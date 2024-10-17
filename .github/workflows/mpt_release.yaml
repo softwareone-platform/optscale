@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 'Get the version'
+      id: get_version
+      run: echo  "VERSION=${GITHUB_REF/refs\/tags\//}" >> "$GITHUB_OUTPUT"
+
+    - name: 'Build and push images'
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY_LOGIN_SERVER }}
+        username: ${{ env.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: ./release.sh ${{ env.REGISTRY_LOGIN_SERVER }} ${{ steps.get_version.outputs.VERSION }}
