@@ -26,7 +26,7 @@ jobs:
     - name: 'Build and push images'
       uses: azure/docker-login@v1
       with:
-        login-server: ${{ env.REGISTRY_LOGIN_SERVER }}
-        username: ${{ env.REGISTRY_USERNAME }}
+        login-server: ${{ vars.REGISTRY_LOGIN_SERVER }}
+        username: ${{ vars.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: ./release.sh ${{ env.REGISTRY_LOGIN_SERVER }} ${{ steps.get_version.outputs.VERSION }}
+    - run: ./release.sh ${{ vars.REGISTRY_LOGIN_SERVER }} ${{ steps.get_version.outputs.VERSION }}
