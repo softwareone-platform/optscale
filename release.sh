@@ -2,19 +2,23 @@
 set -e
 
 FIND_CMD="find . -mindepth 2 -maxdepth 3 -print | grep Dockerfile | grep -vE '(test|.j2)'"
-BUILD_TAG="latest"
 
+BUILD_TAG=""
 REGISTRY=""
 
+
 if [[ -z "$1" ]]; then
-    echo "You must specify the docker registry"
+    echo -e "\nUsage: $0 [registry] [build_tag] \n" 
     exit 1
 else
     REGISTRY="$1"
 fi
 
 
-if [[ ! -z "$2" ]]; then
+if [[ -z "$2" ]]; then
+    echo -e "\nUsage: $0 [registry] [build_tag] \n" 
+    exit 2
+else
     BUILD_TAG="$2"
 fi
 
