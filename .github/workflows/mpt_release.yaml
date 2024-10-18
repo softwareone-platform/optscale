@@ -11,7 +11,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
     - name: Checkout
@@ -23,10 +23,12 @@ jobs:
       id: get_version
       run: echo  "VERSION=${GITHUB_REF/refs\/tags\//}" >> "$GITHUB_OUTPUT"
 
-    - name: 'Build and push images'
+    - name: 'Login to registry'
       uses: azure/docker-login@v1
       with:
         login-server: ${{ vars.REGISTRY_LOGIN_SERVER }}
         username: ${{ vars.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: ./release.sh ${{ vars.REGISTRY_LOGIN_SERVER }} ${{ steps.get_version.outputs.VERSION }}
+
+    - name: 'Build and push images'
+      run: ./release.sh ${{ vars.REGISTRY_LOGIN_SERVER }} ${{ steps.get_version.outputs.VERSION }}
