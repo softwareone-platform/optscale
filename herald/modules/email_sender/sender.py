@@ -1,4 +1,4 @@
-import os
+import subprocess
 import logging
 import smtplib
 import ssl
@@ -52,6 +52,6 @@ def _send_email_to_user_smtp(server, port, email, password, message):
 
 def _send_email_from_default_service(message):
     sendmail_location = "/usr/sbin/sendmail"
-    p = os.popen("%s -t -i" % sendmail_location, "w")
-    p.write(message.as_string())
-    p.close()
+    sanitized_message = message.as_string().replace('\n', '').replace('\r', '')
+    process = subprocess.Popen([sendmail_location, "-t", "-i"], stdin=subprocess.PIPE)
+    process.communicate(input=sanitized_message.encode())
