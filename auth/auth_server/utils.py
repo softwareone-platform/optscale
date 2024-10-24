@@ -87,7 +87,7 @@ def hash_password(password, salt):
 
 
 def get_digest(val):
-    return hashlib.md5(val.encode('utf-8'), usedforsecurity=False).hexdigest()
+    return hashlib.md5(val.encode('utf-8')).hexdigest()
 
 
 def get_input(keys, **inputs):
