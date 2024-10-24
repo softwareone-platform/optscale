@@ -351,7 +351,7 @@ class KeeperExecutorWorker(ConsumerMixin):
                          callbacks=[self.process_task], prefetch_count=10)]
 
     def get_user_id(self, token):
-        user_digest = hashlib.md5(token.encode('utf-8')).hexdigest()
+        user_digest = hashlib.md5(token.encode('utf-8'), usedforsecurity=False).hexdigest()
         _, token_meta = self.auth_cl.token_meta_get([user_digest])
         return token_meta.get(user_digest, {}).get('user_id')
 
