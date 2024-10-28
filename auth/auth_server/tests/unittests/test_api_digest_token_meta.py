@@ -89,7 +89,7 @@ class TestAllowedActionsApi(TestAuthBase):
     def test_digest_get_with_unexpected(self):
         token = self.get_token(self.user_partner.email,
                                self.user_partner_password)
-        digest = hashlib.md5(token.encode('utf-8')).hexdigest()
+        digest = hashlib.md5(token.encode('utf-8'), usedforsecurity=False).hexdigest()
         payload_dict = {
             'digests': [digest]
         }
