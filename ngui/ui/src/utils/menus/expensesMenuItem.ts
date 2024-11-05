@@ -11,7 +11,8 @@ class ExpensesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_explorer_page";
 
-  icon = BarChartOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = BarChartOutlinedIcon;
 
   isRootPath = (currentPath, currentQueryParams) =>
     currentPath === this.route.link && currentQueryParams[FILTER_BY] === undefined;

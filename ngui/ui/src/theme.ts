@@ -37,8 +37,8 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#F58535",
-      contrastText: getDarken(info.main, 0.8)
+      main: "#472AFF",
+      contrastText: 'white'
     },
     "secondary"
   );
@@ -297,8 +297,8 @@ const getThemeConfig = (settings = {}) => {
                 Make option font styles similar to the MuiMenuItem
               */
               ...theme.typography.body2,
-              /* 
-                When options are selected, Autocomplete does not add any Mui classes, 
+              /*
+                When options are selected, Autocomplete does not add any Mui classes,
                 so we need to rely on the aria-selected element property instead.
               */
               "&[aria-selected='true']": {

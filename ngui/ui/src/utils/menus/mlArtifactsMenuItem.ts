@@ -9,7 +9,8 @@ class MlArtifactsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_artifacts";
 
-  icon = DescriptionOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = DescriptionOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

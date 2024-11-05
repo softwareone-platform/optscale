@@ -9,7 +9,8 @@ class RecommendationsArchiveMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_recommend_archive";
 
-  icon = RestoreOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = RestoreOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

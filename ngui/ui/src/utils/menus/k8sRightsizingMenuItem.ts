@@ -9,7 +9,8 @@ class K8sRightsizingMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_k8s_rightsizing";
 
-  icon = ViewInArOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = ViewInArOutlinedIcon;
 }
 
 export default new K8sRightsizingMenuItem();

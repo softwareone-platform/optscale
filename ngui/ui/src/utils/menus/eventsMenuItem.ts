@@ -9,7 +9,8 @@ class EventsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_events";
 
-  icon = EventOutlined;
+  // TODO: remove after TDR approval
+  // icon = EventOutlined;
 }
 
 export default new EventsMenuItem();

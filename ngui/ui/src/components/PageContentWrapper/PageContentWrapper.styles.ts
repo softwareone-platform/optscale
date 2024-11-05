@@ -1,12 +1,28 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
+import {KU_SPACING_3} from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   page: {
-    backgroundColor: theme.palette.background.paper,
     flexGrow: 1,
-    padding: theme.spacing(SPACING_2),
-    paddingTop: theme.spacing(SPACING_1)
+    padding: KU_SPACING_3,
+    paddingTop: KU_SPACING_3,
+    backgroundColor: '#F4F6F8',
+    gap: '24px',
+    display: 'flex',
+    boxSizing: 'border-box',
+    "& .MuiGrid-container": {
+      gap: '24px',
+    },
+    "& .MuiGrid-item": {
+      flexBasis: 'calc(50% - 24px)', //TODO: make width dynamic
+      border: 'none',
+
+    },
+    "& .MuiPaper-root": {
+      borderRadius: '10px',
+      background: 'white',
+      boxShadow: '0 0 6px 0px #0000001a',
+    }
   }
 }));
 

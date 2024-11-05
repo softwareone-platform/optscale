@@ -9,7 +9,8 @@ class TaggingPoliciesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_tagging_policies";
 
-  icon = TagIcon;
+  // TODO: remove after TDR approval
+  // icon = TagIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

@@ -9,7 +9,8 @@ class PowerSchedulesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_power_schedules";
 
-  icon = ScheduleOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = ScheduleOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

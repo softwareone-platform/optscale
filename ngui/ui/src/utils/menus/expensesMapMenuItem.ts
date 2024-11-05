@@ -9,7 +9,8 @@ class ExpensesMapMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_map";
 
-  icon = PublicOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = PublicOutlinedIcon;
 }
 
 export default new ExpensesMapMenuItem();

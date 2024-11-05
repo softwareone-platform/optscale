@@ -21,7 +21,8 @@ class DataSourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.DATA_SOURCES;
 
-  icon = CloudOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = CloudOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath === CLOUD_ACCOUNT_CONNECT;
 }

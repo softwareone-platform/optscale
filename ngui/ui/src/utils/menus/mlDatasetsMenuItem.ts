@@ -9,7 +9,8 @@ class MlDatasetsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_datasets";
 
-  icon = DatasetOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = DatasetOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

@@ -13,7 +13,8 @@ class RecommendationsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RECOMMENDATIONS;
 
-  icon = ThumbUpAltOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = ThumbUpAltOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

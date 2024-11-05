@@ -10,7 +10,8 @@ class HypertuningMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_runsets";
 
-  icon = TuneOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = TuneOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath.startsWith(`/${ML_RUNSETS_BASE}`);
 }

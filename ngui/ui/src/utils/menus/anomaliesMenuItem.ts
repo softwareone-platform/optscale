@@ -9,7 +9,8 @@ class AnomaliesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_anomalies";
 
-  icon = RunningWithErrorsOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = RunningWithErrorsOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

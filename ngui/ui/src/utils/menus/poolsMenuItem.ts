@@ -15,7 +15,8 @@ class PoolsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.POOLS;
 
-  icon = CalculateOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = CalculateOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

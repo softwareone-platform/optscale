@@ -1,7 +1,7 @@
 import Link from "@mui/material/Link";
 import { useIntl } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import logo from "assets/logo/logo.svg";
+import logo from "assets/logo/swo-logo.svg";
 import logoFullDemo from "assets/logo/logo_demo.svg";
 import logoShortDemo from "assets/logo/logo_short_demo.svg";
 import logoShortWhite from "assets/logo/logo_short_white.svg";
@@ -48,7 +48,7 @@ const Logo = ({
       width={width}
       height={height}
       src={getLogo(demo, white, size)}
-      alt={intl.formatMessage({ id: "optscale" })}
+      alt={intl.formatMessage({ id: "swo-logo" })}
       data-test-id={dataTestId}
     />
   );

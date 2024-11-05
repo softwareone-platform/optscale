@@ -9,7 +9,8 @@ class MlModelsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_models";
 
-  icon = HubOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = HubOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

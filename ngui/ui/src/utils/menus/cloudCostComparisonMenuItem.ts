@@ -9,7 +9,8 @@ class CloudCostComparisonMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_comparison";
 
-  icon = CompareOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = CompareOutlinedIcon;
 }
 
 export default new CloudCostComparisonMenuItem();

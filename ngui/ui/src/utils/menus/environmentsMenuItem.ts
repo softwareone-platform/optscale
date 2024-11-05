@@ -14,7 +14,8 @@ class EnvironmentsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.ENVIRONMENTS;
 
-  icon = ScreenShareOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = ScreenShareOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

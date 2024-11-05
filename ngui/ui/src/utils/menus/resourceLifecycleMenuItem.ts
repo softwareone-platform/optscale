@@ -9,7 +9,8 @@ class ResourceLifecycleMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_resource_lifecycle";
 
-  icon = CloudSyncOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = CloudSyncOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

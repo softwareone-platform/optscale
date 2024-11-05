@@ -9,7 +9,8 @@ class MlTasksMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_metrics";
 
-  icon = TrendingUpOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = TrendingUpOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

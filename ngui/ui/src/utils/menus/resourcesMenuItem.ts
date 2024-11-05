@@ -15,7 +15,8 @@ class ResourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RESOURCES;
 
-  icon = StorageOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = StorageOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

@@ -11,7 +11,8 @@ class IntegrationsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_integrations";
 
-  icon = SyncAltOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = SyncAltOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

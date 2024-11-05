@@ -1,49 +1,67 @@
-import { makeStyles } from "tss-react/mui";
+import {makeStyles} from "tss-react/mui";
+import {BRAND_PRIMARY} from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
-  icon: {
-    minWidth: "2rem"
-  },
-  nested: {
-    paddingLeft: theme.spacing(6)
-  },
-  menuLink: {
-    width: "100%",
-    display: "contents",
-    color: "inherit",
-    textDecoration: "none"
-  },
-  activeLink: {
-    color: theme.palette.secondary.contrastText,
-    "& .MuiListItemSecondaryAction-root": {
-      "& svg": {
-        color: theme.palette.secondary.contrastText
-      },
-      "& span": {
-        color: theme.palette.secondary.contrastText
-      },
-      "& .MuiIconButton-root": {
-        "&:hover": {
-          backgroundColor: theme.palette.secondary.light,
-          "& svg": {
-            color: theme.palette.secondary.contrastText
-          },
-          "& span": {
-            color: theme.palette.secondary.contrastText
-          }
-        }
-      }
+    icon: {
+        minWidth: "2rem"
     },
-    "& .listItem": {
-      backgroundColor: theme.palette.action.selected,
-      "& svg": {
-        color: theme.palette.secondary.contrastText
-      },
-      "& span": {
-        color: theme.palette.secondary.contrastText
-      }
+    nested: {
+        paddingLeft: theme.spacing(6)
+    },
+    menuLink: {
+        width: "100%",
+        display: "block",
+        color: "inherit",
+        textDecoration: "none",
+
+        "& .MuiListItemText-root": {
+            position: 'relative',
+        },
+        "& .MuiListItemText-root:before": {
+            content: '""',
+            position: 'absolute',
+            width: '0px',
+            transition: 'all ease-in 0.2s ',
+            height: '100%',
+            borderRadius: '5px',
+            left: '-25px',
+            backgroundColor: BRAND_PRIMARY
+        }
+    },
+    activeLink: {
+        color: 'black',
+        "& .MuiListItemText-root:before": {
+            width: 10,
+        },
+        "& .MuiListItemSecondaryAction-root": {
+            "& svg": {
+                color: 'black'
+            },
+            "& span": {
+                color: 'black'
+            },
+            "& .MuiIconButton-root": {
+                "&:hover": {
+                    backgroundColor: theme.palette.secondary.light,
+                    "& svg": {
+                        color: 'black'
+                    },
+                    "& span": {
+                        color: 'black'
+                    }
+                }
+            }
+        },
+        "& .listItem": {
+            // backgroundColor: theme.palette.action.selected,
+            "& svg": {
+                color: 'black'
+            },
+            "& span": {
+                color: 'black'
+            }
+        }
     }
-  }
 }));
 
 export default useStyles;

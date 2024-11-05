@@ -12,7 +12,8 @@ class HomeMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.HOME;
 
-  icon = HomeOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = HomeOutlinedIcon;
 }
 
 export default new HomeMenuItem();

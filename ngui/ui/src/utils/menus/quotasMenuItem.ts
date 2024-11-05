@@ -9,9 +9,10 @@ class QuotasMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_quotas_and_budgets";
 
+  // TODO: remove after TDR approval
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 
-  icon = CurrencyExchangeOutlinedIcon;
+  // icon = CurrencyExchangeOutlinedIcon;
 }
 
 export default new QuotasMenuItem();

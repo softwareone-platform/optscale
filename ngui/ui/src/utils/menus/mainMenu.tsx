@@ -29,6 +29,12 @@ import settings from "./settingsMenuItem";
 import taggingPolicies from "./taggingPoliciesMenuItem";
 import users from "./usersMenuItem";
 
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
+
 export default [
   {
     id: MAIN_MENU_SECTION_IDS.HOME,
@@ -36,31 +42,31 @@ export default [
   },
   {
     id: MAIN_MENU_SECTION_IDS.FINOPS,
-    menuSectionTitle: <MainMenuSectionTitle messageId="finops" />,
+    menuSectionTitle: <MainMenuSectionTitle messageId="finops" icon={LeaderboardIcon} />,
     items: [expenses, expensesMap, finOpsPortal],
     mode: OPTSCALE_MODE.FINOPS
   },
   {
     id: MAIN_MENU_SECTION_IDS.ML_OPS,
-    menuSectionTitle: <MainMenuSectionTitle messageId="mlops" />,
+    menuSectionTitle: <MainMenuSectionTitle messageId="mlops" icon={AccountTreeOutlinedIcon} />,
     items: [mlTasks, mlModels, mlDatasets, mlArtifactsMenuItem, mlHypertuningMenuItem, mlMetricsMenuItem],
     mode: OPTSCALE_MODE.MLOPS
   },
   {
     id: MAIN_MENU_SECTION_IDS.POLICIES,
-    menuSectionTitle: <MainMenuSectionTitle messageId="policies" />,
+    menuSectionTitle: <MainMenuSectionTitle messageId="policies" icon={PolicyOutlinedIcon} />,
     items: [anomalies, quotas, taggingPolicies, resourceLifecycle, powerSchedulesMenuItem],
     mode: OPTSCALE_MODE.FINOPS
   },
   {
     id: MAIN_MENU_SECTION_IDS.SANDBOX,
-    menuSectionTitle: <MainMenuSectionTitle messageId="sandbox" />,
+    menuSectionTitle: <MainMenuSectionTitle messageId="sandbox" icon={InboxOutlinedIcon} />,
     items: [k8sRightsizing, recommendationsArchive, cloudCostComparisonMenuItem],
     mode: OPTSCALE_MODE.FINOPS
   },
   {
     id: MAIN_MENU_SECTION_IDS.SYSTEM,
-    menuSectionTitle: <MainMenuSectionTitle messageId="system" />,
+    menuSectionTitle: <MainMenuSectionTitle messageId="system" icon={TuneOutlinedIcon} />,
     items: [users, dataSources, integrations, events, settings]
   }
 ];
