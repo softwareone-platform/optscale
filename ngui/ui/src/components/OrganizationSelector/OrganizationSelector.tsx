@@ -14,30 +14,31 @@ import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
+import {common} from "@mui/material/colors";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
 
 const SELECTOR_SX = {
   "&.MuiFormControl-root": {
     "& label": {
-      color: (theme) => theme.palette.primary.main
+      color: (theme) => theme.palette.info.main
     },
     "& div": {
-      color: (theme) => theme.palette.primary.main,
+      color: (theme) => theme.palette.common.black,
       "&.Mui-focused": {
         "& fieldset": {
-          borderColor: (theme) => theme.palette.primary.main
+          borderColor: (theme) => theme.palette.info.main
         }
       }
     },
     "& svg": {
-      color: (theme) => theme.palette.primary.main
+      color: (theme) => theme.palette.common.black
     },
     "& fieldset": {
-      borderColor: (theme) => theme.palette.primary.main
+      borderColor: (theme) => theme.palette.info.main
     },
     "&:hover fieldset": {
-      borderColor: (theme) => theme.palette.primary.main
+      borderColor: (theme) => theme.palette.info.main
     }
   }
 };
@@ -91,7 +92,7 @@ const OrganizationSelector = ({
             <Item key={obj.name} value={obj.id}>
               <ItemContent
                 icon={{
-                  IconComponent: ApartmentIcon
+                  IconComponent: ApartmentIcon,
                 }}
               >
                 {obj.name}
@@ -108,17 +109,17 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        <Button
-          icon={{
-            IconComponent: AddOutlinedIcon
-          }}
-          onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })}
-          dataTestId="orgs_create_new"
-          disabled={isDemo}
-          tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null}
-        >
-          <FormattedMessage id="createNewOrganization" />
-        </Button>
+        {/*<Button*/}
+        {/*  icon={{*/}
+        {/*    IconComponent: AddOutlinedIcon*/}
+        {/*  }}*/}
+        {/*  onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })}*/}
+        {/*  dataTestId="orgs_create_new" */}
+        {/*  disabled={isDemo}*/}
+        {/*  tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null}*/}
+        {/*>*/}
+        {/*  <FormattedMessage id="createNewOrganization" />*/}
+        {/*</Button>*/}
       </Selector>
     </Box>
   );

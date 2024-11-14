@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_2 } from "utils/layouts";
+import {SPACING_2} from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   bar: {

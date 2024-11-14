@@ -1,35 +1,63 @@
 import createCache from "@emotion/cache";
-import { CacheProvider } from "@emotion/react";
+import {CacheProvider} from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider } from "@mui/material/styles";
-import { TssCacheProvider } from "tss-react";
-import { useThemeSettingsOptions } from "hooks/useThemeSettingsOptions";
+import {ThemeProvider} from "@mui/material/styles";
+import {TssCacheProvider} from "tss-react";
+import {useThemeSettingsOptions} from "hooks/useThemeSettingsOptions";
 import getTheme from "theme";
+import {GlobalStyles} from "@mui/material";
+import {BRAND_GRAY_1} from "../../utils/layouts";
 
 const muiCache = createCache({
-  key: "mui",
-  prepend: true
+    key: "mui",
+    prepend: true
 });
 
 const tssCache = createCache({
-  key: "tss"
+    key: "tss"
 });
 
-const ThemeProviderWrapper = ({ children }) => {
-  const themeSettings = useThemeSettingsOptions();
+const globalScrollbarStyles = (
+    <GlobalStyles
+        styles={{
+            "::-webkit-scrollbar": {
+                width: "5px"
+            },
+            "::-webkit-scrollbar-track": {
+                background: BRAND_GRAY_1
+            },
+            "::-webkit-scrollbar-thumb": {
+                borderRadius: "0",
+                backgroundClip: "padding-box",
+                backgroundColor: BRAND_GRAY_1
+            },
+            "::-webkit-scrollbar-thumb:hover": {
+                backgroundColor: BRAND_GRAY_1
+            },
+            "*": {
+                scrollbarColor: `${BRAND_GRAY_1} transparent`,
+                scrollbarWidth: "thin"
+            },
+        }}
+    />
+);
 
-  const theme = getTheme(themeSettings);
+const ThemeProviderWrapper = ({children}) => {
+    const themeSettings = useThemeSettingsOptions();
 
-  return (
-    <CacheProvider value={muiCache}>
-      <TssCacheProvider value={tssCache}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
-      </TssCacheProvider>
-    </CacheProvider>
-  );
+    const theme = getTheme(themeSettings);
+
+    return (
+        <CacheProvider value={muiCache}>
+            <TssCacheProvider value={tssCache}>
+                <ThemeProvider theme={theme}>
+                    {globalScrollbarStyles}
+                    <CssBaseline/>
+                    {children}
+                </ThemeProvider>
+            </TssCacheProvider>
+        </CacheProvider>
+    );
 };
 
 export default ThemeProviderWrapper;

@@ -8,6 +8,7 @@ export const SPACING_5 = 5;
 export const SPACING_6 = 6;
 
 export const BRAND_PRIMARY = "#472AFF"
+export const BRAND_GRAY_1 = "#E0E5E8";
 export const KU_SPACING_1 = "8px";
 export const KU_SPACING_2 = "16px";
 export const KU_SPACING_3 = "24px";

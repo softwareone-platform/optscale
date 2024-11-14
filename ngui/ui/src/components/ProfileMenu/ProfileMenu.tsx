@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -54,7 +54,7 @@ const ProfileMenu = ({ name, email, isLoading = false }: ProfileMenuProps) => {
   const menuItems = [
     {
       messageId: "signOut",
-      icon: ExitToAppOutlinedIcon,
+      icon: ArrowForwardIosIcon,
       onClick: () => {
         signOut();
       },

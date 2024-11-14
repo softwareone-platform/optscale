@@ -60,6 +60,8 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.subtitle1 = {
     ...theme.typography.subtitle1,
+    fontWeight: 'bold',
+    color: 'black',
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },

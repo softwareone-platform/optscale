@@ -54,10 +54,10 @@ const DashboardGridLayout = ({
   ].filter(({ node }) => Boolean(node));
 
   return (
-    <Grid container>
+    <Grid spacing={3} borderRight={'none'} borderLeft={"none"} container>
       {squareNodes.map(({ key, node, mode }, i) => (
         <ModeWrapper mode={mode} key={key}>
-          <Grid item xs={12} lg={6} sx={getSquareNodesStyle(squareNodes.length, i)}>
+          <Grid item xs={12} lg={6}> { /* TODO_KU disabled sx={getSquareNodesStyle(squareNodes.length, i)} */}
             {node}
           </Grid>
         </ModeWrapper>

@@ -42,13 +42,13 @@ const Logo = ({
   size = LOGO_SIZE.FULL
 }) => {
   const intl = useIntl();
-
+  /* TODO_KU: Add 'swo-logo' translation */
   const renderLogo = (
     <img
       width={width}
       height={height}
       src={getLogo(demo, white, size)}
-      alt={intl.formatMessage({ id: "swo-logo" })}
+      alt={"swo-logo"}
       data-test-id={dataTestId}
     />
   );

@@ -1,4 +1,4 @@
-import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box, Stack, Typography } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
@@ -77,6 +77,7 @@ const TopResourcesView = ({ data }) => {
       cloud_account_id: cloudId,
       cloud_account_name: cloudName
     } = original;
+
     return (
       <Tooltip
         key={id}
@@ -145,7 +146,7 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading }) => {
           </Box>
           <Box display="flex" mr={hasPerspectives ? 0.5 : 0}>
             <IconButton
-              icon={<ExitToAppOutlinedIcon />}
+              icon={<ArrowForwardIosIcon />}
               tooltip={{
                 show: true,
                 messageId: "goToResources"

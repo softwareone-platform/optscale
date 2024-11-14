@@ -73,26 +73,26 @@ const AppToolbar = ({onMenuIconClick, mainMenu, showMainMenu = false, showOrgani
 
                     <Typography data-test-id="p_live_demo_mode" sx={{display: {xs: "none", md: "inherit"}}}
                                 className={classes.headerTitle}>
-                        Cloud spend management
-                    </Typography>
-                </div>
-                {isDemo ? (
-                    <Box display="flex" alignItems="center">
-                        <Typography data-test-id="p_live_demo_mode" sx={{display: {xs: "none", md: "inherit"}}}
-                                    color="primary">
-                            <FormattedMessage id="liveDemoMode"/>
+                        FinOps for Cloud { /* TODO_KU: add translation */ }
                         </Typography>
-                        <Button
-                            customClass={cx(classes.marginLeft1, classes.marginRight1)}
-                            disableElevation
-                            dataTestId="btn_register"
-                            messageId="register"
-                            variant="contained"
-                            size={isDownSm ? "small" : "medium"}
-                            color="success"
-                            onClick={onLiveDemoRegisterClick}
-                        />
-                    </Box>
+                        </div>
+                    {isDemo ? (
+                        <Box display="flex" alignItems="center">
+                        <Typography data-test-id="p_live_demo_mode" sx={{display: {xs: "none", md: "inherit"}}}
+                                color="primary">
+                        <FormattedMessage id="liveDemoMode"/>
+                    </Typography>
+                    <Button
+                        customClass={cx(classes.marginLeft1, classes.marginRight1)}
+                        disableElevation
+                        dataTestId="btn_register"
+                        messageId="register"
+                        variant="contained"
+                        size={isDownSm ? "small" : "medium"}
+                        color="success"
+                        onClick={onLiveDemoRegisterClick}
+                    />
+                </Box>
                 ) : null}
                 <Box display="flex" alignItems="center">
 
@@ -104,7 +104,7 @@ const AppToolbar = ({onMenuIconClick, mainMenu, showMainMenu = false, showOrgani
                     <HeaderButtons/>
                 </Box>
             </Toolbar>
-            <div className={classes.headerSpacer}></div>
+            <div className={classes.headerSpacer}/>
         </header>
     );
 };
@@ -162,7 +162,8 @@ const BaseLayout = ({children, showMainMenu = false, showOrganizationSelector = 
                             </>
                         )}
                         <Container key={organizationId} id={BASE_LAYOUT_CONTAINER_ID} component="main"
-                                   className={classes.content}>
+                                   className={classes.content}
+                        >
                             <ErrorBoundary>
                                 <MainLayoutContainer>{Children.only(children)}</MainLayoutContainer>
                             </ErrorBoundary>

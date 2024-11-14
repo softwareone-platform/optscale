@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Box } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
@@ -76,7 +76,7 @@ const RecentModelsCard = ({ models, isLoading = false }: RecentModelsCardProps) 
           </Box>
           <Box display="flex">
             <IconButton
-              icon={<ExitToAppOutlinedIcon />}
+              icon={<ArrowForwardIosIcon />}
               tooltip={{
                 show: true,
                 messageId: "goToModels"
