@@ -50,7 +50,7 @@ const Dashboard = () => {
     policiesCard: <OrganizationConstraintsCardContainer />,
     organizationExpenses: thereAreOnlyEnvironmentDataSources ? null : <OrganizationExpensesContainer />,
     recommendationsCard: <RecommendationsCardContainer />,
-    poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer />,
+    // poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer />,
     recentTasksCard: <RecentTasksCardContainer />,
     recentModelsCard: <RecentModelsCardContainer />
   };

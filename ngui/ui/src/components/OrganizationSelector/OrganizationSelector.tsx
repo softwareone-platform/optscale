@@ -1,22 +1,22 @@
-import { useState } from "react";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import {useState} from "react";
+// import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import { Box } from "@mui/material";
-import { FormattedMessage } from "react-intl";
-import { useNavigate } from "react-router-dom";
+import {Box} from "@mui/material";
+import {FormattedMessage} from "react-intl";
+import {useNavigate} from "react-router-dom";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
-import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
-import { CreateOrganizationModal } from "components/SideModalManager/SideModals";
-import { useIsDownMediaQuery } from "hooks/useMediaQueries";
-import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { ORGANIZATIONS_OVERVIEW } from "urls";
-import {common} from "@mui/material/colors";
+import Selector, {Button, Divider, Item, ItemContent} from "components/Selector";
+// import {CreateOrganizationModal} from "components/SideModalManager/SideModals";
+import {useIsDownMediaQuery} from "hooks/useMediaQueries";
+import {useOpenSideModal} from "hooks/useOpenSideModal";
+import {useOrganizationInfo} from "hooks/useOrganizationInfo";
+import {ORGANIZATIONS_OVERVIEW} from "urls";
+// import {common} from "@mui/material/colors";
 
-const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
+const HIDDEN_SELECTOR_SX = {visibility: "hidden", maxWidth: 0, minWidth: 0};
 
 const SELECTOR_SX = {
   "&.MuiFormControl-root": {
@@ -54,12 +54,12 @@ type OrganizationSelectorProps = {
 };
 
 const OrganizationSelector = ({
-  organizations = [],
-  organizationId = "",
-  onChange,
-  isLoading = false
-}: OrganizationSelectorProps) => {
-  const { isDemo } = useOrganizationInfo();
+                                organizations = [],
+                                organizationId = "",
+                                onChange,
+                                isLoading = false
+                              }: OrganizationSelectorProps) => {
+  const {isDemo} = useOrganizationInfo();
   const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
 
@@ -72,7 +72,7 @@ const OrganizationSelector = ({
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
-        <IconButton icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
+        <IconButton icon={<ExpandMoreOutlinedIcon/>} onClick={handleOpen}/>
       </Hidden>
       <Selector
         id="organization-selector"
@@ -87,19 +87,19 @@ const OrganizationSelector = ({
         sx={isDownSm ? HIDDEN_SELECTOR_SX : SELECTOR_SX}
       >
         {[...organizations]
-          .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+          .sort(({name: nameA}, {name: nameB}) => nameA.localeCompare(nameB))
           .map((obj) => (
             <Item key={obj.name} value={obj.id}>
               <ItemContent
                 icon={{
-                  IconComponent: ApartmentIcon,
+                  IconComponent: ApartmentIcon
                 }}
               >
                 {obj.name}
               </ItemContent>
             </Item>
           ))}
-        <Divider />
+        <Divider/>
         <Button
           icon={{
             IconComponent: VisibilityOutlinedIcon
@@ -107,8 +107,9 @@ const OrganizationSelector = ({
           onClick={() => navigate(ORGANIZATIONS_OVERVIEW)}
           dataTestId="orgs_dashboard"
         >
-          <FormattedMessage id="organizationsOverview" />
+          <FormattedMessage id="organizationsOverview"/>
         </Button>
+        { /* TODO_KU: temporary disabled new organisation creation */ }
         {/*<Button*/}
         {/*  icon={{*/}
         {/*    IconComponent: AddOutlinedIcon*/}

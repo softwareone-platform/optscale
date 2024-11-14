@@ -297,8 +297,8 @@ const getThemeConfig = (settings = {}) => {
                         color: 'black',
                         paddingLeft: KU_SPACING_2,
                         paddingRight: KU_SPACING_3,
-                        paddingTop: KU_SPACING_1,
-                        paddingBottom: KU_SPACING_1
+                        paddingTop: '6px',
+                        paddingBottom: '6px'
                     },
 
                    root: {
