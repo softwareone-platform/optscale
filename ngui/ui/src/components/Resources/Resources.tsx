@@ -3,6 +3,7 @@ import AddchartOutlinedIcon from "@mui/icons-material/AddchartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
+import {Box} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { FormattedMessage, useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
@@ -194,7 +195,8 @@ const Resources = ({
           <Grid item>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
-          <Grid item>
+          <Grid item className={'KuBoxShadowRoot'}>
+            <Box>
             <RangePickerFormContainer
               onApply={(dateRange) => onApply(dateRange)}
               initialStartDateValue={startDateTimestamp}
@@ -202,8 +204,9 @@ const Resources = ({
               rangeType={DATE_RANGE_TYPE.RESOURCES}
               definedRanges={getBasicRangesSet()}
             />
+            </Box>
           </Grid>
-          <Grid xs={12} item>
+          <Grid xs={12} item className={'KuBoxShadowRoot'}>
             {isFilterValuesLoading ? (
               <TypographyLoader linesCount={1} />
             ) : (
@@ -216,11 +219,12 @@ const Resources = ({
               />
             )}
           </Grid>
-          <Grid xs={12} item>
+          <Grid xs={12} item className={'KuBoxShadowRoot'}>
+            <Box>
             <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange} />
-          </Grid>
-          <Grid xs={12} item>
+
             {typeof renderContent === "function" ? renderContent() : null}
+            </Box>
           </Grid>
         </Grid>
       </PageContentWrapper>

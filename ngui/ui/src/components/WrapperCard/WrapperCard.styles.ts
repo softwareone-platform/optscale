@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import {KU_SPACING_2, KU_SPACING_3} from "../../utils/layouts";
+import {KU_BOX_SHADOW, KU_SPACING_2, KU_SPACING_3} from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   spacer: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles()((theme) => ({
   },
   shadow: {
     borderRadius: KU_SPACING_2,
-    boxShadow: '0 0 8px rgba(0,0,0,0.1)'
+    boxShadow: KU_BOX_SHADOW
   },
   buttonLink: {
     "&:hover": {

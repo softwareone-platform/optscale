@@ -15,6 +15,7 @@ export const KU_SPACING_3 = "24px";
 export const KU_SPACING_4 = "32px";
 export const KU_SPACING_5 = "40px";
 export const KU_SPACING_6 = "48px";
+export const KU_BOX_SHADOW = `0 0 ${KU_SPACING_1} rgba(0,0,0,0.1)`
 
 export const scrolledToBottom = (target) => target.scrollTop + target.clientHeight >= target.scrollHeight;
 

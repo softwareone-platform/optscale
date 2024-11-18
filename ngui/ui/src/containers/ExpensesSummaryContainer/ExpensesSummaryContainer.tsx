@@ -63,7 +63,7 @@ const ExpensesSummaryContainer = ({ requestParams }) => {
     }
   ];
 
-  return <SummaryGrid summaryData={summaryData} />;
+  return <SummaryGrid summaryData={summaryData} summaryStyle={'boxShadow'} />;
 };
 
 export default ExpensesSummaryContainer;

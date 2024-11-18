@@ -324,7 +324,7 @@ const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, on
   return (
     <Box className={classes.wrapper}>
       {label && (
-        <Typography component="div" data-test-id={labelDataTestId}>
+        <Typography variant={'fontWeightBold'} component="div" data-test-id={labelDataTestId}>
           {label}
           {": "}
         </Typography>

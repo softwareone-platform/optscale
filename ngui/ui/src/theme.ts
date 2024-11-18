@@ -6,7 +6,7 @@ import {createTheme, alpha, darken, lighten} from "@mui/material/styles";
 import {isEmpty as isEmptyArray} from "utils/arrays";
 import {customResponsiveFontSizes} from "utils/fonts";
 import {isEmpty as isEmptyObject} from "utils/objects";
-import {BRAND_PRIMARY, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
+import {BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -407,7 +407,16 @@ const getThemeConfig = (settings = {}) => {
             },
             MuiCssBaseline: {
                 styleOverrides: {
-                    "#root": {display: "flex", flexDirection: "column", minHeight: "100vh"}
+                    "#root": {display: "flex", flexDirection: "column", minHeight: "100vh"},
+                    '.KuBoxShadowRoot': {
+                        '> .MuiBox-root': {
+                            boxShadow: KU_BOX_SHADOW,
+                            background: 'white',
+                            padding: KU_SPACING_2,
+                            borderRadius: KU_SPACING_1
+                        }
+
+                    }
                 }
             },
             MuiDialogActions: {
