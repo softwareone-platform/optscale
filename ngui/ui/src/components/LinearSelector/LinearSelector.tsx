@@ -1,6 +1,10 @@
 import { useState } from "react";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+
+// KU_TODO: Changed icons
+// import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+// import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
+import KeyboardArrowUpOutlined from '@mui/icons-material/KeyboardArrowUpOutlined';
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
@@ -147,7 +151,7 @@ const MultiPopoverItem = ({ name, items, label, handleApply, values }) => {
 const PopoverLabelExpandIcon = ({ isOpen }) => {
   const { classes } = useStyles();
 
-  const Icon = isOpen ? ArrowDropUpIcon : ArrowDropDownIcon;
+  const Icon = isOpen ? KeyboardArrowUpOutlined : KeyboardArrowDownOutlinedIcon;
 
   return <Icon className={classes.labelIcon} />;
 };

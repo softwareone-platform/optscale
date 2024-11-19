@@ -3,20 +3,16 @@ import {KU_BOX_SHADOW, KU_SPACING_2} from "../../utils/layouts";
 
 const useStyles = makeStyles()(() => ({
   boxShadow: {
-    '> .MuiBox-root': {
-      background: 'white',
+    '.MuiPaper-rounded': {
       borderRadius: KU_SPACING_2,
       boxShadow: KU_BOX_SHADOW,
-      textAlign: 'center'
-    },
-    '.MuiPaper-root': {
-      background: 'none'
+      textAlign: 'center',
+      background: '#CAE4FF80'
     },
     '.MuiBox-root': {
       justifyContent: 'center',
       color: 'black'
     }
-
   }
 }));
 

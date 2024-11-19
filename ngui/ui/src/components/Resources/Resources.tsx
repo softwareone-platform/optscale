@@ -191,7 +191,7 @@ const Resources = ({
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Grid direction="row" container spacing={SPACING_2} justifyContent="space-between">
+        <Grid direction="row" container spacing={3} justifyContent="space-between">
           <Grid item>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>

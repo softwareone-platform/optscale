@@ -1,12 +1,12 @@
 import Link from "@mui/material/Link";
-import { FormattedMessage } from "react-intl";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
+import {FormattedMessage} from "react-intl";
+import {GET_DATA_SOURCES} from "api/restapi/actionTypes";
 import AlertDialog from "components/AlertDialog";
 import DashboardGridLayout from "components/DashboardGridLayout";
 import MailTo from "components/MailTo";
-import Mocked, { MESSAGE_TYPES } from "components/Mocked";
+import Mocked, {MESSAGE_TYPES} from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
-import { PRODUCT_TOUR, useProductTour, useStartTour } from "components/Tour";
+import {PRODUCT_TOUR, useProductTour, useStartTour} from "components/Tour";
 import OrganizationConstraintsCardContainer from "containers/OrganizationConstraintsCardContainer";
 import OrganizationExpensesContainer from "containers/OrganizationExpensesContainer";
 import PoolsRequiringAttentionCardContainer from "containers/PoolsRequiringAttentionCardContainer";
@@ -14,11 +14,11 @@ import RecentModelsCardContainer from "containers/RecentModelsCardContainer";
 import RecentTasksCardContainer from "containers/RecentTasksCardContainer";
 import RecommendationsCardContainer from "containers/RecommendationsCardContainer";
 import TopResourcesExpensesCardContainer from "containers/TopResourcesExpensesCardContainer";
-import { useApiData } from "hooks/useApiData";
-import { useIsUpMediaQuery } from "hooks/useMediaQueries";
-import { EMAIL_SUPPORT, DOCS_HYSTAX_OPTSCALE, SHOW_POLICY_QUERY_PARAM } from "urls";
-import { ENVIRONMENT } from "utils/constants";
-import { getQueryParams, removeQueryParam } from "utils/network";
+import {useApiData} from "hooks/useApiData";
+import {useIsUpMediaQuery} from "hooks/useMediaQueries";
+import {EMAIL_SUPPORT, DOCS_HYSTAX_OPTSCALE, SHOW_POLICY_QUERY_PARAM} from "urls";
+import {ENVIRONMENT} from "utils/constants";
+import {getQueryParams, removeQueryParam} from "utils/network";
 import DashboardMocked from "./DashboardMocked";
 
 const Dashboard = () => {
@@ -27,14 +27,14 @@ const Dashboard = () => {
   const startTour = useStartTour();
 
   const {
-    apiData: { cloudAccounts = [] }
+    apiData: {cloudAccounts = []}
   } = useApiData(GET_DATA_SOURCES);
 
-  const thereAreOnlyEnvironmentDataSources = cloudAccounts.every(({ type }) => type === ENVIRONMENT);
+  const thereAreOnlyEnvironmentDataSources = cloudAccounts.every(({type}) => type === ENVIRONMENT);
 
-  const { isFinished } = useProductTour(PRODUCT_TOUR);
+  const {isFinished} = useProductTour(PRODUCT_TOUR);
 
-  const { showPolicy } = getQueryParams();
+  const {showPolicy} = getQueryParams();
   const firstTimeOpen = !!showPolicy;
 
   const closeAlert = (queryParams) => {
@@ -46,18 +46,18 @@ const Dashboard = () => {
   };
 
   const dashboardGridItems = {
-    topResourcesExpensesCard: thereAreOnlyEnvironmentDataSources ? null : <TopResourcesExpensesCardContainer />,
-    policiesCard: <OrganizationConstraintsCardContainer />,
-    organizationExpenses: thereAreOnlyEnvironmentDataSources ? null : <OrganizationExpensesContainer />,
-    recommendationsCard: <RecommendationsCardContainer />,
-    // poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer />,
-    recentTasksCard: <RecentTasksCardContainer />,
-    recentModelsCard: <RecentModelsCardContainer />
+    topResourcesExpensesCard: thereAreOnlyEnvironmentDataSources ? null : <TopResourcesExpensesCardContainer/>,
+    policiesCard: <OrganizationConstraintsCardContainer/>,
+    organizationExpenses: thereAreOnlyEnvironmentDataSources ? null : <OrganizationExpensesContainer/>,
+    recommendationsCard: <RecommendationsCardContainer/>,
+    poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer/>,
+    recentTasksCard: <RecentTasksCardContainer/>,
+    recentModelsCard: <RecentModelsCardContainer/>
   };
 
   return (
     <>
-      <Mocked mock={<DashboardMocked />} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
+      <Mocked mock={<DashboardMocked/>} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
         <PageContentWrapper>
           <DashboardGridLayout {...dashboardGridItems} />
         </PageContentWrapper>
@@ -69,22 +69,22 @@ const Dashboard = () => {
           paper: "window_privacy_policy",
           button: "btn_proceed"
         }}
-        header={<FormattedMessage id="optScalePrivacyPolicy" />}
+        header={<FormattedMessage id="optScalePrivacyPolicy"/>}
         message={
           <FormattedMessage
             id="privacyWarning"
             values={{
-              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} />,
+              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT}/>,
               docs: (chunks) => (
                 <Link target="_blank" href={DOCS_HYSTAX_OPTSCALE} data-test-id="link_documentation">
                   {chunks}
                 </Link>
               ),
               p: (chunks) => <p>{chunks}</p>,
-              ul: (chunks) => <ul style={{ marginTop: 0 }}>{chunks}</ul>,
+              ul: (chunks) => <ul style={{marginTop: 0}}>{chunks}</ul>,
               li: (chunks) => <li>{chunks}</li>,
               strong: (chunks) => <strong>{chunks}</strong>,
-              br: <br />
+              br: <br/>
             }}
           />
         }

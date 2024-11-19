@@ -104,6 +104,7 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body1 = {
     ...theme.typography.body1,
+    color: 'black',
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
@@ -117,6 +118,7 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body2 = {
     ...theme.typography.body2,
+    color: 'black',
     [upXsBreakpoint]: {
       fontSize: "0.75rem"
     },

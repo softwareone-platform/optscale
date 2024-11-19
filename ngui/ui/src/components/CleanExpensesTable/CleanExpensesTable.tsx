@@ -284,33 +284,34 @@ const CleanExpensesTable = ({
       }
     ];
 
-    if (typeof downloadResources === "function") {
-      actionBarItems.push({
-        key: "download",
-        startIcon: <CloudDownloadOutlinedIcon />,
-        messageId: "download",
-        type: "dropdown",
-        action: downloadResources,
-        isLoading: isDownloadingResources,
-        menu: {
-          items: [
-            {
-              key: "xlsx",
-              messageId: "xlsxFile",
-              action: () => downloadResources(DOWNLOAD_FILE_FORMATS.XLSX),
-              dataTestId: "btn_download_xlsx"
-            },
-            {
-              key: "json",
-              messageId: "jsonFile",
-              action: () => downloadResources(DOWNLOAD_FILE_FORMATS.JSON),
-              dataTestId: "btn_download_json"
-            }
-          ]
-        },
-        dataTestId: "btn_download"
-      });
-    }
+    // KU_TODO: Disabled download
+    // if (typeof downloadResources === "function") {
+    //   actionBarItems.push({
+    //     key: "download",
+    //     startIcon: <CloudDownloadOutlinedIcon />,
+    //     messageId: "download",
+    //     type: "dropdown",
+    //     action: downloadResources,
+    //     isLoading: isDownloadingResources,
+    //     menu: {
+    //       items: [
+    //         {
+    //           key: "xlsx",
+    //           messageId: "xlsxFile",
+    //           action: () => downloadResources(DOWNLOAD_FILE_FORMATS.XLSX),
+    //           dataTestId: "btn_download_xlsx"
+    //         },
+    //         {
+    //           key: "json",
+    //           messageId: "jsonFile",
+    //           action: () => downloadResources(DOWNLOAD_FILE_FORMATS.JSON),
+    //           dataTestId: "btn_download_json"
+    //         }
+    //       ]
+    //     },
+    //     dataTestId: " btn_download"
+    //   });
+    // }
 
     if (assignmentRuleCreationLinkParameters) {
       actionBarItems.push({
