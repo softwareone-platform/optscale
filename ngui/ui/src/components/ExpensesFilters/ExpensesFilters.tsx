@@ -7,7 +7,7 @@ import { POOL_ID_FILTER } from "utils/constants";
 const ExpensesFilters = ({ items, appliedValues, onFilterAdd, onFilterDelete, onFiltersDelete }) =>
   !isEmpty(items) && (
     <LinearSelector
-      label={<FormattedMessage id="filters" />}
+      // KU_TODO: removed label={<FormattedMessage id="filters" />}
       value={appliedValues}
       items={items}
       onChange={({ name: filterName, value, checked }) => {

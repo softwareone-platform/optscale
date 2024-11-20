@@ -135,7 +135,7 @@ const SummaryGrid = ({summaryData, summaryStyle}) => {
       const shouldRender = renderCondition ? renderCondition() || isLoading : true;
       const renderCard = getCardRenderer(type);
       return renderCard && shouldRender ? (
-        <Grid className={summaryStyle === 'boxShadow' ? classes.boxShadow : ''} item key={key || uuidv4()}>
+        <Grid className={summaryStyle === 'customBox' ? classes.customBox : ''} item key={key || uuidv4()}>
           {renderCard({isLoading, ...rest})}
         </Grid>
       ) : null;

@@ -334,7 +334,7 @@ const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, on
         </Typography>
       )}
       {valuesArray.length === 0 ? (
-        <Typography component="span">
+        <Typography variant={'fontWeightBold'} component="span">
           <FormattedMessage id={NONE} />
         </Typography>
       ) : (

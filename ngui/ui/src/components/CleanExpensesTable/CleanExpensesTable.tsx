@@ -137,7 +137,7 @@ const CleanExpensesTable = ({
         },
         cell: ({ row: { original } }) => {
           const metadataTags = MetadataNodes(original).getTags();
-          return <CollapsableTableCell maxRows={5} tags={metadataTags} sorted={false} limit={33} />;
+          return <CollapsableTableCell maxRows={2} tags={metadataTags} sorted={false} limit={33} />;
         }
       },
       resourcePoolOwner({
