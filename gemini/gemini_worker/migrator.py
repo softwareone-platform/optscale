@@ -106,7 +106,7 @@ class Migrator:
     @staticmethod
     def _get_md5(filename):
         return hashlib.md5(
-            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read(), usedforsecurity=False
+            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read()
         ).hexdigest()
 
     def update_versions_table(self, filename):
