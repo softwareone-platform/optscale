@@ -250,7 +250,13 @@ const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, app
     const noEvents = isEmpty(events);
 
     if (noEvents) {
-      return isLoading ? <Loader /> : <FormattedMessage id="noEvents" />;
+      return isLoading ? (
+        <Loader />
+      ) : (
+        <Typography>
+          <FormattedMessage id="noEvents" />
+        </Typography>
+      );
     }
 
     return (

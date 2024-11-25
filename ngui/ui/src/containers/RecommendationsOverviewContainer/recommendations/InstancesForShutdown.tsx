@@ -10,7 +10,7 @@ import {
   NEBIUS_SERVICE
 } from "hooks/useRecommendationServices";
 import { resource, resourceLocation, poolAndOwner, possibleShutdownPeriods, savings } from "utils/columns";
-import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -44,7 +44,7 @@ class InstancesForShutdown extends BaseRecommendation {
 
   services = [AWS_EC2, AWS_RDS, AZURE_COMPUTE, GCP_COMPUTE_ENGINE, ALIBABA_ECS, NEBIUS_SERVICE];
 
-  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS];
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

@@ -18,7 +18,7 @@ it("renders without crashing", () => {
         }}
         onTimeRangeChange={vi.fn}
         isChartLoading={false}
-        isLoading={false}
+        isBreakdownLoading={false}
         archivedRecommendationsBreakdown={vi.fn}
         onBarChartSelect={vi.fn}
       />

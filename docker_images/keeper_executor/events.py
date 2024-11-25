@@ -7,6 +7,29 @@ class Events(enum.Enum):
         [],  # parameters
         "INFO"  # event level
     ]
+    N0023 = [
+        'Power schedule {object_name} ({object_id}) created',
+        ['object_name', 'object_id'],
+        "INFO"
+    ]
+    N0024 = [
+        'Power schedule {object_name} ({object_id}) updated',
+        ['object_name', 'object_id'],
+        "INFO"
+    ]
+    N0025 = [
+        'Power schedule {object_name} ({object_id}) deleted',
+        ['object_name', 'object_id'],
+        "INFO"
+    ]
+    N0026 = [
+        'Power schedule {object_name} ({object_id}) processing completed: '
+        '{success_count} resources powered {vm_action}, {error_count} '
+        'resources failed, {excluded_count} resources excluded from schedule',
+        ['object_name', 'object_id', 'success_count', 'error_count',
+         'excluded_count', 'vm_action'],
+        "INFO"
+    ]
     N0027 = [
         'Organization {object_name} ({object_id}) created',
         ['object_name', 'object_id'],

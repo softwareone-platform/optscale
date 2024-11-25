@@ -9,6 +9,10 @@ class MainEventExecutor(BaseEventExecutor):
     @property
     def action_event_map(self):
         return {
+            'power_schedule_created': Events.N0023,
+            'power_schedule_updated': Events.N0024,
+            'power_schedule_deleted': Events.N0025,
+            'power_schedule_processed': Events.N0026,
             'organization_created': Events.N0027,
             'organization_deleted': Events.N0028,
             'organization_updated': Events.N0029,

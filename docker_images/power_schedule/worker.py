@@ -13,6 +13,7 @@ from kombu.log import get_logger
 from kombu import Connection
 from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue
+from kombu.pools import producers
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -22,7 +23,7 @@ from tools.cloud_adapter.exceptions import (
 
 from docker_images.power_schedule.utils import is_schedule_outdated
 
-
+ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 EXCHANGE_NAME = 'power-schedule'
 QUEUE_NAME = 'power-schedule'
 LOG = get_logger(__name__)
@@ -69,6 +70,27 @@ class PowerScheduleWorker(ConsumerMixin):
     def get_consumers(self, consumer, channel):
         return [consumer(queues=[TASK_QUEUE], accept=['json'],
                          callbacks=[self.process_task], prefetch_count=3)]
+
+    def publish_activities_task(self, organization_id, object_id, object_type,
+                                object_name, action, meta):
+        task = {
+            'organization_id': organization_id,
+            'object_id': object_id,
+            'object_type': object_type,
+            'object_name': object_name,
+            'action': action,
+            'meta': meta
+        }
+        task_exchange = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
+        with producers[self.connection].acquire(block=True) as producer:
+            producer.publish(
+                task,
+                serializer='json',
+                exchange=task_exchange,
+                declare=[task_exchange],
+                routing_key='.'.join((object_type, action)),
+                retry=True
+            )
 
     @staticmethod
     def _local_time_to_utc(time_str, local_tz):
@@ -192,7 +214,8 @@ class PowerScheduleWorker(ConsumerMixin):
         self._cloud_action(cloud_adapter, resource_data, action)
         self.result[action] += 1
 
-    def process_resources(self, power_schedule_id, action):
+    def process_resources(self, power_schedule, action):
+        power_schedule_id = power_schedule['id']
         excluded_resources = []
         resources = list(self.mongo_cl.restapi.resources.find(
             {'power_schedule': power_schedule_id}))
@@ -236,6 +259,17 @@ class PowerScheduleWorker(ConsumerMixin):
                     else:
                         LOG.exception('Action %s failed', action)
                         errors.append(exc)
+            meta = {
+                'success_count': (self.result['start_instance'] +
+                                  self.result['stop_instance']),
+                'error_count': self.result['error'],
+                'excluded_count': self.result['excluded'],
+                'vm_action': 'on' if action == 'start_instance' else 'off'
+            }
+            self.publish_activities_task(
+                power_schedule['organization_id'], power_schedule_id,
+                'power_schedule', power_schedule['name'],
+                'power_schedule_processed', meta)
             if errors:
                 raise errors[0]
 
@@ -246,8 +280,7 @@ class PowerScheduleWorker(ConsumerMixin):
             return
         required_action = self.get_action(schedule)
         if required_action:
-            self.process_resources(
-                power_schedule_id, required_action)
+            self.process_resources(schedule, required_action)
 
     def process_task(self, body, message):
         self.result = self.default_result().copy()

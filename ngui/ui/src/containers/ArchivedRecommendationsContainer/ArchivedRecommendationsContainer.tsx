@@ -79,7 +79,7 @@ const ArchivedRecommendationsContainer = () => {
       onDownload={() => onDownload(dateRange)}
       isChartLoading={isChartLoading}
       isDownloading={isDownloading}
-      isLoading={isLoading}
+      isBreakdownLoading={isLoading}
     />
   );
 };

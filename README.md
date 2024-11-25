@@ -158,8 +158,8 @@ or if you want to use socket:
 
 **version**:
 
-- Use hystax/optscale git tag (eg: 2024101501-public) if you use optscale public version.
-- Use your own tag version if you build your optscale images (eg: latest).
+- Use hystax/optscale git tag (eg: latest) if you use optscale public version.
+- Use your own tag version if you build your optscale images (eg: local).
 
 **please note**: if you use key authentication, you should have the required key (id_rsa) on the machine
 
