@@ -1,12 +1,15 @@
 // Hystax palette: https://cdn.hystax.com/Hystax/Hystax-Guideline-2020.pdf
 // Material design color tool: https://material.io/resources/color/
 
+import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import {common} from "@mui/material/colors";
 import {createTheme, alpha, darken, lighten} from "@mui/material/styles";
 import {isEmpty as isEmptyArray} from "utils/arrays";
 import {customResponsiveFontSizes} from "utils/fonts";
 import {isEmpty as isEmptyObject} from "utils/objects";
-import {BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
+import {BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
+
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -409,6 +412,17 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           colorSecondary: {
             color: secondary.main
+          },
+          root: {
+            '& .MuiTableRowCheckbox-root': { // Only apply to table row checkboxes
+              color: 'gray',
+              '&.Mui-checked': {
+                color: '#000000'
+              },
+              '& .MuiSvgIcon-root': {
+                fontSize: '16px'
+              }
+            }
           }
         }
       },
@@ -571,21 +585,65 @@ const getThemeConfig = (settings = {}) => {
       MuiTable: {
         defaultProps: {
           size: "small"
+        },
+        styleOverrides: {
+          root: {
+            // Add any additional styles for the table root here
+          }
+        }
+      },
+      MuiTableHead: {
+        styleOverrides: {
+          root: {}
+        }
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            "&.MuiTableCell-head": {
+              borderLeft: `1px solid ${BRAND_GRAY_1}`,
+              borderBottom: "1px solid black"
+            },
+            "& .MuiIconButton-root": {
+              padding: 0
+            },
+            "&.tableRowSelection svg": {
+              fill: 'black',
+              width: '19px',
+              height: '19px'
+            }
+          }
         }
       },
       MuiTableSortLabel: {
+        defaultProps: {
+          IconComponent: KeyboardArrowDownOutlinedIcon, // Default icon for descending
+        },
         styleOverrides: {
           root: {
-            "&:hover": {
-              color: text.primary,
-              // Apply color only to the sort arrow icon
-              "> svg:last-child": {
-                color: primary.main
-              }
-            },
             "&.Mui-active": {
-              color: primary.main
+              color: "black", // Ensure active label color is black
+              "&[aria-sort='asc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(0deg)", // Rotate icon for ascending
+                content: "''" // Clear any default content
+              },
+              "&[aria-sort='desc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(180deg)", // Rotate icon for descending
+                content: "''" // Clear any default content
+              }
             }
+          }
+        },
+        slotProps: {
+          icon: ({direction}) => {
+            if (direction === "asc") {
+              return {
+                component: KeyboardArrowUpOutlinedIcon
+              };
+            }
+            return {
+              component: KeyboardArrowDownOutlinedIcon
+            };
           }
         }
       },

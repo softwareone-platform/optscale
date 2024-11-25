@@ -202,6 +202,43 @@ const Resources = ({
         <Grid direction="row" container spacing={3} justifyContent="space-between">
           <Grid item xs={12}>
             <Box>
+              <Grid xs={12} item>
+                {isFilterValuesLoading ? (
+                  <TypographyLoader linesCount={1}/>
+                ) : (
+                  <>
+                    {/*<Accordion zeroSummaryMinHeight={true} headerDataTestId={'filters-accordion'} sx={{ boxShadow: "none", background: 'none'}}>*/}
+                    {/*  <div>*/}
+                    {/*    <Typography variant={'body2'} component="span">*/}
+                    {/*      <FormattedMessage id={'filters'}/>*/}
+                    {/*    </Typography>*/}
+                    {/*    <Badge*/}
+                    {/*      badgeContent={selectedFiltersCount}*/}
+                    {/*      color="primary"*/}
+                    {/*      style={{marginLeft: "18px"}}*/}
+                    {/*    />*/}
+                    {/*  </div>*/}
+                    {/*  <ExpensesFilters*/}
+                    {/*    items={items}*/}
+                    {/*    appliedValues={appliedValues}*/}
+                    {/*    onFilterDelete={onFilterDelete}*/}
+                    {/*    onFiltersDelete={onFiltersDelete}*/}
+                    {/*    onFilterAdd={onFilterAdd}*/}
+                    {/*  />*/}
+                    {/*</Accordion>*/}
+
+
+                    <ExpensesFilters
+                      items={items}
+                      appliedValues={appliedValues}
+                      onFilterDelete={onFilterDelete}
+                      onFiltersDelete={onFiltersDelete}
+                      onFilterAdd={onFilterAdd}
+                    />
+                  </>
+                )}
+              </Grid>
+              <Divider style={{marginTop: KU_SPACING_2, marginBottom: KU_SPACING_2}}/>
               <div style={{display: 'flex', alignItems: 'baseline', justifyContent: 'space-between'}}>
                 <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange}/>
 
@@ -214,38 +251,13 @@ const Resources = ({
                 />
 
               </div>
-              <Grid xs={12} item>
-                {isFilterValuesLoading ? (
-                  <TypographyLoader linesCount={1}/>
-                ) : (
-                  <Accordion zeroSummaryMinHeight={true} headerDataTestId={'filters-accordion'} sx={{ boxShadow: "none", background: 'none'}}>
-                    <div>
-                      <Typography variant={'body2'} component="span">
-                        <FormattedMessage id={'filters'}/>
-                      </Typography>
-                      <Badge
-                        badgeContent={selectedFiltersCount}
-                        color="primary"
-                        style={{marginLeft: "18px"}}
-                      />
-                    </div>
-                    <ExpensesFilters
-                      items={items}
-                      appliedValues={appliedValues}
-                      onFilterDelete={onFilterDelete}
-                      onFiltersDelete={onFiltersDelete}
-                      onFilterAdd={onFilterAdd}
-                    />
-                  </Accordion>
-                )}
-              </Grid>
             </Box>
           </Grid>
-
+          <Grid xs={12} item>
+          <ExpensesSummaryContainer requestParams={requestParams} />
+          </Grid>
           <Grid xs={12} item className={'KuBoxShadowRoot'}>
             <Box>
-              <ExpensesSummaryContainer requestParams={requestParams}/>
-              <Divider orientation="horizontal" style={{marginBottom: KU_SPACING_2}} flexItem />
               {typeof renderContent === "function" ? renderContent() : null}
             </Box>
           </Grid>
