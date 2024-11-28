@@ -1,6 +1,7 @@
 // Hystax palette: https://cdn.hystax.com/Hystax/Hystax-Guideline-2020.pdf
 // Material design color tool: https://material.io/resources/color/
 
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import {common} from "@mui/material/colors";
 import {createTheme, alpha, darken, lighten} from "@mui/material/styles";
@@ -8,7 +9,6 @@ import {isEmpty as isEmptyArray} from "utils/arrays";
 import {customResponsiveFontSizes} from "utils/fonts";
 import {isEmpty as isEmptyObject} from "utils/objects";
 import {BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
@@ -255,7 +255,7 @@ const getThemeConfig = (settings = {}) => {
 
   return Object.freeze({
     typography: {
-      fontFamily: "'Ubuntu', sans-serif",
+      fontFamily: "'Arial', sans-serif",
       mono: {
         fontFamily: "'Ubuntu Mono', monospace"
       }
