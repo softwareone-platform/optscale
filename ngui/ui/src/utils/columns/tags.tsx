@@ -33,7 +33,7 @@ const tags = ({
       return CELL_EMPTY_VALUE;
     }
 
-    return <CollapsableTableCell maxRows={5} tags={tagsValue} />;
+    return <CollapsableTableCell maxRows={2} tags={tagsValue} />;
   }
 });
 
