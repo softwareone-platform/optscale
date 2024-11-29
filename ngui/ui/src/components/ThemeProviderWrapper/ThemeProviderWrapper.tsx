@@ -1,11 +1,11 @@
 import createCache from "@emotion/cache";
 import {CacheProvider} from "@emotion/react";
+import {GlobalStyles} from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import {ThemeProvider} from "@mui/material/styles";
 import {TssCacheProvider} from "tss-react";
 import {useThemeSettingsOptions} from "hooks/useThemeSettingsOptions";
 import getTheme from "theme";
-import {GlobalStyles} from "@mui/material";
 import {BRAND_GRAY_1} from "../../utils/layouts";
 
 const muiCache = createCache({
@@ -37,7 +37,7 @@ const globalScrollbarStyles = (
             "*": {
                 scrollbarColor: `${BRAND_GRAY_1} transparent`,
                 scrollbarWidth: "thin"
-            },
+            }
         }}
     />
 );
@@ -52,7 +52,7 @@ const ThemeProviderWrapper = ({children}) => {
             <TssCacheProvider value={tssCache}>
                 <ThemeProvider theme={theme}>
                     {globalScrollbarStyles}
-                    <CssBaseline/>
+                    <CssBaseline />
                     {children}
                 </ThemeProvider>
             </TssCacheProvider>

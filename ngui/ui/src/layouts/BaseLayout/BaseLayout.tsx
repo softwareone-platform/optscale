@@ -28,8 +28,8 @@ import {REGISTER} from "urls";
 import {trackEvent, GA_EVENT_CATEGORIES} from "utils/analytics";
 import {BASE_LAYOUT_CONTAINER_ID, LOGO_SIZE} from "utils/constants";
 import useStyles from "./BaseLayout.styles";
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
-import {Icon} from "@mui/material";
+// import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+// import {Icon} from "@mui/material";
 
 const logoHeight = 30;
 
@@ -61,7 +61,7 @@ const AppToolbar = ({onMenuIconClick, mainMenu, showMainMenu = false, showOrgani
                     <IconButton
                         sx={{display: {xs: "inherit", md: "none"}}}
                         customClass={classes.marginRight1}
-                        icon={<MenuIcon/>}
+                        icon={<MenuIcon />}
                         color="primary"
                         onClick={onMenuIconClick}
                         aria-label="open drawer"
@@ -69,18 +69,21 @@ const AppToolbar = ({onMenuIconClick, mainMenu, showMainMenu = false, showOrgani
                 )}
                 <div style={{height: logoHeight}} className={classes.logo}>
                     <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight}
-                          demo={isDemo} active/>
+                          demo={isDemo} active
+                    />
 
                     <Typography data-test-id="p_live_demo_mode" sx={{display: {xs: "none", md: "inherit"}}}
-                                className={classes.headerTitle}>
+                                className={classes.headerTitle}
+                    >
                         FinOps for Cloud { /* TODO_KU: add translation */ }
                         </Typography>
                         </div>
                     {isDemo ? (
                         <Box display="flex" alignItems="center">
                         <Typography data-test-id="p_live_demo_mode" sx={{display: {xs: "none", md: "inherit"}}}
-                                color="primary">
-                        <FormattedMessage id="liveDemoMode"/>
+                                color="primary"
+                        >
+                        <FormattedMessage id="liveDemoMode" />
                     </Typography>
                     <Button
                         customClass={cx(classes.marginLeft1, classes.marginRight1)}
@@ -98,13 +101,13 @@ const AppToolbar = ({onMenuIconClick, mainMenu, showMainMenu = false, showOrgani
 
                     {showOrganizationSelector && (
                         <Box mr={1}>
-                            <OrganizationSelectorContainer mainMenu={mainMenu}/>
+                            <OrganizationSelectorContainer mainMenu={mainMenu} />
                         </Box>
                     )}
-                    <HeaderButtons/>
+                    <HeaderButtons />
                 </Box>
             </Toolbar>
-            <div className={classes.headerSpacer}/>
+            <div className={classes.headerSpacer} />
         </header>
     );
 };
@@ -124,10 +127,10 @@ const BaseLayout = ({children, showMainMenu = false, showOrganizationSelector = 
 
     return (
         <>
-            <TopAlertWrapper/>
+            <TopAlertWrapper />
             <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
                 <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
-                    <PendingInvitationsAlert/>
+                    <PendingInvitationsAlert />
                     <AppBar position="static" className={classes.appBar}>
                         <AppToolbar
                             showMainMenu={showMainMenu}
@@ -141,7 +144,7 @@ const BaseLayout = ({children, showMainMenu = false, showOrganizationSelector = 
                             <>
                                 <Hidden mode="down" breakpoint="md">
                                     <CollapsableMenuDrawer>
-                                        <MainMenu menu={mainMenu}/>
+                                        <MainMenu menu={mainMenu} />
                                     </CollapsableMenuDrawer>
                                 </Hidden>
                                 <Hidden mode="up" breakpoint="md">
@@ -156,7 +159,7 @@ const BaseLayout = ({children, showMainMenu = false, showOrganizationSelector = 
                                             keepMounted: true
                                         }}
                                     >
-                                        <MainMenu menu={mainMenu}/>
+                                        <MainMenu menu={mainMenu} />
                                     </Drawer>
                                 </Hidden>
                             </>
@@ -171,7 +174,7 @@ const BaseLayout = ({children, showMainMenu = false, showOrganizationSelector = 
                     </Box>
                 </Box>
                 <Box>
-                    <DocsPanel/>
+                    <DocsPanel />
                 </Box>
             </Box>
         </>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import {useContext, useState} from "react";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import LiveHelpOutlinedIcon from "@mui/icons-material/LiveHelpOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
@@ -7,22 +7,22 @@ import SchoolIcon from "@mui/icons-material/School";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
-import { FormattedMessage } from "react-intl";
+import {FormattedMessage} from "react-intl";
 import IconButton from "components/IconButton";
 import Popover from "components/Popover";
-import { PRODUCT_TOUR, useStartTour } from "components/Tour";
-import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
+import {PRODUCT_TOUR, useStartTour} from "components/Tour";
+import {useIsTourAvailableForCurrentBreakpoint} from "components/Tour/hooks";
 import ProfileMenuContainer from "containers/ProfileMenuContainer";
-import { CommunityDocsContext } from "contexts/CommunityDocsContext";
-import { useMainMenuState } from "hooks/useMainMenuState";
-import { DOCS_HYSTAX_OPTSCALE } from "urls";
+import {CommunityDocsContext} from "contexts/CommunityDocsContext";
+import {useMainMenuState} from "hooks/useMainMenuState";
+import {DOCS_HYSTAX_OPTSCALE} from "urls";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = () => {
   const startTour = useStartTour();
-  const { classes } = useStyles();
+  const {classes} = useStyles();
 
-  const { updateIsExpanded } = useMainMenuState();
+  const {updateIsExpanded} = useMainMenuState();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const openMobileMenu = (event) => {
@@ -40,7 +40,7 @@ const HeaderButtons = () => {
 
   const isTourAvailableForCurrentBreakpoint = useIsTourAvailableForCurrentBreakpoint();
 
-  const { isCommunityDocsOpened, setIsCommunityDocsOpened } = useContext(CommunityDocsContext);
+  const {isCommunityDocsOpened, setIsCommunityDocsOpened} = useContext(CommunityDocsContext);
 
   return (
     <>
@@ -66,16 +66,16 @@ const HeaderButtons = () => {
             value: <FormattedMessage id="productTour" />
           }}
         />
-        { /* TODO_KU: disabled because it doesn't not exist in documentation */ }
-        {/*<IconButton*/}
-        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}*/}
-        {/*  onClick={setIsCommunityDocsOpened}*/}
-        {/*  color="info"*/}
-        {/*  tooltip={{*/}
-        {/*    show: true,*/}
-        {/*    value: <FormattedMessage id="communityDocs" />*/}
-        {/*  }}*/}
-        {/*/>*/}
+        { /* TODO_KU: disabled because it doesn't not exist in documentation */}
+        {/* <IconButton */}
+        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}
+        {/*  onClick={setIsCommunityDocsOpened} */}
+        {/*  color="info" */}
+        {/*  tooltip={{ */}
+        {/*    show: true, */}
+        {/*    value: <FormattedMessage id="communityDocs" /> */}
+        {/*  }} */}
+        {/* /> */}
         <Popover
           label={
             <IconButton

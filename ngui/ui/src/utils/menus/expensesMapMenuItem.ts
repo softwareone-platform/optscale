@@ -1,4 +1,4 @@
-import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
+// import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import expensesMap from "utils/routes/expensesMapRoute";
 import BaseMenuItem from "./baseMenuItem";
 

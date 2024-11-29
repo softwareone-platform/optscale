@@ -6,7 +6,7 @@ import {createTheme, alpha, darken, lighten} from "@mui/material/styles";
 import {isEmpty as isEmptyArray} from "utils/arrays";
 import {customResponsiveFontSizes} from "utils/fonts";
 import {isEmpty as isEmptyObject} from "utils/objects";
-import {BRAND_PRIMARY, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
+import {BRAND_PRIMARY, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -304,7 +304,7 @@ const getThemeConfig = (settings = {}) => {
                    root: {
                        "& .MuiSvgIcon-fontSizeSmall": {
                            fontSize: KU_SPACING_2
-                       },
+                       }
                    },
                     iconOutlined: {
                         fontSize: '16px' // Set font size for MuiSelect-iconOutlined
@@ -450,9 +450,9 @@ const getThemeConfig = (settings = {}) => {
                     sizeSmall: {
                         padding: "10px", // Adjust padding to control button size
                         "& .MuiSvgIcon-root": {
-                            fontSize: '20px',
-                        },
-                    },
+                            fontSize: '20px'
+                        }
+                    }
                 }
             },
             MuiInputLabel: {
@@ -473,7 +473,7 @@ const getThemeConfig = (settings = {}) => {
             MuiLink: {
                 defaultProps: {
                     underline: "hover"
-                },
+                }
             },
             MuiSwitch: {
                 defaultProps: {
@@ -607,7 +607,7 @@ const getThemeConfig = (settings = {}) => {
                     h6: {
                         color: 'black',
                         fontSize: '24px'
-                    },
+                    }
                 }
             },
             MuiUseMediaQuery: {

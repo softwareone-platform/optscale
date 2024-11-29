@@ -61,7 +61,7 @@ const MainMenu = ({menu}) => {
                     <ModeWrapper key={id} mode={mode}>
                         <MenuGroupWrapper id={id} menuSectionTitle={menuSectionTitle} keepExpanded={isProductTourOpen}>
                             {items.map((item) => (
-                                <SimpleItem key={item.route.link} menuItem={item}/>
+                                <SimpleItem key={item.route.link} menuItem={item} />
                             ))}
                         </MenuGroupWrapper>
                     </ModeWrapper>

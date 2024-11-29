@@ -1,4 +1,4 @@
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+// import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import mlArtifactsRoute from "utils/routes/mlArtifactsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
