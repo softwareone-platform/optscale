@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import {KU_SPACING_4} from "../../utils/layouts";
+import { KU_SPACING_4 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   menu: {
@@ -19,9 +19,7 @@ const useStyles = makeStyles()((theme) => ({
       "& .MuiAccordionSummary-content": {
         flexGrow: 0
       },
-      "& .MuiAccordionSummary-content .MuiListItem-root": {
-
-      }
+      "& .MuiAccordionSummary-content .MuiListItem-root": {}
     },
     "& .MuiAccordionDetails-root": {
       padding: 0

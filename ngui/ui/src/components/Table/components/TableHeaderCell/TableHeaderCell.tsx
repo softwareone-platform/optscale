@@ -54,9 +54,7 @@ const TableHeaderCell = ({ headerContext, stickyStyles = {}, getHeaderCellClassN
       }}
       colSpan={headerContext.colSpan}
       rowSpan={headerContext.rowSpan}
-      className={
-        `${isSelectionColumn ? 'tableRowSelection' : ''} ${typeof getHeaderCellClassName === "function" ? getHeaderCellClassName(headerContext.getContext()) : ''}`.trim()
-      }
+      className={`${isSelectionColumn ? "tableRowSelection" : ""} ${typeof getHeaderCellClassName === "function" ? getHeaderCellClassName(headerContext.getContext()) : ""}`.trim()}
     >
       {getCellContent()}
     </Cell>

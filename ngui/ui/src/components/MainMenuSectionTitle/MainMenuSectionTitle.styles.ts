@@ -2,14 +2,14 @@ import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()(() => ({
   titleIcon: {
-    position: 'absolute',
-    left: '-25px',
-    top: '3px'
+    position: "absolute",
+    left: "-25px",
+    top: "3px"
   },
   text: {
-    fontWeight: 'bold',
-    color: 'black',
-    position: 'relative'
+    fontWeight: "bold",
+    color: "black",
+    position: "relative"
   },
   textWrapper: {
     padding: 0

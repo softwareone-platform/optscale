@@ -1,4 +1,4 @@
-import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
+// import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import mlDatasetsRoute from "utils/routes/mlDatasetsRoute";
 import BaseMenuItem from "./baseMenuItem";
 

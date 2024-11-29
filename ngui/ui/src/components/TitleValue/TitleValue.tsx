@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import Typography from "@mui/material/Typography";
-import {KU_SPACING_2} from "../../utils/layouts";
+import { KU_SPACING_2 } from "../../utils/layouts";
 
 const TitleValue = forwardRef(({ children, dataTestId, style = {}, ...rest }, ref) => (
   <Typography

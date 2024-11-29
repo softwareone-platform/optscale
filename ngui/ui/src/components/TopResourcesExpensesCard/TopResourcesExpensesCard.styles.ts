@@ -1,6 +1,6 @@
 import { lighten } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
-import {KU_SPACING_1, SPACING_2} from "utils/layouts";
+import { KU_SPACING_1, SPACING_2 } from "utils/layouts";
 
 const ALPHA = 0.9;
 const useStyles = makeStyles()((theme) => ({

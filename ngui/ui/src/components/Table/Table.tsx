@@ -1,15 +1,15 @@
-import {useRef} from "react";
-import {Box, TableBody, TableCell, TableFooter, TableHead, TableRow} from "@mui/material";
+import { useRef } from "react";
+import { Box, TableBody, TableCell, TableFooter, TableHead, TableRow } from "@mui/material";
 import MuiTable from "@mui/material/Table";
-import {getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import {FormattedMessage} from "react-intl";
+import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { FormattedMessage } from "react-intl";
 import TableLoader from "components/TableLoader";
-import {isEmpty as isEmptyArray} from "utils/arrays";
-import {SPACING_1} from "utils/layouts";
+import { isEmpty as isEmptyArray } from "utils/arrays";
+import { SPACING_1 } from "utils/layouts";
 import InfoArea from "./components/InfoArea";
 import Pagination from "./components/Pagination";
 import TableActions from "./components/TableActions";
-import {MemoTableBodyCell, TableBodyCell} from "./components/TableBodyCell";
+import { MemoTableBodyCell, TableBodyCell } from "./components/TableBodyCell";
 import TableFooterCell from "./components/TableFooterCell";
 import TableHeaderCell from "./components/TableHeaderCell";
 import {
@@ -25,77 +25,77 @@ import {
   useSticky
 } from "./hooks";
 import useStyles from "./Table.styles";
-import {getRowsCount} from "./utils";
-import {SELECTION_COLUMN_ID} from "./utils/constants";
+import { getRowsCount } from "./utils";
+import { SELECTION_COLUMN_ID } from "./utils/constants";
 
 const DEFAULT_EMPTY_MESSAGE_ID = "noDataToDisplay";
 
 const Table = ({
-                 data,
-                 columns: columnsProperty,
-                 /**
-                  * TODO: Remove isLoading from this component
-                  * Motivation: This component manages a local state, so if we render it when data is not fully
-                  * ready (isLoading = false) then we will need to update the local state that depends on a dynamic (api) data
-                  * when it is ready.
-                  * We could make **THIS** component isLoading-independent in order to initialize the state when the data is fully loaded
-                  * In order to do so, we could create another **Table** component and define the following logic there:
-                  * ```
-                  * const Table = ({ isLoading, ...rest }) => {
-                  *    if(isLoading) { return <TableLoader /> }
-                  *
-                  *    return <TableComponent {...rest}/>
-                  * }
-                  * ```
-                  */
-                 isLoading,
-                 getRowStyle,
-                 withHeader = true,
-                 withFooter = false,
-                 withSearch,
-                 rangeFilter,
-                 dataTestIds = {},
-                 queryParamPrefix,
-                 localization = {},
-                 pageSize,
-                 counters = {},
-                 /**
-                  * TODO: The name is confusing, it looks like it is a boolean, but it is a string
-                  * @ekirillov would suggest refactoring it to something more generic line "link" or "header link"
-                  */
-                 showAllLink,
-                 withSelection,
-                 rowSelection,
-                 onRowSelectionChange,
-                 withExpanded,
-                 getSubRows = (row) => row.children,
-                 getRowId,
-                 expanded,
-                 onExpandedChange,
-                 actionBar,
-                 columnsSelectorUID,
-                 columnSetsSelectorId,
-                 columnOrder,
-                 onColumnOrderChange,
-                 stickySettings = {},
-                 memoBodyCells = false,
-                 getRowCellClassName,
-                 getHeaderCellClassName,
-                 onRowClick,
-                 isSelectedRow,
-                 overflowX = "auto",
-                 disableBottomBorderForLastRow = false,
-                 tableLayout = "auto",
-                 enableSearchQueryParam,
-                 enablePaginationQueryParam,
-                 manualPagination,
-                 manualGlobalFiltering
-               }) => {
+  data,
+  columns: columnsProperty,
+  /**
+   * TODO: Remove isLoading from this component
+   * Motivation: This component manages a local state, so if we render it when data is not fully
+   * ready (isLoading = false) then we will need to update the local state that depends on a dynamic (api) data
+   * when it is ready.
+   * We could make **THIS** component isLoading-independent in order to initialize the state when the data is fully loaded
+   * In order to do so, we could create another **Table** component and define the following logic there:
+   * ```
+   * const Table = ({ isLoading, ...rest }) => {
+   *    if(isLoading) { return <TableLoader /> }
+   *
+   *    return <TableComponent {...rest}/>
+   * }
+   * ```
+   */
+  isLoading,
+  getRowStyle,
+  withHeader = true,
+  withFooter = false,
+  withSearch,
+  rangeFilter,
+  dataTestIds = {},
+  queryParamPrefix,
+  localization = {},
+  pageSize,
+  counters = {},
+  /**
+   * TODO: The name is confusing, it looks like it is a boolean, but it is a string
+   * @ekirillov would suggest refactoring it to something more generic line "link" or "header link"
+   */
+  showAllLink,
+  withSelection,
+  rowSelection,
+  onRowSelectionChange,
+  withExpanded,
+  getSubRows = (row) => row.children,
+  getRowId,
+  expanded,
+  onExpandedChange,
+  actionBar,
+  columnsSelectorUID,
+  columnSetsSelectorId,
+  columnOrder,
+  onColumnOrderChange,
+  stickySettings = {},
+  memoBodyCells = false,
+  getRowCellClassName,
+  getHeaderCellClassName,
+  onRowClick,
+  isSelectedRow,
+  overflowX = "auto",
+  disableBottomBorderForLastRow = false,
+  tableLayout = "auto",
+  enableSearchQueryParam,
+  enablePaginationQueryParam,
+  manualPagination,
+  manualGlobalFiltering
+}) => {
   const headerRef = useRef();
 
-  const {classes} = useStyles();
+  const { classes } = useStyles();
 
-  const {stickyHeaderCellStyles, stickyTableStyles} = useSticky({
+  const { stickyHeaderCellStyles, stickyTableStyles } = useSticky({
     headerRef,
     stickySettings
   });
@@ -112,7 +112,7 @@ const Table = ({
     };
   };
 
-  const {tableOptions: sortingTableOptions} = useSortingTableSettings();
+  const { tableOptions: sortingTableOptions } = useSortingTableSettings();
 
   const {
     state: globalFilterState,
@@ -127,7 +127,7 @@ const Table = ({
     columns: columnsProperty
   });
 
-  const {state: columnsVisibilityState, tableOptions: columnsVisibilityTableOptions} =
+  const { state: columnsVisibilityState, tableOptions: columnsVisibilityTableOptions } =
     useColumnsVisibility(columnsSelectorUID);
 
   const totalRowsCount = getRowsCount(data, {
@@ -135,7 +135,7 @@ const Table = ({
     getSubRows
   });
 
-  const {state: paginationState, tableOptions: paginationTableOptions} = usePaginationTableSettings({
+  const { state: paginationState, tableOptions: paginationTableOptions } = usePaginationTableSettings({
     pageSize,
     rowsCount: totalRowsCount,
     queryParamPrefix,
@@ -146,19 +146,19 @@ const Table = ({
     withSelection
   });
 
-  const {state: expandedState, tableOptions: expandedTableOptions} = useExpandedTableSettings({
+  const { state: expandedState, tableOptions: expandedTableOptions } = useExpandedTableSettings({
     withExpanded,
     getSubRows,
     expanded,
     onExpandedChange
   });
 
-  const {state: columnOrderState, tableOptions: columnOrderTableOptions} = useColumnOrderTableSettings({
+  const { state: columnOrderState, tableOptions: columnOrderTableOptions } = useColumnOrderTableSettings({
     columnOrder,
     onColumnOrderChange
   });
 
-  const {state: rowSelectionState, tableOptions: rowSelectionTableOptions} = useRowSelectionTableSettings({
+  const { state: rowSelectionState, tableOptions: rowSelectionTableOptions } = useRowSelectionTableSettings({
     withSelection,
     rowSelection,
     onRowSelectionChange
@@ -209,7 +209,7 @@ const Table = ({
 
   const selectedRowsCount = withSelection ? table.getSelectedRowModel().flatRows.length : 0;
 
-  const {rows} = table.getRowModel();
+  const { rows } = table.getRowModel();
 
   const getPaginationSettings = () => {
     if (isManualPagination) {
@@ -248,10 +248,10 @@ const Table = ({
     return {
       withSearch,
       searchValue: withSearch ? globalFilterState.globalFilter.search : undefined,
-      onSearchChange: withSearch ? (newSearchValue) => onSearchChange(newSearchValue, {tableContext: table}) : null,
+      onSearchChange: withSearch ? (newSearchValue) => onSearchChange(newSearchValue, { tableContext: table }) : null,
       rangeFilter,
       rangeValue: rangeFilter ? globalFilterState.globalFilter.range : undefined,
-      onRangeChange: rangeFilter ? (newRangeValue) => onRangeChange(newRangeValue, {tableContext: table}) : null
+      onRangeChange: rangeFilter ? (newRangeValue) => onRangeChange(newRangeValue, { tableContext: table }) : null
     };
   };
 
@@ -280,7 +280,7 @@ const Table = ({
         }}
       >
         {isLoading ? (
-          <TableLoader columnsCounter={columns.length ?? 5} showHeader/>
+          <TableLoader columnsCounter={columns.length ?? 5} showHeader />
         ) : (
           <MuiTable
             sx={{
@@ -294,15 +294,15 @@ const Table = ({
               <TableHead ref={headerRef}>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) =>
-                      (<TableHeaderCell
+                    {headerGroup.headers.map((header) => (
+                      <TableHeaderCell
                         key={header.id}
                         isSelectionColumn={header.column.id === SELECTION_COLUMN_ID}
                         headerContext={header}
                         stickyStyles={stickyHeaderCellStyles}
                         getHeaderCellClassName={getHeaderCellClassName}
-                      />)
-                    )}
+                      />
+                    ))}
                   </TableRow>
                 ))}
               </TableHead>
@@ -313,15 +313,15 @@ const Table = ({
                   sx={
                     disableBottomBorderForLastRow
                       ? {
-                        "&:last-child > td": {
-                          borderBottom: "none"
+                          "&:last-child > td": {
+                            borderBottom: "none"
+                          }
                         }
-                      }
                       : {}
                   }
                 >
                   <TableCell align="center" colSpan={columns.length}>
-                    <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID}/>
+                    <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID} />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -337,16 +337,16 @@ const Table = ({
                       sx={
                         disableBottomBorderForLastRow
                           ? {
-                            "&:last-child > td": {
-                              borderBottom: "none"
+                              "&:last-child > td": {
+                                borderBottom: "none"
+                              }
                             }
-                          }
                           : {}
                       }
                     >
                       {row.getVisibleCells().map((cell) => {
                         if (cell.column.id === SELECTION_COLUMN_ID) {
-                          return <TableBodyCell className={'tableRowSelection'} key={cell.id} cell={cell}/>;
+                          return <TableBodyCell className={"tableRowSelection"} key={cell.id} cell={cell} />;
                         }
                         const Cell = memoBodyCells ? MemoTableBodyCell : TableBodyCell;
 
@@ -370,7 +370,7 @@ const Table = ({
                 {table.getFooterGroups().map((footerGroup) => (
                   <TableRow key={footerGroup.id}>
                     {footerGroup.headers.map((footerContext) => (
-                      <TableFooterCell key={footerContext.id} footerContext={footerContext}/>
+                      <TableFooterCell key={footerContext.id} footerContext={footerContext} />
                     ))}
                   </TableRow>
                 ))}
@@ -385,8 +385,8 @@ const Table = ({
           alignItems: "center",
           paddingTop: SPACING_1,
           flexWrap: "wrap",
-          flexDirection: {xs: "column-reverse", md: "row"},
-          ":empty": {display: "none"}
+          flexDirection: { xs: "column-reverse", md: "row" },
+          ":empty": { display: "none" }
         }}
       >
         <InfoArea

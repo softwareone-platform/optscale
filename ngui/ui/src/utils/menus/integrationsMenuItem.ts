@@ -1,4 +1,4 @@
-import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
+// import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { BI_EXPORTS } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";
 import integrations from "utils/routes/integrationsRoute";

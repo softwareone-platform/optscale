@@ -1,4 +1,4 @@
-import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
+// import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
 import quotas from "utils/routes/quotasRoute";
 import BaseMenuItem from "./baseMenuItem";
 

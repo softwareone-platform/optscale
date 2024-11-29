@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import {KU_BOX_SHADOW, KU_SPACING_2, KU_SPACING_3} from "../../utils/layouts";
+import { KU_BOX_SHADOW, KU_SPACING_2, KU_SPACING_3 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   spacer: {

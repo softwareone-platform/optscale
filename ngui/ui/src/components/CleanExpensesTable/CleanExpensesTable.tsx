@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
+// import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import DnsOutlinedIcon from "@mui/icons-material/DnsOutlined";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
@@ -22,7 +22,7 @@ import { intl } from "translations/react-intl-config";
 import { getCreateAssignmentRuleUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { resourcePoolOwner, tags } from "utils/columns";
-import { CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX, DOWNLOAD_FILE_FORMATS } from "utils/constants";
+import { CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX } from "utils/constants";
 import { MetadataNodes } from "utils/metadata";
 import { CELL_EMPTY_VALUE, RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 import CollapsableTableCell from "../CollapsableTableCell";
@@ -52,8 +52,8 @@ const LocationNodes = ({ region, service_name: serviceName, k8s_node: k8sNode, k
 const CleanExpensesTable = ({
   expenses,
   disableColumnsSelection = false,
-  downloadResources,
-  isDownloadingResources = false,
+  // downloadResources,
+  // isDownloadingResources = false,
   startDateTimestamp,
   endDateTimestamp,
   assignmentRuleCreationLinkParameters,
