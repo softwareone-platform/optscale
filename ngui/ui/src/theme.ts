@@ -307,7 +307,7 @@ const getThemeConfig = (settings = {}) => {
           root: {
             "& .MuiSvgIcon-fontSizeSmall": {
               fontSize: KU_SPACING_2
-            },
+            }
           },
           iconOutlined: {
             fontSize: '16px' // Set font size for MuiSelect-iconOutlined
@@ -401,9 +401,9 @@ const getThemeConfig = (settings = {}) => {
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: '16px', // Set your desired border-radius value
-          },
-        },
+            borderRadius: '16px' // Set your desired border-radius value
+          }
+        }
       },
       MuiCheckbox: {
         defaultProps: {
@@ -483,9 +483,9 @@ const getThemeConfig = (settings = {}) => {
           sizeSmall: {
             padding: "10px", // Adjust padding to control button size
             "& .MuiSvgIcon-root": {
-              fontSize: '20px',
-            },
-          },
+              fontSize: '20px'
+            }
+          }
         }
       },
       MuiInputLabel: {
@@ -506,7 +506,7 @@ const getThemeConfig = (settings = {}) => {
       MuiLink: {
         defaultProps: {
           underline: "hover"
-        },
+        }
       },
       MuiSwitch: {
         defaultProps: {
@@ -617,7 +617,7 @@ const getThemeConfig = (settings = {}) => {
       },
       MuiTableSortLabel: {
         defaultProps: {
-          IconComponent: KeyboardArrowDownOutlinedIcon, // Default icon for descending
+          IconComponent: KeyboardArrowDownOutlinedIcon // Default icon for descending
         },
         styleOverrides: {
           root: {
@@ -684,7 +684,7 @@ const getThemeConfig = (settings = {}) => {
           h6: {
             color: 'black',
             fontSize: '24px'
-          },
+          }
         }
       },
       MuiUseMediaQuery: {

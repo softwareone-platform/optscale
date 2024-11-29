@@ -11,8 +11,8 @@ import IconButton from "components/IconButton";
 import Selector, {Button, Divider, Item, ItemContent} from "components/Selector";
 // import {CreateOrganizationModal} from "components/SideModalManager/SideModals";
 import {useIsDownMediaQuery} from "hooks/useMediaQueries";
-import {useOpenSideModal} from "hooks/useOpenSideModal";
-import {useOrganizationInfo} from "hooks/useOrganizationInfo";
+// import {useOpenSideModal} from "hooks/useOpenSideModal";
+// import {useOrganizationInfo} from "hooks/useOrganizationInfo";
 import {ORGANIZATIONS_OVERVIEW} from "urls";
 // import {common} from "@mui/material/colors";
 
@@ -59,8 +59,8 @@ const OrganizationSelector = ({
                                 onChange,
                                 isLoading = false
                               }: OrganizationSelectorProps) => {
-  const {isDemo} = useOrganizationInfo();
-  const openSideModal = useOpenSideModal();
+  // const {isDemo} = useOrganizationInfo();
+  // const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
 
   const isDownSm = useIsDownMediaQuery("sm");
@@ -72,7 +72,7 @@ const OrganizationSelector = ({
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
-        <IconButton icon={<ExpandMoreOutlinedIcon/>} onClick={handleOpen}/>
+        <IconButton icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
       </Hidden>
       <Selector
         id="organization-selector"
@@ -99,7 +99,7 @@ const OrganizationSelector = ({
               </ItemContent>
             </Item>
           ))}
-        <Divider/>
+        <Divider />
         <Button
           icon={{
             IconComponent: VisibilityOutlinedIcon
@@ -107,20 +107,20 @@ const OrganizationSelector = ({
           onClick={() => navigate(ORGANIZATIONS_OVERVIEW)}
           dataTestId="orgs_dashboard"
         >
-          <FormattedMessage id="organizationsOverview"/>
+          <FormattedMessage id="organizationsOverview" />
         </Button>
         { /* TODO_KU: temporary disabled new organisation creation */ }
-        {/*<Button*/}
-        {/*  icon={{*/}
-        {/*    IconComponent: AddOutlinedIcon*/}
-        {/*  }}*/}
-        {/*  onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })}*/}
+        {/* <Button */}
+        {/*  icon={{ */}
+        {/*    IconComponent: AddOutlinedIcon */}
+        {/*  }} */}
+        {/*  onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })} */}
         {/*  dataTestId="orgs_create_new" */}
-        {/*  disabled={isDemo}*/}
-        {/*  tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null}*/}
-        {/*>*/}
-        {/*  <FormattedMessage id="createNewOrganization" />*/}
-        {/*</Button>*/}
+        {/*  disabled={isDemo} */}
+        {/*  tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null} */}
+        {/* > */}
+        {/*  <FormattedMessage id="createNewOrganization" /> */}
+        {/* </Button> */}
       </Selector>
     </Box>
   );

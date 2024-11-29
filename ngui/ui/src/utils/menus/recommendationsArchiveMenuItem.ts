@@ -1,4 +1,4 @@
-import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
+// import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import archivedRecommendationsRoute from "utils/routes/archivedRecommendationsRoute";
 import BaseMenuItem from "./baseMenuItem";
 

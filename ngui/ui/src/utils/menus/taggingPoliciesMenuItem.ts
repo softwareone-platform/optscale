@@ -1,4 +1,4 @@
-import TagIcon from "@mui/icons-material/Tag";
+// import TagIcon from "@mui/icons-material/Tag";
 import taggingPolicies from "utils/routes/taggingPoliciesRoute";
 import BaseMenuItem from "./baseMenuItem";
 

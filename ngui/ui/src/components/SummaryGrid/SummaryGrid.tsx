@@ -18,9 +18,9 @@ const getValueComponentSettings = (type, CustomComponent) => ({
       const {currency} = useOrganizationInfo();
 
       return (
-        <Tooltip title={<FormattedNumber format={currency} value={value}/>}>
+        <Tooltip title={<FormattedNumber format={currency} value={value} />}>
           <span>
-            <FormattedMoney {...rest} value={value} type={FORMATTED_MONEY_TYPES.COMPACT}/>
+            <FormattedMoney {...rest} value={value} type={FORMATTED_MONEY_TYPES.COMPACT} />
           </span>
         </Tooltip>
       );
@@ -58,7 +58,7 @@ const renderSummaryCard = ({
       value={ValueComponent ? <ValueComponent {...valueComponentProps} /> : value}
       icon={icon}
       rawValue={valueComponentProps?.value}
-      caption={caption ?? <FormattedMessage id={captionMessageId}/>}
+      caption={caption ?? <FormattedMessage id={captionMessageId} />}
       rawCaption={rawCaption ?? captionMessageId}
       isLoading={isLoading}
       color={color}
@@ -109,8 +109,8 @@ const renderExtendedSummaryCard = ({
           relativeValue
         )
       }
-      caption={caption ?? <FormattedMessage id={captionMessageId}/>}
-      relativeValueCaption={<FormattedMessage id={relativeValueCaptionMessageId}/>}
+      caption={caption ?? <FormattedMessage id={captionMessageId} />}
+      relativeValueCaption={<FormattedMessage id={relativeValueCaptionMessageId} />}
       icon={icon}
       isLoading={isLoading}
       color={color}

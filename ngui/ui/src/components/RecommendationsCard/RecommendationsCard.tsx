@@ -16,9 +16,9 @@ import {
 } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { ALL_SERVICES } from "hooks/useRecommendationServices";
 import { RECOMMENDATIONS, RECOMMENDATION_CATEGORY_QUERY_PARAMETER, RECOMMENDATION_SERVICE_QUERY_PARAMETER } from "urls";
-import {KU_SPACING_2, KU_SPACING_3, SPACING_2} from "utils/layouts";
+import {SPACING_2} from "utils/layouts";
 import { InfoCard, PossibleSavingsCard } from "./Components";
-import Typography from "@mui/material/Typography";
+// import Typography from "@mui/material/Typography";
 
 const RecommendationsCard = ({
   isLoading,

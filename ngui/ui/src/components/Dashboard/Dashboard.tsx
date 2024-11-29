@@ -46,18 +46,18 @@ const Dashboard = () => {
   };
 
   const dashboardGridItems = {
-    topResourcesExpensesCard: thereAreOnlyEnvironmentDataSources ? null : <TopResourcesExpensesCardContainer/>,
-    policiesCard: <OrganizationConstraintsCardContainer/>,
-    organizationExpenses: thereAreOnlyEnvironmentDataSources ? null : <OrganizationExpensesContainer/>,
-    recommendationsCard: <RecommendationsCardContainer/>,
-    poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer/>,
-    recentTasksCard: <RecentTasksCardContainer/>,
-    recentModelsCard: <RecentModelsCardContainer/>
+    topResourcesExpensesCard: thereAreOnlyEnvironmentDataSources ? null : <TopResourcesExpensesCardContainer />,
+    policiesCard: <OrganizationConstraintsCardContainer />,
+    organizationExpenses: thereAreOnlyEnvironmentDataSources ? null : <OrganizationExpensesContainer />,
+    recommendationsCard: <RecommendationsCardContainer />,
+    poolsRequiringAttentionCard: <PoolsRequiringAttentionCardContainer />,
+    recentTasksCard: <RecentTasksCardContainer />,
+    recentModelsCard: <RecentModelsCardContainer />
   };
 
   return (
     <>
-      <Mocked mock={<DashboardMocked/>} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
+      <Mocked mock={<DashboardMocked />} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
         <PageContentWrapper>
           <DashboardGridLayout {...dashboardGridItems} />
         </PageContentWrapper>
@@ -69,12 +69,12 @@ const Dashboard = () => {
           paper: "window_privacy_policy",
           button: "btn_proceed"
         }}
-        header={<FormattedMessage id="optScalePrivacyPolicy"/>}
+        header={<FormattedMessage id="optScalePrivacyPolicy" />}
         message={
           <FormattedMessage
             id="privacyWarning"
             values={{
-              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT}/>,
+              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} />,
               docs: (chunks) => (
                 <Link target="_blank" href={DOCS_HYSTAX_OPTSCALE} data-test-id="link_documentation">
                   {chunks}
@@ -84,7 +84,7 @@ const Dashboard = () => {
               ul: (chunks) => <ul style={{marginTop: 0}}>{chunks}</ul>,
               li: (chunks) => <li>{chunks}</li>,
               strong: (chunks) => <strong>{chunks}</strong>,
-              br: <br/>
+              br: <br />
             }}
           />
         }

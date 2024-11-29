@@ -32,10 +32,11 @@ const SetRootPoolLimit = () => {
 
     return (
         <div className={classes.wrapper}>
-            <PoolLimitIcon data-test-id="img_set_pool_limit" className={classes.icon}/>
+            <PoolLimitIcon data-test-id="img_set_pool_limit" className={classes.icon} />
             <Typography paragraph align="center" gutterBottom data-test-id="p_set_pool_limit">
                 <FormattedMessage
-                    id={isManageResourcesAllowed ? "poolsBackdropMessage" : "poolsContactManagerBackdropMessage"}/>
+                    id={isManageResourcesAllowed ? "poolsBackdropMessage" : "poolsContactManagerBackdropMessage"}
+                />
             </Typography>
             {isManageResourcesAllowed && (
                 <div>
@@ -62,7 +63,7 @@ const PoolsTable = ({pools, sortColumn}) => {
             {
                 header: (
                     <TextWithDataTestId dataTestId="lbl_name">
-                        <FormattedMessage id="name"/>
+                        <FormattedMessage id="name" />
                     </TextWithDataTestId>
                 ),
                 accessorKey: "name",
@@ -70,13 +71,13 @@ const PoolsTable = ({pools, sortColumn}) => {
                            row: {
                                original: {name, purpose}
                            }
-                       }) => <PoolLabel disableLink name={name} type={purpose}/>
+                       }) => <PoolLabel disableLink name={name} type={purpose} />
             },
             expenses({defaultSort: sortColumn === "cost" ? "desc" : undefined}),
             poolForecast({defaultSort: sortColumn === "forecast" ? "desc" : undefined}),
             {
                 id: "actions",
-                header: <FormattedMessage id="actions"/>,
+                header: <FormattedMessage id="actions" />,
                 enableSorting: false,
                 cell: ({
                            row: {
@@ -87,14 +88,14 @@ const PoolsTable = ({pools, sortColumn}) => {
                         <IconButton
                             key="seeResourceList"
                             onClick={() => navigate(getThisMonthResourcesByPoolUrl(id))}
-                            icon={<StorageOutlinedIcon fontSize="small"/>}
-                            tooltip={{show: true, value: <FormattedMessage id="seeResourceList"/>}}
+                            icon={<StorageOutlinedIcon fontSize="small" />}
+                            tooltip={{show: true, value: <FormattedMessage id="seeResourceList" />}}
                         />
                         <IconButton
                             key="seeInCostExplorer"
                             onClick={() => navigate(getThisMonthPoolExpensesUrl(id))}
-                            icon={<BarChartOutlinedIcon fontSize="small"/>}
-                            tooltip={{show: true, value: <FormattedMessage id="seeInCostExplorer"/>}}
+                            icon={<BarChartOutlinedIcon fontSize="small" />}
+                            tooltip={{show: true, value: <FormattedMessage id="seeInCostExplorer" />}}
                         />
                     </>
                 )
@@ -105,7 +106,8 @@ const PoolsTable = ({pools, sortColumn}) => {
 
     return (
         <Table columns={columns} enableSearchQueryParam={false} enablePaginationQueryParam={false} data={tableData}
-               pageSize={5}/>
+               pageSize={5}
+        />
     );
 };
 
@@ -116,12 +118,12 @@ const Tabs = ({withExceededLimit, withForecastedOverspend}) => {
         {
             title: "exceededLimit",
             dataTestId: "tab_exceeded_limit",
-            node: <PoolsTable pools={withExceededLimit} sortColumn="cost"/>
+            node: <PoolsTable pools={withExceededLimit} sortColumn="cost" />
         },
         {
             title: "forecastedOverspend",
             dataTestId: "tab_forecasted_overspend",
-            node: <PoolsTable pools={withForecastedOverspend} sortColumn="forecast"/>
+            node: <PoolsTable pools={withForecastedOverspend} sortColumn="forecast" />
         }
     ];
 
@@ -152,22 +154,22 @@ const PoolsRequiringAttentionCard = ({withExceededLimit, withForecastedOverspend
 
     const renderContent = () =>
         rootPoolLimitUnset ? (
-            <SetRootPoolLimit/>
+            <SetRootPoolLimit />
         ) : (
-            <Tabs withExceededLimit={withExceededLimit} withForecastedOverspend={withForecastedOverspend}/>
+            <Tabs withExceededLimit={withExceededLimit} withForecastedOverspend={withForecastedOverspend} />
         );
 
     return (
         <WrapperCard
             needAlign
-            title={<FormattedMessage id="poolsRequiringAttention"/>}
+            title={<FormattedMessage id="poolsRequiringAttention" />}
             titleButton={{
                 type: "icon",
                 tooltip: {
-                    title: <FormattedMessage id="goToPools"/>
+                    title: <FormattedMessage id="goToPools" />
                 },
                 buttonProps: {
-                    icon: <ArrowForwardIosIcon/>,
+                    icon: <ArrowForwardIosIcon />,
                     isLoading,
                     onClick: goToPools,
                     dataTestId: "btn_go_to_pools"
@@ -179,7 +181,7 @@ const PoolsRequiringAttentionCard = ({withExceededLimit, withForecastedOverspend
             }}
             elevation={0}
         >
-            {isLoading ? <TableLoader showHeader/> : renderContent()}
+            {isLoading ? <TableLoader showHeader /> : renderContent()}
         </WrapperCard>
     );
 };

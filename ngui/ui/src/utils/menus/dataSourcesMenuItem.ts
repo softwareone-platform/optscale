@@ -1,4 +1,4 @@
-import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
+// import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { CLOUD_ACCOUNT_CONNECT } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";

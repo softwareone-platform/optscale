@@ -1,4 +1,4 @@
-import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
+// import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import mlMetricsRoute from "utils/routes/mlMetricsRoute";
 import BaseMenuItem from "./baseMenuItem";
 

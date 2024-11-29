@@ -280,7 +280,7 @@ const Table = ({
         }}
       >
         {isLoading ? (
-          <TableLoader columnsCounter={columns.length ?? 5} showHeader/>
+          <TableLoader columnsCounter={columns.length ?? 5} showHeader />
         ) : (
           <MuiTable
             sx={{
@@ -295,13 +295,15 @@ const Table = ({
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) =>
-                      (<TableHeaderCell
-                        key={header.id}
-                        isSelectionColumn={header.column.id === SELECTION_COLUMN_ID}
-                        headerContext={header}
-                        stickyStyles={stickyHeaderCellStyles}
-                        getHeaderCellClassName={getHeaderCellClassName}
-                      />)
+                      (
+                        <TableHeaderCell
+                          key={header.id}
+                          isSelectionColumn={header.column.id === SELECTION_COLUMN_ID}
+                          headerContext={header}
+                          stickyStyles={stickyHeaderCellStyles}
+                          getHeaderCellClassName={getHeaderCellClassName}
+                        />
+                      )
                     )}
                   </TableRow>
                 ))}
@@ -321,7 +323,7 @@ const Table = ({
                   }
                 >
                   <TableCell align="center" colSpan={columns.length}>
-                    <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID}/>
+                    <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID} />
                   </TableCell>
                 </TableRow>
               ) : (
@@ -346,7 +348,7 @@ const Table = ({
                     >
                       {row.getVisibleCells().map((cell) => {
                         if (cell.column.id === SELECTION_COLUMN_ID) {
-                          return <TableBodyCell className={'tableRowSelection'} key={cell.id} cell={cell}/>;
+                          return <TableBodyCell className={'tableRowSelection'} key={cell.id} cell={cell} />;
                         }
                         const Cell = memoBodyCells ? MemoTableBodyCell : TableBodyCell;
 
@@ -370,7 +372,7 @@ const Table = ({
                 {table.getFooterGroups().map((footerGroup) => (
                   <TableRow key={footerGroup.id}>
                     {footerGroup.headers.map((footerContext) => (
-                      <TableFooterCell key={footerContext.id} footerContext={footerContext}/>
+                      <TableFooterCell key={footerContext.id} footerContext={footerContext} />
                     ))}
                   </TableRow>
                 ))}

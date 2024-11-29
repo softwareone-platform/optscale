@@ -1,17 +1,21 @@
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import MainMenuSectionTitle from "components/MainMenuSectionTitle";
 import { MAIN_MENU_SECTION_IDS } from "components/MenuGroupWrapper/reducer";
 import { OPTSCALE_MODE } from "utils/constants";
 import anomalies from "./anomaliesMenuItem";
-import cloudCostComparisonMenuItem from "./cloudCostComparisonMenuItem";
+// import cloudCostComparisonMenuItem from "./cloudCostComparisonMenuItem";
 import dataSources from "./dataSourcesMenuItem";
-import environments from "./environmentsMenuItem";
+// import environments from "./environmentsMenuItem";
 import events from "./eventsMenuItem";
-import expensesMap from "./expensesMapMenuItem";
+// import expensesMap from "./expensesMapMenuItem";
 import expenses from "./expensesMenuItem";
-import finOpsPortal from "./finOpsPortalMenuItem";
+// import finOpsPortal from "./finOpsPortalMenuItem";
 import home from "./homeMenuItem";
-import integrations from "./integrationsMenuItem";
-import k8sRightsizing from "./k8sRightsizingMenuItem";
+// import integrations from "./integrationsMenuItem";
+// import k8sRightsizing from "./k8sRightsizingMenuItem";
 import mlArtifactsMenuItem from "./mlArtifactsMenuItem";
 import mlDatasets from "./mlDatasetsMenuItem";
 import mlHypertuningMenuItem from "./mlHypertuningMenuItem";
@@ -29,10 +33,6 @@ import settings from "./settingsMenuItem";
 import taggingPolicies from "./taggingPoliciesMenuItem";
 import users from "./usersMenuItem";
 
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
-import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
-import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
-import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 // import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
 
 export default [

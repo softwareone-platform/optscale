@@ -15,7 +15,7 @@ const useStyles = makeStyles()((theme) => ({
         textDecoration: "none",
 
         "& .MuiListItemText-root": {
-            position: 'relative',
+            position: 'relative'
         },
         "& .MuiListItemText-root:before": {
             content: '""',
@@ -31,7 +31,7 @@ const useStyles = makeStyles()((theme) => ({
     activeLink: {
         color: 'black',
         "& .MuiListItemText-root:before": {
-            width: 10,
+            width: 10
         },
         "& .MuiListItemSecondaryAction-root": {
             "& svg": {

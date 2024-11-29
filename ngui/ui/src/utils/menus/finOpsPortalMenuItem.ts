@@ -1,4 +1,4 @@
-import FinOpsChecklistIcon from "icons/FinOpsChecklistIcon";
+// import FinOpsChecklistIcon from "icons/FinOpsChecklistIcon";
 import finOpsPortal from "utils/routes/finOpsPortalRoute";
 import BaseMenuItem from "./baseMenuItem";
 

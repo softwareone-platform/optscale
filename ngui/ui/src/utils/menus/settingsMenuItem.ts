@@ -1,4 +1,4 @@
-import SettingsIcon from "@mui/icons-material/Settings";
+// import SettingsIcon from "@mui/icons-material/Settings";
 import settings from "utils/routes/settingsRoute";
 import BaseMenuItem from "./baseMenuItem";
 

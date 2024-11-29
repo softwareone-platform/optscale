@@ -67,15 +67,15 @@ const HeaderButtons = () => {
           }}
         />
         { /* TODO_KU: disabled because it doesn't not exist in documentation */ }
-        {/*<IconButton*/}
-        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}*/}
-        {/*  onClick={setIsCommunityDocsOpened}*/}
-        {/*  color="info"*/}
-        {/*  tooltip={{*/}
-        {/*    show: true,*/}
-        {/*    value: <FormattedMessage id="communityDocs" />*/}
-        {/*  }}*/}
-        {/*/>*/}
+        {/* <IconButton */}
+        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}
+        {/*  onClick={setIsCommunityDocsOpened} */}
+        {/*  color="info" */}
+        {/*  tooltip={{ */}
+        {/*    show: true, */}
+        {/*    value: <FormattedMessage id="communityDocs" /> */}
+        {/*  }} */}
+        {/* /> */}
         <Popover
           label={
             <IconButton

@@ -1,4 +1,4 @@
-import EventOutlined from "@mui/icons-material/EventOutlined";
+// import EventOutlined from "@mui/icons-material/EventOutlined";
 import events from "utils/routes/eventsRoute";
 import BaseMenuItem from "./baseMenuItem";
 

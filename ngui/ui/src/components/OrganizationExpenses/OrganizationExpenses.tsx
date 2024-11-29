@@ -1,4 +1,3 @@
-{/* TODO_KU: changed arrow icon */}
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useTheme } from "@mui/material";
 import { FormattedMessage } from "react-intl";
