@@ -1,5 +1,6 @@
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
+import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -7,7 +8,7 @@ import ClusterTypesTable from "components/ClusterTypesTable";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DOCS_HYSTAX_CLUSTERS, RESOURCES } from "urls";
-import { SPACING_2 } from "utils/layouts";
+import { KU_SPACING_2 } from "../../utils/layouts";
 
 const actionBarDefinition = {
   breadcrumbs: [
@@ -39,12 +40,14 @@ const ClusterTypes = ({ clusterTypes, onUpdatePriority, isLoading = false }) => 
   <>
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
-      <Grid container spacing={SPACING_2}>
-        <Grid item xs={12}>
-          <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />
-        </Grid>
-        <Grid item xs={12}>
-          <ExplanationMessage />
+      <Grid direction="row" container spacing={3}>
+        <Grid item xs={12} className={"KuBoxShadowRoot"}>
+          <Box>
+            <Box marginBottom={KU_SPACING_2}>
+              <ExplanationMessage />
+            </Box>
+            <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />
+          </Box>
         </Grid>
       </Grid>
     </PageContentWrapper>
