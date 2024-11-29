@@ -45,13 +45,7 @@ const Logo = ({
   // const intl = useIntl();
 
   const renderLogo = (
-    <img
-      width={width}
-      height={height}
-      src={getLogo(demo, white, size)}
-      alt={"swo-logo"}
-      data-test-id={dataTestId}
-    />
+    <img width={width} height={height} src={getLogo(demo, white, size)} alt={"swo-logo"} data-test-id={dataTestId} />
   );
 
   return active ? (

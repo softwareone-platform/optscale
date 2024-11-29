@@ -1,22 +1,22 @@
-import {useState} from "react";
+import { useState } from "react";
 // import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import {Box} from "@mui/material";
-import {FormattedMessage} from "react-intl";
-import {useNavigate} from "react-router-dom";
+import { Box } from "@mui/material";
+import { FormattedMessage } from "react-intl";
+import { useNavigate } from "react-router-dom";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
-import Selector, {Button, Divider, Item, ItemContent} from "components/Selector";
+import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
 // import {CreateOrganizationModal} from "components/SideModalManager/SideModals";
-import {useIsDownMediaQuery} from "hooks/useMediaQueries";
+import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 // import {useOpenSideModal} from "hooks/useOpenSideModal";
 // import {useOrganizationInfo} from "hooks/useOrganizationInfo";
-import {ORGANIZATIONS_OVERVIEW} from "urls";
+import { ORGANIZATIONS_OVERVIEW } from "urls";
 // import {common} from "@mui/material/colors";
 
-const HIDDEN_SELECTOR_SX = {visibility: "hidden", maxWidth: 0, minWidth: 0};
+const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
 
 const SELECTOR_SX = {
   "&.MuiFormControl-root": {
@@ -54,11 +54,11 @@ type OrganizationSelectorProps = {
 };
 
 const OrganizationSelector = ({
-                                organizations = [],
-                                organizationId = "",
-                                onChange,
-                                isLoading = false
-                              }: OrganizationSelectorProps) => {
+  organizations = [],
+  organizationId = "",
+  onChange,
+  isLoading = false
+}: OrganizationSelectorProps) => {
   // const {isDemo} = useOrganizationInfo();
   // const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
@@ -87,7 +87,7 @@ const OrganizationSelector = ({
         sx={isDownSm ? HIDDEN_SELECTOR_SX : SELECTOR_SX}
       >
         {[...organizations]
-          .sort(({name: nameA}, {name: nameB}) => nameA.localeCompare(nameB))
+          .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
           .map((obj) => (
             <Item key={obj.name} value={obj.id}>
               <ItemContent
@@ -109,7 +109,7 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        { /* TODO_KU: temporary disabled new organisation creation */ }
+        {/* TODO_KU: temporary disabled new organisation creation */}
         {/* <Button */}
         {/*  icon={{ */}
         {/*    IconComponent: AddOutlinedIcon */}

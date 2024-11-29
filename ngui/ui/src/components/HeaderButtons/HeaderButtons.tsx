@@ -66,7 +66,7 @@ const HeaderButtons = () => {
             value: <FormattedMessage id="productTour" />
           }}
         />
-        { /* TODO_KU: disabled because it doesn't not exist in documentation */ }
+        {/* TODO_KU: disabled because it doesn't not exist in documentation */}
         {/* <IconButton */}
         {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}
         {/*  onClick={setIsCommunityDocsOpened} */}

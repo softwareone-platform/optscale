@@ -1,5 +1,5 @@
 import { type ReactNode, type Ref } from "react";
-import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { InputAdornment, InputLabel, Select as MuiSelect, Skeleton } from "@mui/material";
 import Item from "../Item";
 import useStyles from "./Select.styles";

@@ -1,7 +1,7 @@
-import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
-import PolicyOutlinedIcon from '@mui/icons-material/PolicyOutlined';
-import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import PolicyOutlinedIcon from "@mui/icons-material/PolicyOutlined";
+import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import MainMenuSectionTitle from "components/MainMenuSectionTitle";
 import { MAIN_MENU_SECTION_IDS } from "components/MenuGroupWrapper/reducer";
 import { OPTSCALE_MODE } from "utils/constants";

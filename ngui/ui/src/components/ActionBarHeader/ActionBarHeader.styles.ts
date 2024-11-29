@@ -13,7 +13,7 @@ const useStyles = makeStyles()((theme) => ({
   },
   title: {
     wordBreak: "break-all",
-    fontWeight: 'bold'
+    fontWeight: "bold"
   }
 }));
 

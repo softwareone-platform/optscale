@@ -61,8 +61,8 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.subtitle1 = {
     ...theme.typography.subtitle1,
-    fontWeight: 'bold',
-    color: 'black',
+    fontWeight: "bold",
+    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
@@ -89,8 +89,8 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.fontWeightBold = {
     ...theme.typography.fontWeightBold,
-    fontWeight: 'bold',
-    color: 'black',
+    fontWeight: "bold",
+    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.75rem"
     },
@@ -104,7 +104,7 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body1 = {
     ...theme.typography.body1,
-    color: 'black',
+    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
@@ -118,7 +118,7 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body2 = {
     ...theme.typography.body2,
-    color: 'black',
+    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.75rem"
     },

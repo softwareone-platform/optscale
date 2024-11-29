@@ -4,8 +4,8 @@ import { useState } from "react";
 // import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 // import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
-import KeyboardArrowUpOutlined from '@mui/icons-material/KeyboardArrowUpOutlined';
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
@@ -328,13 +328,13 @@ const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, on
   return (
     <Box className={classes.wrapper}>
       {label && (
-        <Typography variant={'fontWeightBold'} component="div" data-test-id={labelDataTestId}>
+        <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
           {label}
           {": "}
         </Typography>
       )}
       {valuesArray.length === 0 ? (
-        <Typography variant={'fontWeightBold'} component="span">
+        <Typography variant={"fontWeightBold"} component="span">
           <FormattedMessage id={NONE} />
         </Typography>
       ) : (
