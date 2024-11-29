@@ -1,4 +1,4 @@
-import RunningWithErrorsOutlinedIcon from "@mui/icons-material/RunningWithErrorsOutlined";
+// import RunningWithErrorsOutlinedIcon from "@mui/icons-material/RunningWithErrorsOutlined";
 import anomalies from "utils/routes/anomaliesRoute";
 import BaseMenuItem from "./baseMenuItem";
 

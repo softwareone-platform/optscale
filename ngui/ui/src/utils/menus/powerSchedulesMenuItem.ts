@@ -1,4 +1,4 @@
-import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
+// import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import powerSchedulesRoute from "utils/routes/powerSchedulesRoute";
 import BaseMenuItem from "./baseMenuItem";
 

@@ -1,27 +1,27 @@
-import {useEffect, useState} from "react";
+import { useEffect } from "react";
 import AddchartOutlinedIcon from "@mui/icons-material/AddchartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import {Badge, Box} from "@mui/material";
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {FormattedMessage, useIntl} from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
 import CopyText from "components/CopyText";
-import {getBasicRangesSet} from "components/DateRangePicker/defaults";
+import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import ExpensesFilters from "components/ExpensesFilters";
 import LinearSelector from "components/LinearSelector";
 import PageContentWrapper from "components/PageContentWrapper";
-import {ApplyResourcePerspectiveModal, CreateResourcePerspectiveModal} from "components/SideModalManager/SideModals";
+import { ApplyResourcePerspectiveModal, CreateResourcePerspectiveModal } from "components/SideModalManager/SideModals";
 import TypographyLoader from "components/TypographyLoader";
 import CleanExpensesBreakdownContainer from "containers/CleanExpensesBreakdownContainer";
 import ExpensesSummaryContainer from "containers/ExpensesSummaryContainer";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import ResourceCountBreakdownContainer from "containers/ResourceCountBreakdownContainer";
 import TagsBreakdownContainer from "containers/TagsBreakdownContainer";
-import {useOpenSideModal} from "hooks/useOpenSideModal";
-import {useOrganizationInfo} from "hooks/useOrganizationInfo";
-import {useResourceFilters} from "hooks/useResourceFilters";
+import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useResourceFilters } from "hooks/useResourceFilters";
 import {
   CLUSTER_TYPES,
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
@@ -30,33 +30,33 @@ import {
   RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
   RESOURCES_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
-import {BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE} from "utils/constants";
-import {KU_SPACING_2} from "utils/layouts";
-import {getQueryParams, updateQueryParams} from "utils/network";
-import {isEmpty as isEmptyObject} from "utils/objects";
-import Accordion from "../Accordion";
-import Typography from "@mui/material/Typography";
+import { BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
+import { KU_SPACING_2 } from "utils/layouts";
+import { getQueryParams, updateQueryParams } from "utils/network";
+import { isEmpty as isEmptyObject } from "utils/objects";
+// import Accordion from "../Accordion";
+// import Typography from "@mui/material/Typography";
 import Divider from "../Selector/components/Divider";
 
-const BreakdownLinearSelector = ({value, onChange}) => {
+const BreakdownLinearSelector = ({ value, onChange }) => {
   useEffect(() => {
-    updateQueryParams({[RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: value.name});
+    updateQueryParams({ [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: value.name });
   }, [value.name]);
 
   return (
     <LinearSelector
       value={value}
-      label={<FormattedMessage id="breakdownBy"/>}
+      label={<FormattedMessage id="breakdownBy" />}
       onChange={onChange}
       items={BREAKDOWN_LINEAR_SELECTOR_ITEMS}
     />
   );
 };
 
-const SelectedPerspectiveTitle = ({perspectiveName}) => {
+const SelectedPerspectiveTitle = ({ perspectiveName }) => {
   const intl = useIntl();
 
-  const {organizationId} = useOrganizationInfo();
+  const { organizationId } = useOrganizationInfo();
 
   const copyUrl = [
     window.location.origin,
@@ -69,32 +69,32 @@ const SelectedPerspectiveTitle = ({perspectiveName}) => {
   return (
     <CopyText text={copyUrl} variant="h6" Icon={LinkOutlinedIcon} copyMessageId="copyUrl">
       {intl.formatMessage(
-        {id: "value - value"},
-        {value1: intl.formatMessage({id: "resources"}), value2: perspectiveName}
+        { id: "value - value" },
+        { value1: intl.formatMessage({ id: "resources" }), value2: perspectiveName }
       )}
     </CopyText>
   );
 };
 
 const Resources = ({
-                     startDateTimestamp,
-                     endDateTimestamp,
-                     filters,
-                     filterValues,
-                     onApply,
-                     onFilterAdd,
-                     onFilterDelete,
-                     onFiltersDelete,
-                     requestParams,
-                     activeBreakdown,
-                     selectedPerspectiveName,
-                     perspectives,
-                     onBreakdownChange,
-                     onPerspectiveApply,
-                     isFilterValuesLoading = false
-                   }) => {
+  startDateTimestamp,
+  endDateTimestamp,
+  filters,
+  filterValues,
+  onApply,
+  onFilterAdd,
+  onFilterDelete,
+  onFiltersDelete,
+  requestParams,
+  activeBreakdown,
+  selectedPerspectiveName,
+  perspectives,
+  onBreakdownChange,
+  onPerspectiveApply,
+  isFilterValuesLoading = false
+}) => {
   const openSideModal = useOpenSideModal();
-  const [selectedFiltersCount, setSelectedFiltersCount] = useState(0);
+  // const [selectedFiltersCount, setSelectedFiltersCount] = useState(0);
 
   const intl = useIntl();
 
@@ -105,16 +105,16 @@ const Resources = ({
   const items = resourceFilters.getFilterSelectors();
   const appliedValues = resourceFilters.getAppliedValues();
 
-  useEffect(() => {
-    setSelectedFiltersCount(appliedValues.length); // Update count based on applied values length
-  }, [appliedValues]);
+  // useEffect(() => {
+  //   setSelectedFiltersCount(appliedValues.length); // Update count based on applied values length
+  // }, [appliedValues]);
 
   const actionBarDefinition = {
     title: {
       text: selectedPerspectiveName ? (
-        <SelectedPerspectiveTitle perspectiveName={selectedPerspectiveName}/>
+        <SelectedPerspectiveTitle perspectiveName={selectedPerspectiveName} />
       ) : (
-        intl.formatMessage({id: "resources"})
+        intl.formatMessage({ id: "resources" })
       ),
       dataTestId: "lbl_resources"
     },
@@ -122,23 +122,23 @@ const Resources = ({
       ...(isEmptyObject(perspectives)
         ? []
         : [
-          {
-            key: "perspectives",
-            icon: <AssessmentOutlinedIcon fontSize="small"/>,
-            messageId: "perspectivesTitle",
-            type: "button",
-            action: () => {
-              openSideModal(ApplyResourcePerspectiveModal, {
-                perspectives,
-                appliedPerspectiveName: selectedPerspectiveName,
-                onApply: onPerspectiveApply
-              });
+            {
+              key: "perspectives",
+              icon: <AssessmentOutlinedIcon fontSize="small" />,
+              messageId: "perspectivesTitle",
+              type: "button",
+              action: () => {
+                openSideModal(ApplyResourcePerspectiveModal, {
+                  perspectives,
+                  appliedPerspectiveName: selectedPerspectiveName,
+                  onApply: onPerspectiveApply
+                });
+              }
             }
-          }
-        ]),
+          ]),
       {
         key: "savePerspectiveTitle",
-        icon: <AddchartOutlinedIcon fontSize="small"/>,
+        icon: <AddchartOutlinedIcon fontSize="small" />,
         messageId: "savePerspectiveTitle",
         disabled: isPerspectiveSelected,
         type: "button",
@@ -174,7 +174,7 @@ const Resources = ({
       },
       {
         key: "configureClusterTypes",
-        icon: <GroupWorkOutlinedIcon fontSize="small"/>,
+        icon: <GroupWorkOutlinedIcon fontSize="small" />,
         messageId: "configureClusterTypes",
         type: "button",
         link: CLUSTER_TYPES,
@@ -183,11 +183,11 @@ const Resources = ({
     ]
   };
 
-  const renderExpensesBreakdown = () => <CleanExpensesBreakdownContainer requestParams={requestParams}/>;
+  const renderExpensesBreakdown = () => <CleanExpensesBreakdownContainer requestParams={requestParams} />;
 
-  const renderResourcesCountBreakdown = () => <ResourceCountBreakdownContainer requestParams={requestParams}/>;
+  const renderResourcesCountBreakdown = () => <ResourceCountBreakdownContainer requestParams={requestParams} />;
 
-  const renderTagsBreakdown = () => <TagsBreakdownContainer requestParams={requestParams}/>;
+  const renderTagsBreakdown = () => <TagsBreakdownContainer requestParams={requestParams} />;
 
   const renderContent = {
     [CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES]: renderExpensesBreakdown,
@@ -197,36 +197,35 @@ const Resources = ({
 
   return (
     <>
-      <ActionBar data={actionBarDefinition}/>
+      <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Grid direction="row" container spacing={3} justifyContent="space-between">
           <Grid item xs={12}>
             <Box>
               <Grid xs={12} item>
                 {isFilterValuesLoading ? (
-                  <TypographyLoader linesCount={1}/>
+                  <TypographyLoader linesCount={1} />
                 ) : (
                   <>
-                    {/*<Accordion zeroSummaryMinHeight={true} headerDataTestId={'filters-accordion'} sx={{ boxShadow: "none", background: 'none'}}>*/}
-                    {/*  <div>*/}
-                    {/*    <Typography variant={'body2'} component="span">*/}
-                    {/*      <FormattedMessage id={'filters'}/>*/}
-                    {/*    </Typography>*/}
-                    {/*    <Badge*/}
-                    {/*      badgeContent={selectedFiltersCount}*/}
-                    {/*      color="primary"*/}
-                    {/*      style={{marginLeft: "18px"}}*/}
-                    {/*    />*/}
-                    {/*  </div>*/}
-                    {/*  <ExpensesFilters*/}
-                    {/*    items={items}*/}
-                    {/*    appliedValues={appliedValues}*/}
-                    {/*    onFilterDelete={onFilterDelete}*/}
-                    {/*    onFiltersDelete={onFiltersDelete}*/}
-                    {/*    onFilterAdd={onFilterAdd}*/}
-                    {/*  />*/}
-                    {/*</Accordion>*/}
-
+                    {/* <Accordion zeroSummaryMinHeight={true} headerDataTestId={'filters-accordion'} sx={{ boxShadow: "none", background: 'none'}}> */}
+                    {/*  <div> */}
+                    {/*    <Typography variant={'body2'} component="span"> */}
+                    {/*      <FormattedMessage id={'filters'}/> */}
+                    {/*    </Typography> */}
+                    {/*    <Badge */}
+                    {/*      badgeContent={selectedFiltersCount} */}
+                    {/*      color="primary" */}
+                    {/*      style={{marginLeft: "18px"}} */}
+                    {/*    /> */}
+                    {/*  </div> */}
+                    {/*  <ExpensesFilters */}
+                    {/*    items={items} */}
+                    {/*    appliedValues={appliedValues} */}
+                    {/*    onFilterDelete={onFilterDelete} */}
+                    {/*    onFiltersDelete={onFiltersDelete} */}
+                    {/*    onFilterAdd={onFilterAdd} */}
+                    {/*  /> */}
+                    {/* </Accordion> */}
 
                     <ExpensesFilters
                       items={items}
@@ -238,9 +237,9 @@ const Resources = ({
                   </>
                 )}
               </Grid>
-              <Divider style={{marginTop: KU_SPACING_2, marginBottom: KU_SPACING_2}}/>
-              <div style={{display: 'flex', alignItems: 'baseline', justifyContent: 'space-between'}}>
-                <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange}/>
+              <Divider style={{ marginTop: KU_SPACING_2, marginBottom: KU_SPACING_2 }} />
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange} />
 
                 <RangePickerFormContainer
                   onApply={(dateRange) => onApply(dateRange)}
@@ -249,17 +248,14 @@ const Resources = ({
                   rangeType={DATE_RANGE_TYPE.RESOURCES}
                   definedRanges={getBasicRangesSet()}
                 />
-
               </div>
             </Box>
           </Grid>
           <Grid xs={12} item>
-          <ExpensesSummaryContainer requestParams={requestParams} />
+            <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
-          <Grid xs={12} item className={'KuBoxShadowRoot'}>
-            <Box>
-              {typeof renderContent === "function" ? renderContent() : null}
-            </Box>
+          <Grid xs={12} item className={"KuBoxShadowRoot"}>
+            <Box>{typeof renderContent === "function" ? renderContent() : null}</Box>
           </Grid>
         </Grid>
       </PageContentWrapper>

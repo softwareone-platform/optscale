@@ -1,4 +1,4 @@
-import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
+// import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { CLUSTER_TYPE_CREATE } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";

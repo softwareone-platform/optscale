@@ -1,4 +1,4 @@
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 // TODO_KU: removed icons
 // import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 // import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
@@ -16,9 +16,9 @@ import {
 } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { ALL_SERVICES } from "hooks/useRecommendationServices";
 import { RECOMMENDATIONS, RECOMMENDATION_CATEGORY_QUERY_PARAMETER, RECOMMENDATION_SERVICE_QUERY_PARAMETER } from "urls";
-import {KU_SPACING_2, KU_SPACING_3, SPACING_2} from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 import { InfoCard, PossibleSavingsCard } from "./Components";
-import Typography from "@mui/material/Typography";
+// import Typography from "@mui/material/Typography";
 
 const RecommendationsCard = ({
   isLoading,
@@ -83,7 +83,7 @@ const RecommendationsCard = ({
               }
               color="success"
               icon={null}
-              value={<FormattedNumber value={costRecommendationsCount } />}
+              value={<FormattedNumber value={costRecommendationsCount} />}
               isLoading={isLoading}
               dataTestIds={{
                 value: "block_recommendations_cost_value"

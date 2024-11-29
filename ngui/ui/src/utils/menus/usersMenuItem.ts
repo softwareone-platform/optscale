@@ -1,4 +1,4 @@
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+// import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import users from "utils/routes/usersRoute";
 import BaseMenuItem from "./baseMenuItem";

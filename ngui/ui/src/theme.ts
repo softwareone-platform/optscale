@@ -1,15 +1,14 @@
 // Hystax palette: https://cdn.hystax.com/Hystax/Hystax-Guideline-2020.pdf
 // Material design color tool: https://material.io/resources/color/
 
-import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
-import {common} from "@mui/material/colors";
-import {createTheme, alpha, darken, lighten} from "@mui/material/styles";
-import {isEmpty as isEmptyArray} from "utils/arrays";
-import {customResponsiveFontSizes} from "utils/fonts";
-import {isEmpty as isEmptyObject} from "utils/objects";
-import {BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3} from "./utils/layouts";
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
-
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
+import { common } from "@mui/material/colors";
+import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
+import { isEmpty as isEmptyArray } from "utils/arrays";
+import { customResponsiveFontSizes } from "utils/fonts";
+import { isEmpty as isEmptyObject } from "utils/objects";
+import { BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -42,7 +41,7 @@ const applyPaletteSettings = (settings) => {
   const secondary = mergeIfSettingIsNotEmpty(
     {
       main: "#472AFF",
-      contrastText: 'white'
+      contrastText: "white"
     },
     "secondary"
   );
@@ -91,19 +90,19 @@ const applyChartPaletteSettings = (settings) => {
 
   const chart = isEmptySetting("chart")
     ? [
-      "#4AB4EE",
-      "#FFC348",
-      "#30D5C8",
-      "#9950B1",
-      "#4A63EE",
-      "#FF6648",
-      "#30D575",
-      "#B19950",
-      "#834AEE",
-      "#48E1FF",
-      "#D53090",
-      "#99B150"
-    ]
+        "#4AB4EE",
+        "#FFC348",
+        "#30D5C8",
+        "#9950B1",
+        "#4A63EE",
+        "#FF6648",
+        "#30D575",
+        "#B19950",
+        "#834AEE",
+        "#48E1FF",
+        "#D53090",
+        "#99B150"
+      ]
     : settings.chartPalette.chart;
 
   const monoChart = isEmptySetting("monoChart") ? ["#4AB4EE"] : settings.chartPalette.monoChart;
@@ -238,9 +237,9 @@ export const getThemeSpacingCoefficient = (theme) => {
 // Main theme config
 const getThemeConfig = (settings = {}) => {
   const baseColorsPalette = applyPaletteSettings(settings);
-  const {primary, secondary, info, success, error, warning, text} = baseColorsPalette;
+  const { primary, secondary, info, success, error, warning, text } = baseColorsPalette;
 
-  const {chart, monoChart} = applyChartPaletteSettings(settings);
+  const { chart, monoChart } = applyChartPaletteSettings(settings);
 
   const googleMapPalette = applyGoogleMapPaletteSettings(baseColorsPalette);
 
@@ -255,7 +254,7 @@ const getThemeConfig = (settings = {}) => {
 
   return Object.freeze({
     typography: {
-      fontFamily: "'Ubuntu', sans-serif",
+      fontFamily: "'Arial', sans-serif",
       mono: {
         fontFamily: "'Ubuntu Mono', monospace"
       }
@@ -296,36 +295,36 @@ const getThemeConfig = (settings = {}) => {
       MuiSelect: {
         styleOverrides: {
           select: {
-            fontSize: '14px',
-            color: 'black',
+            fontSize: "14px",
+            color: "black",
             paddingLeft: KU_SPACING_2,
             paddingRight: KU_SPACING_3,
-            paddingTop: '6px',
-            paddingBottom: '6px'
+            paddingTop: "6px",
+            paddingBottom: "6px"
           },
 
           root: {
             "& .MuiSvgIcon-fontSizeSmall": {
               fontSize: KU_SPACING_2
-            },
+            }
           },
           iconOutlined: {
-            fontSize: '16px' // Set font size for MuiSelect-iconOutlined
+            fontSize: "16px" // Set font size for MuiSelect-iconOutlined
           }
         }
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: 'white',
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'black',
-              color: 'black'
+            backgroundColor: "white",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "black",
+              color: "black"
             },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
+            "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: BRAND_PRIMARY
             },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
               borderColor: BRAND_PRIMARY
             }
           }
@@ -333,7 +332,7 @@ const getThemeConfig = (settings = {}) => {
       },
       MuiAutocomplete: {
         styleOverrides: {
-          option: ({theme}) => ({
+          option: ({ theme }) => ({
             "&.MuiAutocomplete-option": {
               /*
                 Make option font styles similar to the MuiMenuItem
@@ -361,8 +360,8 @@ const getThemeConfig = (settings = {}) => {
         },
         variants: [
           {
-            props: {variant: "contained", color: "lightYellow"},
-            style: ({theme}) => ({
+            props: { variant: "contained", color: "lightYellow" },
+            style: ({ theme }) => ({
               color: theme.palette.lightYellow.contrastText,
               "&:hover": {
                 backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
@@ -370,8 +369,8 @@ const getThemeConfig = (settings = {}) => {
             })
           },
           {
-            props: {variant: "contained", color: "lightBlue"},
-            style: ({theme}) => ({
+            props: { variant: "contained", color: "lightBlue" },
+            style: ({ theme }) => ({
               color: theme.palette.lightBlue.contrastText,
               "&:hover": {
                 backgroundColor: lighten(theme.palette.lightBlue.main, 0.08)
@@ -379,8 +378,8 @@ const getThemeConfig = (settings = {}) => {
             })
           },
           {
-            props: {variant: "text", color: "info"},
-            style: ({theme}) => ({
+            props: { variant: "text", color: "info" },
+            style: ({ theme }) => ({
               color: theme.palette.text.primary
             })
           }
@@ -401,9 +400,9 @@ const getThemeConfig = (settings = {}) => {
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: '16px', // Set your desired border-radius value
-          },
-        },
+            borderRadius: "16px" // Set your desired border-radius value
+          }
+        }
       },
       MuiCheckbox: {
         defaultProps: {
@@ -414,13 +413,14 @@ const getThemeConfig = (settings = {}) => {
             color: secondary.main
           },
           root: {
-            '& .MuiTableRowCheckbox-root': { // Only apply to table row checkboxes
-              color: 'gray',
-              '&.Mui-checked': {
-                color: '#000000'
+            "& .MuiTableRowCheckbox-root": {
+              // Only apply to table row checkboxes
+              color: "gray",
+              "&.Mui-checked": {
+                color: "#000000"
               },
-              '& .MuiSvgIcon-root': {
-                fontSize: '16px'
+              "& .MuiSvgIcon-root": {
+                fontSize: "16px"
               }
             }
           }
@@ -429,16 +429,17 @@ const getThemeConfig = (settings = {}) => {
       MuiCssBaseline: {
         styleOverrides: {
           "#root": {
-            display: "flex", flexDirection: "column", minHeight: "100vh"
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
           },
-          '.KuBoxShadowRoot': {
-            '> .MuiBox-root': {
+          ".KuBoxShadowRoot": {
+            "> .MuiBox-root": {
               boxShadow: KU_BOX_SHADOW,
-              background: 'white',
+              background: "white",
               padding: KU_SPACING_2,
               borderRadius: KU_SPACING_1
             }
-
           }
         }
       },
@@ -483,15 +484,15 @@ const getThemeConfig = (settings = {}) => {
           sizeSmall: {
             padding: "10px", // Adjust padding to control button size
             "& .MuiSvgIcon-root": {
-              fontSize: '20px',
-            },
-          },
+              fontSize: "20px"
+            }
+          }
         }
       },
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            color: 'black'
+            color: "black"
           }
         },
         defaultProps: {
@@ -506,7 +507,7 @@ const getThemeConfig = (settings = {}) => {
       MuiLink: {
         defaultProps: {
           underline: "hover"
-        },
+        }
       },
       MuiSwitch: {
         defaultProps: {
@@ -550,7 +551,7 @@ const getThemeConfig = (settings = {}) => {
             "&.Mui-selected": {
               backgroundColor: ACTION_SELECTED,
               color: secondary.contrastText,
-              "&.Mui-focusVisible": {background: ACTION_SELECTED},
+              "&.Mui-focusVisible": { background: ACTION_SELECTED },
               "&:hover": {
                 backgroundColor: ACTION_SELECTED
               }
@@ -608,16 +609,16 @@ const getThemeConfig = (settings = {}) => {
               padding: 0
             },
             "&.tableRowSelection svg": {
-              fill: 'black',
-              width: '19px',
-              height: '19px'
+              fill: "black",
+              width: "19px",
+              height: "19px"
             }
           }
         }
       },
       MuiTableSortLabel: {
         defaultProps: {
-          IconComponent: KeyboardArrowDownOutlinedIcon, // Default icon for descending
+          IconComponent: KeyboardArrowDownOutlinedIcon // Default icon for descending
         },
         styleOverrides: {
           root: {
@@ -635,7 +636,7 @@ const getThemeConfig = (settings = {}) => {
           }
         },
         slotProps: {
-          icon: ({direction}) => {
+          icon: ({ direction }) => {
             if (direction === "asc") {
               return {
                 component: KeyboardArrowUpOutlinedIcon
@@ -682,9 +683,9 @@ const getThemeConfig = (settings = {}) => {
         },
         styleOverrides: {
           h6: {
-            color: 'black',
-            fontSize: '24px'
-          },
+            color: "black",
+            fontSize: "24px"
+          }
         }
       },
       MuiUseMediaQuery: {
@@ -767,4 +768,4 @@ export const RI_SP_CHART_PALETTE = ["#9950B1", "#4AB4EE", "#FFC348", "#30D5C8"];
 
 export default (settings = {}) => customResponsiveFontSizes(createTheme(getThemeConfig(settings)), settings);
 
-export {PDF_THEME};
+export { PDF_THEME };

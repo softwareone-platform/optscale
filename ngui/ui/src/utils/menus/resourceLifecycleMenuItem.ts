@@ -1,4 +1,4 @@
-import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
+// import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 import resourceLifecycle from "utils/routes/resourceLifecycleRoute";
 import BaseMenuItem from "./baseMenuItem";
 
