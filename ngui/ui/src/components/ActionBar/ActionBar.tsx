@@ -241,9 +241,13 @@ const ActionBar = ({ data, isPage = true }) => {
   return title || !isEmptyActions ? (
     <AppBar position="static" className={mapBarClass}>
       <Toolbar disableGutters ref={wrapperRef}>
-        <Box pt={2} pb={2} display={"flex"} sx={{ alignItems: "center" }}>
-          {showBreadcrumbs ? <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs> : null}
-          <Box display="flex">
+        <Box pt={2} pb={2} width={"100%"} display={"flex"} alignItems={"center"}>
+          {showBreadcrumbs ? (
+            <Box>
+              <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs>
+            </Box>
+          ) : null}
+          <Box display="flex" width="100%">
             {title ? (
               <Box display="flex" flexGrow="1" alignItems="center">
                 {renderTitle(title, titleRef)}
@@ -252,7 +256,7 @@ const ActionBar = ({ data, isPage = true }) => {
             {!isEmptyActions ? (
               <Box className={classes.itemsWrapper} ref={buttonsRef}>
                 {!isEmpty(hidden) && (
-                  <Box component="div" className={actionsClasses}>
+                  <Box component="div" width={"100%"} sx={{ display: "flex" }} className={actionsClasses}>
                     <Popover
                       renderMenu={({ closeHandler }) => <DropDownMenu items={hidden} onClose={closeHandler} />}
                       label={<IconButton isLoading={hidden.some((item) => item.isLoading)} icon={<MoreVertOutlinedIcon />} />}
