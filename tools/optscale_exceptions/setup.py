@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 
-requirements = ['tornado==6.4.1', 'requests==2.32.3']
+requirements = ['tornado==6.4.2', 'requests==2.32.3']
 
 setup(name='optscale-exceptions',
       description='OptScale Exceptions',

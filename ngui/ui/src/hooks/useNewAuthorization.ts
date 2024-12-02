@@ -73,7 +73,6 @@ export const useNewAuthorization = () => {
       dispatch((_, getState) =>
         dispatch(getOrganizations())
           .then(() => checkError(GET_ORGANIZATIONS, getState()))
-          .then(() => dispatch(getOrganizations()))
           .then(() => getState()?.[RESTAPI]?.[GET_ORGANIZATIONS]?.organizations)
           .then((existingOrganizations) => {
             if (isEmpty(existingOrganizations)) {
