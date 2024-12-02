@@ -10,7 +10,6 @@ on:
 
 jobs:
   build_image:
-    runs-on: self-hosted
     steps:
       - name: Check out actions code
         uses: actions/checkout@v3
