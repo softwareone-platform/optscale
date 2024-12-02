@@ -88,24 +88,42 @@ const applyPaletteSettings = (settings) => {
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
 
+  // KU_TODO: change colors palette
+  // Original:
+  // [
+  //         "#4AB4EE",
+  //         "#FFC348",
+  //         "#30D5C8",
+  //         "#9950B1",
+  //         "#4A63EE",
+  //         "#FF6648",
+  //         "#30D575",
+  //         "#B19950",
+  //         "#834AEE",
+  //         "#48E1FF",
+  //         "#D53090",
+  //         "#99B150"
+  //       ]
+
   const chart = isEmptySetting("chart")
     ? [
-        "#4AB4EE",
-        "#FFC348",
-        "#30D5C8",
-        "#9950B1",
-        "#4A63EE",
-        "#FF6648",
-        "#30D575",
-        "#B19950",
-        "#834AEE",
-        "#48E1FF",
-        "#D53090",
-        "#99B150"
+        "#EAECFF",
+        "#3520BF",
+        "#959BFF",
+        "#CAE4FF",
+        "#4DA6FF",
+        "#2775C4",
+        "#E87D1E"
+        // "#30D575",
+        // "#B19950",
+        // "#834AEE",
+        // "#48E1FF",
+        // "#D53090",
+        // "#99B150"
       ]
     : settings.chartPalette.chart;
 
-  const monoChart = isEmptySetting("monoChart") ? ["#4AB4EE"] : settings.chartPalette.monoChart;
+  const monoChart = isEmptySetting("monoChart") ? ["#EAECFF"] : settings.chartPalette.monoChart;
 
   return {
     chart,
