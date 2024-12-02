@@ -6,7 +6,7 @@ export const AUTH = "auth";
 const reducer = (state = {}, action) => {
   switch (action.type) {
     case SET_TOKEN: {
-      const { token, user_id: userId, user_email: userEmail, isTemporary } = action.payload;
+      const { token, user_id: userId, user_email: userEmail, isTokenTemporary } = action.payload;
 
       const caveats = macaroon.processCaveats(macaroon.deserialize(token).getCaveats());
 
@@ -19,7 +19,7 @@ const reducer = (state = {}, action) => {
            * The use of a temporary token is a security measure to ensure that users update their passwords before gaining full access to the application.
            * This prevents users from accessing other parts of the application until their password has been successfully changed.
            */
-          [isTemporary ? "temporaryToken" : "token"]: token,
+          [isTokenTemporary ? "temporaryToken" : "token"]: token,
           ...caveats
         }
       };

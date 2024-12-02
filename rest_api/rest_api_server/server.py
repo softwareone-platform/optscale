@@ -537,6 +537,9 @@ def get_handlers(handler_kwargs, version=None):
             (urls_v2.restore_password,
              h_v2.restore_passwords.RestorePasswordAsyncCollectionHandler,
              handler_kwargs),
+            (urls_v2.verify_email,
+             h_v2.verify_emails.VerifyEmailAsyncCollectionHandler,
+             handler_kwargs),
             *profiling_urls,
         ])
     return result

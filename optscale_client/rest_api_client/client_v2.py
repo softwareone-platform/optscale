@@ -2213,3 +2213,11 @@ class Client(Client_v1):
 
     def profiling_token_info_get(self, profiling_token):
         return self.get(self.profiling_token_info_url(profiling_token))
+
+    @staticmethod
+    def verify_email_url():
+        return 'verify_email'
+
+    def verify_email(self, email):
+        url = self.verify_email_url()
+        return self.post(url, {'email': email})

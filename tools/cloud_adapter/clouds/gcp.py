@@ -367,7 +367,8 @@ class GcpVolume(tools.cloud_adapter.model.VolumeResource, GcpResource):
             size=gbs_to_bytes(cloud_volume.size_gb),
             volume_type=type_,
             attached=attached,
-            zone_id=zone_id
+            zone_id=zone_id,
+            snapshot_id=cloud_volume.source_snapshot_id
         )
 
     def _new_labels_request(self, key, value):
@@ -387,6 +388,49 @@ class GcpVolume(tools.cloud_adapter.model.VolumeResource, GcpResource):
             zone=zone,
             resource=self._cloud_object.name,
             zone_set_labels_request_resource=labesl_request,
+            **DEFAULT_KWARGS,
+        )
+
+    def post_discover(self):
+        # Need to explicitly specify which parent's implementation to use
+        return GcpResource.post_discover(self)
+
+
+class GcpImage(tools.cloud_adapter.model.ImageResource, GcpResource):
+    def _get_console_link(self):
+        name = self._cloud_object.name
+        project_id = self._get_project_id()
+        return (
+            f"{BASE_CONSOLE_LINK}/compute/imagesDetail/"
+            f"projects/{project_id}/global/images/{name}"
+        )
+
+    def __init__(self, cloud_image: compute.Image, cloud_adapter):
+        GcpResource.__init__(self, cloud_image, cloud_adapter)
+        super().__init__(
+            **self._common_fields,
+            disk_size=cloud_image.disk_size_gb,
+            cloud_created_at=self._gcp_date_to_timestamp(
+                cloud_image.creation_timestamp),
+            snapshot_id=(cloud_image.source_snapshot_id
+                         if cloud_image.source_snapshot_id else None)
+        )
+
+    def _new_labels_request(self, key, value):
+        labels = self._cloud_object.labels
+        labels[key] = value
+        labels_request = compute.GlobalSetLabelsRequest(
+            label_fingerprint=self._cloud_object.label_fingerprint,
+            labels=labels,
+        )
+        return labels_request
+
+    def _set_tag(self, key, value):
+        labels_request = self._new_labels_request(key, value)
+        self._cloud_adapter.compute_images_client.set_labels(
+            project=self._cloud_adapter.project_id,
+            resource=self._cloud_object.name,
+            global_set_labels_request_resource=labels_request,
             **DEFAULT_KWARGS,
         )
 
@@ -429,11 +473,11 @@ class GcpSnapshot(tools.cloud_adapter.model.SnapshotResource, GcpResource):
         return labesl_request
 
     def _set_tag(self, key, value):
-        labesl_request = self._new_labels_request(key, value)
+        labels_request = self._new_labels_request(key, value)
         self._cloud_adapter.compute_snapshots_client.set_labels(
             project=self._cloud_adapter.project_id,
             resource=self._cloud_object.name,
-            global_set_labels_request_resource=labesl_request,
+            global_set_labels_request_resource=labels_request,
             **DEFAULT_KWARGS,
         )
 
@@ -486,7 +530,8 @@ class GcpAddress(tools.cloud_adapter.model.IpAddressResource, GcpResource):
         available = cloud_address.status == "RESERVED"
         instance_id = None
         if not available:
-            instance_id = cloud_adapter.get_instance_id_for_address(cloud_address)
+            instance_id = cloud_adapter.get_instance_id_for_address(
+                cloud_address)
         super().__init__(
             **self._common_fields,
             available=available,
@@ -496,9 +541,28 @@ class GcpAddress(tools.cloud_adapter.model.IpAddressResource, GcpResource):
     def _get_console_link(self):
         return "https://console.cloud.google.com/networking/addresses/list"
 
+    def _new_labels_request(self, key, value):
+        labels = self._cloud_object.labels
+        labels[key] = value
+        labels_request = compute.RegionSetLabelsRequest(
+            label_fingerprint=self._cloud_object.label_fingerprint,
+            labels=labels,
+        )
+        return labels_request
+
+    def _set_tag(self, key, value):
+        labels_request = self._new_labels_request(key, value)
+        self._cloud_adapter.compute_addresses_client.set_labels(
+            project=self._cloud_adapter.project_id,
+            resource=self._cloud_object.name,
+            region=self._last_path_element(self._cloud_object.region),
+            region_set_labels_request_resource=labels_request,
+            **DEFAULT_KWARGS,
+        )
+
     def post_discover(self):
-        # GCP does not support labels for IP addresses
-        pass
+        # Need to explicitly specify which parent's implementation to use
+        return GcpResource.post_discover(self)
 
 
 class Gcp(CloudBase):
@@ -551,6 +615,7 @@ class Gcp(CloudBase):
             tools.cloud_adapter.model.SnapshotResource: self.snapshot_discovery_calls,
             tools.cloud_adapter.model.IpAddressResource: self.ip_address_discovery_calls,
             tools.cloud_adapter.model.BucketResource: self.bucket_discovery_calls,
+            tools.cloud_adapter.model.ImageResource: self.image_discovery_calls,
         }
 
     @property
@@ -635,6 +700,12 @@ class Gcp(CloudBase):
     @cached_property
     def compute_snapshots_client(self):
         return compute.SnapshotsClient.from_service_account_info(
+            self.credentials,
+        )
+
+    @cached_property
+    def compute_images_client(self):
+        return compute.ImagesClient.from_service_account_info(
             self.credentials,
         )
 
@@ -906,6 +977,20 @@ class Gcp(CloudBase):
 
     def snapshot_discovery_calls(self):
         return [(self.discover_snapshots, ())]
+
+    ######################################################################################
+    # IMAGE DISCOVERY
+    ######################################################################################
+
+    def discover_images(self):
+        for image in self.discover_entities(
+            self.compute_images_client.list,
+            compute.ListImagesRequest
+        ):
+            yield GcpImage(image, self)
+
+    def image_discovery_calls(self):
+        return [(self.discover_images, ())]
 
     ######################################################################################
     # BUCKET DISCOVERY

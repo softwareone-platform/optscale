@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  braces@<3.0.3: '>=3.0.3'
-  ws@>=8.0.0 <8.17.1: '>=8.17.1'
-  micromatch@<4.0.8: '>=4.0.8'
-
 dependencies:
   '@analytics/google-analytics':
     specifier: ^1.0.5

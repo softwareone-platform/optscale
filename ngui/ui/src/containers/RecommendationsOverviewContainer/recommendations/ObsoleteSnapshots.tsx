@@ -1,9 +1,9 @@
 import FormattedMoney from "components/FormattedMoney";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import ObsoleteSnapshotsModal from "components/SideModalManager/SideModals/recommendations/ObsoleteSnapshotsModal";
-import { AWS_EC2, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import { AWS_EC2, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { AWS_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { AWS_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -41,9 +41,9 @@ class ObsoleteSnapshots extends BaseRecommendation {
     return { daysThreshold };
   }
 
-  services = [AWS_EC2, NEBIUS_SERVICE];
+  services = [AWS_EC2, NEBIUS_SERVICE, GCP_COMPUTE_ENGINE];
 
-  appliedDataSources = [AWS_CNR, NEBIUS];
+  appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

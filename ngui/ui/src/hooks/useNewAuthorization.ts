@@ -3,12 +3,14 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getToken, getOrganizations, getInvitations, createOrganization, signIn, createUser, AUTH, RESTAPI } from "api";
 import { GET_TOKEN, SIGN_IN, CREATE_USER } from "api/auth/actionTypes";
-import { GET_ORGANIZATIONS, GET_INVITATIONS, CREATE_ORGANIZATION } from "api/restapi/actionTypes";
+import { API } from "api/reducer";
+import { GET_ORGANIZATIONS, GET_INVITATIONS, CREATE_ORGANIZATION, VERIFY_EMAIL } from "api/restapi/actionTypes";
 import { setScopeId } from "containers/OrganizationSelectorContainer/actionCreators";
 import { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";
-import { ACCEPT_INVITATIONS, HOME } from "urls";
+import VerifyEmailService from "services/VerifyEmailService";
+import { ACCEPT_INVITATIONS, EMAIL_VERIFICATION, HOME } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
-import { checkError } from "utils/api";
+import { checkError, isError } from "utils/api";
 import { isEmpty } from "utils/arrays";
 import { formQueryString, getQueryParams } from "utils/network";
 import { useApiState } from "./useApiState";
@@ -17,6 +19,8 @@ export const PROVIDERS = Object.freeze({
   GOOGLE: "google",
   MICROSOFT: "microsoft"
 });
+
+const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
 // TODO - after Live Demo auth is updated:
 // - remove useAuthorization and rename this one
@@ -35,6 +39,9 @@ export const useNewAuthorization = () => {
   const { isLoading: isCreateOrganizationLoading } = useApiState(CREATE_ORGANIZATION);
   const { isLoading: isCreateUserLoading } = useApiState(CREATE_USER);
   const { isLoading: isSignInLoading } = useApiState(SIGN_IN);
+
+  const { useSendEmailVerificationCode } = VerifyEmailService();
+  const { onSend: sendEmailVerificationCode } = useSendEmailVerificationCode();
 
   const redirectOnSuccess = useCallback(
     (to) => {
@@ -84,6 +91,10 @@ export const useNewAuthorization = () => {
                 ? getOnSuccessRedirectionPath({ userEmail: email })
                 : getQueryParams().next || HOME;
 
+            if (!redirectPath) {
+              return Promise.resolve();
+            }
+
             return redirectOnSuccess(redirectPath);
           })
           .then(() => {
@@ -106,7 +117,31 @@ export const useNewAuthorization = () => {
       setIsAuthInProgress(true);
       dispatch((_, getState) =>
         dispatch(getToken({ email, password }))
-          .then(() => checkError(GET_TOKEN, getState()))
+          .then(() => {
+            const state = getState();
+
+            if (isError(GET_TOKEN, getState())) {
+              const { error_code: errorCode } = state?.[API]?.[GET_TOKEN]?.status?.response?.data?.error ?? {};
+
+              if (errorCode === EMAIL_NOT_VERIFIED_ERROR_CODE) {
+                return sendEmailVerificationCode(email).then(() => {
+                  if (isError(VERIFY_EMAIL, getState())) {
+                    return Promise.reject();
+                  }
+
+                  navigate(
+                    `${EMAIL_VERIFICATION}?${formQueryString({
+                      email
+                    })}`
+                  );
+                  return Promise.reject();
+                });
+              }
+
+              return Promise.reject();
+            }
+            return Promise.resolve();
+          })
           .then(() => dispatch(getInvitations()))
           .then(() => checkError(GET_INVITATIONS, getState()))
           .then(() => getState()?.[RESTAPI]?.[GET_INVITATIONS])
@@ -123,32 +158,39 @@ export const useNewAuthorization = () => {
           })
       );
     },
-    [dispatch, activateScope, navigate]
+    [dispatch, sendEmailVerificationCode, navigate, activateScope]
   );
 
   const register = useCallback(
-    ({ name, email, password }, { getOnSuccessRedirectionPath }) => {
+    ({ name, email, password }) => {
       setIsRegistrationInProgress(true);
       dispatch((_, getState) =>
         dispatch(createUser(name, email, password))
           .then(() => checkError(CREATE_USER, getState()))
-          .then(() => dispatch(getInvitations()))
-          .then(() => checkError(GET_INVITATIONS, getState()))
-          .then(() => getState()?.[RESTAPI]?.[GET_INVITATIONS])
-          .then((pendingInvitations) => {
-            if (isEmpty(pendingInvitations)) {
-              const { userEmail } = getState()?.[AUTH]?.[GET_TOKEN] ?? {};
-              Promise.resolve(activateScope(userEmail, { getOnSuccessRedirectionPath }));
-            } else {
-              navigate(`${ACCEPT_INVITATIONS}?${formQueryString(getQueryParams())}`);
-            }
+          .then(() => {
+            trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: "optscale" });
+            return Promise.resolve();
           })
+          .then(() =>
+            sendEmailVerificationCode(email).then(() => {
+              if (isError(VERIFY_EMAIL, getState())) {
+                return Promise.reject();
+              }
+
+              navigate(
+                `${EMAIL_VERIFICATION}?${formQueryString({
+                  email
+                })}`
+              );
+              return Promise.reject();
+            })
+          )
           .catch(() => {
             setIsRegistrationInProgress(false);
           })
       );
     },
-    [dispatch, activateScope, navigate]
+    [dispatch, navigate, sendEmailVerificationCode]
   );
 
   const thirdPartySignIn = useCallback(

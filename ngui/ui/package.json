@@ -77,13 +77,6 @@
     "vite": "^5.4.6",
     "vite-tsconfig-paths": "^5.0.1"
   },
-  "pnpm": {
-    "overrides": {
-      "braces@<3.0.3": ">=3.0.3",
-      "ws@>=8.0.0 <8.17.1": ">=8.17.1",
-      "micromatch@<4.0.8": ">=4.0.8"
-    }
-  },
   "scripts": {
     "start": "vite",
     "start:ci": "pnpm install --frozen-lockfile --ignore-scripts && pnpm start",

@@ -165,6 +165,8 @@ class GcpReportImporter(BaseReportImporter):
         if cost_type == 'regular':
             if 'Snapshot' in sku:
                 r_type = 'Snapshot'
+            elif 'Image' in sku:
+                r_type = 'Image'
             elif 'PD Capacity' in sku:
                 r_type = 'Volume'
             elif 'Storage' in sku:

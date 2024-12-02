@@ -1526,6 +1526,20 @@ PARAMETER_DUMPS = {
             },
         }
     },
+    'verify_email': {
+        'email': ['serviceuser@hystax.com'],
+        'subject': 'OptScale email verification',
+        'template_type': 'verify_email',
+        'template_params': {
+            'texts': {
+                'code': 263308
+            },
+            'links': {
+                'verify_button': 'https://172.22.20.8/email-verification'
+                                 '?email=serviceuser%40hystax.com&code=263308'
+            }
+        }
+    },
 }
 
 REGEX_EMAIL = '^[a-z0-9!#$%&\'*+/=?`{|}~\^\-\+_()]+(\.[a-z0-9!#$%&\'*+/=' \

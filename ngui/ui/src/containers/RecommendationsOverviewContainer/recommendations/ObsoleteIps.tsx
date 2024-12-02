@@ -3,9 +3,15 @@ import FormattedMoney from "components/FormattedMoney";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import ObsoleteIpsModal from "components/SideModalManager/SideModals/recommendations/ObsoleteIpsModal";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { ALIBABA_ECS_VPC, AWS_EC2_VPC, AZURE_NETWORK, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import {
+  ALIBABA_ECS_VPC,
+  AWS_EC2_VPC,
+  AZURE_NETWORK,
+  GCP_COMPUTE_ENGINE,
+  NEBIUS_SERVICE
+} from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import { EN_FULL_FORMAT, unixTimestampToDateTime } from "utils/datetime";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
@@ -63,9 +69,9 @@ class ObsoleteIps extends BaseRecommendation {
     return { daysThreshold };
   }
 
-  services = [AWS_EC2_VPC, AZURE_NETWORK, ALIBABA_ECS_VPC, NEBIUS_SERVICE];
+  services = [AWS_EC2_VPC, AZURE_NETWORK, ALIBABA_ECS_VPC, NEBIUS_SERVICE, GCP_COMPUTE_ENGINE];
 
-  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS];
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

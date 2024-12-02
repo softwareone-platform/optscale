@@ -566,9 +566,10 @@ class BaseController:
             raise WrongArgumentsException(Err.OE0435, [str(ex)])
         return user
 
-    def create_auth_user(self, email, password, name):
+    def create_auth_user(self, email, password, name, verified=False):
         try:
-            _, user = self.auth_client.user_create(email, password, name)
+            _, user = self.auth_client.user_create(
+                email, password, name, verified=verified)
         except requests.exceptions.HTTPError as ex:
             err_code = ex.response.json()['error']['error_code']
             if err_code == 'OA0042':

@@ -57,10 +57,14 @@ class TokenController(BaseController):
         if password:
             if user.password != hash_password(password, user.salt):
                 raise ForbiddenException(Err.OA0037, [])
+            if not user.verified:
+                raise ForbiddenException(Err.OA0073, [])
         else:
             vc_used = self.use_verification_code(email, verification_code)
             if not vc_used:
                 raise ForbiddenException(Err.OA0071, [])
+            elif not user.verified:
+                user.verified = True
         if not user.is_active:
             raise ForbiddenException(Err.OA0038, [])
         return user
@@ -94,6 +98,8 @@ class TokenController(BaseController):
             raise NotFoundException(Err.OA0043, [user_id])
         if not user.is_active:
             raise ForbiddenException(Err.OA0038, [])
+        if not user.verified:
+            raise ForbiddenException(Err.OA0073, [])
         return self.create_user_token(user, **kwargs)
 
     def create_user_token(self, user, **kwargs):

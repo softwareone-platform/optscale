@@ -202,3 +202,6 @@ class Err(enum.Enum):
     OA0072 = [
         "The verification code can be generated once in a minute"
     ]
+    OA0073 = [
+        "Email not verified"
+    ]

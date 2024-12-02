@@ -63,7 +63,7 @@ import { capitalize } from "./strings";
  * @property {number} endDate - end date timestamp in seconds
  */
 
-const MILLISECONDS_IN_SECOND = 1000;
+export const MILLISECONDS_IN_SECOND = 1000;
 const MILLISECONDS_IN_MINUTE = 60 * MILLISECONDS_IN_SECOND;
 const MILLISECONDS_IN_HOUR = 60 * MILLISECONDS_IN_MINUTE;
 const MILLISECONDS_IN_DAY = 24 * MILLISECONDS_IN_HOUR;

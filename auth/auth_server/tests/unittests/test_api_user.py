@@ -857,3 +857,18 @@ class TestUser(TestAuthBase):
         wl_email = 'user@example.com'
         code, response = self._create_user(email=wl_email)
         self.assertEqual(code, 400)
+
+    def test_create_verified_user(self):
+        secret = self.client.secret
+        self.user_verified_mock.stop()
+        self.client.secret = None
+        code, user = self.client.user_create('test@email.com', 'pass1',
+                                             display_name='test',
+                                             verified=True)
+        self.assertFalse(user['verified'])
+
+        self.client.secret = secret
+        code, user = self.client.user_create('test2@email.com', 'pass1',
+                                             display_name='test',
+                                             verified=True)
+        self.assertTrue(user['verified'])

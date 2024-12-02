@@ -115,6 +115,7 @@ class TestTokenApi(TestAuthBase):
         extract_caveats(token_info['token'])
 
     def test_token_by_verification_code(self):
+        self.user_verified_mock.stop()
         session = self.db_session
         partner_salt = gen_salt()
         partner_password = 'pass1234'
@@ -152,7 +153,9 @@ class TestTokenApi(TestAuthBase):
             code, resp = self.client.post('tokens', body)
             self.assertEqual(code, 403)
             self.assertEqual(resp['error']['error_code'], 'OA0071')
-
+        verified = session.query(User.verified).filter(
+            User.id == partner_user.id).scalar()
+        self.assertFalse(verified)
         body = {
             'verification_code': code_4,
             'email': partner_user.email,
@@ -161,3 +164,6 @@ class TestTokenApi(TestAuthBase):
         self.assertEqual(code, 201)
         self.assertEqual(resp['user_email'], partner_user.email)
         self.assertTrue(vc_4.deleted_at != 0)
+        verified = session.query(User.verified).filter(
+            User.id == partner_user.id).scalar()
+        self.assertTrue(verified)

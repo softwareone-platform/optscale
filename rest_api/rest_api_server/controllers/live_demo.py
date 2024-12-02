@@ -36,6 +36,7 @@ from rest_api.rest_api_server.models.models import (
 from rest_api.rest_api_server.utils import (
     gen_id, encode_config, timestamp_to_day_start)
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
+from optscale_client.auth_client.client_v2 import Client as AuthClient
 
 
 LOG = logging.getLogger(__name__)
@@ -1218,7 +1219,8 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             if not auth_user:
                 email, name, password = self._get_auth_user_params(
                     auth_user_data)
-                auth_user = self.create_auth_user(email, password, name)
+                auth_user = self.create_auth_user(
+                    email, password, name, verified=True)
 
                 employee_user_bindings.append({
                     Employee.id.name: new_employee_id,
@@ -1416,7 +1418,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
                 return live_demo
         org_name, name, email, password = self._get_basic_params()
         LOG.info('%s %s %s %s' % (org_name, name, email, password))
-        auth_user = self.create_auth_user(email, password, name)
+        auth_user = self.create_auth_user(email, password, name, verified=True)
         organization, employee = RegisterController(
             self.session, self._config, self.token).add_organization(
             org_name, auth_user, is_demo=True)

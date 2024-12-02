@@ -628,6 +628,8 @@
   "edit{}": "Edit {value}",
   "eitherMinOrMaxMustBeDefined": "Either minimimum or maximum must be defined",
   "email": "Email",
+  "emailVerificationDescription": "To verify your email, please enter the verification code sent to:",
+  "emailVerifiedSuccessfully": "Email has been verified successfully!",
   "employee": "Employee",
   "enabled": "Enabled",
   "endDate": "End date",

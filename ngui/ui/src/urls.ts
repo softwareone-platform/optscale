@@ -37,6 +37,7 @@ export const INVITED = "/invited";
 export const ACCEPT_INVITATION = "/accept-invitation";
 export const ACCEPT_INVITATIONS = "/accept-invitations";
 export const PASSWORD_RECOVERY = "/password-recovery";
+export const EMAIL_VERIFICATION = "/email-verification";
 
 export const POOL_BASE = "pool";
 export const POOLS_BASE = "pools";
