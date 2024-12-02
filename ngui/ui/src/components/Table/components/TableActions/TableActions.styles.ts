@@ -15,6 +15,28 @@ const useStyles = makeStyles()((theme) => ({
         marginRight: theme.spacing(1)
       }
     },
+    ".MuiOutlinedInput-root": {
+      borderRadius: 0,
+      paddingRight: 0,
+      "> :first-child": {
+        marginLeft: '-10px'
+      },
+      "> :nth-last-child(2)": {
+        marginRight: '-10px'
+      }
+    },
+    ".MuiBadge-root > svg": {
+      fill: 'black'
+    },
+    ".MuiOutlinedInput-notchedOutline": {
+      borderTop: 'none',
+      borderLeft: 'none',
+      borderRight: 'none'
+    },
+    ".MuiInputBase-input": {
+      fontSize: '14px',
+      borderTop: 'none'
+    },
     [theme.breakpoints.down("md")]: {
       paddingBottom: theme.spacing(1)
     }

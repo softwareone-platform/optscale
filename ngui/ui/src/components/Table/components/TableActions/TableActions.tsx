@@ -2,6 +2,7 @@ import { Slider } from "@mui/material";
 import Box from "@mui/material/Box";
 import ActionBar from "components/ActionBar";
 import SearchInput from "components/SearchInput";
+import {KU_SPACING_1, KU_SPACING_2} from "../../../../utils/layouts";
 import ColumnSets from "../ColumnSets";
 import ColumnsSelector from "../ColumnsSelector";
 import useStyles from "./TableActions.styles";
@@ -84,7 +85,9 @@ const TableActions = ({
           marginLeft: showActionBar ? "" : "auto",
           display: "flex",
           flexWrap: withSearch && withColumnSetsSelector && withColumnsSelector ? "wrap" : "nowrap",
-          gap: 1
+          fontSize: KU_SPACING_1,
+          gap: 1,
+          marginBottom: KU_SPACING_2
         }}
       >
         {withSearch && <SearchInput onSearch={onSearchChange} initialSearchText={searchValue} dataTestIds={dataTestIds} />}
