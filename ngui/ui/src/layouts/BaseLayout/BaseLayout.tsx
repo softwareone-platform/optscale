@@ -28,8 +28,10 @@ import { REGISTER } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { BASE_LAYOUT_CONTAINER_ID, LOGO_SIZE } from "utils/constants";
 import useStyles from "./BaseLayout.styles";
+// import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+// import {Icon} from "@mui/material";
 
-const logoHeight = 45;
+const logoHeight = 30;
 
 const getLogoSize = (isDemo, isDownMd, isDownSm) => {
   if (isDemo) {
@@ -52,46 +54,57 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
   };
 
   return (
-    <Toolbar className={classes.toolbar}>
-      {showMainMenu && (
-        <IconButton
-          sx={{ display: { xs: "inherit", md: "none" } }}
-          customClass={classes.marginRight1}
-          icon={<MenuIcon />}
-          color="primary"
-          onClick={onMenuIconClick}
-          aria-label="open drawer"
-        />
-      )}
-      <div style={{ height: logoHeight }} className={classes.logo}>
-        <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight} demo={isDemo} active />
-      </div>
-      {isDemo ? (
-        <Box display="flex" alignItems="center">
-          <Typography data-test-id="p_live_demo_mode" sx={{ display: { xs: "none", md: "inherit" } }} color="primary">
-            <FormattedMessage id="liveDemoMode" />
-          </Typography>
-          <Button
-            customClass={cx(classes.marginLeft1, classes.marginRight1)}
-            disableElevation
-            dataTestId="btn_register"
-            messageId="register"
-            variant="contained"
-            size={isDownSm ? "small" : "medium"}
-            color="success"
-            onClick={onLiveDemoRegisterClick}
+    <header>
+      <Toolbar className={classes.toolbar}>
+        {showMainMenu && (
+          <IconButton
+            sx={{ display: { xs: "inherit", md: "none" } }}
+            customClass={classes.marginRight1}
+            icon={<MenuIcon />}
+            color="primary"
+            onClick={onMenuIconClick}
+            aria-label="open drawer"
           />
-        </Box>
-      ) : null}
-      <Box display="flex" alignItems="center">
-        {showOrganizationSelector && (
-          <Box mr={1}>
-            <OrganizationSelectorContainer mainMenu={mainMenu} />
-          </Box>
         )}
-        <HeaderButtons />
-      </Box>
-    </Toolbar>
+        <div style={{ height: logoHeight }} className={classes.logo}>
+          <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight} demo={isDemo} active />
+
+          <Typography
+            data-test-id="p_live_demo_mode"
+            sx={{ display: { xs: "none", md: "inherit" } }}
+            className={classes.headerTitle}
+          >
+            FinOps for Cloud {/* TODO_KU: add translation */}
+          </Typography>
+        </div>
+        {isDemo ? (
+          <Box display="flex" alignItems="center">
+            <Typography data-test-id="p_live_demo_mode" sx={{ display: { xs: "none", md: "inherit" } }} color="primary">
+              <FormattedMessage id="liveDemoMode" />
+            </Typography>
+            <Button
+              customClass={cx(classes.marginLeft1, classes.marginRight1)}
+              disableElevation
+              dataTestId="btn_register"
+              messageId="register"
+              variant="contained"
+              size={isDownSm ? "small" : "medium"}
+              color="success"
+              onClick={onLiveDemoRegisterClick}
+            />
+          </Box>
+        ) : null}
+        <Box display="flex" alignItems="center">
+          {showOrganizationSelector && (
+            <Box mr={1}>
+              <OrganizationSelectorContainer mainMenu={mainMenu} />
+            </Box>
+          )}
+          <HeaderButtons />
+        </Box>
+      </Toolbar>
+      <div className={classes.headerSpacer} />
+    </header>
   );
 };
 

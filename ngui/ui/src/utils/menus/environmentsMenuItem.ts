@@ -1,4 +1,4 @@
-import ScreenShareOutlinedIcon from "@mui/icons-material/ScreenShareOutlined";
+// import ScreenShareOutlinedIcon from "@mui/icons-material/ScreenShareOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { ENVIRONMENT_CREATE } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";
@@ -14,7 +14,8 @@ class EnvironmentsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.ENVIRONMENTS;
 
-  icon = ScreenShareOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = ScreenShareOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

@@ -1,4 +1,4 @@
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+// import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import users from "utils/routes/usersRoute";
 import BaseMenuItem from "./baseMenuItem";
@@ -12,7 +12,8 @@ class UsersMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.USERS;
 
-  icon = PeopleOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = PeopleOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

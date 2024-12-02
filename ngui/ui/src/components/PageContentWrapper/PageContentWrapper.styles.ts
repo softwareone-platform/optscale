@@ -1,12 +1,11 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
+import { KU_SPACING_3 } from "utils/layouts";
 
-const useStyles = makeStyles()((theme) => ({
+const useStyles = makeStyles()(() => ({
   page: {
-    backgroundColor: theme.palette.background.paper,
-    flexGrow: 1,
-    padding: theme.spacing(SPACING_2),
-    paddingTop: theme.spacing(SPACING_1)
+    padding: KU_SPACING_3,
+    display: "flex",
+    paddingTop: KU_SPACING_3
   }
 }));
 

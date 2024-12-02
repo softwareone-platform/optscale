@@ -297,6 +297,7 @@ const Table = ({
                     {headerGroup.headers.map((header) => (
                       <TableHeaderCell
                         key={header.id}
+                        isSelectionColumn={header.column.id === SELECTION_COLUMN_ID}
                         headerContext={header}
                         stickyStyles={stickyHeaderCellStyles}
                         getHeaderCellClassName={getHeaderCellClassName}
@@ -345,7 +346,7 @@ const Table = ({
                     >
                       {row.getVisibleCells().map((cell) => {
                         if (cell.column.id === SELECTION_COLUMN_ID) {
-                          return <TableBodyCell key={cell.id} cell={cell} />;
+                          return <TableBodyCell className={"tableRowSelection"} key={cell.id} cell={cell} />;
                         }
                         const Cell = memoBodyCells ? MemoTableBodyCell : TableBodyCell;
 

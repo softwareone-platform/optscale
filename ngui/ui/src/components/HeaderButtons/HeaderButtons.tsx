@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import LiveHelpOutlinedIcon from "@mui/icons-material/LiveHelpOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -47,7 +47,7 @@ const HeaderButtons = () => {
       <Box component="div" className={classes.sectionDesktop}>
         <IconButton
           dataTestId="btn_doc"
-          color="primary"
+          color="info"
           href={DOCS_HYSTAX_OPTSCALE}
           icon={<MenuBookOutlinedIcon />}
           tooltip={{
@@ -57,7 +57,7 @@ const HeaderButtons = () => {
         />
         <IconButton
           dataTestId="btn_product_tour"
-          color="primary"
+          color="info"
           icon={<LiveHelpOutlinedIcon />}
           onClick={startProductTour}
           disabled={!isTourAvailableForCurrentBreakpoint}
@@ -66,21 +66,22 @@ const HeaderButtons = () => {
             value: <FormattedMessage id="productTour" />
           }}
         />
-        <IconButton
-          icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}
-          onClick={toggleCommunityDocs}
-          color="primary"
-          tooltip={{
-            show: true,
-            value: <FormattedMessage id="communityDocs" />
-          }}
-        />
+        {/* TODO_KU: disabled because it doesn't not exist in documentation */}
+        {/* <IconButton */}
+        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}
+        {/*  onClick={setIsCommunityDocsOpened} */}
+        {/*  color="info" */}
+        {/*  tooltip={{ */}
+        {/*    show: true, */}
+        {/*    value: <FormattedMessage id="communityDocs" /> */}
+        {/*  }} */}
+        {/* /> */}
         <Popover
           label={
             <IconButton
               dataTestId="btn_profile"
-              icon={<AccountCircleIcon />}
-              color="primary"
+              icon={<AccountCircleOutlined />}
+              color="info"
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="profile" />
@@ -122,7 +123,7 @@ const HeaderButtons = () => {
             <Popover
               label={
                 <IconButton
-                  icon={<AccountCircleIcon />}
+                  icon={<AccountCircleOutlined />}
                   size="medium"
                   color="primary"
                   tooltip={{

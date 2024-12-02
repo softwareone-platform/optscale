@@ -11,7 +11,7 @@ const useStyles = makeStyles()((theme) => {
       flexWrap: "wrap",
       margin: `-${gap} -${halfGap} 0 -${halfGap}`,
       "& > *": {
-        margin: `${gap} ${halfGap} 0 ${halfGap}`
+        margin: `${halfGap}`
       },
       minHeight: "40px"
     },

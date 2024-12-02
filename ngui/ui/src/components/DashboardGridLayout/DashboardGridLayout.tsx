@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import Grid from "@mui/material/Grid";
 import ModeWrapper from "components/ModeWrapper";
 import { OPTSCALE_MODE } from "utils/constants";
-import { getSquareNodesStyle } from "utils/layouts";
+// import { getSquareNodesStyle } from "utils/layouts";
 
 type DashboardGridLayoutProps = {
   topResourcesExpensesCard: ReactNode;
@@ -54,10 +54,12 @@ const DashboardGridLayout = ({
   ].filter(({ node }) => Boolean(node));
 
   return (
-    <Grid container>
-      {squareNodes.map(({ key, node, mode }, i) => (
+    <Grid spacing={3} borderRight={"none"} borderLeft={"none"} container>
+      {squareNodes.map(({ key, node, mode }) => (
         <ModeWrapper mode={mode} key={key}>
-          <Grid item xs={12} lg={6} sx={getSquareNodesStyle(squareNodes.length, i)}>
+          <Grid item xs={12} lg={6}>
+            {" "}
+            {/* TODO_KU disabled sx={getSquareNodesStyle(squareNodes.length, i)} */}
             {node}
           </Grid>
         </ModeWrapper>

@@ -1,11 +1,14 @@
 // Hystax palette: https://cdn.hystax.com/Hystax/Hystax-Guideline-2020.pdf
 // Material design color tool: https://material.io/resources/color/
 
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { common } from "@mui/material/colors";
 import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
+import { BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -22,7 +25,7 @@ const applyPaletteSettings = (settings) => {
 
   const primary = mergeIfSettingIsNotEmpty(
     {
-      main: "#004C74"
+      main: BRAND_PRIMARY
     },
     "primary"
   );
@@ -37,8 +40,8 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#F58535",
-      contrastText: getDarken(info.main, 0.8)
+      main: "#472AFF",
+      contrastText: "white"
     },
     "secondary"
   );
@@ -251,7 +254,7 @@ const getThemeConfig = (settings = {}) => {
 
   return Object.freeze({
     typography: {
-      fontFamily: "'Ubuntu', sans-serif",
+      fontFamily: "'Arial', sans-serif",
       mono: {
         fontFamily: "'Ubuntu Mono', monospace"
       }
@@ -289,6 +292,44 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiSelect: {
+        styleOverrides: {
+          select: {
+            fontSize: "14px",
+            color: "black",
+            paddingLeft: KU_SPACING_2,
+            paddingRight: KU_SPACING_3,
+            paddingTop: "6px",
+            paddingBottom: "6px"
+          },
+
+          root: {
+            "& .MuiSvgIcon-fontSizeSmall": {
+              fontSize: KU_SPACING_2
+            }
+          },
+          iconOutlined: {
+            fontSize: "16px" // Set font size for MuiSelect-iconOutlined
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "white",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "black",
+              color: "black"
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: BRAND_PRIMARY
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: BRAND_PRIMARY
+            }
+          }
+        }
+      },
       MuiAutocomplete: {
         styleOverrides: {
           option: ({ theme }) => ({
@@ -297,8 +338,8 @@ const getThemeConfig = (settings = {}) => {
                 Make option font styles similar to the MuiMenuItem
               */
               ...theme.typography.body2,
-              /* 
-                When options are selected, Autocomplete does not add any Mui classes, 
+              /*
+                When options are selected, Autocomplete does not add any Mui classes,
                 so we need to rely on the aria-selected element property instead.
               */
               "&[aria-selected='true']": {
@@ -356,6 +397,13 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: "16px" // Set your desired border-radius value
+          }
+        }
+      },
       MuiCheckbox: {
         defaultProps: {
           color: "secondary"
@@ -363,12 +411,36 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           colorSecondary: {
             color: secondary.main
+          },
+          root: {
+            "& .MuiTableRowCheckbox-root": {
+              // Only apply to table row checkboxes
+              color: "gray",
+              "&.Mui-checked": {
+                color: "#000000"
+              },
+              "& .MuiSvgIcon-root": {
+                fontSize: "16px"
+              }
+            }
           }
         }
       },
       MuiCssBaseline: {
         styleOverrides: {
-          "#root": { display: "flex", flexDirection: "column", minHeight: "100vh" }
+          "#root": {
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          },
+          ".KuBoxShadowRoot": {
+            "> .MuiBox-root": {
+              boxShadow: KU_BOX_SHADOW,
+              background: "white",
+              padding: KU_SPACING_2,
+              borderRadius: KU_SPACING_1
+            }
+          }
         }
       },
       MuiDialogActions: {
@@ -403,14 +475,26 @@ const getThemeConfig = (settings = {}) => {
           root: {
             marginLeft: 0,
             marginRight: 0,
-            padding: 8,
+            padding: 4,
             "&:hover": {
-              backgroundColor: alpha(ACTION_HOVER, 0.5)
+              backgroundColor: alpha(ACTION_HOVER, 0.5),
+              borderRadius: KU_SPACING_2
+            }
+          },
+          sizeSmall: {
+            padding: "10px", // Adjust padding to control button size
+            "& .MuiSvgIcon-root": {
+              fontSize: "20px"
             }
           }
         }
       },
       MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "black"
+          }
+        },
         defaultProps: {
           size: "small"
         }
@@ -423,11 +507,6 @@ const getThemeConfig = (settings = {}) => {
       MuiLink: {
         defaultProps: {
           underline: "hover"
-        },
-        styleOverrides: {
-          root: {
-            fontWeight: "bold"
-          }
         }
       },
       MuiSwitch: {
@@ -507,21 +586,65 @@ const getThemeConfig = (settings = {}) => {
       MuiTable: {
         defaultProps: {
           size: "small"
+        },
+        styleOverrides: {
+          root: {
+            // Add any additional styles for the table root here
+          }
+        }
+      },
+      MuiTableHead: {
+        styleOverrides: {
+          root: {}
+        }
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            "&.MuiTableCell-head": {
+              borderLeft: `1px solid ${BRAND_GRAY_1}`,
+              borderBottom: "1px solid black"
+            },
+            "& .MuiIconButton-root": {
+              padding: 0
+            },
+            "&.tableRowSelection svg": {
+              fill: "black",
+              width: "19px",
+              height: "19px"
+            }
+          }
         }
       },
       MuiTableSortLabel: {
+        defaultProps: {
+          IconComponent: KeyboardArrowDownOutlinedIcon // Default icon for descending
+        },
         styleOverrides: {
           root: {
-            "&:hover": {
-              color: text.primary,
-              // Apply color only to the sort arrow icon
-              "> svg:last-child": {
-                color: primary.main
-              }
-            },
             "&.Mui-active": {
-              color: primary.main
+              color: "black", // Ensure active label color is black
+              "&[aria-sort='asc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(0deg)", // Rotate icon for ascending
+                content: "''" // Clear any default content
+              },
+              "&[aria-sort='desc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(180deg)", // Rotate icon for descending
+                content: "''" // Clear any default content
+              }
             }
+          }
+        },
+        slotProps: {
+          icon: ({ direction }) => {
+            if (direction === "asc") {
+              return {
+                component: KeyboardArrowUpOutlinedIcon
+              };
+            }
+            return {
+              component: KeyboardArrowDownOutlinedIcon
+            };
           }
         }
       },
@@ -557,6 +680,12 @@ const getThemeConfig = (settings = {}) => {
       MuiTypography: {
         defaultProps: {
           variant: "body2"
+        },
+        styleOverrides: {
+          h6: {
+            color: "black",
+            fontSize: "24px"
+          }
         }
       },
       MuiUseMediaQuery: {

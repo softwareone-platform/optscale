@@ -1,4 +1,4 @@
-import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
+// import DatasetOutlinedIcon from "@mui/icons-material/DatasetOutlined";
 import mlDatasetsRoute from "utils/routes/mlDatasetsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class MlDatasetsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_datasets";
 
-  icon = DatasetOutlinedIcon;
+  // TODO: remove after TDR approval
+  // icon = DatasetOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }
