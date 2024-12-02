@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 import time
+
+import tools.optscale_time as opttime
 from unittest.mock import patch, call, ANY
 from freezegun import freeze_time
 from pymongo import UpdateOne
@@ -88,8 +90,7 @@ class TestConstraints(TestApiBase):
     def get_expenses(self, instances):
         expenses_list = []
         for instance in instances:
-            today = datetime.utcnow().replace(
-                hour=0, minute=0, second=0, microsecond=0)
+            today = opttime.startday(opttime.utcnow())
             for dt, cost in [(today - timedelta(days=14), 2),
                              (today, 3)]:
                 expenses_list.append({
@@ -261,7 +262,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
 
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             code, resp = self.client.process_resource_violations(self.org_id)
             self.assertEqual(code, 204)
@@ -298,7 +299,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         constraints = self.create_resource_constraints(resources)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 2)
@@ -330,7 +331,7 @@ class TestConstraints(TestApiBase):
         constraints = self.create_resource_constraints([resources[0]],
                                                        is_cluster=True)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 2)
@@ -367,7 +368,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         self.create_resource_constraints(resources)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         # send alert to resource owner
@@ -376,7 +377,7 @@ class TestConstraints(TestApiBase):
     def test_pool_constraint(self):
         self.m_recipients.return_value = self.get_auth_users([self.employee])
         # initial
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             resources = self.discover_and_process_violations()
 
@@ -409,7 +410,7 @@ class TestConstraints(TestApiBase):
         self.m_recipients.return_value = self.get_auth_users([self.employee])
         self.create_cluster_type()
         # initial
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             resources = self.discover_and_process_violations()
 
@@ -452,7 +453,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         constraints = self.create_pool_constraints([self.pool_id])
         # constraint hit. Expect alerts for employee and pool owner
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 2)
@@ -473,7 +474,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         constraints = self.create_pool_constraints([self.pool_id], limit=1)
         # pool constraint hit
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 2)
@@ -523,7 +524,7 @@ class TestConstraints(TestApiBase):
         # constraint hit. Expect:
         # - 3 alerts for employee 1 as a resource owner,
         # - 3 alerts for employee 2 as a resource owner,
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 3)
@@ -552,7 +553,7 @@ class TestConstraints(TestApiBase):
             resources, self.org['pool_id'], self.employee_id)
         constraints = self.create_pool_constraints([self.org['pool_id']])
         # constraint hit
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         # pool created + rule deactivated + 1 violated
@@ -609,7 +610,7 @@ class TestConstraints(TestApiBase):
         # constraint hit. Expect:
         # - 4 alerts for employee as resource owner
         # - 4 alerts for employee2 as resource owner
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         # 2 pools created, 1 deactivated rule + 2 violated
@@ -631,7 +632,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         constraints = self.create_resource_constraints(resources, limit=0)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             self.discover_and_process_violations()
         self.assertEqual(self.m_activities.call_count, 1)
@@ -639,7 +640,7 @@ class TestConstraints(TestApiBase):
     def test_pool_constraint_with_zero_limit(self):
         self.m_recipients.return_value = self.get_auth_users([self.employee])
         # initial
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
             resources = self.discover_and_process_violations()
 
@@ -670,7 +671,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         constraints = self.create_resource_constraints(resources)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
 
         self.m_activities.reset_mock()
         with freeze_time(datetime.fromtimestamp(now + REDISCOVER_TIME - 1)):
@@ -690,7 +691,7 @@ class TestConstraints(TestApiBase):
         self.update_expenses(self.get_expenses(resources))
         self.create_resource_constraints(resources)
         # constraint hits
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         call_count = 1
         for constraint_type in ConstraintTypes:
             call_count += 1

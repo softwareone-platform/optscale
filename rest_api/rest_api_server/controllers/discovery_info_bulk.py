@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import tools.optscale_time as opttime
 from tools.optscale_exceptions.common_exc import (
     ConflictException, WrongArgumentsException)
 from rest_api.rest_api_server.controllers.discovery_info import DiscoveryInfoController
@@ -50,7 +50,7 @@ class DiscoveryInfosBulkController(DiscoveryInfoController):
     def delete(self, cloud_account_id, **kwargs):
         self.check_cloud_acc_and_org(cloud_account_id)
         discovery_infos_ids = kwargs['discovery_info']
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         self.session.query(DiscoveryInfo).filter(
             DiscoveryInfo.id.in_(discovery_infos_ids),
             DiscoveryInfo.deleted.is_(False)

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from jira_bus.jira_bus_server.controllers.base import (
     BaseController,
@@ -42,7 +42,8 @@ class UserAssignmentController(BaseController):
             account_id, raise_not_found=False
         )
         if user_assignment:
-            user_assignment.deleted_at = int(datetime.utcnow().timestamp())
+            user_assignment.deleted_at = int(datetime.now(
+                tz=timezone.utc).timestamp())
             self.session.add(user_assignment)
             self.session.commit()
             if user_assignment.auth_user_id is not None:

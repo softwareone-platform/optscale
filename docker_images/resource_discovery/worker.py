@@ -4,7 +4,6 @@ import time
 import traceback
 
 from concurrent.futures.thread import ThreadPoolExecutor
-from datetime import datetime
 from threading import Event, Thread
 import queue
 from kombu.mixins import ConsumerMixin
@@ -19,6 +18,7 @@ from tools.cloud_adapter.exceptions import InvalidResourceTypeException
 from tools.cloud_adapter.model import ResourceTypes, RES_MODEL_MAP
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 
 CHUNK_SIZE = 200
@@ -119,7 +119,7 @@ class ResourcesSaver:
         obj.pop('resource_id', None)
         obj.pop('organization_id', None)
         obj['resource_type'] = getattr(ResourceTypes, resource_type).value
-        obj['last_seen'] = int(datetime.utcnow().timestamp())
+        obj['last_seen'] = utcnow_timestamp()
         obj['active'] = True
         return obj
 
@@ -248,7 +248,7 @@ class DiscoveryWorker(ConsumerMixin):
     def _discover_resources(self, cloud_acc_id, resource_type):
         LOG.info('Starting %s discovery for cloud_account %s',
                  resource_type, cloud_acc_id)
-        start_time = datetime.utcnow()
+        start_time = utcnow()
         if not self.check_discover_enabled(cloud_acc_id, resource_type):
             LOG.info('Discover of cloud account id %s for resource type %s is '
                      'not enabled. Discover will be skipped.', cloud_acc_id,
@@ -308,7 +308,7 @@ class DiscoveryWorker(ConsumerMixin):
             last_discovery_at=int(start_time.timestamp()))
         LOG.info('%s discovery for cloud_account %s completed in %s',
                  resource_type, cloud_acc_id,
-                 (datetime.utcnow() - start_time).total_seconds())
+                 (utcnow() - start_time).total_seconds())
 
     def discover_resources(self, task):
         cloud_acc_id = task.get('cloud_account_id')
@@ -320,7 +320,7 @@ class DiscoveryWorker(ConsumerMixin):
         except Exception as ex:
             self._update_discovery_info(
                 cloud_acc_id, resource_type,
-                last_error_at=int(datetime.utcnow().timestamp()),
+                last_error_at=utcnow_timestamp(),
                 last_error=str(ex)[:255])
             raise
 

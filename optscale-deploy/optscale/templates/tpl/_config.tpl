@@ -219,7 +219,6 @@ etcd:
     aws_secret_access_key: {{ .Values.users_dataset_generator.aws_secret_access_key }}
   service_credentials:
 {{ toYaml .Values.service_credentials | indent 4 }}
-  optscale_meter_enabled: {{ .Values.optscale_meter_enabled }}
 {{ if .Values.fake_cad_config }}
   fake_cad:
     config:
@@ -228,8 +227,10 @@ etcd:
   smtp:
     server: {{ .Values.smtp.server }}
     email: {{ .Values.smtp.email }}
+    login: {{ .Values.smtp.login }}
     port: {{ .Values.smtp.port }}
     password: {{ .Values.smtp.password }}
+    protocol: {{ .Values.smtp.protocol }}
   resource_discovery_settings:
     discover_size: {{ .Values.resource_discovery_settings.discover_size }}
     timeout: {{ .Values.resource_discovery_settings.timeout }}

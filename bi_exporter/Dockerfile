@@ -8,6 +8,7 @@ WORKDIR /usr/src/app/
 
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
+COPY tools/optscale_time tools/optscale_time
 
 COPY bi_exporter/requirements.txt bi_exporter/requirements.txt
 

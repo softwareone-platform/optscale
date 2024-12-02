@@ -4,7 +4,7 @@ import AbandonedNebiusS3BucketsModal from "components/SideModalManager/SideModal
 import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation, text } from "utils/columns";
 import averageDataSize from "utils/columns/averageDataSize";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -97,6 +97,8 @@ class AbandonedNebiusS3Buckets extends BaseRecommendation {
   emptyMessageId = "noAbandonedNebiusS3Buckets";
 
   services = [NEBIUS_SERVICE];
+
+  appliedDataSources = [NEBIUS];
 
   categories = [CATEGORY_COST];
 

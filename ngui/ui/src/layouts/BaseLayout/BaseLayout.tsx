@@ -1,4 +1,4 @@
-import { useState, Children, useContext } from "react";
+import { useState, Children } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -21,7 +21,7 @@ import PendingInvitationsAlert from "components/PendingInvitationsAlert";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import MainLayoutContainer from "containers/MainLayoutContainer";
 import OrganizationSelectorContainer from "containers/OrganizationSelectorContainer";
-import { CommunityDocsContext } from "contexts/CommunityDocsContext";
+import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { REGISTER } from "urls";
@@ -119,7 +119,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
     setMobileOpen(!mobileOpen);
   };
 
-  const { isCommunityDocsOpened } = useContext(CommunityDocsContext);
+  const { isCommunityDocsOpened } = useCommunityDocsContext();
 
   return (
     <>

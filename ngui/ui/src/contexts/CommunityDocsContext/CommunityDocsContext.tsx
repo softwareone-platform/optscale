@@ -2,10 +2,13 @@ import { createContext } from "react";
 
 type CommunityDocsContextType = {
   isCommunityDocsOpened: boolean;
-  setIsCommunityDocsOpened: () => void;
+  toggleCommunityDocs: () => void;
+  openCommunityDocs: () => void;
+  closeCommunityDocs: () => void;
 };
 export default createContext({
   isCommunityDocsOpened: false,
-  setIsCommunityDocsOpened: () => {},
-  closeTips: () => {}
+  toggleCommunityDocs: () => {},
+  openCommunityDocs: () => {},
+  closeCommunityDocs: () => {}
 } as CommunityDocsContextType);

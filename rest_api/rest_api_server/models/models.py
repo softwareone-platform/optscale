@@ -812,7 +812,7 @@ class Condition(Base, CreatedMixin, ImmutableMixin):
     rule_id = Column(Uuid('rule_id'), ForeignKey('rule.id'),
                      nullable=False,
                      info=ColumnPermissions.full)
-    meta_info = Column(BaseString, nullable=False, info=ColumnPermissions.full)
+    meta_info = Column(BaseString, nullable=True, info=ColumnPermissions.full)
 
     def to_dict(self, raw=False):
         cond_dict = super().to_dict()

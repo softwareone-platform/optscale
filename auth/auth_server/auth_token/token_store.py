@@ -1,5 +1,4 @@
 import logging
-import datetime
 from sqlalchemy import and_, or_
 from auth.auth_server.auth_token.macaroon import MacaroonToken
 from auth.auth_server.exceptions import Err
@@ -8,6 +7,7 @@ from auth.auth_server.models.models import (Token, User, Assignment, Role,
 from auth.auth_server.utils import get_context_values, get_digest
 from tools.optscale_exceptions.common_exc import (UnauthorizedException,
                                                   ForbiddenException)
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class TokenStore(object):
 
     def check_token_valid(self, token_str):
         token = self.session.query(Token).filter(
-            Token.valid_until >= datetime.datetime.utcnow(),
+            Token.valid_until >= opttime.utcnow(),
             Token.digest == get_digest(token_str),
         ).all()
         if not token:

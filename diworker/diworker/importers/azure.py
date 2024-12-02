@@ -2,6 +2,8 @@
 import json
 import logging
 from datetime import datetime, timezone, timedelta
+
+import tools.optscale_time as opttime
 from diworker.diworker.utils import retry_backoff
 from tools.cloud_adapter.clouds.azure import (
     AzureConsumptionException, ExpenseImportScheme,
@@ -127,15 +129,20 @@ class AzureReportImporter(BaseReportImporter):
             '%Y-%m-%dT%H:%M:%S.%fZ')
 
     def detect_period_start(self):
-        # When choosing period_start for Azure, prioritize last expense date
-        # over date of the last import run. That is because for Azure the latest
-        # expenses are not available immediately and we need to load these
-        # expenses again on the next run.
-        last_import_at = self.get_last_import_date(self.cloud_acc_id)
-        if last_import_at:
-            self.period_start = last_import_at.replace(
-                hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
-        else:
+        ca_last_import_at = self.cloud_acc.get('last_import_at')
+        if (ca_last_import_at and datetime.utcfromtimestamp(
+                ca_last_import_at).month == datetime.now(
+                    tz=timezone.utc).month):
+            # When choosing period_start for Azure, prioritize last expense
+            # date over date of the last import run. That is because for Azure
+            # the latest expenses are not available immediately and we need to
+            # load these expenses again on the next run.
+            last_exp_date = self.get_last_import_date(self.cloud_acc_id)
+            if last_exp_date:
+                self.period_start = last_exp_date.replace(
+                    hour=0, minute=0, second=0, microsecond=0) - timedelta(
+                    days=1)
+        if not self.period_start:
             super().detect_period_start()
 
     @retry_backoff(AzureConsumptionException,
@@ -149,7 +156,17 @@ class AzureReportImporter(BaseReportImporter):
         elif import_scheme == ExpenseImportScheme.raw_usage.value:
             # TODO: it's better to cache prices somewhere in DB
             LOG.info('Downloading PayAsYouGo prices')
-            prices = self.cloud_adapter.get_public_prices()
+            try:
+                prices = self.cloud_adapter.get_public_prices()
+            except AzureErrorResponseException as exc:
+                code = getattr(exc.error, 'additional_properties', {}).get(
+                    'error', {}).get('code')
+                if code == 'SubscriptionNotFound':
+                    msg = exc.error.additional_properties['error'].get(
+                        'message')
+                    raise AzureResourceNotFoundError(msg)
+                else:
+                    raise exc
             LOG.info('Fetched %s price entries', len(prices))
             self._load_raw_usage_data(prices)
         elif import_scheme == ExpenseImportScheme.partner_raw_usage.value:
@@ -199,7 +216,7 @@ class AzureReportImporter(BaseReportImporter):
         skus_without_prices = set()
         current_day = self.period_start.replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
-        last_day = datetime.utcnow().replace(
+        last_day = opttime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
         while current_day < last_day:
             LOG.info('Processing raw expenses for %s', current_day)
@@ -213,19 +230,9 @@ class AzureReportImporter(BaseReportImporter):
             # collect all usage parts without them being overwritten by each
             # other. Later, on clean expense generation, all entries for one
             # day will be summed together.
-            try:
-                daily_usages = self._get_day_raw_usage(current_day)
-            except AzureErrorResponseException as exc:
-                code = getattr(exc.error, 'additional_properties', {}).get(
-                    'error', {}).get('code')
-                if code == 'SubscriptionNotFound':
-                    msg = exc.error.additional_properties['error'].get(
-                        'message')
-                    raise AzureResourceNotFoundError(msg)
-                else:
-                    raise exc
             record_number = 0
             try:
+                daily_usages = self._get_day_raw_usage(current_day)
                 for usage_obj in daily_usages:
                     usage_dict = usage_obj.as_dict()
                     inst_data = json.loads(usage_dict.get('instance_data', '{}'))
@@ -252,11 +259,17 @@ class AzureReportImporter(BaseReportImporter):
                         self.update_raw_records(chunk)
                         chunk = []
             except AzureErrorResponseException as ex:
+                code = getattr(ex.error, 'additional_properties', {}).get(
+                    'error', {}).get('code')
+                if code == 'SubscriptionNotFound':
+                    msg = ex.error.additional_properties['error'].get(
+                        'message')
+                    raise AzureResourceNotFoundError(msg)
                 error_message = str(ex)
                 if 'Unknown error' in error_message:
-                    LOG.error('No ready reports yet in cloud for %s. Will skip the '
-                              'remaining report import days and try next time'
-                              ' later.', current_day)
+                    LOG.error('No ready reports yet in cloud for %s. Will '
+                              'skip the remaining report import days and try '
+                              'next time later.', current_day)
                     break
                 raise
             current_day += timedelta(days=1)
@@ -422,8 +435,8 @@ class AzureReportImporter(BaseReportImporter):
             tags = self.extract_tags(expenses[-1].get('tags', {}))
             service = expenses[-1].get('consumed_service')
 
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0).replace()
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0).replace()
         for e in expenses:
             start_date = e['start_date']
             if start_date and start_date < first_seen:
@@ -437,7 +450,7 @@ class AzureReportImporter(BaseReportImporter):
             'name': r_name,
             'type': r_type,
             'region': region,
-            'service_name': service,
+            'service_name': service.lower(),
             'tags': tags,
             'first_seen': int(first_seen.timestamp()),
             'last_seen': int(last_seen.timestamp())

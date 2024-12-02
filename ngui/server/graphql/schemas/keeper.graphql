@@ -14,10 +14,17 @@ type Event {
   acknowledged_user: String
 }
 
+enum EventLevel {
+  INFO
+  WARNING
+  ERROR
+  DEBUG
+}
+
 # TODO: circle back on types - required types must be exclamated (see organizationId below and generated resolversTypes)
 input EventsRequestParams {
   limit: Int = 80
-  level: String
+  level: [EventLevel!]
   timeStart: Int
   timeEnd: Int
   lastId: String

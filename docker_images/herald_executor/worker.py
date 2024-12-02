@@ -19,6 +19,7 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from tools.optscale_time import utcnow_timestamp, utcfromtimestamp
 
 LOG = get_logger(__name__)
 
@@ -49,7 +50,8 @@ TASK_QUEUE = Queue(QUEUE_NAME, TASK_EXCHANGE, bindings=[
     binding(TASK_EXCHANGE,
             routing_key='organization.recommendation.saving_spike'),
     binding(TASK_EXCHANGE, routing_key='organization.report_import.passed'),
-    binding(TASK_EXCHANGE, routing_key='insider.error.sslerror')
+    binding(TASK_EXCHANGE, routing_key='insider.error.sslerror'),
+    binding(TASK_EXCHANGE, routing_key='arcee.system.#')
 ])
 
 
@@ -70,6 +72,8 @@ class HeraldTemplates(Enum):
     TAGGING_POLICY = 'organization_policy_tagging'
     REPORT_IMPORT_PASSED = 'report_imports_passed_for_org'
     INSIDER_SSLERROR = 'insider_prices_sslerror'
+    FIRST_TASK_CREATED = 'first_task_created'
+    FIRST_RUN_STARTED = 'first_run_started'
 
 
 class HeraldExecutorWorker(ConsumerMixin):
@@ -178,7 +182,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             return
         env_properties = OrderedDict(resource.get('env_properties', {}))
         resource_id = resource.get('_id') or resource.get('id')
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = utcnow_timestamp()
         _, shareable_bookings = self.rest_cl.shareable_book_list(
             organization_id, 0,
             int(datetime.max.replace(tzinfo=timezone.utc).timestamp()))
@@ -229,9 +233,9 @@ class HeraldExecutorWorker(ConsumerMixin):
             released_at = booking['released_at']
             acquired_by_id = booking.get('acquired_by_id')
             utc_acquired_since = int(
-                datetime.utcfromtimestamp(acquired_since).timestamp())
+                utcfromtimestamp(acquired_since).timestamp())
             utc_released_at = int(
-                datetime.utcfromtimestamp(released_at).timestamp())
+                utcfromtimestamp(released_at).timestamp())
             user_name = employee_id_map.get(acquired_by_id, {}).get('name')
             if not user_name:
                 LOG.error('Could not detect employee name for booking %s',
@@ -477,14 +481,14 @@ class HeraldExecutorWorker(ConsumerMixin):
                 if val is None:
                     v[i] = get_nil_uuid()
             link_filters[f] = v
-        created = datetime.utcfromtimestamp(created_at)
+        created = utcfromtimestamp(created_at)
         if constraint['type'] in ['expense_anomaly', 'resource_count_anomaly']:
             start_date = datetime.combine(created, created.time().min) - timedelta(
                 days=constraint['definition']['threshold_days'])
             end_date = datetime.combine(created, created.time().max) + timedelta(
                 days=1)
         elif constraint['type'] == 'expiring_budget':
-            start_date = datetime.utcfromtimestamp(
+            start_date = utcfromtimestamp(
                 constraint['definition']['start_date'])
             end_date = None
         elif constraint['type'] == 'recurring_budget':
@@ -599,7 +603,7 @@ class HeraldExecutorWorker(ConsumerMixin):
                 'error code: %s' % (constraint_id, code))
         latest_hit = max(hits['organization_limit_hits'],
                          key=lambda x: x['created_at'])
-        hit_date = datetime.utcfromtimestamp(
+        hit_date = utcfromtimestamp(
             latest_hit['created_at']).strftime('%m/%d/%Y %I:%M %p UTC')
         if constraint['type'] not in CONSTRAINT_TYPES:
             raise Exception('Unknown organization constraint '
@@ -609,7 +613,7 @@ class HeraldExecutorWorker(ConsumerMixin):
         link = self._get_org_constraint_link(
             constraint, latest_hit['created_at'], c_filters)
         if constraint['type'] in ['expiring_budget', 'tagging_policy']:
-            constraint_data['definition']['start_date'] = datetime.utcfromtimestamp(
+            constraint_data['definition']['start_date'] = utcfromtimestamp(
                 int(constraint_data['definition']['start_date'])).strftime(
                 '%m/%d/%Y %I:%M %p UTC')
         managers = self.get_owner_manager_infos(organization_id)
@@ -693,21 +697,73 @@ class HeraldExecutorWorker(ConsumerMixin):
             template_params=template_params)
 
     def execute_insider_prices(self):
+        self._send_service_email('Insider faced Azure SSLError',
+                                 HeraldTemplates.INSIDER_SSLERROR.value, {})
+
+    def _send_service_email(self, title, template_type, template_params):
         email = self._get_service_emails()
         if email:
             public_ip = self.config_cl.public_ip()
-            title = 'Insider faced Azure SSLError'
             subject = f'[{public_ip}] {title}'
             self.herald_cl.email_send(
-                [email], subject,
-                template_type=HeraldTemplates.INSIDER_SSLERROR.value
+                [email], subject, template_type=template_type,
+                template_params=template_params
             )
+
+    def _get_organization_info_by_token(self, profiling_token):
+        _, data = self.rest_cl.profiling_token_info_get(profiling_token)
+        _, org = self.rest_cl.organization_get(data['organization_id'])
+        return org['id'], org['name']
+
+    def execute_first_task_created(self, task_id, task_name, profiling_token):
+        LOG.info('SEND SERVICE EMAIL: execute_first_task_created: %s, %s' % (
+            task_id, task_name))
+        title = 'OptScale first task created notification'
+        template_type = HeraldTemplates.FIRST_TASK_CREATED.value
+        org_id, org_name = self._get_organization_info_by_token(profiling_token)
+        template_params = {
+            'texts': {
+                "organization": {
+                    "id": org_id,
+                    "name": org_name
+                },
+                "task": {
+                    "id": task_id,
+                    "name": task_name
+                }
+            }
+        }
+        self._send_service_email(title, template_type, template_params)
+
+    def execute_first_run_started(self, run_id, run_name, profiling_token,
+                                  meta):
+        LOG.info('SEND SERVICE EMAIL: execute_first_run_started: %s, %s' % (
+            run_id, run_name))
+        title = 'OptScale first run started notification'
+        template_type = HeraldTemplates.FIRST_RUN_STARTED.value
+        org_id, org_name = self._get_organization_info_by_token(profiling_token)
+        template_params = {
+            'texts': {
+                "organization": {
+                    "id": org_id,
+                    "name": org_name
+                },
+                "task": meta.get("task", {}),
+                "run": {
+                    "id": run_id,
+                    "name": run_name
+                }
+            }
+        }
+        self._send_service_email(title, template_type, template_params)
 
     def execute(self, task):
         organization_id = task.get('organization_id')
         action = task.get('action')
         object_id = task.get('object_id')
         object_type = task.get('object_type')
+        object_name = task.get('object_name')
+        profiling_token = task.get('profiling_token')
         meta = task.get('meta')
         task_params = [
             object_id, organization_id
@@ -723,7 +779,9 @@ class HeraldExecutorWorker(ConsumerMixin):
             'new_security_recommendation': [organization_id, meta],
             'saving_spike': [object_id, meta],
             'report_import_passed': [object_id],
-            'insider_prices_sslerror': []
+            'insider_prices_sslerror': [],
+            'first_task_created': [object_id, object_name, profiling_token],
+            'first_run_started': [object_id, object_name, profiling_token, meta]
         }
         if action_param_required.get(action) is None or any(
                 map(lambda x: x is None, action_param_required.get(action))):
@@ -742,7 +800,9 @@ class HeraldExecutorWorker(ConsumerMixin):
                 self.execute_new_security_recommendation,
             'saving_spike': self.execute_saving_spike,
             'report_import_passed': self.execute_report_imports_passed_for_org,
-            'insider_prices_sslerror': self.execute_insider_prices
+            'insider_prices_sslerror': self.execute_insider_prices,
+            'first_task_created': self.execute_first_task_created,
+            'first_run_started': self.execute_first_run_started
         }
         LOG.info('Started processing for object %s task type for %s '
                  'for organization %s' % (object_id, action, organization_id))

@@ -15,8 +15,8 @@ LOG = logging.getLogger(__name__)
 
 
 class EventBaseController(BaseController):
-    def __init__(self, mongo_client, config, rabbit_client):
-        super().__init__(mongo_client, config, rabbit_client)
+    def __init__(self, mongo_client, config):
+        super().__init__(mongo_client, config)
 
     def get_poll_resources(self, token):
         return self.get_resources(token, "POLL_EVENT")
@@ -84,7 +84,7 @@ class EventBaseController(BaseController):
 
     def get_meta_by_token(self, token):
         user_digest = list(
-            map(lambda x: hashlib.md5(x.encode("utf-8")).hexdigest(), [token])
+            map(lambda x: hashlib.md5(x.encode("utf-8"), usedforsecurity=False).hexdigest(), [token])
         )[0]
         token_meta = self.get_token_meta([user_digest]).get(user_digest, {})
         return token_meta

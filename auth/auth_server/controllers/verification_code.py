@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from sqlalchemy import and_, exists
 from sqlalchemy.exc import IntegrityError
 from auth.auth_server.controllers.base import BaseController
@@ -10,6 +10,7 @@ from auth.auth_server.models.models import User
 from auth.auth_server.utils import get_digest
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   ForbiddenException)
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 VERIFICATION_CODE_LIFETIME_HRS = 1
@@ -43,7 +44,7 @@ class VerificationCodeController(BaseController):
 
     def _check_generation_timeout(self, email):
         model = self._get_model_type()
-        timeout = datetime.utcnow() - timedelta(
+        timeout = utcnow() - timedelta(
             minutes=GENERATION_THRESHOLD_MIN)
         code_exists = self.session.query(exists().where(and_(
             model.email == email,
@@ -69,7 +70,7 @@ class VerificationCodeController(BaseController):
     def create_verification_code(self, email, code):
         model_type = self._get_model_type()
         LOG.info("Creating %s for %s", model_type.__name__, email)
-        now = datetime.utcnow()
+        now = utcnow()
         now_ts = int(now.timestamp())
         params = {
             'email': email,

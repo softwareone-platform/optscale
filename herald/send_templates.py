@@ -1022,7 +1022,7 @@ PARAMETER_DUMPS = {
             }}},
     'first_shareable_resources': {
         "email": ["azaza@ma.il"],
-        "subject": "OptScale shareable environments notification",
+        "subject": "OptScale shared environments notification",
         "template_type": "first_shareable_resources",
         "template_params": {
             "texts": {
@@ -1476,7 +1476,7 @@ PARAMETER_DUMPS = {
                 }}}},
     'restore_password': {
         'email': ['serviceuser@hystax.com'],
-        'subject': 'Optscale password recovery',
+        'subject': 'OptScale password recovery',
         'template_type': 'restore_password',
         'template_params': {
             'texts': {
@@ -1487,7 +1487,59 @@ PARAMETER_DUMPS = {
                                   '?email=serviceuser%40hystax.com&code=263308'
             }
         }
-    }
+    },
+    'first_task_created': {
+        "email": ["azaza@ma.il"],
+        "subject": "OptScale task created notification",
+        "template_type": "first_task_created",
+        "template_params": {
+            "texts": {
+                "organization": {
+                    "id": "5d3d4501-0de8-40dc-a9ed-df2fb1396141",
+                    "name": "am2"
+                },
+                "task": {
+                    "id": "d7092814-2b12-4e60-89c5-67919c9b17d6",
+                    "name": "my task"
+                }
+            },
+        }
+    },
+    'first_run_started': {
+        "email": ["azaza@ma.il"],
+        "subject": "OptScale run started notification",
+        "template_type": "first_run_started",
+        "template_params": {
+            "texts": {
+                "organization": {
+                    "id": "5d3d4501-0de8-40dc-a9ed-df2fb1396141",
+                    "name": "am2"
+                },
+                "task": {
+                    "id": "d7092814-2b12-4e60-89c5-67919c9b17d6",
+                    "name": "my task"
+                },
+                "run": {
+                    "id": "6946211f-47ff-43a3-a9a3-3e5f57d52415",
+                    "name": "test run"
+                }
+            },
+        }
+    },
+    'verify_email': {
+        'email': ['serviceuser@hystax.com'],
+        'subject': 'OptScale email verification',
+        'template_type': 'verify_email',
+        'template_params': {
+            'texts': {
+                'code': 263308
+            },
+            'links': {
+                'verify_button': 'https://172.22.20.8/email-verification'
+                                 '?email=serviceuser%40hystax.com&code=263308'
+            }
+        }
+    },
 }
 
 REGEX_EMAIL = '^[a-z0-9!#$%&\'*+/=?`{|}~\^\-\+_()]+(\.[a-z0-9!#$%&\'*+/=' \

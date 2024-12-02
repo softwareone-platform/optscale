@@ -3,6 +3,7 @@ from freezegun import freeze_time
 from auth.auth_server.tests.unittests.test_api_base import TestAuthBase
 from auth.auth_server.models.models import Type, VerificationCode
 from auth.auth_server.utils import get_digest
+from tools.optscale_time import utcnow
 
 
 class TestVerificationCodeApi(TestAuthBase):
@@ -51,7 +52,7 @@ class TestVerificationCodeApi(TestAuthBase):
 
     def test_invalidation(self):
         code_1 = 1
-        dt = datetime.utcnow()
+        dt = utcnow()
         with freeze_time(dt):
             _, verification_code_1 = self.client.verification_code_create(
                 self.admin_user.email, code_1)
@@ -94,7 +95,7 @@ class TestVerificationCodeApi(TestAuthBase):
             self.assertEqual(resp['error']['params'], [field])
 
     def test_generation_time_threshold(self):
-        dt = datetime.utcnow()
+        dt = utcnow()
         with freeze_time(dt):
             code, _ = self.client.verification_code_create(
                 self.admin_user.email, 1)

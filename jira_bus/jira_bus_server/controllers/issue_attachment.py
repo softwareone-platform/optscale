@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from jira_bus.jira_bus_server.controllers.base import (
     BaseController,
@@ -16,7 +16,7 @@ class IssueAttachmentController(BaseController):
     def _find_existing_booking(
         self, rest_client, employee_id, resource_id, raise_not_found=True
     ):
-        now_timestamp = int(datetime.utcnow().timestamp())
+        now_timestamp = int(datetime.now(tz=timezone.utc).timestamp())
         _, resource_info = rest_client.cloud_resource_get(resource_id, details=True)
         for booking in resource_info["details"]["shareable_bookings"]:
             employee_match = booking["acquired_by"]["id"] == employee_id

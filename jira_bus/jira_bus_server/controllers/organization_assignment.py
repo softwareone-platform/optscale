@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from jira_bus.jira_bus_server.controllers.base import (
     BaseController,
@@ -42,7 +42,8 @@ class OrganizationAssignmentController(BaseController):
             client_key, raise_not_found=False
         )
         if org_assignment:
-            org_assignment.deleted_at = int(datetime.utcnow().timestamp())
+            org_assignment.deleted_at = int(datetime.now(
+                tz=timezone.utc).timestamp())
             self.session.add(org_assignment)
             self.session.commit()
 

@@ -3,6 +3,7 @@ import csv
 import logging
 from collections import defaultdict
 from datetime import datetime, timezone
+import tools.optscale_time as opttime
 
 from diworker.diworker.importers.base import CSVBaseReportImporter
 
@@ -93,7 +94,7 @@ class NebiusReportImporter(CSVBaseReportImporter):
 
     def load_csv_report(self, report_path, account_id_ca_id_map,
                         billing_period, skipped_accounts):
-        date_start = datetime.utcnow()
+        date_start = opttime.utcnow()
         with open(report_path, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             chunk = []
@@ -106,7 +107,7 @@ class NebiusReportImporter(CSVBaseReportImporter):
                 if len(chunk) == CHUNK_SIZE:
                     self.update_raw_records(chunk)
                     chunk = []
-                    now = datetime.utcnow()
+                    now = opttime.utcnow()
                     if (now - date_start).total_seconds() > 60:
                         LOG.info('report %s: processed %s rows',
                                  report_path, record_number)
@@ -189,8 +190,8 @@ class NebiusReportImporter(CSVBaseReportImporter):
             return sku_name
 
     def get_resource_info_from_expenses(self, expenses):
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0).replace()
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0).replace()
         tags = {}
         for e in expenses:
             start_date = e['start_date']

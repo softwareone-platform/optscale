@@ -17,6 +17,7 @@ import urllib3
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow
 
 
 LOG = get_logger(__name__)
@@ -395,7 +396,7 @@ class OrganizationViolationsWorker(ConsumerMixin):
                                notifications, execution_start_ts):
         c_id = constraint['id']
         start_date = constraint['definition']['start_date']
-        if datetime.fromtimestamp(start_date) > datetime.utcnow():
+        if datetime.fromtimestamp(start_date) > utcnow():
             LOG.info(f'Constraint {c_id} is skipped due to start_date')
             return []
         today_date = datetime.fromtimestamp(execution_start_ts)
@@ -501,7 +502,7 @@ class OrganizationViolationsWorker(ConsumerMixin):
             pass
 
     def process_organization_constraints(self, task):
-        start = datetime.utcnow()
+        start = utcnow()
         start_ts = int(start.timestamp())
         org_id = task.get('organization_id')
         date_ts = task.get('date')
@@ -536,7 +537,7 @@ class OrganizationViolationsWorker(ConsumerMixin):
         self.publish_activities_tasks(notif_tasks)
         LOG.info('Organization violation process for organization %s completed'
                  ' in %s seconds' %
-                 (org_id, int(datetime.utcnow().timestamp()) - start_ts))
+                 (org_id, int(utcnow().timestamp()) - start_ts))
 
     def process_task(self, body, message):
         try:

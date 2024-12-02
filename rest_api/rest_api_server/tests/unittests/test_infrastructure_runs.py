@@ -4,6 +4,7 @@ from datetime import datetime
 
 from rest_api.rest_api_server.tests.unittests.test_infrastructure_base import (
     TestInfrastructureBase)
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestRunsApi(TestInfrastructureBase):
@@ -21,7 +22,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self._create_run(
             self.organization_id, self.task_id, self.runset_id,
             [self.instance_id], start=now - 60, finish=now - 10)
@@ -46,7 +47,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self._create_run(
             self.organization_id, self.task_id, self.runset_id,
             [self.instance_id], start=now - 60, finish=now - 10)
@@ -59,7 +60,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self._create_run(
             self.organization_id, self.task_id, self.runset_id,
             [self.instance_id], 's3://ml-bucket/dataset',
@@ -74,7 +75,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self._create_run(
             self.organization_id, self.task_id, self.runset_id,
             [self.instance_id], 's3://ml-bucket/dataset',
@@ -99,7 +100,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self._create_run(
             self.organization_id, self.task_id, self.runset_id,
             [self.instance_id], start=now - 60, finish=now - 10)
@@ -112,7 +113,7 @@ class TestRunsApi(TestInfrastructureBase):
         code, _ = self.client.runset_list(
             self.organization_id, self.template_id)
         self.assertEqual(code, 200)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         run_start = now - 60
         run_end = now - 10
         self._create_run(

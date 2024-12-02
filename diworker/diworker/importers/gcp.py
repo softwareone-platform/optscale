@@ -1,8 +1,9 @@
 from collections import defaultdict
 import hashlib
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from diworker.diworker.importers.base import BaseReportImporter
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 WRITE_CHUNK_SIZE = 200
@@ -15,11 +16,19 @@ OPTSCALE_RESOURCE_ID_TAG = 'optscale_tracking_id'
 class GcpReportImporter(BaseReportImporter):
 
     def detect_period_start(self):
-        last_import_at = self.get_last_import_date(self.cloud_acc_id)
-        if last_import_at:
-            self.period_start = last_import_at.replace(
-                hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
-        else:
+        ca_last_import_at = self.cloud_acc.get('last_import_at')
+        if (ca_last_import_at and opttime.utcfromtimestamp(
+                ca_last_import_at).month == opttime.utcnow().month):
+            # When choosing period_start for GCP, prioritize last expense
+            # date over date of the last import run. That is because for GCP
+            # the latest expenses are not available immediately and we need to
+            # load these expenses again on the next run.
+            last_exp_date = self.get_last_import_date(self.cloud_acc_id)
+            if last_exp_date:
+                self.period_start = last_exp_date.replace(
+                    hour=0, minute=0, second=0, microsecond=0) - timedelta(
+                    days=1)
+        if not self.period_start:
             super().detect_period_start()
 
     def get_unique_field_list(self):
@@ -60,7 +69,7 @@ class GcpReportImporter(BaseReportImporter):
 
     @staticmethod
     def _generate_tags_hash(tags: dict[str: str]) -> str:
-        return hashlib.sha1(repr(sorted(tags.items())).encode()).hexdigest()
+        return hashlib.sha1(repr(sorted(tags.items())).encode(), usedforsecurity=False).hexdigest()
 
     @staticmethod
     def _generate_resource_id(row_dict):
@@ -128,7 +137,7 @@ class GcpReportImporter(BaseReportImporter):
     def load_raw_data(self):
         current_day = self.period_start.replace(
             hour=0, minute=0, second=0, microsecond=0)
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         while current_day <= now:
             chunk = []
             end_date = current_day + timedelta(days=1)
@@ -156,6 +165,8 @@ class GcpReportImporter(BaseReportImporter):
         if cost_type == 'regular':
             if 'Snapshot' in sku:
                 r_type = 'Snapshot'
+            elif 'Image' in sku:
+                r_type = 'Image'
             elif 'PD Capacity' in sku:
                 r_type = 'Volume'
             elif 'Storage' in sku:
@@ -191,8 +202,8 @@ class GcpReportImporter(BaseReportImporter):
             expenses[-1])
         service = expenses[-1].get('service')
         region = self.cloud_adapter.fix_region(expenses[-1].get('region'))
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0).replace()
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0).replace()
         tags = {}
         system_tags = {}
         for e in expenses:

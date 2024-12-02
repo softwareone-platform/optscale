@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from requests.exceptions import HTTPError
 
 from bumiworker.bumiworker.modules.reserved_instances_base import ReservedInstancesBase
 
@@ -128,11 +129,16 @@ class ReservedInstances(ReservedInstancesBase):
     def get_current_flavor_hourly_price(self, flavor_key):
         price = 0
         params = self._flavor_key_to_insider_params(flavor_key)
-        _, resp = self.insider_cl.get_flavor_prices(**params)
-        prices = resp.get('prices', [])
-        # only the hourly price is supported now for AWS
-        if prices and prices[0]['price_unit'] == '1 hour':
-            price = prices[0]['price']
+        try:
+            _, resp = self.insider_cl.get_flavor_prices(**params)
+            prices = resp.get('prices', [])
+            # only the hourly price is supported now for AWS
+            if prices and prices[0]['price_unit'] == '1 hour':
+                price = prices[0]['price']
+        except HTTPError as exc:
+            region = params.get('region')
+            if f'Region {region} is not available' in str(exc):
+                LOG.warning(str(exc))
         return price
 
     def format_result(self, saving1, saving2, raw_info, instance, excluded_pools):

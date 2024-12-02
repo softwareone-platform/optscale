@@ -2,9 +2,9 @@ import logging
 
 from collections import defaultdict, OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
-from datetime import datetime, timedelta
+from datetime import timedelta
 from requests import HTTPError
-
+from tools.optscale_time import utcnow
 from optscale_client.insider_client.client import Client as InsiderClient
 
 from bumiworker.bumiworker.modules.base import ModuleBase
@@ -180,7 +180,7 @@ class InstanceSubscription(ModuleBase):
         cloud_account_map = self.get_cloud_accounts(
             SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         cloud_account_ids = list(cloud_account_map.keys())
-        now = datetime.utcnow()
+        now = utcnow()
         range_start_ts = int(
             (now - timedelta(days=days_threshold)).timestamp())
         cloud_acc_instance_map = self.get_cloud_acc_instances_map(

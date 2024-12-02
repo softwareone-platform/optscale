@@ -9,6 +9,7 @@ from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import Employee, OrganizationLimitHit
 from sqlalchemy import and_
 from tools.optscale_exceptions.http_exc import OptHTTPError
+import tools.optscale_time as opttime
 
 
 class TestEmployeeApi(TestProfilingBase):
@@ -220,7 +221,7 @@ class TestEmployeeApi(TestProfilingBase):
         session = BaseDB.session(engine)()
         session.query(Employee).filter(
             Employee.id == deleted_emp['id']).update({
-                'deleted_at': int(datetime.utcnow().timestamp())})
+                'deleted_at': opttime.utcnow_timestamp()})
         session.commit()
 
         invalid_owners = ['123', emp['id'], deleted_emp['id']]
@@ -477,7 +478,7 @@ class TestEmployeeApi(TestProfilingBase):
             'cost': 11,
             'cloud_account_id': cloud_acc['id'],
             'resource_id': resource['id'],
-            'date': datetime.utcnow() - timedelta(days=10),
+            'date': opttime.utcnow() - timedelta(days=10),
             'sign': 1
         })
         p_assignment_list.return_value = (200, [])

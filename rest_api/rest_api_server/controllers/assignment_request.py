@@ -1,5 +1,6 @@
 import logging
 
+import tools.optscale_time as opttime
 from datetime import datetime
 
 from sqlalchemy.sql import and_, or_
@@ -120,7 +121,7 @@ class AssignmentRequestController(BaseController):
 
     def _finish_request(self, request, target_request_status):
         self.update(request.id, status=target_request_status,
-                    deleted_at=int(datetime.utcnow().timestamp()))
+                    deleted_at=opttime.utcnow_timestamp())
 
     def list_assignment_requests(self, user_id, organization_id=None,
                                  req_type=None):

@@ -1,5 +1,5 @@
-from datetime import datetime
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP as CURRENCY_MAP
+from tools.optscale_time import utcnow
 
 __all__ = ['get_alert_message', 'get_alert_added_message',
            'get_alert_removed_message', 'get_join_channel_message',
@@ -19,7 +19,7 @@ def get_alert_message(pool_name, organization_name, organization_id,
         exceed_str = f'*{c_sign}{threshold}* threshold'
     else:
         exceed_str = f'*{threshold}%*'
-    now = datetime.utcnow()
+    now = utcnow()
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     today_end = now.replace(hour=23, minute=59, second=59)
     start_ts = int(month_start.timestamp())
@@ -189,8 +189,11 @@ def get_alert_section(public_ip, pool_id, organization_id, pool_name,
                       include_children, currency='USD'):
     c_sign = CURRENCY_MAP.get(currency, '')
     threshold_type_str = 'Expenses' if based == 'cost' else 'Forecast'
+    threshold = str(threshold)
     if threshold_type == 'absolute':
         exceed_str = f'*{c_sign}{threshold}*'
+    elif threshold.endswith('%'):
+        exceed_str = f'*{threshold}*'
     else:
         exceed_str = f'*{threshold}%*'
     with_subs = ' (with subs)' if include_children else ''

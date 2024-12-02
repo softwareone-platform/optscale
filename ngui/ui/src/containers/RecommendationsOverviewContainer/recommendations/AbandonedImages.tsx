@@ -3,7 +3,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import AbandonedImagesModal from "components/SideModalManager/SideModals/recommendations/AbandonedImagesModal";
 import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -44,6 +44,8 @@ class AbandonedImages extends BaseRecommendation {
   emptyMessageId = "noAbandonedImages";
 
   services = [NEBIUS_SERVICE];
+
+  appliedDataSources = [NEBIUS];
 
   categories = [CATEGORY_COST];
 

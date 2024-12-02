@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from bumiworker.bumiworker.modules.base import (
     ArchiveBase, ArchiveReason, ModuleBase, DAYS_IN_MONTH
 )
+from tools.optscale_time import utcnow, startday
 
 
 class AbandonedBase(ModuleBase):
@@ -26,10 +27,8 @@ class AbandonedBase(ModuleBase):
         return resources_by_account_map
 
     def get_avg_daily_expenses(self, resource_ids, start_date):
-        today = datetime.utcnow().replace(
-            hour=0, minute=0, second=0, microsecond=0)
-        start_date = start_date.replace(
-            hour=0, minute=0, second=0, microsecond=0)
+        today = startday(utcnow())
+        start_date = startday(start_date)
         external_table = [{'id': r_id} for r_id in resource_ids]
         query = """
                     SELECT resource_id, sum(cost * sign), min(date)
@@ -103,7 +102,7 @@ class S3AbandonedBucketsBase(AbandonedBase):
         return self.get_options().get('excluded_pools')
 
     def _get(self):
-        now = datetime.utcnow()
+        now = utcnow()
         start_date = now - timedelta(days=self.days_threshold)
 
         cloud_accounts = self.get_cloud_accounts(self.SUPPORTED_CLOUD_TYPES,

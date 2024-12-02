@@ -6,6 +6,7 @@ from rest_api.rest_api_server.models.models import Checklist
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.db_base import BaseDB
+from tools.optscale_time import utcnow_timestamp
 
 
 GET_OPTIMIZATIONS_DATA = ('rest_api.rest_api_server.controllers.optimization.'
@@ -86,7 +87,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         p_get_optimizations_data.return_value = [
             {
@@ -127,7 +128,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         p_get_optimizations_data.return_value = [
             {
@@ -164,7 +165,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         p_get_optimizations_data.return_value = [
             {
@@ -201,7 +202,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance['is_dismissed'] = True
         p_get_optimizations_data.return_value = [
@@ -235,7 +236,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         options = {'key': 'value'}
         p_get_optimizations_data.return_value = [
@@ -268,7 +269,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance['is_dismissed'] = True
         p_get_optimizations_data.return_value = [
@@ -307,7 +308,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance.pop('saving')
         p_get_optimizations_data.return_value = [
@@ -337,7 +338,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         error_message = 'Failed to collect optimization data'
         options = {'key': 'value'}
@@ -383,7 +384,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         error_message = 'Failed to collect optimization data'
         p_get_optimizations_data.return_value = [
@@ -428,7 +429,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         error_message = 'Failed to collect optimization data'
         p_get_optimizations_data.return_value = [
@@ -459,7 +460,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module1 = 'module1'
         module2 = 'module2'
         p_get_optimizations_data.return_value = [
@@ -537,7 +538,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance['is_dismissed'] = True
         p_get_optimizations_data.return_value = [
@@ -614,7 +615,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         opt_data = [self.instance, self.instance2]
         module_saving = self.instance['saving'] + self.instance2['saving']
@@ -646,7 +647,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         opt_data = []
         options = {'key': 'value'}
@@ -676,7 +677,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance.pop('saving')
         self.instance2.pop('saving')
@@ -708,7 +709,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module1 = 'module1'
         module2 = 'module2'
         options1 = {'key1': 'value1'}
@@ -757,7 +758,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module = 'module'
         self.instance.pop('saving')
         error_message = 'Hey, gde kurab\'e?!!1'
@@ -790,7 +791,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module1 = 'module1'
         module2 = 'module2'
         options1 = {'key1': 'value1'}
@@ -839,7 +840,7 @@ class TestOptimizationsApi(TestApiBase):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
 
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         module1 = 'module1'
         module2 = 'module2'
         options1 = {'key1': 'value1'}
@@ -943,7 +944,7 @@ class TestOptimizationDataApi(TestApiBase):
                 '_id': resource['id']
             },
             update={'$set': {
-                'last_seen': int(datetime.utcnow().timestamp() - 1),
+                'last_seen': utcnow_timestamp() - 1,
                 'active': True
             }}
         )
@@ -952,7 +953,7 @@ class TestOptimizationDataApi(TestApiBase):
     @staticmethod
     def _add_checklist(organization_id, timestamp=None):
         if not timestamp:
-            timestamp = int(datetime.utcnow().timestamp())
+            timestamp = utcnow_timestamp()
         db = DBFactory(DBType.Test, None).db
         engine = db.engine
         session = BaseDB.session(engine)()
@@ -1379,7 +1380,7 @@ class TestOptimizationDataApi(TestApiBase):
     def test_optimization_cloud_accounts(self, p_get_optimizations_data):
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']
-        completed_at = int(datetime.utcnow().timestamp())
+        completed_at = utcnow_timestamp()
         self.instance2.update({
             'cloud_account_id': self.cloud_acc2['id'],
             'cloud_type': self.cloud_acc2['type'],

@@ -1,10 +1,11 @@
 import logging
 
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class StuckInStateForALongTimeBase(ArchiveBase):
 
     def _get(self, previous_options, optimizations, cloud_accounts_map,
              **kwargs):
-        now = datetime.utcnow()
+        now = utcnow()
         days_threshold = previous_options['days_threshold']
         start_date = int((now - timedelta(days=days_threshold)).timestamp())
         account_optimizations_map = defaultdict(list)

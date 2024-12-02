@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 from requests import HTTPError
 
@@ -15,7 +15,8 @@ def main(config_cl):
     rest_cl.secret = config_cl.cluster_secret()
 
     _, response = rest_cl.organization_list({'is_demo': True})
-    old_org_ts = int((datetime.utcnow() - timedelta(days=7)).timestamp())
+    old_org_ts = int((datetime.now(tz=timezone.utc) - timedelta(
+        days=7)).timestamp())
     for org in response['organizations']:
         if org['created_at'] > old_org_ts:
             continue

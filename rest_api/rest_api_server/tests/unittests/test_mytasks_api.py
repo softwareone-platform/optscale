@@ -10,6 +10,7 @@ from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import ConstraintLimitHit
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp, utcnow
 
 
 class TestMyTasksApi(TestApiBase):
@@ -99,7 +100,7 @@ class TestMyTasksApi(TestApiBase):
                 '_id': {'$in': resource_ids}
             },
             update={'$set': {
-                'last_seen': int(datetime.datetime.utcnow().timestamp() - 1),
+                'last_seen': utcnow_timestamp() - 1,
                 'active': True
             }}
         )
@@ -158,7 +159,7 @@ class TestMyTasksApi(TestApiBase):
 
     def add_expense_records(self, pool_id=None, cost=1, date=None, owner_id=None):
         if not date:
-            date = datetime.datetime.utcnow()
+            date = utcnow()
         date = date.replace(hour=0, minute=0, second=0, microsecond=0)
         if not owner_id:
             owner_id = self.employee['id']
@@ -520,7 +521,7 @@ class TestMyTasksApi(TestApiBase):
             self.org['pool_id'], type='ttl')
         self.assertEqual(code, 201)
 
-        now = int(datetime.datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         code, constr_1 = self._create_resource_constraint(
             res_1_id, type='ttl', limit=now + 3600)
         self.assertEqual(code, 201)
@@ -760,7 +761,7 @@ class TestMyTasksApi(TestApiBase):
         code, tasks = self.client.my_tasks_get(self.org_id, types=[
             'violated_constraints', 'differ_constraints'])
         self.assertIsNone(tasks.get('violated_constraints'))
-        created_at = datetime.datetime.utcnow().timestamp()
+        created_at = utcnow_timestamp()
         with freeze_time(datetime.datetime.fromtimestamp(created_at + 1)):
             self._add_constraint_limit_hit(
                 res_1_id, pool_id=self.org['pool_id'])

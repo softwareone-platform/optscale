@@ -2,6 +2,7 @@
 import logging
 from datetime import datetime, timedelta
 from diworker.diworker.importers.base import BaseReportImporter
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
@@ -40,7 +41,7 @@ class EnvironmentReportImporter(BaseReportImporter):
         ]
 
     def load_raw_data(self):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         org_id = self.cloud_acc['organization_id']
         _, resources = self.rest_cl.environment_resource_list(org_id)
 
@@ -91,8 +92,8 @@ class EnvironmentReportImporter(BaseReportImporter):
             self.update_raw_records(chunk)
 
     def get_resource_info_from_expenses(self, expenses):
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0)
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0)
         resource_type = None
         for e in expenses:
             if not resource_type:

@@ -1,5 +1,4 @@
 # pylint: disable=C0302
-import datetime
 import random
 import string
 from unittest.mock import patch
@@ -8,6 +7,7 @@ from auth.auth_server.models.models import (Type, User, Action, Role,
                                             Assignment, ActionGroup)
 from auth.auth_server.models.models import gen_salt
 from auth.auth_server.utils import hash_password
+from tools.optscale_time import utcnow_timestamp
 
 
 RES_INFO_URL = "auth.auth_server.controllers.base." \
@@ -233,8 +233,7 @@ class TestRole(TestAuthBase):
         self.assertIsNotNone(response['actions'].get(
             self.roles_action_group.name))
         session = self.db_session
-        self.roles_action_group.deleted_at = int(
-            datetime.datetime.utcnow().timestamp())
+        self.roles_action_group.deleted_at = utcnow_timestamp()
         session.add(self.roles_action_group)
         session.commit()
         _, response = self.client.role_get(test_role1.id)
@@ -261,8 +260,7 @@ class TestRole(TestAuthBase):
             self.cloud_sites_action_group.name].get(
             self.list_css_action.name))
         session = self.db_session
-        self.list_css_action.deleted_at = int(
-            datetime.datetime.utcnow().timestamp())
+        self.list_css_action.deleted_at = utcnow_timestamp()
         session.add(self.list_css_action)
         session.commit()
         _, response = self.client.role_get(test_role1.id)

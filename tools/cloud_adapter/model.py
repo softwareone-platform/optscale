@@ -400,29 +400,34 @@ class IpAddressResource(CloudResource):
 
 class ImageResource(CloudResource):
     __slots__ = ('name', 'block_device_mappings', 'cloud_created_at',
-                 'folder_id')
+                 'folder_id', 'snapshot_id', 'disk_size')
 
     def __init__(self, name=None, block_device_mappings=None,
-                 cloud_created_at=None, folder_id=None, **kwargs):
+                 cloud_created_at=None, folder_id=None, snapshot_id=None,
+                 disk_size=None, **kwargs):
         super().__init__(**kwargs)
         self.name = name
         self.block_device_mappings = block_device_mappings or []
         self.cloud_created_at = cloud_created_at
         self.folder_id = folder_id
+        self.snapshot_id = snapshot_id
+        self.disk_size = disk_size
 
     def __repr__(self):
         return (
             'Image {0} name={1} block_device_mappings={2} '
-            'cloud_created_at={3}'.format(
+            'cloud_created_at={3} snapshot_id={4} disk_size={5}'.format(
                 self.cloud_resource_id, self.name, self.block_device_mappings,
-                self.cloud_created_at))
+                self.cloud_created_at, self.snapshot_id, self.disk_size))
 
     @property
     def meta(self):
         meta = super().meta
         meta.update({
             'block_device_mappings': self.block_device_mappings,
-            'folder_id': self.folder_id
+            'folder_id': self.folder_id,
+            'snapshot_id': self.snapshot_id,
+            'disk_size': self.disk_size,
         })
         return meta
 

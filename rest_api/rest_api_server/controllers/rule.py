@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+import tools.optscale_time as opttime
 
 from retrying import retry
 from sqlalchemy.exc import IntegrityError
@@ -190,11 +190,13 @@ class RuleController(BaseController, PriorityMixin):
         conditions = []
         for cond in conditions_array:
             meta_info = cond.get('meta_info')
-            if not meta_info:
-                raise_not_provided_exception('meta_info')
             type_ = cond.get('type')
             if not type_:
                 raise_not_provided_exception('type')
+            if ('meta_info' not in cond or (
+                    meta_info is None and
+                    ConditionTypes(type_) != ConditionTypes.REGION_IS)):
+                raise_not_provided_exception('meta_info')
             condition = Condition(type=ConditionTypes(type_),
                                   meta_info=meta_info)
             conditions.append(condition)
@@ -288,13 +290,15 @@ class RuleController(BaseController, PriorityMixin):
         return formatted_rules
 
     @retry(**RULE_PRIORITY_RETRIES)
-    def create_rule(self, user_id, organization_id, token, is_deprioritized=False, **kwargs):
+    def create_rule(self, user_id, organization_id, token,
+                    is_deprioritized=False, **kwargs):
         # TODO implement permissions check OSB-412
         self._validate_parameters(**kwargs)
         employee = self.employee_ctrl.get_employee_by_user_and_organization(
             user_id, organization_id=organization_id)
         try:
-            result = self._prepare_rule_data(employee, organization_id, is_deprioritized, **kwargs)
+            result = self._prepare_rule_data(employee, organization_id,
+                                             is_deprioritized, **kwargs)
             rule, pool, owner = result
             if owner and pool:
                 if not self.assignment_ctrl.validate_owner(owner, pool, token):
@@ -314,7 +318,7 @@ class RuleController(BaseController, PriorityMixin):
             'pool_id': pool.id
         }
         self.publish_activities_task(
-            rule.organization_id, rule.organization_id, 'organization',
+            rule.organization_id, rule.organization_id, 'rule',
             'rule_created', meta, 'organization.rule_created', add_token=True)
         return self.get_rule_info(rule)
 
@@ -388,7 +392,7 @@ class RuleController(BaseController, PriorityMixin):
         return original
 
     def _process_conditions_update(self, original, conditions):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         new_conditions = []
         updated_conditions_map = {}
         for condition in conditions:
@@ -409,8 +413,10 @@ class RuleController(BaseController, PriorityMixin):
                         raise WrongArgumentsException(Err.OE0430, [type_])
                     condition.type = ConditionTypes(type_)
                 if 'meta_info' in updated_conditions_map[condition.id]:
-                    meta = updated_conditions_map[condition.id]['meta_info']
-                    if not meta:
+                    meta_info = updated_conditions_map[
+                        condition.id]['meta_info']
+                    if (meta_info is None and
+                            condition.type != ConditionTypes.REGION_IS):
                         raise_not_provided_exception('meta_info')
                     condition.meta_info = updated_conditions_map[
                         condition.id]['meta_info']
@@ -450,7 +456,7 @@ class RuleController(BaseController, PriorityMixin):
             'rule_id': rule.id,
         }
         self.publish_activities_task(
-            rule.organization_id, rule.organization_id, 'organization',
+            rule.organization_id, rule.organization_id, 'rule',
             'rule_updated', meta, 'organization.rule_updated', add_token=True)
         return self.get_rule_info(rule)
 
@@ -464,7 +470,7 @@ class RuleController(BaseController, PriorityMixin):
     @retry(**RULE_PRIORITY_RETRIES)
     def delete(self, item_id, **kwargs):
         # TODO implement permissions check OSB-412
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         rule = self.get(item_id, **kwargs)
         all_rules = self._get_rules(rule.organization_id)
         try:
@@ -482,7 +488,7 @@ class RuleController(BaseController, PriorityMixin):
                 'rule_id': rule.id,
             }
             self.publish_activities_task(
-                rule.organization_id, rule.organization_id, 'organization',
+                rule.organization_id, rule.organization_id, 'rule',
                 'rule_deleted', meta, 'organization.rule_deleted',
                 add_token=True)
         except IntegrityError as exc:

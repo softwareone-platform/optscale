@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
 from unittest.mock import patch
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestK8sRightsizing(TestApiBase):
@@ -32,13 +32,13 @@ class TestK8sRightsizing(TestApiBase):
         _, self.cloud_acc1 = self.create_cloud_account(
             self.org_id, self.valid_kubernetes_cloud_acc,
             auth_user_id=self.auth_user_id_1)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.base_payload = {
             'start_date': now, 'end_date': now + 12345}
 
     def test_metrics_invalid_dates(self):
         validation_params = [
-            ('start_date', int(datetime.utcnow().timestamp()) + 1000000,
+            ('start_date', utcnow_timestamp() + 1000000,
              'OE0446'),
             ('start_date', 'aaa', 'OE0217'),
             ('start_date', None, 'OE0216'),

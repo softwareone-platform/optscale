@@ -67,7 +67,7 @@ class Migration(BaseMigration):
                 LOG.info('Index %s already exists' % INDEX_NAME)
 
     def upgrade(self):
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.now(tz=timezone.utc).timestamp())
         cloud_account_ids = self.get_cloud_account_ids()
         for i, cloud_account_id in enumerate(cloud_account_ids):
             LOG.info('Started updating raw expenses for '

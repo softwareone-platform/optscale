@@ -1,3 +1,4 @@
+import tools.optscale_time as opttime
 from datetime import datetime
 from freezegun import freeze_time
 from unittest.mock import patch
@@ -144,7 +145,7 @@ class TestAssignmentApiBulk(TestAssignmentApiBase):
              No new assignments.
 
         """
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         p_authorize.return_value = True
         with self.switch_user(self.user2_id):
             assignments = self._get_assignments()
@@ -408,7 +409,7 @@ class TestAssignmentApiBulk(TestAssignmentApiBase):
             self._add_expense(resource, day_in_past)
         code, resp = self.client.clean_expenses_get(
             self.org_id, int(day_in_past.timestamp()),
-            int(datetime.utcnow().timestamp()))
+            opttime.utcnow_timestamp())
         self.assertEqual(code, 200)
         expenses = resp['clean_expenses']
         self.assertEqual(len(expenses), len(all_resources))
@@ -424,7 +425,7 @@ class TestAssignmentApiBulk(TestAssignmentApiBase):
                 assignment['resource_id'] in all_res_ids)
         code, resp = self.client.clean_expenses_get(
             self.org_id, int(day_in_past.timestamp()),
-            int(datetime.utcnow().timestamp()))
+            opttime.utcnow_timestamp())
         expenses = resp['clean_expenses']
         self.assertEqual(len(expenses), len(all_resources))
 

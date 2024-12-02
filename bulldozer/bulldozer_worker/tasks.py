@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from bulldozer.bulldozer_worker.infra import Infra, InfraException
-from bulldozer.bulldozer_worker.name_generator import NameGenerator
+from tools.optscale_time import utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 
@@ -156,7 +156,7 @@ class Base:
         # check is it spot runner type
         runner_id = self.body.get("runner_id")
         _, runner = self.bulldozer_cl.get_runner(runner_id)
-        spot_settings = runner.get("spot_settings", {})
+        spot_settings = runner.get("spot_settings") or {}
         spot_retries = spot_settings.get("tries", 0)
         if spot_retries:
             current_try = self.body.get("infra_try", 0)
@@ -258,7 +258,7 @@ class ContinueWithDestroyConditions(Continue):
             started_at = runner["started_at"]
             if started_at:
                 threshold = started_at + max_duration
-                now = datetime.datetime.utcnow().timestamp()
+                now = utcnow_timestamp()
                 LOG.info("runner id %s, current time: %d, threshold: %d",
                          runner_id, now, threshold)
                 if now > threshold:
@@ -374,7 +374,7 @@ class SetFailed(SetFinished):
             self.bulldozer_cl.update_runner(
                 runner_id,
                 state=TaskState.ERROR,
-                destroyed_at=int(datetime.datetime.utcnow().timestamp()))
+                destroyed_at=utcnow_timestamp())
             self.update_reason()
         self.message.ack()
 
@@ -393,7 +393,7 @@ class StartInfra(Continue):
         LOG.info("processing starting runner %s", runner_id)
         _, runner = self.bulldozer_cl.get_runner(runner_id)
         cloud_account_id = runner["cloud_account_id"]
-        prefix = runner.get("name_prefix", "")
+        name = runner["name"]
         user_data = ""
         hp = runner.get("hyperparameters")
         commands = runner.get("commands")
@@ -408,11 +408,9 @@ class StartInfra(Continue):
                 user_data += f"export {k}={v}\n"
         if commands is not None:
             user_data += commands
-        name = f"{prefix}_{NameGenerator.get_random_name()}"
         self.bulldozer_cl.update_runner(
             runner_id,
-            state=TaskState.STARTING,
-            name=name)
+            state=TaskState.STARTING)
         _, cloud_account = self.rest_cl.cloud_account_get(
             cloud_account_id, True)
         # TODO: get cloud type form cloud account to support multi-cloud
@@ -458,12 +456,12 @@ class StartInfra(Continue):
         self.bulldozer_cl.update_runner(
             runner_id,
             state=TaskState.WAITING_ARCEE,
-            started_at=int(datetime.datetime.utcnow().timestamp()),
+            started_at=utcnow_timestamp(),
             instance_id=id_,
             ip_addr=ip_addr,
             return_code=0
         )
-        self.body["updated"] = int(datetime.datetime.utcnow().timestamp())
+        self.body["updated"] = utcnow_timestamp()
         self.update_task_state()
         super()._exec()
 
@@ -490,7 +488,7 @@ class WaitArcee(ContinueWithDestroyConditions):
         if not run_id:
             # check timeout
             last_updated = int(self.body.get("updated"))
-            current_time = int(datetime.datetime.utcnow().timestamp())
+            current_time = utcnow_timestamp()
             wait_time = last_updated + ARCEE_WAIT_TIMEOUT_SEC
             LOG.info("runs not found. current time: %d, wait time: %s",
                      current_time, wait_time)
@@ -504,7 +502,7 @@ class WaitArcee(ContinueWithDestroyConditions):
                 run_id=run_id,
                 state=TaskState.STARTED,
             )
-            self.body["updated"] = int(datetime.datetime.utcnow().timestamp())
+            self.body["updated"] = utcnow_timestamp()
             self.update_task_state()
         super()._exec()
 
@@ -551,9 +549,9 @@ class Stop(Continue):
             self.bulldozer_cl.update_runner(
                 runner_id,
                 state=TaskState.DESTROYED,
-                destroyed_at=int(datetime.datetime.utcnow().timestamp())
+                destroyed_at=utcnow_timestamp()
             )
-        self.body["updated"] = int(datetime.datetime.utcnow().timestamp())
+        self.body["updated"] = utcnow_timestamp()
         self.update_task_state()
         super()._exec()
 

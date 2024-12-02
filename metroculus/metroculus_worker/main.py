@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-from datetime import datetime
 from etcd import Lock as EtcdLock
 from kombu.mixins import ConsumerMixin
 from kombu.log import get_logger
@@ -11,7 +10,7 @@ from metroculus.metroculus_worker.migrator import Migrator
 from metroculus.metroculus_worker.processor import MetricsProcessor
 
 from optscale_client.config_client.client import Client as ConfigClient
-
+from tools.optscale_time import utcnow
 
 EXCHANGE_NAME = 'metroculus-tasks'
 QUEUE_NAME = 'metroculus-task'
@@ -30,7 +29,7 @@ class MetroculusWorker(ConsumerMixin):
                          callbacks=[self.process_task], prefetch_count=10)]
 
     def _process_task(self, task):
-        start_process_time = datetime.utcnow()
+        start_process_time = utcnow()
         cloud_account_id = task.get('cloud_account_id')
         processor = MetricsProcessor(self.config_cl, cloud_account_id)
         try:
@@ -39,7 +38,7 @@ class MetroculusWorker(ConsumerMixin):
                 'Metrics received for cloud_account %s (%s resources). '
                 'The processing took %s seconds' % (
                     cloud_account_id, len(result),
-                    (datetime.utcnow() - start_process_time).total_seconds()))
+                    (utcnow() - start_process_time).total_seconds()))
         except Exception as exc:
             processor.update_getting_metrics_attempt(error=str(exc))
             raise

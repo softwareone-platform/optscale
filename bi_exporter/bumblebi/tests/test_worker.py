@@ -4,6 +4,7 @@ import unittest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock, PropertyMock, patch, mock_open, call
 from optscale_client.config_client.client import Client as ConfigClient
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 from bi_exporter.bumblebi.exporter.main import Worker
 
@@ -57,7 +58,7 @@ class TestWorker(unittest.TestCase):
                 self.tag.encode('utf-8')).decode(): self.tag},
             'region': 'region',
             'first_seen': 0,
-            'last_seen': int(datetime.utcnow().timestamp()),
+            'last_seen': utcnow_timestamp(),
             'active': True,
             'resource_type': 'Instance',
             'service_name': 'service_name',
@@ -98,7 +99,7 @@ class TestWorker(unittest.TestCase):
               'BaseExporter._get_resources',
               return_value=[self.mongo_resource]).start()
         patch('bi_exporter.bumblebi.exporter.exporter.AwsExporter._upload').start()
-        yesterday = datetime.utcnow() - timedelta(days=1)
+        yesterday = utcnow() - timedelta(days=1)
         self.clichouse_expenses = [
             (yesterday, self.cloud_acc['id'], self.mongo_resource['_id'], 348.75)]
         patch('bi_exporter.bumblebi.exporter.exporter.'

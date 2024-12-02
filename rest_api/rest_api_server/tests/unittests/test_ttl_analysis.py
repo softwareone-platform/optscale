@@ -4,6 +4,7 @@ from freezegun import freeze_time
 from unittest.mock import patch
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+import tools.optscale_time as opttime
 
 
 class TestTtlAnalysis(TestApiBase):
@@ -49,8 +50,7 @@ class TestTtlAnalysis(TestApiBase):
             del resource_dict['resources'][0]['name']
         if active:
             resource_dict['resources'][0]['active'] = True
-            resource_dict['resources'][0]['last_seen'] = int(
-                datetime.utcnow().timestamp())
+            resource_dict['resources'][0]['last_seen'] = opttime.utcnow_timestamp()
         if last_seen:
             resource_dict['resources'][0]['last_seen'] = int(last_seen)
         code, resources = self.cloud_resource_create_bulk(
@@ -60,7 +60,7 @@ class TestTtlAnalysis(TestApiBase):
         return resources['resources'][0]
 
     def add_expenses(self, resource, starting_date):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         last_seen = resource.get('last_seen')
         if not last_seen:
             last_seen = now
@@ -78,13 +78,13 @@ class TestTtlAnalysis(TestApiBase):
         self.update_resource_info_by_expenses([resource['id']])
 
     def test_no_default_ttl_value(self):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         code, resp = self.client.ttl_analysis_get(self.pool_id, 0, now)
         self.assertEqual(code, 424)
         self.verify_error_code(resp, 'OE0457')
 
     def test_invalid_pool(self):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         code, resp = self.client.ttl_analysis_get(self.gen_id(), 0, now, 10)
         self.assertEqual(code, 404)
         self.verify_error_code(resp, 'OE0002')
@@ -129,7 +129,7 @@ class TestTtlAnalysis(TestApiBase):
     @freeze_time("2021-01-12 16:14:00")
     def test_ttl_analysis(self):
         ttl = 30
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         expense_start_date = now - timedelta(days=3)
         code, sub_pool = self.client.pool_create(
             self.org_id, {"name": "sub", "parent_id": self.pool_id})
@@ -169,7 +169,7 @@ class TestTtlAnalysis(TestApiBase):
     @freeze_time("2021-01-12 16:14:00")
     def test_resources_created_deleted_in_range(self):
         ttl = 5
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         expense_start_date = now - timedelta(days=1)
         code, sub_pool = self.client.pool_create(
             self.org_id, {"name": "sub", "parent_id": self.pool_id})
@@ -214,7 +214,7 @@ class TestTtlAnalysis(TestApiBase):
     @freeze_time("2021-01-12 16:14:00")
     def test_ttl_reached_before_date_range(self):
         ttl = 30
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         expense_start_date = now - timedelta(days=4)
         code, sub_pool = self.client.pool_create(
             self.org_id, {"name": "sub", "parent_id": self.pool_id})
@@ -258,7 +258,7 @@ class TestTtlAnalysis(TestApiBase):
             self.pool_id, {'limit': ttl, 'type': 'ttl'})
         self.assertEqual(code, 201)
 
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         expense_start_date = now - timedelta(days=3)
         resource = self.add_resource(owner_id=self.employee_id,
                                      pool_id=self.pool_id, active=True)
@@ -286,7 +286,7 @@ class TestTtlAnalysis(TestApiBase):
 
     @freeze_time("2021-01-12 16:14:00")
     def test_resource_without_name(self):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         expense_start_date = now - timedelta(days=3)
         resource = self.add_resource(owner_id=self.employee_id,
                                      pool_id=self.pool_id, active=True,

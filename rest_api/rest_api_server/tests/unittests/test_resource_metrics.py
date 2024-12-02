@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
 from unittest.mock import patch
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestResourceMetrics(TestApiBase):
@@ -37,7 +37,7 @@ class TestResourceMetrics(TestApiBase):
         _, self.resource = self._create_cloud_resource(
             cloud_account['id'], self.valid_resource)
 
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.base_payload = {
             'start_date': now, 'end_date': now + 12345, 'interval': 900}
 
@@ -51,7 +51,7 @@ class TestResourceMetrics(TestApiBase):
                     '_id': resource['id']
                 },
                 update={'$set': {
-                    'last_seen': int(datetime.utcnow().timestamp() - 1),
+                    'last_seen': utcnow_timestamp() - 1,
                     'active': True
                 }}
             )
@@ -68,7 +68,7 @@ class TestResourceMetrics(TestApiBase):
 
     def test_metrics_invalid_dates(self):
         validation_params = [
-            ('start_date', int(datetime.utcnow().timestamp()) + 1000000,
+            ('start_date', utcnow_timestamp() + 1000000,
              'OE0446'),
             ('start_date', 'aaa', 'OE0217'),
             ('start_date', None, 'OE0216'),

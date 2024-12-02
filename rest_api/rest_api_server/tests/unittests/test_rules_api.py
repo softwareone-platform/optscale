@@ -200,6 +200,14 @@ class TestRuleApi(TestRulesApiBase):
             self.assertIn('priority', rule)
 
     @patch(AUTHORIZE_ACTION_METHOD)
+    def test_create_rule_region_is_none(self, p_authorize):
+        p_authorize.return_value = True
+        conditions = [
+                {"type": "region_is", "meta_info": None}
+            ]
+        self._create_rule('Test rule', conditions=conditions)
+
+    @patch(AUTHORIZE_ACTION_METHOD)
     def test_create_rule_with_priority(self, p_authorize):
         """
            - 1. Check initial count of rules. Should be 0.
@@ -546,6 +554,19 @@ class TestRuleApi(TestRulesApiBase):
         check_response("{\"key\": \"key\", \"unexpected\": \"value\"}", "OE0216")
         rules = self._get_rules()
         self.assertEqual(len(rules), 0)
+
+    @patch(AUTHORIZE_ACTION_METHOD)
+    def test_update_rule_region_is_none(self, p_authorize):
+        p_authorize.return_value = True
+        conditions = [
+            {"type": "region_is", "meta_info": "eu-central-1"},
+        ]
+        rule = self._create_rule("TestRule", conditions=conditions)
+        conditions[0]['meta_info'] = None
+        code, resp = self.client.rule_update(rule['id'],
+                                             {'conditions': conditions})
+        self.assertEqual(code, 200)
+        self.assertIsNone(resp['conditions'][0]['meta_info'])
 
     @patch(AUTHORIZE_ACTION_METHOD)
     def test_update_rule(self, p_authorize):

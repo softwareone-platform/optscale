@@ -5,7 +5,7 @@ from typing import Dict, Any, Union
 
 import requests
 
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import quote
 
 
@@ -187,7 +187,7 @@ class Kubernetes(CloudBase):
         return []
 
     def discover_pod_resources(self):
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.now(tz=timezone.utc).timestamp())
         pod_name_labels_map = self._get_pod_labels(now)
         pod_info_metrics = self._get_pods_info_metrics(now)
         service_selectors_map = self._get_service_selectors(now)

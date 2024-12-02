@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import tools.optscale_time as opttime
 
 from sqlalchemy.sql import and_
 from rest_api.rest_api_server.exceptions import Err
@@ -100,7 +100,7 @@ class ResourceConstraintController(ConstraintBaseController, MongoMixin):
     def check_limit(self, constraint_type, limit):
         check_int_attribute('limit', limit)
         if constraint_type == ConstraintTypes.TTL and limit != 0:
-            if limit - int(datetime.utcnow().timestamp()) < 0:
+            if limit - opttime.utcnow_timestamp() < 0:
                 raise WrongArgumentsException(Err.OE0461, ['Limit'])
 
     def get_entity(self, item_id):

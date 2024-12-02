@@ -6,6 +6,7 @@ from rest_api.rest_api_server.controllers.expense import CleanExpenseController
 from rest_api.rest_api_server.exceptions import Err
 
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
+from tools.optscale_time import utcfromtimestamp
 
 LOG = logging.getLogger(__name__)
 DAY_IN_SECONDS = 86400
@@ -45,10 +46,10 @@ class BreakdownBaseController(CleanExpenseController):
 
     @staticmethod
     def _get_breakdown_dates(start_date, end_date):
-        first_breakdown = int(datetime.utcfromtimestamp(start_date).replace(
+        first_breakdown = int(utcfromtimestamp(start_date).replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
         ).timestamp())
-        last_breakdown = int(datetime.utcfromtimestamp(end_date).replace(
+        last_breakdown = int(utcfromtimestamp(end_date).replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
         ).timestamp())
         return [x for x in range(first_breakdown, last_breakdown + 1,
@@ -84,9 +85,9 @@ class BreakdownExpenseController(BreakdownBaseController):
     def update_params(**params):
         start_date = params.get('start_date')
         end_date = params.get('end_date')
-        start_dt = datetime.utcfromtimestamp(start_date).replace(
+        start_dt = utcfromtimestamp(start_date).replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
-        end_dt = datetime.utcfromtimestamp(end_date).replace(
+        end_dt = utcfromtimestamp(end_date).replace(
             hour=23, minute=59, second=59, microsecond=0, tzinfo=timezone.utc)
         params.update({
             'start_date': int(start_dt.timestamp()),
@@ -160,9 +161,9 @@ class BreakdownExpenseController(BreakdownBaseController):
         }
         breakdown = defaultdict(dict)
         counts = {}
-        previous_period_dt = datetime.utcfromtimestamp(
+        previous_period_dt = utcfromtimestamp(
             self.previous_period_start)
-        start_dt = datetime.utcfromtimestamp(self.start_date)
+        start_dt = utcfromtimestamp(self.start_date)
         for breakdown_date, day_info in breakdown_expenses.items():
             for k, cost in day_info.items():
                 if k not in counts:
@@ -236,8 +237,8 @@ class BreakdownExpenseController(BreakdownBaseController):
             {'id': k, 'group_field': v}
             for k, v in resources.items()
         ]
-        start_dt = datetime.utcfromtimestamp(self.previous_period_start)
-        end_dt = datetime.utcfromtimestamp(self.end_date)
+        start_dt = utcfromtimestamp(self.previous_period_start)
+        end_dt = utcfromtimestamp(self.end_date)
         expenses = self.execute_clickhouse(
             query="""
                 SELECT

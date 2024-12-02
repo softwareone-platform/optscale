@@ -11,6 +11,7 @@ from diworker.diworker.importers.base import BaseReportImporter
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from optscale_client.insider_client.client import Client as InsiderClient
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
@@ -350,7 +351,7 @@ class KubernetesReportImporter(BaseReportImporter):
                 self.mongo_raw.bulk_write(changes)
 
     def load_raw_data(self):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         dt = now + timedelta(days=1)
         days = (dt - self.period_start).days
         LOG.info('Loading metrics for period %s - %s' % (
@@ -394,9 +395,9 @@ class KubernetesReportImporter(BaseReportImporter):
                     expense = r['metric'].copy()
                     pod_name = expense.get('pod')
                     resource_id = expense.pop('id').split('/pod')[-1]
-                    start_date = datetime.utcfromtimestamp(
+                    start_date = opttime.utcfromtimestamp(
                         dt_timestamp) - timedelta(days=1)
-                    end_date = datetime.utcfromtimestamp(dt_timestamp)
+                    end_date = opttime.utcfromtimestamp(dt_timestamp)
                     if end_date > now:
                         end_date = now
                     worked_hrs = (end_date - start_date
@@ -455,9 +456,9 @@ class KubernetesReportImporter(BaseReportImporter):
         ]
 
     def get_resource_info_from_expenses(self, expenses):
-        first_seen = datetime.utcnow()
+        first_seen = opttime.utcnow()
         k8s_node, name, k8s_namespace, k8s_service, job = None, None, None, None, None
-        last_seen = datetime.utcfromtimestamp(0).replace()
+        last_seen = opttime.utcfromtimestamp(0).replace()
         for e in expenses:
             if not name:
                 name = e.get('pod')

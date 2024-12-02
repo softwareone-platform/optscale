@@ -7,7 +7,7 @@ import RightsizingStrategyModal from "components/SideModalManager/SideModals/rec
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_RDS, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, recommendedRightsizingSize, resource, resourceLocation, rightsizingSize } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const RightsizingCpuUsageCell = ({ currentUsage, projectedUsage }) => (
@@ -65,6 +65,8 @@ class RightsizingRdsInstances extends BaseRecommendation {
   }
 
   services = [ALIBABA_RDS, NEBIUS_SERVICE];
+
+  appliedDataSources = [ALIBABA_CNR, NEBIUS];
 
   categories = [CATEGORY_COST];
 

@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import cached_property
 from typing import Dict, List
 
@@ -30,7 +30,7 @@ class BIScheduler:
 
     def __init__(self, config_cl: ConfigClient) -> None:
         self.config_cl = config_cl
-        self.now = datetime.utcnow()
+        self.now = datetime.now(tz=timezone.utc).replace(tzinfo=None)
 
     @cached_property
     def rest_cl(self) -> RestClient:

@@ -1,16 +1,19 @@
 import json
-
+from datetime import datetime, timezone
 from tools.optscale_exceptions.common_exc import (NotFoundException,
                                                   ForbiddenException)
+from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.models.enums import CloudTypes
-from rest_api.rest_api_server.controllers.cloud_account import CloudAccountAsyncController
+from rest_api.rest_api_server.controllers.cloud_account import (
+    CloudAccountAsyncController)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler, BaseAsyncItemHandler)
 from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
-from rest_api.rest_api_server.utils import run_task, ModelEncoder
+from rest_api.rest_api_server.utils import (
+    check_int_attribute, check_string_attribute, run_task, ModelEncoder)
 
 
 class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
@@ -446,6 +449,48 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
             result['details'] = res
         self.write(json.dumps(result, cls=ModelEncoder))
 
+    @staticmethod
+    def _validate_params(cloud_acc, **kwargs):
+        secret = kwargs.get('secret')
+        validate_map = {
+            'last_import_attempt_at': check_int_attribute,
+            'last_import_attempt_error': check_string_attribute
+        }
+        for param, func in validate_map.items():
+            if not secret and param in kwargs:
+                raise OptHTTPError(
+                    400, Err.OE0449, [param, 'cloud account'])
+            value = kwargs.get(param)
+            if value:
+                try:
+                    func(param, value)
+                except WrongArgumentsException as exc:
+                    raise OptHTTPError.from_opt_exception(400, exc)
+
+        for param in ['last_import_at', 'last_import_modified_at']:
+            value = kwargs.get(param)
+            if value:
+                if not secret and cloud_acc.type in [CloudTypes.ENVIRONMENT,
+                                                     CloudTypes.KUBERNETES_CNR]:
+                    raise OptHTTPError(
+                        400, Err.OE0560, [cloud_acc.type.value])
+
+                try:
+                    check_int_attribute(param, value)
+                except WrongArgumentsException as exc:
+                    raise OptHTTPError.from_opt_exception(400, exc)
+                if not secret:
+                    # dates should be less than a year ago and not a date in
+                    # the current month if updated by a token
+                    now = datetime.now(tz=timezone.utc)
+                    min_date = int(
+                        now.replace(year=now.year - 1).timestamp())
+                    max_date = int(now.replace(
+                        day=1, hour=0, minute=0, second=0,
+                        microsecond=0).timestamp()) - 1
+                    if value < min_date or value > max_date:
+                        raise OptHTTPError(400, Err.OE0559, [param])
+
     async def patch(self, id, **kwargs):
         """
         ---
@@ -469,30 +514,38 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                 properties:
                     last_import_at:
                         type: integer
-                        description: Attention! This field is for internal use, it is undesirable to change it!
-                                     UTC timestamp of last successful data import
+                        description: |
+                            timestamp of last successful data import
                     last_import_attempt_at:
                         type: integer
-                        description: Attention! This field is for internal use, it is undesirable to change it!
-                                     UTC timestamp of last data import attempt
+                        description: |
+                            Attention! This field is for internal use, it is
+                            undesirable to change it! UTC timestamp of last
+                            data import attempt
                     last_import_attempt_error:
                         type: string
-                        description: Attention! This field is for internal use, it is undesirable to change it!
-                                     Error message of last data import attempt, null if no error
+                        description: |
+                            Attention! This field is for internal use, it is
+                            undesirable to change it! Error message of last
+                            data import attempt, null if no error
                     last_import_modified_at:
                         type: integer
-                        description: Attention! This field is for internal use, it is undesirable to change it!
-                                     Last imported report modification time in timestamp format
+                        description: |
+                            Last imported report modification time in
+                            timestamp format
                     cleaned_at:
                         type: integer
-                        description: Attention! This field is for internal use, it is undesirable to change it!
-                                     UTC timestamp of date when cloud account was cleaned up
+                        description: |
+                            Attention! This field is for internal use, it is
+                            undesirable to change it! UTC timestamp of date
+                            when cloud account was cleaned up
                     name:
                         type: string
                         description: Cloud account name
                     process_recommendations:
                         type: boolean
-                        description: Is recommendations enabled? Default is True
+                        description: |
+                            Is recommendations enabled? Default is True
                     config:
                         type: object
                         description:  |
@@ -519,6 +572,8 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                     - OE0371: Unable to configure billing report
                     - OE0437: Can’t connect the cloud subscription
                     - OE0449: Parameter of cloud account can\'t be changed
+                    - OE0559: Parameter date should be between a month and a year ago
+                    - OE0560: Changing import dates is not supported for cloud account type
             401:
                 description: |
                     Unauthorized:
@@ -545,16 +600,16 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
         - token: []
         - secret: []
         """
+        data = self._request_body()
+        secret = True
         if not self.check_cluster_secret(raises=False):
-            data = self._request_body()
-            not_changeable_param_list = ['last_import_at', 'last_import_modified_at',
-                                         'last_import_attempt_at', 'last_import_attempt_error']
-            for param in not_changeable_param_list:
-                if data.get(param):
-                    raise OptHTTPError(400, Err.OE0449, [param, 'cloud account'])
             await self.check_permissions('MANAGE_CLOUD_CREDENTIALS',
                                          'cloud_account', id)
-        await super().patch(id, **kwargs)
+            secret = False
+        item = await self._get_item(id)
+        self._validate_params(item, **data, secret=secret)
+        res = await run_task(self.controller.edit, id, **data)
+        self.write(res.to_json())
 
     async def delete(self, id, **kwargs):
         """

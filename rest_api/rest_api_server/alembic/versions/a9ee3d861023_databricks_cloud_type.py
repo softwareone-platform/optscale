@@ -7,8 +7,7 @@ Create Date: 2022-11-23 15:28:17.062870
 """
 from alembic import op
 import sqlalchemy as sa
-from datetime import datetime
-
+from datetime import datetime, timezone
 
 # revision identifiers, used by Alembic.
 revision = 'a9ee3d861023'
@@ -39,7 +38,8 @@ def downgrade():
                       sa.sql.column('deleted_at', sa.Integer()))
     op.execute(
         ct.update().where(ct.c.type.in_(['DATABRICKS'])).values(
-            type='ENVIRONMENT', deleted_at=int(datetime.utcnow().timestamp())
+            type='ENVIRONMENT', deleted_at=int(datetime.now(
+                tz=timezone.utc).timestamp())
         )
     )
     op.alter_column('cloudaccount', 'type', existing_type=new_cloud_types,
@@ -49,7 +49,8 @@ def downgrade():
                       sa.sql.column('deleted_at', sa.Integer()))
     op.execute(
         ct.update().where(ct.c.type.in_(['SKU'])).values(
-            type='CLOUD_ACCOUNT', deleted_at=int(datetime.utcnow().timestamp())
+            type='CLOUD_ACCOUNT', deleted_at=int(datetime.now(
+                tz=timezone.utc).timestamp())
         )
     )
     op.alter_column('cost_model', 'type', existing_type=new_cost_models_types,

@@ -1,5 +1,4 @@
 import logging
-import datetime
 from sqlalchemy import and_
 
 from auth.auth_server.controllers.base import BaseController
@@ -11,7 +10,7 @@ from auth.auth_server.utils import check_action
 from tools.optscale_exceptions.common_exc import (ForbiddenException,
                                                   NotFoundException,
                                                   WrongArgumentsException)
-
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 
@@ -106,7 +105,7 @@ class AssignmentController(BaseController):
             token = kwargs.get('token')
             user = self.get_user(token)
             self._check_assign_ability(token, user, item)
-        item.deleted_at = datetime.datetime.utcnow().timestamp()
+        item.deleted_at = opttime.utcnow_timestamp()
         self.session.add(item)
         self.session.commit()
 

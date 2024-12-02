@@ -4,7 +4,7 @@ import logging
 import re
 import os
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from urllib import parse
 
 from sqlalchemy import create_engine
@@ -188,7 +188,8 @@ def _get_checklist(mydb, org_id):
 def _get_expenses_by_clouds(ch_cl, cloud_account_ids):
     if not cloud_account_ids:
         return {}
-    start_date = datetime.utcnow() - timedelta(days=30)
+    start_date = datetime.now(tz=timezone.utc).replace(
+        tzinfo=None) - timedelta(days=30)
     query = """
         SELECT
             cloud_account_id,

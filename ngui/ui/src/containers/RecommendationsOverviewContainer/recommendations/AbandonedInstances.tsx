@@ -3,7 +3,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import AbandonedInstancesModal from "components/SideModalManager/SideModals/recommendations/AbandonedInstancesModal";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS, AZURE_COMPUTE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES, NEBIUS, AZURE_CNR } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -47,6 +47,8 @@ class AbandonedInstances extends BaseRecommendation {
   emptyMessageId = "noAbandonedInstances";
 
   services = [ALIBABA_ECS, AZURE_COMPUTE, AWS_EC2, AWS_RDS, NEBIUS_SERVICE];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS];
 
   categories = [CATEGORY_COST];
 

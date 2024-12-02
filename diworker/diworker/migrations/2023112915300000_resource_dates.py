@@ -1,7 +1,7 @@
 import logging
 from diworker.diworker.migrations.base import BaseMigration
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import UpdateOne
 
 """
@@ -41,8 +41,8 @@ class Migration(BaseMigration):
 
     @staticmethod
     def to_start_date(timestamp):
-        return datetime.utcfromtimestamp(timestamp).replace(
-            hour=0, minute=0, second=0, microsecond=0)
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 
     def add_date_fields(self):
         for is_demo in [False, True]:

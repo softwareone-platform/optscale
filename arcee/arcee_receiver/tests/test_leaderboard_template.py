@@ -512,11 +512,23 @@ async def test_patch_invalid_metric(app):
 
 
 @pytest.mark.asyncio
-async def test_delete_missing(app):
+async def test_delete_missing_task(app):
     client = app.asgi_client
     await prepare_token()
     _, response = await client.delete(
         Urls.leaderboard_templates.format('fake'),
+        headers={"x-api-key": TOKEN1})
+    assert response.status == 404
+    assert "Task not found" in response.text
+
+
+@pytest.mark.asyncio
+async def test_delete_missing_lb(app):
+    client = app.asgi_client
+    await prepare_token()
+    task = await prepare_tasks()
+    _, response = await client.delete(
+        Urls.leaderboard_templates.format(task[0]['_id']),
         headers={"x-api-key": TOKEN1})
     assert response.status == 404
     assert "Not found" in response.text

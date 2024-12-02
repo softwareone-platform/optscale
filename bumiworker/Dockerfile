@@ -10,6 +10,7 @@ COPY optscale_client/metroculus_client optscale_client/metroculus_client
 COPY optscale_client/insider_client optscale_client/insider_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
 COPY tools/cloud_adapter tools/cloud_adapter
+COPY tools/optscale_time tools/optscale_time
 
 COPY bumiworker/requirements.txt ./bumiworker/requirements.txt
 RUN pip install --no-cache-dir -r bumiworker/requirements.txt

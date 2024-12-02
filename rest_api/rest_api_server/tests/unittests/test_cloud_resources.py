@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, timezone
+import tools.optscale_time as opttime
+from datetime import datetime
 from freezegun import freeze_time
 from pymongo import UpdateOne
 from unittest.mock import patch, ANY
@@ -358,7 +359,7 @@ class TestCloudResourceApi(TestProfilingBase):
         res['resource_type'] = 'Instance'
         code, resource = self.cloud_resource_create(self.cloud_acc_id, res)
         self.assertEqual(code, 201)
-        seen_time = int(datetime.utcnow().timestamp() - 5)
+        seen_time = opttime.utcnow_timestamp() - 5
         self.resources_collection.bulk_write([UpdateOne(
             filter={'_id': resource['id']},
             update={'$set': {'last_seen': seen_time, 'active': True}})])
@@ -576,7 +577,7 @@ class TestCloudResourceApi(TestProfilingBase):
             self.assertEqual(code, 201)
 
     def add_cached_resource(self, resource_ids, valid_until=None, active=True):
-        last_seen = int(datetime.utcnow().timestamp())
+        last_seen = opttime.utcnow_timestamp()
         if valid_until:
             active = valid_until > last_seen
             last_seen = valid_until - DEFAULT_CACHE_TIME
@@ -590,7 +591,7 @@ class TestCloudResourceApi(TestProfilingBase):
     def add_recommendations(self, resource_id, modules, timestamp=None,
                             last_check=None, checklist=True):
         if not timestamp:
-            timestamp = int(datetime.utcnow().timestamp())
+            timestamp = opttime.utcnow_timestamp()
 
         recommendations = {
             'modules': modules,
@@ -695,9 +696,9 @@ class TestCloudResourceApi(TestProfilingBase):
             self.assertEqual(details['pool_purpose'], 'business_unit')
 
             self.add_cached_resource(
-                [resource['id'], 'res_3_id'], datetime.utcnow().timestamp() + 500)
+                [resource['id'], 'res_3_id'], opttime.utcnow_timestamp() + 500)
             self.add_cached_resource(
-                [resource['id'], 'res_3_id'], datetime.utcnow().timestamp() + 1000)
+                [resource['id'], 'res_3_id'], opttime.utcnow_timestamp() + 1000)
             code, response = self.client.cloud_resource_get(
                 resource['id'], details=True)
         details = response.get('details')
@@ -776,7 +777,7 @@ class TestCloudResourceApi(TestProfilingBase):
             self.extend_expenses(expenses)
             self.add_cached_resource(
                 [resource['id'], 'res_3_id'],
-                datetime.utcnow().timestamp() + 1000)
+                opttime.utcnow_timestamp() + 1000)
 
             code, response = self.client.cloud_resource_get(
                 resource['id'], details=True)
@@ -847,7 +848,7 @@ class TestCloudResourceApi(TestProfilingBase):
         self.assertIn(resource['id'],
                       data['details']['env_properties_collector_link'])
 
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         schedule_book = {
             'resource_id': resource['id'],
             'acquired_by_id': employee['id'],
@@ -877,7 +878,7 @@ class TestCloudResourceApi(TestProfilingBase):
             'pool_id': self.org['pool_id'],
             'employee_id': employee['id']
         }
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         with freeze_time(now):
             _, resource = self.cloud_resource_create(
                 self.cloud_acc_id, resource_dict)
@@ -924,6 +925,29 @@ class TestCloudResourceApi(TestProfilingBase):
         self.assertIsNotNone(details['constraints']['total_expense_limit'])
         self.assertEqual(len(details['policies']), 1)
         self.assertIsNotNone(details['policies']['ttl'])
+
+    def test_get_by_hash(self):
+        user_id = self.gen_id()
+        _, employee = self.client.employee_create(
+            self.org_id, {'name': 'empl1', 'auth_user_id': user_id})
+        self._mock_auth_user(user_id)
+        cloud_resource_hash = str(uuid.uuid4())
+        resource_dict = {
+            'cloud_resource_hash': cloud_resource_hash,
+            'name': 'res1',
+            'resource_type': 'res_test',
+            'pool_id': self.org['pool_id'],
+            'employee_id': employee['id']
+        }
+        _, resource = self.cloud_resource_create(
+                self.cloud_acc_id, resource_dict)
+        code, resp = self.client.cloud_resource_list(
+            self.cloud_acc_id,
+            cloud_resource_hash=cloud_resource_hash)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['resources']), 1)
+        self.assertEqual(resp['resources'][0]['cloud_resource_hash'],
+                         cloud_resource_hash)
 
     def test_resource_details_cluster(self):
         user_id = self.gen_id()
@@ -1049,7 +1073,7 @@ class TestCloudResourceApi(TestProfilingBase):
         _, resource = self.cloud_resource_create(
             self.cloud_acc_id, resource_dict)
         self.add_cached_resource([resource['id']])
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         self.client.pool_policy_create(
             self.org['pool_id'], {
                 'limit': 150,
@@ -1101,8 +1125,8 @@ class TestCloudResourceApi(TestProfilingBase):
             self.cloud_acc_id, resource_dict)
 
         cache_map = [
-            (resource['id'], int(datetime.utcnow().timestamp()) + 1000),
-            (str(uuid.uuid4()), int(datetime.utcnow().timestamp()) + 2000),
+            (resource['id'], opttime.utcnow_timestamp() + 1000),
+            (str(uuid.uuid4()), opttime.utcnow_timestamp() + 2000),
         ]
         for res_id, valid_until in cache_map:
             self.add_cached_resource([res_id], valid_until)
@@ -1159,7 +1183,7 @@ class TestCloudResourceApi(TestProfilingBase):
         code, resource = self.cloud_resource_create(self.cloud_acc_id,
                                                     self.valid_resource)
         self.add_cached_resource([resource['id']])
-        last_check = int(datetime.utcnow().timestamp())
+        last_check = opttime.utcnow_timestamp()
         timstamp = last_check - 1
         self.add_recommendations(resource['id'], [
             {'name': 'module1', 'saving': 10},
@@ -1224,7 +1248,7 @@ class TestCloudResourceApi(TestProfilingBase):
             {
                 'cloud_account_id': self.cloud_acc['id'],
                 'resource_id': resource['cloud_resource_id'],
-                'date': int(datetime.utcnow().timestamp()),
+                'date': opttime.utcnow_timestamp(),
                 'type': 1,
                 'from': 'region_1',
                 'to': 'External',
@@ -1235,7 +1259,7 @@ class TestCloudResourceApi(TestProfilingBase):
             {
                 'cloud_account_id': self.cloud_acc['id'],
                 'resource_id': resource['cloud_resource_id'],
-                'date': int(datetime.utcnow().timestamp()),
+                'date': opttime.utcnow_timestamp(),
                 'type': 1,
                 'from': 'region_2',
                 'to': 'External',
@@ -1267,7 +1291,7 @@ class TestCloudResourceApi(TestProfilingBase):
             {
                 'cloud_account_id': self.cloud_acc['id'],
                 'resource_id': resource['cloud_resource_id'],
-                'date': int(datetime.utcnow().timestamp()),
+                'date': opttime.utcnow_timestamp(),
                 'type': 1,
                 'from': 'region_1',
                 'to': 'External',

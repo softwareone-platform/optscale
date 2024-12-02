@@ -1,6 +1,6 @@
 from datetime import datetime
 import logging
-
+import tools.optscale_time as opttime
 from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql import func
@@ -323,7 +323,7 @@ class LimitHitsController(BaseController):
     def process_resources(self, organization_id, resources):
         if not resources:
             return []
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         resource_data_map = self.collect_processing_data(resources)
         resource_ids = list(resource_data_map.keys())
         resource_limit_hit_map = {

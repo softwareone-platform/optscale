@@ -10,6 +10,8 @@ from kombu.pools import producers
 from pymongo import MongoClient, UpdateOne
 
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import (utcfromtimestamp, utcnow, startday,
+                                 utcnow_timestamp)
 
 from bumiworker.bumiworker.consts import ArchiveReason
 
@@ -28,11 +30,11 @@ class time_measure(ContextDecorator):
         self._start = None
 
     def __enter__(self):
-        self._start = datetime.utcnow().timestamp()
+        self._start = utcnow_timestamp()
         return self
 
     def __exit__(self, exc_type, exc, exc_tb):
-        total = datetime.utcnow().timestamp() - self._start
+        total = utcnow_timestamp() - self._start
         LOG.info(
             '%s module %s (organization_id %s) completed in %0.2f seconds',
             self.module_type.capitalize(), self.module, self.organization_id, total)
@@ -161,7 +163,7 @@ class ModuleBase(ServiceBase):
 
     @staticmethod
     def timestamp_to_day_start(timestamp) -> datetime:
-        return datetime.utcfromtimestamp(timestamp).replace(
+        return utcfromtimestamp(timestamp).replace(
             hour=0, minute=0, second=0, microsecond=0)
 
     def get_organization_currency(self):
@@ -231,10 +233,9 @@ class ModuleBase(ServiceBase):
         _, response = self.rest_client.cloud_resources_discover(
             self.organization_id, resource_type)
         starting_point = int(
-            (datetime.utcnow() - timedelta(days=delta_days)).timestamp()
+            (utcnow() - timedelta(days=delta_days)).timestamp()
         )
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0,
-                                          microsecond=0)
+        today = startday(utcnow())
         month_ago_timestamp = (today - timedelta(days=1) - timedelta(
             days=DAYS_IN_MONTH))
         resources = response['data']
@@ -250,10 +251,10 @@ class ModuleBase(ServiceBase):
             if is_saving:
                 return (month_ago_timestamp if
                         int(month_ago_timestamp.timestamp()) > res_dt else
-                        datetime.utcfromtimestamp(res_dt).replace(
+                        utcfromtimestamp(res_dt).replace(
                             hour=0, minute=0, second=0, microsecond=0))
             else:
-                return datetime.utcfromtimestamp(res_dt).replace(
+                return utcfromtimestamp(res_dt).replace(
                     hour=0, minute=0, second=0, microsecond=0)
 
         def get_cost_saving(is_saving=True):
@@ -346,7 +347,7 @@ class ModuleBase(ServiceBase):
             pipeline, allowDiskUse=True))
 
     def get_record_key(self, record):
-        return tuple(record[k] for k in self.unique_record_keys)
+        return tuple(record.get(k) for k in self.unique_record_keys)
 
     def set_detection_field(self, module_res, previous_module_res):
         optimization_detection_map = {

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase
@@ -7,6 +7,7 @@ from bumiworker.bumiworker.modules.recommendations.abandoned_images import (
     AbandonedImages as AbandonedImagesRecommendation,
     SUPPORTED_CLOUD_TYPES
 )
+from tools.optscale_time import utcnow
 
 
 class AbandonedImages(ArchiveBase, AbandonedImagesRecommendation):
@@ -22,7 +23,7 @@ class AbandonedImages(ArchiveBase, AbandonedImagesRecommendation):
     def _get(self, previous_options, optimizations, cloud_accounts_map,
              **kwargs):
         days_threshold = previous_options['days_threshold']
-        now = datetime.utcnow()
+        now = utcnow()
         start_date = now - timedelta(days=days_threshold)
 
         account_optimizations_map = defaultdict(list)

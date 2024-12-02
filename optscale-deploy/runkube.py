@@ -18,14 +18,16 @@ from kubernetes.stream import stream as k8s_stream
 from docker import DockerClient
 from kubernetes.stream.ws_client import ERROR_CHANNEL
 from docker.errors import ImageNotFound
-
-DESCRIPTION = "Script to deploy OptScale on k8s. " \
-              "See deployment instructions at https://github.com/hystax/optscale"
+REPOSITORY = 'hystax/optscale'
+DESCRIPTION = f"Script to deploy OptScale on k8s. " \
+              f"See deployment instructions at https://github.com/{REPOSITORY}"
 HELM_DELETE_CMD = 'helm delete --purge {release}'
 HELM_UPDATE_CMD = 'helm upgrade --install {overlays} {release} {chart}'
 GET_FAKE_CERT_CMD = 'cat /ingress-controller/ssl/default-defaultcert.pem'
 HELM_LIST_CMD = 'helm list -a'
 HELM_GET_VALUES_CMD = 'helm get values {name}'
+GET_LATEST_TAG_CMD = f"curl https://api.github.com/repos/{REPOSITORY}/releases" \
+                     f" | jq -r '.[0].tag_name'"
 TEMP_DIR = 'tmp'
 BASE_OVERLAY = os.path.join(TEMP_DIR, 'base_overlay')
 ORIGINAL_OVERLAY = os.path.join(TEMP_DIR, 'original_overlay')
@@ -34,6 +36,7 @@ JOB_NAME = 'configurator'
 OPTSCALE_K8S_NAMESPACE = 'default'
 COMPONENTS_FILE = 'components.yaml'
 LOCAL_TAG = 'local'
+LATEST_TAG = 'latest'
 
 LOG = logging.getLogger(__name__)
 
@@ -321,8 +324,15 @@ class Runkube:
         except IndexError:
             LOG.info('etcd pod not found')
 
+    def check_version(self):
+        if self.version.lower() == LATEST_TAG:
+            self.version = subprocess.check_output(
+                GET_LATEST_TAG_CMD, shell=True).decode("utf-8").rstrip()
+            LOG.info('Latest release tag: %s' % self.version)
+
     def start(self, check, update):
         self.check_releases(update)
+        self.check_version()
         for node in self.get_node_ips():
             docker_cl = self.get_docker_cl(node)
             if not self.no_pull:
@@ -382,7 +392,8 @@ if __name__ == '__main__':
         description=DESCRIPTION,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('name', help='Release name for helm and log separation')
-    parser.add_argument('version', help='OptScale version')
+    parser.add_argument('version', help='OptScale version. Use `latest` to '
+                                        'update on latest release version')
     parser.add_argument('-c', '--config', help='Path to kube config file')
     action_group = parser.add_mutually_exclusive_group(required=False)
     action_group.add_argument('-r', '--restart', action='store_true',

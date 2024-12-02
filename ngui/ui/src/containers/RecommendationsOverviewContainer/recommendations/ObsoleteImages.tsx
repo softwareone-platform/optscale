@@ -7,7 +7,7 @@ import ObsoleteImagesModal from "components/SideModalManager/SideModals/recommen
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AWS_EC2 } from "hooks/useRecommendationServices";
 import { detectedAt, firstSeenOn, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { unixTimestampToDateTime } from "utils/datetime";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
@@ -71,6 +71,8 @@ class ObsoleteImages extends BaseRecommendation {
   descriptionMessageId = "obsoleteImagesDescription";
 
   services = [AWS_EC2, ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR];
 
   categories = [CATEGORY_COST];
 

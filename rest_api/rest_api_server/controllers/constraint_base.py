@@ -1,5 +1,6 @@
 import json
 import logging
+import tools.optscale_time as opttime
 from datetime import datetime, time, timedelta
 
 from sqlalchemy.sql import and_, exists
@@ -105,7 +106,7 @@ class ConstraintBaseController(BaseController):
     def get_resource_hit_value(resource_data, constraint_type, now):
         limit_value_map = {
             ConstraintTypes.TTL: (now - int(resource_data.get(
-                'mindate', datetime.utcnow()).timestamp())) // 3600,
+                'mindate', opttime.utcnow()).timestamp())) // 3600,
             ConstraintTypes.TOTAL_EXPENSE_LIMIT: resource_data.get(
                 'total_cost', 0),
             ConstraintTypes.DAILY_EXPENSE_LIMIT: resource_data.get(

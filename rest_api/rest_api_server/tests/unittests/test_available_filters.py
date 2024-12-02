@@ -1,4 +1,4 @@
-import os
+import tools.optscale_time as opttime
 from datetime import datetime, timezone
 from unittest.mock import patch
 
@@ -94,7 +94,7 @@ class TestAvailableFiltersApi(TestApiBase):
         self.assertEqual(response['error']['error_code'], 'OE0224')
 
     def test_available_filters_limit(self):
-        time = int(datetime.utcnow().timestamp())
+        time = opttime.utcnow_timestamp()
         code, response = self.client.available_filters_get(
             self.org_id, time, time + 1, {'limit': 1})
         self.assertEqual(code, 400)

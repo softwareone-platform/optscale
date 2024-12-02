@@ -4,6 +4,7 @@ from unittest.mock import patch
 from freezegun import freeze_time
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow
 
 
 class TestOrganizationsOverviewApi(TestApiBase):
@@ -206,7 +207,7 @@ class TestOrganizationsOverviewApi(TestApiBase):
             self.org_id, self.valid_cloud_acc_dict,
             auth_user_id=self.auth_user)
 
-        completed_at = datetime.utcnow()
+        completed_at = utcnow()
         completed_at_ts = int(completed_at.timestamp())
         _, res = self.client.optimizations_get(self.org_id)
         checklist_id = res['id']

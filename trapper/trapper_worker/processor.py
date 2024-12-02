@@ -7,6 +7,7 @@ from clickhouse_driver import Client as ClickHouseClient
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcfromtimestamp, utcnow
 
 LOG = get_logger(__name__)
 CHUNK_SIZE = 10000
@@ -98,8 +99,8 @@ class BaseTrafficExpenseProcessor:
             '$or': [
                 {
                     'start_date': {
-                        '$gte': datetime.utcfromtimestamp(t['start_date']),
-                        '$lte': datetime.utcfromtimestamp(t['end_date'])
+                        '$gte': utcfromtimestamp(t['start_date']),
+                        '$lte': utcfromtimestamp(t['end_date'])
                     }
                 }
                 for t in tasks
@@ -336,8 +337,8 @@ class NebiusTrafficExpenseProcessor(BaseTrafficExpenseProcessor):
             '$or': [
                 {
                     'start_date': {
-                        '$gte': datetime.utcfromtimestamp(t['start_date']),
-                        '$lte': datetime.utcfromtimestamp(t['end_date'])
+                        '$gte': utcfromtimestamp(t['start_date']),
+                        '$lte': utcfromtimestamp(t['end_date'])
                     }
                 }
                 for t in tasks

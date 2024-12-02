@@ -3,7 +3,7 @@ First/last expenses in grouped collections
 """
 import logging
 from calendar import monthrange
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from diworker.diworker.migrations.base import BaseMigration
 from pymongo import UpdateOne
@@ -27,8 +27,9 @@ class Migration(BaseMigration):
 
     @staticmethod
     def get_max_last_expense():
-        return (datetime.utcnow().replace(
-            hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1))
+        return (datetime.now(tz=timezone.utc).replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=None
+        ) - timedelta(days=1))
 
     @staticmethod
     def set_first_last_expenses(collection, info, months_list, grouping_field):

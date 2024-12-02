@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import uuid
 from auth.auth_server.tests.unittests.test_api_base import TestAuthBase
 from auth.auth_server.models.models import (Type, User, gen_salt,
                                             VerificationCode)
 from auth.auth_server.utils import hash_password, get_digest
 from auth.auth_server.tests.unittests.utils import extract_caveats
+from tools.optscale_time import utcnow
 
 
 class TestTokenApi(TestAuthBase):
@@ -114,6 +115,7 @@ class TestTokenApi(TestAuthBase):
         extract_caveats(token_info['token'])
 
     def test_token_by_verification_code(self):
+        self.user_verified_mock.stop()
         session = self.db_session
         partner_salt = gen_salt()
         partner_password = 'pass1234'
@@ -125,7 +127,7 @@ class TestTokenApi(TestAuthBase):
         session.add(partner_user)
 
         code_1, code_3, code_4 = 123456, 234567, 345678
-        now = datetime.utcnow()
+        now = utcnow()
         vc_1 = VerificationCode(
             email='wrong@email.com', valid_until=now + timedelta(hours=1),
             code=get_digest(str(code_1)))
@@ -151,7 +153,9 @@ class TestTokenApi(TestAuthBase):
             code, resp = self.client.post('tokens', body)
             self.assertEqual(code, 403)
             self.assertEqual(resp['error']['error_code'], 'OA0071')
-
+        verified = session.query(User.verified).filter(
+            User.id == partner_user.id).scalar()
+        self.assertFalse(verified)
         body = {
             'verification_code': code_4,
             'email': partner_user.email,
@@ -160,3 +164,6 @@ class TestTokenApi(TestAuthBase):
         self.assertEqual(code, 201)
         self.assertEqual(resp['user_email'], partner_user.email)
         self.assertTrue(vc_4.deleted_at != 0)
+        verified = session.query(User.verified).filter(
+            User.id == partner_user.id).scalar()
+        self.assertTrue(verified)

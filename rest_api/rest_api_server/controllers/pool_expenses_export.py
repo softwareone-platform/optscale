@@ -1,4 +1,5 @@
 import logging
+import tools.optscale_time as opttime
 from datetime import datetime
 from tools.optscale_exceptions.common_exc import (ConflictException,
                                                   NotFoundException)
@@ -81,7 +82,7 @@ class PoolExpensesExportController(BaseController):
         pool_id = self.get_pool_id(export_id)
         if start_date is None and end_date is None:
             start_date = 0
-            end_date = int(datetime.utcnow().timestamp())
+            end_date = opttime.utcnow_timestamp()
         elif end_date is None:
             end_date = start_date + 24 * 60 * 60 - 1
         pool = self.get_pool(pool_id)

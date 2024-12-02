@@ -1,11 +1,11 @@
 import logging
 import os
-from datetime import datetime
 from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow
 
 
 LOG = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ RETRY_POLICY = {'max_retries': 15, 'interval_start': 0,
 
 
 def publish_tasks(org_ids, config_cl):
-    now = int(datetime.utcnow().timestamp())
+    now = int(utcnow().timestamp())
     queue_conn = QConnection('amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit')),
         transport_options=RETRY_POLICY)

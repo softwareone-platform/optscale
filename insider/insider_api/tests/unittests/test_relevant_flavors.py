@@ -1,8 +1,8 @@
 import os
 from botocore.exceptions import ClientError
-from datetime import datetime
 from unittest.mock import patch, PropertyMock
 from insider.insider_api.tests.unittests.test_api_base import TestBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestRelevantFlavorsApi(TestBase):
@@ -175,7 +175,7 @@ class TestRelevantFlavorsApi(TestBase):
                 'family': 'family2'
             }
         }
-        self.insert_azure_pricing(int(datetime.utcnow().timestamp()))
+        self.insert_azure_pricing(utcnow_timestamp())
         code, resp = self.client.get_relevant_flavors('azure_cnr', 'us')
         self.assertEqual(resp, {
             'azure_cnr': [

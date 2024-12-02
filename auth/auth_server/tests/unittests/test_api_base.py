@@ -58,8 +58,13 @@ class TestAuthBase(tornado.testing.AsyncHTTPTestCase):
         self.client = TestAuthBase.get_auth_client(version).Client(
             http_provider=http_provider)
         self.client.secret = secret
+        self.user_verified_mock = patch(
+            'auth.auth_server.models.models.User.verified',
+            new_callable=PropertyMock, return_value=True)
+        self.user_verified_mock.start()
 
     def tearDown(self):
+        self.user_verified_mock.stop()
         DBFactory.clean_type(DBType.TEST)
         super().tearDown()
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import logging
 import os
@@ -90,7 +90,7 @@ class MainProcessor:
 
     def load_task(self, task, cleanup_on_fail=True):
         bucket, filename = task['download_url'].split('/')
-        report_path = 'task_%s' % int(datetime.utcnow().timestamp())
+        report_path = 'task_%s' % int(datetime.now(tz=timezone.utc).timestamp())
         LOG.info('loading %s from %s', bucket, filename)
 
         res = None

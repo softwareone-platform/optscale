@@ -1,8 +1,8 @@
 from unittest.mock import patch, Mock, ANY
-from datetime import datetime
 from slack_sdk.errors import SlackApiError
 from slacker.slacker_server.tests.test_api_base import TestApiBase
 from slacker.slacker_server.utils import gen_id
+from tools.optscale_time import utcnow
 
 
 class TestSendMessageAPI(TestApiBase):
@@ -24,7 +24,7 @@ class TestSendMessageAPI(TestApiBase):
         patch('slacker.slacker_server.handlers.v2.base.'
               'BaseHandler.get_meta_by_token',
               return_value={'user_id': self.user_id,
-                            'valid_until': datetime.utcnow().timestamp()*2}
+                            'valid_until': utcnow().timestamp()*2}
               ).start()
         auth_cl_mock.user_update.return_value = (200, {'email': '1@1.com'})
         rest_cl_mock.organization_list.return_value = (

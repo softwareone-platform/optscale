@@ -17,6 +17,7 @@ from rest_api.rest_api_server.utils import Config, handle_http_exc
 from optscale_client.insider_client.client import Client as InsiderClient
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, WrongArgumentsException)
+from tools.optscale_time import utcnow_timestamp
 
 CLOUD_TYPE_TO_CLOUD_MAP = {
     'aws_cnr': 'aws'
@@ -109,7 +110,7 @@ class BaseInfraController(BaseProfilingTokenController, MongoMixin):
             self, runners: list[dict],
             cloud_account: CloudAccount
     ) -> tuple[dict[str, float], dict[str, int]]:
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         filters = []
         min_dt, max_dt = None, None
         duration_map = {}

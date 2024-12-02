@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import time
-from datetime import datetime
 from threading import Thread
 from pymongo import MongoClient, UpdateOne
 from kombu.mixins import ConsumerMixin
@@ -14,6 +13,7 @@ import urllib3
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow_timestamp, utcnow
 
 BOOKING_OBSERVER_EXCHANGE_NAME = 'booking-activities'
 BOOKING_OBSERVER_QUEUE_NAME = 'booking-activity'
@@ -65,10 +65,10 @@ class BookingObserverWorker(ConsumerMixin):
         if not org_id or not observe_time:
             raise Exception('Invalid task received: {}'.format(task))
 
-        start_time = datetime.utcnow()
+        start_time = utcnow()
         self._process(org_id, observe_time)
         LOG.info('Booking observer process for org %s completed in %s seconds',
-                 org_id, (datetime.utcnow() - start_time).total_seconds())
+                 org_id, (utcnow() - start_time).total_seconds())
 
     def get_start_date(self, organization_id):
         try:
@@ -93,7 +93,7 @@ class BookingObserverWorker(ConsumerMixin):
         ])
 
     def _process(self, organization_id, observe_time):
-        end_date = int(datetime.utcnow().timestamp())
+        end_date = utcnow_timestamp()
         start_date = self.get_start_date(organization_id)
         _, bookings = self.rest_cl.shareable_book_list(
             organization_id, start_date, end_date)

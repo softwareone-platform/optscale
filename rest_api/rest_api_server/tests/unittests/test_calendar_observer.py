@@ -1,4 +1,5 @@
 import uuid
+import tools.optscale_time as opttime
 from datetime import datetime, timedelta
 from freezegun import freeze_time
 from unittest.mock import patch, ANY, PropertyMock
@@ -211,28 +212,33 @@ class TestObserver(TestApiBase):
                     'rest_api.google_calendar_client.client.'
                     'GoogleCalendarClient.list_events', return_value=[event]
             ) as p_list_event, patch(
-                'rest_api.google_calendar_client.client.GoogleCalendarClient.update_event'
+                'rest_api.google_calendar_client.client.'
+                'GoogleCalendarClient.update_event'
             ) as p_patch_event:
                 code, _ = self.client.observe_calendar(self.org_id)
                 self.assertEqual(code, 204)
                 p_patch_event.assert_called_once_with(
                     c_sync['calendar_id'], event['id'],
-                    summary=f"{resource.get('name')} is acquired by {self.employee['name']}")
+                    summary=f"{resource.get('name')} is acquired by "
+                            f"{self.employee['name']}")
                 p_list_event.assert_called_once_with(
                     c_sync['calendar_id'], ANY, ANY,
-                    datetime.utcnow() - timedelta(days=28)
+                    opttime.utcnow() - timedelta(days=28)
                 )
 
             with patch(
-                    'optscale_client.config_client.client.Client.google_calendar_service_key',
+                    'optscale_client.config_client.client.Client.'
+                    'google_calendar_service_key',
                     return_value={'client_email': 'example@hystax.com'}):
                 code, res = self.client.organization_calendar_get(self.org_id)
                 self.assertEqual(code, 200)
                 c_sync = res['calendar_synchronization']
             with patch(
-                'rest_api.google_calendar_client.client.GoogleCalendarClient.update_event'
+                'rest_api.google_calendar_client.client.'
+                'GoogleCalendarClient.update_event'
             ), patch(
-                'rest_api.google_calendar_client.client.GoogleCalendarClient.list_events',
+                'rest_api.google_calendar_client.client.'
+                'GoogleCalendarClient.list_events',
                 return_value=[event]
             ) as p_list_event:
                 code, _ = self.client.observe_calendar(self.org_id)
@@ -245,14 +251,15 @@ class TestObserver(TestApiBase):
                 'rest_api.rest_api_server.controllers.base.BaseController.'
                 'publish_activities_task'
             ).start()
-            with patch('rest_api.google_calendar_client.client.GoogleCalendarClient.list_events',
+            with patch('rest_api.google_calendar_client.client.'
+                       'GoogleCalendarClient.list_events',
                        side_effect=FailedDependency(Err.OE0490, ['not found'])):
                 code, _ = self.client.observe_calendar(self.org_id)
                 self.assertEqual(code, 204)
                 error = 'Unable to list calendar events: not found'
                 activity_param_tuples = self.get_publish_activity_tuple(
                     self.org_id, c_sync['id'], 'calendar_synchronization',
-                    'calendar_warning', {
+                    'calendar_observer_warning', {
                         'calendar_id': c_sync['calendar_id'],
                         'reason': error,
                         'is_observer': True,
@@ -350,7 +357,7 @@ class TestObserver(TestApiBase):
                     c_sync['calendar_id'], event['id'], status='confirmed')
                 p_list_event.assert_called_once_with(
                     c_sync['calendar_id'], ANY, ANY,
-                    datetime.utcnow() - timedelta(days=28)
+                    opttime.utcnow() - timedelta(days=28)
                 )
         with freeze_time(dt + timedelta(days=1)):
             with patch('optscale_client.config_client.client.Client.google_calendar_service_key',

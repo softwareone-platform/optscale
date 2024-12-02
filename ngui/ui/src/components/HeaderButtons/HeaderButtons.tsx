@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import LiveHelpOutlinedIcon from "@mui/icons-material/LiveHelpOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
@@ -13,7 +13,7 @@ import Popover from "components/Popover";
 import { PRODUCT_TOUR, useStartTour } from "components/Tour";
 import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
 import ProfileMenuContainer from "containers/ProfileMenuContainer";
-import { CommunityDocsContext } from "contexts/CommunityDocsContext";
+import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
 import useStyles from "./HeaderButtons.styles";
@@ -40,7 +40,7 @@ const HeaderButtons = () => {
 
   const isTourAvailableForCurrentBreakpoint = useIsTourAvailableForCurrentBreakpoint();
 
-  const { isCommunityDocsOpened, setIsCommunityDocsOpened } = useContext(CommunityDocsContext);
+  const { isCommunityDocsOpened, toggleCommunityDocs } = useCommunityDocsContext();
 
   return (
     <>
@@ -111,7 +111,7 @@ const HeaderButtons = () => {
           <Box className={classes.customMenuItem}>
             <IconButton
               icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}
-              onClick={setIsCommunityDocsOpened}
+              onClick={toggleCommunityDocs}
               color="primary"
               tooltip={{
                 show: true,

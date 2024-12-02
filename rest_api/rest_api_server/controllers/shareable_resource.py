@@ -1,3 +1,4 @@
+import tools.optscale_time as opttime
 from datetime import datetime
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 import logging
@@ -88,7 +89,9 @@ class ShareableBookingController(BaseController, MongoMixin,
                                           ['Resource', resource['id']])
         resource_type = resource.get('resource_type')
         is_environment = resource.get('is_environment', False)
-        if not is_environment and resource_type != 'Instance':
+        is_cluster = resource.get('cluster_type_id')
+        if (not is_environment and resource_type != 'Instance'
+                and not is_cluster):
             raise WrongArgumentsException(Err.OE0384, [resource_type])
         if not resource.get('shareable'):
             raise WrongArgumentsException(Err.OE0480, ['Resource',
@@ -135,7 +138,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         if not released_at:
             released_at = 0
         if not acquired_since:
-            acquired_since = int(datetime.utcnow().timestamp())
+            acquired_since = opttime.utcnow_timestamp()
         shareable_bookings = self.session.query(
             ShareableBooking).filter(
             ShareableBooking.resource_id == resource_id,
@@ -191,7 +194,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()
         ).email_send(
-            [recipient], 'OptScale shareable environments notification',
+            [recipient], 'OptScale shared environments notification',
             template_type="first_shareable_resources",
             template_params=template_params)
 
@@ -221,6 +224,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         resources = []
         invalid_resources = []
         not_active_resources = []
+        clustered_resources = []
         all_resources_ids = set(x['id'] for x in all_resources)
         not_found_resources_ids = [x for x in resource_ids
                                    if x not in all_resources_ids]
@@ -233,13 +237,17 @@ class ShareableBookingController(BaseController, MongoMixin,
                 resources.append(resource)
             elif not resource.get('active'):
                 not_active_resources.append(resource)
+            elif (resource.get('resource_type') == ResourceTypes.instance.value
+                  and resource.get('cluster_id')):
+                clustered_resources.append(resource)
             else:
                 resources.append(resource)
         if not_found_resources_ids:
             for res_id in not_found_resources_ids:
                 invalid_resources.append({'id': res_id,
                                           'cloud_resource_id': res_id})
-        return resources, invalid_resources, not_active_resources
+        return (resources, invalid_resources, not_active_resources,
+                clustered_resources)
 
     def get_employee_by_id(self, employee_id):
         employee = self.session.query(Employee).filter(and_(
@@ -285,7 +293,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         self._check_dates(acquired_since, released_at)
         self._check_slots_with_existing(resource_id, acquired_since,
                                         released_at)
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         if (is_admin_permission is False and acquired_since is not None and
                 acquired_since < now_ts):
             raise ForbiddenException(Err.OE0495, [])
@@ -304,7 +312,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         return self.fill_booking_acquired_by(result)
 
     def get_resource_current_booking(self, resource_id):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         resource_booking = self.session.query(ShareableBooking).filter(
             and_(ShareableBooking.resource_id == resource_id,
                  ShareableBooking.acquired_since <= now_ts,
@@ -316,7 +324,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             return booking
 
     def get_upcoming_booking(self, resource_id, current_booking=None):
-        acquired_since = int(datetime.utcnow().timestamp())
+        acquired_since = opttime.utcnow_timestamp()
         if current_booking and current_booking.get('released_at'):
             acquired_since = current_booking['released_at']
         resource_bookings = self.session.query(ShareableBooking).filter(
@@ -370,7 +378,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         if (item.jira_auto_release and
                 not self.get_jira_issue_attachments([item.id])):
             self.release(item.id, is_admin_permission=True,
-                         released_at=int(datetime.utcnow().timestamp()))
+                         released_at=opttime.utcnow_timestamp())
 
     def release(self, item_id, is_admin_permission, **kwargs):
         item = self.get(item_id)
@@ -383,7 +391,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             raise WrongArgumentsException(Err.OE0480, ['Resource',
                                                        resource['_id']])
 
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         released_at = kwargs.get('released_at')
         check_int_attribute('released_at', released_at)
         # only released_at param is expected
@@ -420,7 +428,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         if released_at <= now_ts:
             self.publish_task({
                 'organization_id': item.organization_id,
-                'observe_time': int(datetime.utcnow().timestamp()),
+                'observe_time': opttime.utcnow_timestamp(),
                 'resource': resource,
                 'object_id': item.id
             })
@@ -477,7 +485,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             Pool.deleted.is_(False),
         ).all()
         pools_map = {pool.id: pool for pool in pools}
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         shareable_bookings = self.session.query(
             ShareableBooking).filter(
             ShareableBooking.organization_id == organization_id,
@@ -520,7 +528,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             self._check_resource(resource)
         else:
             raise NotFoundException(Err.OE0002, ['Resource', resource_id])
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         resource_bookings = []
         bookings = self.session.query(
             ShareableBooking).filter(
@@ -542,7 +550,7 @@ class ShareableBookingController(BaseController, MongoMixin,
                                                  item_id])
         resource = next(self.resources_collection.find(
             {'_id': shareable_booking.resource_id}).limit(1))
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         # admin can delete all bookings, resource owner can delete only
         # future bookings
         if (not is_admin_permission and

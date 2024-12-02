@@ -5,6 +5,7 @@ from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 from pymongo import MongoClient
 from optscale_client.config_client.client import Client as ConfigClient
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 DEMO_LIFETIME_DAYS = 2
@@ -38,7 +39,7 @@ def main(config_client):
     mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
     mongo_cl = MongoClient(mongo_conn_string)
     live_demos_collection = mongo_cl.restapi.live_demos
-    dt = datetime.utcnow() - timedelta(days=DEMO_LIFETIME_DAYS)
+    dt = utcnow() - timedelta(days=DEMO_LIFETIME_DAYS)
     count = DEMO_COUNT - live_demos_collection.count_documents({
         'created_at': {'$gte': int(dt.timestamp())}
     })

@@ -14,7 +14,7 @@ import {
   NEBIUS_SERVICE
 } from "hooks/useRecommendationServices";
 import { detectedAt, recommendedRightsizingSize, resource, resourceLocation, rightsizingSize } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const RightsizingCpuUsageCell = ({ currentUsage, projectedUsage }) => (
@@ -72,6 +72,8 @@ class RightsizingInstances extends BaseRecommendation {
   }
 
   services = [AWS_EC2, AWS_RDS, AZURE_COMPUTE, GCP_COMPUTE_ENGINE, ALIBABA_ECS, NEBIUS_SERVICE];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS];
 
   categories = [CATEGORY_COST];
 

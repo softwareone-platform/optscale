@@ -668,7 +668,7 @@ class Alibaba(CloudBase):
         return []
 
     def configure_report(self):
-        now = datetime.utcnow()
+        now = datetime.now(tz=timezone.utc).replace(tzinfo=None)
         config_update = {}
         currency = self.DEFAULT_CURRENCY
         try:

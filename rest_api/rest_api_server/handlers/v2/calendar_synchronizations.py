@@ -181,6 +181,13 @@ class CalendarSynchronizationAsyncItemHandler(BaseAsyncItemHandler,
     def _get_controller_class(self):
         return CalendarSynchronizationAsyncController
 
+    async def _get_item(self, item_id, **kwargs):
+        res = await run_task(self.controller.get, item_id, **kwargs)
+        if res is None:
+            raise OptHTTPError(404, Err.OE0002,
+                               ['Calendar synchronization', item_id])
+        return res
+
     async def patch(self, id, **kwargs):
         """
         ---

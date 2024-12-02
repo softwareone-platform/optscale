@@ -13,7 +13,7 @@ Use this page to create a new metric.
 
 - Add a Metric: 
 
-  - Specify Metric Name: Define the metric name. The selected name will be used in all tables and graphs to identify 
+  - Specify Metric Name: Define the metric name. This name will be used in all tables and graphs to identify 
     this metric.
   
   - Point Metric Key: Enter the metric key. To use metric in your training code, call the ```arcee.send()``` method like: 

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import logging
 import etcd
@@ -7,6 +7,7 @@ from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 
 LOG = logging.getLogger(__name__)
@@ -69,7 +70,7 @@ class ScheduleController(object):
         return res['checklists']
 
     def generate_tasks(self):
-        now = datetime.utcnow()
+        now = utcnow()
         checklists = self.get_checklists()
         bumi_worker_params = self.get_bumi_worker_params()
         scheduled = []
@@ -96,8 +97,7 @@ class ScheduleController(object):
                 checklist['id'], {'next_run': next_run,
                                   'last_run': int(now.timestamp())})
             tasks.append({
-                'last_update': int(
-                    datetime.utcnow().timestamp()),
+                'last_update': utcnow_timestamp(),
                 'tries_count': 0,
                 'organization_id': checklist['organization_id'],
                 'checklist_id': checklist['id'],

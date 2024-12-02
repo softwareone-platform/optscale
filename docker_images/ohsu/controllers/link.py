@@ -3,7 +3,7 @@ import os.path
 import socket
 import subprocess
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from requests.exceptions import HTTPError
 from docker_images.ohsu.controllers.base import BaseController
 from docker_images.ohsu.controllers.base_async import BaseAsyncControllerWrapper
@@ -65,8 +65,8 @@ class SHSLinkController(BaseController):
         port_str = "Successfully started service 'HistoryServerUI' on port "
 
         # spark history server needs some time to start and save logs
-        start_ts = int(datetime.utcnow().timestamp())
-        while int(datetime.utcnow().timestamp()) < (
+        start_ts = int(datetime.now(tz=timezone.utc).timestamp())
+        while int(datetime.now(tz=timezone.utc).timestamp()) < (
                 start_ts + SHS_START_TIMEOUT):
             if os.path.exists(log_file_path):
                 with open(log_file_path, 'r') as f:

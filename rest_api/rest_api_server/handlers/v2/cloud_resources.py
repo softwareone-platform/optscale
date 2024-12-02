@@ -34,6 +34,11 @@ class CloudResourceAsyncCollectionHandler(BaseAsyncCollectionHandler,
             description: Cloud resource id
             required: false
             type: string
+        -   name: cloud_resource_hash
+            in: query
+            description: Cloud resource id
+            required: false
+            type: string
         -   name: assignment_history
             in: query
             description: Include resource assignment history into response
@@ -65,6 +70,8 @@ class CloudResourceAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                         description: "cloud account id"}
                                     cloud_resource_id: {type: string,
                                         description: "Resource id in cloud"}
+                                    cloud_resource_hash: {type: string,
+                                        description: "Resource hash"}
                                     resource_type: {type: string,
                                         description: "Type of cloud resource"}
                                     pool_id: {type: string,
@@ -138,8 +145,11 @@ class CloudResourceAsyncCollectionHandler(BaseAsyncCollectionHandler,
         list_kwargs = dict(
             cloud_account_id=cloud_account_id, check_cloud_account=True)
         cloud_resource_id = self.get_arg('cloud_resource_id', str, None)
+        cloud_resource_hash = self.get_arg('cloud_resource_hash', str, None)
         if cloud_resource_id:
             list_kwargs['cloud_resource_id'] = cloud_resource_id
+        if cloud_resource_hash:
+            list_kwargs['cloud_resource_hash'] = cloud_resource_hash
         resources = await run_task(self.controller.list, **list_kwargs)
         self.write(json.dumps({'resources': resources}, cls=ModelEncoder))
 

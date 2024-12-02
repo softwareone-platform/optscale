@@ -1,7 +1,7 @@
 # pylint: disable=no-member
 import logging
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 from mongoengine.errors import ValidationError, DoesNotExist
 from mongoengine.queryset.visitor import Q
 
@@ -154,7 +154,7 @@ class EventController(EventBaseController):
         poll_orgs = self.get_ack_resources(token)
         if event.organization_id not in poll_orgs:
             raise ForbiddenException(Err.OK0002, [])
-        digest = hashlib.md5(token.encode("utf-8")).hexdigest()
+        digest = hashlib.md5(token.encode("utf-8"), usedforsecurity=False).hexdigest()
         user_meta = self.get_meta_by_token(token)
         event.acknowledged_by = digest
         event.acknowledged_user = "%s (%s)" % (
@@ -210,20 +210,14 @@ class EventController(EventBaseController):
             ReadEvent.objects.insert(read_event)
         return {"id": event_ids}
 
-    def _publish_event(self, **kwargs):
-        self.rabbit_client.publish_message(kwargs)
-
     def submit(self, **kwargs):
         # TODO: possible filter kwargs/filter unexpected
-        kwargs["time"] = int(datetime.utcnow().timestamp())
+        kwargs["time"] = int(datetime.now(tz=timezone.utc).timestamp())
         event = Event(**kwargs)
         try:
             event.save()
         except ValidationError as exc:
             self.raise_from_validation_error(exc)
-
-        self._publish_event(**kwargs)
-
         return event.to_dict()
 
 

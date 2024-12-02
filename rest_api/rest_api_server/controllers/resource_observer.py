@@ -1,7 +1,6 @@
 import logging
-
+import tools.optscale_time as opttime
 from sqlalchemy import and_, false
-from datetime import datetime
 from pymongo import UpdateMany
 
 from tools.cloud_adapter.model import ResourceTypes
@@ -58,7 +57,7 @@ class ResourceObserverController(BaseController, MongoMixin):
                 chunk = inactive_res_ids[i:i+BULK_SIZE]
                 self.resources_collection.update_many(
                     filter={'_id': {'$in': chunk}},
-                    update={'$unset': {'active': 1}}
+                    update={'$unset': {'active': 1, 'shareable': 1}}
                 )
         return list(resources_.values())
 
@@ -72,12 +71,12 @@ class ResourceObserverController(BaseController, MongoMixin):
         resources_ = {r['_id']: r for r in res}
         self.resources_collection.update_many(
             filter={'_id': {'$in': list(resources_.keys())}},
-            update={'$unset': {'active': 1}}
+            update={'$unset': {'active': 1, 'shareable': 1}}
         )
         return list(resources_.values())
 
     def observe(self, organization_id):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         last_run = now - NEWLY_DISCOVERED_TIME
         organization = self._get_organization(organization_id)
         if not organization:
@@ -86,9 +85,13 @@ class ResourceObserverController(BaseController, MongoMixin):
         cloud_accounts_map = {}
         for cloud_account in self._get_cloud_accounts(organization_id):
             if cloud_account.type == CloudTypes.AZURE_TENANT:
-                CloudAccountController(
-                    self.session, self._config, self.token
-                ).create_children_accounts(cloud_account)
+                try:
+                    CloudAccountController(
+                        self.session, self._config, self.token
+                    ).create_children_accounts(cloud_account)
+                except Exception as exc:
+                    LOG.error(f'Error creating children accounts for cloud '
+                              f'account {cloud_account.id}: {str(exc)}')
                 continue
             cloud_accounts_map[cloud_account.id] = cloud_account
         cloud_account_ids = list(cloud_accounts_map.keys())
@@ -142,12 +145,14 @@ class ResourceObserverController(BaseController, MongoMixin):
             cloud_account = cloud_accounts_map[acc_id]
             meta = {
                 'object_name': cloud_account.name,
-                'stat': stat
+                **stat
             }
+            action = 'resources_discovered'
+            if meta.get('clusters'):
+                action = 'resources_clustered_discovered'
             self.publish_activities_task(
                 organization_id, cloud_account.id, 'cloud_account',
-                'resources_discovered', meta,
-                'cloud_account.resources_discovered', add_token=True)
+                action, meta, 'cloud_account.' + action, add_token=True)
         pools_for_org = PoolController(
             self.session, self._config, self.token
         ).get_organization_pools(organization_id)
@@ -188,8 +193,7 @@ class ResourceObserverController(BaseController, MongoMixin):
                 {'organization_id': organization_id}
             ],
             'active': True,
-            'last_seen': {'$gte': int(
-                datetime.utcnow().timestamp()) - HOUR_IN_SEC},
+            'last_seen': {'$gte': opttime.utcnow_timestamp() - HOUR_IN_SEC},
             'cluster_type_id': {'$exists': False}
         }, ['cloud_account_id', 'cluster_id', 'first_seen', 'pool_id',
             'total_cost', 'last_expense'])
@@ -211,7 +215,7 @@ class ResourceObserverController(BaseController, MongoMixin):
         resource_ids = [x.resource_id for x in resources]
         ctrl = ShareableBookingController(self.session, self._config,
                                           self.token)
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         bookings = self.session.query(ShareableBooking).filter(and_(
             ShareableBooking.deleted.is_(False),
             ShareableBooking.resource_id.in_(resource_ids))).all()

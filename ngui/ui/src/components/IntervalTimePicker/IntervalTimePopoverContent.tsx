@@ -14,7 +14,9 @@ import {
   getMinutes,
   setMinutes,
   roundTimeToInterval,
-  subMinutes
+  subMinutes,
+  startOfDay,
+  endOfDay
 } from "utils/datetime";
 import IntervalTimeSelectors from "./IntervalTimeSelectors";
 
@@ -22,7 +24,7 @@ import IntervalTimeSelectors from "./IntervalTimeSelectors";
 const IntervalTimePopoverContent = ({
   open,
   onDayClick,
-  initialDate = +new Date(),
+  initialDate: initialDateProp = +new Date(),
   minDate,
   maxDate,
   intervalMinutes = AMOUNT_30_MINUTES,
@@ -31,22 +33,33 @@ const IntervalTimePopoverContent = ({
   const { classes, cx } = useStyles();
   const today = new Date();
 
-  const initialDateRounded =
-    /**
-     * Round to the farthest minute to prevent date jumping to the next day
-     * E.g if the initial datetime is equal to "23:59" and intervalMinutes is set to "30"
-     * it should be rounded to 23:30, not to 00:00 of the next day
-     */
-    getHours(initialDate) === 23
-      ? roundTimeToInterval(subMinutes(initialDate, intervalMinutes), intervalMinutes)
-      : roundTimeToInterval(initialDate, intervalMinutes);
+  const minDateValid = +startOfDay(parseOptionalDate(minDate, MIN_PICKER_DATE));
+  const maxDateValid = +endOfDay(parseOptionalDate(maxDate, today));
 
-  const minDateValid = parseOptionalDate(minDate, MIN_PICKER_DATE);
-  const maxDateValid = parseOptionalDate(maxDate, today);
-  const initialFirstMonth = initialDateRounded;
+  const getInitialDate = () => {
+    const allowedRangeInitialDate = Math.min(Math.max(minDateValid, initialDateProp), maxDateValid);
 
-  const [date, setDate] = useState(initialDateRounded);
-  const [monthToShow, setMonthToShow] = useState(getTime(initialFirstMonth || today));
+    const initialDateRounded =
+      /**
+       * Round to the farthest minute to prevent date jumping to the next day
+       * E.g if the initial datetime is equal to "23:59" and intervalMinutes is set to "30"
+       * it should be rounded to 23:30, not to 00:00 of the next day
+       */
+      getHours(allowedRangeInitialDate) === 23
+        ? roundTimeToInterval(subMinutes(allowedRangeInitialDate, intervalMinutes), intervalMinutes)
+        : roundTimeToInterval(allowedRangeInitialDate, intervalMinutes);
+
+    return initialDateRounded;
+  };
+
+  const initialDate = getInitialDate();
+
+  const [date, setDate] = useState(initialDate);
+  const [monthToShow, setMonthToShow] = useState(() => {
+    const initialMonthDate = initialDate || +today;
+
+    return getTime(Math.min(initialMonthDate, maxDateValid));
+  });
 
   // handlers
   // set month to show from header selectors
@@ -59,14 +72,14 @@ const IntervalTimePopoverContent = ({
   useEffect(() => {
     if (initialMount.current) {
       initialMount.current = false;
-      onDayClick(initialDateRounded);
+      onDayClick(initialDate);
     }
   });
 
   // set clicked day — applying rounded hours and minutes to selected date (Month returns start of the day)
   const onDayClickHandler = (day) => {
-    const initialDateHours = +getHours(initialDateRounded);
-    const initialDateMinutes = +getMinutes(initialDateRounded);
+    const initialDateHours = +getHours(initialDate);
+    const initialDateMinutes = +getMinutes(initialDate);
 
     const dateWithInitialTime = setHours(setMinutes(day, initialDateMinutes), initialDateHours);
 

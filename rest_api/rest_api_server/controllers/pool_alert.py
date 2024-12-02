@@ -1,20 +1,25 @@
 import logging
 import uuid
 import datetime
-
+import tools.optscale_time as opttime
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import and_
 from tools.optscale_exceptions.common_exc import (NotFoundException,
                                                   WrongArgumentsException)
 from rest_api.rest_api_server.controllers.pool import PoolController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import ThresholdTypes, ThresholdBasedTypes
-from rest_api.rest_api_server.models.models import (PoolAlert, Pool, AlertContact,
-                                                    Organization)
-from rest_api.rest_api_server.controllers.base import (BaseController,
-                                                       BaseHierarchicalController)
+from rest_api.rest_api_server.models.enums import (ThresholdTypes,
+                                                   ThresholdBasedTypes)
+from rest_api.rest_api_server.models.models import (
+    PoolAlert, Pool, AlertContact, Organization
+)
+from rest_api.rest_api_server.controllers.base import (
+    BaseController, BaseHierarchicalController
+)
 from rest_api.rest_api_server.controllers.employee import EmployeeController
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper
+)
 
 LOG = logging.getLogger(__name__)
 NOTIFICATION_INTERVAL = 43200  # 12 hours
@@ -51,7 +56,9 @@ class PoolAlertController(BaseController):
         ).get_pool_hierarchy_costs(organization.pool_id)
 
         def get_pools_children_ids(pool_id):
-            children = {b_id for b_id in pool_limit_costs.get(pool_id)['children']}
+            children = {
+                b_id for b_id in pool_limit_costs.get(pool_id)['children']
+            }
             for child in children.copy():
                 children.update(get_pools_children_ids(child))
             return children
@@ -88,7 +95,7 @@ class PoolAlertController(BaseController):
                 alert_pool_ids.update(pool_ids)
             for alert_id, pool_ids in alert_pools.items():
                 alert = alert_map.get(alert_id)
-                now = int(datetime.datetime.utcnow().timestamp())
+                now = opttime.utcnow_timestamp()
                 last_shoot = alert.last_shoot_at
                 if last_shoot and last_shoot + NOTIFICATION_INTERVAL > now:
                     continue
@@ -151,14 +158,30 @@ class PoolAlertController(BaseController):
             with_subpools = ' with sub-pools'
         alert['based'] = alert_based_value
         alert['threshold_type'] = alert['threshold_type'].value
+        if alert['threshold_type'] == 'percentage':
+            alert['threshold'] = str(alert['threshold']) + '%'
+        contact_type = []
+        if any(bool(
+                contact['slack_channel_id']) for contact in
+               alert['contacts']):
+            contact_type.append('slack')
+        if any(bool(
+                contact['employee_id']) for contact in alert['contacts']):
+            contact_type.append('email')
+        contact_type = "/".join(contact_type)
+        alert['contact_type'] = contact_type[0].upper() + contact_type[1:]
+        threshold_string = ""
+        if warn_type in ['forecast', 'expenses']:
+            threshold_string = 'threshold %s of pool limit' % alert['threshold']
+        alert['threshold_string'] = threshold_string
         return {
             'initiator_name': user_info['display_name'],
             'initiator_email': user_info['email'],
-            'alert': alert,
             'pool_name': pool_name,
             'with_subpools': with_subpools,
             'warn_type': warn_type,
-            'object_name': 'alert(%s)' % alert['id']
+            'object_name': 'alert(%s)' % alert['id'],
+            **alert
         }
 
     def create(self, **kwargs):
@@ -171,7 +194,7 @@ class PoolAlertController(BaseController):
         meta = self.get_alert_task_meta(alert.to_dict(), user_info)
         self.publish_activities_task(
             alert.pool.organization_id, alert.to_dict()['id'], 'pool_alert',
-            'alert_added', meta, 'alert.action.added', add_token=True)
+            'alert_added', meta, 'alert.action.added')
         return alert
 
     def delete(self, item_id):
@@ -198,7 +221,7 @@ class PoolAlertController(BaseController):
         meta = self.get_alert_task_meta(alert_dict, user_info)
         self.publish_activities_task(
             alert.pool.organization_id, alert_dict['id'], 'pool_alert',
-            'alert_removed', meta, 'alert.action.removed', add_token=True)
+            'alert_removed', meta, 'alert.action.removed')
 
     def edit(self, item_id, **kwargs):
         alert = self.get(item_id)

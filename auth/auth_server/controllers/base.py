@@ -1,6 +1,5 @@
 import time
 import logging
-from datetime import datetime
 import requests
 from ordered_set import OrderedSet
 from sqlalchemy import and_
@@ -18,6 +17,7 @@ from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   ForbiddenException)
 from tools.optscale_exceptions.http_exc import handle503
 from optscale_client.rest_api_client.client_v2 import Client as RestApiClient
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ class BaseController(object):
 
     def get_user(self, token):
         token = self.session.query(Token).get(get_digest(token))
-        if not token or not token.valid_until > datetime.utcnow():
+        if not token or not token.valid_until > opttime.utcnow():
             raise UnauthorizedException(Err.OA0023, [])
         return token.user
 
@@ -311,7 +311,7 @@ class BaseController(object):
     def use_verification_code(self, email, code):
         if not email or not code:
             return
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         return self.session.query(VerificationCode).filter(
             and_(
                 VerificationCode.email == email,

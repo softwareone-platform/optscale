@@ -1,4 +1,5 @@
 import logging
+import tools.optscale_time as opttime
 from datetime import datetime
 
 from tools.optscale_exceptions.common_exc import (
@@ -52,7 +53,7 @@ class TtlAnalysisController(BaseController, MongoMixin, ClickHouseMixin):
             raise NotFoundException(Err.OE0002, [Pool.__name__, pool_id])
 
         if end_date is None:
-            end_date = int(datetime.utcnow().timestamp())
+            end_date = opttime.utcnow_timestamp()
 
         if start_date > end_date:
             raise WrongArgumentsException(Err.OE0446, ['end_date', 'start_date'])

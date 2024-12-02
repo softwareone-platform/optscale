@@ -44,7 +44,7 @@ class Migration(BaseMigration):
             org_ids.extend(list(map(lambda x: x['id'], orgs['organizations'])))
         self.clear_clickhouse_db(clickhouse_client)
         for i, organization_id in enumerate(org_ids):
-            start_dt = datetime.utcnow()
+            start_dt = datetime.now()
             _, resp = rest_client.cloud_account_list(organization_id)
             cloud_account_ids = list(map(
                 lambda x: x['id'], resp['cloud_accounts']))
@@ -74,7 +74,7 @@ class Migration(BaseMigration):
             if bulk:
                 total_migrated += len(bulk)
                 self._write_to_clickhouse(clickhouse_client, bulk)
-            execution_time = (datetime.utcnow() - start_dt).total_seconds()
+            execution_time = (datetime.now() - start_dt).total_seconds()
             LOG.info('Expenses for org %s: completed at %s seconds' % (
                 organization_id, execution_time))
 

@@ -11,6 +11,7 @@ from rest_api.rest_api_server.utils import (run_task, check_int_attribute)
 from rest_api.rest_api_server.exceptions import Err
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_time import utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 DEFAULT_INTERVAL = 900
@@ -31,7 +32,7 @@ class K8sRightsizingAsyncHandler(BaseAsyncItemHandler, BaseAuthHandler,
         args.update(
             {
                 'end_date': self.get_arg(
-                    'end_date', int, default=int(datetime.utcnow().timestamp())
+                    'end_date', int, default=utcnow_timestamp()
                 ),
                 'cloud_account_id': self.get_arg('cloud_account_id', str, None)
             })

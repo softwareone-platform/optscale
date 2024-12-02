@@ -10,6 +10,7 @@ from rest_api.rest_api_server.utils import timestamp_to_day_start
 from freezegun import freeze_time
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestPoolApi(TestApiBase):
@@ -52,7 +53,7 @@ class TestPoolApi(TestApiBase):
     def add_recommendations(self, resource_id, modules, timestamp=None,
                             last_check=None, pool_id=None, checklist=True):
         if not timestamp:
-            timestamp = int(datetime.utcnow().timestamp())
+            timestamp = utcnow_timestamp()
 
         recommendations = {
             'modules': modules,
@@ -71,7 +72,7 @@ class TestPoolApi(TestApiBase):
             )
             session.add(record)
             session.commit()
-        last_seen = int(datetime.utcnow().timestamp())
+        last_seen = utcnow_timestamp()
         self.resources_collection.update_one(
             filter={
                 '_id': resource_id
@@ -752,7 +753,7 @@ class TestPoolApi(TestApiBase):
                 'config_scheme': 'create_report'
             }
         }
-        checklist_timestamp = int(datetime.utcnow().timestamp())
+        checklist_timestamp = utcnow_timestamp()
         _, cloud_account = self.create_cloud_account(
             self.org_id, cloud, auth_user_id=self.auth_user_1)
         code, resource = self.cloud_resource_create(
@@ -1112,9 +1113,8 @@ class TestPoolApi(TestApiBase):
             'pool_created', {
                 'object_name': pool['name']
             })
-        p_publish_activities.assert_called_once_with(
-            *activity_param_tuples, add_token=True
-        )
+        p_publish_activities.assert_called_once_with(*activity_param_tuples)
+
         p_publish_activities = patch(
             'rest_api.rest_api_server.controllers.base.BaseController.'
             'publish_activities_task'

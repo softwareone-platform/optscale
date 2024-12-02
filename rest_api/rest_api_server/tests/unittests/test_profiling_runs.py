@@ -8,6 +8,7 @@ from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
     TestProfilingBase)
+import tools.optscale_time as opttime
 
 BYTES_IN_MB = 1024 * 1024
 
@@ -380,7 +381,7 @@ class TestRunsApi(TestProfilingBase):
         self.assertEqual(resp['last_run_cost'], 185)
         self.assertEqual(resp['total_cost'], 185)
 
-        dt_start = datetime.utcnow() - timedelta(days=15)
+        dt_start = opttime.utcnow() - timedelta(days=15)
         self._create_run(
             self.org['id'], task['id'],
             [res_1['cloud_resource_id']],
@@ -804,7 +805,7 @@ class TestRunsApi(TestProfilingBase):
             self.org['id'], valid_task)
         self.assertEqual(code, 201)
         self.assertEqual(len(task['metrics']), 4)
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         run = self._create_run(self.org['id'], task['id'], ['i-1'],
                                start=now - 2, finish=now)
         for dt, val in [

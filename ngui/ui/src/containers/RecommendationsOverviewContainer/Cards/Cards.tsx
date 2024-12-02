@@ -31,7 +31,7 @@ const Cards = ({
   onRecommendationClick,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSources
+  selectedDataSourceIds
 }) => {
   const orderedRecommendations = useOrderedRecommendations(recommendations);
 
@@ -92,7 +92,7 @@ const Cards = ({
           withMenu
           isDownloadAvailable={isDownloadAvailable}
           isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-          selectedDataSources={selectedDataSources}
+          selectedDataSourceIds={selectedDataSourceIds}
         />
       }
     >

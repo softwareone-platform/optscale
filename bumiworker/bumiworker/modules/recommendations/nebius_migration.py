@@ -2,11 +2,12 @@ import logging
 import re
 import json
 from collections import OrderedDict, defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from optscale_client.insider_client.client import Client as InsiderClient
 from tools.cloud_adapter.clouds.nebius import Nebius, PLATFORMS
 from concurrent.futures.thread import ThreadPoolExecutor
 from bumiworker.bumiworker.modules.base import ModuleBase
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 DEFAULT_DAYS_THRESHOLD = 30
@@ -219,7 +220,7 @@ class NebiusMigration(ModuleBase):
             supported_cloud_types=list(cloud_func_map.keys()),
             skip_cloud_accounts=skip_cloud_accounts)
         cloud_account_ids = list(cloud_account_map.keys())
-        dt = datetime.utcnow() - timedelta(seconds=days_threshold * DAY_IN_SEC)
+        dt = utcnow() - timedelta(seconds=days_threshold * DAY_IN_SEC)
         month_multiplier = DAYS_IN_MONTH / days_threshold
         last_seen = int(dt.timestamp())
         instances = self.mongo_client.restapi.resources.find({

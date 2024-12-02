@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from tools.optscale_time import utcnow
 
 __all__ = ['get_time_options', 'get_add_bookings_form', 'get_booking_block',
            'get_booking_details_message']
@@ -7,7 +8,7 @@ __all__ = ['get_time_options', 'get_add_bookings_form', 'get_booking_block',
 def get_time_options():
     options = []
     initial_option = None
-    now = datetime.utcnow()
+    now = utcnow()
     start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     end = start + timedelta(days=1)
     minutes = 0
@@ -29,7 +30,7 @@ def get_time_options():
 
 
 def get_add_bookings_form(resource, public_ip):
-    now_date = datetime.strftime(datetime.utcnow(), "%Y-%m-%d")
+    now_date = datetime.strftime(utcnow(), "%Y-%m-%d")
     r_id = resource['id']
     r_name = resource.get('name')
     options, initial_option = get_time_options()

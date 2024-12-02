@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timezone
 import enum
 from concurrent.futures.thread import ThreadPoolExecutor
 from functools import wraps
@@ -1139,7 +1139,8 @@ class Aws(S3CloudMixin):
     @_wrap_timeout_exception()
     def get_spot_history(self, region, flavors):
         return self.session.client('ec2', region).describe_spot_price_history(
-            InstanceTypes=flavors, StartTime=datetime.datetime.utcnow(),
+            InstanceTypes=flavors,
+            StartTime=datetime.now(tz=timezone.utc).replace(tzinfo=None),
         )
 
     @staticmethod
@@ -1186,7 +1187,7 @@ class Aws(S3CloudMixin):
                     }
                     for bdm in image.get('BlockDeviceMappings', [])
                 ],
-                cloud_created_at=int(datetime.datetime.strptime(
+                cloud_created_at=int(datetime.strptime(
                     image['CreationDate'], date_format).timestamp()),
                 tags=self._extract_tags(image),
             )

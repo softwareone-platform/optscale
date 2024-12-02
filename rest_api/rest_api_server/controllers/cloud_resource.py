@@ -1,5 +1,6 @@
 import logging
 import uuid
+import tools.optscale_time as opttime
 from datetime import datetime, timedelta
 from collections import defaultdict
 from sqlalchemy.exc import IntegrityError
@@ -111,7 +112,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
         if booking_ids:
             self.session.query(ShareableBooking).filter(
                 ShareableBooking.id.in_(booking_ids)).update(
-                {ShareableBooking.deleted_at: int(datetime.utcnow().timestamp())},
+                {ShareableBooking.deleted_at: opttime.utcnow_timestamp()},
                 synchronize_session=False)
             try:
                 self.session.commit()
@@ -138,7 +139,6 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
                             'Error deleting event calendar booking: %s', str(exc))
 
     def edit(self, item_id, **kwargs):
-        now_ts = int(datetime.utcnow().timestamp())
         self.check_restrictions(is_new=False, **kwargs)
         if kwargs.get('employee_id'):
             self.check_entity_exists(kwargs['employee_id'], Employee)
@@ -398,7 +398,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
 
     def _get_active_resource_bookings(self, resource):
         bookings_list = []
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         bookings = self.session.query(ShareableBooking).filter(and_(
             ShareableBooking.resource_id == resource['id'],
             ShareableBooking.deleted_at == 0, or_(
@@ -415,7 +415,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
         return bookings_list
 
     def get_resource_details(self, resource):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         cloud_account = self.session.query(CloudAccount).filter(
             CloudAccount.id == resource.get('cloud_account_id')
         ).one_or_none()
@@ -650,7 +650,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
     @staticmethod
     def _set_resource_date(date_field, meta, resource, status_field_value):
         if status_field_value:
-            date_value = int(datetime.utcnow().timestamp())
+            date_value = opttime.utcnow_timestamp()
         else:
             date_value = meta.get(date_field, 0)
         if not resource.get('meta'):
@@ -803,7 +803,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
             cloud_account_id, resources, include_deleted,
             unique=False, unique_field_name=False)
         self._env_changes_notify(db_resources_map, cloud_account)
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         unique_resources_map = self.get_resources_by_hash_or_id(
             cloud_account_id, resources, include_deleted, unique=True,
             unique_field_name=True)
@@ -963,12 +963,15 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
                 cloud_account = cloud_account_map[acc_id]
                 meta = {
                     'object_name': cloud_account.name,
-                    'stat': stat
+                    **stat
                 }
+                action = 'resources_discovered'
+                if meta.get('clusters'):
+                    action = 'resources_clustered_discovered'
                 self.publish_activities_task(
                     cloud_account.organization_id, cloud_account.id,
-                    'cloud_account', 'resources_discovered', meta,
-                    'cloud_account.resources_discovered', add_token=True)
+                    'cloud_account', action, meta, 'cloud_account.' + action,
+                    add_token=True)
 
         if return_resources:
             resources = self.get_resources_by_hash_or_id(
@@ -984,34 +987,10 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
             filter={
                 '_id': item_id
             },
-            update={'$set': {'deleted_at': int(datetime.utcnow().timestamp())}}
+            update={'$set': {'deleted_at': opttime.utcnow_timestamp()}}
         )
         if not r.modified_count:
             raise NotFoundException(Err.OE0002, ['Resource', item_id])
-
-    def delete_cloud_resources(self, cloud_account_id):
-        now = int(datetime.utcnow().timestamp())
-        chunk_size = 10000
-        while True:
-            res = self.resources_collection.find(
-                {'cloud_account_id': cloud_account_id, 'deleted_at': 0},
-                {'_id': True}).limit(chunk_size)
-            res_ids = [x['_id'] for x in res]
-            if not len(res_ids):
-                break
-            r = self.resources_collection.update_many(
-                filter={
-                    '_id': {'$in': res_ids}
-                },
-                update={
-                    '$set': {'deleted_at': now},
-                    '$unset': {'cluster_id': ''}
-                }
-            )
-            if r.modified_count != len(res_ids):
-                LOG.warning('Delete cloud resources failed - deleted %d of %d;'
-                            ' result: %s' %
-                            (r.modified_count, len(res_ids), r.raw_result))
 
     def get_script(self, item_id):
         resource = self.get(item_id)
@@ -1048,7 +1027,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
                 'id') else resource['_id']
             self.property_history_collection.insert_one({
                 'resource_id': resource_id,
-                'time': int(datetime.utcnow().timestamp()),
+                'time': opttime.utcnow_timestamp(),
                 'changes': changes
             })
         except BulkWriteError as ex:

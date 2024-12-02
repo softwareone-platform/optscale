@@ -18,6 +18,7 @@ class TestPSWorker(unittest.TestCase):
         patch('docker_images.power_schedule.'
               'worker.PowerScheduleWorker.rest_cl',
               new_callable=PropertyMock).start()
+        self.worker.publish_activities_task = MagicMock()
         self.worker.rest_cl.cloud_account_get = MagicMock(
             return_value=(200, {
                 'id': str(uuid.uuid4()),
@@ -27,6 +28,8 @@ class TestPSWorker(unittest.TestCase):
         self.ps_id = str(uuid.uuid4())
         self.valid_ps = {
             'id': self.ps_id,
+            'organization_id': str(uuid.uuid4()),
+            'name': 'my schedule',
             'enabled': True,
             'start_date': 0,
             'end_date': int((datetime.now() + timedelta(days=10)).timestamp()),
@@ -77,6 +80,7 @@ class TestPSWorker(unittest.TestCase):
         self.assertNotIn(
             'last_run_error',
             self.worker.rest_cl.power_schedule_update.call_args[0][1])
+        self.worker.publish_activities_task.assert_not_called()
 
     def test_schedule_with_zero_end_date(self):
         ps = self.valid_ps.copy()
@@ -130,6 +134,7 @@ class TestPSWorker(unittest.TestCase):
         self.assertNotIn(
             'last_run_error',
             self.worker.rest_cl.power_schedule_update.call_args[0][1])
+        self.worker.publish_activities_task.assert_not_called()
 
     def test_excluded_resources(self):
         # not active instance
@@ -227,6 +232,8 @@ class TestPSWorker(unittest.TestCase):
                 self.worker.rest_cl.power_schedule_update.call_args[0][1][
                     'last_run_error'], None)
             self.worker.rest_cl.power_schedule_update.reset_mock()
+            self.worker.publish_activities_task.assert_called_once()
+            self.worker.publish_activities_task.reset_mock()
 
     def test_start_instance(self):
         self.mongo_cl.restapi.resources.insert_one({
@@ -278,6 +285,8 @@ class TestPSWorker(unittest.TestCase):
                 self.worker.rest_cl.power_schedule_update.call_args[0][1][
                     'last_run_error'], None)
             self.worker.rest_cl.power_schedule_update.reset_mock()
+            self.worker.publish_activities_task.assert_called_once()
+            self.worker.publish_activities_task.reset_mock()
 
     def test_no_changes(self):
         self.mongo_cl.restapi.resources.insert_one({
@@ -332,6 +341,7 @@ class TestPSWorker(unittest.TestCase):
                 'last_run_error',
                 self.worker.rest_cl.power_schedule_update.call_args[0][1])
             self.worker.rest_cl.power_schedule_update.reset_mock()
+            self.worker.publish_activities_task.assert_not_called()
 
     def test_no_resources(self):
         ps = self.valid_ps.copy()
@@ -361,6 +371,7 @@ class TestPSWorker(unittest.TestCase):
         self.assertIn(
             'last_run_error',
             self.worker.rest_cl.power_schedule_update.call_args[0][1])
+        self.worker.publish_activities_task.assert_not_called()
 
     def test_cloud_error(self):
         def raise_exc(*args):

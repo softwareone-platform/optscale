@@ -1,11 +1,12 @@
 import logging
 import re
-from datetime import datetime, timedelta
+import tools.optscale_time as opttime
+from datetime import timedelta
 from calendar import monthrange
 
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 
-from sqlalchemy import Enum, true, or_
+from sqlalchemy import Enum, true
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import and_, exists
 from tools.cloud_adapter.exceptions import (
@@ -48,7 +49,8 @@ from rest_api.rest_api_server.models.models import (
     CloudAccount, DiscoveryInfo, Organization, Pool)
 from rest_api.rest_api_server.models.enums import CloudTypes, ConditionTypes
 from rest_api.rest_api_server.controllers.base import BaseController
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper)
 from rest_api.rest_api_server.utils import (
     check_bool_attribute, check_dict_attribute, check_float_attribute,
     check_int_attribute, check_string, check_string_attribute,
@@ -90,7 +92,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         organization = OrganizationController(
             self.session, self._config, self.token).get(organization_id)
         if organization is None:
-            raise NotFoundException(Err.OE0005, [Organization.__name__, organization_id])
+            raise NotFoundException(
+                Err.OE0005, [Organization.__name__, organization_id])
 
     def _validate(self, cloud_acc, is_new=True, **kwargs):
         org_id = kwargs.get('organization_id')
@@ -354,7 +357,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         cloud_pool = PoolController(self.session, self._config, self.token).create(
             organization_id=cloud_account_org_id, parent_id=parent_pool.id,
             name=pool_name, default_owner_id=default_employee.id)
-        rule_name = 'Rule for %s_%s' % (ca_obj.name, int(datetime.utcnow().timestamp()))
+        rule_name = 'Rule for %s_%s' % (ca_obj.name, opttime.utcnow_timestamp())
         RuleController(self.session, self._config, self.token).create_rule(
             auth_user_id, cloud_pool.organization_id, self.token,
             name=rule_name, owner_id=cloud_pool.default_owner_id,
@@ -518,7 +521,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             self._publish_validation_warnings_activities(updated_cloud_account,
                                                          warnings)
             for import_f in ['last_import_at', 'last_import_modified_at',
-                             'last_import_attempt_at', 'last_import_attempt_error']:
+                             'last_import_attempt_at',
+                             'last_import_attempt_error']:
                 kwargs.pop(import_f, None)
         else:
             updated_cloud_account = cloud_acc_obj
@@ -572,8 +576,6 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         super().delete(item_id)
         expense_ctrl = ExpenseController(self._config)
         expense_ctrl.delete_cloud_expenses(item_id)
-        resource_ctrl = CloudResourceController(self._config)
-        resource_ctrl.delete_cloud_resources(item_id)
         self.clean_clickhouse(cloud_account.id, cloud_account.type)
         OrganizationConstraintController(
             self.session, self._config, self.token).delete_constraints_with_hits(
@@ -585,7 +587,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             self.send_cloud_account_email(cloud_account, action='deleted')
 
     def get_details(self, cloud_acc_id):
-        today = datetime.utcnow()
+        today = opttime.utcnow()
         expense_ctrl = ExpenseController(self._config)
         default = {'cost': 0, 'count': 0, 'types': []}
         month_expenses = self._get_this_month_expenses(
@@ -701,7 +703,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
 
         cloud_acc_ids = [x.id for x in cloud_accounts]
 
-        today = datetime.utcnow()
+        today = opttime.utcnow()
         expense_ctrl = ExpenseController(self._config)
         month_expenses = self._get_this_month_expenses(
             expense_ctrl, today, cloud_acc_ids
@@ -748,7 +750,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         configs = adapter.get_children_configs()
         if not configs:
             return
-        root_skipped_subscriptions = root_config.pop('skipped_subscriptions', {})
+        root_skipped_subscriptions = root_config.pop(
+            'skipped_subscriptions', {})
         skipped_subscriptions = root_skipped_subscriptions.copy()
         for c_config in configs:
             c_name = c_config.get('name')

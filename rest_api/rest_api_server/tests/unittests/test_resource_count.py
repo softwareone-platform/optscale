@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from unittest.mock import patch
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import timestamp_to_day_start
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestResourcesCountApi(TestApiBase):
@@ -397,7 +398,7 @@ class TestResourcesCountApi(TestApiBase):
             self.cloud_acc1['id'], first_seen=self.day1, last_seen=self.day2,
             r_type='type2', count=5)
         self._add_extra_fields(res1, recommendations={
-            'run_timestamp': datetime.utcnow().timestamp()})
+            'run_timestamp': utcnow_timestamp()})
 
         code, res = self.client.resources_count_get(
             self.org_id, self.day1, self.day2_inside, 'resource_type',

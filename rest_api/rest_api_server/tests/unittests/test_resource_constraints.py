@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
 from unittest.mock import patch
 from rest_api.rest_api_server.models.enums import ConstraintTypes
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestResourceConstraints(TestApiBase):
@@ -39,7 +39,7 @@ class TestResourceConstraints(TestApiBase):
         _, self.resource = self._create_cloud_resource(self.cloud_acc['id'],
                                                        self.valid_resource)
         self.valid_constraint = {
-            'limit': int(datetime.utcnow().timestamp()) + 3600,
+            'limit': utcnow_timestamp() + 3600,
             'type': 'ttl'
         }
 
@@ -53,7 +53,7 @@ class TestResourceConstraints(TestApiBase):
                     '_id': resource['id']
                 },
                 update={'$set': {
-                    'last_seen': int(datetime.utcnow().timestamp() - 1),
+                    'last_seen': utcnow_timestamp() - 1,
                     'active': True
                 }}
             )
@@ -149,7 +149,7 @@ class TestResourceConstraints(TestApiBase):
         self.assertEqual(code, 201)
         code, response = self.client.resource_constraint_create(
             self.resource['id'], {
-                'limit': int(datetime.utcnow().timestamp()) + 7200,
+                'limit': utcnow_timestamp() + 7200,
                 'type': 'ttl'
             }
         )
@@ -221,7 +221,7 @@ class TestResourceConstraints(TestApiBase):
         self.assertEqual(response['error']['error_code'], 'OE0211')
 
     def test_update(self):
-        limit = int(datetime.utcnow().timestamp()) + 1800
+        limit = utcnow_timestamp() + 1800
         _, response = self.client.resource_constraint_create(
             self.resource['id'], self.valid_constraint)
         code, response = self.client.resource_constraint_update(
@@ -271,7 +271,7 @@ class TestResourceConstraints(TestApiBase):
     def test_constraint_limit_min_max_values(self):
         out_of_limits_values = {
             'ttl': [(-1, 'OE0224'), (720, 'OE0461'),
-                    (int(datetime.utcnow().timestamp()) - 1, 'OE0461')],
+                    (utcnow_timestamp() - 1, 'OE0461')],
             'total_expense_limit': [(-1, 'OE0224'), (2147483648, 'OE0224')]
         }
         for constr_type, values in out_of_limits_values.items():
@@ -285,7 +285,7 @@ class TestResourceConstraints(TestApiBase):
                 self.assertEqual(response['error']['error_code'], error_code)
         code, constraint_ttl = self.client.resource_constraint_create(
             self.resource['id'], {
-                'limit': int(datetime.utcnow().timestamp()) + 3600,
+                'limit': utcnow_timestamp() + 3600,
                 'type': 'ttl'
             })
         self.assertEqual(code, 201)
@@ -342,7 +342,7 @@ class TestResourceConstraints(TestApiBase):
             'rest_api.rest_api_server.controllers.base.BaseController.'
             'publish_activities_task'
         ).start()
-        limit = int(datetime.utcnow().timestamp()) + 3600
+        limit = utcnow_timestamp() + 3600
         code, constraint = self.client.resource_constraint_create(
             self.resource['id'], {'limit': limit, 'type': 'ttl'})
         self.assertEqual(code, 201)

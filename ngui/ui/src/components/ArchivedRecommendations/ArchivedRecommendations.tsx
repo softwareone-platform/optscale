@@ -1,17 +1,21 @@
-import { Grid, Link, Typography } from "@mui/material";
+import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
+import { Box, Link, Stack, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
+import ArchivedResourcesCountBarChart from "components/ArchivedResourcesCountBarChart";
+import BarChartLoader from "components/BarChartLoader";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
+import InlineSeverityAlert from "components/InlineSeverityAlert";
 import PageContentWrapper from "components/PageContentWrapper";
 import PanelLoader from "components/PanelLoader";
-import ArchivedRecommendationsBreakdownContainer from "containers/ArchivedRecommendationsBreakdownContainer";
 import ArchivedRecommendationsDetailsContainer from "containers/ArchivedRecommendationsDetailsContainer";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { RECOMMENDATIONS } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { DATE_RANGE_TYPE } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
+import { isEmpty as isEmptyObject } from "utils/objects";
 
 const ArchivedRecommendations = ({
   onBarChartSelect,
@@ -19,21 +23,43 @@ const ArchivedRecommendations = ({
   dateRange,
   archivedRecommendationsChartBreakdown,
   archivedRecommendationsBreakdown,
+  onDownload,
+  isDownloading = false,
   isChartLoading = false,
-  isLoading = false
+  isBreakdownLoading = false
 }) => {
-  const renderArchivedRecommendationsDetails = () => {
-    if (isLoading) {
-      return <PanelLoader />;
+  const renderArchivedResourcesCountBarChart = () => {
+    if (isChartLoading) {
+      return <BarChartLoader />;
     }
-    if (isEmptyArray(archivedRecommendationsBreakdown)) {
+
+    if (Object.values(archivedRecommendationsChartBreakdown).every(isEmptyObject)) {
       return (
-        <Typography align="center">
-          <FormattedMessage id="noRecommendations" />
+        <Typography>
+          <FormattedMessage id="noArchivedRecommendationsAvailable" />
         </Typography>
       );
     }
-    return <ArchivedRecommendationsDetailsContainer archivedRecommendationsBreakdown={archivedRecommendationsBreakdown} />;
+
+    return (
+      <Box>
+        <ArchivedResourcesCountBarChart onSelect={onBarChartSelect} breakdown={archivedRecommendationsChartBreakdown} />
+      </Box>
+    );
+  };
+
+  const renderArchivedRecommendationsDetails = () => {
+    if (isBreakdownLoading) {
+      return <PanelLoader />;
+    }
+    if (isEmptyArray(archivedRecommendationsBreakdown)) {
+      return null;
+    }
+    return (
+      <Box>
+        <ArchivedRecommendationsDetailsContainer archivedRecommendationsBreakdown={archivedRecommendationsBreakdown} />
+      </Box>
+    );
   };
 
   const actionBarDefinition = {
@@ -45,15 +71,26 @@ const ArchivedRecommendations = ({
     title: {
       text: <FormattedMessage id="archivedRecommendations" />,
       dataTestId: "lbl_archived_recommendations"
-    }
+    },
+    items: [
+      {
+        key: "download",
+        icon: <CloudDownloadOutlinedIcon />,
+        messageId: "download",
+        type: "button",
+        action: onDownload,
+        isLoading: isDownloading,
+        dataTestId: "btn_download"
+      }
+    ]
   };
 
   return (
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Grid container spacing={SPACING_2}>
-          <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Stack spacing={SPACING_2}>
+          <Box display="flex" justifyContent="flex-end">
             <RangePickerFormContainer
               onApply={onTimeRangeChange}
               initialStartDateValue={dateRange.startDate}
@@ -61,18 +98,13 @@ const ArchivedRecommendations = ({
               rangeType={DATE_RANGE_TYPE.ARCHIVED_RECOMMENDATIONS}
               definedRanges={getBasicRangesSet()}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <ArchivedRecommendationsBreakdownContainer
-              isLoading={isChartLoading}
-              onBarChartSelect={onBarChartSelect}
-              breakdown={archivedRecommendationsChartBreakdown}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            {renderArchivedRecommendationsDetails()}
-          </Grid>
-        </Grid>
+          </Box>
+          {renderArchivedResourcesCountBarChart()}
+          {renderArchivedRecommendationsDetails()}
+          <Box>
+            <InlineSeverityAlert messageId="archivedRecommendationsDescription" />
+          </Box>
+        </Stack>
       </PageContentWrapper>
     </>
   );

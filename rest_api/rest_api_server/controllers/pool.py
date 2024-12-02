@@ -1,6 +1,6 @@
 import datetime
 import logging
-
+import tools.optscale_time as opttime
 from collections import defaultdict
 from sqlalchemy import exists, and_
 from sqlalchemy.exc import IntegrityError
@@ -152,7 +152,7 @@ class PoolController(BaseController, MongoMixin):
             }
             self.publish_activities_task(
                 pool.organization_id, pool.id, 'pool',
-                'pool_created', meta, 'pool.pool_created', add_token=True)
+                'pool_created', meta, 'pool.pool_created')
         return pool
 
     def edit(self, item_id, auto_extension=False, **kwargs):
@@ -248,7 +248,7 @@ class PoolController(BaseController, MongoMixin):
             PoolExpensesExport.deleted.is_(False)
         ).one_or_none()
         if export:
-            now_ts = int(datetime.datetime.utcnow().timestamp())
+            now_ts = opttime.utcnow_timestamp()
             export.deleted_at = now_ts
             self.session.add(export)
             self.session.commit()
@@ -352,7 +352,7 @@ class PoolController(BaseController, MongoMixin):
                 )
             )
             for obj in objects:
-                obj.deleted_at = int(datetime.datetime.utcnow().timestamp())
+                obj.deleted_at = opttime.utcnow_timestamp()
         self.session.commit()
 
     def get_sub_pools(self, pool_id, show_details=False):
@@ -486,7 +486,7 @@ class PoolController(BaseController, MongoMixin):
     def get_pool_expenses(self, pool_ids, period_day=None, end_date=None,
                           forecast=True):
         expense_ctrl = ExpenseController(self._config)
-        today = datetime.datetime.utcnow()
+        today = opttime.utcnow()
         month_start = today.replace(
             day=1, hour=0, minute=0, second=0, microsecond=0)
         if not end_date:
@@ -808,7 +808,7 @@ class PoolController(BaseController, MongoMixin):
                 'policies': [policy.to_dict() for policy in pool_policies]
             })
 
-            now = datetime.datetime.utcnow()
+            now = opttime.utcnow()
             pool_ids = [overview['id']] + [b['id'] for b in children]
             overview['saving'], _ = self.get_pool_savings(organization.id,
                                                           pool_ids)

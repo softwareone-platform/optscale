@@ -53,9 +53,9 @@ const DownloadItems = ({
   downloadLimit,
   isDownloadAvailable = false,
   isLoading = false,
-  selectedDataSources
+  selectedDataSourceIds
 }) => {
-  const downloadItems = useDownloadItems(recommendation, downloadLimit, selectedDataSources);
+  const downloadItems = useDownloadItems(recommendation, downloadLimit, selectedDataSourceIds);
 
   return (
     <Menu
@@ -85,7 +85,7 @@ const Actions = ({
   withMenu = false,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSources
+  selectedDataSourceIds
 }) => {
   const { withCleanupScripts, hasItems } = recommendation;
 
@@ -98,7 +98,7 @@ const Actions = ({
           downloadLimit={downloadLimit}
           isDownloadAvailable={isDownloadAvailable}
           isLoading={isGetIsDownloadAvailableLoading}
-          selectedDataSources={selectedDataSources}
+          selectedDataSourceIds={selectedDataSourceIds}
         />
       )}
       <GeneralActions recommendation={recommendation} withMenu={withMenu} />

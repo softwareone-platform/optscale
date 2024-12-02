@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 from jira_bus.jira_bus_server.controllers.base import (
@@ -39,7 +39,7 @@ class ShareableResourceController(BaseController):
         return employee_list["employees"][0]["id"]
 
     def _get_current_bookings(self, resource_data, employee_id=None):
-        now_timestamp = int(datetime.utcnow().timestamp())
+        now_timestamp = int(datetime.now(tz=timezone.utc).timestamp())
         current_bookings = {}
         for resource_item in resource_data["data"]:
             r_id = resource_item["id"]

@@ -15,7 +15,7 @@ This will be a GET request to /rest/api/3/issue/OSB-2491?fields=status
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import urlencode
 
 import jwt
@@ -41,7 +41,7 @@ class AtlassianClient:
         self.shared_secret = shared_secret
 
     def _create_token(self, method, relative_url):
-        now_timestamp = int(datetime.utcnow().timestamp())
+        now_timestamp = int(datetime.now(tz=timezone.utc).timestamp())
         return jwt.encode(
             payload={
                 "iss": self.app_key,

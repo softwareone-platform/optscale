@@ -5,7 +5,7 @@ import functools
 from pymongo import MongoClient
 from tornado.ioloop import IOLoop
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-
+from tools.optscale_time import utcnow
 
 tp_executor = ThreadPoolExecutor(30)
 DEFAULT_CACHE_TIME = 60 * 60 * 12
@@ -27,7 +27,7 @@ class CachedCloudCaller:
             'kwargs': kwargs,
         }
         cache_filter = deepcopy(query_filter)
-        now = datetime.utcnow()
+        now = utcnow()
         cache_filter['updated_at'] = {
             '$gte': now - timedelta(seconds=DEFAULT_CACHE_TIME)
         }

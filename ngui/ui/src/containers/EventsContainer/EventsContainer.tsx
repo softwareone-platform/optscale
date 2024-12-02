@@ -12,6 +12,7 @@ type FilterParams = {
   timeStart?: number;
   timeEnd?: number;
   descriptionLike?: string;
+  includeDebugEvents?: boolean;
 };
 
 type FilterNames = keyof FilterParams;
@@ -28,13 +29,15 @@ const EventsContainer = () => {
     timeStart,
     timeEnd,
     lastId,
-    descriptionLike
+    descriptionLike,
+    includeDebugEvents = false
   } = getQueryParams() as Partial<{
     level: keyof typeof EVENT_LEVEL;
     timeStart: string;
     timeEnd: string;
     lastId: string;
     descriptionLike: string;
+    includeDebugEvents: string | boolean;
   }>;
 
   // Undefined query parameters are ignored in the API calls
@@ -43,19 +46,31 @@ const EventsContainer = () => {
     timeStart: timeStart === undefined ? timeStart : Number(timeStart),
     timeEnd: timeEnd === undefined ? timeEnd : Number(timeEnd),
     lastId,
-    descriptionLike
+    descriptionLike,
+    includeDebugEvents: Boolean(includeDebugEvents)
   });
 
   const [events, setEvents] = useState([]);
+
+  const getLevelParameter = () => {
+    const levels =
+      requestParams.level === EVENT_LEVEL.ALL
+        ? [EVENT_LEVEL.INFO, EVENT_LEVEL.WARNING, EVENT_LEVEL.ERROR]
+        : [requestParams.level];
+
+    return includeDebugEvents ? [...levels, EVENT_LEVEL.DEBUG] : levels;
+  };
 
   const { loading } = useQuery(GET_EVENTS, {
     variables: {
       organizationId,
       requestParams: {
-        ...requestParams,
+        timeStart: requestParams.timeStart,
+        timeEnd: requestParams.timeEnd,
+        lastId: requestParams.lastId,
+        descriptionLike: requestParams.descriptionLike,
         limit: EVENTS_LIMIT,
-        // The events API doesn't support the "ALL" level string, so we need to use the "undefined" in order to get a list of all events
-        level: requestParams.level === EVENT_LEVEL.ALL ? undefined : requestParams.level
+        level: getLevelParameter()
       }
     },
     onCompleted: (data) => {
@@ -68,7 +83,8 @@ const EventsContainer = () => {
       level: newFilterParams.level ?? requestParams.level,
       timeStart: newFilterParams.timeStart ?? requestParams.timeStart,
       timeEnd: newFilterParams.timeEnd ?? requestParams.timeEnd,
-      descriptionLike: newFilterParams.descriptionLike ?? requestParams.descriptionLike
+      descriptionLike: newFilterParams.descriptionLike ?? requestParams.descriptionLike,
+      includeDebugEvents: newFilterParams.includeDebugEvents ?? requestParams.includeDebugEvents
     };
 
     const areParamsDifferent = (Object.keys(newRequestParams) as FilterNames[]).some(
@@ -104,6 +120,7 @@ const EventsContainer = () => {
   return (
     <Events
       eventLevel={requestParams.level}
+      includeDebugEvents={requestParams.includeDebugEvents}
       descriptionLike={requestParams.descriptionLike}
       events={events}
       isLoading={loading}

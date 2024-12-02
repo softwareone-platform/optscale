@@ -5,6 +5,7 @@ import logging
 import os
 import random
 import uuid
+import tools.optscale_time as opttime
 from collections import defaultdict
 from json.decoder import JSONDecodeError
 from kombu.pools import producers
@@ -35,6 +36,7 @@ from rest_api.rest_api_server.models.models import (
 from rest_api.rest_api_server.utils import (
     gen_id, encode_config, timestamp_to_day_start)
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
+from optscale_client.auth_client.client_v2 import Client as AuthClient
 
 
 LOG = logging.getLogger(__name__)
@@ -689,7 +691,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             now, obj)
         if obj.get('active', False):
             obj['last_seen'] = int((
-                datetime.utcnow() + timedelta(days=7)).timestamp())
+                opttime.utcnow() + timedelta(days=7)).timestamp())
         obj['_last_seen_date'] = timestamp_to_day_start(obj.get('last_seen', 0))
         obj['_first_seen_date'] = timestamp_to_day_start(
             obj.get('first_seen', 0))
@@ -1217,7 +1219,8 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             if not auth_user:
                 email, name, password = self._get_auth_user_params(
                     auth_user_data)
-                auth_user = self.create_auth_user(email, password, name)
+                auth_user = self.create_auth_user(
+                    email, password, name, verified=True)
 
                 employee_user_bindings.append({
                     Employee.id.name: new_employee_id,
@@ -1279,8 +1282,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             self, organization: Organization, token: ProfilingToken,
             src_replace_employee, dest_replace_employee, preset
     ):
-        now = int(datetime.utcnow().replace(
-            hour=0, minute=0, second=0).timestamp())
+        now = int(opttime.startday(opttime.utcnow()).timestamp())
         insertions_map = {}
         self.setup(src_replace_employee, dest_replace_employee,
                    organization.pool_id, preset)
@@ -1416,7 +1418,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
                 return live_demo
         org_name, name, email, password = self._get_basic_params()
         LOG.info('%s %s %s %s' % (org_name, name, email, password))
-        auth_user = self.create_auth_user(email, password, name)
+        auth_user = self.create_auth_user(email, password, name, verified=True)
         organization, employee = RegisterController(
             self.session, self._config, self.token).add_organization(
             org_name, auth_user, is_demo=True)
@@ -1469,13 +1471,13 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             Organization.is_demo.is_(true()),
             Organization.deleted.is_(False),
             Organization.created_at >= int(
-                (datetime.utcnow() - timedelta(days=7)).timestamp())
+                (opttime.utcnow() - timedelta(days=7)).timestamp())
         ))
         orgs = demo_organization_q.all()
         return len(orgs) == 1
 
     def _get_prepared_live_demo(self):
-        live_demo_threshhold = datetime.utcnow() - timedelta(
+        live_demo_threshhold = opttime.utcnow() - timedelta(
             days=PREPARED_DEMO_LIFETIME_DAYS)
         live_demo = self.mongo_client.restapi.live_demos.find_one_and_delete({
             'created_at': {'$gte': int(live_demo_threshhold.timestamp())}

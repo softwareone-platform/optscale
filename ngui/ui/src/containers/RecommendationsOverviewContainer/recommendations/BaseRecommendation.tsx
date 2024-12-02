@@ -151,6 +151,8 @@ class BaseRecommendation {
 
   services = [];
 
+  appliedDataSources = [];
+
   sampleValues = {};
 
   withCleanupScripts = false;

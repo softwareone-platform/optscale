@@ -1,5 +1,4 @@
-import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch, ANY
 
 from rest_api.rest_api_server.models.enums import ImportStates
@@ -8,6 +7,7 @@ from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import ReportImport
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from freezegun import freeze_time
+from tools.optscale_time import utcnow
 
 
 class TestReportImportsApi(TestApiBase):
@@ -57,7 +57,7 @@ class TestReportImportsApi(TestApiBase):
         session = BaseDB.session(engine)()
         cloud_acc_id = cloud_acc_id if cloud_acc_id else self.cloud_acc_id
         _import = ReportImport(
-            created_at=datetime.utcnow(),
+            created_at=utcnow(),
             deleted_at=0,
             cloud_account_id=cloud_acc_id,
             state=state,
@@ -81,7 +81,7 @@ class TestReportImportsApi(TestApiBase):
             'state': ImportStates.FAILED.value,
             'state_reason': 'test' * 200,
         }
-        now = datetime.utcnow()
+        now = utcnow()
         with freeze_time(now):
             code, _import = self.client.report_import_update(import_id, update)
         self.assertEqual(code, 200)
@@ -346,7 +346,7 @@ class TestReportImportsApi(TestApiBase):
         self.assertEqual(len(imports), 1)
         self.assertEqual(imports[0]['id'], import_id)
 
-        with freeze_time(datetime.utcnow() + timedelta(minutes=31)):
+        with freeze_time(utcnow() + timedelta(minutes=31)):
             code, resp = self.client.report_import_list(
                 self.cloud_acc_id, show_active=True)
         self.assertEqual(code, 200)

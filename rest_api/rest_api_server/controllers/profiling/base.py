@@ -6,6 +6,7 @@ from rest_api.rest_api_server.controllers.base import (
 from rest_api.rest_api_server.models.enums import RunStates
 from rest_api.rest_api_server.models.models import CloudAccount
 from rest_api.rest_api_server.utils import handle_http_exc
+from tools.optscale_time import utcnow_timestamp
 
 DAY_IN_HOURS = 24
 HOUR_IN_SEC = 3600
@@ -111,7 +112,7 @@ class RunCostsMixin(MongoMixin, ClickHouseMixin):
         min_dt, max_dt = None, None
         executors = set()
         run_executor_duration_map = defaultdict(dict)
-        now = datetime.utcnow().timestamp()
+        now = utcnow_timestamp()
         for r in runs:
             r_start = r.get('start') or 0
             r_finish = r.get('finish') or 0

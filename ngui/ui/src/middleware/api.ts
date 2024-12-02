@@ -124,10 +124,10 @@ const apiMiddleware =
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          errorResponse = { config: { url: error.request, params: {} } };
+          errorResponse = { config: { url: error.config.url, params: {} } };
         } else {
           // Something happened in setting up the request that triggered an error
-          errorResponse = { config: { url: error.message, params: {} } };
+          errorResponse = { config: { url: error.config.url, params: {} } };
         }
         console.log("error: ", error, { url });
         dispatch(apiError(label, errorResponse, errorHandlerType));

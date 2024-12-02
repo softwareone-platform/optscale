@@ -1,4 +1,3 @@
-from datetime import datetime
 from unittest.mock import patch
 
 from tools.optscale_exceptions.http_exc import OptHTTPError
@@ -6,6 +5,7 @@ from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
     TestProfilingBase)
+import tools.optscale_time as opttime
 
 BYTES_IN_MB = 1024 * 1024
 
@@ -87,7 +87,7 @@ class TestExecutorsApi(TestProfilingBase):
         code, task2 = self.client.task_create(
             self.org['id'], {'name': 'pr_2', 'key': 'k_2'})
         self.assertEqual(code, 201)
-        run_1_start_ts = int(datetime.utcnow().timestamp())
+        run_1_start_ts = opttime.utcnow_timestamp()
         run_2_start_ts = run_1_start_ts - 24 * 3600
         run_3_start_ts = run_1_start_ts - 2 * 24 * 3600
         self._create_run(

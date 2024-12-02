@@ -1,3 +1,4 @@
+import tools.optscale_time as opttime
 from datetime import datetime
 from collections import defaultdict
 
@@ -31,12 +32,13 @@ class PoolPolicyController(ConstraintBaseController):
         policy = super().create(**kwargs)
         pool = policy.pool
         meta = {
-            'object_name': pool.name,
+            'pool_name': pool.name,
+            'pool_id': pool.id,
             'policy_type': policy.type.value
         }
         action = 'policy_created'
         self.publish_activities_task(
-            pool.organization_id, pool.id, 'pool', action, meta,
+            pool.organization_id, pool.id, 'pool_policy', action, meta,
             'pool.{action}'.format(action=action), add_token=True)
         return policy
 
@@ -44,37 +46,41 @@ class PoolPolicyController(ConstraintBaseController):
         policy = super().delete(item_id)
         pool = policy.pool
         meta = {
-            'object_name': pool.name,
+            'pool_name': pool.name,
+            'pool_id': pool.id,
             'policy_type': policy.type.value
         }
         action = 'policy_deleted'
         self.publish_activities_task(
-            pool.organization_id, pool.id, 'pool', action, meta,
+            pool.organization_id, pool.id, 'pool_policy', action, meta,
             'pool.{action}'.format(action=action), add_token=True)
         return policy
 
     def edit(self, item_id, **kwargs):
         policy = self.get(item_id)
         policy_dict = policy.to_dict()
-        updates = {k: v for k, v in kwargs.items() if policy_dict.get(k) != kwargs[k]}
+        updates = {k: v for k, v in kwargs.items()
+                   if policy_dict.get(k) != kwargs[k]}
         upd_policy = super().edit(item_id, **kwargs)
         pool = policy.pool
         meta = {
             'object_name': pool.name,
-            'policy_type': policy.type.value
+            'policy_type': policy.type.value,
+            'pool_id': pool.id,
+            'pool_name': pool.name
         }
         if upd_policy and upd_policy.active != policy_dict['active']:
             updates.pop('active', None)
             action_type = 'enabled' if upd_policy.active else 'disabled'
             action = 'policy_{action_type}'.format(action_type=action_type)
             self.publish_activities_task(
-                pool.organization_id, pool.id, 'pool', action, meta,
+                pool.organization_id, pool.id, 'pool_policy', action, meta,
                 'pool.{action}'.format(action=action), add_token=True)
         if updates:
             meta.update({'params': ', '.join(
                 ['%s: %s' % (k, v) for k, v in updates.items()])})
             self.publish_activities_task(
-                pool.organization_id, pool.id, 'pool',
+                pool.organization_id, pool.id, 'pool_policy',
                 'policy_updated', meta, 'pool.policy_updated', add_token=True)
         return upd_policy
 
@@ -111,7 +117,7 @@ class PoolPolicyController(ConstraintBaseController):
 
     def handle_ttl_hit(self, resource_data, constraint, now):
         created_at = int(resource_data.get(
-            'mindate', datetime.utcnow()).timestamp())
+            'mindate', opttime.utcnow()).timestamp())
         ts_limit = created_at + constraint.limit * 3600
         if now > ts_limit:
             return ts_limit, now

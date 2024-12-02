@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 # optscale images are also added to cdn, but not used in emails yet
 # 'background': 'https://cdn.hystax.com/OptScale/email-header-background.png'
@@ -75,7 +75,8 @@ def get_default_template():
         'texts': {
             'product': 'Hystax OptScale',
             'dont_reply': 'Please do not reply to this email',
-            'copyright': 'Copyright © 2016-%s' % datetime.utcnow().year,
+            'copyright': 'Copyright © 2016-%s' % datetime.now(
+                tz=timezone.utc).year,
             'address': '1250 Borregas Ave, Sunnyvale, CA 94089, USA',
             'phone': '+1 628 251-1280'
         },

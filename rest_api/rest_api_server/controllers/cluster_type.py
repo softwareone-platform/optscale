@@ -1,7 +1,7 @@
 import logging
 import uuid
+import tools.optscale_time as opttime
 
-from datetime import datetime
 from pymongo import ReturnDocument, UpdateMany, UpdateOne
 from retrying import retry
 from sqlalchemy import exists
@@ -112,7 +112,7 @@ class ClusterTypeController(BaseController, MongoMixin, PriorityMixin):
                 },
                 update={
                     '$unset': {'active': 1},
-                    '$set': {'deleted_at': int(datetime.utcnow().timestamp())}
+                    '$set': {'deleted_at': opttime.utcnow_timestamp()}
                 }
             )
             if updated_resources.modified_count > 0:
@@ -130,7 +130,7 @@ class ClusterTypeController(BaseController, MongoMixin, PriorityMixin):
 
     @retry(**RETRIES)
     def delete(self, item_id):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         cluster_type = self.get(item_id)
         all_cluster_types = self._get_all_cluster_types(
             cluster_type.organization_id)
@@ -422,7 +422,7 @@ class ClusterTypeApplyController(ClusterTypeController):
 
     def delete_shareable_booking(self, clustered_resource_ids,
                                  no_commit=True):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         self.session.query(ShareableBooking).filter(and_(
             ShareableBooking.deleted.is_(False),
             ShareableBooking.resource_id.in_(
@@ -478,7 +478,7 @@ class ClusterTypeApplyController(ClusterTypeController):
                     for k in tag_cluster_type_map.keys()]
         })
 
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         total_count = 0
         cluster_cid_resources_map = {}
         cluster_cid_cluster_type_map = {}
@@ -614,7 +614,7 @@ class ClusterTypeApplyController(ClusterTypeController):
     def delete_empty_clusters(self, organization_id, cloud_account_ids):
         cluster_ids = self.resources_collection.distinct(
             'cluster_id', {'cloud_account_id': {'$in': cloud_account_ids}})
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         self.resources_collection.update_many(
             filter={
                 '_id': {'$nin': cluster_ids},

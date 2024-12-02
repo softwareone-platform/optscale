@@ -3,6 +3,7 @@ import csv
 import uuid
 import subprocess
 import tempfile
+import tools.optscale_time as opttime
 from ast import literal_eval
 from datetime import datetime, timezone
 from unittest.mock import patch, PropertyMock
@@ -142,7 +143,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             'rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler.'
             'get_meta_by_token', return_value={
                 'user_id': self._user_id,
-                'valid_until': datetime.utcnow().timestamp() * 2
+                'valid_until': opttime.utcnow_timestamp() * 2
             }).start()
         patch('rest_api.rest_api_server.controllers.base.BaseController.'
               'assign_role_to_user').start()
@@ -172,8 +173,8 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         return result
 
     @staticmethod
-    def get_publish_activity_tuple(org_id, object_id, object_type, action, meta,
-                                   routing_key=None):
+    def get_publish_activity_tuple(org_id, object_id, object_type, action,
+                                   meta, routing_key=None):
         if routing_key is None:
             routing_key = '{object_type}.{action}'.format(
                 object_type=object_type, action=action)
@@ -297,7 +298,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             for info in infos['discovery_info']:
                 self.client.discovery_info_update(
                     info['id'],
-                    {'last_discovery_at': int(datetime.utcnow().timestamp())})
+                    {'last_discovery_at': opttime.utcnow_timestamp()})
         if ctrl:
             mock.stop()
         return code, cloud_acc
@@ -326,7 +327,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         obj.pop('resource_id', None)
         obj['meta'] = getattr(cad_resource, 'meta')
         obj['resource_type'] = resource_type_map.get(model)
-        obj['last_seen'] = int(datetime.utcnow().timestamp())
+        obj['last_seen'] = opttime.utcnow_timestamp()
         if first_seen is not None:
             obj['first_seen'] = first_seen
         obj['active'] = True
@@ -334,7 +335,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
 
     def resource_discovery_call(self, resources, create_resources=True,
                                 first_seen=None):
-        start_time = int(datetime.utcnow().timestamp())
+        start_time = opttime.utcnow_timestamp()
         payloads_map = {}
         for rss in resources:
             obj = self._to_discovered_resource(rss, first_seen)
@@ -362,7 +363,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         return link.rsplit('/', 1)[1]
 
     def _make_resources_active(self, resource_ids):
-        seen_time = int(datetime.utcnow().timestamp() - 1)
+        seen_time = opttime.utcnow_timestamp() - 1
         self.resources_collection.bulk_write([UpdateMany(
             filter={'_id': {'$in': resource_ids}},
             update={'$set': {'last_seen': seen_time, 'active': True}},
@@ -589,7 +590,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                 [
                     ('cloud_account_id', 'String', 'default'),
                     ('resource_id', 'String', 'default'),
-                    ('date', 'DateTime', datetime.utcnow()),
+                    ('date', 'DateTime', opttime.utcnow()),
                     ('cost', 'Float64', 0),
                     ('sign', 'Int8', 1)
                 ], self.expenses
@@ -598,7 +599,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                 [
                     ('cloud_account_id', 'String', 'default'),
                     ('resource_id', 'String', 'default'),
-                    ('date', 'DateTime', datetime.utcnow()),
+                    ('date', 'DateTime', opttime.utcnow()),
                     ('type', "Enum8('outbound' = 1, 'inbound' = 2)", 1),
                     ('from', 'String', 'default'),
                     ('to', 'String', 'default'),
@@ -611,7 +612,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                 [
                     ('cloud_account_id', 'String', 'default'),
                     ('resource_id', 'String', 'default'),
-                    ('date', 'DateTime', datetime.utcnow()),
+                    ('date', 'DateTime', opttime.utcnow()),
                     ('instance_type', 'String', ''),
                     ('offer_id', 'String', 'default'),
                     ('offer_type', "Enum8('ri' = 1, 'sp' = 2)", 1),
@@ -628,7 +629,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                 [
                     ('cloud_account_id', 'String', 'default'),
                     ('resource_id', 'String', 'default'),
-                    ('date', 'DateTime', datetime.utcnow()),
+                    ('date', 'DateTime', opttime.utcnow()),
                     ('instance_type', 'String', 'default'),
                     ('os', 'String', 'default'),
                     ('location', 'String', 'default'),
@@ -644,7 +645,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                     ('bucket', 'String', 'default'),
                     ('key', 'String', 'default'),
                     ('size', 'Integer', 1),
-                    ('date', 'DateTime', datetime.utcnow()),
+                    ('date', 'DateTime', opttime.utcnow()),
                 ], self.gemini
             )
         }
@@ -743,7 +744,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
     def _mock_auth_user(self, user_id):
         self.p_get_meta_by_token.return_value = {
             'user_id': user_id,
-            'valid_until': datetime.utcnow().timestamp() * 2
+            'valid_until': opttime.utcnow_timestamp() * 2
         }
 
     def delete_organization(self, org_id):
@@ -831,7 +832,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         )
         session.add(constraint)
         if deleted:
-            constraint.deleted_at = int(datetime.utcnow().timestamp())
+            constraint.deleted_at = opttime.utcnow_timestamp()
         session.commit()
         res = constraint.to_dict()
         res['type'] = res['type'].value
@@ -856,7 +857,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             hit.created_at = created_at
         session.add(hit)
         if deleted:
-            hit.deleted_at = int(datetime.utcnow().timestamp())
+            hit.deleted_at = opttime.utcnow_timestamp()
         session.commit()
         res = hit.to_dict()
         return res

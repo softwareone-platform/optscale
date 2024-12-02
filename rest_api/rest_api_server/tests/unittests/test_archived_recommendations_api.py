@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+import tools.optscale_time as opttime
 from unittest.mock import patch
 
 from rest_api.rest_api_server.handlers.v2.archived_recommendations import (
@@ -37,7 +37,7 @@ class TestArchivedRecommendationsBase(TestApiBase):
         _, self.cloud_acc = self.create_cloud_account(
             self.org_id, creds, auth_user_id=self.user_id)
 
-        self.end_date = int(datetime.utcnow().timestamp())
+        self.end_date = opttime.utcnow_timestamp()
         self.start_date = self.end_date - TWO_WEEK_TS
         self.instance = {
             'cloud_resource_id': 'i-9323123124',
@@ -67,7 +67,7 @@ class TestArchivedRecommendationsBase(TestApiBase):
     def _add_archive_recommendation(self, organization_id, module, reason,
                                     data, archived_at=None):
         if not archived_at:
-            archived_at = int(datetime.utcnow().timestamp())
+            archived_at = opttime.utcnow_timestamp()
         record = {
             'module': module,
             'organization_id': organization_id,

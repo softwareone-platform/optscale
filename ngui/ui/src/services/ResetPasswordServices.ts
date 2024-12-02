@@ -37,7 +37,8 @@ const useGetVerificationCodeToken = () => {
         dispatch(
           getToken({
             email,
-            code
+            code,
+            isTokenTemporary: true
           })
         ).then(() => {
           if (!isError(GET_TOKEN, getState())) {

@@ -9,6 +9,7 @@ from rest_api.rest_api_server.models.enums import ConstraintLimitStates, Constra
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 
 from tools.cloud_adapter.model import InstanceResource
+import tools.optscale_time as opttime
 
 NEWLY_DISCOVERED_TIME = 300  # 5 min
 PROCESS_RESOURCES = ('rest_api.rest_api_server.controllers.limit_hit.'
@@ -67,7 +68,7 @@ class TestObserver(TestApiBase):
                                organization_id=None, created_at=None,
                                applied_rules=None, active=True):
         if not created_at:
-            created_at = int(datetime.utcnow().timestamp())
+            created_at = opttime.utcnow_timestamp()
         if not cloud_account_id:
             cloud_account_id = self.cloud_acc_id
         if not organization_id:
@@ -136,18 +137,22 @@ class TestObserver(TestApiBase):
     @patch(PROCESS_RESOURCES)
     def test_observe_only_cached(self, m_hits):
         self.resource_discovery_call(self.instances)
+        self.resources_collection.update_many(
+            {}, {'$set': {'shareable': True}})
         resources = list(self.resources_collection.find())
         for resource in resources:
             self.assertTrue(resource.get('active'))
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         with freeze_time(now + timedelta(60)):
-            self.resource_discovery_call(self.instances, create_resources=False)
+            self.resource_discovery_call(self.instances,
+                                         create_resources=False)
             code, _ = self.client.observe_resources(self.org_id)
             self.assertEqual(code, 204)
         m_hits.assert_not_called()
         resources = list(self.resources_collection.find())
         for resource in resources:
             self.assertTrue(not resource.get('active'))
+            self.assertTrue(not resource.get('shareable'))
 
     def test_observe_newly_discovered_resources(self):
         rule_1 = {'id': str(uuid.uuid4()), 'name': 'rule1',
@@ -161,7 +166,7 @@ class TestObserver(TestApiBase):
         self._create_mongo_resource('res1', applied_rules=[rule_1, rule_2])
         self._create_mongo_resource('res2', applied_rules=[rule_1])
         self._create_mongo_resource('res3', applied_rules=[rule_3, rule_2])
-        old_times = int(datetime.utcnow().timestamp()) - 500
+        old_times = opttime.utcnow_timestamp() - 500
         self._create_mongo_resource('res_old', created_at=old_times,
                                     applied_rules=[rule_1, rule_2])
         p_publish_activities = patch(
@@ -173,7 +178,7 @@ class TestObserver(TestApiBase):
         self.assertEqual(code, 204)
         activity_param_tuples = self.get_publish_activity_tuple(
             self.org_id, ANY, 'cloud_account', 'resources_discovered', {
-                'stat': {'total': 3, 'clusters': [], 'clustered': 0},
+                'total': 3, 'clusters': 0, 'clustered': 0,
                 'object_name': ANY
             })
         p_publish_activities.assert_has_calls([
@@ -195,7 +200,7 @@ class TestObserver(TestApiBase):
         code, ct = self.client.cluster_type_create(
             self.org_id, {'name': 'my_ct', 'tag_key': 'tn'})
         self.assertEqual(code, 201)
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         self.resource_discovery_call(self.instances)
         resources = list(self.resources_collection.find())
         cluster = None
@@ -213,11 +218,8 @@ class TestObserver(TestApiBase):
         code, _ = self.client.observe_resources(self.org_id)
         self.assertEqual(code, 204)
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.org_id, ANY, 'cloud_account', 'resources_discovered', {
-                'stat': {'clustered': 4, 'clusters': [cluster['_id']],
-                         'total': 4},
-                'object_name': ANY
-            })
+            self.org_id, ANY, 'cloud_account', 'resources_clustered_discovered',
+            {'clustered': 4, 'clusters': 1, 'total': 4, 'object_name': ANY})
         p_publish_activities.assert_has_calls([
             call(*activity_param_tuples, add_token=True)
         ])
@@ -226,9 +228,9 @@ class TestObserver(TestApiBase):
             code, _ = self.client.observe_resources(self.org_id)
             self.assertEqual(code, 204)
             activity_param_tuples = self.get_publish_activity_tuple(
-                self.org_id, ANY, 'cloud_account', 'resources_discovered', {
-                    'stat': {'clustered': 4, 'clusters': [cluster['_id']],
-                             'total': 4},
+                self.org_id, ANY, 'cloud_account',
+                'resources_clustered_discovered', {
+                    'clustered': 4, 'clusters': 1, 'total': 4,
                     'object_name': ANY
                 })
             p_publish_activities.assert_has_calls([
@@ -241,7 +243,7 @@ class TestObserver(TestApiBase):
         code, ct = self.client.cluster_type_create(
             self.org_id, {'name': 'my_ct', 'tag_key': 'tn'})
         self.assertEqual(code, 201)
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         self.resource_discovery_call(self.instances)
 
         code, _ = self.client.observe_resources(self.org_id)
@@ -278,7 +280,7 @@ class TestObserver(TestApiBase):
             self.org['pool_id'], {'limit': 50, 'type': 'total_expense_limit'})
         self.assertEqual(code, 201)
         employee_id = self.gen_id()
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         res_ids = []
         for r in [resources[0], resources[1], resources[2]]:
             res_ids.append(r['id'])
@@ -293,7 +295,7 @@ class TestObserver(TestApiBase):
                 'cost': 100,
                 'cloud_account_id': self.cloud_acc_id,
                 'resource_id': r['id'],
-                'date': datetime.utcnow(),
+                'date': opttime.utcnow(),
                 'sign': 1
             })
         self.update_resource_info_by_expenses(res_ids)
@@ -313,7 +315,7 @@ class TestObserver(TestApiBase):
         self.resources_collection.update_one(
             filter={'_id': resources[0]['id']},
             update={'$set': {
-                'last_seen': int(datetime.utcnow().timestamp()) - 2000,
+                'last_seen': opttime.utcnow_timestamp() - 2000,
                 'active': False}})
         code, _ = self.client.process_resource_violations(self.org_id)
         self.assertEqual(code, 204)
@@ -336,7 +338,7 @@ class TestObserver(TestApiBase):
             'cost': 150,
             'cloud_account_id': self.cloud_acc_id,
             'resource_id': resources[1]['id'],
-            'date': datetime.utcnow(),
+            'date': opttime.utcnow(),
             'sign': 1
         })
         self.update_resource_info_by_expenses([resources[1]['id']])
@@ -348,7 +350,7 @@ class TestObserver(TestApiBase):
             'cost': 150,
             'cloud_account_id': self.cloud_acc_id,
             'resource_id': resources[3]['id'],
-            'date': datetime.utcnow(),
+            'date': opttime.utcnow(),
             'sign': 1
         })
         self.update_resource_info_by_expenses([resources[3]['id']])
@@ -405,7 +407,7 @@ class TestObserver(TestApiBase):
                 'cost': 100,
                 'cloud_account_id': self.cloud_acc_id,
                 'resource_id': r['id'],
-                'date': datetime.utcnow(),
+                'date': opttime.utcnow(),
                 'sign': 1
             })
         self.update_resource_info_by_expenses(r_ids)
@@ -463,7 +465,7 @@ class TestObserver(TestApiBase):
                 'cost': 100,
                 'cloud_account_id': self.cloud_acc_id,
                 'resource_id': r['id'],
-                'date': datetime.utcnow(),
+                'date': opttime.utcnow(),
                 'sign': 1
             })
         self.update_resource_info_by_expenses([
@@ -506,7 +508,7 @@ class TestObserver(TestApiBase):
                 'sign': 1
             })
 
-        new_now = datetime.utcnow()
+        new_now = opttime.utcnow()
         with freeze_time(new_now):
             self.resource_discovery_call(self.instances)
             code, _ = self.client.process_resource_violations(self.org_id)
@@ -538,8 +540,7 @@ class TestObserver(TestApiBase):
                 res['id'], {'limit': limit, 'type': 'daily_expense_limit'})
             self.assertEqual(code, 201)
         employee_id = self.gen_id()
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0,
-                                          microsecond=0)
+        today = opttime.startday(opttime.utcnow())
         yesterday = today - timedelta(days=1)
         r_ids = []
         for r in [resources[0], resources[1], resources[2]]:
@@ -559,7 +560,7 @@ class TestObserver(TestApiBase):
                 'sign': 1,
             })
         self.update_resource_info_by_expenses(r_ids)
-        new_now = datetime.utcnow()
+        new_now = opttime.utcnow()
         with freeze_time(new_now):
             self.resource_discovery_call(self.instances)
             code, _ = self.client.process_resource_violations(self.org_id)
@@ -626,7 +627,7 @@ class TestObserver(TestApiBase):
             update={'$set': {
                 'shareable': True}}
         )
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         released_at = now - 100
         acquired_since = released_at - NEWLY_DISCOVERED_TIME
         schedule_book = {
@@ -662,7 +663,7 @@ class TestObserver(TestApiBase):
             update={'$set': {
                 'shareable': True}}
         )
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         released_at = now + 2 * NEWLY_DISCOVERED_TIME
         acquired_since = now
         schedule_book = {
@@ -698,7 +699,7 @@ class TestObserver(TestApiBase):
             update={'$set': {
                 'shareable': True}}
         )
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         released_at = now - 2 * NEWLY_DISCOVERED_TIME
         acquired_since = released_at - NEWLY_DISCOVERED_TIME
         schedule_book = {
@@ -720,7 +721,7 @@ class TestObserver(TestApiBase):
               'BaseController.publish_activities_task').start()
         token_info = {
             'user_id': self.user_id,
-            'valid_until': datetime.utcnow().timestamp() * 2
+            'valid_until': opttime.utcnow_timestamp() * 2
         }
         patch('rest_api.rest_api_server.handlers.v1.base.'
               'BaseAuthHandler.get_meta_by_token', return_value=token_info
@@ -767,7 +768,7 @@ class TestObserver(TestApiBase):
     def test_send_env_changes_activities_task_without_alert(self):
         token_info = {
             'user_id': self.user_id,
-            'valid_until': datetime.utcnow().timestamp() * 2
+            'valid_until': opttime.utcnow_timestamp() * 2
         }
         patch('rest_api.rest_api_server.handlers.v1.base.'
               'BaseAuthHandler.get_meta_by_token', return_value=token_info
@@ -816,8 +817,7 @@ class TestObserver(TestApiBase):
             update={'$set': {'employee_id': self.employee['id'],
                              'pool_id': pool['id'],
                              'first_seen': 1}})
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0,
-                                          microsecond=0)
+        today = opttime.startday(opttime.utcnow())
         self.expenses.append({
             'cost': 99.1234,
             'cloud_account_id': self.cloud_acc_id,
@@ -871,8 +871,7 @@ class TestObserver(TestApiBase):
             update={'$set': {'employee_id': self.employee['id'],
                              'pool_id': pool['id'],
                              'first_seen': 1}})
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0,
-                                          microsecond=0)
+        today = opttime.startday(opttime.utcnow())
         self.expenses.append({
             'cost': 99.1234,
             'cloud_account_id': self.cloud_acc_id,

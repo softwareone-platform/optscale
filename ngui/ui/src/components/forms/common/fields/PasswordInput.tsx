@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef } from "react";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { useFormContext } from "react-hook-form";
@@ -44,6 +44,26 @@ const PasswordInput = ({
   } = useFormContext();
 
   const intl = useIntl();
+  const inputRef = useRef();
+
+  const { ref, ...rest } = register(name, {
+    required: {
+      value: required,
+      message: intl.formatMessage({ id: "thisFieldIsRequired" })
+    },
+    maxLength:
+      maxLength !== null
+        ? {
+            value: maxLength,
+            message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength })
+          }
+        : undefined,
+    minLength:
+      minLength !== null
+        ? { value: minLength, message: intl.formatMessage({ id: "minFieldLength" }, { min: minLength }) }
+        : undefined,
+    validate
+  });
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false);
 
@@ -56,6 +76,10 @@ const PasswordInput = ({
   ) : (
     <Input
       label={label}
+      ref={(e) => {
+        ref(e);
+        inputRef.current = e;
+      }}
       type={shouldShowPassword ? "text" : "password"}
       error={!!fieldError}
       helperText={fieldError?.message}
@@ -71,31 +95,17 @@ const PasswordInput = ({
               key="eyeButton"
               icon={shouldShowPassword ? <VisibilityOffOutlinedIcon /> : <RemoveRedEyeOutlinedIcon />}
               color="primary"
-              onClick={() => setShouldShowPassword((currentState) => !currentState)}
+              onClick={() => {
+                inputRef.current.focus();
+                setShouldShowPassword((currentState) => !currentState);
+              }}
             />
             {endAdornment}
           </>
         ),
         ...restInputProps
       }}
-      {...register(name, {
-        required: {
-          value: required,
-          message: intl.formatMessage({ id: "thisFieldIsRequired" })
-        },
-        maxLength:
-          maxLength !== null
-            ? {
-                value: maxLength,
-                message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength })
-              }
-            : undefined,
-        minLength:
-          minLength !== null
-            ? { value: minLength, message: intl.formatMessage({ id: "minFieldLength" }, { min: minLength }) }
-            : undefined,
-        validate
-      })}
+      {...rest}
     />
   );
 };

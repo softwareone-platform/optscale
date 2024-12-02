@@ -1,6 +1,6 @@
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from mongoengine.queryset.visitor import Q
 from mongoengine.errors import ValidationError
 
@@ -42,7 +42,7 @@ class FeedbackController(EventBaseController):
         if token:
             user_id = self.get_user_id_by_token(token)
             kwargs.update({"user_id": user_id})
-        kwargs["time"] = int(datetime.utcnow().timestamp())
+        kwargs["time"] = int(datetime.now(tz=timezone.utc).timestamp())
         metadata = kwargs.get("metadata")
         if metadata:
             _check_filter_json(metadata, "metadata")

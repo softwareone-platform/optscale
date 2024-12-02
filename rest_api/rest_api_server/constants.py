@@ -226,7 +226,9 @@ class UrlsV2(Urls):
             r"artifacts/(?P<artifact_id>[^/]+)",
         'tags_collection': r"%s/organizations/(?P<organization_id>[^/]+)/"
                            r"tasks/(?P<task_id>[^/]+)/tags",
-        'restore_password': r"%s/restore_password"
+        'restore_password': r"%s/restore_password",
+        'profiling_token_info': r"%s/profiling_tokens/(?P<profiling_token>[^/]+)",
+        'verify_email': r"%s/verify_email",
     })
 
 

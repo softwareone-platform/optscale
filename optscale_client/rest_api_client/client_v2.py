@@ -204,11 +204,14 @@ class Client(Client_v1):
     def cloud_resource_delete(self, cloud_resource_id):
         return self.delete(self.cloud_resource_url(cloud_resource_id))
 
-    def cloud_resource_list(self, cloud_account_id, cloud_resource_id=None):
+    def cloud_resource_list(self, cloud_account_id, cloud_resource_id=None,
+                            cloud_resource_hash=None):
         url = self.cloud_resource_url(cloud_account_id=cloud_account_id)
         query_params = {}
         if cloud_resource_id:
             query_params['cloud_resource_id'] = cloud_resource_id
+        if cloud_resource_hash:
+            query_params['cloud_resource_hash'] = cloud_resource_hash
         if query_params:
             url += self.query_url(**query_params)
         return self.get(url)
@@ -2202,4 +2205,19 @@ class Client(Client_v1):
 
     def restore_password(self, email):
         url = self.restore_password_url()
+        return self.post(url, {'email': email})
+
+    @staticmethod
+    def profiling_token_info_url(profiling_token):
+        return 'profiling_tokens/%s' % profiling_token
+
+    def profiling_token_info_get(self, profiling_token):
+        return self.get(self.profiling_token_info_url(profiling_token))
+
+    @staticmethod
+    def verify_email_url():
+        return 'verify_email'
+
+    def verify_email(self, email):
+        url = self.verify_email_url()
         return self.post(url, {'email': email})

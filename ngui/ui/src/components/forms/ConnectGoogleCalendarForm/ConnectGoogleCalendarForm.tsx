@@ -6,7 +6,7 @@ import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import CopyText from "components/CopyText";
-import { DOCS_HYSTAX_OPTSCALE } from "urls";
+import { DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION } from "urls";
 import { CalendarIdField } from "./FormElements";
 import { ConnectGoogleCalendarFormProps, FormValues } from "./types";
 import { getDefaultValues } from "./utils";
@@ -56,7 +56,12 @@ const ConnectGoogleCalendarForm = ({
               id="ifYouNeedMoreDescription"
               values={{
                 link: (chunks) => (
-                  <Link data-test-id="link_read_more" href={DOCS_HYSTAX_OPTSCALE} target="_blank" rel="noopener">
+                  <Link
+                    data-test-id="link_read_more"
+                    href={DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION}
+                    target="_blank"
+                    rel="noopener"
+                  >
                     {chunks}
                   </Link>
                 )

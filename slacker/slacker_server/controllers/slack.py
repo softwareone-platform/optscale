@@ -31,6 +31,7 @@ from slacker.slacker_server.message_templates.errors import (
     get_ca_not_connected_message, get_not_have_slack_permissions_message)
 from slacker.slacker_server.models.models import User
 from slacker.slacker_server.utils import gen_id
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 TTL_LIMIT_TO_SHOW = 72
@@ -179,7 +180,7 @@ class SlackController(BaseController):
         auth_cl, _ = self.get_user_api_clients(user.auth_user_id)
         _, user_info = auth_cl.user_get(user.auth_user_id)
 
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = utcnow_timestamp()
         user.deleted_at = now_ts
         self.session.add(user)
         try:
@@ -262,7 +263,7 @@ class SlackController(BaseController):
         _, expenses_resp = rest_cl.clean_expenses_get(
             organization_id=user.organization_id,
             start_date=0,
-            end_date=int(datetime.utcnow().timestamp()),
+            end_date=utcnow_timestamp(),
             params={'owner_id': [user.employee_id], 'active': True}
         )
 
@@ -304,7 +305,7 @@ class SlackController(BaseController):
                         EXPENSE_LIMIT_TO_SHOW)
 
             if ttl_constr:
-                hrs = (ttl_constr['limit'] - datetime.utcnow().timestamp()) / SEC_IN_HRS
+                hrs = (ttl_constr['limit'] - utcnow_timestamp()) / SEC_IN_HRS
                 if int(hrs) <= TTL_LIMIT_TO_SHOW:
                     shown_data[i]['ttl'] = hrs
             if (total_expense_constr and
@@ -401,7 +402,7 @@ class SlackController(BaseController):
             resource_id, details=True)
         try:
             if view_value != -1:
-                limit = int(datetime.utcnow().timestamp()) + view_value * SEC_IN_HRS
+                limit = utcnow_timestamp() + view_value * SEC_IN_HRS
                 if resource["details"]["constraints"].get("ttl"):
                     rest_cl.resource_constraint_update(
                         resource["details"]["constraints"]["ttl"]["id"],
@@ -628,7 +629,7 @@ class SlackController(BaseController):
         say(get_not_have_slack_permissions_message())
 
     def get_current_booking(self, booking_list):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = utcnow_timestamp()
         for booking in booking_list:
             if (booking['acquired_since'] <= now_ts < booking['released_at'] or
                     (booking['acquired_since'] <= now_ts and
@@ -636,7 +637,7 @@ class SlackController(BaseController):
                 return booking
 
     def _ts_to_string(self, date_ts):
-        date = datetime.utcfromtimestamp(date_ts)
+        date = utcfromtimestamp(date_ts)
         return datetime.strftime(date, "%m/%d/%Y %H:%M UTC")
 
     def get_booking_parameters(self, booking):
@@ -801,7 +802,7 @@ class SlackController(BaseController):
             except HTTPError:
                 pass
             current_booking = self.get_current_booking(bookings)
-            now_ts = int(datetime.utcnow().timestamp())
+            now_ts = utcnow_timestamp()
             _, employee_list = rest_cl.employee_list(org['id'])
             employee_id_map = {x['id']: x for x in employee_list['employees']}
             for booking in bookings:
@@ -865,7 +866,7 @@ class SlackController(BaseController):
 
         _, rest_cl = self.get_user_api_clients(user.auth_user_id)
 
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = utcnow_timestamp()
         try:
             _, book = rest_cl.shareable_book_get(booking_id)
             _, resource = rest_cl.cloud_resource_get(book['resource_id'])

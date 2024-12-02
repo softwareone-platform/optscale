@@ -1,5 +1,5 @@
-from datetime import datetime
 from slacker.slacker_server.message_templates.resource_details import get_resource_details_block
+from tools.optscale_time import utcnow_timestamp
 
 __all__ = ['get_ttl_constraint_message', 'get_constraint_block',
            'get_update_ttl_form', 'get_constraint_updated']
@@ -11,7 +11,7 @@ TTL_LIMIT_TO_SHOW = 72
 def get_ttl_constraint_message(ttl_constr):
     ttl_msg = None
     if ttl_constr:
-        hrs = (ttl_constr['limit'] - datetime.utcnow().timestamp()) / SEC_IN_HRS
+        hrs = (ttl_constr['limit'] - utcnow_timestamp()) / SEC_IN_HRS
         if ttl_constr['limit'] == 0:
             ttl_msg = ":warning:No limit"
         elif hrs <= -1:
@@ -60,7 +60,7 @@ def get_update_ttl_form(resource, org_id, public_ip):
                     },
         }
     ] + get_resource_details_block(resource, org_id, public_ip)
-    created = (datetime.utcnow().timestamp() - resource['created_at']) / SEC_IN_HRS
+    created = (utcnow_timestamp() - resource['created_at']) / SEC_IN_HRS
     if created < 1:
         created_msg = '< 1 hour ago'
     elif created == 1:

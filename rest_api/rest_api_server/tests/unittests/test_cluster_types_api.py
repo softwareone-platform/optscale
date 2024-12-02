@@ -6,6 +6,7 @@ from pymongo import UpdateMany
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import encoded_tags
+import tools.optscale_time as opttime
 
 
 class TestClusterTypesApi(TestApiBase):
@@ -319,7 +320,7 @@ class TestClusterTypesApi(TestApiBase):
             'resource_type': resource_type,
             'employee_id': employee_id,
             'pool_id': pool_id,
-            'last_seen': last_seen or int(datetime.utcnow().timestamp()),
+            'last_seen': last_seen or opttime.utcnow_timestamp(),
             'region': region
         }
         if tags:
@@ -781,13 +782,13 @@ class TestClusterTypesApi(TestApiBase):
         self.assertEqual(code, 201)
         self.resources_collection.bulk_write([UpdateMany(
             filter={'_id': resource['id']},
-            update={'$set': {'last_seen': int(datetime.utcnow().timestamp() - 5),
+            update={'$set': {'last_seen': opttime.utcnow_timestamp() - 5,
                              'active': True}},
         )])
 
         code, constraint = self.client.resource_constraint_create(
             resource['id'], {
-                'limit': int(datetime.utcnow().timestamp()) + 3600,
+                'limit': opttime.utcnow_timestamp() + 3600,
                 'type': 'ttl'
             })
         self.assertEqual(code, 201)

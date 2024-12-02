@@ -241,3 +241,21 @@ class TestSignIn(TestAuthBase):
                                             token='token')
         self.assertEqual(code, 201)
         self.assertEqual(resp['user_email'], self.user_customer_email)
+
+    @patch.dict(os.environ, {'MICROSOFT_OAUTH_CLIENT_ID': '123'}, clear=True)
+    def test_signin_user_verified(self):
+        self.user_verified_mock.stop()
+        patch('auth.auth_server.controllers.user.UserController.'
+              'domain_blacklist').start()
+        token_info = (self.user_customer_email, self.user_customer_name)
+        with patch('auth.auth_server.controllers.signin.'
+                   'MicrosoftOauth2Provider.verify',
+                   return_value=token_info):
+            code, resp = self.client.signin(provider='microsoft',
+                                            token='token')
+        self.assertEqual(code, 201)
+
+        code, resp = self.client.user_get(resp['user_id'])
+        self.assertEqual(code, 200)
+        self.assertEqual(resp['email'], self.user_customer_email)
+        self.assertTrue(resp['verified'])

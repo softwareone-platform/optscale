@@ -14,6 +14,7 @@ from rest_api.rest_api_server.utils import run_task, check_int_attribute
 from optscale_client.metroculus_client.client import Client as MetroculusClient
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_time import utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 DEFAULT_INTERVAL = 900
@@ -42,7 +43,8 @@ class ResourceMetricsAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
     def get_metric_arguments(self):
         args = {
             'start_date': self.get_arg('start_date', int),
-            'end_date': self.get_arg('end_date', int, default=int(datetime.utcnow().timestamp())),
+            'end_date': self.get_arg('end_date', int,
+                                     default=utcnow_timestamp()),
             'interval': self.get_arg('interval', int, default=DEFAULT_INTERVAL)
         }
         for param, value in args.items():

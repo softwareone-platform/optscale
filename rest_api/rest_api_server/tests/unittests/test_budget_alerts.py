@@ -4,7 +4,9 @@ from unittest.mock import patch, ANY
 
 from freezegun import freeze_time
 
-from rest_api.rest_api_server.models.enums import ThresholdBasedTypes, ThresholdTypes
+from rest_api.rest_api_server.models.enums import (
+    ThresholdBasedTypes, ThresholdTypes
+)
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 
 
@@ -969,15 +971,26 @@ class TestPoolAlertsApi(TestApiBase):
         meta = {
             'initiator_name': ANY,
             'initiator_email': ANY,
-            'alert': ANY,
             'pool_name': ANY,
             'with_subpools': ANY,
-            'warn_type': ANY,
-            'object_name': 'alert(%s)' % response['id']
+            'warn_type': 'expenses',
+            'object_name': 'alert(%s)' % response['id'],
+            'deleted_at': 0,
+            'id': ANY,
+            'created_at': ANY,
+            'pool_id': self.organization_1['pool_id'],
+            'threshold': 80,
+            'threshold_type': 'absolute',
+            'based': 'cost',
+            'last_shoot_at': 0,
+            'include_children': False,
+            'contacts': ANY,
+            'contact_type': 'Email',
+            'threshold_string': 'threshold 80 of pool limit'
         }
         self.p_send_message.assert_called_once_with(
             self.organization_1['id'], response['id'], 'pool_alert',
-            'alert_added', meta, 'alert.action.added', add_token=True)
+            'alert_added', meta, 'alert.action.added')
 
     def test_delete_activities_task(self):
         body = {
@@ -998,12 +1011,23 @@ class TestPoolAlertsApi(TestApiBase):
         meta = {
             'initiator_name': ANY,
             'initiator_email': ANY,
-            'alert': ANY,
             'pool_name': ANY,
             'with_subpools': ANY,
-            'warn_type': ANY,
-            'object_name': ANY
+            'warn_type': 'expenses',
+            'object_name': ANY,
+            'deleted_at': 0,
+            'id': ANY,
+            'created_at': ANY,
+            'pool_id': self.organization_1['pool_id'],
+            'threshold': 80,
+            'threshold_type': 'absolute',
+            'based': 'cost',
+            'last_shoot_at': 0,
+            'include_children': False,
+            'contacts': ANY,
+            'contact_type': 'Email',
+            'threshold_string': 'threshold 80 of pool limit'
         }
         self.p_send_message.assert_called_once_with(
             self.organization_1['id'], alert['id'], 'pool_alert',
-            'alert_removed', meta, 'alert.action.removed', add_token=True)
+            'alert_removed', meta, 'alert.action.removed')

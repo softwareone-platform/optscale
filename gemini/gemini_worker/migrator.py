@@ -2,7 +2,7 @@ import os
 import hashlib
 import importlib
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from clickhouse_driver import Client as ClickHouseClient
 
 LOG = logging.getLogger(__name__)
@@ -106,7 +106,7 @@ class Migrator:
     @staticmethod
     def _get_md5(filename):
         return hashlib.md5(
-            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read()
+            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read(), usedforsecurity=False
         ).hexdigest()
 
     def update_versions_table(self, filename):
@@ -115,7 +115,7 @@ class Migrator:
                 "version": self._get_version_from_name(filename),
                 "md5": self._get_script_from_name(filename),
                 "script": self._get_script_from_name(filename),
-                "created_at": datetime.utcnow(),
+                "created_at": datetime.now(tz=timezone.utc).replace(tzinfo=None),
             }
         ]
         self.clickhouse_client.execute(

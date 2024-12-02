@@ -229,7 +229,8 @@ import {
   deleteMlArtifact,
   getMlDatasetLabels,
   getMlTaskTags,
-  restorePassword
+  restorePassword,
+  verifyEmail
 } from "./restapi";
 import { RESTAPI } from "./restapi/reducer";
 
@@ -463,7 +464,8 @@ export {
   getMlDatasetLabels,
   getMlTaskTags,
   restorePassword,
-  updateUser
+  updateUser,
+  verifyEmail
 };
 
 export { RESTAPI, AUTH, JIRA_BUS };

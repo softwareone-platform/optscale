@@ -33,11 +33,18 @@ export type Event = {
   time?: Maybe<Scalars['Int']['output']>;
 };
 
+export enum EventLevel {
+  Debug = 'DEBUG',
+  Error = 'ERROR',
+  Info = 'INFO',
+  Warning = 'WARNING'
+}
+
 export type EventsRequestParams = {
   descriptionLike?: InputMaybe<Scalars['String']['input']>;
   includeRead?: InputMaybe<Scalars['Boolean']['input']>;
   lastId?: InputMaybe<Scalars['String']['input']>;
-  level?: InputMaybe<Scalars['String']['input']>;
+  level?: InputMaybe<Array<EventLevel>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   readOnGet?: InputMaybe<Scalars['Boolean']['input']>;
   timeEnd?: InputMaybe<Scalars['Int']['input']>;
@@ -128,6 +135,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Event: ResolverTypeWrapper<Event>;
+  EventLevel: EventLevel;
   EventsRequestParams: EventsRequestParams;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;

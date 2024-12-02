@@ -6,7 +6,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS } from "hooks/useRecommendationServices";
 import { detectedAt, size, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -52,6 +52,8 @@ class InstancesMigration extends BaseRecommendation {
   emptyMessageId = "noInstanceMigrations";
 
   services = [AWS_EC2, AWS_RDS, ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR];
 
   categories = [CATEGORY_COST];
 

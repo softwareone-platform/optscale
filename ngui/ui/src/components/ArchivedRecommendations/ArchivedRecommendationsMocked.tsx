@@ -46,7 +46,7 @@ const ArchivedRecommendationsMocked = () => {
       archivedRecommendationsChartBreakdown={archivedRecommendationsChartBreakdown}
       archivedRecommendationsBreakdown={archivedRecommendationsBreakdown}
       isChartLoading={false}
-      isLoading={false}
+      isBreakdownLoading={false}
     />
   );
 };

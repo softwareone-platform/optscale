@@ -3,6 +3,7 @@ WORKDIR /src
 ENV PYTHONPATH=/src
 
 COPY tools/optscale_exceptions tools/optscale_exceptions
+COPY tools/optscale_time tools/optscale_time
 COPY optscale_client/auth_client optscale_client/auth_client
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client

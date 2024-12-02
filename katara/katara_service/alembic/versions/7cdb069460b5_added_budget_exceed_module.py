@@ -6,7 +6,7 @@ Revises: d777a3b2707c
 Create Date: 2020-06-29 03:02:39.378545
 
 """
-import datetime
+from datetime import datetime, timezone
 import uuid
 
 from alembic import op
@@ -40,7 +40,7 @@ def upgrade():
     try:
         ins_stmt = insert(report_table).values(
             id=str(uuid.uuid4()),
-            created_at=int(datetime.datetime.utcnow().timestamp()),
+            created_at=int(datetime.now(tz=timezone.utc).timestamp()),
             name="budget_exceed",
             module_name="budget_exceed",
             report_format="html",
