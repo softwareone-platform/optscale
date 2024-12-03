@@ -9,7 +9,7 @@ class MlDatasetsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_datasets";
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   // icon = DatasetOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

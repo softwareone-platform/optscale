@@ -7,15 +7,15 @@ export const SPACING_4 = 4;
 export const SPACING_5 = 5;
 export const SPACING_6 = 6;
 
-export const BRAND_PRIMARY = "#472AFF";
-export const BRAND_GRAY_1 = "#E0E5E8";
-export const KU_SPACING_1 = "8px";
-export const KU_SPACING_2 = "16px";
-export const KU_SPACING_3 = "24px";
-export const KU_SPACING_4 = "32px";
-export const KU_SPACING_5 = "40px";
-export const KU_SPACING_6 = "48px";
-export const KU_BOX_SHADOW = `0 1px ${KU_SPACING_1} #6b718057`;
+export const MPT_BRAND_PRIMARY = "#472AFF";
+export const MTP_BRAND_GRAY_1 = "#E0E5E8";
+export const MPT_SPACING_1 = "8px";
+export const MPT_SPACING_2 = "16px";
+export const MPT_SPACING_3 = "24px";
+export const MPT_SPACING_4 = "32px";
+export const MPT_SPACING_5 = "40px";
+export const MPT_SPACING_6 = "48px";
+export const MPT_BOX_SHADOW = `0 1px ${MPT_SPACING_1} #6b718057`;
 
 export const scrolledToBottom = (target) => target.scrollTop + target.clientHeight >= target.scrollHeight;
 

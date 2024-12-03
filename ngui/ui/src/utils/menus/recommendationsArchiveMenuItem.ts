@@ -9,7 +9,7 @@ class RecommendationsArchiveMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_recommend_archive";
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   // icon = RestoreOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

@@ -9,7 +9,7 @@ class EventsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_events";
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   // icon = EventOutlined;
 }
 

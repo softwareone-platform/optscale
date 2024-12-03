@@ -1,9 +1,9 @@
 import { makeStyles } from "tss-react/mui";
-import { KU_SPACING_4 } from "../../utils/layouts";
+import { MPT_SPACING_4 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   menu: {
-    paddingTop: KU_SPACING_4,
+    paddingTop: MPT_SPACING_4,
     "& .MuiAccordionSummary-root": {
       backgroundColor: "unset",
       padding: 0,

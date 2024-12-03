@@ -9,7 +9,7 @@ class QuotasMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_quotas_and_budgets";
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 
   // icon = CurrencyExchangeOutlinedIcon;

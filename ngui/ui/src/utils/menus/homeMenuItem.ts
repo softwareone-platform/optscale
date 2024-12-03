@@ -12,7 +12,7 @@ class HomeMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.HOME;
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   // icon = HomeOutlinedIcon;
 }
 

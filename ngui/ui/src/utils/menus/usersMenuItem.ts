@@ -12,7 +12,7 @@ class UsersMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.USERS;
 
-  // TODO: remove after TDR approval
+  // MTP_TODO: disabled to match MPT figma designs
   // icon = PeopleOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

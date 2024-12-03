@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { KU_BOX_SHADOW, KU_SPACING_2, KU_SPACING_3 } from "../../utils/layouts";
+import { MPT_BOX_SHADOW, MPT_SPACING_2, MPT_SPACING_3 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   spacer: {
@@ -13,11 +13,11 @@ const useStyles = makeStyles()((theme) => ({
     paddingTop: theme.spacing(1)
   },
   card: {
-    padding: KU_SPACING_3
+    padding: MPT_SPACING_3
   },
   shadow: {
-    borderRadius: KU_SPACING_2,
-    boxShadow: KU_BOX_SHADOW
+    borderRadius: MPT_SPACING_2,
+    boxShadow: MPT_BOX_SHADOW
   },
   buttonLink: {
     "&:hover": {
