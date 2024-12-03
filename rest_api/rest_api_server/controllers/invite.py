@@ -3,6 +3,7 @@ import json
 import logging
 import requests
 import uuid
+from sqlalchemy import and_, or_
 import tools.optscale_time as opttime
 from etcd import EtcdKeyNotFound
 
@@ -201,8 +202,31 @@ class InviteController(BaseController):
             invite_assignment.deleted_at = opttime.utcnow_timestamp()
         super().delete(invite.id)
 
-    def list(self, user_id, user_info):
-        invites = super().list(email=user_info['email'])
+    def list(self, organization_id=None, email=None):
+        query = self.session.query(self.model_type).filter(
+            self.model_type.deleted_at == 0)
+        if email:
+            query = query.filter(self.model_type.email == email)
+        if organization_id:
+            pool_query = self.session.query(Pool.id).filter(
+                Pool.deleted_at == 0,
+                Pool.organization_id == organization_id
+            )
+            # get invites ids by invites assignments scopes
+            subquery = self.session.query(InviteAssignment.invite_id).filter(
+                InviteAssignment.deleted_at == 0,
+                or_(
+                    and_(
+                        InviteAssignment.scope_type == InviteAssignmentScopeTypes.ORGANIZATION,
+                        InviteAssignment.scope_id == organization_id),
+                    and_(
+                        InviteAssignment.scope_type == InviteAssignmentScopeTypes.POOL,
+                        InviteAssignment.scope_id.in_(pool_query)),
+                )
+            )
+            query = query.filter(self.model_type.id.in_(subquery))
+        invites = query.all()
+
         now = opttime.utcnow_timestamp()
         result = []
         for invite in invites:

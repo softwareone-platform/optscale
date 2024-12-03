@@ -72,7 +72,7 @@ class TestJiraIssueAttachmentsApi(TestApiBase):
 
     def _create_resource(self, employee_id=None, pool_id=None,
                          is_shareable=True, resource_type='Instance',
-                         tags=None):
+                         tags=None, active=True):
         if not employee_id:
             employee_id = self.employee['id']
         if not pool_id:
@@ -85,6 +85,8 @@ class TestJiraIssueAttachmentsApi(TestApiBase):
             'region': 'us-west-1',
             'pool_id': pool_id
         }
+        if active:
+            resource['active'] = True
         if tags:
             resource['tags'] = tags
         code, created_res = self.cloud_resource_create(self.cloud_acc['id'],

@@ -274,8 +274,12 @@ class Client(Client_v1):
     def invite_create(self, params):
         return self.post(self.invite_url(), params)
 
-    def invite_list(self):
-        return self.get(self.invite_url())
+    def invite_list(self, organization_id=None, email=None):
+        params = {
+            "organization_id": organization_id,
+            "email": email
+        }
+        return self.get(self.invite_url() + self.query_url(**params))
 
     def invite_accept(self, invite_id):
         return self.patch(self.invite_url(invite_id), {'action': 'accept'})

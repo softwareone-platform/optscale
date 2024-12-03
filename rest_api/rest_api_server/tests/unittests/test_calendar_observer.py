@@ -66,7 +66,8 @@ class TestObserver(TestApiBase):
             'resource_type': 'Instance',
             'employee_id': self.employee['id'],
             'region': 'us-west-1',
-            'pool_id': self.pool_id
+            'pool_id': self.pool_id,
+            'active': True
         }
         code, created_res = self.cloud_resource_create(
             self.cloud_acc['id'], resource)

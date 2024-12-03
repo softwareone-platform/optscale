@@ -10,12 +10,14 @@ from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler, BaseAsyncItemHandler)
 from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
+from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.models.enums import InviteAssignmentScopeTypes
-from rest_api.rest_api_server.utils import run_task, ModelEncoder, check_dict_attribute
+from rest_api.rest_api_server.utils import (run_task, ModelEncoder,
+                                            check_dict_attribute)
 
 
 class InviteAsyncCollectionHandler(BaseAsyncCollectionHandler,
-                                   BaseAuthHandler):
+                                   BaseAuthHandler, BaseHandler):
     def _get_controller_class(self):
         return InviteAsyncController
 
@@ -217,10 +219,22 @@ class InviteAsyncCollectionHandler(BaseAsyncCollectionHandler,
         """
         ---
         description: |
-            Get list of invites for current user by token
-            Required permission: TOKEN
+            Get list of invites. If used with token returns invites for current
+            user.
+            Required permission: TOKEN or CLUSTER_SECRET
         tags: [invites]
-        summary: List of invites for current user by token
+        summary: List of invites
+        parameters:
+        -   name: organization_id
+            in: query
+            description: Organization id to filter
+            required: false
+            type: string
+        -   name: email
+            in: query
+            type: string
+            description: invite target email (only with CLUSTER_SECRET)
+            required: false
         responses:
             200:
                 description: Invites list
@@ -275,11 +289,16 @@ class InviteAsyncCollectionHandler(BaseAsyncCollectionHandler,
                     - OE0234: Forbidden
         security:
         - token: []
+        - secret: []
         """
-
-        user_id = await self.check_self_auth()
-        user_info = await self.get_user_info(user_id)
-        res = await run_task(self.controller.list, user_id, user_info)
+        if self.check_cluster_secret(raises=False):
+            email = self.get_arg('email', str, None)
+        else:
+            user_id = await self.check_self_auth()
+            user_info = await self.get_user_info(user_id)
+            email = user_info['email']
+        organization_id = self.get_arg('organization_id', str, None)
+        res = await run_task(self.controller.list, organization_id, email)
         invites = {'invites': [invite.to_dict() for invite in res]}
         self.write(json.dumps(invites, cls=ModelEncoder))
 

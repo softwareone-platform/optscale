@@ -26,7 +26,7 @@ import {
   EMPTY_UUID,
   FORMATTED_MONEY_TYPES
 } from "utils/constants";
-import { formatUTC } from "utils/datetime";
+import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
 import { CELL_EMPTY_VALUE } from "utils/tables";
@@ -73,7 +73,7 @@ const buildDescription = ({ type, definition, formatter, rawString = false }) =>
       { id: "expiringBudgetPolicyDescription" },
       {
         budget: formatter(FORMATTED_MONEY_TYPES.COMMON, totalBudget),
-        startDate: formatUTC(startDate),
+        startDate: format(secondsToMilliseconds(startDate), EN_FULL_FORMAT),
         strong: (chunks) => (rawString ? chunks : <strong>{chunks}</strong>)
       }
     );
@@ -86,7 +86,7 @@ const buildDescription = ({ type, definition, formatter, rawString = false }) =>
     } = definition;
 
     const commonValues = {
-      startDate: formatUTC(startDate),
+      startDate: format(secondsToMilliseconds(startDate), EN_FULL_FORMAT),
       strong: (chunks) => (rawString ? chunks : <strong>{chunks}</strong>)
     };
 

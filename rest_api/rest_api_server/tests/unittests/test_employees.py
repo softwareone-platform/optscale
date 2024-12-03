@@ -372,8 +372,8 @@ class TestEmployeeApi(TestProfilingBase):
 
     @patch('optscale_client.auth_client.client_v2.Client.assignment_list')
     def test_delete_reassign_bookings(self, p_assignment_list):
-        patch('rest_api.rest_api_server.controllers.employee.EmployeeController.'
-              'auth_client').start()
+        patch('rest_api.rest_api_server.controllers.employee.'
+              'EmployeeController.auth_client').start()
         patch('rest_api.rest_api_server.controllers.shareable_resource.'
               'ShareableBookingController.publish_task').start()
         patch('rest_api.rest_api_server.controllers.shareable_resource.'
@@ -405,7 +405,8 @@ class TestEmployeeApi(TestProfilingBase):
                 'name': 'name',
                 'resource_type': 'Instance',
                 'employee_id': emp['id'],
-                'pool_id': self.org['pool_id']
+                'pool_id': self.org['pool_id'],
+                'active': True
             })
         self.assertEqual(code, 201)
         self.resources_collection.update_one(
@@ -421,8 +422,8 @@ class TestEmployeeApi(TestProfilingBase):
               return_value=(200,
                             [{'user_id': emp['auth_user_id']},
                              {'user_id': root_emp['auth_user_id']}])).start()
-        patch('rest_api.rest_api_server.controllers.employee.EmployeeController.'
-              'auth_client.user_roles_get',
+        patch('rest_api.rest_api_server.controllers.employee.'
+              'EmployeeController.auth_client.user_roles_get',
               return_value=(200,
                             [{'user_id': emp['auth_user_id']},
                              {'user_id': root_emp['auth_user_id']}])).start()
