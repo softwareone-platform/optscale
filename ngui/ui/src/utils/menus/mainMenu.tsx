@@ -38,12 +38,12 @@ import users from "./usersMenuItem";
 export default [
   {
     id: MAIN_MENU_SECTION_IDS.HOME,
-    items: [home, recommendations, resources, pools] // TODO_KU: Disabled items: environments
+    items: [home, recommendations, resources, pools] // MPT_TODO: Disabled items: environments
   },
   {
     id: MAIN_MENU_SECTION_IDS.FINOPS,
     menuSectionTitle: <MainMenuSectionTitle messageId="finops" icon={LeaderboardIcon} />,
-    items: [expenses], // TODO_KU: Disabled items: expensesMap, finOpsPortal
+    items: [expenses], // MPT_TODO: Disabled items: expensesMap, finOpsPortal
     mode: OPTSCALE_MODE.FINOPS
   },
   {
@@ -55,10 +55,10 @@ export default [
   {
     id: MAIN_MENU_SECTION_IDS.POLICIES,
     menuSectionTitle: <MainMenuSectionTitle messageId="policies" icon={PolicyOutlinedIcon} />,
-    items: [anomalies, quotas, taggingPolicies], // TODO_KU: Disabled items:  resourceLifecycle, powerSchedulesMenuItem
+    items: [anomalies, quotas, taggingPolicies], // MPT_TODO: Disabled items:  resourceLifecycle, powerSchedulesMenuItem
     mode: OPTSCALE_MODE.FINOPS
   },
-  //  TODO_KU: disabled whole sandbox section
+  //  MPT_TODO: disabled whole sandbox section
   // {
   //   id: MAIN_MENU_SECTION_IDS.SANDBOX,
   //   menuSectionTitle: <MainMenuSectionTitle messageId="sandbox" icon={InboxOutlinedIcon} />,
@@ -68,6 +68,6 @@ export default [
   {
     id: MAIN_MENU_SECTION_IDS.SYSTEM,
     menuSectionTitle: <MainMenuSectionTitle messageId="system" icon={TuneOutlinedIcon} />,
-    items: [users, dataSources, events, settings] // TODO_KU: Disabled items: integrations
+    items: [users, dataSources, events, settings] // MPT_TODO: Disabled items: integrations
   }
 ];

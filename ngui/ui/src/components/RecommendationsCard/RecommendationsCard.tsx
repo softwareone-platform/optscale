@@ -1,5 +1,5 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-// TODO_KU: removed icons
+// MPT_TODO: removed icons
 // import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
 // import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
 // import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
