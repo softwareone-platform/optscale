@@ -40,8 +40,7 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#472AFF",
-      contrastText: "white"
+      main: "#472AFF"
     },
     "secondary"
   );
@@ -334,7 +333,7 @@ const getThemeConfig = (settings = {}) => {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: "white",
+            backgroundColor: "#FFFFFF",
             "& .MuiOutlinedInput-notchedOutline": {
               borderColor: "black",
               color: "black"
@@ -454,7 +453,7 @@ const getThemeConfig = (settings = {}) => {
           ".KuBoxShadowRoot": {
             "> .MuiBox-root": {
               boxShadow: KU_BOX_SHADOW,
-              background: "white",
+              background: "#FFFFFF",
               padding: KU_SPACING_2,
               borderRadius: KU_SPACING_1
             }
