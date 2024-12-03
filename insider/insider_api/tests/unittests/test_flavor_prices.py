@@ -6,6 +6,7 @@ from unittest.mock import patch, PropertyMock
 import optscale_client.insider_client.client as insider_client
 
 from insider.insider_api.tests.unittests.test_api_base import TestBase
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
 
 class TestFlavorPricesApi(TestBase):
@@ -197,7 +198,7 @@ class TestFlavorPricesApi(TestBase):
                 "servicename": "Amazon Elastic Compute Cloud",
                 "storage": "EBS only",
                 "tenancy": "Shared",
-                "updated_at": datetime.utcfromtimestamp(ts),
+                "updated_at": utcfromtimestamp(ts),
                 "usagetype": "APE1-BoxUsage:t3.nano", "vcpu": "2"
             },
             {
@@ -232,7 +233,7 @@ class TestFlavorPricesApi(TestBase):
                 "servicename": "Amazon Elastic Compute Cloud",
                 "storage": "EBS only",
                 "tenancy": "Shared",
-                "updated_at": datetime.utcfromtimestamp(ts),
+                "updated_at": utcfromtimestamp(ts),
                 "usagetype": "APE1-BoxUsage:t3.nano", "vcpu": "2"
             },
             {
@@ -267,7 +268,7 @@ class TestFlavorPricesApi(TestBase):
                 "servicename": "Amazon Elastic Compute Cloud",
                 "storage": "EBS only",
                 "tenancy": "Shared",
-                "updated_at": datetime.utcfromtimestamp(ts),
+                "updated_at": utcfromtimestamp(ts),
                 "usagetype": "APE1-BoxUsage:t3.nano", "vcpu": "2"
             },
             {
@@ -337,7 +338,7 @@ class TestFlavorPricesApi(TestBase):
                 "servicename": "Amazon Elastic Compute Cloud",
                 "storage": "EBS only",
                 "tenancy": "Shared",
-                "updated_at": datetime.utcfromtimestamp(ts),
+                "updated_at": utcfromtimestamp(ts),
                 "usagetype": "APE1-BoxUsage:t3.nano", "vcpu": "2"
             },
             {
@@ -372,7 +373,7 @@ class TestFlavorPricesApi(TestBase):
                 "servicename": "Amazon Elastic Compute Cloud",
                 "storage": "EBS only",
                 "tenancy": "Shared",
-                "updated_at": datetime.utcfromtimestamp(ts),
+                "updated_at": utcfromtimestamp(ts),
                 "usagetype": "APE1-BoxUsage:t3.nano", "vcpu": "2"
             },
         ]
@@ -391,7 +392,7 @@ class TestFlavorPricesApi(TestBase):
                 'region': 'Singapore',
                 'flavor': 'cs.t5-lc1m2.large',
                 'quantity': 1,
-                'updated_at': datetime.utcfromtimestamp(ts)
+                'updated_at': utcfromtimestamp(ts)
             },
             {
                 'UnitPrice': 0.0,
@@ -403,7 +404,7 @@ class TestFlavorPricesApi(TestBase):
                 'region': 'Singapore',
                 'flavor': 'cs.t5-lc1m2.large',
                 'quantity': 12,
-                'updated_at': datetime.utcfromtimestamp(ts)
+                'updated_at': utcfromtimestamp(ts)
             },
             {
                 'UnitPrice': 0.0,
@@ -415,7 +416,7 @@ class TestFlavorPricesApi(TestBase):
                 'region': 'Germany (Frankfurt)',
                 'flavor': 'cs.t5-lc1m2.large',
                 'quantity': 1,
-                'updated_at': datetime.utcfromtimestamp(ts)
+                'updated_at': utcfromtimestamp(ts)
             },
         ]
         for pricing in pricings:
@@ -503,7 +504,7 @@ class TestFlavorPricesApi(TestBase):
         self.verify_error_code(resp, 'OI0012')
 
     def test_azure_valid_params(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.insert_azure_pricing(now)
         self.azure_cad.get_regions_coordinates.return_value = {
             self.azure_valid_params['region']: 2
@@ -542,7 +543,7 @@ class TestFlavorPricesApi(TestBase):
         self.assertEqual(len(res.get('prices', [])), 0)
 
     def test_aws_valid_params(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.insert_aws_pricing(now)
         code, res = self.client.get_flavor_prices(**self.aws_valid_params)
         self.assertEqual(code, 200)
@@ -567,7 +568,7 @@ class TestFlavorPricesApi(TestBase):
         self.assertEqual(price['price'], 0.1)
 
     def test_alibaba_valid_params(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.insert_alibaba_pricing(now)
         self.alibaba_valid_params['quantity'] = 1
         self.alibaba_valid_params['billing_method'] = 'subscription'
@@ -618,7 +619,7 @@ class TestFlavorPricesApi(TestBase):
         self.assertListEqual(res.get('prices'), [])
 
     def test_aws_family_valid_params(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         self.insert_aws_pricing(now)
         code, res = self.client.get_family_prices(
             **self.valid_aws_family_params)

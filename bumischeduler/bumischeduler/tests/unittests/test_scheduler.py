@@ -1,10 +1,9 @@
 import unittest
-
-from datetime import datetime
 from unittest.mock import patch, call, MagicMock
 
 from bumischeduler.bumischeduler.controllers.schedule import (
     ScheduleController, RESCHEDULE_TIMEOUT)
+from tools.optscale_time import utcnow
 
 GET_CHECKLISTS = ("bumischeduler.bumischeduler.controllers.schedule."
                   "ScheduleController.get_checklists")
@@ -43,7 +42,7 @@ class TestScheduler(unittest.TestCase):
     @patch(GET_CHECKLISTS)
     @patch(CREATE_TASKS)
     def test_initial(self, p_create_tasks, p_get_checklists):
-        now = datetime.utcnow()
+        now = utcnow()
         checklist = {
             'id': 'aabe9d07-2eca-42de-9d2d-ad3984c4fb0f',
             'last_run': 0,
@@ -70,7 +69,7 @@ class TestScheduler(unittest.TestCase):
     @patch(GET_CHECKLISTS)
     @patch(CREATE_TASKS)
     def test_completed(self, p_create_tasks, p_get_checklists):
-        now = datetime.utcnow()
+        now = utcnow()
         checklist = {
             'id': 'aabe9d07-2eca-42de-9d2d-ad3984c4fb0f',
             'last_run': int(now.timestamp()) - 10,
@@ -86,7 +85,7 @@ class TestScheduler(unittest.TestCase):
     @patch(GET_CHECKLISTS)
     @patch(CREATE_TASKS)
     def test_in_progress(self, p_create_tasks, p_get_checklists):
-        now = datetime.utcnow()
+        now = utcnow()
         checklist = {
             'id': 'aabe9d07-2eca-42de-9d2d-ad3984c4fb0f',
             'last_run': int(now.timestamp()) - 10,
@@ -102,7 +101,7 @@ class TestScheduler(unittest.TestCase):
     @patch(GET_CHECKLISTS)
     @patch(CREATE_TASKS)
     def test_reschedule(self, p_create_tasks, p_get_checklists):
-        now = datetime.utcnow()
+        now = utcnow()
         checklist = {
             'id': 'aabe9d07-2eca-42de-9d2d-ad3984c4fb0f',
             'last_run': int(now.timestamp()) - RESCHEDULE_TIMEOUT,

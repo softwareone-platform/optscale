@@ -51,8 +51,10 @@ encryption_salt: my~encypt10n~s@lt
 smtp:
   server:
   email:
+  login:
   port:
   password:
+  protocol:
 
 # Slack application credentials
 slacker:

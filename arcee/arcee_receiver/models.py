@@ -8,7 +8,7 @@ from typing import List, Optional, Union
 from typing_extensions import Annotated
 
 
-class ArceeState:
+class ArceeState(int, Enum):
     STARTED = 1
     FINISHED = 2
     ERROR = 3
@@ -113,6 +113,17 @@ class TaskPatchIn(BaseClass):
     name: Optional[str] = None
     description: Optional[str] = None
     owner_id: Optional[str] = None
+
+
+class TaskPostIn(TaskPatchIn):
+    key: str
+    metrics: List[str] = []
+
+
+class Task(TaskPostIn):
+    id: str = id_
+    token: str
+    deleted_at: int = 0
 
 
 class LeaderboardFilter(BaseClass):

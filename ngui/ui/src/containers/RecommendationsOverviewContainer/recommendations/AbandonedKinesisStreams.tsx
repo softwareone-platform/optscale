@@ -5,7 +5,7 @@ import AbandonedKinesisStreamsModal from "components/SideModalManager/SideModals
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { AWS_KINESIS } from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -59,6 +59,8 @@ class AbandonedKinesisStreams extends BaseRecommendation {
   emptyMessageId = "noAbandonedKinesisStreams";
 
   services = [AWS_KINESIS];
+
+  appliedDataSources = [AWS_CNR];
 
   categories = [CATEGORY_COST];
 

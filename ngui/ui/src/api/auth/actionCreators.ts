@@ -15,15 +15,15 @@ import {
   UPDATE_USER
 } from "./actionTypes";
 
-import { onSuccessSignIn, onSuccessCreateUser, onSuccessGetToken } from "./handlers";
+import { onSuccessSignIn, onSuccessGetToken } from "./handlers";
 
 export const API_URL = getApiUrl("auth");
 
-export const getToken = ({ email, password, code }) =>
+export const getToken = ({ email, password, code, isTokenTemporary }) =>
   apiAction({
     url: `${API_URL}/tokens`,
     onSuccess: onSuccessGetToken({
-      isTemporary: !!code
+      isTokenTemporary
     }),
     label: GET_TOKEN,
     params: { email, password, verification_code: code }
@@ -40,7 +40,7 @@ export const signIn = (provider, params) =>
 export const createUser = (name, email, password) =>
   apiAction({
     url: `${API_URL}/users`,
-    onSuccess: onSuccessCreateUser,
+    onSuccess: handleSuccess(CREATE_USER),
     label: CREATE_USER,
     params: { display_name: name, email, password }
   });

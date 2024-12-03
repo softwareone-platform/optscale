@@ -1,4 +1,4 @@
-import os
+import tools.optscale_time as opttime
 from collections import defaultdict
 from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
@@ -132,7 +132,7 @@ class TestBreakdownTagsApi(TestApiBase):
         self.verify_error_code(response, 'OE0224')
 
     def test_breakdown_tags_limit(self):
-        time = int(datetime.utcnow().timestamp())
+        time = opttime.utcnow_timestamp()
         code, response = self.client.breakdown_tags_get(
             self.org_id, time, time + 1, {'limit': 1})
         self.assertEqual(code, 400)

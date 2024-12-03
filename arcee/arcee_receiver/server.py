@@ -19,20 +19,23 @@ import motor.motor_asyncio
 from sanic_ext import validate
 
 from arcee.arcee_receiver.models import (
-    TaskPatchIn, Console, ConsolePostIn, Dataset, DatasetPatchIn,
+    ArtifactPostIn, ArtifactPatchIn, Artifact, ArtifactSearchParams,
+    ArceeState, Console, ConsolePostIn, Dataset, DatasetPatchIn,
     DatasetPostIn, Run, RunPatchIn, RunPostIn, Leaderboard, LeaderboardPatchIn,
     LeaderboardPostIn, LeaderboardTemplate, LeaderboardTemplatePostIn,
     LeaderboardTemplatePatchIn, Log, Platform,
     StatsPostIn, ModelPatchIn, ModelPostIn, Model, ModelVersionIn,
     ModelVersion, Metric, MetricPostIn, MetricPatchIn,
-    ArtifactPostIn, ArtifactPatchIn, Artifact, ArtifactSearchParams,
+    Task, TaskPatchIn, TaskPostIn
 )
 from arcee.arcee_receiver.modules.leader_board import (
     get_calculated_leaderboard, Tendencies)
 from arcee.arcee_receiver.modules.leader_board import (
     get_metrics as _get_task_metrics)
+from arcee.arcee_receiver.producer import ActivitiesTaskProducer
 
 from optscale_client.aconfig_cl.aconfig_cl import AConfigCl
+import tools.optscale_time as opttime
 
 app = Sanic("arcee")
 
@@ -73,6 +76,24 @@ client = motor.motor_asyncio.AsyncIOMotorClient(uri)
 # https://stackoverflow.com/a/69065287
 client.get_io_loop = asyncio.get_running_loop
 db = client[db_name]
+
+
+async def publish_activities_task(
+        profiling_token, object_id, object_name, object_type, action,
+        routing_key=None, **kwargs):
+    task = {
+        "profiling_token": profiling_token,
+        "object_id": object_id,
+        "object_name": object_name,
+        "object_type": object_type,
+        "action": action,
+        **kwargs
+    }
+    routing_key = ".".join([routing_key or object_type, action])
+    producer = ActivitiesTaskProducer()
+    logger.info("Creating activities task:%s, routing_key:%s", task,
+                routing_key)
+    await producer.run_async(producer.create_task, task, routing_key)
 
 
 async def extract_token(request, raise_on=True):
@@ -184,9 +205,10 @@ async def check_metrics(metrics):
     if not metrics:
         return
     existing_metrics = [
-        doc["_id"] async for doc in db.metric.find({"_id": {"$in": metrics}})
+        doc async for doc in db.metric.find({"_id": {"$in": metrics}})
     ]
-    missing = list(filter(lambda x: x not in existing_metrics, metrics))
+    existing_metrics_ids = [x["_id"] for x in existing_metrics]
+    missing = list(filter(lambda x: x not in existing_metrics_ids, metrics))
     if missing:
         msg = "some metrics not exists in db: %s" % ",".join(missing)
         raise SanicException(msg, status_code=400)
@@ -204,29 +226,50 @@ async def check_leaderboard_filters(leaderboard, updates):
         raise SanicException('Invalid filters', status_code=400)
 
 
+async def _create_task(**kwargs) -> dict:
+    task = Task(**kwargs).model_dump(by_alias=True)
+    await db.task.insert_one(task)
+    return task
+
+
 @app.route('/arcee/v2/tasks', methods=["POST", ], ctx_label='token')
-async def create_task(request):
+@validate(json=TaskPostIn)
+async def create_task(request, body: TaskPostIn):
     token = request.ctx.token
-    doc = request.json
-    # TODO: validators
-    key = doc.get("key")
-    if not key or not isinstance(key, str):
-        raise SanicException("Key should be str", status_code=400)
-    metrics = (doc.get("metrics") or list())
-    await check_metrics(metrics)
-    display_name = doc.get("name", key)
-    description = doc.get("description")
-    doc.update({"token": token})
+    await check_metrics(body.metrics)
     o = await db.task.find_one(
-        {"token": token, "key": key, "deleted_at": 0})
+        {"token": token, "key": body.key, "deleted_at": 0})
     if o:
         raise SanicException("Project exists", status_code=409)
-    doc["_id"] = str(uuid.uuid4())
-    doc["name"] = display_name
-    doc["deleted_at"] = 0
-    doc["description"] = description
-    await db.task.insert_one(doc)
-    return json(doc)
+    task_cnt = await db.task.count_documents({"token": token})
+    task = await _create_task(
+            token=token, **body.model_dump(exclude_unset=True))
+    if not task_cnt:
+        await publish_activities_task(
+            token, task["_id"], task.get("name"), "task",
+            "first_task_created", routing_key='arcee.system')
+    await publish_activities_task(
+        token, task["_id"], task.get("name"), "task", "task_created")
+    return json(task)
+
+
+async def _send_task_metric_updated(
+        metrics_to_add: set, metrics_to_remove: set, token: str,
+        object_id: str, object_name: str):
+    all_metrics = metrics_to_add.union(metrics_to_remove)
+    existing_metrics = {
+        doc["_id"]: doc.get('name')
+        async for doc in db.metric.find({"_id": {"$in": list(all_metrics)}})
+    }
+    for metric_id in all_metrics:
+        state = 'activated'
+        if metric_id in metrics_to_remove:
+            state = 'deactivated'
+        await publish_activities_task(
+            token, object_id, object_name, "task", "task_metric_updated",
+            metric_id=metric_id, metric_name=existing_metrics.get(metric_id),
+            state=state
+        )
 
 
 @app.route('/arcee/v2/tasks/<id_>', methods=["PATCH", ],
@@ -246,18 +289,28 @@ async def update_task(request, body: TaskPatchIn, id_: str):
     if not o:
         raise SanicException("Not found", status_code=404)
     d = body.model_dump(exclude_unset=True)
+    metrics_to_add = []
+    metrics_to_remove = []
     if d:
         metrics = d.get('metrics')
         if metrics is not None:
             await check_metrics(metrics)
             metrics_to_remove = set(o['metrics']) - set(metrics)
+            metrics_to_add = set(metrics) - set(o['metrics'])
             for metric_id in metrics_to_remove:
                 if await _metric_used_in_lb(db, metric_id, task_id=id_):
                     raise SanicException(
                         f"Metric is used in task leaderboard(s)",
                         status_code=409)
-        await db.task.update_one(
-            {"_id": id_}, {'$set': d})
+        await db.task.update_one({"_id": id_}, {"$set": d})
+        task_name = d.get("name") or o.get("name")
+        if metrics is None:
+            await publish_activities_task(
+                token, id_, task_name, "task", "task_updated"
+            )
+        else:
+            await _send_task_metric_updated(
+                metrics_to_add, metrics_to_remove, token, id_, task_name)
     return json({"updated": bool(d), "id": id_})
 
 
@@ -363,8 +416,7 @@ async def delete_task(request, id_: str):
     deleted_consoles = 0
     deleted_artifacts = 0
     token = request.ctx.token
-    o = await db.task.find_one(
-        {"token": token, "_id": id_, "deleted_at": 0})
+    o = await db.task.find_one({"token": token, "_id": id_, "deleted_at": 0})
     if not o:
         raise SanicException("Not found", status_code=404)
     runs = [doc["_id"] async for doc in db.run.find({"task_id": id_})]
@@ -405,6 +457,9 @@ async def delete_task(request, id_: str):
         {"$set": {"deleted_at": now}})
     await db.task.update_one(
         {"_id": id_}, {"$set": {"deleted_at": now}})
+    await publish_activities_task(
+        token, id_, o.get("name"), "task", "task_deleted"
+    )
     return json({
         "deleted": True,
         "_id": id_,
@@ -431,18 +486,32 @@ async def create_task_run(request, body: RunPostIn, name: str):
     """
     token = request.ctx.token
 
-    o = await db.task.find_one(
-        {"token": token, "key": name, "deleted_at": 0})
+    o = await db.task.find_one({"token": token, "key": name, "deleted_at": 0})
     if not o:
         raise SanicException("Not found", status_code=404)
 
     task_id = o["_id"]
     run_cnt = await db.run.count_documents({"task_id": task_id})
-    r = Run(
-        task_id=task_id, number=run_cnt + 1, **body.model_dump()
-    )
+    r = Run(task_id=task_id, number=run_cnt + 1, **body.model_dump())
 
     await db.run.insert_one(r.model_dump(by_alias=True))
+    if not run_cnt:
+        all_tasks_run_cnt = await db.run.count_documents({
+            "task_id": {'$in': [
+                doc["_id"] async for doc in db.task.find(
+                    {"token": token}, ['_id']
+                )
+            ]},
+            '_id': {'$ne': r.id}
+        })
+        if not all_tasks_run_cnt:
+            await publish_activities_task(
+                token, r.id, r.name, "run", "first_run_started",
+                routing_key='arcee.system', meta={
+                    'task': {'id': task_id, 'name': o['name']}})
+    await publish_activities_task(
+        token, r.id, r.name, "run", "run_started"
+    )
     return json({"id": r.id})
 
 
@@ -644,19 +713,32 @@ async def update_run(request, body: RunPatchIn, run_id: str):
         await check_run_state(r)
         # check task
         await check_task(token, r)
+    else:
+        task = await db.task.find_one({"_id": r["task_id"]})
+        if task:
+            token = task.get('token')
 
     d = body.model_dump(exclude_unset=True, exclude={'finish'})
     # TODO: remove "finish" from PATCH payload. Set ts based on "state"
     if body.finish:
-        d.update({"finish": int(datetime.utcnow().timestamp())})
+        d.update({"finish": opttime.utcnow_timestamp()})
     hyperparameters = d.get("hyperparameters", {})
     if hyperparameters:
         existing_hyperparams = r.get("hyperparameters", {})
         existing_hyperparams.update(hyperparameters)
         d.update({"hyperparameters": existing_hyperparams})
 
-    await db.run.update_one(
-        {"_id": run_id}, {'$set': d})
+    await db.run.update_one({"_id": run_id}, {"$set": d})
+
+    if body.state and body.state == ArceeState.ERROR:
+        await publish_activities_task(
+            token, run_id, r.get("name"), "run", "run_failed"
+        )
+    elif body.state:
+        await publish_activities_task(
+            token, run_id, r.get("name"), "run", "run_state_updated",
+            state=ArceeState(body.state).name
+        )
     return json({"updated": True, "id": run_id})
 
 
@@ -683,7 +765,7 @@ async def create_run_milestone(request, run_id: str):
     d = {
         "_id": str(uuid.uuid4()),
         "run_id": run_id,
-        "timestamp": int(datetime.utcnow().timestamp()),
+        "timestamp": opttime.utcnow_timestamp(),
         "milestone": milestone,
     }
     await db.milestone.insert_one(
@@ -717,14 +799,20 @@ async def collect(request, body: StatsPostIn):
 
     platform = body.platform
     instance_id = platform.instance_id
+    run_id = body.run
+    run = await db.run.find_one({"_id": run_id})
     if instance_id:
         o = await db.platform.find_one({"instance_id": instance_id})
         if not o:
             await db.platform.insert_one(
                 Platform(**platform.model_dump()).model_dump(by_alias=True))
-
-    run_id = body.run
-    run = await db.run.find_one({"_id": run_id})
+            run_name = None
+            if run:
+                run_name = run.get("name")
+            await publish_activities_task(
+                token, instance_id, instance_id, "platform",
+                "platform_created", run_id=run_id, run_name=run_name
+            )
     if not run:
         raise SanicException("Not found", status_code=404)
     await check_run_state(run)
@@ -925,6 +1013,9 @@ async def delete_run(request, run_id: str):
     await db.model_version.update_many({'run_id': run['_id'], 'deleted_at': 0},
                                        {'$set': {'deleted_at': now}})
     await db.run.delete_one({'_id': run_id})
+    await publish_activities_task(
+        token, run_id, run.get("name"), "run", "run_deleted"
+    )
     return json({"deleted": True, "_id": run_id})
 
 
@@ -949,6 +1040,9 @@ async def create_metric(request, body: MetricPostIn):
         raise SanicException("Conflict", status_code=409)
     metric = await _create_metric(
         token=token, **body.model_dump(exclude_unset=True))
+    await publish_activities_task(
+        token, metric["_id"], metric.get("name"), "metric", "metric_created"
+    )
     return json(metric)
 
 
@@ -1068,6 +1162,9 @@ async def delete_metric(request, metric_id: str):
         raise SanicException("Metric used in leaderboard template",
                              status_code=409)
     await db.metric.delete_one({'_id': metric_id})
+    await publish_activities_task(
+        token, metric_id, o.get("name"), "metric", "metric_deleted"
+    )
     return json({"deleted": True, "_id": metric_id})
 
 
@@ -1100,13 +1197,16 @@ async def change_metric(request, body: MetricPatchIn, metric_id: str):
     :return:
     """
     token = request.ctx.token
-    metric = await db.metric.find_one({'_id': metric_id, 'token': token})
-    if not metric:
+    db_metric = await db.metric.find_one({"_id": metric_id, "token": token})
+    if not db_metric:
         raise SanicException("Metric not found", status_code=404)
     metric = body.model_dump(exclude_unset=True)
     if metric:
-        await db.metric.update_one(
-            {"_id": metric_id}, {'$set': metric})
+        await db.metric.update_one({"_id": metric_id}, {"$set": metric})
+        await publish_activities_task(
+            token, metric_id, metric.get("name") or db_metric.get("name"),
+            "metric", "metric_updated"
+        )
     return json({"updated": bool(metric), "id": metric_id})
 
 
@@ -1170,7 +1270,7 @@ async def create_token(request):
     d = {
         "_id": str(uuid.uuid4()),
         "token": token,
-        "created": int(datetime.utcnow().timestamp()),
+        "created": opttime.utcnow_timestamp(),
         "deleted_at": 0,
     }
     await db.token.insert_one(
@@ -1201,8 +1301,7 @@ async def delete_token(request, token: str):
     await db.token.update_one(
         {"_id": token_id}, {
             '$set': {
-                "deleted_at": int(
-                    datetime.utcnow().timestamp()),
+                "deleted_at": int(opttime.utcnow_timestamp()),
             }
         })
     return json({"deleted": True, "id": token_id})
@@ -1256,7 +1355,7 @@ async def create_stage(request, run_id: str):
     d = {
         "_id": str(uuid.uuid4()),
         "run_id": run_id,
-        "timestamp": int(datetime.utcnow().timestamp()),
+        "timestamp": opttime.utcnow_timestamp(),
         "name": stage_name,
     }
     await db.stage.insert_one(
@@ -1313,7 +1412,7 @@ async def create_proc_data(request, run_id: str):
     d = {
         "_id": str(uuid.uuid4()),
         "run_id": run_id,
-        "timestamp": int(datetime.utcnow().timestamp()),
+        "timestamp": opttime.utcnow_timestamp(),
         'instance_id': instance,
         "proc_stats": proc_stats,
     }
@@ -1436,8 +1535,12 @@ async def create_leaderboard_template(request, body: LeaderboardTemplatePostIn,
         raise SanicException("Conflict", status_code=409)
     await check_metrics(body.metrics)
     leaderboard_template = await _create_leaderboard_template(
-        token=token, task_id=task_id,
-        **body.model_dump(exclude_unset=True))
+        token=token, task_id=task_id, **body.model_dump(exclude_unset=True))
+    await publish_activities_task(
+        token, leaderboard_template["_id"], None, "leaderboard_template",
+        "leaderboard_template_created", task_id=task_id,
+        task_name=task.get("name")
+    )
     return json(leaderboard_template, status=201)
 
 
@@ -1463,6 +1566,9 @@ async def create_leaderboard(request, body: LeaderboardPostIn,
     d = await _create_leaderboard(
         token=token, leaderboard_template_id=leaderboard_template_id,
         **body.model_dump())
+    await publish_activities_task(
+        token, d["_id"], d.get("name"), "leaderboard", "leaderboard_created"
+    )
     return json(d, status=201)
 
 
@@ -1594,20 +1700,19 @@ async def get_leaderboards(request, leaderboard_template_id: str):
 async def update_leaderboard(request, body: LeaderboardPatchIn, id_: str):
     token = request.ctx.token
     o = await db.leaderboard.find_one(
-        {"$and": [
-            {"token": token},
-            {"_id": id_},
-            {"deleted_at": 0}
-        ]})
+        {"$and": [{"token": token}, {"_id": id_}, {"deleted_at": 0}]}
+    )
     if not o:
         raise SanicException("Leaderboard not found", status_code=404)
     d = body.model_dump(exclude_unset=True)
     if d:
         await check_leaderboard_filters(o, d)
         LeaderboardPatchIn.remove_dup_ds_ids(d)
-        await db.leaderboard.update_one(
-            {"_id": id_}, {'$set': d})
+        await db.leaderboard.update_one({"_id": id_}, {"$set": d})
     o = await db.leaderboard.find_one({"_id": id_})
+    await publish_activities_task(
+        token, o["_id"], o.get("name"), "leaderboard", "leaderboard_updated"
+    )
     return json(o)
 
 
@@ -1619,9 +1724,12 @@ async def delete_leaderboard(request, id_: str):
     if not o:
         raise SanicException("Leaderboard not found", status_code=404)
     await db.leaderboard.update_one({"_id": id_}, {'$set': {
-        "deleted_at": int(datetime.utcnow().timestamp())
+        "deleted_at": opttime.utcnow_timestamp()
     }})
-    return json('', status=204)
+    await publish_activities_task(
+        token, id_, o.get("name"), "leaderboard", "leaderboard_deleted"
+    )
+    return json("", status=204)
 
 
 @app.route('/arcee/v2/leaderboards/<id_>/details', methods=["GET", ],
@@ -1746,6 +1854,11 @@ async def change_leaderboard_template(
         await db.leaderboard_template.update_one(
             {"_id": lb_id}, {'$set': lb})
     o = await db.leaderboard_template.find_one({"_id": lb_id})
+    await publish_activities_task(
+        token, lb_id, None,  "leaderboard_template",
+        "leaderboard_template_updated", task_id=task_id,
+        task_name=task.get("name")
+    )
     return json(LeaderboardTemplate(**o).model_dump(by_alias=True))
 
 
@@ -1759,6 +1872,10 @@ async def delete_leaderboard_template(request, task_id: str):
     :return:
     """
     token = request.ctx.token
+    task = await db.task.find_one({
+        '_id': task_id, 'token': token, 'deleted_at': 0})
+    if not task:
+        raise SanicException("Task not found", status_code=404)
     leaderboard_template = await db.leaderboard_template.find_one(
         {"token": token, "task_id": task_id, "deleted_at": 0})
     if not leaderboard_template:
@@ -1772,7 +1889,12 @@ async def delete_leaderboard_template(request, task_id: str):
         {"_id": leaderboard_template['_id']},
         {'$set': {'deleted_at': deleted_at}}
     )
-    return json({"deleted": True, "_id": leaderboard_template['_id']})
+    await publish_activities_task(
+        token, leaderboard_template["_id"], None, "leaderboard_template",
+        "leaderboard_template_deleted", task_id=task_id,
+        task_name=task.get("name")
+    )
+    return json({"deleted": True, "_id": leaderboard_template["_id"]})
 
 
 @app.route('/arcee/v2/leaderboards/<leaderboard_id>/generate',
@@ -1809,6 +1931,9 @@ async def create_dataset(request, body: DatasetPostIn):
         raise SanicException("Dataset exists", status_code=409)
     d = await _create_dataset(
         token=token, **body.model_dump(exclude_unset=True))
+    await publish_activities_task(
+        token, d["_id"], d.get("name"), "dataset", "dataset_created",
+    )
     return json(d, status=201)
 
 
@@ -1831,6 +1956,9 @@ async def register_dataset(request, body: DatasetPostIn, run_id: str):
             token=token, **body.model_dump(exclude_unset=True))
     await db.run.update_one(
         {"_id": run_id}, {"$set": {"dataset_id": d["_id"]}})
+    await publish_activities_task(
+        token, d["_id"], d.get("name"), "dataset", "dataset_created"
+    )
     return json({"id": d["_id"]})
 
 
@@ -1873,18 +2001,18 @@ async def get_dataset(request, id_: str):
 async def update_dataset(request, body: DatasetPatchIn, id_: str):
     token = request.ctx.token
     o = await db.dataset.find_one(
-        {"$and": [
-            {"token": token},
-            {"_id": id_},
-            {"deleted_at": 0}
-        ]})
+        {"$and": [{"token": token}, {"_id": id_}, {"deleted_at": 0}]}
+    )
     if not o:
         raise SanicException("Dataset not found", status_code=404)
     d = body.model_dump(exclude_unset=True)
     if d:
-        await db.dataset.update_one(
-            {"_id": id_}, {'$set': d})
+        await db.dataset.update_one({"_id": id_}, {"$set": d})
     o = await db.dataset.find_one({"_id": id_})
+    await publish_activities_task(
+        token, o["_id"], d.get("name") or o.get("name"), "dataset",
+        "dataset_updated"
+    )
     return json(Dataset(**o).model_dump(by_alias=True))
 
 
@@ -1950,9 +2078,12 @@ async def delete_dataset(request, id_: str):
     if await _dataset_used_in_leaderboard(db, id_):
         raise SanicException("Dataset used in leaderboard", status_code=409)
     await db.dataset.update_one({"_id": id_}, {'$set': {
-        "deleted_at": int(datetime.utcnow().timestamp())
+        "deleted_at": opttime.utcnow_timestamp()
     }})
-    return json('', status=204)
+    await publish_activities_task(
+        token, id_, o.get("name"), "dataset", "dataset_deleted"
+    )
+    return json("", status=204)
 
 
 @app.route('/arcee/v2/labels', methods=["GET", ], ctx_label='token')
@@ -2054,6 +2185,9 @@ async def create_model(request, body: ModelPostIn):
     if not model:
         model = await _create_model(
             token=token, **body.model_dump(exclude_unset=True))
+        await publish_activities_task(
+            token, model["_id"], model.get("name"), "model", "model_created"
+        )
     return json(model, status=201)
 
 
@@ -2201,17 +2335,22 @@ async def update_model(request, body: ModelPatchIn, id_: str):
     await _get_model(token, id_)
     model = body.model_dump(exclude_unset=True)
     if model:
-        await db.model.update_one(
-            {"_id": id_}, {'$set': model})
+        await db.model.update_one({"_id": id_}, {"$set": model})
     obj = await db.model.find_one({"_id": id_})
+    await publish_activities_task(
+        token, obj["_id"], obj.get("name"), "model", "model_updated"
+    )
     return json(Model(**obj).model_dump(by_alias=True))
 
 
 @app.route('/arcee/v2/models/<id_>', methods=["DELETE", ], ctx_label='token')
 async def delete_model(request, id_: str):
-    await _get_model(request.ctx.token, id_)
+    model = await _get_model(request.ctx.token, id_)
     await db.model_version.delete_many({"model_id": id_})
     await db.model.delete_one({"_id": id_})
+    await publish_activities_task(
+        request.ctx.token, id_, model.get("name"),  "model", "model_deleted"
+    )
     return json({'deleted': True, '_id': id_}, status=204)
 
 
@@ -2258,26 +2397,27 @@ async def _remove_used_aliases(aliases, model_id):
 async def create_model_version(request, body: ModelVersionIn,
                                run_id: str, model_id: str):
     token = request.ctx.token
-    await _get_model(token, model_id)
-    run = await db.run.find_one({
-        '_id': run_id
-    })
+    model = await _get_model(token, model_id)
+    run = await db.run.find_one({"_id": run_id})
     if not run:
         raise SanicException('Run not found', status_code=404)
     model_version = await db.model_version.find_one(
-        {"$and": [
-            {"model_id": model_id},
-            {"run_id": run_id}
-        ]})
+        {"$and": [{"model_id": model_id}, {"run_id": run_id}]}
+    )
     if model_version:
         raise SanicException("Model version already exists", status_code=409)
     body.version = await _get_next_version(model_id, body.version)
     if body.aliases:
         await _remove_used_aliases(body.aliases, model_id)
-    model = await _create_model_version(
-        run_id=run_id, model_id=model_id,
-        **body.model_dump(exclude_unset=True))
-    return json(model, status=201)
+    model_version = await _create_model_version(
+        run_id=run_id, model_id=model_id, **body.model_dump(exclude_unset=True)
+    )
+    await publish_activities_task(
+        token, model_version["_id"], model_version["version"], "model_version",
+        "model_version_created", model_id=model_id,
+        model_name=model.get("name")
+    )
+    return json(model_version, status=201)
 
 
 @app.route('/arcee/v2/runs/<run_id>/models/<model_id>/version',
@@ -2304,6 +2444,10 @@ async def update_model_version(request, body: ModelVersionIn,
         await db.model_version.update_one(
             {"_id": model_version_id}, {'$set': updates})
     obj = await db.model_version.find_one({"_id": model_version_id})
+    await publish_activities_task(
+        request.ctx.token, obj["_id"], obj["version"], "model_version",
+        "model_version_updated"
+    )
     return json(ModelVersion(**obj).model_dump(by_alias=True))
 
 
@@ -2325,7 +2469,11 @@ async def delete_model_version(request, run_id: str, model_id: str):
         {'$set': {
             "deleted_at": int(datetime.now(tz=timezone.utc).timestamp())}}
     )
-    return json('', status=204)
+    await publish_activities_task(
+        request.ctx.token, model_version_id, model_version["version"],
+        "model_version", "model_version_deleted"
+    )
+    return json("", status=204)
 
 
 @app.route('/arcee/v2/tasks/<task_id>/model_versions', methods=["GET", ],
@@ -2390,12 +2538,17 @@ async def _create_artifact(**kwargs) -> dict:
 @validate(json=ArtifactPostIn)
 async def create_artifact(request, body: ArtifactPostIn):
     token = request.ctx.token
-    run = await db.run.find_one({"_id": body.run_id, 'deleted_at': 0})
+    run = await db.run.find_one({"_id": body.run_id, "deleted_at": 0})
     if not run:
         raise SanicException("Run not found", status_code=404)
     artifact = await _create_artifact(
-            token=token, **body.model_dump(exclude_unset=True))
+        token=token, **body.model_dump(exclude_unset=True)
+    )
     artifact = _format_artifact(artifact, run)
+    await publish_activities_task(
+        token, artifact["_id"], artifact.get("name"), "artifact",
+        "artifact_created"
+    )
     return json(artifact, status=201)
 
 
@@ -2513,26 +2666,32 @@ async def get_artifact(request, id_: str):
 async def update_artifact(request, body: ArtifactPatchIn, id_: str):
     token = request.ctx.token
     artifact = await _get_artifact(token, id_)
-    run = await db.run.find_one(
-        {"_id": artifact['run_id'], 'deleted_at': 0})
+    run = await db.run.find_one({"_id": artifact["run_id"], "deleted_at": 0})
     if not run:
         raise SanicException("Run not found", status_code=404)
     updates = body.model_dump(exclude_unset=True)
     if updates:
-        await db.artifact.update_one(
-            {"_id": id_}, {'$set': updates})
+        await db.artifact.update_one({"_id": id_}, {"$set": updates})
     obj = await db.artifact.find_one({"_id": id_})
     artifact = Artifact(**obj).model_dump(by_alias=True)
     artifact = _format_artifact(artifact, run)
+    await publish_activities_task(
+        token, artifact["_id"], artifact.get("name"), "artifact",
+        "artifact_updated"
+    )
     return json(artifact)
 
 
 @app.route('/arcee/v2/artifacts/<id_>', methods=["DELETE", ],
            ctx_label='token')
 async def delete_artifact(request, id_: str):
-    await _get_artifact(request.ctx.token, id_)
+    artifact = await _get_artifact(request.ctx.token, id_)
     await db.artifact.delete_one({"_id": id_})
-    return json({'deleted': True, '_id': id_}, status=204)
+    await publish_activities_task(
+        request.ctx.token, id_, artifact.get("name"), "artifact",
+        "artifact_deleted"
+    )
+    return json({"deleted": True, "_id": id_}, status=204)
 
 
 if __name__ == '__main__':

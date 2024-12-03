@@ -19,6 +19,7 @@ from rest_api.rest_api_server.controllers.base import (
     ResourceFormatMixin)
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_time import utcfromtimestamp, utcnow
 
 LOG = logging.getLogger(__name__)
 NOT_SET_NAME = '(not set)'
@@ -206,7 +207,7 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
         )
 
     def get_first_expenses_for_forecast(self, field, values):
-        prev_month_start = (datetime.utcnow().replace(day=1) - timedelta(
+        prev_month_start = (utcnow().replace(day=1) - timedelta(
             days=1)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         if field in ['cloud_account_id']:
             result = self._get_first_cloud_account_expense(
@@ -312,10 +313,10 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
             total_cost = resource.get('total_cost', 0)
             res_created = datetime.fromtimestamp(resource.pop('created_at', 0))
             mindate_ts = resource.get('first_seen')
-            mindate = datetime.utcfromtimestamp(
+            mindate = utcfromtimestamp(
                 mindate_ts) if mindate_ts else res_created
             maxdate_ts = resource.get('last_seen')
-            maxdate = datetime.utcfromtimestamp(
+            maxdate = utcfromtimestamp(
                 maxdate_ts) if maxdate_ts else res_created
             resource.update({
                 '_id': {'resource_id': r_id},

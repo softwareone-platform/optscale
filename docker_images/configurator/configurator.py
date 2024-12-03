@@ -17,6 +17,7 @@ from optscale_client.config_client.client import Client as EtcdClient
 
 LOG = logging.getLogger(__name__)
 
+ETCD_KEYS_TO_DELETE = ['/logstash_host', '/optscale_meter_enabled']
 RETRY_ARGS = dict(stop_max_attempt_number=300, wait_fixed=500)
 RABBIT_PRECONDIFITON_FAILED_CODE = 406
 
@@ -93,10 +94,11 @@ class Configurator(object):
             self.commit_config()
             return
         LOG.info("Writing default etcd keys")
-        try:
-            self.etcd_cl.delete('/logstash_host')
-        except etcd.EtcdKeyNotFound:
-            pass
+        for key in ETCD_KEYS_TO_DELETE:
+            try:
+                self.etcd_cl.delete(key)
+            except etcd.EtcdKeyNotFound:
+                pass
         self.etcd_cl.write_branch('/', config, overwrite_lists=True)
         LOG.info("Configuring database server")
         self.configure_databases()

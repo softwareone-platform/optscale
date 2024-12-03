@@ -1,3 +1,4 @@
+import tools.optscale_time as opttime
 from calendar import monthrange
 from datetime import datetime, timedelta
 
@@ -31,7 +32,7 @@ class PoolExpenseController(BaseController):
     @property
     def today(self):
         if self._today is None:
-            self._today = datetime.utcnow()
+            self._today = opttime.utcnow()
         return self._today
 
     @property

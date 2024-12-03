@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from jira_bus.jira_bus_server.controllers.base import (
     BaseController,
@@ -32,7 +32,7 @@ class ShareableBookController(BaseController):
     def release_booking(self, account_id, booking_id):
         auth_token = self.get_auth_token(account_id)
         rest_client = self._get_rest_client(token=auth_token)
-        now_timestamp = int(datetime.utcnow().timestamp())
+        now_timestamp = int(datetime.now(tz=timezone.utc).timestamp())
         rest_client.shareable_book_release(booking_id, {"released_at": now_timestamp})
 
     def delete_booking(self, account_id, booking_id):

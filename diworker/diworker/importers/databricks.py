@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import datetime, timezone, timedelta
 from tools.cloud_adapter.clouds.databricks import DEFAULT_SKU_PRICES
 from diworker.diworker.importers.base import BaseReportImporter
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
@@ -46,7 +47,7 @@ class DatabricksReportImporter(BaseReportImporter):
 
     def load_raw_data(self):
         start_date = self.period_start.strftime("%Y-%m")
-        end_date = datetime.utcnow().strftime("%Y-%m")
+        end_date = opttime.utcnow().strftime("%Y-%m")
         usages = self.cloud_adapter.download_usage(
             start_date, end_date)
         if not usages:
@@ -99,8 +100,8 @@ class DatabricksReportImporter(BaseReportImporter):
         return res
 
     def get_resource_info_from_expenses(self, expenses):
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0)
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0)
         meta_dict = {}
         resource_type = None
         name = None

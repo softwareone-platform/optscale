@@ -14,6 +14,7 @@ from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue, binding
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 
 QUEUE_NAME = 'webhook-task'
@@ -141,7 +142,7 @@ class WebhookExecutorWorker(ConsumerMixin):
         return True
 
     def execute_webhook(self, task):
-        start_time = datetime.utcnow()
+        start_time = utcnow()
         org_id = task.get('organization_id')
         object_id = task.get('object_id')
         action = task.get('action')
@@ -205,13 +206,13 @@ class WebhookExecutorWorker(ConsumerMixin):
             'headers': webhook['headers'],
             'body': json.dumps(request_body),
             'success': success,
-            'execution_time': int(datetime.utcnow().timestamp()),
+            'execution_time': utcnow_timestamp(),
             'execution_result': '%s, %s' % (code, result)
         }
         self.mongo_cl.restapi.webhook_logs.insert_one(log_info)
         LOG.info('Webhook executor for %s (%s) completed in %s seconds',
                  webhook['object_type'], webhook['object_id'],
-                 (datetime.utcnow() - start_time).total_seconds())
+                 (utcnow() - start_time).total_seconds())
 
     def process_task(self, body, message):
         try:

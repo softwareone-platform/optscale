@@ -1,5 +1,5 @@
 import logging
-
+import tools.optscale_time as opttime
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 
@@ -180,7 +180,7 @@ class CalendarSynchronizationController(BaseController, MongoMixin):
     def list_calendar_events(self, calendar_id, time_min=None, time_max=None,
                              updated_min=None, reraise=False):
         if updated_min:
-            updated_min_limit = datetime.utcnow() - timedelta(days=UPDATED_MIN_DAYS)
+            updated_min_limit = opttime.utcnow() - timedelta(days=UPDATED_MIN_DAYS)
             updated_min = max(updated_min, updated_min_limit)
         try:
             events = self.google_calendar_cl.list_events(
@@ -201,7 +201,7 @@ class CalendarSynchronizationController(BaseController, MongoMixin):
                 shareable_booking.acquired_since).replace(
                 hour=23, minute=59, second=0, microsecond=0) + end_boost
             if event:
-                today = datetime.utcnow().replace(
+                today = opttime.utcnow().replace(
                     hour=23, minute=59, second=0, microsecond=0)
                 end_border = today + timedelta(days=180)
                 if event['end'] < end_border:
@@ -222,7 +222,7 @@ class CalendarSynchronizationController(BaseController, MongoMixin):
         }
 
     def _check_calendar_availability(self, organization_id, calendar_id):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         test_template = {
             'calendar_id': calendar_id,
             'start': now,

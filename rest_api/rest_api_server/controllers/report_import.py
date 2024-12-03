@@ -1,7 +1,7 @@
 import logging
 import uuid
+import tools.optscale_time as opttime
 from sqlalchemy import and_, true, or_, exists
-from datetime import datetime
 import boto3
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, FailedDependency, WrongArgumentsException
@@ -47,7 +47,7 @@ class ReportImportBaseController(BaseController):
         return report_import
 
     def check_unprocessed_imports(self, cloud_account_id):
-        dt = datetime.utcnow().timestamp()
+        dt = opttime.utcnow().timestamp()
         scheduled_threshold = dt - NOT_PROCESSED_REPORT_THRESHOLD
         active_threshold = dt - ACTIVE_IMPORT_THRESHOLD
         return self.session.query(
@@ -93,7 +93,7 @@ class ReportImportBaseController(BaseController):
         return completed_import and completed_import.id == updated_report.id
 
     def edit(self, item_id, **kwargs):
-        kwargs['updated_at'] = int(datetime.utcnow().timestamp())
+        kwargs['updated_at'] = opttime.utcnow_timestamp()
         updated_report = super().edit(item_id, **kwargs)
         state = kwargs.get('state')
         if updated_report.is_recalculation:
@@ -352,7 +352,7 @@ class ReportImportFileController(ReportImportBaseController):
                 self.model_type.state != ImportStates.COMPLETED
             )
         if show_active:
-            ts = datetime.utcnow().timestamp() - ACTIVE_IMPORT_THRESHOLD
+            ts = opttime.utcnow_timestamp() - ACTIVE_IMPORT_THRESHOLD
             query = query.filter(
                 self.model_type.state == ImportStates.IN_PROGRESS,
                 self.model_type.updated_at >= ts

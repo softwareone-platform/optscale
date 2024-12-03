@@ -3,11 +3,11 @@ import json
 import logging
 import os
 from urllib import parse
-from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import boto3
 from optscale_client.config_client.client import Client as ConfigClient
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
 DEFAULT_ETCD_HOST = 'etcd'
 DEFAULT_ETCD_PORT = 80
@@ -89,13 +89,13 @@ def _dt_to_human_readable(dt):
 
 def _timestamp_to_human_readable(ts):
     try:
-        return _dt_to_human_readable(datetime.utcfromtimestamp(float(ts)))
+        return _dt_to_human_readable(utcfromtimestamp(float(ts)))
     except Exception:
         return None
 
 
 def _get_failed_cloud_accounts(mydb):
-    now = datetime.utcnow().timestamp()
+    now = utcnow_timestamp()
     import_dt = now - IMPORT_THRESHOLD
     query = f"""
         SELECT ca_t.id, ca_t.name, ca_t.type, ca_t.created_at,

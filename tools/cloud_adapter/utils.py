@@ -1,8 +1,13 @@
 BYTES_IN_GB = 1024 * 1024 * 1024
+BYTES_IN_MIB = 1024 * 1024
 
 
 def gbs_to_bytes(gbs):
     return gbs * BYTES_IN_GB if gbs else 0
+
+
+def mibs_to_bytes(mibs):
+    return mibs * BYTES_IN_MIB if mibs else 0
 
 
 class CloudParameter:

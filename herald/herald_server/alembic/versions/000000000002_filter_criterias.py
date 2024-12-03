@@ -5,7 +5,7 @@ Revises: 000000000001
 Create Date: 2018-03-19 14:36:42.383444
 
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from alembic import op
 import sqlalchemy as sa
 
@@ -21,7 +21,7 @@ def upgrade():
     field_table = op.create_table(
         'field',
         sa.Column('created_at', sa.Integer(), nullable=False,
-                  default=datetime.utcnow().timestamp),
+                  default=datetime.now(tz=timezone.utc).timestamp),
         sa.Column('deleted_at', sa.Integer(), nullable=False, default=0),
         sa.Column('id', sa.Integer(), nullable=False, autoincrement=True),
         sa.Column('name', sa.String(length=256), nullable=True),

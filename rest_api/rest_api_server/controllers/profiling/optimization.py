@@ -6,7 +6,7 @@ from rest_api.rest_api_server.controllers.checklist import ChecklistController
 from tools.optscale_exceptions.common_exc import NotFoundException
 from rest_api.rest_api_server.exceptions import Err
 from requests.exceptions import HTTPError
-from datetime import datetime
+from tools.optscale_time import utcnow_timestamp
 
 LAST_RUNS_THRESHOLD = 7 * 86400  # 7 days
 
@@ -52,7 +52,7 @@ class TaskOptimizationsController(BaseProfilingController,
                 raise NotFoundException(
                     Err.OE0002, ['Task', task_id])
             raise
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         return list(filter(
             lambda x: x['start'] >= now - LAST_RUNS_THRESHOLD, runs))
 

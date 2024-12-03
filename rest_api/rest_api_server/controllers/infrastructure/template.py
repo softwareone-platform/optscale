@@ -195,9 +195,14 @@ class TemplateController(BaseInfraController):
                     runset_ids, infrastructure_token)
                 last_runset_id = runset_ids[0]
                 for runset_id, runset in runsets.items():
+                    cloud_account_id = runset['cloud_account_id']
+                    if cloud_account_id not in cloud_accounts:
+                        # handle cloud accounts removed from template
+                        cloud_accounts.update(self._get_cloud_accounts(
+                            organization_id, [cloud_account_id]))
                     costs, _ = self._get_usage(
                         runners.get(runset_id, []),
-                        cloud_accounts[runset['cloud_account_id']])
+                        cloud_accounts[cloud_account_id])
                     runset_cost = sum(costs.values())
                     # set initial last_runset_id value or overwrite with
                     # fresher sample

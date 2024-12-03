@@ -229,7 +229,7 @@ class GcpResource:
         )
 
     def _cloud_resource_hash(self):
-        return hashlib.sha1(self._cloud_object.self_link.encode()).hexdigest()
+        return hashlib.sha1(self._cloud_object.self_link.encode(), usedforsecurity=False).hexdigest()
 
     def _need_to_update_tags(self):
         optscale_tag_value = self.tags.get(OPTSCALE_TRACKING_TAG)
@@ -277,10 +277,10 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
         return self._last_path_element(self._cloud_object.machine_type)
 
     def _extract_network(self):
-        network = self._cloud_object.network_interfaces[0].network
-        network_name = self._last_path_element(network)
+        network_link = self._cloud_object.network_interfaces[0].network
+        network_name = self._last_path_element(network_link)
         network_id = self._cloud_adapter.network_name_to_id.get(network_name)
-        return network_id, network_name
+        return network_id, network_name, network_link
 
     def __init__(self, cloud_instance: compute.Instance, cloud_adapter: "Gcp"):
         GcpResource.__init__(self, cloud_instance, cloud_adapter)
@@ -292,14 +292,14 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
         )
         spotted = cloud_instance.scheduling.provisioning_model == "SPOT"
         stopped_allocated = cloud_instance.status == 'SUSPENDED'
-        network_id, network_name = self._extract_network()
+        network_id, network_name, network_link = self._extract_network()
+        security_groups = list(cloud_instance.tags.items)
         zone_id = self._last_path_element(self._cloud_object.zone)
 
         super().__init__(
             **self._common_fields,
             flavor=flavor,
-            # TODO: find security groups info
-            security_groups=None,
+            security_groups=security_groups,
             spotted=spotted,
             stopped_allocated=stopped_allocated,
             image_id=image_id,
@@ -312,20 +312,20 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
     def _new_labels_request(self, key, value):
         labels = self._cloud_object.labels
         labels[key] = value
-        labesl_request = compute.InstancesSetLabelsRequest(
+        labels_request = compute.InstancesSetLabelsRequest(
             label_fingerprint=self._cloud_object.label_fingerprint,
             labels=labels,
         )
-        return labesl_request
+        return labels_request
 
     def _set_tag(self, key, value):
-        labesl_request = self._new_labels_request(key, value)
+        labels_request = self._new_labels_request(key, value)
         zone = self._last_path_element(self._cloud_object.zone)
         self._cloud_adapter.compute_instances_client.set_labels(
             project=self._cloud_adapter.project_id,
             zone=zone,
             instance=self._cloud_object.name,
-            instances_set_labels_request_resource=labesl_request,
+            instances_set_labels_request_resource=labels_request,
             **DEFAULT_KWARGS,
         )
 
@@ -367,7 +367,8 @@ class GcpVolume(tools.cloud_adapter.model.VolumeResource, GcpResource):
             size=gbs_to_bytes(cloud_volume.size_gb),
             volume_type=type_,
             attached=attached,
-            zone_id=zone_id
+            zone_id=zone_id,
+            snapshot_id=cloud_volume.source_snapshot_id
         )
 
     def _new_labels_request(self, key, value):
@@ -387,6 +388,49 @@ class GcpVolume(tools.cloud_adapter.model.VolumeResource, GcpResource):
             zone=zone,
             resource=self._cloud_object.name,
             zone_set_labels_request_resource=labesl_request,
+            **DEFAULT_KWARGS,
+        )
+
+    def post_discover(self):
+        # Need to explicitly specify which parent's implementation to use
+        return GcpResource.post_discover(self)
+
+
+class GcpImage(tools.cloud_adapter.model.ImageResource, GcpResource):
+    def _get_console_link(self):
+        name = self._cloud_object.name
+        project_id = self._get_project_id()
+        return (
+            f"{BASE_CONSOLE_LINK}/compute/imagesDetail/"
+            f"projects/{project_id}/global/images/{name}"
+        )
+
+    def __init__(self, cloud_image: compute.Image, cloud_adapter):
+        GcpResource.__init__(self, cloud_image, cloud_adapter)
+        super().__init__(
+            **self._common_fields,
+            disk_size=cloud_image.disk_size_gb,
+            cloud_created_at=self._gcp_date_to_timestamp(
+                cloud_image.creation_timestamp),
+            snapshot_id=(cloud_image.source_snapshot_id
+                         if cloud_image.source_snapshot_id else None)
+        )
+
+    def _new_labels_request(self, key, value):
+        labels = self._cloud_object.labels
+        labels[key] = value
+        labels_request = compute.GlobalSetLabelsRequest(
+            label_fingerprint=self._cloud_object.label_fingerprint,
+            labels=labels,
+        )
+        return labels_request
+
+    def _set_tag(self, key, value):
+        labels_request = self._new_labels_request(key, value)
+        self._cloud_adapter.compute_images_client.set_labels(
+            project=self._cloud_adapter.project_id,
+            resource=self._cloud_object.name,
+            global_set_labels_request_resource=labels_request,
             **DEFAULT_KWARGS,
         )
 
@@ -429,11 +473,11 @@ class GcpSnapshot(tools.cloud_adapter.model.SnapshotResource, GcpResource):
         return labesl_request
 
     def _set_tag(self, key, value):
-        labesl_request = self._new_labels_request(key, value)
+        labels_request = self._new_labels_request(key, value)
         self._cloud_adapter.compute_snapshots_client.set_labels(
             project=self._cloud_adapter.project_id,
             resource=self._cloud_object.name,
-            global_set_labels_request_resource=labesl_request,
+            global_set_labels_request_resource=labels_request,
             **DEFAULT_KWARGS,
         )
 
@@ -486,7 +530,8 @@ class GcpAddress(tools.cloud_adapter.model.IpAddressResource, GcpResource):
         available = cloud_address.status == "RESERVED"
         instance_id = None
         if not available:
-            instance_id = cloud_adapter.get_instance_id_for_address(cloud_address)
+            instance_id = cloud_adapter.get_instance_id_for_address(
+                cloud_address)
         super().__init__(
             **self._common_fields,
             available=available,
@@ -496,9 +541,28 @@ class GcpAddress(tools.cloud_adapter.model.IpAddressResource, GcpResource):
     def _get_console_link(self):
         return "https://console.cloud.google.com/networking/addresses/list"
 
+    def _new_labels_request(self, key, value):
+        labels = self._cloud_object.labels
+        labels[key] = value
+        labels_request = compute.RegionSetLabelsRequest(
+            label_fingerprint=self._cloud_object.label_fingerprint,
+            labels=labels,
+        )
+        return labels_request
+
+    def _set_tag(self, key, value):
+        labels_request = self._new_labels_request(key, value)
+        self._cloud_adapter.compute_addresses_client.set_labels(
+            project=self._cloud_adapter.project_id,
+            resource=self._cloud_object.name,
+            region=self._last_path_element(self._cloud_object.region),
+            region_set_labels_request_resource=labels_request,
+            **DEFAULT_KWARGS,
+        )
+
     def post_discover(self):
-        # GCP does not support labels for IP addresses
-        pass
+        # Need to explicitly specify which parent's implementation to use
+        return GcpResource.post_discover(self)
 
 
 class Gcp(CloudBase):
@@ -551,6 +615,7 @@ class Gcp(CloudBase):
             tools.cloud_adapter.model.SnapshotResource: self.snapshot_discovery_calls,
             tools.cloud_adapter.model.IpAddressResource: self.ip_address_discovery_calls,
             tools.cloud_adapter.model.BucketResource: self.bucket_discovery_calls,
+            tools.cloud_adapter.model.ImageResource: self.image_discovery_calls,
         }
 
     @property
@@ -639,6 +704,12 @@ class Gcp(CloudBase):
         )
 
     @cached_property
+    def compute_images_client(self):
+        return compute.ImagesClient.from_service_account_info(
+            self.credentials,
+        )
+
+    @cached_property
     def compute_addresses_client(self):
         return compute.AddressesClient.from_service_account_info(
             self.credentials,
@@ -646,7 +717,13 @@ class Gcp(CloudBase):
 
     @cached_property
     def compute_instance_types_client(self):
-        return compute.MachineTypesClient.from_service_account_info(self.credentials)
+        return compute.MachineTypesClient.from_service_account_info(
+            self.credentials)
+
+    @cached_property
+    def compute_firewall_client(self):
+        return compute.FirewallsClient.from_service_account_info(
+            self.credentials)
 
     @cached_property
     def compute_networks_client(self):
@@ -902,6 +979,20 @@ class Gcp(CloudBase):
         return [(self.discover_snapshots, ())]
 
     ######################################################################################
+    # IMAGE DISCOVERY
+    ######################################################################################
+
+    def discover_images(self):
+        for image in self.discover_entities(
+            self.compute_images_client.list,
+            compute.ListImagesRequest
+        ):
+            yield GcpImage(image, self)
+
+    def image_discovery_calls(self):
+        return [(self.discover_images, ())]
+
+    ######################################################################################
     # BUCKET DISCOVERY
     ######################################################################################
 
@@ -978,6 +1069,13 @@ class Gcp(CloudBase):
             result[network.name] = str(network.id)
         return result
 
+    def discover_firewalls(self):
+        return self.discover_entities(
+            self.compute_firewall_client.list,
+            compute.ListFirewallsRequest,
+            project=self.project_id
+        )
+
     ######################################################################################
     # INSTANCE TYPES DISCOVERY
     ######################################################################################
@@ -1013,17 +1111,24 @@ class Gcp(CloudBase):
     def _resource_priced_machine_series_descriptions(self) -> dict:
         return {
             "A2 Instance": "a2",
+            "A3 Instance": "a3",
             "C2D AMD Instance": "c2d",
             "Compute optimized": "c2",
+            "C3 Instance": "c3",
+            "C4 Instance": "c4",
             "E2 Instance": "e2",
+            "G2 Instance": "g2",
+            "M1 Memory-optimized Instance": "m1",
+            "M2 Memory-optimized Instance": "m2",
             "M3 Memory-optimized Instance": "m3",
-            "Memory-optimized Instance": "m1",
-            "Memory Optimized Upgrade Premium for Memory-optimized Instance": "m2",
             "N1 Predefined Instance": "n1",
             "N2 Instance": "n2",
             "N2D AMD Instance": "n2d",
+            "N4 Instance": "n4",
             "T2D AMD Instance": "t2d",
             "T2A Arm Instance": "t2a",
+            "X4 Instance": "x4",
+            "Z3 Instance": "z3",
         }
 
     @cached_property
@@ -1062,7 +1167,7 @@ class Gcp(CloudBase):
         GROUP BY sku.id"""
         query = f"""
         SELECT prices.list_price, prices.sku
-        FROM `hystaxcom.pricing_dataset.cloud_pricing_export` prices
+        FROM `{self._pricing_table_full_name()}` prices
         INNER JOIN ({inner_query}) inr
         ON    prices.sku.id = inr.sku_id
           AND prices.export_time = inr.export_time
@@ -1518,3 +1623,4 @@ class Gcp(CloudBase):
             )
         except api_exceptions.NotFound as exc:
             raise ResourceNotFound(str(exc))
+

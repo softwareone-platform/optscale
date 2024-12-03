@@ -238,6 +238,8 @@ class UserAsyncCollectionHandler(UserAsyncCollectionHandler_v1,
                     scope_id: {type: string,
                         description: User scope id (None scope means root)}
                     token: {type: string, description: Token}
+                    verified: {type: boolean,
+                        description: "Is email verified?"}
         responses:
             201: {description: Success (returns created user data)}
             400:
@@ -288,6 +290,9 @@ class UserAsyncCollectionHandler(UserAsyncCollectionHandler_v1,
             unexpected_string = ', '.join(duplicates)
             raise OptHTTPError(400, Err.OA0022, [unexpected_string])
         body.update(url_params)
+        if not self.check_cluster_secret(raises=False):
+            # verified users can be created only by secret
+            body.pop('verified', None)
         self._validate_params(**body)
         res = await run_task(
             self.controller.create, **body, **self.token,

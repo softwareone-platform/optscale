@@ -1,6 +1,5 @@
 from unittest.mock import patch
-from datetime import datetime
-
+from tools.optscale_time import utcnow_timestamp
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 
 
@@ -52,7 +51,7 @@ class TestContextApi(TestApiBase):
                     '_id': resource['id']
                 },
                 update={'$set': {
-                    'last_seen': int(datetime.utcnow().timestamp() - 1),
+                    'last_seen': utcnow_timestamp() - 1,
                     'active': True
                 }}
             )
@@ -138,7 +137,7 @@ class TestContextApi(TestApiBase):
             active=True, pool_id=self.organization['pool_id'],
             employee_id=self.employee['id'])
         code, constraint = self.client.resource_constraint_create(
-            res['id'], {'limit': int(datetime.utcnow().timestamp()) + 3600,
+            res['id'], {'limit': utcnow_timestamp() + 3600,
                         'type': 'ttl'})
         self.assertEqual(code, 201)
 
@@ -155,7 +154,7 @@ class TestContextApi(TestApiBase):
         )
         _, constraint = self.client.resource_constraint_create(
             res['id'],
-            {'limit': int(datetime.utcnow().timestamp()) + 3600,
+            {'limit': utcnow_timestamp() + 3600,
              'type': 'ttl'})
         code, context = self.client.context_get(
             'resource_constraint', constraint['id'])

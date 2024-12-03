@@ -214,12 +214,12 @@ class Client(etcd.Client):
     def smtp_params(self):
         """
         Get tuple with access args for smtp
-        :return: ('server', 'port', 'email', 'password')
+        :return: ('server', 'port', 'email', 'login', 'password', 'protocol')
         """
         try:
             params = self.read_branch('/smtp')
             return (params['server'], params['port'], params['email'],
-                    params['password'])
+                    params.get('login'), params['password'], params['protocol'])
         except etcd.EtcdKeyNotFound:
             return None
 

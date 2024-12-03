@@ -450,16 +450,14 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading, showCancel = t
       icon: GcpLogoIcon,
       messageId: GCP_ACCOUNT,
       dataTestId: "btn_gcp_account",
-      action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR),
-      mode: OPTSCALE_MODE.FINOPS
+      action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR)
     },
     {
       id: ALIBABA_ACCOUNT,
       icon: AlibabaLogoIcon,
       messageId: ALIBABA_ACCOUNT,
       dataTestId: "btn_alibaba_account",
-      action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR),
-      mode: OPTSCALE_MODE.FINOPS
+      action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR)
     },
     {
       id: NEBIUS_ACCOUNT,

@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from datetime import datetime
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from tools.optscale_time import utcnow_timestamp
 
 __all__ = ['get_resource_details_block', 'get_resource_details_message']
 
@@ -96,7 +96,7 @@ def get_resource_details_message(
 
     ttl = constraints.get('ttl')
     if ttl:
-        hrs = (ttl['limit'] - datetime.utcnow().timestamp()) / SEC_IN_HRS
+        hrs = (ttl['limit'] - utcnow_timestamp()) / SEC_IN_HRS
         if ttl['limit'] == 0:
             ttl_msg = ":warning:No limit"
         elif hrs <= -1:

@@ -74,7 +74,7 @@ const MlTaskRecommendations = ({ taskId, recommendations, isLoading }) => {
         onRecommendationClick={onRecommendationClick}
         isDownloadAvailable={isDownloadAvailable}
         isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-        selectedDataSources={[]}
+        selectedDataSourceIds={[]}
       />
     );
   };

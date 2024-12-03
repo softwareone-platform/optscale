@@ -1,5 +1,6 @@
 import json
 import logging
+import tools.optscale_time as opttime
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 
@@ -437,7 +438,7 @@ class OrganizationConstraintController(ConstraintBaseController,
         organization = self.get_entity(organization_id)
         self._check_input(organization_id, organization, **kwargs)
 
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         filled_filters = self._fill_filters(
             organization_id, now, kwargs.get('filters', {}))
         kwargs['filters'] = filled_filters
@@ -522,7 +523,7 @@ class OrganizationConstraintController(ConstraintBaseController,
         return result
 
     def delete_constraint_by_id(self, constraint_id):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         LOG.info("Deleting %s with id %s", self.get_model_name(),
                  constraint_id)
         self.session.query(OrganizationLimitHit).filter(
@@ -538,7 +539,7 @@ class OrganizationConstraintController(ConstraintBaseController,
         self.session.commit()
 
     def delete_constraints_with_hits(self, organization_id, filters=None):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         constraints_to_delete = []
         all_constraints = self.session.query(OrganizationConstraint).filter(
             OrganizationConstraint.organization_id == organization_id,

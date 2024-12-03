@@ -1,6 +1,7 @@
 import datetime
 import asyncio
 from typing import Tuple
+from enum import Enum
 import os
 import uuid
 from sanic import Sanic
@@ -13,12 +14,14 @@ from mongodb_migrations.cli import MigrationManager
 from mongodb_migrations.config import Configuration
 
 from bulldozer.bulldozer_api.cost_calc import CostCalc
-from bulldozer.bulldozer_api.producer import TaskProducer
+from bulldozer.bulldozer_api.producer import (
+    ActivitiesTaskProducer, TaskProducer
+)
 from bulldozer.bulldozer_api.name_generator import NameGenerator
 from bulldozer.bulldozer_api.utils import permutation
 
 from optscale_client.aconfig_cl.aconfig_cl import AConfigCl
-
+from tools.optscale_time import utcnow_timestamp
 
 app = Sanic("bulldozer")
 
@@ -28,8 +31,7 @@ etcd_port = int(os.environ.get('HX_ETCD_PORT'))
 config_client = AConfigCl(host=etcd_host, port=etcd_port)
 
 
-class TaskState:
-
+class TaskState(int, Enum):
     STARTING_PREPARING = 1
     STARTING = 2
     STARTED = 3
@@ -41,8 +43,7 @@ class TaskState:
     WAITING_ARCEE = 10
 
 
-class RunsetState:
-
+class RunsetState(int, Enum):
     CREATED = 1
     RUNNING = 2
     STOPPING = 3
@@ -70,6 +71,23 @@ client = motor.motor_asyncio.AsyncIOMotorClient(uri)
 db = client[db_name]
 
 cost_calc = CostCalc()
+
+
+async def publish_activities_task(infrastructure_token, object_id, object_name,
+                                  object_type, action, **kwargs):
+    task = {
+        "infrastructure_token": infrastructure_token,
+        "object_id": object_id,
+        "object_name": object_name,
+        "object_type": object_type,
+        "action": action,
+        **kwargs
+    }
+    routing_key = ".".join([object_type, action])
+    producer = ActivitiesTaskProducer()
+    logger.info("Creating activities task:%s, routing_key:%s", task,
+                routing_key)
+    await producer.run_async(producer.create_task, task, routing_key)
 
 
 async def extract_token(request):
@@ -152,7 +170,7 @@ async def create_token(request):
     d = {
         "_id": str(uuid.uuid4()),
         "token": token,
-        "created": int(datetime.datetime.utcnow().timestamp()),
+        "created": utcnow_timestamp(),
         "deleted_at": 0,
     }
     await db.token.insert_one(
@@ -183,8 +201,7 @@ async def delete_token(request, token: str):
     await db.token.update_one(
         {"_id": token_id}, {
             '$set': {
-                "deleted_at": int(
-                    datetime.datetime.utcnow().timestamp()),
+                "deleted_at": utcnow_timestamp(),
             }
         })
     return json(
@@ -234,8 +251,9 @@ async def create_template(request):
                              status_code=400)
     tags = (doc.get("tags") or dict())
     hyperparameters = doc.get("hyperparameters")
+    runset_template_id = str(uuid.uuid4())
     d = {
-        "_id": str(uuid.uuid4()),
+        "_id": runset_template_id,
         "name": template_name,
         "task_ids": task_ids,
         "cloud_account_ids": cloud_account_ids,
@@ -246,10 +264,14 @@ async def create_template(request):
         "token": token,
         "tags": tags,
         "hyperparameters": hyperparameters,
-        "created_at": int(datetime.datetime.utcnow().timestamp()),
+        "created_at": utcnow_timestamp(),
         "deleted_at": 0
     }
     await db.template.insert_one(d)
+    await publish_activities_task(
+        token, runset_template_id, template_name, "runset_template",
+        "runset_template_created"
+    )
     return json(d, status=201)
 
 
@@ -375,6 +397,9 @@ async def update_template(request, id_: str):
         await db.template.update_one(
             {"_id": id_}, {'$set': d})
     o = await db.template.find_one({"_id": id_})
+    await publish_activities_task(
+        token, id_, o.get("name"), "runset_template", "runset_template_updated"
+    )
     return json(o)
 
 
@@ -401,12 +426,12 @@ async def delete_template(request, id_: str):
                              status_code=409)
 
     await db.template.update_one({"_id": id_}, {'$set': {
-        "deleted_at": int(datetime.datetime.utcnow().timestamp())
+        "deleted_at": utcnow_timestamp()
     }})
-    return json(
-        '',
-        status=204
+    await publish_activities_task(
+        token, id_, o.get("name"), "runset_template", "runset_template_deleted"
     )
+    return json("", status=204)
 
 
 async def _create_runner(
@@ -425,6 +450,7 @@ async def _create_runner(
         spot_settings: dict,
         open_ingress: bool,
 ):
+    runner_name = f"{name_prefix}_{NameGenerator.get_random_name()}"
     runner = {
         "_id": str(uuid.uuid4()),
         "runset_id": runset_id,
@@ -442,11 +468,14 @@ async def _create_runner(
         "created_at": created_at,
         "destroyed_at": 0,
         "started_at": 0,
-        "name": "",
+        "name": runner_name,
         "spot_settings": spot_settings,
         "open_ingress": open_ingress,
     }
     await db.runner.insert_one(runner)
+    await publish_activities_task(
+        token, runner["_id"], runner_name, "runner", "runner_created"
+    )
     return runner["_id"]
 
 
@@ -458,7 +487,7 @@ async def submit_tasks(runners, state):
             "state": state,
             "runner_id": runner,
             "try": 0,
-            "updated": int(datetime.datetime.utcnow().timestamp()),
+            "updated": utcnow_timestamp(),
             "reason": "",
             "infra_try": 0
         }
@@ -502,10 +531,11 @@ async def create_runset(request, template_id: str):
     open_ingress = doc.get("open_ingress", False)
     runset_id = str(uuid.uuid4())
     runset_cnt = await db.runset.count_documents({"template_id": template_id})
-    created_at = int(datetime.datetime.utcnow().timestamp())
+    runset_name = NameGenerator.get_random_name()
+    created_at = utcnow_timestamp()
     d = {
         "_id": runset_id,
-        "name": NameGenerator.get_random_name(),
+        "name": runset_name,
         "number": runset_cnt + 1,
         "template_id": template_id,
         "task_id": task_id,
@@ -557,6 +587,9 @@ async def create_runset(request, template_id: str):
     )
 
     await db.runset.insert_one(d)
+    await publish_activities_task(
+        token, runset_id, runset_name, "runset", "runset_created"
+    )
     return json(d, status=201)
 
 
@@ -629,6 +662,9 @@ async def set_runset_state(request, id_: str):
     if not o:
         raise SanicException("runset not found", status_code=404)
 
+    if not token:
+        token = o.get("token")
+
     doc = request.json
     # TODO: validators?
     state = doc.get("state")
@@ -659,6 +695,10 @@ async def set_runset_state(request, id_: str):
         "state": state}})
 
     o = await db.runset.find_one({"_id": id_})
+    await publish_activities_task(
+        token, id_, o.get("name"), "runset", "runset_state_updated",
+        state=state
+    )
     return json(o)
 
 
@@ -791,16 +831,25 @@ async def update_runner(request, id_: str):
     if started_at is not None:
         sd.update({"started_at": started_at})
 
+    runset_id = o["runset_id"]
+    runset = await db.runset.find_one({"_id": runset_id})
+    token = runset["token"]
     if sd:
-        await db.runner.update_one(
-            {"_id": id_}, {'$set': sd})
+        await db.runner.update_one({"_id": id_}, {"$set": sd})
+        if state:
+            await publish_activities_task(
+                token, id_, o.get("name"), "runner",
+                "runner_state_updated", state=TaskState(sd["state"]).name
+            )
+        if destroyed_at:
+            await publish_activities_task(
+                token, id_, o.get("name"), "runner", "runner_destroyed"
+            )
 
     o = await db.runner.find_one({"_id": id_})
-    runset_id = o["runset_id"]
 
     sd = dict()
     runners = [doc async for doc in db.runner.find({"runset_id": runset_id})]
-    runset = await db.runset.find_one({"_id": runset_id})
     if not runset.get("started_at", 0):
         started = sorted(
             list(filter(lambda x: x.get("started_at", 0) != 0, runners)),
@@ -821,15 +870,17 @@ async def update_runner(request, id_: str):
 
     # TODO: check usage
     if all(map(lambda x: x["state"] == TaskState.ERROR, runners)):
-
         sd.update({"state": RunsetState.ERROR})
-    elif (any(map(lambda x: x["state"] == TaskState.STARTED, runners)) and not
-          all(map(lambda x: x["state"] in [
-             TaskState.STARTING_PREPARING,
-             TaskState.STARTING,
-             TaskState.WAITING_ARCEE,
-             TaskState.DESTROYING_SCHEDULED,
-             TaskState.DESTROYING], runners))):
+    elif any(map(lambda x: x["state"] == TaskState.STARTED, runners)
+             ) and not all(map(
+                 lambda x: x["state"] in [
+                     TaskState.STARTING_PREPARING,
+                     TaskState.STARTING,
+                     TaskState.WAITING_ARCEE,
+                     TaskState.DESTROYING_SCHEDULED,
+                     TaskState.DESTROYING],
+                 runners,
+             )):
         sd.update({"state": RunsetState.STARTED})
     elif any(map(lambda x: x["state"] in [
         TaskState.STARTING_PREPARING,
@@ -843,13 +894,14 @@ async def update_runner(request, id_: str):
         TaskState.DESTROY_PREPARING
     ], runners)):
         sd.update({"state": RunsetState.STOPPING})
-    elif (any(map(lambda x: x["state"] == TaskState.DESTROYED, runners)) and
-          not all(map(lambda x: x["state"] in [
-             TaskState.STARTING_PREPARING,
-             TaskState.STARTING,
-             TaskState.WAITING_ARCEE,
-             TaskState.DESTROYING_SCHEDULED,
-             TaskState.DESTROYING], runners))):
+    elif any(map(lambda x: x["state"] == TaskState.DESTROYED, runners)
+             ) and not all(map(lambda x: x["state"] in [
+                                   TaskState.STARTING_PREPARING,
+                                   TaskState.STARTING,
+                                   TaskState.WAITING_ARCEE,
+                                   TaskState.DESTROYING_SCHEDULED,
+                                   TaskState.DESTROYING],
+                               runners)):
         sd.update({"state": RunsetState.STOPPED})
     # log update state map
     logger.info(
@@ -860,8 +912,13 @@ async def update_runner(request, id_: str):
     )
 
     if sd:
-        await db.runset.update_one(
-            {"_id": runset_id}, {'$set': sd})
+        await db.runset.update_one({"_id": runset_id}, {"$set": sd})
+        if "state" in sd and sd["state"] != runset["state"]:
+            await publish_activities_task(
+                token, runset["_id"], runset.get("name"),
+                "runset", "runset_state_updated",
+                state=RunsetState(sd["state"]).name
+            )
     return json(o)
 
 

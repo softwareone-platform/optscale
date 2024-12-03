@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from functools import cached_property
 
 from diworker.diworker.importers.base import CSVBaseReportImporter
-
+import tools.optscale_time as opttime
 import pyarrow.parquet as pq
 
 LOG = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class AWSReportImporter(CSVBaseReportImporter):
             'Savings Plan': [],
             'Reserved Instances': []
         }
-        self.import_start_ts = int(datetime.utcnow().timestamp())
+        self.import_start_ts = int(opttime.utcnow().timestamp())
         self.current_billing_period = None
 
     @cached_property
@@ -382,7 +382,7 @@ class AWSReportImporter(CSVBaseReportImporter):
 
     def load_csv_report(self, report_path, account_id_ca_id_map,
                         billing_period, skipped_accounts):
-        date_start = datetime.utcnow()
+        date_start = opttime.utcnow()
         with open(report_path, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             reader.fieldnames = self._convert_to_legacy_csv_columns(
@@ -399,7 +399,7 @@ class AWSReportImporter(CSVBaseReportImporter):
                 if len(chunk) == CHUNK_SIZE:
                     self.update_raw_records(chunk)
                     chunk = []
-                    now = datetime.utcnow()
+                    now = opttime.utcnow()
                     if (now - date_start).total_seconds() > 60:
                         LOG.info('report %s: processed %s rows',
                                  report_path, record_number)
@@ -447,7 +447,7 @@ class AWSReportImporter(CSVBaseReportImporter):
 
     def load_parquet_report(self, report_path, account_id_ca_id_map,
                             billing_period, skipped_accounts):
-        date_start = datetime.utcnow()
+        date_start = opttime.utcnow()
         dataframe = pq.read_pandas(report_path).to_pandas()
         new_columns = self._convert_to_legacy_csv_columns(
             dataframe.columns, dict_format=True)
@@ -494,7 +494,7 @@ class AWSReportImporter(CSVBaseReportImporter):
                           field_name == 'discount/EdpDiscount' and value):
                         chunk[expense_num]['cost'] += float(value)
                     elif field_name == 'lineItem/UsageType':
-                        if 'BoxUsage' in value:
+                        if value and 'BoxUsage' in value:
                             chunk[expense_num]['box_usage'] = True
                     if isinstance(value, float) and math.isnan(value):
                         value = 0
@@ -514,7 +514,7 @@ class AWSReportImporter(CSVBaseReportImporter):
                 self._set_resource_id(expense)
             if expenses:
                 self.update_raw_records(expenses)
-                now = datetime.utcnow()
+                now = opttime.utcnow()
                 if (now - date_start).total_seconds() > 60:
                     LOG.info('report %s: processed %s rows', report_path, i)
                     date_start = now

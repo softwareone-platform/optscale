@@ -327,7 +327,8 @@ import {
   GET_ML_DATASET_LABELS,
   SET_ML_TASK_TAGS,
   GET_ML_TASK_TAGS,
-  RESTORE_PASSWORD
+  RESTORE_PASSWORD,
+  VERIFY_EMAIL
 } from "./actionTypes";
 import {
   onUpdateOrganizationOption,
@@ -2908,6 +2909,16 @@ export const restorePassword = (email) =>
     url: `${API_URL}/restore_password`,
     method: "POST",
     label: RESTORE_PASSWORD,
+    params: {
+      email
+    }
+  });
+
+export const verifyEmail = (email) =>
+  apiAction({
+    url: `${API_URL}/verify_email`,
+    method: "POST",
+    label: VERIFY_EMAIL,
     params: {
       email
     }

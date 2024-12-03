@@ -7,7 +7,7 @@ import ReservedInstancesModal from "components/SideModalManager/SideModals/recom
 import { AWS_EC2 } from "hooks/useRecommendationServices";
 import { RI_SP_COVERAGE } from "urls";
 import { detectedAt, resource, resourceLocation, size } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -76,6 +76,8 @@ class ReservedInstances extends BaseRecommendation {
   }
 
   services = [AWS_EC2];
+
+  appliedDataSources = [AWS_CNR];
 
   categories = [CATEGORY_COST];
 

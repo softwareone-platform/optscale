@@ -1,6 +1,6 @@
 # pylint: disable=abstract-method
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy.ext.declarative.base import _declarative_constructor
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -249,7 +249,7 @@ class NullableBool(TypeDecorator):
 
 
 def get_current_timestamp():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 class PermissionKeys(Enum):

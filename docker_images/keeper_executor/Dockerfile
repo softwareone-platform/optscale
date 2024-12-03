@@ -12,6 +12,7 @@ COPY optscale_client/rest_api_client optscale_client/rest_api_client
 COPY docker_images/keeper_executor/requirements.txt docker_images/keeper_executor/
 RUN pip install --no-cache-dir -r docker_images/keeper_executor/requirements.txt
 
-COPY docker_images/keeper_executor/worker.py docker_images/keeper_executor/
+COPY docker_images/keeper_executor/*.py docker_images/keeper_executor/
+COPY docker_images/keeper_executor/executors/*.py docker_images/keeper_executor/executors/
 
 CMD ["python3", "docker_images/keeper_executor/worker.py"]

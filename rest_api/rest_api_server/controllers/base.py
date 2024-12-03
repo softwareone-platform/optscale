@@ -1,8 +1,8 @@
 import hashlib
 import logging
 import threading
+import tools.optscale_time as opttime
 from clickhouse_driver import Client as ClickHouseClient
-from datetime import datetime
 from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 from pymongo import MongoClient
@@ -363,7 +363,12 @@ class BaseController:
         if add_token and self.token:
             if not meta:
                 meta = {}
-            meta.update({'token': self.token})
+            user_info = self.get_user_info()
+            meta.update({
+                'user_display_name': user_info.get('display_name'),
+                'user_email': user_info.get('email'),
+                'user_id': user_info.get('id')
+            })
         task = {
             'organization_id': organization_id,
             'object_id': object_id,
@@ -392,7 +397,7 @@ class BaseController:
         return self._auth_client
 
     def get_user_id(self):
-        user_digest = hashlib.md5(self.token.encode('utf-8')).hexdigest()
+        user_digest = hashlib.md5(self.token.encode('utf-8'), usedforsecurity=False).hexdigest()
         _, token_meta = self.auth_client.token_meta_get([user_digest])
         return token_meta.get(user_digest, {}).get('user_id')
 
@@ -452,7 +457,7 @@ class BaseController:
     def delete(self, item_id):
         LOG.info("Deleting %s with id %s", self.model_type.__name__, item_id)
         return self.update(
-            item_id, deleted_at=int(datetime.utcnow().timestamp()))
+            item_id, deleted_at=opttime.utcnow_timestamp())
 
     def update(self, item_id, **kwargs):
         try:
@@ -561,9 +566,10 @@ class BaseController:
             raise WrongArgumentsException(Err.OE0435, [str(ex)])
         return user
 
-    def create_auth_user(self, email, password, name):
+    def create_auth_user(self, email, password, name, verified=False):
         try:
-            _, user = self.auth_client.user_create(email, password, name)
+            _, user = self.auth_client.user_create(
+                email, password, name, verified=verified)
         except requests.exceptions.HTTPError as ex:
             err_code = ex.response.json()['error']['error_code']
             if err_code == 'OA0042':

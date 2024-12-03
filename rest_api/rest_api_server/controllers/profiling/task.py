@@ -17,6 +17,7 @@ from rest_api.rest_api_server.controllers.profiling.leaderboard_template import 
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.enums import RunStates
 from rest_api.rest_api_server.models.models import Employee
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, ConflictException)
@@ -56,7 +57,7 @@ class TaskController(BaseProfilingController, RunCostsMixin):
         last_run_executor = None
         run_metrics = {}
         last_30_days_start = int(
-            (datetime.utcnow() - timedelta(days=30)).timestamp())
+            (utcnow() - timedelta(days=30)).timestamp())
         if runs:
             for r in runs:
                 run_cost = run_costs.get(r['id'], 0)
@@ -82,7 +83,7 @@ class TaskController(BaseProfilingController, RunCostsMixin):
 
             finish = last.get('finish')
             if not finish and last['state'] == RunStates.running:
-                finish = datetime.utcnow().timestamp()
+                finish = utcnow_timestamp()
 
             last_run_duration = finish - last.get('start') if finish else None
             last_run_cost = run_costs.get(last['id'], 0)

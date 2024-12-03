@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import get_nil_uuid
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp, utcnow
 
 DAY_IN_SECONDS = 86400
 
@@ -108,7 +109,7 @@ class TestBreakdownExpensesApi(TestApiBase):
         self.verify_error_code(response, 'OE0224')
 
     def test_breakdown_expenses_limit(self):
-        time = int(datetime.utcnow().timestamp())
+        time = utcnow_timestamp()
         code, response = self.client.breakdown_expenses_get(
             self.org_id, time, time + 1, 'pool_id', {'limit': 1})
         self.assertEqual(code, 400)
@@ -142,7 +143,7 @@ class TestBreakdownExpensesApi(TestApiBase):
 
     def test_breakdown_expenses_invalid_breakdown_by(self):
         for breakdown_by in [1, 'invalid']:
-            time = int(datetime.utcnow().timestamp())
+            time = utcnow_timestamp()
             code, response = self.client.breakdown_expenses_get(
                 self.org_id, time, time + 1, breakdown_by)
             self.assertEqual(code, 400)
@@ -159,21 +160,21 @@ class TestBreakdownExpensesApi(TestApiBase):
             {
                 'cloud_account_id': self.cloud_acc1['id'],
                 'resource_id': res1['id'],
-                'date': datetime.utcfromtimestamp(day_1_ts),
+                'date': utcfromtimestamp(day_1_ts),
                 'cost': 10,
                 'sign': 1
             },
             {
                 'cloud_account_id': self.cloud_acc2['id'],
                 'resource_id': res2['id'],
-                'date': datetime.utcfromtimestamp(day_2_ts),
+                'date': utcfromtimestamp(day_2_ts),
                 'cost': 20,
                 'sign': 1
             },
             {
                 'cloud_account_id': self.cloud_acc1['id'],
                 'resource_id': res1['id'],
-                'date': datetime.utcfromtimestamp(day_1_ts) - timedelta(days=1),
+                'date': utcfromtimestamp(day_1_ts) - timedelta(days=1),
                 'cost': 1,
                 'sign': 1
             },
@@ -207,7 +208,7 @@ class TestBreakdownExpensesApi(TestApiBase):
             self.expenses.append({
                 'cloud_account_id': res['cloud_account_id'],
                 'resource_id': res['id'],
-                'date': datetime.utcfromtimestamp(day_1_ts),
+                'date': utcfromtimestamp(day_1_ts),
                 'cost': 10,
                 'sign': 1
             })
@@ -268,7 +269,7 @@ class TestBreakdownExpensesApi(TestApiBase):
             last_seen=day_1_ts, region='us-none', service_name='service1',
             pool_id=self.sub_pool1['id'], employee_id=self.employee1['id']
         )
-        day_1 = datetime.utcfromtimestamp(day_1_ts)
+        day_1 = utcfromtimestamp(day_1_ts)
         self.expenses.extend([
             {
                 'cloud_account_id': self.cloud_acc1['id'],
@@ -462,7 +463,7 @@ class TestBreakdownExpensesApi(TestApiBase):
         })
 
     def test_no_expenses(self):
-        end_date = datetime.utcnow()
+        end_date = utcnow()
         start_date = end_date - timedelta(days=7)
         code, resp = self.client.breakdown_expenses_get(
             self.org_id, int(start_date.timestamp()), int(end_date.timestamp()))
@@ -698,7 +699,7 @@ class TestBreakdownExpensesApi(TestApiBase):
             last_seen=day_1_ts, region='us-none', service_name='service1',
             pool_id=self.sub_pool1['id'], employee_id=self.employee1['id']
         )
-        day_1 = datetime.utcfromtimestamp(day_1_ts)
+        day_1 = utcfromtimestamp(day_1_ts)
         self.expenses.extend([
             {
                 'cloud_account_id': self.cloud_acc1['id'],

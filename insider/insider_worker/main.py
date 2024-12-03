@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 import urllib3
 from etcd import Lock as EtcdLock
@@ -46,7 +46,7 @@ class InsiderWorker(ConsumerMixin):
                          callbacks=[self.process_task], prefetch_count=10)]
 
     def _process_task(self, task):
-        start_process_time = int(datetime.utcnow().timestamp())
+        start_process_time = int(datetime.now(tz=timezone.utc).timestamp())
         cloud_type = task.get('cloud_type')
         if not cloud_type:
             raise Exception('Invalid task received: {}'.format(task))
@@ -59,7 +59,7 @@ class InsiderWorker(ConsumerMixin):
         get_processor_class(cloud_type)(
             self.mongo_client, self.config_cl).process_prices()
 
-        end_process_time = int(datetime.utcnow().timestamp())
+        end_process_time = int(datetime.now(tz=timezone.utc).timestamp())
         self.discoveries.update_one(
             filter={'_id': discovery_id},
             update={'$set': {'completed_at': end_process_time}}

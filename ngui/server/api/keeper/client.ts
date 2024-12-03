@@ -18,17 +18,29 @@ class KeeperClient extends BaseClient {
       descriptionLike: "description_like",
     };
 
-    // This is temporary. All URL parameters must be strings.
-    // Mapping will be done elsewhere, not clear how at this point.
-    Object.entries(requestParams).forEach(([key, value]) => {
-      const stringValue = value.toString();
+    const appendParameter = (key, value) => {
+      const parameterName = paramsMapping[key];
 
-      const mappedParam = paramsMapping[key];
-
-      if (mappedParam) {
-        params.append(mappedParam, stringValue);
+      if (parameterName) {
+        params.append(parameterName, value);
       } else {
-        params.append(key, stringValue);
+        params.append(key, value);
+      }
+    };
+
+    /**
+     * This is temporary
+     * Mapping will be done elsewhere, not clear how at this point
+     */
+    Object.entries(requestParams).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        value.forEach((datum) => {
+          const stringValue = datum.toString();
+          appendParameter(key, stringValue);
+        });
+      } else {
+        const stringValue = value.toString();
+        appendParameter(key, stringValue);
       }
     });
 

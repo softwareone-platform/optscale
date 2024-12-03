@@ -25,10 +25,8 @@ class ObsoleteSnapshots(ObsoleteSnapshotsArchiveBase,
 
     def get_used_resources(self, now, cloud_account_id, cloud_config,
                            obsolete_threshold):
-        snapshots_used_by_images = {}
-        if cloud_config.get('type') == AWS_CLOUD:
-            snapshots_used_by_images = self.get_snapshots_used_by_images(
-                now, cloud_config)
+        snapshots_used_by_images = self.get_snapshots_used_by_images(
+            now, cloud_config)
         snapshots_using_volumes = self._get_snapshots_using_volumes(
             now, cloud_account_id)
         snapshots_used_by_volumes = self.get_snapshots_used_by_volumes(

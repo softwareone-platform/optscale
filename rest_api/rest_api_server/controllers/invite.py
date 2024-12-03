@@ -3,7 +3,7 @@ import json
 import logging
 import requests
 import uuid
-
+import tools.optscale_time as opttime
 from etcd import EtcdKeyNotFound
 
 from rest_api.rest_api_server.controllers.base import BaseController
@@ -127,7 +127,7 @@ class InviteController(BaseController):
                                 owner_id=user_id,
                                 meta=json.dumps(meta),
                                 ttl=int(
-                                    datetime.datetime.utcnow().timestamp() +
+                                    opttime.utcnow_timestamp() +
                                     datetime.timedelta(
                                         days=invite_expiration_days
                                     ).total_seconds()))
@@ -136,12 +136,14 @@ class InviteController(BaseController):
         if show_link:
             invite_dict['url'] = invite_url
         self.send_notification(
-            email, invite_url, organization.name, organization.id, organization.currency)
+            email, invite_url, organization.name, organization.id,
+            organization.currency)
         meta = {
             'object_name': organization.name,
             'email': email,
-            'scope_purposes': ', '.join('%s: %s' % (k, v)
-                                        for k, v in scope_name_role_map.items())
+            'scope_purposes': ', '.join(
+                '%s: %s' % (k, v.split('_')[-1])
+                for k, v in scope_name_role_map.items())
         }
 
         self.publish_activities_task(
@@ -196,12 +198,12 @@ class InviteController(BaseController):
 
     def delete_invite(self, invite):
         for invite_assignment in invite.invite_assignments:
-            invite_assignment.deleted_at = int(datetime.datetime.utcnow().timestamp())
+            invite_assignment.deleted_at = opttime.utcnow_timestamp()
         super().delete(invite.id)
 
     def list(self, user_id, user_info):
         invites = super().list(email=user_info['email'])
-        now = int(datetime.datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         result = []
         for invite in invites:
             if invite.ttl <= now:
@@ -223,7 +225,7 @@ class InviteController(BaseController):
 
     def _get_invite_for_email(self, invite_id, email):
         invite = super().get(item_id=invite_id, email=email)
-        now = int(datetime.datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         if not invite or invite.ttl <= now:
             if invite:
                 self.update(invite_id, deleted_at=now)

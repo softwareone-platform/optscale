@@ -2,11 +2,12 @@ import uuid
 from datetime import datetime
 import optscale_client.insider_client.client as insider_client
 from insider.insider_api.tests.unittests.test_api_base import TestBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestSimilarPricingsAPI(TestBase):
     def _discovery(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         discoveries = [
             {
                 'cloud_type': 'azure_cnr',
@@ -149,7 +150,7 @@ class TestSimilarPricingsAPI(TestBase):
             'armSkuName': 'Standard_A3', 'isPrimaryMeterRegion': True,
             'armRegionName': 'uknorth', 'tierMinimumUnits': 0.0,
             'productId': 'DZH318Z0BPVJ',
-            'last_seen': int(datetime.utcnow().timestamp())
+            'last_seen': utcnow_timestamp()
         }
         self.mongo_client.insider.azure_prices.insert_one(pr)
         code, resp = self.client.get_similar_pricings(

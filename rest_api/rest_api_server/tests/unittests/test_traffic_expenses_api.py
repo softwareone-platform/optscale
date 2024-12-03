@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 from unittest.mock import patch, ANY
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import get_nil_uuid
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestTrafficExpensesApi(TestApiBase):
@@ -123,7 +124,7 @@ class TestTrafficExpensesApi(TestApiBase):
         self.verify_error_code(response, 'OE0224')
 
     def test_limit(self):
-        time = int(datetime.utcnow().timestamp())
+        time = utcnow_timestamp()
         code, response = self.client.traffic_expenses_get(
             self.org_id, time, time + 1, {'limit': 1})
         self.assertEqual(code, 400)

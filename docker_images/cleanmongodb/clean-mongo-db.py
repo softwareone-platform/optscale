@@ -3,7 +3,7 @@ import os
 import logging
 from bson.objectid import ObjectId
 from optscale_client.config_client.client import Client as ConfigClient
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import MongoClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -39,6 +39,8 @@ class CleanMongoDB(object):
             self.mongo_client.arcee.artifact: ROWS_LIMIT,
             # linked to task_id
             self.mongo_client.arcee.run: ROWS_LIMIT,
+            # linked to organization_id
+            self.mongo_client.keeper.event: ROWS_LIMIT,
             # linked to profiling_token.token
             self.mongo_client.arcee.task: ROWS_LIMIT,
             self.mongo_client.arcee.dataset: ROWS_LIMIT,
@@ -248,7 +250,7 @@ class CleanMongoDB(object):
 
     def update_cleaned_at(self, cloud_account_id=None, organization_id=None):
         session = self.get_session()
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.now(tz=timezone.utc).timestamp())
         if cloud_account_id:
             LOG.info(
                 f'Updating cleaned_at for cloud account {cloud_account_id}')
@@ -319,6 +321,12 @@ class CleanMongoDB(object):
         if not token:
             self.update_cleaned_at(organization_id=org_id)
             return
+        keeper_collections = [
+            self.mongo_client.keeper.event
+        ]
+        # delete clusters resources
+        restapi_collections = [self.mongo_client.restapi.resources]
+        # delete ml objects
         arcee_collections = [self.mongo_client.arcee.dataset,
                              self.mongo_client.arcee.metric,
                              self.mongo_client.arcee.leaderboard_template,
@@ -327,7 +335,13 @@ class CleanMongoDB(object):
         bulldozer_collections = [self.mongo_client.bulldozer.template,
                                  self.mongo_client.bulldozer.runset,
                                  self.mongo_client.bulldozer.runner]
-        LOG.info('Start processing ML objects for organization %s', org_id)
+        LOG.info('Start processing objects for organization %s', org_id)
+        for collection in keeper_collections:
+            self.limits[collection] = self.delete_in_chunks(
+                collection, 'organization_id', org_id)
+        for collection in restapi_collections:
+            self.limits[collection] = self.delete_in_chunks(
+                collection, 'organization_id', org_id)
         for collection in arcee_collections:
             self.limits[collection] = self.delete_in_chunks(
                 collection, 'token', token)
@@ -369,7 +383,7 @@ class CleanMongoDB(object):
             org_id, token, infra_token = info
             self._delete_by_organization(org_id, token, infra_token)
             info = self.get_deleted_organization_info()
-        LOG.info('Organizations ML objects processing is completed')
+        LOG.info('Organizations objects processing is completed')
 
     def _delete_by_cloud_account(self, cloud_account_id, is_demo):
         restapi_collections = [self.mongo_client.restapi.raw_expenses,

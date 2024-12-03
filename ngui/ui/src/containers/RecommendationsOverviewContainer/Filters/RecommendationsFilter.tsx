@@ -5,8 +5,7 @@ import {
   CATEGORY_COST,
   CATEGORY_SECURITY,
   CATEGORY_CRITICAL,
-  CATEGORY_NON_EMPTY,
-  RECOMMENDATION_COLOR
+  CATEGORY_NON_EMPTY
 } from "../recommendations/BaseRecommendation";
 
 export const RECOMMENDATIONS_FILTERS = Object.freeze([
@@ -20,27 +19,6 @@ export const RECOMMENDATIONS_FILTERS = Object.freeze([
 export const POSSIBLE_RECOMMENDATIONS_FILTERS = RECOMMENDATIONS_FILTERS.map(({ id }) => id);
 
 export const DEFAULT_RECOMMENDATIONS_FILTER = RECOMMENDATIONS_FILTERS[0].id;
-
-export const categoryFilter = (category) => (recommendation) => {
-  if (category === CATEGORY_ALL) {
-    return true;
-  }
-
-  // two definitional categories
-  if ([CATEGORY_COST, CATEGORY_SECURITY].includes(category)) {
-    return recommendation.categories.includes(category);
-  }
-
-  if (category === CATEGORY_CRITICAL) {
-    return recommendation.color === RECOMMENDATION_COLOR.ERROR;
-  }
-
-  if (category === CATEGORY_NON_EMPTY) {
-    return recommendation.saving !== 0 && recommendation.count !== 0;
-  }
-
-  return true;
-};
 
 const RecommendationsFilter = ({ onChange, value }) => {
   const intl = useIntl();

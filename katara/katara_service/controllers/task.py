@@ -21,6 +21,7 @@ from tools.optscale_exceptions.common_exc import (
     WrongArgumentsException,
     NotFoundException
 )
+import tools.optscale_time as opttime
 
 
 LOG = logging.getLogger(__name__)
@@ -92,7 +93,7 @@ class TaskController(BaseController):
                     setattr(task, key, value)
                 self._validate(task, is_new=False, **kwargs)
                 if task.state == TaskState.completed.value:
-                    now = int(datetime.utcnow().timestamp())
+                    now = opttime.utcnow_timestamp()
                     task.completed_at = now
                     self.session.add(task)
                     # child obj changes are possible only if obj in session

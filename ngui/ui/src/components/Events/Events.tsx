@@ -1,13 +1,15 @@
 import { useEffect, useState, useMemo } from "react";
 import ErrorIcon from "@mui/icons-material/Error";
 import InfoIcon from "@mui/icons-material/Info";
-import { Stack } from "@mui/material";
+import PestControlIcon from "@mui/icons-material/PestControl";
+import { FormControlLabel, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import ActionBar from "components/ActionBar";
+import Checkbox from "components/Checkbox";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import LinearSelector from "components/LinearSelector";
 import PageContentWrapper from "components/PageContentWrapper";
@@ -83,6 +85,8 @@ const EVENT_LEVEL_ITEMS = [
 
 const DEFAULT_EVENT_LEVEL = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => itemValue === EVENT_LEVEL.ALL);
 
+const formatEventTime = (eventTime) => `${formatUTC(eventTime, EN_FULL_FORMAT)} UTC`;
+
 const EventLevelSelector = ({ eventLevel, onApply }) => {
   const getValue = () => {
     const { name, value } = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => eventLevel === itemValue) ?? DEFAULT_EVENT_LEVEL;
@@ -120,10 +124,11 @@ const EventIcon = ({ eventLevel }) =>
   ({
     [EVENT_LEVEL.INFO]: <InfoIcon fontSize="small" color="info" />,
     [EVENT_LEVEL.WARNING]: <ErrorIcon fontSize="small" color="warning" />,
-    [EVENT_LEVEL.ERROR]: <ErrorIcon fontSize="small" color="error" />
+    [EVENT_LEVEL.ERROR]: <ErrorIcon fontSize="small" color="error" />,
+    [EVENT_LEVEL.DEBUG]: <PestControlIcon fontSize="small" color="info" />
   })[eventLevel];
 
-const Events = ({ eventLevel, descriptionLike, onScroll, applyFilter, events, isLoading = false }) => {
+const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, applyFilter, events, isLoading = false }) => {
   const [expanded, setExpanded] = useState("");
   const queryParams = getQueryParams();
 
@@ -173,7 +178,7 @@ const Events = ({ eventLevel, descriptionLike, onScroll, applyFilter, events, is
       {
         name: <FormattedMessage id="date" />,
         dataTestId: "lbl_date",
-        value: `${formatUTC(event.time, EN_FULL_FORMAT)} UTC`
+        value: formatEventTime(event.time)
       },
       {
         name: <FormattedMessage id="objectName" />,
@@ -234,7 +239,7 @@ const Events = ({ eventLevel, descriptionLike, onScroll, applyFilter, events, is
             <EventIcon eventLevel={event.level} />
           </Box>
           <Typography variant="body2" noWrap>
-            {event.description}
+            {`${formatEventTime(event.time)} | ${event.description}`}
           </Typography>
         </Box>
         {getAccordionContent(event)}
@@ -245,7 +250,13 @@ const Events = ({ eventLevel, descriptionLike, onScroll, applyFilter, events, is
     const noEvents = isEmpty(events);
 
     if (noEvents) {
-      return isLoading ? <Loader /> : <FormattedMessage id="noEvents" />;
+      return isLoading ? (
+        <Loader />
+      ) : (
+        <Typography>
+          <FormattedMessage id="noEvents" />
+        </Typography>
+      );
     }
 
     return (
@@ -269,8 +280,22 @@ const Events = ({ eventLevel, descriptionLike, onScroll, applyFilter, events, is
       <PageContentWrapper>
         <Stack spacing={SPACING_1} height="100%">
           <Box display="flex" flexWrap="wrap" gap={SPACING_2}>
-            <Box>
-              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} />
+            <Box display="flex" gap={2}>
+              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} showDebugEvent={includeDebugEvents} />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={includeDebugEvents}
+                    onChange={() => {
+                      applyFilter({
+                        includeDebugEvents: !includeDebugEvents
+                      });
+                    }}
+                  />
+                }
+                label={<FormattedMessage id="showDebugEvents" />}
+              />
             </Box>
             <Box
               display="flex"

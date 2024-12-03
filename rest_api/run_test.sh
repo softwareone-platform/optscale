@@ -22,7 +22,7 @@ docker run -i --rm ${TEST_IMAGE} bash -c \
 echo "<<Alembic down revision tests"
 
 echo "Unit tests>>>"
-docker run -i --rm -v $PWD/rest_api/.clickhouse:/usr/src/app/rest_api/.clickhouse ${TEST_IMAGE} \
-    bash -c "./rest_api/prepare_clickhouse_local.sh docker && PYTHONPATH=. pytest -n auto rest_api --maxprocesses 3 --dist no --disable-warnings"
+docker run -i --rm ${TEST_IMAGE} \
+    bash -c "PYTHONPATH=. pytest -n auto rest_api --maxprocesses 3 --dist no --disable-warnings"
 echo "<<Unit tests"
 docker rmi ${TEST_IMAGE}

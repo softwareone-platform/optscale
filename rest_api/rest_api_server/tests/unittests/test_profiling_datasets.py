@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
     TestProfilingBase)
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestDatasetApi(TestProfilingBase):
@@ -45,8 +46,7 @@ class TestDatasetApi(TestProfilingBase):
 
     def test_create_incorrect_timespan(self):
         valid_dataset = self.valid_dataset.copy()
-        valid_dataset['timespan_from'] = int(
-            datetime.datetime.utcnow().timestamp()) + 100
+        valid_dataset['timespan_from'] = utcnow_timestamp() + 100
         code, dataset = self.client.dataset_create(
             self.organization_id, valid_dataset)
         self.assertEqual(code, 400)

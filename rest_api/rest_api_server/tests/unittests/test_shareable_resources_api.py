@@ -9,6 +9,7 @@ from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.google_calendar_client.client import CalendarException
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.exceptions import Err
+from tools.optscale_time import utcnow_timestamp
 
 DAY_SECONDS = 24 * 60 * 60
 
@@ -148,7 +149,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_unexpected_params(self):
         resource_id = self._create_resource()['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now - DAY_SECONDS
         schedule_book = {
             'resource_id': resource_id,
@@ -164,7 +165,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_invalid_int_param(self):
         resource_id = self._create_resource()['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         schedule_book = {
             'resource_id': resource_id,
             'acquired_by_id': self.employee_2['id'],
@@ -207,7 +208,7 @@ class TestShareableResourcesApi(TestApiBase):
             self.organization_id, env_resource)
         self.assertEqual(code, 201)
 
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now + DAY_SECONDS
         schedule_book = {
             'resource_id': resource['id'],
@@ -256,7 +257,7 @@ class TestShareableResourcesApi(TestApiBase):
         shareable_resource_1 = self._create_resource(tags={'type': 'val'})
         shareable_resource_1_id = shareable_resource_1['id']
         self.assertEqual(shareable_resource_1['shareable'], True)
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now + DAY_SECONDS
         released_at = since + DAY_SECONDS
         schedule_book = {
@@ -318,7 +319,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_invalid_dates(self):
         resource_id = self._create_resource()['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now + DAY_SECONDS
         schedule_book = {
             'resource_id': resource_id,
@@ -428,7 +429,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_create_duplicated_bookings(self):
         resource_id = self._create_resource()['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         released_at = now - DAY_SECONDS
         since = released_at - DAY_SECONDS
         schedule_book = {
@@ -447,7 +448,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_date_invalid_slot_create(self):
         resource_id = self._create_resource()['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         released_at = now - DAY_SECONDS
         since = released_at - DAY_SECONDS
         schedule_book = {
@@ -503,7 +504,7 @@ class TestShareableResourcesApi(TestApiBase):
     def test_patch_shareable(self):
         resource = self._create_resource()
         resource_id = resource['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         until = now + 2 * DAY_SECONDS
         schedule_book = {
             'resource_id': resource_id,
@@ -549,7 +550,7 @@ class TestShareableResourcesApi(TestApiBase):
     def test_patch_None_released_at(self):
         resource = self._create_resource()
         resource_id = resource['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         until = now + DAY_SECONDS
         schedule_book = {
             'resource_id': resource_id,
@@ -581,7 +582,7 @@ class TestShareableResourcesApi(TestApiBase):
     def test_patch_invalid_scope_period(self):
         resource = self._create_resource()
         resource_id = resource['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now + DAY_SECONDS
         until = since + DAY_SECONDS
         schedule_book = {
@@ -622,12 +623,12 @@ class TestShareableResourcesApi(TestApiBase):
         )
         code, response = self.client.shareable_book_release(
             book_1['id'], {
-                'released_at': int(datetime.utcnow().timestamp()) + 10})
+                'released_at': utcnow_timestamp() + 10})
         self.assertEqual(code, 400)
         self.assertEqual(response['error']['error_code'], 'OE0480')
 
     def test_shareable_resource_list(self):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         old_since = now - DAY_SECONDS
         old_until = now - 1
         since = now + DAY_SECONDS
@@ -668,7 +669,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_get_booking(self):
         resource = self._create_resource()
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource_id = resource['id']
         schedule_book = {
             'resource_id': resource_id,
@@ -697,7 +698,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_get_deleted_booking_event(self):
         resource = self._create_resource()
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource_id = resource['id']
         schedule_book = {
             'resource_id': resource_id,
@@ -725,7 +726,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_delete_booking_from_invalid_period(self):
         resource = self._create_resource(employee_id=self.employee_2['id'])
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource_id = resource['id']
         schedule_book = {
             'resource_id': resource_id,
@@ -775,7 +776,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_delete_booking_by_org_manager(self):
         resource = self._create_resource()
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource_id = resource['id']
         schedule_book = {
             'resource_id': resource_id,
@@ -813,7 +814,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def test_create_booking_in_past(self):
         resource = self._create_resource()
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now - DAY_SECONDS
         resource_id = resource['id']
         schedule_book = {
@@ -881,7 +882,7 @@ class TestShareableResourcesApi(TestApiBase):
         p_update_event = patch(
             'rest_api.google_calendar_client.client.GoogleCalendarClient.update_event'
         ).start()
-        dt = int(datetime.utcnow().timestamp()) + 1000
+        dt = utcnow_timestamp() + 1000
         code, response = self.client.shareable_book_release(
             booking['id'], {'released_at': dt})
         self.assertEqual(code, 200)
@@ -937,7 +938,7 @@ class TestShareableResourcesApi(TestApiBase):
                 self.organization_id, schedule_book)
         self.assertEqual(code, 201)
 
-        dt = int(datetime.utcnow().timestamp()) + 1000
+        dt = utcnow_timestamp() + 1000
         patch(
             'rest_api.google_calendar_client.client.GoogleCalendarClient.list_events',
             return_value=[event]
@@ -1000,7 +1001,7 @@ class TestShareableResourcesApi(TestApiBase):
         self.assertEqual(response['bookings'], [])
 
         # only future and current bookings are returned
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         now_until = now + DAY_SECONDS - 1
         old_since = now - DAY_SECONDS
         old_until = now - 1
@@ -1029,13 +1030,26 @@ class TestShareableResourcesApi(TestApiBase):
         self.assertEqual(code, 404)
         self.assertEqual(response['error']['error_code'], 'OE0002')
 
+    def test_get_bookings_for_cluster(self):
+        code, cluster_type = self.client.cluster_type_create(
+            self.organization_id, {'name': 'cluster', 'tag_key': 'type'})
+        self._create_resource(is_shareable=False, tags={'type': 'val'})
+        self.client.cluster_types_apply(self.organization_id)
+        cluster = next(
+            self.resources_collection.find({'cluster_type_id': cluster_type[
+                'id']}))
+        self.resources_collection.update_one(
+            {'_id': cluster['_id']}, {'$set': {'shareable': True}})
+        code, response = self.client.resource_bookings_get(cluster['_id'])
+        self.assertEqual(code, 200)
+
     def test_bookings_list_for_organization(self):
         resource = self._create_resource()
         code, response = self.client.resource_bookings_get(resource['id'])
         self.assertEqual(code, 200)
         self.assertEqual(response['bookings'], [])
 
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         now_until = now + DAY_SECONDS - 1
         old_since = now - DAY_SECONDS
         old_until = now - 1
@@ -1067,7 +1081,7 @@ class TestShareableResourcesApi(TestApiBase):
     def test_patch_current_booking(self):
         resource = self._create_resource()
         resource_id = resource['id']
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         since = now - DAY_SECONDS
         until = now - 100
         schedule_book = {
@@ -1275,7 +1289,7 @@ class TestShareableResourcesApi(TestApiBase):
     def test_autorelease(self):
         for autorelease in [True, False]:
             resource = self._create_resource(employee_id=self.employee['id'])
-            now = int(datetime.utcnow().timestamp())
+            now = utcnow_timestamp()
             resource_id = resource['id']
             schedule_book = {
                 'resource_id': resource_id,

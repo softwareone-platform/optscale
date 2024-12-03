@@ -93,12 +93,13 @@ class Client(Client_v1):
         return code, response
 
     def user_create(self, email, password, display_name, is_active=True,
-                    id=None):
+                    id=None, verified=False):
         body = {
             "email": email,
             "password": password,
             "display_name": display_name,
-            "is_active": is_active
+            "is_active": is_active,
+            "verified": verified
         }
         if id is None:
             return self.post(self.user_url(), body)

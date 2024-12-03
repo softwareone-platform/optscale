@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { AppBar, Box, CircularProgress, Link, Paper, Toolbar } from "@mui/material";
 import { FormattedMessage } from "react-intl";
@@ -6,7 +6,7 @@ import IconButton from "components/IconButton";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import Markdown from "components/Markdown";
 import SideModalTitle from "components/SideModalTitle";
-import CommunityDocsContext from "contexts/CommunityDocsContext/CommunityDocsContext";
+import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useRoutePath } from "hooks/useRoutePath";
 import { intl } from "translations/react-intl-config";
 import { GITHUB_HYSTAX_OPTSCALE_REPO, getDocsFileUrl } from "urls";
@@ -30,7 +30,7 @@ const DocumentationUrl = ({ url }: { url: string }) => <strong>ngui/ui/public{ur
 
 const DocsPanel = () => {
   const { classes } = useStyles();
-  const { isCommunityDocsOpened, setIsCommunityDocsOpened } = useContext(CommunityDocsContext);
+  const { isCommunityDocsOpened, toggleCommunityDocs } = useCommunityDocsContext();
 
   const [status, setStatus] = useState(STATUSES.LOADING);
 
@@ -79,7 +79,7 @@ const DocsPanel = () => {
           <SideModalTitle sx={{ flexGrow: 1 }}>
             <FormattedMessage id="communityDocs" />
           </SideModalTitle>
-          <IconButton icon={<CloseIcon />} onClick={setIsCommunityDocsOpened} color="inherit" />
+          <IconButton icon={<CloseIcon />} onClick={toggleCommunityDocs} color="inherit" />
         </Toolbar>
       </AppBar>
       <Box className={classes.content}>

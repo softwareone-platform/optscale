@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from freezegun import freeze_time
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestOrganizationLimitHits(TestApiBase):
@@ -57,7 +58,7 @@ class TestOrganizationLimitHits(TestApiBase):
 
     def test_create_limit_hit_with_created_at(self):
         params = self.valid_hit_params.copy()
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         params['created_at'] = now
         code, resp = self.client.organization_limit_hit_create(
             self.org_id, params)
@@ -228,7 +229,7 @@ class TestOrganizationLimitHits(TestApiBase):
         value = 44.44
         run_result = {
             'average': 10, 'today': value,
-            'breakdown': {int(datetime.utcnow().timestamp()): 10}
+            'breakdown': {utcnow_timestamp(): 10}
         }
         params = {"constraint_limit": limit, "value": value,
                   'run_result': run_result}

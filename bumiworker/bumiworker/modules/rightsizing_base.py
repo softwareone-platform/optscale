@@ -2,7 +2,7 @@ from enum import Enum
 import logging
 
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from math import ceil
 
 import re
@@ -10,7 +10,7 @@ from requests import HTTPError
 
 from optscale_client.insider_client.client import Client as InsiderClient
 from optscale_client.metroculus_client.client import Client as MetroculusClient
-
+from tools.optscale_time import utcnow
 from bumiworker.bumiworker.modules.base import (
     ModuleBase, ArchiveBase, ArchiveReason
 )
@@ -100,7 +100,7 @@ class RightsizingBase(ModuleBase):
 
     @staticmethod
     def get_common_match_pipeline(resource_ids, cloud_account_ids):
-        now = datetime.utcnow()
+        now = utcnow()
         return {
             '$match': {
                 '$and': [
@@ -369,7 +369,7 @@ class RightsizingBase(ModuleBase):
         self.cloud_account_map = self.get_cloud_accounts(
             supported_types, skip_cloud_accounts)
 
-        min_dt = datetime.utcnow() - timedelta(days=days_threshold)
+        min_dt = utcnow() - timedelta(days=days_threshold)
         instances = self._get_instances(list(self.cloud_account_map.keys()),
                                         int(min_dt.timestamp()))
 
@@ -418,7 +418,7 @@ class RightsizingBase(ModuleBase):
 
     def get_base_agr_cpu_metric(self, cloud_account_id, resource_ids,
                                 days_threshold):
-        now = datetime.utcnow()
+        now = utcnow()
         start = now - timedelta(days=days_threshold)
         _, metrics = self.metroculus_cl.get_aggregated_metrics(
             cloud_account_id, resource_ids, int(start.timestamp()),
@@ -668,7 +668,7 @@ class RightsizingArchiveBase(ArchiveBase, RightsizingBase):
         days_threshold = previous_options['days_threshold']
 
         cloud_acc_instances_map = defaultdict(dict)
-        min_dt = datetime.utcnow() - timedelta(days=days_threshold)
+        min_dt = utcnow() - timedelta(days=days_threshold)
         for cloud_acc_id, instances in self._get_instances(
                 list(cloud_accounts_map.keys()),
                 int(min_dt.timestamp())).items():

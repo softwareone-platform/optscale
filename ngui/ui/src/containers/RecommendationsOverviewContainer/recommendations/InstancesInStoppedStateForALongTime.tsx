@@ -5,7 +5,7 @@ import InstancesInStoppedStateForALongTimeModal from "components/SideModalManage
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AZURE_COMPUTE } from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { EN_FULL_FORMAT, unixTimestampToDateTime } from "utils/datetime";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
@@ -67,6 +67,8 @@ class InstancesInStoppedStateForALongTime extends BaseRecommendation {
   emptyMessageId = "noInstanceMigrationsInStoppedState";
 
   services = [AZURE_COMPUTE, ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR, AZURE_CNR];
 
   categories = [CATEGORY_COST];
 

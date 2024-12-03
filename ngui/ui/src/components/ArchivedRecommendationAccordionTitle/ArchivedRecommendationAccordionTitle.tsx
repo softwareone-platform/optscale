@@ -25,14 +25,11 @@ const StyledKeyValueChip = ({ keyMessageId, value }: StyledKeyValueChipProps) =>
     variant="outlined"
     sx={{
       // Override the border color to make it contrast with the background when an accordion is expanded
-      borderColor: (theme) => theme.palette.info.dark
+      borderColor: (theme) => theme.palette.info.dark,
+      // Override the text color to make it contrast with the background when an accordion is expanded
+      color: "inherit"
     }}
-    label={
-      // Wrap with typography to inherit its text color setting to make the label contrast with the background
-      <Typography>
-        <KeyValueLabel keyMessageId={keyMessageId} isBoldValue={false} value={value} />
-      </Typography>
-    }
+    label={<KeyValueLabel keyMessageId={keyMessageId} isBoldValue={false} value={value} />}
   />
 );
 

@@ -26,6 +26,8 @@ class RestClient extends BaseClient {
     const dataSource = await this.patch(path, {
       body: JSON.stringify({
         name: params.name,
+        last_import_at: params.lastImportAt,
+        last_import_modified_at: params.lastImportModifiedAt,
         config: {
           ...params.awsRootConfig,
           ...params.awsLinkedConfig,

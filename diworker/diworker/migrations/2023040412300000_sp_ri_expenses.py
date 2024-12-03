@@ -1,7 +1,7 @@
 import logging
 from clickhouse_driver import Client as ClickHouseClient
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from diworker.diworker.importers.aws import AWSReportImporter
 from diworker.diworker.migrations.base import BaseMigration
@@ -105,7 +105,7 @@ class Migration(BaseMigration):
     @staticmethod
     def get_months(start_date):
         months_starts = []
-        end_date = datetime.utcnow()
+        end_date = datetime.now(tz=timezone.utc).replace(tzinfo=None)
         while start_date < end_date:
             months_starts.append(start_date)
             start_date = start_date + relativedelta(months=1)
@@ -197,7 +197,7 @@ class Migration(BaseMigration):
         old_cloud_res_ids = set()
         new_cloud_res_ids = set()
         affected_cloud_res_ids = set()
-        min_date = datetime.utcnow()
+        min_date = datetime.now(tz=timezone.utc).replace(tzinfo=None)
         update_count = 0
         for i in range(0, len(ri_sp_expenses), RAW_EXPENSES_CHUNK_SIZE):
             raw_expenses_ids_chunk = ri_sp_expenses[i:i+RAW_EXPENSES_CHUNK_SIZE]

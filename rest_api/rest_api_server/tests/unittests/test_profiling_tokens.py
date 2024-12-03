@@ -67,3 +67,15 @@ class TestProfilingTokensApi(TestApiBase):
         code, resp = self.client.profiling_token_get(self.org['id'])
         self.assertEqual(code, 200)
         self.assertEqual(len(self._get_db_profiling_tokens(self.org['id'])), 1)
+
+    def test_get_token_info(self):
+        code, token = self.client.profiling_token_get(self.org['id'])
+        self.assertEqual(code, 200)
+        code, data = self.client.profiling_token_info_get(token['token'])
+        self.assertEqual(code, 200)
+        self.assertEqual(data['organization_id'], self.org['id'])
+
+    def test_get_invalid_token_info(self):
+        code, data = self.client.profiling_token_info_get('token')
+        self.assertEqual(code, 404)
+        self.assertEqual(data['error']['error_code'], 'OE0002')

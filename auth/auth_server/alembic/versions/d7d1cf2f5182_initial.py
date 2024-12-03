@@ -11,7 +11,7 @@ import enum
 import uuid
 import string
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import (Column, String, Integer, ForeignKey, Table,
@@ -40,7 +40,7 @@ def gen_salt():
 
 
 def get_current_timestamp():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 def create_tables():

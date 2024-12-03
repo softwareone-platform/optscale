@@ -3,6 +3,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { AWS_S3, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, resource, resourceLocation } from "utils/columns";
+import { AWS_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
 
 const columns = [
@@ -58,6 +59,8 @@ class PublicS3Buckets extends BaseRecommendation {
   emptyMessageId = "noPublicS3Buckets";
 
   services = [AWS_S3, NEBIUS_SERVICE];
+
+  appliedDataSources = [AWS_CNR, NEBIUS];
 
   categories = [CATEGORY_SECURITY];
 

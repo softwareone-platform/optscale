@@ -17,10 +17,12 @@ class TestInviteApi(TestApiBase):
         self.user_id = self.gen_id()
         self._mock_auth_user(self.user_id)
         patch(
-            'rest_api.rest_api_server.controllers.invite.InviteController.check_user_exists',
+            'rest_api.rest_api_server.controllers.invite.'
+            'InviteController.check_user_exists',
             return_value=(False, {})).start()
         patch(
-            'rest_api.rest_api_server.controllers.invite.InviteController.get_invite_expiration_days',
+            'rest_api.rest_api_server.controllers.invite.'
+            'InviteController.get_invite_expiration_days',
             return_value=30).start()
         _, root_organization = self.client.organization_create(
             {'name': 'root org'})
@@ -78,15 +80,17 @@ class TestInviteApi(TestApiBase):
                 'role_scope': None
             }]
 
-        patch('rest_api.rest_api_server.controllers.invite.InviteController.'
-              'get_user_auth_assignments', return_value=user_assignments).start()
-        patch('rest_api.rest_api_server.controllers.employee.EmployeeController.'
-              'notification_domain_blacklist').start()
+        patch('rest_api.rest_api_server.controllers.invite.'
+              'InviteController.get_user_auth_assignments',
+              return_value=user_assignments).start()
+        patch('rest_api.rest_api_server.controllers.employee.'
+              'EmployeeController.notification_domain_blacklist').start()
         self.mock_user_info(self.owner_email)
 
     def mock_user_info(self, email, name='default'):
         patch(
-            'rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler._get_user_info',
+            'rest_api.rest_api_server.handlers.v1.base.'
+            'BaseAuthHandler._get_user_info',
             return_value={
                 'id': self.user_id,
                 'display_name': name,
@@ -159,7 +163,8 @@ class TestInviteApi(TestApiBase):
             'initiator_email': 'user@ema.il',
             'user_email': self.email_2,
             'scope_purposes': '%s: %s' % (
-                self.org_name, 'optscale_engineer')  # org name is equal to root pool name
+                # org name is equal to root pool name
+                self.org_name, 'optscale_engineer')
         }
         self.p_get_user_info.return_value = {
             'display_name': fmt_args['initiator_name'], 'id': self._user_id,
@@ -174,7 +179,8 @@ class TestInviteApi(TestApiBase):
             'employee_invited', {
                 'object_name': self.org_name,
                 'email': self.email_2,
-                'scope_purposes': '%s: %s' % (self.org_name, 'optscale_engineer')
+                'scope_purposes': '%s: %s' % (self.org_name,
+                                              'engineer')
             })
         p_publish_activities.assert_called_once_with(
             *activity_param_tuples, add_token=True
@@ -190,7 +196,8 @@ class TestInviteApi(TestApiBase):
             'initiator_email': 'user@ema.il',
             'user_email': self.email_2,
             'scope_purposes': '%s: %s' % (
-                self.org_name, 'optscale_member')  # org name is equal to root pool name
+                # org name is equal to root pool name
+                self.org_name, 'optscale_member')
         }
         self.p_get_user_info.return_value = {
             'display_name': fmt_args['initiator_name'], 'id': self._user_id,
@@ -205,7 +212,7 @@ class TestInviteApi(TestApiBase):
             'employee_invited', {
                 'object_name': self.org_name,
                 'email': self.email_2,
-                'scope_purposes': '%s: %s' % (self.org_name, 'optscale_member')
+                'scope_purposes': '%s: %s' % (self.org_name, 'member')
             })
         p_publish_activities.assert_called_once_with(
             *activity_param_tuples, add_token=True

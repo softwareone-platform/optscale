@@ -13,6 +13,7 @@ from katara.katara_worker.reports_generators.report import create_report
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.katara_client.client import Client as KataraClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow_timestamp
 
 
 LOG = get_logger(__name__)
@@ -139,16 +140,15 @@ class Continue(Base):
 
 class UpdateTimeout(Continue):
     def execute(self):
-        self.body['last_update'] = int(
-            datetime.datetime.utcnow().timestamp())
+        self.body['last_update'] = utcnow_timestamp()
         super().execute()
 
 
 class CheckTimeoutThreshold(UpdateTimeout):
     def execute(self):
         # MAX_UPDATE_THRESHOLD from last step execution exceeded
-        if (int(datetime.datetime.utcnow().timestamp()) -
-                self.body['last_update'] > MAX_UPDATE_THRESHOLD):
+        if (utcnow_timestamp() - self.body['last_update'] >
+                MAX_UPDATE_THRESHOLD):
             raise KataraTaskTimeoutError()
         super().execute()
 

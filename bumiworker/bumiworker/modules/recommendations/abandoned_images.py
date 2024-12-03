@@ -1,7 +1,8 @@
 import logging
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from bumiworker.bumiworker.modules.abandoned_base import AbandonedBase
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class AbandonedImages(AbandonedBase):
             SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         cloud_accounts = list(cloud_account_map.values())
         cloud_accounts_ids = list(cloud_account_map.keys())
-        starting_point = datetime.utcnow() - timedelta(days=days_threshold)
+        starting_point = utcnow() - timedelta(days=days_threshold)
         employees = self.get_employees()
         pools = self.get_pools()
 

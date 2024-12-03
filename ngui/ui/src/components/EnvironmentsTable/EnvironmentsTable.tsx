@@ -37,8 +37,6 @@ import { SPACING_1 } from "utils/layouts";
 import { getCloudResourceIdentifier, getResourceDisplayedName } from "utils/resources";
 import { CELL_EMPTY_VALUE } from "utils/tables";
 
-const NAME_COLUMN_ACCESSOR = "displayedName";
-
 const renderEnvironmentCell = ({ resource, index }) => {
   const { id, name, resource_type: resourceType, ssh_only: requireSshKey } = resource;
 
@@ -82,15 +80,6 @@ const getUpcomingBookings = (allBookings, id) =>
     .filter((booking) => booking.resource_id === id && booking.acquired_since > millisecondsToSeconds(Date.now()))
     .sort((a, b) => a.acquired_since - b.acquired_since);
 
-const getTableData = (data) => {
-  const patchedWithDisplayedName = data.map((obj) => ({
-    ...obj,
-    // used for sorting
-    [NAME_COLUMN_ACCESSOR]: obj.name || obj.cloud_resource_id || obj.cloud_resource_hash
-  }));
-  return patchedWithDisplayedName;
-};
-
 const getUniqueSortedEnvironmentProperties = (data) => {
   const allEnvironmentProperties = data.flatMap(({ env_properties: envProperties = {} }) => Object.keys(envProperties));
   return [...new Set(allEnvironmentProperties)].sort();
@@ -99,7 +88,6 @@ const getUniqueSortedEnvironmentProperties = (data) => {
 const getProductTourIdForDynamicField = (field) => ENVIRONMENT_TOUR_IDS_BY_DYNAMIC_FIELDS[field] || undefined;
 
 const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = {} }) => {
-  const memoizedData = useMemo(() => getTableData(data), [data]);
   const openSideModal = useOpenSideModal();
 
   const {
@@ -107,6 +95,8 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
     isUpdateEnvironmentLoading = false,
     isGetResourceAllowedActionsLoading = false
   } = isLoadingProps;
+
+  const tableData = useMemo(() => data, [data]);
 
   const columns = useMemo(() => {
     const getDeleteAction = ({ id, name }, index) => ({
@@ -213,7 +203,8 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
             <FormattedMessage id="environment" />
           </TextWithDataTestId>
         ),
-        accessorKey: NAME_COLUMN_ACCESSOR,
+        id: "name",
+        accessorFn: (originalRow) => getResourceDisplayedName(originalRow),
         enableHiding: false,
         cell: ({ row: { original, index } }) =>
           renderEnvironmentCell({
@@ -370,9 +361,9 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
       }
     ];
 
-    const envPropertiesColumns = getUniqueSortedEnvironmentProperties(memoizedData).map((field) => ({
+    const envPropertiesColumns = getUniqueSortedEnvironmentProperties(tableData).map((field) => ({
       header: <TextWithDataTestId dataTestId={`lbl_environment_property_${field}`}>{field}</TextWithDataTestId>,
-      accessorFn: (originalRow) => originalRow.env_properties?.[field],
+      accessorFn: (originalRow) => originalRow.env_properties?.[field] ?? "",
       id: `env_properties.${field}`,
       columnSelector: {
         accessor: `env_properties.${field}`,
@@ -388,11 +379,19 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
          */
         maxWidth: 550
       },
-      cell: ({ cell }) => (
-        <Box overflow="auto">
-          <Markdown>{cell.getValue()}</Markdown>
-        </Box>
-      )
+      cell: ({ cell }) => {
+        const value = cell.getValue();
+
+        if (value === "") {
+          return CELL_EMPTY_VALUE;
+        }
+
+        return (
+          <Box overflow="auto">
+            <Markdown>{cell.getValue()}</Markdown>
+          </Box>
+        );
+      }
     }));
 
     return [
@@ -416,7 +415,7 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
         )
       }
     ];
-  }, [isUpdateEnvironmentLoading, entityId, isGetResourceAllowedActionsLoading, onUpdateActivity, memoizedData, openSideModal]);
+  }, [isUpdateEnvironmentLoading, entityId, isGetResourceAllowedActionsLoading, onUpdateActivity, tableData, openSideModal]);
 
   return isGetEnvironmentsLoading ? (
     <TableLoader columnsCounter={5} showHeader />
@@ -442,7 +441,7 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
           ]
         }
       }}
-      data={memoizedData}
+      data={tableData}
       columns={columns}
       withSearch
       pageSize={50}

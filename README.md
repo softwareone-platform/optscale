@@ -124,7 +124,7 @@ Run the following command:
 ansible-playbook -e "ansible_ssh_user=<user>" -k -K -i "<ip address>," ansible/k8s-master.yaml
 ```
 
-where <user> - actual username; <ip address> - host ip address,
+where `<user>` - actual username; `<ip address>` - host ip address,
 ip address should be private address of the machine, you can check it with
 
 ```
@@ -136,6 +136,8 @@ If your deployment server is the service-host server, add `"ansible_connection=l
 #### Creating user overlay
 
 Edit file with overlay - [optscale-deploy/overlay/user_template.yml](optscale-deploy/overlay/user_template.yml); see comments in overlay file for guidance.
+
+Pay attention to "service_credentials" parameter, as OptScale uses it to retrieve cloud pricing data for recommendations calculation.
 
 #### Cluster installation
 
@@ -156,10 +158,13 @@ or if you want to use socket:
 
 **version**:
 
-- Use hystax/optscale git tag (eg: 2023110701-public) if you use optscale public version.
-- Use your own tag version if you build your optscale images (eg: latest).
+- Use hystax/optscale git tag (eg: latest) if you use optscale public version.
+- Use your own tag version if you build your optscale images (eg: local).
 
 **please note**: if you use key authentication, you should have the required key (id_rsa) on the machine
+
+Check the state of the pods using `kubectl get pods` command.
+When all of the pods are running your OptScale is ready to use. Try to access it by `https://<ip address>`.
 
 #### Cluster update
 

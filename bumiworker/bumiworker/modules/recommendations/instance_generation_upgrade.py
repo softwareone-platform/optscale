@@ -1,5 +1,5 @@
 import logging
-
+from requests.exceptions import HTTPError
 from collections import OrderedDict, defaultdict
 from datetime import datetime, timedelta, timezone
 from optscale_client.insider_client.client import Client as InsiderClient
@@ -113,9 +113,10 @@ class InstanceGenerationUpgrade(ModuleBase):
                 os_type = instance['meta'].get('os') or raw_info.get('os')
                 preinstalled = raw_info.get('software')
                 current_daily_cost = self.get_current_daily_cost(raw_info)
+                region = instance['region']
                 generation_params = {
                     'cloud_type': cloud_type,
-                    'region': instance['region'],
+                    'region': region,
                     'current_flavor': flavor,
                     'os_type': os_type,
                 }
@@ -123,8 +124,15 @@ class InstanceGenerationUpgrade(ModuleBase):
                     generation_params['preinstalled'] = preinstalled
                 if meter_id and cloud_type == 'azure_cnr':
                     generation_params['meter_id'] = meter_id
-                _, gen_resp = self.insider_cl.find_flavor_generation(
-                    **generation_params, currency=currency)
+                try:
+                    _, gen_resp = self.insider_cl.find_flavor_generation(
+                        **generation_params, currency=currency)
+                except HTTPError as exc:
+                    if f'Region {region} is not available' in str(exc):
+                        LOG.warning(str(exc))
+                        continue
+                    else:
+                        raise
                 if not gen_resp:
                     stats_map[cloud_account_id][
                         'not_found_recommended_flavors'] += 1

@@ -7,6 +7,7 @@ import { ALL_SERVICES, useRecommendationServices } from "hooks/useRecommendation
 import { useRiSpExpensesSummary } from "hooks/useRiSpExpensesSummary";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import OrganizationOptionsService from "services/OrganizationOptionsService";
+import RecommendationsOverviewService from "services/RecommendationsOverviewService";
 import {
   RECOMMENDATION_CATEGORY_QUERY_PARAMETER,
   RECOMMENDATION_SERVICE_QUERY_PARAMETER,
@@ -14,9 +15,7 @@ import {
 } from "urls";
 import { RECOMMENDATIONS_LIMIT_FILTER } from "utils/constants";
 import { DEFAULT_RECOMMENDATIONS_FILTER, DEFAULT_VIEW, POSSIBLE_RECOMMENDATIONS_FILTERS, POSSIBLE_VIEWS } from "./Filters";
-
 import RecommendationsOverview from "./RecommendationsOverview";
-import RecommendationsOverviewService from "./RecommendationsOverviewService";
 import {
   setCategory as setCategoryActionCreator,
   setService as setServiceActionCreator,
@@ -27,7 +26,15 @@ import { VALUE_ACCESSORS } from "./redux/controlsState/reducer";
 
 const OPTION_PREFIX = "recommendation_";
 
-const RecommendationsOverviewContainer = ({ selectedDataSources }) => {
+type RecommendationsOverviewContainerProps = {
+  selectedDataSourceIds: string[];
+  selectedDataSourceTypes: string[];
+};
+
+const RecommendationsOverviewContainer = ({
+  selectedDataSourceIds,
+  selectedDataSourceTypes
+}: RecommendationsOverviewContainerProps) => {
   const { useGet, useGetRecommendationsDownloadOptions } = OrganizationOptionsService();
   const { options: downloadOptions } = useGetRecommendationsDownloadOptions();
   const { options } = useGet(true);
@@ -63,7 +70,7 @@ const RecommendationsOverviewContainer = ({ selectedDataSources }) => {
 
   const { useGetOptimizationsOverview } = RecommendationsOverviewService();
 
-  const { data, isDataReady } = useGetOptimizationsOverview(selectedDataSources);
+  const { data, isDataReady } = useGetOptimizationsOverview(selectedDataSourceIds);
 
   const optscaleRecommendations = useOptscaleRecommendations();
 
@@ -87,15 +94,16 @@ const RecommendationsOverviewContainer = ({ selectedDataSources }) => {
         type: recommendation.type,
         titleMessageId: recommendation.title,
         limit: downloadLimit,
-        dataSourceIds: selectedDataSources,
+        dataSourceIds: selectedDataSourceIds,
         dismissable: recommendation.dismissable,
         withExclusions: recommendation.withExclusions
       });
     },
-    [downloadLimit, openSideModal, selectedDataSources]
+    [downloadLimit, openSideModal, selectedDataSourceIds]
   );
 
-  const { isLoading: isRiSpExpensesSummaryLoading, summary: riSpExpensesSummary } = useRiSpExpensesSummary(selectedDataSources);
+  const { isLoading: isRiSpExpensesSummaryLoading, summary: riSpExpensesSummary } =
+    useRiSpExpensesSummary(selectedDataSourceIds);
 
   const { isLoading: isGetIsDownloadAvailableLoading, isDownloadAvailable } = useGetIsRecommendationsDownloadAvailable();
 
@@ -122,7 +130,8 @@ const RecommendationsOverviewContainer = ({ selectedDataSources }) => {
       isRiSpExpensesSummaryLoading={isRiSpExpensesSummaryLoading}
       isDownloadAvailable={isDownloadAvailable}
       isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-      selectedDataSources={selectedDataSources}
+      selectedDataSourceIds={selectedDataSourceIds}
+      selectedDataSourceTypes={selectedDataSourceTypes}
     />
   );
 };

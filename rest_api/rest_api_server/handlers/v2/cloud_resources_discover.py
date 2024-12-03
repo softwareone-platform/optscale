@@ -53,6 +53,8 @@ class CloudResourceDiscoverAsyncCollectionHandler(
                 - azure_cnr
                 - kubernetes_cnr
                 - alibaba_cnr
+                - gcp_cnr
+                - nebius
             required: false
             type: string
         -   name: cached

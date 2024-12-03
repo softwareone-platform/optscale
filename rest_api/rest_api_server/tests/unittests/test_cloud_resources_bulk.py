@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, timezone
+import tools.optscale_time as opttime
+from datetime import datetime
 from unittest.mock import patch
 
 from freezegun import freeze_time
@@ -130,7 +131,7 @@ class TestCloudResourceApi(TestApiBase):
                 obj[field] = val
         obj.pop('resource_id', None)
         obj['resource_type'] = resource_type_map.get(model)
-        obj['last_seen'] = int(datetime.utcnow().timestamp())
+        obj['last_seen'] = opttime.utcnow_timestamp()
         obj['active'] = active
         obj['meta'] = getattr(cad_resource, 'meta')
         return obj
@@ -325,7 +326,7 @@ class TestCloudResourceApi(TestApiBase):
             self.org1_id, self.cloud_acc1_id, 'cloud_account',
             'resources_discovered', {
                 'object_name': self.cloud_acc1['name'],
-                'stat': {'total': 1, 'clusters': [], 'clustered': 0}
+                'total': 1, 'clusters': 0, 'clustered': 0
             })
         publish_discovered_cluster_resource_activity.assert_called_once_with(
             *activity_param_tuples, add_token=True)
@@ -660,7 +661,7 @@ class TestCloudResourceApi(TestApiBase):
 
         volume.attached = True
         resource = self._to_discovered_resource(volume)
-        cache_update_time1 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time1 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time1)):
             code, result = self.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]}, behavior='update_existing',
@@ -717,7 +718,7 @@ class TestCloudResourceApi(TestApiBase):
 
         instance.stopped_allocated = False
         resource = self._to_discovered_resource(instance)
-        cache_update_time1 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time1 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time1)):
             code, result = self.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]},
@@ -777,7 +778,7 @@ class TestCloudResourceApi(TestApiBase):
 
         instance.stopped_allocated = None
         resource = self._to_discovered_resource(instance)
-        with freeze_time(datetime.fromtimestamp(int(datetime.utcnow().timestamp()))):
+        with freeze_time(datetime.fromtimestamp(opttime.utcnow_timestamp())):
             code, result = self.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]},
                 behavior='update_existing', return_resources=True)
@@ -789,7 +790,7 @@ class TestCloudResourceApi(TestApiBase):
 
         instance.stopped_allocated = False
         resource = self._to_discovered_resource(instance)
-        cache_update_time1 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time1 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time1)):
             code, result = self.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]},
@@ -837,7 +838,7 @@ class TestCloudResourceApi(TestApiBase):
         # if in the first discover we got invalid status from Azure
         instance.stopped_allocated = None
         resource = self._to_discovered_resource(instance)
-        with freeze_time(datetime.fromtimestamp(int(datetime.utcnow().timestamp()))):
+        with freeze_time(datetime.fromtimestamp(opttime.utcnow_timestamp())):
             code, result = self.client.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]}, behavior='update_existing',
                 return_resources=True)
@@ -848,7 +849,7 @@ class TestCloudResourceApi(TestApiBase):
                 result['resources'][0]['meta']['stopped_allocated'], False)
         instance.stopped_allocated = True
         resource = self._to_discovered_resource(instance)
-        cache_update_time1 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time1 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time1)):
             code, result = self.client.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]}, behavior='update_existing',
@@ -860,7 +861,7 @@ class TestCloudResourceApi(TestApiBase):
                 result['resources'][0]['meta']['stopped_allocated'], True)
         instance.stopped_allocated = False
         resource = self._to_discovered_resource(instance)
-        cache_update_time2 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time2 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time2)):
             code, result = self.client.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]},
@@ -873,7 +874,7 @@ class TestCloudResourceApi(TestApiBase):
                 result['resources'][0]['meta']['stopped_allocated'], False)
         instance.stopped_allocated = True
         resource = self._to_discovered_resource(instance)
-        cache_update_time3 = datetime.utcnow().timestamp() + REDISCOVER_TIME + 1
+        cache_update_time3 = opttime.utcnow_timestamp() + REDISCOVER_TIME + 1
         with freeze_time(datetime.fromtimestamp(cache_update_time3)):
             code, result = self.client.cloud_resource_create_bulk(
                 self.cloud_acc1_id, {'resources': [resource]},
@@ -1304,7 +1305,7 @@ class TestCloudResourceApi(TestApiBase):
                 resource = self.valid_resource2.copy()
                 resource['cloud_resource_id'] = 'some_resource_%s' % str(uuid.uuid4())
                 for field in fields:
-                    resource[field] = int(datetime.utcnow().timestamp())
+                    resource[field] = opttime.utcnow_timestamp()
                 valid_body = {
                     'resources': [
                         resource

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from diworker.diworker.migrations.base import BaseMigration
 from clickhouse_driver import Client as ClickHouseClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -75,7 +75,7 @@ class Migration(BaseMigration):
                 """, params={'cloud_accounts': accs_to_fix}
             )
             clickhouse_client.execute('OPTIMIZE TABLE traffic_expenses FINAL')
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.now(tz=timezone.utc).timestamp())
         for ca in accs_to_fix:
             LOG.info('Create traffic processing task for %s' % ca)
             self.rest_cl.traffic_processing_task_create(ca, {

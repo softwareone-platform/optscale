@@ -322,6 +322,33 @@ class TestTemplateApi(TestInfrastructureBase):
             self.assertEqual(o.get('total_cost'), 0)
             self.assertEqual(o.get('last_runset_cost'), 0)
 
+    def test_overview_removed_cloud_acc(self):
+        code, template = self.client.template_create(
+            self.organization_id, self.valid_template)
+        code, runset = self.client.runset_create(
+            self.organization_id, template['id'], self.valid_runset)
+        self.client.runset_get(self.organization_id, runset['id'])
+        code, _ = self.client.templates_overview(self.organization_id)
+        self.assertEqual(code, 200)
+        config = {
+            'name': 'new',
+            'type': 'aws_cnr',
+            'config': {
+                'access_key_id': 'key',
+                'secret_access_key': 'secret',
+                'config_scheme': 'create_report'
+            }
+        }
+        _, cloud_acc = self.create_cloud_account(
+            self.organization_id, config)
+        code, template = self.client.template_update(
+            self.organization_id, template['id'],
+            {'cloud_account_ids': [cloud_acc['id']]})
+        self.assertEqual(code, 200)
+        code, resp = self.client.templates_overview(self.organization_id)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['templates']), 1)
+
     def test_overview(self):
         code, template = self.client.template_create(
             self.organization_id, self.valid_template)

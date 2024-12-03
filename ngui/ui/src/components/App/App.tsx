@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { GET_TOKEN } from "api/auth/actionTypes";
 import ErrorBoundary from "components/ErrorBoundary";
 import LayoutWrapper from "components/LayoutWrapper";
-import CommunityDocsContextProvider from "contexts/CommunityDocsContext/CommunityDocsContextProvider";
 import RoutePathContextProvider from "contexts/RoutePathContext/RoutePathContextProvider";
 import { useApiData } from "hooks/useApiData";
 import { useOrganizationIdQueryParameterListener } from "hooks/useOrganizationIdQueryParameterListener";
@@ -58,21 +57,19 @@ const RouteRender = ({ isTokenRequired, component, layout, context }) => {
 };
 
 const App = () => (
-  <CommunityDocsContextProvider>
-    <Routes>
-      {routes.map(({ key, component, layout, link, isTokenRequired = true, context }) => (
-        <Route
-          key={key}
-          path={link}
-          element={
-            <RoutePathContextProvider path={link}>
-              <RouteRender isTokenRequired={isTokenRequired} component={component} context={context} layout={layout} />
-            </RoutePathContextProvider>
-          }
-        />
-      ))}
-    </Routes>
-  </CommunityDocsContextProvider>
+  <Routes>
+    {routes.map(({ key, component, layout, link, isTokenRequired = true, context }) => (
+      <Route
+        key={key}
+        path={link}
+        element={
+          <RoutePathContextProvider path={link}>
+            <RouteRender isTokenRequired={isTokenRequired} component={component} context={context} layout={layout} />
+          </RoutePathContextProvider>
+        }
+      />
+    ))}
+  </Routes>
 );
 
 export default App;

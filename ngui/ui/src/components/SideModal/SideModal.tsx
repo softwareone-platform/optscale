@@ -1,4 +1,4 @@
-import { ReactNode, SyntheticEvent, useState } from "react";
+import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import SideModalHeader from "components/SideModalHeader";
 import { SideModalHeaderProps } from "components/SideModalHeader/SideModalHeader";
@@ -23,6 +23,11 @@ const DrawerContent = ({ headerProps, handleClose, children }: DrawerContentProp
   const { showExpand, ...sideModalHeaderProps } = headerProps;
 
   const [isExpanded, setIsExpanded] = useState(showExpand);
+
+  useEffect(() => {
+    // Reset the expanded state when opening a new modal from an already open modal
+    setIsExpanded(showExpand);
+  }, [showExpand]);
 
   const { classes, cx } = useStyles();
 

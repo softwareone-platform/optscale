@@ -6,6 +6,7 @@ from requests.models import Response
 from freezegun import freeze_time
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
     TestProfilingBase)
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestTaskApi(TestProfilingBase):
@@ -300,7 +301,7 @@ class TestTaskApi(TestProfilingBase):
             cloud_acc['id'], body, behavior='skip_existing',
             return_resources=True)
         self.assertEqual(code, 200)
-        now = datetime.utcnow().timestamp()
+        now = utcnow_timestamp()
         # create 2nd run earlier then 1st one
         self._create_run(self.org['id'], task['id'], ['i-1'],
                          start=now - 2, finish=now)
@@ -360,7 +361,7 @@ class TestTaskApi(TestProfilingBase):
             self.org['id'], self.valid_task)
         self.assertEqual(code, 201)
         self.assertEqual(len(task['metrics']), 1)
-        now = datetime.utcnow().timestamp()
+        now = utcnow_timestamp()
         self._create_run(self.org['id'], task['id'], ['i-1'],
                          start=now - 2, finish=now, data={'loss': 10})
         # second created run should be first

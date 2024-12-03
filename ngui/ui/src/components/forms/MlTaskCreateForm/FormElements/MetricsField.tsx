@@ -1,15 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  Link,
-  Paper,
-  Skeleton,
-  Typography
-} from "@mui/material";
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Link, Paper, Skeleton, Typography } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import AggregateFunctionFormattedMessage from "components/AggregateFunctionFormattedMessage";
@@ -27,6 +16,7 @@ const MetricCard = ({ name, metricKey, tendency, aggregateFunction, targetValue,
   <Paper
     elevation={0}
     sx={{
+      height: "100%",
       // TODO ML: Get the color programmatically?
       // Context: We use the same color as for the input borders
       border: `1px solid #C4C4C4`
@@ -88,7 +78,7 @@ const MetricsField = ({ metrics = [], isLoading = false }) => {
                 <Typography gutterBottom>
                   <FormattedMessage id="createMlTask.selectMetrics" />
                 </Typography>
-                <Grid container spacing={1}>
+                <Box display="grid" gridTemplateColumns="repeat(auto-fill, minmax(min(100%, 250px), 1fr))" gap={2} width="100%">
                   {metrics.map((metric) => {
                     const isSelected = value.includes(metric.id);
                     const onSelect = () => {
@@ -100,7 +90,7 @@ const MetricsField = ({ metrics = [], isLoading = false }) => {
                     };
 
                     return (
-                      <Grid key={metric.name} item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Box key={metric.name}>
                         <MetricCard
                           isSelected={isSelected}
                           onSelect={onSelect}
@@ -110,10 +100,10 @@ const MetricsField = ({ metrics = [], isLoading = false }) => {
                           aggregateFunction={metric.func}
                           targetValue={metric.target_value}
                         />
-                      </Grid>
+                      </Box>
                     );
                   })}
-                </Grid>
+                </Box>
               </>
             )}
           </FormControl>

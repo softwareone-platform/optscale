@@ -393,6 +393,8 @@ export type UpdateDataSourceInput = {
   databricksConfig?: InputMaybe<DatabricksConfigInput>;
   gcpConfig?: InputMaybe<GcpConfigInput>;
   k8sConfig?: InputMaybe<K8sConfigInput>;
+  lastImportAt?: InputMaybe<Scalars['Int']['input']>;
+  lastImportModifiedAt?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nebiusConfig?: InputMaybe<NebiusConfigInput>;
 };

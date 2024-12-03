@@ -12,6 +12,7 @@ SUPPORTED_CLOUD_TYPES = [
     'aws_cnr',
     'azure_cnr',
     'alibaba_cnr',
+    'gcp_cnr',
     'nebius',
 ]
 

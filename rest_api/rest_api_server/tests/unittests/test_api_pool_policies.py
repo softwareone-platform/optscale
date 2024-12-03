@@ -279,9 +279,13 @@ class TestPoolPolicies(TestApiBase):
             self.organization['pool_id'], valid_policy)
         self.assertEqual(code, 201)
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.organization['id'], self.organization['pool_id'], 'pool',
-            'policy_created', {'object_name': 'test organization',
-                               'policy_type': 'total_expense_limit'})
+            self.organization['id'], self.organization['pool_id'],
+            'pool_policy', 'policy_created',
+            {'pool_name': 'test organization',
+             'pool_id': self.organization['pool_id'],
+             'policy_type': 'total_expense_limit'},
+            routing_key='pool.policy_created'
+        )
         p_publish_activity.assert_called_once_with(*activity_param_tuples,
                                                    add_token=True)
 
@@ -294,9 +298,13 @@ class TestPoolPolicies(TestApiBase):
         self.assertEqual(code, 200)
         self.assertFalse(resp['active'])
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.organization['id'], self.organization['pool_id'], 'pool',
-            'policy_disabled', {'object_name': 'test organization',
-                                'policy_type': 'total_expense_limit'})
+            self.organization['id'], self.organization['pool_id'],
+            'pool_policy', 'policy_disabled',
+            {'object_name': 'test organization',
+             'policy_type': 'total_expense_limit',
+             'pool_id': self.organization['pool_id'],
+             'pool_name': 'test organization'},
+            routing_key='pool.policy_disabled')
         p_publish_activity.assert_called_once_with(*activity_param_tuples,
                                                    add_token=True)
 
@@ -308,10 +316,15 @@ class TestPoolPolicies(TestApiBase):
             policy['id'], {'active': False, 'limit': 50})
         self.assertEqual(code, 200)
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.organization['id'], self.organization['pool_id'], 'pool',
-            'policy_updated', {'object_name': 'test organization',
-                               'policy_type': 'total_expense_limit',
-                               'params': 'limit: 50'})
+            self.organization['id'], self.organization['pool_id'],
+            'pool_policy', 'policy_updated',
+            {'object_name': 'test organization',
+             'policy_type': 'total_expense_limit',
+             'pool_id': self.organization['pool_id'],
+             'pool_name': 'test organization',
+             'params': 'limit: 50'},
+            routing_key='pool.policy_updated'
+        )
         p_publish_activity.assert_called_once_with(*activity_param_tuples,
                                                    add_token=True)
 
@@ -327,9 +340,14 @@ class TestPoolPolicies(TestApiBase):
             policy['id'], {'active': True})
         self.assertEqual(code, 200)
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.organization['id'], self.organization['pool_id'], 'pool',
-            'policy_enabled', {'object_name': 'test organization',
-                               'policy_type': 'total_expense_limit'})
+            self.organization['id'], self.organization['pool_id'],
+            'pool_policy', 'policy_enabled',
+            {'object_name': 'test organization',
+             'policy_type': 'total_expense_limit',
+             'pool_id': self.organization['pool_id'],
+             'pool_name': 'test organization'},
+            routing_key='pool.policy_enabled'
+        )
         p_publish_activity.assert_called_once_with(*activity_param_tuples,
                                                    add_token=True)
 
@@ -340,8 +358,12 @@ class TestPoolPolicies(TestApiBase):
         code, _ = self.client.pool_policy_delete(policy['id'])
         self.assertEqual(code, 204)
         activity_param_tuples = self.get_publish_activity_tuple(
-            self.organization['id'], self.organization['pool_id'], 'pool',
-            'policy_deleted', {'object_name': 'test organization',
-                               'policy_type': 'total_expense_limit'})
+            self.organization['id'], self.organization['pool_id'],
+            'pool_policy', 'policy_deleted',
+            {'pool_name': 'test organization',
+             'pool_id': self.organization['pool_id'],
+             'policy_type': 'total_expense_limit'},
+            routing_key='pool.policy_deleted'
+        )
         p_publish_activity.assert_called_once_with(*activity_param_tuples,
                                                    add_token=True)

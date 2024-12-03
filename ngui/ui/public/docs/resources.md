@@ -25,7 +25,7 @@ Organize and categorize resources based on your specific requirements.
 
 - Configure Cluster types: Click the "Configure cluster types" button from the page toolbar.
 
-- Label as Shared: Mark selected resources as Shared Environments by clicking the "Mark as Shared Environment" button from the table toolbar.
+- Label as Shared: Mark selected resources as Shared Environments by clicking the "Mark as Shared Environment" button from the table toolbar. The action is available for active instances and clusters.
 
 ### **Tips**
 

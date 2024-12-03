@@ -2,7 +2,7 @@ import logging
 from diworker.diworker.migrations.base import BaseMigration
 from clickhouse_driver import Client as ClickHouseClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from datetime import datetime
+from datetime import datetime, timezone
 
 """
 Clickhouse traffic expenses table rework.
@@ -31,7 +31,7 @@ class Migration(BaseMigration):
         clickhouse_cl.execute('OPTIMIZE TABLE traffic_expenses FINAL')
         LOG.info('Creating traffic processing tasks')
         _, orgs = self.rest_cl.organization_list()
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = int(datetime.now(tz=timezone.utc).timestamp())
         cnt = 0
         for org in orgs['organizations']:
             _, accs = self.rest_cl.cloud_account_list(org['id'])

@@ -1,6 +1,6 @@
 import enum
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 import croniter
 
@@ -15,7 +15,7 @@ from katara.katara_service.utils import ModelEncoder, gen_id
 
 
 def get_current_timestamp():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 class ReportFormat(enum.Enum):

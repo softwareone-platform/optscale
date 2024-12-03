@@ -1,8 +1,8 @@
-from datetime import datetime
 from unittest.mock import patch, ANY
 from tools.cloud_adapter.model import ResourceTypes
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.exceptions import Err
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestShareableResourcesApi(TestApiBase):
@@ -59,7 +59,7 @@ class TestShareableResourcesApi(TestApiBase):
                               name='test_resource', tags=None, last_seen=None,
                               region=None, first_seen=None,
                               shareable=False, use_resource_hash=False):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource_key = 'cloud_resource_id'
         if use_resource_hash:
             resource_key = 'cloud_resource_hash'
@@ -127,7 +127,8 @@ class TestShareableResourcesApi(TestApiBase):
     def test_shareable_bulk(self):
         self._make_resources_active([self.instance_resource['id'],
                                      self.not_instance['id'],
-                                     self.cluster_resource['_id']])
+                                     self.cluster_resource['_id'],
+                                     self.instance_cluster_res['id']])
         # shareable instance
         code, data = self.client.resources_bulk_share(
             self.org_id, resource_ids=[self.instance_resource['id']])
@@ -154,6 +155,12 @@ class TestShareableResourcesApi(TestApiBase):
         self.assertEqual(code, 201)
         self.verify_shareable_resources_response(
             data, shared_ids=[self.cluster_resource['_id']])
+
+        # not shareable clustered instance
+        code, data = self.client.resources_bulk_share(
+            self.org_id, resource_ids=[self.instance_cluster_res['id']])
+        self.assertEqual(code, 201)
+        self.assertEqual(data['failed'][0]['code'], 'OE0481')
 
         # shareable environment
         code, data = self.client.resources_bulk_share(
@@ -215,7 +222,7 @@ class TestShareableResourcesApi(TestApiBase):
             self.org_id, resource_ids=[self.instance_resource['id']])
         self.assertEqual(code, 201)
         p_email_send.assert_called_once_with(
-            [ANY], 'OptScale shareable environments notification',
+            [ANY], 'OptScale shared environments notification',
             template_type='first_shareable_resources',
             template_params={
                 'texts': {'organization': {

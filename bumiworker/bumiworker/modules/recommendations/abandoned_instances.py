@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from optscale_client.metroculus_client.client import Client as MetroculusClient
 
 from bumiworker.bumiworker.modules.abandoned_base import AbandonedBase
+from tools.optscale_time import utcnow
 
 SUPPORTED_CLOUD_TYPES = [
     'aws_cnr',
@@ -90,7 +91,7 @@ class AbandonedInstances(AbandonedBase):
         (days_threshold, cpu_percent_threshold, network_bps_threshold,
          excluded_pools, skip_cloud_accounts) = self.get_options_values()
 
-        now = datetime.utcnow()
+        now = utcnow()
         start_date = now - timedelta(days=days_threshold)
 
         cloud_accounts = self.get_cloud_accounts(SUPPORTED_CLOUD_TYPES,

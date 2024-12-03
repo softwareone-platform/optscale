@@ -611,9 +611,11 @@ class Err(enum.Enum):
         []
     ]
     OE0478 = [
-        "Current resource can't be shared, resource type is invalid for sharing %s",
+        "Current resource can't be shared, resource type is invalid for "
+        "sharing %s",
         ["cloud_resource_id"],
-        ["Current resource can't be shared, resource type is invalid for sharing i-095a8e515029f5153"],
+        ["Current resource can't be shared, resource type is invalid for "
+         "sharing i-095a8e515029f5153"],
     ]
     OE0479 = [
         "%s should be False",
@@ -1017,4 +1019,14 @@ class Err(enum.Enum):
         "Environment with name %s and resource type %s already exists",
         ['name', 'resource_type'],
         ['dev-1', 'instance']
+    ]
+    OE0559 = [
+        "\"%s\" date should be between a month and a year ago",
+        ['last_import_at'],
+        []
+    ]
+    OE0560 = [
+        "Changing import dates is not supported for \"%s\" cloud account type",
+        ['environment'],
+        []
     ]

@@ -14,7 +14,7 @@ from tools.cloud_adapter.clouds.gcp import Gcp
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from botocore.exceptions import ClientError as AwsClientError
 from insider.insider_api.utils import handle_credentials_error
-
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 
@@ -130,7 +130,7 @@ class AwsProvider(BaseProvider):
         software = self.preinstalled_map.get(
             preinstalled.lower(), 'NA') if preinstalled else 'NA'
 
-        now = datetime.utcnow()
+        now = utcnow()
         query = {
             'instanceType': flavor,
             'location': location,
@@ -166,7 +166,7 @@ class AwsProvider(BaseProvider):
             raise WrongArgumentsException(Err.OI0015, [os_type])
 
         # TODO: Add currency support
-        now = datetime.utcnow()
+        now = utcnow()
         regex = re.compile(f"{instance_family}\\.", re.IGNORECASE)
         query = {
             'instanceType': regex,
@@ -277,7 +277,7 @@ class AzureProvider(BaseProvider):
         if operating_system not in {'windows', 'linux'}:
             raise WrongArgumentsException(Err.OI0015, [os_type])
 
-        now = datetime.utcnow()
+        now = utcnow()
         product_name_regex = "Windows$" if operating_system == 'windows' else ".*(?<!Windows)$"
         query = {
             'type': 'Consumption',
@@ -323,7 +323,7 @@ class AlibabaProvider(BaseProvider):
     def _load_flavor_prices(self, region, flavor, os_type='linux',
                             preinstalled=None, billing_method='pay_as_you_go',
                             quantity=1, currency='USD'):
-        now = datetime.utcnow()
+        now = utcnow()
         query = {
             'region': region,
             'flavor': flavor,
@@ -385,7 +385,7 @@ class GcpProvider(BaseProvider):
     def _load_flavor_prices(self, region, flavor, os_type='linux',
                             preinstalled=None, billing_method=None,
                             quantity=None, currency='USD'):
-        now = datetime.utcnow()
+        now = utcnow()
         query = {
             'region': region,
             'flavor': flavor,

@@ -1,12 +1,12 @@
 import logging
 import os
-from datetime import datetime
 
 from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow_timestamp
 
 
 LOG = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ def publish_tasks(org_ids, config_client):
             producer.publish(
                 {
                     'organization_id': org_id,
-                    'observe_time': int(datetime.utcnow().timestamp())
+                    'observe_time': utcnow_timestamp()
                 },
                 serializer='json',
                 exchange=task_exchange,

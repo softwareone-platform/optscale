@@ -37,6 +37,7 @@ export const INVITED = "/invited";
 export const ACCEPT_INVITATION = "/accept-invitation";
 export const ACCEPT_INVITATIONS = "/accept-invitations";
 export const PASSWORD_RECOVERY = "/password-recovery";
+export const EMAIL_VERIFICATION = "/email-verification";
 
 export const POOL_BASE = "pool";
 export const POOLS_BASE = "pools";
@@ -552,6 +553,7 @@ export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}resource
 export const DOCS_HYSTAX_CLUSTERS = `${DOCS_HYSTAX_OPTSCALE}clusters.html`;
 export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}optscales_recommendations.html#clean-up-scripts-based-on-optscale-s-recommendations`;
 export const DOCS_HYSTAX_SLACK_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#slack-app`;
+export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#google-calendar`;
 
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =

@@ -1,6 +1,5 @@
 import argparse
 import os
-from datetime import datetime
 from typing import Optional
 
 from kombu import Exchange, Queue, Connection
@@ -12,6 +11,7 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from optscale_client.config_client.client import Client as ConfigClient
 
 from bi_exporter.bumblebi.exporter.exporter_factory import ExporterFactory
+from tools.optscale_time import utcnow_timestamp
 
 EXCHANGE_NAME = 'bi-exporter'
 QUEUE_NAME = 'bi-exporter'
@@ -45,7 +45,7 @@ class Worker(ConsumerMixin):
 
     @staticmethod
     def _now_ts():
-        return int(datetime.utcnow().timestamp())
+        return utcnow_timestamp()
 
     @property
     def valid_states_for_export(self):

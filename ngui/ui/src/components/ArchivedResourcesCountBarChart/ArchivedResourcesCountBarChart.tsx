@@ -6,7 +6,6 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { useAllRecommendations } from "hooks/useAllRecommendations";
 import { ARCHIVATION_REASON_MESSAGE_ID } from "utils/constants";
 import { EN_FORMAT_SHORT_YEAR, formatUTC, getEndOfDayInUTCinSeconds, secondsToMilliseconds } from "utils/datetime";
-import { isEmpty as isEmptyObject } from "utils/objects";
 import useStyles from "./ArchivedResourcesCountBarChart.styles";
 
 const NOT_SELECTED = undefined;
@@ -44,10 +43,6 @@ const ChartTooltip = ({ sectionData }) => {
 };
 
 const getChartData = (breakdown) => {
-  if (Object.values(breakdown).every(isEmptyObject)) {
-    return [];
-  }
-
   const chartData = Object.entries(breakdown).map(([date, dateBreakdown]) => ({
     date: formatUTC(date, EN_FORMAT_SHORT_YEAR),
     dateTimestamp: Number(date),

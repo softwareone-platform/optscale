@@ -338,6 +338,8 @@ input DatabricksConfigInput {
 
 input UpdateDataSourceInput {
   name: String
+  lastImportAt: Int
+  lastImportModifiedAt: Int
   awsRootConfig: AwsRootConfigInput
   awsLinkedConfig: AwsLinkedConfigInput
   azureSubscriptionConfig: AzureSubscriptionConfigInput

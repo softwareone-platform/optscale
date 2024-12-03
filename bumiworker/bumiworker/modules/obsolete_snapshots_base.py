@@ -8,6 +8,7 @@ from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase, ModuleBase
+from tools.optscale_time import utcnow, startday
 
 BULK_SIZE = 2000
 DAYS_IN_MONTH = 30
@@ -34,6 +35,8 @@ class ObsoleteSnapshotsBase(ModuleBase):
 
     def merge_last_used(self, collection, to_merge):
         for resource_id, last_used in to_merge.items():
+            if resource_id is None:
+                continue
             current_last_used = collection.get(resource_id)
             if current_last_used is None or current_last_used < last_used:
                 collection[resource_id] = last_used
@@ -73,7 +76,8 @@ class ObsoleteSnapshotsBase(ModuleBase):
             }
         ]
 
-    def get_snapshots_used_by_images(self, now, cloud_config):
+    @staticmethod
+    def _get_snapshots_used_by_images_from_cloud(now, cloud_config):
         adapter = CloudAdapter.get_adapter(cloud_config)
         images = []
         snapshot_ids = set()
@@ -93,6 +97,25 @@ class ObsoleteSnapshotsBase(ModuleBase):
                 if snapshot_id:
                     snapshot_ids.add(snapshot_id)
         return {s: now for s in snapshot_ids}
+
+    def _get_snapshots_used_by_images_from_db(self, now, cloud_config):
+        snapshot_ids = self.mongo_client.restapi.resources.find({
+            'cloud_account_id': cloud_config['id'],
+            'resource_type': 'Image',
+            'active': True}, {'meta.snapshot_id': 1})
+        return {s['meta.snapshot_id']: now for s in snapshot_ids
+                if 'meta.snapshot_id' in s}
+
+    def get_snapshots_used_by_images(self, now, cloud_config):
+        cloud_funcs = {
+            'alibaba_cnr': self._get_snapshots_used_by_images_from_cloud,
+            'aws_cnr': self._get_snapshots_used_by_images_from_cloud,
+            'gcp_cnr': self._get_snapshots_used_by_images_from_db,
+        }
+        func = cloud_funcs.get(cloud_config.get('type'))
+        if not func:
+            return {}
+        return func(now, cloud_config)
 
     def get_snapshots_used_by_volumes(self, now, cloud_account_id,
                                       obsolete_threshold):
@@ -230,7 +253,7 @@ class ObsoleteSnapshotsArchiveBase(ArchiveBase):
 
     def _get(self, previous_options, optimizations, cloud_accounts_map,
              **kwargs):
-        now = datetime.utcnow()
+        now = utcnow()
         days_threshold = previous_options['days_threshold']
         obsolete_threshold = timedelta(days_threshold)
 

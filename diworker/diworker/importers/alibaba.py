@@ -8,6 +8,7 @@ from pymongo import UpdateOne
 from diworker.diworker.importers.base import BaseReportImporter
 from diworker.diworker.utils import bytes_to_gb, retry_mongo_upsert
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
@@ -147,7 +148,7 @@ class AlibabaReportImporter(BaseReportImporter):
 
     def load_raw_data(self):
         chunk = []
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         current_day = self.period_start.replace(
             hour=0, minute=0, second=0, microsecond=0)
         while current_day <= now:
@@ -260,8 +261,8 @@ class AlibabaReportImporter(BaseReportImporter):
             return product_detail
 
     def get_resource_info_from_expenses(self, expenses):
-        first_seen = datetime.utcnow()
-        last_seen = datetime.utcfromtimestamp(0).replace()
+        first_seen = opttime.utcnow()
+        last_seen = opttime.utcfromtimestamp(0).replace()
         for e in expenses:
             start_date = e['start_date']
             if start_date and start_date < first_seen:
@@ -339,7 +340,7 @@ class AlibabaReportImporter(BaseReportImporter):
     def get_full_months_in_period(self):
         full_month_dates = []
         start = self.period_start
-        end = datetime.utcnow()
+        end = opttime.utcnow()
         month_start = datetime(
             year=start.year, month=start.month, day=1,
             hour=0, minute=0, second=0)
@@ -551,7 +552,7 @@ class AlibabaReportImporter(BaseReportImporter):
         super().generate_clean_records(regeneration=regeneration)
         if self.cloud_acc['last_import_at'] != 0:
             self.fix_snapshot_chain_expenses()
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         if (self.period_start.month != now.month or
                 self.period_start.year != now.year):
             self.check_exp_for_previous_month(now)

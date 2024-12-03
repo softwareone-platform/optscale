@@ -1,6 +1,7 @@
+import { NOT_SET_REGION_FILTER_NAME } from "components/forms/AssignmentRuleForm/FormElements/ConditionsFieldArray";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { intl } from "translations/react-intl-config";
-import { CONDITION_TYPES, TAG_IS, CLOUD_IS, TAG_VALUE_STARTS_WITH } from "utils/constants";
+import { CONDITION_TYPES, TAG_IS, CLOUD_IS, TAG_VALUE_STARTS_WITH, REGION_IS } from "utils/constants";
 
 const prepareData = ({ assignmentRules, entities }) => {
   const translateType = (type) =>
@@ -35,6 +36,9 @@ const prepareData = ({ assignmentRules, entities }) => {
           }
           if (type === CLOUD_IS) {
             value = entities?.[metaInfo]?.name;
+          }
+          if (type === REGION_IS) {
+            value = metaInfo === null ? NOT_SET_REGION_FILTER_NAME : metaInfo;
           }
           return {
             ...resultObject,

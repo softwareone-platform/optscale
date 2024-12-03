@@ -63,6 +63,11 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
         power_schedule = super().create(
             organization_id=organization_id, **kwargs).to_dict()
         power_schedule['resources_count'] = 0
+        self.publish_activities_task(
+            organization_id, power_schedule["id"], "power_schedule",
+            "power_schedule_created", {"object_name": power_schedule["name"]},
+            "power_schedule.power_schedule_created"
+        )
         return power_schedule
 
     def list(self, organization_id: str, **kwargs):
@@ -92,6 +97,13 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
                 Err.OE0002, [self.model_type.__name__, item_id])
         schedule = super().edit(item_id, **kwargs).to_dict()
         self._set_resources(schedule, show_resources=True)
+        # not spam events on every schedule run
+        if set(kwargs) - {'last_eval', 'last_run_error', 'last_run'}:
+            self.publish_activities_task(
+                item.organization_id, item_id, "power_schedule",
+                "power_schedule_updated", {"object_name": item.name},
+                "power_schedule.power_schedule_created"
+            )
         return schedule
 
     def bulk_action(self, power_schedule_id: str, data: dict):
@@ -127,6 +139,11 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
         self.resources_collection.update_many(
             {'power_schedule': power_schedule_id},
             {'$unset': {'power_schedule': 1}})
+        self.publish_activities_task(
+            item.organization_id, power_schedule_id, "power_schedule",
+            "power_schedule_deleted", {"object_name": item.name},
+            "power_schedule.power_schedule_deleted"
+        )
         super().delete(power_schedule_id)
 
 

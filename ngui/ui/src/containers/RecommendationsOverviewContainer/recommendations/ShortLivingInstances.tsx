@@ -3,9 +3,9 @@ import FormattedMoney from "components/FormattedMoney";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import ShortLivingInstancesModal from "components/SideModalManager/SideModals/recommendations/ShortLivingInstancesModal";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { ALIBABA_ECS, AWS_EC2, AZURE_COMPUTE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import { ALIBABA_ECS, AWS_EC2, AZURE_COMPUTE, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -49,7 +49,9 @@ class ShortLivingInstances extends BaseRecommendation {
     return { daysThreshold };
   }
 
-  services = [AWS_EC2, AZURE_COMPUTE, ALIBABA_ECS, NEBIUS_SERVICE];
+  services = [AWS_EC2, AZURE_COMPUTE, GCP_COMPUTE_ENGINE, ALIBABA_ECS, NEBIUS_SERVICE];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

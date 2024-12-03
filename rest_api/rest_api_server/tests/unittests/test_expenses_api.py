@@ -12,6 +12,7 @@ from rest_api.rest_api_server.exceptions import Err
 
 from rest_api.rest_api_server.utils import get_nil_uuid
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 
 class TestExpensesApi(TestApiBase):
@@ -120,7 +121,7 @@ class TestExpensesApi(TestApiBase):
                               host_ip=None, instance_address=None, k8s_namespace=None,
                               k8s_node=None, pod_ip=None, first_seen=None, k8s_service=None,
                               service_name=None, resource_hash=None):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource = {
             'cloud_resource_id': self.gen_id(),
             'name': name,
@@ -161,7 +162,7 @@ class TestExpensesApi(TestApiBase):
     def add_recommendations(self, resource_id, modules, timestamp=None,
                             last_check=None, pool_id=None, checklist=True):
         if not timestamp:
-            timestamp = int(datetime.utcnow().timestamp())
+            timestamp = utcnow_timestamp()
 
         recommendations = {
             'modules': modules,
@@ -183,7 +184,7 @@ class TestExpensesApi(TestApiBase):
         updates = {
             'recommendations': recommendations,
             'active': True,
-            'last_seen': int(datetime.utcnow().timestamp())
+            'last_seen': utcnow_timestamp()
         }
         if pool_id:
             updates['pool_id'] = pool_id
@@ -2342,7 +2343,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc2['id'], tags={'some': 'thing'}, region='us-test')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -2410,7 +2411,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'tag': 'val'}, region='us-east')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 450, 'date': dt,
@@ -2475,7 +2476,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'tag': 'val'}, region='us-east', resource_hash='hash')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 450, 'date': dt,
@@ -2535,7 +2536,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'tag': 'val'}, region='us-east')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 450, 'date': dt,
@@ -3124,7 +3125,7 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(response['total_count'], 0)
 
     def test_summary_clean_expenses_invalid_limit(self):
-        time = int(datetime.utcnow().timestamp())
+        time = utcnow_timestamp()
         code, response = self.client.clean_expenses_get(
             self.org_id, time, time + 1, {'limit': -1})
         self.assertEqual(code, 400)
@@ -3420,8 +3421,8 @@ class TestExpensesApi(TestApiBase):
         self.client.pool_delete(self.sub_pool1['id'])
         self.client.organization_delete(self.org_id)
         code, response = self.client.clean_expenses_get(
-            self.org_id, int(datetime.utcnow().timestamp()) - 1000,
-            int(datetime.utcnow().timestamp()), {})
+            self.org_id, utcnow_timestamp() - 1000,
+            utcnow_timestamp(), {})
         self.assertEqual(code, 404)
 
     def test_summary_expenses_deleted_org(self):
@@ -3431,8 +3432,8 @@ class TestExpensesApi(TestApiBase):
         self.client.pool_delete(self.sub_pool1['id'])
         self.client.organization_delete(self.org_id)
         code, response = self.client.summary_expenses_get(
-            self.org_id, int(datetime.utcnow().timestamp()) - 1000,
-            int(datetime.utcnow().timestamp()), {})
+            self.org_id, utcnow_timestamp() - 1000,
+            utcnow_timestamp(), {})
         self.assertEqual(code, 404)
 
     def test_raw_expenses_deleted_org(self):
@@ -3442,18 +3443,18 @@ class TestExpensesApi(TestApiBase):
         self.client.pool_delete(self.sub_pool1['id'])
         self.client.organization_delete(self.org_id)
         code, response = self.client.raw_expenses_get(
-            self.org_id, int(datetime.utcnow().timestamp()) - 1000,
-            int(datetime.utcnow().timestamp()), {})
+            self.org_id, utcnow_timestamp() - 1000,
+            utcnow_timestamp(), {})
         self.assertEqual(code, 404)
 
     def test_raw_expenses_nonexistent_resource(self):
         code, response = self.client.raw_expenses_get(
-            str(uuid.uuid4()), int(datetime.utcnow().timestamp()) - 1000,
-            int(datetime.utcnow().timestamp()), {})
+            str(uuid.uuid4()), utcnow_timestamp() - 1000,
+            utcnow_timestamp(), {})
         self.assertEqual(code, 404)
         code, response = self.client.raw_expenses_get(
-            get_nil_uuid(), int(datetime.utcnow().timestamp()) - 1000,
-            int(datetime.utcnow().timestamp()), {})
+            get_nil_uuid(), utcnow_timestamp() - 1000,
+            utcnow_timestamp(), {})
         self.assertEqual(code, 404)
 
     def test_region_expenses_no_cloud_accs(self):
@@ -3598,7 +3599,7 @@ class TestExpensesApi(TestApiBase):
                 resource, resource2, resource3, resource4
             ]
         }
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -3735,7 +3736,7 @@ class TestExpensesApi(TestApiBase):
             instance_address='10.24.0.2', k8s_namespace='default', k8s_node='node_test1',
             pod_ip='10.24.1.3', k8s_service='monitoring-nginx')
         self.assertEqual(code, 201)
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 300, 'date': dt,
@@ -4012,7 +4013,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'some': 'tag'}, region='us-test')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4231,7 +4232,7 @@ class TestExpensesApi(TestApiBase):
         )
         code, resource2 = self.create_cloud_resource(
             self.cloud_acc2['id'], region='us-east')
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4274,7 +4275,7 @@ class TestExpensesApi(TestApiBase):
             self.org_id, {'name': 'res3', 'resource_type': 'some_type'})
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4408,7 +4409,7 @@ class TestExpensesApi(TestApiBase):
             self.org_id, {'name': 'res3', 'resource_type': 'some_type'})
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4481,7 +4482,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'some': 'tag'}, region='us-test')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4552,7 +4553,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc1['id'], tags={'some': 'tag'}, region='us-test')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4687,7 +4688,7 @@ class TestExpensesApi(TestApiBase):
             self.org_id, {'name': 'res2', 'resource_type': 'some_type'})
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4757,7 +4758,7 @@ class TestExpensesApi(TestApiBase):
             self.org_id, {'name': 'res2', 'resource_type': 'some_type'})
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -4879,7 +4880,7 @@ class TestExpensesApi(TestApiBase):
 
     @freeze_time('2021-09-13 15:00:00')
     def test_get_old_active_clean_expenses(self):
-        now = datetime.utcnow()
+        now = utcnow()
         now_ts = int(now.timestamp())
         today = now.replace(hour=0, minute=0, second=0)
         previuos_month_day = today.replace(month=today.month - 1, day=1)
@@ -5013,7 +5014,7 @@ class TestExpensesApi(TestApiBase):
         code, env_resource = self.client.environment_resource_create(
             self.org_id, {'name': 'some_name', 'resource_type': 'Instance'})
         self.assertEqual(code, 201)
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 10, 'date': dt,
@@ -5388,7 +5389,7 @@ class TestExpensesApi(TestApiBase):
             self.cloud_acc2['id'], region='global')
         self.assertEqual(code, 201)
 
-        dt = datetime.utcnow()
+        dt = utcnow()
         expenses = [
             {
                 'cost': 150, 'date': dt,
@@ -5424,7 +5425,7 @@ class TestExpensesApi(TestApiBase):
         p_azure_regions_map.return_value = {
             'global': {'longitude': 3, 'latitude': 3}
         }
-        end_date = datetime.utcnow()
+        end_date = utcnow()
         start_date = end_date - timedelta(days=1)
 
         code, resp = self.client.region_expenses_get(

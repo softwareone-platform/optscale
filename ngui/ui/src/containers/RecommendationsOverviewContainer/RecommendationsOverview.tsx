@@ -3,38 +3,14 @@ import Stack from "@mui/material/Stack";
 import { Box } from "@mui/system";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import SearchInput from "components/SearchInput";
-import { intl } from "translations/react-intl-config";
 import { SPACING_2 } from "utils/layouts";
 import Cards from "./Cards";
-import { RecommendationsFilter, ServicesFilter, VIEW_CARDS, VIEW_TABLE, View, categoryFilter, serviceFilter } from "./Filters";
+import { RecommendationsFilter, ServicesFilter, VIEW_CARDS, VIEW_TABLE, View } from "./Filters";
 import { ACTIVE } from "./recommendations/BaseRecommendation";
 import useStyles from "./RecommendationsOverview.styles";
 import RecommendationsTable from "./RecommendationsTable";
 import Summary from "./Summary";
-
-const searchFilter = (search) => (recommendation) => {
-  if (!search) {
-    return true;
-  }
-
-  const commonMessageValues = {
-    strong: (chunks) => chunks,
-    link: (chunks) => chunks
-  };
-
-  const description = intl
-    .formatMessage(
-      { id: recommendation.descriptionMessageId },
-      { ...recommendation.descriptionMessageValues, ...commonMessageValues }
-    )
-    .toLocaleLowerCase();
-
-  const title = intl.formatMessage({ id: recommendation.title }).toLocaleLowerCase();
-
-  const searchLowerCase = search.toLocaleLowerCase();
-
-  return title.includes(searchLowerCase) || description.includes(searchLowerCase);
-};
+import { categoryFilter, serviceFilter, searchFilter, appliedDataSourcesFilter } from "./utils";
 
 const sortRecommendation = (recommendationA, recommendationB) => {
   const aHasSavings = recommendationA.hasSaving;
@@ -74,7 +50,8 @@ const RecommendationsOverview = ({
   downloadLimit,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSources,
+  selectedDataSourceIds,
+  selectedDataSourceTypes,
   lastCompleted,
   totalSaving,
   nextRun,
@@ -88,6 +65,7 @@ const RecommendationsOverview = ({
     .filter(categoryFilter(category))
     .filter(serviceFilter(service))
     .filter(searchFilter(search))
+    .filter(appliedDataSourcesFilter(selectedDataSourceTypes))
     .sort(sortRecommendation);
 
   return (
@@ -133,7 +111,7 @@ const RecommendationsOverview = ({
                   onRecommendationClick={onRecommendationClick}
                   isDownloadAvailable={isDownloadAvailable}
                   isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-                  selectedDataSources={selectedDataSources}
+                  selectedDataSourceIds={selectedDataSourceIds}
                 />
               </Box>
             )}
@@ -145,7 +123,7 @@ const RecommendationsOverview = ({
                 onRecommendationClick={onRecommendationClick}
                 isDownloadAvailable={isDownloadAvailable}
                 isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-                selectedDataSources={selectedDataSources}
+                selectedDataSourceIds={selectedDataSourceIds}
               />
             )}
           </>

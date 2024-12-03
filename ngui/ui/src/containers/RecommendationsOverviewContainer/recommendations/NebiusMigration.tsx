@@ -10,7 +10,7 @@ import NebiusMigrationModal from "components/SideModalManager/SideModals/recomme
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS, AZURE_COMPUTE, GCP_COMPUTE_ENGINE } from "hooks/useRecommendationServices";
 import { possibleMonthlySavings, expenses, usage } from "utils/columns";
-import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -102,6 +102,8 @@ class NebiusMigration extends BaseRecommendation {
   descriptionMessageId = "migrationToNebiusDescription";
 
   services = [AWS_EC2, AWS_RDS, AZURE_COMPUTE, ALIBABA_ECS, GCP_COMPUTE_ENGINE];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

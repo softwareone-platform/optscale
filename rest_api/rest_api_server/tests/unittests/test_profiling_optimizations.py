@@ -1,10 +1,10 @@
 import uuid
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import TestProfilingBase
 from unittest.mock import patch
-from datetime import datetime
 from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import Checklist
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestProfilingOptimizationsApi(TestProfilingBase):
@@ -76,7 +76,7 @@ class TestProfilingOptimizationsApi(TestProfilingBase):
         code, task = self.client.task_create(
             self.org['id'], self.valid_task)
         self.assertEqual(code, 201)
-        dt = int(datetime.utcnow().timestamp())
+        dt = utcnow_timestamp()
         checklist = self.add_checklist(self.org['id'], dt)
         ca_id = str(uuid.uuid4())
         data = [
@@ -158,7 +158,7 @@ class TestProfilingOptimizationsApi(TestProfilingBase):
         code, task = self.client.task_create(
             self.org['id'], self.valid_task)
         self.assertEqual(code, 201)
-        dt = int(datetime.utcnow().timestamp())
+        dt = utcnow_timestamp()
         checklist = self.add_checklist(self.org['id'], dt)
         ca_id = str(uuid.uuid4())
         data = [
@@ -214,7 +214,7 @@ class TestProfilingOptimizationsApi(TestProfilingBase):
         code, task = self.client.task_create(
             self.org['id'], self.valid_task)
         self.assertEqual(code, 201)
-        dt = int(datetime.utcnow().timestamp())
+        dt = utcnow_timestamp()
         checklist = self.add_checklist(self.org['id'], dt)
         ca_id = str(uuid.uuid4())
         data = [
@@ -258,7 +258,7 @@ class TestProfilingOptimizationsApi(TestProfilingBase):
         code, task = self.client.task_create(
             self.org['id'], self.valid_task)
         self.assertEqual(code, 201)
-        dt = int(datetime.utcnow().timestamp())
+        dt = utcnow_timestamp()
         checklist = self.add_checklist(self.org['id'], dt)
         ca_id = str(uuid.uuid4())
         data = [

@@ -12,6 +12,7 @@ from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
 from rest_api.rest_api_server.models.enums import RolePurposes
 from rest_api.rest_api_server.utils import run_task, ModelEncoder, check_int_attribute
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
+from tools.optscale_time import utcnow_timestamp
 
 
 class ShareableBookingBaseAsyncHandler(BaseAuthHandler, BaseHandler):
@@ -246,7 +247,7 @@ class ShareableBookingAsyncHandler(BaseAsyncCollectionHandler,
         args = {
             'start_date': self.get_arg('start_date', int),
             'end_date': self.get_arg(
-                'end_date', int, default=int(datetime.utcnow().timestamp()))
+                'end_date', int, default=utcnow_timestamp())
         }
         self.check_date_arguments(args)
         res = await run_task(self.controller.get_shareable_bookings,

@@ -7,7 +7,7 @@ from bumiworker.bumiworker.modules.base import ArchiveBase
 from bumiworker.bumiworker.modules.recommendations.abandoned_instances import (
     AbandonedInstances as AbandonedInstancesRecommendation,
     SUPPORTED_CLOUD_TYPES)
-
+from tools.optscale_time import utcnow
 
 LOG = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class AbandonedInstances(ArchiveBase, AbandonedInstancesRecommendation):
         cpu_percent_threshold = previous_options['cpu_percent_threshold']
         network_bps_threshold = previous_options['network_bps_threshold']
 
-        now = datetime.utcnow()
+        now = utcnow()
         start_date = now - timedelta(days=days_threshold)
         cloud_acc_instances_map = defaultdict(dict)
         for cloud_acc_id, instances in self.get_active_resources(

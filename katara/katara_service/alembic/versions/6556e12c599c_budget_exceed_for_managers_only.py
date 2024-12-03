@@ -7,7 +7,7 @@ Create Date: 2020-07-06 05:17:55.067820
 
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from alembic import op
 from sqlalchemy.orm import Session
@@ -50,7 +50,7 @@ recipient_table = table(
 
 
 def get_current_timestamp():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 def gen_id():

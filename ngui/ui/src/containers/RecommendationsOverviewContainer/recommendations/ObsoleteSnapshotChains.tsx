@@ -3,7 +3,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import ObsoleteSnapshotChainsModal from "components/SideModalManager/SideModals/recommendations/ObsoleteSnapshotChainsModal";
 import { ALIBABA_ECS } from "hooks/useRecommendationServices";
 import { detectedAt, firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ALIBABA_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -42,6 +42,8 @@ class ObsoleteSnapshotChains extends BaseRecommendation {
   }
 
   services = [ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR];
 
   categories = [CATEGORY_COST];
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from kombu.log import get_logger
 from requests.exceptions import SSLError
 from kombu import Connection as QConnection
@@ -122,7 +122,7 @@ class AzurePriceProcessor(BasePriceProcessor):
                              processed_keys):
         if not new_prices_map:
             return
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = int(datetime.now(tz=timezone.utc).timestamp())
         update_ids = []
         for key, new_price in new_prices_map.copy().items():
             processed_key = processed_keys.get(key)

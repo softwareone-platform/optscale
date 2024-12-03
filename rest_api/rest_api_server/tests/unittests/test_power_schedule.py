@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
 from freezegun import freeze_time
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestPowerSchedule(TestApiBase):
@@ -50,7 +51,7 @@ class TestPowerSchedule(TestApiBase):
                               pool_id=None, resource_type='Instance',
                               name='test_resource', power_schedule=None,
                               active=False):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource = {
             'cloud_resource_id': self.gen_id(),
             'name': name,
@@ -247,7 +248,7 @@ class TestPowerSchedule(TestApiBase):
             'power_off': '11:44',
             'power_on': '23:59',
             'timezone': 'Europe/Vienna',
-            'start_date': int(datetime.utcnow().timestamp()),
+            'start_date': utcnow_timestamp(),
             'name': 'my schedule 1',
             'enabled': False,
             'last_eval': 12,

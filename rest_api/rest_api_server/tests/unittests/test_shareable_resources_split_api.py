@@ -1,7 +1,7 @@
-from datetime import datetime
 from unittest.mock import patch
 from tools.cloud_adapter.model import ResourceTypes
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestSplitShareableResourcesApi(TestApiBase):
@@ -54,7 +54,7 @@ class TestSplitShareableResourcesApi(TestApiBase):
                               pool_id=None, resource_type='test_type',
                               name='test_resource', tags=None, last_seen=None,
                               region=None, first_seen=None):
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         resource = {
             'cloud_resource_id': self.gen_id(),
             'name': name,

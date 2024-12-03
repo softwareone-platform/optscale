@@ -5,6 +5,7 @@ from calendar import monthrange
 
 from bumiworker.bumiworker.modules.base import ModuleBase
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_time import utcnow
 
 DEFAULT_DAYS_THRESHOLD = 7
 BULK_SIZE = 1000
@@ -179,7 +180,7 @@ class ObsoleteImages(ModuleBase):
         cloud_accounts = list(cloud_account_map.values())
 
         account_id_type_map = {x['id']: x['type'] for x in cloud_accounts}
-        starting_point = datetime.utcnow() - timedelta(days=days_threshold)
+        starting_point = utcnow() - timedelta(days=days_threshold)
         images_map = self._get_images_map(cloud_accounts, starting_point)
 
         image_ids = list(images_map.keys())
@@ -228,7 +229,7 @@ class ObsoleteImages(ModuleBase):
 
         snapshot_info_map = self.get_snapshot_info_map(
             account_id_type_map, snapshot_image_map, starting_point)
-        today = datetime.utcnow()
+        today = utcnow()
         _, days_in_month = monthrange(today.year, today.month)
         for snapshot_id, image_ids in snapshot_image_map.items():
             for image_id in image_ids:

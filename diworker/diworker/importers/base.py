@@ -14,6 +14,7 @@ import boto3
 from boto3.session import Config as BotoConfig
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from diworker.diworker.utils import retry_mongo_upsert, get_month_start
+import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
@@ -40,7 +41,7 @@ class BaseReportImporter:
         if detect_period_start:
             self.detect_period_start()
         self.imported_raw_dates_map = defaultdict(dict)
-        self.report_identity = datetime.utcnow().timestamp()
+        self.report_identity = opttime.utcnow().timestamp()
 
     @property
     def cloud_acc(self):
@@ -477,12 +478,12 @@ class BaseReportImporter:
     def detect_period_start(self):
         ca_last_import_at = self.cloud_acc.get('last_import_at')
         if (ca_last_import_at and
-                datetime.utcfromtimestamp(
-                    ca_last_import_at).month == datetime.utcnow().month):
+                opttime.utcfromtimestamp(
+                    ca_last_import_at).month == opttime.utcnow().month):
             last_import_at = self.get_last_import_date(self.cloud_acc_id)
             # someone cleared expenses collection
             if not last_import_at:
-                last_import_at = datetime.utcfromtimestamp(
+                last_import_at = opttime.utcfromtimestamp(
                     self.cloud_acc['last_import_at'])
             if last_import_at.day == 1:
                 self.period_start = get_month_start(
@@ -490,7 +491,7 @@ class BaseReportImporter:
             else:
                 self.period_start = last_import_at
         elif ca_last_import_at:
-            self.period_start = datetime.utcfromtimestamp(
+            self.period_start = opttime.utcfromtimestamp(
                 self.cloud_acc['last_import_at'])
             self.remove_raw_expenses_from_period_start(self.cloud_acc_id)
 
@@ -499,11 +500,11 @@ class BaseReportImporter:
 
     def set_period_start(self):
         if self.need_extend_report_interval:
-            this_month_start = datetime.utcnow().replace(
+            this_month_start = opttime.utcnow().replace(
                 day=1, hour=0, minute=0, second=0, microsecond=0)
             self.period_start = this_month_start - relativedelta(months=+3)
         else:
-            self.period_start = get_month_start(datetime.utcnow())
+            self.period_start = get_month_start(opttime.utcnow())
 
     def get_last_import_date(self, cloud_account_id, tzinfo=None):
         max_dt = self.clickhouse_cl.execute(

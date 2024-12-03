@@ -18,6 +18,7 @@ COPY optscale_client/arcee_client optscale_client/arcee_client
 COPY optscale_client/bulldozer_client optscale_client/bulldozer_client
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
+COPY tools/optscale_time tools/optscale_time
 
 RUN pip install --no-cache-dir -r bulldozer/bulldozer_worker/requirements.txt
 COPY bulldozer/bulldozer_worker/*.py bulldozer/bulldozer_worker/

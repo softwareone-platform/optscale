@@ -64,11 +64,9 @@ def _generate_context(template_params, config_client):
 
 
 def generate_email(config_client, to, subject, template_params,
-                   template_type=None, reply_to_email=None,
-                   frm='noreply@hystax.com'):
+                   template_type=None, reply_to_email=None):
     msg = MIMEMultipart('related')
     msg['Subject'] = subject
-    msg['From'] = frm
     msg['To'] = to
     if reply_to_email:
         msg['reply-to'] = reply_to_email

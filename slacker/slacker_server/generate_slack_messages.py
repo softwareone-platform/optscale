@@ -28,15 +28,16 @@ from slacker.slacker_server.message_templates.resources import *
 from slacker.slacker_server.message_templates.resource_details import *
 from slacker.slacker_server.message_templates.warnings import *
 from slacker.slacker_server.models.db_factory import DBType, DBFactory
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
-NOW_TS = int(datetime.utcnow().timestamp())
-ACQUIRED_SINCE = datetime.strftime(datetime.utcfromtimestamp(
+NOW_TS = utcnow_timestamp()
+ACQUIRED_SINCE = datetime.strftime(utcfromtimestamp(
     NOW_TS - 60), "%m/%d/%Y %H:%M UTC")
-RELEASED_AT = datetime.strftime(datetime.utcfromtimestamp(NOW_TS + 3600),
+RELEASED_AT = datetime.strftime(utcfromtimestamp(NOW_TS + 3600),
                                 "%m/%d/%Y %H:%M UTC")
-FUTURE_ACQUIRED_SINCE = datetime.strftime(datetime.utcfromtimestamp(
+FUTURE_ACQUIRED_SINCE = datetime.strftime(utcfromtimestamp(
     NOW_TS + 3660), "%m/%d/%Y %H:%M UTC")
-FUTURE_RELEASED_AT = datetime.strftime(datetime.utcfromtimestamp(
+FUTURE_RELEASED_AT = datetime.strftime(utcfromtimestamp(
     NOW_TS + 7200), "%m/%d/%Y %H:%M UTC")
 POOL = {"name": "My pool", "limit": 500, "id": str(uuid.uuid4())}
 CLOUD_ACCOUNT = {"name": "My super cloud", "id": str(uuid.uuid4())}

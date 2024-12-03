@@ -13,6 +13,7 @@ import CreateOrganizationModal from "./CreateOrganizationModal";
 import CreateOrganizationOptionModal from "./CreateOrganizationOptionModal";
 import CreateResourcePerspectiveModal from "./CreateResourcePerspectiveModal";
 import CreateS3DuplicateFinderCheckModal from "./CreateS3DuplicateFinderCheckModal";
+import DataSourceBillingReimportModal from "./DataSourceBillingReimportModal";
 import DeleteAssignmentRuleModal from "./DeleteAssignmentRuleModal";
 import DeleteBIExportModal from "./DeleteBIExportModal";
 import DeleteClusterTypeModal from "./DeleteClusterTypeModal";
@@ -133,5 +134,6 @@ export {
   EditModelVersionAliasModal,
   EditModelPathModal,
   EditModelVersionTagsModal,
-  MlDeleteArtifactModal
+  MlDeleteArtifactModal,
+  DataSourceBillingReimportModal
 };

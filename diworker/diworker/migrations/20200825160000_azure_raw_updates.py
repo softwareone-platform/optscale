@@ -80,7 +80,7 @@ class Migration(BaseMigration):
             self.db.raw_expenses.bulk_write(update_requests)
 
     def remove_azure_data_from_current_month(self):
-        month_regex = datetime.utcnow().strftime('%Y-%m')
+        month_regex = datetime.now(tz=timezone.utc).strftime('%Y-%m')
         self.db.raw_expenses.delete_many({'usage_start': {'$regex': month_regex}})
 
     def update_resource_id_in_clean_expenses(self):

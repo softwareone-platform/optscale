@@ -1,5 +1,5 @@
 import uuid
-
+import tools.optscale_time as opttime
 from rest_api.rest_api_server.controllers.cluster_type import ClusterTypeController
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
@@ -401,7 +401,7 @@ class TestCloudResourcesDiscoveryApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertEqual(len(response['data']), 5)
         self.assertEqual(response['from_cache'], True)
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         with freeze_time(now + timedelta(60)):
             self.resource_discovery_call(
                 self.get_instances(), create_resources=False)
@@ -520,7 +520,7 @@ class TestCloudResourcesDiscoveryApi(TestApiBase):
         self.assertEqual(code, 200)
 
     def test_first_seen_discover(self):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         with freeze_time(now):
             self.resource_discovery_call(self.get_instances())
         code, response = self.client.cloud_resources_discover(
@@ -558,7 +558,7 @@ class TestCloudResourcesDiscoveryApi(TestApiBase):
             self.assertEqual(resp['first_seen'], int(past_date.timestamp()))
 
     def test_import_after_discover(self):
-        now = datetime.utcnow()
+        now = opttime.utcnow()
         with freeze_time(now):
             self.resource_discovery_call([self.get_instances()[0]])
         code, response = self.client.cloud_resources_discover(
@@ -604,7 +604,7 @@ class TestCloudResourcesDiscoveryApi(TestApiBase):
             'resource_type': resource_type,
             'employee_id': employee_id,
             'pool_id': pool_id,
-            'last_seen': last_seen or int(datetime.utcnow().timestamp()),
+            'last_seen': last_seen or opttime.utcnow_timestamp(),
             'region': region
         }
         if tags:

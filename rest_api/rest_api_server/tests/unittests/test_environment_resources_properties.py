@@ -1,6 +1,3 @@
-import datetime
-import os
-import uuid
 import copy
 
 from unittest.mock import patch, ANY
@@ -9,6 +6,7 @@ from freezegun import freeze_time
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import encoded_map
+from tools.optscale_time import utcnow
 
 
 class TestEnvironmentResourceApi(TestApiBase):
@@ -180,7 +178,7 @@ class TestEnvironmentResourceApi(TestApiBase):
 
     def test_send_properties_double(self):
         init_props = {'some_field': 'some_value'}
-        now = datetime.datetime.utcnow()
+        now = utcnow()
         with freeze_time(now):
             code, _ = self.client.env_properties_send(
                 self.env_resource_id, init_props)

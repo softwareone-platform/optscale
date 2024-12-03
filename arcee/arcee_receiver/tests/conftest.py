@@ -4,11 +4,17 @@ import pytest
 from arcee.arcee_receiver.tests.base import AConfigClMock, DB_MOCK
 
 
+async def return_none(*_args, **_kwargs):
+    return None
+
+
 @pytest.fixture
 def mock_base(mocker):
     mocker.patch('optscale_client.aconfig_cl.aconfig_cl.AConfigCl',
                  AConfigClMock)
     mocker.patch('arcee.arcee_receiver.server.db', DB_MOCK)
+    mocker.patch('arcee.arcee_receiver.server.publish_activities_task',
+                 return_none)
 
 
 async def return_false(*_args):

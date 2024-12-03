@@ -1,7 +1,6 @@
 import uuid
-from datetime import datetime
 from unittest.mock import patch
-
+from tools.optscale_time import utcnow_timestamp
 from tools.cloud_adapter.model import ResourceTypes
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 
@@ -102,7 +101,7 @@ class TestDiscoveryInfo(TestApiBase):
 
     def test_update_discovery_info(self):
         _, res = self.client.discovery_info_list(self.cloud_acc_id)
-        some_time = int(datetime.utcnow().timestamp())
+        some_time = utcnow_timestamp()
         for di_info in res['discovery_info']:
             code, res = self.client.discovery_info_update(
                 di_info['id'], {'last_discovery_at': some_time,
@@ -150,7 +149,7 @@ class TestDiscoveryInfo(TestApiBase):
     def test_update_discovery_info_nonexisting(self):
         code, res = self.client.discovery_info_update(
             str(uuid.uuid4()),
-            {'last_discovery_at': int(datetime.utcnow().timestamp())}
+            {'last_discovery_at': utcnow_timestamp()}
         )
         self.assertEqual(code, 404)
 

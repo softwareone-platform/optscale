@@ -6,6 +6,7 @@ from optscale_client.insider_client.client import Client as InsiderClient
 
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase, ModuleBase
+from tools.optscale_time import utcnow
 
 DEFAULT_DAYS_THRESHOLD = 90
 LOG = logging.getLogger(__name__)
@@ -90,7 +91,7 @@ class ReservedInstancesBase(ModuleBase):
         cloud_account_map = self.get_cloud_accounts(
             self.SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         cloud_account_ids = list(cloud_account_map.keys())
-        now = datetime.utcnow()
+        now = utcnow()
         range_start_ts = int((now - timedelta(days=days_threshold)).timestamp())
         instance_map = self.get_instances_map(cloud_account_ids, range_start_ts)
         cloud_resource_ids = list(instance_map.keys())

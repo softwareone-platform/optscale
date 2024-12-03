@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from unittest.mock import patch, ANY
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from tools.optscale_time import utcnow_timestamp
 
 
 class TestWebhooksApi(TestApiBase):
@@ -358,7 +359,7 @@ class TestWebhooksApi(TestApiBase):
                                                        schedule_book)
         self.assertEqual(code, 201)
         code, _ = self.client.shareable_book_release(
-            book['id'], {'released_at': int(datetime.utcnow().timestamp())})
+            book['id'], {'released_at': utcnow_timestamp()})
         self.assertEqual(code, 200)
         self.assertEqual(p_publish_task.call_count, 1)
         p_publish_task.assert_called_with({

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import tools.optscale_time as opttime
 
 from requests import HTTPError
 from sqlalchemy.sql import and_
@@ -93,7 +93,7 @@ class AssignmentController(BaseController, MongoMixin):
         return {request.resource_id: request for request in res}
 
     def invalidate_requests(self, res_ids):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = opttime.utcnow_timestamp()
         resource_request_map = self.get_active_requests(res_ids)
         requests = list(resource_request_map.values())
         for request in requests:

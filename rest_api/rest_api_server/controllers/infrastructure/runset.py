@@ -13,7 +13,7 @@ from rest_api.rest_api_server.models.models import Employee
 
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, WrongArgumentsException, ConflictException)
-
+from tools.optscale_time import utcnow_timestamp
 
 MIN_CPU_COUNT = 4
 STOP_ACTION = 'stop'
@@ -45,7 +45,7 @@ def format_template(template: dict) -> dict:
 def get_runners_duration(runners: list[dict]) -> int:
     min_started_at = 0
     max_destroyed_at = 0
-    now = int(datetime.utcnow().timestamp())
+    now = utcnow_timestamp()
     for runner in runners:
         if not runner.get('started_at'):
             # we need start point to calculate something

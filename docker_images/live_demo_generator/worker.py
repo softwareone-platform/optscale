@@ -14,6 +14,7 @@ from datetime import datetime
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow
 
 EXCHANGE_NAME = 'live-demo-generations'
 QUEUE_NAME = 'live-demo-generation'
@@ -66,12 +67,12 @@ class LiveDemoGenerator(ConsumerMixin):
             time.sleep(1)
 
     def generate_live_demo(self):
-        d_start = datetime.utcnow()
+        d_start = utcnow()
         _, response = self.rest_cl.live_demo_create()
         response['created_at'] = int(d_start.timestamp())
         self.mongo_cl.restapi.live_demos.insert_one(response)
         LOG.info('Live demo generated in %s seconds',
-                 (datetime.utcnow() - d_start).total_seconds())
+                 (utcnow() - d_start).total_seconds())
 
 
 if __name__ == '__main__':

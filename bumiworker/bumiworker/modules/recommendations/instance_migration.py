@@ -5,7 +5,7 @@ from pymongo import UpdateOne
 
 from tools.cloud_adapter.clouds.aws import Aws
 from tools.cloud_adapter.clouds.alibaba import Alibaba
-
+from tools.optscale_time import utcnow
 from bumiworker.bumiworker.modules.base import ModuleBase
 
 
@@ -31,9 +31,18 @@ ALIBABA_REGION_MAP = {
 
 
 AWS_REGION_MAP = {
+    'af': ['af-south-1'],
+    'ap': ['ap-east-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
+           'ap-south-1', 'ap-south-2', 'ap-southeast-1',
+           'ap-southeast-2', 'ap-southeast-3', 'ap-southeast-4',
+           'ap-southeast-5'],
+    'ca': ['ca-central-1', 'ca-west-1'],
+    'eu': ['eu-central-1', 'eu-central-2', 'eu-west-1', 'eu-west-2',
+           'eu-west-3', 'eu-south-1', 'eu-north-1'],
+    'il': ['il-central-1'],
+    'me': ['me-south-1', 'me-central-1'],
+    'sa': ['sa-east-1'],
     'us': ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2'],
-    'eu': ['eu-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3', 'eu-south-1',
-           'eu-north-1']
 }
 AWS_SKU_INDEX = 'AwsSkuIndex'
 # this map is necessary to map human-readable names from SKU attributes to
@@ -41,23 +50,36 @@ AWS_SKU_INDEX = 'AwsSkuIndex'
 # permission ssm:GetParameter, so it may not work on most accounts. That's why
 # I saved it here
 AWS_REGION_NAMES_TO_CODES = {
+    'Africa (Cape Town)': 'af-south-1',
+    'Asia Pacific (Hong Kong)': 'ap-east-1',
     'Asia Pacific (Tokyo)': 'ap-northeast-1',
-    'US West (Oregon)': 'us-west-2',
-    'Asia Pacific (Mumbai)': 'ap-south-1',
-    'Canada (Central)': 'ca-central-1',
-    'Europe (London)': 'eu-west-2',
-    'Asia Pacific (Singapore)': 'ap-southeast-1',
-    'South America (Sao Paulo)': 'sa-east-1',
-    'Europe (Frankfurt)': 'eu-central-1',
-    'Asia Pacific (Sydney)': 'ap-southeast-2',
-    'US West (N. California)': 'us-west-1',
-    'Europe (Ireland)': 'eu-west-1',
     'Asia Pacific (Seoul)': 'ap-northeast-2',
-    'Europe (Milan)': 'eu-south-1',
+    'Asia Pacific (Osaka)': 'ap-northeast-3',
+    'Asia Pacific (Mumbai)': 'ap-south-1',
+    'Asia Pacific (Hyderabad)': 'ap-south-2',
+    'Asia Pacific (Singapore)': 'ap-southeast-1',
+    'Asia Pacific (Sydney)': 'ap-southeast-2',
+    'Asia Pacific (Jakarta)': 'ap-southeast-3',
+    'Asia Pacific (Melbourne)': 'ap-southeast-4',
+    'Asia Pacific (Malaysia)': 'ap-southeast-5',
+    'Canada (Central)': 'ca-central-1',
+    'Canada West (Calgary)': 'ca-west-1',
+    'Europe (Frankfurt)': 'eu-central-1',
+    'Europe (Zurich)': 'eu-central-2',
     'Europe (Stockholm)': 'eu-north-1',
+    'Europe (Milan)': 'eu-south-1',
+    'Europe (Spain)': 'eu-south-2',
+    'Europe (Ireland)': 'eu-west-1',
+    'Europe (London)': 'eu-west-2',
+    'Europe (Paris)': 'eu-west-3',
+    'Israel (Tel Aviv)': 'il-central-1',
+    'Middle East (Bahrain)': 'me-south-1',
+    'Middle East (UAE)': 'me-central-1',
+    'South America (Sao Paulo)': 'sa-east-1',
     'US East (N. Virginia)': 'us-east-1',
     'US East (Ohio)': 'us-east-2',
-    'Europe (Paris)': 'eu-west-3'
+    'US West (N. California)': 'us-west-1',
+    'US West (Oregon)': 'us-west-2',
 }
 unique_sku_fields = [
     'location',
@@ -113,7 +135,7 @@ class InstanceMigration(ModuleBase):
             similar_skus = self.aws.get_similar_sku_prices(sku)
             updates = []
             for sku in similar_skus:
-                sku['updated_at'] = datetime.utcnow()
+                sku['updated_at'] = utcnow()
                 updates.append(UpdateOne(
                     filter={'sku': sku['sku']},
                     update={'$set': sku},
@@ -124,7 +146,7 @@ class InstanceMigration(ModuleBase):
 
         sku_dict = list(self.aws_prices.find({
             'sku': sku,
-            'updated_at': {'$gte': datetime.utcnow() - timedelta(days=60)}
+            'updated_at': {'$gte': utcnow() - timedelta(days=60)}
         }))
         if sku_dict:
             LOG.info('Found SKU %s for instance %s in DB', sku, resource_id)
@@ -154,7 +176,7 @@ class InstanceMigration(ModuleBase):
                     {'cloud_account_id': {
                         '$in': list(cloud_account_map.keys())}},
                     {'start_date': {
-                        '$gte': datetime.utcnow() - timedelta(days=10)}},
+                        '$gte': utcnow() - timedelta(days=10)}},
                     {'cost': {'$ne': 0}},
                 ]
             }},
@@ -175,7 +197,7 @@ class InstanceMigration(ModuleBase):
             similar_skus = self.get_similar_skus(resource_id, sku_info['sku'])
 
             region_prefix = instance_info['region'].split('-')[0]
-            similar_regions = AWS_REGION_MAP.get(region_prefix)
+            similar_regions = AWS_REGION_MAP.get(region_prefix, [])
             similar_from_regions = {}
             for sku_dict in similar_skus:
                 _index = sku_dict['location'].index('(')
@@ -200,8 +222,9 @@ class InstanceMigration(ModuleBase):
                 similar_from_regions[sku_dict['sku']] = sku_dict
 
             cheapest_sku = min(similar_from_regions.values(),
-                               key=lambda x: x['monthly_price'])
-            if cheapest_sku['sku'] == sku_info['sku']:
+                               key=lambda x: x['monthly_price'],
+                               default=None)
+            if cheapest_sku is None or cheapest_sku['sku'] == sku_info['sku']:
                 continue
 
             current_sku = similar_from_regions[sku_info['sku']]

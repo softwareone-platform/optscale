@@ -11,6 +11,7 @@ from rest_api.rest_api_server.models.enums import RunStates
 from rest_api.rest_api_server.models.models import CloudAccount
 
 from tools.optscale_exceptions.common_exc import NotFoundException
+from tools.optscale_time import utcnow_timestamp
 
 
 class RunController(BaseInfraController):
@@ -54,7 +55,7 @@ class RunController(BaseInfraController):
         run['status'] = RunStates(state).name
         finish = run.get('finish')
         if not finish and state == RunStates.running:
-            finish = datetime.utcnow().timestamp()
+            finish = utcnow_timestamp()
         duration = finish - run.get('start')
         run['runset'] = self.format_runset(
             run.pop('runset_id'), run.pop('runset_name', None))
@@ -80,7 +81,7 @@ class RunController(BaseInfraController):
         if not executors:
             # no executors created. Nothing to count
             return {}
-        now = int(datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         started_at = runset['started_at']
         destroyed_at = runset.get('destroyed_at') or now
         started_at = datetime.fromtimestamp(started_at).replace(

@@ -30,6 +30,7 @@ import editAssignmentRuleRoute from "./editAssignmentRuleRoute";
 import editBIExportRoute from "./editBIExportRoute";
 import editMlMetricRoute from "./editMlMetricRoute";
 import editPowerScheduleRoute from "./editPowerScheduleRoute";
+import emailVerificationRoute from "./emailVerificationRoute";
 import environmentsRoute from "./environmentsRoute";
 import eventsRoute from "./eventsRoute";
 import expensesMapRoute from "./expensesMapRoute";
@@ -190,6 +191,7 @@ export const routes = [
   mlEditRunArtifactRoute,
   mlCreateRunArtifactRoute,
   mlEditArtifactRoute,
+  emailVerificationRoute,
   // React router 6.x does not require the not found route (*) to be at the end,
   // but the matchPath hook that is used in the DocsPanel component seems to honor the order.
   // Moving it to the bottom for "safety" reasons.

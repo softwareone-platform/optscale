@@ -6,7 +6,7 @@ Revises: fb5d8764b7aa
 Create Date: 2020-08-28 09:43:42.646503
 
 """
-import datetime
+from datetime import datetime, timezone
 import uuid
 
 from alembic import op
@@ -63,7 +63,7 @@ modules = [
 
 
 def get_current_timestamp():
-    return int(datetime.datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 def gen_id():
@@ -79,7 +79,7 @@ def upgrade():
         for module_name, purpose, module_description in modules:
             ins_stmt = insert(report_table).values(
                 id=str(uuid.uuid4()),
-                created_at=int(datetime.datetime.utcnow().timestamp()),
+                created_at=get_current_timestamp(),
                 name=module_name,
                 module_name=module_name,
                 report_format="html",

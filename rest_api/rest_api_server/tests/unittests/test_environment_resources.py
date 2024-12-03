@@ -434,7 +434,7 @@ class TestEnvironmentResourceApi(TestApiBase):
             self.org_id, self.valid_resource)
         self.assertEqual(code, 201)
         send_email_patch.assert_called_once_with(
-            [ANY], 'OptScale shareable environments notification',
+            [ANY], 'OptScale shared environments notification',
             template_type='first_shareable_resources',
             template_params={
                 'texts': {'organization': {

@@ -1,4 +1,3 @@
-import datetime
 import json
 import os
 import uuid
@@ -15,6 +14,7 @@ from bumiworker.bumiworker.modules.module import call_module, list_modules
 
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow_timestamp
 
 
 LOG = get_logger(__name__)
@@ -143,15 +143,14 @@ class Continue(Base):
 
 class UpdateTimeout(Continue):
     def _execute(self):
-        self.body['last_update'] = int(
-            datetime.datetime.utcnow().timestamp())
+        self.body['last_update'] = utcnow_timestamp()
         super()._execute()
 
 
 class CheckTimeoutThreshold(UpdateTimeout):
     def check_timeout(self):
         # MAX_UPDATE_THRESHOLD from last step execution exceeded
-        if (int(datetime.datetime.utcnow().timestamp()) -
+        if (utcnow_timestamp() -
                 self.body['last_update'] > self.body['task_timeout']):
             raise BumiTaskTimeoutError(
                 'Timeout error while process task %s, step %s' % (
@@ -161,14 +160,13 @@ class CheckTimeoutThreshold(UpdateTimeout):
 class CheckWaitThreshold(Continue):
     def _handle_exception(self, exc):
         # further waiters should be able to count from scratch
-        self.body['last_update'] = int(
-            datetime.datetime.utcnow().timestamp())
+        self.body['last_update'] = utcnow_timestamp()
         super()._handle_exception(exc)
 
     def check_timeout(self):
         # MAX_WAIT_THRESHOLD from previous step execution exceeded
-        if (int(datetime.datetime.utcnow().timestamp()) -
-                self.body['last_update'] > self.body['wait_timeout']):
+        if (utcnow_timestamp() - self.body['last_update'] >
+                self.body['wait_timeout']):
             raise BumiTaskWaitError(
                 'Wait error while process task %s, step %s' % (
                     task_str(self.body), self.step))
@@ -181,8 +179,8 @@ class CompleteBase(Base):
 
     def _handle_exception(self, exc):
         # put msg to queue and hope that it'll gracefully finish
-        if (int(datetime.datetime.utcnow().timestamp()) -
-                self.body['last_update'] <= self.body['wait_timeout']):
+        if (utcnow_timestamp() - self.body['last_update'] <=
+                self.body['wait_timeout']):
             self.on_continue_cb(self.body, self.is_delayed)
         else:
             LOG.error('Aborting task %s, step %s since graceful fail seems impossible',
@@ -276,8 +274,7 @@ class InitializeChildrenBase(CheckTimeoutThreshold):
 
     def _get_child_task(self, module):
         return {
-                'last_update': int(
-                    datetime.datetime.utcnow().timestamp()),
+                'last_update': utcnow_timestamp(),
                 'tries_count': 0,
                 'created_at': self.body['created_at'],
                 'checklist_id': self.body['checklist_id'],
@@ -337,8 +334,7 @@ class WaitTasksResult(CheckWaitThreshold):
         s3_objects = self.s3_client.list_objects_v2(
             Bucket=BUCKET_NAME, Prefix=prefix)
         if s3_objects['KeyCount'] == self.body['children_count']:
-            self.body['last_update'] = int(
-                datetime.datetime.utcnow().timestamp())
+            self.body['last_update'] = utcnow_timestamp()
             self.update_task_state()
         super()._execute()
 

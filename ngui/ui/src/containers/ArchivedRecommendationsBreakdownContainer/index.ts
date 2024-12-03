@@ -1,3 +1,0 @@
-import ArchivedRecommendationsBreakdownContainer from "./ArchivedRecommendationsBreakdownContainer";
-
-export default ArchivedRecommendationsBreakdownContainer;

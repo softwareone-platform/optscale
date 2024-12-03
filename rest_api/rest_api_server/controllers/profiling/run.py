@@ -13,6 +13,7 @@ from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.enums import RunStates
 
 from tools.optscale_exceptions.common_exc import NotFoundException
+from tools.optscale_time import utcnow_timestamp
 
 DAY_IN_HOURS = 24
 BYTES_IN_MB = 1024 * 1024
@@ -44,7 +45,7 @@ class RunController(BaseProfilingController, RunCostsMixin):
         run['status'] = RunStates(state).name
         finish = run.get('finish')
         if not finish and state == RunStates.running:
-            finish = datetime.utcnow().timestamp()
+            finish = utcnow_timestamp()
         run['duration'] = finish - run.get('start') if finish else None
         run['cost'] = run_costs.get(run['id'], 0)
         run['metrics'] = task_metrics

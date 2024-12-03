@@ -69,14 +69,14 @@ export const useDownloadCleanupScripts = (recommendation) => {
   return [];
 };
 
-export const useDownloadItems = (recommendation, downloadLimit, selectedDataSources) => {
+export const useDownloadItems = (recommendation, downloadLimit, selectedDataSourceIds) => {
   const { type, items, status } = recommendation;
 
   const { download, isLoading } = useDownloadRecommendationItems({
     limit: downloadLimit,
     type,
     status,
-    dataSourceIds: selectedDataSources
+    dataSourceIds: selectedDataSourceIds
   });
 
   return isEmptyArray(items)

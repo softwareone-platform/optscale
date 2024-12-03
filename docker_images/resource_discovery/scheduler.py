@@ -10,6 +10,7 @@ from tools.cloud_adapter.cloud import Cloud
 from tools.cloud_adapter.model import RES_MODEL_MAP
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time import utcnow, utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 IGNORED_CLOUD_TYPES = ['environment']
@@ -89,7 +90,7 @@ def process(config_cl):
                          secret=config_cl.cluster_secret())
     _, response = rest_cl.organization_list({'with_connected_accounts': True})
     tasks_map = defaultdict(list)
-    now = int(datetime.utcnow().timestamp())
+    now = utcnow_timestamp()
     _, _, _, observe_timeout = config_cl.resource_discovery_params()
     for organization in response['organizations']:
         try:
@@ -117,8 +118,7 @@ def process(config_cl):
                     if di_info['enabled']:
                         rest_cl.discovery_info_update(
                             di_info['id'], {
-                                'observe_time': int(
-                                    datetime.utcnow().timestamp())})
+                                'observe_time': utcnow_timestamp()})
                         tasks_map[organization['id']].append(
                             (ca['id'], di_info['resource_type']))
             except requests.exceptions.HTTPError as ex:
@@ -130,9 +130,9 @@ def process(config_cl):
 
 
 def main(config_client):
-    start_time = datetime.utcnow()
+    start_time = utcnow()
     tasks_map = process(config_client)
-    exec_time = (datetime.utcnow() - start_time).total_seconds()
+    exec_time = (utcnow() - start_time).total_seconds()
     if tasks_map:
         publish_tasks(config_client, tasks_map)
         LOG.info('Published %s tasks (%s seconds) for orgs: %s',

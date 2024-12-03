@@ -8,11 +8,12 @@ import Mocked, { MESSAGE_TYPES } from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
 import RecommendationsOverviewContainer from "containers/RecommendationsOverviewContainer";
 import RecommendationsOverviewContainerMocked from "containers/RecommendationsOverviewContainer/RecommendationsOverviewContainerMocked";
-import RecommendationsOverviewService from "containers/RecommendationsOverviewContainer/RecommendationsOverviewService";
 import { useApiData } from "hooks/useApiData";
+import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
+import RecommendationsOverviewService from "services/RecommendationsOverviewService";
 import { ARCHIVED_RECOMMENDATIONS } from "urls";
-import { AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR } from "utils/constants";
+import { AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 
 const DATA_SOURCES_QUERY_NAME = "dataSourceId";
@@ -42,18 +43,28 @@ const getActionBar = ({ forceCheck, isForceCheckAvailable }) => ({
   ]
 });
 
-const RECOMMENDABLE_DATA_SOURCES = [AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR];
+// Always included in recommendations
+const RECOMMENDABLE_DATA_SOURCES_BASE = [AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR];
 
 const RecommendationsPage = ({ isMock }) => {
   const {
     apiData: { cloudAccounts = [] }
   } = useApiData(GET_DATA_SOURCES);
 
-  const [selectedDataSources, setSelectedDataSources] = useSyncQueryParamWithState({
+  const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
+  const [selectedDataSourceIds, setSelectedDataSourceIds] = useSyncQueryParamWithState({
     queryParamName: DATA_SOURCES_QUERY_NAME,
     defaultValue: [],
     parameterIsArray: true
   });
+
+  const selectedDataSourceTypes: string[] = Array.from(
+    new Set(
+      cloudAccounts
+        .filter((cloudAccount) => selectedDataSourceIds.includes(cloudAccount.id))
+        .map((cloudAccount) => cloudAccount.type)
+    )
+  );
 
   const { forceCheck, isForceCheckAvailable } = RecommendationsOverviewService().useForceCheck();
   const recommendationsActionBar = getActionBar({ forceCheck, isForceCheckAvailable });
@@ -65,9 +76,11 @@ const RecommendationsPage = ({ isMock }) => {
         <Stack spacing={SPACING_2} sx={{ minHeight: "100%" }}>
           <div>
             <DataSourceMultiSelect
-              allDataSources={cloudAccounts.filter((cloudAccount) => RECOMMENDABLE_DATA_SOURCES.includes(cloudAccount.type))}
-              dataSourceIds={selectedDataSources}
-              onChange={setSelectedDataSources}
+              allDataSources={cloudAccounts.filter((cloudAccount) =>
+                [...RECOMMENDABLE_DATA_SOURCES_BASE, ...(isNebiusConnectionEnabled ? [NEBIUS] : [])].includes(cloudAccount.type)
+              )}
+              dataSourceIds={selectedDataSourceIds}
+              onChange={setSelectedDataSourceIds}
               displayEmpty
             />
           </div>
@@ -75,7 +88,10 @@ const RecommendationsPage = ({ isMock }) => {
             {isMock ? (
               <RecommendationsOverviewContainerMocked />
             ) : (
-              <RecommendationsOverviewContainer selectedDataSources={selectedDataSources} />
+              <RecommendationsOverviewContainer
+                selectedDataSourceIds={selectedDataSourceIds}
+                selectedDataSourceTypes={selectedDataSourceTypes}
+              />
             )}
           </div>
         </Stack>

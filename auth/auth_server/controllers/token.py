@@ -15,6 +15,7 @@ from auth.auth_server.utils import (hash_password, popkey,
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   ForbiddenException,
                                                   NotFoundException)
+from tools.optscale_time import utcnow
 from optscale_client.config_client.client import etcd
 
 LOG = logging.getLogger(__name__)
@@ -56,10 +57,14 @@ class TokenController(BaseController):
         if password:
             if user.password != hash_password(password, user.salt):
                 raise ForbiddenException(Err.OA0037, [])
+            if not user.verified:
+                raise ForbiddenException(Err.OA0073, [])
         else:
             vc_used = self.use_verification_code(email, verification_code)
             if not vc_used:
                 raise ForbiddenException(Err.OA0071, [])
+            elif not user.verified:
+                user.verified = True
         if not user.is_active:
             raise ForbiddenException(Err.OA0038, [])
         return user
@@ -93,12 +98,14 @@ class TokenController(BaseController):
             raise NotFoundException(Err.OA0043, [user_id])
         if not user.is_active:
             raise ForbiddenException(Err.OA0038, [])
+        if not user.verified:
+            raise ForbiddenException(Err.OA0073, [])
         return self.create_user_token(user, **kwargs)
 
     def create_user_token(self, user, **kwargs):
         model_type = self._get_model_type()
         LOG.info("Creating %s with parameters %s", model_type.__name__, kwargs)
-        now = datetime.datetime.utcnow()
+        now = utcnow()
         macaroon_token = MacaroonToken(user.salt, user.id).create(
             xstr(kwargs.get('register', False)),
             xstr(kwargs.get('provider', 'optscale'))
@@ -108,7 +115,7 @@ class TokenController(BaseController):
             'created_at': now,
             'valid_until': now + datetime.timedelta(hours=self.expiration),
             'ip': kwargs.get('ip'),
-            'digest': hashlib.md5(macaroon_token.encode('utf-8')).hexdigest()
+            'digest': hashlib.md5(macaroon_token.encode('utf-8'), usedforsecurity=False).hexdigest()
         }
         token = model_type(**params)
         self.session.add(token)

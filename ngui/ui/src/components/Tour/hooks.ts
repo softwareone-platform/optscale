@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
+import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { useRootData } from "hooks/useRootData";
 import { startTour, updateTourStep as updateTourStepAction } from "./actionCreators";
@@ -15,6 +16,8 @@ export const useIsTourAvailableForCurrentBreakpoint = () => {
 export const useStartTour = () => {
   const dispatch = useDispatch();
 
+  const { closeCommunityDocs } = useCommunityDocsContext();
+
   const isTourAvailableForCurrentBreakpoint = useIsTourAvailableForCurrentBreakpoint();
 
   return useCallback(
@@ -23,9 +26,10 @@ export const useStartTour = () => {
         return;
       }
       const stepId = TOURS_DEFINITIONS[tourId][0].id;
+      closeCommunityDocs();
       dispatch(startTour(tourId, stepId));
     },
-    [dispatch, isTourAvailableForCurrentBreakpoint]
+    [dispatch, isTourAvailableForCurrentBreakpoint, closeCommunityDocs]
   );
 };
 

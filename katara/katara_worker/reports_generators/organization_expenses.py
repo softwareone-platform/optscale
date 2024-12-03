@@ -1,8 +1,8 @@
 import uuid
 from calendar import monthrange
-from datetime import datetime
 
 from katara.katara_worker.reports_generators.base import Base
+from tools.optscale_time import utcnow
 
 
 class OrganizationExpenses(Base):
@@ -11,7 +11,7 @@ class OrganizationExpenses(Base):
         return str(uuid.UUID(int=0))
 
     def generate(self):
-        today = datetime.utcnow()
+        today = utcnow()
         start_date = today.replace(
             day=1, hour=0, minute=0, second=0, microsecond=0)
         start = int(start_date.timestamp())
@@ -82,7 +82,7 @@ class OrganizationExpenses(Base):
 
     @staticmethod
     def get_monthly_forecast(cost):
-        today = datetime.utcnow()
+        today = utcnow()
         worked_days = today.day
         _, days_in_month = monthrange(today.year, today.month)
         forecast = cost * days_in_month / worked_days

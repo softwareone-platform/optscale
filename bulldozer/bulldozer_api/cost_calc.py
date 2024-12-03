@@ -10,6 +10,7 @@ import concurrent.futures
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.insider_client.client import Client as InsiderClient
+from tools.optscale_time import utcnow_timestamp
 
 
 SECS_IN_HR = 3600  # seconds in hour
@@ -66,7 +67,7 @@ class CostCalc:
         )
         if hourly_price:
             started_at = runner.get('started_at')
-            now = int(datetime.datetime.utcnow().timestamp())
+            now = utcnow_timestamp()
             if started_at:
                 destroyed_at = runner.get('destroyed_at') or now
                 cost = self.get_cost(hourly_price, destroyed_at - started_at)

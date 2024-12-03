@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch
 
 from sqlalchemy import and_
@@ -9,6 +9,7 @@ from rest_api.rest_api_server.models.models import (OrganizationConstraintTypes,
                                                     OrganizationLimitHit)
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import get_nil_uuid
+import tools.optscale_time as opttime
 
 
 class TestOrganizationConstraints(TestApiBase):
@@ -66,7 +67,7 @@ class TestOrganizationConstraints(TestApiBase):
                               host_ip=None, instance_address=None, k8s_namespace=None,
                               k8s_node=None, pod_ip=None, first_seen=None, k8s_service=None,
                               service_name=None):
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         resource = {
             'cloud_resource_id': self.gen_id(),
             'name': name,
@@ -777,7 +778,7 @@ class TestOrganizationConstraints(TestApiBase):
 
     def test_list_constraints_with_hit_days(self):
         constr = self.create_org_constraint(self.org_id, self.pool_id)
-        created_at = int((datetime.utcnow() - timedelta(days=2)).timestamp())
+        created_at = int((opttime.utcnow() - timedelta(days=2)).timestamp())
         old_hit = self.create_org_limit_hit(self.org_id, self.pool_id,
                                             constraint_id=constr['id'],
                                             created_at=created_at)
@@ -894,7 +895,7 @@ class TestOrganizationConstraints(TestApiBase):
         last_run_result = {'average': 0, 'today': 0, 'breakdown': {}}
         _test(last_run_result)
 
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         average = 2
         last_run_result = {
             'average': average, 'today': 20,
@@ -920,7 +921,7 @@ class TestOrganizationConstraints(TestApiBase):
             OrganizationConstraintTypes.EXPENSE_ANOMALY.value: (
                 ['test', [1.2]], {'today': 'OE0466', 'average': 'OE0466'}),
         }
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         for type_ in [OrganizationConstraintTypes.RESOURCE_COUNT_ANOMALY.value,
                       OrganizationConstraintTypes.EXPENSE_ANOMALY.value]:
             constr = self.create_org_constraint(
@@ -948,7 +949,7 @@ class TestOrganizationConstraints(TestApiBase):
             assertion_message = 'Error on %s constraint update' % type_
             last_run_result = {
                 'average': 0, 'today': 0,
-                'breakdown': {int(datetime.utcnow().timestamp()): 123}
+                'breakdown': {opttime.utcnow_timestamp(): 123}
             }
             code, resp = self.client.organization_constraint_update(
                 constr['id'], {'last_run_result': last_run_result})
@@ -1149,7 +1150,7 @@ class TestOrganizationConstraints(TestApiBase):
             {
                 'cloud_account_id': self.cloud_acc['id'],
                 'resource_id': res1['cloud_resource_id'],
-                'date': int(datetime.utcnow().timestamp()),
+                'date': opttime.utcnow_timestamp(),
                 'type': 1,
                 'from': 'region_2',
                 'to': 'External',

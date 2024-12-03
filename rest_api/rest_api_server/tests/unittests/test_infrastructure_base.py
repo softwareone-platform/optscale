@@ -8,6 +8,7 @@ from unittest.mock import patch, PropertyMock
 from rest_api.rest_api_server.controllers.infrastructure.base import get_cost
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import ArceeMock
+from tools.optscale_time import utcnow_timestamp
 
 
 def get_http_error(code):
@@ -150,14 +151,14 @@ class TestInfrastructureBase(TestApiBase):
         dataset = {
             '_id': str(uuid.uuid4()),
             'path': str(uuid.uuid4()),
-            'name': f'Dataset {datetime.datetime.utcnow().timestamp()}',
+            'name': f'Dataset {utcnow_timestamp()}',
             'description': 'Discovered in training <task_key> - <run_name>(<run_id>)',
             'labels': ['test'],
-            'created_at': int(datetime.datetime.utcnow().timestamp()),
+            'created_at': int(utcnow_timestamp()),
             'deleted_at': 0,
             'token': token,
-            'timespan_from': int(datetime.datetime.utcnow().timestamp()),
-            'timespan_to': int(datetime.datetime.utcnow().timestamp())
+            'timespan_from': utcnow_timestamp(),
+            'timespan_to': utcnow_timestamp()
         }
         if kwargs:
             dataset.update(kwargs)
@@ -353,7 +354,7 @@ class BulldozerMock:
                       region_id, instance_type, name_prefix, owner_id,
                       hyperparameters, tags, destroy_conditions, commands,
                       open_ingress=False, spot_settings=None):
-        now = int(datetime.datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         b = {
             "template_id": template_id,
             "task_id": task_id,
@@ -409,7 +410,7 @@ class BulldozerMock:
         return 200, runsets
 
     def __generate_runners(self, runset_ids):
-        now = int(datetime.datetime.utcnow().timestamp())
+        now = utcnow_timestamp()
         runsets = list(self.infra_runsets.find({'_id': {'$in': runset_ids}}))
         # TODO: (am) complex runs generation based on runset hyperparameters
         inserted_ids = []

@@ -1,15 +1,7 @@
 import { FormControl, InputLabel, MenuItem, OutlinedInput, Select } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import CloudLabel from "components/CloudLabel";
-import { ALL_SERVICES, useRecommendationServices } from "hooks/useRecommendationServices";
-
-export const serviceFilter = (service) => (recommendation) => {
-  if (service === ALL_SERVICES) {
-    return true;
-  }
-
-  return recommendation.services.includes(service);
-};
+import { useRecommendationServices } from "hooks/useRecommendationServices";
 
 const renderItem = (type, name, intl) =>
   type ? <CloudLabel name={intl.formatMessage({ id: name })} type={type} disableLink /> : <FormattedMessage id={name} />;

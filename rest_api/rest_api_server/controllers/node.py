@@ -1,7 +1,7 @@
 import json
 import logging
+import tools.optscale_time as opttime
 
-from datetime import datetime
 from retrying import retry
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import and_
@@ -77,7 +77,7 @@ class NodeController(BaseController):
         }
 
         res = []
-        now = int(datetime.utcnow().timestamp())
+        now = opttime.utcnow_timestamp()
         try:
             for k, existing_node in existing_map.items():
                 changes = payload_map.pop(k, None)

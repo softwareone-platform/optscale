@@ -4,7 +4,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import CvocAgreementOpportunitiesModal from "components/SideModalManager/SideModals/recommendations/CvocAgreementOpportunitiesModal";
 import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, resource, resourceLocation, size } from "utils/columns";
-import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -69,6 +69,8 @@ class CvocAgreementOpportunities extends BaseRecommendation {
   emptyMessageId = "noCvosAgreementOpportunities";
 
   services = [NEBIUS_SERVICE];
+
+  appliedDataSources = [NEBIUS];
 
   categories = [CATEGORY_COST];
 

@@ -5,7 +5,7 @@ Revises: f45ed78f1de9
 Create Date: 2020-07-15 13:05:54.365778
 
 """
-import datetime
+from datetime import datetime, timezone
 import uuid
 
 from alembic import op
@@ -54,7 +54,7 @@ MODULE_NAME = "budget_exceed_resources"
 
 
 def get_current_timestamp():
-    return int(datetime.datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 
 def gen_id():
@@ -69,7 +69,7 @@ def upgrade():
     try:
         ins_stmt = insert(report_table).values(
             id=str(uuid.uuid4()),
-            created_at=int(datetime.datetime.utcnow().timestamp()),
+            created_at=get_current_timestamp(),
             name=MODULE_NAME,
             module_name=MODULE_NAME,
             report_format="html",

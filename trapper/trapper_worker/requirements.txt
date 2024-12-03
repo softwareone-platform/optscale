@@ -6,3 +6,4 @@ urllib3==1.26.18
 -e optscale_client/rest_api_client
 -e tools/cloud_adapter
 -e optscale_client/config_client
+-e tools/optscale_time

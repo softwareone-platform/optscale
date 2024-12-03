@@ -1,4 +1,4 @@
-aiohttp==3.10.2
+aiohttp==3.10.11
 sanic==23.12.1
 motor==3.6.0
 pymongo==4.9.1
@@ -9,3 +9,4 @@ mongodb-migrations==1.2.1
 -e optscale_client/config_client
 -e optscale_client/insider_client
 -e optscale_client/aconfig_cl
+-e tools/optscale_time

@@ -1,4 +1,3 @@
-import os
 import uuid
 from datetime import datetime, timedelta
 from unittest.mock import patch
@@ -12,6 +11,7 @@ from rest_api.rest_api_server.models.enums import (
 )
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from rest_api.rest_api_server.utils import MAX_32_INT, encode_config
+import tools.optscale_time as opttime
 
 
 class TestScheduleImportsApi(TestApiBase):
@@ -84,7 +84,7 @@ class TestScheduleImportsApi(TestApiBase):
         session = BaseDB.session(engine)()
         cloud_acc = CloudAccount(
             name=str(uuid.uuid4()),
-            created_at=int(datetime.utcnow().timestamp()),
+            created_at=opttime.utcnow_timestamp(),
             deleted_at=0,
             config=encode_config(config),
             organization_id=org_id,
@@ -197,7 +197,7 @@ class TestScheduleImportsApi(TestApiBase):
         self.assertEqual(len(ret['report_imports']), 1)
         code, ret = self.client.schedule_import(0)
         self.assertEqual(len(ret['report_imports']), 0)
-        with freeze_time(datetime.utcnow() + timedelta(hours=3)):
+        with freeze_time(opttime.utcnow() + timedelta(hours=3)):
             code, resp = self.client.schedule_import(0)
             self.assertEqual(len(resp['report_imports']), 1)
             code, ret = self.client.schedule_import(0)
@@ -216,10 +216,10 @@ class TestScheduleImportsApi(TestApiBase):
         self.client.report_import_update(imp['id'], {'state': 'in_progress'})
         code, ret = self.client.schedule_import(0)
         self.assertEqual(len(ret['report_imports']), 0)
-        with freeze_time(datetime.utcnow() + timedelta(hours=10)):
+        with freeze_time(opttime.utcnow() + timedelta(hours=10)):
             self.client.report_import_update(imp['id'], {})
             code, ret = self.client.schedule_import(0)
             self.assertEqual(len(ret['report_imports']), 0)
-        with freeze_time(datetime.utcnow() + timedelta(hours=10, minutes=31)):
+        with freeze_time(opttime.utcnow() + timedelta(hours=10, minutes=31)):
             code, ret = self.client.schedule_import(0)
             self.assertEqual(len(ret['report_imports']), 1)

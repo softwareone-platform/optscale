@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import tools.optscale_time as opttime
 from rest_api.rest_api_server.controllers.base import BaseController, MongoMixin
 from rest_api.rest_api_server.controllers.shareable_resource import (
     ShareableBookingController)
@@ -99,7 +99,7 @@ class JiraIssueAttachmentController(BaseController, MongoMixin):
         if not shareable_booking:
             self.validate_shareable_booking(
                 attachment.shareable_booking_id, user_id)
-        attachment.deleted_at = int(datetime.utcnow().timestamp())
+        attachment.deleted_at = opttime.utcnow_timestamp()
         self.shareable_booking_controller.check_autorelease(
             attachment.shareable_booking_id)
         self.session.commit()

@@ -213,7 +213,7 @@ const usePosition = (targetElementRect, tooltipRect, scrollHelpHeight) => {
     if (!isEmpty(tooltipRect)) {
       // FOR OFFSCREEN ELEMENT (when tooltip "follows" it on the borders)
       // 1. Changing position if element is above/below/left/right the screen
-      // 2. In "undeterminate" (?) sectors set position only if current one is opposite one
+      // 2. In "indeterminate" (?) sectors set position only if current one is opposite one
       //    This way situation "tooltip was in right position, but now element is outside right and bottom borders of screen" — tooltip will be set into left position
       //
       //      ?    | setPos(D)|    ?

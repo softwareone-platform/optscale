@@ -2,7 +2,6 @@ import json
 import time
 import uuid
 from copy import deepcopy
-from datetime import datetime
 from unittest.mock import patch, PropertyMock
 
 import optscale_client.rest_api_client
@@ -16,6 +15,7 @@ from rest_api.rest_api_server.models.models import (
     ResourceConstraint, PoolPolicy, OrganizationConstraint,
     OrganizationLimitHit)
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+import tools.optscale_time as opttime
 
 
 PRESET_CLOUD_RESOURCE_ID = "sunflower-eu-fra"
@@ -1980,7 +1980,7 @@ class TestLiveDemosApi(TestApiBase):
                    return_value=deepcopy(self.preset)):
             code, response = self.client.live_demo_create()
         self.assertEqual(code, 201)
-        response['created_at'] = int(datetime.utcnow().timestamp())
+        response['created_at'] = opttime.utcnow_timestamp()
         self.mongo_client.restapi.live_demos.insert_one(response)
         return response
 
@@ -2030,9 +2030,9 @@ class TestLiveDemosApi(TestApiBase):
             self.assertEqual(len(filters[f]), 1)
             self.assertIsNotNone(filters[f][0])
 
-        start_date = int(datetime.utcnow().replace(
-            hour=0, minute=0, second=0).timestamp()) - self.preset[
-            'organization_constraint'][2]['definition.start_date_offset']
+        start_date = int(
+            opttime.startday(opttime.utcnow()).timestamp()
+        ) - self.preset['organization_constraint'][2]['definition.start_date_offset']
         total_budget = self.preset['organization_constraint'][2][
             'definition']['total_budget'] * self.multiplier
         definition = {'total_budget': total_budget, 'start_date': start_date}

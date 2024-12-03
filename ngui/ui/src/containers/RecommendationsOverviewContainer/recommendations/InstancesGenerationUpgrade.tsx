@@ -1,7 +1,7 @@
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS, AZURE_COMPUTE } from "hooks/useRecommendationServices";
 import { detectedAt, resourceLocation, resource, savings, text } from "utils/columns";
-import { METADATA_FIELDS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, METADATA_FIELDS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -29,6 +29,8 @@ class InstancesGenerationUpgrade extends BaseRecommendation {
   emptyMessageId = "noInstancesToUpgrade";
 
   services = [AWS_EC2, AWS_RDS, AZURE_COMPUTE, ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR];
 
   categories = [CATEGORY_COST];
 

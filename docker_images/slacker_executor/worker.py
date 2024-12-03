@@ -15,6 +15,7 @@ from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from optscale_client.slacker_client.client import Client as SlackerClient
+from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
 LOG = get_logger(__name__)
 QUEUE_NAME = 'slacker-task'
@@ -104,7 +105,7 @@ class SlackerExecutorWorker(ConsumerMixin):
     @staticmethod
     def ts_to_slacker_time_format(timestamp):
         if timestamp:
-            date = datetime.utcfromtimestamp(timestamp)
+            date = utcfromtimestamp(timestamp)
             return datetime.strftime(date, "%m/%d/%Y %H:%M UTC")
         else:
             return 'Not set'
@@ -151,7 +152,7 @@ class SlackerExecutorWorker(ConsumerMixin):
 
     @staticmethod
     def get_current_booking(bookings):
-        now_ts = int(datetime.utcnow().timestamp())
+        now_ts = utcnow_timestamp()
         for booking in bookings:
             if booking['acquired_since'] <= now_ts and (
                     booking['released_at'] == 0 or
@@ -160,7 +161,7 @@ class SlackerExecutorWorker(ConsumerMixin):
 
     @staticmethod
     def get_upcoming_booking(bookings, current_booking=None):
-        acquired_since = int(datetime.utcnow().timestamp())
+        acquired_since = utcnow_timestamp()
         if current_booking and current_booking.get('released_at'):
             acquired_since = current_booking['released_at']
         future_bookings = [x for x in bookings
@@ -402,8 +403,7 @@ class SlackerExecutorWorker(ConsumerMixin):
     def execute_alert_added_removed(self, organization_id, alert_id, action,
                                     object_type, meta):
         _, organization = self.rest_cl.organization_get(organization_id)
-        alert = meta.get('alert', {})
-        pool_id = meta.get('alert', {}).get('pool_id')
+        pool_id = meta.get('pool_id')
         _, pool = self.rest_cl.pool_get(pool_id)
         params = {
             'pool_name': pool['name'],
@@ -416,12 +416,12 @@ class SlackerExecutorWorker(ConsumerMixin):
             'currency': organization['currency']
         }
         for p in ['based', 'threshold', 'threshold_type', 'include_children']:
-            params[p] = alert.get(p)
+            params[p] = meta.get(p)
 
-        for contact in alert['contacts']:
+        for contact in meta['contacts']:
             if contact.get('slack_channel_id'):
                 warning_params = self.get_warning_params(
-                    alert, pool, organization, contact['slack_channel_id'])
+                    meta, pool, organization, contact['slack_channel_id'])
                 self.send(
                     ACTION_MSG_MAP.get(action), params,
                     contact['slack_channel_id'], contact['slack_team_id'],

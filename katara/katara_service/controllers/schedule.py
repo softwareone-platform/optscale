@@ -19,6 +19,7 @@ from tools.optscale_exceptions.common_exc import (
     WrongArgumentsException,
     ConflictException
 )
+import tools.optscale_time as opttime
 
 
 LOG = logging.getLogger(__name__)
@@ -43,8 +44,7 @@ class ScheduleController(BaseController):
             for task in tasks:
                 task_params = {
                     'task_id': task.id,
-                    'last_update': int(
-                        datetime.datetime.utcnow().timestamp()),
+                    'last_update': opttime.utcnow_timestamp(),
                     'tries_count': 0
                 }
                 producer.publish(
@@ -58,7 +58,7 @@ class ScheduleController(BaseController):
                 )
 
     def generate_tasks(self):
-        now = datetime.datetime.utcnow()
+        now = opttime.utcnow()
         schedules = self.session.query(
             Schedule.id, Schedule.crontab).filter(
             and_(
@@ -96,7 +96,7 @@ class ScheduleController(BaseController):
     @staticmethod
     def _check_crontab(crontab):
         try:
-            croniter.croniter(crontab, datetime.datetime.utcnow())
+            croniter.croniter(crontab, opttime.utcnow())
         except ValueError:
             raise WrongArgumentsException(Err.OKA0006, [crontab])
 

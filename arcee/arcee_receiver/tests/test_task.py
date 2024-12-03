@@ -3,7 +3,7 @@ import uuid
 import pytest
 from arcee.arcee_receiver.tests.base import (
     DB_MOCK, TOKEN1, Urls, prepare_tasks, prepare_metrics, prepare_token,
-    prepare_run, prepare_model_version, prepare_artifact)
+    prepare_run, prepare_model_version)
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ async def test_create_task(app):
 
 
 @pytest.mark.asyncio
-async def test_create_task(app):
+async def test_create_task_invalid_metric(app):
     client = app.asgi_client
     await prepare_token()
     task = {
@@ -82,7 +82,59 @@ async def test_create_task_missing_key(app):
                                     data=json.dumps(task),
                                     headers={"x-api-key": TOKEN1})
     assert response.status == 400
-    assert "Key should be str" in response.text
+    assert 'Field required' in response.text
+
+
+@pytest.mark.asyncio
+async def test_create_invalid_params_types(app):
+    client = app.asgi_client
+    await prepare_token()
+    task = {
+        'key': 'key',
+        'description': 'description',
+        'name': 'name',
+        'owner_id': 'owner_id',
+        'metrics': ['test']
+    }
+    for param in ["description", "name", "owner_id", "key"]:
+        for value in [1, {"test": 1}, ['test']]:
+            params = task.copy()
+            params[param] = value
+            _, response = await client.post(
+                Urls.tasks, data=json.dumps(params),
+                headers={"x-api-key": TOKEN1})
+            assert response.status == 400
+            assert "Input should be a valid string" in response.text
+
+    for value in [1, "test", {"test": "test"}]:
+        params = task.copy()
+        params['metrics'] = value
+        _, response = await client.post(
+            Urls.tasks, data=json.dumps(params),
+            headers={"x-api-key": TOKEN1})
+        assert response.status == 400
+        assert "Input should be a valid list" in response.text
+
+
+@pytest.mark.asyncio
+async def test_create_unexpected(app):
+    client = app.asgi_client
+    await prepare_token()
+    task = {
+        'key': 'key',
+        'description': 'description',
+        'name': 'name',
+        'metrics': ['test']
+    }
+
+    for param in ['_id', 'deleted_at', 'token', 'test']:
+        data = task.copy()
+        data[param] = 'test'
+        _, response = await client.post(Urls.tasks,
+                                        data=json.dumps(data),
+                                        headers={"x-api-key": TOKEN1})
+        assert response.status == 400
+        assert "Extra inputs are not permitted" in response.text
 
 
 @pytest.mark.asyncio

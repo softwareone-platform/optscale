@@ -173,9 +173,7 @@ class RegionIsCondition(BaseCondition):
 
     def match(self, res_info):
         region = res_info.get(self.target_attribute_name)
-        if region:
-            return region == self.formatted_meta
-        return False
+        return region == self.formatted_meta
 
 
 CONDITIONS_MAP = {

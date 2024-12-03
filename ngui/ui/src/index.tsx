@@ -17,6 +17,7 @@ import App from "components/App";
 import SideModalManager from "components/SideModalManager";
 import ThemeProviderWrapper from "components/ThemeProviderWrapper";
 import Tour from "components/Tour";
+import { CommunityDocsContextProvider } from "contexts/CommunityDocsContext";
 import configureStore from "store";
 import { intl } from "translations/react-intl-config";
 import { microsoftOAuthConfiguration } from "utils/integrations";
@@ -40,7 +41,9 @@ root.render(
             <MsalProvider instance={pca}>
               <ThemeProviderWrapper>
                 <SideModalManager>
-                  <App />
+                  <CommunityDocsContextProvider>
+                    <App />
+                  </CommunityDocsContextProvider>
                 </SideModalManager>
                 <Tour />
                 <ApolloApiErrorAlert />

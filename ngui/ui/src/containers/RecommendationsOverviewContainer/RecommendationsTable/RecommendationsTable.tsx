@@ -16,7 +16,7 @@ const RecommendationsTable = ({
   onRecommendationClick,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSources
+  selectedDataSourceIds
 }) => {
   const tableData = useMemo(
     () =>
@@ -55,12 +55,12 @@ const RecommendationsTable = ({
             recommendation={original.recommendation}
             isDownloadAvailable={isDownloadAvailable}
             isGetIsDownloadAvailableLoading={isGetIsDownloadAvailableLoading}
-            selectedDataSources={selectedDataSources}
+            selectedDataSourceIds={selectedDataSourceIds}
           />
         )
       })
     ],
-    [downloadLimit, isDownloadAvailable, onRecommendationClick, isGetIsDownloadAvailableLoading, selectedDataSources]
+    [downloadLimit, isDownloadAvailable, onRecommendationClick, isGetIsDownloadAvailableLoading, selectedDataSourceIds]
   );
 
   return (
