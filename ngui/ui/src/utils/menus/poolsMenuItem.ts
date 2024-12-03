@@ -15,7 +15,7 @@ class PoolsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.POOLS;
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = CalculateOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;

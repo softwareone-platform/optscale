@@ -109,7 +109,7 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        {/* TODO_KU: temporary disabled new organisation creation */}
+        {/* MPT_TODO: temporary disabled new organisation creation */}
         {/* <Button */}
         {/*  icon={{ */}
         {/*    IconComponent: AddOutlinedIcon */}

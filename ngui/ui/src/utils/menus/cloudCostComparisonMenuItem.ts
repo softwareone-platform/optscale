@@ -9,7 +9,7 @@ class CloudCostComparisonMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_comparison";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = CompareOutlinedIcon;
 }
 

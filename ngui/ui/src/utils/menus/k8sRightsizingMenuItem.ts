@@ -9,7 +9,7 @@ class K8sRightsizingMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_k8s_rightsizing";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = ViewInArOutlinedIcon;
 }
 

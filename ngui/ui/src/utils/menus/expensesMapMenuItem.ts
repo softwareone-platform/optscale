@@ -9,7 +9,7 @@ class ExpensesMapMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_map";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = PublicOutlinedIcon;
 }
 

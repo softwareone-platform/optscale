@@ -284,7 +284,7 @@ const CleanExpensesTable = ({
       }
     ];
 
-    // KU_TODO: Disabled download
+    // MPT_TODO: Disabled download
     // if (typeof downloadResources === "function") {
     //   actionBarItems.push({
     //     key: "download",

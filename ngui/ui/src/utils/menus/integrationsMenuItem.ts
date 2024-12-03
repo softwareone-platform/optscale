@@ -11,7 +11,7 @@ class IntegrationsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_integrations";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = SyncAltOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;

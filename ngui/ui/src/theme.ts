@@ -8,7 +8,14 @@ import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
-import { BRAND_GRAY_1, BRAND_PRIMARY, KU_BOX_SHADOW, KU_SPACING_1, KU_SPACING_2, KU_SPACING_3 } from "./utils/layouts";
+import {
+  MPT_BRAND_GRAY_1,
+  MPT_BRAND_PRIMARY,
+  MPT_BOX_SHADOW,
+  MPT_SPACING_1,
+  MPT_SPACING_2,
+  MPT_SPACING_3
+} from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -25,7 +32,7 @@ const applyPaletteSettings = (settings) => {
 
   const primary = mergeIfSettingIsNotEmpty(
     {
-      main: BRAND_PRIMARY
+      main: MPT_BRAND_PRIMARY
     },
     "primary"
   );
@@ -40,8 +47,7 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#472AFF",
-      contrastText: "white"
+      main: "#472AFF"
     },
     "secondary"
   );
@@ -88,14 +94,32 @@ const applyPaletteSettings = (settings) => {
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
 
+  // MPT_TODO: change colors palette
+  // Original:
+  // [
+  //         "#4AB4EE",
+  //         "#FFC348",
+  //         "#30D5C8",
+  //         "#9950B1",
+  //         "#4A63EE",
+  //         "#FF6648",
+  //         "#30D575",
+  //         "#B19950",
+  //         "#834AEE",
+  //         "#48E1FF",
+  //         "#D53090",
+  //         "#99B150"
+  //       ]
+
   const chart = isEmptySetting("chart")
     ? [
-        "#4AB4EE",
-        "#FFC348",
-        "#30D5C8",
-        "#9950B1",
-        "#4A63EE",
-        "#FF6648",
+        "#EAECFF",
+        "#3520BF",
+        "#959BFF",
+        "#CAE4FF",
+        "#4DA6FF",
+        "#2775C4",
+        "#E87D1E",
         "#30D575",
         "#B19950",
         "#834AEE",
@@ -105,7 +129,7 @@ const applyChartPaletteSettings = (settings) => {
       ]
     : settings.chartPalette.chart;
 
-  const monoChart = isEmptySetting("monoChart") ? ["#4AB4EE"] : settings.chartPalette.monoChart;
+  const monoChart = isEmptySetting("monoChart") ? ["#EAECFF"] : settings.chartPalette.monoChart;
 
   return {
     chart,
@@ -297,15 +321,15 @@ const getThemeConfig = (settings = {}) => {
           select: {
             fontSize: "14px",
             color: "black",
-            paddingLeft: KU_SPACING_2,
-            paddingRight: KU_SPACING_3,
+            paddingLeft: MPT_SPACING_2,
+            paddingRight: MPT_SPACING_3,
             paddingTop: "6px",
             paddingBottom: "6px"
           },
 
           root: {
             "& .MuiSvgIcon-fontSizeSmall": {
-              fontSize: KU_SPACING_2
+              fontSize: MPT_SPACING_2
             }
           },
           iconOutlined: {
@@ -316,16 +340,16 @@ const getThemeConfig = (settings = {}) => {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: "white",
+            backgroundColor: "#FFFFFF",
             "& .MuiOutlinedInput-notchedOutline": {
               borderColor: "black",
               color: "black"
             },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: BRAND_PRIMARY
+              borderColor: MPT_BRAND_PRIMARY
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: BRAND_PRIMARY
+              borderColor: MPT_BRAND_PRIMARY
             }
           }
         }
@@ -435,10 +459,10 @@ const getThemeConfig = (settings = {}) => {
           },
           ".KuBoxShadowRoot": {
             "> .MuiBox-root": {
-              boxShadow: KU_BOX_SHADOW,
-              background: "white",
-              padding: KU_SPACING_2,
-              borderRadius: KU_SPACING_1
+              boxShadow: MPT_BOX_SHADOW,
+              background: "#FFFFFF",
+              padding: MPT_SPACING_2,
+              borderRadius: MPT_SPACING_1
             }
           }
         }
@@ -478,7 +502,7 @@ const getThemeConfig = (settings = {}) => {
             padding: 4,
             "&:hover": {
               backgroundColor: alpha(ACTION_HOVER, 0.5),
-              borderRadius: KU_SPACING_2
+              borderRadius: MPT_SPACING_2
             }
           },
           sizeSmall: {
@@ -601,9 +625,19 @@ const getThemeConfig = (settings = {}) => {
       MuiTableCell: {
         styleOverrides: {
           root: {
+            color: "black",
+            ".MuiTypography-root": {
+              fontSize: "15px"
+            },
+            ".MuiTypography-caption": {
+              fontSize: "13px"
+            },
             "&.MuiTableCell-head": {
-              borderLeft: `1px solid ${BRAND_GRAY_1}`,
-              borderBottom: "1px solid black"
+              borderLeft: `1px solid ${MPT_BRAND_GRAY_1}`,
+              borderBottom: "1px solid black",
+              "&:last-of-type": {
+                borderRight: `1px solid ${MPT_BRAND_GRAY_1}`
+              }
             },
             "& .MuiIconButton-root": {
               padding: 0

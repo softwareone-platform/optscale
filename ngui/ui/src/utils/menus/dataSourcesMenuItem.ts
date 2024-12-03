@@ -21,7 +21,7 @@ class DataSourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.DATA_SOURCES;
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = CloudOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath === CLOUD_ACCOUNT_CONNECT;

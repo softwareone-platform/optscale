@@ -11,7 +11,7 @@ class ExpensesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_explorer_page";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = BarChartOutlinedIcon;
 
   isRootPath = (currentPath, currentQueryParams) =>

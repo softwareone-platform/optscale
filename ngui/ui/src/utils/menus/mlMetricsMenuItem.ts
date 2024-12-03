@@ -9,7 +9,7 @@ class MlTasksMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_metrics";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = TrendingUpOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

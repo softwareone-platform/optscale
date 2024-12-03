@@ -9,7 +9,7 @@ class SettingsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_settings";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = SettingsIcon;
 }
 

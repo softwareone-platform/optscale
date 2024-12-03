@@ -74,7 +74,7 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
             sx={{ display: { xs: "none", md: "inherit" } }}
             className={classes.headerTitle}
           >
-            FinOps for Cloud {/* TODO_KU: add translation */}
+            FinOps for Cloud {/* MPT_TODO: add translation */}
           </Typography>
         </div>
         {isDemo ? (

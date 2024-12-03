@@ -31,7 +31,7 @@ import {
   RESOURCES_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
 import { BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
-import { KU_SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_2 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 // import Accordion from "../Accordion";
@@ -237,7 +237,7 @@ const Resources = ({
                   </>
                 )}
               </Grid>
-              <Divider style={{ marginTop: KU_SPACING_2, marginBottom: KU_SPACING_2 }} />
+              <Divider style={{ marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2 }} />
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
                 <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange} />
 

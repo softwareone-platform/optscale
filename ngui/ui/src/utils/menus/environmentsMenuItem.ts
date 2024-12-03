@@ -14,7 +14,7 @@ class EnvironmentsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.ENVIRONMENTS;
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = ScreenShareOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;

@@ -9,7 +9,7 @@ class FinOpsPortalMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_finops_portal";
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = FinOpsChecklistIcon;
 }
 

@@ -8,7 +8,7 @@ import ClusterTypesTable from "components/ClusterTypesTable";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DOCS_HYSTAX_CLUSTERS, RESOURCES } from "urls";
-import { KU_SPACING_2 } from "../../utils/layouts";
+import { MPT_SPACING_2 } from "../../utils/layouts";
 
 const actionBarDefinition = {
   breadcrumbs: [
@@ -43,7 +43,7 @@ const ClusterTypes = ({ clusterTypes, onUpdatePriority, isLoading = false }) => 
       <Grid direction="row" container spacing={3}>
         <Grid item xs={12} className={"KuBoxShadowRoot"}>
           <Box>
-            <Box marginBottom={KU_SPACING_2}>
+            <Box marginBottom={MPT_SPACING_2}>
               <ExplanationMessage />
             </Box>
             <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />

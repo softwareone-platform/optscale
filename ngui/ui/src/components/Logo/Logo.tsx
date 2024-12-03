@@ -41,7 +41,7 @@ const Logo = ({
   height = "auto",
   size = LOGO_SIZE.FULL
 }) => {
-  /* TODO_KU: Add 'swo-logo' translation */
+  /* MPT_TODO: Add 'swo-logo' translation */
   // const intl = useIntl();
 
   const renderLogo = (

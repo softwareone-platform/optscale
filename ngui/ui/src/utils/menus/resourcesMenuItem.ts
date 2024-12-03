@@ -15,7 +15,7 @@ class ResourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RESOURCES;
 
-  // TODO: remove after TDR approval
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = StorageOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;

@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { BRAND_PRIMARY } from "../../utils/layouts";
+import { MPT_BRAND_PRIMARY } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   icon: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles()((theme) => ({
       height: "100%",
       borderRadius: "5px",
       left: "-25px",
-      backgroundColor: BRAND_PRIMARY
+      backgroundColor: MPT_BRAND_PRIMARY
     }
   },
   activeLink: {
