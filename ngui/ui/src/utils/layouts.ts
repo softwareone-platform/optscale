@@ -8,7 +8,7 @@ export const SPACING_5 = 5;
 export const SPACING_6 = 6;
 
 export const MPT_BRAND_PRIMARY = "#472AFF";
-export const MTP_BRAND_GRAY_1 = "#E0E5E8";
+export const MPT_BRAND_GRAY_1 = "#E0E5E8";
 export const MPT_SPACING_1 = "8px";
 export const MPT_SPACING_2 = "16px";
 export const MPT_SPACING_3 = "24px";

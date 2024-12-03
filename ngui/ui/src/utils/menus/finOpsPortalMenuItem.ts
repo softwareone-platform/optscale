@@ -9,7 +9,7 @@ class FinOpsPortalMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_finops_portal";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = FinOpsChecklistIcon;
 }
 

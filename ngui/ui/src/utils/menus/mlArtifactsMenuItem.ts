@@ -9,7 +9,7 @@ class MlArtifactsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_artifacts";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = DescriptionOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

@@ -13,7 +13,7 @@ class RecommendationsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RECOMMENDATIONS;
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = ThumbUpAltOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;

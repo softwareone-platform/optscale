@@ -9,7 +9,7 @@ class EventsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_events";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = EventOutlined;
 }
 

@@ -8,7 +8,14 @@ import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
-import { MTP_BRAND_GRAY_1, MPT_BRAND_PRIMARY, MPT_BOX_SHADOW, MPT_SPACING_1, MPT_SPACING_2, MPT_SPACING_3 } from "./utils/layouts";
+import {
+  MPT_BRAND_GRAY_1,
+  MPT_BRAND_PRIMARY,
+  MPT_BOX_SHADOW,
+  MPT_SPACING_1,
+  MPT_SPACING_2,
+  MPT_SPACING_3
+} from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -87,7 +94,7 @@ const applyPaletteSettings = (settings) => {
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
 
-  // MTP_TODO: change colors palette
+  // MPT_TODO: change colors palette
   // Original:
   // [
   //         "#4AB4EE",
@@ -626,10 +633,10 @@ const getThemeConfig = (settings = {}) => {
               fontSize: "13px"
             },
             "&.MuiTableCell-head": {
-              borderLeft: `1px solid ${MTP_BRAND_GRAY_1}`,
+              borderLeft: `1px solid ${MPT_BRAND_GRAY_1}`,
               borderBottom: "1px solid black",
               "&:last-of-type": {
-                borderRight: `1px solid ${MTP_BRAND_GRAY_1}`
+                borderRight: `1px solid ${MPT_BRAND_GRAY_1}`
               }
             },
             "& .MuiIconButton-root": {

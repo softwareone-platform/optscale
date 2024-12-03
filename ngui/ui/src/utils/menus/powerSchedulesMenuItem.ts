@@ -9,7 +9,7 @@ class PowerSchedulesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_power_schedules";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = ScheduleOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

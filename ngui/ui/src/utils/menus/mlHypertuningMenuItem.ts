@@ -10,7 +10,7 @@ class HypertuningMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_runsets";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = TuneOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath.startsWith(`/${ML_RUNSETS_BASE}`);

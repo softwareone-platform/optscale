@@ -9,7 +9,7 @@ class TaggingPoliciesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_tagging_policies";
 
-  // MTP_TODO: disabled to match MPT figma designs
+  // MPT_TODO: disabled to match MPT figma designs
   // icon = TagIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);

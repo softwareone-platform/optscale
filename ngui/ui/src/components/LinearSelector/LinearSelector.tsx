@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-// MTP_TODO: Changed icons
+// MPT_TODO: Changed icons
 // import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 // import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
