@@ -626,7 +626,10 @@ const getThemeConfig = (settings = {}) => {
             },
             "&.MuiTableCell-head": {
               borderLeft: `1px solid ${BRAND_GRAY_1}`,
-              borderBottom: "1px solid black"
+              borderBottom: "1px solid black",
+              "&:last-of-type": {
+                borderRight: `1px solid ${BRAND_GRAY_1}`
+              }
             },
             "& .MuiIconButton-root": {
               padding: 0
