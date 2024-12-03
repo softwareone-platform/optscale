@@ -2,7 +2,7 @@ import { Slider } from "@mui/material";
 import Box from "@mui/material/Box";
 import ActionBar from "components/ActionBar";
 import SearchInput from "components/SearchInput";
-import {KU_SPACING_1, KU_SPACING_2} from "../../../../utils/layouts";
+import { KU_SPACING_1, KU_SPACING_2 } from "../../../../utils/layouts";
 import ColumnSets from "../ColumnSets";
 import ColumnsSelector from "../ColumnsSelector";
 import useStyles from "./TableActions.styles";

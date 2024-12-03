@@ -618,11 +618,12 @@ const getThemeConfig = (settings = {}) => {
       MuiTableCell: {
         styleOverrides: {
           root: {
+            color: "black",
             ".MuiTypography-root": {
-              fontSize: '15px'
+              fontSize: "15px"
             },
             ".MuiTypography-caption": {
-              fontSize: '13px'
+              fontSize: "13px"
             },
             "&.MuiTableCell-head": {
               borderLeft: `1px solid ${BRAND_GRAY_1}`,

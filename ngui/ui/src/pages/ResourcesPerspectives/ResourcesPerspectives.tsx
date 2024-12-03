@@ -1,4 +1,4 @@
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
