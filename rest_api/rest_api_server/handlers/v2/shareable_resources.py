@@ -133,6 +133,7 @@ class ShareableBookingAsyncHandler(BaseAsyncCollectionHandler,
                     - OE0384: Invalid resource type
                     - OE0416: Argument should not contain only whitespaces
                     - OE0435: Auth call error
+                    - OE0443: Resource is not active
                     - OE0446: released_at should be greater than acquired_since
                     - OE0454: Resource does not belong to the organization
                     - OE0456: Duplicate path parameters in the request body

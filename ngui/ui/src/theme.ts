@@ -113,23 +113,22 @@ const applyChartPaletteSettings = (settings) => {
 
   const chart = isEmptySetting("chart")
     ? [
+        "#959BFF",
         "#EAECFF",
         "#3520BF",
-        "#959BFF",
         "#CAE4FF",
         "#4DA6FF",
         "#2775C4",
         "#E87D1E",
-        "#30D575",
-        "#B19950",
-        "#834AEE",
-        "#48E1FF",
-        "#D53090",
-        "#99B150"
+        "#F1B178",
+        "#733F11",
+        "#007D8C",
+        "#004A59",
+        "#80E1AE"
       ]
     : settings.chartPalette.chart;
 
-  const monoChart = isEmptySetting("monoChart") ? ["#EAECFF"] : settings.chartPalette.monoChart;
+  const monoChart = isEmptySetting("monoChart") ? ["#959BFF"] : settings.chartPalette.monoChart;
 
   return {
     chart,
@@ -461,7 +460,7 @@ const getThemeConfig = (settings = {}) => {
             "> .MuiBox-root": {
               boxShadow: MPT_BOX_SHADOW,
               background: "#FFFFFF",
-              padding: MPT_SPACING_2,
+              padding: MPT_SPACING_3,
               borderRadius: MPT_SPACING_1
             }
           }

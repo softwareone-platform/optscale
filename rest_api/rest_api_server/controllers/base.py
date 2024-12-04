@@ -555,9 +555,9 @@ class BaseController:
             LOG.error('Assign error: %s' % str(ex))
             raise FailedDependency(Err.OE0435, [str(ex)])
 
-    def get_user_info(self):
+    def get_user_info(self, user_id=None):
         try:
-            user_id = self.get_user_id()
+            user_id = user_id or self.get_user_id()
             if user_id is None:
                 return {}
             self.auth_client.token = self.token

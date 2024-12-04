@@ -78,7 +78,7 @@ class TestShareableResourcesApi(TestApiBase):
 
     def _create_resource(self, employee_id=None, pool_id=None,
                          is_shareable=True, resource_type='Instance',
-                         tags=None):
+                         tags=None, active=True):
         if not employee_id:
             employee_id = self.employee['id']
         if not pool_id:
@@ -91,6 +91,8 @@ class TestShareableResourcesApi(TestApiBase):
             'region': 'us-west-1',
             'pool_id': pool_id
         }
+        if active:
+            resource['active'] = active
         if tags:
             resource['tags'] = tags
         code, created_res = self.cloud_resource_create(self.cloud_acc['id'],
@@ -230,6 +232,18 @@ class TestShareableResourcesApi(TestApiBase):
                                                            schedule_book)
         self.assertEqual(code, 400)
         self.assertEqual(response['error']['error_code'], 'OE0480')
+
+    def test_book_not_active_resource(self):
+        resource_id = self._create_resource(
+            is_shareable=True, active=False)['id']
+        schedule_book = {
+            'resource_id': resource_id,
+            'acquired_by_id': self.employee_2['id'],
+        }
+        code, response = self.client.shareable_book_create(
+            self.organization_id, schedule_book)
+        self.assertEqual(code, 400)
+        self.assertEqual(response['error']['error_code'], 'OE0443')
 
     def test_not_shareable_cluster(self):
         code, cluster_type = self.client.cluster_type_create(

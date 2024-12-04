@@ -98,6 +98,8 @@ class ShareableBookingController(BaseController, MongoMixin,
                                                        resource['id']])
         if resource.get('cluster_id'):
             raise WrongArgumentsException(Err.OE0481, [resource['id']])
+        if not resource.get('active'):
+            raise WrongArgumentsException(Err.OE0443, [resource['id']])
 
     def _check_resource_param(self, organization_id, resource_id):
         resource = self.cloud_resource_ctrl.get(resource_id)
