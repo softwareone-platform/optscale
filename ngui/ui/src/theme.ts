@@ -113,11 +113,11 @@ const applyChartPaletteSettings = (settings) => {
 
   const chart = isEmptySetting("chart")
     ? [
-        "#3520BF",
         "#959BFF",
+        "#EAECFF",
+        "#3520BF",
         "#CAE4FF",
         "#4DA6FF",
-        "#EAECFF",
         "#2775C4",
         "#E87D1E",
         "#F1B178",
@@ -128,7 +128,7 @@ const applyChartPaletteSettings = (settings) => {
       ]
     : settings.chartPalette.chart;
 
-  const monoChart = isEmptySetting("monoChart") ? ["#3520BF"] : settings.chartPalette.monoChart;
+  const monoChart = isEmptySetting("monoChart") ? ["#959BFF"] : settings.chartPalette.monoChart;
 
   return {
     chart,
