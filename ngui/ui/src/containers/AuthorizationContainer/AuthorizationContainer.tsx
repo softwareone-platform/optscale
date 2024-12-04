@@ -85,26 +85,27 @@ const AuthorizationContainer = () => {
         content={
           <Stack spacing={SPACING_4}>
             <div>{createForm()}</div>
-            <div>
-              <OAuthSignIn
-                googleButton={
-                  <GoogleAuthButton
-                    thirdPartySignIn={onThirdPartySignIn}
-                    setIsAuthInProgress={setIsAuthInProgress}
-                    isAuthInProgress={isAuthInProgress}
-                    isRegistrationInProgress={isRegistrationInProgress}
-                  />
-                }
-                microsoftButton={
-                  <MicrosoftSignInButton
-                    thirdPartySignIn={onThirdPartySignIn}
-                    setIsAuthInProgress={setIsAuthInProgress}
-                    isAuthInProgress={isAuthInProgress}
-                    isRegistrationInProgress={isRegistrationInProgress}
-                  />
-                }
-              />
-            </div>
+            {/*MPT_TODO: disabled other authentication sources*/}
+            {/*<div>*/}
+            {/*<OAuthSignIn*/}
+            {/*    googleButton={*/}
+            {/*      <GoogleAuthButton*/}
+            {/*        thirdPartySignIn={onThirdPartySignIn}*/}
+            {/*        setIsAuthInProgress={setIsAuthInProgress}*/}
+            {/*        isAuthInProgress={isAuthInProgress}*/}
+            {/*        isRegistrationInProgress={isRegistrationInProgress}*/}
+            {/*      />*/}
+            {/*    }*/}
+            {/*    microsoftButton={*/}
+            {/*      <MicrosoftSignInButton*/}
+            {/*        thirdPartySignIn={onThirdPartySignIn}*/}
+            {/*        setIsAuthInProgress={setIsAuthInProgress}*/}
+            {/*        isAuthInProgress={isAuthInProgress}*/}
+            {/*        isRegistrationInProgress={isRegistrationInProgress}*/}
+            {/*      />*/}
+            {/*    }*/}
+            {/*  />*/}
+            {/*</div>*/}
           </Stack>
         }
       />
