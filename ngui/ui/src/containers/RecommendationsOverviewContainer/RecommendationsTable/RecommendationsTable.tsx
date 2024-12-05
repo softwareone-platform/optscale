@@ -64,7 +64,7 @@ const RecommendationsTable = ({
   );
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%" }} className="MuiBox-WhiteCard">
       {isLoading ? (
         <TableLoader columnsCounter={columns.length} />
       ) : (

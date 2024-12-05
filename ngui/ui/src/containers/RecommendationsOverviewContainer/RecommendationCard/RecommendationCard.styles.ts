@@ -1,15 +1,16 @@
 import { lighten } from "@mui/system";
 import { makeStyles } from "tss-react/mui";
 import { SPACING_2 } from "utils/layouts";
+import { MPT_BOX_SHADOW, MPT_SPACING_1, MPT_SPACING_2 } from "../../../utils/layouts";
 
 const ALPHA = 0.95;
 const useStyles = makeStyles()((theme, color) => ({
   card: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    border: !color ? `1px solid ${lighten(theme.palette.info.main, 0.8)}` : "",
-    backgroundColor: color ? lighten(theme.palette[color].main, ALPHA) : ""
+    justifyContent: "space-between",    
+    border: !!color ? `2px solid ${theme.palette[color].secondary}` : '',    
+    boxShadow: MPT_BOX_SHADOW
   },
   content: {
     display: "flex",

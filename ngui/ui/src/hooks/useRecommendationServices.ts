@@ -105,10 +105,10 @@ export const useRecommendationServices = () => {
     [ALL_SERVICES]: {
       name: ALL_SERVICES
     },
-    ...ALIBABA_SERVICES,
-    ...AWS_SERVICES,
+    // ...ALIBABA_SERVICES,
     ...AZURE_SERVICES,
+    ...AWS_SERVICES,
     ...GCP_SERVICES,
-    ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
+    // ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
   };
 };
