@@ -38,7 +38,6 @@ const RegistrationForm = ({ onSubmit, isLoading = false, isInvited = false }: Re
         </Typography>
         <Box className={classes.registerButtonWrapper}>
           <ButtonLoader
-            uppercase
             dataTestId="btn_register"
             variant="contained"
             color="primary"

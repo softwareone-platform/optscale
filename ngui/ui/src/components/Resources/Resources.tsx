@@ -254,7 +254,7 @@ const Resources = ({
           <Grid xs={12} item>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
-          <Grid xs={12} item className={"KuBoxShadowRoot"}>
+          <Grid xs={12} item className={"MTPBoxShadowRoot"}>
             <Box>{typeof renderContent === "function" ? renderContent() : null}</Box>
           </Grid>
         </Grid>

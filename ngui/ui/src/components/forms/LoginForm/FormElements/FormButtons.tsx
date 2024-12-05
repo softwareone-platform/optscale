@@ -5,7 +5,6 @@ const FormButtons = ({ isLoading = false }) => (
   <FormButtonsWrapper mt={3} mb={2}>
     <ButtonLoader
       dataTestId="btn_login"
-      uppercase
       variant="contained"
       color="primary"
       isLoading={isLoading}

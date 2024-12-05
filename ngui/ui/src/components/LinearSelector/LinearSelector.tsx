@@ -21,6 +21,7 @@ import Popover from "components/Popover";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
+import { MPT_SPACING_2 } from "../../utils/layouts";
 import useStyles from "./LinearSelector.styles";
 
 const NONE = "none";
@@ -31,7 +32,7 @@ const ItemLabel = ({ name, handleChange, dataTestId, displayedName, endAdornment
   const { classes } = useStyles();
 
   return (
-    <DashedTypography onClick={handleChange} component="span" dataTestId={dataTestId} className={classes.label}>
+    <DashedTypography onClick={handleChange} component="span" dataTestId={dataTestId} className={classes.label} chipMode>
       {displayedName || <FormattedMessage id={name} />}
       {endAdornment}
     </DashedTypography>
@@ -210,7 +211,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
   const getChipLabel = () => {
     const nameDisplayed = displayedName || <FormattedMessage id={name} />;
     const valueDisplayed = displayedValue || value;
-    const typographyVariant = "subtitle2";
+    const typographyVariant = "subtitle";
 
     return [LINEAR_SELECTOR_ITEMS_TYPES.POPOVER, LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER].includes(type) ? (
       <KeyValueLabel
@@ -236,7 +237,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
         chip: `chip_${dataTestId}`,
         deleteIcon: `btn_${dataTestId}_close`
       }}
-      color="info"
+      color="primary"
       size="medium"
       variant="outlined"
       onDelete={onDelete}
@@ -370,7 +371,7 @@ const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, on
           {valuesArray.length > 1 && onClearAll ? (
             <Button
               dataTestId="btn_clear"
-              dashedBorder
+              style={{ fontSize: "15px", borderRadius: MPT_SPACING_2, paddingTop: "2px", paddingBottom: "2px" }}
               startIcon={<DeleteOutlinedIcon />}
               onClick={onClearAll}
               messageId="clearFilters"

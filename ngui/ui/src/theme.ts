@@ -385,6 +385,8 @@ const getThemeConfig = (settings = {}) => {
           {
             props: { variant: "contained", color: "lightYellow" },
             style: ({ theme }) => ({
+              padding: `6px ${MPT_SPACING_2}`,
+              borderRadius: MPT_SPACING_1,
               color: theme.palette.lightYellow.contrastText,
               "&:hover": {
                 backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
@@ -406,11 +408,24 @@ const getThemeConfig = (settings = {}) => {
               color: theme.palette.text.primary
             })
           }
-        ]
+        ],
+        styleOverrides: {
+          root: {
+            padding: `6px ${MPT_SPACING_2}`,
+            borderRadius: MPT_SPACING_1
+          }
+        }
       },
       MuiButtonGroup: {
         defaultProps: {
           color: "info"
+        }
+      },
+      MuiBreadcrumbs: {
+        styleOverrides: {
+          li: {
+            whiteSpace: "nowrap"
+          }
         }
       },
       MuiCardHeader: {
@@ -456,7 +471,7 @@ const getThemeConfig = (settings = {}) => {
             flexDirection: "column",
             minHeight: "100vh"
           },
-          ".KuBoxShadowRoot": {
+          ".MTPBoxShadowRoot": {
             "> .MuiBox-root": {
               boxShadow: MPT_BOX_SHADOW,
               background: "#FFFFFF",
