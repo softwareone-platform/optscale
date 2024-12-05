@@ -7,7 +7,7 @@ const FormButtons = ({ isLoading = false }) => (
       dataTestId="btn_login"
       uppercase
       variant="contained"
-      color="lightBlue"
+      color="primary"
       isLoading={isLoading}
       messageId="login"
       type="submit"

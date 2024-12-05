@@ -7,7 +7,7 @@ const FormButtons = ({ isLoading = false }) => (
       uppercase
       fullWidth
       variant="contained"
-      color="lightBlue"
+      color="primary"
       isLoading={isLoading}
       messageId="sendVerificationCode"
       type="submit"

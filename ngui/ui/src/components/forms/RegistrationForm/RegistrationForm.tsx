@@ -41,7 +41,7 @@ const RegistrationForm = ({ onSubmit, isLoading = false, isInvited = false }: Re
             uppercase
             dataTestId="btn_register"
             variant="contained"
-            color="lightBlue"
+            color="primary"
             customWrapperClass={classes.registerButton}
             isLoading={isLoading}
             messageId="register"

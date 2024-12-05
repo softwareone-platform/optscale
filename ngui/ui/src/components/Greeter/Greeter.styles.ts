@@ -70,7 +70,21 @@ const useStyles = makeStyles()((theme) => ({
     backgroundColor: theme.palette.common.white
   },
   rightSideGrid: {
-    backgroundColor: "#333F53"
+    backgroundColor: theme.palette.primary.main,
+    backgroundImage: "url('/sample-chart-bcg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    position: "relative",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(2,62,104,0.8)",
+      zIndex: 1
+    }
   },
   ...getFormAndMapWrapperClasses(theme)
 }));
