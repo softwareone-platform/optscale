@@ -23,7 +23,8 @@ import {
   MPT_ALERTS_WARNING_2,
   MPT_ALERTS_WARNING_4,
   MPT_ALERTS_DANGER_2,
-  MPT_ALERTS_DANGER_4
+  MPT_ALERTS_DANGER_4,
+  MPT_GRADIENT
 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
@@ -42,7 +43,8 @@ const applyPaletteSettings = (settings) => {
   const primary = mergeIfSettingIsNotEmpty(
     {
       main: MPT_BRAND_PRIMARY,
-      white: MPT_BRAND_WHITE
+      white: MPT_BRAND_WHITE,
+      gradient: MPT_GRADIENT
     },
     "primary"
   );
@@ -423,6 +425,13 @@ const getThemeConfig = (settings = {}) => {
           }
         ]
       },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: "4px"
+          }  
+        }        
+      },
       MuiButtonGroup: {
         styleOverrides: {
           root: {
@@ -504,7 +513,7 @@ const getThemeConfig = (settings = {}) => {
           ".MuiBox-WhiteCard": {
             boxShadow: MPT_BOX_SHADOW,
             background: "#FFFFFF",
-            padding: MPT_SPACING_2,
+            padding: MPT_SPACING_3,
             borderRadius: MPT_SPACING_1
           }
         }

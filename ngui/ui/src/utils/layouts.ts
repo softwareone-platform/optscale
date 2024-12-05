@@ -38,7 +38,7 @@ export const MPT_TERTIARY_BLUE_2 = `#4DA6FF`;
 export const MPT_BOX_SHADOW = `0 1px ${MPT_SPACING_1} #6b718057`;
 export const MPT_BOX_SHADOW_HOVER = `0 0 0 2px ${MPT_ALERTS_INFO_2} inset, 0 1px ${MPT_SPACING_1} #6b718057`;
 
-
+export const MPT_GRADIENT = "linear-gradient(270deg, #00c9cd, #472aff, #392d9c)";
 
 export const scrolledToBottom = (target) => target.scrollTop + target.clientHeight >= target.scrollHeight;
 

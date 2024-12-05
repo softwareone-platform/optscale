@@ -4,11 +4,12 @@ const useStyles = makeStyles()((theme) => ({
   title: {
     flexGrow: 1,
     display: "flex",
-    alignContent: "center"
+    alignContent: "center",
+    color: theme.palette.primary.white
   },
   headerPrimary: {
     color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.main
+    background: theme.palette.primary.gradient
   },
   headerSuccess: {
     color: theme.palette.success.contrastText,
