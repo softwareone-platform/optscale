@@ -146,7 +146,7 @@ const ClusterTypesTable = ({ clusterTypes, onUpdatePriority, isLoading = false }
               key: "add",
               icon: <AddOutlinedIcon fontSize="small" />,
               messageId: "add",
-              color: "success",
+              color: "primary",
               variant: "contained",
               type: "button",
               link: CLUSTER_TYPE_CREATE,

@@ -41,12 +41,12 @@ const ClusterTypes = ({ clusterTypes, onUpdatePriority, isLoading = false }) => 
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
       <Grid direction="row" container spacing={3}>
-        <Grid item xs={12} className={"KuBoxShadowRoot"}>
+        <Grid item xs={12} className={"MTPBoxShadowRoot"}>
           <Box>
-            <Box marginBottom={MPT_SPACING_2}>
+            <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />
+            <Box marginTop={MPT_SPACING_2}>
               <ExplanationMessage />
             </Box>
-            <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />
           </Box>
         </Grid>
       </Grid>
