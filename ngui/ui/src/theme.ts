@@ -10,6 +10,7 @@ import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import {
   MPT_BRAND_GRAY_1,
+  MPT_GRAY_2,
   MPT_GRAY_3,
   MPT_GRAY_4,
   MPT_BRAND_WHITE,
@@ -44,6 +45,7 @@ const applyPaletteSettings = (settings) => {
     {
       main: MPT_BRAND_PRIMARY,
       white: MPT_BRAND_WHITE,
+      gray2: MPT_GRAY_2,
       gradient: MPT_GRADIENT
     },
     "primary"
@@ -651,13 +653,6 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
-      MuiTab: {
-        styleOverrides: {
-          root: {
-            minHeight: "3rem"
-          }
-        }
-      },
       MuiTable: {
         defaultProps: {
           size: "small"
@@ -740,10 +735,25 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            minHeight: "3rem",
+            fontSize: "1rem",
+            textTransform: "none",
+            padding: `20px 12px`,
+            margin: "0 12px 0 4px"
+          }
+        }
+      },
       MuiTabs: {
         styleOverrides: {
           root: {
             minHeight: "2rem"
+          },
+          indicator: {
+            borderRadius: "4px",
+            height: "4px"
           }
         }
       },
