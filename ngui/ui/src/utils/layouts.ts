@@ -10,13 +10,12 @@ export const SPACING_6 = 6;
 export const MPT_BRAND_PRIMARY = "#472AFF";
 
 export const MPT_BRAND_WHITE = "#FFFFFF";
-export const MPT_BRAND_GRAY_1 = "#E0E5E8"; // TODO: replace with MPT_GRAY_2
+export const MPT_BRAND_BLACK = "#000000";
 export const MPT_GRAY_1 = "#F4F6F8";
 export const MPT_GRAY_2 = "#E0E5E8";
 export const MPT_GRAY_3 = "#AEB1B9";
 export const MPT_GRAY_4 = "#6B7180";
 
-export const MPT_BRAND_GRAY_2 = "rgba(107,113,128,0.2)";
 export const MPT_SPACING_1 = "8px";
 export const MPT_SPACING_2 = "16px";
 export const MPT_SPACING_3 = "24px";
@@ -36,7 +35,7 @@ export const MPT_TERTIARY_BLUE_1 = `#CAE4FF`;
 export const MPT_TERTIARY_BLUE_2 = `#4DA6FF`;
 
 export const MPT_BOX_SHADOW = `0 1px ${MPT_SPACING_1} #6b718057`;
-export const MPT_BOX_SHADOW_THIN = `0 1px 3px ${MPT_BRAND_GRAY_2}`;
+export const MPT_BOX_SHADOW_THIN = `0 1px 4px ${MPT_GRAY_3}`;
 export const MPT_BOX_SHADOW_HOVER = `0 0 0 2px ${MPT_ALERTS_INFO_2} inset, 0 1px ${MPT_SPACING_1} #6b718057`;
 
 export const MPT_GRADIENT = "linear-gradient(270deg, #00c9cd, #472aff, #392d9c)";

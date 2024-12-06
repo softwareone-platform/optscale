@@ -9,7 +9,7 @@ import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import {
-  MPT_BRAND_GRAY_1,
+  MPT_GRAY_2,
   MPT_GRAY_3,
   MPT_GRAY_4,
   MPT_BRAND_WHITE,
@@ -699,10 +699,10 @@ const getThemeConfig = (settings = {}) => {
               fontSize: "13px"
             },
             "&.MuiTableCell-head": {
-              borderLeft: `1px solid ${MPT_BRAND_GRAY_1}`,
+              borderLeft: `1px solid ${MPT_GRAY_2}`,
               borderBottom: "1px solid black",
               "&:last-of-type": {
-                borderRight: `1px solid ${MPT_BRAND_GRAY_1}`
+                borderRight: `1px solid ${MPT_GRAY_2}`
               }
             },
             "& .MuiIconButton-root": {
@@ -773,7 +773,10 @@ const getThemeConfig = (settings = {}) => {
         },
         styleOverrides: {
           dense: {
-            paddingRight: 0
+            paddingRight: 0,
+            ".MuiButton-root": {
+              fontSize: "14px"
+            }
           }
         }
       },

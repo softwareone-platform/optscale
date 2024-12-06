@@ -239,6 +239,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
       }}
       color="primary"
       size="medium"
+      sx={{ borderRadius: MPT_SPACING_2 }}
       variant="outlined"
       onDelete={onDelete}
     />
