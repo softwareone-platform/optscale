@@ -1,9 +1,8 @@
 import { lighten } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
+import { SPACING_1, SPACING_2, SPACING_3, MPT_BOX_SHADOW_HOVER } from "utils/layouts";
 
 const ALPHA = 0.95;
-const ALPHA_HOVER = 0.8;
 
 const useStyles = makeStyles()((theme, color) => ({
   root: {
@@ -15,12 +14,16 @@ const useStyles = makeStyles()((theme, color) => ({
       minWidth: 100
     },
     backgroundColor: lighten(color, ALPHA),
+    border: `1px solid ${lighten(color, ALPHA)}`,
     color
   },
   button: {
     transition: "background-color 0.3s ease-in",
     cursor: "pointer",
-    "&:hover": { backgroundColor: lighten(color, ALPHA_HOVER) }
+    paddingRight: theme.spacing(SPACING_3),
+    "&:hover": {
+      boxShadow: MPT_BOX_SHADOW_HOVER
+    }
   },
   content: {
     paddingTop: theme.spacing(SPACING_1),
