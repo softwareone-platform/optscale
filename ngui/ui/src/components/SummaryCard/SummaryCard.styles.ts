@@ -3,7 +3,6 @@ import { makeStyles } from "tss-react/mui";
 import { SPACING_1, SPACING_2, SPACING_3, MPT_BOX_SHADOW_HOVER } from "utils/layouts";
 
 const ALPHA = 0.95;
-const ALPHA_HOVER = 0.8;
 
 const useStyles = makeStyles()((theme, color) => ({
   root: {
@@ -15,7 +14,7 @@ const useStyles = makeStyles()((theme, color) => ({
       minWidth: 100
     },
     backgroundColor: lighten(color, ALPHA),
-    border: "1px solid ${lighten(color, ALPHA)}",
+    border: `1px solid ${lighten(color, ALPHA)}`,
     color
   },
   button: {
@@ -24,7 +23,6 @@ const useStyles = makeStyles()((theme, color) => ({
     paddingRight: theme.spacing(SPACING_3),
     "&:hover": {
       boxShadow: MPT_BOX_SHADOW_HOVER
-
     }
   },
   content: {

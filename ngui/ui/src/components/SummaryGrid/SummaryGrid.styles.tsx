@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_BOX_SHADOW, MPT_SPACING_1, MPT_SPACING_2, MPT_TERTIARY_BLUE_1, MPT_TERTIARY_BLUE_2 } from "../../utils/layouts";
+import { MPT_BOX_SHADOW, MPT_SPACING_1, MPT_SPACING_2, MPT_TERTIARY_BLUE_1 } from "../../utils/layouts";
 
 const useStyles = makeStyles()(() => ({
   customBox: {

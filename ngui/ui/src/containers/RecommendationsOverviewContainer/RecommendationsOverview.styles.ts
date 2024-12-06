@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_SPACING_3, SPACING_1, MPT_SPACING_1, MPT_SPACING_2, MPT_BOX_SHADOW } from "utils/layouts";
+import { MPT_SPACING_3, SPACING_1 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   actionBar: {

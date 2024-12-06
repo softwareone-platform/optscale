@@ -512,7 +512,7 @@ const getThemeConfig = (settings = {}) => {
           },
           ".MuiBox-WhiteCard": {
             boxShadow: MPT_BOX_SHADOW,
-            background: "#FFFFFF",
+            background: MPT_BRAND_WHITE,
             padding: MPT_SPACING_3,
             borderRadius: MPT_SPACING_1
           }
