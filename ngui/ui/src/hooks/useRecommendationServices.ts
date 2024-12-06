@@ -102,13 +102,13 @@ const GCP_SERVICES = Object.freeze({
 // });
 
 export const useRecommendationServices = () => ({
-    [ALL_SERVICES]: {
-      name: ALL_SERVICES
-    },
-    // MPT_TODO: disabled to math BDR requirements
-    // ...ALIBABA_SERVICES,
-    ...AZURE_SERVICES,
-    ...AWS_SERVICES,
-    ...GCP_SERVICES
-    // ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
-  });
+  [ALL_SERVICES]: {
+    name: ALL_SERVICES
+  },
+  // MPT_TODO: disabled to math BDR requirements
+  // ...ALIBABA_SERVICES,
+  ...AZURE_SERVICES,
+  ...AWS_SERVICES,
+  ...GCP_SERVICES
+  // ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
+});

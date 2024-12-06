@@ -429,8 +429,8 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           root: {
             borderRadius: "4px"
-          }  
-        }        
+          }
+        }
       },
       MuiButtonGroup: {
         styleOverrides: {

@@ -5,8 +5,8 @@ const useStyles = makeStyles()((theme, color) => ({
   card: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",    
-    border: color ? `2px solid ${theme.palette[color].secondary}` : '',    
+    justifyContent: "space-between",
+    border: color ? `2px solid ${theme.palette[color].secondary}` : "",
     boxShadow: MPT_BOX_SHADOW
   },
   content: {

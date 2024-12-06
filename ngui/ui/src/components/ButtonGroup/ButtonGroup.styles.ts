@@ -11,7 +11,7 @@ const useStyles = makeStyles()((theme) => ({
     }
   },
   activeButton: {
-    backgroundColor: theme.palette.secondary.main,    
+    backgroundColor: theme.palette.secondary.main,
     ".MuiTypography-root": {
       color: theme.palette.primary.white
     },
