@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1 } from "utils/layouts";
+import { MPT_GRADIENT, SPACING_1 } from "utils/layouts";
 
 export const DRAWER_WIDTH = 250;
 
@@ -8,7 +8,7 @@ const useStyles = makeStyles()((theme) => ({
     boxShadow: "none"
   },
   headerSpacer: {
-    background: "linear-gradient(270deg, #00c9cd, #472aff, #392d9c);",
+    background: MPT_GRADIENT,
     height: "3px"
   },
   toolbar: {

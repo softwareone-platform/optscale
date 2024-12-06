@@ -10,11 +10,21 @@ import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import {
   MPT_BRAND_GRAY_1,
+  MPT_GRAY_3,
+  MPT_GRAY_4,
+  MPT_BRAND_WHITE,
   MPT_BRAND_PRIMARY,
   MPT_BOX_SHADOW,
   MPT_SPACING_1,
   MPT_SPACING_2,
-  MPT_SPACING_3
+  MPT_SPACING_3,
+  MPT_ALERTS_SUCCESS_2,
+  MPT_ALERTS_SUCCESS_4,
+  MPT_ALERTS_WARNING_2,
+  MPT_ALERTS_WARNING_4,
+  MPT_ALERTS_DANGER_2,
+  MPT_ALERTS_DANGER_4,
+  MPT_GRADIENT
 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
@@ -32,7 +42,9 @@ const applyPaletteSettings = (settings) => {
 
   const primary = mergeIfSettingIsNotEmpty(
     {
-      main: MPT_BRAND_PRIMARY
+      main: MPT_BRAND_PRIMARY,
+      white: MPT_BRAND_WHITE,
+      gradient: MPT_GRADIENT
     },
     "primary"
   );
@@ -47,28 +59,31 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#472AFF"
+      main: MPT_BRAND_PRIMARY
     },
     "secondary"
   );
 
   const success = mergeIfSettingIsNotEmpty(
     {
-      main: "#007E00"
+      main: MPT_ALERTS_SUCCESS_4,
+      secondary: MPT_ALERTS_SUCCESS_2
     },
     "success"
   );
 
   const error = mergeIfSettingIsNotEmpty(
     {
-      main: "#B00020"
+      main: MPT_ALERTS_DANGER_4,
+      secondary: MPT_ALERTS_DANGER_2
     },
     "error"
   );
 
   const warning = mergeIfSettingIsNotEmpty(
     {
-      main: "#906B00"
+      main: MPT_ALERTS_WARNING_4,
+      secondary: MPT_ALERTS_WARNING_2
     },
     "warning"
   );
@@ -339,6 +354,7 @@ const getThemeConfig = (settings = {}) => {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
+            borderRadius: MPT_SPACING_1,
             backgroundColor: "#FFFFFF",
             "& .MuiOutlinedInput-notchedOutline": {
               borderColor: "black",
@@ -379,7 +395,8 @@ const getThemeConfig = (settings = {}) => {
       MuiButton: {
         defaultProps: {
           size: "small",
-          color: "info"
+          color: "primary",
+          borderRadius: MPT_SPACING_1
         },
         variants: [
           {
@@ -416,7 +433,36 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: "4px"
+          }
+        }
+      },
       MuiButtonGroup: {
+        styleOverrides: {
+          root: {
+            padding: "2px",
+            background: "#fff",
+            borderRadius: MPT_SPACING_1,
+            border: `1px solid ${MPT_GRAY_3}`,
+            "& .MuiTypography-root": {
+              color: MPT_GRAY_4
+            }
+          },
+          firstButton: {
+            borderRadius: MPT_SPACING_1
+          },
+          grouped: {
+            borderRadius: MPT_SPACING_1,
+            border: `1px solid transparent`,
+            color: MPT_GRAY_4,
+            "& + button": {
+              marginLeft: "4px"
+            }
+          }
+        },
         defaultProps: {
           color: "info"
         }
@@ -478,6 +524,12 @@ const getThemeConfig = (settings = {}) => {
               padding: MPT_SPACING_3,
               borderRadius: MPT_SPACING_1
             }
+          },
+          ".MuiBox-WhiteCard": {
+            boxShadow: MPT_BOX_SHADOW,
+            background: MPT_BRAND_WHITE,
+            padding: MPT_SPACING_3,
+            borderRadius: MPT_SPACING_1
           }
         }
       },
@@ -588,7 +640,7 @@ const getThemeConfig = (settings = {}) => {
             // https://github.com/mui-org/material-ui/issues/29842
             "&.Mui-selected": {
               backgroundColor: ACTION_SELECTED,
-              color: secondary.contrastText,
+              color: MPT_BRAND_WHITE,
               "&.Mui-focusVisible": { background: ACTION_SELECTED },
               "&:hover": {
                 backgroundColor: ACTION_SELECTED
