@@ -209,9 +209,9 @@ const Greeter = ({ content }: GreeterProps) => {
       className: classes.centeredFlexColumnDirection
     },
     {
-      key: "bannerAndText",
+      key: "bannerBackground",
       className: classes.centeredFlexColumnDirection,
-      children: <div className={classes.imageWithCaptionWrapper}>1</div>
+      children: <div className={classes.imageWithCaptionWrapper} />
     }
   ];
 
