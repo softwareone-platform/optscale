@@ -3,10 +3,10 @@ import { AWS_CNR, AZURE_CNR, GCP_CNR } from "utils/constants";
 export const ALL_SERVICES = "all";
 
 // MPT_TODO: disabled to math BDR requirements
-// export const ALIBABA_ECS = "alibabaEcs";
-// export const ALIBABA_ECS_VPC = "alibabaEcsVpc";
-// export const ALIBABA_EBS = "alibabaEbs";
-// export const ALIBABA_RDS = "alibabaRds";
+export const ALIBABA_ECS = "alibabaEcs";
+export const ALIBABA_ECS_VPC = "alibabaEcsVpc";
+export const ALIBABA_EBS = "alibabaEbs";
+export const ALIBABA_RDS = "alibabaRds";
 
 export const AWS_IAM = "awsIam";
 export const AWS_EC2 = "awsEc2";
@@ -22,7 +22,7 @@ export const AZURE_NETWORK = "azureNetwork";
 export const GCP_COMPUTE_ENGINE = "gcpComputeEngine";
 
 // MPT_TODO: disabled to math BDR requirements
-// export const NEBIUS_SERVICE = "nebius";
+export const NEBIUS_SERVICE = "nebius";
 
 // MPT_TODO: disabled to math BDR requirements
 // const ALIBABA_SERVICES = Object.freeze({

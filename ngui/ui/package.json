@@ -93,7 +93,7 @@
     "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'",
     "translate:fix": "prettier --write 'src/translations/**/*.json'",
     "translate:sort": "node src/translations/sortTranslations.ts",
-    "check": "pnpm lint:check && pnpm prettier:check",
+    "check": "pnpm lint:check && pnpm prettier:check && pnpm build",
     "fix": "pnpm lint:fix && pnpm prettier:fix",
     "fix:all": "pnpm fix && pnpm translate:sort && pnpm translate:fix",
     "type:check": "tsc"
