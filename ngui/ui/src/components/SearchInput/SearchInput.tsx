@@ -60,7 +60,6 @@ const SearchInput = ({ onSearch, initialSearchText = "", dataTestIds = {}, sx = 
         startAdornment: (
           <IconButton
             dataTestId={searchButtonDataTestId}
-            sx={{ padding: MPT_SPACING_1 }}
             icon={<SearchOutlinedIcon />}
             onClick={() => {
               inputRef.current.focus();
