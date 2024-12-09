@@ -16,26 +16,17 @@ const useStyles = makeStyles()((theme) => ({
       }
     },
     ".MuiOutlinedInput-root": {
-      borderRadius: 0,
-      paddingRight: 0,
-      "> :first-child": {
-        marginLeft: "-10px"
-      },
-      "> :nth-last-child(2)": {
-        marginRight: "-10px"
-      }
+      boxShadow: " inset 0 0 5px rgba(0, 0, 0, 0.2)"
+    },
+    ".MuiOutlinedInput-root svg": {
+      fill: "black"
     },
     ".MuiBadge-root > svg": {
       fill: "black"
     },
-    ".MuiOutlinedInput-notchedOutline": {
-      borderTop: "none",
-      borderLeft: "none",
-      borderRight: "none"
-    },
+    ".MuiOutlinedInput-notchedOutline": {},
     ".MuiInputBase-input": {
-      fontSize: "14px",
-      borderTop: "none"
+      fontSize: "14px"
     },
     [theme.breakpoints.down("md")]: {
       paddingBottom: theme.spacing(1)

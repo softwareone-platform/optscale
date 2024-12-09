@@ -9,7 +9,6 @@ import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import {
-  MPT_BRAND_GRAY_1,
   MPT_GRAY_2,
   MPT_GRAY_3,
   MPT_GRAY_4,
@@ -404,6 +403,8 @@ const getThemeConfig = (settings = {}) => {
           {
             props: { variant: "contained", color: "lightYellow" },
             style: ({ theme }) => ({
+              padding: `6px ${MPT_SPACING_2}`,
+              borderRadius: MPT_SPACING_1,
               color: theme.palette.lightYellow.contrastText,
               "&:hover": {
                 backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
@@ -425,7 +426,13 @@ const getThemeConfig = (settings = {}) => {
               color: theme.palette.text.primary
             })
           }
-        ]
+        ],
+        styleOverrides: {
+          root: {
+            padding: `6px ${MPT_SPACING_2}`,
+            borderRadius: MPT_SPACING_1
+          }
+        }
       },
       MuiChip: {
         styleOverrides: {
@@ -459,6 +466,13 @@ const getThemeConfig = (settings = {}) => {
         },
         defaultProps: {
           color: "info"
+        }
+      },
+      MuiBreadcrumbs: {
+        styleOverrides: {
+          li: {
+            whiteSpace: "nowrap"
+          }
         }
       },
       MuiCardHeader: {
@@ -504,7 +518,7 @@ const getThemeConfig = (settings = {}) => {
             flexDirection: "column",
             minHeight: "100vh"
           },
-          ".KuBoxShadowRoot": {
+          ".MTPBoxShadowRoot": {
             "> .MuiBox-root": {
               boxShadow: MPT_BOX_SHADOW,
               background: "#FFFFFF",
@@ -679,10 +693,10 @@ const getThemeConfig = (settings = {}) => {
               fontSize: "13px"
             },
             "&.MuiTableCell-head": {
-              borderLeft: `1px solid ${MPT_BRAND_GRAY_1}`,
+              borderLeft: `1px solid ${MPT_GRAY_2}`,
               borderBottom: "1px solid black",
               "&:last-of-type": {
-                borderRight: `1px solid ${MPT_BRAND_GRAY_1}`
+                borderRight: `1px solid ${MPT_GRAY_2}`
               }
             },
             "& .MuiIconButton-root": {
@@ -768,7 +782,10 @@ const getThemeConfig = (settings = {}) => {
         },
         styleOverrides: {
           dense: {
-            paddingRight: 0
+            paddingRight: 0,
+            ".MuiButton-root": {
+              fontSize: "14px"
+            }
           }
         }
       },

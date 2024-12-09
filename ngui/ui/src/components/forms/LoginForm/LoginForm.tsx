@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { REGISTER, PASSWORD_RECOVERY } from "urls";
-import { getQueryParams, getSearch } from "utils/network";
+import { PASSWORD_RECOVERY } from "urls";
+import { getQueryParams } from "utils/network";
 import { EmailField, FormButtons, PasswordField } from "./FormElements";
 import { FormValues, LoginFormProps } from "./types";
 import { getDefaultValues } from "./utils";
@@ -21,7 +21,7 @@ const LoginForm = ({ onSubmit, isLoading = false, isInvited = false }: LoginForm
 
   const { handleSubmit } = methods;
 
-  const search = getSearch();
+  // const search = getSearch();
 
   return (
     <FormProvider {...methods}>
@@ -35,11 +35,11 @@ const LoginForm = ({ onSubmit, isLoading = false, isInvited = false }: LoginForm
               <FormattedMessage id="forgotPassword" />
             </Link>
           </Typography>
-          <Typography>
-            <Link data-test-id="link_sign_up" color="primary" to={`${REGISTER}${search}`} component={RouterLink}>
-              <FormattedMessage id="noAccountSignUp" />
-            </Link>
-          </Typography>
+          {/* <Typography> */}
+          {/*  <Link data-test-id="link_sign_up" color="primary" to={`${REGISTER}${search}`} component={RouterLink}> */}
+          {/*    <FormattedMessage id="noAccountSignUp" /> */}
+          {/*  </Link> */}
+          {/* </Typography> */}
         </Box>
       </form>
     </FormProvider>

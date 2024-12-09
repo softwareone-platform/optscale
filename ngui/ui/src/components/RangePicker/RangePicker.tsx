@@ -101,7 +101,7 @@ const RangePicker = ({
           dataTestId="text_selected_dates"
           style={{ minWidth: "180px" }}
         >
-          {dateAsText}
+          <span style={{ fontSize: "15px" }}>{dateAsText}</span>
         </OutlinedDiv>
       }
       menu={popoverContent}

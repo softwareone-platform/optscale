@@ -126,6 +126,7 @@ const Resources = ({
               key: "perspectives",
               icon: <AssessmentOutlinedIcon fontSize="small" />,
               messageId: "perspectivesTitle",
+              color: "primary",
               type: "button",
               action: () => {
                 openSideModal(ApplyResourcePerspectiveModal, {
@@ -170,6 +171,7 @@ const Resources = ({
           });
         },
         requiredActions: ["EDIT_PARTNER"],
+        color: "primary",
         dataTestId: "btn_create_perspective"
       },
       {
@@ -177,6 +179,7 @@ const Resources = ({
         icon: <GroupWorkOutlinedIcon fontSize="small" />,
         messageId: "configureClusterTypes",
         type: "button",
+        color: "primary",
         link: CLUSTER_TYPES,
         dataTestId: "btn_configure_cluster_types"
       }
@@ -254,7 +257,7 @@ const Resources = ({
           <Grid xs={12} item>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
-          <Grid xs={12} item className={"KuBoxShadowRoot"}>
+          <Grid xs={12} item className={"MTPBoxShadowRoot"}>
             <Box>{typeof renderContent === "function" ? renderContent() : null}</Box>
           </Grid>
         </Grid>
