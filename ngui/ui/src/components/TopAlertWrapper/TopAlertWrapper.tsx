@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useMemo } from "react";
-// import { Box } from "@mui/material";
-// import { render as renderGithubButton } from "github-buttons";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
-// import { GET_TOKEN } from "api/auth/actionTypes";
 import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-// import { useRootData } from "hooks/useRootData";
-// import { GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
-// import { SPACING_1 } from "utils/layouts";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
 import { useAllAlertsSelector } from "./selectors";
 import TopAlert from "./TopAlert";
@@ -55,14 +49,15 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
   const dispatch = useDispatch();
 
   const { organizationId } = useOrganizationInfo();
-  //
+
+  // MPT_TODO: disabled openSourceAnnouncement
   // const {
   //   apiData: { userId }
   // } = useApiData(GET_TOKEN);
+  //
+  // const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
 
   const storedAlerts = useAllAlertsSelector(organizationId);
-
-  // const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
 
   const {
     apiData: { cloudAccounts = [] }
@@ -166,15 +161,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       //   dataTestId: "top_alert_open_source_announcement"
       // }
     ];
-  }, [
-    storedAlerts,
-    isDataSourceReady,
-    hasDataSourceInProcessing,
-    // isExistingUser,
-    updateOrganizationTopAlert
-    // userId,
-    // organizationId
-  ]);
+  }, [storedAlerts, isDataSourceReady, hasDataSourceInProcessing, updateOrganizationTopAlert]);
 
   const currentAlert = useMemo(
     () =>
