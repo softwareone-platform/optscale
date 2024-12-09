@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Box, TableBody, TableCell, TableFooter, TableHead, TableRow } from "@mui/material";
 import MuiTable from "@mui/material/Table";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
@@ -7,6 +7,7 @@ import TableLoader from "components/TableLoader";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_1 } from "utils/layouts";
 import InfoArea from "./components/InfoArea";
+import TableGradientOverlay from "./components/MptTableGradientOverlay/MptTableGradientOverlay";
 import Pagination from "./components/Pagination";
 import TableActions from "./components/TableActions";
 import { MemoTableBodyCell, TableBodyCell } from "./components/TableBodyCell";
@@ -92,36 +93,7 @@ const Table = ({
   manualGlobalFiltering
 }) => {
   const headerRef = useRef();
-  const tableContainerRef = useRef<HTMLElement>();
-  const [isGradientVisible, setIsGradientVisible] = useState(false);
-
-  const updateGradientVisibility = () => {
-    const container = tableContainerRef.current as HTMLElement;
-    if (container) {
-      const isScrollable = container.scrollWidth > container.clientWidth;
-      const atScrollEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth;
-      setIsGradientVisible(isScrollable && !atScrollEnd);
-    }
-  };
-
-  useEffect(() => {
-    const container = tableContainerRef.current;
-
-    updateGradientVisibility();
-
-    if (container) {
-      container.addEventListener("scroll", updateGradientVisibility);
-      window.addEventListener("resize", updateGradientVisibility);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("scroll", updateGradientVisibility);
-        window.removeEventListener("resize", updateGradientVisibility);
-      }
-    };
-  }, []);
-
+  const tableContainerRef = useRef<HTMLElement | null>(null);
   const { classes } = useStyles();
 
   const { stickyHeaderCellStyles, stickyTableStyles } = useSticky({
@@ -411,7 +383,7 @@ const Table = ({
             </MuiTable>
           )}
         </Box>
-        {isGradientVisible && <div className={classes.tableGradientOverlay} />}
+        <TableGradientOverlay containerWithScrollRef={tableContainerRef} />
         <Box
           sx={{
             display: "flex",
