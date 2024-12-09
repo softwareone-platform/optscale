@@ -10,7 +10,8 @@ const useStyles = makeStyles()(() => ({
       textAlign: "left",
       padding: MPT_SPACING_1,
       background: MPT_TERTIARY_BLUE_1,
-      boxShadow: MPT_BOX_SHADOW
+      boxShadow: MPT_BOX_SHADOW,
+      border: "none"
     },
     ".MuiBox-root": {
       color: "black"

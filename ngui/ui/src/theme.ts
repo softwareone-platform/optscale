@@ -44,6 +44,7 @@ const applyPaletteSettings = (settings) => {
     {
       main: MPT_BRAND_PRIMARY,
       white: MPT_BRAND_WHITE,
+      gray2: MPT_GRAY_2,
       gradient: MPT_GRADIENT
     },
     "primary"
@@ -666,13 +667,6 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
-      MuiTab: {
-        styleOverrides: {
-          root: {
-            minHeight: "3rem"
-          }
-        }
-      },
       MuiTable: {
         defaultProps: {
           size: "small"
@@ -755,10 +749,26 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            minHeight: "3rem",
+            fontSize: "1rem",
+            textTransform: "none",
+            padding: `20px 12px`,
+            margin: "0 12px 0 4px",
+            color: "inherit"
+          }
+        }
+      },
       MuiTabs: {
         styleOverrides: {
           root: {
             minHeight: "2rem"
+          },
+          indicator: {
+            borderRadius: "4px",
+            height: "4px"
           }
         }
       },
