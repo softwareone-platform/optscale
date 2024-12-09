@@ -756,7 +756,8 @@ const getThemeConfig = (settings = {}) => {
             fontSize: "1rem",
             textTransform: "none",
             padding: `20px 12px`,
-            margin: "0 12px 0 4px"
+            margin: "0 12px 0 4px",
+            color: "inherit"
           }
         }
       },
