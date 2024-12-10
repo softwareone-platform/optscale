@@ -10,7 +10,7 @@ import OrganizationThemeSettingsContainer from "containers/OrganizationThemeSett
 const TypographySettings = () => {
   const theme = useTheme();
 
-  const variants = ["body1", "body2", "subtitle1", "subtitle2", "h1", "h2", "h3", "h4", "h5", "h6"];
+  const variants = ["body1", "body2", "body2bold", "subtitle1", "subtitle2", "h1", "h2", "h3", "h4", "h5", "h6"];
 
   return (
     <Grid container spacing={2}>

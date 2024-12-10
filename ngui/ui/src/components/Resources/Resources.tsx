@@ -34,8 +34,6 @@ import { BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_R
 import { MPT_SPACING_2 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
-// import Accordion from "../Accordion";
-// import Typography from "@mui/material/Typography";
 import Divider from "../Selector/components/Divider";
 
 const BreakdownLinearSelector = ({ value, onChange }) => {

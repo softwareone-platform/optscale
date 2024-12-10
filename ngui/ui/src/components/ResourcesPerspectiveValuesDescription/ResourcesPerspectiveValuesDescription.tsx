@@ -1,10 +1,10 @@
 import { Stack } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import SubTitle from "components/SubTitle";
 import { breakdowns } from "hooks/useBreakdownBy";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { SPACING_1 } from "utils/layouts";
+import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1 } from "utils/layouts";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
   controlName: "categorizeBy",
@@ -31,8 +31,8 @@ const getBreakdownStateValueRenderer = (name) =>
   })[name] ?? (() => null);
 
 const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}, filters = [] }) => (
-  <Stack spacing={SPACING_1}>
-    <KeyValueLabel keyMessageId="breakdownBy" value={<FormattedMessage id={breakdownBy} />} />
+  <Stack spacing={SPACING_1} paddingTop={MPT_SPACING_2}>
+    <KeyValueLabel keyMessageId="breakdownBy" isBoldValue value={<FormattedMessage id={breakdownBy} />} />
     {Object.entries(breakdownData)
       .map(([name, value]) => {
         const renderer = getBreakdownStateValueRenderer(name);
@@ -41,18 +41,24 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       })
       .filter(Boolean)
       .map(({ controlName, renderValue }) => (
-        <KeyValueLabel key={controlName} keyMessageId={controlName} value={renderValue()} />
+        <KeyValueLabel key={controlName} isBoldValue keyMessageId={controlName} value={renderValue()} />
       ))}
     <div>
       {isEmptyArray(filters) ? (
         <KeyValueLabel keyMessageId="filters" value="-" />
       ) : (
         <>
-          <SubTitle>
+          <Typography variant="subtitle1" component="h3" marginTop={MPT_SPACING_1} gutterBottom>
             <FormattedMessage id="filters" />
-          </SubTitle>
+          </Typography>
           {filters.map(({ name, displayedName, displayedValue }) => (
-            <KeyValueLabel key={name} keyText={displayedName} value={displayedValue} />
+            <KeyValueLabel
+              key={name}
+              sx={{ marginBottom: MPT_SPACING_1 }}
+              isBoldValue
+              keyText={displayedName}
+              value={displayedValue}
+            />
           ))}
         </>
       )}
