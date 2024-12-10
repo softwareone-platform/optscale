@@ -27,10 +27,10 @@ type KeyValueLabelProps = KeyType & {
 };
 
 const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
-  ({ value, variant, keyMessageId, keyText, isBoldValue = true, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
+  ({ value, variant, keyMessageId, keyText, isBoldValue = false, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
     const renderValue = () => {
       if (value || value === 0) {
-        return value;
+        return <Typography variant={isBoldValue ? "fontWeightBold" : "fontWeightRegular"}>{value}</Typography>;
       }
 
       return <>&nbsp;-&nbsp;</>;
@@ -74,7 +74,6 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
         </Box>
         <Box
           sx={{
-            fontWeight: isBoldValue ? "bold" : undefined,
             whiteSpace: "normal",
             overflowWrap: "anywhere"
           }}
