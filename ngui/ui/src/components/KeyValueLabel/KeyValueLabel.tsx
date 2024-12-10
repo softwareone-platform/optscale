@@ -30,7 +30,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
   ({ value, variant, keyMessageId, keyText, isBoldValue = false, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
     const renderValue = () => {
       if (value || value === 0) {
-        return value
+        return value;
       }
 
       return <>&nbsp;-&nbsp;</>;
@@ -76,11 +76,11 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
           sx={{
             whiteSpace: "normal",
             overflowWrap: "anywhere",
-            fontWeight: 'bold'
+            fontWeight: "bold"
           }}
           data-test-id={valueDataTestId}
         >
-          <span style={{fontWeight: isBoldValue ? 'bold' : 'normal'}}>{renderValue()}</span>
+          <span style={{ fontWeight: isBoldValue ? "bold" : "normal" }}>{renderValue()}</span>
         </Box>
       </Typography>
     );
