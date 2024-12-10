@@ -2,7 +2,6 @@ import { ReactNode, forwardRef } from "react";
 import { Box } from "@mui/material";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import {fontWeight} from "@mui/system";
 
 type KeyType =
   | {
