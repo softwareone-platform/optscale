@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { TssCacheProvider } from "tss-react";
 import { useThemeSettingsOptions } from "hooks/useThemeSettingsOptions";
 import getTheme from "theme";
-import { MPT_GRAY_2 } from "../../utils/layouts";
+import { MPT_GRAY_4 } from "../../utils/layouts";
 
 const muiCache = createCache({
   key: "mui",
@@ -24,18 +24,18 @@ const globalScrollbarStyles = (
         width: "5px"
       },
       "::-webkit-scrollbar-track": {
-        background: MPT_GRAY_2
+        background: MPT_GRAY_4
       },
       "::-webkit-scrollbar-thumb": {
         borderRadius: "0",
         backgroundClip: "padding-box",
-        backgroundColor: MPT_GRAY_2
+        backgroundColor: MPT_GRAY_4
       },
       "::-webkit-scrollbar-thumb:hover": {
-        backgroundColor: MPT_GRAY_2
+        backgroundColor: MPT_GRAY_4
       },
       "*": {
-        scrollbarColor: `${MPT_GRAY_2} transparent`,
+        scrollbarColor: `${MPT_GRAY_4} transparent`,
         scrollbarWidth: "thin"
       }
     }}

@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
@@ -32,7 +32,7 @@ const getBreakdownStateValueRenderer = (name) =>
 
 const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}, filters = [] }) => (
   <Stack spacing={SPACING_1} paddingTop={MPT_SPACING_2}>
-    <KeyValueLabel keyMessageId="breakdownBy" isBoldValue value={<FormattedMessage id={breakdownBy} />} />
+    <KeyValueLabel keyMessageId="breakdownBy" isBoldKeyLabel value={<FormattedMessage id={breakdownBy} />} />
     {Object.entries(breakdownData)
       .map(([name, value]) => {
         const renderer = getBreakdownStateValueRenderer(name);
@@ -41,21 +41,23 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       })
       .filter(Boolean)
       .map(({ controlName, renderValue }) => (
-        <KeyValueLabel key={controlName} isBoldValue keyMessageId={controlName} value={renderValue()} />
+        <KeyValueLabel key={controlName} isBoldKeyLabel keyMessageId={controlName} value={renderValue()} />
       ))}
     <div>
       {isEmptyArray(filters) ? (
-        <KeyValueLabel keyMessageId="filters" value="-" />
+        <KeyValueLabel keyMessageId="filters" isBoldKeyLabel value="-" />
       ) : (
         <>
-          <Typography variant="subtitle1" component="h3" marginTop={MPT_SPACING_1} gutterBottom>
-            <FormattedMessage id="filters" />
-          </Typography>
+          <Box sx={{ marginBottom: MPT_SPACING_1 }}>
+            <Typography variant={"fontWeightBold"}>
+              <FormattedMessage id="filters" />:
+            </Typography>
+          </Box>
           {filters.map(({ name, displayedName, displayedValue }) => (
             <KeyValueLabel
               key={name}
               sx={{ marginBottom: MPT_SPACING_1 }}
-              isBoldValue
+              isBoldKeyLabel
               keyText={displayedName}
               value={displayedValue}
             />

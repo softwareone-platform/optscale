@@ -31,6 +31,7 @@ export const MPT_ALERTS_WARNING_4 = `#F1B178`;
 
 export const MPT_ALERTS_SUCCESS_2 = `#80E1AE`;
 export const MPT_ALERTS_SUCCESS_4 = `#005838`;
+export const MPT_TERTIARY_PRIMARY = `#ebedff`;
 export const MPT_TERTIARY_BLUE_1 = `#CAE4FF`;
 export const MPT_TERTIARY_BLUE_2 = `#4DA6FF`;
 

@@ -710,6 +710,13 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiBackdrop: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "rgba(255, 255, 255, 0.6)"
+          }
+        }
+      },
       MuiTableSortLabel: {
         defaultProps: {
           IconComponent: KeyboardArrowDownOutlinedIcon // Default icon for descending
