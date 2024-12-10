@@ -1,10 +1,10 @@
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { breakdowns } from "hooks/useBreakdownBy";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1 } from "utils/layouts";
+import { MPT_SPACING_1, MPT_SPACING_2, SPACING_2 } from "utils/layouts";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
   controlName: "categorizeBy",
@@ -31,8 +31,8 @@ const getBreakdownStateValueRenderer = (name) =>
   })[name] ?? (() => null);
 
 const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}, filters = [] }) => (
-  <Stack spacing={SPACING_1} paddingTop={MPT_SPACING_2}>
-    <KeyValueLabel keyMessageId="breakdownBy" isBoldValue value={<FormattedMessage id={breakdownBy} />} />
+  <Stack spacing={SPACING_2} paddingTop={MPT_SPACING_2}>
+    <KeyValueLabel keyMessageId="breakdownBy" isBoldKeyLabel value={<FormattedMessage id={breakdownBy} />} />
     {Object.entries(breakdownData)
       .map(([name, value]) => {
         const renderer = getBreakdownStateValueRenderer(name);
@@ -41,28 +41,30 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       })
       .filter(Boolean)
       .map(({ controlName, renderValue }) => (
-        <KeyValueLabel key={controlName} isBoldValue keyMessageId={controlName} value={renderValue()} />
+        <KeyValueLabel key={controlName} isBoldKeyLabel keyMessageId={controlName} value={renderValue()} />
       ))}
-    <div>
+    <Box sx={{ paddingTop: MPT_SPACING_2 }}>
       {isEmptyArray(filters) ? (
-        <KeyValueLabel keyMessageId="filters" value="-" />
+        <KeyValueLabel keyMessageId="filters" isBoldKeyLabel value="None" />
       ) : (
         <>
-          <Typography variant="subtitle1" component="h3" marginTop={MPT_SPACING_1} gutterBottom>
-            <FormattedMessage id="filters" />
-          </Typography>
+          <Box sx={{ marginBottom: MPT_SPACING_1 }}>
+            <Typography variant={"fontWeightBold"}>
+              <FormattedMessage id="filters" />:
+            </Typography>
+          </Box>
           {filters.map(({ name, displayedName, displayedValue }) => (
             <KeyValueLabel
               key={name}
               sx={{ marginBottom: MPT_SPACING_1 }}
-              isBoldValue
+              isBoldKeyLabel
               keyText={displayedName}
               value={displayedValue}
             />
           ))}
         </>
       )}
-    </div>
+    </Box>
   </Stack>
 );
 
