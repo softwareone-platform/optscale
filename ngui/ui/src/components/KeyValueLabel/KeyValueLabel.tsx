@@ -2,6 +2,7 @@ import { ReactNode, forwardRef } from "react";
 import { Box } from "@mui/material";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
+import {fontWeight} from "@mui/system";
 
 type KeyType =
   | {
@@ -30,7 +31,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
   ({ value, variant, keyMessageId, keyText, isBoldValue = false, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
     const renderValue = () => {
       if (value || value === 0) {
-        return <Typography variant={isBoldValue ? "fontWeightBold" : "fontWeightRegular"}>{value}</Typography>;
+        return value
       }
 
       return <>&nbsp;-&nbsp;</>;
@@ -75,11 +76,12 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
         <Box
           sx={{
             whiteSpace: "normal",
-            overflowWrap: "anywhere"
+            overflowWrap: "anywhere",
+            fontWeight: 'bold'
           }}
           data-test-id={valueDataTestId}
         >
-          {renderValue()}
+          <span style={{fontWeight: isBoldValue ? 'bold' : 'normal'}}>{renderValue()}</span>
         </Box>
       </Typography>
     );
