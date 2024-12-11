@@ -16,7 +16,7 @@ import { MetadataNodes } from "utils/metadata";
 import { isEmpty } from "utils/objects";
 import CollapsableTableCell from "../CollapsableTableCell";
 
-const renderKeyValueLabels = (options) => options.map((opt) => <KeyValueLabel key={opt.messageId} {...opt} />);
+const renderKeyValueLabels = (options) => options.map((opt) => <KeyValueLabel key={opt.keyMessageId} {...opt} />);
 
 const getIdLabelDefinition = ({ cloudResourceIdentifier, isActive }) => ({
   value: (

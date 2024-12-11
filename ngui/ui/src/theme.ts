@@ -396,8 +396,7 @@ const getThemeConfig = (settings = {}) => {
       MuiButton: {
         defaultProps: {
           size: "small",
-          color: "primary",
-          borderRadius: MPT_SPACING_1
+          color: "primary"
         },
         variants: [
           {
