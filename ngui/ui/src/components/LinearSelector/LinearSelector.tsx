@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-// MPT_TODO: Changed icons
-// import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-// import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
@@ -18,11 +15,11 @@ import Chip from "components/Chip";
 import DashedTypography from "components/DashedTypography";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Popover from "components/Popover";
-import { isEmpty as isEmptyArray } from "utils/arrays";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { MPT_SPACING_2 } from "../../utils/layouts";
 import useStyles from "./LinearSelector.styles";
+import { processItemDefinition } from "./itemDefinition.helper";
 
 const NONE = "none";
 
@@ -246,41 +243,9 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
   );
 };
 
-const SelectorItems = ({ items, values, onChange, onApply }) =>
-  items.reduce((selectorItems, itemDefinition) => {
-    const { name, items: popoverItems, type } = itemDefinition;
-    const isSelected = values.some(({ name: valueName }) => valueName === name);
-
-    // skipping all selected items, except multiselector
-    if (isSelected && type !== LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER) {
-      return selectorItems;
-    }
-
-    let notSelectedPopoverItems = [];
-
-    if (type === LINEAR_SELECTOR_ITEMS_TYPES.POPOVER) {
-      const { name: selectedItemName, value: selectedItemValue } =
-        values.find((valueObject) => valueObject.name === name) ?? {};
-
-      notSelectedPopoverItems =
-        selectedItemName === name ? popoverItems.filter((el) => el.value !== selectedItemValue) : popoverItems;
-
-      // skip if there are no items left in the popover
-      if (isEmptyArray(notSelectedPopoverItems)) {
-        return selectorItems;
-      }
-    }
-
-    if (type === LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER) {
-      // Skip popover if there are no items
-      if (isEmptyArray(popoverItems)) {
-        return selectorItems;
-      }
-      notSelectedPopoverItems = popoverItems;
-    }
-
-    return [
-      ...selectorItems,
+const SelectorItems = ({ items, values, onChange, onApply }) => {
+  const renderItem = (itemDefinition, notSelectedPopoverItems) => {
+    return (
       <Box data-test-id={`selector_${name}`} key={itemDefinition.name}>
         <Item
           {...itemDefinition}
@@ -294,11 +259,35 @@ const SelectorItems = ({ items, values, onChange, onApply }) =>
           values={values}
         />
       </Box>
-    ];
-  }, []);
+    );
+  };
 
-const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, onApply, dataTestIds = {} }) => {
+  return items.reduce((selectorItems, itemDefinition) => {
+    const { skip, notSelectedPopoverItems } = processItemDefinition(itemDefinition, values);
+
+    if (skip) {
+      return selectorItems;
+    }
+
+    return [...selectorItems, renderItem(itemDefinition, notSelectedPopoverItems)];
+  }, []);
+};
+
+const LinearSelector = ({
+  value,
+  label,
+  items,
+  onClear,
+  onClearAll,
+  onChange,
+  onApply,
+  dataTestIds = {},
+  exposeFirstItem = false
+}) => {
   const { label: labelDataTestId } = dataTestIds;
+  let accordionItems = [];
+
+  const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
   const getValuesArray = () => {
     if (isEmptyObject(value)) {
@@ -327,68 +316,102 @@ const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, on
 
   const { classes } = useStyles();
 
-  return (
-    <Box className={classes.wrapper}>
-      {label && (
-        <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
-          {label}
-          {": "}
-        </Typography>
-      )}
-      {valuesArray.length === 0 ? (
-        <Typography variant={"fontWeightBold"} component="span">
-          <FormattedMessage id={NONE} />
-        </Typography>
-      ) : (
-        <>
-          {valuesArray.map((pickedValue) => {
-            const {
-              name: itemName,
-              value: itemValue,
-              displayedValue: itemDisplayedValue,
-              type: itemType,
-              displayedName,
-              dataTestId
-            } = pickedValue;
+  if (exposeFirstItem) {
+    accordionItems = items.slice(1);
+    items = [items[0]];
+  }
 
-            return (
-              <PickedItem
-                key={`${itemName}-${itemValue}`}
-                name={itemName}
-                dataTestId={dataTestId}
-                // equal to node that was defined in "values" array (LinearSelector)
-                // or to node that was defined as a displayedName in items
-                // or <FormattedMessage id={name}/>
-                displayedName={displayedName}
-                displayedValue={itemDisplayedValue}
-                value={itemValue}
-                type={itemType}
-                onDelete={
-                  typeof onClear === "function" ? () => onClear({ filterName: itemName, filterValue: itemValue }) : undefined
-                }
+  return (
+    <>
+      <Box className={classes.wrapper}>
+        {label && (
+          <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
+            {label}
+            {": "}
+          </Typography>
+        )}
+        {valuesArray.length === 0 ? (
+          <Typography variant={"fontWeightBold"} component="span">
+            <FormattedMessage id={NONE} />
+          </Typography>
+        ) : (
+          <>
+            {valuesArray.map((pickedValue) => {
+              const {
+                name: itemName,
+                value: itemValue,
+                displayedValue: itemDisplayedValue,
+                type: itemType,
+                displayedName,
+                dataTestId
+              } = pickedValue;
+
+              return (
+                <PickedItem
+                  key={`${itemName}-${itemValue}`}
+                  name={itemName}
+                  dataTestId={dataTestId}
+                  // equal to node that was defined in "values" array (LinearSelector)
+                  // or to node that was defined as a displayedName in items
+                  // or <FormattedMessage id={name}/>
+                  displayedName={displayedName}
+                  displayedValue={itemDisplayedValue}
+                  value={itemValue}
+                  type={itemType}
+                  onDelete={
+                    typeof onClear === "function"
+                      ? () =>
+                          onClear({
+                            filterName: itemName,
+                            filterValue: itemValue
+                          })
+                      : undefined
+                  }
+                />
+              );
+            })}
+            {valuesArray.length > 1 && onClearAll ? (
+              <Button
+                dataTestId="btn_clear"
+                style={{ fontSize: "15px", borderRadius: MPT_SPACING_2, paddingTop: "2px", paddingBottom: "2px" }}
+                startIcon={<DeleteOutlinedIcon />}
+                onClick={onClearAll}
+                messageId="clearFilters"
+                color="error"
               />
-            );
-          })}
-          {valuesArray.length > 1 && onClearAll ? (
+            ) : null}
+          </>
+        )}
+        <Divider
+          component="span"
+          style={{ marginLeft: "8px", marginRight: "8px", width: "2px" }}
+          flexItem
+          orientation="vertical"
+        />
+
+        <SelectorItems items={items} values={valuesArray} onApply={onApply} onChange={onChange} />
+        {accordionItems.length > 0 && (
+          <>
             <Button
-              dataTestId="btn_clear"
-              style={{ fontSize: "15px", borderRadius: MPT_SPACING_2, paddingTop: "2px", paddingBottom: "2px" }}
-              startIcon={<DeleteOutlinedIcon />}
-              onClick={onClearAll}
-              messageId="clearFilters"
-              color="error"
-            />
-          ) : null}
-        </>
+              variant="text"
+              onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
+              style={{ marginTop: "8px" }}
+              dataTestId="btn_show_more_filters"
+              messageId={isAccordionVisible ? "showLess" : "showMore"}
+            >
+            </Button>
+          </>
+        )}
+      </Box>
+
+
+
+      {isAccordionVisible && accordionItems.length > 0 && (
+        <Box className={classes.wrapper} paddingTop={MPT_SPACING_2}>
+          <SelectorItems items={accordionItems} values={valuesArray} onApply={onApply} onChange={onChange} />
+        </Box>
       )}
-      <Divider
-        component="span"
-        style={{ marginLeft: "8px", marginRight: "8px", width: "2px" }}
-        flexItem
-        orientation="vertical"
-      />
-      <SelectorItems items={items} values={valuesArray} onApply={onApply} onChange={onChange} />
-    </Box>
+    </>
   );
 };
 
