@@ -18,8 +18,8 @@ import Popover from "components/Popover";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { MPT_SPACING_2 } from "../../utils/layouts";
-import useStyles from "./LinearSelector.styles";
 import { processItemDefinition } from "./itemDefinition.helper";
+import useStyles from "./LinearSelector.styles";
 
 const NONE = "none";
 
@@ -244,23 +244,21 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
 };
 
 const SelectorItems = ({ items, values, onChange, onApply }) => {
-  const renderItem = (itemDefinition, notSelectedPopoverItems) => {
-    return (
-      <Box data-test-id={`selector_${name}`} key={itemDefinition.name}>
-        <Item
-          {...itemDefinition}
-          items={notSelectedPopoverItems}
-          handleChange={({ name: itemName, value: itemValue, checked }) => {
-            if (typeof onChange === "function") {
-              onChange({ name: itemName, value: itemValue, checked });
-            }
-          }}
-          handleApply={onApply}
-          values={values}
-        />
-      </Box>
-    );
-  };
+  const renderItem = (itemDefinition, notSelectedPopoverItems) => (
+    <Box data-test-id={`selector_${itemDefinition.name}`} key={itemDefinition.name}>
+      <Item
+        {...itemDefinition}
+        items={notSelectedPopoverItems}
+        handleChange={({ name: itemName, value: itemValue, checked }) => {
+          if (typeof onChange === "function") {
+            onChange({ name: itemName, value: itemValue, checked });
+          }
+        }}
+        handleApply={onApply}
+        values={values}
+      />
+    </Box>
+  );
 
   return items.reduce((selectorItems, itemDefinition) => {
     const { skip, notSelectedPopoverItems } = processItemDefinition(itemDefinition, values);
@@ -285,7 +283,8 @@ const LinearSelector = ({
   exposeFirstItem = false
 }) => {
   const { label: labelDataTestId } = dataTestIds;
-  let accordionItems = [];
+  let expandableItems = [];
+  let alwaysVisibleItems = [];
 
   const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
@@ -317,8 +316,9 @@ const LinearSelector = ({
   const { classes } = useStyles();
 
   if (exposeFirstItem) {
-    accordionItems = items.slice(1);
-    items = [items[0]];
+    const [firstItem, ...rest] = items;
+    alwaysVisibleItems = [firstItem];
+    expandableItems = rest;
   }
 
   return (
@@ -389,26 +389,26 @@ const LinearSelector = ({
           orientation="vertical"
         />
 
-        <SelectorItems items={items} values={valuesArray} onApply={onApply} onChange={onChange} />
-        {accordionItems.length > 0 && (
-          <>
-            <Button
-              variant="text"
-              onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
-              style={{ marginTop: "8px" }}
-              dataTestId="btn_show_more_filters"
-              messageId={isAccordionVisible ? "showLess" : "showMore"}
-            >
-            </Button>
-          </>
+        <SelectorItems
+          items={alwaysVisibleItems.length > 0 ? alwaysVisibleItems : items}
+          values={valuesArray}
+          onApply={onApply}
+          onChange={onChange}
+        />
+        {expandableItems.length > 0 && (
+          <Button
+            variant="text"
+            onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
+            style={{ marginTop: "8px" }}
+            dataTestId="btn_show_more_filters"
+            messageId={isAccordionVisible ? "showLess" : "showMore"}
+          />
         )}
       </Box>
 
-
-
-      {isAccordionVisible && accordionItems.length > 0 && (
+      {isAccordionVisible && expandableItems.length > 0 && (
         <Box className={classes.wrapper} paddingTop={MPT_SPACING_2}>
-          <SelectorItems items={accordionItems} values={valuesArray} onApply={onApply} onChange={onChange} />
+          <SelectorItems items={expandableItems} values={valuesArray} onApply={onApply} onChange={onChange} />
         </Box>
       )}
     </>

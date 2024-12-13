@@ -1,5 +1,5 @@
-import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyArray } from "utils/arrays";
+import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 
 export const processItemDefinition = (itemDefinition, values) => {
   const { name, items: popoverItems, type } = itemDefinition;
@@ -14,8 +14,7 @@ export const processItemDefinition = (itemDefinition, values) => {
   let notSelectedPopoverItems = [];
 
   if (type === LINEAR_SELECTOR_ITEMS_TYPES.POPOVER) {
-    const { name: selectedItemName, value: selectedItemValue } =
-    values.find((valueObject) => valueObject.name === name) ?? {};
+    const { name: selectedItemName, value: selectedItemValue } = values.find((valueObject) => valueObject.name === name) ?? {};
 
     notSelectedPopoverItems =
       selectedItemName === name ? popoverItems.filter((el) => el.value !== selectedItemValue) : popoverItems;
@@ -36,4 +35,3 @@ export const processItemDefinition = (itemDefinition, values) => {
 
   return { skip: false, notSelectedPopoverItems };
 };
-
