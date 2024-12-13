@@ -788,6 +788,30 @@ export const BREAKDOWN_LINEAR_SELECTOR_ITEMS = [
   }
 ];
 
+export const BREAKDOWN_BUTTON_GROUP_ITEMS = [
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_expenses"
+  },
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_resource_count"
+  },
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_tags"
+  }
+];
+
 export const ML_TASK_DETAILS_TABS = Object.freeze({
   OVERVIEW: "overview",
   RUNS: "runs",
