@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_BOX_SHADOW_THIN, MPT_SPACING_2 } from "../../utils/layouts";
+import { MPT_BRAND_BLACK, MPT_GRAY_3, MPT_SPACING_1 } from "../../utils/layouts";
 
 const useStyles = makeStyles()(() => ({
   dashed: {
@@ -9,16 +9,16 @@ const useStyles = makeStyles()(() => ({
   },
   chip: {
     display: "inline",
-    border: `1px solid rgba(0, 0, 0, 0)`,
-    padding: `5px ${MPT_SPACING_2}`,
-    borderRadius: MPT_SPACING_2,
-    boxShadow: MPT_BOX_SHADOW_THIN,
+    border: `1px solid ${MPT_GRAY_3}`,
+    padding: `4px ${MPT_SPACING_1}`,
+    borderRadius: MPT_SPACING_1,
     background: "none",
     width: "fit-content",
-    transition: "background, border ease-in-out 0.2s",
+    transition: "background 0.2s ease-in-out, border 0.2s ease-in-out",
+    color: MPT_BRAND_BLACK,
     "&:hover": {
-      background: "white",
-      borderColor: "rgba(0, 0, 0, 0.2)"
+      borderColor: MPT_BRAND_BLACK,
+      background: "rgba(0, 0, 0, 0.1)"
     }
   },
   cursorPointer: {
