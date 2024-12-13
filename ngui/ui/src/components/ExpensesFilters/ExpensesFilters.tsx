@@ -10,7 +10,7 @@ const ExpensesFilters = ({ items, appliedValues, onFilterAdd, onFilterDelete, on
       label={<FormattedMessage id="filters" />}
       value={appliedValues}
       items={items}
-      exposeFirstItem={true}
+      exposeFirstItem
       onChange={({ name: filterName, value, checked }) => {
         if ([POOL_ID_FILTER].includes(filterName)) {
           onFilterAdd({
