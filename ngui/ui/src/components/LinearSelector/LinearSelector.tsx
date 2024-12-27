@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
 import Box from "@mui/material/Box";
@@ -212,6 +214,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
 
     return [LINEAR_SELECTOR_ITEMS_TYPES.POPOVER, LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER].includes(type) ? (
       <KeyValueLabel
+        isBoldValue={true}
         keyText={nameDisplayed}
         value={valueDisplayed}
         variant={typographyVariant}
@@ -234,9 +237,9 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
         chip: `chip_${dataTestId}`,
         deleteIcon: `btn_${dataTestId}_close`
       }}
+      className={"selectedFilter"}
       color="primary"
       size="medium"
-      sx={{ borderRadius: MPT_SPACING_2 }}
       variant="outlined"
       onDelete={onDelete}
     />
@@ -373,8 +376,8 @@ const LinearSelector = ({
             {valuesArray.length > 1 && onClearAll ? (
               <Button
                 dataTestId="btn_clear"
-                style={{ fontSize: "15px", borderRadius: MPT_SPACING_2, paddingTop: "2px", paddingBottom: "2px" }}
                 startIcon={<DeleteOutlinedIcon />}
+                customClass={classes.clearAllFilters}                
                 onClick={onClearAll}
                 messageId="clearFilters"
                 color="error"
@@ -397,9 +400,10 @@ const LinearSelector = ({
         />
         {expandableItems.length > 0 && (
           <Button
+            startIcon={isAccordionVisible ? <RemoveIcon/> : <AddIcon/>}
+            customClass={classes.showMoreFilters}
             variant="text"
-            onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
-            style={{ marginTop: "8px" }}
+            onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility            
             dataTestId="btn_show_more_filters"
             messageId={isAccordionVisible ? "showLess" : "showMore"}
           />

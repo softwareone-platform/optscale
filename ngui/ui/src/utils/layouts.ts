@@ -23,8 +23,11 @@ export const MPT_SPACING_4 = "32px";
 export const MPT_SPACING_5 = "40px";
 export const MPT_SPACING_6 = "48px";
 
+export const MPT_ALERTS_INFO_1 = `#EAECFF`;
 export const MPT_ALERTS_INFO_2 = `#959BFF`;
+export const MPT_ALERTS_DANGER_1 = `#FCE8EA`;
 export const MPT_ALERTS_DANGER_2 = `#EE8C96`;
+export const MPT_ALERTS_DANGER_3 = `#BB1425`;
 export const MPT_ALERTS_DANGER_4 = `#8F101D`;
 export const MPT_ALERTS_WARNING_2 = `#F1B178`;
 export const MPT_ALERTS_WARNING_4 = `#F1B178`;
