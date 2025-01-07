@@ -237,26 +237,6 @@ const Resources = ({
                   <TypographyLoader linesCount={1} />
                 ) : (
                   <>
-                    {/* <Accordion zeroSummaryMinHeight={true} headerDataTestId={'filters-accordion'} sx={{ boxShadow: "none", background: 'none'}}> */}
-                    {/*  <div> */}
-                    {/*    <Typography variant={'body2'} component="span"> */}
-                    {/*      <FormattedMessage id={'filters'}/> */}
-                    {/*    </Typography> */}
-                    {/*    <Badge */}
-                    {/*      badgeContent={selectedFiltersCount} */}
-                    {/*      color="primary" */}
-                    {/*      style={{marginLeft: "18px"}} */}
-                    {/*    /> */}
-                    {/*  </div> */}
-                    {/*  <ExpensesFilters */}
-                    {/*    items={items} */}
-                    {/*    appliedValues={appliedValues} */}
-                    {/*    onFilterDelete={onFilterDelete} */}
-                    {/*    onFiltersDelete={onFiltersDelete} */}
-                    {/*    onFilterAdd={onFilterAdd} */}
-                    {/*  /> */}
-                    {/* </Accordion> */}
-
                     <ExpensesFilters
                       items={items}
                       appliedValues={appliedValues}

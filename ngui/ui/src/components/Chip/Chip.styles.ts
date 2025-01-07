@@ -8,8 +8,8 @@ const useStyles = makeStyles()(() => ({
       border: "none",
       backgroundColor: MPT_ALERTS_INFO_1,
       borderRadius: "8px"
-    },
-  },  
+    }
+  },
   uppercase: {
     textTransform: "uppercase"
   },

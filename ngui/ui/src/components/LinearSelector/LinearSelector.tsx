@@ -1,13 +1,13 @@
 import { useState } from "react";
 
+import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
+import RemoveIcon from "@mui/icons-material/Remove";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
-import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
@@ -19,7 +19,7 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Popover from "components/Popover";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
-import { MPT_SPACING_2 } from "../../utils/layouts";
+import { MPT_SPACING_2, SPACING_1, SPACING_2 } from "../../utils/layouts";
 import { processItemDefinition } from "./itemDefinition.helper";
 import useStyles from "./LinearSelector.styles";
 
@@ -214,7 +214,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
 
     return [LINEAR_SELECTOR_ITEMS_TYPES.POPOVER, LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER].includes(type) ? (
       <KeyValueLabel
-        isBoldValue={true}
+        isBoldValue
         keyText={nameDisplayed}
         value={valueDisplayed}
         variant={typographyVariant}
@@ -325,97 +325,97 @@ const LinearSelector = ({
   }
 
   return (
-    <>
-      <Box className={classes.wrapper}>
+    <Box>
+      <Grid container>
         {label && (
-          <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
-            {label}
-            {": "}
-          </Typography>
+          <Grid xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2} data-test-id="testtttt">
+            <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
+              {label}
+              {": "}
+            </Typography>
+          </Grid>
         )}
-        {valuesArray.length === 0 ? (
-          <Typography variant={"fontWeightBold"} component="span">
-            <FormattedMessage id={NONE} />
-          </Typography>
-        ) : (
-          <>
-            {valuesArray.map((pickedValue) => {
-              const {
-                name: itemName,
-                value: itemValue,
-                displayedValue: itemDisplayedValue,
-                type: itemType,
-                displayedName,
-                dataTestId
-              } = pickedValue;
+        <Grid xs={12} md={11}>
+          <Grid container gap={SPACING_1}>
+            {valuesArray.length === 0 ? (
+              <Typography lineHeight={SPACING_2} component="span">
+                <FormattedMessage id={NONE} />
+              </Typography>
+            ) : (
+              <>
+                {valuesArray.map((pickedValue) => {
+                  const {
+                    name: itemName,
+                    value: itemValue,
+                    displayedValue: itemDisplayedValue,
+                    type: itemType,
+                    displayedName,
+                    dataTestId
+                  } = pickedValue;
 
-              return (
-                <PickedItem
-                  key={`${itemName}-${itemValue}`}
-                  name={itemName}
-                  dataTestId={dataTestId}
-                  // equal to node that was defined in "values" array (LinearSelector)
-                  // or to node that was defined as a displayedName in items
-                  // or <FormattedMessage id={name}/>
-                  displayedName={displayedName}
-                  displayedValue={itemDisplayedValue}
-                  value={itemValue}
-                  type={itemType}
-                  onDelete={
-                    typeof onClear === "function"
-                      ? () =>
-                          onClear({
-                            filterName: itemName,
-                            filterValue: itemValue
-                          })
-                      : undefined
-                  }
-                />
-              );
-            })}
-            {valuesArray.length > 1 && onClearAll ? (
+                  return (
+                    <PickedItem
+                      key={`${itemName}-${itemValue}`}
+                      name={itemName}
+                      dataTestId={dataTestId}
+                      // equal to node that was defined in "values" array (LinearSelector)
+                      // or to node that was defined as a displayedName in items
+                      // or <FormattedMessage id={name}/>
+                      displayedName={displayedName}
+                      displayedValue={itemDisplayedValue}
+                      value={itemValue}
+                      type={itemType}
+                      onDelete={
+                        typeof onClear === "function"
+                          ? () =>
+                              onClear({
+                                filterName: itemName,
+                                filterValue: itemValue
+                              })
+                          : undefined
+                      }
+                    />
+                  );
+                })}
+
+                {valuesArray.length > 1 && onClearAll ? (
+                  <Button
+                    dataTestId="btn_clear"
+                    startIcon={<DeleteOutlinedIcon />}
+                    customClass={classes.clearAllFilters}
+                    onClick={onClearAll}
+                    messageId="clearFilters"
+                    color="error"
+                  />
+                ) : null}
+              </>
+            )}
+          </Grid>
+          <Grid container gap={SPACING_1} marginTop={SPACING_1}>
+            <SelectorItems
+              items={alwaysVisibleItems.length > 0 ? alwaysVisibleItems : items}
+              values={valuesArray}
+              onApply={onApply}
+              onChange={onChange}
+            />
+
+            {isAccordionVisible && expandableItems.length > 0 && (
+              <SelectorItems items={expandableItems} values={valuesArray} onApply={onApply} onChange={onChange} />
+            )}
+            {expandableItems.length > 0 && (
               <Button
-                dataTestId="btn_clear"
-                startIcon={<DeleteOutlinedIcon />}
-                customClass={classes.clearAllFilters}                
-                onClick={onClearAll}
-                messageId="clearFilters"
-                color="error"
+                startIcon={isAccordionVisible ? <RemoveIcon /> : <AddIcon />}
+                customClass={classes.showMoreFilters}
+                variant="text"
+                onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
+                dataTestId="btn_show_more_filters"
+                messageId={isAccordionVisible ? "showLess" : "showMore"}
               />
-            ) : null}
-          </>
-        )}
-        <Divider
-          component="span"
-          style={{ marginLeft: "8px", marginRight: "8px", width: "2px" }}
-          flexItem
-          orientation="vertical"
-        />
-
-        <SelectorItems
-          items={alwaysVisibleItems.length > 0 ? alwaysVisibleItems : items}
-          values={valuesArray}
-          onApply={onApply}
-          onChange={onChange}
-        />
-        {expandableItems.length > 0 && (
-          <Button
-            startIcon={isAccordionVisible ? <RemoveIcon/> : <AddIcon/>}
-            customClass={classes.showMoreFilters}
-            variant="text"
-            onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility            
-            dataTestId="btn_show_more_filters"
-            messageId={isAccordionVisible ? "showLess" : "showMore"}
-          />
-        )}
-      </Box>
-
-      {isAccordionVisible && expandableItems.length > 0 && (
-        <Box className={classes.wrapper} paddingTop={MPT_SPACING_2}>
-          <SelectorItems items={expandableItems} values={valuesArray} onApply={onApply} onChange={onChange} />
-        </Box>
-      )}
-    </>
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

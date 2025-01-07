@@ -7,7 +7,7 @@ const useStyles = makeStyles()((theme) => {
   return {
     showMoreFilters: {
       color: theme.palette.primary.main,
-      padding: "5px 8px",
+      padding: "5px 8px"
     },
     clearAllFilters: {
       backgroundColor: theme.palette.error.primary,

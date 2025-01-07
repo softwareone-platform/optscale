@@ -1,5 +1,5 @@
 // import CancelIcon from "@mui/icons-material/Cancel";
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from "@mui/icons-material/Clear";
 import MuiChip from "@mui/material/Chip";
 import useStyles from "./Chip.styles";
 
