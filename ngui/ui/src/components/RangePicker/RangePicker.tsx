@@ -14,7 +14,7 @@ import {
   secondsToMilliseconds
 } from "utils/datetime";
 import { objectMap } from "utils/objects";
-import {MPT_BRAND_BLACK} from "../../utils/layouts";
+import { MPT_BRAND_BLACK } from "../../utils/layouts";
 
 const RangePicker = ({
   validation = {},

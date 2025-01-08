@@ -19,7 +19,7 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Popover from "components/Popover";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
-import {MPT_SPACING_2, SPACING_1, SPACING_2} from "../../utils/layouts";
+import { MPT_SPACING_2, SPACING_1, SPACING_2 } from "../../utils/layouts";
 import { processItemDefinition } from "./itemDefinition.helper";
 import useStyles from "./LinearSelector.styles";
 
@@ -326,7 +326,7 @@ const LinearSelector = ({
 
   return (
     <Box>
-      <Grid container gap={MPT_SPACING_2} wrap={'nowrap'}>
+      <Grid container gap={MPT_SPACING_2} wrap={"nowrap"}>
         {label && (
           <Grid xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }}>
             <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>

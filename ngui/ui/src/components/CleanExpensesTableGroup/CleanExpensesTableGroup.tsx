@@ -20,7 +20,7 @@ import {
   CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX,
   CLEAN_EXPENSES_GROUP_TYPES_LIST
 } from "utils/constants";
-import {MPT_SPACING_1, MPT_SPACING_2, SPACING_1, SPACING_2} from "utils/layouts";
+import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1, SPACING_2 } from "utils/layouts";
 import { updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getPaginationQueryKey, getSearchQueryKey } from "utils/tables";
@@ -200,82 +200,82 @@ const CleanExpensesTableGroup = ({
       <Grid container>
         <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2} data-test-id="testtttt">
           <Box marginTop={SPACING_1}>
-          <LinearSelector
-            value={
-              isGroupStateEmpty
-                ? {}
-                : {
-                    name: groupState.groupType,
-                    value: groupState.groupBy
-                  }
-            }
-            label={<FormattedMessage id="groupBy" />}
-            onChange={({ name: groupType, value: groupBy }) => {
-              updateQueryParams({
-                [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
-                [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
-                [GROUP_TYPE_PARAM_NAME]: groupType,
-                [GROUP_BY_PARAM_NAME]: groupBy
-              });
-              handleGroupSelectorChange({
-                groupType,
-                groupBy
-              });
-            }}
-            onClear={() => {
-              updateQueryParams({
-                [GROUP_TYPE_PARAM_NAME]: undefined,
-                [GROUP_BY_PARAM_NAME]: undefined,
-                [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
-                [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
-              });
-            }}
-            items={[
-              {
-                name: CLEAN_EXPENSES_GROUP_TYPES.POOL,
-                value: CLEAN_EXPENSES_GROUP_TYPES.POOL,
-                type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
-                dataTestId: "ls_item_pool"
-              },
-              {
-                name: CLEAN_EXPENSES_GROUP_TYPES.OWNER,
-                value: CLEAN_EXPENSES_GROUP_TYPES.OWNER,
-                type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
-                dataTestId: "ls_item_owner"
-              },
-              ...(!isEmptyArray(tags)
-                ? [
-                    {
-                      name: CLEAN_EXPENSES_GROUP_TYPES.TAG,
-                      type: LINEAR_SELECTOR_ITEMS_TYPES.POPOVER,
-                      dataTestId: "ls_item_tag",
-                      items: tags.map((tag, index) => ({
-                        name: CLEAN_EXPENSES_GROUP_TYPES.TAG,
-                        value: tag,
-                        label: tag,
-                        key: tag,
-                        dataTestId: `ls_mi_tag_name_${index}`
-                      }))
+            <LinearSelector
+              value={
+                isGroupStateEmpty
+                  ? {}
+                  : {
+                      name: groupState.groupType,
+                      value: groupState.groupBy
                     }
-                  ]
-                : [])
-            ]}
-            dataTestIds={{
-              label: "ls_lbl_group"
-            }}
-          />
+              }
+              label={<FormattedMessage id="groupBy" />}
+              onChange={({ name: groupType, value: groupBy }) => {
+                updateQueryParams({
+                  [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
+                  [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
+                  [GROUP_TYPE_PARAM_NAME]: groupType,
+                  [GROUP_BY_PARAM_NAME]: groupBy
+                });
+                handleGroupSelectorChange({
+                  groupType,
+                  groupBy
+                });
+              }}
+              onClear={() => {
+                updateQueryParams({
+                  [GROUP_TYPE_PARAM_NAME]: undefined,
+                  [GROUP_BY_PARAM_NAME]: undefined,
+                  [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
+                  [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
+                });
+              }}
+              items={[
+                {
+                  name: CLEAN_EXPENSES_GROUP_TYPES.POOL,
+                  value: CLEAN_EXPENSES_GROUP_TYPES.POOL,
+                  type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+                  dataTestId: "ls_item_pool"
+                },
+                {
+                  name: CLEAN_EXPENSES_GROUP_TYPES.OWNER,
+                  value: CLEAN_EXPENSES_GROUP_TYPES.OWNER,
+                  type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+                  dataTestId: "ls_item_owner"
+                },
+                ...(!isEmptyArray(tags)
+                  ? [
+                      {
+                        name: CLEAN_EXPENSES_GROUP_TYPES.TAG,
+                        type: LINEAR_SELECTOR_ITEMS_TYPES.POPOVER,
+                        dataTestId: "ls_item_tag",
+                        items: tags.map((tag, index) => ({
+                          name: CLEAN_EXPENSES_GROUP_TYPES.TAG,
+                          value: tag,
+                          label: tag,
+                          key: tag,
+                          dataTestId: `ls_mi_tag_name_${index}`
+                        }))
+                      }
+                    ]
+                  : [])
+              ]}
+              dataTestIds={{
+                label: "ls_lbl_group"
+              }}
+            />
           </Box>
         </Grid>
-        <Grid item xs={'auto'} md={'auto'}>
-          {!isGroupStateEmpty &&
-              <Box display={'flex'}>
-                <Divider orientation={'vertical'} flexItem sx={{marginTop: MPT_SPACING_1, marginBottom: MPT_SPACING_1}} />
-                <SortGroupsBySelector sortGroupsBy={sortGroupsBy} setSortGroupsBy={setSortGroupsBy} />
-              </Box>
-          }
+        <Grid item xs={"auto"} md={"auto"}>
+          {!isGroupStateEmpty && (
+            <Box display={"flex"}>
+              <Divider orientation={"vertical"} flexItem sx={{ marginTop: MPT_SPACING_1, marginBottom: MPT_SPACING_1 }} />
+              <SortGroupsBySelector sortGroupsBy={sortGroupsBy} setSortGroupsBy={setSortGroupsBy} />
+            </Box>
+          )}
         </Grid>
       </Grid>
-      <Divider sx={{marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2}} />
+      <Divider sx={{ marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2 }} />
       <Grid container>
         <Grid item xs={12}>
           {!isGroupStateEmpty ? (
