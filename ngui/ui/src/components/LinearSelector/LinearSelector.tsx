@@ -335,7 +335,7 @@ const LinearSelector = ({
             </Typography>
           </Grid>
         )}
-        <Grid item xs={12} md={11}>
+        <Grid item xs={12} md={12}>
           <Grid container gap={SPACING_1}>
             {valuesArray.length === 0 ? (
               <Typography lineHeight={SPACING_2} component="span">
