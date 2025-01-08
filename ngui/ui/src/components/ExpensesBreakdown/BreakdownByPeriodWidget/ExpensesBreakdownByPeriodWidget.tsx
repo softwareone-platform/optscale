@@ -43,7 +43,7 @@ const BreakdownLinearSelector = ({ value, items, onChange }) => {
   return <LinearSelector value={value} onChange={onChange} items={items} />;
 };
 
-const ExpensesBreakdownByPeriodWidget = ({ render }) => {
+const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const { [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodTypeQueryParameter } = getQueryParams();
@@ -81,6 +81,7 @@ const ExpensesBreakdownByPeriodWidget = ({ render }) => {
           messageId="expensesBreakdownBarChartDescription"
           messageValues={{ periodType: intl.formatMessage({ id: periodType.value }) }}
         />
+        {customContent && <Box mb={SPACING_1}>{customContent}</Box>}
       </Box>
       <DynamicTextPdf
         pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle}
