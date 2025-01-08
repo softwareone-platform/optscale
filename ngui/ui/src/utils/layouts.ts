@@ -23,8 +23,11 @@ export const MPT_SPACING_4 = "32px";
 export const MPT_SPACING_5 = "40px";
 export const MPT_SPACING_6 = "48px";
 
+export const MPT_ALERTS_INFO_1 = `#EAECFF`;
 export const MPT_ALERTS_INFO_2 = `#959BFF`;
+export const MPT_ALERTS_DANGER_1 = `#FCE8EA`;
 export const MPT_ALERTS_DANGER_2 = `#EE8C96`;
+export const MPT_ALERTS_DANGER_3 = `#BB1425`;
 export const MPT_ALERTS_DANGER_4 = `#8F101D`;
 export const MPT_ALERTS_WARNING_2 = `#F1B178`;
 export const MPT_ALERTS_WARNING_4 = `#F1B178`;
@@ -36,7 +39,6 @@ export const MPT_TERTIARY_BLUE_1 = `#CAE4FF`;
 export const MPT_TERTIARY_BLUE_2 = `#4DA6FF`;
 
 export const MPT_BOX_SHADOW = `0 1px ${MPT_SPACING_1} #6b718057`;
-export const MPT_BOX_SHADOW_THIN = `0 1px 4px #6b718057`;
 export const MPT_BOX_SHADOW_HOVER = `0 0 0 2px ${MPT_ALERTS_INFO_2} inset, 0 1px ${MPT_SPACING_1} #6b718057`;
 
 export const MPT_GRADIENT = "linear-gradient(270deg, #00c9cd, #472aff, #392d9c)";

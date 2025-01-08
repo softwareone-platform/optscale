@@ -22,7 +22,9 @@ import {
   MPT_ALERTS_SUCCESS_4,
   MPT_ALERTS_WARNING_2,
   MPT_ALERTS_WARNING_4,
+  MPT_ALERTS_DANGER_1,
   MPT_ALERTS_DANGER_2,
+  MPT_ALERTS_DANGER_3,
   MPT_ALERTS_DANGER_4,
   MPT_GRADIENT
 } from "./utils/layouts";
@@ -76,7 +78,9 @@ const applyPaletteSettings = (settings) => {
   const error = mergeIfSettingIsNotEmpty(
     {
       main: MPT_ALERTS_DANGER_4,
-      secondary: MPT_ALERTS_DANGER_2
+      primary: MPT_ALERTS_DANGER_1,
+      secondary: MPT_ALERTS_DANGER_2,
+      text: MPT_ALERTS_DANGER_3
     },
     "error"
   );
