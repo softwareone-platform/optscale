@@ -328,14 +328,14 @@ const LinearSelector = ({
     <Box>
       <Grid container gap={MPT_SPACING_2} wrap={"nowrap"}>
         {label && (
-          <Grid xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }}>
+          <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }}>
             <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
               {label}
               {": "}
             </Typography>
           </Grid>
         )}
-        <Grid xs={12} md={11}>
+        <Grid item xs={12} md={11}>
           <Grid container gap={SPACING_1}>
             {valuesArray.length === 0 ? (
               <Typography lineHeight={SPACING_2} component="span">
