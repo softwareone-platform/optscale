@@ -1,0 +1,18 @@
+{
+  "name": "optscale",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r ⭐ Drop a star to support OptScale ⭐\r </p>",
+  "main": "index.js",
+  "scripts": {
+    "playwright:show-report": "playwright show-report",
+    "playwright:debug": "playwright test --debug",
+    "playwright:test": "playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5"
+  }
+}

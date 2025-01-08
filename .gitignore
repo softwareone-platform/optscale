@@ -39,3 +39,8 @@ ngui/ui/package-lock.json
 jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
