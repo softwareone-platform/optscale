@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import { FormattedMessage } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +20,7 @@ import {
   CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX,
   CLEAN_EXPENSES_GROUP_TYPES_LIST
 } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
+import {MPT_SPACING_1, MPT_SPACING_2, SPACING_1, SPACING_2} from "utils/layouts";
 import { updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getPaginationQueryKey, getSearchQueryKey } from "utils/tables";
@@ -195,9 +196,10 @@ const CleanExpensesTableGroup = ({
   const isGroupStateEmpty = isEmptyObject(groupState);
 
   return (
-    <Grid container spacing={SPACING_2}>
-      <Grid item xs={12}>
-        <Box display="flex">
+    <Box>
+      <Grid container>
+        <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2} data-test-id="testtttt">
+          <Box marginTop={SPACING_1}>
           <LinearSelector
             value={
               isGroupStateEmpty
@@ -262,35 +264,46 @@ const CleanExpensesTableGroup = ({
               label: "ls_lbl_group"
             }}
           />
-          {!isGroupStateEmpty && <SortGroupsBySelector sortGroupsBy={sortGroupsBy} setSortGroupsBy={setSortGroupsBy} />}
-        </Box>
+          </Box>
+        </Grid>
+        <Grid item xs={'auto'} md={'auto'}>
+          {!isGroupStateEmpty &&
+              <Box display={'flex'}>
+                <Divider orientation={'vertical'} flexItem sx={{marginTop: MPT_SPACING_1, marginBottom: MPT_SPACING_1}} />
+                <SortGroupsBySelector sortGroupsBy={sortGroupsBy} setSortGroupsBy={setSortGroupsBy} />
+              </Box>
+          }
+        </Grid>
       </Grid>
-      <Grid item xs={12} style={{ paddingTop: 0 }}>
-        {!isGroupStateEmpty ? (
-          <GroupedTables
-            startDateTimestamp={startDateTimestamp}
-            endDateTimestamp={endDateTimestamp}
-            onAccordionChange={() => {
-              updateQueryParams({
-                [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
-                [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
-              });
-            }}
-            groupedResources={cachedGroups[groupState.groupBy] ?? []}
-            getGroupHeaderDataTestId={(index) => `group_${groupState.groupType}_${index}`}
-          />
-        ) : (
-          <CleanExpensesTable
-            startDateTimestamp={startDateTimestamp}
-            endDateTimestamp={endDateTimestamp}
-            expenses={expenses}
-            downloadResources={downloadResources}
-            isDownloadingResources={isDownloadingResources}
-            totalResourcesCount={totalResourcesCount}
-          />
-        )}
+      <Divider sx={{marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2}} />
+      <Grid container>
+        <Grid item xs={12}>
+          {!isGroupStateEmpty ? (
+            <GroupedTables
+              startDateTimestamp={startDateTimestamp}
+              endDateTimestamp={endDateTimestamp}
+              onAccordionChange={() => {
+                updateQueryParams({
+                  [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
+                  [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
+                });
+              }}
+              groupedResources={cachedGroups[groupState.groupBy] ?? []}
+              getGroupHeaderDataTestId={(index) => `group_${groupState.groupType}_${index}`}
+            />
+          ) : (
+            <CleanExpensesTable
+              startDateTimestamp={startDateTimestamp}
+              endDateTimestamp={endDateTimestamp}
+              expenses={expenses}
+              downloadResources={downloadResources}
+              isDownloadingResources={isDownloadingResources}
+              totalResourcesCount={totalResourcesCount}
+            />
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 
