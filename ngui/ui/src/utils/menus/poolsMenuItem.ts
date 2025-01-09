@@ -1,4 +1,4 @@
-import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
+// import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { ASSIGNMENT_RULE_CREATE, ASSIGNMENT_RULE } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";
@@ -15,7 +15,8 @@ class PoolsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.POOLS;
 
-  icon = CalculateOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = CalculateOutlinedIcon;
 
   mode = OPTSCALE_MODE.FINOPS;
 

@@ -70,7 +70,7 @@ const RecommendationsPage = ({ isMock }) => {
     <>
       <ActionBar data={recommendationsActionBar} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2} sx={{ minHeight: "100%" }}>
+        <Stack spacing={SPACING_2} sx={{ minHeight: "100%", width: "100%" }}>
           <div>
             <DataSourceMultiSelect
               allDataSources={dataSources.filter((dataSource) =>

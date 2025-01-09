@@ -1,4 +1,4 @@
-import TagIcon from "@mui/icons-material/Tag";
+// import TagIcon from "@mui/icons-material/Tag";
 import taggingPolicies from "utils/routes/taggingPoliciesRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class TaggingPoliciesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_tagging_policies";
 
-  icon = TagIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = TagIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

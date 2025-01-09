@@ -1,4 +1,4 @@
-import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
+// import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { CLOUD_ACCOUNT_CONNECT } from "urls";
 import { OPTSCALE_MODE } from "utils/constants";
@@ -21,7 +21,8 @@ class DataSourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.DATA_SOURCES;
 
-  icon = CloudOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = CloudOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath === CLOUD_ACCOUNT_CONNECT;
 }

@@ -1,15 +1,14 @@
+// import { useApiData } from "hooks/useApiData";
+// import { useApiState } from "hooks/useApiState";
+// import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
+// import { useGetToken } from "hooks/useGetToken";
+// import { useRootData } from "hooks/useRootData";
 import { useCallback, useEffect, useMemo } from "react";
-import { Box } from "@mui/material";
-import { render as renderGithubButton } from "github-buttons";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useAllDataSources } from "hooks/coreData";
-import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { useRootData } from "hooks/useRootData";
-import { GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
 import { useAllAlertsSelector } from "./selectors";
 import TopAlert from "./TopAlert";
@@ -24,40 +23,41 @@ export const IS_EXISTING_USER = "isExistingUser";
 
 const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) => ![ENVIRONMENT, AZURE_TENANT].includes(type));
 
-const GitHubInlineButton = ({ children, ariaLabelMessageId, href, dataIcon }) => {
-  const intl = useIntl();
-  const anchorRef = useCallback((anchor) => {
-    if (anchor && anchor.parentNode) {
-      renderGithubButton(anchor, (el) => {
-        anchor.parentNode.replaceChild(el, anchor);
-      });
-    }
-  }, []);
-  return (
-    <Box display="inline-block" sx={{ verticalAlign: "middle" }} mx={SPACING_1}>
-      <a
-        href={href}
-        data-icon={dataIcon}
-        aria-label={intl.formatMessage({ id: ariaLabelMessageId })}
-        data-show-count
-        ref={anchorRef}
-      >
-        {children}
-      </a>
-    </Box>
-  );
-};
+// MPT_TODO: disabled optScale github buttons
+// const GitHubInlineButton = ({ children, ariaLabelMessageId, href, dataIcon }) => {
+//   const intl = useIntl();
+//   const anchorRef = useCallback((anchor) => {
+//     if (anchor && anchor.parentNode) {
+//       renderGithubButton(anchor, (el) => {
+//         anchor.parentNode.replaceChild(el, anchor);
+//       });
+//     }
+//   }, []);
+//   return (
+//     <Box display="inline-block" sx={{ verticalAlign: "middle" }} mx={SPACING_1}>
+//       <a
+//         href={href}
+//         data-icon={dataIcon}
+//         aria-label={intl.formatMessage({ id: ariaLabelMessageId })}
+//         data-show-count
+//         ref={anchorRef}
+//       >
+//         {children}
+//       </a>
+//     </Box>
+//   );
+// };
 
 const TopAlertWrapper = ({ blacklistIds = [] }) => {
   const dispatch = useDispatch();
 
   const { organizationId } = useOrganizationInfo();
 
-  const { userId } = useGetToken();
+  // const { userId } = useGetToken();
 
   const storedAlerts = useAllAlertsSelector(organizationId);
 
-  const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
+  // const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
 
   const dataSources = useAllDataSources();
 
@@ -121,42 +121,44 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
           updateOrganizationTopAlert({ id: ALERT_TYPES.DATA_SOURCES_PROCEEDED, closed: false, triggered: false });
         },
         dataTestId: "top_alert_data_proceeded"
-      },
-      {
-        id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT,
-        // isExistingUser — true only if user was logged in/visited optscale before. Set in migrations.
-        // organizationId — wont be presented on initial load (so storedAlerts will be empty, so even if banner was closed, we would not know that,
-        //                  so we need to wait for organizationId. But if user is not logged in — there also wont be organizationId, so we use next flag)
-        // userId — presented after login
-        // this check means "condition: not logged in new user (!isExistingUser && !userId) OR new user and we know organization id (!isExistingUser && organizationId)"
-        condition: !isExistingUser && (!userId || organizationId),
-        getContent: () => (
-          <Box sx={{ textAlign: "center" }}>
-            <FormattedMessage
-              id="openSourceAnnouncement"
-              values={{
-                star: (chunks) => (
-                  <GitHubInlineButton
-                    ariaLabelMessageId="starHystaxOnGithub"
-                    dataIcon="octicon-star"
-                    href={GITHUB_HYSTAX_OPTSCALE_REPO}
-                  >
-                    {chunks}
-                  </GitHubInlineButton>
-                )
-              }}
-            />
-          </Box>
-        ),
-        type: "info",
-        triggered: isTriggered(ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT),
-        onClose: () => {
-          updateOrganizationTopAlert({ id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT, closed: true });
-        },
-        dataTestId: "top_alert_open_source_announcement"
       }
+      // MPT_TODO: disabled openSourceAnnouncement
+      // {
+      //   id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT,
+      //   // isExistingUser — true only if user was logged in/visited optscale before. Set in migrations.
+      //   // organizationId — wont be presented on initial load (so storedAlerts will be empty, so even if banner was closed, we would not know that,
+      //   //                  so we need to wait for organizationId. But if user is not logged in — there also wont be organizationId, so we use next flag)
+      //   // userId — presented after login
+      //   // this check means "condition: not logged in new user (!isExistingUser && !userId) OR new user and we know organization id (!isExistingUser && organizationId)"
+      //   condition: !isExistingUser && (!userId || organizationId),
+      //   getContent: () => (
+      //     <Box sx={{ textAlign: "center" }}>
+      //       <FormattedMessage
+      //         id="openSourceAnnouncement"
+      //         values={{
+      //           star: (chunks) => (
+      //             <GitHubInlineButton
+      //               ariaLabelMessageId="starHystaxOnGithub"
+      //               dataIcon="octicon-star"
+      //               href={GITHUB_HYSTAX_OPTSCALE_REPO}
+      //             >
+      //               {chunks}
+      //             </GitHubInlineButton>
+      //           )
+      //         }}
+      //       />
+      //     </Box>
+      //   ),
+      //   type: "info",
+      //   triggered: isTriggered(ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT),
+      //   onClose: () => {
+      //     updateOrganizationTopAlert({ id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT, closed: true });
+      //   },
+      //   dataTestId: "top_alert_open_source_announcement"
+      // }
     ];
-  }, [storedAlerts, hasDataSourceInProcessing, isExistingUser, updateOrganizationTopAlert, userId, organizationId]);
+    // }, [storedAlerts, hasDataSourceInProcessing, isExistingUser, updateOrganizationTopAlert, userId, organizationId]);
+  }, [storedAlerts, hasDataSourceInProcessing, updateOrganizationTopAlert]);
 
   const currentAlert = useMemo(
     () =>

@@ -1,11 +1,33 @@
 // Hystax palette: https://cdn.hystax.com/Hystax/Hystax-Guideline-2020.pdf
 // Material design color tool: https://material.io/resources/color/
 
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { common } from "@mui/material/colors";
 import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmpty as isEmptyObject } from "utils/objects";
+import {
+  MPT_GRAY_2,
+  MPT_GRAY_3,
+  MPT_GRAY_4,
+  MPT_BRAND_WHITE,
+  MPT_BRAND_PRIMARY,
+  MPT_BOX_SHADOW,
+  MPT_SPACING_1,
+  MPT_SPACING_2,
+  MPT_SPACING_3,
+  MPT_ALERTS_SUCCESS_2,
+  MPT_ALERTS_SUCCESS_4,
+  MPT_ALERTS_WARNING_2,
+  MPT_ALERTS_WARNING_4,
+  MPT_ALERTS_DANGER_1,
+  MPT_ALERTS_DANGER_2,
+  MPT_ALERTS_DANGER_3,
+  MPT_ALERTS_DANGER_4,
+  MPT_GRADIENT
+} from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -22,7 +44,10 @@ const applyPaletteSettings = (settings) => {
 
   const primary = mergeIfSettingIsNotEmpty(
     {
-      main: "#004C74"
+      main: MPT_BRAND_PRIMARY,
+      white: MPT_BRAND_WHITE,
+      gray2: MPT_GRAY_2,
+      gradient: MPT_GRADIENT
     },
     "primary"
   );
@@ -37,29 +62,33 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: "#F58535",
-      contrastText: getDarken(info.main, 0.8)
+      main: MPT_BRAND_PRIMARY
     },
     "secondary"
   );
 
   const success = mergeIfSettingIsNotEmpty(
     {
-      main: "#007E00"
+      main: MPT_ALERTS_SUCCESS_4,
+      secondary: MPT_ALERTS_SUCCESS_2
     },
     "success"
   );
 
   const error = mergeIfSettingIsNotEmpty(
     {
-      main: "#B00020"
+      main: MPT_ALERTS_DANGER_4,
+      primary: MPT_ALERTS_DANGER_1,
+      secondary: MPT_ALERTS_DANGER_2,
+      text: MPT_ALERTS_DANGER_3
     },
     "error"
   );
 
   const warning = mergeIfSettingIsNotEmpty(
     {
-      main: "#906B00"
+      main: MPT_ALERTS_WARNING_4,
+      secondary: MPT_ALERTS_WARNING_2
     },
     "warning"
   );
@@ -85,24 +114,41 @@ const applyPaletteSettings = (settings) => {
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
 
+  // MPT_TODO: change colors palette
+  // Original:
+  // [
+  //         "#4AB4EE",
+  //         "#FFC348",
+  //         "#30D5C8",
+  //         "#9950B1",
+  //         "#4A63EE",
+  //         "#FF6648",
+  //         "#30D575",
+  //         "#B19950",
+  //         "#834AEE",
+  //         "#48E1FF",
+  //         "#D53090",
+  //         "#99B150"
+  //       ]
+
   const chart = isEmptySetting("chart")
     ? [
-        "#4AB4EE",
-        "#FFC348",
-        "#30D5C8",
-        "#9950B1",
-        "#4A63EE",
-        "#FF6648",
-        "#30D575",
-        "#B19950",
-        "#834AEE",
-        "#48E1FF",
-        "#D53090",
-        "#99B150"
+        "#959BFF",
+        "#EAECFF",
+        "#3520BF",
+        "#CAE4FF",
+        "#4DA6FF",
+        "#2775C4",
+        "#E87D1E",
+        "#F1B178",
+        "#733F11",
+        "#007D8C",
+        "#004A59",
+        "#80E1AE"
       ]
     : settings.chartPalette.chart;
 
-  const monoChart = isEmptySetting("monoChart") ? ["#4AB4EE"] : settings.chartPalette.monoChart;
+  const monoChart = isEmptySetting("monoChart") ? ["#959BFF"] : settings.chartPalette.monoChart;
 
   return {
     chart,
@@ -251,7 +297,7 @@ const getThemeConfig = (settings = {}) => {
 
   return Object.freeze({
     typography: {
-      fontFamily: "'Ubuntu', sans-serif",
+      fontFamily: "'Arial', sans-serif",
       mono: {
         fontFamily: "'Ubuntu Mono', monospace"
       }
@@ -283,6 +329,45 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiSelect: {
+        styleOverrides: {
+          select: {
+            fontSize: "14px",
+            color: "black",
+            paddingLeft: MPT_SPACING_2,
+            paddingRight: MPT_SPACING_3,
+            paddingTop: "6px",
+            paddingBottom: "6px"
+          },
+
+          root: {
+            "& .MuiSvgIcon-fontSizeSmall": {
+              fontSize: MPT_SPACING_2
+            }
+          },
+          iconOutlined: {
+            fontSize: "16px" // Set font size for MuiSelect-iconOutlined
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: MPT_SPACING_1,
+            backgroundColor: "#FFFFFF",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "black",
+              color: "black"
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: MPT_BRAND_PRIMARY
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: MPT_BRAND_PRIMARY
+            }
+          }
+        }
+      },
       MuiAutocomplete: {
         styleOverrides: {
           option: ({ theme }) => ({
@@ -291,8 +376,8 @@ const getThemeConfig = (settings = {}) => {
                 Make option font styles similar to the MuiMenuItem
               */
               ...theme.typography.body2,
-              /* 
-                When options are selected, Autocomplete does not add any Mui classes, 
+              /*
+                When options are selected, Autocomplete does not add any Mui classes,
                 so we need to rely on the aria-selected element property instead.
               */
               "&[aria-selected='true']": {
@@ -309,12 +394,14 @@ const getThemeConfig = (settings = {}) => {
       MuiButton: {
         defaultProps: {
           size: "small",
-          color: "info"
+          color: "primary"
         },
         variants: [
           {
             props: { variant: "contained", color: "lightYellow" },
             style: ({ theme }) => ({
+              padding: `6px ${MPT_SPACING_2}`,
+              borderRadius: MPT_SPACING_1,
               color: theme.palette.lightYellow.contrastText,
               "&:hover": {
                 backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
@@ -336,17 +423,66 @@ const getThemeConfig = (settings = {}) => {
               color: theme.palette.text.primary
             })
           }
-        ]
+        ],
+        styleOverrides: {
+          root: {
+            padding: `6px ${MPT_SPACING_2}`,
+            borderRadius: MPT_SPACING_1
+          }
+        }
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: "4px"
+          }
+        }
       },
       MuiButtonGroup: {
+        styleOverrides: {
+          root: {
+            padding: "2px",
+            background: "#fff",
+            borderRadius: MPT_SPACING_1,
+            border: `1px solid ${MPT_GRAY_3}`,
+            "& .MuiTypography-root": {
+              color: MPT_GRAY_4
+            }
+          },
+          firstButton: {
+            borderRadius: MPT_SPACING_1
+          },
+          grouped: {
+            borderRadius: MPT_SPACING_1,
+            border: `1px solid transparent`,
+            color: MPT_GRAY_4,
+            "& + button": {
+              marginLeft: "4px"
+            }
+          }
+        },
         defaultProps: {
           color: "info"
+        }
+      },
+      MuiBreadcrumbs: {
+        styleOverrides: {
+          li: {
+            whiteSpace: "nowrap"
+          }
         }
       },
       MuiCardHeader: {
         styleOverrides: {
           content: {
             overflow: "hidden"
+          }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: "16px" // Set your desired border-radius value
           }
         }
       },
@@ -357,12 +493,42 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           colorSecondary: {
             color: secondary.main
+          },
+          root: {
+            "& .MuiTableRowCheckbox-root": {
+              // Only apply to table row checkboxes
+              color: "gray",
+              "&.Mui-checked": {
+                color: "#000000"
+              },
+              "& .MuiSvgIcon-root": {
+                fontSize: "16px"
+              }
+            }
           }
         }
       },
       MuiCssBaseline: {
         styleOverrides: {
-          "#root": { display: "flex", flexDirection: "column", minHeight: "100vh" }
+          "#root": {
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh"
+          },
+          ".MTPBoxShadowRoot": {
+            "> .MuiBox-root": {
+              boxShadow: MPT_BOX_SHADOW,
+              background: "#FFFFFF",
+              padding: MPT_SPACING_3,
+              borderRadius: MPT_SPACING_1
+            }
+          },
+          ".MuiBox-WhiteCard": {
+            boxShadow: MPT_BOX_SHADOW,
+            background: MPT_BRAND_WHITE,
+            padding: MPT_SPACING_3,
+            borderRadius: MPT_SPACING_1
+          }
         }
       },
       MuiDialogActions: {
@@ -397,14 +563,26 @@ const getThemeConfig = (settings = {}) => {
           root: {
             marginLeft: 0,
             marginRight: 0,
-            padding: 8,
+            padding: 4,
             "&:hover": {
-              backgroundColor: alpha(ACTION_HOVER, 0.5)
+              backgroundColor: alpha(ACTION_HOVER, 0.5),
+              borderRadius: MPT_SPACING_2
+            }
+          },
+          sizeSmall: {
+            padding: "10px", // Adjust padding to control button size
+            "& .MuiSvgIcon-root": {
+              fontSize: "20px"
             }
           }
         }
       },
       MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: "black"
+          }
+        },
         defaultProps: {
           size: "small"
         }
@@ -417,11 +595,6 @@ const getThemeConfig = (settings = {}) => {
       MuiLink: {
         defaultProps: {
           underline: "hover"
-        },
-        styleOverrides: {
-          root: {
-            fontWeight: "bold"
-          }
         }
       },
       MuiSwitch: {
@@ -465,7 +638,7 @@ const getThemeConfig = (settings = {}) => {
             // https://github.com/mui-org/material-ui/issues/29842
             "&.Mui-selected": {
               backgroundColor: ACTION_SELECTED,
-              color: secondary.contrastText,
+              color: MPT_BRAND_WHITE,
               "&.Mui-focusVisible": { background: ACTION_SELECTED },
               "&:hover": {
                 backgroundColor: ACTION_SELECTED
@@ -491,31 +664,85 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
-      MuiTab: {
-        styleOverrides: {
-          root: {
-            minHeight: "3rem"
-          }
-        }
-      },
       MuiTable: {
         defaultProps: {
           size: "small"
+        },
+        styleOverrides: {
+          root: {
+            // Add any additional styles for the table root here
+          }
+        }
+      },
+      MuiTableHead: {
+        styleOverrides: {
+          root: {}
+        }
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            color: "black",
+            ".MuiTypography-root": {
+              fontSize: "15px"
+            },
+            ".MuiTypography-caption": {
+              fontSize: "13px"
+            },
+            "&.MuiTableCell-head": {
+              borderLeft: `1px solid ${MPT_GRAY_2}`,
+              borderBottom: "1px solid black",
+              "&:last-of-type": {
+                borderRight: `1px solid ${MPT_GRAY_2}`
+              }
+            },
+            "& .MuiIconButton-root": {
+              padding: 0
+            },
+            "&.tableRowSelection svg": {
+              fill: "black",
+              width: "19px",
+              height: "19px"
+            }
+          }
+        }
+      },
+      MuiBackdrop: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "rgba(255, 255, 255, 0.6)"
+          }
         }
       },
       MuiTableSortLabel: {
+        defaultProps: {
+          IconComponent: KeyboardArrowDownOutlinedIcon // Default icon for descending
+        },
         styleOverrides: {
           root: {
-            "&:hover": {
-              color: text.primary,
-              // Apply color only to the sort arrow icon
-              "> svg:last-child": {
-                color: primary.main
-              }
-            },
             "&.Mui-active": {
-              color: primary.main
+              color: "black", // Ensure active label color is black
+              "&[aria-sort='asc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(0deg)", // Rotate icon for ascending
+                content: "''" // Clear any default content
+              },
+              "&[aria-sort='desc'] .MuiTableSortLabel-icon": {
+                transform: "rotate(180deg)", // Rotate icon for descending
+                content: "''" // Clear any default content
+              }
             }
+          }
+        },
+        slotProps: {
+          icon: ({ direction }) => {
+            if (direction === "asc") {
+              return {
+                component: KeyboardArrowUpOutlinedIcon
+              };
+            }
+            return {
+              component: KeyboardArrowDownOutlinedIcon
+            };
           }
         }
       },
@@ -526,10 +753,26 @@ const getThemeConfig = (settings = {}) => {
           }
         }
       },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            minHeight: "3rem",
+            fontSize: "1rem",
+            textTransform: "none",
+            padding: `20px 12px`,
+            margin: "0 12px 0 4px",
+            color: "inherit"
+          }
+        }
+      },
       MuiTabs: {
         styleOverrides: {
           root: {
             minHeight: "2rem"
+          },
+          indicator: {
+            borderRadius: "4px",
+            height: "4px"
           }
         }
       },
@@ -544,13 +787,22 @@ const getThemeConfig = (settings = {}) => {
         },
         styleOverrides: {
           dense: {
-            paddingRight: 0
+            paddingRight: 0,
+            ".MuiButton-root": {
+              fontSize: "14px"
+            }
           }
         }
       },
       MuiTypography: {
         defaultProps: {
           variant: "body2"
+        },
+        styleOverrides: {
+          h6: {
+            color: "black",
+            fontSize: "24px"
+          }
         }
       },
       MuiUseMediaQuery: {

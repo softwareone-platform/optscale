@@ -1,10 +1,25 @@
 import { makeStyles } from "tss-react/mui";
+import { MPT_BRAND_BLACK, MPT_GRAY_3, MPT_SPACING_1 } from "../../utils/layouts";
 
 const useStyles = makeStyles()(() => ({
   dashed: {
     display: "inline",
     borderBottom: "1px dashed",
     width: "fit-content"
+  },
+  chip: {
+    display: "inline",
+    border: `1px solid ${MPT_GRAY_3}`,
+    padding: `4px ${MPT_SPACING_1}`,
+    borderRadius: MPT_SPACING_1,
+    background: "none",
+    width: "fit-content",
+    transition: "background 0.2s ease-in-out, border 0.2s ease-in-out",
+    color: MPT_BRAND_BLACK,
+    "&:hover": {
+      borderColor: MPT_BRAND_BLACK,
+      background: "rgba(0, 0, 0, 0.1)"
+    }
   },
   cursorPointer: {
     "&:hover": {
