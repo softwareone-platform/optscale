@@ -1,24 +1,22 @@
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { SPACING_2 } from "utils/layouts";
 
 const ExpensesBreakdownLayoutWrapper = ({ top, center: { left: centerLeft, right: centerRight }, bottom }) => (
-  <Grid container direction="row" justifyContent="space-between" spacing={SPACING_2}>
+  <Grid container>
     {top}
-    <Grid item container spacing={SPACING_2}>
-      {centerLeft && (
-        <Grid item xs={12} md={centerRight ? 9 : 12}>
-          {centerLeft}
-        </Grid>
-      )}
-      {centerRight ? (
-        <Grid item xs={12} md={3}>
-          {centerRight}
-        </Grid>
-      ) : null}
-    </Grid>
+    {centerLeft && (
+      <Grid item xs={12} md={centerRight ? 9 : 12}>
+        <Box className={"MTPBoxShadow"}>{centerLeft}</Box>
+      </Grid>
+    )}
+    {centerRight ? (
+      <Grid item xs={12} md={3}>
+        <Box className={"MTPBoxShadow"}>{centerRight}</Box>
+      </Grid>
+    ) : null}
     {bottom && (
       <Grid item xs={12}>
-        {bottom}
+        <Box className={"MTPBoxShadow"}>{bottom}</Box>
       </Grid>
     )}
   </Grid>

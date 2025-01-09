@@ -205,7 +205,7 @@ const Resources = ({
             <Grid xs={12} item>
               <ExpensesSummaryContainer requestParams={requestParams} />
             </Grid>
-            <Box>
+            <Box className={"MTPBoxShadow"}>
               <div style={{ display: "flex", alignItems: "baseline" }}>
                 <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
                   <FormattedMessage id={"breakdownBy"} />

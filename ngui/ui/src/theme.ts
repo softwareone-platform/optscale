@@ -521,6 +521,14 @@ const getThemeConfig = (settings = {}) => {
             flexDirection: "column",
             minHeight: "100vh"
           },
+          ".MTPBoxShadow.MuiBox-root": {
+            boxShadow: MPT_BOX_SHADOW,
+            background: "#FFFFFF",
+            padding: MPT_SPACING_3,
+            borderRadius: MPT_SPACING_1,
+            marginTop: MPT_SPACING_1,
+            width: "100%"
+          },
           ".MTPBoxShadowRoot": {
             "> .MuiBox-root": {
               boxShadow: MPT_BOX_SHADOW,

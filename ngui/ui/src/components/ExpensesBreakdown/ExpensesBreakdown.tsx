@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import BarChartLoader from "components/BarChartLoader";
@@ -29,6 +30,7 @@ import {
   K8S_NAMESPACE_FILTER,
   OPTSCALE_RESOURCE_TYPES
 } from "utils/constants";
+import { MPT_SPACING_2 } from "../../utils/layouts";
 import ExpensesBreakdownActionBar from "./ActionBar";
 import ExpensesBreakdownBarChart from "./BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "./BreakdownByButtonsGroup";
@@ -122,15 +124,6 @@ const ExpensesBreakdown = ({
       <Grid item>
         <ExpensesBreakdownSummaryCards total={total} previousTotal={previousTotal} isLoading={isLoading} />
       </Grid>
-      <Grid item>
-        <RangePickerFormContainer
-          onApply={onApply}
-          initialStartDateValue={startDateTimestamp}
-          initialEndDateValue={endDateTimestamp}
-          rangeType="expenses"
-          definedRanges={getBasicRangesSet()}
-        />
-      </Grid>
       {type !== COST_EXPLORER && (
         <Grid item xs={12}>
           <ExpensesBreakdownBreakdownByButtonsGroup
@@ -156,6 +149,21 @@ const ExpensesBreakdown = ({
     }
     return (
       <ExpensesBreakdownByPeriodWidget
+        customContent={
+          <Grid container alignItems={"center"}>
+            <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
+              <FormattedMessage id={"dateRangeUTC"} />
+              {": "}
+            </Typography>
+            <RangePickerFormContainer
+              onApply={onApply}
+              initialStartDateValue={startDateTimestamp}
+              initialEndDateValue={endDateTimestamp}
+              rangeType="expenses"
+              definedRanges={getBasicRangesSet()}
+            />
+          </Grid>
+        }
         render={(periodType) => (
           <ExpensesBreakdownBarChart
             periodType={periodType}
