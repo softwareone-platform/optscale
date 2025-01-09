@@ -3,6 +3,7 @@ import CloudIcon from "@mui/icons-material/Cloud";
 import PeopleIcon from "@mui/icons-material/People";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -13,12 +14,11 @@ import ExpensesBreakdownBarChart from "components/ExpensesBreakdown/BarChart";
 import ExpensesBreakdownByPeriodWidget from "components/ExpensesBreakdown/BreakdownByPeriodWidget";
 import ExpensesBreakdownSummaryCards from "components/ExpensesBreakdown/SummaryCards";
 import PageContentWrapper from "components/PageContentWrapper";
-import SubTitle from "components/SubTitle";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
 import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_2, MPT_SPACING_3, SPACING_2 } from "utils/layouts";
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -158,28 +158,38 @@ const CostExplorer = ({
             <Box>
               <ExpensesBreakdownByPeriodWidget
                 customContent={
-                  <RangePickerFormContainer
-                    onApply={onApply}
-                    initialStartDateValue={startDateTimestamp}
-                    initialEndDateValue={endDateTimestamp}
-                    pdfId={PDF_ELEMENTS.costExplorer.dates}
-                    rangeType="expenses"
-                    definedRanges={getBasicRangesSet()}
-                  />
+                  <Grid container alignItems={"center"}>
+                    <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
+                      <FormattedMessage id={"dateRangeUTC"} />
+                      {": "}
+                    </Typography>
+                    <RangePickerFormContainer
+                      onApply={onApply}
+                      initialStartDateValue={startDateTimestamp}
+                      initialEndDateValue={endDateTimestamp}
+                      pdfId={PDF_ELEMENTS.costExplorer.dates}
+                      rangeType="expenses"
+                      hideLabel
+                      definedRanges={getBasicRangesSet()}
+                    />
+                  </Grid>
                 }
                 render={(periodType) => (
                   <Grid container spacing={SPACING_2}>
                     {renderBarChart(periodType)}
-                    <Grid item xs={12}>
-                      <SubTitle align="center">
-                        <FormattedMessage id="seeExpensesBreakdownBy" />
-                      </SubTitle>
-                      <ButtonSwitch buttons={breakdownByButtons} />
-                    </Grid>
                   </Grid>
                 )}
               />
             </Box>
+            <Grid item paddingTop={MPT_SPACING_3} xs={12} className={"MTPBoxShadowRoot"}>
+              <Box>
+                <Typography variant={"subtitle1"}>
+                  <FormattedMessage id={"seeExpensesBreakdownBy"} />
+                  {": "}
+                </Typography>
+                <ButtonSwitch buttons={breakdownByButtons} />
+              </Box>
+            </Grid>
           </Grid>
         </Grid>
       </PageContentWrapper>

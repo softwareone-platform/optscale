@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import { useIntl } from "react-intl";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import QuestionMark from "components/QuestionMark";
 import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
+import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import ButtonGroup from "../../ButtonGroup";
 import { changePeriodType } from "./actionCreator";
@@ -91,25 +93,39 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   return (
     <>
       <Box display="flex" alignItems="center" mb={SPACING_1}>
+        <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
+          <FormattedMessage id={"breakdownBy"} />
+          {": "}
+        </Typography>
         <BreakdownLinearSelector value={periodType} items={breakdownLinearSelectorItems} onChange={handleClick} />
         <QuestionMark
           messageId="expensesBreakdownBarChartDescription"
           messageValues={{ periodType: intl.formatMessage({ id: periodType.value }) }}
         />
-        {customContent && <Box mb={SPACING_1}>{customContent}</Box>}
+        {customContent && (
+          <>
+            <Divider
+              style={{ margin: MPT_SPACING_1, marginLeft: MPT_SPACING_2, marginRight: MPT_SPACING_2 }}
+              flexItem
+              orientation="vertical"
+            />
+            <Box>{customContent}</Box>
+          </>
+        )}
       </Box>
-      {/*MPT_TODO: disabled to math BDR requirement*/}
-      {/*<DynamicTextPdf*/}
-      {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle}*/}
-      {/*  renderData={() => ({*/}
-      {/*    text: {*/}
-      {/*      [EXPENSES_SPLIT_PERIODS.DAILY]: "dailyExpenses",*/}
-      {/*      [EXPENSES_SPLIT_PERIODS.WEEKLY]: "weeklyExpenses",*/}
-      {/*      [EXPENSES_SPLIT_PERIODS.MONTHLY]: "monthlyExpenses"*/}
-      {/*    }[periodType.value],*/}
-      {/*    elementType: PDF_ELEMENTS.basics.H2*/}
-      {/*  })}*/}
-      {/*/>*/}
+      <Divider style={{ marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2 }} />
+      {/* MPT_TODO: disabled to math BDR requirement */}
+      {/* <DynamicTextPdf */}
+      {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle} */}
+      {/*  renderData={() => ({ */}
+      {/*    text: { */}
+      {/*      [EXPENSES_SPLIT_PERIODS.DAILY]: "dailyExpenses", */}
+      {/*      [EXPENSES_SPLIT_PERIODS.WEEKLY]: "weeklyExpenses", */}
+      {/*      [EXPENSES_SPLIT_PERIODS.MONTHLY]: "monthlyExpenses" */}
+      {/*    }[periodType.value], */}
+      {/*    elementType: PDF_ELEMENTS.basics.H2 */}
+      {/*  })} */}
+      {/* /> */}
       {render(periodType.value)}
     </>
   );

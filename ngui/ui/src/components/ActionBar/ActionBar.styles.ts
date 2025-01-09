@@ -1,15 +1,16 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_GRAY_2, SPACING_5 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   bar: {
     backgroundColor: "white",
     color: "inherit",
-    boxShadow: "none"
+    boxShadow: "none",
+    borderBottom: `1px solid ${MPT_GRAY_2}`
   },
   isPage: {
-    paddingRight: theme.spacing(SPACING_2),
-    paddingLeft: theme.spacing(SPACING_2)
+    paddingRight: theme.spacing(SPACING_5),
+    paddingLeft: theme.spacing(SPACING_5)
   },
   itemsWrapper: {
     whiteSpace: "nowrap",
