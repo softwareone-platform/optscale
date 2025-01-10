@@ -62,7 +62,7 @@ const WrapperCard = forwardRef(
     } = dataTestIds || {};
     const { show: showButton, href, link, messageId: buttonTextId } = button || {};
 
-    const mainCardClasses = cx(classes[className], needAlign ? classes.alignedWrapper : "", classes.shadow);
+    const mainCardClasses = cx(classes[className], needAlign ? classes.alignedWrapper : "");
 
     return (
       <>

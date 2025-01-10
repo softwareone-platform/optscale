@@ -15,10 +15,10 @@ const useStyles = makeStyles()((theme) => ({
   card: {
     padding: MPT_SPACING_3
   },
-  shadow: {
-    borderRadius: MPT_SPACING_2,
-    boxShadow: MPT_BOX_SHADOW
-  },
+  // shadow: {
+  //   borderRadius: MPT_SPACING_2,
+  //   boxShadow: MPT_BOX_SHADOW
+  // },
   buttonLink: {
     "&:hover": {
       textDecoration: "none"

@@ -57,6 +57,7 @@ const OrganizationExpenses = ({ data, isLoading }) => {
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={<FormattedMessage id="organizationExpenses" />}
       titleButton={{

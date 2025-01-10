@@ -59,6 +59,7 @@ const RecentTasksCard = ({ tasks, isLoading = false }) => {
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={
         <Box display="flex" alignItems="center">

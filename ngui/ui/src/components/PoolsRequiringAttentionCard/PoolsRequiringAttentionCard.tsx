@@ -157,6 +157,7 @@ const PoolsRequiringAttentionCard = ({ withExceededLimit, withForecastedOverspen
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={<FormattedMessage id="poolsRequiringAttention" />}
       titleButton={{

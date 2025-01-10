@@ -64,15 +64,14 @@ const generateResponsiveFontSizes = (themeInput) => {
     ...theme.typography.subtitle1,
     fontWeight: "bold",
     color: "black",
-    marginBottom: MPT_SPACING_2,
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
     [upLgBreakpoint]: {
-      fontSize: "0.92rem"
+      fontSize: "1rem"
     },
     [upXlBreakpoint]: {
-      fontSize: "1rem"
+      fontSize: "1.12rem"
     }
   };
 

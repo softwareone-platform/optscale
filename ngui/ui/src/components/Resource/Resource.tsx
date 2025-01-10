@@ -31,8 +31,9 @@ import { RESOURCES, getCreateResourceAssignmentRuleUrl } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { isEmpty as isEmptyArray, getSumByObjectKey } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, RESOURCE_PAGE_TABS } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
+import { SPACING_2, MPT_SPACING_3 } from "utils/layouts";
 import { getCloudResourceIdentifier, getResourceDisplayedName } from "utils/resources";
+import { Box } from "@mui/system";
 
 const {
   DETAILS: DETAILS_TAB,
@@ -402,10 +403,12 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
       <PageContentWrapper>
         <Grid container spacing={SPACING_2}>
           <Grid container item xs={12}>
-            <SummaryGrid summaryData={getSummaryData} />
+            <SummaryGrid summaryData={getSummaryData} summaryStyle="customBox"     />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+            <Box>
             <TabsWrapper
+              headerSx={{ margin: `-${MPT_SPACING_3} -${MPT_SPACING_3} 0`, padding: `0 ${MPT_SPACING_3}` }}
               isLoading={isGetResourceLoading || isLoadingPatch}
               tabsProps={{
                 tabs,
@@ -415,7 +418,8 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
                 name: "resources-details"
               }}
             />
-          </Grid>
+            </Box>
+          </Grid>          
         </Grid>
       </PageContentWrapper>
     </>
