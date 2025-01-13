@@ -1,9 +1,9 @@
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ButtonGroup from "components/ButtonGroup";
 import Hidden from "components/Hidden";
 import Selector, { Item, ItemContent } from "components/Selector";
 import { POOL_DETAILS, CLOUD_DETAILS, OWNER_DETAILS, EXPENSES_FILTERBY_TYPES, KUBERNETES_CNR } from "utils/constants";
+import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 
 const filters = [
   { id: EXPENSES_FILTERBY_TYPES.SERVICE, messageId: "service", forTypes: [CLOUD_DETAILS], excludeFor: [KUBERNETES_CNR] },
@@ -58,9 +58,7 @@ const ExpensesBreakdownBreakdownByButtonsGroup = ({ type, onClick, filterBy, dat
         </Selector>
       </Hidden>
       <Hidden mode="down" breakpoint="sm">
-        <Typography component="span">
-          <FormattedMessage id="breakdownBy" />{" "}
-        </Typography>
+        <LabelColon messageId={"breakdownBy"} />
         <ButtonGroup buttons={buttonsGroup} activeButtonIndex={activeButtonIndex} />
       </Hidden>
     </>

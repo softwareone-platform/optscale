@@ -1,5 +1,4 @@
 import { responsiveFontSizes } from "@mui/material/styles";
-import { MPT_SPACING_2 } from "./layouts";
 import { isEmpty as isEmptyObject } from "./objects";
 
 export const MAP_MARKER_FONT_SIZE_IN_PX = 11;
@@ -64,7 +63,6 @@ const generateResponsiveFontSizes = (themeInput) => {
     ...theme.typography.subtitle1,
     fontWeight: "bold",
     color: "black",
-    marginBottom: MPT_SPACING_2,
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },

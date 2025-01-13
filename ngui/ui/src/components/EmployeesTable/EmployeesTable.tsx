@@ -1,28 +1,24 @@
 import { useMemo } from "react";
-import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { FormattedMessage, useIntl } from "react-intl";
-import { REST_API_URL } from "api";
 import CaptionedCell from "components/CaptionedCell";
 import Icon from "components/Icon";
-import { JIRA } from "components/Integrations/Jira/Jira";
 import PoolLabel from "components/PoolLabel";
-import { DeleteEmployeeModal, SlackIntegrationModal } from "components/SideModalManager/SideModals";
+import { DeleteEmployeeModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useFormatIntervalTimeAgo } from "hooks/useFormatIntervalTimeAgo";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import JiraIcon from "icons/JiraIcon";
 import SlackIcon from "icons/SlackIcon";
-import { EMPLOYEES_INVITE, getIntegrationsUrl } from "urls";
-import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES, DOWNLOAD_FILE_FORMATS } from "utils/constants";
+import { EMPLOYEES_INVITE } from "urls";
+import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES } from "utils/constants";
 
 const EmployeeCell = ({ rowId, rowOriginal }) => {
   const {
@@ -73,7 +69,7 @@ const EmployeeCell = ({ rowId, rowOriginal }) => {
   return (
     <CaptionedCell caption={caption} enableTextCopy>
       <>
-        {employeeName}
+        <strong>{employeeName}</strong>
         {icons}
       </>
     </CaptionedCell>
@@ -136,13 +132,21 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
   const openSideModal = useOpenSideModal();
   const intl = useIntl();
 
-  const { name: organizationName, organizationId } = useOrganizationInfo();
+  const { name: organizationName } = useOrganizationInfo();
 
   const data = useMemo(
     () =>
       employees.map((el) => ({
         ...el,
-        assignmentsStringified: renderRoles({ assignments: el.assignments, organizationName, id: el.id }, true, intl).join(" ")
+        assignmentsStringified: renderRoles(
+          {
+            assignments: el.assignments,
+            organizationName,
+            id: el.id
+          },
+          true,
+          intl
+        ).join(" ")
       })),
     [employees, organizationName, intl]
   );
@@ -206,15 +210,15 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
     ],
     [organizationName, openSideModal, data]
   );
-
-  const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
-  const downloadEmployees = (format) => {
-    fetchAndDownload({
-      url: `${REST_API_URL}/organizations/${organizationId}/employees?format=${format}`,
-      fallbackFilename: `employees.${format}`,
-      format
-    });
-  };
+  // MPT_TODO: disabled to meet BDR requirements
+  //   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
+  // const downloadEmployees = (format) => {
+  //   fetchAndDownload({
+  //     url: `${REST_API_URL}/organizations/${organizationId}/employees?format=${format}`,
+  //     fallbackFilename: `employees.${format}`,
+  //     format
+  //   });
+  // };
 
   return isLoading ? (
     <TableLoader columnsCounter={columns.length} showHeader />
@@ -238,51 +242,52 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
                 messageId: "invite",
                 link: EMPLOYEES_INVITE,
                 type: "button",
-                color: "success",
+                color: "primary",
                 variant: "contained",
                 dataTestId: "btn_invite",
                 requiredActions: ["MANAGE_INVITES"]
-              },
-              {
-                key: "slack",
-                icon: <SlackIcon />,
-                messageId: "slack",
-                action: () => openSideModal(SlackIntegrationModal),
-                type: "button",
-                dataTestId: "btn_slack"
-              },
-              {
-                key: "jira",
-                icon: <JiraIcon />,
-                messageId: "jira",
-                link: getIntegrationsUrl(JIRA),
-                type: "button",
-                dataTestId: "btn_jira"
-              },
-              {
-                key: "download",
-                startIcon: <CloudDownloadOutlinedIcon />,
-                messageId: "download",
-                type: "dropdown",
-                isLoading: isFileDownloading,
-                menu: {
-                  items: [
-                    {
-                      key: "xlsx",
-                      messageId: "xlsxFile",
-                      action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.XLSX),
-                      dataTestId: "btn_download_xlsx"
-                    },
-                    {
-                      key: "json",
-                      messageId: "jsonFile",
-                      action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.JSON),
-                      dataTestId: "btn_download_json"
-                    }
-                  ]
-                },
-                dataTestId: "btn_download"
               }
+              // MPT_TODO: disabled to meet BDR requirements
+              // {
+              //   key: "slack",
+              //   icon: <SlackIcon />,
+              //   messageId: "slack",
+              //   action: () => openSideModal(SlackIntegrationModal),
+              //   type: "button",
+              //   dataTestId: "btn_slack"
+              // },
+              // {
+              //   key: "jira",
+              //   icon: <JiraIcon />,
+              //   messageId: "jira",
+              //   link: getIntegrationsUrl(JIRA),
+              //   type: "button",
+              //   dataTestId: "btn_jira"
+              // },
+              // {
+              //   key: "download",
+              //   startIcon: <CloudDownloadOutlinedIcon />,
+              //   messageId: "download",
+              //   type: "dropdown",
+              //   isLoading: isFileDownloading,
+              //   menu: {
+              //     items: [
+              //       {
+              //         key: "xlsx",
+              //         messageId: "xlsxFile",
+              //         action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.XLSX),
+              //         dataTestId: "btn_download_xlsx"
+              //       },
+              //       {
+              //         key: "json",
+              //         messageId: "jsonFile",
+              //         action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.JSON),
+              //         dataTestId: "btn_download_json"
+              //       }
+              //     ]
+              //   },
+              //   dataTestId: "btn_download"
+              // }
             ]
           }
         }}
