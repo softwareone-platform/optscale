@@ -3,18 +3,18 @@ import test from "../fixtures/fixture";
 
 
 
-test.beforeEach(async ({ loginPage }) => {
-  await test.step('Login as FinOps user', async () => {
-    const email = process.env.FINOPS_USER_EMAIL;
-    const password = process.env.FINOPS_USER_PASSWORD;
-    await loginPage.login(email, password);
-  });
-});
+// test.beforeEach(async ({ loginPage }) => {
+//   await test.step('Login as FinOps user', async () => {
+//     const email = process.env.FINOPS_USER_EMAIL;
+//     const password = process.env.FINOPS_USER_PASSWORD;
+//     await loginPage.login(email, password);
+//   });
+// });
 
 test('Login as FinOps user', async ({ homePage, header }) => {
 
   await test.step('Verify user is logged as a member of the QA Test Org', async () => {
-    // await homePage.navigateToURL(true);
+    await homePage.navigateToURL(true);
     const organizationName = await header.organizationSelect.innerText();
     expect(organizationName).toContain('QA Test Organization');
   } );
@@ -26,7 +26,7 @@ test('Verify Main Menu', async ({ mainMenu }) => {
   });
 
   await test.step('Verify Main Menu items', async () => {
-    // await mainMenu.navigateToURL(true);
+    await mainMenu.navigateToURL(true);
     await expect(mainMenu.homeBtn).toBeVisible();
     await expect(mainMenu.recommendationsBtn).toBeVisible();
     await expect(mainMenu.resourcesBtn).toBeVisible();

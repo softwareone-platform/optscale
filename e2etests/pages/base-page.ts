@@ -27,19 +27,22 @@ export abstract class BasePage {
             });
         });
     }
+
     async getSelectedOptionFromSelect(selectElement: Locator) {
         return await selectElement.evaluate((select: HTMLSelectElement) => {
             const selectedOption = select.selectedOptions[0];
             return selectedOption.text;
         });
     }
+
     async setupRouting(token: string) {
         await this.page.route('**/*', (route) => {
+            console.log(`Intercepting request to: ${route.request().url()}`);
             const headers = {
                 ...route.request().headers(),
                 Authorization: `Bearer ${token}`,
             };
-            route.continue({ headers });
+            route.continue({headers});
         });
     }
 }
