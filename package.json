@@ -6,7 +6,8 @@
   "scripts": {
     "playwright:show-report": "playwright show-report",
     "playwright:debug": "playwright test --debug",
-    "playwright:test": "playwright test"
+    "playwright:test": "playwright test",
+    "playwright:codegen": "playwright codegen cloudspend.velasuci.com"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,8 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.5"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }

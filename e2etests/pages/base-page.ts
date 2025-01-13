@@ -33,4 +33,13 @@ export abstract class BasePage {
             return selectedOption.text;
         });
     }
+    async setupRouting(token: string) {
+        await this.page.route('**/*', (route) => {
+            const headers = {
+                ...route.request().headers(),
+                Authorization: `Bearer ${token}`,
+            };
+            route.continue({ headers });
+        });
+    }
 }

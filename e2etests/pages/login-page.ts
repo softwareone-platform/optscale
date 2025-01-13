@@ -14,4 +14,11 @@ export class LoginPage extends BasePage {
         this.passwordInput = this.page.getByTestId('input_pass');
         this.loginBtn = this.page.getByTestId('btn_login');
     }
+
+    async login(email: string, password: string) {
+        await this.navigateToURL(true);
+        await this.emailInput.fill(email);
+        await this.passwordInput.fill(password);
+        await this.loginBtn.click();
+    }
 }
