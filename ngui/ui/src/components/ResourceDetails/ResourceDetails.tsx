@@ -16,7 +16,8 @@ import { MetadataNodes } from "utils/metadata";
 import { isEmpty } from "utils/objects";
 import CollapsableTableCell from "../CollapsableTableCell";
 
-const renderKeyValueLabels = (options) => options.map((opt) => <KeyValueLabel sx={{ marginBottom: MPT_SPACING_2 }} isBoldKeyLabel={true} key={opt.keyMessageId} {...opt} />);
+const renderKeyValueLabels = (options) =>
+  options.map((opt) => <KeyValueLabel sx={{ marginBottom: MPT_SPACING_2 }} isBoldKeyLabel key={opt.keyMessageId} {...opt} />);
 
 const getIdLabelDefinition = ({ cloudResourceIdentifier, isActive }) => ({
   value: (

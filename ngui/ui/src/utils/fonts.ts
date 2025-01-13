@@ -1,5 +1,4 @@
 import { responsiveFontSizes } from "@mui/material/styles";
-import { MPT_SPACING_2 } from "./layouts";
 import { isEmpty as isEmptyObject } from "./objects";
 
 export const MAP_MARKER_FONT_SIZE_IN_PX = 11;

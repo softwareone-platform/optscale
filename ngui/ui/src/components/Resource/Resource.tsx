@@ -6,6 +6,7 @@ import LaunchOutlinedIcon from "@mui/icons-material/LaunchOutlined";
 import MediationOutlinedIcon from "@mui/icons-material/MediationOutlined";
 import { Link } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -33,7 +34,6 @@ import { isEmpty as isEmptyArray, getSumByObjectKey } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, RESOURCE_PAGE_TABS } from "utils/constants";
 import { SPACING_2, MPT_SPACING_3 } from "utils/layouts";
 import { getCloudResourceIdentifier, getResourceDisplayedName } from "utils/resources";
-import { Box } from "@mui/system";
 
 const {
   DETAILS: DETAILS_TAB,
@@ -403,23 +403,23 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
       <PageContentWrapper>
         <Grid container spacing={SPACING_2}>
           <Grid container item xs={12}>
-            <SummaryGrid summaryData={getSummaryData} summaryStyle="customBox"     />
+            <SummaryGrid summaryData={getSummaryData} summaryStyle="customBox" />
           </Grid>
           <Grid item xs={12} className={"MTPBoxShadowRoot"}>
             <Box>
-            <TabsWrapper
-              headerSx={{ margin: `-${MPT_SPACING_3} -${MPT_SPACING_3} 0`, padding: `0 ${MPT_SPACING_3}` }}
-              isLoading={isGetResourceLoading || isLoadingPatch}
-              tabsProps={{
-                tabs,
-                defaultTab: DETAILS_TAB,
-                activeTab,
-                handleChange,
-                name: "resources-details"
-              }}
-            />
+              <TabsWrapper
+                headerSx={{ margin: `-${MPT_SPACING_3} -${MPT_SPACING_3} 0`, padding: `0 ${MPT_SPACING_3}` }}
+                isLoading={isGetResourceLoading || isLoadingPatch}
+                tabsProps={{
+                  tabs,
+                  defaultTab: DETAILS_TAB,
+                  activeTab,
+                  handleChange,
+                  name: "resources-details"
+                }}
+              />
             </Box>
-          </Grid>          
+          </Grid>
         </Grid>
       </PageContentWrapper>
     </>

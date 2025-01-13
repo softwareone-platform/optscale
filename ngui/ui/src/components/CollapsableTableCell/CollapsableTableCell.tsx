@@ -50,7 +50,7 @@ const renderItems =
         return (
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
-            isBoldKeyLabel={true}
+            isBoldKeyLabel
             sx={{ marginBottom: MPT_SPACING_2 }}
             key={displayedKey}
             keyText={displayedKey}
@@ -66,7 +66,7 @@ const renderItems =
         return (
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
-            isBoldKeyLabel={true}
+            isBoldKeyLabel
             sx={{ marginBottom: MPT_SPACING_2 }}
             keyText={key}
             value={<CopyText textToCopy={textToCopy}>{cutValue}</CopyText>}

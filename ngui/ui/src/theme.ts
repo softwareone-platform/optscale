@@ -492,7 +492,7 @@ const getThemeConfig = (settings = {}) => {
         variants: [
           {
             props: { variant: "clean" },
-            style: ({ theme }) => ({
+            style: () => ({
               border: "none",
               borderRadius: 0,
               boxShadow: "none",
@@ -503,7 +503,7 @@ const getThemeConfig = (settings = {}) => {
           },
           {
             props: { variant: "shadow" },
-            style: ({ theme }) => ({
+            style: () => ({
               borderRadius: MPT_SPACING_2,
               boxShadow: MPT_BOX_SHADOW
             })
