@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import QuestionMark from "components/QuestionMark";
 import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
-import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1 } from "utils/layouts";
+import { SPACING_1 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
+import DividerHorizontal from "../../../shared/components/DividerHorizontal/DividerHorizontal";
+import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 import ButtonGroup from "../../ButtonGroup";
 import { changePeriodType } from "./actionCreator";
 import { EXPENSES_BREAKDOWN_PERIOD_TYPE } from "./reducer";
@@ -93,10 +93,7 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   return (
     <>
       <Box display="flex" alignItems="center" mb={SPACING_1}>
-        <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
-          <FormattedMessage id={"breakdownBy"} />
-          {": "}
-        </Typography>
+        <LabelColon messageId={"timeInterval"} />
         <BreakdownLinearSelector value={periodType} items={breakdownLinearSelectorItems} onChange={handleClick} />
         <QuestionMark
           messageId="expensesBreakdownBarChartDescription"
@@ -104,16 +101,11 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
         />
         {customContent && (
           <>
-            <Divider
-              style={{ margin: MPT_SPACING_1, marginLeft: MPT_SPACING_2, marginRight: MPT_SPACING_2 }}
-              flexItem
-              orientation="vertical"
-            />
+            <DividerHorizontal />
             <Box>{customContent}</Box>
           </>
         )}
       </Box>
-      <Divider style={{ marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2 }} />
       {/* MPT_TODO: disabled to math BDR requirement */}
       {/* <DynamicTextPdf */}
       {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle} */}

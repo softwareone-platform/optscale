@@ -3,7 +3,6 @@ import CloudIcon from "@mui/icons-material/Cloud";
 import PeopleIcon from "@mui/icons-material/People";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -18,7 +17,8 @@ import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
 import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
-import { MPT_SPACING_2, MPT_SPACING_3, SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -148,10 +148,11 @@ const CostExplorer = ({
               total={total}
               previousTotal={previousTotal}
               isLoading={isLoading}
-              pdfIds={{
-                totalExpensesForSelectedPeriod: PDF_ELEMENTS.costExplorer.expensesSummary,
-                totalExpensesForPreviousPeriod: PDF_ELEMENTS.costExplorer.previousExpensesSummary
-              }}
+              // MPT_TODO: disabled to meet BDR requirements
+              // pdfIds={{
+              //   totalExpensesForSelectedPeriod: PDF_ELEMENTS.costExplorer.expensesSummary,
+              //   totalExpensesForPreviousPeriod: PDF_ELEMENTS.costExplorer.previousExpensesSummary
+              // }}
             />
           </Grid>
           <Grid item xs={12} className={"MTPBoxShadowRoot"}>
@@ -159,10 +160,7 @@ const CostExplorer = ({
               <ExpensesBreakdownByPeriodWidget
                 customContent={
                   <Grid container alignItems={"center"}>
-                    <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
-                      <FormattedMessage id={"dateRangeUTC"} />
-                      {": "}
-                    </Typography>
+                    <LabelColon messageId={"dateRange"} />
                     <RangePickerFormContainer
                       onApply={onApply}
                       initialStartDateValue={startDateTimestamp}
@@ -181,12 +179,9 @@ const CostExplorer = ({
                 )}
               />
             </Box>
-            <Grid item paddingTop={MPT_SPACING_3} xs={12} className={"MTPBoxShadowRoot"}>
-              <Box>
-                <Typography variant={"subtitle1"}>
-                  <FormattedMessage id={"seeExpensesBreakdownBy"} />
-                  {": "}
-                </Typography>
+            <Grid item direction={"row"} alignItems={"baseline"} paddingTop={MPT_SPACING_3} xs={12}>
+              <Box className={"MTPBoxShadow"} display={"flex"} flexWrap={"nowrap"} alignItems={"baseline"}>
+                <LabelColon messageId={"seeExpensesBreakdownBy"} />
                 <ButtonSwitch buttons={breakdownByButtons} />
               </Box>
             </Grid>

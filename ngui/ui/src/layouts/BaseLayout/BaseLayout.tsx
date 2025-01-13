@@ -28,8 +28,6 @@ import { REGISTER } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { BASE_LAYOUT_CONTAINER_ID, LOGO_SIZE } from "utils/constants";
 import useStyles from "./BaseLayout.styles";
-// import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
-// import {Icon} from "@mui/material";
 
 const logoHeight = 30;
 

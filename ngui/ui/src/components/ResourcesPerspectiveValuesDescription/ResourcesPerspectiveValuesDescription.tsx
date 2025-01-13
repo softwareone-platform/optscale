@@ -1,10 +1,10 @@
 import { Box, Stack } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { breakdowns } from "hooks/useBreakdownBy";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { MPT_SPACING_1, MPT_SPACING_2, SPACING_2 } from "utils/layouts";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
   controlName: "categorizeBy",
@@ -49,9 +49,7 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       ) : (
         <>
           <Box sx={{ marginBottom: MPT_SPACING_1 }}>
-            <Typography variant={"fontWeightBold"}>
-              <FormattedMessage id="filters" />:
-            </Typography>
+            <LabelColon messageId={"filters"} />
           </Box>
           {filters.map(({ name, displayedName, displayedValue }) => (
             <KeyValueLabel

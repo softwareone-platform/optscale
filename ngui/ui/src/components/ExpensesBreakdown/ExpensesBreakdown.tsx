@@ -1,8 +1,6 @@
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
-import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import BarChartLoader from "components/BarChartLoader";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
@@ -30,7 +28,7 @@ import {
   K8S_NAMESPACE_FILTER,
   OPTSCALE_RESOURCE_TYPES
 } from "utils/constants";
-import { MPT_SPACING_2 } from "../../utils/layouts";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ExpensesBreakdownActionBar from "./ActionBar";
 import ExpensesBreakdownBarChart from "./BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "./BreakdownByButtonsGroup";
@@ -126,12 +124,14 @@ const ExpensesBreakdown = ({
       </Grid>
       {type !== COST_EXPLORER && (
         <Grid item xs={12}>
-          <ExpensesBreakdownBreakdownByButtonsGroup
-            filterBy={filterBy}
-            type={type}
-            onClick={updateFilter}
-            dataSourceType={dataSourceType}
-          />
+          <Box className={"MTPBoxShadow"}>
+            <ExpensesBreakdownBreakdownByButtonsGroup
+              filterBy={filterBy}
+              type={type}
+              onClick={updateFilter}
+              dataSourceType={dataSourceType}
+            />
+          </Box>
         </Grid>
       )}
     </>
@@ -151,10 +151,7 @@ const ExpensesBreakdown = ({
       <ExpensesBreakdownByPeriodWidget
         customContent={
           <Grid container alignItems={"center"}>
-            <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
-              <FormattedMessage id={"dateRangeUTC"} />
-              {": "}
-            </Typography>
+            <LabelColon messageId={"dateRange"} />
             <RangePickerFormContainer
               onApply={onApply}
               initialStartDateValue={startDateTimestamp}
@@ -191,11 +188,7 @@ const ExpensesBreakdown = ({
     );
   };
 
-  const PieChartHeader = () => (
-    <Box justifyContent="center" display="flex">
-      <FormattedMessage id="expenses" />
-    </Box>
-  );
+  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""} />;
 
   const renderPieChartWidget = () => {
     if (isLoading) {
