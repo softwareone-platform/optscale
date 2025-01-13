@@ -139,6 +139,7 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading }) => {
   return (
     <WrapperCard
       needAlign
+      variant="shadow"
       title={
         <Box display="flex" alignItems="center">
           <Box mr={0.5}>

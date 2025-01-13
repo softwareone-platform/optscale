@@ -67,10 +67,10 @@ const generateResponsiveFontSizes = (themeInput) => {
       fontSize: "0.85rem"
     },
     [upLgBreakpoint]: {
-      fontSize: "0.92rem"
+      fontSize: "1rem"
     },
     [upXlBreakpoint]: {
-      fontSize: "1rem"
+      fontSize: "1.12rem"
     }
   };
 

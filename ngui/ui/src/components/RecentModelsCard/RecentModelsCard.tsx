@@ -68,6 +68,7 @@ const RecentModelsCard = ({ models, isLoading = false }: RecentModelsCardProps) 
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={
         <Box display="flex" alignItems="center">

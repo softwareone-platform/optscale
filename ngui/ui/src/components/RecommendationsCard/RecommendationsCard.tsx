@@ -41,6 +41,7 @@ const RecommendationsCard = ({
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={<FormattedMessage id="recommendations" />}
       titleButton={{

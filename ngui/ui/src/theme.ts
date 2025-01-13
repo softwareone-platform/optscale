@@ -486,6 +486,29 @@ const getThemeConfig = (settings = {}) => {
         }
       },
       MuiCard: {
+        defaultProps: {
+          variant: "outlined"
+        },
+        variants: [
+          {
+            props: { variant: "clean" },
+            style: () => ({
+              border: "none",
+              borderRadius: 0,
+              boxShadow: "none",
+              "& .MuiCardContent-root": {
+                padding: 0
+              }
+            })
+          },
+          {
+            props: { variant: "shadow" },
+            style: () => ({
+              borderRadius: MPT_SPACING_2,
+              boxShadow: MPT_BOX_SHADOW
+            })
+          }
+        ],
         styleOverrides: {
           root: {
             borderRadius: "16px" // Set your desired border-radius value
