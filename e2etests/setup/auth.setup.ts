@@ -23,12 +23,3 @@ setup('Login and save token', async ({ request }) => {
     const tokenFilePath = path.resolve('e2etests/.auth/authToken.json');
     fs.writeFileSync(tokenFilePath, JSON.stringify({ token: responseBody.token }), 'utf8');
 });
-    // const response = await request.post('https://cloudspend.velasuci.com/auth/v2/tokens', {
-    //         data: {
-    //             email: 'FinOpsTest1@outlook.com',
-    //             password: 'Ci8W2ue7rYS5-AK'
-    //         }
-    //     }
-    // )
-
-// });
