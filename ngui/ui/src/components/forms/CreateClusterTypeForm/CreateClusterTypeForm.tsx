@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import FormContentDescription from "components/FormContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { CLUSTER_TYPES, DOCS_HYSTAX_CLUSTERS, RESOURCES } from "urls";
 import { MPT_SPACING_3 } from "utils/layouts";
@@ -45,21 +45,23 @@ const CreateClusterTypeForm = ({ onSubmit, onCancel, isSubmitLoading = false }: 
                   <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <NameField />
                     <TagKeyField />
+                    <FormContentDescription
+                      alertProps={{
+                        messageId: "createClusterTypeDescription",
+                        messageValues: {
+                          strong: (chunks) => <strong>{chunks}</strong>,
+                          link: (chunks) => (
+                            <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
+                              {chunks}
+                            </Link>
+                          )
+                        }
+                      }}
+                    />
                     <FormButtons onCancel={onCancel} isLoading={isSubmitLoading} />
                   </form>
                 </FormProvider>
               </Box>
-              <InlineSeverityAlert
-                messageId="createClusterTypeDescription"
-                messageValues={{
-                  strong: (chunks) => <strong>{chunks}</strong>,
-                  link: (chunks) => (
-                    <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
-                      {chunks}
-                    </Link>
-                  )
-                }}
-              />
             </Box>
           </Grid>
         </Grid>

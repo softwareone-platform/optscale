@@ -88,7 +88,7 @@ _The current installation process does not work on Ubuntu 22.04_
 Run the following commands:
 
 ```
-sudo apt update; sudo apt install python3-pip sshpass git python3-virtualenv python3.9
+sudo apt update; sudo apt install python3-pip sshpass git python3.9-venv python3.9-dev python3.9 -y
 ```
 
 #### Pulling optscale-deploy scripts
@@ -125,13 +125,11 @@ ansible-playbook -e "ansible_ssh_user=<user>" -k -K -i "<ip address>," ansible/k
 ```
 
 where `<user>` - actual username; `<ip address>` - host ip address,
-ip address should be private address of the machine, you can check it with
+ip address should be private address of the machine, you can check it with the command `ip a`.
 
-```
-ip a
-```
+**Note:** do not use `127.0.0.1` or `localhost` as the hostname. Instead, prefer providing the server's hostname (check with the command `hostname`) and make sure it is resolveable from host that the Ansible Playbooks ran from (if needed, add to the ``/etc/hosts`` files).
 
-If your deployment server is the service-host server, add `"ansible_connection=local"` to the ansible command.
+If your deployment server is the service-host server, add `-e "ansible_connection=local"` to the ansible command.
 
 #### Creating user overlay
 

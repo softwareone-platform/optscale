@@ -152,12 +152,27 @@ export type AzureTenantDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type CreateDataSourceInput = {
+  alibabaConfig?: InputMaybe<AlibabaConfigInput>;
+  awsLinkedConfig?: InputMaybe<AwsLinkedConfigInput>;
+  awsRootConfig?: InputMaybe<AwsRootConfigInput>;
+  azureSubscriptionConfig?: InputMaybe<AzureSubscriptionConfigInput>;
+  azureTenantConfig?: InputMaybe<AzureTenantConfigInput>;
+  databricksConfig?: InputMaybe<DatabricksConfigInput>;
+  gcpConfig?: InputMaybe<GcpConfigInput>;
+  gcpTenantConfig?: InputMaybe<GcpTenantConfigInput>;
+  k8sConfig?: InputMaybe<K8sConfigInput>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  nebiusConfig?: InputMaybe<NebiusConfigInput>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type DataSourceDetails = {
   __typename?: 'DataSourceDetails';
   cost: Scalars['Float']['output'];
   discovery_infos?: Maybe<Array<Maybe<DataSourceDiscoveryInfos>>>;
   forecast: Scalars['Float']['output'];
-  last_month_cost: Scalars['Float']['output'];
+  last_month_cost?: Maybe<Scalars['Float']['output']>;
   resources: Scalars['Int']['output'];
 };
 
@@ -176,18 +191,18 @@ export type DataSourceDiscoveryInfos = {
 };
 
 export type DataSourceInterface = {
-  account_id: Scalars['String']['output'];
+  account_id?: Maybe<Scalars['String']['output']>;
   details?: Maybe<DataSourceDetails>;
-  id: Scalars['String']['output'];
-  last_getting_metric_attempt_at: Scalars['Int']['output'];
+  id?: Maybe<Scalars['String']['output']>;
+  last_getting_metric_attempt_at?: Maybe<Scalars['Int']['output']>;
   last_getting_metric_attempt_error?: Maybe<Scalars['String']['output']>;
-  last_getting_metrics_at: Scalars['Int']['output'];
-  last_import_at: Scalars['Int']['output'];
-  last_import_attempt_at: Scalars['Int']['output'];
+  last_getting_metrics_at?: Maybe<Scalars['Int']['output']>;
+  last_import_at?: Maybe<Scalars['Int']['output']>;
+  last_import_attempt_at?: Maybe<Scalars['Int']['output']>;
   last_import_attempt_error?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   parent_id?: Maybe<Scalars['String']['output']>;
-  type: DataSourceType;
+  type?: Maybe<DataSourceType>;
 };
 
 export type DataSourceRequestParams = {
@@ -202,6 +217,7 @@ export enum DataSourceType {
   Databricks = 'databricks',
   Environment = 'environment',
   GcpCnr = 'gcp_cnr',
+  GcpTenant = 'gcp_tenant',
   KubernetesCnr = 'kubernetes_cnr',
   Nebius = 'nebius'
 }
@@ -235,6 +251,22 @@ export type DatabricksDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type Employee = {
+  __typename?: 'Employee';
+  id: Scalars['String']['output'];
+  jira_connected: Scalars['Boolean']['output'];
+  slack_connected: Scalars['Boolean']['output'];
+};
+
+export type EmployeeEmail = {
+  __typename?: 'EmployeeEmail';
+  available_by_role: Scalars['Boolean']['output'];
+  email_template: Scalars['String']['output'];
+  employee_id: Scalars['ID']['output'];
+  enabled: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+};
+
 export type EnvironmentDataSource = DataSourceInterface & {
   __typename?: 'EnvironmentDataSource';
   account_id: Scalars['String']['output'];
@@ -260,6 +292,7 @@ export type GcpBillingDataConfig = {
 
 export type GcpBillingDataConfigInput = {
   dataset_name: Scalars['String']['input'];
+  project_id?: InputMaybe<Scalars['String']['input']>;
   table_name: Scalars['String']['input'];
 };
 
@@ -290,6 +323,58 @@ export type GcpDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type GcpTenantBillingDataConfig = {
+  __typename?: 'GcpTenantBillingDataConfig';
+  dataset_name?: Maybe<Scalars['String']['output']>;
+  project_id?: Maybe<Scalars['String']['output']>;
+  table_name?: Maybe<Scalars['String']['output']>;
+};
+
+export type GcpTenantConfig = {
+  __typename?: 'GcpTenantConfig';
+  billing_data?: Maybe<GcpTenantBillingDataConfig>;
+};
+
+export type GcpTenantConfigInput = {
+  billing_data: GcpBillingDataConfigInput;
+  credentials: Scalars['JSONObject']['input'];
+};
+
+export type GcpTenantDataSource = DataSourceInterface & {
+  __typename?: 'GcpTenantDataSource';
+  account_id?: Maybe<Scalars['String']['output']>;
+  config?: Maybe<GcpTenantConfig>;
+  details?: Maybe<DataSourceDetails>;
+  id: Scalars['String']['output'];
+  last_getting_metric_attempt_at: Scalars['Int']['output'];
+  last_getting_metric_attempt_error?: Maybe<Scalars['String']['output']>;
+  last_getting_metrics_at: Scalars['Int']['output'];
+  last_import_at: Scalars['Int']['output'];
+  last_import_attempt_at: Scalars['Int']['output'];
+  last_import_attempt_error?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  parent_id?: Maybe<Scalars['String']['output']>;
+  type: DataSourceType;
+};
+
+export type Invitation = {
+  __typename?: 'Invitation';
+  id: Scalars['String']['output'];
+  invite_assignments?: Maybe<Array<InvitationAssignment>>;
+  organization: Scalars['String']['output'];
+  owner_email: Scalars['String']['output'];
+  owner_name: Scalars['String']['output'];
+};
+
+export type InvitationAssignment = {
+  __typename?: 'InvitationAssignment';
+  id: Scalars['String']['output'];
+  purpose: Scalars['String']['output'];
+  scope_id: Scalars['String']['output'];
+  scope_name: Scalars['String']['output'];
+  scope_type: Scalars['String']['output'];
+};
+
 export type K8CostModelConfig = {
   __typename?: 'K8CostModelConfig';
   cpu_hourly_cost: Scalars['Float']['output'];
@@ -303,6 +388,7 @@ export type K8sConfig = {
 };
 
 export type K8sConfigInput = {
+  cost_model?: InputMaybe<Scalars['JSONObject']['input']>;
   password: Scalars['String']['input'];
   user: Scalars['String']['input'];
 };
@@ -326,13 +412,87 @@ export type K8sDataSource = DataSourceInterface & {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createDataSource?: Maybe<DataSourceInterface>;
+  createOrganization?: Maybe<Organization>;
+  deleteDataSource?: Maybe<Scalars['String']['output']>;
+  deleteOrganization?: Maybe<Scalars['String']['output']>;
   updateDataSource?: Maybe<DataSourceInterface>;
+  updateEmployeeEmail?: Maybe<EmployeeEmail>;
+  updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
+  updateInvitation?: Maybe<Scalars['String']['output']>;
+  updateOptscaleMode?: Maybe<OptscaleMode>;
+  updateOrganization?: Maybe<Organization>;
+  updateOrganizationPerspectives?: Maybe<Scalars['JSONObject']['output']>;
+  updateOrganizationThemeSettings?: Maybe<Scalars['JSONObject']['output']>;
+};
+
+
+export type MutationCreateDataSourceArgs = {
+  organizationId: Scalars['ID']['input'];
+  params: CreateDataSourceInput;
+};
+
+
+export type MutationCreateOrganizationArgs = {
+  organizationName: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteDataSourceArgs = {
+  dataSourceId: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteOrganizationArgs = {
+  organizationId: Scalars['ID']['input'];
 };
 
 
 export type MutationUpdateDataSourceArgs = {
   dataSourceId: Scalars['ID']['input'];
   params: UpdateDataSourceInput;
+};
+
+
+export type MutationUpdateEmployeeEmailArgs = {
+  employeeId: Scalars['ID']['input'];
+  params: UpdateEmployeeEmailInput;
+};
+
+
+export type MutationUpdateEmployeeEmailsArgs = {
+  employeeId: Scalars['ID']['input'];
+  params: UpdateEmployeeEmailsInput;
+};
+
+
+export type MutationUpdateInvitationArgs = {
+  action: Scalars['String']['input'];
+  invitationId: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateOptscaleModeArgs = {
+  organizationId: Scalars['ID']['input'];
+  value?: InputMaybe<OptscaleModeParams>;
+};
+
+
+export type MutationUpdateOrganizationArgs = {
+  organizationId: Scalars['ID']['input'];
+  params: UpdateOrganizationInput;
+};
+
+
+export type MutationUpdateOrganizationPerspectivesArgs = {
+  organizationId: Scalars['ID']['input'];
+  value: Scalars['JSONObject']['input'];
+};
+
+
+export type MutationUpdateOrganizationThemeSettingsArgs = {
+  organizationId: Scalars['ID']['input'];
+  value: Scalars['JSONObject']['input'];
 };
 
 export type NebiusConfig = {
@@ -373,15 +533,79 @@ export type NebiusDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type OptscaleMode = {
+  __typename?: 'OptscaleMode';
+  finops?: Maybe<Scalars['Boolean']['output']>;
+  mlops?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type OptscaleModeParams = {
+  finops?: InputMaybe<Scalars['Boolean']['input']>;
+  mlops?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type Organization = {
+  __typename?: 'Organization';
+  currency: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  is_demo: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  pool_id: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  currentEmployee?: Maybe<Employee>;
   dataSource?: Maybe<DataSourceInterface>;
+  dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
+  employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
+  invitations?: Maybe<Array<Maybe<Invitation>>>;
+  optscaleMode?: Maybe<OptscaleMode>;
+  organizationFeatures?: Maybe<Scalars['JSONObject']['output']>;
+  organizationPerspectives?: Maybe<Scalars['JSONObject']['output']>;
+  organizationThemeSettings?: Maybe<Scalars['JSONObject']['output']>;
+  organizations?: Maybe<Array<Maybe<Organization>>>;
+};
+
+
+export type QueryCurrentEmployeeArgs = {
+  organizationId: Scalars['ID']['input'];
 };
 
 
 export type QueryDataSourceArgs = {
   dataSourceId: Scalars['ID']['input'];
   requestParams?: InputMaybe<DataSourceRequestParams>;
+};
+
+
+export type QueryDataSourcesArgs = {
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryEmployeeEmailsArgs = {
+  employeeId: Scalars['ID']['input'];
+};
+
+
+export type QueryOptscaleModeArgs = {
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrganizationFeaturesArgs = {
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrganizationPerspectivesArgs = {
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrganizationThemeSettingsArgs = {
+  organizationId: Scalars['ID']['input'];
 };
 
 export type UpdateDataSourceInput = {
@@ -392,11 +616,32 @@ export type UpdateDataSourceInput = {
   azureTenantConfig?: InputMaybe<AzureTenantConfigInput>;
   databricksConfig?: InputMaybe<DatabricksConfigInput>;
   gcpConfig?: InputMaybe<GcpConfigInput>;
+  gcpTenantConfig?: InputMaybe<GcpTenantConfigInput>;
   k8sConfig?: InputMaybe<K8sConfigInput>;
   lastImportAt?: InputMaybe<Scalars['Int']['input']>;
   lastImportModifiedAt?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nebiusConfig?: InputMaybe<NebiusConfigInput>;
+};
+
+export type UpdateEmployeeEmailInput = {
+  action: UpdateEmployeeEmailsAction;
+  emailId: Scalars['ID']['input'];
+};
+
+export enum UpdateEmployeeEmailsAction {
+  Disable = 'disable',
+  Enable = 'enable'
+}
+
+export type UpdateEmployeeEmailsInput = {
+  disable?: InputMaybe<Array<Scalars['ID']['input']>>;
+  enable?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type UpdateOrganizationInput = {
+  currency?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -469,7 +714,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of interface types */
 export type ResolversInterfaceTypes<_RefType extends Record<string, unknown>> = {
-  DataSourceInterface: ( AlibabaDataSource ) | ( AwsDataSource ) | ( AzureSubscriptionDataSource ) | ( AzureTenantDataSource ) | ( DatabricksDataSource ) | ( EnvironmentDataSource ) | ( GcpDataSource ) | ( K8sDataSource ) | ( NebiusDataSource );
+  DataSourceInterface: ( AlibabaDataSource ) | ( AwsDataSource ) | ( AzureSubscriptionDataSource ) | ( AzureTenantDataSource ) | ( DatabricksDataSource ) | ( EnvironmentDataSource ) | ( GcpDataSource ) | ( GcpTenantDataSource ) | ( K8sDataSource ) | ( NebiusDataSource );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -488,6 +733,7 @@ export type ResolversTypes = {
   AzureTenantConfigInput: AzureTenantConfigInput;
   AzureTenantDataSource: ResolverTypeWrapper<AzureTenantDataSource>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: ResolverTypeWrapper<DataSourceDetails>;
   DataSourceDiscoveryInfos: ResolverTypeWrapper<DataSourceDiscoveryInfos>;
   DataSourceInterface: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>['DataSourceInterface']>;
@@ -496,6 +742,8 @@ export type ResolversTypes = {
   DatabricksConfig: ResolverTypeWrapper<DatabricksConfig>;
   DatabricksConfigInput: DatabricksConfigInput;
   DatabricksDataSource: ResolverTypeWrapper<DatabricksDataSource>;
+  Employee: ResolverTypeWrapper<Employee>;
+  EmployeeEmail: ResolverTypeWrapper<EmployeeEmail>;
   EnvironmentDataSource: ResolverTypeWrapper<EnvironmentDataSource>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   GcpBillingDataConfig: ResolverTypeWrapper<GcpBillingDataConfig>;
@@ -503,8 +751,14 @@ export type ResolversTypes = {
   GcpConfig: ResolverTypeWrapper<GcpConfig>;
   GcpConfigInput: GcpConfigInput;
   GcpDataSource: ResolverTypeWrapper<GcpDataSource>;
+  GcpTenantBillingDataConfig: ResolverTypeWrapper<GcpTenantBillingDataConfig>;
+  GcpTenantConfig: ResolverTypeWrapper<GcpTenantConfig>;
+  GcpTenantConfigInput: GcpTenantConfigInput;
+  GcpTenantDataSource: ResolverTypeWrapper<GcpTenantDataSource>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Invitation: ResolverTypeWrapper<Invitation>;
+  InvitationAssignment: ResolverTypeWrapper<InvitationAssignment>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']['output']>;
   K8CostModelConfig: ResolverTypeWrapper<K8CostModelConfig>;
   K8sConfig: ResolverTypeWrapper<K8sConfig>;
@@ -514,9 +768,16 @@ export type ResolversTypes = {
   NebiusConfig: ResolverTypeWrapper<NebiusConfig>;
   NebiusConfigInput: NebiusConfigInput;
   NebiusDataSource: ResolverTypeWrapper<NebiusDataSource>;
+  OptscaleMode: ResolverTypeWrapper<OptscaleMode>;
+  OptscaleModeParams: OptscaleModeParams;
+  Organization: ResolverTypeWrapper<Organization>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UpdateDataSourceInput: UpdateDataSourceInput;
+  UpdateEmployeeEmailInput: UpdateEmployeeEmailInput;
+  UpdateEmployeeEmailsAction: UpdateEmployeeEmailsAction;
+  UpdateEmployeeEmailsInput: UpdateEmployeeEmailsInput;
+  UpdateOrganizationInput: UpdateOrganizationInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -535,6 +796,7 @@ export type ResolversParentTypes = {
   AzureTenantConfigInput: AzureTenantConfigInput;
   AzureTenantDataSource: AzureTenantDataSource;
   Boolean: Scalars['Boolean']['output'];
+  CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: DataSourceDetails;
   DataSourceDiscoveryInfos: DataSourceDiscoveryInfos;
   DataSourceInterface: ResolversInterfaceTypes<ResolversParentTypes>['DataSourceInterface'];
@@ -542,6 +804,8 @@ export type ResolversParentTypes = {
   DatabricksConfig: DatabricksConfig;
   DatabricksConfigInput: DatabricksConfigInput;
   DatabricksDataSource: DatabricksDataSource;
+  Employee: Employee;
+  EmployeeEmail: EmployeeEmail;
   EnvironmentDataSource: EnvironmentDataSource;
   Float: Scalars['Float']['output'];
   GcpBillingDataConfig: GcpBillingDataConfig;
@@ -549,8 +813,14 @@ export type ResolversParentTypes = {
   GcpConfig: GcpConfig;
   GcpConfigInput: GcpConfigInput;
   GcpDataSource: GcpDataSource;
+  GcpTenantBillingDataConfig: GcpTenantBillingDataConfig;
+  GcpTenantConfig: GcpTenantConfig;
+  GcpTenantConfigInput: GcpTenantConfigInput;
+  GcpTenantDataSource: GcpTenantDataSource;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  Invitation: Invitation;
+  InvitationAssignment: InvitationAssignment;
   JSONObject: Scalars['JSONObject']['output'];
   K8CostModelConfig: K8CostModelConfig;
   K8sConfig: K8sConfig;
@@ -560,9 +830,15 @@ export type ResolversParentTypes = {
   NebiusConfig: NebiusConfig;
   NebiusConfigInput: NebiusConfigInput;
   NebiusDataSource: NebiusDataSource;
+  OptscaleMode: OptscaleMode;
+  OptscaleModeParams: OptscaleModeParams;
+  Organization: Organization;
   Query: {};
   String: Scalars['String']['output'];
   UpdateDataSourceInput: UpdateDataSourceInput;
+  UpdateEmployeeEmailInput: UpdateEmployeeEmailInput;
+  UpdateEmployeeEmailsInput: UpdateEmployeeEmailsInput;
+  UpdateOrganizationInput: UpdateOrganizationInput;
 };
 
 export type AlibabaConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['AlibabaConfig'] = ResolversParentTypes['AlibabaConfig']> = {
@@ -669,7 +945,7 @@ export type DataSourceDetailsResolvers<ContextType = any, ParentType extends Res
   cost?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   discovery_infos?: Resolver<Maybe<Array<Maybe<ResolversTypes['DataSourceDiscoveryInfos']>>>, ParentType, ContextType>;
   forecast?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  last_month_cost?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  last_month_cost?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   resources?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -689,19 +965,19 @@ export type DataSourceDiscoveryInfosResolvers<ContextType = any, ParentType exte
 };
 
 export type DataSourceInterfaceResolvers<ContextType = any, ParentType extends ResolversParentTypes['DataSourceInterface'] = ResolversParentTypes['DataSourceInterface']> = {
-  __resolveType: TypeResolveFn<'AlibabaDataSource' | 'AwsDataSource' | 'AzureSubscriptionDataSource' | 'AzureTenantDataSource' | 'DatabricksDataSource' | 'EnvironmentDataSource' | 'GcpDataSource' | 'K8sDataSource' | 'NebiusDataSource', ParentType, ContextType>;
-  account_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'AlibabaDataSource' | 'AwsDataSource' | 'AzureSubscriptionDataSource' | 'AzureTenantDataSource' | 'DatabricksDataSource' | 'EnvironmentDataSource' | 'GcpDataSource' | 'GcpTenantDataSource' | 'K8sDataSource' | 'NebiusDataSource', ParentType, ContextType>;
+  account_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes['DataSourceDetails']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  last_getting_metric_attempt_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  last_getting_metric_attempt_at?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   last_getting_metric_attempt_error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  last_getting_metrics_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  last_import_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  last_import_attempt_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_getting_metrics_at?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  last_import_at?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  last_import_attempt_at?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   last_import_attempt_error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['DataSourceType'], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['DataSourceType']>, ParentType, ContextType>;
 };
 
 export type DatabricksConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['DatabricksConfig'] = ResolversParentTypes['DatabricksConfig']> = {
@@ -724,6 +1000,22 @@ export type DatabricksDataSourceResolvers<ContextType = any, ParentType extends 
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['DataSourceType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EmployeeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Employee'] = ResolversParentTypes['Employee']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  jira_connected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  slack_connected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EmployeeEmailResolvers<ContextType = any, ParentType extends ResolversParentTypes['EmployeeEmail'] = ResolversParentTypes['EmployeeEmail']> = {
+  available_by_role?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  email_template?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  employee_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  enabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -772,6 +1064,53 @@ export type GcpDataSourceResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GcpTenantBillingDataConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['GcpTenantBillingDataConfig'] = ResolversParentTypes['GcpTenantBillingDataConfig']> = {
+  dataset_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  project_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  table_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GcpTenantConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['GcpTenantConfig'] = ResolversParentTypes['GcpTenantConfig']> = {
+  billing_data?: Resolver<Maybe<ResolversTypes['GcpTenantBillingDataConfig']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GcpTenantDataSourceResolvers<ContextType = any, ParentType extends ResolversParentTypes['GcpTenantDataSource'] = ResolversParentTypes['GcpTenantDataSource']> = {
+  account_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  config?: Resolver<Maybe<ResolversTypes['GcpTenantConfig']>, ParentType, ContextType>;
+  details?: Resolver<Maybe<ResolversTypes['DataSourceDetails']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  last_getting_metric_attempt_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_getting_metric_attempt_error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  last_getting_metrics_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_import_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_import_attempt_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_import_attempt_error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  parent_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['DataSourceType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvitationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Invitation'] = ResolversParentTypes['Invitation']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  invite_assignments?: Resolver<Maybe<Array<ResolversTypes['InvitationAssignment']>>, ParentType, ContextType>;
+  organization?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner_email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvitationAssignmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvitationAssignment'] = ResolversParentTypes['InvitationAssignment']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  purpose?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scope_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scope_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scope_type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSONObject'], any> {
   name: 'JSONObject';
 }
@@ -806,7 +1145,18 @@ export type K8sDataSourceResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createDataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<MutationCreateDataSourceArgs, 'organizationId' | 'params'>>;
+  createOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationCreateOrganizationArgs, 'organizationName'>>;
+  deleteDataSource?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteDataSourceArgs, 'dataSourceId'>>;
+  deleteOrganization?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationDeleteOrganizationArgs, 'organizationId'>>;
   updateDataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<MutationUpdateDataSourceArgs, 'dataSourceId' | 'params'>>;
+  updateEmployeeEmail?: Resolver<Maybe<ResolversTypes['EmployeeEmail']>, ParentType, ContextType, RequireFields<MutationUpdateEmployeeEmailArgs, 'employeeId' | 'params'>>;
+  updateEmployeeEmails?: Resolver<Maybe<Array<Maybe<ResolversTypes['EmployeeEmail']>>>, ParentType, ContextType, RequireFields<MutationUpdateEmployeeEmailsArgs, 'employeeId' | 'params'>>;
+  updateInvitation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationUpdateInvitationArgs, 'action' | 'invitationId'>>;
+  updateOptscaleMode?: Resolver<Maybe<ResolversTypes['OptscaleMode']>, ParentType, ContextType, RequireFields<MutationUpdateOptscaleModeArgs, 'organizationId'>>;
+  updateOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationArgs, 'organizationId' | 'params'>>;
+  updateOrganizationPerspectives?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationPerspectivesArgs, 'organizationId' | 'value'>>;
+  updateOrganizationThemeSettings?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationThemeSettingsArgs, 'organizationId' | 'value'>>;
 };
 
 export type NebiusConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['NebiusConfig'] = ResolversParentTypes['NebiusConfig']> = {
@@ -836,8 +1186,32 @@ export type NebiusDataSourceResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type OptscaleModeResolvers<ContextType = any, ParentType extends ResolversParentTypes['OptscaleMode'] = ResolversParentTypes['OptscaleMode']> = {
+  finops?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  mlops?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
+  currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  is_demo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  pool_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  currentEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, RequireFields<QueryCurrentEmployeeArgs, 'organizationId'>>;
   dataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<QueryDataSourceArgs, 'dataSourceId'>>;
+  dataSources?: Resolver<Maybe<Array<Maybe<ResolversTypes['DataSourceInterface']>>>, ParentType, ContextType, RequireFields<QueryDataSourcesArgs, 'organizationId'>>;
+  employeeEmails?: Resolver<Maybe<Array<Maybe<ResolversTypes['EmployeeEmail']>>>, ParentType, ContextType, RequireFields<QueryEmployeeEmailsArgs, 'employeeId'>>;
+  invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invitation']>>>, ParentType, ContextType>;
+  optscaleMode?: Resolver<Maybe<ResolversTypes['OptscaleMode']>, ParentType, ContextType, RequireFields<QueryOptscaleModeArgs, 'organizationId'>>;
+  organizationFeatures?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationFeaturesArgs, 'organizationId'>>;
+  organizationPerspectives?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationPerspectivesArgs, 'organizationId'>>;
+  organizationThemeSettings?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationThemeSettingsArgs, 'organizationId'>>;
+  organizations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Organization']>>>, ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -854,10 +1228,17 @@ export type Resolvers<ContextType = any> = {
   DataSourceInterface?: DataSourceInterfaceResolvers<ContextType>;
   DatabricksConfig?: DatabricksConfigResolvers<ContextType>;
   DatabricksDataSource?: DatabricksDataSourceResolvers<ContextType>;
+  Employee?: EmployeeResolvers<ContextType>;
+  EmployeeEmail?: EmployeeEmailResolvers<ContextType>;
   EnvironmentDataSource?: EnvironmentDataSourceResolvers<ContextType>;
   GcpBillingDataConfig?: GcpBillingDataConfigResolvers<ContextType>;
   GcpConfig?: GcpConfigResolvers<ContextType>;
   GcpDataSource?: GcpDataSourceResolvers<ContextType>;
+  GcpTenantBillingDataConfig?: GcpTenantBillingDataConfigResolvers<ContextType>;
+  GcpTenantConfig?: GcpTenantConfigResolvers<ContextType>;
+  GcpTenantDataSource?: GcpTenantDataSourceResolvers<ContextType>;
+  Invitation?: InvitationResolvers<ContextType>;
+  InvitationAssignment?: InvitationAssignmentResolvers<ContextType>;
   JSONObject?: GraphQLScalarType;
   K8CostModelConfig?: K8CostModelConfigResolvers<ContextType>;
   K8sConfig?: K8sConfigResolvers<ContextType>;
@@ -865,6 +1246,8 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   NebiusConfig?: NebiusConfigResolvers<ContextType>;
   NebiusDataSource?: NebiusDataSourceResolvers<ContextType>;
+  OptscaleMode?: OptscaleModeResolvers<ContextType>;
+  Organization?: OrganizationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 

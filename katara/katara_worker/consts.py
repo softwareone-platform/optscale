@@ -5,6 +5,7 @@ class TaskState(object):
     GOT_SCOPES = 'got_scopes'
     GETTING_RECIPIENTS = 'getting_recipients'
     GOT_RECIPIENTS = 'got_recipients'
+    CHECKING_EMAIL_SETTINGS = 'checking_email_settings'
     GENERATING_DATA = 'generating_data'
     GENERATED_DATA = 'generated_data'
     PUTTING_TO_HERALD = 'putting_to_herald'

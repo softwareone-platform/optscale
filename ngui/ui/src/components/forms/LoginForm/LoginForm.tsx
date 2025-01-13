@@ -10,7 +10,7 @@ import { EmailField, FormButtons, PasswordField } from "./FormElements";
 import { FormValues, LoginFormProps } from "./types";
 import { getDefaultValues } from "./utils";
 
-const LoginForm = ({ onSubmit, isLoading = false, isInvited = false }: LoginFormProps) => {
+const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: LoginFormProps) => {
   const { email = "" } = getQueryParams() as { email?: string };
 
   const methods = useForm<FormValues>({
@@ -28,7 +28,7 @@ const LoginForm = ({ onSubmit, isLoading = false, isInvited = false }: LoginForm
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <EmailField readOnly={isInvited} />
         <PasswordField />
-        <FormButtons isLoading={isLoading} />
+        <FormButtons isLoading={isLoading} disabled={disabled} />
         <Box display="flex" justifyContent="space-evenly">
           <Typography>
             <Link color="primary" to={PASSWORD_RECOVERY} component={RouterLink}>

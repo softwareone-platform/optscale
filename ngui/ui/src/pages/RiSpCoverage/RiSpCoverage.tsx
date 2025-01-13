@@ -3,14 +3,13 @@ import FormControl from "@mui/material/FormControl";
 import Stack from "@mui/material/Stack";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import DataSourceMultiSelect from "components/DataSourceMultiSelect";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import PageContentWrapper from "components/PageContentWrapper";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import RiSpCoverageContainer from "containers/RiSpCoverageContainer";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import { RECOMMENDATIONS, RI_SP_QUERY_PARAMETERS } from "urls";
@@ -30,9 +29,7 @@ const actionBarDefinition = {
 const TARGET_DATA_SOURCES_TYPES = [AWS_CNR];
 
 const RiSpCoverage = () => {
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const [selectedDataSourceIds, setSelectedDataSources] = useSyncQueryParamWithState({
     queryParamName: RI_SP_QUERY_PARAMETERS.DATA_SOURCE_ID,
@@ -57,7 +54,7 @@ const RiSpCoverage = () => {
     setSelectedEndDate(endDate);
   };
 
-  const allDataSources = cloudAccounts.filter((cloudAccount) => TARGET_DATA_SOURCES_TYPES.includes(cloudAccount.type));
+  const allDataSources = dataSources.filter((dataSource) => TARGET_DATA_SOURCES_TYPES.includes(dataSource.type));
 
   return (
     <>

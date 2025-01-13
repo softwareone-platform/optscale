@@ -1,6 +1,5 @@
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import AlertDialog from "components/AlertDialog";
 import DashboardGridLayout from "components/DashboardGridLayout";
 import MailTo from "components/MailTo";
@@ -14,7 +13,7 @@ import RecentModelsCardContainer from "containers/RecentModelsCardContainer";
 import RecentTasksCardContainer from "containers/RecentTasksCardContainer";
 import RecommendationsCardContainer from "containers/RecommendationsCardContainer";
 import TopResourcesExpensesCardContainer from "containers/TopResourcesExpensesCardContainer";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { EMAIL_SUPPORT, DOCS_HYSTAX_OPTSCALE, SHOW_POLICY_QUERY_PARAM } from "urls";
 import { ENVIRONMENT } from "utils/constants";
@@ -26,11 +25,9 @@ const Dashboard = () => {
 
   const startTour = useStartTour();
 
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
-  const thereAreOnlyEnvironmentDataSources = cloudAccounts.every(({ type }) => type === ENVIRONMENT);
+  const thereAreOnlyEnvironmentDataSources = dataSources.every(({ type }) => type === ENVIRONMENT);
 
   const { isFinished } = useProductTour(PRODUCT_TOUR);
 

@@ -14,7 +14,8 @@ import {
   DatabricksCredentials,
   AwsRootBillingBucket,
   AwsRootExportType,
-  AwsRootUseAwsEdpDiscount
+  AwsRootUseAwsEdpDiscount,
+  GcpTenantCredentials
 } from "components/DataSourceCredentialFields";
 import { RadioGroup, Switch } from "components/forms/common/fields";
 import {
@@ -36,7 +37,8 @@ import {
   ALIBABA_ACCOUNT,
   GCP_ACCOUNT,
   NEBIUS_ACCOUNT,
-  DATABRICKS_ACCOUNT
+  DATABRICKS_ACCOUNT,
+  GCP_TENANT_ACCOUNT
 } from "utils/constants";
 
 export const AWS_ROOT_INPUTS_FIELD_NAMES = {
@@ -134,6 +136,8 @@ const ConnectionInputs = ({ connectionType }) => {
       return <AlibabaCredentials />;
     case GCP_ACCOUNT:
       return <GcpCredentials />;
+    case GCP_TENANT_ACCOUNT:
+      return <GcpTenantCredentials />;
     case NEBIUS_ACCOUNT:
       return <NebiusInputs />;
     case DATABRICKS_ACCOUNT:

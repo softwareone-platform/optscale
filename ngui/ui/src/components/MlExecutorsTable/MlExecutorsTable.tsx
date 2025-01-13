@@ -1,34 +1,25 @@
 import { useMemo } from "react";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { lastUsed, firstSeen, mlExecutorLocation, expenses } from "utils/columns";
-import executor from "utils/columns/executor";
-import { OPTSCALE_MODE } from "utils/constants";
+import { getColumns } from "./utils";
 
-const MlExecutorsTable = ({ executors, isLoading }) => {
+const MlExecutorsTable = ({
+  executors,
+  withExpenses = false,
+  disableExecutorLink = false,
+  disableLocationLink = false,
+  isLoading = false
+}) => {
   const memoizedExecutors = useMemo(() => executors, [executors]);
 
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
-
   const columns = useMemo(
-    () => [
-      executor(),
-      mlExecutorLocation(),
-      ...(isFinOpsEnabled
-        ? [
-            expenses({
-              id: "expenses",
-              headerDataTestId: "lbl_expenses",
-              headerMessageId: "expenses",
-              accessorFn: (rowData) => rowData.resource?.total_cost
-            })
-          ]
-        : []),
-      lastUsed({ headerDataTestId: "lbl_last_used", accessorFn: (rowData) => rowData.last_used }),
-      firstSeen({ headerDataTestId: "lbl_first_seen", accessorFn: (rowData) => rowData.resource?.first_seen })
-    ],
-    [isFinOpsEnabled]
+    () =>
+      getColumns({
+        withExpenses,
+        disableExecutorLink,
+        disableLocationLink
+      }),
+    [disableExecutorLink, disableLocationLink, withExpenses]
   );
 
   return isLoading ? (

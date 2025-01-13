@@ -123,6 +123,22 @@ class TestEnvironmentResourceApi(TestApiBase):
         result_props = resp.get('env_properties', {})
         self.assertNotIn('field1', result_props.keys())
 
+    def test_send_invalid_params(self):
+        code, resp = self.client.env_properties_send(
+            self.env_resource_id, {'test': ['test']})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OE0214')
+
+        code, resp = self.client.env_properties_send(
+            self.env_resource_id, {'': 'test'})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OE0215')
+
+        code, resp = self.client.env_properties_send(
+            self.env_resource_id, {' ': 'test'})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OE0416')
+
     def test_send_properties_slack_message(self):
         p_send_msg = patch('rest_api.rest_api_server.controllers.base.'
                            'BaseController.publish_activities_task').start()

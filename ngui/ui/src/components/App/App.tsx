@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { GET_TOKEN } from "api/auth/actionTypes";
 import ErrorBoundary from "components/ErrorBoundary";
 import LayoutWrapper from "components/LayoutWrapper";
 import RoutePathContextProvider from "contexts/RoutePathContext/RoutePathContextProvider";
-import { useApiData } from "hooks/useApiData";
-import { useOrganizationIdQueryParameterListener } from "hooks/useOrganizationIdQueryParameterListener";
+import { useGetToken } from "hooks/useGetToken";
 import { LOGIN, USER_EMAIL_QUERY_PARAMETER_NAME } from "urls";
 import mainMenu from "utils/menus";
 import { formQueryString, getPathname, getQueryParams } from "utils/network";
@@ -38,11 +36,7 @@ const LoginNavigation = () => {
 };
 
 const RouteRender = ({ isTokenRequired, component, layout, context }) => {
-  const {
-    apiData: { token }
-  } = useApiData(GET_TOKEN);
-
-  useOrganizationIdQueryParameterListener();
+  const { token } = useGetToken();
 
   // TODO: create a Page component and wrap each page explicitly with Redirector
   if (!token && isTokenRequired) {

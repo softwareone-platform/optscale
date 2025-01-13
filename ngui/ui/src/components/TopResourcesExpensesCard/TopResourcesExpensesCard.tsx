@@ -18,7 +18,7 @@ import TableLoader from "components/TableLoader";
 import TitleValue from "components/TitleValue";
 import Tooltip from "components/Tooltip";
 import WrapperCard from "components/WrapperCard";
-import { useOrganizationPerspectives } from "hooks/useOrganizationPerspectives";
+import { useOrganizationPerspectives } from "hooks/coreData";
 import { getLast30DaysResourcesUrl, getResourcesExpensesUrl, RESOURCE_PERSPECTIVES } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";

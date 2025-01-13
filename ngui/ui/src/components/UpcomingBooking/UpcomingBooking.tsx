@@ -1,17 +1,24 @@
+import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import { INFINITY_SIGN } from "utils/constants";
 import { EN_FULL_FORMAT, format, secondsToMilliseconds, intervalToDuration } from "utils/datetime";
-import BookingTimeMeasure from "./BookingTimeMeasure";
+import Duration from "./Duration";
 
-const getInfiniteBookingTimeMeasuresDefinition = (acquiredSince) => ({
-  duration: INFINITY_SIGN,
-  remained: INFINITY_SIGN,
-  bookedUntil: INFINITY_SIGN,
-  // TODO: generalize getBookedSince in InfiniteBookingTimeMeasures and FiniteBookingTimeMeasures
-  bookedSince: format(secondsToMilliseconds(acquiredSince), EN_FULL_FORMAT)
-});
+type UpcomingBookingProps = {
+  employeeName: string;
+  acquiredSince: number;
+  releasedAt: number;
+};
 
-const getFiniteBookingTimeMeasuresDefinition = (acquiredSince, releasedAt) => {
+const getInfiniteBookingTimeMeasuresDefinition = (acquiredSince: number) =>
+  ({
+    duration: Infinity,
+    remained: Infinity,
+    bookedUntil: Infinity,
+    // TODO: generalize getBookedSince in InfiniteBookingTimeMeasures and FiniteBookingTimeMeasures
+    bookedSince: format(secondsToMilliseconds(acquiredSince), EN_FULL_FORMAT)
+  }) as const;
+
+const getFiniteBookingTimeMeasuresDefinition = (acquiredSince: number, releasedAt: number) => {
   const acquiredSinceInMilliseconds = secondsToMilliseconds(acquiredSince);
   const releasedAtInMilliseconds = secondsToMilliseconds(releasedAt);
 
@@ -29,7 +36,13 @@ const getFiniteBookingTimeMeasuresDefinition = (acquiredSince, releasedAt) => {
   };
 };
 
-export const getBookingTimeMeasuresDefinition = ({ releasedAt, acquiredSince }) => {
+export const getBookingTimeMeasuresDefinition = ({
+  releasedAt,
+  acquiredSince
+}: {
+  releasedAt: number;
+  acquiredSince: number;
+}) => {
   const timeMeasuresDefinition =
     releasedAt === 0
       ? getInfiniteBookingTimeMeasuresDefinition(acquiredSince)
@@ -37,15 +50,15 @@ export const getBookingTimeMeasuresDefinition = ({ releasedAt, acquiredSince }) 
   return timeMeasuresDefinition;
 };
 
-const UpcomingBooking = ({ employeeName, acquiredSince, releasedAt }) => {
+const UpcomingBooking = ({ employeeName, acquiredSince, releasedAt }: UpcomingBookingProps) => {
   const { bookedSince, bookedUntil, duration } = getBookingTimeMeasuresDefinition({ releasedAt, acquiredSince });
 
   return (
     <>
       <KeyValueLabel keyMessageId="user" value={employeeName} />
       <KeyValueLabel keyMessageId="since" value={bookedSince} />
-      <KeyValueLabel keyMessageId="until" value={bookedUntil} />
-      <BookingTimeMeasure messageId="duration" measure={duration} />
+      <KeyValueLabel keyMessageId="until" value={bookedUntil === Infinity ? <FormattedMessage id="infinite" /> : bookedUntil} />
+      {bookedUntil !== Infinity && <Duration duration={duration} />}
     </>
   );
 };

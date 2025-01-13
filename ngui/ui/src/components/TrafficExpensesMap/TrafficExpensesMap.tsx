@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { GoogleMapsOverlay } from "@deck.gl/google-maps";
 import { getViewStateForLocations } from "@flowmap.gl/data";
 import { FlowmapLayer, PickingType } from "@flowmap.gl/layers";
+import { Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import GoogleMapReact from "google-map-react";
@@ -15,6 +16,7 @@ import TrafficMapMarker from "components/TrafficMapMarker";
 import { isEmpty } from "utils/arrays";
 import { EXPENSES_MAP_OBJECT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { getEnvironmentVariable } from "utils/env";
+import { SPACING_2 } from "utils/layouts";
 import { TRAFFIC_EXPENSES_HEIGHT } from "utils/maps";
 import FlowMapDataProvider from "./FlowMapDataProvider";
 import useStyles from "./TrafficExpensesMap.styles";
@@ -231,60 +233,68 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
 
   const externalMarker = data?.externalLocations.length ? data?.externalLocations[0] : null;
   const interRegionMarker = data?.interRegion;
+
   const key = getEnvironmentVariable("VITE_GOOGLE_MAP_API_KEY");
+
   return (
-    <div
-      className={`flowmap-container ${UI_INITIAL.darkMode ? "dark" : "light"}`}
-      style={{ height: `${TRAFFIC_EXPENSES_HEIGHT}px`, width: "100%", position: "relative" }}
-    >
-      {!key && <InlineSeverityAlert messageId="googleMapsIsNotConfigured" />}
-      <GoogleMapReact
-        bootstrapURLKeys={{ key }}
-        defaultCenter={viewParams.defaultCenter}
-        center={{ lat: viewParams.latitude, lng: viewParams.longitude }}
-        defaultZoom={viewParams.defaultZoom}
-        zoom={viewParams.zoom}
-        options={{ styles: theme.palette.googleMap, minZoom: viewParams.minZoom, maxZoom: viewParams.maxZoom }}
-        yesIWantToUseGoogleMapApiInternals
-        onChange={onChange}
-        onGoogleApiLoaded={({ map, maps }) => {
-          const mapLegend = document.getElementById("map-legend");
-          const mapTooltip = document.getElementById("map-tooltip");
-          map.controls[maps.ControlPosition.BOTTOM_CENTER].push(mapLegend);
-          map.controls[maps.ControlPosition.TOP_LEFT].push(mapTooltip);
-          setLayers([]);
-          deckOverlay.finalize();
-          deckOverlay = new GoogleMapsOverlay();
-          deckOverlay.setMap(map);
-          refreshLayers();
-        }}
+    <Stack spacing={SPACING_2}>
+      {!key && (
+        <div>
+          <InlineSeverityAlert messageId="googleMapsIsNotConfigured" />
+        </div>
+      )}
+      <div
+        className={`flowmap-container ${UI_INITIAL.darkMode ? "dark" : "light"}`}
+        style={{ height: `${TRAFFIC_EXPENSES_HEIGHT}px`, width: "100%", position: "relative" }}
       >
-        {externalMarker && (
-          <TrafficMapMarker
-            key={`marker-${externalMarker.id}-${externalMarker.name}`}
-            lat={externalMarker.latitude}
-            lng={externalMarker.longitude}
-            type={EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER}
-            onClick={onMapClick}
-          />
-        )}
-        {interRegionMarker && (
-          <TrafficMapMarker
-            key={`marker-${interRegionMarker.id}-${interRegionMarker.name}`}
-            lat={interRegionMarker.latitude}
-            lng={interRegionMarker.longitude}
-            type={EXPENSES_MAP_OBJECT_TYPES.INTER_REGION_MARKER}
-            onClick={onMapClick}
-          />
-        )}
-      </GoogleMapReact>
-      <div id={"map-legend"} style={{ visibility: "hidden" }}>
-        {legend}
+        <GoogleMapReact
+          bootstrapURLKeys={{ key }}
+          defaultCenter={viewParams.defaultCenter}
+          center={{ lat: viewParams.latitude, lng: viewParams.longitude }}
+          defaultZoom={viewParams.defaultZoom}
+          zoom={viewParams.zoom}
+          options={{ styles: theme.palette.googleMap, minZoom: viewParams.minZoom, maxZoom: viewParams.maxZoom }}
+          yesIWantToUseGoogleMapApiInternals
+          onChange={onChange}
+          onGoogleApiLoaded={({ map, maps }) => {
+            const mapLegend = document.getElementById("map-legend");
+            const mapTooltip = document.getElementById("map-tooltip");
+            map.controls[maps.ControlPosition.BOTTOM_CENTER].push(mapLegend);
+            map.controls[maps.ControlPosition.TOP_LEFT].push(mapTooltip);
+            setLayers([]);
+            deckOverlay.finalize();
+            deckOverlay = new GoogleMapsOverlay();
+            deckOverlay.setMap(map);
+            refreshLayers();
+          }}
+        >
+          {externalMarker && (
+            <TrafficMapMarker
+              key={`marker-${externalMarker.id}-${externalMarker.name}`}
+              lat={externalMarker.latitude}
+              lng={externalMarker.longitude}
+              type={EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER}
+              onClick={onMapClick}
+            />
+          )}
+          {interRegionMarker && (
+            <TrafficMapMarker
+              key={`marker-${interRegionMarker.id}-${interRegionMarker.name}`}
+              lat={interRegionMarker.latitude}
+              lng={interRegionMarker.longitude}
+              type={EXPENSES_MAP_OBJECT_TYPES.INTER_REGION_MARKER}
+              onClick={onMapClick}
+            />
+          )}
+        </GoogleMapReact>
+        <div id={"map-legend"} style={{ visibility: "hidden" }}>
+          {legend}
+        </div>
+        <div id={"map-tooltip"} className={classes.tooltip} style={{ display: tooltip.display, ...tooltip.position }}>
+          {tooltip.content}
+        </div>
       </div>
-      <div id={"map-tooltip"} className={classes.tooltip} style={{ display: tooltip.display, ...tooltip.position }}>
-        {tooltip.content}
-      </div>
-    </div>
+    </Stack>
   );
 };
 

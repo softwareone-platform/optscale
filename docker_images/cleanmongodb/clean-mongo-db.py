@@ -29,6 +29,11 @@ class CleanMongoDB(object):
             # linked to cloud_account_id
             self.mongo_client.restapi.raw_expenses: ROWS_LIMIT,
             self.mongo_client.restapi.resources: ROWS_LIMIT,
+            # linked to organization_id
+            self.mongo_client.restapi.archived_recommendations: ROWS_LIMIT,
+            self.mongo_client.restapi.checklists: ROWS_LIMIT,
+            self.mongo_client.restapi.webhook_observer: ROWS_LIMIT,
+            self.mongo_client.restapi.webhook_logs: ROWS_LIMIT,
             # linked to run_id
             self.mongo_client.arcee.console: ROWS_LIMIT,
             self.mongo_client.arcee.log: ROWS_LIMIT,
@@ -318,14 +323,17 @@ class CleanMongoDB(object):
         return result
 
     def _delete_by_organization(self, org_id, token, infra_token):
-        if not token:
-            self.update_cleaned_at(organization_id=org_id)
-            return
+        restapi_collections = [
+            self.mongo_client.restapi.archived_recommendations,
+            self.mongo_client.restapi.checklists,
+            # delete clusters resources
+            self.mongo_client.restapi.resources,
+            self.mongo_client.restapi.webhook_observer,
+            self.mongo_client.restapi.webhook_logs
+        ]
         keeper_collections = [
             self.mongo_client.keeper.event
         ]
-        # delete clusters resources
-        restapi_collections = [self.mongo_client.restapi.resources]
         # delete ml objects
         arcee_collections = [self.mongo_client.arcee.dataset,
                              self.mongo_client.arcee.metric,
@@ -342,6 +350,10 @@ class CleanMongoDB(object):
         for collection in restapi_collections:
             self.limits[collection] = self.delete_in_chunks(
                 collection, 'organization_id', org_id)
+
+        if not token:
+            self.update_cleaned_at(organization_id=org_id)
+            return
         for collection in arcee_collections:
             self.limits[collection] = self.delete_in_chunks(
                 collection, 'token', token)

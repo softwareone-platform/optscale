@@ -1,17 +1,27 @@
+import { useLazyQuery, useMutation } from "@apollo/client";
 import CreateOrganizationForm from "components/forms/CreateOrganizationForm";
 import { FormValues } from "components/forms/CreateOrganizationForm/types";
-import OrganizationsService from "services/OrganizationsService";
+import { CREATE_ORGANIZATION, GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
 
 const CreateOrganizationContainer = ({ onSuccess, closeSideModal }) => {
-  const { useCreate, useGet } = OrganizationsService();
+  const [createOrganization, { loading: createOrganizationLoading }] = useMutation(CREATE_ORGANIZATION);
 
-  const { onCreate, isLoading: isCreateLoading } = useCreate();
-  const { getOrganizations, isLoading: isGetLoading } = useGet();
+  const [getOrganizations, { loading: isOrganizationsLoading }] = useLazyQuery(GET_ORGANIZATIONS, {
+    fetchPolicy: "network-only"
+  });
 
-  const isLoading = isCreateLoading || isGetLoading;
+  const isLoading = createOrganizationLoading || isOrganizationsLoading;
 
   const onSubmit = async (formData: FormValues) => {
-    const { id } = await onCreate(formData.name);
+    const {
+      data: {
+        createOrganization: { id }
+      }
+    } = await createOrganization({
+      variables: {
+        organizationName: formData.name
+      }
+    });
     await getOrganizations();
     onSuccess(id);
     closeSideModal();

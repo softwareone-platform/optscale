@@ -3,7 +3,7 @@ import { Alert, AlertProps, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import useStyles from "./InlineSeverityAlert.styles";
 
-type InlineSeverityAlertProps = {
+export type InlineSeverityAlertProps = {
   messageId: string;
   messageValues?: Record<string, ReactNode>;
   messageDataTestId?: string;

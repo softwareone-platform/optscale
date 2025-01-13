@@ -51,8 +51,7 @@ class ExecutorAsyncCollectionHandler(
         -   name: token
             in: query
             description: |
-                Unique token related to organization profiling token (only
-                with run_id)
+                MD5 hash of organization profiling token (only with run_id)
             required: false
             type: string
         responses:
@@ -145,10 +144,10 @@ class ExecutorAsyncCollectionHandler(
                 organization_id, token, raises=False) or not run_ids:
             await self.check_permissions(
                 'INFO_ORGANIZATION', 'organization', organization_id)
-        token = await self._get_profiling_token(organization_id)
+        profiling_token = await self._get_profiling_token(organization_id)
         task_ids = self.get_arg('task_id', str, repeated=True)
         res = await run_task(
-            self.controller.list, organization_id, task_ids, token,
+            self.controller.list, organization_id, task_ids, profiling_token,
             run_ids=run_ids
         )
         tasks_dict = {'executors': res}

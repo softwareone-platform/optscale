@@ -18,6 +18,7 @@ import PoolsTableReducer, { EXPANDED_POOL_ROWS } from "components/PoolsTable/red
 import TopAlertReducer, { ALERTS } from "components/TopAlertWrapper/reducer";
 import { IS_EXISTING_USER } from "components/TopAlertWrapper/TopAlertWrapper";
 import { reducer as TourReducer, TOURS } from "components/Tour";
+import InitializeReducer, { INITIAL } from "containers/InitializeContainer/redux";
 import ScopeIdReducer, { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";
 import RangeDatesReducer, { RANGE_DATES } from "containers/RangePickerFormContainer/reducer";
 import RecommendationsControlsStateReducer, {
@@ -61,6 +62,7 @@ const authPersistConfig = {
 };
 
 const appReducer = combineReducers({
+  [INITIAL]: InitializeReducer,
   [API]: ApiReducer,
   [AUTH]: persistReducer(authPersistConfig, AuthReducer),
   [RESTAPI]: RestapiReducer,
@@ -93,6 +95,7 @@ const rootReducer = (incomingState, action) => {
 
     // Do not persist the following keys after signing out
     const {
+      [INITIAL]: initial,
       [API]: api,
       [RESTAPI]: restapi,
       [JIRA_BUS]: jiraBus,

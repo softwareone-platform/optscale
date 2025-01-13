@@ -1,12 +1,9 @@
-import { GET_TOKEN } from "api/auth/actionTypes";
 import ProfileMenu from "components/ProfileMenu";
-import { useApiData } from "hooks/useApiData";
+import { useGetToken } from "hooks/useGetToken";
 import UserService from "services/UserService";
 
 const ProfileMenuContainer = () => {
-  const {
-    apiData: { userId }
-  } = useApiData(GET_TOKEN);
+  const { userId } = useGetToken();
 
   const { useGet } = UserService();
   const {

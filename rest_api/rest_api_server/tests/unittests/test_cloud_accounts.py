@@ -595,7 +595,7 @@ class TestCloudAccountApi(TestApiBase):
             }
             if cloud_acc['id'] == cloud_acc2['id']:
                 self.assertEqual(cloud_acc['details']['cost'], 90)
-                self.assertEqual(cloud_acc['details']['tracked'], 1)
+                self.assertEqual(cloud_acc['details']['resources'], 1)
                 self.assertEqual(cloud_acc['details']['forecast'], 277)
                 self.assertEqual(
                     cloud_acc['details']['last_month_cost'], 240)
@@ -603,7 +603,7 @@ class TestCloudAccountApi(TestApiBase):
                                      res_discovery_info_2)
             else:
                 self.assertEqual(cloud_acc['details']['cost'], 450)
-                self.assertEqual(cloud_acc['details']['tracked'], 2)
+                self.assertEqual(cloud_acc['details']['resources'], 2)
                 self.assertEqual(cloud_acc['details']['forecast'], 807)
                 self.assertEqual(
                     cloud_acc['details']['last_month_cost'], 180)
@@ -685,6 +685,50 @@ class TestCloudAccountApi(TestApiBase):
             self.assertEqual(details['forecast'], 580)
             self.assertEqual(details['last_month_cost'], 360)
             self.assertEqual(details['resources'], 2)
+            self.assertDictEqual(cloud_discovery_info, res_discovery_info)
+
+    def test_get_details_deleted_res(self):
+        self.valid_aws_cloud_acc['name'] = 'cloud_1'
+        code, cloud_acc1 = self.create_cloud_account(
+            self.org_id, self.valid_aws_cloud_acc)
+        self.assertEqual(code, 201)
+
+        day_in_month = datetime.datetime(2020, 1, 14)
+
+        _, resource = self.cloud_resource_create(
+            cloud_acc1['id'], {
+                'cloud_resource_id': 'cloud_resource_id',
+                'resource_type': 'resource_type',
+                'first_seen': int(day_in_month.timestamp()),
+                'last_seen': int(day_in_month.timestamp())
+            })
+        self.expenses.append({
+            'resource_id': resource['id'],
+            'cost': 100,
+            'date': day_in_month,
+            'cloud_account_id': cloud_acc1['id'],
+            'sign': 1,
+        })
+
+        code, res = self.client.discovery_info_list(
+            cloud_acc1['id'])
+        self.assertEqual(code, 200)
+        res_discovery_info = {di['id']: di for di in res['discovery_info']}
+
+        self.resources_collection.update_one({'_id': resource['id']},
+                                             {'$set': {'deleted_at': 1}})
+
+        with freeze_time(datetime.datetime(2020, 1, 15)):
+            code, cloud_acc = self.client.cloud_account_get(
+                cloud_acc1['id'], details=True)
+            details = cloud_acc['details']
+            cloud_discovery_info = {
+                di['id']: di for di in details['discovery_infos']
+            }
+            self.assertEqual(details['cost'], 0)
+            self.assertEqual(details['forecast'], 0)
+            self.assertEqual(details['last_month_cost'], 0)
+            self.assertEqual(details['resources'], 0)
             self.assertDictEqual(cloud_discovery_info, res_discovery_info)
 
     def test_patch_enable_import(self):
@@ -1991,3 +2035,57 @@ class TestCloudAccountApi(TestApiBase):
     def test_adapter_implemented(self):
         for t in list(CloudTypes):
             CloudAdapter.get_adapter({'type': t.value})
+
+    def test_gcp_tenant_workflow(self):
+        body = {
+            'name': 'gcp cloud_acc',
+            'type': 'gcp_tenant',
+            'config': {
+                'credentials': {
+                    "project_id": "hystax",
+                    "type": "service_account",
+                    "private_key_id": "redacted",
+                    "private_key": "redacted",
+                },
+                'billing_data': {
+                    'dataset_name': 'billing_data',
+                    'table_name': 'gcp_billing_export_v1',
+                },
+            }
+        }
+        code, parent_ca = self.create_cloud_account(self.org_id, body)
+        self.assertEqual(code, 201)
+        self.assertEqual(parent_ca['type'], body['type'])
+        self.assertDictEqual(parent_ca['config']['billing_data'], {
+            'dataset_name': 'billing_data',
+            'project_id': 'hystax',
+            'table_name': 'gcp_billing_export_v1'
+        })
+        patch('tools.cloud_adapter.clouds.gcp_tenant.GcpTenant'
+              '.get_children_configs',
+              return_value=[{
+                  'name': 'child 1',
+                  'config': {'project_id': 'project_1'},
+                  'type': 'gcp_cnr'
+              }]).start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp.validate_credentials',
+              return_value={'account_id': 'project_1', 'warnings': []}
+              ).start()
+        code, _ = self.client.observe_resources(self.org_id)
+        self.assertEqual(code, 204)
+        code, resp = self.client.cloud_account_list(self.org_id)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['cloud_accounts']), 2)
+
+        for c in resp['cloud_accounts']:
+            if c['id'] != parent_ca['id']:
+                child_ca_id = c['id']
+                self.assertEqual(c['type'], 'gcp_cnr')
+                self.assertDictEqual(c['config']['credentials'], {
+                    "type": "service_account",
+                    "private_key_id": "redacted",
+                    "private_key": "redacted",
+                })
+                ca_obj = self.get_cloud_account_object(child_ca_id)
+                conf = decode_config(ca_obj.config)
+                self.assertEqual(conf, {'project_id': 'project_1'})

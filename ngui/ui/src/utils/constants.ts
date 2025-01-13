@@ -54,6 +54,7 @@ export const AZURE_CNR = "azure_cnr";
 export const AZURE_TENANT = "azure_tenant";
 export const DATABRICKS = "databricks";
 export const GCP_CNR = "gcp_cnr";
+export const GCP_TENANT = "gcp_tenant";
 export const ALIBABA_CNR = "alibaba_cnr";
 export const NEBIUS = "nebius";
 export const KUBERNETES_CNR = "kubernetes_cnr";
@@ -67,6 +68,7 @@ export const DATABRICKS_ACCOUNT = "databricks";
 export const KUBERNETES = "kubernetes";
 export const ALIBABA_ACCOUNT = "alibaba";
 export const GCP_ACCOUNT = "gcp";
+export const GCP_TENANT_ACCOUNT = "gcpTenant";
 export const NEBIUS_ACCOUNT = "nebius";
 
 export const DATASOURCE_TYPE = "type";
@@ -80,6 +82,7 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [DATABRICKS]: "databricks",
   [ALIBABA_CNR]: "alibaba",
   [GCP_CNR]: "gcp",
+  [GCP_TENANT]: "gcpTenant",
   [ENVIRONMENT]: "environment",
   [NEBIUS]: "nebius",
   [KUBERNETES_CNR]: "kubernetes"
@@ -514,8 +517,6 @@ export const ALERT_SEVERITY = Object.freeze({
   SUCCESS: "success",
   WARNING: "warning"
 });
-
-export const INFINITY_SIGN = "∞";
 
 export const ENVIRONMENT_SOFTWARE_FIELD = "Software ";
 export const ENVIRONMENT_JIRA_TICKETS_FIELD = "Jira tickets ";
@@ -987,3 +988,8 @@ export const OPTSCALE_MODE = Object.freeze({
 
 export const DATASET_NAME_LENGTH_LIMIT = 70;
 export const DATASET_PATH_LENGTH_LIMIT = 70;
+
+export const AUTH_PROVIDERS = Object.freeze({
+  GOOGLE: "google",
+  MICROSOFT: "microsoft"
+});

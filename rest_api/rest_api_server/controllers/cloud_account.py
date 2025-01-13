@@ -285,7 +285,6 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         return result
 
     def create(self, **kwargs):
-        LOG.info('Creating cloud account. Input data: %s', kwargs)
         org_id = kwargs.get('organization_id')
         self._check_organization(org_id)
         root_config = kwargs.pop('root_config', None)
@@ -311,9 +310,10 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             adapter_cls, config)
         if last_import_modified_at:
             kwargs['last_import_modified_at'] = last_import_modified_at
+        LOG.info('Creating cloud account. Input data: %s', kwargs)
         ca_obj = CloudAccount(**kwargs)
         self._validate(ca_obj, True, **kwargs)
-        if ca_obj.type == CloudTypes.AZURE_TENANT:
+        if ca_obj.type in [CloudTypes.AZURE_TENANT, CloudTypes.GCP_TENANT]:
             ca_obj.auto_import = False
         configuration_res = self._configure_report(
             adapter_cls, config, organization)
@@ -462,7 +462,6 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         return bool(set(kwargs.keys()).intersection(set(NOTIFY_FIELDS)))
 
     def edit(self, item_id, **kwargs):
-        LOG.info('Editing cloud account %s. Input: %s', item_id, kwargs)
         self.check_update_restrictions(**kwargs)
         cloud_acc_obj = self.get(item_id)
         self._validate(cloud_acc_obj, False, **kwargs)
@@ -480,6 +479,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             self.session, self._config)
         old_config = cloud_acc_obj.decoded_config
         config = kwargs.pop('config', {})
+        LOG.info('Editing cloud account %s. Input: %s. Config: %s', item_id,
+                 kwargs, bool(config))
         if cloud_acc_obj.parent_id and config:
             raise WrongArgumentsException(Err.OE0211, ['config'])
         organization = OrganizationController(
@@ -726,7 +727,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                 'forecast': expense_ctrl.get_monthly_forecast(
                     last_stats['cost'] + current_stats['cost'],
                     current_stats['cost'], first_expenses.get(acc.id)),
-                'tracked': current_stats['count'],
+                'resources': current_stats['count'],
                 'last_month_cost': last_stats['cost'],
                 'discovery_infos': discovery_infos.get(acc.id, {})
             }
@@ -760,6 +761,9 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                     organization_id=root_account.organization_id,
                     parent_id=root_account.id, root_config=root_config.copy(),
                     **c_config)
+                if c_name in skipped_subscriptions:
+                    skipped_subscriptions.pop(c_name, None)
+            except ConflictException:
                 if c_name in skipped_subscriptions:
                     skipped_subscriptions.pop(c_name, None)
             except Exception as ex:

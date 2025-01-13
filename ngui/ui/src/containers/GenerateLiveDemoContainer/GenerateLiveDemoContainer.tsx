@@ -1,25 +1,38 @@
 import { useEffect, useState } from "react";
+import { useMutation } from "@apollo/client";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getLiveDemo, createLiveDemo, RESTAPI, AUTH } from "api";
-import { GET_TOKEN } from "api/auth/actionTypes";
+import { getLiveDemo, createLiveDemo, RESTAPI } from "api";
 import { GET_LIVE_DEMO, CREATE_LIVE_DEMO } from "api/restapi/actionTypes";
 import GenerateLiveDemo from "components/GenerateLiveDemo";
+import { initialize } from "containers/InitializeContainer/redux";
+import { CREATE_TOKEN } from "graphql/api/auth/queries";
 import { useApiState } from "hooks/useApiState";
-import { useAuthorization } from "hooks/useAuthorization";
 import { reset } from "reducers/route";
 import { HOME } from "urls";
 import { isError } from "utils/api";
+import macaroon from "utils/macaroons";
 import { getQueryParams } from "utils/network";
 
-const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }) => {
+type GenerateLiveDemoContainerProps = {
+  email?: string;
+  subscribeToNewsletter?: boolean;
+};
+
+const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }: GenerateLiveDemoContainerProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [hasError, setHasError] = useState(false);
 
   const { isLoading: isGetLiveDemoLoading } = useApiState(GET_LIVE_DEMO);
   const { isLoading: isCreateLiveDemoLoading } = useApiState(CREATE_LIVE_DEMO);
-  const { authorize, isLoading: isAuthorizationLoading } = useAuthorization();
+
+  const [createToken, { loading: loginLoading }] = useMutation(CREATE_TOKEN, {
+    onCompleted: (data) => {
+      const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
+      dispatch(initialize({ ...data.token, caveats }));
+    }
+  });
 
   useEffect(() => {
     const activeLiveDemo = (handlers) => (_, getState) => {
@@ -53,13 +66,13 @@ const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }) => {
           const generatedEmail = getState()?.[RESTAPI]?.[GET_LIVE_DEMO].email ?? "";
           const generatedPassword = getState()?.[RESTAPI]?.[GET_LIVE_DEMO].password ?? "";
           if (generatedEmail && generatedPassword) {
-            return authorize(generatedEmail, generatedPassword);
+            return createToken({ variables: { email: generatedEmail, password: generatedPassword } });
           }
 
           return Promise.reject();
         })
         .then(() => {
-          const token = getState()?.[AUTH]?.[GET_TOKEN]?.token ?? "";
+          const { token } = getState()?.initial ?? {};
 
           if (token) {
             return Promise.reject(handlers.redirect);
@@ -80,11 +93,11 @@ const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }) => {
         })
       );
     }
-  }, [hasError, dispatch, navigate, authorize, email, subscribeToNewsletter]);
+  }, [hasError, dispatch, navigate, email, subscribeToNewsletter, createToken]);
 
   return (
     <GenerateLiveDemo
-      isLoading={isGetLiveDemoLoading || isCreateLiveDemoLoading || isAuthorizationLoading}
+      isLoading={loginLoading || isGetLiveDemoLoading || isCreateLiveDemoLoading}
       showRetry={hasError}
       retry={() => setHasError(false)}
     />

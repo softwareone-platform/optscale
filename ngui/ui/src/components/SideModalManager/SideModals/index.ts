@@ -60,6 +60,7 @@ import S3DuplicateFinderSettingsModal from "./S3DuplicateFinderSettingsModal";
 import SaveMlChartsDashboard from "./SaveMlChartsDashboard";
 import SelectedBucketsInfoModal from "./SelectedBucketsInfoModal";
 import SelectStageOrMilestoneModal from "./SelectStageOrMilestoneModal";
+import ShareRunLinkModal from "./ShareRunLinkModal";
 import ShareSettingsModal from "./ShareSettingsModal";
 import SlackIntegrationModal from "./SlackIntegrationModal";
 import UnmarkEnvironmentModal from "./UnmarkEnvironmentModal";
@@ -135,5 +136,6 @@ export {
   EditModelPathModal,
   EditModelVersionTagsModal,
   MlDeleteArtifactModal,
-  DataSourceBillingReimportModal
+  DataSourceBillingReimportModal,
+  ShareRunLinkModal
 };

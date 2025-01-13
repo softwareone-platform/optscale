@@ -3,15 +3,15 @@ import Link from "@mui/material/Link";
 import { useTheme } from "@mui/material/styles";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { GET_INVITATIONS } from "api/restapi/actionTypes";
 import SnackbarAlert from "components/SnackbarAlert";
-import { useApiData } from "hooks/useApiData";
+import { useInvitations } from "hooks/coreData";
 import { SETTINGS_TABS } from "pages/Settings/Settings";
 import { getSettingsUrl } from "urls";
 import { isEmpty } from "utils/arrays";
 
 const PendingInvitationsAlert = () => {
-  const { apiData: invitations } = useApiData(GET_INVITATIONS, []);
+  const invitations = useInvitations();
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

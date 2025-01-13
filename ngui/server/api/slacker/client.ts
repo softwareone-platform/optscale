@@ -13,7 +13,7 @@ class SlackerClient extends BaseClient {
 
   async connectSlackUser(secret) {
     return this.post("connect_slack_user", {
-      body: JSON.stringify({ secret }),
+      body: { secret },
     });
   }
 }

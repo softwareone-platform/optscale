@@ -1,7 +1,17 @@
 import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import SummaryList from "components/SummaryList";
-import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, AZURE_TENANT, GCP_CNR, KUBERNETES_CNR, NEBIUS, DATABRICKS } from "utils/constants";
+import {
+  ALIBABA_CNR,
+  AWS_CNR,
+  AZURE_CNR,
+  AZURE_TENANT,
+  GCP_CNR,
+  KUBERNETES_CNR,
+  NEBIUS,
+  DATABRICKS,
+  GCP_TENANT
+} from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { ChildrenList } from "./ChildrenList";
 import { K8sHelp } from "./Help";
@@ -21,6 +31,7 @@ const DataSourceDetails = ({ id, accountId, parentId, type, config = {} }) => {
     [AZURE_CNR]: AzureProperties,
     [AZURE_TENANT]: AzureProperties,
     [GCP_CNR]: GcpProperties,
+    [GCP_TENANT]: GcpProperties,
     [ALIBABA_CNR]: AlibabaProperties,
     [KUBERNETES_CNR]: K8sProperties,
     [NEBIUS]: NebiusProperties,
@@ -32,7 +43,8 @@ const DataSourceDetails = ({ id, accountId, parentId, type, config = {} }) => {
   }[type];
 
   const childrenList = {
-    [AZURE_TENANT]: ChildrenList
+    [AZURE_TENANT]: ChildrenList,
+    [GCP_TENANT]: ChildrenList
   }[type];
 
   return (

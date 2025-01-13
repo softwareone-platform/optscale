@@ -1,10 +1,9 @@
-import { GET_CURRENT_EMPLOYEE } from "api/restapi/actionTypes";
 import Filters from "components/Filters";
 import { RESOURCE_FILTERS } from "components/Filters/constants";
-import { useApiData } from "./useApiData";
+import { useCurrentEmployee } from "./coreData/useCurrentEmployee";
 
 export const useResourceFilters = (filterValues, appliedFilters) => {
-  const { apiData: { currentEmployee: { id: currentEmployeeId } = {} } = {} } = useApiData(GET_CURRENT_EMPLOYEE);
+  const { id: currentEmployeeId } = useCurrentEmployee();
 
   const scopeInfo = { currentEmployeeId };
 

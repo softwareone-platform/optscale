@@ -98,56 +98,63 @@ const CloudExpensesChart = ({ cloudAccounts, limit, forecast, isLoading = false 
 
   const renderChart = !isEmpty(cloudAccounts) ? (
     <Box
-      display="flex"
-      alignItems="flex-start"
-      position="relative"
-      border={`${CHART_BORDER_WIDTH} ${CHART_BORDER_STYLE} ${theme.palette[chartBorderColor].main}`}
+      sx={{
+        // Allocate space for marker labels
+        py: 3
+      }}
     >
-      {limit > forecast ? (
-        <CloudExpensesChartMarker
-          position="top"
-          value={limit}
-          chartBorderWidth={CHART_BORDER_WIDTH}
-          chartSegmentHeight={CHART_SEGMENT_HEIGHT}
-          valueMessageId={"limit"}
-          chartBase={chartBase}
-        />
-      ) : (
-        <CloudExpensesChartMarker
-          position="top"
-          value={forecast}
-          chartBorderWidth={CHART_BORDER_WIDTH}
-          chartSegmentHeight={CHART_SEGMENT_HEIGHT}
-          valueMessageId="forecast"
-          chartBase={chartBase}
-        />
-      )}
-      {cloudData.map((data) => {
-        const { details: { cost = 0, forecast: cloudAccountForecast = 0 } = {}, id } = data;
-        return cost !== 0 ? (
-          <Fragment key={id}>
-            {renderExpensesSegment(cost, data)}
-            {renderForecastSegment(cloudAccountForecast, cost, data)}
-          </Fragment>
-        ) : null;
-      })}
-      {limit > forecast ? (
-        <CloudExpensesChartMarker
-          value={forecast}
-          chartBorderWidth={CHART_BORDER_WIDTH}
-          chartSegmentHeight={CHART_SEGMENT_HEIGHT}
-          valueMessageId="forecast"
-          chartBase={chartBase}
-        />
-      ) : (
-        <CloudExpensesChartMarker
-          value={limit}
-          chartBorderWidth={CHART_BORDER_WIDTH}
-          chartSegmentHeight={CHART_SEGMENT_HEIGHT}
-          valueMessageId="limit"
-          chartBase={chartBase}
-        />
-      )}
+      <Box
+        display="flex"
+        alignItems="flex-start"
+        position="relative"
+        border={`${CHART_BORDER_WIDTH} ${CHART_BORDER_STYLE} ${theme.palette[chartBorderColor].main}`}
+      >
+        {limit > forecast ? (
+          <CloudExpensesChartMarker
+            position="top"
+            value={limit}
+            chartBorderWidth={CHART_BORDER_WIDTH}
+            chartSegmentHeight={CHART_SEGMENT_HEIGHT}
+            valueMessageId={"limit"}
+            chartBase={chartBase}
+          />
+        ) : (
+          <CloudExpensesChartMarker
+            position="top"
+            value={forecast}
+            chartBorderWidth={CHART_BORDER_WIDTH}
+            chartSegmentHeight={CHART_SEGMENT_HEIGHT}
+            valueMessageId="forecast"
+            chartBase={chartBase}
+          />
+        )}
+        {cloudData.map((data) => {
+          const { details: { cost = 0, forecast: cloudAccountForecast = 0 } = {}, id } = data;
+          return cost !== 0 ? (
+            <Fragment key={id}>
+              {renderExpensesSegment(cost, data)}
+              {renderForecastSegment(cloudAccountForecast, cost, data)}
+            </Fragment>
+          ) : null;
+        })}
+        {limit > forecast ? (
+          <CloudExpensesChartMarker
+            value={forecast}
+            chartBorderWidth={CHART_BORDER_WIDTH}
+            chartSegmentHeight={CHART_SEGMENT_HEIGHT}
+            valueMessageId="forecast"
+            chartBase={chartBase}
+          />
+        ) : (
+          <CloudExpensesChartMarker
+            value={limit}
+            chartBorderWidth={CHART_BORDER_WIDTH}
+            chartSegmentHeight={CHART_SEGMENT_HEIGHT}
+            valueMessageId="limit"
+            chartBase={chartBase}
+          />
+        )}
+      </Box>
     </Box>
   ) : null;
 

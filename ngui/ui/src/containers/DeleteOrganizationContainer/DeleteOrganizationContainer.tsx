@@ -1,38 +1,33 @@
 import { useState } from "react";
+import { useMutation } from "@apollo/client";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import { useDispatch } from "react-redux";
-import { deleteOrganization } from "api";
-import { DELETE_ORGANIZATION } from "api/restapi/actionTypes";
 import DeleteEntity from "components/DeleteEntity";
 import Input from "components/Input";
 import OrganizationLabel from "components/OrganizationLabel";
-import { useApiState } from "hooks/useApiState";
+import { DELETE_ORGANIZATION } from "graphql/api/restapi/queries/restapi.queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useSignOut } from "hooks/useSignOut";
-import { isError } from "utils/api";
 
 const CONFIRMATION_TEXT = "delete";
 
 const DeleteOrganizationContainer = ({ onCancel }) => {
-  const dispatch = useDispatch();
-
   const { name: organizationName, organizationId } = useOrganizationInfo();
 
   const [confirmationTextInputValue, setConfirmationTextInputValue] = useState("");
 
-  const { isLoading } = useApiState(DELETE_ORGANIZATION);
-
   const signOut = useSignOut();
 
+  const [deleteOrganization, { loading }] = useMutation(DELETE_ORGANIZATION);
+
   const onDelete = () => {
-    dispatch((_, getState) => {
-      dispatch(deleteOrganization(organizationId)).then(() => {
-        if (!isError(DELETE_ORGANIZATION, getState())) {
-          onCancel();
-          signOut();
-        }
-      });
+    deleteOrganization({
+      variables: {
+        organizationId
+      }
+    }).then(() => {
+      onCancel();
+      signOut();
     });
   };
 
@@ -49,7 +44,7 @@ const DeleteOrganizationContainer = ({ onCancel }) => {
         onDelete
       }}
       onCancel={onCancel}
-      isLoading={isLoading}
+      isLoading={loading}
     >
       <Typography>
         <FormattedMessage id="youWillBeForcedToSignOut" />

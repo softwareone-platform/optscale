@@ -1,13 +1,12 @@
-import { Link, Stack } from "@mui/material";
+import { Link } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import AssignmentRulesTable from "components/AssignmentRulesTable";
 import ContentBackdropLoader from "components/ContentBackdropLoader";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { POOLS } from "urls";
-import { SPACING_2 } from "utils/layouts";
 
 const actionBarDefinition = {
   breadcrumbs: [
@@ -26,19 +25,19 @@ const AssignmentRules = ({ rules, managedPools, onUpdatePriority, isLoadingProps
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
       <ContentBackdropLoader isLoading={isUpdateLoading}>
-        <Stack spacing={SPACING_2}>
-          <div>
-            <AssignmentRulesTable
-              rules={rules}
-              managedPools={managedPools}
-              isLoadingProps={isLoadingProps}
-              onUpdatePriority={onUpdatePriority}
-            />
-          </div>
-          <div>
-            <InlineSeverityAlert messageId="assignmentRulesPageDescription" messageDataTestId="p_environments_list" />
-          </div>
-        </Stack>
+        <AssignmentRulesTable
+          rules={rules}
+          managedPools={managedPools}
+          isLoadingProps={isLoadingProps}
+          onUpdatePriority={onUpdatePriority}
+        />
+        <PageContentDescription
+          position="bottom"
+          alertProps={{
+            messageId: "assignmentRulesPageDescription",
+            messageDataTestId: "p_environments_list"
+          }}
+        />
       </ContentBackdropLoader>
     </PageContentWrapper>
   </>

@@ -1,3 +1,0 @@
-import RecommendationListItemResourceLabel from "./RecommendationListItemResourceLabel";
-
-export default RecommendationListItemResourceLabel;

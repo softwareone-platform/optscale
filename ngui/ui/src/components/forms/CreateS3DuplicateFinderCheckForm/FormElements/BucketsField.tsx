@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { FormControl, FormHelperText } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import CloudResourceId from "components/CloudResourceId";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
@@ -77,6 +77,8 @@ const TableField = ({ buckets, value, dataSources, onChange, errors }) => {
 };
 
 const BucketsField = ({ buckets, dataSources, isLoading }) => {
+  const intl = useIntl();
+
   const {
     formState: { errors },
     watch,
@@ -101,19 +103,23 @@ const BucketsField = ({ buckets, dataSources, isLoading }) => {
         rules={{
           validate: {
             atLeastOneSelected: (value) =>
-              isEmptyObject(value) ? <FormattedMessage id="atLeastOneBucketMustBeSelected" /> : true,
+              isEmptyObject(value)
+                ? intl.formatMessage({
+                    id: "atLeastOneBucketMustBeSelected"
+                  })
+                : true,
             maxBuckets: (value) => {
               const bucketsCount = Object.keys(value).length;
-              return bucketsCount > MAX_SELECTED_BUCKETS ? (
-                <FormattedMessage
-                  id="maxNBucketsCanBeSelected"
-                  values={{
-                    value: MAX_SELECTED_BUCKETS
-                  }}
-                />
-              ) : (
-                true
-              );
+              return bucketsCount > MAX_SELECTED_BUCKETS
+                ? intl.formatMessage(
+                    {
+                      id: "maxNBucketsCanBeSelected"
+                    },
+                    {
+                      value: MAX_SELECTED_BUCKETS
+                    }
+                  )
+                : true;
             }
           }
         }}

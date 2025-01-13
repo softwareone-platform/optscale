@@ -2,7 +2,7 @@ import { getUnit } from "@mui/material/styles/cssUtils";
 import { isMedia } from "theme";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { isObject } from "utils/objects";
-import { useOrganizationThemeSettings } from "./useOrganizationThemeSettings";
+import { useOrganizationThemeSettings } from "./coreData";
 
 const validateObject = (obj, validator) => {
   if (!isObject(obj)) {

@@ -1,8 +1,9 @@
-import { GET_ORGANIZATION_ALLOWED_ACTIONS, GET_POOL_ALLOWED_ACTIONS, GET_RESOURCE_ALLOWED_ACTIONS } from "api/auth/actionTypes";
+import { GET_POOL_ALLOWED_ACTIONS, GET_RESOURCE_ALLOWED_ACTIONS } from "api/auth/actionTypes";
 import { useApiData } from "hooks/useApiData";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { hasIntersection, getLength, isIdentical } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
+import { useOrganizationAllowedActions } from "./coreData";
 
 const CHECK_PERMISSION_CONDITION = Object.freeze({
   OR: "or",
@@ -34,7 +35,7 @@ const getLabel = (entityType) => {
     case SCOPE_TYPES.RESOURCE:
       return GET_RESOURCE_ALLOWED_ACTIONS;
     default:
-      return GET_ORGANIZATION_ALLOWED_ACTIONS;
+      return "";
   }
 };
 
@@ -49,6 +50,12 @@ const useScopedAllowedActions = (entityType, entityId) => {
     apiData: { allowedActions = {} }
   } = useApiData(label);
 
+  const organizationAllowedActions = useOrganizationAllowedActions();
+
+  if (entityType === SCOPE_TYPES.ORGANIZATION) {
+    return organizationAllowedActions[organizationId] || [];
+  }
+
   return allowedActions[id] || [];
 };
 
@@ -61,14 +68,12 @@ export const useAllAllowedActions = () => {
     apiData: { allowedActions: resourceAllowedAction = {} }
   } = useApiData(GET_RESOURCE_ALLOWED_ACTIONS);
 
-  const {
-    apiData: { allowedActions: organizationAllowedAction = {} }
-  } = useApiData(GET_ORGANIZATION_ALLOWED_ACTIONS);
+  const organizationAllowedActions = useOrganizationAllowedActions();
 
   return {
     [SCOPE_TYPES.POOL]: poolAllowedAction,
     [SCOPE_TYPES.RESOURCE]: resourceAllowedAction,
-    [SCOPE_TYPES.ORGANIZATION]: organizationAllowedAction
+    [SCOPE_TYPES.ORGANIZATION]: organizationAllowedActions
   };
 };
 
@@ -120,5 +125,9 @@ export const useFilterByPermissions = ({ entitiesIds, entitiesType, permissions,
     apiData: { allowedActions = {} }
   } = useApiData(label);
 
-  return entitiesIds.filter((id) => isAllowed(permissions, allowedActions[id] || [], condition));
+  const organizationAllowedActions = useOrganizationAllowedActions();
+
+  const allowedEntityActions = entitiesType === SCOPE_TYPES.ORGANIZATION ? organizationAllowedActions : allowedActions;
+
+  return entitiesIds.filter((entityId) => isAllowed(permissions, allowedEntityActions[entityId] || [], condition));
 };

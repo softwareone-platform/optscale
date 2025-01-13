@@ -6,7 +6,7 @@ class ViolatedConstraintsDiff(ViolatedConstraints):
     def generate(self):
         report = super().generate()
         if report:
-            report['template_type'] = 'pool_owner_violation_report'
+            report['template_type'] = self.get_template_type(__file__)
         return report
 
 

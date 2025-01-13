@@ -13,6 +13,7 @@ import {
   AZURE_TENANT_CREDENTIALS_FIELD_NAMES,
   AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES,
   GCP_CREDENTIALS_FIELD_NAMES,
+  GCP_TENANT_CREDENTIALS_FIELD_NAMES,
   KUBERNETES_CREDENTIALS_FIELD_NAMES,
   DATABRICKS_CREDENTIALS_FIELD_NAMES,
   AWS_ROOT_CREDENTIALS_FIELD_NAMES,
@@ -65,7 +66,9 @@ import {
   NEBIUS,
   DATABRICKS,
   DATABRICKS_ACCOUNT,
-  OPTSCALE_MODE
+  OPTSCALE_MODE,
+  GCP_TENANT_ACCOUNT,
+  GCP_TENANT
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
@@ -85,6 +88,7 @@ const getCloudType = (connectionType) =>
     [AZURE_TENANT_ACCOUNT]: AZURE_TENANT,
     [ALIBABA_ACCOUNT]: ALIBABA_CNR,
     [GCP_ACCOUNT]: GCP_CNR,
+    [GCP_TENANT_ACCOUNT]: GCP_TENANT,
     [NEBIUS_ACCOUNT]: NEBIUS,
     [DATABRICKS_ACCOUNT]: DATABRICKS,
     [KUBERNETES]: KUBERNETES_CNR
@@ -115,7 +119,6 @@ const getAwsParameters = (formData) => {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
       use_edp_discount: formData[AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
-      linked: false,
       cur_version: Number(formData[AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
       ...getConfigSchemeParameters()
     }
@@ -189,6 +192,22 @@ const getGoogleParameters = async (formData) => {
   };
 };
 
+const getGoogleTenantParameters = async (formData) => {
+  const credentials = await readFileAsText(formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.CREDENTIALS]);
+
+  return {
+    name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+    type: GCP_TENANT,
+    config: {
+      credentials: JSON.parse(credentials),
+      billing_data: {
+        dataset_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
+        table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]
+      }
+    }
+  };
+};
+
 const getNebiusParameters = (formData) => ({
   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
   type: NEBIUS,
@@ -227,7 +246,7 @@ const renderConnectionTypeDescription = (settings) =>
     </Typography>
   ));
 
-const renderConnectionTypeInfoMessage = ({ connectionType }) =>
+const renderConnectionTypeInfoMessage = (connectionType) =>
   ({
     [AWS_ROOT_ACCOUNT]: renderConnectionTypeDescription([
       {
@@ -387,10 +406,29 @@ const renderConnectionTypeInfoMessage = ({ connectionType }) =>
           p: (chunks) => <p>{chunks}</p>
         }
       }
+    ]),
+    [GCP_TENANT_ACCOUNT]: renderConnectionTypeDescription([
+      {
+        key: "createGCPTenantDocumentationReference1",
+        messageId: "createGCPTenantDocumentationReference1"
+      },
+      {
+        key: "createGCPTenantDocumentationReference2",
+        messageId: "createGCPTenantDocumentationReference2",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>,
+          p: (chunks) => <p>{chunks}</p>
+        }
+      }
     ])
   })[connectionType];
 
-const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading, showCancel = true }) => {
+const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCancel = true }) => {
   const methods = useForm();
 
   const ref = useRef();
@@ -451,6 +489,13 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading, showCancel = t
       messageId: GCP_ACCOUNT,
       dataTestId: "btn_gcp_account",
       action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR)
+    },
+    {
+      id: GCP_TENANT_ACCOUNT,
+      icon: GcpLogoIcon,
+      messageId: GCP_TENANT_ACCOUNT,
+      dataTestId: "btn_gcp_tenant_account",
+      action: () => defaultTileAction(GCP_TENANT_ACCOUNT, GCP_TENANT)
     },
     {
       id: ALIBABA_ACCOUNT,
@@ -518,7 +563,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading, showCancel = t
           ))}
         </div>
         <Box sx={{ width: { md: `max(50%, ${width}px)` } }}>
-          <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage({ connectionType })}</Box>
+          <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage(connectionType)}</Box>
           <form
             onSubmit={
               isDemo
@@ -531,6 +576,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading, showCancel = t
                       [AZURE_TENANT]: getAzureTenantParameters,
                       [AZURE_CNR]: getAzureSubscriptionParameters,
                       [GCP_CNR]: getGoogleParameters,
+                      [GCP_TENANT]: getGoogleTenantParameters,
                       [ALIBABA_CNR]: getAlibabaParameters,
                       [NEBIUS]: getNebiusParameters,
                       [KUBERNETES_CNR]: getKubernetesParameters,

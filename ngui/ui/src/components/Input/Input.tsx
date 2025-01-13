@@ -25,15 +25,11 @@ const Input = forwardRef((props, ref) => {
 
   const inputClassName = cx(isMasked ? classes.masked : "");
 
-  const { readOnly = false, style } = InputProps;
-
-  // Please note, disableUnderline not supported by outlined variant.
-  // But now we replacing variant to standard if control is readOnly
-  const InputPropsMerged = { ...InputProps, style, ...(readOnly ? { disableUnderline: true } : {}) };
+  const { readOnly } = InputProps;
 
   return (
     <TextField
-      variant={readOnly ? "standard" : variant}
+      variant={readOnly ? "outlined" : variant}
       fullWidth={fullWidth}
       type={type}
       onCopy={isMasked ? (event) => event.preventDefault() : undefined}
@@ -42,12 +38,18 @@ const Input = forwardRef((props, ref) => {
         "data-test-id": dataTestId,
         className: cx(inputClassName, inputProps.className)
       }}
-      sx={sx}
+      sx={{
+        sx,
+        fieldset: {
+          ...sx?.fieldset,
+          border: readOnly ? "none" : undefined
+        }
+      }}
       InputLabelProps={{
         shrink: true,
         ...InputLabelProps
       }}
-      InputProps={InputPropsMerged}
+      InputProps={InputProps}
       minRows={minRows}
       maxRows={maxRows}
       {...rest}

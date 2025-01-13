@@ -26,7 +26,7 @@ const descriptionColumn = (state) => ({
   )
 });
 
-const actionsColumn = ({ active = true, isLoading, patchResource, shouldRenderTableActions }) => ({
+const actionsColumn = ({ active = true, isLoading, patchResource, havePermissionsToPerformActions }) => ({
   header: (
     <TextWithDataTestId dataTestId={`lbl_table_${active ? "active" : "dismissed"}_actions`}>
       <FormattedMessage id="actions" />
@@ -43,10 +43,10 @@ const actionsColumn = ({ active = true, isLoading, patchResource, shouldRenderTa
         onClick={() =>
           patchResource(original.name, active ? RESOURCE_VISIBILITY_ACTIONS.DISMISS : RESOURCE_VISIBILITY_ACTIONS.ACTIVATE)
         }
-        disabled={!shouldRenderTableActions}
+        disabled={!havePermissionsToPerformActions}
         tooltip={{
           show: true,
-          value: shouldRenderTableActions ? (
+          value: havePermissionsToPerformActions ? (
             <FormattedMessage id={active ? "dismissRecommendation" : "activateRecommendation"} />
           ) : (
             <FormattedMessage id="youDoNotHaveEnoughPermissions" />
@@ -72,16 +72,16 @@ const ResourceRecommendationLayout = ({ title, table }) => (
 const DismissedResourceRecommendations = ({
   patchResource,
   dismissedRecommendations = [],
-  shouldRenderTableActions,
+  havePermissionsToPerformActions,
   isLoading
 }) => {
   const data = useMemo(() => dismissedRecommendations, [dismissedRecommendations]);
   const columns = useMemo(
     () => [
       descriptionColumn("dismissed"),
-      actionsColumn({ active: false, isLoading, patchResource, shouldRenderTableActions })
+      actionsColumn({ active: false, isLoading, patchResource, havePermissionsToPerformActions })
     ],
-    [isLoading, patchResource, shouldRenderTableActions]
+    [isLoading, patchResource, havePermissionsToPerformActions]
   );
   return (
     <ResourceRecommendationLayout
@@ -105,10 +105,17 @@ const DismissedResourceRecommendations = ({
   );
 };
 
-const ActiveResourceRecommendations = ({ patchResource, activeRecommendations = [], shouldRenderTableActions, isLoading }) => {
+const ActiveResourceRecommendations = ({
+  patchResource,
+  activeRecommendations = [],
+  havePermissionsToPerformActions,
+  isLoading
+}) => {
   const data = useMemo(() => activeRecommendations, [activeRecommendations]);
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const includesAnyDismissable = activeRecommendations.some((recommendation) => recommendation.dismissable);
+
+    return [
       descriptionColumn("active"),
       {
         header: (
@@ -120,10 +127,11 @@ const ActiveResourceRecommendations = ({ patchResource, activeRecommendations = 
         defaultSort: "desc",
         cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />
       },
-      actionsColumn({ active: true, isLoading, patchResource, shouldRenderTableActions })
-    ],
-    [isLoading, patchResource, shouldRenderTableActions]
-  );
+      ...(includesAnyDismissable
+        ? [actionsColumn({ active: true, isLoading, patchResource, havePermissionsToPerformActions })]
+        : [])
+    ];
+  }, [activeRecommendations, isLoading, patchResource, havePermissionsToPerformActions]);
   return (
     <ResourceRecommendationLayout
       title={<ResourceRecommendationTitle messageId="active" />}
@@ -160,7 +168,7 @@ const ResourceRecommendations = ({
   resourceId,
   isLoading = false
 }) => {
-  const shouldRenderTableActions = useIsAllowed({
+  const havePermissionsToPerformActions = useIsAllowed({
     entityType: SCOPE_TYPES.RESOURCE,
     entityId: resourceId,
     requiredActions: ["MANAGE_RESOURCES", "MANAGE_OWN_RESOURCES"]
@@ -181,7 +189,7 @@ const ResourceRecommendations = ({
         <ActiveResourceRecommendations
           activeRecommendations={recommendationsWithInfo}
           patchResource={patchResource}
-          shouldRenderTableActions={shouldRenderTableActions}
+          havePermissionsToPerformActions={havePermissionsToPerformActions}
           isLoading={isLoading}
         />
       )}
@@ -189,7 +197,7 @@ const ResourceRecommendations = ({
         <DismissedResourceRecommendations
           dismissedRecommendations={dismissedRecommendationsWithInfo}
           patchResource={patchResource}
-          shouldRenderTableActions={shouldRenderTableActions}
+          havePermissionsToPerformActions={havePermissionsToPerformActions}
           isLoading={isLoading}
         />
       )}

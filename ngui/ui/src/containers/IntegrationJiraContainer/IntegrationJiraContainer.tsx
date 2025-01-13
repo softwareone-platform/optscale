@@ -1,6 +1,5 @@
-import { GET_CURRENT_EMPLOYEE } from "api/restapi/actionTypes";
 import Jira from "components/Integrations/Jira";
-import { useApiData } from "hooks/useApiData";
+import { useCurrentEmployee } from "hooks/coreData";
 import EmployeesService from "services/EmployeesService";
 import JiraOrganizationStatusService from "services/JiraOrganizationStatusService";
 
@@ -11,8 +10,7 @@ const IntegrationJiraContainer = () => {
   const { useGet: useGetJiraOrganizationStatus } = JiraOrganizationStatusService();
   const { isLoading: isGetJiraOrganizationStatusLoading, connectedTenants } = useGetJiraOrganizationStatus();
 
-  const { apiData: { currentEmployee: { jira_connected: isCurrentEmployeeConnectedToJira = false } = {} } = {} } =
-    useApiData(GET_CURRENT_EMPLOYEE);
+  const { jira_connected: isCurrentEmployeeConnectedToJira = false } = useCurrentEmployee();
 
   return (
     <Jira

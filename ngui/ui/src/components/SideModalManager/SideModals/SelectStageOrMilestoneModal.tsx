@@ -1,4 +1,4 @@
-import StagesAndMilestonesContainer from "containers/StagesAndMilestonesContainer";
+import StagesAndMilestones from "components/StagesAndMilestones";
 import BaseSideModal from "./BaseSideModal";
 
 class SelectStageOrMilestoneModal extends BaseSideModal {
@@ -13,7 +13,31 @@ class SelectStageOrMilestoneModal extends BaseSideModal {
   dataTestId = "smodal_select_stage_or_milestone";
 
   get content() {
-    return <StagesAndMilestonesContainer {...this.payload} closeSideModal={this.closeSideModal} />;
+    const {
+      highlightedStage,
+      setHighlightedStage,
+      setSelectedSegment,
+      secondsTimeRange,
+      stages,
+      milestonesGroupedByTimeTuples
+    } = this.payload;
+
+    return (
+      <StagesAndMilestones
+        milestonesGroupedByTimeTuples={milestonesGroupedByTimeTuples}
+        resetBrushTo={(start, end) => {
+          setSelectedSegment([start, end]);
+          this.closeSideModal();
+        }}
+        stages={stages}
+        highlightedStage={highlightedStage}
+        setHighlightedStage={(stage) => {
+          setHighlightedStage(stage);
+          this.closeSideModal();
+        }}
+        secondsTimeRange={secondsTimeRange}
+      />
+    );
   }
 }
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { areSearchParamsEqual } from "api/utils";
 import { RESOURCE_FILTERS_NAMES } from "components/Filters/constants";
 import Resources from "components/Resources";
-import { useOrganizationPerspectives } from "hooks/useOrganizationPerspectives";
+import { useOrganizationPerspectives } from "hooks/coreData";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { useReactiveSearchParams } from "hooks/useReactiveSearchParams";
 import AvailableFiltersService from "services/AvailableFiltersService";

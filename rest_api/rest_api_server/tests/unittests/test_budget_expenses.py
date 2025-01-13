@@ -72,30 +72,42 @@ class TestPoolExpensesApi(TestApiBase):
         day_in_current2 = datetime(2020, 1, 18)
 
         # org pool
-        self.add_expense(day_in_last, 3, self.cloud_acc1['id'], self.org['pool_id'])
-        self.add_expense(day_in_current, 1, self.cloud_acc1['id'], self.org['pool_id'])
+        self.add_expense(day_in_last, 3, self.cloud_acc1['id'],
+                         self.org['pool_id'])
+        self.add_expense(day_in_current, 1, self.cloud_acc1['id'],
+                         self.org['pool_id'])
 
         # child1
-        self.add_expense(day_in_last, 7, self.cloud_acc1['id'], self.child1['id'])
-        self.add_expense(day_in_current, 10, self.cloud_acc1['id'], self.child1['id'])
+        self.add_expense(day_in_last, 7, self.cloud_acc1['id'],
+                         self.child1['id'])
+        self.add_expense(day_in_current, 10, self.cloud_acc1['id'],
+                         self.child1['id'])
 
         # child1_1
-        self.add_expense(day_in_current, 3, self.cloud_acc1['id'], self.child1_1['id'])
+        self.add_expense(day_in_current, 3, self.cloud_acc1['id'],
+                         self.child1_1['id'])
 
         # child1_2
-        self.add_expense(day_in_last, 4, self.cloud_acc1['id'], self.child1_2['id'])
+        self.add_expense(day_in_last, 4, self.cloud_acc1['id'],
+                         self.child1_2['id'])
 
         # child2_1 in cloud 2
-        self.add_expense(day_in_current, 5, self.cloud_acc2['id'], self.child2_1['id'])
+        self.add_expense(day_in_current, 5, self.cloud_acc2['id'],
+                         self.child2_1['id'])
 
         # org2
-        self.add_expense(day_in_last, 3000, self.cloud_acc_org2['id'], self.org2['pool_id'])
-        self.add_expense(day_in_last2, 4000, self.cloud_acc_org2['id'], self.org2['pool_id'])
-        self.add_expense(day_in_current, 4999, self.cloud_acc_org2['id'], self.org2['pool_id'])
-        self.add_expense(day_in_current2, 4111, self.cloud_acc_org2['id'], self.org2['pool_id'])
+        self.add_expense(day_in_last, 3000, self.cloud_acc_org2['id'],
+                         self.org2['pool_id'])
+        self.add_expense(day_in_last2, 4000, self.cloud_acc_org2['id'],
+                         self.org2['pool_id'])
+        self.add_expense(day_in_current, 4999, self.cloud_acc_org2['id'],
+                         self.org2['pool_id'])
+        self.add_expense(day_in_current2, 4111, self.cloud_acc_org2['id'],
+                         self.org2['pool_id'])
 
         self.today_ts = int(datetime(2020, 1, 20, 17, 34, 00).timestamp())
-        self.last_month_ts = int(datetime(2019, 12, 31, 23, 59, 59).timestamp())
+        self.last_month_ts = int(datetime(
+            2019, 12, 31, 23, 59, 59).timestamp())
         self.this_month_ts = int(datetime(2020, 1, 31, 23, 59, 59).timestamp())
         self.p_assign = patch(
             'rest_api.rest_api_server.controllers.pool.PoolController.'
@@ -116,6 +128,7 @@ class TestPoolExpensesApi(TestApiBase):
                 '_first_seen_date': timestamp_to_day_start(timestamp),
                 'last_seen': timestamp,
                 '_last_seen_date': timestamp_to_day_start(timestamp),
+                'deleted_at': 0
             }
             self.resources_collection.insert_one(resource)
             resource_id = resource['_id']

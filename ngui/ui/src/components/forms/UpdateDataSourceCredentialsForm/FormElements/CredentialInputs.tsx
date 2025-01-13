@@ -17,7 +17,9 @@ import {
   AwsRootCredentials,
   AwsRootBillingBucket,
   AwsRootExportType,
-  AwsRootUseAwsEdpDiscount
+  AwsRootUseAwsEdpDiscount,
+  GcpTenantCredentials,
+  GCP_TENANT_CREDENTIALS_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import { Switch } from "components/forms/common/fields";
 import {
@@ -27,7 +29,17 @@ import {
   ReportBucketPathPrefix
 } from "components/NebiusConfigFormElements";
 import UpdateServiceAccountCredentialsDescription from "components/NebiusConfigFormElements/UpdateServiceAccountCredentialsDescription";
-import { ALIBABA_CNR, AZURE_TENANT, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR, DATABRICKS, KUBERNETES_CNR } from "utils/constants";
+import {
+  ALIBABA_CNR,
+  AZURE_TENANT,
+  AWS_CNR,
+  AZURE_CNR,
+  NEBIUS,
+  GCP_CNR,
+  DATABRICKS,
+  KUBERNETES_CNR,
+  GCP_TENANT
+} from "utils/constants";
 
 export const AWS_POOL_UPDATE_DATA_EXPORT_PARAMETERS = "updateDataExportParameters";
 
@@ -90,6 +102,15 @@ const CredentialInputs = ({ type, config }) => {
             GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET,
             GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE,
             GCP_CREDENTIALS_FIELD_NAMES.PROJECT_ID
+          ]}
+        />
+      );
+    case GCP_TENANT:
+      return (
+        <GcpTenantCredentials
+          hidden={[
+            GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET,
+            GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE
           ]}
         />
       );

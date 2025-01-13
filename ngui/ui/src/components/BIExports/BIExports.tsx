@@ -1,16 +1,14 @@
 import { Link } from "@mui/material";
-import { Stack } from "@mui/system";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BIExportsTable from "components/BIExportsTable";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import TableLoader from "components/TableLoader";
 import { INTEGRATIONS } from "urls";
-import { SPACING_2 } from "utils/layouts";
 
-const BIExports = ({ biExports, isLoading }) => (
+const BIExports = ({ biExports, isLoading = false }) => (
   <>
     <ActionBar
       data={{
@@ -26,12 +24,13 @@ const BIExports = ({ biExports, isLoading }) => (
       }}
     />
     <PageContentWrapper>
-      <Stack spacing={SPACING_2}>
-        <div>{isLoading ? <TableLoader /> : <BIExportsTable exports={biExports} />}</div>
-        <div>
-          <InlineSeverityAlert messageId="biExportsDescription" />
-        </div>
-      </Stack>
+      {isLoading ? <TableLoader /> : <BIExportsTable exports={biExports} />}
+      <PageContentDescription
+        position="bottom"
+        alertProps={{
+          messageId: "biExportsDescription"
+        }}
+      />
     </PageContentWrapper>
   </>
 );

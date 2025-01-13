@@ -2,12 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import PlayCircleOutlineOutlinedIcon from "@mui/icons-material/PlayCircleOutlineOutlined";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Stack } from "@mui/system";
 import { GET_ML_TASKS } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import { ML_TASKS_FILTERS_NAMES } from "components/Filters/constants";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
 import MlTasksTable from "components/MlTasksTable";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { ProfilingIntegrationModal } from "components/SideModalManager/SideModals";
 import TableLoader from "components/TableLoader";
@@ -23,7 +22,6 @@ import {
   OWNER_ID_FILTER,
   EMPTY_UUID
 } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
@@ -187,23 +185,22 @@ const MlTasks = ({ tasks, isLoading }) => {
     <>
       <PageActionBar />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2}>
-          <div>
-            {isLoading ? (
-              <TableLoader columnsCounter={4} showHeader />
-            ) : (
-              <MlTasksTable
-                tasks={filteredData}
-                appliedFilters={selectedFilters}
-                filterValues={filterValues}
-                onFilterChange={onFilterChange}
-              />
-            )}
-          </div>
-          <div>
-            <InlineSeverityAlert messageId="mlTasksDescription" />
-          </div>
-        </Stack>
+        {isLoading ? (
+          <TableLoader columnsCounter={4} showHeader />
+        ) : (
+          <MlTasksTable
+            tasks={filteredData}
+            appliedFilters={selectedFilters}
+            filterValues={filterValues}
+            onFilterChange={onFilterChange}
+          />
+        )}
+        <PageContentDescription
+          position="bottom"
+          alertProps={{
+            messageId: "mlTasksDescription"
+          }}
+        />
       </PageContentWrapper>
     </>
   );

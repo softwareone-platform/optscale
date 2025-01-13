@@ -3,7 +3,6 @@ import { MINUTE } from "api/constants";
 import { apiAction, getApiUrl, hashParams } from "api/utils";
 import {
   CREATE_USER,
-  GET_ORGANIZATION_ALLOWED_ACTIONS,
   GET_TOKEN,
   GET_USER,
   SET_USER,
@@ -12,19 +11,18 @@ import {
   GET_RESOURCE_ALLOWED_ACTIONS,
   SET_ALLOWED_ACTIONS,
   SIGN_IN,
-  UPDATE_USER
+  UPDATE_USER,
+  SET_TOKEN
 } from "./actionTypes";
 
-import { onSuccessSignIn, onSuccessGetToken } from "./handlers";
+import { onSuccessSignIn } from "./handlers";
 
 export const API_URL = getApiUrl("auth");
 
-export const getToken = ({ email, password, code, isTokenTemporary }) =>
+export const getToken = ({ email, password, code }) =>
   apiAction({
     url: `${API_URL}/tokens`,
-    onSuccess: onSuccessGetToken({
-      isTokenTemporary
-    }),
+    onSuccess: handleSuccess(SET_TOKEN),
     label: GET_TOKEN,
     params: { email, password, verification_code: code }
   });
@@ -59,17 +57,6 @@ export const getUser = (userId) =>
     method: "GET",
     onSuccess: handleSuccess(SET_USER),
     label: GET_USER,
-    ttl: 30 * MINUTE
-  });
-
-export const getOrganizationAllowedActions = (params) =>
-  apiAction({
-    url: `${API_URL}/allowed_actions`,
-    method: "GET",
-    onSuccess: handleSuccess(SET_ALLOWED_ACTIONS),
-    label: GET_ORGANIZATION_ALLOWED_ACTIONS,
-    hash: hashParams(params),
-    params: { organization: params },
     ttl: 30 * MINUTE
   });
 

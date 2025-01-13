@@ -1700,3 +1700,30 @@ class Layout(Base, BaseMixin, ValidatorMixin):
     @hybrid_property
     def deleted(self):
         return false()
+
+
+class EmployeeEmail(Base, ValidatorMixin, MutableMixin):
+    __tablename__ = 'employee_email'
+    id = Column(NullableUuid('id'), primary_key=True, default=gen_id,
+                info=ColumnPermissions.create_only)
+    employee_id = Column(Uuid('employee_id'),
+                         ForeignKey('employee.id'),
+                         info=ColumnPermissions.create_only,
+                         nullable=False)
+    employee = relationship("Employee", foreign_keys=[employee_id])
+    email_template = Column(MediumLargeNullableString("email_template"),
+                            nullable=False, info=ColumnPermissions.create_only)
+    enabled = Column(NullableBool('enabled'), nullable=False, default=True,
+                     info=ColumnPermissions.full)
+
+    __table_args__ = (
+        UniqueConstraint("employee_id", "email_template", "deleted_at",
+                         name="uc_employee_email_template"),)
+
+    @hybrid_property
+    def unique_fields(self):
+        return ["employee_id", "email_template"]
+
+    @validates("employee_id", "enabled", "email_template")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)

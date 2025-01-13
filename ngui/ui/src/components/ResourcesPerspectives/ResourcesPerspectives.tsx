@@ -1,26 +1,25 @@
 import { useMemo } from "react";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PriorityHighOutlinedIcon from "@mui/icons-material/PriorityHighOutlined";
-import { Link, Stack } from "@mui/material";
+import { Link } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import Filters from "components/Filters";
 import { RESOURCE_FILTERS } from "components/Filters/constants";
 import IconLabel from "components/IconLabel";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import PageContentDescription from "components/PageContentDescription";
 import DeletePerspectiveSideModal from "components/SideModalManager/SideModals/DeletePerspectiveSideModal";
 import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import Tooltip from "components/Tooltip";
+import { useOrganizationPerspectives } from "hooks/coreData";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { breakdowns } from "hooks/useBreakdownBy";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationPerspectives } from "hooks/useOrganizationPerspectives";
 import { getResourcesExpensesUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { SPACING_2 } from "utils/layouts";
 
 const ResourcesPerspectives = () => {
   const isAllowedToDeletePerspectives = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
@@ -214,22 +213,23 @@ const ResourcesPerspectives = () => {
   }, [validPerspectives, intl, invalidPerspectives]);
 
   return (
-    <Stack spacing={SPACING_2}>
-      <div>
-        <Table
-          columns={columns}
-          data={data}
-          localization={{
-            emptyMessageId: "noPerspectives"
-          }}
-          withSearch
-          pageSize={50}
-        />
-      </div>
-      <div>
-        <InlineSeverityAlert messageId="perspectivesDescription" />
-      </div>
-    </Stack>
+    <>
+      <Table
+        columns={columns}
+        data={data}
+        localization={{
+          emptyMessageId: "noPerspectives"
+        }}
+        withSearch
+        pageSize={50}
+      />
+      <PageContentDescription
+        position="bottom"
+        alertProps={{
+          messageId: "perspectivesDescription"
+        }}
+      />
+    </>
   );
 };
 

@@ -105,8 +105,8 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
       },
       {
         header: intl.formatMessage({ id: "resourcesChargedThisMonth" }),
-        id: "details.tracked",
-        accessorFn: (originalRow) => originalRow.details?.tracked,
+        id: "details.resources",
+        accessorFn: (originalRow) => originalRow.details?.resources,
         emptyValue: "0"
       },
       {

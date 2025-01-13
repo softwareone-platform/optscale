@@ -159,8 +159,7 @@ class InsecureSecurityGroups(ModuleBase):
             if s_groups is None:
                 continue
             security_groups_map = region_sg_map[region]
-            for group in s_groups:
-                group_id = group['GroupId']
+            for group_id in s_groups:
                 instances = security_groups_map.get(group_id, [])
                 instances.append(instance)
                 security_groups_map[group_id] = instances

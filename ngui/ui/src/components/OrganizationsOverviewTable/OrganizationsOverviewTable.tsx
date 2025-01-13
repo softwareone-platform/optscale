@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import Link from "@mui/material/Link";
 import { alpha, useTheme } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
 import FormattedMoney from "components/FormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import OrganizationLabel from "components/OrganizationLabel";
 import PoolLabel from "components/PoolLabel";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
+import { useUpdateScope } from "hooks/useUpdateScope";
 import { intl } from "translations/react-intl-config";
 import { RECOMMENDATIONS } from "urls";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
@@ -34,6 +34,8 @@ const OrganizationsOverviewTable = ({ data, total = data.length, isLoading = fal
   const theme = useTheme();
 
   const tableData = useMemo(() => data, [data]);
+
+  const updateScope = useUpdateScope();
 
   const columns = useMemo(
     () => [
@@ -90,7 +92,15 @@ const OrganizationsOverviewTable = ({ data, total = data.length, isLoading = fal
           }
         }) =>
           saving ? (
-            <Link to={`${RECOMMENDATIONS}?organizationId=${organizationId}`} component={RouterLink}>
+            <Link
+              component="button"
+              onClick={() =>
+                updateScope({
+                  newScopeId: organizationId,
+                  redirectTo: RECOMMENDATIONS
+                })
+              }
+            >
               <FormattedMoney format={currency} value={saving} type={FORMATTED_MONEY_TYPES.COMMON} />
             </Link>
           ) : null
@@ -112,7 +122,7 @@ const OrganizationsOverviewTable = ({ data, total = data.length, isLoading = fal
           getExceedingLimits("exceededForecasts", original).map((pool) => getExceedingLabel("forecast", pool, original))
       }
     ],
-    []
+    [updateScope]
   );
 
   return isLoading ? (

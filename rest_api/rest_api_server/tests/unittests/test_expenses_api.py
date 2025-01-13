@@ -195,7 +195,8 @@ class TestExpensesApi(TestApiBase):
             update={'$set': updates}
         )
 
-    @patch('rest_api.rest_api_server.controllers.expense.ExpenseController.get_expenses')
+    @patch('rest_api.rest_api_server.controllers.expense.'
+           'ExpenseController.get_expenses')
     def test_pool_get_no_filter(self, p_expenses):
         p_expenses.return_value = [
             {
@@ -236,7 +237,8 @@ class TestExpensesApi(TestApiBase):
             [self.cloud_acc1['id'], self.cloud_acc2['id'], self.cloud_acc3['id']],
             self.prev_start, self.end_date, group_by=None)
 
-    @patch('rest_api.rest_api_server.controllers.expense.ExpenseController.get_expenses')
+    @patch('rest_api.rest_api_server.controllers.expense.'
+           'ExpenseController.get_expenses')
     def test_pool_get_no_filter_for_sub_pool(self, p_expenses):
         p_expenses.return_value = [
             {
@@ -273,7 +275,8 @@ class TestExpensesApi(TestApiBase):
             [self.sub_pool1['id'], self.sub_pool2['id']],
             self.prev_start, self.end_date, group_by=None)
 
-    @patch('rest_api.rest_api_server.controllers.expense.ExpenseController.get_expenses')
+    @patch('rest_api.rest_api_server.controllers.expense.'
+           'ExpenseController.get_expenses')
     def test_pool_filter_by_cloud(self, p_expenses):
         p_expenses.return_value = [
             {
@@ -382,7 +385,8 @@ class TestExpensesApi(TestApiBase):
             [self.cloud_acc1['id'], self.cloud_acc2['id'], self.cloud_acc3['id']],
             self.prev_start, self.end_date, group_by='cloud_account_id')
 
-    @patch('rest_api.rest_api_server.controllers.expense.ExpenseController.get_expenses')
+    @patch('rest_api.rest_api_server.controllers.expense.'
+           'ExpenseController.get_expenses')
     def test_pool_filter_by_cloud_for_subpool(self, p_expenses):
         p_expenses.return_value = [
             {
@@ -484,7 +488,8 @@ class TestExpensesApi(TestApiBase):
             [self.sub_pool1['id'], self.sub_pool2['id']],
             self.prev_start, self.end_date, group_by='cloud_account_id')
 
-    @patch('rest_api.rest_api_server.controllers.expense.ExpenseController.get_expenses')
+    @patch('rest_api.rest_api_server.controllers.expense.'
+           'ExpenseController.get_expenses')
     def test_pool_filter_by_pool(self, p_expenses):
         p_expenses.return_value = [
             {
@@ -4100,18 +4105,19 @@ class TestExpensesApi(TestApiBase):
         code, response = self.client.clean_expenses_get(
             self.org_id, time - 100, time + 100, body)
         self.assertEqual(code, 200)
-        self.assertEqual(response['total_cost'], 550)
-        self.assertEqual(response['total_count'], 2)
-        self.assertTrue(len(response['clean_expenses']) == 2)
+        # cluster awesome/val excluded as have resource with recommendations
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+        self.assertTrue(len(response['clean_expenses']) == 1)
         self.assertEqual(response['clean_expenses'][0]['resource_id'],
                          resource2['cluster_id'])
 
         code, response = self.client.summary_expenses_get(
             self.org_id, time - 100, time + 100, body)
         self.assertEqual(code, 200)
-        self.assertEqual(response['total_cost'], 550)
-        self.assertEqual(response['total_count'], 2)
-        self.assertEqual(response['total_saving'], 1165)
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+        self.assertEqual(response['total_saving'], 0)
 
         body = {'resource_type': '%s:cluster' % cluster_type['name']}
         code, response = self.client.clean_expenses_get(
@@ -4145,7 +4151,7 @@ class TestExpensesApi(TestApiBase):
 
         self._make_resources_active([resource1['cluster_id']])
         body = {'resource_type': '%s:cluster' % cluster_type['name'],
-                'active': True, 'recommendations': False}
+                'active': True}
         code, response = self.client.clean_expenses_get(
             self.org_id, time - 100, time + 100, body)
         self.assertEqual(code, 200)
@@ -4208,16 +4214,16 @@ class TestExpensesApi(TestApiBase):
         code, response = self.client.clean_expenses_get(
             self.org_id, time - 100, time + 100, body)
         self.assertEqual(code, 200)
-        self.assertEqual(response['total_cost'], 800)
-        self.assertEqual(response['total_count'], 3)
-        self.assertEqual(len(response.get('clean_expenses', [])), 3)
+        self.assertEqual(response['total_cost'], 550)
+        self.assertEqual(response['total_count'], 2)
+        self.assertEqual(len(response.get('clean_expenses', [])), 2)
 
         code, response = self.client.summary_expenses_get(
             self.org_id, time - 100, time + 100, body)
         self.assertEqual(code, 200)
-        self.assertEqual(response['total_cost'], 800)
-        self.assertEqual(response['total_count'], 3)
-        self.assertEqual(response['total_saving'], 1165)
+        self.assertEqual(response['total_cost'], 550)
+        self.assertEqual(response['total_count'], 2)
+        self.assertEqual(response['total_saving'], 0)
 
     def test_clean_expenses_shareables(self):
         code, resource1 = self.create_cloud_resource(
@@ -5077,6 +5083,132 @@ class TestExpensesApi(TestApiBase):
             self.org_id, now - 100, now + 100, body)
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OE0212')
+
+    def test_traffic_filters_with_clusters(self):
+        day_in_month = datetime(2020, 1, 14)
+        time = int(day_in_month.timestamp())
+        self.client.cluster_type_create(
+            self.org_id, {'name': 'awesome', 'tag_key': 'tag'})
+        _, resource1 = self.create_cloud_resource(
+            self.cloud_acc1['id'], self.employee1['id'], self.org['pool_id'],
+            name='name_1', first_seen=time, tags={'tag': 'val'},
+            service_name='service_name_1', resource_type='resource_type_1')
+        _, resource2 = self.create_cloud_resource(
+            self.cloud_acc2['id'], self.employee2['id'], self.org['pool_id'],
+            name='name_2', first_seen=time, tags={'tag_2': 'val'},
+            service_name='service_name_2', resource_type='resource_type_2')
+        _, resource3 = self.create_cloud_resource(
+            self.cloud_acc1['id'], self.employee1['id'], self.org['pool_id'],
+            name='name_3', first_seen=time, tags={'tag': 'val'},
+            service_name='service_name_1', resource_type='resource_type_1')
+        expenses = [
+            {
+                'cost': 150, 'resource_id': resource1['id'],
+                'date': day_in_month, 'cloud_acc': self.cloud_acc1['id'],
+            },
+            {
+                'cost': 300, 'resource_id': resource2['id'],
+                'date': day_in_month, 'cloud_acc': self.cloud_acc2['id'],
+            },
+            {
+                'cost': 70, 'resource_id': resource3['id'],
+                'date': day_in_month, 'cloud_acc': self.cloud_acc1['id'],
+            },
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+        self.traffic_expenses = [
+            {
+                'cloud_account_id': self.cloud_acc1['id'],
+                'resource_id': resource1['cloud_resource_id'],
+                'date': datetime.fromtimestamp(time),
+                'type': 1,
+                'from': 'from_1',
+                'to': 'to_1',
+                'usage': 1,
+                'cost': 1,
+                'sign': 1
+            },
+            {
+                'cloud_account_id': self.cloud_acc1['id'],
+                'resource_id': resource1['cloud_resource_id'],
+                'date': datetime.fromtimestamp(time),
+                'type': 1,
+                'from': 'from_2',
+                'to': 'to_1',
+                'usage': 2,
+                'cost': 2,
+                'sign': 1
+            },
+            {
+                'cloud_account_id': self.cloud_acc1['id'],
+                'resource_id': resource2['cloud_resource_id'],
+                'date': datetime.fromtimestamp(time),
+                'type': 1,
+                'from': 'from_2',
+                'to': 'to_1',
+                'usage': 3,
+                'cost': 3,
+                'sign': 1
+            }
+        ]
+
+        for body in [
+            {
+                'traffic_from': ['from_1:aws_cnr', 'from_2:aws_cnr'],
+                'traffic_to': 'to_1:aws_cnr'
+            },
+            {
+                'traffic_to': 'to_1:aws_cnr'
+            },
+            {
+                'traffic_from': 'ANY'
+            },
+        ]:
+            code, response = self.client.clean_expenses_get(
+                self.org_id, time, time + 1, body)
+            self.assertEqual(code, 200)
+            clean_expenses = response['clean_expenses']
+            self.assertEqual(len(clean_expenses), 2)
+            expected_traf_ex_map = {
+                resource1['cluster_id']: [
+                    {'from': 'from_1', 'to': 'to_1', 'usage': 1, 'cost': 1},
+                    {'from': 'from_2', 'to': 'to_1', 'usage': 2, 'cost': 2}
+                ],
+                resource2['id']: [
+                    {'from': 'from_2', 'to': 'to_1', 'usage': 3, 'cost': 3}
+                ]
+            }
+            for e in clean_expenses:
+                self.assertEqual(
+                    sorted(e['traffic_expenses'], key=lambda x: x['cost']),
+                    expected_traf_ex_map[e['id']])
+
+        body = {
+            'traffic_from': 'from_1:aws_cnr',
+            'traffic_to': 'to_1:aws_cnr'
+        }
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time, time + 1, body)
+        self.assertEqual(code, 200)
+        clean_expenses = response['clean_expenses']
+        self.assertEqual(len(clean_expenses), 1)
+        expected_traf_ex_map = {
+            resource1['cluster_id']: [
+                {'from': 'from_1', 'to': 'to_1', 'usage': 1, 'cost': 1},
+            ]
+        }
+        for e in clean_expenses:
+            self.assertEqual(
+                sorted(e['traffic_expenses'], key=lambda x: x['cost']),
+                expected_traf_ex_map[e['id']])
 
     def test_traffic_filters(self):
         day_in_month = datetime(2020, 1, 14)

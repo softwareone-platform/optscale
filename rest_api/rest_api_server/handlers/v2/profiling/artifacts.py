@@ -5,7 +5,8 @@ from rest_api.rest_api_server.controllers.profiling.artifact import (
     ArtifactAsyncController)
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler, BaseAsyncItemHandler)
-from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
+from rest_api.rest_api_server.handlers.v1.base import (
+    BaseAuthHandler, BaseAuthQueryTokenHandler)
 from rest_api.rest_api_server.handlers.v2.profiling.base import (
     ProfilingHandler)
 from rest_api.rest_api_server.exceptions import Err
@@ -50,8 +51,9 @@ def _validate_params(data, is_new=True):
         raise OptHTTPError.from_opt_exception(400, exc)
 
 
-class ArtifactsAsyncCollectionHandler(BaseAsyncCollectionHandler,
-                                      BaseAuthHandler, ProfilingHandler):
+class ArtifactsAsyncCollectionHandler(
+        BaseAsyncCollectionHandler, BaseAuthQueryTokenHandler,
+        ProfilingHandler):
     def _get_controller_class(self):
         return ArtifactAsyncController
 
@@ -228,6 +230,12 @@ class ArtifactsAsyncCollectionHandler(BaseAsyncCollectionHandler,
             description: return artifacts starting from this number
             required: false
             type: integer
+        -   name: token
+            in: query
+            description: |
+                MD5 hash of organization profiling token (only with run_id)
+            required: false
+            type: string
         responses:
             200:
                 description: Organization artifacts list
@@ -293,11 +301,14 @@ class ArtifactsAsyncCollectionHandler(BaseAsyncCollectionHandler,
         security:
         - token: []
         """
-        await self.check_permissions(
-                'INFO_ORGANIZATION', 'organization', organization_id)
-        token = await self._get_profiling_token(organization_id)
+        token = self.get_arg('token', str, None)
         params = self._get_query_params()
-        res = await run_task(self.controller.list, token, **params)
+        if not (await self.check_md5_profiling_token(
+                organization_id, token, raises=False) and params.get('run_id')):
+            await self.check_permissions(
+                'INFO_ORGANIZATION', 'organization', organization_id)
+        profiling_token = await self._get_profiling_token(organization_id)
+        res = await run_task(self.controller.list, profiling_token, **params)
         self.write(json.dumps(res, cls=ModelEncoder))
 
 

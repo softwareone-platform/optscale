@@ -1,9 +1,9 @@
 import FormattedMoney from "components/FormattedMoney";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import AbandonedImagesModal from "components/SideModalManager/SideModals/recommendations/AbandonedImagesModal";
-import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import { GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
 
 const columns = [
@@ -43,9 +43,9 @@ class AbandonedImages extends BaseRecommendation {
 
   emptyMessageId = "noAbandonedImages";
 
-  services = [NEBIUS_SERVICE];
+  services = [NEBIUS_SERVICE, GCP_COMPUTE_ENGINE];
 
-  appliedDataSources = [NEBIUS];
+  appliedDataSources = [NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_COST];
 

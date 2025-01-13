@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import uuid
+import hashlib
 from typing import Optional, List
 
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
@@ -35,6 +36,10 @@ class TestProfilingBase(TestApiBase):
             ProfilingToken.organization_id == organization_id).one_or_none()
         if token:
             return token.token
+
+    @staticmethod
+    def get_md5_token_hash(profiling_token):
+        return hashlib.md5(profiling_token.encode('utf-8')).hexdigest()
 
     def _gen_executor(self, token, **kwargs):
         executor_id = kwargs.pop('_id', None)

@@ -5,13 +5,13 @@ import QuestionMark from "components/QuestionMark";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
-const Cell = ({ discovered, resource }) => {
+const Cell = ({ discovered, resource, disableLink = false }) => {
   const { isDemo } = useOrganizationInfo();
 
   if (discovered) {
     const { cloud_account: { id, name, type } = {} } = resource ?? {};
 
-    return <CloudLabel id={id} name={name} type={type} disableLink={isDemo} />;
+    return <CloudLabel id={id} name={name} type={type} disableLink={isDemo || disableLink} />;
   }
 
   return (
@@ -24,7 +24,7 @@ const Cell = ({ discovered, resource }) => {
   );
 };
 
-const mlExecutorLocation = ({ headerDataTestId = "lbl_location", headerMessageId = "location" } = {}) => ({
+const mlExecutorLocation = ({ headerDataTestId = "lbl_location", headerMessageId = "location", disableLink = false } = {}) => ({
   header: (
     <TextWithDataTestId dataTestId={headerDataTestId}>
       <FormattedMessage id={headerMessageId} />
@@ -35,7 +35,7 @@ const mlExecutorLocation = ({ headerDataTestId = "lbl_location", headerMessageId
     row: {
       original: { discovered, resource }
     }
-  }) => <Cell discovered={discovered} resource={resource} />
+  }) => <Cell discovered={discovered} resource={resource} disableLink={disableLink} />
 });
 
 export default mlExecutorLocation;

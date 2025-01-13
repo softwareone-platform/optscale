@@ -1,12 +1,9 @@
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 
 const ResourceLocationCell = ({ dataSource, caption }) => {
-  const {
-    apiData: { cloudAccounts: dataSources = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   return (
     <CaptionedCell caption={caption}>

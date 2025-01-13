@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Provider } from "react-redux";
-import { GET_DATA_SOURCES, GET_ENVIRONMENTS } from "api/restapi/actionTypes";
+import { GET_ENVIRONMENTS } from "api/restapi/actionTypes";
 import Dashboard from "components/Dashboard";
 import { MockPermissionsStateContext } from "stories";
 
@@ -318,77 +318,11 @@ const environments = [
   }
 ];
 
-const onlyEnvironmentDataSources = [
-  {
-    deleted_at: 0,
-    id: "e2bc1b1f-deeb-4eb7-892a-d3714fde97c6",
-    created_at: 1630193075,
-    name: "Environment",
-    type: "environment",
-    config: {},
-    organization_id: "a42c727b-52dd-4b48-8785-dfaed6b75404",
-    auto_import: false,
-    import_period: 1,
-    last_import_at: 1631992150,
-    last_import_modified_at: 0,
-    account_id: "4e84a988-a4ab-418a-a576-9f0e9611e5fb",
-    process_recommendations: false,
-    last_import_attempt_at: 1631516521,
-    last_import_attempt_error: null,
-    details: {}
-  }
-];
-
-const allDataSources = [
-  {
-    deleted_at: 0,
-    id: "e2bc1b1f-deeb-4eb7-892a-d3714fde97c6",
-    created_at: 1630193075,
-    name: "Environment",
-    type: "environment",
-    config: {},
-    organization_id: "a42c727b-52dd-4b48-8785-dfaed6b75404",
-    auto_import: false,
-    import_period: 1,
-    last_import_at: 1631992150,
-    last_import_modified_at: 0,
-    account_id: "4e84a988-a4ab-418a-a576-9f0e9611e5fb",
-    process_recommendations: false,
-    last_import_attempt_at: 1631516521,
-    last_import_attempt_error: null,
-    details: {}
-  },
-  {
-    deleted_at: 0,
-    id: "12bc1b1f-deeb-4eb7-892a-d3714fde97c6",
-    created_at: 1630193075,
-    name: "AWS",
-    type: "aws_cnr",
-    config: {},
-    organization_id: "a42c727b-52dd-4b48-8785-dfaed6b75404",
-    auto_import: false,
-    import_period: 1,
-    last_import_at: 1631992150,
-    last_import_modified_at: 0,
-    account_id: "4e84a988-a4ab-418a-a576-9f0e9611e5fb",
-    process_recommendations: false,
-    last_import_attempt_at: 1631516521,
-    last_import_attempt_error: null,
-    details: {}
-  }
-];
-
 const MockPermissionsContextWrapper = ({ children }) => children(useContext(MockPermissionsStateContext));
 
 export const NoDataSources = () => (
   <MockPermissionsContextWrapper>
     {({ mockStore, mockState }) => {
-      mockState.mockRestapi({
-        [GET_DATA_SOURCES]: {
-          cloudAccounts: []
-        }
-      });
-
       const store = mockStore(mockState);
 
       return (
@@ -404,9 +338,6 @@ export const OnlyEnvironmentDataSources = (args) => (
   <MockPermissionsContextWrapper>
     {({ mockStore, mockState }) => {
       mockState.mockRestapi({
-        [GET_DATA_SOURCES]: {
-          cloudAccounts: onlyEnvironmentDataSources
-        },
         [GET_ENVIRONMENTS]: args.withEnvironments ? [] : environments
       });
 
@@ -425,9 +356,6 @@ export const AllDataSources = (args) => (
   <MockPermissionsContextWrapper>
     {({ mockStore, mockState }) => {
       mockState.mockRestapi({
-        [GET_DATA_SOURCES]: {
-          cloudAccounts: allDataSources
-        },
         [GET_ENVIRONMENTS]: args.withEnvironments ? [] : environments
       });
 

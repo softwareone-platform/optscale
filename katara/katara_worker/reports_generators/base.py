@@ -1,6 +1,16 @@
+import os
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+
+
+MODULE_NAME_EMAIL_TEMPLATE = {
+    'organization_expenses': 'weekly_expense_report',
+    'pool_limit_exceed': 'pool_exceed_report',
+    'pool_limit_exceed_resources': 'pool_exceed_resources_report',
+    'violated_constraints': 'resource_owner_violation_report',
+    'violated_constraints_diff': 'pool_owner_violation_report'
+}
 
 
 class Base(object):
@@ -30,3 +40,8 @@ class Base(object):
     @staticmethod
     def get_currency_code(currency):
         return CURRENCY_SYMBOLS_MAP.get(currency, '')
+
+    @staticmethod
+    def get_template_type(path):
+        return MODULE_NAME_EMAIL_TEMPLATE[(os.path.splitext(
+            os.path.basename(path)))[0]]

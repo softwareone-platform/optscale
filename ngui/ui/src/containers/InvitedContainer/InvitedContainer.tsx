@@ -1,25 +1,22 @@
 import { Box, CircularProgress } from "@mui/material";
-import { GET_TOKEN } from "api/auth/actionTypes";
+import { useNavigate } from "react-router-dom";
 import Logo from "components/Logo";
 import Redirector from "components/Redirector";
 import WrongInvitationEmailAlert from "components/WrongInvitationEmailAlert";
-import { useApiData } from "hooks/useApiData";
-import { useNewAuthorization } from "hooks/useNewAuthorization";
+import { useGetToken } from "hooks/useGetToken";
 import { useSignOut } from "hooks/useSignOut";
 import { SETTINGS_TABS } from "pages/Settings/Settings";
 import UserService from "services/UserService";
-import { REGISTER, getSettingsUrl } from "urls";
+import { HOME, REGISTER, getSettingsUrl } from "urls";
 import { SPACING_6 } from "utils/layouts";
 import { getQueryParams, getStringUrl } from "utils/network";
 
 const InvitedContainer = () => {
   const signOut = useSignOut();
 
-  const {
-    apiData: { token, userId }
-  } = useApiData(GET_TOKEN);
+  const { token, userId } = useGetToken();
 
-  const { activateScope } = useNewAuthorization();
+  const navigate = useNavigate();
 
   const { useGet } = UserService();
   const { isDataReady, user } = useGet(userId);
@@ -59,7 +56,7 @@ const InvitedContainer = () => {
           <WrongInvitationEmailAlert
             invitationEmail={invitationEmail}
             currentEmail={currentEmail}
-            onGoToDashboard={() => activateScope(currentEmail)}
+            onGoToDashboard={() => navigate(HOME)}
             onSignOut={onSignOut}
           />
         ) : (

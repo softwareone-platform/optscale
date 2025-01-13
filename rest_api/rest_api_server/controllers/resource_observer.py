@@ -84,7 +84,9 @@ class ResourceObserverController(BaseController, MongoMixin):
                 Err.OE0002, [Organization.__name__, organization_id])
         cloud_accounts_map = {}
         for cloud_account in self._get_cloud_accounts(organization_id):
-            if cloud_account.type == CloudTypes.AZURE_TENANT:
+            if cloud_account.type in [
+                CloudTypes.AZURE_TENANT, CloudTypes.GCP_TENANT
+            ]:
                 try:
                     CloudAccountController(
                         self.session, self._config, self.token

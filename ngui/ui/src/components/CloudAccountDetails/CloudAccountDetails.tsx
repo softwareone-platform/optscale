@@ -5,7 +5,6 @@ import { Link } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import AdvancedDataSourceDetails from "components/AdvancedDataSourceDetails";
 import DataSourceDetails from "components/DataSourceDetails";
@@ -22,7 +21,7 @@ import TabsWrapper from "components/TabsWrapper";
 import DataSourceNodesContainer from "containers/DataSourceNodesContainer";
 import DataSourceSkusContainer from "containers/DataSourceSkusContainer";
 import UploadCloudReportDataContainer from "containers/UploadCloudReportDataContainer";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { useDataSources } from "hooks/useDataSources";
 import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
@@ -352,13 +351,11 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     config = {}
   } = data;
 
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
-  const childrenAccounts = cloudAccounts.filter(({ parent_id: accountParentId }) => accountParentId === id);
+  const childrenDataSources = dataSources.filter(({ parent_id: accountParentId }) => accountParentId === id);
 
-  const childrenDetails = summarizeChildrenDetails(childrenAccounts);
+  const childrenDetails = summarizeChildrenDetails(childrenDataSources);
 
   const {
     cost = 0,

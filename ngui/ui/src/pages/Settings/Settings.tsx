@@ -5,6 +5,7 @@ import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
 import ModeContainer from "containers/ModeContainer";
 import SshSettingsContainer from "containers/SshSettingsContainer";
+import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
 import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
 import { OPTSCALE_MODE } from "utils/constants";
 
@@ -18,7 +19,8 @@ export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
   INVITATIONS: "invitations",
   MODE: "mode",
-  SSH: "sshKeys"
+  SSH: "sshKeys",
+  EMAIL_NOTIFICATIONS: "emailNotifications"
 });
 
 const Settings = () => {
@@ -48,7 +50,12 @@ const Settings = () => {
             node: <SshSettingsContainer />
           }
         ]
-      : [])
+      : []),
+    {
+      title: SETTINGS_TABS.EMAIL_NOTIFICATIONS,
+      dataTestId: `tab_${SETTINGS_TABS.EMAIL_NOTIFICATIONS}`,
+      node: <UserEmailNotificationSettingsContainer />
+    }
   ];
 
   return (

@@ -24,5 +24,6 @@ export const getCreateFormDefaultValues = (): CreatePoolFormValues => ({
   [FIELD_NAMES.NAME]: "",
   [FIELD_NAMES.LIMIT]: "",
   [FIELD_NAMES.TYPE]: POOL_TYPE_BUDGET,
+  [FIELD_NAMES.OWNER]: "",
   [FIELD_NAMES.AUTO_EXTENSION]: false
 });

@@ -8,7 +8,19 @@ import { FIELD_NAMES } from "../constants";
 
 const FIELD_NAME = FIELD_NAMES.LIMIT;
 
-const PoolFormLimitInput = ({ unallocatedLimit, isLoading = false, isRootPool = false, isReadOnly = false }) => {
+type PoolFormLimitInputProps = {
+  unallocatedLimit: number;
+  isLoading?: boolean;
+  isRootPool?: boolean;
+  isReadOnly?: boolean;
+};
+
+const PoolFormLimitInput = ({
+  unallocatedLimit,
+  isLoading = false,
+  isRootPool = false,
+  isReadOnly = false
+}: PoolFormLimitInputProps) => {
   const { currencySymbol } = useOrganizationInfo();
 
   const intl = useIntl();

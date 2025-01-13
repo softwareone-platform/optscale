@@ -1,26 +1,28 @@
-import { useDispatch } from "react-redux";
-import { updateOrganization } from "api";
-import { UPDATE_ORGANIZATION } from "api/restapi/actionTypes";
+import { useMutation } from "@apollo/client";
 import EditOrganizationForm from "components/forms/EditOrganizationForm";
 import { FormValues } from "components/forms/EditOrganizationForm/types";
-import { useApiState } from "hooks/useApiState";
+import { UPDATE_ORGANIZATION } from "graphql/api/restapi/queries/restapi.queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
 type EditOrganizationFormContainerProps = {
   onCancel: () => void;
+  onSuccess: () => void;
 };
 
-const EditOrganizationFormContainer = ({ onCancel }: EditOrganizationFormContainerProps) => {
-  const dispatch = useDispatch();
-
-  const { isLoading } = useApiState(UPDATE_ORGANIZATION);
-
+const EditOrganizationFormContainer = ({ onCancel, onSuccess }: EditOrganizationFormContainerProps) => {
   const { name: currentOrganizationName, organizationId } = useOrganizationInfo();
 
+  const [updateOrganization, { loading }] = useMutation(UPDATE_ORGANIZATION);
+
   const onSubmit = ({ organizationName }: FormValues) => {
-    // There is no need to handle edit mode close since organization will be re-requested after deletion
-    // and backdrop loader for the entire page will be rendered => edit form will be automatically unmounted
-    dispatch(updateOrganization(organizationId, { name: organizationName }));
+    updateOrganization({
+      variables: {
+        organizationId,
+        params: {
+          name: organizationName
+        }
+      }
+    }).then(onSuccess);
   };
 
   return (
@@ -28,7 +30,7 @@ const EditOrganizationFormContainer = ({ onCancel }: EditOrganizationFormContain
       currentOrganizationName={currentOrganizationName}
       onSubmit={onSubmit}
       onCancel={onCancel}
-      isLoading={isLoading}
+      isLoading={loading}
     />
   );
 };

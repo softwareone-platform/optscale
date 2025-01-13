@@ -101,8 +101,7 @@ class TestAvailableFiltersApi(TestApiBase):
         self.assertEqual(response['error']['error_code'], 'OE0212')
 
     def test_invalid_organization(self):
-        day_in_month = datetime(2020, 1, 14)
-
+        day_in_month = datetime(2020, 1, 14, tzinfo=timezone.utc)
         time = int(day_in_month.timestamp())
         valid_aws_cloud_acc = {
             'name': 'my cloud_acc',
@@ -118,6 +117,12 @@ class TestAvailableFiltersApi(TestApiBase):
         self.assertEqual(code, 201)
         _, organization2 = self.client.organization_create(
             {'name': "organization2"})
+        _, employee2 = self.client.employee_create(
+            organization2['id'],
+            {'name': 'name2', 'auth_user_id': self.auth_user_id_1})
+        code, cloud_acc2 = self.create_cloud_account(
+            organization2['id'], valid_aws_cloud_acc)
+        self.assertEqual(code, 201)
         filters = {
             'cloud_account_id': [cloud_acc1['id']]
         }
@@ -150,3 +155,13 @@ class TestAvailableFiltersApi(TestApiBase):
             self.org_id, min_timestamp, max_timestamp, filters)
         self.assertEqual(code, 200)
         self.assertEqual(response['filter_values']['pool'], [])
+
+    def test_available_filters_no_cloud_account(self):
+        _, org = self.client.organization_create(
+            {'name': "organization1"})
+        max_timestamp = int(datetime.max.replace(
+            tzinfo=timezone.utc).timestamp()) - 1
+        code, response = self.client.available_filters_get(
+            org['id'], 0, max_timestamp, {})
+        self.assertEqual(code, 200)
+        self.assertEqual(response['filter_values'], {})

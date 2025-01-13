@@ -229,6 +229,10 @@ class UrlsV2(Urls):
         'restore_password': r"%s/restore_password",
         'profiling_token_info': r"%s/profiling_tokens/(?P<profiling_token>[^/]+)",
         'verify_email': r"%s/verify_email",
+        'employee_emails_collection':
+            r"%s/employees/(?P<employee_id>[^/]+)/emails",
+        'employee_emails_bulk':
+            r"%s/employees/(?P<employee_id>[^/]+)/emails/bulk",
     })
 
 

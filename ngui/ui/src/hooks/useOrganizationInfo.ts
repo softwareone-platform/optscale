@@ -1,47 +1,35 @@
-import { GET_ORGANIZATIONS } from "api/restapi/actionTypes";
+import { useSelector } from "react-redux";
 import { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";
-import { useApiData } from "hooks/useApiData";
-import { useRootData } from "hooks/useRootData";
 import localeManager from "translations/localeManager";
+import { useOrganizations } from "./coreData";
 
-const getActiveOrganization = (organizationId, organizations) => {
-  // 1. Take organization by id from storage
-  // 2. Take first organization from storage
-  // 3. Take empty object
+const useCurrentOrganization = (organizations = []) => {
+  // Take current/active organization ID from storage
+  const currentOrganizationId = useSelector((state) => state[SCOPE_ID]);
 
-  let organization = organizations.find((org) => org.id === organizationId);
-
-  if (!organization) {
-    [organization = {}] = organizations;
-  }
-
-  return organization;
-};
-
-export const useOrganizationInfo = () => {
-  // TODO: need to check setScopeId function, which is not being called
-  // after authorization, so old organization id is still persisted,
-  // even after login with another user (with another organizations set)
-  const { rootData: organizationId } = useRootData(SCOPE_ID);
-
+  // If there is no organization found by that ID, take the first one from storage
   const {
-    apiData: { organizations = [] }
-  } = useApiData(GET_ORGANIZATIONS);
-
-  const {
+    id: organizationId,
     pool_id: organizationPoolId,
-    name,
+    name: organizationName,
     is_demo: isDemo = false,
-    id: newOrganizationId,
     currency = "USD"
-  } = getActiveOrganization(organizationId, organizations);
+  } = organizations.find((org) => org.id === currentOrganizationId) ?? organizations?.[0] ?? {};
 
   return {
-    organizationId: newOrganizationId,
-    name,
+    organizationId,
+    name: organizationName,
     organizationPoolId,
     isDemo,
     currency,
     currencySymbol: currency ? localeManager.getCurrencySymbol(currency) : undefined
   };
+};
+
+export const useOrganizationInfo = () => {
+  const organizations = useOrganizations();
+
+  const currentOrganization = useCurrentOrganization(organizations);
+
+  return currentOrganization;
 };

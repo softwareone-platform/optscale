@@ -4,13 +4,13 @@ import { OPTSCALE_MODE } from "utils/constants";
 
 type ModeWrapperProps = {
   children: ReactNode;
-  mode: (typeof OPTSCALE_MODE)[keyof typeof OPTSCALE_MODE] | undefined;
+  mode?: (typeof OPTSCALE_MODE)[keyof typeof OPTSCALE_MODE];
 };
 
 const ModeWrapper = ({ children, mode }: ModeWrapperProps) => {
-  const shouldShowChildren = useIsOptScaleModeEnabled(mode);
+  const isModeEnabled = useIsOptScaleModeEnabled(mode);
 
-  return shouldShowChildren ? children : null;
+  return isModeEnabled ? children : null;
 };
 
 export default ModeWrapper;

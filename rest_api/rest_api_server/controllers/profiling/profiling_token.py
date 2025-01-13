@@ -1,3 +1,4 @@
+import hashlib
 from tools.optscale_exceptions.common_exc import NotFoundException
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.models import ProfilingToken
@@ -14,7 +15,11 @@ class ProfilingTokenController(BaseProfilingController):
         return ProfilingToken
 
     def get(self, organization_id, **kwargs):
-        return super().get_or_create_profiling_token(organization_id)
+        token = super().get_or_create_profiling_token(organization_id)
+        token = token.to_dict()
+        token['md5_token'] = hashlib.md5(
+            token['token'].encode('utf-8')).hexdigest()
+        return token
 
     def get_profiling_token_info(self, profiling_token):
         token = self.session.query(ProfilingToken).filter(

@@ -4,19 +4,13 @@ import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { getResource, RESTAPI, getPoolOwners, createAssignmentRule, getAvailablePools } from "api";
-import {
-  GET_RESOURCE,
-  GET_DATA_SOURCES,
-  CREATE_ASSIGNMENT_RULE,
-  GET_POOL_OWNERS,
-  GET_AVAILABLE_POOLS
-} from "api/restapi/actionTypes";
+import { GET_RESOURCE, CREATE_ASSIGNMENT_RULE, GET_POOL_OWNERS, GET_AVAILABLE_POOLS } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import ActionBarResourceNameTitleText from "components/ActionBarResourceNameTitleText";
 import AssignmentRuleForm from "components/forms/AssignmentRuleForm";
 import { FIELD_NAMES } from "components/forms/AssignmentRuleForm/utils";
 import PageContentWrapper from "components/PageContentWrapper";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { useApiState } from "hooks/useApiState";
 import { useAssignmentRulesAvailableFilters } from "hooks/useAssignmentRulesAvailableFilters";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
@@ -168,10 +162,7 @@ const CreateResourceAssignmentRuleFormContainer = ({ resourceId }) => {
 
   const { isLoading: isCreateAssignmentRuleLoading } = useApiState(CREATE_ASSIGNMENT_RULE);
 
-  // get cloud accounts
-  // Attention: we don't request cloud account here as they are included in the initial loader
-  // and we assume that they are up-to-date
-  const { apiData: { cloudAccounts = [] } = {} } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const { isLoading: isAvailableFiltersLoading, resourceTypes, regions } = useAssignmentRulesAvailableFilters();
 
@@ -213,7 +204,7 @@ const CreateResourceAssignmentRuleFormContainer = ({ resourceId }) => {
             }}
             onCancel={redirect}
             pools={pools}
-            cloudAccounts={cloudAccounts}
+            cloudAccounts={dataSources}
             resourceTypes={resourceTypes}
             regions={regions}
             onPoolChange={(newPoolId, callback) => {

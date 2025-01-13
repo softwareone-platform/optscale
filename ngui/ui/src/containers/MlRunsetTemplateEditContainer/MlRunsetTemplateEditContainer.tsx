@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import MlRunsetTemplateEdit from "components/MlRunsetTemplateEdit";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import MlRunsetTemplatesService from "services/MlRunsetTemplatesService";
 import MlTasksService from "services/MlTasksService";
 import { getMlRunsetTemplateUrl } from "urls";
@@ -16,9 +15,7 @@ const MlRunsetTemplateEditContainer = () => {
   const { useGetAll } = MlTasksService();
   const { isLoading: isGetAllTasksLoading, tasks } = useGetAll();
 
-  const {
-    apiData: { cloudAccounts: dataSources = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const { useUpdateRunsetTemplate, useGetOne } = MlRunsetTemplatesService();
   const { onUpdate, isLoading: isUpdateMlRunsetTemplateLoading } = useUpdateRunsetTemplate();

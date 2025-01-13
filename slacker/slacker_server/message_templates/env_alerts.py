@@ -134,15 +134,16 @@ def get_message_acquired(resource_id, resource_name, public_ip, org_id,
 def get_env_property_updated_block(env_properties, public_ip, resource_id):
     env_properties_blocks = []
     for prop in env_properties[:5]:
-        env_properties_blocks.append({
+        env_properties_blocks.extend([{
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*Name:*\n{prop['name']}\n"
-                        f"*Previous value:* \n{prop['previous_value']}\n"
-                        f"*New value:*\n{prop['new_value']}"
-            }
-        })
+                "text": f"*Property name:* {prop['name']}\n"
+                        f"*Previous value:* {prop['previous_value'] or '-'}\n"
+                        f"*New value:* {prop['new_value'] or '-'}"
+            }},
+            {"type": "divider"}
+        ])
     if len(env_properties) > 5:
         env_properties_blocks.append(
             {
@@ -172,7 +173,7 @@ def get_current_env_property_block(curr_env_properties):
 
     text = ''
     for prop_name, value in curr_env_properties.items():
-        text = text + f"*{prop_name}:*\n{value}\n"
+        text = text + f"*{prop_name}:* {value}\n"
 
     if not text:
         text = '-'

@@ -1,27 +1,27 @@
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import CloudLabel from "components/CloudLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { AZURE_CNR } from "utils/constants";
+
+const ParentDataSource = ({ parentDataSourceId }) => {
+  const dataSources = useAllDataSources();
+  const { name, type } = dataSources.find((dataSource) => dataSource.id === parentDataSourceId) ?? {};
+
+  return (
+    <KeyValueLabel
+      keyMessageId="parentDataSource"
+      value={<CloudLabel id={parentDataSourceId} name={name} type={type} />}
+      dataTestIds={{ key: "p_parent_data_source_key", value: "p_parent_data_source_value" }}
+    />
+  );
+};
 
 const AzureProperties = ({ config, parentId }) => {
   const { client_id: clientId, tenant, expense_import_scheme: expenseImportScheme, subscription_id: subscriptionId } = config;
 
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
-
-  const { name, type } = cloudAccounts.find((cloudAccount) => cloudAccount.id === parentId) ?? {};
-
   return (
     <>
-      {parentId && (
-        <KeyValueLabel
-          keyMessageId="parentDataSource"
-          value={<CloudLabel id={parentId} name={name} type={type} />}
-          dataTestIds={{ key: "p_parent_data_source_key", value: "p_parent_data_source_value" }}
-        />
-      )}
+      {parentId && <ParentDataSource parentDataSourceId={parentId} />}
       {subscriptionId && (
         <KeyValueLabel
           keyMessageId="subscriptionId"

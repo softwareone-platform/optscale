@@ -9,7 +9,7 @@ LOG = logging.getLogger(__name__)
 DEFAULT_DAYS_THRESHOLD = 7
 BULK_SIZE = 1000
 SUPPORTED_CLOUD_TYPES = [
-    'nebius'
+    'gcp_cnr', 'nebius'
 ]
 
 
@@ -90,7 +90,7 @@ class AbandonedImages(AbandonedBase):
                             'cloud_account_id': image['cloud_account_id'],
                             'cloud_account_name': account['name'],
                             'cloud_type': account['type'],
-                            'folder_id': image['meta']['folder_id'],
+                            'folder_id': image['meta'].get('folder_id'),
                             'last_used': last_used_map.get(
                                 image['cloud_resource_id'], 0),
                             'first_seen': image['first_seen'],

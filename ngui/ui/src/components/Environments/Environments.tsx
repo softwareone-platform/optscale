@@ -7,7 +7,7 @@ import BookingsCalendar from "components/BookingsCalendar";
 import ButtonGroup from "components/ButtonGroup";
 import EnvironmentsTable from "components/EnvironmentsTable";
 import Hidden from "components/Hidden";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import Selector, { Item, ItemContent } from "components/Selector";
 import { ENVIRONMENTS_TOUR_IDS } from "components/Tour";
@@ -235,12 +235,16 @@ const Environments = ({
                   </Grid>
                 )}
               </div>
-              <div>
-                <InlineSeverityAlert messageId="environmentsDescription" messageDataTestId="p_environments_list" />
-              </div>
             </Stack>
           </Grid>
         </Grid>
+        <PageContentDescription
+          position="bottom"
+          alertProps={{
+            messageId: "environmentsDescription",
+            messageDataTestId: "p_environments_list"
+          }}
+        />
       </PageContentWrapper>
     </>
   );

@@ -1,52 +1,27 @@
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { GET_ORGANIZATIONS } from "api/restapi/actionTypes";
+import { useQuery } from "@apollo/client";
 import OrganizationSelector from "components/OrganizationSelector";
-import { useApiData } from "hooks/useApiData";
-import { useApiState } from "hooks/useApiState";
+import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { formQueryString, getMenuRootUrl, getQueryParams, removeQueryParam } from "utils/network";
-import requestManager from "utils/requestManager";
-import { setScopeId } from "./actionCreators";
-import { SCOPE_ID } from "./reducer";
+import { useUpdateScope } from "hooks/useUpdateScope";
+import { HOME } from "urls";
 
-const OrganizationSelectorContainer = ({ mainMenu }) => {
-  const dispatch = useDispatch();
-  const {
-    apiData: { organizations }
-  } = useApiData(GET_ORGANIZATIONS);
-
-  const { isLoading } = useApiState(GET_ORGANIZATIONS);
+const OrganizationSelectorContainer = () => {
+  const { data: { organizations = [] } = {} } = useQuery(GET_ORGANIZATIONS, {
+    fetchPolicy: "cache-only"
+  });
 
   const { organizationId } = useOrganizationInfo();
 
-  const navigate = useNavigate();
+  const updateScope = useUpdateScope();
 
-  const handleScopeChange = (scopeId) => {
-    requestManager.cancelAllPendingRequests();
-    removeQueryParam(SCOPE_ID);
-
-    // The straightforward solution to persist query parameters when changing the organization
-    // More context:
-    // * https://gitlab.com/hystax/ngui/-/merge_requests/2773
-    // * https://datatrendstech.atlassian.net/browse/OS-4786
-    const { type } = getQueryParams();
-
-    const to = [getMenuRootUrl(mainMenu), formQueryString({ type })].join("?");
-
-    navigate(to);
-
-    dispatch(setScopeId(scopeId));
+  const handleScopeChange = (scopeId: string) => {
+    updateScope({
+      newScopeId: scopeId,
+      redirectTo: HOME
+    });
   };
 
-  return (
-    <OrganizationSelector
-      organizations={organizations}
-      organizationId={organizationId}
-      onChange={handleScopeChange}
-      isLoading={isLoading}
-    />
-  );
+  return <OrganizationSelector organizations={organizations} organizationId={organizationId} onChange={handleScopeChange} />;
 };
 
 export default OrganizationSelectorContainer;

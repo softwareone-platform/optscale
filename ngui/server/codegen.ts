@@ -23,6 +23,10 @@ const config: CodegenConfig = {
         },
       },
     },
+    "./graphql/resolvers/auth.generated.ts": {
+      schema: "./graphql/schemas/auth.graphql",
+      plugins: commonPlugins,
+    },
   },
 };
 

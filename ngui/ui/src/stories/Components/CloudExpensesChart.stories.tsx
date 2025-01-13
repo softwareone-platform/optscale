@@ -13,7 +13,7 @@ export default {
 
 const cloudAccounts = [
   {
-    details: { tracked: 768, last_month_cost: 559.7434027942, cost: 141.0194095445, forecast: 546.45 },
+    details: { resources: 768, last_month_cost: 559.7434027942, cost: 141.0194095445, forecast: 546.45 },
     type: "aws_cnr",
     name: "AWS",
     organization_id: "9eb8d5fe-b5a8-4c6f-899a-bf761109d11f",
@@ -37,7 +37,7 @@ const cloudAccounts = [
     id: "3d4236be-e167-4801-86ff-944943a9ae6f"
   },
   {
-    details: { tracked: 22, last_month_cost: 85.1889819768111, cost: 5.958978755733334, forecast: 23.09 },
+    details: { resources: 22, last_month_cost: 85.1889819768111, cost: 5.958978755733334, forecast: 23.09 },
     type: "azure_cnr",
     name: "EK_azure_connection",
     organization_id: "9eb8d5fe-b5a8-4c6f-899a-bf761109d11f",

@@ -1,27 +1,35 @@
+import { useMutation } from "@apollo/client";
 import Mode from "components/Mode";
-import OrganizationOptionsService from "services/OrganizationOptionsService";
-import { OPTSCALE_MODE_OPTION } from "utils/constants";
+import { GET_OPTSCALE_MODE, UPDATE_OPTSCALE_MODE } from "graphql/api/restapi/queries";
+import { useGetOptscaleMode } from "hooks/coreData";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
 const ModeContainer = () => {
-  const { useGetOptscaleMode, useUpdateOption } = OrganizationOptionsService();
+  const { organizationId } = useOrganizationInfo();
+  const { optscaleMode } = useGetOptscaleMode();
 
-  const {
-    isGetOrganizationOptionLoading,
-    option: { value }
-  } = useGetOptscaleMode(OPTSCALE_MODE_OPTION);
-  const { isUpdateOrganizationOptionLoading, updateOption } = useUpdateOption();
+  const [updateOptscaleModeMutation, { loading }] = useMutation(UPDATE_OPTSCALE_MODE, {
+    update: (cache, { data: { updateOptscaleMode } }) => {
+      const { optscaleMode: cacheOptscaleMode } = cache.readQuery({ query: GET_OPTSCALE_MODE, variables: { organizationId } });
+
+      cache.writeQuery({
+        query: GET_OPTSCALE_MODE,
+        variables: { organizationId },
+        data: {
+          optscaleMode: {
+            ...cacheOptscaleMode,
+            ...updateOptscaleMode
+          }
+        }
+      });
+    }
+  });
 
   const onApply = (option) => {
-    updateOption(OPTSCALE_MODE_OPTION, { value: option });
+    updateOptscaleModeMutation({ variables: { organizationId, value: option } });
   };
 
-  return (
-    <Mode
-      isLoadingProps={{ isGetOrganizationOptionLoading, isUpdateOrganizationOptionLoading }}
-      option={value}
-      onApply={onApply}
-    />
-  );
+  return <Mode isLoading={loading} option={optscaleMode} onApply={onApply} />;
 };
 
 export default ModeContainer;

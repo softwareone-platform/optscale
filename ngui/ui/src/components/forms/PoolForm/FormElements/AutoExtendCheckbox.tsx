@@ -5,7 +5,12 @@ import { FIELD_NAMES } from "../constants";
 
 const FIELD_NAME = FIELD_NAMES.AUTO_EXTENSION;
 
-const AutoExtendCheckbox = ({ isLoading = false, isReadOnly = false }) => (
+type AutoExtendCheckboxProps = {
+  isLoading?: boolean;
+  isReadOnly?: boolean;
+};
+
+const AutoExtendCheckbox = ({ isLoading = false, isReadOnly = false }: AutoExtendCheckboxProps) => (
   <Checkbox
     name={FIELD_NAME}
     isLoading={isLoading}

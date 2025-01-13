@@ -1,10 +1,10 @@
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
-import { useApiData } from "hooks/useApiData";
 import { isEmpty } from "utils/arrays";
+import { useAllDataSources } from "./coreData/useAllDataSources";
 
-export const useShouldRenderConnectCloudAccountMock = (cloudAccountType) => {
-  const { apiData: { cloudAccounts = [] } = {} } = useApiData(GET_DATA_SOURCES);
-  return cloudAccountType
-    ? cloudAccounts.findIndex((cloudAccount) => cloudAccount.type === cloudAccountType) === -1
-    : isEmpty(cloudAccounts);
+export const useShouldRenderConnectCloudAccountMock = (dataSourceType) => {
+  const dataSources = useAllDataSources();
+
+  return dataSourceType
+    ? dataSources.findIndex((dataSource) => dataSource.type === dataSourceType) === -1
+    : isEmpty(dataSources);
 };

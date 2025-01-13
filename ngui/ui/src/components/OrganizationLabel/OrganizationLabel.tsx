@@ -1,16 +1,47 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import Link from "@mui/material/Link";
-import { Link as RouterLink } from "react-router-dom";
 import Icon from "components/Icon";
-import { getHomeUrl } from "urls";
+import { useUpdateScope } from "hooks/useUpdateScope";
+import { HOME } from "urls";
 
-const OrganizationLabel = ({ name, id, dataTestId, disableLink = false }) => (
+type OrganizationLabelProps = {
+  id: string;
+  name: string;
+  dataTestId?: string;
+  disableLink?: boolean;
+};
+
+type LabelLinkProps = {
+  organizationId: string;
+  organizationName: string;
+  dataTestId?: string;
+};
+
+const LabelLink = ({ organizationId, organizationName, dataTestId }: LabelLinkProps) => {
+  const updateScope = useUpdateScope();
+
+  return (
+    <Link
+      data-test-id={dataTestId}
+      color="primary"
+      component="button"
+      onClick={() =>
+        updateScope({
+          newScopeId: organizationId,
+          redirectTo: HOME
+        })
+      }
+    >
+      {organizationName}
+    </Link>
+  );
+};
+
+const OrganizationLabel = ({ id, name, dataTestId, disableLink = false }: OrganizationLabelProps) => (
   <>
     <Icon icon={ApartmentIcon} hasRightMargin />
     {!disableLink ? (
-      <Link data-test-id={dataTestId} color="primary" to={getHomeUrl(id)} component={RouterLink}>
-        {name}
-      </Link>
+      <LabelLink organizationId={id} organizationName={name} dataTestId={dataTestId} />
     ) : (
       <span data-test-id={dataTestId}>{name}</span>
     )}

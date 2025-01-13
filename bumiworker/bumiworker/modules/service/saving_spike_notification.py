@@ -64,6 +64,7 @@ class SavingSpikeNotification(ServiceBase):
             modules_data.sort(key=lambda x: x['saving'], reverse=True)
             task = {
                 "object_id": self.organization_id,
+                "organization_id": self.organization_id,
                 "object_type": "organization",
                 "action": "saving_spike",
                 "meta": {"previous_total": previous_total,

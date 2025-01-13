@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import MlRunsetTemplateForm from "components/forms/MlRunsetTemplateForm";
 import { FIELD_NAMES } from "components/forms/MlRunsetTemplateForm/constants";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import MlRunsetTemplatesService from "services/MlRunsetTemplatesService";
 import MlTasksService from "services/MlTasksService";
 import { ML_RUNSET_TEMPLATES } from "urls";
@@ -33,9 +32,7 @@ const MlRunsetTemplateCreateFormContainer = () => {
   const { useGetAll } = MlTasksService();
   const { isLoading: isGetAllTasksLoading, tasks } = useGetAll();
 
-  const {
-    apiData: { cloudAccounts: dataSources = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const { useCreateMlRunsetTemplate } = MlRunsetTemplatesService();
   const { onCreate, isLoading: isCreateMlRunsetTemplateLoading } = useCreateMlRunsetTemplate();

@@ -1,29 +1,26 @@
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import CloudLabel from "components/CloudLabel";
 import SubTitle from "components/SubTitle";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { isEmpty } from "utils/arrays";
 
 const ChildrenList = ({ parentId }) => {
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
-  const childrenAccounts = cloudAccounts.filter(({ parent_id: accountParentId }) => accountParentId === parentId);
+  const childDataSources = dataSources.filter(({ parent_id: accountParentId }) => accountParentId === parentId);
 
   return (
     <>
       <SubTitle>
         <FormattedMessage id="childDataSources" />
       </SubTitle>
-      {isEmpty(childrenAccounts) ? (
+      {isEmpty(childDataSources) ? (
         <Typography>
           <FormattedMessage id="noChildDataSourcesDiscovered" />
         </Typography>
       ) : (
-        childrenAccounts.map(({ id, name, type }) => <CloudLabel key={id} id={id} name={name} type={type} />)
+        childDataSources.map(({ id, name, type }) => <CloudLabel key={id} id={id} name={name} type={type} />)
       )}
     </>
   );

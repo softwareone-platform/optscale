@@ -34,7 +34,7 @@ class ViolatedConstraints(Base):
                     res_constaint['type'] = type_value_for_replace
         return {
             'email': [self.report_data['user_email']],
-            'template_type': 'resource_owner_violation_report',
+            'template_type': self.get_template_type(__file__),
             'subject':
                 'Action required: Hystax OptScale Resource Constraints Report',
             'template_params': {

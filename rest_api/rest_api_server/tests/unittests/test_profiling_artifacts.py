@@ -1,5 +1,7 @@
 import uuid
 from unittest.mock import patch
+from tools.optscale_exceptions.http_exc import OptHTTPError
+from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
     TestProfilingBase)
 
@@ -31,6 +33,8 @@ class TestArtifactsApi(TestProfilingBase):
             'description': 'Test description',
             'tags': {'tag': 'tag'}
         }
+        _, resp = self.client.profiling_token_get(self.org['id'])
+        self.profiling_token = resp['token']
 
     def test_create_artifact(self):
         code, resp = self.client.artifact_create(
@@ -105,6 +109,46 @@ class TestArtifactsApi(TestProfilingBase):
         self.assertEqual(code, 200)
         self.assertEqual(len(resp['artifacts']), 1)
         self.assertEqual(resp['artifacts'][0]['id'], artifact['id'])
+
+    def test_list_artifacts_by_token(self):
+        code, artifact = self.client.artifact_create(
+            self.org['id'], self.valid_artifact)
+        self.assertEqual(code, 201)
+
+        def side_eff(_action, *_args, **_kwargs):
+            raise OptHTTPError(403, Err.OE0234, [])
+
+        patch(
+            'rest_api.rest_api_server.handlers.v1.base.'
+            'BaseAuthHandler.check_permissions',
+            side_effect=side_eff).start()
+
+        code, resp = self.client.artifacts_get(
+            self.org['id'], run_id=[self.valid_artifact['run_id']],
+            task_id=[self.task['id']], created_at_gt=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            token=self.get_md5_token_hash(self.profiling_token)
+        )
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['artifacts']), 1)
+        self.assertEqual(resp['artifacts'][0]['id'], artifact['id'])
+
+        code, resp = self.client.artifacts_get(
+            self.org['id'], task_id=[self.task['id']], created_at_gt=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            token=self.get_md5_token_hash(self.profiling_token)
+        )
+        self.assertEqual(code, 403)
+        self.assertEqual(resp['error']['error_code'], 'OE0234')
+
+        code, resp = self.client.artifacts_get(
+            self.org['id'], run_id=[self.valid_artifact['run_id']],
+            task_id=[self.task['id']], created_at_gt=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            token='123'
+        )
+        self.assertEqual(code, 403)
+        self.assertEqual(resp['error']['error_code'], 'OE0234')
 
     def test_list_artifacts_invalid_params(self):
         for param in ['created_at_gt', 'created_at_lt', 'start_from', 'limit']:

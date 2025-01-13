@@ -13,7 +13,8 @@ from slacker.slacker_server.message_templates.alerts import (
 from slacker.slacker_server.message_templates.env_alerts import (
     get_property_updated_message, get_message_changed_active_state,
     get_message_acquired, get_message_released)
-from slacker.slacker_server.message_templates.warnings import get_archived_message_block
+from slacker.slacker_server.message_templates.warnings import (
+    get_archived_message_block)
 
 
 LOG = logging.getLogger(__name__)
@@ -39,16 +40,24 @@ class SendMessageController(BaseHandlerController):
         parameters = kwargs.get('parameters', {})
         warning = parameters.pop('warning', None)
         warning_params = parameters.pop('warning_params', None)
+        teams_channels = set()
         if auth_user_id:
-            user = self.session.query(User).filter(
+            users = self.session.query(User).filter(
                 User.auth_user_id == auth_user_id,
                 User.deleted.is_(False),
-            ).one_or_none()
-            if not user:
+            ).all()
+            if not users:
                 raise NotFoundException(Err.OS0016, ['auth_user_id',
                                                      auth_user_id])
-            team_id = user.slack_team_id
-            channel_id = user.slack_channel_id
+            for user in users:
+                teams_channels.add((user.slack_channel_id, user.slack_team_id))
+        if team_id or channel_id:
+            teams_channels.add((channel_id, team_id))
+        if channel_id and channel_id.startswith('C'):
+            # public or private channel, not direct message
+            channels = self.app.client.get_bot_conversations(team_id=team_id)
+            if channel_id not in [x['id'] for x in channels]:
+                raise NotFoundException(Err.OS0020, [channel_id])
 
         template_func = self.MESSAGE_TEMPLATES.get(type_)
         if template_func is None:
@@ -64,9 +73,11 @@ class SendMessageController(BaseHandlerController):
                     **warning_params) + message['blocks']
 
         try:
-            self.app.client.chat_post(
-                channel_id=channel_id, team_id=team_id,
-                **message)
+            for data in teams_channels:
+                channel_id, team_id = data
+                self.app.client.chat_post(
+                    channel_id=channel_id, team_id=team_id,
+                    **message)
         except TypeError as exc:
             LOG.error('Failed to send message: %s', exc)
             raise WrongArgumentsException(Err.OS0011, ['parameters'])

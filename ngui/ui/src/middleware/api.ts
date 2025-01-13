@@ -3,7 +3,6 @@ import queryString from "query-string";
 import { v4 as uuidv4 } from "uuid";
 import { apiEnd, apiError, apiStart, apiSuccess, resetTtl } from "api";
 import { API } from "api/actionTypes";
-import { GET_TOKEN } from "api/auth/actionTypes";
 import { signOut } from "utils/api";
 import { ALERT_SEVERITY } from "utils/constants";
 import { getEnvironmentVariable } from "utils/env";
@@ -51,8 +50,7 @@ const apiMiddleware =
 
     const state = getState();
 
-    const { token, temporaryToken, userEmail } = state?.auth?.[GET_TOKEN] ?? {};
-    const accessToken = temporaryToken || token;
+    const { token: accessToken, user_email: userEmail } = state?.initial ?? {};
 
     const dataOrParams = ["GET", "DELETE"].includes(method) ? "params" : "data";
 

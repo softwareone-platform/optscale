@@ -6,6 +6,7 @@ from katara.katara_worker.tasks import (
     SetGettingRecipients,
     GetRecipients,
     SetGeneratingReportData,
+    CheckingEmployeeEmailSettings,
     GenerateReportData,
     SetPuttingToHerald,
     PutToHerald
@@ -19,6 +20,7 @@ TASKS_TRANSITIONS = {
     TaskState.GOT_SCOPES: SetGettingRecipients,
     TaskState.GETTING_RECIPIENTS: GetRecipients,
     TaskState.GOT_RECIPIENTS: SetGeneratingReportData,
+    TaskState.CHECKING_EMAIL_SETTINGS: CheckingEmployeeEmailSettings,
     TaskState.GENERATING_DATA: GenerateReportData,
     TaskState.GENERATED_DATA: SetPuttingToHerald,
     TaskState.PUTTING_TO_HERALD: PutToHerald

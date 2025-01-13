@@ -246,17 +246,17 @@ const useCreatePool = () => {
   const { organizationId } = useOrganizationInfo();
   const { isLoading } = useApiState(CREATE_POOL);
   const createPool = useCallback(
-    ({ name, limit, type, autoExtension, parentId }) =>
+    ({ name, limit, type, autoExtension, parentId, defaultOwnerId }) =>
       new Promise((resolve, reject) => {
         dispatch((_, getState) => {
-          dispatch(createPoolApi(organizationId, { parentId, name, autoExtension, limit: parseFloat(limit), type })).then(
-            () => {
-              if (!isError(CREATE_POOL, getState())) {
-                return resolve();
-              }
-              return reject();
+          dispatch(
+            createPoolApi(organizationId, { parentId, name, autoExtension, limit: parseFloat(limit), type, defaultOwnerId })
+          ).then(() => {
+            if (!isError(CREATE_POOL, getState())) {
+              return resolve();
             }
-          );
+            return reject();
+          });
         });
       }),
     [dispatch, organizationId]

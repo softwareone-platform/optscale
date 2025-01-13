@@ -6,7 +6,13 @@ import Logo from "components/Logo";
 import PageTitle from "components/PageTitle";
 import { SPACING_4 } from "utils/layouts";
 
-const GenerateLiveDemo = ({ isLoading, retry, showRetry = false }) => (
+type GenerateLiveDemoProps = {
+  retry: () => void;
+  isLoading?: boolean;
+  showRetry?: boolean;
+};
+
+const GenerateLiveDemo = ({ retry, isLoading = false, showRetry = false }: GenerateLiveDemoProps) => (
   <Stack spacing={SPACING_4} alignItems="center">
     <Box>
       <Logo width={200} dataTestId="img_logo" />

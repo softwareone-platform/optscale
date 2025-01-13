@@ -278,6 +278,8 @@ class Aws(S3CloudMixin):
             next_token = described.get('NextToken')
             for reservation in described['Reservations']:
                 for instance in reservation['Instances']:
+                    sg_ids = [x['GroupId'] for x in instance.get(
+                        'SecurityGroups', [])]
                     dates = [x['Ebs']['AttachTime'] for x in instance[
                         'BlockDeviceMappings'] if 'Ebs' in x]
                     dates.extend(list(map(
@@ -293,7 +295,7 @@ class Aws(S3CloudMixin):
                         region=region,
                         name=self._extract_tag(instance, 'Name'),
                         flavor=instance['InstanceType'],
-                        security_groups=instance.get('SecurityGroups', []),
+                        security_groups=sg_ids,
                         organization_id=self.organization_id,
                         tags=self._extract_tags(instance),
                         spotted=spotted,

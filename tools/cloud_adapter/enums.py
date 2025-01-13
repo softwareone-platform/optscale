@@ -8,6 +8,7 @@ class CloudTypes(Enum):
     AZURE_TENANT = 'azure_tenant'
     KUBERNETES_CNR = 'kubernetes_cnr'
     GCP_CNR = 'gcp_cnr'
+    GCP_TENANT = 'gcp_tenant'
     NEBIUS = 'nebius'
     ENVIRONMENT = 'environment'
     DATABRICKS = 'databricks'

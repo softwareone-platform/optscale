@@ -8,5 +8,6 @@ export type FormValues = {
 export type LoginFormProps = {
   onSubmit: (data: FormValues) => void;
   isLoading?: boolean;
+  disabled?: boolean;
   isInvited?: boolean;
 };

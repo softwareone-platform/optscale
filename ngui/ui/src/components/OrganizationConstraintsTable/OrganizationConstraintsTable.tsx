@@ -3,7 +3,6 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import AnomaliesFilters from "components/AnomaliesFilters";
 import Filters from "components/Filters";
 import { RESOURCE_FILTERS } from "components/Filters/constants";
@@ -12,10 +11,10 @@ import IconButton from "components/IconButton";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import { useAllDataSources } from "hooks/coreData";
 import { useIsAllowed } from "hooks/useAllowedActions";
-import { useApiData } from "hooks/useApiData";
 import { intl } from "translations/react-intl-config";
-import { isEmpty } from "utils/arrays";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 import { organizationConstraintName, organizationConstraintStatus } from "utils/columns";
 import {
   QUOTA_POLICY,
@@ -116,9 +115,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
   const isManageResourcesAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
   const formatter = useMoneyFormatter();
 
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const memoizedConstraints = useMemo(
     () =>
@@ -205,7 +202,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
   ) : (
     <Table
       actionBar={{
-        show: isManageResourcesAllowed && !isEmpty(cloudAccounts),
+        show: isManageResourcesAllowed && !isEmptyArray(dataSources),
         definition: {
           items: [
             {

@@ -3,7 +3,7 @@ import { FormControl, FormLabel, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import HtmlSymbol from "components/HtmlSymbol";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import { FIELD_NAMES } from "./constants";
 import {
   RunTagsField,
@@ -47,7 +47,12 @@ const LeaderboardForm = ({
 
   return (
     <FormProvider {...methods}>
-      {isTemplate && <InlineSeverityAlert messageId="leaderboardTemplateDescription" sx={{ mb: 1, width: "100%" }} />}
+      {isTemplate && (
+        <PageContentDescription
+          position="top"
+          alertProps={{ messageId: "leaderboardTemplateDescription", sx: { width: "100%" } }}
+        />
+      )}
       <form
         onSubmit={handleSubmit((formData) => {
           const submitData = {

@@ -4,11 +4,12 @@ import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { createAssignmentRule, getPoolOwners, RESTAPI, getAvailablePools } from "api";
-import { CREATE_ASSIGNMENT_RULE, GET_DATA_SOURCES, GET_POOL_OWNERS, GET_AVAILABLE_POOLS } from "api/restapi/actionTypes";
+import { CREATE_ASSIGNMENT_RULE, GET_POOL_OWNERS, GET_AVAILABLE_POOLS } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import AssignmentRuleForm from "components/forms/AssignmentRuleForm";
 import { FIELD_NAMES } from "components/forms/AssignmentRuleForm/utils";
 import PageContentWrapper from "components/PageContentWrapper";
+import { useAllDataSources } from "hooks/coreData";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useAssignmentRulesAvailableFilters } from "hooks/useAssignmentRulesAvailableFilters";
@@ -178,10 +179,7 @@ const CreateAssignmentRuleFormContainer = () => {
     });
   }, [dispatch, organizationPoolId, organizationId]);
 
-  // get cloud accounts
-  // Attention: we don't request cloud account here as they are included in the initial loader
-  // and we assume that they are up-to-date
-  const { apiData: { cloudAccounts = [] } = {} } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const { isLoading: isAvailableFiltersLoading, resourceTypes, regions } = useAssignmentRulesAvailableFilters();
 
@@ -207,7 +205,7 @@ const CreateAssignmentRuleFormContainer = () => {
             }}
             onCancel={redirect}
             pools={pools}
-            cloudAccounts={cloudAccounts}
+            cloudAccounts={dataSources}
             resourceTypes={resourceTypes}
             regions={regions}
             onPoolChange={(newPoolId, callback) => {

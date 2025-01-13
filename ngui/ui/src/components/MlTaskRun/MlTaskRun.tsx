@@ -1,96 +1,53 @@
-import { useState } from "react";
 import RefreshOutlinedIcon from "@mui/icons-material/RefreshOutlined";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { Link, Stack, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import { GET_ML_ARTIFACTS, GET_ML_EXECUTORS, GET_ML_RUN_DETAILS, GET_ML_RUN_DETAILS_BREAKDOWN } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
-import TabsWrapper from "components/TabsWrapper";
-import ExecutionBreakdownContainer from "containers/ExecutionBreakdownContainer";
+import { ShareRunLinkModal } from "components/SideModalManager/SideModals";
 import RunArtifactsContainer from "containers/RunArtifactsContainer";
+import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useRefetchApis } from "hooks/useRefetchApis";
 import { ML_TASKS, getMlTaskDetailsUrl } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import { formatRunFullName } from "utils/ml";
-import { Executors, Overview } from "./Components";
-import Status from "./Components/Status";
+import { Charts, Executors, Overview, Status, Tabs } from "./Components";
 
-export const TABS = Object.freeze({
-  OVERVIEW: "overview",
-  ARTIFACTS: "artifacts",
-  CHARTS: "charts",
-  EXECUTORS: "executors"
-});
-
-const Tabs = ({ run, isLoading = false }) => {
-  const [activeTab, setActiveTab] = useState();
-
-  const tabs = [
-    {
-      title: TABS.OVERVIEW,
-      dataTestId: "tab_overview",
-      node: (
-        <Overview
-          status={run.status}
-          duration={run.duration}
-          cost={run.cost}
-          reachedGoals={run.reached_goals}
-          dataset={run.dataset}
-          tags={run.tags}
-          hyperparameters={run.hyperparameters}
-          git={run.git}
-          command={run.command}
-          console={run.console}
-          isLoading={isLoading}
-        />
-      )
-    },
-    {
-      title: TABS.CHARTS,
-      dataTestId: "tab_charts",
-      node: <ExecutionBreakdownContainer reachedGoals={run.reached_goals} />
-    },
-    {
-      title: TABS.ARTIFACTS,
-      dataTestId: "tab_artifact",
-      node: <RunArtifactsContainer />
-    },
-    {
-      title: TABS.EXECUTORS,
-      dataTestId: "tab_executors",
-      node: <Executors />
-    }
-  ];
-
-  return (
-    <TabsWrapper
-      tabsProps={{
-        tabs,
-        defaultTab: TABS.OVERVIEW,
-        name: "ml-task-run-details",
-        activeTab,
-        handleChange: (event, value) => {
-          setActiveTab(value);
-        }
-      }}
-    />
-  );
-};
-
-const MlTaskRun = ({ run, isLoading = false }) => {
+const MlTaskRun = ({
+  run,
+  organizationId,
+  arceeToken,
+  isFinOpsEnabled = false,
+  isPublicRun = false,
+  isLoading = false,
+  isDataReady = false
+}) => {
   const { task: { id: taskId, name: taskName } = {}, name: runName, number } = run;
 
   const refetch = useRefetchApis();
 
+  const openSideModal = useOpenSideModal();
+
   const actionBarDefinition = {
     breadcrumbs: [
-      <Link key={1} to={ML_TASKS} component={RouterLink}>
-        <FormattedMessage id="tasks" />
-      </Link>,
-      <Link key={2} to={getMlTaskDetailsUrl(taskId)} component={RouterLink}>
-        {taskName}
-      </Link>,
+      isPublicRun ? (
+        <span>
+          <FormattedMessage id="tasks" />
+        </span>
+      ) : (
+        <Link key={1} to={ML_TASKS} component={RouterLink}>
+          <FormattedMessage id="tasks" />
+        </Link>
+      ),
+      isPublicRun ? (
+        <span>{taskName}</span>
+      ) : (
+        <Link key={2} to={getMlTaskDetailsUrl(taskId)} component={RouterLink}>
+          {taskName}
+        </Link>
+      ),
       <FormattedMessage key={3} id="runs" />
     ],
     title: {
@@ -105,9 +62,50 @@ const MlTaskRun = ({ run, isLoading = false }) => {
         dataTestId: "btn_refresh",
         type: "button",
         action: () => refetch([GET_ML_RUN_DETAILS, GET_ML_EXECUTORS, GET_ML_RUN_DETAILS_BREAKDOWN, GET_ML_ARTIFACTS])
-      }
+      },
+      ...(isPublicRun
+        ? []
+        : [
+            {
+              key: "btn-share",
+              icon: <ShareOutlinedIcon fontSize="small" />,
+              messageId: "share",
+              dataTestId: "btn_share",
+              type: "button",
+              isLoading,
+              action: () => {
+                openSideModal(ShareRunLinkModal, {
+                  runId: run.id
+                });
+              }
+            }
+          ])
     ]
   };
+
+  const overviewTab = <Overview run={run} isLoading={isLoading} />;
+
+  const chartsTab = (
+    <Charts
+      run={run}
+      organizationId={organizationId}
+      arceeToken={arceeToken}
+      isPublicRun={isPublicRun}
+      isTaskRunLoading={isLoading}
+      isTaskRunDataReady={isDataReady}
+    />
+  );
+
+  const artifactsTab = <RunArtifactsContainer organizationId={organizationId} arceeToken={arceeToken} />;
+
+  const executorsTab = (
+    <Executors
+      arceeToken={arceeToken}
+      organizationId={organizationId}
+      withExpenses={isFinOpsEnabled}
+      isPublicRun={isPublicRun}
+    />
+  );
 
   return (
     <>
@@ -115,10 +113,16 @@ const MlTaskRun = ({ run, isLoading = false }) => {
       <PageContentWrapper>
         <Stack spacing={SPACING_2}>
           <div>
-            <Status status={run.status} duration={run.duration} cost={run.cost} isLoading={isLoading} />
+            <Status
+              status={run.status}
+              duration={run.duration}
+              cost={run.cost}
+              withCost={isFinOpsEnabled}
+              isLoading={isLoading}
+            />
           </div>
           <div>
-            <Tabs run={run} isLoading={isLoading} />
+            <Tabs overviewTab={overviewTab} chartsTab={chartsTab} artifactsTab={artifactsTab} executorsTab={executorsTab} />
           </div>
         </Stack>
       </PageContentWrapper>

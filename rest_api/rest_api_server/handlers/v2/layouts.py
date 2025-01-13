@@ -1,13 +1,12 @@
 import json
 
 from rest_api.rest_api_server.controllers.layout import LayoutsAsyncController
-from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.handlers.v2.profiling.base import (
     ProfilingHandler)
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncItemHandler, BaseAsyncCollectionHandler)
 from rest_api.rest_api_server.handlers.v1.base import (
-    BaseAuthHandler, BaseAuthQueryTokenHandler)
+    BaseAuthQueryTokenHandler)
 from rest_api.rest_api_server.utils import (run_task, ModelEncoder)
 
 
@@ -49,7 +48,7 @@ class LayoutsAsyncCollectionHandler(
         -   name: token
             in: query
             description: |
-                Unique token related to organization profiling token (only with
+                MD5 hash of organization profiling token (only with
                 layout_type=ml_run_charts_dashboard)
             required: false
             type: string
@@ -222,7 +221,7 @@ class LayoutsAsyncCollectionHandler(
 
 
 class LayoutsAsyncItemHandler(
-        BaseAsyncItemHandler, BaseAuthHandler, BaseHandler):
+        BaseAsyncItemHandler, BaseAuthQueryTokenHandler, ProfilingHandler):
     def _get_controller_class(self):
         return LayoutsAsyncController
 
@@ -244,6 +243,12 @@ class LayoutsAsyncItemHandler(
             in: path
             description: Layout id
             required: true
+            type: string
+        -   name: token
+            in: query
+            description: |
+                MD5 hash of organization profiling token
+            required: false
             type: string
         responses:
             200:
@@ -281,11 +286,19 @@ class LayoutsAsyncItemHandler(
         security:
         - token: []
         """
-        await self.check_permissions(
+        secret = False
+        token = self.get_arg('token', str, None)
+        if await self.check_md5_profiling_token(
+                organization_id, token, raises=False):
+            user_id = None
+            secret = True
+        else:
+            await self.check_permissions(
                 'INFO_ORGANIZATION', 'organization', organization_id)
-        user_id = await self.check_self_auth()
+            user_id = await self.check_self_auth()
         res = await run_task(
-            self.controller.get_item, user_id, organization_id, layout_id)
+            self.controller.get_item, user_id, organization_id, layout_id,
+            secret=secret)
         self.write(json.dumps(res.to_dict()))
 
     async def patch(self, organization_id, layout_id):

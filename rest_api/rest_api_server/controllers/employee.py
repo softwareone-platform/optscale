@@ -1,6 +1,7 @@
 import logging
 import re
 import requests
+from datetime import datetime, timezone
 from optscale_client.config_client.client import etcd
 from sqlalchemy import exists, and_, or_, func
 from sqlalchemy.exc import IntegrityError
@@ -8,8 +9,10 @@ from tools.optscale_exceptions.common_exc import (
     NotFoundException, ConflictException, ForbiddenException,
     UnauthorizedException, WrongArgumentsException)
 
-from rest_api.rest_api_server.controllers.base import BaseController, MongoMixin
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base import (
+    BaseController, MongoMixin)
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper)
 from rest_api.rest_api_server.controllers.expense import (
     CloudFilteredEmployeeFormattedExpenseController,
     PoolFilteredEmployeeFormattedExpenseController)
@@ -17,12 +20,14 @@ from rest_api.rest_api_server.controllers.organization_constraint import (
     OrganizationConstraintController)
 from rest_api.rest_api_server.controllers.profiling.base import (
     BaseProfilingController)
+from rest_api.rest_api_server.controllers.employee_email import (
+    EmployeeEmailController)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.enums import (
     AuthenticationType, PoolPurposes, RolePurposes)
 from rest_api.rest_api_server.models.models import (
-    AssignmentRequest, Employee, Layout, Organization, Pool, Rule,
-    ShareableBooking)
+    AssignmentRequest, Employee, EmployeeEmail, Layout, Organization, Pool,
+    Rule, ShareableBooking)
 from rest_api.rest_api_server.utils import Config
 
 from optscale_client.auth_client.client_v2 import Client as AuthClient
@@ -221,6 +226,15 @@ class EmployeeController(BaseController, MongoMixin):
             result.append(item)
         return result
 
+    def _create_employee_emails(self, employee_id):
+        emp_email_ctr = EmployeeEmailController(self.session, self._config)
+        emp_email_ctr.create_all_email_templates(employee_id)
+
+    def create(self, **kwargs):
+        employee = super().create(**kwargs)
+        self._create_employee_emails(employee.id)
+        return employee
+
     def get_expenses(self, employee, start_date, end_date, filter_by):
         controller_map = {
             'cloud': CloudFilteredEmployeeFormattedExpenseController,
@@ -331,6 +345,13 @@ class EmployeeController(BaseController, MongoMixin):
             self.session.rollback()
             raise WrongArgumentsException(Err.OE0003, [str(ex)])
 
+    def _delete_employee_emails(self, employee_id):
+        self.session.query(EmployeeEmail).filter(
+            EmployeeEmail.employee_id == employee_id,
+            EmployeeEmail.deleted_at == 0
+        ).update({EmployeeEmail.deleted_at: int(datetime.now(
+            tz=timezone.utc).timestamp())})
+
     def delete(self, item_id, reassign_resources=True, **kwargs):
         employee = self.get(item_id)
         scopes = self.get_org_and_pool_summary_map(employee.organization_id)
@@ -343,6 +364,8 @@ class EmployeeController(BaseController, MongoMixin):
             if exc.response.status_code == 401:
                 raise UnauthorizedException(Err.OE0235, [])
             raise
+
+        self._delete_employee_emails(item_id)
 
         if reassign_resources:
             new_owner_id = kwargs.get('new_owner_id')

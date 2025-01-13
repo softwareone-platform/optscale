@@ -9,7 +9,7 @@ import { FormattedMessage } from "react-intl";
 import { GET_RESOURCE_ALLOWED_ACTIONS } from "api/auth/actionTypes";
 import CloudLabel from "components/CloudLabel";
 import IconButton from "components/IconButton";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import ExcludePoolsFromRecommendationModal from "components/SideModalManager/SideModals/ExcludePoolsFromRecommendationModal";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
@@ -222,9 +222,12 @@ const Details = ({ type, limit, status, data, dataSourceIds = [], withDownload }
   return (
     <>
       {status === ACTIVE && (
-        <InlineSeverityAlert
-          messageId={recommendation.descriptionMessageId}
-          messageValues={{ strong: (chunks) => <strong>{chunks}</strong>, ...recommendation.descriptionMessageValues }}
+        <PageContentDescription
+          position="top"
+          alertProps={{
+            messageId: recommendation.descriptionMessageId,
+            messageValues: { strong: (chunks) => <strong>{chunks}</strong>, ...recommendation.descriptionMessageValues }
+          }}
         />
       )}
       <Table

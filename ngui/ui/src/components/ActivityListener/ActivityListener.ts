@@ -1,14 +1,12 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { GET_TOKEN } from "api/auth/actionTypes";
-import { useApiData } from "hooks/useApiData";
+import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { dropUserIdentificationIfUniqueIdChanged, identify, initializeHotjar, trackPage } from "utils/analytics";
 
 const ActivityListener = () => {
-  const {
-    apiData: { userId }
-  } = useApiData(GET_TOKEN);
+  const { userId } = useGetToken();
+
   const { isDemo, organizationId } = useOrganizationInfo();
 
   // hotjar init

@@ -1,12 +1,13 @@
-import { Box } from "@mui/material";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
-import { SPACING_1 } from "utils/layouts";
+import PageContentDescription from "components/PageContentDescription";
 
 const InformationWrapper = ({ children }) => (
   <>
-    <Box mb={SPACING_1}>
-      <InlineSeverityAlert messageId="recommendationsSettingsOutOfSyncMessage" />
-    </Box>
+    <PageContentDescription
+      position="top"
+      alertProps={{
+        messageId: "recommendationsSettingsOutOfSyncMessage"
+      }}
+    />
     {children}
   </>
 );

@@ -13,15 +13,22 @@ const Accordion = ({
   inheritFlexDirection = false,
   actions = null,
   headerDataTestId,
+  disableShadows = false,
+  enabledBorder = false,
+  expandTitleColor,
+  alwaysHighlightTitle = false,
   ...rest
 }) => {
-  const { classes, cx } = useStyles();
+  const { classes, cx } = useStyles({
+    expandTitleColor,
+    alwaysHighlightTitle
+  });
 
   return (
     <MuiAccordion
       TransitionProps={{ unmountOnExit: true }}
       {...rest}
-      className={disableExpandedSpacing ? classes.disableExpandedSpacing : ""}
+      className={cx(disableExpandedSpacing ? classes.disableExpandedSpacing : "", disableShadows ? classes.disableShadows : "")}
     >
       <AccordionSummary
         data-test-id={headerDataTestId}
@@ -30,7 +37,9 @@ const Accordion = ({
           classes.summary,
           zeroSummaryMinHeight ? classes.zeroSummaryMinHeight : "",
           inheritFlexDirection ? classes.inheritFlexDirection : "",
-          hideExpandIcon ? "" : classes.summaryPadding
+          hideExpandIcon ? "" : classes.summaryPadding,
+          enabledBorder ? classes.enableBorder : "",
+          classes.expandTitleColor
         )}
       >
         {summary}

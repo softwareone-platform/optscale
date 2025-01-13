@@ -518,8 +518,7 @@ class OrganizationConstraintController(ConstraintBaseController,
             extended_filters = self._extend_filters(
                 organization_id, c.loaded_filters)
             c.filters = json.dumps(extended_filters)
-            if hit_days:
-                c.limit_hits = constraint_hits_map.get(c.id, [])
+            c.limit_hits = constraint_hits_map.get(c.id, [])
         return result
 
     def delete_constraint_by_id(self, constraint_id):

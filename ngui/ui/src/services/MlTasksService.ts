@@ -276,10 +276,8 @@ const useGetTaskRunsBulk = (taskId, runIds) => {
   return { isLoading, isDataReady, runs };
 };
 
-const useGetTaskRun = (runId) => {
+const useGetTaskRun = (organizationId, runId, params) => {
   const dispatch = useDispatch();
-
-  const { organizationId } = useOrganizationInfo();
 
   const { isLoading, isDataReady, shouldInvoke } = useApiState(GET_ML_RUN_DETAILS, { organizationId, runId });
 
@@ -287,9 +285,9 @@ const useGetTaskRun = (runId) => {
 
   useEffect(() => {
     if (shouldInvoke) {
-      dispatch(getMlRunDetails(organizationId, runId));
+      dispatch(getMlRunDetails(organizationId, runId, params));
     }
-  }, [dispatch, organizationId, runId, shouldInvoke]);
+  }, [dispatch, organizationId, runId, shouldInvoke, params]);
 
   return { isLoading, isDataReady, run: apiData };
 };
@@ -314,10 +312,8 @@ const useGetTaskTags = (taskId) => {
   return { isLoading, tags };
 };
 
-const useGetRunBreakdown = (runId) => {
+const useGetRunBreakdown = (organizationId, runId, params) => {
   const dispatch = useDispatch();
-
-  const { organizationId } = useOrganizationInfo();
 
   const { isLoading, isDataReady, shouldInvoke } = useApiState(GET_ML_RUN_DETAILS_BREAKDOWN, {
     organizationId,
@@ -330,9 +326,9 @@ const useGetRunBreakdown = (runId) => {
 
   useEffect(() => {
     if (shouldInvoke) {
-      dispatch(getMlRunDetailsBreakdown(organizationId, runId));
+      dispatch(getMlRunDetailsBreakdown(organizationId, runId, params));
     }
-  }, [dispatch, organizationId, runId, shouldInvoke]);
+  }, [dispatch, organizationId, runId, shouldInvoke, params]);
 
   return { isLoading, isDataReady, breakdown, stages, milestones };
 };

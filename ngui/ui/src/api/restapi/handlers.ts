@@ -5,8 +5,6 @@ import {
   SET_INVITATION,
   GET_POOL,
   DELETE_POOL,
-  GET_CURRENT_EMPLOYEE,
-  SET_CURRENT_EMPLOYEE,
   GET_ASSIGNMENT_RULES,
   SET_POOL_POLICY,
   GET_POOL_POLICIES,
@@ -35,11 +33,6 @@ import {
   UPDATE_GLOBAL_POOL_POLICY,
   GET_GLOBAL_RESOURCE_CONSTRAINTS,
   UPDATE_GLOBAL_RESOURCE_CONSTRAINT,
-  UPDATE_ORGANIZATION_THEME_SETTINGS,
-  GET_ORGANIZATION_THEME_SETTINGS,
-  UPDATE_ORGANIZATION_PERSPECTIVES,
-  GET_ORGANIZATION_PERSPECTIVES,
-  CREATE_ORGANIZATION,
   UPDATE_ENVIRONMENT_SSH_REQUIREMENT,
   GET_ML_TASK,
   SET_ML_TASK,
@@ -78,22 +71,10 @@ export const onSuccessUpdateInvitation = () => ({
   label: GET_INVITATION
 });
 
-export const onSuccessCreateOrganization = (data) => ({
-  type: CREATE_ORGANIZATION,
-  payload: data,
-  label: CREATE_ORGANIZATION
-});
-
 export const onSuccessDeletePool = (id) => () => ({
   type: DELETE_POOL,
   payload: { id },
   label: GET_POOL
-});
-
-export const onSuccessGetCurrentEmployee = ({ employees = [] }) => ({
-  type: SET_CURRENT_EMPLOYEE,
-  payload: employees[0],
-  label: GET_CURRENT_EMPLOYEE
 });
 
 export const onSuccessCreatePoolPolicy = (data) => ({
@@ -229,18 +210,6 @@ export const onSuccessUpdateAnomaly = (data) => ({
   type: UPDATE_ORGANIZATION_CONSTRAINT,
   payload: data,
   label: GET_ORGANIZATION_CONSTRAINT
-});
-
-export const onUpdateOrganizationThemeSettings = (data) => ({
-  type: UPDATE_ORGANIZATION_THEME_SETTINGS,
-  payload: data,
-  label: GET_ORGANIZATION_THEME_SETTINGS
-});
-
-export const onUpdateOrganizationPerspectives = (data) => ({
-  type: UPDATE_ORGANIZATION_PERSPECTIVES,
-  payload: data,
-  label: GET_ORGANIZATION_PERSPECTIVES
 });
 
 export const onUpdateMlTask = (data) => ({

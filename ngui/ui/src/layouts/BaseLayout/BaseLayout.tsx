@@ -1,4 +1,4 @@
-import { useState, Children } from "react";
+import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -19,7 +19,8 @@ import Logo from "components/Logo";
 import MainMenu from "components/MainMenu";
 import PendingInvitationsAlert from "components/PendingInvitationsAlert";
 import TopAlertWrapper from "components/TopAlertWrapper";
-import MainLayoutContainer from "containers/MainLayoutContainer";
+// import MainLayoutContainer from "containers/MainLayoutContainer";
+import CoreDataContainer from "containers/CoreDataContainer";
 import OrganizationSelectorContainer from "containers/OrganizationSelectorContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
@@ -40,7 +41,7 @@ const getLogoSize = (isDemo, isDownMd, isDownSm) => {
   return isDownSm ? LOGO_SIZE.SHORT : LOGO_SIZE.FULL;
 };
 
-const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrganizationSelector = false }) => {
+const AppToolbar = ({ onMenuIconClick, showMainMenu = false, showOrganizationSelector = false }) => {
   const { classes, cx } = useStyles();
   const navigate = useNavigate();
   const isDownMd = useIsDownMediaQuery("md");
@@ -97,7 +98,7 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
         <Box display="flex" alignItems="center">
           {showOrganizationSelector && (
             <Box mr={1}>
-              <OrganizationSelectorContainer mainMenu={mainMenu} />
+              <OrganizationSelectorContainer />
             </Box>
           )}
           <HeaderButtons />
@@ -162,7 +163,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
             )}
             <Container key={organizationId} id={BASE_LAYOUT_CONTAINER_ID} component="main" className={classes.content}>
               <ErrorBoundary>
-                <MainLayoutContainer>{Children.only(children)}</MainLayoutContainer>
+                <CoreDataContainer>{children}</CoreDataContainer>
               </ErrorBoundary>
             </Container>
           </Box>

@@ -5,7 +5,7 @@ import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import ClusterTypesTable from "components/ClusterTypesTable";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DOCS_HYSTAX_CLUSTERS, RESOURCES } from "urls";
 import { MPT_SPACING_2 } from "../../utils/layouts";
@@ -22,20 +22,6 @@ const actionBarDefinition = {
   }
 };
 
-const ExplanationMessage = () => (
-  <InlineSeverityAlert
-    messageId="clusterTypesDescription"
-    messageDataTestId="p_clusters_list"
-    messageValues={{
-      link: (chunks) => (
-        <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
-          {chunks}
-        </Link>
-      )
-    }}
-  />
-);
-
 const ClusterTypes = ({ clusterTypes, onUpdatePriority, isLoading = false }) => (
   <>
     <ActionBar data={actionBarDefinition} />
@@ -45,7 +31,20 @@ const ClusterTypes = ({ clusterTypes, onUpdatePriority, isLoading = false }) => 
           <Box>
             <ClusterTypesTable clusterTypes={clusterTypes} onUpdatePriority={onUpdatePriority} isLoading={isLoading} />
             <Box marginTop={MPT_SPACING_2}>
-              <ExplanationMessage />
+              <PageContentDescription
+                position="bottom"
+                alertProps={{
+                  messageId: "clusterTypesDescription",
+                  messageDataTestId: "p_clusters_list",
+                  messageValues: {
+                    link: (chunks) => (
+                      <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
+                        {chunks}
+                      </Link>
+                    )
+                  }
+                }}
+              />
             </Box>
           </Box>
         </Grid>

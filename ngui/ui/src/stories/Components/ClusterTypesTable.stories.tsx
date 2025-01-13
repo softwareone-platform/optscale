@@ -1,7 +1,5 @@
 import { Provider } from "react-redux";
 import configureMockStore from "redux-mock-store";
-import { GET_ORGANIZATION_ALLOWED_ACTIONS } from "api/auth/actionTypes";
-import { GET_ORGANIZATIONS } from "api/restapi/actionTypes";
 import ClusterTypesTable from "components/ClusterTypesTable";
 import { MOCKED_ORGANIZATION_ID } from "stories";
 
@@ -25,23 +23,7 @@ export const withoutManageResourcePermission = (args) => (
 
 export const withManageResourcePermission = (args) => {
   const store = mockStore({
-    organizationId: MOCKED_ORGANIZATION_ID,
-    restapi: {
-      [GET_ORGANIZATIONS]: {
-        organizations: [
-          {
-            id: MOCKED_ORGANIZATION_ID
-          }
-        ]
-      }
-    },
-    auth: {
-      [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-        allowedActions: {
-          my_organization_id: ["MANAGE_RESOURCES"]
-        }
-      }
-    }
+    organizationId: MOCKED_ORGANIZATION_ID
   });
 
   return (

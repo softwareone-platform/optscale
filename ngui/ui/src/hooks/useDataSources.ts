@@ -23,7 +23,8 @@ import {
   ENVIRONMENT,
   GCP_CNR,
   CLOUD_ACCOUNT_TYPE,
-  NEBIUS
+  NEBIUS,
+  GCP_TENANT
 } from "utils/constants";
 
 export const getSettings = (type) =>
@@ -49,7 +50,7 @@ export const getSettings = (type) =>
     [DATABRICKS]: {
       icon: DatabricksLogoIcon,
       logo: databricksLogo,
-      disconnectQuestionId: "disconnectAzureQuestion",
+      disconnectQuestionId: "disconnectDatabricksQuestion",
       cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[DATABRICKS]
     },
     [KUBERNETES_CNR]: {
@@ -73,6 +74,12 @@ export const getSettings = (type) =>
       logo: gcpLogo,
       disconnectQuestionId: "disconnectGcpQuestion",
       cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_CNR]
+    },
+    [GCP_TENANT]: {
+      icon: GcpLogoIcon,
+      logo: gcpLogo,
+      disconnectQuestionId: "disconnectGcpQuestion",
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_TENANT]
     },
     [NEBIUS]: {
       icon: NebiusLogoIcon,

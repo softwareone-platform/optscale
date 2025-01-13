@@ -54,9 +54,10 @@ class Err(enum.Enum):
         ["channel_id and auth_user_id could not be provided at the same time"]
     ]
     OS0016 = [
-        "User with %s %s were not found",
+        "User with %s %s was not found",
         ["auth_user_id", "02430e6b-6975-4535-8bc6-7a7b52938014"],
-        ["User with auth_user_id 02430e6b-6975-4535-8bc6-7a7b52938014 were not found"]
+        ["User with auth_user_id 02430e6b-6975-4535-8bc6-7a7b52938014 was not "
+         "found"]
     ]
     OS0017 = [
         "%s should provide only with %s",
@@ -70,4 +71,9 @@ class Err(enum.Enum):
         "Target slack channel %s is archived",
         ['channel_id'],
         ['Target slack channel FFFFFFFFF is archived']
+    ]
+    OS0020 = [
+        "Slack app is not added to channel %s",
+        ['channel_id'],
+        ['Slack app is not added to channel C000000000']
     ]

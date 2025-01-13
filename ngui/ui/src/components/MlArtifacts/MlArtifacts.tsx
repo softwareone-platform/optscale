@@ -5,9 +5,12 @@ import ActionBar from "components/ActionBar";
 import ArtifactsTable from "components/ArtifactsTable";
 import PageContentWrapper from "components/PageContentWrapper";
 import MlArtifactsContainer from "containers/MlArtifactsContainer";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useRefetchApis } from "hooks/useRefetchApis";
 
 const MlArtifacts = ({ tasks, isLoading = false }) => {
+  const { organizationId } = useOrganizationInfo();
+
   const refetch = useRefetchApis();
 
   const actionBarDefinition = {
@@ -33,6 +36,7 @@ const MlArtifacts = ({ tasks, isLoading = false }) => {
       <PageContentWrapper>
         <MlArtifactsContainer
           tasks={tasks}
+          organizationId={organizationId}
           isLoading={isLoading}
           render={({ artifacts, pagination, search, rangeFilter, tasksFilter }) => (
             <ArtifactsTable

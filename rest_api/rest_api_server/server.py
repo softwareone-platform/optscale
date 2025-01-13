@@ -540,6 +540,12 @@ def get_handlers(handler_kwargs, version=None):
             (urls_v2.verify_email,
              h_v2.verify_emails.VerifyEmailAsyncCollectionHandler,
              handler_kwargs),
+            (urls_v2.employee_emails_collection,
+             h_v2.employee_emails.EmployeeEmailsAsyncCollectionHandler,
+             handler_kwargs),
+            (urls_v2.employee_emails_bulk,
+             h_v2.employee_emails.EmployeeEmailsBulkAsyncCollectionHandler,
+             handler_kwargs),
             *profiling_urls,
         ])
     return result

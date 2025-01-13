@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getSshKeys, createSshKey, updateSshKey } from "api";
-import { GET_CURRENT_EMPLOYEE, GET_SSH_KEYS } from "api/restapi/actionTypes";
+import { GET_SSH_KEYS } from "api/restapi/actionTypes";
 import SshSettings from "components/SshSettings";
+import { useCurrentEmployee } from "hooks/coreData";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 
@@ -10,7 +11,7 @@ const SshSettingsContainer = () => {
   const dispatch = useDispatch();
 
   // employee id
-  const { apiData: { currentEmployee: { id: currentEmployeeId } = {} } = {} } = useApiData(GET_CURRENT_EMPLOYEE);
+  const { id: currentEmployeeId } = useCurrentEmployee();
 
   // get ssh keys
   const { shouldInvoke, isLoading: isGetSshKeysLoading } = useApiState(GET_SSH_KEYS, currentEmployeeId);

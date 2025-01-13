@@ -2,9 +2,10 @@ import { useEffect, useMemo } from "react";
 import { millisecondsToSeconds } from "date-fns";
 import { useDispatch } from "react-redux";
 import { RESTAPI, bookEnvironment, createSshKey, getSshKeys } from "api";
-import { BOOK_ENVIRONMENT, GET_CURRENT_EMPLOYEE, GET_SSH_KEYS, CREATE_SSH_KEY } from "api/restapi/actionTypes";
+import { BOOK_ENVIRONMENT, GET_SSH_KEYS, CREATE_SSH_KEY } from "api/restapi/actionTypes";
 import BookEnvironmentForm from "components/forms/BookEnvironmentForm";
 import { FormValues } from "components/forms/BookEnvironmentForm/types";
+import { useCurrentEmployee } from "hooks/coreData";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
@@ -28,9 +29,7 @@ const BookEnvironmentFormContainer = ({
   const { isLoading: isBookEnvironmentLoading } = useApiState(BOOK_ENVIRONMENT);
   const { isLoading: isCreateSshKeyLoading } = useApiState(CREATE_SSH_KEY);
 
-  const {
-    apiData: { currentEmployee = {} }
-  } = useApiData(GET_CURRENT_EMPLOYEE);
+  const currentEmployee = useCurrentEmployee();
 
   const requestParams = useMemo(
     () => ({
