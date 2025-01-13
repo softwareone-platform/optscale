@@ -20,7 +20,7 @@ test('Login as FinOps user', async ({ homePage, header }) => {
   } );
 });
 
-test.only('Verify Main Menu', async ({ mainMenu }) => {
+test('Verify Main Menu', async ({ mainMenu }) => {
   await test.step('Expand Main Menu', async () => {
     await mainMenu.expandMenu();
   });
