@@ -1,5 +1,6 @@
 import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import {defineConfig, expect, Locator, Page} from "@playwright/test";
+
 
 export class MainMenu extends BasePage {
     readonly page: Page;
@@ -67,5 +68,10 @@ export class MainMenu extends BasePage {
         if (await this.systemBtn.isVisible() && await this.systemBtn.getAttribute('aria-expanded') === 'false') {
             await this.systemBtn.click();
         }
+    }
+    async assertMenuNavigation(menuLink: Locator, expectedUrl: string) {
+        const baseURL = process.env.baseURL;
+        await menuLink.click();
+        await expect(this.page).toHaveURL(new RegExp(`^${baseURL}${expectedUrl.replace(/^\//, '')}`));
     }
 }

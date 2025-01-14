@@ -7,7 +7,7 @@ import path from "path";
 import {AuthResponse} from "../test-data/test-data-types";
 import fs from "fs";
 
-setup('Login and save token', async ({ request }) => {
+setup('API Login and save token', async ({ request }) => {
     const response = await request.post('https://cloudspend.velasuci.com/auth/v2/tokens', {
         data: {
             email: `${process.env.FINOPS_USER_EMAIL}`,

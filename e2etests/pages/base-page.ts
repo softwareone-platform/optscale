@@ -12,11 +12,11 @@ export abstract class BasePage {
     async navigateToURL(waitForPageLoad = false): Promise<void> {
         await this.page.goto(this.url, {waitUntil: "domcontentloaded"});
         if (waitForPageLoad) {
-            await this.waitForLoadEvent();
+            await this.waitForDocumentComplete();
         }
     }
 
-    async waitForLoadEvent(): Promise<void> {
+    async waitForDocumentComplete(): Promise<void> {
         await this.page.evaluate(() => {
             return new Promise<void>((resolve) => {
                 if (document.readyState === "complete") {
@@ -37,7 +37,7 @@ export abstract class BasePage {
 
     async setupRouting(token: string) {
         await this.page.route('**/*', (route) => {
-            console.log(`Intercepting request to: ${route.request().url()}`);
+            // console.log(`Intercepting request to: ${route.request().url()}`);
             const headers = {
                 ...route.request().headers(),
                 Authorization: `Bearer ${token}`,
