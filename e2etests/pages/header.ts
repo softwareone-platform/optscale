@@ -24,6 +24,7 @@ export class Header extends BasePage {
         this.profileBtn = this.header.getByTestId('btn_profile');
         this.profileUserName = this.page.getByTestId('p_user_name');
         this.profileUserEmail = this.page.getByTestId('p_user_email');
+        this.profileSignOutBtn = this.page.getByTestId('btn_signout');
     }
 
     async selectOrganization(organization: string) {

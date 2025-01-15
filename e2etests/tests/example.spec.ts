@@ -37,7 +37,7 @@ test('Verify connect data banner displayed when no data source', async ({homePag
     });
 });
 
-test('Verify Home page object when data source connected', async ({homePage, header}) => {
+test('Verify Home page objects when data source connected', async ({homePage, header}) => {
 
     await test.step('Verify user is logged as a member of the Apple Inc Org', async () => {
         const organizationName = await header.organizationSelect.innerText();
@@ -213,5 +213,24 @@ test('Verify Home page object when data source connected', async ({homePage, hea
 
         await test.step('Navigate to Settings from main menu', async () => {
             await mainMenu.assertMenuNavigation(mainMenu.settingsBtn, settingsPage.url);
+        });
+    });
+
+    test('Select data source, category and applicable service in recommendations', async ({header, homePage, recommendationsPage}) => {
+        await test.step('Navigate to recommendations page for Apple Inc', async () => {
+            const organizationName = await header.organizationSelect.innerText();
+            if (!organizationName.includes('Apple Inc')) {
+                await header.selectOrganization('Apple Inc');
+            }
+            await homePage.recommendationsBtn.click();
+        });
+    await test.step('Select data source', async () => {
+        await recommendationsPage.selectDataSource('swotest02');
+    });
+    await test.step('Select category', async () => {
+        await recommendationsPage.selectCategory('Critical');
+    });
+    await test.step('Select applicable service', async () => {
+            await recommendationsPage.selectApplicableService('Compute');
         });
     });

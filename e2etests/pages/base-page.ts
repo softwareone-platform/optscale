@@ -28,6 +28,12 @@ export abstract class BasePage {
         });
     }
 
+    async selectFromComboBox(comboBox: Locator, option: string, closeList = false) {
+        await comboBox.click();
+        await this.page.getByRole('option', {name: option, exact: true}).click();
+        if (closeList) await this.page.locator('body').click();
+    }
+
     async getSelectedOptionFromSelect(selectElement: Locator) {
         return await selectElement.evaluate((select: HTMLSelectElement) => {
             const selectedOption = select.selectedOptions[0];
