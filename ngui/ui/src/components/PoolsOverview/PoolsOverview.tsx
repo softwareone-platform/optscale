@@ -9,6 +9,7 @@ import { ASSIGNMENT_RULES } from "urls";
 import { POOL_TYPE_BUSINESS_UNIT } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import Summary from "./Summary";
+import { Box } from "@mui/system";
 
 const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLoading }) => {
   const { name } = useOrganizationInfo();
@@ -40,11 +41,17 @@ const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLo
           <Grid item>
             <Summary data={data} isLoading={isLoading} />
           </Grid>
-          <Grid item xs={12}>
-            <PoolsTable
-              rootPool={data}
-              isLoadingProps={{ isGetPoolLoading: isLoading, isGetPoolDataReady: isDataReady, isGetPoolAllowedActionsLoading }}
-            />
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+            <Box>
+              <PoolsTable
+                rootPool={data}
+                isLoadingProps={{
+                  isGetPoolLoading: isLoading,
+                  isGetPoolDataReady: isDataReady,
+                  isGetPoolAllowedActionsLoading
+                }}
+              />
+            </Box>
           </Grid>
         </Grid>
       </PageContentWrapper>
