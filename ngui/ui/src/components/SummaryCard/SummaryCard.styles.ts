@@ -13,8 +13,6 @@ const useStyles = makeStyles()((theme, color) => ({
     [theme.breakpoints.down("xl")]: {
       minWidth: 100
     },
-    backgroundColor: lighten(color, ALPHA),
-    border: `1px solid ${lighten(color, ALPHA)}`,
     color
   },
   button: {
@@ -34,6 +32,9 @@ const useStyles = makeStyles()((theme, color) => ({
     "&:last-child": {
       paddingBottom: theme.spacing(SPACING_1)
     }
+  },
+  icon: {
+    fontSize: "18px"
   }
 }));
 

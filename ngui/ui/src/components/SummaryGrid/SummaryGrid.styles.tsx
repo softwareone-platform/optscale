@@ -11,7 +11,6 @@ const useStyles = makeStyles()(() => ({
       padding: MPT_SPACING_1,
       paddingLeft: 0,
       paddingRight: 0,
-      background: MPT_BRAND_WHITE,
       boxShadow: MPT_BOX_SHADOW,
       border: "none",
       ".MuiTypography-h5": {
@@ -19,9 +18,6 @@ const useStyles = makeStyles()(() => ({
         fontSize: MPT_SPACING_3,
         lineHeight: "28px"
       }
-    },
-    ".MuiBox-root": {
-      color: "black"
     }
   }
 }));
