@@ -234,3 +234,16 @@ test('Verify Home page objects when data source connected', async ({homePage, he
             await recommendationsPage.selectApplicableService('Compute');
         });
     });
+
+    test('See all perspectives', async ({homePage, header, perspectivesPage}) => {
+        await test.step('Select organization Apple Inc', async () => {
+            await header.selectOrganization('Apple Inc');
+        });
+        await test.step('Select all perspectives', async () => {
+            await homePage.selectPerspectives('See all perspectives');
+        });
+        await test.step('Verify perspectives page', async () => {
+            await expect(perspectivesPage.page).toHaveURL(perspectivesPage.url);
+            await expect(perspectivesPage.perspectivesHeading).toBeVisible();
+        });
+    });

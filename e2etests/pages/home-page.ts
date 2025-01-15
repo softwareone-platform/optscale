@@ -48,4 +48,9 @@ export class HomePage extends BasePage {
         this.poolsReqAttnExceededLimitBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_exceeded_limit');
         this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
     }
+
+    async selectPerspectives(option: string) {
+        await this.topResourcesPerspectives.click();
+        await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
+    }
 }

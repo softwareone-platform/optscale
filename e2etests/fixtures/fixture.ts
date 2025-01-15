@@ -14,6 +14,7 @@ import {UsersPage} from "../pages/users-page";
 import {CloudAccountsPage} from "../pages/cloud-accounts-page";
 import {EventsPage} from "../pages/events-page";
 import {SettingsPage} from "../pages/settings-page";
+import {PerspectivesPage} from "../pages/perspectives-page";
 
 // Helper to dynamically generate a token
 async function generateToken(request: any): Promise<string> {
@@ -41,6 +42,7 @@ const test = base.extend<{
     homePage: HomePage;
     loginPage: LoginPage;
     mainMenu: MainMenu;
+    perspectivesPage: PerspectivesPage;
     policiesPage: PoliciesPage;
     poolsPage: PoolsPage;
     recommendationsPage: RecommendationsPage;
@@ -94,6 +96,11 @@ const test = base.extend<{
         const mainMenu = new MainMenu(page);
         await mainMenu.setupRouting(token);
         await use(mainMenu);
+    },
+    perspectivesPage: async ({ page, token }, use) => {
+        const perspectivesPage = new PerspectivesPage(page);
+        await perspectivesPage.setupRouting(token);
+        await use(perspectivesPage);
     },
     policiesPage: async ({ page, token }, use) => {
         const policiesPage = new PoliciesPage(page);
