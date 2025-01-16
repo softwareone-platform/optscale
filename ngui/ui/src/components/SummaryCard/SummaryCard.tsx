@@ -35,10 +35,11 @@ const getCardIcon = (cardType: string, classes) =>
 const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type,...rest }, ref) => {
   const { classes, cx } = useStyles(color);
   const cardClasses = cx(classes.root, clickable ? classes.button : "");
+  const cardContentClasses = cx(classes.content, type !== 'primary' ? classes.contentWithIcon : '');
 
   return (
     <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
-      <CardContent className={classes.content}>
+      <CardContent className={cardContentClasses}>
         <Box>
           {type !== 'primary' && (
             <Box position="absolute" bottom={"12px"} right={"8px"} fontSize={"18px"}>                 
