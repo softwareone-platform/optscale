@@ -26,9 +26,9 @@ import {
   RESOURCE_TYPE_IS,
   REGION_IS
 } from "utils/constants";
+import { SPACING_1 } from "utils/layouts";
 import { getQueryParams } from "utils/network";
 import { parseJSON } from "utils/strings";
-import { SPACING_1 } from "utils/layouts";
 
 const PageActionBar = ({ isFormDataLoading }) => {
   const getActionBarDefinitions = () => ({

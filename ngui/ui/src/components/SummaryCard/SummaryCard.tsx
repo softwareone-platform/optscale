@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ClearIcon from '@mui/icons-material/Clear';
-import ErrorIcon from '@mui/icons-material/Error';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ClearIcon from "@mui/icons-material/Clear";
+import ErrorIcon from "@mui/icons-material/Error";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -27,22 +27,22 @@ export const SUMMARY_CARD_ICONS = Object.freeze({
 const getCardIcon = (cardType: string, classes) =>
   ({
     [SUMMARY_CARD_ICONS.PRIMARY]: "",
-    [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon}/>,
-    [SUMMARY_CARD_ICONS.WARNING]: <ErrorIcon className={classes.icon}/>,
-    [SUMMARY_CARD_ICONS.ERROR]: <ClearIcon className={classes.icon}/>
+    [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon} />,
+    [SUMMARY_CARD_ICONS.WARNING]: <ErrorIcon className={classes.icon} />,
+    [SUMMARY_CARD_ICONS.ERROR]: <ClearIcon className={classes.icon} />
   })[cardType];
 
-const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type,...rest }, ref) => {
+const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
   const { classes, cx } = useStyles(color);
   const cardClasses = cx(classes.root, clickable ? classes.button : "");
-  const cardContentClasses = cx(classes.content, type !== 'primary' ? classes.contentWithIcon : '');
+  const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
 
   return (
     <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
       <CardContent className={cardContentClasses}>
         <Box>
-          {type !== 'primary' && (
-            <Box position="absolute" bottom={"12px"} right={"8px"} fontSize={"18px"}>                 
+          {type !== "primary" && (
+            <Box position="absolute" bottom={"12px"} right={"8px"} fontSize={"18px"}>
               {getCardIcon(type, classes)}
             </Box>
           )}

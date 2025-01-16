@@ -1,5 +1,6 @@
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/system";
 import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
 import PoolsTable from "components/PoolsTable";
@@ -9,7 +10,6 @@ import { ASSIGNMENT_RULES } from "urls";
 import { POOL_TYPE_BUSINESS_UNIT } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import Summary from "./Summary";
-import { Box } from "@mui/system";
 
 const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLoading }) => {
   const { name } = useOrganizationInfo();
