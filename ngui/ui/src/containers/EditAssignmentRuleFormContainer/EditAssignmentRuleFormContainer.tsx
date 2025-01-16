@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Link } from "@mui/material";
+import { Box, Grid, Link } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
@@ -22,6 +22,7 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ASSIGNMENT_RULES, POOLS } from "urls";
 import { isError } from "utils/api";
 import { TAG_IS, CLOUD_IS, TAG_VALUE_STARTS_WITH, RESOURCE_TYPE_IS, REGION_IS } from "utils/constants";
+import { SPACING_1 } from "utils/layouts";
 
 const getConditions = (conditions = []) =>
   conditions.map((condition) => {
@@ -174,47 +175,47 @@ const EditAssignmentRuleFormContainer = ({ assignmentRuleId }) => {
         }}
       />
       <PageContentWrapper>
-        <Box
-          sx={{
-            width: { md: "50%" }
-          }}
-        >
-          <AssignmentRuleForm
-            onSubmit={(params) => {
-              dispatch((_, getState) => {
-                dispatch(updateAssignmentRule(assignmentRuleId, params)).then(() => {
-                  if (!isError(UPDATE_ASSIGNMENT_RULE, getState())) {
-                    return redirect();
-                  }
-                  return undefined;
-                });
-              });
-            }}
-            onCancel={redirect}
-            pools={pools}
-            cloudAccounts={cloudAccounts}
-            resourceTypes={resourceTypes}
-            regions={regions}
-            isEdit
-            onPoolChange={(newPoolId, callback) => {
-              dispatch((_, getState) => {
-                dispatch(getPoolOwners(newPoolId)).then(() => {
-                  const { poolOwners: owners = [] } = getState()?.[RESTAPI]?.[GET_POOL_OWNERS] ?? {};
-                  callback(owners);
-                });
-              });
-            }}
-            poolOwners={poolOwners}
-            defaultValues={defaultValues}
-            isLoadingProps={{
-              isActiveCheckboxLoading: isFormDataLoading,
-              isNameInputLoading: isFormDataLoading,
-              isConditionsFieldLoading: isFormDataLoading || isAvailableFiltersLoading,
-              isPoolSelectorLoading: isFormDataLoading,
-              isOwnerSelectorLoading: isFormDataLoading,
-              isSubmitButtonLoading: isFormDataLoading || isUpdateAssignmentRuleLoading
-            }}
-          />
+        <Box className={"MTPBoxShadow"}>
+          <Grid container spacing={SPACING_1}>
+            <Grid item xs={12} sm={12} lg={6}>
+              <AssignmentRuleForm
+                onSubmit={(params) => {
+                  dispatch((_, getState) => {
+                    dispatch(updateAssignmentRule(assignmentRuleId, params)).then(() => {
+                      if (!isError(UPDATE_ASSIGNMENT_RULE, getState())) {
+                        return redirect();
+                      }
+                      return undefined;
+                    });
+                  });
+                }}
+                onCancel={redirect}
+                pools={pools}
+                cloudAccounts={cloudAccounts}
+                resourceTypes={resourceTypes}
+                regions={regions}
+                isEdit
+                onPoolChange={(newPoolId, callback) => {
+                  dispatch((_, getState) => {
+                    dispatch(getPoolOwners(newPoolId)).then(() => {
+                      const { poolOwners: owners = [] } = getState()?.[RESTAPI]?.[GET_POOL_OWNERS] ?? {};
+                      callback(owners);
+                    });
+                  });
+                }}
+                poolOwners={poolOwners}
+                defaultValues={defaultValues}
+                isLoadingProps={{
+                  isActiveCheckboxLoading: isFormDataLoading,
+                  isNameInputLoading: isFormDataLoading,
+                  isConditionsFieldLoading: isFormDataLoading || isAvailableFiltersLoading,
+                  isPoolSelectorLoading: isFormDataLoading,
+                  isOwnerSelectorLoading: isFormDataLoading,
+                  isSubmitButtonLoading: isFormDataLoading || isUpdateAssignmentRuleLoading
+                }}
+              />
+            </Grid>
+          </Grid>
         </Box>
       </PageContentWrapper>
     </>
