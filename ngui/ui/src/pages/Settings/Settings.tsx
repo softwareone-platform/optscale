@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import ActionBar from "components/ActionBar";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
@@ -55,13 +56,15 @@ const Settings = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <TabsWrapper
-          tabsProps={{
-            name: "settings",
-            tabs,
-            defaultTab: SETTINGS_TABS.ORGANIZATION
-          }}
-        />
+        <Box className={"MTPBoxShadow"}>
+          <TabsWrapper
+            tabsProps={{
+              name: "settings",
+              tabs,
+              defaultTab: SETTINGS_TABS.ORGANIZATION
+            }}
+          />
+        </Box>
       </PageContentWrapper>
     </>
   );
