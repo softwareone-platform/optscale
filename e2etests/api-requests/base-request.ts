@@ -1,8 +1,8 @@
 import {type APIRequestContext} from "@playwright/test";
 import {APIResponse} from "playwright";
 
-export class BaseRequest {
-    request: APIRequestContext;
+export abstract class BaseRequest {
+    readonly request: APIRequestContext;
 
     constructor(request: APIRequestContext) {
         this.request = request;
