@@ -1,4 +1,4 @@
-import { Link, Stack } from "@mui/material";
+import { Box, Link, Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -26,19 +26,21 @@ const AssignmentRules = ({ rules, managedPools, onUpdatePriority, isLoadingProps
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
       <ContentBackdropLoader isLoading={isUpdateLoading}>
-        <Stack spacing={SPACING_2}>
-          <div>
-            <AssignmentRulesTable
-              rules={rules}
-              managedPools={managedPools}
-              isLoadingProps={isLoadingProps}
-              onUpdatePriority={onUpdatePriority}
-            />
-          </div>
-          <div>
-            <InlineSeverityAlert messageId="assignmentRulesPageDescription" messageDataTestId="p_environments_list" />
-          </div>
-        </Stack>
+        <Box className={"MTPBoxShadow"}>
+          <Stack spacing={SPACING_2}>
+            <div>
+              <AssignmentRulesTable
+                rules={rules}
+                managedPools={managedPools}
+                isLoadingProps={isLoadingProps}
+                onUpdatePriority={onUpdatePriority}
+              />
+            </div>
+            <div>
+              <InlineSeverityAlert messageId="assignmentRulesPageDescription" messageDataTestId="p_environments_list" />
+            </div>
+          </Stack>
+        </Box>
       </ContentBackdropLoader>
     </PageContentWrapper>
   </>

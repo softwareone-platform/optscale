@@ -1,8 +1,5 @@
-import { lighten } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1, SPACING_2, SPACING_3, MPT_BOX_SHADOW_HOVER } from "utils/layouts";
-
-const ALPHA = 0.95;
+import { SPACING_1, SPACING_2, SPACING_3, MPT_BOX_SHADOW_HOVER, MPT_SPACING_4 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme, color) => ({
   root: {
@@ -13,8 +10,6 @@ const useStyles = makeStyles()((theme, color) => ({
     [theme.breakpoints.down("xl")]: {
       minWidth: 100
     },
-    backgroundColor: lighten(color, ALPHA),
-    border: `1px solid ${lighten(color, ALPHA)}`,
     color
   },
   button: {
@@ -34,6 +29,12 @@ const useStyles = makeStyles()((theme, color) => ({
     "&:last-child": {
       paddingBottom: theme.spacing(SPACING_1)
     }
+  },
+  contentWithIcon: {
+    paddingRight: MPT_SPACING_4
+  },
+  icon: {
+    fontSize: "18px"
   }
 }));
 

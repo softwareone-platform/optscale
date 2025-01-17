@@ -128,7 +128,7 @@ const getCardRenderer = (cardType) =>
     [SUMMARY_CARD_TYPES.EXTENDED]: renderExtendedSummaryCard
   })[cardType];
 
-const SummaryGrid = ({ summaryData, summaryStyle }) => {
+const SummaryGrid = ({ summaryData, summaryStyle = "customBox" }) => {
   const { classes } = useStyles();
   const renderSummary = () =>
     summaryData.map(({ key, renderCondition, type = SUMMARY_CARD_TYPES.BASIC, isLoading, ...rest }) => {

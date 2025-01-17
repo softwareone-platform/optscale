@@ -1,5 +1,8 @@
 import { forwardRef } from "react";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -14,14 +17,35 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import useStyles from "./SummaryCard.styles";
 import SummaryCardPdf from "./SummaryCardPdf";
 
-const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, ...rest }, ref) => {
+export const SUMMARY_CARD_ICONS = Object.freeze({
+  PRIMARY: "primary",
+  SUCCESS: "success",
+  WARNING: "warning",
+  ERROR: "error"
+});
+
+const getCardIcon = (cardType: string, classes) =>
+  ({
+    [SUMMARY_CARD_ICONS.PRIMARY]: "",
+    [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon} />,
+    [SUMMARY_CARD_ICONS.WARNING]: <ErrorIcon className={classes.icon} />,
+    [SUMMARY_CARD_ICONS.ERROR]: <CancelIcon className={classes.icon} />
+  })[cardType];
+
+const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
   const { classes, cx } = useStyles(color);
   const cardClasses = cx(classes.root, clickable ? classes.button : "");
+  const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
 
   return (
     <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
-      <CardContent className={classes.content}>
+      <CardContent className={cardContentClasses}>
         <Box>
+          {type !== "primary" && (
+            <Box position="absolute" bottom={"12px"} right={"8px"} fontSize={"18px"}>
+              {getCardIcon(type, classes)}
+            </Box>
+          )}
           {children}
           {clickable && (
             <Box position="absolute" bottom={"16px"} right={"8px"}>
@@ -51,8 +75,7 @@ const SummaryCard = ({
 }) => {
   const theme = useTheme();
 
-  const themeColor = theme.palette[color].main;
-
+  const themeColor = theme.palette[color].card;
   const { currency } = useOrganizationInfo();
   const { cardTestId } = dataTestIds || {};
 
@@ -107,7 +130,7 @@ const SummaryCard = ({
               </Typography>
             </>
           ) : null}
-          <CardLayout clickable={clickable} cardTestId={cardTestId} onClick={cardClickHandler} color={themeColor}>
+          <CardLayout clickable={clickable} cardTestId={cardTestId} onClick={cardClickHandler} color={themeColor} type={color}>
             {customContent || (
               <SummaryCardContent value={value} caption={caption} dataTestIds={dataTestIds} icon={icon} help={help} />
             )}

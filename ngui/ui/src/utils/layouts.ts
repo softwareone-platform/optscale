@@ -9,8 +9,8 @@ export const SPACING_6 = 6;
 
 export const MPT_BRAND_PRIMARY = "#472AFF";
 
+export const MPT_BRAND_TYPE = "#000000";
 export const MPT_BRAND_WHITE = "#FFFFFF";
-export const MPT_BRAND_BLACK = "#000000";
 export const MPT_GRAY_1 = "#F4F6F8";
 export const MPT_GRAY_2 = "#E0E5E8";
 export const MPT_GRAY_3 = "#AEB1B9";
@@ -30,9 +30,11 @@ export const MPT_ALERTS_DANGER_2 = `#EE8C96`;
 export const MPT_ALERTS_DANGER_3 = `#BB1425`;
 export const MPT_ALERTS_DANGER_4 = `#8F101D`;
 export const MPT_ALERTS_WARNING_2 = `#F1B178`;
+export const MPT_ALERTS_WARNING_3 = `#E87D1E`;
 export const MPT_ALERTS_WARNING_4 = `#F1B178`;
 
 export const MPT_ALERTS_SUCCESS_2 = `#80E1AE`;
+export const MPT_ALERTS_SUCCESS_3 = `#00784D`;
 export const MPT_ALERTS_SUCCESS_4 = `#005838`;
 export const MPT_TERTIARY_PRIMARY = `#EBEDFF`;
 export const MPT_TERTIARY_BLUE_1 = `#CAE4FF`;

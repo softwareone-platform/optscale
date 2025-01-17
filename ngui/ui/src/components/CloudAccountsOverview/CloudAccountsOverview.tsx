@@ -98,7 +98,7 @@ const Summary = ({ totalExpenses, totalForecast, lastMonthCost, isLoading = fals
           }
         ];
 
-  return <SummaryGrid summaryData={getSummaryData()} />;
+  return <SummaryGrid summaryData={getSummaryData()} summaryStyle="customBox" />;
 };
 
 const AwsLinkedAccountsWarning = () => {

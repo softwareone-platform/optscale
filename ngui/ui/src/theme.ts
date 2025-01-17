@@ -21,12 +21,15 @@ import {
   MPT_ALERTS_SUCCESS_2,
   MPT_ALERTS_SUCCESS_4,
   MPT_ALERTS_WARNING_2,
+  MPT_ALERTS_WARNING_3,
   MPT_ALERTS_WARNING_4,
   MPT_ALERTS_DANGER_1,
   MPT_ALERTS_DANGER_2,
   MPT_ALERTS_DANGER_3,
   MPT_ALERTS_DANGER_4,
-  MPT_GRADIENT
+  MPT_GRADIENT,
+  MPT_BRAND_TYPE,
+  MPT_ALERTS_SUCCESS_3
 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
@@ -47,7 +50,8 @@ const applyPaletteSettings = (settings) => {
       main: MPT_BRAND_PRIMARY,
       white: MPT_BRAND_WHITE,
       gray2: MPT_GRAY_2,
-      gradient: MPT_GRADIENT
+      gradient: MPT_GRADIENT,
+      card: MPT_BRAND_TYPE
     },
     "primary"
   );
@@ -70,7 +74,8 @@ const applyPaletteSettings = (settings) => {
   const success = mergeIfSettingIsNotEmpty(
     {
       main: MPT_ALERTS_SUCCESS_4,
-      secondary: MPT_ALERTS_SUCCESS_2
+      secondary: MPT_ALERTS_SUCCESS_2,
+      card: MPT_ALERTS_SUCCESS_3
     },
     "success"
   );
@@ -80,7 +85,8 @@ const applyPaletteSettings = (settings) => {
       main: MPT_ALERTS_DANGER_4,
       primary: MPT_ALERTS_DANGER_1,
       secondary: MPT_ALERTS_DANGER_2,
-      text: MPT_ALERTS_DANGER_3
+      text: MPT_ALERTS_DANGER_3,
+      card: MPT_ALERTS_DANGER_3
     },
     "error"
   );
@@ -88,7 +94,8 @@ const applyPaletteSettings = (settings) => {
   const warning = mergeIfSettingIsNotEmpty(
     {
       main: MPT_ALERTS_WARNING_4,
-      secondary: MPT_ALERTS_WARNING_2
+      secondary: MPT_ALERTS_WARNING_2,
+      card: MPT_ALERTS_WARNING_3
     },
     "warning"
   );
