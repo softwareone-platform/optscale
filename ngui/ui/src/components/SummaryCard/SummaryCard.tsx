@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ClearIcon from "@mui/icons-material/Clear";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
@@ -29,7 +29,7 @@ const getCardIcon = (cardType: string, classes) =>
     [SUMMARY_CARD_ICONS.PRIMARY]: "",
     [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon} />,
     [SUMMARY_CARD_ICONS.WARNING]: <ErrorIcon className={classes.icon} />,
-    [SUMMARY_CARD_ICONS.ERROR]: <ClearIcon className={classes.icon} />
+    [SUMMARY_CARD_ICONS.ERROR]: <CancelIcon className={classes.icon} />
   })[cardType];
 
 const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {

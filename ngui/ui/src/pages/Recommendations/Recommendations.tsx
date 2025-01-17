@@ -28,11 +28,13 @@ const getActionBar = ({ forceCheck, isForceCheckAvailable }) => ({
       dataTestId: "btn_archive",
       icon: <RestoreOutlinedIcon />,
       messageId: "archive",
+      color: "primary",
       type: "button",
       link: ARCHIVED_RECOMMENDATIONS
     },
     {
       key: "forceCheck",
+      color: "primary",
       type: "button",
       show: isForceCheckAvailable,
       icon: <CachedOutlinedIcon />,

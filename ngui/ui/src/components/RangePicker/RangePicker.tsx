@@ -14,7 +14,7 @@ import {
   secondsToMilliseconds
 } from "utils/datetime";
 import { objectMap } from "utils/objects";
-import { MPT_BRAND_BLACK } from "../../utils/layouts";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const RangePicker = ({
   validation = {},
@@ -103,7 +103,7 @@ const RangePicker = ({
           dataTestId="text_selected_dates"
           style={{ minWidth: "180px" }}
         >
-          <span style={{ fontSize: "14px", color: MPT_BRAND_BLACK }}>{dateAsText}</span>
+          <span style={{ fontSize: "14px", color: MPT_BRAND_TYPE }}>{dateAsText}</span>
           {hideLabel}
         </OutlinedDiv>
       }

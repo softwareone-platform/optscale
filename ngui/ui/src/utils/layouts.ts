@@ -11,7 +11,6 @@ export const MPT_BRAND_PRIMARY = "#472AFF";
 
 export const MPT_BRAND_TYPE = "#000000";
 export const MPT_BRAND_WHITE = "#FFFFFF";
-export const MPT_BRAND_BLACK = "#000000";
 export const MPT_GRAY_1 = "#F4F6F8";
 export const MPT_GRAY_2 = "#E0E5E8";
 export const MPT_GRAY_3 = "#AEB1B9";

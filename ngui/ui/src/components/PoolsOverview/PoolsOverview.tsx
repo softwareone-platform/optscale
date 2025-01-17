@@ -27,6 +27,7 @@ const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLo
         icon: <AssignmentOutlinedIcon fontSize="small" />,
         messageId: "configureAssignmentRules",
         link: ASSIGNMENT_RULES,
+        color: "primary",
         type: "button",
         dataTestId: "btn_configure_assignment_rules"
       }
@@ -41,8 +42,8 @@ const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLo
           <Grid item>
             <Summary data={data} isLoading={isLoading} />
           </Grid>
-          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
-            <Box>
+          <Grid item xs={12}>
+            <Box className={"MTPBoxShadow"}>
               <PoolsTable
                 rootPool={data}
                 isLoadingProps={{
