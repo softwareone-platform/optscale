@@ -1,12 +1,11 @@
 import Link from "@mui/material/Link";
-// import { useIntl } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import logoFullDemo from "assets/logo/logo_demo.svg";
 import logoShortDemo from "assets/logo/logo_short_demo.svg";
 import logoShortWhite from "assets/logo/logo_short_white.svg";
 import logoShortWhiteDemo from "assets/logo/logo_short_white_demo.svg";
 import logoFullWhite from "assets/logo/logo_white.svg";
 import logoFullWhiteDemo from "assets/logo/logo_white_demo.svg";
+import logoFullDemo from "assets/logo/swo-logo-demo.svg";
 import logo from "assets/logo/swo-logo.svg";
 import { HOME } from "urls";
 import { LOGO_SIZE } from "utils/constants";
