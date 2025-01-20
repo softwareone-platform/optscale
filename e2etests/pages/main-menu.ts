@@ -70,7 +70,7 @@ export class MainMenu extends BasePage {
         }
     }
     async assertMenuNavigation(menuLink: Locator, expectedUrl: string) {
-        const baseURL = process.env.baseURL;
+        const baseURL = process.env.BASE_URL;
         await menuLink.click();
         await expect(this.page).toHaveURL(new RegExp(`^${baseURL}${expectedUrl.replace(/^\//, '')}`));
     }

@@ -8,9 +8,7 @@ async function globalSetup(config: FullConfig) {
         path: ".env.local",
         override: true,
     });
-    const baseURL = config.projects[0].use.baseURL;
-    process.env.baseURL = baseURL;
-    console.log(`Tests running on ${process.env.baseURL}`);
+    console.log(`Tests running on ${process.env.BASE_URL}`);
 }
 
 module.exports = globalSetup;

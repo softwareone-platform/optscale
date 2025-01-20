@@ -20,8 +20,8 @@ import {PerspectivesPage} from "../pages/perspectives-page";
 async function generateToken(request: any): Promise<string> {
     const response = await request.post('https://cloudspend.velasuci.com/auth/v2/tokens', {
         data: {
-            email: `${process.env.FINOPS_USER_EMAIL}`,
-            password: `${process.env.FINOPS_USER_PASSWORD}`,
+            email: `${process.env.DEFAULT_USER_EMAIL}`,
+            password: `${process.env.DEFAULT_USER_PASSWORD}`,
         },
     });
 

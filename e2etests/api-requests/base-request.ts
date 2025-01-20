@@ -4,7 +4,7 @@ import {APIResponse} from "playwright";
 export abstract class BaseRequest {
     readonly request: APIRequestContext;
 
-    constructor(request: APIRequestContext) {
+    protected constructor(request: APIRequestContext) {
         this.request = request;
     }
 

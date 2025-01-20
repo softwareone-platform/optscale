@@ -87,7 +87,7 @@ export class AuthRequest extends BaseRequest {
       }
     });
     if (response.status() !== 204) {
-      throw new Error('Failed to delete user');
+      throw new Error(`Failed to delete userID ${userID}`);
     }
     console.log(`UserID ${userID} deleted`);
   }

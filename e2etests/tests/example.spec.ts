@@ -4,8 +4,8 @@ import test from "../fixtures/fixture";
 
 test.beforeEach(async ({loginPage}) => {
     await test.step('Login as FinOps user', async () => {
-        const email = process.env.FINOPS_USER_EMAIL;
-        const password = process.env.FINOPS_USER_PASSWORD;
+        const email = process.env.DEFAULT_USER_EMAIL;
+        const password = process.env.DEFAULT_USER_PASSWORD;
         await loginPage.login(email, password);
     });
 });

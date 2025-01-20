@@ -29,7 +29,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
       use: {
         actionTimeout: 10000,
-        baseURL: "https://cloudspend.velasuci.com/",
+        baseURL: process.env.BASE_URL,
         testIdAttribute: 'data-test-id',
         headless: true,
         trace: "retain-on-failure",
