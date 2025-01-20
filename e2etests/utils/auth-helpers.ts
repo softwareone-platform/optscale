@@ -29,6 +29,11 @@ export const getAccessTokenFromCookies = async (page: Page) => {
     return tokenCookie.value;
 };
 
+export function getAccessTokenFromFile() {
+    return fs.readFileSync(path.resolve('e2etests/.auth/authToken.txt'), {
+        encoding: "utf-8",
+    });
+}
 // export const getToken = () => {
 //     const tokenFilePath = path.resolve('e2etests/.auth/authToken.json');
 //     const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));
