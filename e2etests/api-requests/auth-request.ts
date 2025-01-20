@@ -79,7 +79,7 @@ export class AuthRequest extends BaseRequest {
     return user;
   }
 
-  async deleteUser(userID): Promise<string> {
+  async deleteUser(userID: string): Promise<void> {
     const response = await this.request.delete(`/auth/v2/users/${userID}`, {
       headers: {
         "Content-Type": "application/json",
@@ -89,6 +89,6 @@ export class AuthRequest extends BaseRequest {
     if (response.status() !== 204) {
       throw new Error('Failed to delete user');
     }
-    return 'User deleted';
+    console.log(`UserID ${userID} deleted`);
   }
 }
