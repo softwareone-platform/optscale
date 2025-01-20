@@ -41,7 +41,7 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
 
   const { isDemo } = useOrganizationInfo();
 
-  // MTP_TODO: disabled to meet BDR requirements
+  // MPT_TODO: disabled to meet BDR requirements
   // const navigate = useNavigate();
   // const onLiveDemoRegisterClick = () => {
   //   navigate(REGISTER);
@@ -75,7 +75,7 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
         {isDemo ? (
           <Box display="flex" alignItems="center">
             <InlineSeverityAlert messageId="liveDemoMode" data-test-id="p_live_demo_mode" />
-            {/* MTP_TODO: disabled to meet BDR Requirements */}
+            {/* MPT_TODO: disabled to meet BDR Requirements */}
             {/* <Button */}
             {/*  customClass={cx(classes.marginLeft1, classes.marginRight1)} */}
             {/*  disableElevation */}
