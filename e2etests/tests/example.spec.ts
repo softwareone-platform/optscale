@@ -59,58 +59,6 @@ test('Verify Home page objects when data source connected', async ({homePage, he
     });
 });
 
-    test('Verify Main Menu for QA Test Org', async ({mainMenu, header}) => {
-
-        await test.step('Change Organization to QA Test if not set', async () => {
-            const organizationName = await header.organizationSelect.innerText();
-            if (!organizationName.includes('QA Test Organization')) {
-                await header.selectOrganization('QA Test Organization');
-            }
-        });
-
-        await test.step('Expand Main Menu', async () => {
-            await mainMenu.expandMenu();
-        });
-
-        await test.step('Verify Main Menu items', async () => {
-            // await mainMenu.navigateToURL(true);
-            await expect(mainMenu.homeBtn).toBeVisible();
-            await expect(mainMenu.recommendationsBtn).toBeVisible();
-            await expect(mainMenu.resourcesBtn).toBeVisible();
-            await expect(mainMenu.poolsBtn).toBeVisible();
-        });
-
-        await test.step('Verify FinOps Menu items', async () => {
-            await expect(mainMenu.finOpsBtn).toBeVisible();
-            await expect(mainMenu.costExplorerBtn).toBeVisible();
-        });
-
-        await test.step('Verify MLOps Menu items', async () => {
-            await expect(mainMenu.mlOpsBtn).toBeVisible();
-            await expect(mainMenu.tasksBtn).toBeVisible();
-            await expect(mainMenu.modelsBtn).toBeVisible();
-            await expect(mainMenu.datasetsBtn).toBeVisible();
-            await expect(mainMenu.artifactsBtn).toBeVisible();
-            await expect(mainMenu.hypertuningBtn).toBeVisible();
-            await expect(mainMenu.metricsBtn).toBeVisible();
-        });
-
-        await test.step('Verify Policies Menu items', async () => {
-            await expect(mainMenu.policiesBtn).toBeVisible();
-            await expect(mainMenu.anomaliesBtn).toBeVisible();
-            await expect(mainMenu.quotasAndBudgetsBtn).toBeVisible();
-            await expect(mainMenu.taggingBtn).toBeVisible();
-        });
-
-        await test.step('Verify System Menu items', async () => {
-            await expect(mainMenu.systemBtn).toBeVisible();
-            await expect(mainMenu.userManagementBtn).toBeVisible();
-            await expect(mainMenu.dataSourcesBtn).toBeVisible();
-            await expect(mainMenu.eventsBtn).toBeVisible();
-            await expect(mainMenu.settingsBtn).toBeVisible();
-        });
-    });
-
     test('Verify Main Menu for Apple Inc', async ({mainMenu, header}) => {
         await test.step('Change organization to Apple Inc', async () => {
             await header.selectOrganization('Apple Inc');
