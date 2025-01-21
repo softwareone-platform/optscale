@@ -3,7 +3,7 @@ import {generateRandomEmail, generateRandomOrganizationName} from "../utils/rand
 import {saveUserID} from "../utils/auth-helpers";
 import {saveOrganizationId} from "../utils/organization-helpers";
 
-setup.only('API Login and save token', async ({ authRequest, restAPIRequest }) => {
+setup.only('Create user and organization via API', async ({ authRequest, restAPIRequest }) => {
     const email = generateRandomEmail();
     const orgName = generateRandomOrganizationName();
     const user = (await authRequest.createUser(email, 'password#1234', 'Test User'));
