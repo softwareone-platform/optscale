@@ -18,6 +18,20 @@ export function saveFile(token: string, role: EUserRole): void {
     );
 }
 
+export function saveUserID(userID: string): void {
+    fs.writeFile(
+        path.resolve(__dirname, `userID.txt`),
+        `${userID}`,
+        "utf8",
+        function (err) {
+            if (err) {
+                return console.error(err);
+            }
+            console.log("File created!");
+        },
+    );
+}
+
 export const getAccessTokenFromCookies = async (page: Page) => {
     const cookies = await page.context().cookies();
 

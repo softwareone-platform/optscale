@@ -15,3 +15,7 @@ export function generateRandomEmail(domain: string = 'example.com'): string {
     // Combine elements into a random email
     return `test_${timestamp}_${randomNumber}@${domain}`;
 }
+
+export function generateRandomOrganizationName(): string {
+    return `Test Organization ${uuidv4()}`;
+}

@@ -1,20 +1,16 @@
-import {expect} from "@playwright/test";
 import {test as setup} from "../fixtures/api-fixture";
-import path from "path";
-import fs from "fs";
-import {AuthRequest} from "../api-requests/auth-request";
-import {generateRandomEmail} from "../utils/random-data";
+import {generateRandomEmail, generateRandomOrganizationName} from "../utils/random-data";
+import {saveUserID} from "../utils/auth-helpers";
+import {saveOrganizationId} from "../utils/organization-helpers";
 
-let userToken: string;
-let userID: string;
-
-setup.only('API Login and save token', async ({ authRequest }) => {
+setup.only('API Login and save token', async ({ authRequest, restAPIRequest }) => {
     const email = generateRandomEmail();
-    // const tokenFilePath = path.resolve('e2etests/.auth/authToken.txt');
-    // fs.writeFileSync(tokenFilePath, await authRequest.getAuthorizationToken(`${process.env.STEVE_EMAIL}`, `${process.env.STEVE_PASSWORD}`), 'utf8');
-    // const token = await authRequest.getAuthorizationToken(`${process.env.DEFAULT_USER_EMAIL}`, `${process.env.DEFAULT_USER_PASSWORD}`);
+    const orgName = generateRandomOrganizationName();
     const user = (await authRequest.createUser(email, 'password#1234', 'Test User'));
-    userID = JSON.parse(user).id;
-    userToken = JSON.parse(user).token;
-    await authRequest.deleteUser(userID);
+    const userID = JSON.parse(user).id;
+    const userToken = JSON.parse(user).token;
+    saveUserID(userID);
+    const organization = (await restAPIRequest.createOrganization(userToken, orgName));
+    const orgID = JSON.parse(organization).id;
+    saveOrganizationId(orgID);
 });

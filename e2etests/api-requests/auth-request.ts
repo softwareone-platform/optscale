@@ -4,17 +4,21 @@ import {APIRequestContext} from "@playwright/test";
 
 export class AuthRequest extends BaseRequest {
     readonly request: APIRequestContext;
+    readonly userEndpoint: string;
+    readonly tokenEndpoint: string;
 
   constructor(request: APIRequestContext) {
     super(request);
       this.request = request;
+        this.userEndpoint = "/auth/v2/users";
+        this.tokenEndpoint = "/auth/v2/tokens";
   }
 
   async authorization(
       email: string,
       password: string,
   ): Promise<APIResponse> {
-    return await this.request.post("/auth/v2/tokens", {
+    return await this.request.post(this.tokenEndpoint, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -42,7 +46,7 @@ export class AuthRequest extends BaseRequest {
   }
 
   async getUsers(token: string): Promise<string> {
-    const response = await this.request.get("/auth/v2/users", {
+    const response = await this.request.get(this.userEndpoint, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
@@ -57,7 +61,7 @@ export class AuthRequest extends BaseRequest {
   }
 
   async createUser(email: string, password: string, displayName: string): Promise<string> {
-    const response = await this.request.post("/auth/v2/users", {
+    const response = await this.request.post(this.userEndpoint, {
       headers: {
         "Content-Type": "application/json",
         Secret: `${process.env.CLUSTER_SECRET}`
@@ -80,7 +84,7 @@ export class AuthRequest extends BaseRequest {
   }
 
   async deleteUser(userID: string): Promise<void> {
-    const response = await this.request.delete(`/auth/v2/users/${userID}`, {
+    const response = await this.request.delete(`${this.userEndpoint}/${userID}`, {
       headers: {
         "Content-Type": "application/json",
         Secret: `${process.env.CLUSTER_SECRET}`

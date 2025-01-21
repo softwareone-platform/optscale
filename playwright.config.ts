@@ -11,6 +11,7 @@ const storageState = EStorageState.defaultUser;
  */
 export default defineConfig({
   globalSetup: "./e2etests/setup/global-setup.ts",
+  globalTeardown: "./e2etests/setup/global-teardown.ts",
   testDir: './e2etests',
   /* Run tests in files in parallel */
   fullyParallel: true,
