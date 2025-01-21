@@ -49,3 +49,5 @@ e2etests/.auth/authToken.json
 /e2etests/.auth/
 results.json
 results.json
+e2etests/utils/organizationID.txt
+e2etests/utils/userID.txt
