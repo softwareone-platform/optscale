@@ -6,10 +6,10 @@ import path from "path";
 import fs from "fs";
 
 let email: string;
-const password = 'password#1234';
+const password = process.env.DEFAULT_USER_PASSWORD;
 let userToken: string;
 
-setup.only('Create user and organization via API login with user to generate token', async ({ authRequest, restAPIRequest }) => {
+setup.only('Create user, organization and user auth token via API', async ({ authRequest, restAPIRequest }) => {
     await setup.step('Create User', async () => {
         email = generateRandomEmail();
         const user = (await authRequest.createUser(email, password, 'Test User'));
