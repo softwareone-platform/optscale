@@ -12,7 +12,7 @@ async function globalTeardown() {
         const baseUrl = process.env.BASE_URL;
         const context = await browser.newContext({
             baseURL: baseUrl, // Pass baseURL to the context
-            ignoreHTTPSErrors: true,
+            ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
         });
 
         // Get the APIRequestContext

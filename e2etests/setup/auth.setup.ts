@@ -5,11 +5,11 @@ import {saveOrganizationId} from "../utils/organization-helpers";
 import path from "path";
 import fs from "fs";
 
-let email: string;
-const password = process.env.DEFAULT_USER_PASSWORD;
-let userToken: string;
-
 setup.only('Create user, organization and user auth token via API', async ({ authRequest, restAPIRequest }) => {
+    let email: string;
+    const password = process.env.DEFAULT_USER_PASSWORD;
+    let userToken: string;
+
     await setup.step('Create User', async () => {
         email = generateRandomEmail();
         const user = (await authRequest.createUser(email, password, 'Test User'));

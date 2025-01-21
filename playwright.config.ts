@@ -37,7 +37,7 @@ export default defineConfig({
         video: "retain-on-failure",
         screenshot: "only-on-failure",
         contextOptions: {
-          ignoreHTTPSErrors: true,
+          ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
           viewport: {width: 1920, height: 1080},
         },
       },
