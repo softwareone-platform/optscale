@@ -1,6 +1,6 @@
 import { useAllDataSources } from "./useAllDataSources";
 import { useCurrentEmployee } from "./useCurrentEmployee";
-import { useGetOptscaleMode } from "./useGetOptscaleMode";
+import { useGetOptscaleCapability } from "./useGetOptscaleCapability";
 import { useInvitations } from "./useInvitations";
 import { useOrganizationAllowedActions } from "./useOrganizationAllowedActions";
 import { useOrganizationFeatures } from "./useOrganizationFeatures";
@@ -15,7 +15,7 @@ export {
   useAllDataSources,
   useInvitations,
   useOrganizationFeatures,
-  useGetOptscaleMode,
+  useGetOptscaleCapability,
   useOrganizationThemeSettings,
   useOrganizationPerspectives
 };

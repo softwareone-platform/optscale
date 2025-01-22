@@ -1,7 +1,7 @@
 import CloudOutlinedIcon from "@mui/icons-material/CloudOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { CLOUD_ACCOUNT_CONNECT } from "urls";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import dataSources from "utils/routes/dataSourcesRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,8 +9,8 @@ class DataSourcesMenuItem extends BaseMenuItem {
   route = dataSources;
 
   // eslint-disable-next-line class-methods-use-this
-  messageId = ({ mode }) => {
-    if (mode?.[OPTSCALE_MODE.FINOPS] ?? true) {
+  messageId = ({ capability }) => {
+    if (capability?.[OPTSCALE_CAPABILITY.FINOPS] ?? true) {
       return "dataSourcesTitle";
     }
 

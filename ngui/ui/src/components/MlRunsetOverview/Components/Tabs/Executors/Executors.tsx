@@ -8,9 +8,9 @@ import ResourceName from "components/ResourceName";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { expenses, resourceLocation } from "utils/columns";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { getCloudResourceIdentifier } from "utils/resources";
 import { CELL_EMPTY_VALUE } from "utils/tables";
 
@@ -28,7 +28,7 @@ const STATUSES = Object.freeze({
 });
 
 const Executors = ({ executors, isLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const columns = useMemo(
     () => [

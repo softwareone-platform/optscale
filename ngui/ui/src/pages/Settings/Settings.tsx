@@ -2,12 +2,12 @@ import ActionBar from "components/ActionBar";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
+import CapabilityContainer from "containers/CapabilityContainer";
 import InvitationsContainer from "containers/InvitationsContainer";
-import ModeContainer from "containers/ModeContainer";
 import SshSettingsContainer from "containers/SshSettingsContainer";
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { OPTSCALE_MODE } from "utils/constants";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 
 const actionBarDefinition = {
   title: {
@@ -18,13 +18,13 @@ const actionBarDefinition = {
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
   INVITATIONS: "invitations",
-  MODE: "mode",
+  CAPABILITIES: "capabilities",
   SSH: "sshKeys",
   EMAIL_NOTIFICATIONS: "emailNotifications"
 });
 
 const Settings = () => {
-  const isFinOpsModeEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsCapabilityEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const tabs = [
     {
@@ -38,11 +38,11 @@ const Settings = () => {
       node: <InvitationsContainer />
     },
     {
-      title: SETTINGS_TABS.MODE,
-      dataTestId: `tab_${SETTINGS_TABS.MODE}`,
-      node: <ModeContainer />
+      title: SETTINGS_TABS.CAPABILITIES,
+      dataTestId: `tab_${SETTINGS_TABS.CAPABILITIES}`,
+      node: <CapabilityContainer />
     },
-    ...(isFinOpsModeEnabled
+    ...(isFinOpsCapabilityEnabled
       ? [
           {
             title: SETTINGS_TABS.SSH,

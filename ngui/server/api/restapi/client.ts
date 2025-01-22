@@ -8,10 +8,10 @@ import {
   MutationUpdateOrganizationArgs,
   MutationCreateOrganizationArgs,
   MutationDeleteOrganizationArgs,
-  MutationUpdateOptscaleModeArgs,
   MutationUpdateOrganizationPerspectivesArgs,
   QueryOrganizationPerspectivesArgs,
   QueryOrganizationFeaturesArgs,
+  MutationUpdateOptscaleCapabilityArgs,
 } from "../../graphql/resolvers/restapi.generated.js";
 
 class RestApiClient extends BaseClient {
@@ -185,21 +185,21 @@ class RestApiClient extends BaseClient {
     return parsedFeatures;
   }
 
-  async getOptscaleMode(organizationId: string) {
+  async getOptscaleCapability(organizationId: string) {
     const path = `organizations/${organizationId}/options/optscale_mode`;
-    const mode = await this.get(path);
+    const capability = await this.get(path);
 
-    const parsedMode = JSON.parse(mode.value);
+    const parsedCapability = JSON.parse(capability.value);
 
-    return parsedMode.value;
+    return parsedCapability.value;
   }
 
-  async updateOptscaleMode(
-    organizationId: MutationUpdateOptscaleModeArgs["organizationId"],
-    value: MutationUpdateOptscaleModeArgs["value"]
+  async updateOptscaleCapability(
+    organizationId: MutationUpdateOptscaleCapabilityArgs["organizationId"],
+    value: MutationUpdateOptscaleCapabilityArgs["value"]
   ) {
     const path = `organizations/${organizationId}/options/optscale_mode`;
-    const mode = await this.patch(path, {
+    const capability = await this.patch(path, {
       body: {
         value: JSON.stringify({
           value,
@@ -207,9 +207,9 @@ class RestApiClient extends BaseClient {
       },
     });
 
-    const parsedMode = JSON.parse(mode.value);
+    const parsedCapability = JSON.parse(capability.value);
 
-    return parsedMode.value;
+    return parsedCapability.value;
   }
 
   async getOrganizationThemeSettings(organizationId: string) {

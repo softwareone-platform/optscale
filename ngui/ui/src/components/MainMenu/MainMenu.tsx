@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { List } from "@mui/material";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import MenuGroupWrapper from "components/MenuGroupWrapper";
 import MenuItem from "components/MenuItem";
-import ModeWrapper from "components/ModeWrapper";
 import { PRODUCT_TOUR, useProductTour, PRODUCT_TOUR_IDS } from "components/Tour";
-import { useGetOptscaleMode } from "hooks/coreData";
+import { useGetOptscaleCapability } from "hooks/coreData";
 
 const SimpleItem = ({ menuItem }) => {
-  const { optscaleMode } = useGetOptscaleMode();
+  const { optscaleCapability } = useGetOptscaleCapability();
 
   return (
-    <ModeWrapper mode={menuItem.mode}>
+    <CapabilityWrapper capability={menuItem.capability}>
       <MenuItem
         className={menuItem.className}
         dataProductTourId={menuItem.dataProductTourId}
@@ -18,7 +18,7 @@ const SimpleItem = ({ menuItem }) => {
         messageId={
           typeof menuItem.messageId === "function"
             ? menuItem.messageId({
-                mode: optscaleMode
+                capability: optscaleCapability
               })
             : menuItem.messageId
         }
@@ -27,7 +27,7 @@ const SimpleItem = ({ menuItem }) => {
         icon={menuItem.icon}
         dataTestId={menuItem.dataTestId}
       />
-    </ModeWrapper>
+    </CapabilityWrapper>
   );
 };
 
@@ -54,14 +54,14 @@ const MainMenu = ({ menu }) => {
   return (
     <>
       <List component="nav" sx={{ padding: 0 }}>
-        {menu.map(({ items, menuSectionTitle, id, mode }) => (
-          <ModeWrapper key={id} mode={mode}>
+        {menu.map(({ items, menuSectionTitle, id, capability }) => (
+          <CapabilityWrapper key={id} capability={capability}>
             <MenuGroupWrapper id={id} menuSectionTitle={menuSectionTitle} keepExpanded={isProductTourOpen}>
               {items.map((item) => (
                 <SimpleItem key={item.route.link} menuItem={item} />
               ))}
             </MenuGroupWrapper>
-          </ModeWrapper>
+          </CapabilityWrapper>
         ))}
       </List>
     </>

@@ -1,7 +1,7 @@
 import ScreenShareOutlinedIcon from "@mui/icons-material/ScreenShareOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { ENVIRONMENT_CREATE } from "urls";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import environments from "utils/routes/environmentsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -16,7 +16,7 @@ class EnvironmentsMenuItem extends BaseMenuItem {
 
   icon = ScreenShareOutlinedIcon;
 
-  mode = OPTSCALE_MODE.FINOPS;
+  capability = OPTSCALE_CAPABILITY.FINOPS;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link) || currentPath.startsWith(ENVIRONMENT_CREATE);
 }

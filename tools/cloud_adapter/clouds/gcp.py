@@ -1,6 +1,7 @@
 from collections import defaultdict
 from functools import cached_property
 from concurrent.futures import ThreadPoolExecutor
+from typing import Dict, Tuple
 from datetime import datetime, timezone, timedelta
 import hashlib
 import logging
@@ -107,37 +108,53 @@ class InstanceType:
     # E2 shared-core custom machine types have fractional vCPUs,
     # but the instance types API says they all have 2 vCPUs.
     SHARED_CPU_VALUES = {
-        "e2-micro": 0.25,
-        "e2-small": 0.5,
-        "e2-medium": 1,
+        "micro": 0.25,
+        "small": 0.5,
+        "medium": 1,
     }
 
-    def __init__(
-        self, type_name=None, cpu_cores=None, ram_gb=None, family=None, price=None
-    ):
+    def __init__(self, type_name=None, cpu_cores=None, ram_gb=None,
+                 family=None, price=None, custom=False):
         self.type_name = type_name
         self.cpu_cores = cpu_cores
         self.ram_gb = ram_gb
         self.family = family
+        self.custom = custom
         self.price = price
 
     def parse_machine_family(self):
         # turn e.g. "e2-standard-4" into "e2"
         self.family = self.type_name.split("-")[0]
 
+    def parse_custom(self):
+        if "custom" in self.type_name:
+            self.custom = True
+
+    def _cpu_value_from_flavor(self):
+        return self.type_name.split('-')[-2]
+
     def parse_cpu_cores(self, machine_type: compute.MachineType):
         self.cpu_cores = machine_type.guest_cpus
         if machine_type.is_shared_cpu:
-            # if machine type has shared CPU, compute API sometimes returns incorrect CPU values
-            fractional_cpu = self.SHARED_CPU_VALUES.get(self.type_name)
+            # if machine type has shared CPU, compute API sometimes returns
+            # incorrect CPU values
+            cpu_value = self._cpu_value_from_flavor()
+            fractional_cpu = self.SHARED_CPU_VALUES.get(cpu_value)
             if fractional_cpu is not None:
                 self.cpu_cores = fractional_cpu
 
     def parse_compute_machine_type(self, machine_type: compute.MachineType):
         self.type_name = machine_type.name
         self.parse_machine_family()
+        self.parse_custom()
         self.ram_gb = machine_type.memory_mb / 1024
         self.parse_cpu_cores(machine_type)
+
+    def parse_ram_cpu_from_flavor_name(self):
+        self.ram_gb = int(self.type_name.split('-')[-1]) / 1024
+        cpu_value = self._cpu_value_from_flavor()
+        self.cpu_cores = self.SHARED_CPU_VALUES.get(
+            cpu_value) or float(cpu_value)
 
     def __str__(self) -> str:
         return f"{self.family} {self.cpu_cores} {self.ram_gb} {round(self.price, 4)}"
@@ -148,6 +165,7 @@ class InstanceType:
             "cpu_cores": self.cpu_cores,
             "ram_gb": self.ram_gb,
             "family": self.family,
+            "custom": self.custom,
             "price": self.price,
         }
 
@@ -1176,12 +1194,18 @@ class Gcp(CloudBase):
 
     @staticmethod
     def _build_sku_description_pattern(
-        sku_text: str, location: str, wildcard_prefix: bool
+        sku_text: str, location: str, wildcard_prefix: bool, custom: bool=False
     ) -> str:
         # sample pattern values:
         # '%Instance Core running in Delhi'
         # 'Small Instance with 1 VCPU running in London'
+        # 'E2 Custom Instance Core running in Americas'
         prefix = "%" if wildcard_prefix else ""
+        if custom:
+            if 'Instance' in sku_text:
+                sku_text.replace('Instance', 'Custom Instance')
+            else:
+                sku_text = f"Custom%{sku_text}"
         return f"{prefix}{sku_text} running in {location}"
 
     def _build_pricing_query(self, sku_desription_pattern: str) -> str:
@@ -1229,28 +1253,51 @@ class Gcp(CloudBase):
         highest_price = row.list_price["tiered_rates"][0]["usd_amount"]
         return highest_price
 
-    def _parse_machine_family(self, row, sku_desription_pattern: str) -> str:
-        # - take sku description (M3 Memory-optimized Instance Core running in Las Vegas)
-        # - remove the patern that we used for matching (%Instance Core running in Las Vegas) from the end
-        # - lookup the remaining string (M3 Memory-optimized) in the map and get the family name (m3)
+    def _parse_machine_family(self, row) -> (str, str):
+        # - take sku description:
+        #     M3 Memory-optimized Instance Core running in Las Vegas
+        # - remove location part starting from "running":
+        #     M3 Memory-optimized Instance Core
+        # - remove sku type related words "Custom", "Core", "Ram":
+        #    M3 Memory-optimized Instance
+        # - lookup the remaining string in the map and get the family name (m3):
+        #    M3 Memory-optimized Instance
         sku_description = row.sku["description"]
-        machine_family_description = sku_description[: -len(sku_desription_pattern)]
+        custom = 'Custom' in sku_description
+        sku_description = sku_description.split('running')[0]
+        for param in ["Core", "Ram", "Custom"]:
+            sku_description = sku_description.replace(param + " ", "")
         machine_family = self._resource_priced_machine_series_descriptions.get(
-            machine_family_description
+            sku_description.rstrip()
         )
-        return machine_family
+        return machine_family, custom
 
     @staticmethod
-    def _update_m2_prices(prices: dict[str, MachineFamilyResourcePrice]):
+    def _update_m2_prices(
+            prices: Dict[Tuple[str, bool], MachineFamilyResourcePrice]):
         # m2 instance family is a special case.
         # Pricing table only contains "premium" prices
         # that need to be added to the regular m1 prices.
-        prices["m2"].vcpu_price += prices["m1"].vcpu_price
-        prices["m2"].ram_gb_price += prices["m1"].ram_gb_price
+        if ("m2", False) in prices and ("m1", False) in prices:
+            prices[("m2", False)].vcpu_price += prices[
+                ("m1", False)].vcpu_price
+            prices[("m2", False)].ram_gb_price += prices[
+                ("m1", False)].ram_gb_price
 
     def _get_machine_family_resource_prices(
         self, region: str
-    ) -> dict[str, MachineFamilyResourcePrice]:
+    ) -> Dict[Tuple, MachineFamilyResourcePrice]:
+
+        def _get_prices(sku_pattern, inst_family_prices):
+            for row in self._query_prices(sku_pattern):
+                machine_family, custom = self._parse_machine_family(row)
+                if not machine_family:
+                    continue
+                price = self._parse_price(row)
+                inst_family_prices[(machine_family, custom)].set_price(
+                    sku_text, price)
+            return inst_family_prices
+
         # get per-cpu and per-ram-gb prices for machine families
         locations = self._get_region_locations(region)
         instance_family_prices = defaultdict(MachineFamilyResourcePrice)
@@ -1259,19 +1306,19 @@ class Gcp(CloudBase):
                 sku_desription_pattern = self._build_sku_description_pattern(
                     sku_text, location, wildcard_prefix=True
                 )
-                for row in self._query_prices(sku_desription_pattern):
-                    machine_family = self._parse_machine_family(
-                        row, sku_desription_pattern
-                    )
-                    if not machine_family:
-                        continue
-                    price = self._parse_price(row)
-                    instance_family_prices[machine_family].set_price(sku_text, price)
+                instance_family_prices = _get_prices(sku_desription_pattern,
+                                                     instance_family_prices)
+                sku_desription_pattern = self._build_sku_description_pattern(
+                    sku_text, location, wildcard_prefix=True, custom=True
+                )
+                instance_family_prices.update(
+                    _get_prices(sku_desription_pattern, instance_family_prices))
         self._update_m2_prices(instance_family_prices)
         return instance_family_prices
 
     def _get_special_instance_type_prices(self, region: str) -> dict:
-        # get prices for instace types which are not prices separately for each CPU core and each GB of RAM
+        # get prices for instance types which are not prices separately for
+        # each CPU core and each GB of RAM
         locations = self._get_region_locations(region)
         instance_type_prices = {}
         for (
@@ -1311,6 +1358,21 @@ class Gcp(CloudBase):
         ram_price = instance_type.ram_gb * resource_prices.ram_gb_price
         return cpu_price + ram_price
 
+    def get_instance_type_by_name(
+            self, region: str, flavor: str) -> dict[str, InstanceType]:
+        request = compute.GetMachineTypeRequest(
+            zone=region,
+            project=self.project_id,
+            machine_type=flavor
+        )
+        response = self.compute_instance_types_client.get(
+            request=request, **DEFAULT_KWARGS
+        )
+        result = {}
+        instance_type = InstanceType()
+        instance_type.parse_compute_machine_type(response)
+        return result
+
     @staticmethod
     def get_instance_type_price(
         instance_type: InstanceType,
@@ -1321,7 +1383,8 @@ class Gcp(CloudBase):
         if instance_type_price is not None:
             return instance_type_price
         machine_family = instance_type.family
-        resource_prices = machine_family_prices.get(machine_family)
+        custom = instance_type.custom
+        resource_prices = machine_family_prices.get((machine_family, custom))
         if not resource_prices:
             return None
         if not resource_prices.vcpu_price or not resource_prices.ram_gb_price:
@@ -1330,10 +1393,159 @@ class Gcp(CloudBase):
             instance_type, resource_prices
         )
 
-    def get_instance_types_priced(self, region: str) -> dict[str, dict]:
+    @property
+    def _family_max_cpu_map(self):
+        return {
+            "e2": {
+                "cpu": {"min": 0.25, "max": 22},
+                "ram": {"min": 1, "max": 128},
+                "min_ram_per_cpu": 0.5,
+                "max_ram_per_cpu": 8,
+                "cpu_step": 2,
+            },
+            "n1": {
+                "cpu": {"min": 0.25, "max": 96},
+                "ram": {"min": 0.6, "max": 624},
+                "min_ram_per_cpu": 0.5,
+                "max_ram_per_cpu": 6.5,
+                "cpu_step": 2,
+            },
+            "n2": {
+                "cpu": {"min": 2, "max": 128},
+                "ram": {"min": 2, "max": 864},
+                "min_ram_per_cpu": 0.5,
+                "max_ram_per_cpu": 8,
+                "cpu_step": 2
+            },
+            "n2d": {
+                "cpu": {"min": 2, "max": 224},
+                "ram": {"min": 2, "max": 892},
+                "min_ram_per_cpu": 0.5,
+                "max_ram_per_cpu": 8,
+                "cpu_step": 2,
+            },
+            "n4": {
+                "cpu": {"min": 2, "max": 80},
+                "ram": {"min": 4, "max": 640},
+                "min_ram_per_cpu": 2,
+                "max_ram_per_cpu": 8,
+                "cpu_step": 2,
+            }
+        }
+
+    @staticmethod
+    def gbs_to_mbs(value):
+        return value * 1024
+
+    @staticmethod
+    def mbs_to_gbs(value):
+        return value / 1024
+
+    def _generate_instance_types(
+            self, source_instance_type: InstanceType,
+            instance_types: Dict[str, InstanceType]=None):
+        custom_instance_types = {}
+        ram_step = 256
+        predefined_flavors = []
+        if instance_types:
+            predefined_flavors = [
+                (value.cpu_cores, value.ram_gb)
+                for name, value in instance_types.items()
+                if source_instance_type.family in name]
+        family_description = self._family_max_cpu_map.get(
+            source_instance_type.family)
+        min_cpu = family_description["cpu"]["min"]
+        max_cpu = family_description["cpu"]["max"]
+        min_ram_gb = family_description["ram"]["min"]
+        max_ram_gb = family_description["ram"]["max"]
+        min_ram_per_cpu = family_description["min_ram_per_cpu"]
+        max_ram_per_cpu = family_description["max_ram_per_cpu"]
+        cpu_step = family_description["cpu_step"]
+        if min_cpu < 2:
+            for cpu_fraction in [0.25, 0.5, 1]:
+                if cpu_fraction < min_cpu:
+                    continue
+                instance_type = InstanceType(cpu_cores=cpu_fraction,
+                                             custom=True)
+                cpu_name = next(
+                    k for k, v in instance_type.SHARED_CPU_VALUES.items()
+                    if v == cpu_fraction
+                )
+                size_ram_max_gb = cpu_fraction * max_ram_per_cpu
+                size_ram_max_mb = self.gbs_to_mbs(size_ram_max_gb)
+                size_ram_min_gb = cpu_fraction * min_ram_per_cpu
+                if size_ram_min_gb < min_ram_gb:
+                    size_ram_min_gb = min_ram_gb
+                size_ram_min_mb = self.gbs_to_mbs(size_ram_min_gb)
+                for ram_mb in range(int(size_ram_min_mb), int(size_ram_max_mb),
+                                    ram_step):
+                    instance_type.ram_gb = self.mbs_to_gbs(ram_mb)
+                    instance_type.type_name = f"{source_instance_type.family}" \
+                                              f"-custom-{cpu_name}-{ram_mb}"
+                    custom_instance_types[instance_type.type_name] = instance_type
+        min_cpu = 2
+        for cpu in range(min_cpu, max_cpu, cpu_step):
+            size_ram_max_gb = cpu * max_ram_per_cpu
+            if size_ram_max_gb > max_ram_gb:
+                size_ram_max_gb = max_ram_gb
+            size_ram_max_mb = self.gbs_to_mbs(size_ram_max_gb)
+            size_ram_min_gb = cpu * min_ram_per_cpu
+            if size_ram_min_gb < min_ram_gb:
+                continue
+            size_ram_min_mb = self.gbs_to_mbs(size_ram_min_gb)
+            for ram_mb in range(int(size_ram_min_mb), int(size_ram_max_mb),
+                                ram_step):
+                ram_gb = self.mbs_to_gbs(ram_mb)
+                if (cpu, ram_gb) in predefined_flavors:
+                    continue
+                flavor_name = f"{source_instance_type.family}-custom" \
+                              f"-{cpu}-{ram_mb}"
+                instance_type = InstanceType(
+                    type_name=flavor_name, cpu_cores=cpu, ram_gb=ram_gb,
+                    family=source_instance_type.family, custom=True)
+                custom_instance_types[
+                    instance_type.type_name] = instance_type
+        return custom_instance_types
+
+    def get_custom_instance_types(
+            self, machine_family_prices: Dict[Tuple, MachineFamilyResourcePrice],
+            source_flavor_id: str=None, mode: str=None,
+            instance_types: Dict[str, InstanceType]=None
+    ):
+        custom_instance_types = {}
+        source_instance_type = InstanceType(source_flavor_id)
+        source_instance_type.parse_machine_family()
+        for family, custom in machine_family_prices:
+            if (not custom or family not in self._family_max_cpu_map or (
+                    source_instance_type.family != family)):
+                continue
+            if mode == 'current':
+                # parse source instance type
+                instance_type = InstanceType(source_flavor_id)
+                instance_type.parse_machine_family()
+                instance_type.parse_ram_cpu_from_flavor_name()
+                instance_type.parse_custom()
+                custom_instance_types[instance_type.type_name] = instance_type
+            else:
+                # generate available custom instance types by family
+                custom_instance_types = self._generate_instance_types(
+                    source_instance_type, instance_types)
+        return custom_instance_types
+
+    @staticmethod
+    def _is_custom_flavor(source_flavor_id):
+        return source_flavor_id and "custom" in source_flavor_id
+
+    def get_instance_types_priced(
+            self, region: str, source_flavor_id: str=None, mode: str=None
+    ) -> Dict[str, dict]:
         instance_types = self.get_instance_types(region)
         machine_family_prices = self._get_machine_family_resource_prices(region)
         instance_type_prices = self._get_special_instance_type_prices(region)
+        if self._is_custom_flavor(source_flavor_id) or mode != "current":
+            custom_types = self.get_custom_instance_types(
+                machine_family_prices, source_flavor_id, mode, instance_types)
+            instance_types.update(custom_types)
         result = {}
         for instance_type_name, instance_type in instance_types.items():
             price = self.get_instance_type_price(

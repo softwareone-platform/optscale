@@ -494,12 +494,12 @@ export const AXIS_FORMATS = Object.freeze({
 export const getScaledCanvasContext = (canvasElement, { width, height }) => {
   const ctx = canvasElement.getContext("2d");
 
-  /* eslint-disable no-return-assign, no-param-reassign */
+  /* eslint-disable no-param-reassign */
   canvasElement.width = width * window.devicePixelRatio;
   canvasElement.height = height * window.devicePixelRatio;
   canvasElement.style.width = `${width}px`;
   canvasElement.style.height = `${height}px`;
-  /* eslint-enable no-return-assign, no-param-reassign */
+  /* eslint-enable no-param-reassign */
 
   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 

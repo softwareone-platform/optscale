@@ -1,6 +1,7 @@
 from datetime import datetime, timezone, timedelta
 import enum
 import logging
+import re
 import time
 from requests.models import Request
 from urllib.parse import urlencode
@@ -239,7 +240,7 @@ class Azure(CloudBase):
         if self._network:
             return self._network
         self._network = NetworkManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            self.client_secret_credentials, self._subscription_id)
         return self._network
 
     @property
@@ -366,22 +367,6 @@ class Azure(CloudBase):
         except ResourceNotFound:
             return None
         return self._extract_server_status(server.instance_view)
-
-    def _extract_public_ip_ids(self, nic_object):
-        public_ip_ids = [conf.public_ip_address.id
-                         for conf in nic_object.ip_configurations
-                         if conf.public_ip_address]
-        return public_ip_ids
-
-    def _extract_server_ips(self, server_object):
-        public_ip_ids = []
-        for nic in server_object.network_profile.network_interfaces:
-            nic_info = self._parse_azure_id(nic.id)
-            nic = self.network.network_interfaces.get(
-                nic_info['group_name'], nic_info['name'],
-                expand='ipConfigurations/publicIPAddress')
-            public_ip_ids.extend(self._extract_public_ip_ids(nic))
-        return public_ip_ids
 
     def _parse_azure_id(self, azure_id):
         azure_id_parts = azure_id.split('/')
@@ -757,48 +742,39 @@ class Azure(CloudBase):
         return [(self.discover_bucket_resources, ())]
 
     def discover_ip_address_resources(self):
-        vms = {}
-        vm_ids = [vm.id for vm in
-                  list(self.compute.virtual_machines.list_all())]
-        for vm_id in vm_ids:
-            try:
-                vm_parsed_id = self._parse_azure_id(vm_id)
-                vm = self.compute.virtual_machines.get(
-                    vm_parsed_id['group_name'], vm_parsed_id['name'],
-                    expand=InstanceViewTypes.instance_view)
-                ip_address_ids = self._extract_server_ips(vm)
-                for ip_address_id in ip_address_ids:
-                    vms[ip_address_id] = {}
-                    vms[ip_address_id]['status'] = self._extract_server_status(
-                        vm.instance_view)
-                    vms[ip_address_id]['vm_id'] = vm_id
-            except ResourceNotFound:
-                continue
-        lbs = {}
-        load_balancers = self.network.load_balancers.list_all()
-        for lb in load_balancers:
-            for ip_cfg in lb.frontend_ip_configurations:
-                if not ip_cfg.public_ip_address:
-                    continue
-                lbs[ip_cfg.public_ip_address.id] = lb.id
-        gateways = {}
-        app_gateways = self.network.application_gateways.list_all()
-        for app_gateway in app_gateways:
-            for ip_cfg in app_gateway.frontend_ip_configurations:
-                if not ip_cfg.public_ip_address:
-                    continue
-                gateways[ip_cfg.public_ip_address.id] = app_gateway.id
         all_ip_addresses = list(self.network.public_ip_addresses.list_all())
         for public_ip_address in all_ip_addresses:
             tags = public_ip_address.tags or {}
             public_ip_id = public_ip_address.id
             cloud_console_link = self._generate_cloud_link(public_ip_id)
-            vm = vms.get(public_ip_id, {})
-            lb = lbs.get(public_ip_id)
-            gateway = gateways.get(public_ip_id)
-            vm_id = vm.get('vm_id') or lb or gateway
-            available = (vm.get('status') is None and lb is None and
-                         gateway is None)
+            ip_config = public_ip_address.ip_configuration
+            available = True
+            vm_id = None
+            if ip_config:
+                available = False
+                attached_id = public_ip_address.ip_configuration.id
+                pattern = r"[A-Za-z0-9.\/_\-]*\/[A-Za-z0-9.\/_\-]*ipconfigurations"
+                id_ = re.match(pattern, attached_id, re.IGNORECASE)
+                if id_:
+                    info = self._parse_azure_id(id_[0].rsplit('/', 1)[0])
+                    vm_id = info.get('azure_id')
+                    # get vm by nic
+                    if 'networkinterfaces' in vm_id.lower():
+                        nic = self.network.network_interfaces.get(
+                            info['group_name'], info['name'],
+                            expand='ipConfigurations/publicIPAddress')
+                        if nic and nic.virtual_machine:
+                            vm_id = self._parse_azure_id(
+                                nic.virtual_machine.id).get('azure_id')
+                        else:
+                            # ip is attached to nic that is not attached to
+                            # any instance
+                            available = True
+            nat = public_ip_address.nat_gateway
+            if nat:
+                available = False
+                vm_id = nat.id
+
             resource = IpAddressResource(
                 cloud_account_id=self.cloud_account_id,
                 organization_id=self.organization_id,
@@ -1031,7 +1007,7 @@ class Azure(CloudBase):
                 'name': 'Australia Central 2', 'alias': 'AU Central 2',
                 'longitude': 149.1244, 'latitude': -35.3075},
             'chinanorth2': {
-                'name': 'China North 2', 'alias': 'CH North',
+                'name': 'China North 2', 'alias': 'CN North',
                 'longitude': 116.383, 'latitude': 39.916},
             'uaecentral': {
                 'name': 'UAE Central', 'alias': 'AE Central',
@@ -1066,6 +1042,15 @@ class Azure(CloudBase):
             'switzerlandnorth': {
                 'name': 'Switzerland North', 'alias': 'CH North',
                 'longitude': 8.564572, 'latitude': 47.451542},
+            'swedencentral': {
+                'name': 'Sweden Central', 'alias': 'SE Central',
+                'longitude': 17.14127, 'latitude': 60.67488},
+            'polandcentral': {
+                'name': 'Poland Central',
+                'longitude': 21.01666, 'latitude': 52.23334},
+            'qatarcentral': {
+                'name': 'Qatar Central',
+                'longitude': 51.439327, 'latitude': 25.551462},
             'southafricawest': {
                 'name': 'South Africa West', 'alias': 'ZA West',
                 'longitude': 18.843266, 'latitude': -34.075691},
@@ -1117,7 +1102,8 @@ class Azure(CloudBase):
                 'name': 'France South', 'alias': 'FR South',
                 'longitude': 2.1972, 'latitude': 43.8345},
             'eastasia': {
-                'name': 'East Asia', 'longitude': 114.188, 'latitude': 22.267},
+                'name': 'East Asia', 'alias': 'AP East',
+                'longitude': 114.188, 'latitude': 22.267},
             'uaenorth': {
                 'name': 'UAE North', 'alias': 'uaen',
                 'longitude': 55.316666, 'latitude': 25.266666},
@@ -1130,12 +1116,27 @@ class Azure(CloudBase):
             'koreasouth': {
                 'name': 'Korea South', 'alias': 'KR South',
                 'longitude': 129.0756, 'latitude': 35.1796},
+            'israelcentral': {
+                'name': 'Israel Central', 'alias': 'IL Central',
+                'longitude': 33.4506633, 'latitude': 31.2655698},
+            'mexicocentral': {
+                'name': 'Mexico Central',
+                'longitude': -100.389888, 'latitude': 20.588818},
+            'newzealandnorth': {
+                'name': 'New Zealand North', 'alias': 'NZ North',
+                'longitude': 174.76349, 'latitude': -36.84853},
+            'spaincentral': {
+                'name': 'Spain Central',
+                'longitude': 3.4209, 'latitude': 40.4259},
             'eastus2': {
                 'name': 'East US 2', 'alias': 'useast2',
                 'longitude': -78.3889, 'latitude': 36.6681},
             'westus2': {
                 'name': 'West US 2', 'alias': 'US West 2',
                 'longitude': -119.852, 'latitude': 47.233},
+            'italynorth': {
+                'name': 'Italy North',
+                'longitude': 9.18109, 'latitude': 45.46888},
             'japanwest': {
                 'name': 'Japan West', 'alias': 'JA West',
                 'longitude': 135.5022, 'latitude': 34.6939},
@@ -1166,12 +1167,17 @@ class Azure(CloudBase):
                 'name': 'Brazil South', 'alias': 'BR South',
                 'longitude': -46.633, 'latitude': -23.55},
             'brazilsoutheast': {
-                'name': 'Brazil Southeast', 'alias': 'South America',
+                'name': 'Brazil Southeast', 'alias': 'BR Southeast',
                 'longitude': -43.2075, 'latitude': -22.90278},
             'westus3': {
                 'name': 'West US 3', 'alias': 'US West 3',
                 'longitude': -112.074036, 'latitude': 33.448376},
         }
+
+    def alias_location_map(self):
+        coord_map = self._get_coordinates_map()
+        return {v['alias']: k for k, v in coord_map.items()
+                if 'alias' in v}
 
     def get_regions_coordinates(self):
         def to_coord(coordinate):

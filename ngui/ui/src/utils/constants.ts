@@ -256,7 +256,7 @@ export const ACTIVE_BE_FILTER = "active";
 export const ACTIVE_FILTER = "active";
 
 export const RECOMMENDATIONS_BE_FILTER = "recommendations";
-export const AVAILABLE_SAVINGS_FILTER = "availableSavings";
+export const RECOMMENDATIONS_FILTER = "recommendations";
 
 export const CONSTRAINT_VIOLATED_BE_FILTER = "constraint_violated";
 export const CONSTRAINT_VIOLATED_FILTER = "constraintViolated";
@@ -956,8 +956,7 @@ export const LAYOUT_TYPES = Object.freeze({
   RESOURCE_RAW_EXPENSES_COLUMNS: "resource_raw_expenses_columns"
 });
 
-export const OPTSCALE_MODE_OPTION = "optscale_mode";
-export const OPTSCALE_MODE = Object.freeze({
+export const OPTSCALE_CAPABILITY = Object.freeze({
   FINOPS: "finops",
   MLOPS: "mlops"
 });

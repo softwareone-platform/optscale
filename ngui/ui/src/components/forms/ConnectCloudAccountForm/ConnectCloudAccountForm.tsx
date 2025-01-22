@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import {
   ALIBABA_CREDENTIALS_FIELD_NAMES,
   AZURE_TENANT_CREDENTIALS_FIELD_NAMES,
@@ -23,7 +24,6 @@ import {
   AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import ModeWrapper from "components/ModeWrapper";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
 import { useIsDataSourceTypeConnectionEnabled } from "hooks/useIsDataSourceTypeConnectionEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
@@ -66,7 +66,7 @@ import {
   NEBIUS,
   DATABRICKS,
   DATABRICKS_ACCOUNT,
-  OPTSCALE_MODE,
+  OPTSCALE_CAPABILITY,
   GCP_TENANT_ACCOUNT,
   GCP_TENANT
 } from "utils/constants";
@@ -510,7 +510,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: NEBIUS_ACCOUNT,
       dataTestId: "btn_nebius_account",
       action: () => defaultTileAction(NEBIUS_ACCOUNT, NEBIUS),
-      mode: OPTSCALE_MODE.FINOPS
+      capability: OPTSCALE_CAPABILITY.FINOPS
     },
     {
       id: DATABRICKS_ACCOUNT,
@@ -518,7 +518,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: DATABRICKS_ACCOUNT,
       dataTestId: "btn_databricks_account",
       action: () => defaultTileAction(DATABRICKS_ACCOUNT, DATABRICKS),
-      mode: OPTSCALE_MODE.FINOPS
+      capability: OPTSCALE_CAPABILITY.FINOPS
     },
     {
       id: KUBERNETES,
@@ -526,7 +526,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: KUBERNETES,
       dataTestId: "btn_kubernetes",
       action: () => defaultTileAction(KUBERNETES, KUBERNETES_CNR),
-      mode: OPTSCALE_MODE.FINOPS
+      capability: OPTSCALE_CAPABILITY.FINOPS
     }
   ].filter(({ id }) => isDataSourceTypeConnectionEnabled(id));
 
@@ -534,8 +534,8 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
     <FormProvider {...methods}>
       <Stack>
         <div style={{ display: "flex", flexWrap: "wrap", width: "fit-content" }} ref={ref}>
-          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, mode }, index) => (
-            <ModeWrapper mode={mode} key={id}>
+          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }, index) => (
+            <CapabilityWrapper capability={capability} key={id}>
               <Paper
                 className={cx(classes.tile, connectionType !== id && classes.inactiveTile)}
                 variant="outlined"
@@ -559,7 +559,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                   <FormattedMessage id={messageId} />
                 </Typography>
               </Paper>
-            </ModeWrapper>
+            </CapabilityWrapper>
           ))}
         </div>
         <Box sx={{ width: { md: `max(50%, ${width}px)` } }}>

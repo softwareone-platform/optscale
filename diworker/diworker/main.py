@@ -4,8 +4,6 @@ import time
 
 import urllib3
 from threading import Thread
-from optscale_client.config_client.client import Client as ConfigClient
-from datetime import datetime
 from etcd import Lock as EtcdLock
 from kombu import Exchange, Queue, Connection as QConnection
 from kombu.pools import producers
@@ -14,14 +12,15 @@ from kombu.mixins import ConsumerMixin
 from kombu.utils.debug import setup_logging
 from pymongo import MongoClient
 from urllib3.exceptions import InsecureRequestWarning
-from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from clickhouse_driver import Client as ClickHouseClient
+
+from optscale_client.config_client.client import Client as ConfigClient
+from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from tools.optscale_time.optscale_time import startday, utcfromtimestamp
 
 from diworker.diworker.importers.base import BaseReportImporter
 from diworker.diworker.importers.factory import get_importer_class
 from diworker.diworker.migrator import Migrator
-
-from optscale_client.herald_client.client_v2 import Client as HeraldClient
 
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ALERT_THRESHOLD = 60 * 60 * 24
@@ -83,12 +82,13 @@ class DIWorker(ConsumerMixin):
         return self._clickhouse_cl
 
     def publish_activities_task(self, organization_id, object_id, object_type,
-                                action, routing_key):
+                                action, routing_key, meta=None):
         task = {
             'organization_id': organization_id,
             'object_id': object_id,
             'object_type': object_type,
-            'action': action
+            'action': action,
+            'meta': meta
         }
         queue_conn = QConnection('amqp://{user}:{pass}@{host}:{port}'.format(
             **self.config_cl.read_branch('/rabbit')))
@@ -144,11 +144,13 @@ class DIWorker(ConsumerMixin):
             'recalculate': is_recalculation}
         importer = None
         ca = None
+        previous_attempt_ts = 0
         try:
             _, ca = self.rest_cl.cloud_account_get(
                 importer_params.get('cloud_account_id'))
             organization_id = ca.get('organization_id')
             start_last_import_ts = ca.get('last_import_at', 0)
+            previous_attempt_ts = ca.get('last_import_attempt_at', 0)
             cc_type = ca.get('type')
             importer = get_importer_class(cc_type)(**importer_params)
             importer.import_report()
@@ -171,51 +173,35 @@ class DIWorker(ConsumerMixin):
             if hasattr(exc, 'details'):
                 # pylint: disable=E1101
                 LOG.error('Mongo exception details: %s', exc.details)
+            reason = str(exc)
             self.rest_cl.report_import_update(
                 self.report_import_id,
-                {'state': 'failed', 'state_reason': str(exc)}
+                {'state': 'failed', 'state_reason': reason}
             )
             now = int(time.time())
             if not importer:
                 importer = BaseReportImporter(**importer_params)
-            importer.update_cloud_import_attempt(now, str(exc))
-            # TODO: OS-6259: temporary mute service email
-            # if ca:
-            #     self.send_service_email(ca, now, str(exc))
+            importer.update_cloud_import_attempt(now, reason)
+            self.send_report_failed_email(ca, previous_attempt_ts, now)
             raise
 
-    def send_service_email(self, cloud_account, now, reason):
+    def send_report_failed_email(self, cloud_account, previous_attempt_ts,
+                                 now):
         last_import_at = cloud_account['last_import_at']
         if not last_import_at:
             last_import_at = cloud_account['created_at']
         if now - last_import_at < ALERT_THRESHOLD:
             return
-
-        _, organization = self.rest_cl.organization_get(
-            cloud_account['organization_id'])
-        recipient = self.config_cl.optscale_error_email_recipient()
-        if not recipient:
-            return
-        title = "Report import failed"
-        subject = '[%s] %s' % (self.config_cl.public_ip(), title)
-        template_params = {
-            'texts': {
-                'organization': {
-                    'id': organization['id'],
-                    'name': organization['name']},
-                'cloud_account': {
-                    'id': cloud_account['id'],
-                    'name': cloud_account['name'],
-                    'type': cloud_account['type'],
-                    'last_import_at': datetime.fromtimestamp(
-                        last_import_at).strftime('%m/%d/%Y %H:%M:%S UTC')
-                },
-                'reason': reason
-            }}
-        HeraldClient(url=self.config_cl.herald_url(),
-                     secret=self.config_cl.cluster_secret()).email_send(
-            [recipient], subject, template_params=template_params,
-            template_type="report_import_failed")
+        if last_import_at < previous_attempt_ts:
+            # previous import failed too
+            if startday(utcfromtimestamp(previous_attempt_ts)) == startday(
+                    utcfromtimestamp(now)):
+                # email already sent today during previous report import fails
+                return
+        self.publish_activities_task(
+            cloud_account['organization_id'], cloud_account['id'],
+            'cloud_account', 'report_import_failed',
+            'organization.report_import.failed')
 
     def process_task(self, body, message):
         try:

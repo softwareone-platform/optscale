@@ -32,6 +32,16 @@ const getLogo = (demo, white, size) => {
   return logosMap.logo;
 };
 
+type LogoProps = {
+  dataTestId?: string;
+  demo?: boolean;
+  active?: boolean;
+  white?: boolean;
+  width?: string | number;
+  height?: string | number;
+  size?: string;
+};
+
 const Logo = ({
   dataTestId,
   demo = false,
@@ -40,7 +50,7 @@ const Logo = ({
   width = "auto",
   height = "auto",
   size = LOGO_SIZE.FULL
-}) => {
+}: LogoProps) => {
   const intl = useIntl();
 
   const renderLogo = (

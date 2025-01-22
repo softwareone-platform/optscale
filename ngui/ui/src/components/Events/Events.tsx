@@ -23,13 +23,6 @@ import { EN_FULL_FORMAT, formatUTC } from "utils/datetime";
 import { SPACING_1, SPACING_2, SPACING_3 } from "utils/layouts";
 import { getQueryParams, updateQueryParams, removeQueryParam } from "utils/network";
 
-const actionBarDefinition = {
-  title: {
-    messageId: "events",
-    dataTestId: "lbl_events"
-  }
-};
-
 const Loader = () => (
   <Box width="100%" textAlign="center" pt={2}>
     <CircularProgress />
@@ -128,7 +121,23 @@ const EventIcon = ({ eventLevel }) =>
     [EVENT_LEVEL.DEBUG]: <PestControlIcon fontSize="small" color="info" />
   })[eventLevel];
 
-const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, applyFilter, events, isLoading = false }) => {
+const Events = ({
+  eventLevel,
+  descriptionLike,
+  includeDebugEvents,
+  onScroll,
+  applyFilter,
+  events,
+  isLoading = false,
+  isFetchingMore = false
+}) => {
+  const actionBarDefinition = {
+    title: {
+      messageId: "events",
+      dataTestId: "lbl_events"
+    }
+  };
+
   const [expanded, setExpanded] = useState("");
   const queryParams = getQueryParams();
 
@@ -249,27 +258,43 @@ const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, app
   const renderEventList = () => {
     const noEvents = isEmpty(events);
 
+    if (isLoading) {
+      return <Loader />;
+    }
+
     if (noEvents) {
-      return isLoading ? (
-        <Loader />
-      ) : (
-        <Typography>
-          <FormattedMessage id="noEvents" />
-        </Typography>
-      );
+      return <FormattedMessage id="noEvents" />;
     }
 
     return (
-      <Box>
-        <Stack spacing={SPACING_3}>
-          {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
-            <Box key={groupKey}>
-              <Typography>{groupKey}</Typography>
-              {renderAccordion(groupData, index)}
-            </Box>
-          ))}
-        </Stack>
-        {isLoading ? <Loader /> : null}
+      <Box
+        onScroll={onScroll}
+        display="flex"
+        flexDirection="column"
+        flexGrow={1}
+        flexBasis="0px"
+        overflow="auto"
+        /**
+         * Set an approximate maximum height for the events section to ensure it remains scrollable on large screens.
+         * The maximum height should be determined based on the height of the container when all events belong to a single date.
+         * In this scenario, the container's height will be close to its minimum possible value.
+         *
+         * EVENTS_LIMIT represents the maximum number of events that can be fetched in a single request.
+         * Each event is assumed to occupy approximately 25 pixels in height.
+         */
+        maxHeight={`${EVENTS_LIMIT * 25}px`}
+      >
+        <Box>
+          <Stack spacing={SPACING_3}>
+            {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
+              <Box key={groupKey}>
+                <Typography>{groupKey}</Typography>
+                {renderAccordion(groupData, index)}
+              </Box>
+            ))}
+          </Stack>
+          {isFetchingMore ? <Loader /> : null}
+        </Box>
       </Box>
     );
   };
@@ -281,7 +306,7 @@ const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, app
         <Stack spacing={SPACING_1} height="100%">
           <Box display="flex" flexWrap="wrap" gap={SPACING_2}>
             <Box display="flex" gap={2}>
-              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} showDebugEvent={includeDebugEvents} />
+              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} />
               <FormControlLabel
                 control={
                   <Checkbox
@@ -337,25 +362,7 @@ const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, app
               </Box>
             </Box>
           </Box>
-          <Box
-            onScroll={onScroll}
-            display="flex"
-            flexDirection="column"
-            flexGrow={1}
-            flexBasis="0px"
-            overflow="auto"
-            /**
-             * Set an approximate maximum height for the events section to ensure it remains scrollable on large screens.
-             * The maximum height should be determined based on the height of the container when all events belong to a single date.
-             * In this scenario, the container's height will be close to its minimum possible value.
-             *
-             * EVENTS_LIMIT represents the maximum number of events that can be fetched in a single request.
-             * Each event is assumed to occupy approximately 25 pixels in height.
-             */
-            maxHeight={`${EVENTS_LIMIT * 25}px`}
-          >
-            {renderEventList()}
-          </Box>
+          {renderEventList()}
         </Stack>
       </PageContentWrapper>
     </>

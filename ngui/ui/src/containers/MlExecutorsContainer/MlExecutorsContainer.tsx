@@ -1,17 +1,22 @@
 import MlExecutorsTable from "components/MlExecutorsTable";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import MlExecutorsService from "services/MlExecutorsService";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { inDateRange, secondsToMilliseconds } from "utils/datetime";
 
 const MlExecutorsContainer = ({ dateRange }) => {
   const getFilteredExecutors = (executors) =>
     executors.filter(({ last_used: lastUsed }) => inDateRange(dateRange, secondsToMilliseconds(lastUsed)));
 
-  const { useGet } = MlExecutorsService();
-  const { isLoading, executors } = useGet();
+  const { organizationId } = useOrganizationInfo();
 
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const { useGet } = MlExecutorsService();
+  const { isLoading, executors } = useGet({
+    organizationId
+  });
+
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   return <MlExecutorsTable executors={getFilteredExecutors(executors)} isLoading={isLoading} withExpenses={isFinOpsEnabled} />;
 };

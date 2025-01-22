@@ -90,6 +90,10 @@ const EMAIL_TEMPLATES = {
     report_imports_passed_for_org: {
       title: "emailTemplates.systemNotifications.report_imports_passed_for_org.title",
       description: "emailTemplates.systemNotifications.report_imports_passed_for_org.description"
+    },
+    report_import_failed: {
+      title: "emailTemplates.systemNotifications.report_import_failed.title",
+      description: "emailTemplates.systemNotifications.report_import_failed.description"
     }
   },
   accountManagement: {

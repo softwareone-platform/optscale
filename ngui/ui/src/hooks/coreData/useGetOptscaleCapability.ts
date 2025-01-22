@@ -1,11 +1,11 @@
 import { useQuery } from "@apollo/client";
-import { GET_OPTSCALE_MODE } from "graphql/api/restapi/queries";
+import { GET_OPTSCALE_CAPABILITY } from "graphql/api/restapi/queries";
 import { useOrganizationInfo } from "../useOrganizationInfo";
 
-export const useGetOptscaleMode = () => {
+export const useGetOptscaleCapability = () => {
   const { organizationId } = useOrganizationInfo();
 
-  const { data } = useQuery(GET_OPTSCALE_MODE, {
+  const { data } = useQuery(GET_OPTSCALE_CAPABILITY, {
     fetchPolicy: "cache-only",
     variables: {
       organizationId
@@ -13,6 +13,6 @@ export const useGetOptscaleMode = () => {
   });
 
   return {
-    optscaleMode: data?.optscaleMode ?? {}
+    optscaleCapability: data?.optscaleCapability ?? {}
   };
 };

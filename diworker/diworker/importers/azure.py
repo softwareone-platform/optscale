@@ -16,58 +16,28 @@ LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
 
 REGION_NAMES = {
-  "AU Central 2": "Australia Central 2",
-  "US West Central": "West Central US",
-  "DE North": "Germany North",
-  "US Central": "Central US",
-  "AP Southeast": "Southeast Asia",
-  "IN South": "South India",
-  "ZA North": "South Africa North",
-  "AE North": "UAE North",
-  "AP East": "East Asia",
-  "ZA West": "South Africa West",
-  "AU Central": "Australia Central",
-  "US South Central": "South Central US",
-  "CH West": "Switzerland West",
-  "CA East": "Canada East",
-  "AU Southeast": "Australia Southeast",
-  "CH North": "Switzerland North",
-  "KR South": "Korea South",
-  "UK West": "UK West",
-  "NO East": "Norway East",
-  "EU West": "West Europe",
-  "CA Central": "Canada Central",
-  "US East 2": "East US 2",
-  "IN Central": "Central India",
-  "JA West": "Japan West",
-  "JA East": "Japan East",
-  "FR Central": "France Central",
-  "US West": "West US",
-  "US West 2": "West US 2",
-  "US West 3": "West US 3",
-  "NO West": "Norway West",
-  "DE West Central": "Germany West Central",
-  "EU North": "North Europe",
-  "BR South": "Brazil South",
-  "BR Southeast": "Brazil Southeast",
-  "US North Central": "North Central US",
-  "AU East": "Australia East",
-  "FR South": "France South",
-  "US East": "East US",
-  "UK South": "UK South",
-  "AE Central": "UAE Central",
-  "IN West": "West India",
-  "KR Central": "Korea Central",
-  "NorthCentralUs": "North Central US",
-  "westus2": "West US 2",
-  "uswest2": "West US 2",
-  "EastUS": "East US",
-  "USNorth": "North Central US",
-  "EastUS2": "East US 2"
+    "AP Southeast": "Southeast Asia",
+    "AE North": "UAE North",
+    "US East 2": "East US 2",
+    "EU North": "North Europe",
+    "NorthCentralUs": "North Central US",
+    "SouthCentralUS": "South Central US",
+    "WestUS": "West US",
+    "uswest": "West US",
+    "uswest2": "West US 2",
+    "uswest3": "West US 3",
+    "EastUS": "East US",
+    "useast": "East US",
+    "EastUS2": "East US 2",
+    "CentralUS": "Central US",
+    "USCentral": "Central US",
+    "USNorth": "North Central US",
+    "USSouth": "South Central US",
 }
 
 
 class AzureReportImporter(BaseReportImporter):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         resource_type_map = {
@@ -77,7 +47,9 @@ class AzureReportImporter(BaseReportImporter):
             'virtualMachines': 'Instance',
             'snapshots': 'Snapshot',
         }
-        self.resource_type_map_lowered = {k.lower(): v for k, v in resource_type_map.items()}
+        self.resource_type_map_lowered = {
+            k.lower(): v for k, v in resource_type_map.items()
+        }
 
     @staticmethod
     def _get_additional_expenses_groupings():
@@ -421,17 +393,28 @@ class AzureReportImporter(BaseReportImporter):
                             're-generating from raw expenses obtained by old '
                             'Consumption API. Usage dict: %s', expenses[-1])
                 region_field = 'instance_location'
-            region_set = {e.get(region_field) for e in expenses}
+            region_set = {e[region_field] for e in expenses
+                          if region_field in e}
             # instance_location may contain network az (DE Zone 1) if record
             # relates to networking charges. we can't map such info to proper
             # region, so looking for smth present in our map
+            regions_map = REGION_NAMES.copy()
+            coordinates_map = self.cloud_adapter.get_regions_coordinates()
+            for k, v in coordinates_map.items():
+                region_name = v['name']
+                regions_map[k] = region_name
+                if 'alias' in v:
+                    regions_map[v['alias']] = region_name
+            regions_map.update(REGION_NAMES)
             for r in region_set:
-                if r in REGION_NAMES:
-                    region = REGION_NAMES.get(r)
+                if r in regions_map:
+                    region = regions_map.get(r)
                     break
             else:
-                LOG.warning('Unable to find regions %s in map', region_set)
-                region = region_set.pop() or None
+                region = None
+                if region_set:
+                    LOG.warning('Unable to find regions %s in map', region_set)
+                    region = region_set.pop()
             tags = self.extract_tags(expenses[-1].get('tags', {}))
             service = expenses[-1].get('consumed_service')
 
