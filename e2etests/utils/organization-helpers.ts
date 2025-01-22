@@ -3,7 +3,7 @@ import path from "path";
 
 export function saveOrganizationId(organizationId: string): void {
     fs.writeFile(
-        path.resolve(__dirname, `organizationID.txt`),
+        path.resolve(`e2etests/.cache/organizationID.txt`),
         `${organizationId}`,
         "utf8",
         function (err) {

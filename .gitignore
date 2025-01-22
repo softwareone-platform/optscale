@@ -45,8 +45,8 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 *.local
-e2etests/.auth/authToken.json
-/e2etests/.auth/
+e2etests/.cache/authToken.json
+/e2etests/.cache/
 results.json
 results.json
 e2etests/utils/organizationID.txt

@@ -43,10 +43,10 @@ export abstract class BasePage {
 
     async setupRouting(token: string) {
         await this.page.route('**/*', (route) => {
-            // console.log(`Intercepting request to: ${route.request().url()}`);
+            console.log(`Intercepting request to: ${route.request().url()}`);
             const headers = {
                 ...route.request().headers(),
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`
             };
             route.continue({headers});
         });

@@ -5,10 +5,12 @@ import {saveOrganizationId} from "../utils/organization-helpers";
 import path from "path";
 import fs from "fs";
 
-setup.only('Create user, organization and user auth token via API', async ({ authRequest, restAPIRequest }) => {
+setup('Create user, organization and user auth token via API', async ({ authRequest, restAPIRequest }) => {
     let email: string;
     const password = process.env.DEFAULT_USER_PASSWORD;
     let userToken: string;
+
+
 
     await setup.step('Create User', async () => {
         email = generateRandomEmail();
@@ -24,9 +26,10 @@ setup.only('Create user, organization and user auth token via API', async ({ aut
         saveOrganizationId(orgID);
     })
     await setup.step('Login to generate token', async () => {
-        const tokenFilePath = path.resolve('e2etests/.auth/authToken.txt');
+        const tokenFilePath = 'e2etests/.cache/authToken.txt';
         fs.writeFileSync(tokenFilePath, await authRequest.getAuthorizationToken(email, password), 'utf8');
-    });
 
+
+    });
 });
 

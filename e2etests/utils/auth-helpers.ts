@@ -6,7 +6,7 @@ import {Page} from "@playwright/test";
 
 export function saveFile(token: string, role: EUserRole): void {
     fs.writeFile(
-        path.resolve(__dirname, `token-${role}.txt`),
+        path.resolve(`e2etests/.cache/token-${role}.txt`),
         `${token}`,
         "utf8",
         function (err) {
@@ -20,7 +20,7 @@ export function saveFile(token: string, role: EUserRole): void {
 
 export function saveUserID(userID: string): void {
     fs.writeFile(
-        path.resolve(__dirname, `userID.txt`),
+        path.resolve('e2etests/.cache/userID.txt'),
         `${userID}`,
         "utf8",
         function (err) {
@@ -44,12 +44,12 @@ export const getAccessTokenFromCookies = async (page: Page) => {
 };
 
 export function getAccessTokenFromFile() {
-    return fs.readFileSync(path.resolve('e2etests/.auth/authToken.txt'), {
+    return fs.readFileSync(path.resolve('e2etests/.cache/authToken.txt'), {
         encoding: "utf-8",
     });
 }
 // export const getToken = () => {
-//     const tokenFilePath = path.resolve('e2etests/.auth/authToken.json');
+//     const tokenFilePath = path.resolve('e2etests/.cache/authToken.json');
 //     const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));
 //     return tokenData.token;
 // };

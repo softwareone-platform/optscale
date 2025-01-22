@@ -4,7 +4,7 @@ import { chromium, APIRequestContext } from "@playwright/test";
 import { AuthRequest } from "../api-requests/auth-request";
 
 async function globalTeardown() {
-    const userFilePath = "e2etests/utils/userID.txt";
+    const userFilePath = "e2etests/.cache/userID.txt";
 
     if (fs.existsSync(userFilePath)) {
         // Create a browser and context

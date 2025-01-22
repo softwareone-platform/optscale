@@ -16,24 +16,8 @@ import {EventsPage} from "../pages/events-page";
 import {SettingsPage} from "../pages/settings-page";
 import {PerspectivesPage} from "../pages/perspectives-page";
 
-// Helper to dynamically generate a token
-async function generateToken(request: any): Promise<string> {
-    const response = await request.post('https://cloudspend.velasuci.com/auth/v2/tokens', {
-        data: {
-            email: `${process.env.DEFAULT_USER_EMAIL}`,
-            password: `${process.env.DEFAULT_USER_PASSWORD}`,
-        },
-    });
 
-    if (response.status() !== 201) {
-        throw new Error('Failed to generate token');
-    }
-
-    const { token } = await response.json();
-    return token;
-}
-
-const test = base.extend<{
+export const test = base.extend<{
     anomaliesPage: AnomaliesPage;
     cloudAccountsPage: CloudAccountsPage;
     eventsPage: EventsPage;
@@ -50,93 +34,71 @@ const test = base.extend<{
     settingsPage: SettingsPage;
     taggingPoliciesPage: TaggingPoliciesPage;
     usersPage: UsersPage;
-    token: string; // Add token as a fixture
 }>({
-    // Token fixture
-    token: async ({ request }, use) => {
-        const token = await generateToken(request); // Dynamically generate the token
-        await use(token);
-    },
-    anomaliesPage: async ({ page, token }, use) => {
+    anomaliesPage: async ({ page }, use) => {
         const anomaliesPage = new AnomaliesPage(page);
-        await anomaliesPage.setupRouting(token);
         await use(anomaliesPage);
     },
-    cloudAccountsPage: async ({ page, token }, use) => {
+    cloudAccountsPage: async ({ page }, use) => {
         const cloudAccountsPage = new CloudAccountsPage(page);
-        await cloudAccountsPage.setupRouting(token);
         await use(cloudAccountsPage);
     },
-    eventsPage: async ({ page, token }, use) => {
+    eventsPage: async ({ page }, use) => {
         const eventsPage = new EventsPage(page);
-        await eventsPage.setupRouting(token);
         await use(eventsPage);
     },
-    expensesPage: async ({ page, token }, use) => {
+    expensesPage: async ({ page }, use) => {
         const expensesPage = new ExpensesPage(page);
-        await expensesPage.setupRouting(token);
         await use(expensesPage);
     },
-    header: async ({ page, token }, use) => {
+    header: async ({ page }, use) => {
         const header = new Header(page);
-        await header.setupRouting(token);
         await use(header);
     },
-    homePage: async ({ page, token }, use) => {
+    homePage: async ({ page }, use) => {
         const homePage = new HomePage(page);
-        await homePage.setupRouting(token);
         await use(homePage);
     },
-    loginPage: async ({ page, token }, use) => {
+    loginPage: async ({ page}, use) => {
         const loginPage = new LoginPage(page);
-        await loginPage.setupRouting(token); // Inject token into routing
         await use(loginPage);
     },
-    mainMenu: async ({ page, token }, use) => {
+    mainMenu: async ({ page }, use) => {
         const mainMenu = new MainMenu(page);
-        await mainMenu.setupRouting(token);
         await use(mainMenu);
     },
-    perspectivesPage: async ({ page, token }, use) => {
+    perspectivesPage: async ({ page }, use) => {
         const perspectivesPage = new PerspectivesPage(page);
-        await perspectivesPage.setupRouting(token);
         await use(perspectivesPage);
     },
-    policiesPage: async ({ page, token }, use) => {
+    policiesPage: async ({ page}, use) => {
         const policiesPage = new PoliciesPage(page);
-        await policiesPage.setupRouting(token);
         await use(policiesPage);
         },
-    poolsPage: async ({ page, token }, use) => {
+    poolsPage: async ({ page}, use) => {
         const poolsPage = new PoolsPage(page);
-        await poolsPage.setupRouting(token);
         await use(poolsPage);
     },
-    recommendationsPage: async ({ page, token }, use) => {
+    recommendationsPage: async ({ page }, use) => {
         const recommendationsPage = new RecommendationsPage(page);
-        await recommendationsPage.setupRouting(token);
         await use(recommendationsPage);
     },
-    resourcesPage: async ({ page, token }, use) => {
+    resourcesPage: async ({ page}, use) => {
         const resourcesPage = new ResourcesPage(page);
-        await resourcesPage.setupRouting(token);
         await use(resourcesPage);
     },
-    settingsPage: async ({ page, token }, use) => {
+    settingsPage: async ({ page}, use) => {
         const settingsPage = new SettingsPage(page);
-        await settingsPage.setupRouting(token);
         await use(settingsPage);
     },
-    taggingPoliciesPage: async ({ page, token }, use) => {
+    taggingPoliciesPage: async ({ page}, use) => {
         const taggingPoliciesPage = new TaggingPoliciesPage(page);
-        await taggingPoliciesPage.setupRouting(token);
         await use(taggingPoliciesPage);
     },
-    usersPage: async ({ page, token }, use) => {
+    usersPage: async ({ page}, use) => {
         const usersPage = new UsersPage(page);
-        await usersPage.setupRouting(token);
         await use(usersPage);
     },
 });
 
-export default test;
+
