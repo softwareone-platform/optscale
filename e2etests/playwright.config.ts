@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import {EStorageState} from "./e2etests/utils/enums";
+import {EStorageState} from "./utils/enums";
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -10,9 +10,9 @@ const storageState = EStorageState.defaultUser;
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  globalSetup: "./e2etests/setup/global-setup.ts",
-  globalTeardown: "./e2etests/setup/global-teardown.ts",
-  testDir: './e2etests',
+  globalSetup: "./setup/global-setup.ts",
+  globalTeardown: "./setup/global-teardown.ts",
+  testDir: '../e2etests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -20,7 +20,7 @@ export function saveFile(token: string, role: EUserRole): void {
 
 export function saveUserID(userID: string): void {
     fs.writeFile(
-        path.resolve('e2etests/.cache/userID.txt'),
+        path.resolve('.cache/userID.txt'),
         `${userID}`,
         "utf8",
         function (err) {

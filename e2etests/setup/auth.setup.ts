@@ -26,7 +26,7 @@ setup('Create user, organization and user auth token via API', async ({ authRequ
         saveOrganizationId(orgID);
     })
     await setup.step('Login to generate token', async () => {
-        const tokenFilePath = 'e2etests/.cache/authToken.txt';
+        const tokenFilePath = '.cache/authToken.txt';
         fs.writeFileSync(tokenFilePath, await authRequest.getAuthorizationToken(email, password), 'utf8');
 
 
