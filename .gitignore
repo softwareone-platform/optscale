@@ -35,3 +35,9 @@ ngui/*/storybook
 jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
+/node_modules/
+.env.local
+/e2etests/.cache
+/playwright-report
+results.json
+test-results/.last-run.json
