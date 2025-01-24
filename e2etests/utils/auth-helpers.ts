@@ -4,9 +4,9 @@ import {EUserRole} from "./enums";
 import {Page} from "@playwright/test";
 
 
-export function saveFile(token: string, role: EUserRole): void {
+export function saveToken(token: string, role: EUserRole): void {
     fs.writeFile(
-        path.resolve(`e2etests/.cache/token-${role}.txt`),
+        path.resolve(`.cache/token-${role}.txt`),
         `${token}`,
         "utf8",
         function (err) {
@@ -44,12 +44,12 @@ export const getAccessTokenFromCookies = async (page: Page) => {
 };
 
 export function getAccessTokenFromFile() {
-    return fs.readFileSync(path.resolve('e2etests/.cache/authToken.txt'), {
+    return fs.readFileSync(path.resolve('.cache/authToken.txt'), {
         encoding: "utf-8",
     });
 }
 // export const getToken = () => {
-//     const tokenFilePath = path.resolve('e2etests/.cache/authToken.json');
+//     const tokenFilePath = path.resolve('.cache/authToken.json');
 //     const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));
 //     return tokenData.token;
 // };

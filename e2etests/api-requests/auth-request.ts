@@ -1,6 +1,7 @@
 import {APIResponse} from "playwright";
 import {BaseRequest} from "./base-request";
 import {APIRequestContext} from "@playwright/test";
+import fs from "fs";
 
 export class AuthRequest extends BaseRequest {
     readonly request: APIRequestContext;
@@ -40,42 +41,30 @@ async getAuthorizationToken(email: string, password: string): Promise<string> {
   return token;
 }
 
-async getUsers(token: string): Promise<string> {
-  const response = await this.request.get(this.userEndpoint, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
+async saveAuthorizationResponse(email: string, password: string): Promise<void> {
+  const response = await this.authorization(email, password);
+    if (response.status() !== 201) {
+        throw new Error('Failed to authorize user');
     }
-  });
+  const responseBody = await response.json();
+  const userID = responseBody.user_id; // Assuming the response contains a user object with an id
 
-  if (response.status() !== 200) {
-    throw new Error('Failed to get users');
-  }
-
-  return JSON.stringify(await response.json());
+  const filePath = `.cache/auth-response-${userID}.json`;
+  fs.writeFileSync(filePath, JSON.stringify(responseBody, null, 2));
+  console.log(`Response saved to ${filePath}`);
 }
 
-async createUser(email: string, password: string, displayName: string): Promise<string> {
-  const response = await this.request.post(this.userEndpoint, {
+async getUsersWithClusterSecret(userID?: string): Promise<APIResponse> {
+  const  endpoint = `${this.userEndpoint}?user_id=${userID}`;
+  console.log(endpoint);
+  const response = await this.request.get(endpoint, {
     headers: {
       "Content-Type": "application/json",
-      Secret: process.env.CLUSTER_SECRET
+      Secret: `${process.env.CLUSTER_SECRET}`
     },
-    data: {
-      email,
-      display_name: displayName,
-      password,
-      verified: true
-    }
   });
-
-  if (response.status() !== 201) {
-    throw new Error('Failed to create user');
-  }
-
-  const user = JSON.stringify(await response.json());
-  console.log(`User: ${user}`);
-  return user;
+  console.log(JSON.stringify(await response.json()));
+  return response;
 }
 
   async deleteUser(userID: string): Promise<void> {
