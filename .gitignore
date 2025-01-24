@@ -42,6 +42,4 @@ e2etests/.env.local
 e2etests/.cache
 e2etests/playwright-report
 e2etests/results.json
-e2etests/test-results/.last-run.json
-/test-results
-/playwright-report
+e2etests/test-results/
