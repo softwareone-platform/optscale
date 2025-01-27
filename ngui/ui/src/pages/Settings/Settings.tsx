@@ -4,10 +4,6 @@ import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
-import ModeContainer from "containers/ModeContainer";
-import SshSettingsContainer from "containers/SshSettingsContainer";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { OPTSCALE_MODE } from "utils/constants";
 
 const actionBarDefinition = {
   title: {
@@ -17,13 +13,15 @@ const actionBarDefinition = {
 
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
-  INVITATIONS: "invitations",
-  MODE: "mode",
-  SSH: "sshKeys"
+  INVITATIONS: "invitations"
+  // MTP_TODO: disabled to meet BDR requirements
+  // MODE: "mode",
+  // SSH: "sshKeys"
 });
 
 const Settings = () => {
-  const isFinOpsModeEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  // MTP_TODO: disabled to meet BDR requirements
+  // const isFinOpsModeEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
 
   const tabs = [
     {
@@ -35,21 +33,22 @@ const Settings = () => {
       title: SETTINGS_TABS.INVITATIONS,
       dataTestId: `tab_${SETTINGS_TABS.INVITATIONS}`,
       node: <InvitationsContainer />
-    },
-    {
-      title: SETTINGS_TABS.MODE,
-      dataTestId: `tab_${SETTINGS_TABS.MODE}`,
-      node: <ModeContainer />
-    },
-    ...(isFinOpsModeEnabled
-      ? [
-          {
-            title: SETTINGS_TABS.SSH,
-            dataTestId: `tab_${SETTINGS_TABS.SSH}`,
-            node: <SshSettingsContainer />
-          }
-        ]
-      : [])
+    }
+    // MTP_TODO: disabled to meet BDR requirements
+    // {
+    //   title: SETTINGS_TABS.MODE,
+    //   dataTestId: `tab_${SETTINGS_TABS.MODE}`,
+    //   node: <ModeContainer />
+    // },
+    // ...(isFinOpsModeEnabled
+    //   ? [
+    //       {
+    //         title: SETTINGS_TABS.SSH,
+    //         dataTestId: `tab_${SETTINGS_TABS.SSH}`,
+    //         node: <SshSettingsContainer />
+    //       }
+    //     ]
+    //   : [])
   ];
 
   return (

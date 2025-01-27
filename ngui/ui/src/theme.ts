@@ -449,7 +449,6 @@ const getThemeConfig = (settings = {}) => {
           root: {
             borderRadius: "4px",
             "& .MuiChip-label > .MuiTypography-root": {
-              color: MPT_BRAND_WHITE,
               fontSize: "13px"
             }
           }
