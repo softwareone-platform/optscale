@@ -1,11 +1,6 @@
 import { useState, useMemo } from "react";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-// import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
-import DnsOutlinedIcon from "@mui/icons-material/DnsOutlined";
 import { FormattedMessage } from "react-intl";
-import { useDispatch } from "react-redux";
-import { markResourcesAsEnvironments } from "api";
-import { MARK_RESOURCES_AS_ENVIRONMENTS } from "api/restapi/actionTypes";
 import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
 import ExpenseCell from "components/ExpenseCell";
@@ -16,8 +11,6 @@ import ResourcePaidNetworkTrafficList from "components/ResourcePaidNetworkTraffi
 import ResourceTypeLabel from "components/ResourceTypeLabel";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useApiState } from "hooks/useApiState";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
 import { getCreateAssignmentRuleUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -59,9 +52,10 @@ const CleanExpensesTable = ({
   assignmentRuleCreationLinkParameters,
   totalResourcesCount
 }) => {
-  const dispatch = useDispatch();
-  const { organizationId } = useOrganizationInfo();
-  const { isLoading: isMarkResourcesAsEnvironmentsLoading } = useApiState(MARK_RESOURCES_AS_ENVIRONMENTS);
+  // MTP_TODO: Disabled to meet BDR requirements
+  // const dispatch = useDispatch();
+  // const { organizationId } = useOrganizationInfo();
+  // const { isLoading: isMarkResourcesAsEnvironmentsLoading } = useApiState(MARK_RESOURCES_AS_ENVIRONMENTS);
 
   const [rowSelection, setRowSelection] = useState({});
 
@@ -266,22 +260,24 @@ const CleanExpensesTable = ({
   );
 
   const getActionBarItems = () => {
-    const selectedResourceIds = Object.keys(rowSelection);
+    // MPT_TODO: Disabled download
+    // const selectedResourceIds = Object.keys(rowSelection);
 
     const actionBarItems = [
-      {
-        key: "markAsEnvironment",
-        icon: <DnsOutlinedIcon fontSize="small" />,
-        messageId: "markAsEnvironment",
-        enableIfSelectedRows: true,
-        type: "button",
-        isLoading: isMarkResourcesAsEnvironmentsLoading,
-        requiredActions: ["MANAGE_RESOURCES"],
-        dataTestId: "btn_mark_as_environment",
-        action: () => {
-          dispatch(markResourcesAsEnvironments(organizationId, selectedResourceIds));
-        }
-      }
+      // MPT_TODO: Disabled download
+      // {
+      //   key: "markAsEnvironment",
+      //   icon: <DnsOutlinedIcon fontSize="small" />,
+      //   messageId: "markAsEnvironment",
+      //   enableIfSelectedRows: true,
+      //   type: "button",
+      //   isLoading: isMarkResourcesAsEnvironmentsLoading,
+      //   requiredActions: ["MANAGE_RESOURCES"],
+      //   dataTestId: "btn_mark_as_environment",
+      //   action: () => {
+      //     dispatch(markResourcesAsEnvironments(organizationId, selectedResourceIds));
+      //   }
+      // }
     ];
 
     // MPT_TODO: Disabled download

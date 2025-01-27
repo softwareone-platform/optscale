@@ -18,7 +18,8 @@ const renderCaptionGridItem = (caption, rest) => {
     return caption.map(({ key, ...captionProps }) => <CaptionGridItem key={key} {...captionProps} />);
   }
   if (isObject(caption)) {
-    return <CaptionGridItem {...caption} />;
+    const { key, ...captionProps } = caption;
+    return <CaptionGridItem key={key} {...captionProps} />;
   }
   return <CaptionGridItem caption={caption} {...rest} />;
 };

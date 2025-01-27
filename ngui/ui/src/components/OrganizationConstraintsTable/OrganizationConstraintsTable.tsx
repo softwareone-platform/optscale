@@ -134,6 +134,8 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
               .map(({ displayedNameString, displayedValueString }) => `${displayedNameString}: ${displayedValueString}`)
               .join(" ");
 
+        console.log(constraint);
+
         return {
           ...constraint,
           descriptionForSearch: buildDescription({
@@ -212,7 +214,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
               key: "add",
               icon: <AddOutlinedIcon fontSize="small" />,
               messageId: "add",
-              color: "success",
+              color: "primary",
               variant: "contained",
               type: "button",
               link: addButtonLink,

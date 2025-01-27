@@ -1,6 +1,6 @@
+import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import DetectedConstraintsHistoryTable from "components/DetectedConstraintsHistoryTable";
-import SubTitle from "components/SubTitle";
 import TableLoader from "components/TableLoader";
 import TypographyLoader from "components/TypographyLoader";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -45,9 +45,9 @@ const DetectedConstraintsHistory = ({ limitHits, constraint, isLoading = false }
 
   return (
     <>
-      <SubTitle>
+      <Typography variant="subtitle1">
         <FormattedMessage id={mapConstraintTypeToTitleMessageId(constraint?.type)} />
-      </SubTitle>
+      </Typography>
       <DetectedConstraintsHistoryTable limitHits={limitHits} constraint={constraint} />
     </>
   );

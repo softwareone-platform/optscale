@@ -559,7 +559,6 @@ const getThemeConfig = (settings = {}) => {
             background: "#FFFFFF",
             padding: MPT_SPACING_3,
             borderRadius: MPT_SPACING_1,
-            marginTop: MPT_SPACING_1,
             width: "100%"
           },
           ".MTPBoxShadowRoot": {
