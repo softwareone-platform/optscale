@@ -28,9 +28,9 @@ import {
   TAGGING_POLICY_TYPES
 } from "utils/constants";
 import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
-import { SPACING_1 } from "utils/layouts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
+import { SPACING_2 } from "../../utils/layouts";
 import SlicedText from "../SlicedText";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
 
@@ -47,6 +47,7 @@ const ConstraintName = ({ id, name }) => {
     <Box display="flex" alignItems="center">
       <KeyValueLabel
         keyMessageId="name"
+        isBoldKeyLabel
         value={<SlicedText limit={80} text={name} />}
         sx={{
           marginRight: 1
@@ -90,6 +91,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {!TAGGING_POLICY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="type"
+          isBoldKeyLabel
           value={<FormattedMessage id={ANOMALY_TYPES[type] || QUOTAS_AND_BUDGETS_TYPES[type]} />}
           gutterBottom
         />
@@ -97,6 +99,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {ANOMALY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="evaluationPeriod"
+          isBoldKeyLabel
           value={<FormattedMessage id="xDays" values={{ x: evaluationPeriod }} />}
           gutterBottom
         />
@@ -104,6 +107,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {ANOMALY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="threshold"
+          isBoldKeyLabel
           value={<FormattedNumber value={threshold / 100} format="percentage" />}
           gutterBottom
         />
@@ -168,6 +172,7 @@ const OrganizationConstraint = ({
         icon: <ListAltOutlinedIcon fontSize="small" />,
         messageId: "showResources",
         type: "button",
+        color: "primary",
         isLoading: isGetConstraintLoading,
         dataTestId: "btn_show_resources",
         action: () => {
@@ -179,6 +184,7 @@ const OrganizationConstraint = ({
         key: "delete",
         icon: <DeleteOutlinedIcon fontSize="small" />,
         messageId: "delete",
+        color: "primary",
         type: "button",
         isLoading: isGetConstraintLoading,
         show: isAllowed,
@@ -202,22 +208,28 @@ const OrganizationConstraint = ({
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_1}>
-          <div>
-            {isGetConstraintLoading ? (
-              <Skeleton width="100%">
-                <ConstraintProperties />
-              </Skeleton>
-            ) : (
-              <ConstraintProperties id={id} name={name} type={type} definition={definition} />
-            )}
-          </div>
-          <div>{renderFiltersSection()}</div>
-          <DetectedConstraintsHistory
-            constraint={constraint}
-            limitHits={limitHits}
-            isLoading={isGetConstraintLoading || isGetLimitHitsLoading}
-          />
+        <Stack width={"100%"} spacing={SPACING_2}>
+          <Box className={"MTPBoxShadow"}>
+            <div>
+              {isGetConstraintLoading ? (
+                <Skeleton width="100%">
+                  <ConstraintProperties />
+                </Skeleton>
+              ) : (
+                <ConstraintProperties id={id} name={name} type={type} definition={definition} />
+              )}
+            </div>
+            <div>{renderFiltersSection()}</div>
+          </Box>
+          {limitHits.length > 0 && (
+            <Box className={"MTPBoxShadow"}>
+              <DetectedConstraintsHistory
+                constraint={constraint}
+                limitHits={limitHits}
+                isLoading={isGetConstraintLoading || isGetLimitHitsLoading}
+              />
+            </Box>
+          )}
         </Stack>
       </PageContentWrapper>
     </>
