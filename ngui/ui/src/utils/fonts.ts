@@ -34,6 +34,7 @@ const applyTypographySettings = (themeInput, settings) => {
 
   theme.typography.body1 = mergeIfSettingIsNotEmpty(theme.typography.body1, "body1");
   theme.typography.body2 = mergeIfSettingIsNotEmpty(theme.typography.body2, "body2");
+  theme.typography.label = mergeIfSettingIsNotEmpty(theme.typography.label, "label");
   theme.typography.subtitle1 = mergeIfSettingIsNotEmpty(theme.typography.subtitle1, "subtitle1");
   theme.typography.subtitle2 = mergeIfSettingIsNotEmpty(theme.typography.subtitle2, "subtitle2");
   theme.typography.fontWeightBold = mergeIfSettingIsNotEmpty(theme.typography.fontWeightBold, "fontWeightBold");
@@ -58,7 +59,11 @@ const generateResponsiveFontSizes = (themeInput) => {
   const upXsBreakpoint = getUpBreakpoint("xs");
   const upLgBreakpoint = getUpBreakpoint("lg");
   const upXlBreakpoint = getUpBreakpoint("xl");
-
+  theme.typography.label = {
+    fontWeight: "bold",
+    color: "black",
+    fontSize: "0.85rem"
+  };
   theme.typography.subtitle1 = {
     ...theme.typography.subtitle1,
     fontWeight: "bold",
