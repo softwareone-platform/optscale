@@ -24,6 +24,7 @@ export class HomePage extends BasePage {
     readonly poolsRequiringAttentionBtn: Locator;
     readonly poolsReqAttnExceededLimitBtn: Locator;
     readonly poolsReqAttnExceededForecastedOverspendBtn: Locator;
+    readonly progressBar: Locator;
 
     constructor(page: Page) {
         super(page, '/');
@@ -49,10 +50,19 @@ export class HomePage extends BasePage {
         this.poolsRequiringAttentionBtn = this.poolsRequiringAttentionBlock.getByTestId('btn_go_to_pools');
         this.poolsReqAttnExceededLimitBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_exceeded_limit');
         this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
+        this.progressBar = this.page.getByRole('progressbar');
     }
 
     async selectPerspectives(option: string) {
         await this.topResourcesPerspectives.click();
         await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
+    }
+
+    async  waitForAllProgressBarsToDisappear() {
+        console.log('Waiting for all progress bars appear');
+        await this.progressBar.first().waitFor({state: 'visible'});
+        const progressBars = this.progressBar;
+        await progressBars.evaluateAll(bars => bars.every(bar => bar.style.display === 'none'));
+        console.log('All progress bars have disappeared');
     }
 }
