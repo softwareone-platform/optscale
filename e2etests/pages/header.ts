@@ -16,7 +16,7 @@ export class Header extends BasePage {
     constructor(page: Page) {
         super(page, '/');
         this.page = page;
-        this.header = this.page.locator('header');
+        this.header = this.page.locator('header').first();
         this.swoLogo = this.header.getByTestId('img_logo');
         this.organizationSelect = this.header.getByTestId('organization-selector-select');
         this.documentationBtn = this.header.getByTestId('btn_doc');

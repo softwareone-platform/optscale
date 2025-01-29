@@ -20,7 +20,7 @@ test.describe("User Management tests", () => {
         });
     });
 
-    test.only("Login with new user and verify present in user management list", async ({mainMenu, usersPage}) => {
+    test("Login with new user and verify present in user management list", async ({mainMenu, usersPage}) => {
         await mainMenu.clickUserManagement();
         const user = await usersPage.getUserEmailInTable(email);
         await expect(user).toBeVisible();
