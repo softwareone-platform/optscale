@@ -51,7 +51,7 @@ export default defineConfig({
         channel: "chrome",
         storageState,
       },
-      // dependencies: ["setup"],
+      dependencies: ["setup"],
     }
     //
     // {

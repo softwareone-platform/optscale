@@ -74,4 +74,11 @@ export class MainMenu extends BasePage {
         await menuLink.click();
         await expect(this.page).toHaveURL(new RegExp(`^${baseURL}${expectedUrl.replace(/^\//, '')}`));
     }
+
+    async clickUserManagement() {
+        if(await this.systemBtn.getAttribute('aria-expanded') === 'false') {
+            await this.systemBtn.click();
+        }
+        await this.userManagementBtn.click();
+    }
 }

@@ -10,4 +10,7 @@ export class UsersPage extends BasePage {
         this.page = page;
         this.usersHeading = this.page.getByTestId('lbl_users');
     }
+    async getUserEmailInTable(email: string): Promise<Locator> {
+        return this.page.locator(`//td[contains(text(), '${email}')]`);
+    }
 }

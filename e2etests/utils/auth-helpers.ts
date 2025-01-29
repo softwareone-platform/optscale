@@ -48,6 +48,40 @@ export function getAccessTokenFromFile() {
         encoding: "utf-8",
     });
 }
+
+export function saveAuthResponseData(response: any, role: EUserRole): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(
+            path.resolve(`.cache/auth-response-${role}.json`),
+            JSON.stringify(response),
+            "utf8",
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    console.log("File created!");
+                    resolve();
+                }
+            },
+        );
+    });
+}
+
+
+
+export function getValueFromAuthResponse(role: EUserRole, key: string): string {
+    const filePath = path.resolve(`.cache/auth-response-${role}.json`);
+
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Auth response file does not exist: ${filePath}`);
+    }
+
+    const authResponse = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    console.log(authResponse[key]);
+    return authResponse[key];
+}
+
 // export const getToken = () => {
 //     const tokenFilePath = path.resolve('.cache/authToken.json');
 //     const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));

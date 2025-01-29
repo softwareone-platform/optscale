@@ -35,13 +35,14 @@ async getAuthorizationToken(email: string, password: string): Promise<string> {
   if (response.status() !== 201) {
     throw new Error('Failed to generate token');
   }
-
+  const body = await response.json();
+  console.log(JSON.stringify(body));
   const { token } = await response.json();
   console.log(`Token: ${token}`);
   return token;
 }
 
-async saveAuthorizationResponse(email: string, password: string): Promise<void> {
+async saveAuthorizationResponse(email: string, password: string, user?: string): Promise<void> {
   const response = await this.authorization(email, password);
     if (response.status() !== 201) {
         throw new Error('Failed to authorize user');
@@ -55,7 +56,10 @@ async saveAuthorizationResponse(email: string, password: string): Promise<void> 
 }
 
 async getUsersWithClusterSecret(userID?: string): Promise<APIResponse> {
-  const  endpoint = `${this.userEndpoint}?user_id=${userID}`;
+let endpoint = this.userEndpoint;
+  if (userID) {
+    endpoint += `?user_id=${userID}`;
+  }
   console.log(endpoint);
   const response = await this.request.get(endpoint, {
     headers: {
@@ -63,9 +67,37 @@ async getUsersWithClusterSecret(userID?: string): Promise<APIResponse> {
       Secret: `${process.env.CLUSTER_SECRET}`
     },
   });
-  console.log(JSON.stringify(await response.json()));
   return response;
 }
+
+async getUsersWithBadClusterSecret(userID: string): Promise<APIResponse> {
+    const response = await this.request.get(`${this.userEndpoint}/${userID}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Secret: 'bad-secret'
+        },
+    });
+  return response;
+}
+  async createUser(email: string, password: string, displayName: string): Promise<APIResponse> {
+    const response = await this.request.post(this.userEndpoint, {
+      headers: {
+        "Content-Type": "application/json",
+        Secret: process.env.CLUSTER_SECRET
+      },
+      data: {
+        email,
+        display_name: displayName,
+        password,
+        verified: true
+      }
+    });
+
+    if (response.status() !== 201) {
+      throw new Error('Failed to create user');
+    }
+    return response;
+  }
 
   async deleteUser(userID: string): Promise<void> {
     const response = await this.request.delete(`${this.userEndpoint}/${userID}`, {
