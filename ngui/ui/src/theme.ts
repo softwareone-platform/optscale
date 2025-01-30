@@ -729,9 +729,6 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           root: {
             color: "black",
-            ".MuiTypography-root": {
-              fontSize: "15px"
-            },
             ".MuiTypography-caption": {
               fontSize: "13px"
             },

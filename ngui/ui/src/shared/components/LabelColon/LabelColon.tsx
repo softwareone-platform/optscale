@@ -9,7 +9,7 @@ interface ILabelProps {
 }
 
 const LabelColon: React.FC<ILabelProps> = ({ messageId, suffix = ":" }) => (
-  <Typography variant="subtitle1" component="span" paddingRight={MPT_SPACING_2} marginBottom={0}>
+  <Typography variant="label" component="div" paddingRight={MPT_SPACING_2} marginBottom={0}>
     <FormattedMessage id={messageId} />
     {suffix}
   </Typography>

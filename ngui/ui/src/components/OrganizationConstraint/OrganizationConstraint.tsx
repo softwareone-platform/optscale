@@ -14,7 +14,6 @@ import IconButton from "components/IconButton";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DeleteOrganizationConstraintModal } from "components/SideModalManager/SideModals";
-import SubTitle from "components/SubTitle";
 import EditOrganizationConstraintNameFormContainer from "containers/EditOrganizationConstraintNameFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
@@ -30,7 +29,7 @@ import {
 import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
-import { SPACING_2 } from "../../utils/layouts";
+import { MPT_SPACING_2, SPACING_2 } from "../../utils/layouts";
 import SlicedText from "../SlicedText";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
 
@@ -113,23 +112,34 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
         />
       )}
       {type === QUOTA_POLICY && (
-        <KeyValueLabel keyMessageId="quotaPolicyMaxValue" value={<FormattedNumber value={maxValue} />} gutterBottom />
+        <KeyValueLabel
+          keyMessageId="quotaPolicyMaxValue"
+          isBoldKeyLabel
+          value={<FormattedNumber value={maxValue} />}
+          gutterBottom
+        />
       )}
       {type === RECURRING_BUDGET_POLICY && (
         <KeyValueLabel
           keyMessageId="recurringBudgetPolicyMonthlyBudget"
+          isBoldKeyLabel
           value={<FormattedMoney value={monthlyBudget} />}
           gutterBottom
         />
       )}
       {(type === EXPIRING_BUDGET_POLICY || type === TAGGING_POLICY) && (
-        <KeyValueLabel keyMessageId="startDate" value={format(secondsToMilliseconds(startDate), EN_FULL_FORMAT)} gutterBottom />
+        <KeyValueLabel
+          keyMessageId="startDate"
+          isBoldKeyLabel
+          value={format(secondsToMilliseconds(startDate), EN_FULL_FORMAT)}
+          gutterBottom
+        />
       )}
       {type === EXPIRING_BUDGET_POLICY && (
-        <KeyValueLabel keyMessageId="budget" value={<FormattedMoney value={totalBudget} />} gutterBottom />
+        <KeyValueLabel keyMessageId="budget" isBoldKeyLabel value={<FormattedMoney value={totalBudget} />} gutterBottom />
       )}
       {type === TAGGING_POLICY && (
-        <Typography>
+        <Typography component="div" sx={{ marginTop: MPT_SPACING_2 }}>
           <TaggingPolicyDescriptionShort conditions={conditions} />
         </Typography>
       )}
@@ -139,9 +149,9 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
 
 const FiltersSection = ({ filters = {}, isLoading = false }) => (
   <>
-    <SubTitle>
+    <Typography variant="subtitle1" component="div" sx={{ marginTop: MPT_SPACING_2 }}>
       <FormattedMessage id="filters" />
-    </SubTitle>
+    </Typography>
     {isLoading ? <Skeleton height={80} /> : <AnomaliesFilters filters={filters} showAll />}
   </>
 );
@@ -184,7 +194,7 @@ const OrganizationConstraint = ({
         key: "delete",
         icon: <DeleteOutlinedIcon fontSize="small" />,
         messageId: "delete",
-        color: "primary",
+        color: "error",
         type: "button",
         isLoading: isGetConstraintLoading,
         show: isAllowed,
