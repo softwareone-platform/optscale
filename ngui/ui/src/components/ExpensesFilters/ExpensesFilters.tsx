@@ -1,13 +1,13 @@
-import { FormattedMessage } from "react-intl";
 import LinearSelector from "components/LinearSelector";
 import { getPoolIdWithSubPools } from "urls";
 import { isEmpty } from "utils/arrays";
 import { POOL_ID_FILTER } from "utils/constants";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const ExpensesFilters = ({ items, appliedValues, onFilterAdd, onFilterDelete, onFiltersDelete }) =>
   !isEmpty(items) && (
     <LinearSelector
-      label={<FormattedMessage id="filters" />}
+      label={<LabelColon messageId="filters" />}
       value={appliedValues}
       items={items}
       exposeFirstItem

@@ -5,8 +5,7 @@ import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
 import CopyText from "components/CopyText";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
@@ -31,9 +30,12 @@ import {
   RESOURCES_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
 import { BREAKDOWN_BUTTON_GROUP_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
-import { MPT_SPACING_2, MPT_SPACING_3 } from "utils/layouts";
+import { MPT_SPACING_2 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
+import DividerHorizontal from "../../shared/components/DividerHorizontal/DividerHorizontal";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 import ButtonGroup from "../ButtonGroup";
 import Divider from "../Selector/components/Divider";
 
@@ -206,22 +208,11 @@ const Resources = ({
               <ExpensesSummaryContainer requestParams={requestParams} />
             </Grid>
             <Box className={"MTPBoxShadow"}>
-              <div style={{ display: "flex", alignItems: "baseline" }}>
-                <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
-                  <FormattedMessage id={"breakdownBy"} />
-                  {": "}
-                </Typography>
+              <ResponsiveStack>
+                <LabelColon messageId={"breakdownBy"} />
                 <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange} />
-                <Divider
-                  component="span"
-                  style={{ marginLeft: MPT_SPACING_3, marginRight: MPT_SPACING_3, width: "1px" }}
-                  flexItem
-                  orientation="vertical"
-                />
-                <Typography variant={"fontWeightBold"} component="div" sx={{ marginRight: MPT_SPACING_2 }}>
-                  <FormattedMessage id={"dateRangeUTC"} />
-                  {": "}
-                </Typography>
+                <DividerHorizontal />
+                <LabelColon messageId={"dateRange"} />
                 <RangePickerFormContainer
                   onApply={(dateRange) => onApply(dateRange)}
                   initialStartDateValue={startDateTimestamp}
@@ -230,7 +221,7 @@ const Resources = ({
                   definedRanges={getBasicRangesSet()}
                   hideLabel
                 />
-              </div>
+              </ResponsiveStack>
               <Divider style={{ marginTop: MPT_SPACING_2, marginBottom: MPT_SPACING_2 }} />
               <Grid xs={12} item>
                 {isFilterValuesLoading ? (

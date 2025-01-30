@@ -29,6 +29,7 @@ import {
   OPTSCALE_RESOURCE_TYPES
 } from "utils/constants";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 import ExpensesBreakdownActionBar from "./ActionBar";
 import ExpensesBreakdownBarChart from "./BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "./BreakdownByButtonsGroup";
@@ -150,7 +151,7 @@ const ExpensesBreakdown = ({
     return (
       <ExpensesBreakdownByPeriodWidget
         customContent={
-          <Grid container alignItems={"center"}>
+          <ResponsiveStack>
             <LabelColon messageId={"dateRange"} />
             <RangePickerFormContainer
               onApply={onApply}
@@ -159,7 +160,7 @@ const ExpensesBreakdown = ({
               rangeType="expenses"
               definedRanges={getBasicRangesSet()}
             />
-          </Grid>
+          </ResponsiveStack>
         }
         render={(periodType) => (
           <ExpensesBreakdownBarChart

@@ -1,8 +1,4 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-// MPT_TODO: removed icons
-// import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-// import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
-// import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { Grid } from "@mui/material";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 import { createSearchParams, useNavigate } from "react-router-dom";
@@ -18,7 +14,6 @@ import { ALL_SERVICES } from "hooks/useRecommendationServices";
 import { RECOMMENDATIONS, RECOMMENDATION_CATEGORY_QUERY_PARAMETER, RECOMMENDATION_SERVICE_QUERY_PARAMETER } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import { InfoCard, PossibleSavingsCard } from "./Components";
-// import Typography from "@mui/material/Typography";
 
 const RecommendationsCard = ({
   isLoading,

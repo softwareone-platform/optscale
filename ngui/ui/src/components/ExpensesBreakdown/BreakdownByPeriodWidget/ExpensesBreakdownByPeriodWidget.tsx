@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import QuestionMark from "components/QuestionMark";
 import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import DividerHorizontal from "../../../shared/components/DividerHorizontal/DividerHorizontal";
 import LabelColon from "../../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../../shared/components/ResponsiveStack/ResponsiveStack";
+import { MPT_SPACING_3 } from "../../../utils/layouts";
 import ButtonGroup from "../../ButtonGroup";
 import { changePeriodType } from "./actionCreator";
 import { EXPENSES_BREAKDOWN_PERIOD_TYPE } from "./reducer";
@@ -92,20 +94,24 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
 
   return (
     <>
-      <Box display="flex" alignItems="center" mb={SPACING_1}>
+      <ResponsiveStack>
         <LabelColon messageId={"timeInterval"} />
-        <BreakdownLinearSelector value={periodType} items={breakdownLinearSelectorItems} onChange={handleClick} />
-        <QuestionMark
-          messageId="expensesBreakdownBarChartDescription"
-          messageValues={{ periodType: intl.formatMessage({ id: periodType.value }) }}
-        />
+        <Stack direction={"row"} alignItems={"center"}>
+          <BreakdownLinearSelector value={periodType} items={breakdownLinearSelectorItems} onChange={handleClick} />
+          <QuestionMark
+            messageId="expensesBreakdownBarChartDescription"
+            messageValues={{ periodType: intl.formatMessage({ id: periodType.value }) }}
+          />
+        </Stack>
+
         {customContent && (
           <>
             <DividerHorizontal />
-            <Box>{customContent}</Box>
+            {customContent}
           </>
         )}
-      </Box>
+      </ResponsiveStack>
+      <Box marginTop={MPT_SPACING_3}>{render(periodType.value)}</Box>
       {/* MPT_TODO: disabled to math BDR requirement */}
       {/* <DynamicTextPdf */}
       {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle} */}
@@ -118,7 +124,6 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
       {/*    elementType: PDF_ELEMENTS.basics.H2 */}
       {/*  })} */}
       {/* /> */}
-      {render(periodType.value)}
     </>
   );
 };

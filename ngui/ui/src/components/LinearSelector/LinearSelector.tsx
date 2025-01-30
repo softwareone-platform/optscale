@@ -19,7 +19,8 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Popover from "components/Popover";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
-import { MPT_SPACING_2, SPACING_1, SPACING_2 } from "../../utils/layouts";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+import { SPACING_1, SPACING_2 } from "../../utils/layouts";
 import { processItemDefinition } from "./itemDefinition.helper";
 import useStyles from "./LinearSelector.styles";
 
@@ -289,6 +290,8 @@ const LinearSelector = ({
   let expandableItems = [];
   let alwaysVisibleItems = [];
 
+  console.log(label);
+
   const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
   const getValuesArray = () => {
@@ -326,14 +329,11 @@ const LinearSelector = ({
 
   return (
     <Box>
-      <Grid container gap={MPT_SPACING_2} wrap={"nowrap"}>
+      <ResponsiveStack>
         {label && (
-          <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }}>
-            <Typography variant={"fontWeightBold"} component="div" data-test-id={labelDataTestId}>
-              {label}
-              {": "}
-            </Typography>
-          </Grid>
+          <Box alignSelf={"start"} sx={{ paddingTop: "4px" }} component="div" data-test-id={labelDataTestId}>
+            {label}
+          </Box>
         )}
         <Grid item xs={12} md={12}>
           <Grid container gap={SPACING_1}>
@@ -414,7 +414,7 @@ const LinearSelector = ({
             )}
           </Grid>
         </Grid>
-      </Grid>
+      </ResponsiveStack>
     </Box>
   );
 };
