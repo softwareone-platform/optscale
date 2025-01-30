@@ -67,7 +67,6 @@ export class RecommendationsPage extends BasePage {
             await this.cardsBtn.click();
         }
     }
-
     async clickTableButton() {
         await this.tableBtn.click();
     }

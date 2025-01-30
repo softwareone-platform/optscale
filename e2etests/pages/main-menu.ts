@@ -85,4 +85,8 @@ export class MainMenu extends BasePage {
     async clickRecommendations() {
         await this.recommendationsBtn.click();
     }
+
+    async clickResources() {
+        await this.resourcesBtn.click();
+    }
 }
