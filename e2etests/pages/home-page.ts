@@ -3,7 +3,6 @@ import {Locator, Page} from "@playwright/test";
 
 export class HomePage extends BasePage {
     readonly page: Page;
-    readonly liveDemoAlert: Locator;
     readonly connectDataSourceBanner: Locator;
     readonly organizationExpensesBlock: Locator;
     readonly organizationExpensesBtn: Locator;
@@ -29,7 +28,6 @@ export class HomePage extends BasePage {
     constructor(page: Page) {
         super(page, '/');
         this.page = page;
-        this.liveDemoAlert = this.page.getByRole("alert", {name: "You are in a live demo mode"});
         this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
         this.organizationExpensesBlock = this.page.getByTestId('block_org_expenses');
         this.organizationExpensesBtn = this.organizationExpensesBlock.getByTestId('btn_go_to_org_expenses');

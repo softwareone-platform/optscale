@@ -1,5 +1,5 @@
 import {expect} from '@playwright/test';
-import {test} from "../fixtures/fixture";
+import {test} from "../fixtures/page-fixture";
 
 
 test.beforeEach(async ({loginPage}) => {

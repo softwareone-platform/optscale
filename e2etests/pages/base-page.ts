@@ -28,19 +28,19 @@ export abstract class BasePage {
         });
     }
 
-/**
-         * Selects an option from a combo box.
-         *
-         * @param {Locator} comboBox - The locator for the combo box element.
-         * @param {string} option - The option to select from the combo box.
-         * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
-         * @returns {Promise<void>} A promise that resolves when the option is selected.
-         */
-        async selectFromComboBox(comboBox: Locator, option: string, closeList = false) {
-            await comboBox.click();
-            await this.page.getByRole('option', {name: option, exact: true}).click();
-            if (closeList) await this.page.locator('body').click();
-        }
+    /**
+     * Selects an option from a combo box.
+     *
+     * @param {Locator} comboBox - The locator for the combo box element.
+     * @param {string} option - The option to select from the combo box.
+     * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
+     * @returns {Promise<void>} A promise that resolves when the option is selected.
+     */
+    async selectFromComboBox(comboBox: Locator, option: string, closeList = false) {
+        await comboBox.click();
+        await this.page.getByRole('option', {name: option, exact: true}).click();
+        if (closeList) await this.page.locator('body').click();
+    }
 
     async getSelectedOptionFromSelect(selectElement: Locator) {
         return await selectElement.evaluate((select: HTMLSelectElement) => {
@@ -60,7 +60,7 @@ export abstract class BasePage {
         });
     }
 
-/**
+    /**
      * Waits for at least one canvas element on the page to have non-zero pixel data.
      * This method is useful to ensure that a canvas has finished rendering before proceeding.
      *
@@ -74,7 +74,7 @@ export abstract class BasePage {
 
             // Check if any canvas has non-zero pixel data
             return Array.from(canvases).some(canvas => {
-                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const ctx = canvas.getContext('2d', {willReadFrequently: true});
                 if (!ctx) return false;
 
                 const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -82,4 +82,27 @@ export abstract class BasePage {
             });
         });
     }
+
+
+    /**
+     * Waits for the text content of an element to include the expected text.
+     *
+     * @param {Locator} locator - The locator for the element whose text content is being checked.
+     * @param {string} expectedText - The text expected to be included in the element's text content.
+     * @returns {Promise<void>} A promise that resolves when the text content includes the expected text.
+     */
+    async waitForTextContent(locator: Locator, expectedText: string) {
+        await locator.filter({hasText: expectedText}).waitFor();
+    }
+
+/**
+         * Evaluates whether a button element has the active button class.
+         *
+         * @param {Locator} button - The locator for the button element to be evaluated.
+         * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
+         */
+        async evaluateActiveButton(button: Locator) {
+            const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
+            return hasActiveButtonClass;
+        }
 }

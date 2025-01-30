@@ -5,6 +5,7 @@ export class Header extends BasePage {
     readonly page: Page;
     readonly header: Locator;
     readonly swoLogo: Locator;
+    readonly liveDemoAlert: Locator;
     readonly organizationSelect: Locator;
     readonly documentationBtn: Locator;
     readonly productTourBtn: Locator;
@@ -18,6 +19,7 @@ export class Header extends BasePage {
         this.page = page;
         this.header = this.page.locator('header').first();
         this.swoLogo = this.header.getByTestId('img_logo');
+        this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({ hasText: 'You are in a live demo mode' });
         this.organizationSelect = this.header.getByTestId('organization-selector-select');
         this.documentationBtn = this.header.getByTestId('btn_doc');
         this.productTourBtn = this.header.getByTestId('btn_product_tour');

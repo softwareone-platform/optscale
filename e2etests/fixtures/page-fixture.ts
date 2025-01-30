@@ -15,6 +15,7 @@ import {CloudAccountsPage} from "../pages/cloud-accounts-page";
 import {EventsPage} from "../pages/events-page";
 import {SettingsPage} from "../pages/settings-page";
 import {PerspectivesPage} from "../pages/perspectives-page";
+import {ResourceDetailsPage} from "../pages/resource-details-page";
 
 
 export const test = base.extend<{
@@ -31,6 +32,7 @@ export const test = base.extend<{
     poolsPage: PoolsPage;
     recommendationsPage: RecommendationsPage;
     resourcesPage: ResourcesPage;
+    resourceDetailsPage: ResourceDetailsPage;
     settingsPage: SettingsPage;
     taggingPoliciesPage: TaggingPoliciesPage;
     usersPage: UsersPage;
@@ -86,6 +88,10 @@ export const test = base.extend<{
     resourcesPage: async ({ page}, use) => {
         const resourcesPage = new ResourcesPage(page);
         await use(resourcesPage);
+    },
+    resourceDetailsPage: async ({ page}, use) => {
+        const resourceDetailsPage = new ResourceDetailsPage(page);
+        await use(resourceDetailsPage);
     },
     settingsPage: async ({ page}, use) => {
         const settingsPage = new SettingsPage(page);

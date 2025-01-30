@@ -29,6 +29,7 @@ export class ResourcesPage extends BasePage {
     readonly expensesBreakdownChart: Locator;
     readonly resourceCountBreakdownChart: Locator;
     readonly tagsBreakdownChart: Locator;
+    readonly sunflowerEuFraLinkToDetails: Locator;
 
 
     constructor(page: Page) {
@@ -60,6 +61,7 @@ export class ResourcesPage extends BasePage {
         this.expensesBreakdownChart = this.page.getByTestId('expenses_breakdown_chart');
         this.resourceCountBreakdownChart = this.page.getByTestId('resource_count_breakdown_chart');
         this.tagsBreakdownChart = this.page.getByTestId('tags_breakdown_chart');
+        this.sunflowerEuFraLinkToDetails = this.page.locator('//a[.="sunflower-eu-fra"]');
     }
 
     async evaluateActiveButton(button: Locator) {
@@ -82,5 +84,9 @@ export class ResourcesPage extends BasePage {
         await this.page.getByRole('button', { name: startDay, exact: true }).first().click();
         await this.page.getByRole('button', { name: endDay }).first().click();
         await this.applyDateButton.click();
+    }
+
+    async clickLinkToDetails(link: Locator) {
+        await link.click();
     }
 }

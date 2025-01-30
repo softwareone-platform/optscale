@@ -1,4 +1,4 @@
-import {test as setup} from "../fixtures/fixture";
+import {test as setup} from "../fixtures/page-fixture";
 import {EStorageState} from "../utils/enums";
 
 // setup("authenticate-default-user", async ({loginPage}) => {

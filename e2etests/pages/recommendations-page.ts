@@ -57,11 +57,6 @@ export class RecommendationsPage extends BasePage {
         await this.selectFromComboBox(this.applicableServices, service);
     }
 
-    async evaluateActiveButton(button: Locator) {
-        const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
-        return hasActiveButtonClass;
-    }
-
     async clickCardsButtonIfNotActive() {
         if (!await this.evaluateActiveButton(this.cardsBtn)) {
             await this.cardsBtn.click();
