@@ -67,7 +67,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.clickCardsExpensesIfNotActive();
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.expensesBreakdownChart.waitFor();
-            await resourcesPage.page.waitForTimeout(3000);
+            await resourcesPage.waitForCanvas();
             await expect(resourcesPage.expensesBreakdownChart).toHaveScreenshot('Resources-expenses-chart-screenshot.png');
         });
 
@@ -75,7 +75,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourceCountBtn.click();
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.resourceCountBreakdownChart.waitFor();
-            await resourcesPage.page.waitForTimeout(3000);
+            await resourcesPage.waitForCanvas();
             await expect(resourcesPage.resourceCountBreakdownChart).toHaveScreenshot('Resources-resource-count-chart-screenshot.png');
         });
 
@@ -83,7 +83,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.tagsBtn.click();
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.tagsBreakdownChart.waitFor();
-            await resourcesPage.page.waitForTimeout(3000);
+            await resourcesPage.waitForCanvas();
             await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
         });
 

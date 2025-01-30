@@ -28,11 +28,19 @@ export abstract class BasePage {
         });
     }
 
-    async selectFromComboBox(comboBox: Locator, option: string, closeList = false) {
-        await comboBox.click();
-        await this.page.getByRole('option', {name: option, exact: true}).click();
-        if (closeList) await this.page.locator('body').click();
-    }
+/**
+         * Selects an option from a combo box.
+         *
+         * @param {Locator} comboBox - The locator for the combo box element.
+         * @param {string} option - The option to select from the combo box.
+         * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
+         * @returns {Promise<void>} A promise that resolves when the option is selected.
+         */
+        async selectFromComboBox(comboBox: Locator, option: string, closeList = false) {
+            await comboBox.click();
+            await this.page.getByRole('option', {name: option, exact: true}).click();
+            if (closeList) await this.page.locator('body').click();
+        }
 
     async getSelectedOptionFromSelect(selectElement: Locator) {
         return await selectElement.evaluate((select: HTMLSelectElement) => {
@@ -49,6 +57,29 @@ export abstract class BasePage {
                 Authorization: `Bearer ${token}`
             };
             route.continue({headers});
+        });
+    }
+
+/**
+     * Waits for at least one canvas element on the page to have non-zero pixel data.
+     * This method is useful to ensure that a canvas has finished rendering before proceeding.
+     *
+     * @returns {Promise<void>} A promise that resolves when the condition is met.
+     */
+    async waitForCanvas() {
+        await this.page.waitForFunction(() => {
+            // Select all canvas elements on the page
+            const canvases = document.querySelectorAll('canvas');
+            if (!canvases.length) return false;
+
+            // Check if any canvas has non-zero pixel data
+            return Array.from(canvases).some(canvas => {
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                if (!ctx) return false;
+
+                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                return data.some(pixel => pixel !== 0); // Ensure at least one pixel is non-zero
+            });
         });
     }
 }
