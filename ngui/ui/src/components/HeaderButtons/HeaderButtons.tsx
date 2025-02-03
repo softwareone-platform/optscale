@@ -16,6 +16,7 @@ import ProfileMenuContainer from "containers/ProfileMenuContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = () => {
@@ -94,14 +95,14 @@ const HeaderButtons = () => {
       {/* TODO: Maybe we can make the Popup component more universal and include the case below */}
       {/* TODO: https://datatrendstech.atlassian.net/browse/NGUI-2808 to handle dynamic header buttons, product tour is hidden on mdDown (when hamburger menu is activated) */}
       <Box component="div" className={classes.sectionMobile}>
-        <IconButton icon={<MoreVertIcon />} color="primary" onClick={openMobileMenu} />
+        <IconButton icon={<MoreVertIcon />} sx={{ color: MPT_BRAND_TYPE }} onClick={openMobileMenu} />
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMobileMenu}>
           <Box className={classes.customMenuItem}>
             <IconButton
               href={DOCS_HYSTAX_OPTSCALE}
               icon={<MenuBookOutlinedIcon />}
               size="medium"
-              color="primary"
+              sx={{ color: MPT_BRAND_TYPE }}
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="documentation" />
@@ -112,7 +113,7 @@ const HeaderButtons = () => {
             <IconButton
               icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}
               onClick={toggleCommunityDocs}
-              color="primary"
+              sx={{ color: MPT_BRAND_TYPE }}
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="communityDocs" />
@@ -125,7 +126,7 @@ const HeaderButtons = () => {
                 <IconButton
                   icon={<AccountCircleOutlined />}
                   size="medium"
-                  color="primary"
+                  sx={{ color: MPT_BRAND_TYPE }}
                   tooltip={{
                     show: true,
                     value: <FormattedMessage id="profile" />

@@ -1,4 +1,4 @@
-import { useState, Children } from "react";
+import React, { useState, Children } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -6,6 +6,7 @@ import Container from "@mui/material/Container";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { FormattedMessage } from "react-intl";
 import CollapsableMenuDrawer from "components/CollapsableMenuDrawer";
 import DocsPanel from "components/DocsPanel";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -23,6 +24,7 @@ import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { BASE_LAYOUT_CONTAINER_ID, LOGO_SIZE } from "utils/constants";
 import InlineSeverityAlert from "../../components/InlineSeverityAlert";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./BaseLayout.styles";
 
 const logoHeight = 30;
@@ -53,10 +55,9 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
       <Toolbar className={classes.toolbar}>
         {showMainMenu && (
           <IconButton
-            sx={{ display: { xs: "inherit", md: "none" } }}
+            sx={{ display: { xs: "inherit", md: "none", color: MPT_BRAND_TYPE } }}
             customClass={classes.marginRight1}
             icon={<MenuIcon />}
-            color="primary"
             onClick={onMenuIconClick}
             aria-label="open drawer"
           />
@@ -64,29 +65,30 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
         <div style={{ height: logoHeight }} className={classes.logo}>
           <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight} demo={isDemo} active />
 
-          <Typography
-            data-test-id="p_live_demo_mode"
-            sx={{ display: { xs: "none", md: "inherit" } }}
-            className={classes.headerTitle}
-          >
-            FinOps for Cloud {/* MPT_TODO: add translation */}
-          </Typography>
+          <Hidden mode="down" breakpoint="md">
+            <Typography data-test-id="p_live_demo_mode" className={classes.headerTitle}>
+              <FormattedMessage id={"finopsForCloud"} />
+            </Typography>
+          </Hidden>
         </div>
         {isDemo ? (
-          <Box display="flex" alignItems="center">
-            <InlineSeverityAlert messageId="liveDemoMode" data-test-id="p_live_demo_mode" />
-            {/* MPT_TODO: disabled to meet BDR Requirements */}
-            {/* <Button */}
-            {/*  customClass={cx(classes.marginLeft1, classes.marginRight1)} */}
-            {/*  disableElevation */}
-            {/*  dataTestId="btn_register" */}
-            {/*  messageId="register" */}
-            {/*  variant="contained" */}
-            {/*  size={isDownSm ? "small" : "medium"} */}
-            {/*  color="success" */}
-            {/*  onClick={onLiveDemoRegisterClick} */}
-            {/* /> */}
-          </Box>
+          <Hidden mode="down" breakpoint="md">
+            <Box display="flex" alignItems="center">
+              <InlineSeverityAlert messageId="liveDemoMode" data-test-id="p_live_demo_mode" />
+
+              {/* MPT_TODO: disabled to meet BDR Requirements */}
+              {/* <Button */}
+              {/*  customClass={cx(classes.marginLeft1, classes.marginRight1)} */}
+              {/*  disableElevation */}
+              {/*  dataTestId="btn_register" */}
+              {/*  messageId="register" */}
+              {/*  variant="contained" */}
+              {/*  size={isDownSm ? "small" : "medium"} */}
+              {/*  color="success" */}
+              {/*  onClick={onLiveDemoRegisterClick} */}
+              {/* /> */}
+            </Box>
+          </Hidden>
         ) : null}
         <Box display="flex" alignItems="center">
           {showOrganizationSelector && (

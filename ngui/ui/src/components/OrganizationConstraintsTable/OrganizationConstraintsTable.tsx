@@ -30,6 +30,7 @@ import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
 import { CELL_EMPTY_VALUE } from "utils/tables";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const buildDescription = ({ type, definition, formatter, rawString = false }) => {
   if (ANOMALY_TYPES[type]) {
@@ -134,8 +135,6 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
               .map(({ displayedNameString, displayedValueString }) => `${displayedNameString}: ${displayedValueString}`)
               .join(" ");
 
-        console.log(constraint);
-
         return {
           ...constraint,
           descriptionForSearch: buildDescription({
@@ -167,7 +166,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
       {
         header: (
           <TextWithDataTestId dataTestId="lbl_filters">
-            <FormattedMessage id="filters" />
+            <LabelColon messageId="filters" />
           </TextWithDataTestId>
         ),
         accessorKey: "filtersString",

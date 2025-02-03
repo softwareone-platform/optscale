@@ -21,6 +21,7 @@ import { useOrganizationPerspectives } from "hooks/useOrganizationPerspectives";
 import { getResourcesExpensesUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_2 } from "utils/layouts";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const ResourcesPerspectives = () => {
   const isAllowedToDeletePerspectives = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
@@ -112,7 +113,7 @@ const ResourcesPerspectives = () => {
       {
         header: (
           <TextWithDataTestId dataTestId="lbl_filters">
-            <FormattedMessage id="filters" />
+            <LabelColon messageId="filters" />
           </TextWithDataTestId>
         ),
         accessorKey: "filtersString",

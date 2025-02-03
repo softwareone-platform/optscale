@@ -20,6 +20,7 @@ import Popover from "components/Popover";
 import { useAllowedItems } from "hooks/useAllowedActions";
 import { isEmpty, splitIntoTwoChunks } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./ActionBar.styles";
 import { COLLAPSE_MODE, HIDE_MODE, useHideActionsForSmallScreens } from "./useHideActionsForSmallScreens";
 
@@ -259,7 +260,13 @@ const ActionBar = ({ data, isPage = true }) => {
                   <Box component="div" width={"100%"} sx={{ display: "flex" }} className={actionsClasses}>
                     <Popover
                       renderMenu={({ closeHandler }) => <DropDownMenu items={hidden} onClose={closeHandler} />}
-                      label={<IconButton isLoading={hidden.some((item) => item.isLoading)} icon={<MoreVertOutlinedIcon />} />}
+                      label={
+                        <IconButton
+                          sx={{ color: MPT_BRAND_TYPE }}
+                          isLoading={hidden.some((item) => item.isLoading)}
+                          icon={<MoreVertOutlinedIcon />}
+                        />
+                      }
                     />
                   </Box>
                 )}

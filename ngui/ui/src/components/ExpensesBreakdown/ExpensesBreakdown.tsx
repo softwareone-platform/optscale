@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,9 @@ import {
   OPTSCALE_RESOURCE_TYPES
 } from "utils/constants";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+import { MPT_SPACING_2, MPT_SPACING_3 } from "../../utils/layouts";
+import Hidden from "../Hidden";
 import ExpensesBreakdownActionBar from "./ActionBar";
 import ExpensesBreakdownBarChart from "./BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "./BreakdownByButtonsGroup";
@@ -125,12 +129,29 @@ const ExpensesBreakdown = ({
       {type !== COST_EXPLORER && (
         <Grid item xs={12}>
           <Box className={"MTPBoxShadow"}>
-            <ExpensesBreakdownBreakdownByButtonsGroup
-              filterBy={filterBy}
-              type={type}
-              onClick={updateFilter}
-              dataSourceType={dataSourceType}
-            />
+            <ResponsiveStack direction={{ md: "column", lg: "row" }} alignItems={{ md: "flex-start", lg: "center" }}>
+              <ExpensesBreakdownBreakdownByButtonsGroup
+                filterBy={filterBy}
+                type={type}
+                onClick={updateFilter}
+                dataSourceType={dataSourceType}
+              />
+
+              <Hidden mode="up" breakpoint="lg">
+                <Divider sx={{ marginTop: MPT_SPACING_3, marginBottom: MPT_SPACING_2 }} />
+              </Hidden>
+
+              <ResponsiveStack>
+                <LabelColon messageId={"dateRange"} />
+                <RangePickerFormContainer
+                  onApply={onApply}
+                  initialStartDateValue={startDateTimestamp}
+                  initialEndDateValue={endDateTimestamp}
+                  rangeType="expenses"
+                  definedRanges={getBasicRangesSet()}
+                />
+              </ResponsiveStack>
+            </ResponsiveStack>
           </Box>
         </Grid>
       )}
@@ -149,18 +170,6 @@ const ExpensesBreakdown = ({
     }
     return (
       <ExpensesBreakdownByPeriodWidget
-        customContent={
-          <Grid container alignItems={"center"}>
-            <LabelColon messageId={"dateRange"} />
-            <RangePickerFormContainer
-              onApply={onApply}
-              initialStartDateValue={startDateTimestamp}
-              initialEndDateValue={endDateTimestamp}
-              rangeType="expenses"
-              definedRanges={getBasicRangesSet()}
-            />
-          </Grid>
-        }
         render={(periodType) => (
           <ExpensesBreakdownBarChart
             periodType={periodType}

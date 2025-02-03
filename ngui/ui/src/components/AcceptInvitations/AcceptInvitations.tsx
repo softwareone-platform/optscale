@@ -33,7 +33,7 @@ const AcceptInvitations = ({ invitations = [], activateScope, isLoadingProps = {
   return (
     <Stack alignItems="center" spacing={SPACING_6}>
       <Box>
-        <Logo width={200} />
+        <Logo width={200} dataTestId={"LogoAcceptInvitations"} />
       </Box>
       <Box pl={2} pr={2}>
         <Invitations

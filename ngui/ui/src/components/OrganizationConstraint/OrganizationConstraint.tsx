@@ -29,6 +29,7 @@ import {
 import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import { MPT_SPACING_2, SPACING_2 } from "../../utils/layouts";
 import SlicedText from "../SlicedText";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
@@ -150,7 +151,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
 const FiltersSection = ({ filters = {}, isLoading = false }) => (
   <>
     <Typography variant="subtitle1" component="div" sx={{ marginTop: MPT_SPACING_2 }}>
-      <FormattedMessage id="filters" />
+      <LabelColon messageId="filters" />
     </Typography>
     {isLoading ? <Skeleton height={80} /> : <AnomaliesFilters filters={filters} showAll />}
   </>

@@ -19,6 +19,7 @@ import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_
 import { PDF_ELEMENTS } from "utils/constants";
 import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -159,7 +160,7 @@ const CostExplorer = ({
             <Box>
               <ExpensesBreakdownByPeriodWidget
                 customContent={
-                  <Grid container alignItems={"center"}>
+                  <ResponsiveStack>
                     <LabelColon messageId={"dateRange"} />
                     <RangePickerFormContainer
                       onApply={onApply}
@@ -170,7 +171,7 @@ const CostExplorer = ({
                       hideLabel
                       definedRanges={getBasicRangesSet()}
                     />
-                  </Grid>
+                  </ResponsiveStack>
                 }
                 render={(periodType) => (
                   <Grid container spacing={SPACING_2}>
@@ -180,9 +181,11 @@ const CostExplorer = ({
               />
             </Box>
             <Grid item direction={"row"} alignItems={"baseline"} paddingTop={MPT_SPACING_3} xs={12}>
-              <Box className={"MTPBoxShadow"} display={"flex"} flexWrap={"nowrap"} alignItems={"baseline"}>
-                <LabelColon messageId={"seeExpensesBreakdownBy"} />
-                <ButtonSwitch buttons={breakdownByButtons} />
+              <Box className={"MTPBoxShadow"}>
+                <ResponsiveStack>
+                  <LabelColon messageId={"seeExpensesBreakdownBy"} />
+                  <ButtonSwitch buttons={breakdownByButtons} />
+                </ResponsiveStack>
               </Box>
             </Grid>
           </Grid>
