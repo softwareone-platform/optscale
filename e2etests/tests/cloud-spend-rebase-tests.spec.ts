@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
     })
@@ -95,7 +95,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
     })
 
-    test.only('Verify Resource details page matches screenshots', async ({
+    test('Verify Resource details page matches screenshots', async ({
                                                                              mainMenu,
                                                                              resourcesPage,
                                                                              resourceDetailsPage

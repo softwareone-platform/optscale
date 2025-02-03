@@ -64,11 +64,6 @@ export class ResourcesPage extends BasePage {
         this.sunflowerEuFraLinkToDetails = this.page.locator('//a[.="sunflower-eu-fra"]');
     }
 
-    async evaluateActiveButton(button: Locator) {
-        const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
-        return hasActiveButtonClass;
-    }
-
     async clickCardsExpensesIfNotActive() {
         if (!await this.evaluateActiveButton(this.expensesBtn)) {
             await this.expensesBtn.click();

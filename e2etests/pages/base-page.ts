@@ -42,13 +42,12 @@ export abstract class BasePage {
         if (closeList) await this.page.locator('body').click();
     }
 
-    async getSelectedOptionFromSelect(selectElement: Locator) {
-        return await selectElement.evaluate((select: HTMLSelectElement) => {
-            const selectedOption = select.selectedOptions[0];
-            return selectedOption.text;
-        });
-    }
-
+    /**
+     * Sets up routing for the page to intercept all network requests and add an Authorization header.
+     *
+     * @param {string} token - The token to be used for the Authorization header.
+     * @returns {Promise<void>} A promise that resolves when the routing is set up.
+     */
     async setupRouting(token: string) {
         await this.page.route('**/*', (route) => {
             console.log(`Intercepting request to: ${route.request().url()}`);
@@ -95,14 +94,14 @@ export abstract class BasePage {
         await locator.filter({hasText: expectedText}).waitFor();
     }
 
-/**
-         * Evaluates whether a button element has the active button class.
-         *
-         * @param {Locator} button - The locator for the button element to be evaluated.
-         * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
-         */
-        async evaluateActiveButton(button: Locator) {
-            const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
-            return hasActiveButtonClass;
-        }
+    /**
+     * Evaluates whether a button element has the active button class.
+     *
+     * @param {Locator} button - The locator for the button element to be evaluated.
+     * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
+     */
+    async evaluateActiveButton(button: Locator) {
+        const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
+        return hasActiveButtonClass;
+    }
 }
