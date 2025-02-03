@@ -1,5 +1,4 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import { MPT_SPACING_2 } from "utils/layouts";
 
 const NebiusProperties = ({ accountId, config }) => {
   const {
@@ -15,14 +14,14 @@ const NebiusProperties = ({ accountId, config }) => {
     <>
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="cloudId"
         value={accountId}
         dataTestIds={{ key: `p_key_cloud_id`, value: `p_value_cloud_id` }}
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="cloudName"
         value={cloudName}
         dataTestIds={{
@@ -32,7 +31,7 @@ const NebiusProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="serviceAccountId"
         value={serviceAccountId}
         dataTestIds={{
@@ -42,7 +41,7 @@ const NebiusProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="authorizedKeyId"
         value={authorizedKeyId}
         dataTestIds={{
@@ -52,7 +51,7 @@ const NebiusProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="accessKeyId"
         value={accessKeyId}
         dataTestIds={{
@@ -62,7 +61,7 @@ const NebiusProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="reportBucketName"
         value={reportBucketName}
         dataTestIds={{
@@ -72,7 +71,7 @@ const NebiusProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="reportPathPrefix"
         value={reportPathPrefix}
         dataTestIds={{

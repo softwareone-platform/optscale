@@ -14,7 +14,6 @@ import { discoveryStatus, lastTimeLocal, resourceType } from "utils/columns";
 import { DISCOVERY_STATUS } from "utils/columns/discoveryStatus";
 import { BILLING_IMPORT_STATUS, getBillingImportStatus } from "utils/dataSources";
 import { getTimeDistance } from "utils/datetime";
-import { MPT_SPACING_2 } from "utils/layouts";
 
 const Discovery = ({ discoveryInfos }) => {
   const columns = useMemo(
@@ -103,7 +102,7 @@ const AdvancedDataSourceDetails = ({
             <>
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="lastImportAt"
                 keyMessageId="lastBillingReportProcessed"
                 value={
@@ -118,7 +117,7 @@ const AdvancedDataSourceDetails = ({
               />
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="lastImportAttemptAt"
                 keyMessageId="lastBillingReportAttempt"
                 value={
@@ -133,7 +132,7 @@ const AdvancedDataSourceDetails = ({
               />
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="status"
                 keyMessageId="status"
                 value={
@@ -161,7 +160,7 @@ const AdvancedDataSourceDetails = ({
             <>
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="lastMetricsRetrieval"
                 keyMessageId="lastMetricsRetrieval"
                 value={
@@ -176,7 +175,7 @@ const AdvancedDataSourceDetails = ({
               />
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="lastMetricsRetrievalAttempt"
                 keyMessageId="lastMetricsRetrievalAttempt"
                 value={
@@ -191,7 +190,7 @@ const AdvancedDataSourceDetails = ({
               />
               <KeyValueLabel
                 isBoldKeyLabel
-                sx={{ marginBottom: MPT_SPACING_2 }}
+                variant="property"
                 key="status"
                 keyMessageId="status"
                 value={

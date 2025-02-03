@@ -3,7 +3,6 @@ import CloudLabel from "components/CloudLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { useApiData } from "hooks/useApiData";
 import { AZURE_CNR } from "utils/constants";
-import { MPT_SPACING_2 } from "utils/layouts";
 
 const AzureProperties = ({ config, parentId }) => {
   const { client_id: clientId, tenant, expense_import_scheme: expenseImportScheme, subscription_id: subscriptionId } = config;
@@ -19,7 +18,7 @@ const AzureProperties = ({ config, parentId }) => {
       {parentId && (
         <KeyValueLabel
           isBoldKeyLabel
-          sx={{ marginBottom: MPT_SPACING_2 }}
+          variant="property"
           keyMessageId="parentDataSource"
           value={<CloudLabel id={parentId} name={name} type={type} />}
           dataTestIds={{ key: "p_parent_data_source_key", value: "p_parent_data_source_value" }}
@@ -28,7 +27,7 @@ const AzureProperties = ({ config, parentId }) => {
       {subscriptionId && (
         <KeyValueLabel
           isBoldKeyLabel
-          sx={{ marginBottom: MPT_SPACING_2 }}
+          variant="property"
           keyMessageId="subscriptionId"
           value={subscriptionId}
           dataTestIds={{
@@ -39,18 +38,21 @@ const AzureProperties = ({ config, parentId }) => {
       )}
       <KeyValueLabel
         isBoldKeyLabel
+        variant="property"
         keyMessageId="applicationClientId"
         value={clientId}
         dataTestIds={{ key: "p_client_id_key", value: "p_client_id_value" }}
       />
       <KeyValueLabel
         isBoldKeyLabel
+        variant="property"
         keyMessageId="directoryTenantId"
         value={tenant}
         dataTestIds={{ key: "p_tenant_key", value: "p_tenant_value" }}
       />
       <KeyValueLabel
         isBoldKeyLabel
+        variant="property"
         keyMessageId="expenseImportScheme"
         value={expenseImportScheme}
         dataTestIds={{ key: "p_expense_import_scheme_key", value: "p_expense_import_scheme_value" }}

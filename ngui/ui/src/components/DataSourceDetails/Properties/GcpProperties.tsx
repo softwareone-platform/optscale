@@ -1,6 +1,5 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { GCP_CNR } from "utils/constants";
-import { MPT_SPACING_2 } from "utils/layouts";
 
 const GcpProperties = ({ accountId, config }) => {
   const { billing_data: billingData } = config;
@@ -10,7 +9,7 @@ const GcpProperties = ({ accountId, config }) => {
     <>
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="GCPProjectId"
         value={accountId}
         dataTestIds={{
@@ -20,14 +19,14 @@ const GcpProperties = ({ accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="billingDataDatasetName"
         value={datasetName}
         dataTestIds={{ key: "p_dataset_name_key", value: "p_dataset_name_value" }}
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="billingDataTableName"
         value={tableName}
         dataTestIds={{ key: "p_table_name_key", value: "p_table_name_value" }}
@@ -35,6 +34,7 @@ const GcpProperties = ({ accountId, config }) => {
       {projectId && (
         <KeyValueLabel
           isBoldKeyLabel
+          variant="property"
           keyMessageId="billingDataProjectId"
           value={projectId}
           dataTestIds={{ key: "p_project_id", value: "p_project_id" }}

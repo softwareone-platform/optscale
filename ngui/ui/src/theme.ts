@@ -31,11 +31,11 @@ import {
   MPT_BRAND_TYPE,
   MPT_ALERTS_SUCCESS_3
 } from "./utils/layouts";
-// import { lineHeight } from "@mui/system";
 
-declare module '@mui/material/Typography' {
+declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     header: true;
+    property: true;
   }
 }
 
@@ -863,15 +863,14 @@ const getThemeConfig = (settings = {}) => {
             props: { variant: "header" },
             style: ({ theme }) => ({
               ...theme.typography.subtitle1,
-              // lineHeight: 2.5,
-              marginBottom: "20px",
-              // marginTop: MPT_SPACING_2,
-              // padding: `6px ${MPT_SPACING_2}`,
-              // borderRadius: MPT_SPACING_1,
-              // color: theme.palette.lightYellow.contrastText,
-              // "&:hover": {
-              //   backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
-              // }
+              marginBottom: "20px"
+            })
+          },
+          {
+            props: { variant: "property" },
+            style: () => ({
+              marginBottom: MPT_SPACING_1,
+              fontWeight: "bold"
             })
           }
         ]

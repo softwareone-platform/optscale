@@ -2,7 +2,6 @@ import CopyText from "components/CopyText";
 import CostModelFormattedMoney from "components/CostModelFormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { KUBERNETES_CNR } from "utils/constants";
-import { MPT_SPACING_2 } from "utils/layouts";
 
 const K8sProperties = ({ id, accountId, config }) => {
   const { cost_model: { cpu_hourly_cost: cpuHourlyCost, memory_hourly_cost: memoryHourlyCost } = {}, user } = config;
@@ -11,7 +10,7 @@ const K8sProperties = ({ id, accountId, config }) => {
     <>
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="kubernetesId"
         value={accountId}
         dataTestIds={{
@@ -21,7 +20,7 @@ const K8sProperties = ({ id, accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="dataSourceId"
         value={
           <CopyText sx={{ fontWeight: "inherit" }} text={id}>
@@ -32,21 +31,21 @@ const K8sProperties = ({ id, accountId, config }) => {
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="user"
         value={user}
         dataTestIds={{ key: "p_user_key", value: "p_user_value" }}
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="cpuPerHour"
         value={<CostModelFormattedMoney value={cpuHourlyCost} />}
         dataTestIds={{ key: "p_cpu_per_hour_key", value: "p_cpu_per_hour_value" }}
       />
       <KeyValueLabel
         isBoldKeyLabel
-        sx={{ marginBottom: MPT_SPACING_2 }}
+        variant="property"
         keyMessageId="memoryPerHour"
         value={<CostModelFormattedMoney value={memoryHourlyCost} />}
         dataTestIds={{ key: "p_memory_per_hour_key", value: "p_memory_per_hour_value" }}
