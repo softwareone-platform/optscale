@@ -31,6 +31,13 @@ import {
   MPT_BRAND_TYPE,
   MPT_ALERTS_SUCCESS_3
 } from "./utils/layouts";
+// import { lineHeight } from "@mui/system";
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    header: true;
+  }
+}
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
@@ -315,6 +322,10 @@ const getThemeConfig = (settings = {}) => {
           root: {
             "&:before": {
               display: "none"
+            },
+            "&:first-of-type": {
+              borderTopLeftRadius: MPT_SPACING_1,
+              borderTopRightRadius: MPT_SPACING_1
             }
           }
         }
@@ -846,7 +857,24 @@ const getThemeConfig = (settings = {}) => {
             color: "black",
             fontSize: "24px"
           }
-        }
+        },
+        variants: [
+          {
+            props: { variant: "header" },
+            style: ({ theme }) => ({
+              ...theme.typography.subtitle1,
+              // lineHeight: 2.5,
+              marginBottom: "20px",
+              // marginTop: MPT_SPACING_2,
+              // padding: `6px ${MPT_SPACING_2}`,
+              // borderRadius: MPT_SPACING_1,
+              // color: theme.palette.lightYellow.contrastText,
+              // "&:hover": {
+              //   backgroundColor: lighten(theme.palette.lightYellow.main, 0.08)
+              // }
+            })
+          }
+        ]
       },
       MuiUseMediaQuery: {
         defaultProps: {

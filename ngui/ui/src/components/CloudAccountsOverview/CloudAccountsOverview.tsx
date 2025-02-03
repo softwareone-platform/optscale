@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ActionBar from "components/ActionBar";
 import CloudAccountsTable from "components/CloudAccountsTable";
@@ -149,8 +150,10 @@ const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = f
                 </Grid>
               )}
               <Grid item xs={12}>
-                {!isLoading && onlyAwsLinkedAccountsConnected && <AwsLinkedAccountsWarning />}
-                <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
+                <Box className={"MTPBoxShadow"}>
+                  {!isLoading && onlyAwsLinkedAccountsConnected && <AwsLinkedAccountsWarning />}
+                  <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
+                </Box>
               </Grid>
             </Grid>
           </Grid>

@@ -1,4 +1,4 @@
-import { Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -21,7 +21,9 @@ const ConnectCloudAccount = ({ isLoading, onSubmit, onCancel }) => (
   <>
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
-      <ConnectCloudAccountForm isLoading={isLoading} onSubmit={onSubmit} onCancel={onCancel} />
+      <Box className={"MTPBoxShadow"}>
+        <ConnectCloudAccountForm isLoading={isLoading} onSubmit={onSubmit} onCancel={onCancel} />
+      </Box>
     </PageContentWrapper>
   </>
 );

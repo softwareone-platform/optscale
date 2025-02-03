@@ -1,5 +1,6 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { DATABRICKS } from "utils/constants";
+import { MPT_SPACING_2 } from "utils/layouts";
 
 const DatabricksProperties = ({ accountId, config }) => {
   const { client_id: clientId } = config;
@@ -7,6 +8,8 @@ const DatabricksProperties = ({ accountId, config }) => {
   return (
     <>
       <KeyValueLabel
+        isBoldKeyLabel
+        sx={{ marginBottom: MPT_SPACING_2 }}
         keyMessageId="accountId"
         value={accountId}
         dataTestIds={{
@@ -15,6 +18,8 @@ const DatabricksProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
+        isBoldKeyLabel
+        sx={{ marginBottom: MPT_SPACING_2 }}
         keyMessageId="clientId"
         value={clientId}
         dataTestIds={{

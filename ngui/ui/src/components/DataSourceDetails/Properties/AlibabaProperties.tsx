@@ -1,5 +1,6 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { ALIBABA_CNR } from "utils/constants";
+import { MPT_SPACING_2 } from "utils/layouts";
 
 const AlibabaProperties = ({ accountId, config }) => {
   const { access_key_id: accessKeyId } = config;
@@ -7,6 +8,8 @@ const AlibabaProperties = ({ accountId, config }) => {
   return (
     <>
       <KeyValueLabel
+        isBoldKeyLabel
+        sx={{ marginBottom: MPT_SPACING_2 }}
         key="alibabaAccountId"
         keyMessageId="alibabaAccountId"
         value={accountId}
@@ -16,6 +19,8 @@ const AlibabaProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
+        isBoldKeyLabel
+        sx={{ marginBottom: MPT_SPACING_2 }}
         key="alibabaAccessKeyId"
         keyMessageId="alibabaAccessKeyId"
         value={accessKeyId}

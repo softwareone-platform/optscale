@@ -10,8 +10,7 @@ type SubTitleProps = {
 const SubTitle = ({ children, dataProductTourId, dataTestId, ...rest }: SubTitleProps) => (
   <Typography
     component="h4"
-    variant="subtitle1"
-    fontWeight={"normal"}
+    variant="header"
     data-product-tour-id={dataProductTourId}
     data-test-id={dataTestId}
     {...rest}
