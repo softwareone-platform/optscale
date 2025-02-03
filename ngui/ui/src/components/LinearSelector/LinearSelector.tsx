@@ -20,7 +20,7 @@ import Popover from "components/Popover";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
-import { SPACING_1, SPACING_2 } from "../../utils/layouts";
+import {SPACING_1, SPACING_2} from "../../utils/layouts";
 import { processItemDefinition } from "./itemDefinition.helper";
 import useStyles from "./LinearSelector.styles";
 
@@ -331,7 +331,7 @@ const LinearSelector = ({
     <Box>
       <ResponsiveStack>
         {label && (
-          <Box alignSelf={"start"} sx={{ paddingTop: "4px" }} component="div" data-test-id={labelDataTestId}>
+          <Box alignSelf={"start"} sx={{ lineHeight: '1.8em' }} component="div" data-test-id={labelDataTestId}>
             {label}
           </Box>
         )}

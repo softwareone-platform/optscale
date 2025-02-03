@@ -11,7 +11,6 @@ const SubTitle = ({ children, dataProductTourId, dataTestId, ...rest }: SubTitle
   <Typography
     component="h4"
     variant="subtitle1"
-    fontWeight={"normal"}
     data-product-tour-id={dataProductTourId}
     data-test-id={dataTestId}
     {...rest}
