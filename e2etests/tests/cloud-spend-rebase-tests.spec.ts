@@ -1,18 +1,19 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
     })
 
     test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
+        await loginPage.page.clock.setFixedTime(new Date('2025-01-31T12:00:00Z'));
         await loginPage.loginToLiveDemo(process.env.DEFAULT_USER_EMAIL);
         await header.liveDemoAlert.waitFor();
         await homePage.page.waitForLoadState('networkidle');
     })
 
-    test.only("Verify Header and Main Menu", async ({header, mainMenu}) => {
+    test("Verify Header and Main Menu", async ({header, mainMenu}) => {
         await test.step('Verify header', async () => {
             await expect(header.header).toHaveScreenshot('Header-screenshot.png');
         });
@@ -22,16 +23,17 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
     })
 
-    test('Verify Homepage matches screenshots', async ({header, mainMenu, homePage}) => {
+    test('Verify Homepage matches screenshots', async ({homePage}) => {
         await test.step('Verify Home Page content', async () => {
+
             //Organization Expenses forecast column seems to be recalculated daily so
-            await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png', {maxDiffPixelRatio: 0.2});
-            await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png', {maxDiffPixelRatio: 0.1});
-            await expect(homePage.recommendationsBlock).toHaveScreenshot('RecommendationsBlock-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
+            await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
+            await expect(homePage.recommendationsBlock).toHaveScreenshot('RecommendationsBlock-screenshot.png');
 
             // Although the data is fixed the display values for "Last check" values are dynamic so we can't match the screenshot 100%
-            await expect(homePage.policyViolationsBlock).toHaveScreenshot('PolicyViolationsBlock-screenshot.png', {maxDiffPixelRatio: 0.2});
-            await expect(homePage.poolsRequiringAttentionBlock).toHaveScreenshot('PoolsRequiringAttentionBlock-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(homePage.policyViolationsBlock).toHaveScreenshot('PolicyViolationsBlock-screenshot.png');
+            await expect(homePage.poolsRequiringAttentionBlock).toHaveScreenshot('PoolsRequiringAttentionBlock-screenshot.png');
         });
     })
 
@@ -42,8 +44,9 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Recommendations page content - cards', async () => {
             await recommendationsPage.clickCardsButtonIfNotActive();
+
             //Dynamic values check time data are not fixed so we can't match the screenshot 100%
-            await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
             await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
             await expect(recommendationsPage.firstCard).toHaveScreenshot('Recommendations-cards-first-card-screenshot.png');
         });
@@ -51,7 +54,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Recommendations page content - table', async () => {
             await recommendationsPage.clickTableButton();
             //Dynamic values check time data are not fixed so we can't match the screenshot 100%
-            await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png');
             await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
             await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-table--screenshot.png');
         });
@@ -112,12 +115,13 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Resource details page content - Details tab', async () => {
             if (!await resourceDetailsPage.isTabSelected(resourceDetailsPage.detailsTab)) await resourceDetailsPage.clickDetailsTab();
             await resourceDetailsPage.heading.hover();
-            await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png', {maxDiffPixelRatio: 0.01});
         });
 
         await test.step('Verify Resource details page content - Constraints tab', async () => {
             await resourceDetailsPage.clickConstraintsTab();
             await resourceDetailsPage.heading.hover();
+            await resourceDetailsPage.constraintsTable.waitFor();
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
         });
 
@@ -130,7 +134,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourceDetailsPage.clickExpensesDetailedButton();
             await resourceDetailsPage.heading.hover();
             await resourceDetailsPage.waitForCanvas();
-            await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png', {maxDiffPixelRatio: 0.1});
+            await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png', {maxDiffPixelRatio: 0.01});
             // await resourceDetailsPage.clickExpensesPaidNetworkTrafficButton();
             // await resourceDetailsPage.heading.hover();
             // await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-paid-network-traffic-screenshot.png');

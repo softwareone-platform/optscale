@@ -13,6 +13,7 @@ export class ResourceDetailsPage extends BasePage {
     readonly addAssignmentBtn: Locator;
     readonly detailsTab: Locator;
     readonly constraintsTab: Locator;
+    readonly constraintsTable: Locator;
     readonly expensesTab: Locator;
     readonly recommendationsTab: Locator;
     readonly expensesGroupedButton: Locator;
@@ -33,6 +34,7 @@ export class ResourceDetailsPage extends BasePage {
         this.addAssignmentBtn = this.page.getByTestId('btn_add_rule');
         this.detailsTab = this.page.getByTestId('tab_details');
         this.constraintsTab = this.page.getByTestId('tab_constraints');
+        this.constraintsTable = this.page.getByTestId('table_constraints');
         this.expensesTab = this.page.getByTestId('tab_expenses');
         this.expensesGroupedButton = this.page.getByTestId('btn_grouped');
         this.expensesDetailedButton = this.page.getByTestId('btn_detailed');
