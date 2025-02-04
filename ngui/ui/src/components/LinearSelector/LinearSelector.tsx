@@ -290,8 +290,6 @@ const LinearSelector = ({
   let expandableItems = [];
   let alwaysVisibleItems = [];
 
-  console.log(label);
-
   const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
   const getValuesArray = () => {

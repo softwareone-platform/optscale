@@ -42,14 +42,14 @@ const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId
       <CardContent className={cardContentClasses}>
         <Box>
           {type !== "primary" && (
-            <Box position="absolute" bottom={"12px"} right={"8px"} fontSize={"18px"}>
+            <Box position="absolute" bottom={"0px"} right={"10px"} fontSize={"18px"}>
               {getCardIcon(type, classes)}
             </Box>
           )}
           {children}
           {clickable && (
-            <Box position="absolute" bottom={"25px"} right={"8px"}>
-              <ArrowForwardIosIcon color="primary" sx={{ opacity: 1 }} />
+            <Box position="absolute" bottom={"25px"} right={"6px"}>
+              <ArrowForwardIosIcon color={color} sx={{ opacity: 1 }} />
             </Box>
           )}
         </Box>
