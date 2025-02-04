@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import LinearSelector from "components/LinearSelector";
-import { TABS } from "components/MlTaskRun";
+import { TABS } from "components/MlTaskRun/Components/Tabs";
 import { MlDeleteArtifactModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";

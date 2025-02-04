@@ -5,9 +5,8 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { type GraphQLError } from "graphql";
 import { createClient } from "graphql-ws";
 import { v4 as uuidv4 } from "uuid";
-import { GET_TOKEN } from "api/auth/actionTypes";
 import { GET_ERROR } from "graphql/api/common";
-import { useApiData } from "hooks/useApiData";
+import { useGetToken } from "hooks/useGetToken";
 import { getEnvironmentVariable } from "utils/env";
 
 const httpBase = getEnvironmentVariable("VITE_APOLLO_HTTP_BASE");
@@ -23,9 +22,7 @@ const writeErrorToCache = (cache: DefaultContext, graphQLError: GraphQLError) =>
 };
 
 const ApolloClientProvider = ({ children }) => {
-  const {
-    apiData: { token }
-  } = useApiData(GET_TOKEN);
+  const { token } = useGetToken();
 
   const httpLink = new HttpLink({
     uri: `${httpBase}/api`,
@@ -67,8 +64,8 @@ const ApolloClientProvider = ({ children }) => {
   );
 
   const client = new ApolloClient({
-    link: from([errorLink, splitLink]),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    link: from([errorLink, splitLink])
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

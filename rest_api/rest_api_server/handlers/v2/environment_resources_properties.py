@@ -7,7 +7,8 @@ from rest_api.rest_api_server.handlers.v1.base_async import BaseAsyncItemHandler
 from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
 from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.utils import (run_task, ModelEncoder,
-                                            check_int_attribute, object_to_xlsx)
+                                            check_int_attribute, object_to_xlsx,
+                                            check_string_attribute)
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from tools.optscale_exceptions.common_exc import (NotFoundException,
                                                   WrongArgumentsException)
@@ -227,6 +228,19 @@ class EnvironmentResourcePropertiesCollectorAsyncItemHandler(BaseHandler):
     def _get_controller_class(self):
         return CloudResourceAsyncController
 
+    @staticmethod
+    def _validate_parameters(params):
+        try:
+            if not isinstance(params, dict):
+                raise WrongArgumentsException(Err.OE0344, ['Properties'])
+            if not params:
+                return
+            for k, v in params.items():
+                check_string_attribute('Property', k)
+                check_string_attribute(k, v, allow_empty=True)
+        except WrongArgumentsException as ex:
+            raise OptHTTPError.from_opt_exception(400, ex)
+
     async def post(self, id):
         """
         ---
@@ -235,30 +249,36 @@ class EnvironmentResourcePropertiesCollectorAsyncItemHandler(BaseHandler):
             of an environment resource
             Required permission: none
         tags: [cloud_resources]
-        summary: Registers information about the properties of an environment resource
+        summary: |
+            Registers information about the properties of an environment
+            resource
         parameters:
         -   name: id
             in: path
-            description: Cloud resource ID
+            description: resource ID
             required: true
             type: string
         -   in: body
             name: body
             description: new values of resource properties
             required: true
-            type: object
-            example:
-                version: 1.23.4
-                status: success
-                some_property: some_value
+            schema:
+                type: object
+                example:
+                    version: 1.23.4
+                    status: success
+                    some_property: some_value
         responses:
             204:
                 description: No content
             400:
                 description: |
                     Wrong arguments:
+                    - OE0214: Param should be a string
+                    - OE0215: Param should contain 1-255 characters
                     - OE0233: Incorrect body received
                     - OE0344: Properties should be a dictionary
+                    - OE0416: Param should not contain only whitespaces
                     - OE0480: Resource is not shareable
             404:
                 description: |
@@ -266,5 +286,6 @@ class EnvironmentResourcePropertiesCollectorAsyncItemHandler(BaseHandler):
                     - OE0002: Resource not found
         """
         props = self._request_body()
+        self._validate_parameters(props)
         await run_task(self.controller.edit, id, env_properties=props)
         self.set_status(204)

@@ -1,4 +1,4 @@
-import { useOrganizationFeatures } from "./useOrganizationFeatures";
+import { useOrganizationFeatures } from "./coreData";
 
 export const useIsFeatureEnabled = (featureName) => {
   const { [featureName]: featureFlag = 0 } = useOrganizationFeatures();

@@ -1,13 +1,10 @@
 import { reformatBreakdown } from "utils/api";
 import { removeObjects } from "utils/arrays";
 import {
-  SET_ORGANIZATION_FEATURES,
   SET_ORGANIZATION_OPTIONS,
   SET_ORGANIZATION_OPTION,
   SET_ORGANIZATION_CONSTRAINTS,
   SET_POOL,
-  SET_DATA_SOURCES,
-  SET_ORGANIZATIONS,
   SET_ORGANIZATIONS_OVERVIEW,
   SET_POOL_EXPENSES_BREAKDOWN,
   SET_CLOUDS_EXPENSES,
@@ -19,7 +16,6 @@ import {
   SET_AUTHORIZED_EMPLOYEES,
   SET_EMPLOYEES,
   SET_ORGANIZATION_EXPENSES,
-  SET_CURRENT_EMPLOYEE,
   SET_RAW_EXPENSES,
   SET_CLEAN_EXPENSES,
   SET_EXPENSES_SUMMARY,
@@ -55,7 +51,6 @@ import {
   SET_OPTIMIZATION_OPTIONS,
   SET_ORGANIZATION_CALENDAR,
   UPDATE_ENVIRONMENT_PROPERTY,
-  SET_INVITATIONS,
   UPDATE_SSH_KEY,
   SET_RESOURCE_COUNT_BREAKDOWN,
   SET_TAGS_BREAKDOWN,
@@ -74,11 +69,6 @@ import {
   SET_ARCHIVED_OPTIMIZATION_DETAILS,
   SET_K8S_RIGHTSIZING,
   DELETE_POOL,
-  UPDATE_ORGANIZATION_THEME_SETTINGS,
-  SET_ORGANIZATION_THEME_SETTINGS,
-  SET_ORGANIZATION_PERSPECTIVES,
-  UPDATE_ORGANIZATION_PERSPECTIVES,
-  CREATE_ORGANIZATION,
   UPDATE_ENVIRONMENT_SSH_REQUIREMENT,
   SET_ML_TASKS,
   SET_ML_LEADERBOARD_TEMPLATE,
@@ -136,18 +126,6 @@ export const RESTAPI = "restapi";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
-    case SET_ORGANIZATION_FEATURES: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
-    case SET_ORGANIZATION_THEME_SETTINGS: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
     case SET_ORGANIZATION_OPTIONS: {
       return {
         ...state,
@@ -158,14 +136,6 @@ const reducer = (state = {}, action) => {
       return {
         ...state,
         [action.label]: action.payload.value
-      };
-    }
-    case SET_DATA_SOURCES: {
-      return {
-        ...state,
-        [action.label]: {
-          cloudAccounts: action.payload.cloud_accounts
-        }
       };
     }
     case UPDATE_POOL_EXPENSES_EXPORT: {
@@ -227,26 +197,6 @@ const reducer = (state = {}, action) => {
         [action.label]: {
           employees
         }
-      };
-    }
-    case SET_CURRENT_EMPLOYEE: {
-      return {
-        ...state,
-        [action.label]: {
-          currentEmployee: action.payload
-        }
-      };
-    }
-    case CREATE_ORGANIZATION: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
-    case SET_ORGANIZATIONS: {
-      return {
-        ...state,
-        [action.label]: action.payload
       };
     }
     case SET_ORGANIZATIONS_OVERVIEW: {
@@ -323,11 +273,6 @@ const reducer = (state = {}, action) => {
         [action.label]: {
           invitation: action.payload
         }
-      };
-    case SET_INVITATIONS:
-      return {
-        ...state,
-        [action.label]: action.payload.invites
       };
     case SET_RAW_EXPENSES: {
       return {
@@ -612,17 +557,6 @@ const reducer = (state = {}, action) => {
         ...state,
         [action.label]: action.payload
       };
-    case SET_ORGANIZATION_PERSPECTIVES:
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    case UPDATE_ORGANIZATION_PERSPECTIVES: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
     case UPDATE_ENVIRONMENT_PROPERTY: {
       return {
         ...state,
@@ -707,12 +641,6 @@ const reducer = (state = {}, action) => {
       };
     }
     case SET_ARCHIVED_OPTIMIZATION_DETAILS: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
-    case UPDATE_ORGANIZATION_THEME_SETTINGS: {
       return {
         ...state,
         [action.label]: action.payload

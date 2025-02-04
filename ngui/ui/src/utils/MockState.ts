@@ -1,5 +1,4 @@
-import { GET_ORGANIZATION_ALLOWED_ACTIONS, GET_POOL_ALLOWED_ACTIONS, GET_RESOURCE_ALLOWED_ACTIONS } from "api/auth/actionTypes";
-import { GET_ORGANIZATIONS } from "api/restapi/actionTypes";
+import { GET_POOL_ALLOWED_ACTIONS, GET_RESOURCE_ALLOWED_ACTIONS } from "api/auth/actionTypes";
 
 export function MockState(defaultState = {}) {
   let state = defaultState;
@@ -44,46 +43,11 @@ export function MockState(defaultState = {}) {
     };
   };
 
-  const mockOrganizationPermissions = (organizationId, allowedActions) => {
+  const mockOrganizationPermissions = (organizationId) => {
     state = {
       ...state,
       // get organization id from state or set a new value
-      organizationId: state.organizationId || organizationId,
-      restapi: {
-        // copy entire state
-        ...state.restapi,
-        [GET_ORGANIZATIONS]: {
-          organizations: [
-            // copy organizations list if exists
-            ...(state.restapi?.[GET_ORGANIZATIONS]?.organizations ?? []),
-            // if organization with "organizationId" already exists in the state - do nothing, otherwise add new organization
-            ...(state.restapi?.[GET_ORGANIZATIONS]?.organizations.some((organization) => organization.id === organizationId)
-              ? []
-              : [
-                  {
-                    id: organizationId
-                  }
-                ])
-          ]
-        }
-      },
-      auth: {
-        // copy entire auth state
-        ...state.auth,
-        [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-          allowedActions: {
-            // copy allowedActions object if exists
-            ...(state.auth?.[GET_ORGANIZATION_ALLOWED_ACTIONS]?.allowedActions ?? {}),
-            // merge existed permissions (if they exist) with new permissions
-            [organizationId]: Array.from(
-              new Set([
-                ...(state.auth?.[GET_ORGANIZATION_ALLOWED_ACTIONS]?.allowedActions?.[organizationId] ?? []),
-                ...allowedActions
-              ])
-            )
-          }
-        }
-      }
+      organizationId: state.organizationId || organizationId
     };
   };
 

@@ -101,7 +101,7 @@ class UserAsyncItemHandler(UserAsyncItemHandler_v1,
             Required permission: EDIT_USER_INFO or ACTIVATE_USER or
                 RESET_USER_PASSWORD
         parameters:
-        -   name: id
+        -   name: user_id
             in: path
             description: ID of user to modify
             required: true

@@ -1,6 +1,11 @@
 import logging
 from collections import defaultdict
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from tools.optscale_exceptions.common_exc import (
+    FailedDependency
+)
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper
+)
 from rest_api.rest_api_server.controllers.expense import CleanExpenseController
 from rest_api.rest_api_server.utils import encode_string, get_nil_uuid
 
@@ -240,6 +245,13 @@ class AvailableFiltersController(CleanExpenseController):
             }},
             {'$group': group_stage}
         ], allowDiskUse=True)
+
+    def get(self, organization_id, **params):
+        try:
+            self.get_organization_and_cloud_accs(organization_id)
+        except FailedDependency:
+            return self._get_base_result({})
+        return super().get(organization_id, **params)
 
 
 class AvailableFiltersAsyncController(BaseAsyncControllerWrapper):

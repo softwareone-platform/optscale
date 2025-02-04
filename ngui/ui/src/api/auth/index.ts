@@ -1,6 +1,5 @@
 import {
   createUser,
-  getOrganizationAllowedActions,
   getPoolAllowedActions,
   getToken,
   getUser,
@@ -15,7 +14,6 @@ export {
   createUser,
   getToken,
   getUser,
-  getOrganizationAllowedActions,
   getPoolAllowedActions,
   resetPassword,
   getResourceAllowedActions,

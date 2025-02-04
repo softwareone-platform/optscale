@@ -4,7 +4,9 @@ from sqlalchemy import and_
 from unittest.mock import patch, ANY
 from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.db_base import BaseDB
-from rest_api.rest_api_server.models.models import Checklist, OrganizationLimitHit
+from rest_api.rest_api_server.models.models import (
+    Checklist, OrganizationLimitHit
+)
 from rest_api.rest_api_server.utils import timestamp_to_day_start
 
 from freezegun import freeze_time
@@ -580,7 +582,8 @@ class TestPoolApi(TestApiBase):
                 'first_seen': int(day_in_month.timestamp()),
                 'last_seen': int(day_in_month.timestamp()),
                 '_first_seen_date': day_in_month,
-                '_last_seen_date': day_in_month
+                '_last_seen_date': day_in_month,
+                'deleted_at': 0
             }
             self.resources_collection.insert_one(resource)
             self.expenses.append({
@@ -633,6 +636,55 @@ class TestPoolApi(TestApiBase):
             code, pool = self.client.pool_get(
                 pool_id, children=True)
             self.assertEqual(len(pool['children']), len(children))
+
+    def test_get_deleted_resource(self):
+        _, org = self.client.organization_create({'name': 'org name'})
+        auth_user_1 = self.gen_id()
+        _, employee = self.client.employee_create(
+            org['id'], {'name': 'employee',
+                        'auth_user_id': auth_user_1})
+        _, org_pool = self.client.pool_update(org['pool_id'],
+                                              {'limit': 600})
+
+        code, cloud_acc = self.create_cloud_account(
+            org['id'], {
+                'name': 'my cloud_acc',
+                'type': 'aws_cnr',
+                'config': {
+                    'access_key_id': 'key',
+                    'secret_access_key': 'secret',
+                }
+            }, auth_user_id=auth_user_1)
+        code, response = self.client.rules_list(org['id'])
+        created_cloud_rule = response['rules'][0]
+        _, created_cloud_pool = self.client.pool_get(
+            created_cloud_rule['pool_id'])
+        self.set_allowed_pair(auth_user_1, created_cloud_pool['id'])
+        day_in_month = datetime(2020, 1, 10)
+        resource = {
+            '_id': str(uuid.uuid4()),
+            'cloud_account_id': cloud_acc['id'],
+            'cloud_resource_id': str(uuid.uuid4()),
+            'pool_id': org_pool['id'],
+            'employee_id': self.employee_1_1['id'],
+            'name': 'name',
+            'resource_type': 'Instance',
+            'first_seen': int(day_in_month.timestamp()),
+            'last_seen': int(day_in_month.timestamp()),
+            '_first_seen_date': day_in_month,
+            '_last_seen_date': day_in_month,
+            'deleted_at': 1
+        }
+        self.resources_collection.insert_one(resource)
+        self.expenses.append({
+            'resource_id': resource['_id'],
+            'cost': 11,
+            'date': day_in_month,
+            'cloud_account_id': cloud_acc['id'],
+            'sign': 1,
+        })
+        code, pool = self.client.pool_get(org_pool['id'], children=True)
+        self.assertEqual(pool.get('cost', 0), 0)
 
     def test_get_with_details_and_removed_children(self):
         get_expenses = patch(
@@ -868,8 +920,9 @@ class TestPoolApi(TestApiBase):
         resource = self._create_resource(
             cloud_account['id'], employee2['id'], child_pool['id'])
         self._mock_auth_user(user2_id)
-        patch('rest_api.rest_api_server.controllers.assignment.AssignmentController.'
-              '_authorize_action_for_pool', return_value=True).start()
+        patch('rest_api.rest_api_server.controllers.assignment.'
+              'AssignmentController._authorize_action_for_pool',
+              return_value=True).start()
         code, request = self.client.assignment_request_create(self.org_id, {
             'resource_id': resource['id'],
             'approver_id': employee1['id'],
@@ -895,20 +948,27 @@ class TestPoolApi(TestApiBase):
             'role_name': 'Manager',
             'role_scope': None}]
         patch(
-            'rest_api.rest_api_server.controllers.invite.InviteController.get_invite_expiration_days',
+            'rest_api.rest_api_server.controllers.invite.'
+            'InviteController.get_invite_expiration_days',
             return_value=30).start()
         patch(
-            'rest_api.rest_api_server.controllers.invite.InviteController.check_user_exists',
+            'rest_api.rest_api_server.controllers.invite.'
+            'InviteController.check_user_exists',
             return_value=(True, {})).start()
         patch(
-            'rest_api.rest_api_server.controllers.invite.InviteController.get_user_auth_assignments',
+            'rest_api.rest_api_server.controllers.invite.'
+            'InviteController.get_user_auth_assignments',
             return_value=user_assignments).start()
         patch(
-            'rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler._get_user_info',
+            'rest_api.rest_api_server.handlers.v1.base.'
+            'BaseAuthHandler._get_user_info',
             return_value={
                 'display_name': 'default',
                 'email': 'email@email.com'
             }).start()
+        patch('rest_api.rest_api_server.controllers.invite.'
+              'InviteController.check_user_exists',
+              return_value=(False, {})).start()
         code, invites = self.client.invite_create({
             'invites': {
                 'some@email.com': [
@@ -927,7 +987,8 @@ class TestPoolApi(TestApiBase):
         _, ar = self.client.assignment_request_list(self.org_id)
         self.assertEqual(len(ar['assignment_requests']['outgoing']), 0)
         patch(
-            'rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler._get_user_info',
+            'rest_api.rest_api_server.handlers.v1.base.'
+            'BaseAuthHandler._get_user_info',
             return_value={
                 'display_name': 'default',
                 'email': 'some@email.com'

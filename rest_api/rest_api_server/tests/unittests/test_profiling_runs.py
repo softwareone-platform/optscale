@@ -29,6 +29,8 @@ class TestRunsApi(TestProfilingBase):
             'commit_id': "1fde95d5664ae9e542610993e17ee81b135b55c0",
             'status': "dirty"
         }
+        _, resp = self.client.profiling_token_get(self.org['id'])
+        self.profiling_token = resp['token']
 
     def test_get_run(self):
         code, resp = self.client.run_get(self.org['id'], '123')
@@ -90,9 +92,8 @@ class TestRunsApi(TestProfilingBase):
                                's3://ml-bucket/dataset',
                                data={'step': 2000, 'loss': 55},
                                git=self.git_data)
-        token = self.get_profiling_token(self.org['id'])
         code, resp = self.client.run_get(
-            self.org['id'], run['_id'], token=token)
+            self.org['id'], run['_id'])
         self.assertEqual(code, 200)
 
         def side_eff(_action, *_args, **_kwargs):
@@ -107,6 +108,11 @@ class TestRunsApi(TestProfilingBase):
             self.org['id'], run['_id'], token='123')
         self.assertEqual(code, 403)
         self.assertEqual(resp['error']['error_code'], 'OE0234')
+
+        code, resp = self.client.run_get(
+            self.org['id'], run['_id'],
+            token=self.get_md5_token_hash(self.profiling_token))
+        self.assertEqual(code, 200)
 
     def test_get_run_console_data(self):
         metric_1 = self._create_metric(self.org['id'], 'loss')
@@ -581,7 +587,7 @@ class TestRunsApi(TestProfilingBase):
         self.cloud_resource_create_bulk(
             cloud_acc['id'], body, behavior='skip_existing',
             return_resources=True)
-        now_dt = datetime(2022, 5, 10)
+        now_dt = datetime(2022, 5, 10, tzinfo=timezone.utc)
         now = int(now_dt.timestamp())
         code, task = self.client.task_create(
             self.org['id'], {
@@ -653,22 +659,22 @@ class TestRunsApi(TestProfilingBase):
         self.assertEqual(code, 200)
         raw_data = [
             {
-                'start_date': datetime(2022, 5, 15, 12),
-                'end_date': datetime(2022, 5, 15, 16),
+                'start_date': datetime(2022, 5, 15, 12, tzinfo=timezone.utc),
+                'end_date': datetime(2022, 5, 15, 16, tzinfo=timezone.utc),
                 'cost': 120,
                 'cloud_account_id': cloud_acc['id'],
                 'resource_id': res_1['cloud_resource_id']
             },
             {
-                'start_date': datetime(2022, 5, 15),
-                'end_date': datetime(2022, 5, 16),
+                'start_date': datetime(2022, 5, 15, tzinfo=timezone.utc),
+                'end_date': datetime(2022, 5, 16, tzinfo=timezone.utc),
                 'cost': 179,
                 'cloud_account_id': cloud_acc['id'],
                 'resource_id': res_2['cloud_resource_id']
             },
             {
-                'start_date': datetime(2022, 5, 15, 15),
-                'end_date': datetime(2022, 5, 15, 16),
+                'start_date': datetime(2022, 5, 15, 15, tzinfo=timezone.utc),
+                'end_date': datetime(2022, 5, 15, 16, tzinfo=timezone.utc),
                 'identity/TimeInterval': '2017-11-01T00:00:00Z/2017-11-01T01:00:00Z',
                 'cost': 200,
                 'box_usage': True,
@@ -694,12 +700,12 @@ class TestRunsApi(TestProfilingBase):
                 'name': 'My test project',
                 'key': 'test_project',
             })
-        with freeze_time(datetime(2022, 5, 16)):
+        with freeze_time(datetime(2022, 5, 16, tzinfo=timezone.utc)):
             self._create_run(
                 self.org['id'], task['id'],
                 [res_2['cloud_resource_id']],
                 start=int(datetime(
-                    2022, 5, 15, 14).timestamp()),
+                    2022, 5, 15, 14, tzinfo=timezone.utc).timestamp()),
                 finish=None, state=3)
             code, resp = self.client.task_get(self.org['id'], task['id'])
             self.assertEqual(code, 200)
@@ -710,13 +716,13 @@ class TestRunsApi(TestProfilingBase):
                 self.org['id'], task['id'],
                 [res_1['cloud_resource_id']],
                 start=int(datetime(
-                    2022, 5, 15, 14).timestamp()),
+                    2022, 5, 15, 14, tzinfo=timezone.utc).timestamp()),
                 finish=None, state=1)
             code, resp = self.client.task_get(self.org['id'], task['id'])
             self.assertEqual(code, 200)
             self.assertEqual(resp['last_run_cost'], 50)
             self.assertEqual(resp['last_run_duration'], 10 * 3600)
-        with freeze_time(datetime(2022, 5, 17)):
+        with freeze_time(datetime(2022, 5, 17, tzinfo=timezone.utc)):
             code, resp = self.client.task_get(self.org['id'], task['id'])
             self.assertEqual(code, 200)
             self.assertEqual(resp['last_run_cost'], 50 + 120)

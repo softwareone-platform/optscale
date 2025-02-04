@@ -5,6 +5,7 @@ from bumiworker.bumiworker.modules.base import ModuleBase
 
 SUPPORTED_CLOUD_TYPES = [
     'aws_cnr',
+    'gcp_cnr',
     'nebius'
 ]
 

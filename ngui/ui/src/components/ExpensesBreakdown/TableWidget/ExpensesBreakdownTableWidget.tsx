@@ -27,12 +27,12 @@ const getTableWrapperCardTitleName = (filterBy) =>
 
 const getTableEmptyMessageId = (filterBy) =>
   ({
-    [EXPENSES_FILTERBY_TYPES.POOL]: "noPools",
-    [EXPENSES_FILTERBY_TYPES.CLOUD]: "noDataSources",
-    [EXPENSES_FILTERBY_TYPES.SERVICE]: "noServices",
-    [EXPENSES_FILTERBY_TYPES.REGION]: "noRegions",
-    [EXPENSES_FILTERBY_TYPES.EMPLOYEE]: "noOwners",
-    [EXPENSES_FILTERBY_TYPES.RESOURCE_TYPE]: "noResourceTypes"
+    [EXPENSES_FILTERBY_TYPES.POOL]: "noPoolExpenses",
+    [EXPENSES_FILTERBY_TYPES.CLOUD]: "noDataSourceExpenses",
+    [EXPENSES_FILTERBY_TYPES.SERVICE]: "noServiceExpenses",
+    [EXPENSES_FILTERBY_TYPES.REGION]: "noRegionExpenses",
+    [EXPENSES_FILTERBY_TYPES.EMPLOYEE]: "noOwnerExpenses",
+    [EXPENSES_FILTERBY_TYPES.RESOURCE_TYPE]: "noResourceTypeExpenses"
   })[filterBy];
 
 const getExpensesTableData = ({ filteredBreakdown, totalExpenses, urlGetter, colorsMap }) =>

@@ -1,5 +1,4 @@
-from tools.optscale_exceptions.common_exc import NotFoundException
-from tools.optscale_exceptions.http_exc import OptHTTPError
+import json
 from rest_api.rest_api_server.controllers.profiling.profiling_token import (
     ProfilingTokenAsyncController)
 from rest_api.rest_api_server.handlers.v1.base_async import (
@@ -20,10 +19,10 @@ class ProfilingTokenAsyncCollectionHandler(BaseAsyncCollectionHandler,
         """
         ---
         description: |
-            Get list of organization profiling tokens
+            Get organization profiling token
             Required permission: INFO_ORGANIZATION
         tags: [profiling_tokens]
-        summary: List of organization profiling tokens
+        summary: Organization profiling token
         parameters:
         -   name: organization_id
             in: path
@@ -32,24 +31,28 @@ class ProfilingTokenAsyncCollectionHandler(BaseAsyncCollectionHandler,
             type: string
         responses:
             200:
-                description: Organization profiling tokens list
+                description: Organization profiling token
                 schema:
                     type: object
                     properties:
-                        profiling_tokens:
-                            type: array
-                            items:
-                                type: object
-                                properties:
-                                    id:
-                                        type: string
-                                        description: Unique profiling token id
-                                    token:
-                                        type: string
-                                        description: Profiling token
-                                    organization_id:
-                                        type: string
-                                        description: Organization id
+                        id:
+                            type: string
+                            description: Unique profiling token id
+                        token:
+                            type: string
+                            description: Profiling token
+                        organization_id:
+                            type: string
+                            description: Organization id
+                        md5_token:
+                            type: string
+                            description: MD5 hash of profiling token
+                        created_at:
+                            type: integer
+                            description: Created at timestamp
+                        deleted_at:
+                            type: integer
+                            description: Deleted at timestamp
             401:
                 description: |
                     Unauthorized:
@@ -70,7 +73,7 @@ class ProfilingTokenAsyncCollectionHandler(BaseAsyncCollectionHandler,
             'INFO_ORGANIZATION', 'organization', organization_id)
         res = await run_task(self.controller.get,
                              organization_id=organization_id)
-        self.write(res.to_json())
+        self.write(json.dumps(res))
 
 
 class ProfilingTokenInfoAsyncItemHandler(BaseAsyncItemHandler,

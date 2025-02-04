@@ -1,7 +1,5 @@
-import { Stack } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
-import { SPACING_1 } from "utils/layouts";
+import FormContentDescription from "components/FormContentDescription";
 import { FormButtons, ReimportFromDatePicker } from "./FormElements";
 import { DataSourceBillingReimportFormProps, FormValues } from "./types";
 import { getDefaultValues } from "./utils";
@@ -16,10 +14,13 @@ const DataSourceBillingReimportForm = ({ onSubmit, isSubmitLoading = false }: Da
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Stack spacing={SPACING_1}>
-          <ReimportFromDatePicker />
-          <InlineSeverityAlert messageId="billingReimportWarning" severity="warning" />
-        </Stack>
+        <ReimportFromDatePicker />
+        <FormContentDescription
+          alertProps={{
+            messageId: "billingReimportWarning",
+            severity: "warning"
+          }}
+        />
         <FormButtons isLoading={isSubmitLoading} />
       </form>
     </FormProvider>

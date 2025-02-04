@@ -1,8 +1,8 @@
+import { useMutation } from "@apollo/client";
 import { useDispatch } from "react-redux";
-import { restorePassword, getToken, updateUser } from "api";
-import { GET_TOKEN, UPDATE_USER } from "api/auth/actionTypes";
+import { restorePassword } from "api";
 import { RESTORE_PASSWORD } from "api/restapi/actionTypes";
-import { useApiData } from "hooks/useApiData";
+import { CREATE_TOKEN, UPDATE_USER } from "graphql/api/auth/queries";
 import { useApiState } from "hooks/useApiState";
 import { isError } from "utils/api";
 
@@ -27,77 +27,47 @@ const useSendVerificationCode = () => {
 };
 
 const useGetVerificationCodeToken = () => {
-  const dispatch = useDispatch();
-
-  const { isLoading } = useApiState(GET_TOKEN);
+  const [createToken, { loading: loginLoading }] = useMutation(CREATE_TOKEN);
 
   const onGet = (email: string, code: string) =>
-    new Promise((resolve, reject) => {
-      dispatch((_, getState) => {
-        dispatch(
-          getToken({
-            email,
-            code,
-            isTokenTemporary: true
-          })
-        ).then(() => {
-          if (!isError(GET_TOKEN, getState())) {
-            return resolve();
-          }
-          return reject();
-        });
-      });
-    });
+    createToken({ variables: { email, code } }).then(({ data: { token } }) => Promise.resolve(token));
 
-  return { onGet, isLoading };
+  return { onGet, isLoading: loginLoading };
 };
 
 const useUpdateUserPassword = () => {
-  const dispatch = useDispatch();
+  const [updateUser, { loading: updateUserLoading }] = useMutation(UPDATE_USER);
 
-  const { isLoading } = useApiState(UPDATE_USER);
-
-  const {
-    apiData: { userId }
-  } = useApiData(GET_TOKEN);
-
-  const onUpdate = (newPassword: string) =>
-    new Promise((resolve, reject) => {
-      dispatch((_, getState) => {
-        dispatch(
-          updateUser(userId, {
-            password: newPassword
-          })
-        ).then(() => {
-          if (!isError(UPDATE_USER, getState())) {
-            return resolve();
-          }
-          return reject();
-        });
-      });
+  const onUpdate = (
+    token: {
+      user_id: string;
+      user_email: string;
+      token: string;
+    },
+    newPassword: string
+  ) =>
+    updateUser({
+      variables: {
+        id: token.user_id,
+        params: { password: newPassword }
+      },
+      context: {
+        headers: {
+          "x-optscale-token": token.token
+        }
+      }
     });
 
-  return { onUpdate, isLoading };
+  return { onUpdate, isLoading: updateUserLoading };
 };
 
 const useGetNewToken = () => {
-  const dispatch = useDispatch();
-
-  const { isLoading } = useApiState(GET_TOKEN);
+  const [createToken, { loading: loginLoading }] = useMutation(CREATE_TOKEN);
 
   const onGet = (email: string, password: string) =>
-    new Promise((resolve, reject) => {
-      dispatch((_, getState) => {
-        dispatch(getToken({ email, password })).then(() => {
-          if (!isError(GET_TOKEN, getState())) {
-            return resolve();
-          }
-          return reject();
-        });
-      });
-    });
+    createToken({ variables: { email, password } }).then(({ data: { token } }) => Promise.resolve(token));
 
-  return { onGet, isLoading };
+  return { onGet, isLoading: loginLoading };
 };
 
 function ResetPasswordServices() {

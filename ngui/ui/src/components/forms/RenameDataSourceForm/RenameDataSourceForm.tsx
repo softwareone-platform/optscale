@@ -1,7 +1,5 @@
-import { Stack } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
-import { SPACING_1 } from "utils/layouts";
+import FormContentDescription from "components/FormContentDescription";
 import { FormButtons, NameField } from "./FormElements";
 import { FormValues, RenameDataSourceFormProps } from "./types";
 import { getDefaultValues } from "./utils";
@@ -23,14 +21,12 @@ const RenameDataSourceForm = ({ name, onSubmit, onCancel, isLoading = false }: R
         })}
         noValidate
       >
-        <Stack spacing={SPACING_1}>
-          <div>
-            <NameField />
-          </div>
-          <div>
-            <InlineSeverityAlert messageId="dataSourceRenamingWarning" />
-          </div>
-        </Stack>
+        <NameField />
+        <FormContentDescription
+          alertProps={{
+            messageId: "dataSourceRenamingWarning"
+          }}
+        />
         <FormButtons onCancel={onCancel} isLoading={isLoading} />
       </form>
     </FormProvider>

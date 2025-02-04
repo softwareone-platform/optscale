@@ -29,6 +29,7 @@ class TaskState(enum.Enum):
     got_scopes = 'got_scopes'
     getting_recipients = 'getting_recipients'
     got_recipients = 'got_recipients'
+    checking_email_settings = 'checking_email_settings'
     generating_data = 'generating_data'
     generated_data = 'generated_data'
     putting_to_herald = 'putting_to_herald'

@@ -27,6 +27,9 @@ const LimitWarning = ({ limit }) => {
         entities: intl.formatMessage({ id: "resources" }).toLocaleLowerCase(),
         count: limit
       }}
+      sx={{
+        mb: 1
+      }}
     />
   );
 };

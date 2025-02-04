@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { GET_TOKEN } from "api/auth/actionTypes";
-import { useApiData } from "./useApiData";
+import { useGetToken } from "./useGetToken";
 
 const getFilenameFromHeader = (header) => header?.match(/filename="(.+)"/)[1];
 
@@ -35,9 +34,7 @@ const download = (data, filename, type) => {
 };
 
 export const useFetchAndDownload = () => {
-  const {
-    apiData: { token }
-  } = useApiData(GET_TOKEN);
+  const { token } = useGetToken();
 
   const [isFileDownloading, setIsFileDownloading] = useState(false);
 

@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
-import { useApiData } from "hooks/useApiData";
-import { useApiState } from "hooks/useApiState";
+import { useAllDataSources } from "hooks/coreData";
+// import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
@@ -50,22 +49,17 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
 
   const { organizationId } = useOrganizationInfo();
 
-  // MPT_TODO: disabled openSourceAnnouncement
-  // const {
-  //   apiData: { userId }
-  // } = useApiData(GET_TOKEN);
-  //
-  // const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
+  // const { userId } = useGetToken();
 
   const storedAlerts = useAllAlertsSelector(organizationId);
 
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  // const { rootData: isExistingUser = false } = useRootData(IS_EXISTING_USER);
 
-  const { isDataReady: isDataSourceReady } = useApiState(GET_DATA_SOURCES, organizationId);
+  const dataSources = useAllDataSources();
 
-  const eligibleDataSources = getEligibleDataSources(cloudAccounts);
+  // const { isDataReady: isDataSourceReady } = useApiState(GET_DATA_SOURCES, organizationId);
+
+  const eligibleDataSources = getEligibleDataSources(dataSources);
 
   const hasDataSourceInProcessing = eligibleDataSources.some(({ last_import_at: lastImportAt }) => lastImportAt === 0);
 
@@ -82,10 +76,10 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
     );
 
     // "recharging" message about processing if closed, when no items are been processed
-    if (isDataSourceReady && !hasDataSourceInProcessing && isDataSourcedProcessingAlertClosed) {
+    if (!hasDataSourceInProcessing && isDataSourcedProcessingAlertClosed) {
       updateOrganizationTopAlert({ id: ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING, closed: false });
     }
-  }, [hasDataSourceInProcessing, isDataSourceReady, storedAlerts, updateOrganizationTopAlert]);
+  }, [hasDataSourceInProcessing, storedAlerts, updateOrganizationTopAlert]);
 
   const alerts = useMemo(() => {
     const isDataSourcesAreProceedingAlertTriggered = storedAlerts.some(
@@ -100,7 +94,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
     return [
       {
         id: ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING,
-        condition: isDataSourceReady && hasDataSourceInProcessing,
+        condition: hasDataSourceInProcessing,
         getContent: () => <FormattedMessage id="someDataSourcesAreProcessing" />,
         onClose: () => {
           updateOrganizationTopAlert({ id: ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING, closed: true });
@@ -113,7 +107,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       },
       {
         id: ALERT_TYPES.DATA_SOURCES_PROCEEDED,
-        condition: isDataSourceReady && !hasDataSourceInProcessing && isDataSourcesAreProceedingAlertTriggered,
+        condition: !hasDataSourceInProcessing && isDataSourcesAreProceedingAlertTriggered,
         getContent: () => <FormattedMessage id="allDataSourcesProcessed" />,
         type: "success",
         triggered: isTriggered(ALERT_TYPES.DATA_SOURCES_PROCEEDED),
@@ -161,7 +155,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       //   dataTestId: "top_alert_open_source_announcement"
       // }
     ];
-  }, [storedAlerts, isDataSourceReady, hasDataSourceInProcessing, updateOrganizationTopAlert]);
+  }, [storedAlerts, hasDataSourceInProcessing, updateOrganizationTopAlert]);
 
   const currentAlert = useMemo(
     () =>

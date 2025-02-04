@@ -1,14 +1,13 @@
 import { useMemo } from "react";
-import { Autocomplete, Box, Stack, createFilterOptions } from "@mui/material";
+import { Autocomplete, Box, createFilterOptions } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { FormattedMessage, useIntl } from "react-intl";
 import Chip from "components/Chip";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import FormContentDescription from "components/FormContentDescription";
 import Input from "components/Input";
 import MlModelVersionLabel from "components/MlModelVersionLabel";
 import SlicedText from "components/SlicedText";
 import { DEFAULT_MAX_INPUT_LENGTH } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
 import { notOnlyWhiteSpaces } from "utils/validation";
 import { ALIAS_LENGTH_LIMIT, FIELD_NAMES } from "../constants";
 import { AliasesFieldProps, ConflictingAliasesWarningProps, FormValues } from "../types";
@@ -29,15 +28,17 @@ const ConflictingAliasesWarning = ({ modelVersion, aliasToVersionMap }: Conflict
   });
 
   return conflictingAliases.map((alias) => (
-    <InlineSeverityAlert
+    <FormContentDescription
       key={alias}
-      messageId="conflictingAliasWarning"
-      messageValues={{
-        alias,
-        version: aliasToVersionMap[alias],
-        strong: (chunks) => <strong>{chunks}</strong>
+      fullWidth
+      alertProps={{
+        messageId: "conflictingAliasWarning",
+        messageValues: {
+          alias,
+          version: aliasToVersionMap[alias],
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
       }}
-      sx={{ width: "100%" }}
     />
   ));
 };
@@ -67,7 +68,7 @@ const AliasesField = ({ aliasToVersionMap, modelVersion }: AliasesFieldProps) =>
   );
 
   return (
-    <Stack spacing={SPACING_1}>
+    <>
       <Controller
         name={FIELD_NAME}
         control={control}
@@ -174,7 +175,7 @@ const AliasesField = ({ aliasToVersionMap, modelVersion }: AliasesFieldProps) =>
         )}
       />
       <ConflictingAliasesWarning modelVersion={modelVersion} aliasToVersionMap={aliasToVersionMap} />
-    </Stack>
+    </>
   );
 };
 

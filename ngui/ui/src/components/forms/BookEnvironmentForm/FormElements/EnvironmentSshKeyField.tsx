@@ -2,8 +2,8 @@ import { useState } from "react";
 import { CircularProgress, FormControl } from "@mui/material";
 import { useIntl } from "react-intl";
 import ButtonGroup from "components/ButtonGroup";
+import FormContentDescription from "components/FormContentDescription";
 import { Selector } from "components/forms/common/fields";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
 import { ItemContent } from "components/Selector";
 import { isEmpty } from "utils/arrays";
 import CreateSshKeyNameField from "./CreateSshKeyNameField";
@@ -73,7 +73,12 @@ const EnvironmentSshKeyField = ({ sshKeys = [], isGetSshKeysReady, defaultKeyId 
       )}
       {activeTab === ADD_KEY && (
         <>
-          <InlineSeverityAlert messageDataTestId="ssh-hint" messageId="sshHint" />
+          <FormContentDescription
+            alertProps={{
+              messageId: "sshHint",
+              messageDataTestId: "ssh-hint"
+            }}
+          />
           <CreateSshKeyNameField />
           <CreateSshKeyValueField />
         </>

@@ -1,12 +1,11 @@
 import { useMemo } from "react";
-import { FormControl, FormHelperText, Stack } from "@mui/material";
+import { FormControl, FormHelperText } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormattedMessage, useIntl } from "react-intl";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import { useIntl } from "react-intl";
+import FormContentDescription from "components/FormContentDescription";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import { powerScheduleInstance, resourceLocation, resourcePoolOwner, size, tags } from "utils/columns";
-import { SPACING_1 } from "utils/layouts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { FormValues } from "../types";
 
@@ -103,42 +102,44 @@ const InstancesField = ({ instances, instancesCountLimit, isLoading = false }) =
   const intl = useIntl();
 
   return (
-    <FormControl fullWidth>
-      <Controller
-        name={FIELD_NAME}
-        rules={{
-          validate: {
-            atLeastOneSelected: (value) =>
-              isEmptyObject(value) ? <FormattedMessage id="atLeastOneInstanceMustBeSelected" /> : true
-          }
-        }}
-        render={({ field: { value, onChange } }) => (
-          <>
-            {isLoading ? (
+    <Controller
+      name={FIELD_NAME}
+      rules={{
+        validate: {
+          atLeastOneSelected: (value) =>
+            isEmptyObject(value) ? intl.formatMessage({ id: "atLeastOneInstanceMustBeSelected" }) : true
+        }
+      }}
+      render={({ field: { value, onChange } }) => {
+        if (isLoading) {
+          return (
+            <FormControl fullWidth>
               <TableLoader />
-            ) : (
-              <Stack spacing={SPACING_1}>
-                {instances.length >= instancesCountLimit && (
-                  <div>
-                    <InlineSeverityAlert
-                      messageId="rowsLimitWarning"
-                      messageValues={{
-                        entities: intl.formatMessage({ id: "instances" }).toLocaleLowerCase(),
-                        count: instancesCountLimit
-                      }}
-                    />
-                  </div>
-                )}
-                <div>
-                  <TableField instances={instances} value={value} onChange={onChange} />
-                </div>
-              </Stack>
+            </FormControl>
+          );
+        }
+
+        return (
+          <>
+            {instances.length >= instancesCountLimit && (
+              <FormContentDescription
+                alertProps={{
+                  messageId: "rowsLimitWarning",
+                  messageValues: {
+                    entities: intl.formatMessage({ id: "instances" }).toLocaleLowerCase(),
+                    count: instancesCountLimit
+                  }
+                }}
+              />
             )}
-            {!!errors[FIELD_NAME] && <FormHelperText error>{errors[FIELD_NAME].message}</FormHelperText>}
+            <FormControl fullWidth>
+              <TableField instances={instances} value={value} onChange={onChange} />
+              {!!errors[FIELD_NAME] && <FormHelperText error>{errors[FIELD_NAME].message}</FormHelperText>}
+            </FormControl>
           </>
-        )}
-      />
-    </FormControl>
+        );
+      }}
+    />
   );
 };
 

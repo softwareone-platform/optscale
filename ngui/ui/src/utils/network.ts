@@ -60,16 +60,3 @@ export const removeQueryParam = (key) => {
  *
  */
 export const formQueryString = (params: Record<string, unknown>) => queryString.stringify(params);
-
-export const getMenuRootUrl = (menu) => {
-  const currentPath = getPathname();
-  const currentQueryParams = getQueryParams();
-  const menuItems = menu.reduce((result, value) => [...result, ...value.items], []);
-  const activeElement = menuItems.find(
-    (el) => typeof el.isActive === "function" && el.isActive(currentPath, currentQueryParams)
-  );
-  if (activeElement) {
-    return activeElement.route.link;
-  }
-  return currentPath;
-};

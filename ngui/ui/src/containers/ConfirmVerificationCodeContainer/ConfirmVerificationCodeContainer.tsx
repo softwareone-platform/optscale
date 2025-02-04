@@ -6,7 +6,7 @@ import ResetPasswordServices from "services/ResetPasswordServices";
 import { getQueryParams } from "utils/network";
 
 type ConfirmVerificationCodeContainerProps = {
-  onSuccess: () => void;
+  onSuccess: (args: { user_id: string; user_email: string; token: string }) => void;
 };
 
 const ConfirmVerificationCodeContainer = ({ onSuccess }: ConfirmVerificationCodeContainerProps) => {

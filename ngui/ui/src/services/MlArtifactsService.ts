@@ -53,6 +53,7 @@ type CreateApplicationApiParams = {
 };
 
 const useGet = (
+  organizationId: string,
   params?: GetApiParams
 ): {
   isLoading: boolean;
@@ -64,8 +65,6 @@ const useGet = (
   };
 } => {
   const dispatch = useDispatch();
-
-  const { organizationId } = useOrganizationInfo();
 
   const { apiData } = useApiData(GET_ML_ARTIFACTS);
 

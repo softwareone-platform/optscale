@@ -1,107 +1,177 @@
+import { useMutation } from "@apollo/client";
 import { Stack } from "@mui/material";
-import { useLocation } from "react-router-dom";
-import { GET_TOKEN } from "api/auth/actionTypes";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
 import Greeter from "components/Greeter";
 import Redirector from "components/Redirector";
-import { useApiData } from "hooks/useApiData";
-import { useNewAuthorization } from "hooks/useNewAuthorization";
+import { initialize } from "containers/InitializeContainer/redux";
+import { CREATE_TOKEN, CREATE_USER, SIGN_IN } from "graphql/api/auth/queries";
+import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { HOME_FIRST_TIME, HOME, REGISTER, LOGIN } from "urls";
+import VerifyEmailService from "services/VerifyEmailService";
+import {
+  REGISTER,
+  LOGIN,
+  INITIALIZE,
+  EMAIL_VERIFICATION,
+  SHOW_POLICY_QUERY_PARAM,
+  USER_EMAIL_QUERY_PARAMETER_NAME,
+  NEXT_QUERY_PARAMETER_NAME
+} from "urls";
+import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import { SPACING_4 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import macaroon from "utils/macaroons";
+import { formQueryString, getQueryParams, updateQueryParams } from "utils/network";
 
-export const getLoginRedirectionPath = (scopeUserEmail: string) => {
-  const { next = HOME, userEmail: userEmailQueryParameter } = getQueryParams();
-
-  if (userEmailQueryParameter) {
-    return userEmailQueryParameter === scopeUserEmail ? next : HOME;
-  }
-
-  return next;
-};
+const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
 const AuthorizationContainer = () => {
   const { pathname } = useLocation();
+  const dispatch = useDispatch();
 
-  const { invited: queryInvited, next = HOME } = getQueryParams();
-
-  const { authorize, register, isRegistrationInProgress, isAuthInProgress } = useNewAuthorization();
+  const { invited: queryInvited } = getQueryParams();
 
   const { isDemo } = useOrganizationInfo();
-  const {
-    apiData: { token }
-  } = useApiData(GET_TOKEN);
+
+  const { token } = useGetToken();
+
+  const navigate = useNavigate();
+
   const isTokenExists = Boolean(token);
 
-  const onSubmitRegister = ({ name, email, password }) => {
-    register(
-      { name, email, password },
-      {
-        getOnSuccessRedirectionPath: () => HOME_FIRST_TIME
+  const { useSendEmailVerificationCode } = VerifyEmailService();
+
+  const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
+
+  const [createToken, { loading: loginLoading }] = useMutation(CREATE_TOKEN);
+
+  const [createUser, { loading: registerLoading }] = useMutation(CREATE_USER);
+
+  const [, { loading: signInLoading }] = useMutation(SIGN_IN, {
+    onCompleted: (data) => {
+      const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
+      const { register, provider } = caveats;
+      if (register) {
+        trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: provider });
+        updateQueryParams({
+          [SHOW_POLICY_QUERY_PARAM]: true
+        });
       }
-    );
+      dispatch(initialize({ ...data.signIn, caveats }));
+    }
+  });
+
+  const handleLogin = ({ email, password }) => {
+    createToken({ variables: { email, password } })
+      .then(({ data }) => {
+        const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
+        dispatch(initialize({ ...data.token, caveats }));
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
+          navigate(`${EMAIL_VERIFICATION}?${formQueryString({ email })}`);
+        }
+      });
   };
 
-  const onSubmitLogin = ({ email, password }) => {
-    authorize(
-      { email, password },
-      {
-        getOnSuccessRedirectionPath: ({ userEmail }) => getLoginRedirectionPath(userEmail)
-      }
-    );
+  const handleRegister = ({ email, password, name }) => {
+    createUser({ variables: { email, password, name } })
+      .then(() => {
+        trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: "optscale" });
+        return Promise.resolve();
+      })
+      .then(() => sendEmailVerificationCode(email))
+      .then(() => {
+        navigate(
+          `${EMAIL_VERIFICATION}?${formQueryString({
+            email
+          })}`
+        );
+      });
   };
-  /* MPT_TODO: disabled other authentication sources */
-  // const onThirdPartySignIn = (provider, params) =>
-  //   thirdPartySignIn(
-  //     { provider, params },
-  //     {
-  //       getOnSuccessRedirectionPath: ({ userEmail }) => getLoginRedirectionPath(userEmail)
+
+  // const handleThirdPartySignIn = ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
+  //   signIn({ variables: { provider, token: thirdPartyToken, tenantId, redirectUri } }).then(({ data }) => {
+  //     const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
+  //     if (caveats.register) {
+  //       trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
   //     }
-  //   );
-
-  // isGetTokenLoading used for LoginForm, isCreateUserLoading for RegistrationForm
-  const isLoading = isRegistrationInProgress || isAuthInProgress;
+  //     dispatch(initialize({ ...data.signIn, caveats }));
+  //   });
+  // };
 
   const isInvited = queryInvited !== undefined;
 
   const createForm =
     {
-      [LOGIN]: () => <LoginForm onSubmit={onSubmitLogin} isLoading={isLoading} isInvited={isInvited} />,
-      [REGISTER]: () => <RegistrationForm onSubmit={onSubmitRegister} isLoading={isLoading} isInvited={isInvited} />
+      [LOGIN]: () => (
+        <LoginForm
+          onSubmit={handleLogin}
+          isLoading={loginLoading}
+          disabled={registerLoading || signInLoading}
+          isInvited={isInvited}
+        />
+      ),
+      [REGISTER]: () => (
+        <RegistrationForm
+          onSubmit={handleRegister}
+          isLoading={registerLoading}
+          disabled={loginLoading || signInLoading || isSendEmailVerificationCodeLoading}
+          isInvited={isInvited}
+        />
+      )
     }[pathname] || (() => null);
 
+  // TODO: get back to the force redirect
   // redirecting already authorized user from /login and /register pages
-  const shouldRedirectAuthorizedUser = !isAuthInProgress && !isRegistrationInProgress && !isDemo && isTokenExists;
+  // const shouldRedirectAuthorizedUser = !isAuthInProgress && !isRegistrationInProgress && !isDemo && isTokenExists;
+  const shouldRedirectAuthorizedUser = !isDemo && isTokenExists;
+
+  const getRedirectionPath = () => {
+    const {
+      [NEXT_QUERY_PARAMETER_NAME]: next,
+      [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy
+    } = getQueryParams() as {
+      [NEXT_QUERY_PARAMETER_NAME]: string;
+      [USER_EMAIL_QUERY_PARAMETER_NAME]: string;
+      [SHOW_POLICY_QUERY_PARAM]: boolean | string;
+    };
+
+    return `${INITIALIZE}?${formQueryString({
+      [NEXT_QUERY_PARAMETER_NAME]: next || INITIALIZE,
+      [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy
+    })}`;
+  };
 
   return (
-    <Redirector condition={shouldRedirectAuthorizedUser} to={next}>
+    <Redirector condition={shouldRedirectAuthorizedUser} to={getRedirectionPath()}>
       <Greeter
         content={
           <Stack spacing={SPACING_4}>
             <div>{createForm()}</div>
-            {/* MPT_TODO: disabled other authentication sources */}
-            {/* <div> */}
-            {/* <OAuthSignIn */}
-            {/*    googleButton={ */}
-            {/*      <GoogleAuthButton */}
-            {/*        thirdPartySignIn={onThirdPartySignIn} */}
-            {/*        setIsAuthInProgress={setIsAuthInProgress} */}
-            {/*        isAuthInProgress={isAuthInProgress} */}
-            {/*        isRegistrationInProgress={isRegistrationInProgress} */}
-            {/*      /> */}
-            {/*    } */}
-            {/*    microsoftButton={ */}
-            {/*      <MicrosoftSignInButton */}
-            {/*        thirdPartySignIn={onThirdPartySignIn} */}
-            {/*        setIsAuthInProgress={setIsAuthInProgress} */}
-            {/*        isAuthInProgress={isAuthInProgress} */}
-            {/*        isRegistrationInProgress={isRegistrationInProgress} */}
-            {/*      /> */}
-            {/*    } */}
-            {/*  /> */}
-            {/* </div> */}
+            {/* <div>
+              <OAuthSignIn
+                googleButton={
+                  <GoogleAuthButton
+                    handleSignIn={handleThirdPartySignIn}
+                    isLoading={signInLoading}
+                    disabled={loginLoading || registerLoading}
+                  />
+                }
+                microsoftButton={
+                  <MicrosoftSignInButton
+                    handleSignIn={handleThirdPartySignIn}
+                    isLoading={signInLoading}
+                    disabled={loginLoading || registerLoading}
+                  />
+                }
+              />
+            </div> */}
           </Stack>
         }
       />

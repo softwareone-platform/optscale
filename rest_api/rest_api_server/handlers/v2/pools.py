@@ -175,6 +175,11 @@ class PoolAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         type: boolean
                         description: Automatic extension of parent pools if needed
                         required: False
+                    default_owner_id:
+                        type: string
+                        description: default owner id
+                        required: False
+                        example: a201ff8c-691b-4d51-8885-cbccdec05027
         responses:
             200:
                 description: Success (returns created object)

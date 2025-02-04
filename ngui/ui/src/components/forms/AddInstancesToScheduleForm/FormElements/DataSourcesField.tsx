@@ -1,8 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import DataSourceMultiSelect from "components/DataSourceMultiSelect";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import { FormValues } from "../types";
@@ -13,9 +12,7 @@ export const FIELD_NAME = "dataSources";
 const SUPPORTED_DATA_SOURCE_TYPES = [AWS_CNR, AZURE_CNR, GCP_CNR, ALIBABA_CNR, NEBIUS];
 
 const useDataSources = () => {
-  const {
-    apiData: { cloudAccounts: dataSources = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   return dataSources.filter(({ type }) => SUPPORTED_DATA_SOURCE_TYPES.includes(type));
 };

@@ -27,7 +27,7 @@ class GcpReportImporter(BaseReportImporter):
             if last_exp_date:
                 self.period_start = last_exp_date.replace(
                     hour=0, minute=0, second=0, microsecond=0) - timedelta(
-                    days=1)
+                    days=3)
         if not self.period_start:
             super().detect_period_start()
 

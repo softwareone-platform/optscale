@@ -1,40 +1,29 @@
+import { useMutation } from "@apollo/client";
 import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import { useDispatch } from "react-redux";
-import { updateInvitation } from "api";
-import { UPDATE_INVITATION } from "api/restapi/actionTypes";
 import ButtonLoader from "components/ButtonLoader";
-import { useApiState } from "hooks/useApiState";
-import { isError } from "utils/api";
+import { UPDATE_INVITATION } from "graphql/api/restapi/queries/restapi.queries";
 
 const InvitationActionsContainer = ({ invitationId, onSuccessAccept, onSuccessDecline, buttonSize = "small" }) => {
-  const dispatch = useDispatch();
-
-  const { isLoading, entityId } = useApiState(UPDATE_INVITATION);
+  const [updateInvitation, { loading: loginLoading }] = useMutation(UPDATE_INVITATION);
 
   const onAccept = () => {
-    dispatch((_, getState) => {
-      dispatch(updateInvitation(invitationId, "accept")).then(() => {
-        if (typeof onSuccessAccept === "function" && !isError(UPDATE_INVITATION, getState())) {
-          onSuccessAccept();
-        }
-        return undefined;
-      });
+    updateInvitation({ variables: { invitationId, action: "accept" } }).then(() => {
+      if (typeof onSuccessAccept === "function") {
+        onSuccessAccept();
+      }
     });
   };
 
   const onDecline = () => {
-    dispatch((_, getState) => {
-      dispatch(updateInvitation(invitationId, "decline")).then(() => {
-        if (typeof onSuccessDecline === "function" && !isError(UPDATE_INVITATION, getState())) {
-          onSuccessDecline();
-        }
-        return undefined;
-      });
+    updateInvitation({ variables: { invitationId, action: "decline" } }).then(() => {
+      if (typeof onSuccessAccept === "function") {
+        onSuccessDecline();
+      }
     });
   };
 
-  const isButtonLoading = entityId === invitationId && isLoading;
+  const isButtonLoading = loginLoading;
 
   return (
     <>

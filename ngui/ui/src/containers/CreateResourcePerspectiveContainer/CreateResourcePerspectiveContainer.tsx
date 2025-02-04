@@ -1,28 +1,41 @@
+import { useMutation } from "@apollo/client";
 import CreateResourcePerspectiveForm from "components/forms/CreateResourcePerspectiveForm";
-import { useOrganizationPerspectives } from "hooks/useOrganizationPerspectives";
-import OrganizationOptionsService from "services/OrganizationOptionsService";
+import { GET_ORGANIZATION_PERSPECTIVES, UPDATE_ORGANIZATION_PERSPECTIVES } from "graphql/api/restapi/queries/restapi.queries";
+import { useOrganizationPerspectives } from "hooks/coreData";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
 const CreateResourcePerspectiveContainer = ({ filters, breakdownBy, breakdownData, onSuccess, onCancel }) => {
+  const { organizationId } = useOrganizationInfo();
+
   const { allPerspectives } = useOrganizationPerspectives();
 
-  const { useUpdateOrganizationPerspectives } = OrganizationOptionsService();
+  const [updateOrganizationPerspectives, { loading }] = useMutation(UPDATE_ORGANIZATION_PERSPECTIVES, {
+    update: (cache, { data }) => {
+      cache.writeQuery({
+        query: GET_ORGANIZATION_PERSPECTIVES,
+        variables: { organizationId },
+        data: {
+          organizationPerspectives: data.updateOrganizationPerspectives
+        }
+      });
+    }
+  });
 
-  const { update, isLoading } = useUpdateOrganizationPerspectives();
-
-  const onSubmit = (data) => {
-    update(
-      {
-        ...allPerspectives,
-        [data.name]: data.payload
-      },
-      onSuccess
-    );
-  };
+  const onSubmit = (data) =>
+    updateOrganizationPerspectives({
+      variables: {
+        organizationId,
+        value: {
+          ...allPerspectives,
+          [data.name]: data.payload
+        }
+      }
+    }).then(onSuccess);
 
   return (
     <CreateResourcePerspectiveForm
       onSubmit={onSubmit}
-      isLoading={isLoading}
+      isLoading={loading}
       breakdownBy={breakdownBy}
       breakdownData={breakdownData}
       filters={filters}

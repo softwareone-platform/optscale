@@ -47,20 +47,7 @@ const PowerSchedules = ({
   const actionBarDefinition = {
     title: {
       messageId: "powerSchedulesTitle"
-    },
-    items: [
-      {
-        key: "btn-add",
-        dataTestId: "btn_add",
-        icon: <AddOutlinedIcon fontSize="small" />,
-        messageId: "add",
-        color: "success",
-        variant: "contained",
-        type: "button",
-        requiredActions: ["EDIT_PARTNER"],
-        action: () => navigate(CREATE_POWER_SCHEDULE)
-      }
-    ]
+    }
   };
 
   const tableData = useMemo(() => powerSchedules, [powerSchedules]);
@@ -169,7 +156,34 @@ const PowerSchedules = ({
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        {isGetPowerSchedulesLoading ? <TableLoader /> : <Table withSearch data={tableData} columns={columns} pageSize={50} />}
+        {isGetPowerSchedulesLoading ? (
+          <TableLoader />
+        ) : (
+          <Table
+            withSearch
+            data={tableData}
+            columns={columns}
+            actionBar={{
+              show: true,
+              definition: {
+                items: [
+                  {
+                    key: "btn-add",
+                    dataTestId: "btn_add",
+                    icon: <AddOutlinedIcon fontSize="small" />,
+                    messageId: "add",
+                    color: "success",
+                    variant: "contained",
+                    type: "button",
+                    requiredActions: ["EDIT_PARTNER"],
+                    action: () => navigate(CREATE_POWER_SCHEDULE)
+                  }
+                ]
+              }
+            }}
+            pageSize={50}
+          />
+        )}
       </PageContentWrapper>
     </>
   );

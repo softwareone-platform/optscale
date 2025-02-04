@@ -2,7 +2,7 @@ import { Stack } from "@mui/material";
 import ActionBar from "components/ActionBar";
 import CloudCostComparisonTable from "components/CloudCostComparisonTable";
 import CloudCostComparisonFiltersForm from "components/forms/CloudCostComparisonFiltersForm";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import TableLoader from "components/TableLoader";
 import { SPACING_1 } from "utils/layouts";
@@ -18,10 +18,14 @@ const CloudCostComparison = ({ isLoading, relevantSizes, defaultFormValues, onFi
   <>
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
+      <PageContentDescription
+        position="top"
+        alertProps={{
+          messageId: "cloudCostComparisonDescription",
+          messageValues: { br: <br /> }
+        }}
+      />
       <Stack spacing={SPACING_1}>
-        <div>
-          <InlineSeverityAlert messageId="cloudCostComparisonDescription" messageValues={{ br: <br /> }} />
-        </div>
         <div>
           <CloudCostComparisonFiltersForm onSubmit={onFiltersApply} defaultValues={defaultFormValues} />
         </div>

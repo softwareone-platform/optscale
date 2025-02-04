@@ -1,11 +1,17 @@
 import InactiveUsersModal from "components/SideModalManager/SideModals/recommendations/InactiveUsersModal";
-import { AWS_IAM, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import { AWS_IAM, GCP_IAM, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, lastUsed, name, userLocation } from "utils/columns";
-import { AWS_CNR, NEBIUS } from "utils/constants";
+import { AWS_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
 
 const columns = [
-  name({ accessorKey: "user_name", captionAccessor: "user_id", headerDataTestId: "lbl_iu_name", enableTextCopy: true }),
+  name({
+    accessorKey: "user_name",
+    captionAccessor: "user_id",
+    headerDataTestId: "lbl_iu_name",
+    enableTextCopy: true,
+    defaultSort: "asc"
+  }),
   userLocation({ headerDataTestId: "lbl_iu_location" }),
   lastUsed({ headerDataTestId: "lbl_iu_last_used" }),
   detectedAt({ headerDataTestId: "lbl_iu_detected_at" })
@@ -28,9 +34,9 @@ class InactiveUsers extends BaseRecommendation {
 
   emptyMessageId = "noInactiveUsers";
 
-  services = [AWS_IAM, NEBIUS_SERVICE];
+  services = [AWS_IAM, NEBIUS_SERVICE, GCP_IAM];
 
-  appliedDataSources = [AWS_CNR, NEBIUS];
+  appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_SECURITY];
 

@@ -270,6 +270,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             'azure_cnr': 'azure.Azure',
             'gcp_cnr': 'gcp.Gcp',
             'nebius': 'nebius.Nebius',
+            'gcp_tenant': 'gcp_tenant.GcpTenant'
         }
         if not account_id:
             account_id = self.gen_id()

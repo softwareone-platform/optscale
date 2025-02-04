@@ -1,0 +1,36 @@
+input OrganizationAllowedActionsRequestParams {
+  organization: String!
+}
+
+# TODO: Split Token and User and use them separately for token and user related mutations?
+type Token {
+  user_email: String!
+  user_id: ID!
+  token: String
+}
+
+# TODO: Represents an object with dynamic fields (IDs) and an array of strings
+scalar OrganizationAllowedActionsScalar
+
+type Query {
+  organizationAllowedActions(
+    requestParams: OrganizationAllowedActionsRequestParams
+  ): OrganizationAllowedActionsScalar
+}
+
+input UpdateUserParams {
+  password: String
+  name: String
+}
+
+type Mutation {
+  token(email: String!, password: String, code: String): Token
+  user(email: String!, password: String!, name: String!): Token
+  updateUser(id: ID!, params: UpdateUserParams!): Token
+  signIn(
+    provider: String!
+    token: String!
+    tenantId: String
+    redirectUri: String
+  ): Token
+}

@@ -1,5 +1,4 @@
-import { GET_POOL_ALLOWED_ACTIONS, GET_ORGANIZATION_ALLOWED_ACTIONS } from "api/auth/actionTypes";
-import { GET_ORGANIZATIONS } from "api/restapi/actionTypes";
+import { GET_POOL_ALLOWED_ACTIONS } from "api/auth/actionTypes";
 import { MockState } from "utils/MockState";
 
 const POOL_ID = "pool_uuid";
@@ -81,23 +80,7 @@ describe("mockOrganizationPermissions method testing", () => {
     const mockState = MockState();
     mockState.mockOrganizationPermissions(ORGANIZATION_ID, ["manage_something"]);
     expect(mockState.state).toEqual({
-      organizationId: ORGANIZATION_ID,
-      restapi: {
-        [GET_ORGANIZATIONS]: {
-          organizations: [
-            {
-              id: ORGANIZATION_ID
-            }
-          ]
-        }
-      },
-      auth: {
-        [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-          allowedActions: {
-            [ORGANIZATION_ID]: ["manage_something"]
-          }
-        }
-      }
+      organizationId: ORGANIZATION_ID
     });
   });
   describe("extracting existed state", () => {
@@ -108,19 +91,7 @@ describe("mockOrganizationPermissions method testing", () => {
           data: {}
         },
         restapi: {
-          someRestApiKey: "randomString",
-          [GET_ORGANIZATIONS]: {
-            organizations: [{ id: "org1" }, { id: "org2" }]
-          }
-        },
-        auth: {
-          someAuthKey: "randomString",
-          [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-            allowedActions: {
-              org1: ["p1", "p2"],
-              org2: []
-            }
-          }
+          someRestApiKey: "randomString"
         }
       });
       mockState.mockOrganizationPermissions(ORGANIZATION_ID, ["manage_something"]);
@@ -130,26 +101,7 @@ describe("mockOrganizationPermissions method testing", () => {
           data: {}
         },
         restapi: {
-          someRestApiKey: "randomString",
-          [GET_ORGANIZATIONS]: {
-            organizations: [
-              { id: "org1" },
-              { id: "org2" },
-              {
-                id: ORGANIZATION_ID
-              }
-            ]
-          }
-        },
-        auth: {
-          someAuthKey: "randomString",
-          [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-            allowedActions: {
-              org1: ["p1", "p2"],
-              org2: [],
-              [ORGANIZATION_ID]: ["manage_something"]
-            }
-          }
+          someRestApiKey: "randomString"
         }
       });
     });
@@ -159,55 +111,16 @@ describe("mockOrganizationPermissions method testing", () => {
       });
       mockState.mockOrganizationPermissions(ORGANIZATION_ID, ["manage_something"]);
       expect(mockState.state).toEqual({
-        organizationId: "existedOrganizationId",
-        restapi: {
-          [GET_ORGANIZATIONS]: {
-            organizations: [
-              {
-                id: ORGANIZATION_ID
-              }
-            ]
-          }
-        },
-        auth: {
-          [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-            allowedActions: {
-              [ORGANIZATION_ID]: ["manage_something"]
-            }
-          }
-        }
+        organizationId: "existedOrganizationId"
       });
     });
     test("extend permissions", () => {
       const mockState = MockState({
-        organizationId: "existedOrganizationId",
-        auth: {
-          [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-            allowedActions: {
-              [ORGANIZATION_ID]: ["existed_permission"]
-            }
-          }
-        }
+        organizationId: "existedOrganizationId"
       });
       mockState.mockOrganizationPermissions(ORGANIZATION_ID, ["manage_something"]);
       expect(mockState.state).toEqual({
-        organizationId: "existedOrganizationId",
-        restapi: {
-          [GET_ORGANIZATIONS]: {
-            organizations: [
-              {
-                id: ORGANIZATION_ID
-              }
-            ]
-          }
-        },
-        auth: {
-          [GET_ORGANIZATION_ALLOWED_ACTIONS]: {
-            allowedActions: {
-              [ORGANIZATION_ID]: ["existed_permission", "manage_something"]
-            }
-          }
-        }
+        organizationId: "existedOrganizationId"
       });
     });
   });

@@ -3,8 +3,6 @@ import { MINUTE, HALF_HOUR, HOUR, ERROR_HANDLER_TYPE_LOCAL, SUCCESS_HANDLER_TYPE
 import { apiAction, getApiUrl, hashParams } from "api/utils";
 import { DAILY_EXPENSE_LIMIT, TOTAL_EXPENSE_LIMIT, TTL } from "utils/constraints";
 import {
-  GET_ORGANIZATION_FEATURES,
-  SET_ORGANIZATION_FEATURES,
   GET_ORGANIZATION_OPTIONS,
   SET_ORGANIZATION_OPTIONS,
   GET_ORGANIZATION_OPTION,
@@ -14,15 +12,10 @@ import {
   UPDATE_ORGANIZATION_OPTION,
   CREATE_ORGANIZATION_OPTION,
   SET_ORGANIZATION_OPTION,
-  CREATE_DATA_SOURCE,
-  GET_POOL,
-  DELETE_DATA_SOURCE,
   UPDATE_DATA_SOURCE,
   SET_POOL,
   UPDATE_POOL,
   DELETE_POOL,
-  GET_ORGANIZATIONS,
-  SET_ORGANIZATIONS,
   GET_ORGANIZATIONS_OVERVIEW,
   SET_ORGANIZATIONS_OVERVIEW,
   CREATE_POOL,
@@ -38,7 +31,6 @@ import {
   SUBMIT_FOR_AUDIT,
   GET_INVITATION,
   SET_INVITATION,
-  UPDATE_INVITATION,
   CREATE_INVITATIONS,
   GET_SPLIT_RESOURCES,
   SET_SPLIT_RESOURCES,
@@ -51,8 +43,6 @@ import {
   DELETE_EMPLOYEE,
   SET_AUTHORIZED_EMPLOYEES,
   SET_EMPLOYEES,
-  GET_CURRENT_EMPLOYEE,
-  CREATE_ORGANIZATION,
   GET_ORGANIZATION_EXPENSES,
   SET_ORGANIZATION_EXPENSES,
   GET_RAW_EXPENSES,
@@ -148,9 +138,6 @@ import {
   DELETE_CALENDAR_SYNCHRONIZATION,
   UPDATE_ENVIRONMENT_PROPERTY,
   UPDATE_ORGANIZATION,
-  DELETE_ORGANIZATION,
-  SET_INVITATIONS,
-  GET_INVITATIONS,
   CREATE_DAILY_EXPENSE_LIMIT_RESOURCE_CONSTRAINT,
   UPDATE_DAILY_EXPENSE_LIMIT_RESOURCE_CONSTRAINT,
   SET_RESOURCE_COUNT_BREAKDOWN,
@@ -187,12 +174,6 @@ import {
   SET_ARCHIVED_OPTIMIZATION_DETAILS,
   SET_K8S_RIGHTSIZING,
   GET_K8S_RIGHTSIZING,
-  UPDATE_ORGANIZATION_THEME_SETTINGS,
-  SET_ORGANIZATION_THEME_SETTINGS,
-  GET_ORGANIZATION_THEME_SETTINGS,
-  SET_ORGANIZATION_PERSPECTIVES,
-  GET_ORGANIZATION_PERSPECTIVES,
-  UPDATE_ORGANIZATION_PERSPECTIVES,
   UPDATE_ENVIRONMENT_SSH_REQUIREMENT,
   GET_ML_TASKS,
   SET_ML_TASKS,
@@ -254,8 +235,6 @@ import {
   GET_ML_RUNSETS_RUNS,
   SET_ML_RUNSET_EXECUTORS,
   GET_ML_RUNSET_EXECUTORS,
-  SET_DATA_SOURCES,
-  GET_DATA_SOURCES,
   STOP_ML_RUNSET,
   SET_ORGANIZATION_BI_EXPORTS,
   GET_ORGANIZATION_BI_EXPORT,
@@ -328,13 +307,12 @@ import {
   SET_ML_TASK_TAGS,
   GET_ML_TASK_TAGS,
   RESTORE_PASSWORD,
-  VERIFY_EMAIL
+  VERIFY_EMAIL,
+  GET_POOL
 } from "./actionTypes";
 import {
   onUpdateOrganizationOption,
-  onSuccessUpdateInvitation,
   onSuccessDeletePool,
-  onSuccessGetCurrentEmployee,
   onSuccessCreatePoolPolicy,
   onSuccessCreateResourceConstraint,
   onSuccessDeleteResourceConstraint,
@@ -353,9 +331,6 @@ import {
   onSuccessUpdateGlobalPoolPolicyLimit,
   onSuccessUpdateGlobalPoolPolicyActivity,
   onSuccessUpdateGlobalResourceConstraintLimit,
-  onUpdateOrganizationThemeSettings,
-  onUpdateOrganizationPerspectives,
-  onSuccessCreateOrganization,
   onSuccessUpdateEnvironmentSshRequirement,
   onUpdateMlTask,
   onSuccessGetOptimizationsOverview,
@@ -372,47 +347,6 @@ import {
 } from "./handlers";
 
 export const API_URL = getApiUrl("restapi");
-
-export const getOrganizationFeatures = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/options/features`,
-    method: "GET",
-    ttl: HOUR,
-    onSuccess: handleSuccess(SET_ORGANIZATION_FEATURES),
-    hash: hashParams(organizationId),
-    label: GET_ORGANIZATION_FEATURES
-  });
-
-export const getOrganizationThemeSettings = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/options/theme_settings`,
-    method: "GET",
-    ttl: HOUR,
-    onSuccess: handleSuccess(SET_ORGANIZATION_THEME_SETTINGS),
-    hash: hashParams(organizationId),
-    label: GET_ORGANIZATION_THEME_SETTINGS
-  });
-
-export const getOrganizationPerspectives = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/options/perspectives`,
-    method: "GET",
-    ttl: HOUR,
-    onSuccess: handleSuccess(SET_ORGANIZATION_PERSPECTIVES),
-    hash: hashParams(organizationId),
-    label: GET_ORGANIZATION_PERSPECTIVES
-  });
-
-export const updateOrganizationPerspectives = (organizationId, value) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/options/perspectives`,
-    method: "PATCH",
-    onSuccess: onUpdateOrganizationPerspectives,
-    label: UPDATE_ORGANIZATION_PERSPECTIVES,
-    params: {
-      value: JSON.stringify(value)
-    }
-  });
 
 export const getOrganizationOptions = (organizationId, withValues = false) =>
   apiAction({
@@ -453,17 +387,6 @@ export const updateOrganizationOption = (organizationId, name, value) =>
     successHandlerType: SUCCESS_HANDLER_TYPE_ALERT,
     label: UPDATE_ORGANIZATION_OPTION,
     affectedRequests: [GET_ORGANIZATION_OPTIONS],
-    params: {
-      value: JSON.stringify(value)
-    }
-  });
-
-export const updateOrganizationThemeSettings = (organizationId, value) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/options/theme_settings`,
-    method: "PATCH",
-    onSuccess: onUpdateOrganizationThemeSettings,
-    label: UPDATE_ORGANIZATION_THEME_SETTINGS,
     params: {
       value: JSON.stringify(value)
     }
@@ -529,36 +452,6 @@ export const updateOrganizationConstraint = (id, params) =>
     params
   });
 
-export const getDataSources = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/cloud_accounts`,
-    method: "GET",
-    onSuccess: handleSuccess(SET_DATA_SOURCES),
-    label: GET_DATA_SOURCES,
-    hash: hashParams(organizationId),
-    ttl: 2 * MINUTE,
-    params: {
-      details: true
-    }
-  });
-
-export const createDataSource = (organizationId, params) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/cloud_accounts`,
-    method: "POST",
-    affectedRequests: [GET_DATA_SOURCES, GET_AVAILABLE_FILTERS],
-    label: CREATE_DATA_SOURCE,
-    params
-  });
-
-export const disconnectDataSource = (id) =>
-  apiAction({
-    url: `${API_URL}/cloud_accounts/${id}`,
-    method: "DELETE",
-    affectedRequests: [GET_DATA_SOURCES, GET_AVAILABLE_FILTERS],
-    label: DELETE_DATA_SOURCE
-  });
-
 export const uploadCloudReport = (cloudAccountId, file) =>
   apiAction({
     url: `${API_URL}/cloud_accounts/${cloudAccountId}/report_upload`,
@@ -613,15 +506,6 @@ export const getPool = (poolId, children = false, details = false) =>
     }
   });
 
-export const createOrganization = (name) =>
-  apiAction({
-    url: `${API_URL}/organizations`,
-    method: "POST",
-    onSuccess: onSuccessCreateOrganization,
-    label: CREATE_ORGANIZATION,
-    params: { name }
-  });
-
 export const createPool = (organizationId, params) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/pools`,
@@ -634,7 +518,8 @@ export const createPool = (organizationId, params) =>
       parent_id: params.parentId,
       limit: params.limit,
       purpose: params.type,
-      auto_extension: params.autoExtension
+      auto_extension: params.autoExtension,
+      default_owner_id: params.defaultOwnerId
     }
   });
 
@@ -672,29 +557,11 @@ export const deletePool = (id) =>
     label: DELETE_POOL
   });
 
-export const getOrganizations = () =>
-  apiAction({
-    url: `${API_URL}/organizations`,
-    method: "GET",
-    onSuccess: handleSuccess(SET_ORGANIZATIONS),
-    ttl: HALF_HOUR,
-    label: GET_ORGANIZATIONS
-  });
-
-export const deleteOrganization = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}`,
-    method: "DELETE",
-    label: DELETE_ORGANIZATION,
-    affectedRequests: [GET_ORGANIZATIONS]
-  });
-
 export const updateOrganization = (organizationId, params) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}`,
     method: "PATCH",
     label: UPDATE_ORGANIZATION,
-    affectedRequests: [GET_ORGANIZATIONS],
     params
   });
 
@@ -774,26 +641,6 @@ export const getInvitation = (inviteId) =>
     label: GET_INVITATION
   });
 
-export const getInvitations = () =>
-  apiAction({
-    url: `${API_URL}/invites`,
-    method: "GET",
-    onSuccess: handleSuccess(SET_INVITATIONS),
-    label: GET_INVITATIONS,
-    ttl: HALF_HOUR
-  });
-
-export const updateInvitation = (inviteId, action) =>
-  apiAction({
-    url: `${API_URL}/invites/${inviteId}`,
-    method: "PATCH",
-    onSuccess: onSuccessUpdateInvitation,
-    entityId: inviteId,
-    label: UPDATE_INVITATION,
-    affectedRequests: [GET_ORGANIZATIONS, GET_INVITATIONS],
-    params: { action }
-  });
-
 export const splitResources = (organizationId, ids) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/split_resources/assign`,
@@ -868,19 +715,6 @@ export const deleteEmployee = (employeeId, { newOwnerId }) =>
     affectedRequests: [GET_EMPLOYEES, GET_AUTHORIZED_EMPLOYEES],
     params: {
       new_owner_id: newOwnerId
-    }
-  });
-
-export const getCurrentEmployee = (organizationId) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/employees`,
-    method: "GET",
-    onSuccess: onSuccessGetCurrentEmployee,
-    label: GET_CURRENT_EMPLOYEE,
-    ttl: HALF_HOUR,
-    hash: hashParams(organizationId),
-    params: {
-      current_only: true
     }
   });
 
@@ -1460,6 +1294,7 @@ export const applyAssignmentRules = (organizationId, params) =>
     url: `${API_URL}/organizations/${organizationId}/rules_apply`,
     method: "POST",
     label: APPLY_ASSIGNMENT_RULES,
+    affectedRequests: [GET_CLEAN_EXPENSES],
     params: {
       pool_id: params.poolId,
       include_children: params.includeChildren
@@ -2240,24 +2075,30 @@ export const getMlTaskRunsBulk = (organizationId, taskId, runIds) =>
     }
   });
 
-export const getMlRunDetails = (organizationId, runId) =>
+export const getMlRunDetails = (organizationId, runId, params = {}) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/runs/${runId}`,
     method: "GET",
     ttl: 5 * MINUTE,
     onSuccess: handleSuccess(SET_ML_RUN_DETAILS),
     hash: hashParams({ organizationId, runId }),
-    label: GET_ML_RUN_DETAILS
+    label: GET_ML_RUN_DETAILS,
+    params: {
+      token: params.arceeToken
+    }
   });
 
-export const getMlRunDetailsBreakdown = (organizationId, runId) =>
+export const getMlRunDetailsBreakdown = (organizationId, runId, params = {}) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/runs/${runId}/breakdown`,
     method: "GET",
     ttl: 5 * MINUTE,
     onSuccess: handleSuccess(SET_ML_RUN_DETAILS_BREAKDOWN),
     hash: hashParams({ organizationId, runId }),
-    label: GET_ML_RUN_DETAILS_BREAKDOWN
+    label: GET_ML_RUN_DETAILS_BREAKDOWN,
+    params: {
+      token: params.arceeToken
+    }
   });
 
 export const createMlTask = (organizationId, params) =>
@@ -2420,7 +2261,8 @@ export const getMlExecutors = (organizationId, params) =>
     onSuccess: handleSuccess(SET_ML_EXECUTORS),
     params: {
       task_id: params.taskIds,
-      run_id: params.runIds
+      run_id: params.runIds,
+      token: params.arceeToken
     }
   });
 
@@ -2449,7 +2291,8 @@ export const getMlArtifacts = (organizationId, params = {}) =>
       text_like: params.textLike,
       created_at_gt: params.createdAtGt,
       created_at_lt: params.createdAtLt,
-      task_id: params.taskId
+      task_id: params.taskId,
+      token: params.arceeToken
     }
   });
 
@@ -2840,22 +2683,23 @@ export const removeInstancesFromSchedule = (powerScheduleId, instancesToRemove) 
     }
   });
 
-export const getLayouts = (organizationId, { layoutType, entityId, includeShared }) =>
+export const getLayouts = (organizationId, { layoutType, entityId, includeShared, arceeToken }) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/layouts`,
     method: "GET",
-    hash: hashParams({ organizationId, layoutType, entityId, includeShared }),
+    hash: hashParams({ organizationId, layoutType, entityId, includeShared, token: arceeToken }),
     onSuccess: handleSuccess(SET_LAYOUTS),
     label: GET_LAYOUTS,
     ttl: 5 * MINUTE,
     params: {
-      type: layoutType,
+      layout_type: layoutType,
       entity_id: entityId,
-      include_shared: includeShared
+      include_shared: includeShared,
+      token: arceeToken
     }
   });
 
-export const getLayout = (organizationId, layoutId) =>
+export const getLayout = (organizationId, layoutId, params = {}) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/layouts/${layoutId}`,
     method: "GET",
@@ -2863,7 +2707,10 @@ export const getLayout = (organizationId, layoutId) =>
     onSuccess: handleSuccess(SET_LAYOUT),
     entityId: layoutId,
     label: GET_LAYOUT,
-    ttl: 5 * MINUTE
+    ttl: 5 * MINUTE,
+    params: {
+      token: params.arceeToken
+    }
   });
 
 export const createLayout = (organizationId, params = {}) =>

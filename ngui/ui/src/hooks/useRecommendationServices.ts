@@ -20,6 +20,8 @@ export const AZURE_COMPUTE = "azureCompute";
 export const AZURE_NETWORK = "azureNetwork";
 
 export const GCP_COMPUTE_ENGINE = "gcpComputeEngine";
+export const GCP_IAM = "gcpAim";
+export const GCP_CLOUD_STORAGE = "gcpCloudStorage";
 
 // MPT_TODO: disabled to math BDR requirements
 export const NEBIUS_SERVICE = "nebius";
@@ -90,6 +92,14 @@ const GCP_SERVICES = Object.freeze({
   [GCP_COMPUTE_ENGINE]: {
     type: GCP_CNR,
     name: "services.computeEngine"
+  },
+  [GCP_IAM]: {
+    type: GCP_CNR,
+    name: "services.iam"
+  },
+  [GCP_CLOUD_STORAGE]: {
+    type: GCP_CNR,
+    name: "services.cloudStorage"
   }
 });
 
