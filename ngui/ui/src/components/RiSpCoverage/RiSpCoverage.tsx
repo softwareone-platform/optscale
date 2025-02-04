@@ -12,7 +12,7 @@ import SubTitle from "components/SubTitle";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { useToggle } from "hooks/useToggle";
 import { RI_SP_CHART_PALETTE } from "theme";
-import {MPT_SPACING_1, SPACING_1, SPACING_2} from "utils/layouts";
+import { MPT_SPACING_1, SPACING_1, SPACING_2 } from "utils/layouts";
 
 const UsageTitle = () => (
   <SubTitle>
@@ -145,17 +145,17 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
       {isUpMd ? (
         <>
           <Grid item xs={6}>
-            <Box className={'MTPBoxShadow'} height={'100%'}>
-            {usageTitle}
-            {usageDescription}
-            {coverageBarChart}
+            <Box className={"MTPBoxShadow"} height={"100%"}>
+              {usageTitle}
+              {usageDescription}
+              {coverageBarChart}
             </Box>
           </Grid>
           <Grid item xs={6}>
-            <Box className={'MTPBoxShadow'}>
-            {expensesTitle}
-            {expensesDescription}
-            {expensesBarChart}
+            <Box className={"MTPBoxShadow"}>
+              {expensesTitle}
+              {expensesDescription}
+              {expensesBarChart}
             </Box>
           </Grid>
         </>
@@ -173,12 +173,12 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
           </Grid>
         </>
       )}
-      <Grid item xs={12}  marginTop={MPT_SPACING_1}>
-        <Box className={'MTPBoxShadow'}>
-        <RiSpCoverageTable
-          breakdown={[...Object.values(usageBreakdown).flat(), ...Object.values(expensesBreakdown).flat()]}
-          isLoading={isGetUsageBreakdownLoading || isGetExpensesBreakdownLoading}
-        />
+      <Grid item xs={12} marginTop={MPT_SPACING_1}>
+        <Box className={"MTPBoxShadow"}>
+          <RiSpCoverageTable
+            breakdown={[...Object.values(usageBreakdown).flat(), ...Object.values(expensesBreakdown).flat()]}
+            isLoading={isGetUsageBreakdownLoading || isGetExpensesBreakdownLoading}
+          />
         </Box>
       </Grid>
     </Grid>

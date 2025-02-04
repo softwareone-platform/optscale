@@ -41,9 +41,8 @@ const S3DuplicateFinder = ({ geminis, isLoading = false }) => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-
         <Stack spacing={SPACING_2}>
-          <Box className={'MTPBoxShadow'}>
+          <Box className={"MTPBoxShadow"}>
             <Typography gutterBottom>
               <FormattedMessage id="s3DuplicatesDescription.intro" />
             </Typography>
@@ -57,8 +56,8 @@ const S3DuplicateFinder = ({ geminis, isLoading = false }) => {
               <FormattedMessage id="s3DuplicatesDescription.ui" />
             </Typography>
           </Box>
-          <Box className={'MTPBoxShadow'}>
-          <div>{isLoading ? <TableLoader showHeader /> : <S3DuplicateFinderChecksTable geminis={geminis} />}</div>
+          <Box className={"MTPBoxShadow"}>
+            <div>{isLoading ? <TableLoader showHeader /> : <S3DuplicateFinderChecksTable geminis={geminis} />}</div>
           </Box>
         </Stack>
       </PageContentWrapper>

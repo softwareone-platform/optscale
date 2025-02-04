@@ -209,7 +209,7 @@ const CleanExpensesTableGroup = ({
                       value: groupState.groupBy
                     }
               }
-              label={<LabelColon messageId={'groupBy'} noWrap />}
+              label={<LabelColon messageId={"groupBy"} noWrap />}
               onChange={({ name: groupType, value: groupBy }) => {
                 updateQueryParams({
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,

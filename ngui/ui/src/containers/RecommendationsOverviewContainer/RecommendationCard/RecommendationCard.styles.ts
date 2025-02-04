@@ -1,12 +1,11 @@
 import { makeStyles } from "tss-react/mui";
 import { MPT_BOX_SHADOW, MPT_SPACING_1, MPT_SPACING_2, MPT_SPACING_3 } from "../../../utils/layouts";
 
-const useStyles = makeStyles()((theme, color) => ({
+const useStyles = makeStyles()(() => ({
   card: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    border: color ? `2px solid ${theme.palette[color].secondary}` : "",
     boxShadow: MPT_BOX_SHADOW
   },
   content: {
