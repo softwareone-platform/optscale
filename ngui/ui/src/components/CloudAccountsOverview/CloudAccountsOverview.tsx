@@ -153,7 +153,7 @@ const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = f
             </div>
           )}
           <div>
-            <Box  className={"MTPBoxShadow"}>
+            <Box className={"MTPBoxShadow"}>
               <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
             </Box>
           </div>
