@@ -10,23 +10,9 @@ export abstract class BasePage {
     }
 
     async navigateToURL(waitForPageLoad = false): Promise<void> {
-        await this.page.goto(this.url, {waitUntil: "domcontentloaded"});
-        if (waitForPageLoad) {
-            await this.waitForDocumentComplete();
-        }
+        await this.page.goto(this.url, {waitUntil: waitForPageLoad ? "networkidle" : "domcontentloaded"});
     }
 
-    async waitForDocumentComplete(): Promise<void> {
-        await this.page.evaluate(() => {
-            return new Promise<void>((resolve) => {
-                if (document.readyState === "complete") {
-                    resolve();
-                } else {
-                    window.addEventListener('load', () => resolve(), {once: true});
-                }
-            });
-        });
-    }
 
     /**
      * Selects an option from a combo box.

@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
     })
@@ -145,6 +145,21 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourceDetailsPage.heading.hover();
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-recommendations-tab-screenshot.png');
         });
-
     })
+
+    test('Verify Pools page matches screenshots', async ({poolsPage}) => {
+        await test.step('Navigate to Pools page', async () => {
+            await poolsPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Pools page content', async () => {
+            await expect(poolsPage.main).toHaveScreenshot('Pools-landing-screenshot.png');
+        });
+
+        await test.step('Verify Pools page with expanded requiring attention', async () => {
+           await poolsPage.clickExpandRequiringAttentionBtn();
+           await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
+        });
+
+    });
 })
