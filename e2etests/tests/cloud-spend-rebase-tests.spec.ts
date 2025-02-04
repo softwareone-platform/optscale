@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
     })
@@ -12,7 +12,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
         await homePage.page.waitForLoadState('networkidle');
     })
 
-    test('Verify Homepage matches screenshots', async ({header, mainMenu, homePage}) => {
+    test.only("Verify Header and Main Menu", async ({header, mainMenu}) => {
         await test.step('Verify header', async () => {
             await expect(header.header).toHaveScreenshot('Header-screenshot.png');
         });
@@ -20,7 +20,9 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Main Menu', async () => {
             await expect(mainMenu.menu).toHaveScreenshot('MainMenu-screenshot.png');
         });
+    })
 
+    test('Verify Homepage matches screenshots', async ({header, mainMenu, homePage}) => {
         await test.step('Verify Home Page content', async () => {
             //Organization Expenses forecast column seems to be recalculated daily so
             await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png', {maxDiffPixelRatio: 0.2});
