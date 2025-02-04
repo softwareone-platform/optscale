@@ -16,8 +16,10 @@ import { MPT_SPACING_1, SPACING_1, SPACING_2 } from "utils/layouts";
 
 const UsageTitle = () => (
   <SubTitle>
-    <Box display="flex" alignItems="center">
-      <FormattedMessage id="usage" />
+    <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
+      <Typography variant={"subtitle1"}>
+        <FormattedMessage id="usage" />
+      </Typography>
     </Box>
   </SubTitle>
 );
@@ -74,8 +76,10 @@ const ExpensesTitle = ({ showSavingsCheckbox }) => {
 
   return (
     <SubTitle>
-      <Box display="flex" alignItems="center">
-        <FormattedMessage id="expenses" />
+      <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
+        <Typography variant={"subtitle1"}>
+          <FormattedMessage id="expenses" />
+        </Typography>
         <FormControlLabel
           // A trick to prevent the switch to take extra vertical space. Consider this solution for other places
           style={{ height: 0 }}

@@ -48,7 +48,7 @@ const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId
           )}
           {children}
           {clickable && (
-            <Box position="absolute" bottom={"16px"} right={"8px"}>
+            <Box position="absolute" bottom={"25px"} right={"8px"}>
               <ArrowForwardIosIcon color="primary" sx={{ opacity: 1 }} />
             </Box>
           )}
