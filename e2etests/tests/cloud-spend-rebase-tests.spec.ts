@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
     })
@@ -101,10 +101,10 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     })
 
     test('Verify Resource details page matches screenshots', async ({
-                                                                             mainMenu,
-                                                                             resourcesPage,
-                                                                             resourceDetailsPage
-                                                                         }) => {
+                                                                        mainMenu,
+                                                                        resourcesPage,
+                                                                        resourceDetailsPage
+                                                                    }) => {
         await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
             await mainMenu.clickResources();
             await resourcesPage.waitForCanvas();
@@ -157,9 +157,64 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Pools page with expanded requiring attention', async () => {
-           await poolsPage.clickExpandRequiringAttentionBtn();
-           await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
+            await poolsPage.clickExpandRequiringAttentionBtn();
+            await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
+        });
+    });
+
+    test('Verify Expenses page matches screenshots', async ({expensesPage}) => {
+        await test.step('Navigate to Expenses page', async () => {
+            await expensesPage.navigateToURL(true);
         });
 
+        await test.step('Verify Expenses page content - daily selected', async () => {
+            await expensesPage.clickDailyBtnIfNotSelected();
+            await expensesPage.expensesHeading.hover();
+            await expensesPage.waitForCanvas();
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-daily-screenshot.png');
+        });
+
+        await test.step('Verify Expenses page content - weekly selected', async () => {
+            await expensesPage.clickWeeklyBtn();
+            await expensesPage.expensesHeading.hover();
+            await expensesPage.waitForCanvas();
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-weekly-screenshot.png');
+        });
+
+        await test.step('Verify Expenses page content - monthly selected', async () => {
+           await expensesPage.clickMonthlyBtn();
+           await expensesPage.expensesHeading.hover();
+           await expensesPage.waitForCanvas();
+           await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
+        });
+    });
+
+    test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
+        await test.step('Navigate to Expenses page', async () => {
+            await expensesPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Expenses page breakdowns - source', async () => {
+            await expensesPage.clickSourceBtn();
+            await expensesPage.costExploreBreadcrumb.hover();
+            await expensesPage.waitForCanvas();
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
+        });
+
+        await test.step('Verify Expenses page breakdowns - pool', async () => {
+            await expensesPage.clickCostExploreBreadcrumb();
+            await expensesPage.clickPoolBtn();
+            await expensesPage.costExploreBreadcrumb.hover();
+            await expensesPage.waitForCanvas();
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-pool-screenshot.png');
+        });
+
+        await test.step('Verify Expenses page breakdowns - owner', async () => {
+            await expensesPage.clickCostExploreBreadcrumb();
+            await expensesPage.clickOwnerBtn();
+            await expensesPage.costExploreBreadcrumb.hover();
+            await expensesPage.waitForCanvas();
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-owner-screenshot.png');
+        });
     });
 })
