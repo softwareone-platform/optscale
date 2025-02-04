@@ -290,8 +290,6 @@ const LinearSelector = ({
   let expandableItems = [];
   let alwaysVisibleItems = [];
 
-  console.log(label);
-
   const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
   const getValuesArray = () => {
@@ -331,7 +329,7 @@ const LinearSelector = ({
     <Box>
       <ResponsiveStack>
         {label && (
-          <Box alignSelf={"start"} sx={{ paddingTop: "4px" }} component="div" data-test-id={labelDataTestId}>
+          <Box alignSelf={"start"} sx={{ lineHeight: "1.8em" }} component="div" data-test-id={labelDataTestId}>
             {label}
           </Box>
         )}

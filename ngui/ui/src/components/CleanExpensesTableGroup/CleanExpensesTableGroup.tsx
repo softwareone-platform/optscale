@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import { FormattedMessage } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import CleanExpensesTable from "components/CleanExpensesTable";
 import GroupedTables from "components/GroupedTables";
@@ -24,6 +23,7 @@ import { MPT_SPACING_1, MPT_SPACING_2, SPACING_1, SPACING_2 } from "utils/layout
 import { updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getPaginationQueryKey, getSearchQueryKey } from "utils/tables";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import { TOTAL_EXPENSES, COUNT } from "./constant";
 import SortGroupsBySelector from "./SortGroupsBySelector";
 import { changeSortGroupsBy } from "./SortGroupsBySelector/actionCreators";
@@ -198,7 +198,7 @@ const CleanExpensesTableGroup = ({
   return (
     <Box>
       <Grid container>
-        <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2} data-test-id="testtttt">
+        <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2}>
           <Box marginTop={SPACING_1}>
             <LinearSelector
               value={
@@ -209,7 +209,7 @@ const CleanExpensesTableGroup = ({
                       value: groupState.groupBy
                     }
               }
-              label={<FormattedMessage id="groupBy" />}
+              label={<LabelColon messageId={"groupBy"} noWrap />}
               onChange={({ name: groupType, value: groupBy }) => {
                 updateQueryParams({
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,

@@ -7,7 +7,7 @@ const TitleValue = forwardRef(({ children, dataTestId, style = {}, ...rest }, re
     component="span"
     variant="subtitle1"
     data-test-id={dataTestId}
-    style={{ ...style, fontWeight: "normal", fontSize: MPT_SPACING_2 }}
+    style={{ fontWeight: "normal", fontSize: MPT_SPACING_2, ...style }}
     ref={ref}
     {...rest}
   >

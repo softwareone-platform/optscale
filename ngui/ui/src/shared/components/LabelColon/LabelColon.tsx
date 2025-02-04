@@ -5,10 +5,11 @@ import { FormattedMessage } from "react-intl";
 interface ILabelProps {
   messageId: string;
   suffix?: string;
+  noWrap?: boolean;
 }
 
-const LabelColon: React.FC<ILabelProps> = ({ messageId, suffix = ":" }) => (
-  <Typography variant="label" component="div" marginBottom={0}>
+const LabelColon: React.FC<ILabelProps> = ({ messageId, suffix = ":", noWrap = false }) => (
+  <Typography variant="label" component="div" noWrap={noWrap} marginBottom={0}>
     <FormattedMessage id={messageId} />
     {suffix}
   </Typography>
