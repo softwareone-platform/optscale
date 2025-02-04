@@ -3,7 +3,6 @@ import CopyTextComponent from "components/CopyText";
 import ExpandableList from "components/ExpandableList";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Tooltip from "components/Tooltip";
-import { MPT_SPACING_2 } from "utils/layouts";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 
 /**
@@ -51,7 +50,7 @@ const renderItems =
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
             isBoldKeyLabel
-            sx={{ marginBottom: MPT_SPACING_2 }}
+            variant="property"
             key={displayedKey}
             keyText={displayedKey}
             value={<CopyText textToCopy={textToCopy}>{value}</CopyText>}
@@ -67,7 +66,7 @@ const renderItems =
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
             isBoldKeyLabel
-            sx={{ marginBottom: MPT_SPACING_2 }}
+            variant="property"
             keyText={key}
             value={<CopyText textToCopy={textToCopy}>{cutValue}</CopyText>}
           />

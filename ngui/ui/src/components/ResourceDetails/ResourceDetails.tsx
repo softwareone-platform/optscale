@@ -11,13 +11,13 @@ import ResourceTypeLabel from "components/ResourceTypeLabel";
 import SubTitle from "components/SubTitle";
 import { RESOURCE_PAGE_TABS } from "utils/constants";
 import { formatUTC, EN_FULL_FORMAT } from "utils/datetime";
-import { MPT_SPACING_2, SPACING_2 } from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 import { MetadataNodes } from "utils/metadata";
 import { isEmpty } from "utils/objects";
 import CollapsableTableCell from "../CollapsableTableCell";
 
 const renderKeyValueLabels = (options) =>
-  options.map((opt) => <KeyValueLabel sx={{ marginBottom: MPT_SPACING_2 }} isBoldKeyLabel key={opt.keyMessageId} {...opt} />);
+  options.map((opt) => <KeyValueLabel isBoldKeyLabel variant="property" key={opt.keyMessageId} {...opt} />);
 
 const getIdLabelDefinition = ({ cloudResourceIdentifier, isActive }) => ({
   value: (

@@ -32,6 +32,13 @@ import {
   MPT_ALERTS_SUCCESS_3
 } from "./utils/layouts";
 
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides {
+    header: true;
+    property: true;
+  }
+}
+
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
 
@@ -315,6 +322,10 @@ const getThemeConfig = (settings = {}) => {
           root: {
             "&:before": {
               display: "none"
+            },
+            "&:first-of-type": {
+              borderTopLeftRadius: MPT_SPACING_1,
+              borderTopRightRadius: MPT_SPACING_1
             }
           }
         }
@@ -846,7 +857,23 @@ const getThemeConfig = (settings = {}) => {
             color: "black",
             fontSize: "24px"
           }
-        }
+        },
+        variants: [
+          {
+            props: { variant: "header" },
+            style: ({ theme }) => ({
+              ...theme.typography.subtitle1,
+              marginBottom: "20px"
+            })
+          },
+          {
+            props: { variant: "property" },
+            style: () => ({
+              marginBottom: MPT_SPACING_1,
+              fontWeight: "bold"
+            })
+          }
+        ]
       },
       MuiUseMediaQuery: {
         defaultProps: {
