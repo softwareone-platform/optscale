@@ -101,7 +101,7 @@ class WebhookExecutorWorker(ConsumerMixin):
                 ssh_key_map = json.loads(ssh_key_map_json)
                 ssh_key = ssh_key_map.get('key')
                 booking['ssh_key'] = ssh_key
-        owner_id = booking.get('acquired_by_id')
+        owner_id = booking.get('acquired_by', {}).get('id')
         owner = {}
         if owner_id:
             _, owner = self.rest_cl.employee_get(owner_id)

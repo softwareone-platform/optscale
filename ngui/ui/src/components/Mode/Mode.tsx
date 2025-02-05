@@ -12,10 +12,7 @@ import { SPACING_2 } from "utils/layouts";
 type ModeWrapperProps = {
   option: Record<(typeof OPTSCALE_MODE)[keyof typeof OPTSCALE_MODE], boolean>;
   onApply: (mode: ModeWrapperProps["option"]) => void;
-  isLoadingProps?: {
-    isGetOrganizationOptionLoading?: boolean;
-    isUpdateOrganizationOptionLoading?: boolean;
-  };
+  isLoading?: boolean;
 };
 
 type FeatureListProps = {
@@ -66,9 +63,7 @@ const Card = ({ name, messageIds, onSelect, isSelected, isLoading, disabled = fa
   </ContentBackdropLoader>
 );
 
-const Mode = ({ option, onApply, isLoadingProps = {} }: ModeWrapperProps) => {
-  const { isGetOrganizationOptionLoading, isUpdateOrganizationOptionLoading } = isLoadingProps;
-
+const Mode = ({ option, onApply, isLoading }: ModeWrapperProps) => {
   const isApplyModeAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
 
   const [showApplyModeError, setShowApplyModeError] = useState(false);
@@ -95,7 +90,6 @@ const Mode = ({ option, onApply, isLoadingProps = {} }: ModeWrapperProps) => {
           name="mlops"
           isSelected={mode[OPTSCALE_MODE.MLOPS]}
           onSelect={() => setMode(OPTSCALE_MODE.MLOPS)}
-          isLoading={isGetOrganizationOptionLoading}
           messageIds={["mode.mlops.1", "mode.mlops.2", "mode.mlops.3", "mode.mlops.4", "mode.mlops.5", "mode.mlops.6"]}
           disabled={!isApplyModeAllowed}
         />
@@ -103,7 +97,6 @@ const Mode = ({ option, onApply, isLoadingProps = {} }: ModeWrapperProps) => {
         <Card
           name="finops"
           isSelected={mode[OPTSCALE_MODE.FINOPS]}
-          isLoading={isGetOrganizationOptionLoading}
           onSelect={() => setMode(OPTSCALE_MODE.FINOPS)}
           messageIds={["mode.finops.1", "mode.finops.2", "mode.finops.3", "mode.finops.4", "mode.finops.5", "mode.finops.6"]}
           disabled={!isApplyModeAllowed}
@@ -122,7 +115,7 @@ const Mode = ({ option, onApply, isLoadingProps = {} }: ModeWrapperProps) => {
             color="primary"
             variant="contained"
             onClick={onApplyButtonClick}
-            isLoading={isGetOrganizationOptionLoading || isUpdateOrganizationOptionLoading}
+            isLoading={isLoading}
           />
         </FormButtonsWrapper>
       )}

@@ -20,9 +20,11 @@ type LayoutData = {
 
 const useGetAll = (
   params: {
+    organizationId: string;
     layoutType: (typeof LAYOUT_TYPES)[keyof typeof LAYOUT_TYPES];
     entityId?: string;
     includeShared?: boolean;
+    arceeToken?: string;
   },
   onSuccess?: (layout: LayoutData) => void
 ): {
@@ -32,9 +34,7 @@ const useGetAll = (
 } => {
   const dispatch = useDispatch();
 
-  const { layoutType, entityId, includeShared } = params;
-
-  const { organizationId } = useOrganizationInfo();
+  const { organizationId, layoutType, entityId, includeShared, arceeToken } = params;
 
   const { isLoading, shouldInvoke } = useApiState(GET_LAYOUTS, {
     organizationId,
@@ -50,7 +50,7 @@ const useGetAll = (
   useEffect(() => {
     if (shouldInvoke) {
       dispatch((_, getState) => {
-        dispatch(getLayouts(organizationId, { layoutType, entityId, includeShared })).then(() => {
+        dispatch(getLayouts(organizationId, { layoutType, entityId, includeShared, arceeToken })).then(() => {
           if (!isError(GET_LAYOUTS, getState())) {
             const apiData = getState()[RESTAPI][GET_LAYOUTS];
             if (typeof onSuccess === "function") {
@@ -60,7 +60,7 @@ const useGetAll = (
         });
       });
     }
-  }, [shouldInvoke, dispatch, organizationId, entityId, includeShared, layoutType, onSuccess]);
+  }, [shouldInvoke, dispatch, organizationId, entityId, includeShared, layoutType, onSuccess, arceeToken]);
 
   return {
     isLoading,
@@ -99,11 +99,9 @@ const useGetOneOnDemand = (): {
   isLoading: boolean;
   entityId: string;
   layout: LayoutData;
-  onGet: (layoutId: string) => Promise<LayoutData>;
+  onGet: (organizationId: string, layoutId: string, params: { arceeToken?: string }) => Promise<LayoutData>;
 } => {
   const dispatch = useDispatch();
-
-  const { organizationId } = useOrganizationInfo();
 
   const { isLoading, entityId } = useApiState(GET_LAYOUT);
 
@@ -114,10 +112,10 @@ const useGetOneOnDemand = (): {
     entityId,
     layout,
     onGet: useCallback(
-      (layoutId) =>
+      (organizationId, layoutId, params) =>
         new Promise((resolve, reject) => {
           dispatch((_, getState) => {
-            dispatch(getLayout(organizationId, layoutId)).then(() => {
+            dispatch(getLayout(organizationId, layoutId, params)).then(() => {
               if (!isError(GET_LAYOUT, getState())) {
                 const apiData = getState()[RESTAPI][GET_LAYOUT];
 
@@ -127,7 +125,7 @@ const useGetOneOnDemand = (): {
             });
           });
         }),
-      [dispatch, organizationId]
+      [dispatch]
     )
   };
 };

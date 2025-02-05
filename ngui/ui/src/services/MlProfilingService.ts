@@ -12,7 +12,7 @@ const useGetToken = () => {
   const { organizationId } = useOrganizationInfo();
 
   const {
-    apiData: { token = "" }
+    apiData: { token = "", md5_token: md5Token = "" }
   } = useApiData(GET_PROFILING_TOKEN);
 
   const { isLoading, shouldInvoke } = useApiState(GET_PROFILING_TOKEN, { organizationId });
@@ -23,7 +23,7 @@ const useGetToken = () => {
     }
   }, [shouldInvoke, dispatch, organizationId]);
 
-  return { isLoading, token };
+  return { isLoading, token, md5Token };
 };
 
 function MlProfilingService() {

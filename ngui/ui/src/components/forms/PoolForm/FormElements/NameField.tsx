@@ -4,7 +4,12 @@ import { FIELD_NAMES } from "../constants";
 
 const FIELD_NAME = FIELD_NAMES.NAME;
 
-const NameField = ({ isLoading = false, readOnly = false }) => (
+type NameFieldProps = {
+  isLoading?: boolean;
+  readOnly?: boolean;
+};
+
+const NameField = ({ isLoading = false, readOnly = false }: NameFieldProps) => (
   <TextInput
     name={FIELD_NAME}
     label={<FormattedMessage id="name" />}

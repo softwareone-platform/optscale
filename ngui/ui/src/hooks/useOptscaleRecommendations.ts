@@ -26,7 +26,7 @@ import ShortLivingInstances from "containers/RecommendationsOverviewContainer/re
 import VolumesNotAttachedForLongTime from "containers/RecommendationsOverviewContainer/recommendations/VolumesNotAttachedForLongTime";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 
-const NEBIUS_RECOMMENDATIONS = [AbandonedImages, CvocAgreementOpportunities, AbandonedNebiusS3Buckets, NebiusMigration];
+const NEBIUS_RECOMMENDATIONS = [CvocAgreementOpportunities, AbandonedNebiusS3Buckets, NebiusMigration];
 
 export const NEBIUS_RECOMMENDATION_TYPES = NEBIUS_RECOMMENDATIONS.map((Recommendation) => new Recommendation().type);
 
@@ -56,6 +56,7 @@ export const useOptscaleRecommendations = () => {
       AbandonedInstances,
       PublicS3Buckets,
       ObsoleteImages,
+      AbandonedImages,
       ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
     ];
 

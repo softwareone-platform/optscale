@@ -32,6 +32,8 @@ class TestExecutorsApi(TestProfilingBase):
         }
         _, self.cloud_acc = self.create_cloud_account(
             self.org['id'], config, auth_user_id=self.user_id)
+        _, resp = self.client.profiling_token_get(self.org['id'])
+        self.profiling_token = resp['token']
 
     def test_list_executors(self):
         code, task = self.client.task_create(
@@ -271,3 +273,12 @@ class TestExecutorsApi(TestProfilingBase):
             self.org['id'], task['id'], token='123')
         self.assertEqual(code, 403)
         self.assertEqual(resp['error']['error_code'], 'OE0234')
+
+        code, resp = self.client.executor_list(
+            self.org['id'], run_ids=r1['_id'],
+            token=self.get_md5_token_hash(self.profiling_token)
+        )
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['executors']), 1)
+        self.assertEqual(resp['executors'][0]['instance_id'],
+                         valid_resource['cloud_resource_id'])

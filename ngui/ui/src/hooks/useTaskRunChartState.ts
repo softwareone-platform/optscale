@@ -197,7 +197,14 @@ const useGridTypeActions = ({ setSaved, setDashboard }) => {
   return { updateGridType };
 };
 
-export const useTaskRunChartState = ({ taskId, implementedMetricsBreakdownNames, breakdownNames }) => {
+export const useTaskRunChartState = ({
+  organizationId,
+  arceeToken,
+  taskId,
+  implementedMetricsBreakdownNames,
+  breakdownNames,
+  isPublicRun = false
+}) => {
   const { dashboardId: selectedDashboardId, setDashboardId: setSelectedDashboardId } = useTaskRunsDashboardState(taskId);
 
   const { useGetAll, useGetOneOnDemand, useUpdate, useDelete, useCreate } = LayoutsService();
@@ -206,7 +213,14 @@ export const useTaskRunChartState = ({ taskId, implementedMetricsBreakdownNames,
   const { onCreate } = useCreate();
   const { onUpdate } = useUpdate();
 
-  const [saved, setSaved] = useState(true);
+  const [saved, setSavedState] = useState(true);
+
+  const setSaved = (newState: boolean) => {
+    if (isPublicRun) {
+      return;
+    }
+    setSavedState(newState);
+  };
 
   const initializeDashboardState = useCallback(
     (dashboard) => {
@@ -241,11 +255,13 @@ export const useTaskRunChartState = ({ taskId, implementedMetricsBreakdownNames,
 
   const getAllLayoutsApiParams = useMemo(
     () => ({
+      organizationId,
+      arceeToken,
       layoutType: LAYOUT_TYPES.ML_RUN_CHARTS_DASHBOARD,
       entityId: taskId,
       includeShared: true
     }),
-    [taskId]
+    [arceeToken, organizationId, taskId]
   );
 
   const onSuccessGetAllLayouts = useCallback(
@@ -254,12 +270,14 @@ export const useTaskRunChartState = ({ taskId, implementedMetricsBreakdownNames,
         setDashboard(initializeDashboardState(DEFAULT_DASHBOARD));
       }
       if (apiLayouts.find(({ id }) => id === selectedDashboardId)) {
-        onGet(selectedDashboardId).then((dashboardInfo) => {
+        onGet(organizationId, selectedDashboardId, {
+          arceeToken
+        }).then((dashboardInfo) => {
           setDashboard(initializeDashboardState(dashboardInfo));
         });
       }
     },
-    [initializeDashboardState, onGet, selectedDashboardId]
+    [arceeToken, initializeDashboardState, onGet, organizationId, selectedDashboardId]
   );
 
   const { layouts, currentEmployeeId, isLoading: isGetAllLoading } = useGetAll(getAllLayoutsApiParams, onSuccessGetAllLayouts);
@@ -271,7 +289,9 @@ export const useTaskRunChartState = ({ taskId, implementedMetricsBreakdownNames,
       setDashboard(initializeDashboardState(DEFAULT_DASHBOARD));
       setSelectedDashboardId(newDashboardId);
     } else {
-      onGet(newDashboardId).then((dashboardInfo) => {
+      onGet(organizationId, newDashboardId, {
+        arceeToken
+      }).then((dashboardInfo) => {
         setDashboard(initializeDashboardState(dashboardInfo));
         setSelectedDashboardId(newDashboardId);
       });

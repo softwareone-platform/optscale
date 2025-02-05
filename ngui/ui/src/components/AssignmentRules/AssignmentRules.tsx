@@ -4,7 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import AssignmentRulesTable from "components/AssignmentRulesTable";
 import ContentBackdropLoader from "components/ContentBackdropLoader";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { POOLS } from "urls";
 import { SPACING_2 } from "utils/layouts";
@@ -37,7 +37,13 @@ const AssignmentRules = ({ rules, managedPools, onUpdatePriority, isLoadingProps
               />
             </div>
             <div>
-              <InlineSeverityAlert messageId="assignmentRulesPageDescription" messageDataTestId="p_environments_list" />
+              <PageContentDescription
+                position="bottom"
+                alertProps={{
+                  messageId: "assignmentRulesPageDescription",
+                  messageDataTestId: "p_environments_list"
+                }}
+              />
             </div>
           </Stack>
         </Box>

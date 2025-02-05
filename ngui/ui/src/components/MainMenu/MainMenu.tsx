@@ -4,11 +4,11 @@ import MenuGroupWrapper from "components/MenuGroupWrapper";
 import MenuItem from "components/MenuItem";
 import ModeWrapper from "components/ModeWrapper";
 import { PRODUCT_TOUR, useProductTour, PRODUCT_TOUR_IDS } from "components/Tour";
-import { useOptScaleMode } from "hooks/useOptScaleMode";
+import { useGetOptscaleMode } from "hooks/coreData";
 import useStyles from "./MainMenu.styles";
 
 const SimpleItem = ({ menuItem }) => {
-  const optScaleMode = useOptScaleMode();
+  const { optscaleMode } = useGetOptscaleMode();
 
   return (
     <ModeWrapper mode={menuItem.mode}>
@@ -19,7 +19,7 @@ const SimpleItem = ({ menuItem }) => {
         messageId={
           typeof menuItem.messageId === "function"
             ? menuItem.messageId({
-                mode: optScaleMode
+                mode: optscaleMode
               })
             : menuItem.messageId
         }

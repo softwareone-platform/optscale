@@ -79,10 +79,12 @@ class TestMyTasksApi(TestApiBase):
         self.assertEqual(code, 201)
 
         self._mock_auth_user(self.user_id)
-        patch('rest_api.rest_api_server.handlers.v2.my_tasks.MyTasksAsyncHandler.'
-              'check_cluster_secret', return_value=False).start()
-        patch('rest_api.rest_api_server.controllers.assignment.AssignmentController.'
-              '_authorize_action_for_pool', return_value=True).start()
+        patch('rest_api.rest_api_server.handlers.v2.my_tasks.'
+              'MyTasksAsyncHandler.check_cluster_secret',
+              return_value=False).start()
+        patch('rest_api.rest_api_server.controllers.assignment.'
+              'AssignmentController._authorize_action_for_pool',
+              return_value=True).start()
 
     def test_get_my_tasks_no_types(self):
         code, tasks = self.client.my_tasks_get(self.org_id)
@@ -157,7 +159,8 @@ class TestMyTasksApi(TestApiBase):
         self.assertEqual(code, 201)
         return request
 
-    def add_expense_records(self, pool_id=None, cost=1, date=None, owner_id=None):
+    def add_expense_records(self, pool_id=None, cost=1, date=None,
+                            owner_id=None):
         if not date:
             date = utcnow()
         date = date.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -176,7 +179,8 @@ class TestMyTasksApi(TestApiBase):
             'first_seen': int(date.timestamp()),
             '_first_seen_date': date,
             'last_seen': int(date.timestamp()),
-            '_last_seen_date': date
+            '_last_seen_date': date,
+            'deleted_at': 0
         }
         self.resources_collection.insert_one(resource)
         self.expenses.append({

@@ -30,10 +30,11 @@ export const HOME = "/";
 export const getHomeUrl = (organizationId) =>
   organizationId ? concatenateUrl([HOME, `?organizationId=${organizationId}`], "", "") : HOME;
 export const SHOW_POLICY_QUERY_PARAM = "showPolicy";
-export const HOME_FIRST_TIME = `/?${SHOW_POLICY_QUERY_PARAM}=true`;
 export const LOGIN = "/login";
 export const REGISTER = "/register";
 export const INVITED = "/invited";
+export const INITIALIZE = "/initialize";
+export const RESET_PASSWORD = "/reset-password";
 export const ACCEPT_INVITATION = "/accept-invitation";
 export const ACCEPT_INVITATIONS = "/accept-invitations";
 export const PASSWORD_RECOVERY = "/password-recovery";
@@ -334,6 +335,18 @@ const ML_LAUNCH_BASE = "launch";
 export const ML_RUNSETS_BASE = "runsets";
 export const ML_RUN_BASE = "run";
 
+export const ML_PUBLIC_RUN_BASE = "run";
+export const ML_PUBLIC_RUN = concatenateUrl([ML_PUBLIC_RUN_BASE, ML_TASK_RUN_IDENTIFIER]);
+export const getMlPublicRunUrl = (runId, { organizationId, arceeToken }) => {
+  const urlBase = ML_PUBLIC_RUN.replace(ML_TASK_RUN_IDENTIFIER, runId);
+  const searchParams = new URLSearchParams({
+    organizationId,
+    token: arceeToken
+  });
+
+  return `${urlBase}?${searchParams.toString()}`;
+};
+
 export const ML_TASKS = concatenateUrl([ML_TASKS_BASE]);
 export const ML_TASK_CREATE = concatenateUrl([ML_TASKS_BASE, CREATE]);
 
@@ -580,3 +593,5 @@ export const isProduction = () => window.location.origin === PRODUCTION;
 export const isDemo = () => window.location.origin === DEMO;
 
 export const USER_EMAIL_QUERY_PARAMETER_NAME = "userEmail";
+
+export const NEXT_QUERY_PARAMETER_NAME = "next";

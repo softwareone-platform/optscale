@@ -5,6 +5,8 @@ import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
 
+import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
+
 const actionBarDefinition = {
   title: {
     messageId: "settings"
@@ -13,6 +15,7 @@ const actionBarDefinition = {
 
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
+  EMAIL_NOTIFICATIONS: "emailNotifications",
   INVITATIONS: "invitations"
   // MTP_TODO: disabled to meet BDR requirements
   // MODE: "mode",
@@ -33,8 +36,7 @@ const Settings = () => {
       title: SETTINGS_TABS.INVITATIONS,
       dataTestId: `tab_${SETTINGS_TABS.INVITATIONS}`,
       node: <InvitationsContainer />
-    }
-    // MTP_TODO: disabled to meet BDR requirements
+    },
     // {
     //   title: SETTINGS_TABS.MODE,
     //   dataTestId: `tab_${SETTINGS_TABS.MODE}`,
@@ -48,7 +50,12 @@ const Settings = () => {
     //         node: <SshSettingsContainer />
     //       }
     //     ]
-    //   : [])
+    //   : []),
+    {
+      title: SETTINGS_TABS.EMAIL_NOTIFICATIONS,
+      dataTestId: `tab_${SETTINGS_TABS.EMAIL_NOTIFICATIONS}`,
+      node: <UserEmailNotificationSettingsContainer />
+    }
   ];
 
   return (

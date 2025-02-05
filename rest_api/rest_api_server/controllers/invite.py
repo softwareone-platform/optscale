@@ -8,8 +8,11 @@ import tools.optscale_time as opttime
 from etcd import EtcdKeyNotFound
 
 from rest_api.rest_api_server.controllers.base import BaseController
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper)
 from rest_api.rest_api_server.controllers.employee import EmployeeController
+from rest_api.rest_api_server.controllers.employee_email import (
+    EmployeeEmailController)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.enums import InviteAssignmentScopeTypes
 from rest_api.rest_api_server.models.models import (
@@ -57,10 +60,28 @@ class InviteController(BaseController):
 
     def get_invite_expiration_days(self):
         try:
-            invite_expiration_days = int(self._config.read('/restapi/invite_expiration_days').value)
+            invite_expiration_days = int(
+                self._config.read('/restapi/invite_expiration_days').value)
         except EtcdKeyNotFound:
             invite_expiration_days = 30
         return invite_expiration_days
+
+    def _is_invite_email_enabled(self, organization_id, email):
+        exists, info = self.check_user_exists(email)
+        if not exists:
+            return True
+        employee_ctrl = EmployeeController(self.session, self._config)
+        employee = employee_ctrl.list(organization_id,
+                                      auth_user_id=info['id'])
+        if employee:
+            empl_email_ctrl = EmployeeEmailController(
+                self.session, self._config)
+            emails = empl_email_ctrl.list(
+                employee[0]['id'], email_template='invite')
+            if emails['employee_emails'] and not emails['employee_emails'][0][
+                    'enabled']:
+                return False
+        return True
 
     def create(self, email, user_id, user_info, invite_assignments: 'list',
                show_link=False):
@@ -136,9 +157,10 @@ class InviteController(BaseController):
         invite_url = self.generate_link(email)
         if show_link:
             invite_dict['url'] = invite_url
-        self.send_notification(
-            email, invite_url, organization.name, organization.id,
-            organization.currency)
+        if self._is_invite_email_enabled(organization.id, email):
+            self.send_notification(
+                email, invite_url, organization.name, organization.id,
+                organization.currency)
         meta = {
             'object_name': organization.name,
             'email': email,
@@ -305,7 +327,8 @@ class InviteController(BaseController):
             base_url=base_url, action='invited', params=params)
         return url
 
-    def send_notification(self, email, url, organization_name, organization_id, currency):
+    def send_notification(self, email, url, organization_name, organization_id,
+                          currency):
         subject = 'OptScale invitation notification'
         template_params = {
             'texts': {

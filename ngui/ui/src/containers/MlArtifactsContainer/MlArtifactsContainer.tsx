@@ -54,8 +54,10 @@ export type TasksFilter = {
 };
 
 type MlArtifactsContainerProps = {
+  organizationId: string;
   runId?: string | string[];
   tasks?: { id: string; name: string }[];
+  arceeToken?: string;
   isLoading?: boolean;
   render: (props: {
     artifacts: Artifact[];
@@ -99,7 +101,14 @@ const getRangeQueryParams = (minRange: number, maxRange: number) => {
   return [minRange, maxRange] as const;
 };
 
-const MlArtifactsContainer = ({ runId, tasks = [], isLoading = false, render }: MlArtifactsContainerProps) => {
+const MlArtifactsContainer = ({
+  organizationId,
+  runId,
+  tasks = [],
+  arceeToken,
+  isLoading = false,
+  render
+}: MlArtifactsContainerProps) => {
   const { useGet } = MlArtifactsService();
 
   const [pageIndex, setPageIndex] = useState(getDefaultPageIndexValue());
@@ -149,9 +158,10 @@ const MlArtifactsContainer = ({ runId, tasks = [], isLoading = false, render }: 
       textLike: searchValue,
       createdAtGt: debouncedRange[0],
       createdAtLt: debouncedRange[1],
-      taskId: appliedFilters[TASKS_FILTER]
+      taskId: appliedFilters[TASKS_FILTER],
+      arceeToken
     }),
-    [pageIndex, runId, searchValue, debouncedRange, appliedFilters]
+    [pageIndex, runId, searchValue, debouncedRange, appliedFilters, arceeToken]
   );
 
   const onSearchChange = (newSearch: string) => {
@@ -177,7 +187,7 @@ const MlArtifactsContainer = ({ runId, tasks = [], isLoading = false, render }: 
     });
   }, [pageIndex, debouncedRange, searchValue, appliedFilters]);
 
-  const { isLoading: isGetArtifactsLoading, data } = useGet(params);
+  const { isLoading: isGetArtifactsLoading, data } = useGet(organizationId, params);
 
   const totalArtifactsCount = data?.total_count ?? 0;
 

@@ -11,11 +11,13 @@ import checkEnvironment from "./checkEnvironment.js";
 import KeeperClient from "./api/keeper/client.js";
 import keeperResolvers from "./graphql/resolvers/keeper.js";
 import slackerResolvers from "./graphql/resolvers/slacker.js";
-import restResolvers from "./graphql/resolvers/restapi.js";
+import authResolvers from "./graphql/resolvers/auth.js";
+import restapiResolvers from "./graphql/resolvers/restapi.js";
 import SlackerClient from "./api/slacker/client.js";
 import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge";
 import { loadFilesSync } from "@graphql-tools/load-files";
 import RestApiClient from "./api/restapi/client.js";
+import AuthClient from "./api/auth/client.js";
 
 checkEnvironment(["UI_BUILD_PATH", "PROXY_URL"]);
 
@@ -28,6 +30,7 @@ interface ContextValue {
     keeper: KeeperClient;
     slacker: SlackerClient;
     restapi: RestApiClient;
+    auth: AuthClient;
   };
 }
 
@@ -41,7 +44,8 @@ const typeDefs = mergeTypeDefs(typesArray);
 const resolvers = mergeResolvers([
   keeperResolvers,
   slackerResolvers,
-  restResolvers,
+  restapiResolvers,
+  authResolvers,
 ]);
 
 // Same ApolloServer initialization as before, plus the drain plugin
@@ -75,6 +79,7 @@ app.use(
           keeper: new KeeperClient({ cache }, token, "http://keeper"),
           slacker: new SlackerClient({ cache }, token, "http://slacker"),
           restapi: new RestApiClient({ cache }, token, "http://restapi"),
+          auth: new AuthClient({ cache }, token, "http://auth"),
         },
       };
     },

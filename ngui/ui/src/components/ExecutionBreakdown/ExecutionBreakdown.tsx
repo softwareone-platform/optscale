@@ -8,7 +8,6 @@ import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import { extent } from "d3-array";
 import { FormattedNumber, useIntl } from "react-intl";
-import { useParams } from "react-router-dom";
 import Button from "components/Button";
 import DynamicFractionDigitsValue, { useFormatDynamicFractionDigitsValue } from "components/DynamicFractionDigitsValue";
 import FormattedDigitalUnit, { IEC_UNITS, formatDigitalUnit } from "components/FormattedDigitalUnit";
@@ -59,7 +58,16 @@ const GridButton = ({ gridType, onClick }) => (
   </ToggleButtonGroup>
 );
 
-const ExecutionBreakdown = ({ breakdown, milestones, reachedGoals = {}, taskId }) => {
+const ExecutionBreakdown = ({
+  organizationId,
+  isPublicRun = false,
+  arceeToken,
+  breakdown,
+  stages,
+  milestones,
+  reachedGoals = {},
+  taskId
+}) => {
   const milestonesGroupedByTimeTuples = getMilestoneTuplesGroupedByTime(milestones);
 
   const theme = useTheme();
@@ -230,18 +238,19 @@ const ExecutionBreakdown = ({ breakdown, milestones, reachedGoals = {}, taskId }
   };
 
   const openSideModal = useOpenSideModal();
-  const { runId } = useParams();
 
   const [highlightedStage, setHighlightedStage] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState(null);
 
   const onStageSelectClick = () =>
     openSideModal(SelectStageOrMilestoneModal, {
-      runId,
       highlightedStage,
       setHighlightedStage,
       setSelectedSegment,
-      secondsTimeRange: xValuesRange
+      secondsTimeRange: xValuesRange,
+      stages,
+      milestones,
+      milestonesGroupedByTimeTuples
     });
 
   const getSelectedSegment = () => selectedSegment ?? xValuesRange;
@@ -269,9 +278,12 @@ const ExecutionBreakdown = ({ breakdown, milestones, reachedGoals = {}, taskId }
     updateGridType,
     isLoadingProps
   } = useTaskRunChartState({
+    organizationId,
+    arceeToken,
     taskId,
     implementedMetricsBreakdownNames,
-    breakdownNames
+    breakdownNames,
+    isPublicRun
   });
 
   const {
@@ -353,6 +365,7 @@ const ExecutionBreakdown = ({ breakdown, milestones, reachedGoals = {}, taskId }
             updateDashboard={({ name, shared }) => updateDashboard({ name, shared })}
             createDashboard={({ name, shared }) => createDashboard({ name, shared })}
             removeDashboard={(id) => removeDashboard(id)}
+            isPublicRun={isPublicRun}
             isLoadingProps={isLoadingProps}
           />
         </Box>

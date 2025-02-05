@@ -1,24 +1,21 @@
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import ButtonLoader from "components/ButtonLoader";
-import { PROVIDERS } from "hooks/useNewAuthorization";
 import MicrosoftIcon from "icons/MicrosoftIcon";
+import { AUTH_PROVIDERS } from "utils/constants";
 import { microsoftOAuthConfiguration } from "utils/integrations";
 
-const handleClick = async (instance, callback, setIsAuthInProgress) => {
+const handleClick = async (instance, callback) => {
   try {
     const { tenantId, idToken } = await instance.loginPopup({ prompt: "select_account" });
-    callback(PROVIDERS.MICROSOFT, { token: idToken, tenant_id: tenantId });
+    callback({ provider: AUTH_PROVIDERS.MICROSOFT, token: idToken, tenantId });
   } catch (error) {
     console.log("Microsoft login failure ", error);
-    setIsAuthInProgress(false);
   }
 };
 
-const MicrosoftSignInButton = ({ thirdPartySignIn, setIsAuthInProgress, isAuthInProgress, isRegistrationInProgress }) => {
+const MicrosoftSignInButton = ({ handleSignIn, isLoading, disabled }) => {
   const { instance, inProgress } = useMsal();
-
-  const isLoading = isAuthInProgress || isRegistrationInProgress;
 
   const environmentNotSet = !microsoftOAuthConfiguration.auth.clientId;
 
@@ -28,11 +25,10 @@ const MicrosoftSignInButton = ({ thirdPartySignIn, setIsAuthInProgress, isAuthIn
       messageId="microsoft"
       size="medium"
       onClick={() => {
-        setIsAuthInProgress(true);
-        handleClick(instance, thirdPartySignIn, setIsAuthInProgress);
+        handleClick(instance, handleSignIn);
       }}
       startIcon={<MicrosoftIcon />}
-      disabled={inProgress === InteractionStatus.Startup || environmentNotSet}
+      disabled={inProgress === InteractionStatus.Startup || environmentNotSet || disabled}
       fullWidth
       isLoading={isLoading}
       tooltip={{

@@ -7,6 +7,7 @@ from tools.cloud_adapter.clouds.azure_tenant import AzureTenant
 from tools.cloud_adapter.clouds.kubernetes import Kubernetes
 from tools.cloud_adapter.clouds.environment import Environment
 from tools.cloud_adapter.clouds.gcp import Gcp
+from tools.cloud_adapter.clouds.gcp_tenant import GcpTenant
 from tools.cloud_adapter.clouds.nebius import Nebius
 from tools.cloud_adapter.clouds.databricks import Databricks
 
@@ -19,6 +20,7 @@ SUPPORTED_BILLING_TYPES = {
     'alibaba_cnr': Alibaba,
     'environment': Environment,
     'gcp_cnr': Gcp,
+    'gcp_tenant': GcpTenant,
     'nebius': Nebius,
     'databricks': Databricks
 }

@@ -1,9 +1,12 @@
+import hashlib
+from unittest.mock import patch, PropertyMock
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
-from rest_api.rest_api_server.tests.unittests.test_profiling_base import ArceeMock
+from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
+    ArceeMock
+)
 from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import ProfilingToken
-from unittest.mock import patch, PropertyMock
 
 
 class TestProfilingTokensApi(TestApiBase):
@@ -42,6 +45,8 @@ class TestProfilingTokensApi(TestApiBase):
         code, resp = self.client.profiling_token_get(self.org['id'])
         self.assertEqual(code, 200)
         self.assertEqual(token1, resp)
+        self.assertEqual(resp['md5_token'], hashlib.md5(
+            resp['token'].encode('utf-8')).hexdigest())
 
     def test_create_on_another_api(self):
         tokens = self._get_db_profiling_tokens(self.org['id'])

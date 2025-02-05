@@ -8,7 +8,9 @@ it("renders without crashing", () => {
   root.render(
     <TestProvider
       state={{
-        auth: { GET_TOKEN: { userId: "123" } }
+        initial: {
+          user_id: "123"
+        }
       }}
     >
       <ProfileMenuContainer name={"profile-name"} />

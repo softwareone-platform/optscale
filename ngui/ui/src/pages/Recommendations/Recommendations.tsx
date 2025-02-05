@@ -1,14 +1,13 @@
 import CachedOutlinedIcon from "@mui/icons-material/CachedOutlined";
 import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import Stack from "@mui/material/Stack";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import ActionBar from "components/ActionBar";
 import DataSourceMultiSelect from "components/DataSourceMultiSelect";
 import Mocked, { MESSAGE_TYPES } from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
 import RecommendationsOverviewContainer from "containers/RecommendationsOverviewContainer";
 import RecommendationsOverviewContainerMocked from "containers/RecommendationsOverviewContainer/RecommendationsOverviewContainerMocked";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import RecommendationsOverviewService from "services/RecommendationsOverviewService";
@@ -49,9 +48,7 @@ const getActionBar = ({ forceCheck, isForceCheckAvailable }) => ({
 const RECOMMENDABLE_DATA_SOURCES_BASE = [AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR];
 
 const RecommendationsPage = ({ isMock }) => {
-  const {
-    apiData: { cloudAccounts = [] }
-  } = useApiData(GET_DATA_SOURCES);
+  const dataSources = useAllDataSources();
 
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
   const [selectedDataSourceIds, setSelectedDataSourceIds] = useSyncQueryParamWithState({
@@ -62,7 +59,7 @@ const RecommendationsPage = ({ isMock }) => {
 
   const selectedDataSourceTypes: string[] = Array.from(
     new Set(
-      cloudAccounts
+      dataSources
         .filter((cloudAccount) => selectedDataSourceIds.includes(cloudAccount.id))
         .map((cloudAccount) => cloudAccount.type)
     )
@@ -78,8 +75,8 @@ const RecommendationsPage = ({ isMock }) => {
         <Stack spacing={SPACING_2} sx={{ minHeight: "100%", width: "100%" }}>
           <div>
             <DataSourceMultiSelect
-              allDataSources={cloudAccounts.filter((cloudAccount) =>
-                [...RECOMMENDABLE_DATA_SOURCES_BASE, ...(isNebiusConnectionEnabled ? [NEBIUS] : [])].includes(cloudAccount.type)
+              allDataSources={dataSources.filter((dataSource) =>
+                [...RECOMMENDABLE_DATA_SOURCES_BASE, ...(isNebiusConnectionEnabled ? [NEBIUS] : [])].includes(dataSource.type)
               )}
               dataSourceIds={selectedDataSourceIds}
               onChange={setSelectedDataSourceIds}

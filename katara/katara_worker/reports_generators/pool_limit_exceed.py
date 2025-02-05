@@ -34,7 +34,7 @@ class PoolExceed(Base):
             return
         return {
             'email': [self.report_data['user_email']],
-            'template_type': 'pool_exceed_report',
+            'template_type': self.get_template_type(__file__),
             'subject': 'Action Required: Hystax OptScale Pool Limit '
                        'Exceed Alert',
             'template_params': {

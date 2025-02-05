@@ -1,14 +1,11 @@
 import { useDispatch } from "react-redux";
-import { GET_TOKEN } from "api/auth/actionTypes";
 import { signOut } from "utils/api";
-import { useApiData } from "./useApiData";
+import { useGetToken } from "./useGetToken";
 
 export const useSignOut = () => {
   const dispatch = useDispatch();
 
-  const {
-    apiData: { userEmail }
-  } = useApiData(GET_TOKEN);
+  const { userEmail } = useGetToken();
 
   return () =>
     signOut(dispatch, {

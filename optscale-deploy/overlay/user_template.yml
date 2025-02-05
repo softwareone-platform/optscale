@@ -108,3 +108,8 @@ grafana:
   env:
     htpasswd_user: userforgrafana
     htpasswd_pass: passwordforgrafana
+
+# Public ip of OptScale VM used in external integrations like emails,
+# google calendar etc. Defaults to internal ip, change it if internal ip
+# is not accessible in your network
+public_ip:

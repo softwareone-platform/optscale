@@ -1,7 +1,8 @@
 import logging
 
 from bumiworker.bumiworker.consts import ArchiveReason
-from bumiworker.bumiworker.modules.inactive_users_base import ArchiveInactiveUsersBase
+from bumiworker.bumiworker.modules.inactive_users_base import (
+    ArchiveInactiveUsersBase)
 from bumiworker.bumiworker.modules.recommendations.inactive_users import (
     InactiveUsers as InactiveUsersRecommendation)
 
@@ -12,6 +13,7 @@ LOG = logging.getLogger(__name__)
 class InactiveUsers(ArchiveInactiveUsersBase, InactiveUsersRecommendation):
     SUPPORTED_CLOUD_TYPES = [
         'aws_cnr',
+        'gcp_cnr',
         'nebius'
     ]
 

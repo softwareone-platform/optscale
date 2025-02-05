@@ -1,9 +1,9 @@
 import { FormattedMessage } from "react-intl";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { AWS_S3, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import { AWS_S3, GCP_CLOUD_STORAGE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, resource, resourceLocation } from "utils/columns";
-import { AWS_CNR, NEBIUS } from "utils/constants";
+import { AWS_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
 
 const columns = [
@@ -58,9 +58,9 @@ class PublicS3Buckets extends BaseRecommendation {
 
   emptyMessageId = "noPublicS3Buckets";
 
-  services = [AWS_S3, NEBIUS_SERVICE];
+  services = [AWS_S3, NEBIUS_SERVICE, GCP_CLOUD_STORAGE];
 
-  appliedDataSources = [AWS_CNR, NEBIUS];
+  appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
   categories = [CATEGORY_SECURITY];
 

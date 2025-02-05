@@ -43,6 +43,7 @@ from aliyunsdkrds.endpoint import endpoint_data
 from aliyunsdkrds.request.v20140815 import (
     DescribeAvailableClassesRequest,
     DescribeDBInstancesRequest,
+    DescribeRegionsRequest as DescribeRdsRegionsRequest,
     DescribeTagsRequest as DescribeRdsTagsRequest,
     DescribeDBInstanceAttributeRequest,
 )
@@ -269,6 +270,11 @@ class Alibaba(CloudBase):
         request = DescribeRegionsRequest.DescribeRegionsRequest()
         request.set_AcceptLanguage('en-US')  # The default is Chinese
         regions = self._send_request(request)['Regions']['Region']
+        return self._exclude_closed_regions(regions)
+
+    def _list_rds_region_details(self):
+        request = DescribeRdsRegionsRequest.DescribeRegionsRequest()
+        regions = self._send_request(request)['Regions']['RDSRegion']
         return self._exclude_closed_regions(regions)
 
     def _find_region(self, id_or_name):
@@ -641,11 +647,8 @@ class Alibaba(CloudBase):
                 for r in self._list_region_details()]
 
     def rds_instance_discovery_calls(self):
-        excluded_regions = ['cn-wuhan-lr']
-        # rds instances discover in this regions raises error for some reasons
         return [(self._discover_region_rds_instances, (r,))
-                for r in self._list_region_details()
-                if r['RegionId'] not in excluded_regions]
+                for r in self._list_rds_region_details()]
 
     def ip_address_discovery_calls(self):
         return [(self._discover_ip_addresses, (r,))
@@ -713,6 +716,9 @@ class Alibaba(CloudBase):
             'cn-wulanchabu': {
                 'name': 'China (Ulanqab)',
                 'longitude': 113.0597863, 'latitude': 41.0177905},
+            'cn-wulanchabu-acdr-1': {
+                'name': 'Wulanchabu HDG ACDR',
+                'longitude': 113.132585, 'latitude': 40.994786},
             'cn-hangzhou': {
                 'name': 'China (Hangzhou)',
                 'longitude': 120.0314647, 'latitude': 30.2613156},

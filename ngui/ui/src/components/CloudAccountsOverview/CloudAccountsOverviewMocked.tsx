@@ -8,7 +8,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 16,
+          resources: 16,
           last_month_cost: 18560.75036486765,
           forecast: 20110.78,
           cost: 12785.47
@@ -20,7 +20,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 610,
+          resources: 610,
           last_month_cost: 40120.98,
           forecast: 35270.79,
           cost: 28385.59
@@ -32,7 +32,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 5,
+          resources: 5,
           last_month_cost: 11750,
           forecast: 10750.8,
           cost: 6102.09
@@ -44,7 +44,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 5,
+          resources: 5,
           last_month_cost: 6500.5523346274,
           forecast: 7850.19,
           cost: 4334.18
@@ -56,7 +56,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 12,
+          resources: 12,
           last_month_cost: 5900.5523346274,
           forecast: 5226.19,
           cost: 2512.18
@@ -68,7 +68,7 @@ const CloudAccountsOverviewMocked = () => (
       {
         config: {},
         details: {
-          tracked: 125,
+          resources: 125,
           last_month_cost: 0,
           forecast: 203.6,
           cost: 203.59941599999996

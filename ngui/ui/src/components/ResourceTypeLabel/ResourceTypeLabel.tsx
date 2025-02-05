@@ -1,14 +1,80 @@
+import { ReactNode } from "react";
 import DnsOutlinedIcon from "@mui/icons-material/DnsOutlined";
 import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import { FormattedMessage } from "react-intl";
 import Icon from "components/Icon";
 import IconLabel from "components/IconLabel";
 
-const DefaultLabel = ({ label }) => label || null;
+type ClusterIconProps = {
+  dataTestId: string;
+  hasRightMargin?: boolean;
+};
 
-const ClusterLabel = ({ label, iconDataTestId }) => (
+type EnvironmentIconProps = {
+  dataTestId: string;
+  hasRightMargin?: boolean;
+};
+
+type DefaultLabelProps = {
+  label: ReactNode;
+};
+
+type ClusterLabelProps = {
+  label: ReactNode;
+  iconDataTestId: string;
+};
+
+type EnvironmentLabelProps = {
+  label: ReactNode;
+  iconDataTestId: string;
+};
+
+type EnvironmentClusterLabelProps = {
+  label: ReactNode;
+  iconDataTestId: string;
+};
+
+type ResourceInfo = {
+  isEnvironment: boolean;
+  shareable: boolean;
+  clusterTypeId: string;
+  resourceType: string;
+};
+
+type ResourceTypeLabelProps = {
+  resourceInfo: ResourceInfo;
+  iconDataTestId: string;
+};
+
+const ClusterIcon = ({ dataTestId, hasRightMargin = false }: ClusterIconProps) => (
+  <Icon
+    icon={GroupWorkOutlinedIcon}
+    dataTestId={dataTestId}
+    hasRightMargin={hasRightMargin}
+    tooltip={{
+      show: true,
+      messageId: "cluster"
+    }}
+  />
+);
+
+const EnvironmentIcon = ({ dataTestId, hasRightMargin = false }: EnvironmentIconProps) => (
+  <Icon
+    icon={DnsOutlinedIcon}
+    dataTestId={dataTestId}
+    hasRightMargin={hasRightMargin}
+    tooltip={{
+      show: true,
+      messageId: "environment"
+    }}
+  />
+);
+
+const DefaultLabel = ({ label }: DefaultLabelProps) => label || null;
+
+const ClusterLabel = ({ label, iconDataTestId }: ClusterLabelProps) => (
   <IconLabel
-    icon={<Icon icon={GroupWorkOutlinedIcon} dataTestId={iconDataTestId} hasRightMargin />}
+    icon={<ClusterIcon dataTestId={iconDataTestId} hasRightMargin />}
     label={
       <span>
         {label} (<FormattedMessage id="cluster" />)
@@ -17,9 +83,9 @@ const ClusterLabel = ({ label, iconDataTestId }) => (
   />
 );
 
-const EnvironmentLabel = ({ label, iconDataTestId }) => (
+const EnvironmentLabel = ({ label, iconDataTestId }: EnvironmentLabelProps) => (
   <IconLabel
-    icon={<Icon icon={DnsOutlinedIcon} dataTestId={iconDataTestId} hasRightMargin />}
+    icon={<EnvironmentIcon dataTestId={iconDataTestId} hasRightMargin />}
     label={
       <span>
         {label} (<FormattedMessage id="SharedEnvironment" />)
@@ -28,12 +94,12 @@ const EnvironmentLabel = ({ label, iconDataTestId }) => (
   />
 );
 
-const EnvironmentClusterLabel = ({ label, iconDataTestId }) => (
+const EnvironmentClusterLabel = ({ label, iconDataTestId }: EnvironmentClusterLabelProps) => (
   <IconLabel
     icon={
       <>
-        <Icon key="environment" icon={DnsOutlinedIcon} dataTestId={`environment_${iconDataTestId}`} hasRightMargin />
-        <Icon key="cluster" icon={GroupWorkOutlinedIcon} dataTestId={`cluster_${iconDataTestId}`} hasRightMargin />
+        <EnvironmentIcon key="environment" dataTestId={`environment_${iconDataTestId}`} hasRightMargin />
+        <ClusterIcon key="cluster" dataTestId={`cluster_${iconDataTestId}`} hasRightMargin />
       </>
     }
     label={
@@ -44,7 +110,7 @@ const EnvironmentClusterLabel = ({ label, iconDataTestId }) => (
   />
 );
 
-const getLabelComponent = (resourceInfo) => {
+const getLabelComponent = (resourceInfo: ResourceInfo) => {
   if (resourceInfo.isEnvironment || resourceInfo.shareable) {
     return resourceInfo.clusterTypeId ? EnvironmentClusterLabel : EnvironmentLabel;
   }
@@ -54,7 +120,7 @@ const getLabelComponent = (resourceInfo) => {
   return DefaultLabel;
 };
 
-const ResourceTypeLabel = ({ resourceInfo, iconDataTestId }) => {
+const ResourceTypeLabel = ({ resourceInfo, iconDataTestId }: ResourceTypeLabelProps) => {
   const LabelComponent = getLabelComponent(resourceInfo);
   return <LabelComponent label={resourceInfo.resourceType} iconDataTestId={iconDataTestId} />;
 };

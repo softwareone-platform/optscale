@@ -7,6 +7,9 @@ from kombu.log import get_logger
 
 
 from katara.katara_worker.consts import TaskState
+from katara.katara_worker.reports_generators.base import (
+    MODULE_NAME_EMAIL_TEMPLATE
+)
 from katara.katara_worker.reports_generators.report import create_report
 
 
@@ -272,10 +275,49 @@ class SetGeneratingReportData(SetCompleted):
             result['user_role'] = user_role
             new_tasks.append({
                 'schedule_id': task['schedule_id'],
-                'state': TaskState.GENERATING_DATA,
+                'state': TaskState.CHECKING_EMAIL_SETTINGS,
                 'result': json.dumps(result),
                 'parent_id': task['id']})
         self.katara_cl.tasks_create(tasks=new_tasks)
+        super().execute()
+
+
+class CheckingEmployeeEmailSettings(CheckTimeoutThreshold):
+    def execute(self):
+        _, task = self.katara_cl.task_get(
+            self.body['task_id'], expanded=True)
+        schedule = task.get('schedule') or {}
+        organization_id = schedule.get('recipient', {}).get('scope_id')
+        result = self._load_result(task['result'])
+        auth_user_id = result['user_role']['user_id']
+        _, employees = self.rest_cl.employee_list(organization_id)
+        employee = next((x for x in employees['employees']
+                         if x['auth_user_id'] == auth_user_id), None)
+        if not employee:
+            LOG.info('Employee not found, completing task %s',
+                     self.body['task_id'])
+            SetCompleted(body=self.body, message=self.message,
+                         config_cl=self.config_cl,
+                         on_continue_cb=self.on_continue_cb,
+                         on_complete_cb=self.on_complete_cb).execute()
+            return
+        module_name = schedule.get('report', {}).get('module_name')
+        email_template = MODULE_NAME_EMAIL_TEMPLATE[module_name]
+        _, email_templates = self.rest_cl.employee_emails_get(
+            employee['id'], email_template=email_template)
+        if (not email_templates.get('employee_emails') or
+                not email_templates['employee_emails'][0]['enabled']):
+            LOG.info('Employee email %s for employee %s is disabled, '
+                     'completing task %s', module_name, auth_user_id,
+                     self.body['task_id'])
+            SetCompleted(body=self.body, message=self.message,
+                         config_cl=self.config_cl,
+                         on_continue_cb=self.on_continue_cb,
+                         on_complete_cb=self.on_complete_cb).execute()
+            return
+        self.katara_cl.task_update(
+            self.body['task_id'], result=json.dumps(result),
+            state=TaskState.GENERATING_DATA)
         super().execute()
 
 

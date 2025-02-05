@@ -795,6 +795,20 @@ class TestOrganizationConstraints(TestApiBase):
         self.assertNotIn(
             'constraint', resp['organization_constraints'][0].keys())
 
+    def test_list_constraints_with_zero_hit_days(self):
+        constr = self.create_org_constraint(self.org_id, self.pool_id)
+        self.create_org_limit_hit(self.org_id, self.pool_id,
+                                  constraint_id=constr['id'])
+        code, resp = self.client.organization_constraint_list(self.org_id,
+                                                              hit_days=0)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['organization_constraints']), 3)
+        resp_constraint = [x for x in resp['organization_constraints']
+                           if x['id'] == constr['id']][0]
+        self.assertEqual(len(resp_constraint['limit_hits']), 0)
+        self.assertNotIn(
+            'constraint', resp['organization_constraints'][0].keys())
+
     def test_limit_hit_with_invalid_hit_days(self):
         code, resp = self.client.organization_constraint_list(self.org_id,
                                                               hit_days='str')

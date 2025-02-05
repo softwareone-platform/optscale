@@ -463,10 +463,6 @@ class AvailableFiltersAsyncHandler(FilteredExpensesBaseAsyncHandler):
                 description: |
                     Not found:
                     - OE0002: Organization not found
-            424:
-                description: |
-                    Failed dependency:
-                    - OE0445: Organization doesn't have any cloud accounts connected
         security:
         - token: []
         - secret: []

@@ -2,10 +2,9 @@ import { useMemo } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import PageContentDescription from "components/PageContentDescription/PageContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DeleteMlMetricModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
@@ -17,7 +16,6 @@ import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { ML_METRIC_CREATE, getEditMetricUrl } from "urls";
 import { dynamicFractionDigitsValue, name, tendency, text } from "utils/columns";
 import aggregateFunction from "utils/columns/aggregateFunction";
-import { SPACING_2 } from "utils/layouts";
 
 const actionBarDefinition = {
   title: {
@@ -108,29 +106,28 @@ const MlMetrics = ({ metrics, isLoading }) => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2}>
-          <div>
-            {isLoading ? (
-              <TableLoader />
-            ) : (
-              <Table
-                data={memoizedMetrics}
-                columns={columns}
-                actionBar={{
-                  show: true,
-                  definition: tableActionBarDefinition
-                }}
-                localization={{
-                  emptyMessageId: "noMetrics"
-                }}
-                pageSize={50}
-              />
-            )}
-          </div>
-          <div>
-            <InlineSeverityAlert messageId="mlMetricsDescription" />
-          </div>
-        </Stack>
+        {isLoading ? (
+          <TableLoader />
+        ) : (
+          <Table
+            data={memoizedMetrics}
+            columns={columns}
+            actionBar={{
+              show: true,
+              definition: tableActionBarDefinition
+            }}
+            localization={{
+              emptyMessageId: "noMetrics"
+            }}
+            pageSize={50}
+          />
+        )}
+        <PageContentDescription
+          position="bottom"
+          alertProps={{
+            messageId: "mlMetricsDescription"
+          }}
+        />
       </PageContentWrapper>
     </>
   );

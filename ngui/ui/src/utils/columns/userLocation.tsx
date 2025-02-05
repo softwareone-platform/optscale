@@ -1,18 +1,13 @@
 import { FormattedMessage } from "react-intl";
-import { GET_DATA_SOURCES } from "api/restapi/actionTypes";
 import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useApiData } from "hooks/useApiData";
+import { useAllDataSources } from "hooks/coreData";
 
-const Cell = ({
-  row: {
-    original: { cloud_account_id: dataSourceId, cloud_account_name: dataSourceName, cloud_type: dataSourceType, region }
-  }
-}) => {
-  const {
-    apiData: { cloudAccounts: dataSources = [] }
-  } = useApiData(GET_DATA_SOURCES);
+const Cell = ({ row: { original } }) => {
+  const { cloud_account_id: dataSourceId, cloud_account_name: dataSourceName, cloud_type: dataSourceType, region } = original;
+
+  const dataSources = useAllDataSources();
 
   return (
     <CaptionedCell caption={region}>

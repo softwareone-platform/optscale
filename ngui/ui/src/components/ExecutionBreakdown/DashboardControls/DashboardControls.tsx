@@ -16,6 +16,7 @@ const DashboardControls = ({
   updateDashboard,
   createDashboard,
   removeDashboard,
+  isPublicRun,
   isLoadingProps = {}
 }) => {
   const isOwnedDashboard = currentEmployeeId === dashboard.ownerId;
@@ -49,22 +50,26 @@ const DashboardControls = ({
           isLoading={isLoadingProps.isSetupLoading || isLoadingProps.isSelectNewLoading}
         />
       </Box>
-      <div>
-        <IconButton
-          icon={<SaveIcon />}
-          onClick={onSave}
-          isLoading={isLoadingProps.isSetupLoading || isLoadingProps.isSelectNewLoading}
-        />
-      </div>
-      <div>
-        <IconButton
-          icon={<DeleteOutlinedIcon />}
-          color="error"
-          onClick={onDelete}
-          disabled={!isOwnedDashboard || isDefaultDashboard(dashboard.id)}
-          isLoading={isLoadingProps.isSetupLoading || isLoadingProps.isSelectNewLoading}
-        />
-      </div>
+      {isPublicRun ? null : (
+        <>
+          <div>
+            <IconButton
+              icon={<SaveIcon />}
+              onClick={onSave}
+              isLoading={isLoadingProps.isSetupLoading || isLoadingProps.isSelectNewLoading}
+            />
+          </div>
+          <div>
+            <IconButton
+              icon={<DeleteOutlinedIcon />}
+              color="error"
+              onClick={onDelete}
+              disabled={!isOwnedDashboard || isDefaultDashboard(dashboard.id)}
+              isLoading={isLoadingProps.isSetupLoading || isLoadingProps.isSelectNewLoading}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

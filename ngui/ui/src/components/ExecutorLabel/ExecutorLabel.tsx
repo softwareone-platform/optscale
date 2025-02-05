@@ -9,24 +9,24 @@ const PLATFORM_TYPE_TO_DATA_SOURCE_TYPE = Object.freeze({
   aws: AWS_CNR
 });
 
-const DiscoveredExecutorLabel = ({ resource }) => {
+const DiscoveredExecutorLabel = ({ resource, disableLink }) => {
   const { _id: id, cloud_resource_id: cloudResourceId, cloud_account: { type } = {} } = resource;
 
   return (
     <IconLabel
       icon={<CloudTypeIcon type={type} hasRightMargin />}
-      label={<CloudResourceId resourceId={id} cloudResourceIdentifier={cloudResourceId} />}
+      label={<CloudResourceId resourceId={id} cloudResourceIdentifier={cloudResourceId} disableLink={disableLink} />}
     />
   );
 };
 
-const ExecutorLabel = ({ instanceId, platformType, discovered = false, resource }) =>
+const ExecutorLabel = ({ instanceId, platformType, discovered = false, resource, disableLink = false }) =>
   discovered ? (
-    <DiscoveredExecutorLabel resource={resource} />
+    <DiscoveredExecutorLabel resource={resource} disableLink={disableLink} />
   ) : (
     <IconLabel
       icon={<CloudTypeIcon type={PLATFORM_TYPE_TO_DATA_SOURCE_TYPE[platformType]} hasRightMargin />}
-      label={<CloudResourceId cloudResourceIdentifier={instanceId} disableLink={!discovered} />}
+      label={<CloudResourceId cloudResourceIdentifier={instanceId} disableLink />}
     />
   );
 

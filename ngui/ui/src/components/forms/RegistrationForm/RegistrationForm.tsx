@@ -12,7 +12,7 @@ import useStyles from "./RegistrationForm.styles";
 import { FormValues, RegistrationFormProps } from "./types";
 import { getDefaultValues } from "./utils";
 
-const RegistrationForm = ({ onSubmit, isLoading = false, isInvited = false }: RegistrationFormProps) => {
+const RegistrationForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: RegistrationFormProps) => {
   const { classes } = useStyles();
 
   const { email = "" } = getQueryParams() as { email?: string };
@@ -43,6 +43,7 @@ const RegistrationForm = ({ onSubmit, isLoading = false, isInvited = false }: Re
             color="primary"
             customWrapperClass={classes.registerButton}
             isLoading={isLoading}
+            disabled={disabled}
             messageId="register"
             type="submit"
             size="large"

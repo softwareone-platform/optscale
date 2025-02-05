@@ -1,28 +1,41 @@
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
-import { Link as RouterLink } from "react-router-dom";
 import IconLabel from "components/IconLabel";
 import PoolTypeIcon from "components/PoolTypeIcon";
 import SlicedText from "components/SlicedText";
+import { useUpdateScope } from "hooks/useUpdateScope";
 import { getPoolUrl, isPoolIdWithSubPools } from "urls";
 import { formQueryString } from "utils/network";
 
 const SLICED_POOL_NAME_LENGTH = 35;
 
-const getUrl = (poolId, organizationId) => {
+const getUrl = (poolId: string, organizationId: string) => {
   // TODO: remove this after https://datatrendstech.atlassian.net/browse/OS-4157
   const poolIdWithoutSubPoolMark = isPoolIdWithSubPools(poolId) ? poolId.slice(0, poolId.length - 1) : poolId;
   const baseUrl = getPoolUrl(poolIdWithoutSubPoolMark);
-  return organizationId ? `${baseUrl}?${formQueryString({ organizationId })}` : baseUrl;
+  return organizationId ? `${baseUrl}&${formQueryString({ organizationId })}` : baseUrl;
 };
 
 const SlicedPoolName = ({ name }) => <SlicedText limit={SLICED_POOL_NAME_LENGTH} text={name} />;
 
-const PoolLink = ({ id, name, dataTestId, organizationId }) => (
-  <Link data-test-id={dataTestId} color="primary" to={getUrl(id, organizationId)} component={RouterLink}>
-    {name}
-  </Link>
-);
+const PoolLink = ({ id, name, dataTestId, organizationId }) => {
+  const updateScope = useUpdateScope();
+
+  return (
+    <Link
+      component="button"
+      onClick={() => {
+        updateScope({
+          newScopeId: organizationId,
+          redirectTo: getUrl(id, organizationId)
+        });
+      }}
+      data-test-id={dataTestId}
+    >
+      {name}
+    </Link>
+  );
+};
 
 const renderLabel = ({ disableLink, name, id, dataTestId, organizationId }) => {
   const slicedName = <SlicedPoolName name={name} />;

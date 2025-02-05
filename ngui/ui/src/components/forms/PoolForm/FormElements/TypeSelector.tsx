@@ -15,9 +15,14 @@ import {
 } from "utils/constants";
 import { FIELD_NAMES } from "../constants";
 
+type TypeSelectorProps = {
+  isLoading?: boolean;
+  readOnly?: boolean;
+};
+
 const FIELD_NAME = FIELD_NAMES.TYPE;
 
-const TypeSelector = ({ isLoading = false, readOnly = false }) => {
+const TypeSelector = ({ isLoading = false, readOnly = false }: TypeSelectorProps) => {
   const intl = useIntl();
 
   return (

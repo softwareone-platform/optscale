@@ -31,6 +31,8 @@ class TestLayouts(TestProfilingBase):
         _, self.employee_org2 = self.client.employee_create(
             self.org2['id'], {'name': 'John Org2',
                               'auth_user_id': self.user_id2})
+        _, resp = self.client.profiling_token_get(self.org['id'])
+        self.profiling_token = resp['token']
         self.valid_layout = {
             'name': 'layout',
             'type': 'test',
@@ -114,7 +116,7 @@ class TestLayouts(TestProfilingBase):
         type_ = 'test_type'
         layout0 = self.create_layout(owner_id=self.employee_org2['id'],
                                      type_=type_, shared=True)
-        layout1 = self.create_layout(owner_id=self.employee['id'])
+        self.create_layout(owner_id=self.employee['id'])
         layout2 = self.create_layout(
             type_=type_, owner_id=self.employee['id'])
         layout3 = self.create_layout(
@@ -122,7 +124,7 @@ class TestLayouts(TestProfilingBase):
         layout4 = self.create_layout(
             owner_id=self.employee2['id'], entity_id=self.user_id,
             shared=True, type_='ml_run_charts_dashboard')
-        layout5 = self.create_layout(
+        self.create_layout(
             owner_id=self.employee2['id'], entity_id=self.user_id,
             shared=False, type_='ml_run_charts_dashboard')
         layout6 = self.create_layout(
@@ -181,7 +183,7 @@ class TestLayouts(TestProfilingBase):
         # arcee token in query
         secret_p.return_value = False
         code, res = self.client.layouts_list(
-            self.org_id, token=self.get_profiling_token(self.org_id),
+            self.org_id, token=self.get_md5_token_hash(self.profiling_token),
             layout_type='ml_run_charts_dashboard', include_shared=True)
         self.assertEqual(code, 200)
         self.assertEqual(len(res['layouts']), 1)
@@ -189,7 +191,8 @@ class TestLayouts(TestProfilingBase):
 
         code, res = self.client.layouts_list(
             self.org_id, layout_type='ml_run_charts_dashboard',
-            token=self.get_profiling_token(self.org_id),
+            token=self.get_md5_token_hash(
+                self.get_profiling_token(self.org_id)),
             include_shared=False)
         self.assertEqual(code, 200)
         self.assertEqual(len(res['layouts']), 0)
@@ -263,6 +266,13 @@ class TestLayouts(TestProfilingBase):
             self.org_id, layout3['id'])
         self.assertEqual(code, 404)
         self.assertEqual(res['error']['error_code'], 'OE0002')
+
+        # by token
+        code, res = self.client.layout_get(
+            self.org_id, layout3['id'],
+            token=self.get_md5_token_hash(self.profiling_token))
+        self.assertEqual(code, 200)
+        self.assertEqual(res['id'], layout3['id'])
 
     def test_delete_layout(self):
         layout1 = self.create_layout(owner_id=self.employee['id'])

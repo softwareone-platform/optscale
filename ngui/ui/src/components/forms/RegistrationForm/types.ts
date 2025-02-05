@@ -10,5 +10,6 @@ export type FormValues = {
 export type RegistrationFormProps = {
   onSubmit: (data: FormValues) => void;
   isLoading?: boolean;
+  disabled?: boolean;
   isInvited?: boolean;
 };

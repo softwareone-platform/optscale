@@ -1,5 +1,5 @@
 import { SHORT_WEEK_DAYS } from "utils/datetime";
-import { useOrganizationFeatures } from "./useOrganizationFeatures";
+import { useOrganizationFeatures } from "./coreData";
 
 export const getValidCustomWeekends = (customWeekends) => {
   if (Array.isArray(customWeekends)) {

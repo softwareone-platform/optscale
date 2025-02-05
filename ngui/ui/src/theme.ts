@@ -321,6 +321,7 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           root: {
             "&:before": {
+              // disable border between accordions
               display: "none"
             },
             "&:first-of-type": {
@@ -341,14 +342,7 @@ const getThemeConfig = (settings = {}) => {
           },
           root: {
             "&.Mui-expanded": {
-              minHeight: "48px",
-              color: secondary.contrastText,
-              backgroundColor: ACTION_SELECTED
-            }
-          },
-          expandIconWrapper: {
-            "&.Mui-expanded": {
-              color: secondary.contrastText
+              minHeight: "48px"
             }
           }
         }

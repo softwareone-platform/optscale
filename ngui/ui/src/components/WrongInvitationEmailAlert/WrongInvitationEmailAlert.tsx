@@ -2,8 +2,8 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import { Box, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
-import useStyles from "components/AcceptInvitations/AcceptInvitations.styles";
 import Button from "components/Button";
+import useStyles from "./WrongInvitationEmailAlert.styles";
 
 type WrongInvitationEmailAlertProps = {
   invitationEmail: string;

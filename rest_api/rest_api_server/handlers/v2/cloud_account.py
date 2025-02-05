@@ -59,7 +59,8 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                     type:
                         type: string
                         enum: [aws_cnr, azure_cnr, kubernetes_cnr, alibaba_cnr,
-                               azure_tenant, gcp_cnr, nebius, databricks]
+                               azure_tenant, gcp_cnr, nebius, databricks,
+                               gcp_tenant]
                         description: Cloud account type
                         example: aws_cnr
                     config:
@@ -94,6 +95,7 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                     - OE0226: Argument should be True or False
                     - OE0371: Unable to configure billing report
                     - OE0437: Can’t connect the cloud subscription
+                    - OE0455: Cloud connection error
                     - OE0456: Duplicate path parameters in the request body
                     - OE0513: Cloud validation is timed out. Please retry later
             401:
@@ -199,7 +201,7 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                         description: "cloud account type:
                                         ('aws_cnr','azure_cnr', 'kubernetes_cnr',
                                          'azure_tenant', 'alibaba_cnr', 'gcp_cnr',
-                                         'nebius', 'databricks')"}
+                                         'nebius', 'databricks', 'gcp_tenant')"}
                                     config:
                                         type: object
                                         description: |
@@ -215,7 +217,7 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                                 description: forecast for this month}
                                             last_month_cost: {type: integer,
                                                 description: total cost in last month}
-                                            tracked: {type: integer,
+                                            resources: {type: integer,
                                                 description: number of tracked resources}
                                             discovery_infos:
                                                 type: object
@@ -351,7 +353,7 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                             description: "cloud account type:
                             ('aws_cnr','azure_cnr', 'alibaba_cnr',
                              'azure_tenant', 'kubernetes_cnr', 'gcp_cnr',
-                             'nebius', 'databricks')"}
+                             'nebius', 'databricks', 'gcp_tenant')"}
                         config: {type: object,
                             description:
                             "Object with credentials to access cloud"}
@@ -571,6 +573,7 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                     - OE0226: Argument should be True or False
                     - OE0371: Unable to configure billing report
                     - OE0437: Can’t connect the cloud subscription
+                    - OE0455: Cloud connection error
                     - OE0449: Parameter of cloud account can\'t be changed
                     - OE0559: Parameter date should be between a month and a year ago
                     - OE0560: Changing import dates is not supported for cloud account type

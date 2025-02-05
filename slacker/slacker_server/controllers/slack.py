@@ -5,7 +5,6 @@ import logging
 from datetime import datetime, timedelta
 
 from requests import HTTPError
-from retrying import Retrying
 from slack_sdk.errors import SlackApiError
 from sqlalchemy.exc import IntegrityError
 
@@ -16,7 +15,8 @@ from slacker.slacker_server.message_templates.alerts import (
     get_add_constraint_envs_alert_modal)
 from slacker.slacker_server.message_templates.bookings import (
     get_add_bookings_form, get_booking_details_message)
-from slacker.slacker_server.message_templates.connect import get_welcome_message
+from slacker.slacker_server.message_templates.connect import (
+    get_welcome_message)
 from slacker.slacker_server.message_templates.constraints import (
     get_update_ttl_form, get_constraint_updated)
 from slacker.slacker_server.message_templates.disconnect import (
@@ -24,43 +24,21 @@ from slacker.slacker_server.message_templates.disconnect import (
 from slacker.slacker_server.message_templates.envs import get_envs_message
 from slacker.slacker_server.message_templates.org import (
     get_org_switch_message, get_org_switch_completed_message)
-from slacker.slacker_server.message_templates.resources import get_resources_message
+from slacker.slacker_server.message_templates.resources import (
+    get_resources_message)
 from slacker.slacker_server.message_templates.resource_details import (
     get_resource_details_message)
 from slacker.slacker_server.message_templates.errors import (
     get_ca_not_connected_message, get_not_have_slack_permissions_message)
 from slacker.slacker_server.models.models import User
-from slacker.slacker_server.utils import gen_id
+from slacker.slacker_server.utils import gen_id, retry_too_many_requests
 from tools.optscale_time import utcfromtimestamp, utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 TTL_LIMIT_TO_SHOW = 72
 EXPENSE_LIMIT_TO_SHOW = 0.9
-MS_IN_SEC = 1000
 SEC_IN_HRS = 3600
 MAX_MSG_ENVS_LENGTH = 10
-
-
-def retry_too_many_requests(f, *args, **kwargs):
-    try:
-        return f(*args, **kwargs)
-    except Exception as exc:
-        if retriable_slack_api_error(exc):
-            f_retry = Retrying(
-                retry_on_exception=retriable_slack_api_error,
-                wait_fixed=int(exc.response.headers['Retry-After']) * MS_IN_SEC,
-                stop_max_attempt_number=5)
-            res = f_retry.call(f, *args, **kwargs)
-            return res
-        else:
-            raise exc
-
-
-def retriable_slack_api_error(exc):
-    if (isinstance(exc, SlackApiError) and
-            exc.response.headers.get('Retry-After')):
-        return True
-    return False
 
 
 class MetaSlackController:
@@ -326,7 +304,8 @@ class SlackController(BaseController):
     def resource_details(self, ack, say, action, body, logger):
         slack_user_id = body['user']['id']
         user = self.get_user(slack_user_id)
-        if user is None or user.auth_user_id is None or user.organization_id is None:
+        if (user is None or user.auth_user_id is None
+                or user.organization_id is None):
             ack()
             return
         target_resource_id = action['value']
@@ -336,20 +315,35 @@ class SlackController(BaseController):
         _, resource = rest_cl.cloud_resource_get(
             target_resource_id, details=True)
         _, org = rest_cl.organization_get(user.organization_id)
+        _, response = rest_cl.resource_limit_hits_list(target_resource_id)
+        limit_hits = response.get('limit_hits', [])
+
         tel_enabled = self.total_expense_limit_enabled(user.organization_id)
         constraint_types = ['ttl', 'daily_expense_limit']
         if tel_enabled:
             constraint_types.append('total_expense_limit')
+
         constraints = {}
-        for constraint in constraint_types:
-            if resource['details']['constraints'].get(constraint):
-                constraints[constraint] = resource['details']['constraints'][
-                    constraint]
-                constraints[constraint]['constraint_type'] = 'resource specific'
-            elif resource['details']['policies'].get(constraint, {}).get('active'):
-                constraints[constraint] = resource['details']['policies'][
-                    constraint]
-                constraints[constraint]['constraint_type'] = 'pool policy'
+        for constraint_type in constraint_types:
+            constraint = {}
+            last_hit = next((x for x in limit_hits
+                             if x['type'] == constraint_type), None)
+            if constraint_type in resource['details']['constraints']:
+                constraint = resource['details']['constraints'][
+                    constraint_type]
+                constraint['constraint_type'] = 'resource specific'
+                if (last_hit and not last_hit['pool_id']
+                        and last_hit['state'] == 'red'):
+                    constraint['last_hit'] = last_hit
+            elif resource['details']['policies'].get(constraint_type, {}).get(
+                    'active'):
+                constraint = resource['details']['policies'][constraint_type]
+                constraint['constraint_type'] = 'pool policy'
+                if (last_hit and last_hit['pool_id'] == resource['pool_id']
+                        and last_hit['state'] == 'red'):
+                    constraint['last_hit'] = last_hit
+            constraints[constraint_type] = constraint
+        resource['constraints'] = constraints
 
         current_booking = None
         if resource['details'].get('shareable_bookings'):
@@ -367,7 +361,8 @@ class SlackController(BaseController):
         say(get_resource_details_message(
             resource=resource, org_id=user.organization_id,
             public_ip=self.config_cl.public_ip(), booking=current_booking,
-            currency=org['currency'], total_expense_limit_enabled=tel_enabled))
+            currency=org['currency'], total_expense_limit_enabled=tel_enabled
+        ))
 
     def create_update_ttl_view(self, ack, action, client, body, say, logger):
         slack_user_id = body['user']['id']

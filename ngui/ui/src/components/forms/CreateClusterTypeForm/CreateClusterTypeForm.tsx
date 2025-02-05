@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
-import InlineSeverityAlert from "components/InlineSeverityAlert";
+import FormContentDescription from "components/FormContentDescription";
 import PageContentWrapper from "components/PageContentWrapper";
 import { CLUSTER_TYPES, DOCS_HYSTAX_CLUSTERS, RESOURCES } from "urls";
 import { MPT_SPACING_3 } from "utils/layouts";
@@ -39,27 +39,27 @@ const CreateClusterTypeForm = ({ onSubmit, onCancel, isSubmitLoading = false }: 
       <PageContentWrapper>
         <Grid direction="row" container spacing={3}>
           <Grid item xs={12} className={"MTPBoxShadowRoot"}>
-            <Box>
-              <Box sx={{ width: { md: "50%" }, mb: MPT_SPACING_3 }}>
-                <FormProvider {...methods}>
-                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <NameField />
-                    <TagKeyField />
-                    <FormButtons onCancel={onCancel} isLoading={isSubmitLoading} />
-                  </form>
-                </FormProvider>
-              </Box>
-              <InlineSeverityAlert
-                messageId="createClusterTypeDescription"
-                messageValues={{
-                  strong: (chunks) => <strong>{chunks}</strong>,
-                  link: (chunks) => (
-                    <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
-                      {chunks}
-                    </Link>
-                  )
-                }}
-              />
+            <Box sx={{ width: { md: "50%" }, mb: MPT_SPACING_3 }}>
+              <FormProvider {...methods}>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                  <NameField />
+                  <TagKeyField />
+                  <FormContentDescription
+                    alertProps={{
+                      messageId: "createClusterTypeDescription",
+                      messageValues: {
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                        link: (chunks) => (
+                          <Link data-test-id="link_read_more" href={DOCS_HYSTAX_CLUSTERS} target="_blank" rel="noopener">
+                            {chunks}
+                          </Link>
+                        )
+                      }
+                    }}
+                  />
+                  <FormButtons onCancel={onCancel} isLoading={isSubmitLoading} />
+                </form>
+              </FormProvider>
             </Box>
           </Grid>
         </Grid>

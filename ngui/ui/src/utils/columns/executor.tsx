@@ -4,7 +4,7 @@ import ExecutorLabel from "components/ExecutorLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
 
-const executor = () => ({
+const executor = ({ disableLink = false }) => ({
   header: (
     <TextWithDataTestId dataTestId="lbl_executor">
       <FormattedMessage id="executor" />
@@ -38,7 +38,13 @@ const executor = () => ({
           }
         ]}
       >
-        <ExecutorLabel discovered={discovered} resource={resource} instanceId={instanceId} platformType={platformType} />
+        <ExecutorLabel
+          discovered={discovered}
+          resource={resource}
+          instanceId={instanceId}
+          platformType={platformType}
+          disableLink={disableLink}
+        />
       </CaptionedCell>
     );
   }

@@ -1,8 +1,9 @@
 import { useCallback } from "react";
+import { useMutation } from "@apollo/client";
 import { useDispatch } from "react-redux";
-import { getToken, verifyEmail } from "api";
-import { GET_TOKEN } from "api/auth/actionTypes";
+import { verifyEmail } from "api";
 import { VERIFY_EMAIL } from "api/restapi/actionTypes";
+import { CREATE_TOKEN } from "graphql/api/auth/queries";
 import { useApiState } from "hooks/useApiState";
 import { isError } from "utils/api";
 
@@ -30,28 +31,12 @@ const useSendEmailVerificationCode = () => {
 };
 
 const useGetEmailVerificationCodeToken = () => {
-  const dispatch = useDispatch();
-
-  const { isLoading } = useApiState(GET_TOKEN);
+  const [createToken, { loading: loginLoading }] = useMutation(CREATE_TOKEN);
 
   const onGet = (email: string, code: string) =>
-    new Promise((resolve, reject) => {
-      dispatch((_, getState) => {
-        dispatch(
-          getToken({
-            email,
-            code
-          })
-        ).then(() => {
-          if (!isError(GET_TOKEN, getState())) {
-            return resolve();
-          }
-          return reject();
-        });
-      });
-    });
+    createToken({ variables: { email, code } }).then(({ data: { token } }) => Promise.resolve(token));
 
-  return { onGet, isLoading };
+  return { onGet, isLoading: loginLoading };
 };
 
 function VerifyEmailService() {

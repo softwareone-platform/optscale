@@ -1,6 +1,9 @@
 from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_exceptions.common_exc import NotFoundException
 
-from slacker.slacker_server.controllers.send_message import SendMessageAsyncController
+from slacker.slacker_server.controllers.send_message import (
+    SendMessageAsyncController
+)
 from slacker.slacker_server.exceptions import Err
 from slacker.slacker_server.handlers.v2.base import BaseHandler
 
@@ -132,7 +135,7 @@ class SendMessageHandler(BaseHandler):
                     - OS0012: Duplicated parameters in path and body
                     - OS0014: channel_id with team_id or auth_user_id should be provided
                     - OS0015: channel_id and auth_user_id could not be provided at the same time
-                    - OS0016: User not found
+                    - OS0016: User with auth_user_id was not found
                     - OS0017: channel_id should provide only with team_id
                     - OS0019: Target slack channel is archived
             401:
@@ -150,7 +153,10 @@ class SendMessageHandler(BaseHandler):
         data = self._request_body()
         data.update(kwargs)
         await self.validate_params(**data)
-        await self.controller.send_message(**data)
+        try:
+            await self.controller.send_message(**data)
+        except NotFoundException as exc:
+            raise OptHTTPError.from_opt_exception(404, exc)
         self.write_json({})
         self.set_status(201)
 

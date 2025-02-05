@@ -1,7 +1,6 @@
-import { GET_CURRENT_EMPLOYEE } from "api/restapi/actionTypes";
 import { SCOPE_TYPES } from "utils/constants";
+import { useCurrentEmployee } from "./coreData/useCurrentEmployee";
 import { useIsAllowed, useIsAllowedForSome } from "./useAllowedActions";
-import { useApiData } from "./useApiData";
 
 // TODO: There are thoughts to change the approach here, to make it more readable and flexible. The discussed options can be seen at the link - https://gitlab.com/hystax/ngui/-/merge_requests/1669
 const getAllowedActionsConfiguration = (employeeId, resourceId, currentEmployeeId) => {
@@ -15,7 +14,7 @@ const getAllowedActionsConfiguration = (employeeId, resourceId, currentEmployeeI
 };
 
 export const useIsAllowedToManageResourceConstraint = (employeeId, resourceId) => {
-  const { apiData: { currentEmployee: { id: currentEmployeeId } = {} } = {} } = useApiData(GET_CURRENT_EMPLOYEE);
+  const { id: currentEmployeeId } = useCurrentEmployee();
 
   const configuration = getAllowedActionsConfiguration(employeeId, resourceId, currentEmployeeId);
 
@@ -30,7 +29,7 @@ export const useIsAllowedToManageResourceConstraint = (employeeId, resourceId) =
  * @returns a boolean flag which indicates if a user is able to manage some resource constraint
  */
 export const useIsAllowedToManageAnyResourceConstraint = (configuration) => {
-  const { apiData: { currentEmployee: { id: currentEmployeeId } = {} } = {} } = useApiData(GET_CURRENT_EMPLOYEE);
+  const { id: currentEmployeeId } = useCurrentEmployee();
 
   const allowedActionsConfiguration = configuration.map(({ resourceId, employeeId }) =>
     getAllowedActionsConfiguration(employeeId, resourceId, currentEmployeeId)

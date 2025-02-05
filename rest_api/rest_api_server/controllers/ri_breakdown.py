@@ -27,6 +27,7 @@ RI_FACTOR_MAP = {
 
 
 class RiBreakdownController(CleanExpenseController):
+    JOIN_TRAFFIC_EXPENSES = False
     RESOURCE_PREFIX = 'ri'
 
     @property

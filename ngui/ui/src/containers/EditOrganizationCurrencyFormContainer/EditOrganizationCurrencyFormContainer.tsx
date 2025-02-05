@@ -1,26 +1,32 @@
-import { useDispatch } from "react-redux";
-import { updateOrganization } from "api";
-import { UPDATE_ORGANIZATION } from "api/restapi/actionTypes";
+import { useMutation } from "@apollo/client";
 import EditOrganizationCurrencyForm from "components/forms/EditOrganizationCurrencyForm";
 import { FormValues } from "components/forms/EditOrganizationCurrencyForm/types";
-import { useApiState } from "hooks/useApiState";
+import { UPDATE_ORGANIZATION } from "graphql/api/restapi/queries/restapi.queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
-const EditOrganizationCurrencyFormContainer = ({ onCancel }) => {
-  const dispatch = useDispatch();
+type EditOrganizationCurrencyFormContainerProps = {
+  onCancel: () => void;
+  onSuccess: () => void;
+};
 
-  const { isLoading } = useApiState(UPDATE_ORGANIZATION);
-
+const EditOrganizationCurrencyFormContainer = ({ onCancel, onSuccess }: EditOrganizationCurrencyFormContainerProps) => {
   const { currency, organizationId } = useOrganizationInfo();
 
+  const [updateOrganization, { loading }] = useMutation(UPDATE_ORGANIZATION);
+
   const onSubmit = (formData: FormValues) => {
-    // There is no need to handle edit mode close since organization will be re-requested after editing
-    // and backdrop loader for the entire page will be rendered => edit form will be automatically unmounted
-    dispatch(updateOrganization(organizationId, { currency: formData.currency }));
+    updateOrganization({
+      variables: {
+        organizationId,
+        params: {
+          currency: formData.currency
+        }
+      }
+    }).then(onSuccess);
   };
 
   return (
-    <EditOrganizationCurrencyForm defaultCurrency={currency} onSubmit={onSubmit} onCancel={onCancel} isLoading={isLoading} />
+    <EditOrganizationCurrencyForm defaultCurrency={currency} onSubmit={onSubmit} onCancel={onCancel} isLoading={loading} />
   );
 };
 

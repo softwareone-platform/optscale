@@ -11,8 +11,6 @@ import {
 } from "api";
 import {
   getRecommendationsDownloadLimit,
-  updateOrganizationThemeSettings,
-  updateOrganizationPerspectives,
   getS3DuplicatesOrganizationSettings,
   updateS3DuplicatesOrganizationSettings
 } from "api/restapi/actionCreators";
@@ -25,8 +23,6 @@ import {
   CREATE_ORGANIZATION_OPTION,
   DELETE_ORGANIZATION_OPTION,
   GET_RECOMMENDATIONS_DOWNLOAD_OPTIONS,
-  UPDATE_ORGANIZATION_THEME_SETTINGS,
-  UPDATE_ORGANIZATION_PERSPECTIVES,
   GET_S3_DUPLICATES_ORGANIZATION_SETTINGS,
   UPDATE_S3_DUPLICATES_ORGANIZATION_SETTINGS
 } from "api/restapi/actionTypes";
@@ -34,7 +30,6 @@ import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isError, checkError } from "utils/api";
-import { OPTSCALE_MODE_OPTION } from "utils/constants";
 import { parseJSON } from "utils/strings";
 
 const useGet = (withValues) => {
@@ -70,30 +65,6 @@ const useGetOption = () => {
   const getOption = (name) => dispatch(getOrganizationOption(organizationId, name));
 
   return { isGetOrganizationOptionLoading: isLoading, value: jsonValue, getOption };
-};
-
-// OptScale mode is a special option, it is "global", meaning that other components visibility might rely on it
-// They are wrapped with ModeWrapper, which might cause side effects. One that is known is a conflict between optscale_mode and other options.
-// This is a "quick" fix, the implementation will most likely to be changed once we migrate to Apollo and implement a new initialization process.
-// Note that there is no name passed to useApiState intentionally.
-const useGetOptscaleMode = () => {
-  const dispatch = useDispatch();
-  const { organizationId } = useOrganizationInfo();
-
-  const { apiData: option } = useApiData(GET_ORGANIZATION_OPTION, "{}");
-
-  const { isLoading, shouldInvoke } = useApiState(GET_ORGANIZATION_OPTION, { organizationId });
-
-  useEffect(() => {
-    if (shouldInvoke) {
-      dispatch(getOrganizationOption(organizationId, OPTSCALE_MODE_OPTION));
-    }
-  }, [dispatch, organizationId, shouldInvoke]);
-
-  return {
-    isGetOrganizationOptionLoading: isLoading,
-    option: parseJSON(option)
-  };
 };
 
 const useDeleteOption = () => {
@@ -136,23 +107,6 @@ const useUpdateOption = () => {
   };
 
   return { isUpdateOrganizationOptionLoading: isLoading, updateOption };
-};
-
-const useUpdateThemeSettings = () => {
-  const dispatch = useDispatch();
-  const { organizationId } = useOrganizationInfo();
-
-  const { isLoading } = useApiState(UPDATE_ORGANIZATION_THEME_SETTINGS);
-
-  const update = (value) => {
-    dispatch((_, getState) => {
-      dispatch(updateOrganizationThemeSettings(organizationId, value)).then(() =>
-        checkError(UPDATE_ORGANIZATION_THEME_SETTINGS, getState())
-      );
-    });
-  };
-
-  return { isLoading, update };
 };
 
 const useCreateOption = () => {
@@ -246,27 +200,6 @@ const useUpdateRecommendationOptions = () => {
   return { isLoading, updateRecommendationOptions };
 };
 
-const useUpdateOrganizationPerspectives = () => {
-  const dispatch = useDispatch();
-  const { organizationId } = useOrganizationInfo();
-
-  const { isLoading } = useApiState(UPDATE_ORGANIZATION_PERSPECTIVES);
-
-  const update = (value, onSuccess) => {
-    dispatch((_, getState) => {
-      dispatch(updateOrganizationPerspectives(organizationId, value))
-        .then(() => checkError(UPDATE_ORGANIZATION_PERSPECTIVES, getState()))
-        .then(() => {
-          if (typeof onSuccess === "function") {
-            onSuccess();
-          }
-        });
-    });
-  };
-
-  return { isLoading, update };
-};
-
 const useGetRecommendationsDownloadOptions = () => {
   const dispatch = useDispatch();
   const { organizationId } = useOrganizationInfo();
@@ -332,7 +265,6 @@ function OrganizationOptionsService() {
   return {
     useGet,
     useGetOption,
-    useGetOptscaleMode,
     useUpdateOption,
     useCreateOption,
     useDeleteOption,
@@ -340,8 +272,6 @@ function OrganizationOptionsService() {
     useGetRecommendationOptionsOnce,
     useUpdateRecommendationOptions,
     useGetRecommendationsDownloadOptions,
-    useUpdateThemeSettings,
-    useUpdateOrganizationPerspectives,
     useGetS3DuplicatesOrganizationSettings,
     useUpdateS3DuplicatedOrganizationSettings
   };

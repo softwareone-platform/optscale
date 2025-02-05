@@ -1,5 +1,5 @@
-import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import ActionBar from "components/ActionBar";
 import CloudAccountsTable from "components/CloudAccountsTable";
 import CloudExpensesChart from "components/CloudExpensesChart";
@@ -9,7 +9,7 @@ import SummaryGrid from "components/SummaryGrid";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { getSumByNestedObjectKey, isEmpty as isEmptyArray } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, SUMMARY_CARD_TYPES, AWS_CNR } from "utils/constants";
-import { SPACING_2, SPACING_3 } from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 import { getPercentageChangeModule } from "utils/math";
 
 type SummaryProps = {
@@ -99,7 +99,7 @@ const Summary = ({ totalExpenses, totalForecast, lastMonthCost, isLoading = fals
           }
         ];
 
-  return <SummaryGrid summaryData={getSummaryData()} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={getSummaryData()} />;
 };
 
 const AwsLinkedAccountsWarning = () => {
@@ -128,36 +128,36 @@ const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = f
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Grid container justifyContent="flex-start" alignItems="center" spacing={SPACING_2}>
-          <Grid item xs={12}>
+        <Stack spacing={SPACING_2}>
+          <div>
             <Summary
               totalExpenses={totalExpenses}
               totalForecast={totalForecast}
               lastMonthCost={lastMonthCost}
               isLoading={isLoading}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container spacing={SPACING_3}>
-              {(organizationLimit === 0 && totalForecast === 0) || totalExpenses === 0 ? null : (
-                <Grid item xs={12}>
-                  <CloudExpensesChart
-                    cloudAccounts={cloudAccounts}
-                    limit={organizationLimit}
-                    forecast={totalForecast}
-                    isLoading={isLoading}
-                  />
-                </Grid>
-              )}
-              <Grid item xs={12}>
-                <Box className={"MTPBoxShadow"}>
-                  {!isLoading && onlyAwsLinkedAccountsConnected && <AwsLinkedAccountsWarning />}
-                  <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
+          </div>
+          <div>
+            {(organizationLimit === 0 && totalForecast === 0) || totalExpenses === 0 ? null : (
+              <CloudExpensesChart
+                cloudAccounts={cloudAccounts}
+                limit={organizationLimit}
+                forecast={totalForecast}
+                isLoading={isLoading}
+              />
+            )}
+          </div>
+          {!isLoading && onlyAwsLinkedAccountsConnected && (
+            <div>
+              <AwsLinkedAccountsWarning />
+            </div>
+          )}
+          <div>
+            <Box className={"MTPBoxShadow"}>
+              <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
+            </Box>
+          </div>
+        </Stack>
       </PageContentWrapper>
     </>
   );

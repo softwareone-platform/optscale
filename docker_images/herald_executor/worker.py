@@ -13,12 +13,11 @@ from kombu import Connection
 from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue, binding
 import urllib3
-
+from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 from optscale_client.auth_client.client_v2 import Client as AuthClient
-from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 from tools.optscale_time import utcnow_timestamp, utcfromtimestamp
 
 LOG = get_logger(__name__)
@@ -76,6 +75,16 @@ class HeraldTemplates(Enum):
     FIRST_RUN_STARTED = 'first_run_started'
 
 
+CONSTRAINT_TYPE_TEMPLATE_MAP = {
+    'expense_anomaly': HeraldTemplates.ANOMALY_DETECTION.value,
+    'resource_count_anomaly': HeraldTemplates.ANOMALY_DETECTION.value,
+    'expiring_budget': HeraldTemplates.EXPIRING_BUDGET.value,
+    'recurring_budget': HeraldTemplates.RECURRING_BUDGET.value,
+    'resource_quota': HeraldTemplates.RESOURCE_QUOTA.value,
+    'tagging_policy': HeraldTemplates.TAGGING_POLICY.value
+}
+
+
 class HeraldExecutorWorker(ConsumerMixin):
     def __init__(self, connection, config_cl):
         self.connection = connection
@@ -118,31 +127,38 @@ class HeraldExecutorWorker(ConsumerMixin):
         return [consumer(queues=[TASK_QUEUE], accept=['json'],
                          callbacks=[self.process_task], prefetch_count=10)]
 
-    def get_auth_users(self, user_ids):
-        _, response = self.auth_cl.user_list(user_ids)
-        return response
-
-    def get_owner_manager_infos(self, organization_id,
-                                tenant_auth_user_ids=None):
-        auth_users = []
-        if tenant_auth_user_ids:
-            auth_users = self.get_auth_users(tenant_auth_user_ids)
-        all_user_info = {auth_user['id']: {
-            'display_name': auth_user.get('display_name'),
-            'email': auth_user.get('email')
-        } for auth_user in auth_users}
-
-        _, org_managers = self.auth_cl.user_roles_get(
-            scope_ids=[organization_id],
-            role_purposes=[MANAGER_ROLE])
-        for manager in org_managers:
-            user_id = manager['user_id']
-            if not tenant_auth_user_ids or user_id not in tenant_auth_user_ids:
+    def get_owner_manager_infos(
+            self, organization_id, tenant_auth_user_ids=None,
+            email_template=None):
+        _, employees = self.rest_cl.employee_list(organization_id)
+        _, user_roles = self.auth_cl.user_roles_get(
+                scope_ids=[organization_id],
+                user_ids=[x['auth_user_id'] for x in employees['employees']]
+        )
+        all_user_info = {}
+        for user_role in user_roles:
+            user_id = user_role['user_id']
+            if (user_role['role_purpose'] == MANAGER_ROLE or
+                    tenant_auth_user_ids and user_id in tenant_auth_user_ids):
                 all_user_info[user_id] = {
-                    'display_name': manager.get('user_display_name'),
-                    'email': manager.get('user_email')
+                    'display_name': user_role.get('user_display_name'),
+                    'email': user_role.get('user_email')
                 }
+        if email_template:
+            for employee in employees['employees']:
+                auth_user_id = employee['auth_user_id']
+                if (auth_user_id in all_user_info and
+                        not self.is_email_enabled(employee['id'],
+                                                  email_template)):
+                    all_user_info.pop(auth_user_id, None)
         return all_user_info
+
+    def is_email_enabled(self, employee_id, email_template):
+        _, employee_emails = self.rest_cl.employee_emails_get(
+            employee_id, email_template)
+        employee_email = employee_emails.get('employee_emails')
+        if employee_email:
+            return employee_email[0]['enabled']
 
     def _get_service_emails(self):
         return self.config_cl.optscale_email_recipient()
@@ -217,7 +233,7 @@ class HeraldExecutorWorker(ConsumerMixin):
         shareable_booking_data = self._filter_bookings(
             shareable_bookings.get('data', []), resource_id, now_ts)
         for booking in shareable_booking_data:
-            acquired_by_id = booking.get('acquired_by_id')
+            acquired_by_id = booking.get('acquired_by', {}).get('id')
             if acquired_by_id:
                 resource_tenant_ids.append(acquired_by_id)
         _, employees = self.rest_cl.employee_list(org_id=organization_id)
@@ -227,16 +243,14 @@ class HeraldExecutorWorker(ConsumerMixin):
         tenant_auth_user_ids = [
             emp['auth_user_id'] for emp in list(employee_id_map.values())
         ]
-
         for booking in shareable_booking_data:
             acquired_since = booking['acquired_since']
             released_at = booking['released_at']
-            acquired_by_id = booking.get('acquired_by_id')
             utc_acquired_since = int(
                 utcfromtimestamp(acquired_since).timestamp())
             utc_released_at = int(
                 utcfromtimestamp(released_at).timestamp())
-            user_name = employee_id_map.get(acquired_by_id, {}).get('name')
+            user_name = booking.get('acquired_by', {}).get('name')
             if not user_name:
                 LOG.error('Could not detect employee name for booking %s',
                           booking['id'])
@@ -272,7 +286,8 @@ class HeraldExecutorWorker(ConsumerMixin):
                     }})
 
         all_user_info = self.get_owner_manager_infos(
-            cloud_account['organization_id'], tenant_auth_user_ids)
+            cloud_account['organization_id'], tenant_auth_user_ids,
+            HeraldTemplates.ENVIRONMENT_CHANGES.value)
         env_properties_list = [
             {'env_key': env_prop_key, 'env_value': env_prop_value}
             for env_prop_key, env_prop_value in env_properties.items()
@@ -409,9 +424,11 @@ class HeraldExecutorWorker(ConsumerMixin):
             employee_id = contact.get('employee_id')
             if employee_id:
                 _, employee = self.rest_cl.employee_get(employee_id)
-                _, user = self.auth_cl.user_get(employee['auth_user_id'])
-                self.send_expenses_alert(
-                    user['email'], alert, pool['name'], organization)
+                if self.is_email_enabled(employee['id'],
+                                         HeraldTemplates.POOL_ALERT.value):
+                    _, user = self.auth_cl.user_get(employee['auth_user_id'])
+                    self.send_expenses_alert(
+                        user['email'], alert, pool['name'], organization)
 
     def execute_constraint_violated(self, object_id, organization_id, meta,
                                     object_type):
@@ -421,6 +438,14 @@ class HeraldExecutorWorker(ConsumerMixin):
         _, user = self.auth_cl.user_get(object_id)
 
         if user.get('slack_connected'):
+            return
+
+        _, employees = self.rest_cl.employee_list(organization_id)
+        employee = next((x for x in employees['employees']
+                         if x['auth_user_id'] == object_id), None)
+        if employee and not self.is_email_enabled(
+                employee['id'],
+                HeraldTemplates.RESOURCE_OWNER_VIOLATION_ALERT.value):
             return
 
         hit_list = meta.get('violations')
@@ -536,14 +561,6 @@ class HeraldExecutorWorker(ConsumerMixin):
     def _get_org_constraint_template_params(self, organization, constraint,
                                             constraint_data, hit_date,
                                             latest_hit, link, user_info):
-        constraint_template_map = {
-            'expense_anomaly': HeraldTemplates.ANOMALY_DETECTION.value,
-            'resource_count_anomaly': HeraldTemplates.ANOMALY_DETECTION.value,
-            'expiring_budget': HeraldTemplates.EXPIRING_BUDGET.value,
-            'recurring_budget': HeraldTemplates.RECURRING_BUDGET.value,
-            'resource_quota': HeraldTemplates.RESOURCE_QUOTA.value,
-            'tagging_policy': HeraldTemplates.TAGGING_POLICY.value
-        }
         if 'anomaly' in constraint['type']:
             title = 'Anomaly detection alert'
         else:
@@ -578,7 +595,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             if without_tag:
                 conditions.append(f'without tag "{without_tag}"')
             params['texts']['conditions'] = ', '.join(conditions)
-        return params, title, constraint_template_map[constraint['type']]
+        return params, title
 
     def execute_organization_constraint_violated(self, constraint_id,
                                                  organization_id):
@@ -587,7 +604,8 @@ class HeraldExecutorWorker(ConsumerMixin):
             LOG.warning('Organization %s was not found, error code: %s' % (
                 organization_id, code))
             return
-        code, constraint = self.rest_cl.organization_constraint_get(constraint_id)
+        code, constraint = self.rest_cl.organization_constraint_get(
+            constraint_id)
         if not constraint:
             LOG.warning(
                 'Organization constraint %s was not found, error code: %s' % (
@@ -616,9 +634,11 @@ class HeraldExecutorWorker(ConsumerMixin):
             constraint_data['definition']['start_date'] = utcfromtimestamp(
                 int(constraint_data['definition']['start_date'])).strftime(
                 '%m/%d/%Y %I:%M %p UTC')
-        managers = self.get_owner_manager_infos(organization_id)
+        template = CONSTRAINT_TYPE_TEMPLATE_MAP[constraint['type']]
+        managers = self.get_owner_manager_infos(
+            organization_id, email_template=template)
         for user_id, user_info in managers.items():
-            params, subject, template = self._get_org_constraint_template_params(
+            params, subject = self._get_org_constraint_template_params(
                 organization, constraint, constraint_data, hit_date,
                 latest_hit, link, user_info)
             self.herald_cl.email_send(
@@ -634,7 +654,9 @@ class HeraldExecutorWorker(ConsumerMixin):
             return
         for i, data_dict in enumerate(module_count_list):
             module_count_list[i] = data_dict
-        managers = self.get_owner_manager_infos(organization_id)
+        managers = self.get_owner_manager_infos(
+            organization_id,
+            email_template=HeraldTemplates.NEW_SECURITY_RECOMMENDATION.value)
         for user_id, user_info in managers.items():
             template_params = {
                 'texts': {
@@ -662,7 +684,8 @@ class HeraldExecutorWorker(ConsumerMixin):
             opt['saving'] = round(opt['saving'], 2)
             top3[i] = opt
 
-        managers = self.get_owner_manager_infos(organization_id)
+        managers = self.get_owner_manager_infos(
+            organization_id, email_template=HeraldTemplates.SAVING_SPIKE.value)
         for user_id, user_info in managers.items():
             template_params = {
                 'texts': {
@@ -683,7 +706,9 @@ class HeraldExecutorWorker(ConsumerMixin):
 
     def execute_report_imports_passed_for_org(self, organization_id):
         _, organization = self.rest_cl.organization_get(organization_id)
-        managers = self.get_owner_manager_infos(organization_id)
+        managers = self.get_owner_manager_infos(
+            organization_id,
+            email_template=HeraldTemplates.REPORT_IMPORT_PASSED.value)
         emails = [x['email'] for x in managers.values()]
         subject = 'Expenses initial processing completed'
         template_params = {
@@ -691,10 +716,11 @@ class HeraldExecutorWorker(ConsumerMixin):
                 'organization': self._get_organization_params(organization),
             }
         }
-        self.herald_cl.email_send(
-            emails, subject,
-            template_type=HeraldTemplates.REPORT_IMPORT_PASSED.value,
-            template_params=template_params)
+        if emails:
+            self.herald_cl.email_send(
+                emails, subject,
+                template_type=HeraldTemplates.REPORT_IMPORT_PASSED.value,
+                template_params=template_params)
 
     def execute_insider_prices(self):
         self._send_service_email('Insider faced Azure SSLError',

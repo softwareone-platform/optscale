@@ -6,6 +6,7 @@ enum DataSourceType {
   azure_tenant
   azure_cnr
   gcp_cnr
+  gcp_tenant
   alibaba_cnr
   nebius
   databricks
@@ -30,21 +31,21 @@ type DataSourceDetails {
   cost: Float!
   discovery_infos: [DataSourceDiscoveryInfos]
   forecast: Float!
-  last_month_cost: Float!
+  last_month_cost: Float
   resources: Int!
 }
 
 interface DataSourceInterface {
-  id: String!
-  name: String!
-  type: DataSourceType!
+  id: String
+  name: String
+  type: DataSourceType
   parent_id: String
-  account_id: String!
-  last_import_at: Int!
-  last_import_attempt_at: Int!
+  account_id: String
+  last_import_at: Int
+  last_import_attempt_at: Int
   last_import_attempt_error: String
-  last_getting_metrics_at: Int!
-  last_getting_metric_attempt_at: Int!
+  last_getting_metrics_at: Int
+  last_getting_metric_attempt_at: Int
   last_getting_metric_attempt_error: String
   details: DataSourceDetails
 }
@@ -149,6 +150,33 @@ type GcpDataSource implements DataSourceInterface {
   last_getting_metric_attempt_error: String
   details: DataSourceDetails
   config: GcpConfig
+}
+
+# GCP tenant data source
+type GcpTenantBillingDataConfig {
+  dataset_name: String
+  table_name: String
+  project_id: String
+}
+
+type GcpTenantConfig {
+  billing_data: GcpTenantBillingDataConfig
+}
+
+type GcpTenantDataSource implements DataSourceInterface {
+  id: String!
+  name: String!
+  type: DataSourceType!
+  parent_id: String
+  account_id: String
+  last_import_at: Int!
+  last_import_attempt_at: Int!
+  last_import_attempt_error: String
+  last_getting_metrics_at: Int!
+  last_getting_metric_attempt_at: Int!
+  last_getting_metric_attempt_error: String
+  details: DataSourceDetails
+  config: GcpTenantConfig
 }
 
 # Alibaba data source
@@ -302,9 +330,15 @@ input AzureTenantConfigInput {
 input GcpBillingDataConfigInput {
   dataset_name: String!
   table_name: String!
+  project_id: String
 }
 
 input GcpConfigInput {
+  billing_data: GcpBillingDataConfigInput!
+  credentials: JSONObject!
+}
+
+input GcpTenantConfigInput {
   billing_data: GcpBillingDataConfigInput!
   credentials: JSONObject!
 }
@@ -328,12 +362,28 @@ input NebiusConfigInput {
 input K8sConfigInput {
   password: String!
   user: String!
+  cost_model: JSONObject
 }
 
 input DatabricksConfigInput {
   account_id: String!
   client_id: String!
   client_secret: String!
+}
+
+input CreateDataSourceInput {
+  name: String
+  type: String
+  awsRootConfig: AwsRootConfigInput
+  awsLinkedConfig: AwsLinkedConfigInput
+  azureSubscriptionConfig: AzureSubscriptionConfigInput
+  azureTenantConfig: AzureTenantConfigInput
+  gcpConfig: GcpConfigInput
+  gcpTenantConfig: GcpTenantConfigInput
+  alibabaConfig: AlibabaConfigInput
+  nebiusConfig: NebiusConfigInput
+  databricksConfig: DatabricksConfigInput
+  k8sConfig: K8sConfigInput
 }
 
 input UpdateDataSourceInput {
@@ -345,22 +395,132 @@ input UpdateDataSourceInput {
   azureSubscriptionConfig: AzureSubscriptionConfigInput
   azureTenantConfig: AzureTenantConfigInput
   gcpConfig: GcpConfigInput
+  gcpTenantConfig: GcpTenantConfigInput
   alibabaConfig: AlibabaConfigInput
   nebiusConfig: NebiusConfigInput
   databricksConfig: DatabricksConfigInput
   k8sConfig: K8sConfigInput
 }
 
+type EmployeeEmail {
+  id: ID!
+  employee_id: ID!
+  email_template: String!
+  enabled: Boolean!
+  available_by_role: Boolean!
+}
+
+input UpdateEmployeeEmailsInput {
+  enable: [ID!]
+  disable: [ID!]
+}
+
+enum UpdateEmployeeEmailsAction {
+  enable
+  disable
+}
+
+input UpdateEmployeeEmailInput {
+  emailId: ID!
+  action: UpdateEmployeeEmailsAction!
+}
+
+type Organization {
+  id: String!
+  name: String!
+  is_demo: Boolean!
+  currency: String!
+  pool_id: String!
+}
+
+type Employee {
+  id: String!
+  jira_connected: Boolean!
+  slack_connected: Boolean!
+}
+
+type InvitationAssignment {
+  id: String!
+  scope_id: String!
+  scope_name: String!
+  scope_type: String!
+  purpose: String!
+}
+
+type Invitation {
+  id: String!
+  owner_name: String!
+  owner_email: String!
+  organization: String!
+  invite_assignments: [InvitationAssignment!]
+}
+
+type OptscaleMode {
+  finops: Boolean
+  mlops: Boolean
+}
+
+input OptscaleModeParams {
+  finops: Boolean
+  mlops: Boolean
+}
+
+input UpdateOrganizationInput {
+  name: String
+  currency: String
+}
+
 type Query {
+  organizations: [Organization]
+  currentEmployee(organizationId: ID!): Employee
+  dataSources(organizationId: ID!): [DataSourceInterface]
   dataSource(
     dataSourceId: ID!
     requestParams: DataSourceRequestParams
   ): DataSourceInterface
+  employeeEmails(employeeId: ID!): [EmployeeEmail]
+  invitations: [Invitation]
+  organizationFeatures(organizationId: ID!): JSONObject
+  optscaleMode(organizationId: ID!): OptscaleMode
+  organizationThemeSettings(organizationId: ID!): JSONObject
+  organizationPerspectives(organizationId: ID!): JSONObject
 }
 
 type Mutation {
+  createDataSource(
+    organizationId: ID!
+    params: CreateDataSourceInput!
+  ): DataSourceInterface
   updateDataSource(
     dataSourceId: ID!
     params: UpdateDataSourceInput!
   ): DataSourceInterface
+  updateEmployeeEmails(
+    employeeId: ID!
+    params: UpdateEmployeeEmailsInput!
+  ): [EmployeeEmail]
+  updateEmployeeEmail(
+    employeeId: ID!
+    params: UpdateEmployeeEmailInput!
+  ): EmployeeEmail
+  deleteDataSource(dataSourceId: ID!): String
+  createOrganization(organizationName: String!): Organization
+  updateOrganization(
+    organizationId: ID!
+    params: UpdateOrganizationInput!
+  ): Organization
+  deleteOrganization(organizationId: ID!): String
+  updateInvitation(invitationId: String!, action: String!): String
+  updateOptscaleMode(
+    organizationId: ID!
+    value: OptscaleModeParams
+  ): OptscaleMode
+  updateOrganizationThemeSettings(
+    organizationId: ID!
+    value: JSONObject!
+  ): JSONObject
+  updateOrganizationPerspectives(
+    organizationId: ID!
+    value: JSONObject!
+  ): JSONObject
 }
