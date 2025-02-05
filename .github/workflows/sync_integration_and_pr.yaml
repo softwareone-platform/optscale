@@ -1,0 +1,80 @@
+name: Sync Branch and Create PR
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday at 09:00 UTC
+  workflow_dispatch:  # Manual trigger option
+
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Jira Login
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      - name: Check for Existing Jira Ticket
+        id: check_jira_ticket
+        uses: atlassian/gajira-list-issues@v3
+        with:
+          jql: "project = 'MPT' AND epicLink = 'MPT-3562' AND summary ~ '[SYNC-UPSTREAM]' AND statusCategory != 'Done'"
+
+      - name: Stop if Jira Ticket Exists
+        if: steps.check_jira_ticket.outputs.issues != '[]'
+        run: |
+          echo "A Jira ticket already exists. Stopping the workflow."
+          exit 0
+
+      - name: Create Jira Ticket
+        id: create_jira_ticket
+        uses: atlassian/gajira-create@v3
+        with:
+          project: "MPT"
+          issue_type: "Story"
+          summary: "[SYNC-UPSTREAM] Sync OptScale integration -> main"
+          description: "This task involves syncing the upstream branch with the main branch and creating a PR."
+          assignee: ${{ secrets.JIRA_ASSIGNEE }}
+          epic_link: "MPT-3562"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: integration
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/hystax/optscale.git
+          git fetch upstream
+
+      - name: Sync branch with upstream
+        run: |
+          git checkout integration
+          git merge upstream/integration --no-edit
+
+      - name: Push changes to integration
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin integration
+
+      - name: Check for existing Pull Request
+        id: check_pr
+        uses: peter-evans/find-pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          head: integration
+          base: main
+
+      - name: Create Pull Request
+        if: steps.check_pr.outputs.pull_request_number == ''
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: integration
+          base: main
+          title: "${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main $(date '+%Y-%m-%d')"
+          body: "This PR syncs the latest changes from upstream. Related Jira issue: "
+          draft: false
