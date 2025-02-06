@@ -36,8 +36,10 @@ jobs:
           jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
           project: "MPT"
           issue_type: "Story"
-          summary: "[SYNC-UPSTREAM] Sync OptScale integration -> main"
+          summary: "__SYNC_UPSTREAM__ Sync OptScale integration -> main"
           description: "This task involves syncing the upstream branch with the main branch and creating a PR."
+          fix_version: "v4"
+          component: "Extension FinOps"
           assignee: ${{ secrets.JIRA_ASSIGNEE }}
           epic: "MPT-3562"
 

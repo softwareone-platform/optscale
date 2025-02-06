@@ -19,6 +19,12 @@ inputs:
   issue_type:
     description: 'The Issue Type.'
     required: true
+  fix_version:
+    description: 'The Fix Version.'
+    required: true
+  component:
+    description: 'The Component.'
+    required: true
   description:
     description: 'Optional Description.'
   epic:
