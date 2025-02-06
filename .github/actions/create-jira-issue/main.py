@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 
 # Read input parameters from environment variables
@@ -16,7 +17,18 @@ ASSIGNEE = os.getenv("INPUT_ASSIGNEE")
 GITHUB_OUTPUT = os.getenv("GITHUB_OUTPUT")
 
 # Ensure required environment variables are set
-if not all([JIRA_URL, JIRA_USERNAME, JIRA_API_TOKEN, PROJECT, SUMMARY, ISSUE_TYPE, FIX_VERSION, COMPONENT]):
+if not all(
+    [
+        JIRA_URL,
+        JIRA_USERNAME,
+        JIRA_API_TOKEN,
+        PROJECT,
+        SUMMARY,
+        ISSUE_TYPE,
+        FIX_VERSION,
+        COMPONENT,
+    ]
+):
     print(
         "::error::Missing required input parameters: "
         "jira_base_url, jira_user_email, jira_api_token, project, summary, issue_type, "
@@ -31,9 +43,7 @@ jira_search_url = f"{JIRA_URL}/rest/api/3/issue"
 auth = (JIRA_USERNAME, JIRA_API_TOKEN)
 
 # Request headers
-headers = {
-    "Accept": "application/json"
-}
+headers = {"Accept": "application/json"}
 
 # Build the payload
 payload = {
@@ -42,12 +52,19 @@ payload = {
         "summary": SUMMARY,
         "issuetype": {"name": ISSUE_TYPE},
         "fixVersions": [{"name": FIX_VERSION}],
-        "components": [{"name": COMPONENT}]
+        "components": [{"name": COMPONENT}],
     }
 }
 
+
 if DESCRIPTION:
-    payload["fields"]["description"] = {"value": DESCRIPTION}
+    payload["fields"]["description"] = {
+        "content": [
+            {"content": [{"text": DESCRIPTION, "type": "text"}], "type": "paragraph"}
+        ],
+        "type": "doc",
+        "version": 1,
+    }
 
 if ASSIGNEE:
     payload["fields"]["assignee"] = {"name": ASSIGNEE}
@@ -55,10 +72,13 @@ if ASSIGNEE:
 if EPIC:
     payload["fields"]["parent"] = {"key": EPIC}
 
+print(json.dumps(payload, indent=2))
 
 try:
     # Make the request to Jira
     response = requests.post(jira_search_url, headers=headers, auth=auth, json=payload)
+    if response.status_code != 201:
+        print(response.json())
     response.raise_for_status()  # Raise exception for HTTP errors
 
     # Parse response

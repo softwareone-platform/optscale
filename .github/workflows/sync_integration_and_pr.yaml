@@ -21,14 +21,9 @@ jobs:
           jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
           jql: "project = MPT AND parentEpic = MPT-3562 AND summary ~ __SYNC_UPSTREAM__ AND status NOT IN (Done, Rejected)"
 
-      - name: Stop if Jira Ticket Exists
-        if: steps.check_jira_ticket.outputs.issues_exist
-        run: |
-          echo "A Jira ticket already exists. Stopping the workflow."
-          exit 0
-
       - name: Create Jira Ticket
         id: create_jira_ticket
+        if: steps.check_jira_ticket.outputs.issues_exist != 'true'
         uses: ./.github/actions/create-jira-issue
         with:
           jira_base_url: ${{ secrets.JIRA_BASE_URL }}
@@ -62,7 +57,7 @@ jobs:
       - name: Check if PR exists
         id: check_pr
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           prs=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
@@ -71,16 +66,22 @@ jobs:
               --json title \
               --jq 'length')
           if ((prs > 0)); then
-              echo "skip=true" >> "$GITHUB_OUTPUT"
+              echo "pr_exists=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request exist."
           fi
+          
+
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
-        if: '!steps.check_pr.outputs.skip'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: integration
-          base: main
-          title: "${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main $(date '+%Y-%m-%d')"
-          body: "This PR syncs the latest changes from upstream. Related Jira issue: "
-          draft: false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'integration' \
+              --base 'main' \
+              --title '${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
+              --body "This PR syncs the latest changes from upstream."
