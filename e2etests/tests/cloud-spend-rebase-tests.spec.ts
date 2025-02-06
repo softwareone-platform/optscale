@@ -64,14 +64,12 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Navigate to Resources page', async () => {
             await mainMenu.clickResources();
         });
-        await test.step('Set date range', async () => {
-            await resourcesPage.selectPreviousDateRange('Dec', '2024', '1', '31');
-        });
 
         await test.step('Verify Resources page on landing', async () => {
             await resourcesPage.waitForCanvas();
             await resourcesPage.searchInput.waitFor();
             await resourcesPage.resourcesHeading.hover();
+            await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
         });
 
@@ -80,6 +78,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.expensesBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
+            await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.expensesBreakdownChart).toHaveScreenshot('Resources-expenses-chart-screenshot.png');
         });
 
@@ -88,6 +87,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.resourceCountBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
+            await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.resourceCountBreakdownChart).toHaveScreenshot('Resources-resource-count-chart-screenshot.png');
         });
 
@@ -96,6 +96,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.tagsBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
+            await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
         });
     })
