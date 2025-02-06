@@ -4,10 +4,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 async function globalTeardown() {
-    const cacheDir = path.resolve(__dirname, '../.cache');
-    const authResponseFiles = fs.readdirSync(cacheDir).filter(file => file.startsWith('auth-response'));
-
-    console.log(`Global teardown started. Auth response files: ${authResponseFiles}`);
+    // const cacheDir = path.resolve(__dirname, '../.cache');
+    // const authResponseFiles = fs.readdirSync(cacheDir).filter(file => file.startsWith('auth-response'));
+    //
+    // console.log(`Global teardown started. Auth response files: ${authResponseFiles}`);
 
     // if (authResponseFiles.length > 0) {
     //     // Create a browser and context
