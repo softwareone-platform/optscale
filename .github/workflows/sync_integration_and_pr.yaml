@@ -31,6 +31,9 @@ jobs:
         id: create_jira_ticket
         uses: ./.github/actions/create-jira-issue
         with:
+          jira_base_url: ${{ secrets.JIRA_BASE_URL }}
+          jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
           project: "MPT"
           issue_type: "Story"
           summary: "[SYNC-UPSTREAM] Sync OptScale integration -> main"
