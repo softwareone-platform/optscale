@@ -41,11 +41,9 @@ try:
     # Write result to $GITHUB_OUTPUT
     with open(GITHUB_OUTPUT, "a") as github_output:
         if issues:
-            github_output.write("issues_exist=true\n")
+            issue = issues[0]["key"]
+            github_output.write(f"issue={issue}\n")
             print("::notice::Jira issues found matching the JQL query.")
-        else:
-            github_output.write("issues_exist=false\n")
-            print("::notice::No Jira issues found matching the JQL query.")
 
 except requests.RequestException as e:
     print(f"::error::{str(e)}")

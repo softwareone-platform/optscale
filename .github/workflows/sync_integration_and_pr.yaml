@@ -23,7 +23,7 @@ jobs:
 
       - name: Create Jira Ticket
         id: create_jira_ticket
-        if: steps.check_jira_ticket.outputs.issues_exist != 'true'
+        if: steps.check_jira_ticket.outputs.issue == ''
         uses: ./.github/actions/create-jira-issue
         with:
           jira_base_url: ${{ secrets.JIRA_BASE_URL }}
@@ -83,5 +83,5 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --head 'integration' \
               --base 'main' \
-              --title '${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
+              --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
               --body "This PR syncs the latest changes from upstream."
