@@ -1,5 +1,5 @@
 FROM python:3.9-slim
-COPY . /app
-WORKDIR /app
+RUN mkdir -p /github/workspace
+COPY main.py /github/workspace/main.py
 RUN pip install requests
 ENTRYPOINT ["python", "main.py"]
