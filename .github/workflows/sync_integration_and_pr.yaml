@@ -16,18 +16,16 @@ jobs:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
       - name: Check for Existing Jira Ticket
         id: check_jira_ticket
-        uses: DanielHilton/jira-jql-search@v0.2.0
-        env:
-          JIRA_HOST: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        uses: shamrat17/jira-jql-query@master
         with:
           jql: "project = 'MPT' AND epicLink = 'MPT-3562' AND summary ~ '[SYNC-UPSTREAM]' AND statusCategory != 'Done'"
+          fields: id
 
       - name: Stop if Jira Ticket Exists
-        if: steps.check_jira_ticket.outputs.issueData.issues != '[]'
+        if: steps.check_jira_ticket.outputs.jqlResult.issues != '[]'
         run: |
           echo "A Jira ticket already exists. Stopping the workflow."
           exit 0
