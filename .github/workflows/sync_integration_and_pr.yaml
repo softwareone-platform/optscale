@@ -19,7 +19,7 @@ jobs:
 
       - name: Check for Existing Jira Ticket
         id: check_jira_ticket
-        uses: shamrat17/jira-jql-query@master
+        uses: shamrat17/jira-jql-query@main
         with:
           jql: "project = 'MPT' AND epicLink = 'MPT-3562' AND summary ~ '[SYNC-UPSTREAM]' AND statusCategory != 'Done'"
           fields: id
