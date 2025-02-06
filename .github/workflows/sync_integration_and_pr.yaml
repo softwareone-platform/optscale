@@ -12,13 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Jira Login
-        uses: atlassian/gajira-login@v3
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
       - name: Check for Existing Jira Ticket
         id: check_jira_ticket
         uses: ./.github/actions/check-jira-issues
@@ -26,7 +19,7 @@ jobs:
           jira_base_url: ${{ secrets.JIRA_BASE_URL }}
           jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
           jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
-          jql: "project = 'MPT' AND epicLink = 'MPT-3562' AND summary ~ '[SYNC-UPSTREAM]' AND statusCategory != 'Done'"
+          jql: "project = MPT AND parentEpic = MPT-3562 AND summary ~ __SYNC_UPSTREAM__ AND status NOT IN (Done, Rejected)"
 
       - name: Stop if Jira Ticket Exists
         if: steps.check_jira_ticket.outputs.issues_exist
@@ -36,14 +29,14 @@ jobs:
 
       - name: Create Jira Ticket
         id: create_jira_ticket
-        uses: atlassian/gajira-create@v3
+        uses: ./.github/actions/create-jira-issue
         with:
           project: "MPT"
           issue_type: "Story"
           summary: "[SYNC-UPSTREAM] Sync OptScale integration -> main"
           description: "This task involves syncing the upstream branch with the main branch and creating a PR."
           assignee: ${{ secrets.JIRA_ASSIGNEE }}
-          epic_link: "MPT-3562"
+          epic: "MPT-3562"
 
       - name: Add upstream remote
         run: |
