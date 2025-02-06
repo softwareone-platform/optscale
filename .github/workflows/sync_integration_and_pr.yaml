@@ -8,8 +8,10 @@ on:
 jobs:
   sync-branch:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Jira Login
         uses: atlassian/gajira-login@v3
         env:
@@ -39,11 +41,6 @@ jobs:
           description: "This task involves syncing the upstream branch with the main branch and creating a PR."
           assignee: ${{ secrets.JIRA_ASSIGNEE }}
           epic_link: "MPT-3562"
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: integration
 
       - name: Add upstream remote
         run: |
