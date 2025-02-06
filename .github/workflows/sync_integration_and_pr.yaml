@@ -23,6 +23,9 @@ jobs:
         id: check_jira_ticket
         uses: ./.github/actions/check-jira-issues
         with:
+          jira_base_url: ${{ secrets.JIRA_BASE_URL }}
+          jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
           jql: "project = 'MPT' AND epicLink = 'MPT-3562' AND summary ~ '[SYNC-UPSTREAM]' AND statusCategory != 'Done'"
 
       - name: Stop if Jira Ticket Exists
