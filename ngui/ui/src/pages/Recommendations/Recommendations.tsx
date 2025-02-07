@@ -7,7 +7,7 @@ import Mocked, { MESSAGE_TYPES } from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
 import RecommendationsOverviewContainer from "containers/RecommendationsOverviewContainer";
 import RecommendationsOverviewContainerMocked from "containers/RecommendationsOverviewContainer/RecommendationsOverviewContainerMocked";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import RecommendationsOverviewService from "services/RecommendationsOverviewService";

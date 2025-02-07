@@ -26,9 +26,9 @@ const getValue = (hitValue, constraintLimit, type) => {
     {
       [RESOURCE_COUNT_ANOMALY]: (
         <>
-          <FormattedNumber value={constraintLimit} maximumFractionDigits={MAXIMUM_FRACTION_DIGITS} />
+          <FormattedNumber value={constraintLimit} maximumFractionDigits={0} />
           {" ⟶ "}
-          <FormattedNumber value={hitValue} maximumFractionDigits={MAXIMUM_FRACTION_DIGITS} />
+          <FormattedNumber value={hitValue} maximumFractionDigits={0} />
           {percentageChange}
         </>
       ),

@@ -10,7 +10,7 @@ import ActionBarResourceNameTitleText from "components/ActionBarResourceNameTitl
 import AssignmentRuleForm from "components/forms/AssignmentRuleForm";
 import { FIELD_NAMES } from "components/forms/AssignmentRuleForm/utils";
 import PageContentWrapper from "components/PageContentWrapper";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useApiState } from "hooks/useApiState";
 import { useAssignmentRulesAvailableFilters } from "hooks/useAssignmentRulesAvailableFilters";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";

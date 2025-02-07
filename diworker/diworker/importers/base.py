@@ -431,6 +431,7 @@ class BaseReportImporter:
 
         LOG.info('Updating import time')
         self.update_cloud_import_time(int(time.time()))
+        self.update_cloud_account_config()
         LOG.info('Import completed')
 
         LOG.info('Processing alerts')
@@ -456,6 +457,9 @@ class BaseReportImporter:
         self.rest_cl.cloud_account_update(self.cloud_acc_id,
                                           {'last_import_attempt_at': ts,
                                            'last_import_attempt_error': error})
+
+    def update_cloud_account_config(self):
+        pass
 
     @staticmethod
     def extract_tags(raw_tags):

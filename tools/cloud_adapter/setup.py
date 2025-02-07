@@ -17,7 +17,7 @@ requirements = [
 
     # Azure
     'azure-mgmt-resource==2.1.0',
-    'azure-mgmt-network==2.6.0',
+    'azure-mgmt-network==28.1.0',
     'azure-mgmt-compute==7.0.0',
     "azure-storage-blob==1.5.0",
     'azure-mgmt-storage==3.3.0',

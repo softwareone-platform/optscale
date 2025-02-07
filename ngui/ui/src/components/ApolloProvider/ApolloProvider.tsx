@@ -47,7 +47,7 @@ const ApolloClientProvider = ({ children }) => {
 
     /* Just log network errors for now. 
        We rely on custom error codes that are returned in graphQLErrors. 
-       It might be usefult to cache networkError errors to display alerts as well. 
+       It might be useful to cache networkError errors to display alerts as well. 
     */
     if (networkError) {
       console.error(`[Network error]: ${networkError}`);

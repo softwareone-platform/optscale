@@ -19,13 +19,14 @@ import {
   DEFAULT_BAR_CHART_PADDING,
   DEFAULT_BAR_CHART_INNER_PADDING,
   DEFAULT_CHART_BORDER_WIDTH,
-  FORMATTED_MONEY_TYPES
+  FORMATTED_MONEY_TYPES,
+  CHART_LEGEND_WIDTH,
+  CHART_LEGEND_LAYOUT_SETTINGS
 } from "utils/constants";
 import useStyles from "./CanvasBarChart.styles";
 import CanvasBarChartPdf from "./CanvasBarChartPdf";
 import CanvasBarChartTooltip from "./CanvasBarChartTooltip";
-
-const DEFAULT_LAYERS = ["grid", "axes", "bars", "legends", "annotations", "totals"];
+import { getChartLayers } from "./layers";
 
 const isBarEmpty = (barData) => barData.value === 0;
 
@@ -203,7 +204,6 @@ const CanvasBarChart = ({
   label,
   onClick,
   renderTooltipBody,
-  layers = DEFAULT_LAYERS,
   selectedBar,
   borderWidth = DEFAULT_CHART_BORDER_WIDTH,
   pdfId,
@@ -222,7 +222,9 @@ const CanvasBarChart = ({
   minMaxTicksEqualToMinMaxValues,
   enableTotals,
   valueFormat,
-  thresholdMarker
+  thresholdMarker,
+  withLegend,
+  legendLabel
 }) => {
   const wrapperRef = useRef();
   const canvasRef = useRef();
@@ -315,6 +317,17 @@ const CanvasBarChart = ({
     };
   };
 
+  const chartLayers = getChartLayers({
+    selectedBar,
+    barsRef,
+    thresholdMarker,
+    withLegend,
+    chartTheme,
+    drawBar,
+    getBarSettings,
+    legendLabel
+  });
+
   return (
     <div ref={wrapperRef} style={{ height: "100%" }} data-test-id={dataTestId}>
       {pdfId ? <CanvasBarChartPdf pdfId={pdfId} renderData={() => ({ canvasRef })} /> : null}
@@ -374,58 +387,23 @@ const CanvasBarChart = ({
         renderBar={(ctx, settings) => {
           drawBar(ctx, settings);
         }}
-        layers={[
-          ...layers,
-          (ctx, layerContext) => {
-            if (selectedBar) {
-              layerContext.bars.forEach((bar) => {
-                drawBar(ctx, getBarSettings(bar));
-              });
-            }
-          },
-          (_, { bars }) => {
-            barsRef.current = bars.map((bar) => getBarSettings(bar));
-          },
-          ...(thresholdMarker
-            ? [
-                (ctx, layerContext) => {
-                  const { innerWidth, yScale } = layerContext;
-
-                  const yTotal = yScale(thresholdMarker.value);
-
-                  const x0 = 0;
-                  const x1 = innerWidth;
-                  const y0 = yTotal;
-                  const y1 = yTotal;
-
-                  ctx.strokeStyle = chartTheme.canvas.marker.color;
-                  ctx.lineWidth = chartTheme.canvas.marker.lineWidth;
-
-                  ctx.beginPath();
-                  ctx.setLineDash(chartTheme.canvas.marker.lineDash);
-                  ctx.moveTo(x0, y0);
-                  ctx.lineTo(x1, y1);
-                  ctx.stroke();
-
-                  const textX0 = innerWidth - chartTheme.canvas.marker.xOffset;
-                  const textY0 = yTotal - chartTheme.canvas.marker.yOffset;
-
-                  ctx.textAlign = "right";
-                  ctx.fillStyle = chartTheme.canvas.marker.color;
-                  const text = thresholdMarker.format?.(thresholdMarker.value) ?? thresholdMarker.value;
-                  ctx.font = chartTheme.canvas.marker.font;
-                  ctx.fillText(text, textX0, textY0);
-                  ctx.restore();
-                }
-              ]
-            : [])
-        ]}
+        layers={chartLayers}
         theme={chartTheme}
         axisFormat={AXIS_FORMATS.MONEY}
         labelSkipWidth={labelSkipWidth}
         labelTextColor={labelTextColor}
         enableTotals={enableTotals}
         valueFormat={valueFormat}
+        legends={
+          withLegend
+            ? [
+                {
+                  dataFrom: "keys",
+                  ...CHART_LEGEND_LAYOUT_SETTINGS
+                }
+              ]
+            : undefined
+        }
       />
     </div>
   );
@@ -439,12 +417,16 @@ const ResponsiveCanvasBarChart = ({
   emptyMessageId = "noDataToDisplay",
   palette,
   dataTestId,
+  withLegend = false,
   ...rest
 }) => {
-  const theme = useMuiTheme();
+  const muiTheme = useMuiTheme();
 
   const {
-    margin = DEFAULT_BAR_CHART_MARGIN,
+    margin = {
+      ...DEFAULT_BAR_CHART_MARGIN,
+      right: withLegend ? CHART_LEGEND_WIDTH : DEFAULT_BAR_CHART_MARGIN.right
+    },
     height = DEFAULT_BAR_CHART_HEIGHT,
     padding = DEFAULT_BAR_CHART_PADDING,
     innerPadding = DEFAULT_BAR_CHART_INNER_PADDING
@@ -453,7 +435,7 @@ const ResponsiveCanvasBarChart = ({
   return (
     <div
       style={{
-        height: theme.spacing(height)
+        height: muiTheme.spacing(height)
       }}
     >
       <ResponsiveWrapper>
@@ -489,7 +471,8 @@ const ResponsiveCanvasBarChart = ({
               padding={padding}
               innerPadding={innerPadding}
               keys={keys}
-              palette={palette || theme.palette.chart}
+              palette={palette || muiTheme.palette.chart}
+              withLegend={withLegend}
               {...rest}
             />
           );

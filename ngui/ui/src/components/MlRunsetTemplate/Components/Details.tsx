@@ -4,18 +4,18 @@ import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import CloudLabel from "components/CloudLabel";
 import CopyText from "components/CopyText";
 import FormattedMoney from "components/FormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import MlRunsetTagForCreatedResourcesChip from "components/MlRunsetTagForCreatedResourcesChip";
-import ModeWrapper from "components/ModeWrapper";
 import SummaryList from "components/SummaryList";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
 import { getMlTaskDetailsUrl } from "urls";
 import { isEmpty as isEmptyArray, isLastItem } from "utils/arrays";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
 const Details = ({
@@ -111,12 +111,12 @@ const Details = ({
                   )
                 }
               />
-              <ModeWrapper mode={OPTSCALE_MODE.FINOPS}>
+              <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
                 <KeyValueLabel
                   keyMessageId="maximumRunsetBudget"
                   value={maximumRunsetBudget === undefined ? null : <FormattedMoney value={maximumRunsetBudget} />}
                 />
-              </ModeWrapper>
+              </CapabilityWrapper>
               <KeyValueLabel keyMessageId="resourceNamePrefix" value={resourceNamePrefix} />
               <KeyValueLabel
                 keyMessageId="tagForCreatedResources"

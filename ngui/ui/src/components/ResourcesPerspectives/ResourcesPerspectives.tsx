@@ -14,7 +14,7 @@ import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import Tooltip from "components/Tooltip";
-import { useOrganizationPerspectives } from "hooks/coreData";
+import { useOrganizationPerspectives } from "hooks/coreData/useOrganizationPerspectives";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { breakdowns } from "hooks/useBreakdownBy";
 import { useOpenSideModal } from "hooks/useOpenSideModal";

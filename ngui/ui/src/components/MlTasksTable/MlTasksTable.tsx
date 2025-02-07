@@ -7,15 +7,15 @@ import KeyValueLabel from "components/KeyValueLabel";
 import MlTasksFilters from "components/MlTasksFilters";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { ML_TASK_CREATE } from "urls";
 import { duration, metrics, mlTaskLastRun, mlTaskName } from "utils/columns";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { getTasksMetricsKeyNameEntries, getFirstMetricEntryKey } from "utils/ml";
 
 const MlTasksTable = ({ tasks, filterValues, appliedFilters, onFilterChange }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const metricsKeyNameEntries = getTasksMetricsKeyNameEntries(tasks);
 

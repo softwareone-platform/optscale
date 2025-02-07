@@ -2,7 +2,7 @@ import { FormattedMessage } from "react-intl";
 import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 
 const Cell = ({ row: { original } }) => {
   const { cloud_account_id: dataSourceId, cloud_account_name: dataSourceName, cloud_type: dataSourceType, region } = original;

@@ -122,7 +122,8 @@ class TestInfrastructureBase(TestApiBase):
             },
             'open_ingress': False,
             'spot_settings': {
-                'tries': 3
+                'tries': 3,
+                'spot_price': 1.1
             }
         }
 

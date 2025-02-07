@@ -1,5 +1,3 @@
-/* eslint-disable import/no-duplicates */
-
 import { useState } from "react";
 import getDay from "date-fns/getDay";
 import enUsLocale from "date-fns/locale/en-US";

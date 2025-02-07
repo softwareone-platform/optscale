@@ -65,8 +65,8 @@ const resolvers: Resolvers = {
     organizationFeatures: async (_, { organizationId }, { dataSources }) => {
       return dataSources.restapi.getOrganizationFeatures(organizationId);
     },
-    optscaleMode: async (_, { organizationId }, { dataSources }) => {
-      return dataSources.restapi.getOptscaleMode(organizationId);
+    optscaleCapability: async (_, { organizationId }, { dataSources }) => {
+      return dataSources.restapi.getOptscaleCapability(organizationId);
     },
     organizationThemeSettings: async (
       _,
@@ -123,12 +123,15 @@ const resolvers: Resolvers = {
     updateInvitation: async (_, { invitationId, action }, { dataSources }) => {
       return dataSources.restapi.updateInvitation(invitationId, action);
     },
-    updateOptscaleMode: async (
+    updateOptscaleCapability: async (
       _,
       { organizationId, value },
       { dataSources }
     ) => {
-      return dataSources.restapi.updateOptscaleMode(organizationId, value);
+      return dataSources.restapi.updateOptscaleCapability(
+        organizationId,
+        value
+      );
     },
     updateOrganizationThemeSettings: async (
       _,

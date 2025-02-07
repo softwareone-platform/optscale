@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 from bulldozer.bulldozer_worker.infra import Infra, InfraException
@@ -74,7 +73,7 @@ class RunsetState:
 
 
 class TaskReason:
-    COMPLETED = "task completed successfully"
+    COMPLETED = "Task completed successfully"
 
 
 class Base:
@@ -237,7 +236,7 @@ class ContinueWithDestroyConditions(Continue):
         _, runner = self.bulldozer_cl.get_runner(runner_id)
         # check for destroy flag set
         if runner.get("destroy"):
-            raise DestroyFlagSet("Destroy flag is set")
+            raise DestroyFlagSet("Aborted - Destroy flag is set")
 
         destroy_conditions = runner.get("destroy_conditions", {})
         # check budget condition
@@ -250,7 +249,8 @@ class ContinueWithDestroyConditions(Continue):
                      "current (estimated): %f", runner_id, max_budget, cost)
             if max_budget < cost:
                 raise BudgetExceeded(
-                    f"Budget exceeded max: {max_budget}, current: {cost}")
+                    f"Aborted - Budget exceeded max: {max_budget}, "
+                    f"current: {cost}")
         max_duration = destroy_conditions.get("max_duration")
         if max_duration:
             LOG.info("checking for max duration %d for runner %s",
@@ -263,7 +263,7 @@ class ContinueWithDestroyConditions(Continue):
                          runner_id, now, threshold)
                 if now > threshold:
                     raise TimeoutConditionExceeded(
-                        f"Duration exceeded: current time: {now} "
+                        f"Aborted - Duration exceeded: current time: {now} "
                         f"threshold: {threshold}"
                     )
 
@@ -366,15 +366,18 @@ class SetFailed(SetFinished):
                 }
             )
             infra.destroy()
-
+            self.bulldozer_cl.update_runner(
+                runner_id,
+                state=TaskState.DESTROYED,
+                destroyed_at=utcnow_timestamp()
+            )
         except Exception as exc:
             # basically exception
             LOG.exception("Cleanup problem: %s", str(exc))
-        finally:
             self.bulldozer_cl.update_runner(
                 runner_id,
-                state=TaskState.ERROR,
-                destroyed_at=utcnow_timestamp())
+                state=TaskState.ERROR)
+        finally:
             self.update_reason()
         self.message.ack()
 
@@ -402,6 +405,11 @@ class StartInfra(Continue):
         tags = runner.get("tags", dict())
         # opens ingress ports for runner instance
         open_ingress = runner.get("open_ingress", False)
+        _, runset = self.bulldozer_cl.runset_get(runner["runset_id"])
+        spot_settings = runset.get("spot_settings")
+        spot_price = None
+        if spot_settings:
+            spot_price = spot_settings.get("spot_price")
 
         if hp is not None and isinstance(hp, dict):
             for k, v in hp.items():
@@ -413,7 +421,7 @@ class StartInfra(Continue):
             state=TaskState.STARTING)
         _, cloud_account = self.rest_cl.cloud_account_get(
             cloud_account_id, True)
-        # TODO: get cloud type form cloud account to support multi-cloud
+        # TODO: get cloud type from cloud account to support multi-cloud
         # Now only AWS is supported
         c_type = "AWS"
         if not self.body.get("type"):
@@ -448,6 +456,7 @@ class StartInfra(Continue):
             key=None,
             tags=tags,
             open_ingress=open_ingress,
+            spot_price=spot_price
         )
 
         LOG.info("Created runner id=%s, instance=%s, ip=%s",
@@ -494,7 +503,7 @@ class WaitArcee(ContinueWithDestroyConditions):
                      current_time, wait_time)
             if current_time > wait_time:
                 # TODO: Do we need automatically destroy env?
-                raise ArceeWaitException("Arcee wait exceeded")
+                raise ArceeWaitException("Aborted - Arcee wait exceeded")
         else:
             self.update_run_info(run_id, runner)
             self.bulldozer_cl.update_runner(

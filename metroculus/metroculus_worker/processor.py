@@ -553,6 +553,7 @@ class MetricsProcessor(object):
         # order of items inserted.
         metric_cloud_names_map = {
             "cpu": "compute.googleapis.com/instance/cpu/utilization",
+            "cpu_load": "agent.googleapis.com/cpu/load_15m",
             "network_in_io": "compute.googleapis.com/instance/network/received_bytes_count",
             "network_out_io": "compute.googleapis.com/instance/network/sent_bytes_count",
             "ram_percent": "agent.googleapis.com/memory/percent_used",
@@ -563,6 +564,7 @@ class MetricsProcessor(object):
         }
         ram_sizes = {}
         ram_percents = set()
+        cpus = set()
         for metric_name, cloud_metric_name in metric_cloud_names_map.items():
             response = adapter.get_metric(
                 cloud_metric_name,
@@ -592,6 +594,7 @@ class MetricsProcessor(object):
                     value = point.value.double_value
                     date = datetime.fromtimestamp(
                         point.interval.start_time.timestamp())
+                    key = (resource_id, date)
                     if metric_name in [
                         'network_in_io',
                         'network_out_io',
@@ -603,7 +606,6 @@ class MetricsProcessor(object):
                     elif metric_name == "ram_percent":
                         if record.metric.labels.get('state') != 'used':
                             continue
-                        key = (resource_id, date)
                         ram_percents.add(key)
                     # to determine RAM value in % instead of absolute values,
                     # on instances without Ops agent, we need to know values
@@ -613,11 +615,9 @@ class MetricsProcessor(object):
                     # we rely on the fact that the metrics API returns metrics
                     # in the same order as they were requested.
                     elif metric_name == "ram_size":
-                        key = (resource_id, date)
                         ram_sizes[key] = value
                         continue
                     elif metric_name == "ram":
-                        key = (resource_id, date)
                         if key in ram_percents:
                             # not calculate ram value, as agent's value exists
                             continue
@@ -636,6 +636,10 @@ class MetricsProcessor(object):
                         # metrics API returns CPU usage in range [0;1].
                         # transform it into %.
                         value *= 100
+                        cpus.add(key)
+                    elif metric_name == "cpu_load":
+                        if key in cpus:
+                            continue
                     result.append({
                         'cloud_account_id': cloud_account_id,
                         'resource_id': resource_id,

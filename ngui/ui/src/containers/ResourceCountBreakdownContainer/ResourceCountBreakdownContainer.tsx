@@ -25,9 +25,9 @@ const ResourceCountBreakdownContainer = ({ requestParams }) => {
   return (
     <ResourceCountBreakdown
       breakdown={breakdown}
+      counts={counts}
       breakdownByValue={breakdownByValue}
       onBreakdownByChange={onBreakdownByChange}
-      counts={counts}
       countKeys={countKeysSortedByTotalInDescendingOrder}
       isLoading={isGetResourceCountBreakdownLoading}
       appliedRange={{

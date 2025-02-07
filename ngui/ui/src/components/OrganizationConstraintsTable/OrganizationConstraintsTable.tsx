@@ -11,7 +11,7 @@ import IconButton from "components/IconButton";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { intl } from "translations/react-intl-config";
 import { isEmpty as isEmptyArray } from "utils/arrays";

@@ -93,7 +93,7 @@ class RightsizingBase(ModuleBase):
             flavor_cpu, instance_metrics, optimization_metric)
         if min_recommended:
             recommended_cpu_list = [
-                x for x in range(int(min_recommended), flavor_cpu)
+                x for x in range(int(min_recommended), int(flavor_cpu))
                 if x >= recommended_flavor_cpu_min and bool(
                     x == 1 or x > 1 and x % 2 == 0)]
         return recommended_cpu_list

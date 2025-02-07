@@ -110,3 +110,50 @@ Samples could be found here:
 Set all the variables and save without `.sample`
 
 Take a note, that at production or dockerized version server starts with `prepare-and-run.sh` script, which creates /ui/build/config.js, where **all** `VITE_` variables (even unused in code!) will be listed **with** their names. At this stage, do not use `ui/.env` to store any sensitive information in `VITE_` variables.
+
+### Fixing npm module vulnerabilities
+
+To check and fix npm module vulnerabilities using pnpm, follow these steps:
+
+#### 1. Basic vulnerability check:
+
+```
+pnpm audit
+```
+
+#### 2. Simple fixes:
+
+To automatically fix direct vulnerabilities where possible:
+
+```
+pnpm audit --fix
+```
+
+#### 3. Handling indirect dependencies:
+
+For vulnerabilities in packages that are not directly installed:
+
+1. Identify the vulnerable package and its dependencies:
+
+```
+pnpm audit
+pnpm why <package_name>
+```
+
+2. Examine the package.json files of projects using the vulnerable package to determine acceptable version ranges according to semver rules
+
+3. Run the fix command to generate an override:
+
+```
+pnpm audit --fix
+```
+
+4. Verify that the generated override in package.json follows the required semver rules
+
+5. Install dependencies with the override:
+
+```
+pnpm install
+```
+
+6. After verifying the fix works, remove the override from package.json

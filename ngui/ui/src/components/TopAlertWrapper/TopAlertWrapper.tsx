@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 // import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
