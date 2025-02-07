@@ -1,5 +1,5 @@
 import {BasePage} from "./base-page";
-import {defineConfig, expect, Locator, Page} from "@playwright/test";
+import {expect, Locator, Page} from "@playwright/test";
 
 
 export class MainMenu extends BasePage {
@@ -36,25 +36,26 @@ export class MainMenu extends BasePage {
         this.recommendationsBtn = this.menu.getByTestId('btn_recommend');
         this.resourcesBtn = this.menu.getByTestId('btn_resources');
         this.poolsBtn = this.menu.getByTestId('btn_pools');
-        this.finOpsBtn =  this.menu.getByRole('button', { name: 'FinOps' });
+        this.finOpsBtn = this.menu.getByRole('button', {name: 'FinOps'});
         this.costExplorerBtn = this.menu.getByTestId('btn_cost_explorer_page');
-        this.mlOpsBtn = this.menu.getByRole('button', { name: 'MLOps' });
+        this.mlOpsBtn = this.menu.getByRole('button', {name: 'MLOps'});
         this.tasksBtn = this.menu.getByTestId('btn_ml_tasks');
         this.modelsBtn = this.menu.getByTestId('btn_ml_models');
         this.datasetsBtn = this.menu.getByTestId('btn_ml_datasets');
         this.artifactsBtn = this.menu.getByTestId('btn_ml_artifacts');
         this.hypertuningBtn = this.menu.getByTestId('btn_ml_runsets');
         this.metricsBtn = this.menu.getByTestId('btn_ml_metrics');
-        this.policiesBtn =  this.menu.getByRole('button', { name: 'Policies' });
-        this.anomaliesBtn =  this.menu.getByTestId('btn_anomalies');
-        this.quotasAndBudgetsBtn =  this.menu.getByTestId('btn_quotas_and_budgets');
-        this.taggingBtn =  this.menu.getByTestId('btn_tagging_policies');
-        this.systemBtn = this.menu.getByRole('button', { name: 'System' });
+        this.policiesBtn = this.menu.getByRole('button', {name: 'Policies'});
+        this.anomaliesBtn = this.menu.getByTestId('btn_anomalies');
+        this.quotasAndBudgetsBtn = this.menu.getByTestId('btn_quotas_and_budgets');
+        this.taggingBtn = this.menu.getByTestId('btn_tagging_policies');
+        this.systemBtn = this.menu.getByRole('button', {name: 'System'});
         this.userManagementBtn = this.menu.getByTestId('btn_user_management');
         this.dataSourcesBtn = this.menu.getByTestId('btn_data_sources');
         this.eventsBtn = this.menu.getByTestId('btn_events');
         this.settingsBtn = this.menu.getByTestId('btn_settings');
     }
+
     async expandMenu() {
         if (await this.finOpsBtn.isVisible() && await this.finOpsBtn.getAttribute('aria-expanded') === 'false') {
             await this.finOpsBtn.click();
@@ -69,14 +70,16 @@ export class MainMenu extends BasePage {
             await this.systemBtn.click();
         }
     }
+
     async assertMenuNavigation(menuLink: Locator, expectedUrl: string) {
         const baseURL = process.env.BASE_URL;
         await menuLink.click();
-        await expect(this.page).toHaveURL(new RegExp(`^${baseURL}${expectedUrl.replace(/^\//, '')}`));
+        const currentUrl = this.page.url();
+        expect(currentUrl.startsWith(`${baseURL}${expectedUrl}`)).toBe(true);
     }
 
     async clickUserManagement() {
-        if(await this.systemBtn.getAttribute('aria-expanded') === 'false') {
+        if (await this.systemBtn.getAttribute('aria-expanded') === 'false') {
             await this.systemBtn.click();
         }
         await this.userManagementBtn.click();

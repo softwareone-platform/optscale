@@ -3,7 +3,7 @@ import {expect} from "@playwright/test";
 
 test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
-        expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
+        expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
     })
 
     test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
