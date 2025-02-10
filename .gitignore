@@ -39,3 +39,9 @@ ngui/ui/package-lock.json
 jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
+/e2etests/.env.local
+/e2etests/test-results/
+/e2etests/node_modules/
+/e2etests/playwright-report/
+/e2etests/results.json
+/e2etests/.cache/
