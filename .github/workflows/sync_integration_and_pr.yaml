@@ -54,6 +54,26 @@ jobs:
         run: |
           git push origin integration
 
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Create merge branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin
+          git checkout main
+          git checkout -b main_integration_sync
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<actions-bot@github.local>"
+          if ! git merge upstream/integration --no-edit; then
+            echo "Merge completed with conflicts; resolving automatically."
+            git add -A
+            git commit --no-edit || echo "Nothing to commit, all changes are staged."
+          fi
+          git push origin main_integration_sync --force
+
       - name: Check if PR exists
         id: check_pr
         env:
@@ -61,7 +81,7 @@ jobs:
         run: |
           prs=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
-              --head 'integration' \
+              --head 'main_integration_sync' \
               --base 'main' \
               --json title \
               --jq 'length')
@@ -69,11 +89,6 @@ jobs:
               echo "pr_exists=true" >> "$GITHUB_OUTPUT"
               echo "::notice::Pull Request exist."
           fi
-          
-
-      - name: Get current date
-        id: current_date
-        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         env:
@@ -81,7 +96,7 @@ jobs:
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
-              --head 'integration' \
+              --head 'main_integration_sync' \
               --base 'main' \
               --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
               --body "This PR syncs the latest changes from upstream."
