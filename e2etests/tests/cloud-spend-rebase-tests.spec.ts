@@ -24,6 +24,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     })
 
     test('Verify Homepage matches screenshots', async ({homePage}) => {
+        // test.slow();
         await test.step('Verify Home Page content', async () => {
             //Organization Expenses forecast column seems to be recalculated daily so
             await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
@@ -37,13 +38,14 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     })
 
     test('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
+        // test.slow();
         await test.step('Navigate to Recommendations page', async () => {
             await mainMenu.clickRecommendations();
         });
 
         await test.step('Verify Recommendations page content - cards', async () => {
             await recommendationsPage.clickCardsButtonIfNotActive();
-
+            // await recommendationsPage.page.waitForTimeout(5000);
             //Dynamic values check time data are not fixed so we can't match the screenshot 100%
             await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
             await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
@@ -52,6 +54,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Recommendations page content - table', async () => {
             await recommendationsPage.clickTableButton();
+            // await recommendationsPage.page.waitForTimeout(5000);
             //Dynamic values check time data are not fixed so we can't match the screenshot 100%
             await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png');
             await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
@@ -60,6 +63,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     })
 
     test('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
+        // test.slow();
         await test.step('Navigate to Resources page', async () => {
             await mainMenu.clickResources();
         });
@@ -68,7 +72,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.waitForCanvas();
             await resourcesPage.searchInput.waitFor();
             await resourcesPage.resourcesHeading.hover();
-            await resourcesPage.page.waitForTimeout(5000);
+            // await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
         });
 
@@ -77,7 +81,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.expensesBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
-            await resourcesPage.page.waitForTimeout(5000);
+            // await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.expensesBreakdownChart).toHaveScreenshot('Resources-expenses-chart-screenshot.png');
         });
 
@@ -86,7 +90,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.resourceCountBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
-            await resourcesPage.page.waitForTimeout(5000);
+            // await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.resourceCountBreakdownChart).toHaveScreenshot('Resources-resource-count-chart-screenshot.png');
         });
 
@@ -95,7 +99,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourcesPage.resourcesHeading.hover();
             await resourcesPage.tagsBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
-            await resourcesPage.page.waitForTimeout(5000);
+            // await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
         });
     })
@@ -105,6 +109,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
                                                                         resourcesPage,
                                                                         resourceDetailsPage
                                                                     }) => {
+        // test.slow();
         await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
             await mainMenu.clickResources();
             await resourcesPage.waitForCanvas();
@@ -115,6 +120,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Resource details page content - Details tab', async () => {
             if (!await resourceDetailsPage.isTabSelected(resourceDetailsPage.detailsTab)) await resourceDetailsPage.clickDetailsTab();
             await resourceDetailsPage.heading.hover();
+            // await resourceDetailsPage.page.waitForTimeout(5000);
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png', {maxDiffPixelRatio: 0.01});
         });
 
@@ -122,6 +128,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourceDetailsPage.clickConstraintsTab();
             await resourceDetailsPage.heading.hover();
             await resourceDetailsPage.constraintsTable.waitFor();
+            // await resourceDetailsPage.page.waitForTimeout(5000);
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
         });
 
@@ -130,10 +137,12 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await resourceDetailsPage.clickExpensesGroupedButtonIfNotActive();
             await resourceDetailsPage.heading.hover();
             await resourceDetailsPage.waitForCanvas();
+            // await resourceDetailsPage.page.waitForTimeout(5000);
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-grouped-screenshot.png');
             await resourceDetailsPage.clickExpensesDetailedButton();
             await resourceDetailsPage.heading.hover();
             await resourceDetailsPage.waitForCanvas();
+            // await resourceDetailsPage.page.waitForTimeout(5000);
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png', {maxDiffPixelRatio: 0.01});
             // await resourceDetailsPage.clickExpensesPaidNetworkTrafficButton();
             // await resourceDetailsPage.heading.hover();
@@ -143,27 +152,31 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Resource details page content - Recommendations tab', async () => {
             await resourceDetailsPage.clickRecommendationsTab();
             await resourceDetailsPage.heading.hover();
+            // await resourceDetailsPage.page.waitForTimeout(5000);
             await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-recommendations-tab-screenshot.png');
         });
     })
 
     test('Verify Pools page matches screenshots', async ({poolsPage}) => {
-        test.slow();
+        // test.slow();
         await test.step('Navigate to Pools page', async () => {
             await poolsPage.navigateToURL(true);
         });
 
         await test.step('Verify Pools page content', async () => {
+            // await poolsPage.page.waitForTimeout(5000);
             await expect(poolsPage.main).toHaveScreenshot('Pools-landing-screenshot.png');
         });
 
         await test.step('Verify Pools page with expanded requiring attention', async () => {
             await poolsPage.clickExpandRequiringAttentionBtn();
+            // await poolsPage.page.waitForTimeout(5000);
             await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
         });
     });
 
     test('Verify Expenses page matches screenshots', async ({expensesPage}) => {
+        // test.slow();
         await test.step('Navigate to Expenses page', async () => {
             await expensesPage.navigateToURL(true);
         });
@@ -172,6 +185,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expensesPage.clickDailyBtnIfNotSelected();
             await expensesPage.expensesHeading.hover();
             await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-daily-screenshot.png');
         });
 
@@ -179,6 +193,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expensesPage.clickWeeklyBtn();
             await expensesPage.expensesHeading.hover();
             await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-weekly-screenshot.png');
         });
 
@@ -186,11 +201,13 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
            await expensesPage.clickMonthlyBtn();
            await expensesPage.expensesHeading.hover();
            await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
            await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
         });
     });
 
     test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
+        // test.slow();
         await test.step('Navigate to Expenses page', async () => {
             await expensesPage.navigateToURL(true);
         });
@@ -199,6 +216,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expensesPage.clickSourceBtn();
             await expensesPage.costExploreBreadcrumb.hover();
             await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
         });
 
@@ -207,6 +225,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expensesPage.clickPoolBtn();
             await expensesPage.costExploreBreadcrumb.hover();
             await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-pool-screenshot.png');
         });
 
@@ -215,6 +234,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expensesPage.clickOwnerBtn();
             await expensesPage.costExploreBreadcrumb.hover();
             await expensesPage.waitForCanvas();
+            // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-owner-screenshot.png');
         });
     });

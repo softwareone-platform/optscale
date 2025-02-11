@@ -41,7 +41,7 @@ export class RecommendationsPage extends BasePage {
         this.cardsBtn = this.page.getByRole('button', {name: 'Cards'});
         this.tableBtn = this.page.getByRole('button', {name: 'Table'});
         this.searchInput = this.page.getByPlaceholder('Search');
-        this.firstCard = this.page.locator('//div[contains(@class, "tss-x60kca-card")]').first();
+        this.firstCard = this.page.locator('//div[contains(@class, "MuiCard-root")]').first();
         this.table = this.main.locator('table');
     }
 
