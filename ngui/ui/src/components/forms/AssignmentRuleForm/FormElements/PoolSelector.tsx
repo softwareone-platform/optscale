@@ -17,7 +17,7 @@ const PoolSelector = ({
       name={name}
       items={pools.map(({ id: poolId, name: poolName, pool_purpose: poolPurpose }) => ({
         value: poolId,
-        content: <ItemContentWithPoolIcon poolType={poolPurpose}>{poolName}</ItemContentWithPoolIcon>
+        content: <ItemContentWithPoolIcon poolType={poolPurpose} label={poolName} />
       }))}
       id="target-pool-selector"
       fullWidth

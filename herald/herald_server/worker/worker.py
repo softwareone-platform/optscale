@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 import argparse
 
@@ -13,9 +14,35 @@ LOG = logging.getLogger(__name__)
 DEFAULT_ETCD_HOST = '127.0.0.1'
 DEFAULT_ETCD_PORT = 2379
 
+CUSTOM_TEMPLATES_PATH = '/usr/src/app/herald/modules/email_generator/' \
+                        'custom_templates'
+README_NAME = 'README.md'
+README_PATH_LOCAL = '/usr/src/app/herald/modules/email_generator/' \
+                    'CUSTOM_EMAIL_README.md'
+
+
+def upload_custom_email_template_readme():
+    try:
+        shutil.copy(README_PATH_LOCAL,
+                    os.path.join(CUSTOM_TEMPLATES_PATH, README_NAME))
+        LOG.info("Copied README.md")
+    except Exception as exc:
+        LOG.exception(exc)
+
+
+def find_custom_email_templates():
+    try:
+        files = [x for x in os.listdir(CUSTOM_TEMPLATES_PATH)
+                 if x.endswith('.html')]
+        if files:
+            LOG.info('Found custom email templates: %s', files)
+    except Exception as exc:
+        LOG.exception(exc)
+
 
 def make_app(etcd_host, etcd_port, wait=False):
-    config_cl = optscale_client.config_client.client.Client(host=etcd_host, port=etcd_port)
+    config_cl = optscale_client.config_client.client.Client(
+        host=etcd_host, port=etcd_port)
     if wait:
         config_cl.wait_configured()
 
@@ -28,6 +55,9 @@ def make_app(etcd_host, etcd_port, wait=False):
 
     db = DBFactory(DBType.MySQL, config_cl).db
     engine = db.engine
+
+    upload_custom_email_template_readme()
+    find_custom_email_templates()
 
     tasks_processor = MainProcessor(consumer, engine, config_cl)
 

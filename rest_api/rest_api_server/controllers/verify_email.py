@@ -15,6 +15,9 @@ class VerifyEmailController(RestorePasswordController):
         return f'https://{host}/email-verification{params}'
 
     def send_verification_email(self, email, code):
+        if self._config.disable_email_verification():
+            LOG.warning("Skipping sending verification email")
+            return
         link = self._generate_link(email, code)
         HeraldClient(
             url=self._config.herald_url(),

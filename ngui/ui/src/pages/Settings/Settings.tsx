@@ -3,9 +3,17 @@ import ActionBar from "components/ActionBar";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
+import CapabilityContainer from "containers/CapabilityContainer";
 import InvitationsContainer from "containers/InvitationsContainer";
+<<<<<<< HEAD
 
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
+=======
+import SshSettingsContainer from "containers/SshSettingsContainer";
+import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
+>>>>>>> upstream/integration
 
 const actionBarDefinition = {
   title: {
@@ -15,6 +23,7 @@ const actionBarDefinition = {
 
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
+<<<<<<< HEAD
   EMAIL_NOTIFICATIONS: "emailNotifications",
   INVITATIONS: "invitations"
   // MTP_TODO: disabled to meet BDR requirements
@@ -25,6 +34,16 @@ export const SETTINGS_TABS = Object.freeze({
 const Settings = () => {
   // MTP_TODO: disabled to meet BDR requirements
   // const isFinOpsModeEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+=======
+  INVITATIONS: "invitations",
+  CAPABILITIES: "capabilities",
+  SSH: "sshKeys",
+  EMAIL_NOTIFICATIONS: "emailNotifications"
+});
+
+const Settings = () => {
+  const isFinOpsCapabilityEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
+>>>>>>> upstream/integration
 
   const tabs = [
     {
@@ -37,6 +56,7 @@ const Settings = () => {
       dataTestId: `tab_${SETTINGS_TABS.INVITATIONS}`,
       node: <InvitationsContainer />
     },
+<<<<<<< HEAD
     // {
     //   title: SETTINGS_TABS.MODE,
     //   dataTestId: `tab_${SETTINGS_TABS.MODE}`,
@@ -51,6 +71,22 @@ const Settings = () => {
     //       }
     //     ]
     //   : []),
+=======
+    {
+      title: SETTINGS_TABS.CAPABILITIES,
+      dataTestId: `tab_${SETTINGS_TABS.CAPABILITIES}`,
+      node: <CapabilityContainer />
+    },
+    ...(isFinOpsCapabilityEnabled
+      ? [
+          {
+            title: SETTINGS_TABS.SSH,
+            dataTestId: `tab_${SETTINGS_TABS.SSH}`,
+            node: <SshSettingsContainer />
+          }
+        ]
+      : []),
+>>>>>>> upstream/integration
     {
       title: SETTINGS_TABS.EMAIL_NOTIFICATIONS,
       dataTestId: `tab_${SETTINGS_TABS.EMAIL_NOTIFICATIONS}`,

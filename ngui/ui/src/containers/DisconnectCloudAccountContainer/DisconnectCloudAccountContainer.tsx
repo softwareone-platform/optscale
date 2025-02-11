@@ -4,7 +4,7 @@ import { GET_AVAILABLE_FILTERS } from "api/restapi/actionTypes";
 import DisconnectCloudAccountForm from "components/forms/DisconnectCloudAccountForm";
 import { getReasonValue } from "components/forms/DisconnectCloudAccountForm/utils";
 import { DELETE_DATA_SOURCE, GET_DATA_SOURCES } from "graphql/api/restapi/queries/restapi.queries";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useRefetchApis } from "hooks/useRefetchApis";
 import DataSourcesService, { DATASOURCE_SURVEY_TYPES } from "services/DataSourcesService";
 import { CLOUD_ACCOUNTS } from "urls";

@@ -233,8 +233,43 @@ class AlibabaTrafficExpenseProcessor(BaseTrafficExpenseProcessor):
     ]
 
     @staticmethod
-    def extract_locations_and_usage(e):
-        _from = e.get('Zone') or e.get('Region') or 'Unknown'
+    def _zone_to_region(zone):
+        """
+        Converts zone name from expenses to region name.
+
+        Examples:
+            ap-southeast-5a -> ap-southeast-5
+            eu-central-a -> eu-central-1
+            cn-beijing-f -> cn-beijing
+
+        :param zone: (str) zone name
+        :return: (str) region name or zone name
+        """
+        parts = zone.split("-")
+        if len(parts) == 3 and parts[0] == "cn":
+            zone = "-".join(parts[:2])
+        elif len(parts) >= 3 and parts[0] != "cn":
+            # region name should ends with integer, ex.: eu-central-1
+            last = parts.pop(-1)
+            try:
+                int(last)
+            except ValueError:
+                # try to get region number from the last part
+                number = ''.join(x for x in last if x.isdigit())
+                if not number:
+                    # fix region name for zones without number, ex.:
+                    # eu-central-a -> eu-central-1
+                    number = "1"
+                parts.append(number)
+                zone = "-".join(parts)
+        return zone
+
+    def extract_locations_and_usage(self, e):
+        zone = e.get('Zone')
+        region = e.get('Region')
+        if not region and zone:
+            zone = self._zone_to_region(zone)
+        _from = region or zone or 'Unknown'
         _to = 'Unknown' if e.get('InternetIP') else 'External'
         _usage = float(e.get('Usage') or 0)
         return _from, _to, _usage

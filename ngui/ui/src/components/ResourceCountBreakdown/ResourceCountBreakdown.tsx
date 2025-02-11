@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Box, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
+import ChartLegendToggle from "components/ChartLegendToggle";
 import BreakdownBy from "components/ExpensesDailyBreakdownBy/BreakdownBy";
+import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import { splitIntoTwoChunks, isEmpty as isEmptyArray } from "utils/arrays";
-import { getColorScale } from "utils/charts";
+import { getColorsMap } from "utils/charts";
 import { format, secondsToMilliseconds } from "utils/datetime";
 import { SPACING_1 } from "utils/layouts";
 import ResourceCountBreakdownLineChart from "./ResourceCountBreakdownLineChart";
@@ -19,35 +21,20 @@ const useTranslatedOtherLineName = () => {
   return intl.formatMessage({ id: "other" });
 };
 
-const createColorsMap = (arrayToColorize, colorScale) =>
-  arrayToColorize.reduce(
-    (map, key) => ({
-      ...map,
-      [key]: colorScale(key)
-    }),
-    {}
-  );
-
 const useColors = (countKeys) => {
   const theme = useTheme();
 
-  const colorScale = getColorScale(theme.palette.chart);
-
-  const resourceTypesColorsMap = createColorsMap(countKeys, colorScale);
-
-  const getTableColors = () => ({ ...resourceTypesColorsMap });
-  const getChartColors = () => ({
-    ...resourceTypesColorsMap,
-    [OTHER_LINE_NAME]: colorScale(OTHER_LINE_NAME)
-  });
+  const chartPalette = theme.palette.chart;
 
   return {
-    tableColors: getTableColors(),
-    chartColors: getChartColors()
+    tableColors: getColorsMap(countKeys, chartPalette),
+    chartColors: getColorsMap([...countKeys, OTHER_LINE_NAME], chartPalette)
   };
 };
 
 const useLineData = (breakdown, countKeys) => {
+  const intl = useIntl();
+
   const [topCountKeys, otherCountKeys] = splitIntoTwoChunks(countKeys, 10);
 
   const allDates = Object.keys(breakdown);
@@ -80,7 +67,7 @@ const useLineData = (breakdown, countKeys) => {
         return {
           x: getDateString(date),
           y: getResourcesCount(date, countKey),
-          translatedSerieId: countKey === "null" ? <FormattedMessage id="(not set)" /> : undefined,
+          translatedSerieId: countKey === "null" ? intl.formatMessage({ id: "(not set)" }) : undefined,
           details: {
             id,
             created,
@@ -169,11 +156,18 @@ const ResourceCountBreakdown = ({
 
   const lineData = useLineData(breakdown, excludeHiddenResourceTypes());
 
+  const [withLegend, setWithLegend] = useSyncQueryParamWithState({
+    queryParamName: "withLegend",
+    possibleStates: [true, false],
+    defaultValue: "true"
+  });
+
   return (
     <Stack spacing={SPACING_1}>
       <Box display="flex">
         <BreakdownBy value={breakdownByValue} onChange={onBreakdownByChange} />
         <ResourceCountBreakdownShowWeekendSwitch />
+        <ChartLegendToggle checked={withLegend} onChange={setWithLegend} />
       </Box>
       <Box>
         <ResourceCountBreakdownLineChart
@@ -181,6 +175,7 @@ const ResourceCountBreakdown = ({
           colors={chartColors}
           isLoading={isLoading}
           breakdownBy={breakdownByValue}
+          withLegend={withLegend}
           dataTestId="resource_count_breakdown_chart"
         />
       </Box>

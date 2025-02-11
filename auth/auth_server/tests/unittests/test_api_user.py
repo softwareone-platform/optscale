@@ -872,3 +872,12 @@ class TestUser(TestAuthBase):
                                              display_name='test',
                                              verified=True)
         self.assertTrue(user['verified'])
+
+    def test_disabled_email_verification(self):
+        patch('optscale_client.config_client.client.'
+              'Client.disable_email_verification',
+              return_value=True).start()
+        self.user_verified_mock.stop()
+        code, user = self.client.user_create('test@email.com', 'pass1',
+                                             display_name='test')
+        self.assertTrue(user['verified'])

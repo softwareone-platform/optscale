@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import {
   AZURE_TENANT_CREDENTIALS_FIELD_NAMES,
   AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES,
@@ -20,7 +21,11 @@ import {
   AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
+<<<<<<< HEAD
 import ModeWrapper from "components/ModeWrapper";
+=======
+import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
+>>>>>>> upstream/integration
 import { useIsDataSourceTypeConnectionEnabled } from "hooks/useIsDataSourceTypeConnectionEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useResizeObserver } from "hooks/useResizeObserver";
@@ -29,11 +34,26 @@ import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
 
 import {
+<<<<<<< HEAD
   DOCS_HYSTAX_AUTO_BILLING_AWS,
   DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
   DOCS_HYSTAX_DISCOVER_RESOURCES,
   GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
   DOCS_HYSTAX_CONNECT_GCP_CLOUD
+=======
+  DOCS_HYSTAX_CONNECT_AWS_ROOT,
+  DOCS_HYSTAX_CONNECT_AZURE_TENANT,
+  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
+  GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
+  GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
+  DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
+  DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
+  DATABRICKS_CREATE_SERVICE_PRINCIPAL,
+  DOCS_HYSTAX_CONNECT_KUBERNETES,
+  DOCS_HYSTAX_CONNECT_AWS_LINKED,
+  DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION,
+  DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT
+>>>>>>> upstream/integration
 } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import {
@@ -49,6 +69,14 @@ import {
   ALIBABA_ACCOUNT,
   GCP_CNR,
   GCP_ACCOUNT,
+<<<<<<< HEAD
+=======
+  NEBIUS_ACCOUNT,
+  NEBIUS,
+  DATABRICKS,
+  DATABRICKS_ACCOUNT,
+  OPTSCALE_CAPABILITY,
+>>>>>>> upstream/integration
   GCP_TENANT_ACCOUNT,
   GCP_TENANT
 } from "utils/constants";
@@ -236,7 +264,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsRootDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_AUTO_BILLING_AWS} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -250,7 +278,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsLinkedDocumentationReference1",
         values: {
           autoBillingAwsLink: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_AUTO_BILLING_AWS} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_LINKED} target="_blank" rel="noopener">
               {chunks}
             </Link>
           )
@@ -277,7 +305,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsLinkedDocumentationReference3",
         values: {
           discoverResourcesLink: (chunks) => (
-            <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_DISCOVER_RESOURCES} target="_blank" rel="noopener">
+            <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES} target="_blank" rel="noopener">
               {chunks}
             </Link>
           )
@@ -290,7 +318,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAzureSubscriptionDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_TENANT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -304,7 +332,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAzureSubscriptionDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -312,6 +340,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
+<<<<<<< HEAD
     // [KUBERNETES]: renderConnectionTypeDescription([
     //   {
     //     key: "createKubernetesDocumentationReference1",
@@ -374,13 +403,72 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
     //     }
     //   }
     // ]),
+=======
+    [KUBERNETES]: renderConnectionTypeDescription([
+      {
+        key: "createKubernetesDocumentationReference1",
+        messageId: "createKubernetesDocumentationReference1",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_KUBERNETES} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          )
+        }
+      },
+      {
+        key: "createKubernetesDocumentationReference2",
+        messageId: "createKubernetesDocumentationReference2"
+      },
+      {
+        key: "createKubernetesDocumentationReference3",
+        messageId: "createKubernetesDocumentationReference3",
+        values: {
+          kubernetesConnectGuide: (
+            <Link data-test-id="link_guide" href={GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR} target="_blank" rel="noopener">
+              {GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR}
+            </Link>
+          ),
+          p: (chunks) => <p>{chunks}</p>
+        }
+      }
+    ]),
+    [ALIBABA_ACCOUNT]: renderConnectionTypeDescription([
+      {
+        key: "createAlibabaDocumentationReference",
+        messageId: "createAlibabaDocumentationReference",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
+      }
+    ]),
+    [DATABRICKS_ACCOUNT]: renderConnectionTypeDescription([
+      {
+        key: "createDatabricksDocumentationReference",
+        messageId: "createDatabricksDocumentationReference",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DATABRICKS_CREATE_SERVICE_PRINCIPAL} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
+      }
+    ]),
+>>>>>>> upstream/integration
     [GCP_ACCOUNT]: renderConnectionTypeDescription([
       {
         key: "createGCPDocumentationReference",
         messageId: "createGCPDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -399,7 +487,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createGCPTenantDocumentationReference2",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -478,6 +566,40 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: GCP_TENANT_ACCOUNT,
       dataTestId: "btn_gcp_tenant_account",
       action: () => defaultTileAction(GCP_TENANT_ACCOUNT, GCP_TENANT)
+<<<<<<< HEAD
+=======
+    },
+    {
+      id: ALIBABA_ACCOUNT,
+      icon: AlibabaLogoIcon,
+      messageId: ALIBABA_ACCOUNT,
+      dataTestId: "btn_alibaba_account",
+      action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR)
+    },
+    {
+      id: NEBIUS_ACCOUNT,
+      icon: NebiusLogoIcon,
+      messageId: NEBIUS_ACCOUNT,
+      dataTestId: "btn_nebius_account",
+      action: () => defaultTileAction(NEBIUS_ACCOUNT, NEBIUS),
+      capability: OPTSCALE_CAPABILITY.FINOPS
+    },
+    {
+      id: DATABRICKS_ACCOUNT,
+      icon: DatabricksLogoIcon,
+      messageId: DATABRICKS_ACCOUNT,
+      dataTestId: "btn_databricks_account",
+      action: () => defaultTileAction(DATABRICKS_ACCOUNT, DATABRICKS),
+      capability: OPTSCALE_CAPABILITY.FINOPS
+    },
+    {
+      id: KUBERNETES,
+      icon: K8sLogoIcon,
+      messageId: KUBERNETES,
+      dataTestId: "btn_kubernetes",
+      action: () => defaultTileAction(KUBERNETES, KUBERNETES_CNR),
+      capability: OPTSCALE_CAPABILITY.FINOPS
+>>>>>>> upstream/integration
     }
     // {
     //   id: ALIBABA_ACCOUNT,
@@ -516,8 +638,8 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
     <FormProvider {...methods}>
       <Stack>
         <div style={{ display: "flex", flexWrap: "wrap", width: "fit-content" }} ref={ref}>
-          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, mode }, index) => (
-            <ModeWrapper mode={mode} key={id}>
+          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }, index) => (
+            <CapabilityWrapper capability={capability} key={id}>
               <Paper
                 className={cx(classes.tile, connectionType !== id && classes.inactiveTile)}
                 variant="outlined"
@@ -541,7 +663,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                   <FormattedMessage id={messageId} />
                 </Typography>
               </Paper>
-            </ModeWrapper>
+            </CapabilityWrapper>
           ))}
         </div>
         <Box sx={{ width: { md: `max(50%, ${width}px)` } }}>

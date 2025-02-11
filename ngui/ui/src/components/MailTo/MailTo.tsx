@@ -1,6 +1,13 @@
+import { ReactNode } from "react";
 import Link from "@mui/material/Link";
 
-const MailTo = ({ email, text, dataTestId }) => (
+type MailToProps = {
+  email: string;
+  text: ReactNode;
+  dataTestId?: string;
+};
+
+const MailTo = ({ email, text, dataTestId }: MailToProps) => (
   <Link data-test-id={dataTestId} href={`mailto:${email}`} rel="noopener">
     {text}
   </Link>

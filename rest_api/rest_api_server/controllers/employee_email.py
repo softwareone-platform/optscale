@@ -30,6 +30,7 @@ ROLE_TEMPLATES = {
         'weekly_expense_report',
         'environment_changes',
         'resource_owner_violation_alert',
+        'report_import_failed'
     ],
     'optscale_engineer': [
         'pool_exceed_resources_report',

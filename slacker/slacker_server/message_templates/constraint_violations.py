@@ -24,7 +24,7 @@ def get_constraint_violation_alert(org_id, org_name, violations, public_ip):
         }
     ]
     violation_blocks = []
-    for violation in violations:
+    for violation in violations[:5]:
         r_id = violation.get('resource_id')
         r_cid = violation.get('cloud_resource_id')
         r_name = violation.get('resource_name')

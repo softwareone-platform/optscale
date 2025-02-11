@@ -21,7 +21,7 @@ import TabsWrapper from "components/TabsWrapper";
 import DataSourceNodesContainer from "containers/DataSourceNodesContainer";
 import DataSourceSkusContainer from "containers/DataSourceSkusContainer";
 import UploadCloudReportDataContainer from "containers/UploadCloudReportDataContainer";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useDataSources } from "hooks/useDataSources";
 import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
@@ -39,11 +39,17 @@ import {
   AZURE_CNR,
   GCP_CNR,
   ALIBABA_CNR,
-  NEBIUS
+  NEBIUS,
+  GCP_TENANT
 } from "utils/constants";
 import { summarizeChildrenDetails } from "utils/dataSources";
+<<<<<<< HEAD
 import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
 import { getPercentageChangeModule } from "utils/math";
+=======
+import { SPACING_2 } from "utils/layouts";
+import { getPercentageChangeModule, round } from "utils/math";
+>>>>>>> upstream/integration
 
 const {
   DETAILS: DETAILS_TAB,
@@ -365,7 +371,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     discovery_infos: discoveryInfos
   } = { ...details, ...childrenDetails };
 
-  const isTenant = type === AZURE_TENANT;
+  const isTenant = [AZURE_TENANT, GCP_TENANT].includes(type);
   const isChildSubscription = Boolean(parentId);
   const isSubscription = !isTenant && !isChildSubscription;
 
@@ -383,7 +389,12 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
       <PageContentWrapper>
         <Grid container spacing={SPACING_2}>
           <Grid item>
-            <Summary lastMonthCost={lastMonthCost} cost={cost} forecast={forecast} isLoading={isLoading} />
+            <Summary
+              lastMonthCost={round(lastMonthCost, 2)}
+              cost={round(cost, 2)}
+              forecast={round(forecast, 2)}
+              isLoading={isLoading}
+            />
           </Grid>
           <Grid item xs={12}>
             <Box className={"MTPBoxShadow"}>

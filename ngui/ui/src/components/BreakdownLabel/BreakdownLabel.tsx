@@ -1,14 +1,14 @@
-import { FormattedMessage } from "react-intl";
 import CloudLabel from "components/CloudLabel";
 import PoolLabel from "components/PoolLabel";
+import { intl } from "translations/react-intl-config";
 import { RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY } from "utils/constants";
 
-const getIdText = (details) => (details.id === "null" ? <FormattedMessage id="(not set)" /> : details.id);
+const getIdText = (details) => (details.id === "null" ? intl.formatMessage({ id: "(not set)" }) : details.id);
 
-const getLabelText = (details) => details.name || getIdText(details);
+export const getBreakdownLabelText = (details) => details.name || getIdText(details);
 
 const BreakdownLabel = ({ breakdownBy, details }) => {
-  const getLabel = () => getLabelText(details);
+  const getLabel = () => getBreakdownLabelText(details);
 
   const renderer = {
     [RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY.EMPLOYEE_ID]: () => getLabel(),

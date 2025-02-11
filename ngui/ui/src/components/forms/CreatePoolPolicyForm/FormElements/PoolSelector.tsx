@@ -10,7 +10,7 @@ const PoolSelector = ({ onChange, pools, isLoading = false }) => (
     name={FIELD_NAME}
     items={pools.map(({ id, name: poolName, pool_purpose: poolPurpose }) => ({
       value: id,
-      content: <ItemContentWithPoolIcon poolType={poolPurpose}>{poolName}</ItemContentWithPoolIcon>
+      content: <ItemContentWithPoolIcon poolType={poolPurpose} label={poolName} />
     }))}
     labelMessageId="pool"
     fullWidth

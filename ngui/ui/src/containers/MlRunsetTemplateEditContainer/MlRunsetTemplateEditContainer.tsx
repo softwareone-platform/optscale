@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MlRunsetTemplateEdit from "components/MlRunsetTemplateEdit";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import MlRunsetTemplatesService from "services/MlRunsetTemplatesService";
 import MlTasksService from "services/MlTasksService";
 import { getMlRunsetTemplateUrl } from "urls";

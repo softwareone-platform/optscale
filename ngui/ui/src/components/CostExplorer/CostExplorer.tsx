@@ -13,13 +13,24 @@ import ExpensesBreakdownBarChart from "components/ExpensesBreakdown/BarChart";
 import ExpensesBreakdownByPeriodWidget from "components/ExpensesBreakdown/BreakdownByPeriodWidget";
 import ExpensesBreakdownSummaryCards from "components/ExpensesBreakdown/SummaryCards";
 import PageContentWrapper from "components/PageContentWrapper";
+<<<<<<< HEAD
+=======
+import SubTitle from "components/SubTitle";
+import Tooltip from "components/Tooltip";
+>>>>>>> upstream/integration
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
 import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
+<<<<<<< HEAD
 import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+=======
+import { SPACING_2 } from "utils/layouts";
+import { createPdf } from "utils/pdf";
+import { sliceByLimitWithEllipsis } from "utils/strings";
+>>>>>>> upstream/integration
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -27,6 +38,8 @@ const breakdownByButtons = [
   { messageId: "owner", link: EXPENSES_BY_OWNER, icon: <PeopleIcon /> }
   // { messageId: "geography", link: EXPENSES_MAP, icon: <PublicIcon /> } //MPT_TODO: disabled to meet BDR requirements
 ];
+
+const MAX_ORGANIZATION_NAME_LENGTH = 64;
 
 const CostExplorer = ({
   total,
@@ -43,13 +56,21 @@ const CostExplorer = ({
 
   const breakdownData = useBreakdownData(breakdown);
 
+  const isNameLong = organizationName?.length > MAX_ORGANIZATION_NAME_LENGTH;
+
   const actionBarData = {
     title: {
       text: (
         <FormattedMessage
           id="expensesOf"
           values={{
-            name: organizationName
+            name: (
+              <Tooltip title={isNameLong ? organizationName : undefined}>
+                <span>
+                  {isNameLong ? sliceByLimitWithEllipsis(organizationName, MAX_ORGANIZATION_NAME_LENGTH) : organizationName}
+                </span>
+              </Tooltip>
+            )
           }}
         />
       ),

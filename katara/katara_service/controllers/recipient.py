@@ -1,11 +1,13 @@
 import json
 import logging
+from requests.exceptions import HTTPError
 from sqlalchemy import and_, exists
 
 from tools.optscale_exceptions.common_exc import (
     ConflictException,
     WrongArgumentsException,
 )
+from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
 from katara.katara_service.controllers.base import BaseController
@@ -23,10 +25,18 @@ LOG = logging.getLogger(__name__)
 class RecipientController(BaseController):
     def __init__(self, db_session=None, config=None, engine=None):
         super().__init__(db_session, config, engine)
+        self._auth_cl = None
         self._rest_cl = None
 
     def _get_model_type(self):
         return Recipient
+
+    @property
+    def auth_cl(self):
+        if self._auth_cl is None:
+            self._auth_cl = AuthClient(url=self._config.auth_url(),
+                                       secret=self._config.cluster_secret())
+        return self._auth_cl
 
     @property
     def rest_cl(self):
@@ -61,6 +71,12 @@ class RecipientController(BaseController):
                 RolePurpose(recipient.role_purpose)
             except ValueError:
                 raise WrongArgumentsException(Err.OKA0025, ["role_purpose"])
+        if recipient.user_id:
+            try:
+                _, user = self.auth_cl.user_get(recipient.user_id)
+            except HTTPError:
+                raise WrongArgumentsException(Err.OKA0004,
+                                              ["User", recipient.user_id])
 
     def delete(self, **kwargs):
         payload_dict = kwargs.pop("payload")

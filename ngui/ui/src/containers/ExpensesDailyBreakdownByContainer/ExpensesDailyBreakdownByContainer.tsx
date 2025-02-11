@@ -17,12 +17,13 @@ const ExpensesDailyBreakdownByContainer = ({ cleanExpensesRequestParams }) => {
     [breakdownByValue, cleanExpensesRequestParams]
   );
 
-  const { isLoading, data: { breakdown = {} } = {} } = useGet(requestParams);
+  const { isLoading, data: { breakdown = {}, counts = {} } = {} } = useGet(requestParams);
 
   return (
     <ExpensesDailyBreakdownBy
       isLoading={isLoading}
       breakdown={breakdown}
+      counts={counts}
       breakdownByValue={breakdownByValue}
       onBreakdownByChange={onBreakdownByChange}
     />

@@ -1,17 +1,20 @@
-import { useQuery } from "@apollo/client";
-import { Box, Stack, CircularProgress } from "@mui/material";
+import { NetworkStatus, useQuery } from "@apollo/client";
+import { Box, Stack, CircularProgress, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { Navigate } from "react-router-dom";
+import Button from "components/Button";
 import Logo from "components/Logo";
-import PageTitle from "components/PageTitle";
+import MailTo from "components/MailTo";
 import { GET_ORGANIZATIONS, GET_INVITATIONS } from "graphql/api/restapi/queries";
 import { useGetToken } from "hooks/useGetToken";
-import { HOME, NEXT_QUERY_PARAMETER_NAME, SHOW_POLICY_QUERY_PARAM, USER_EMAIL_QUERY_PARAMETER_NAME } from "urls";
+import { useSignOut } from "hooks/useSignOut";
+import { EMAIL_SUPPORT, HOME, NEXT_QUERY_PARAMETER_NAME, SHOW_POLICY_QUERY_PARAM, USER_EMAIL_QUERY_PARAMETER_NAME } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_6 } from "utils/layouts";
 import { getQueryParams } from "utils/network";
 import AcceptInvitations from "./AcceptInvitations";
 import SetupOrganization from "./SetupOrganization";
+import { Title } from "./Title";
 
 const getRedirectionPath = (scopeUserEmail: string) => {
   const {
@@ -32,25 +35,35 @@ const getRedirectionPath = (scopeUserEmail: string) => {
     return next;
   };
 
-  const getSearchParams = () => {
-    const searchParams = [showPolicyQueryParameter ? `${SHOW_POLICY_QUERY_PARAM}=${showPolicyQueryParameter}` : ""].join("&");
-    return searchParams;
-  };
+  const nextPath = getNextPath();
 
-  return `${getNextPath()}?${getSearchParams()}`;
+  const url = new URL(nextPath, window.location.origin);
+
+  // Add showPolicy param if needed
+  if (showPolicyQueryParameter) {
+    url.searchParams.set(SHOW_POLICY_QUERY_PARAM, showPolicyQueryParameter);
+  }
+
+  // Return just the pathname and search parts, removing the origin
+  return `${url.pathname}${url.search}`;
 };
 
 const InitializeContainer = () => {
+  const signOut = useSignOut();
   const { userEmail } = useGetToken();
 
   const {
     data: organizations,
-    loading: getOrganizationsLoading,
+    networkStatus: getOrganizationsNetworkStatus,
     error: getOrganizationsError,
     refetch: refetchOrganizations
   } = useQuery(GET_ORGANIZATIONS, {
-    fetchPolicy: "network-only"
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true
   });
+
+  const getOrganizationsLoading = getOrganizationsNetworkStatus === NetworkStatus.loading;
+  const getOrganizationsRefetching = getOrganizationsNetworkStatus === NetworkStatus.refetch;
 
   const {
     data: invitations,
@@ -80,10 +93,49 @@ const InitializeContainer = () => {
     }
 
     if (isEmptyArray(organizations?.organizations ?? [])) {
-      return <SetupOrganization userEmail={userEmail} refetchOrganizations={refetchOrganizations} />;
+      return (
+        <SetupOrganization
+          userEmail={userEmail}
+          refetchOrganizations={refetchOrganizations}
+          isLoading={{
+            getOrganizationsLoading: getOrganizationsRefetching
+          }}
+        />
+      );
     }
 
-    return <Navigate to={getRedirectionPath(userEmail)} />;
+    return (
+      <>
+        <Title messageId="initializingOptscale" dataTestId="p_initializing" />
+        <Navigate to={getRedirectionPath(userEmail)} />
+      </>
+    );
+  };
+
+  const renderError = () => {
+    return (
+      <>
+        <Box>
+          <Title
+            dataTestId="p_issue_occurred_during_initialization_process"
+            messageId="anIssueOccurredDuringTheInitializationProcess"
+            messageValues={{
+              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} />,
+              br: <br />
+            }}
+          />
+          <Typography align="center" variant="body2" px={2}>
+            <FormattedMessage
+              id="pleaseSignInAgainAndIfTheProblemPersists"
+              values={{ email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} /> }}
+            />
+          </Typography>
+        </Box>
+        <Box height={60} display="flex" alignItems="center" gap={2}>
+          <Button size="medium" messageId="signOut" color="primary" onClick={signOut} />
+        </Box>
+      </>
+    );
   };
 
   return (
@@ -93,17 +145,13 @@ const InitializeContainer = () => {
       </Box>
       {isLoading ? (
         <>
-          <Box pr={2} pl={2}>
-            <PageTitle dataTestId="p_initializing" align="center">
-              <FormattedMessage id="initializingOptscale" />
-            </PageTitle>
-          </Box>
+          <Title messageId="initializingOptscale" dataTestId="p_initializing" />
           <Box height={60}>
             <CircularProgress data-test-id="svg_loading" />
           </Box>
         </>
       ) : (
-        <>{error ? <div>Display error(s), possible actions are TBD</div> : renderContent()}</>
+        <>{error ? renderError() : renderContent()}</>
       )}
     </Stack>
   );

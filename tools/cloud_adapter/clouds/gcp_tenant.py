@@ -59,17 +59,24 @@ class GcpTenant(Gcp):
     def discovery_calls_map(self):
         return {}
 
+    def _validate_credentials(self):
+        if "client_id" not in self.credentials:
+            raise InvalidParameterException(
+                "Credentials should contain 'client_id'"
+            )
+
     def validate_credentials(self, org_id=None):
         try:
             self._validate_billing_config()
             self._validate_billing_type()
+            self._validate_credentials()
             self._test_bigquery_connection()
         except api_exceptions.Forbidden as ex:
             # remove new-lines, otherwise tornado will fail to write response
             raise InvalidParameterException(str(ex).replace("\n", " "))
         except Exception as ex:
             raise CloudConnectionError(str(ex))
-        return {"account_id": self.config.get("client_id"), "warnings": []}
+        return {"account_id": self.credentials['client_id'], "warnings": []}
 
     def _list_projects(self):
         dt = self._get_billing_threshold_date()

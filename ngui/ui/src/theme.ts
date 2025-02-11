@@ -42,6 +42,8 @@ declare module "@mui/material/Typography" {
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
 
+const getWebkitAutofillBackgroundColor = (theme) => lighten(theme.palette.lightBlue.main, 0.9);
+
 export const isMedia = (property) => property.startsWith("@media");
 
 const applyPaletteSettings = (settings) => {
@@ -553,6 +555,7 @@ const getThemeConfig = (settings = {}) => {
         }
       },
       MuiCssBaseline: {
+<<<<<<< HEAD
         styleOverrides: {
           "#root": {
             display: "flex",
@@ -581,6 +584,15 @@ const getThemeConfig = (settings = {}) => {
             borderRadius: MPT_SPACING_1
           }
         }
+=======
+        styleOverrides: (theme) => ({
+          "#root": { display: "flex", flexDirection: "column", minHeight: "100vh" },
+          // https://github.com/mui/material-ui/issues/33519
+          "input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active": {
+            WebkitBoxShadow: `0 0 0 30px ${getWebkitAutofillBackgroundColor(theme)} inset !important`
+          }
+        })
+>>>>>>> upstream/integration
       },
       MuiDialogActions: {
         styleOverrides: {
@@ -604,6 +616,12 @@ const getThemeConfig = (settings = {}) => {
       MuiFormHelperText: {
         defaultProps: {
           margin: "dense"
+        },
+        styleOverrides: {
+          contained: () => ({
+            marginLeft: 0,
+            marginRight: 0
+          })
         }
       },
       MuiIconButton: {
@@ -641,6 +659,14 @@ const getThemeConfig = (settings = {}) => {
       MuiInputBase: {
         defaultProps: {
           size: "small"
+        },
+        styleOverrides: {
+          root: ({ theme }) => ({
+            // https://github.com/mui/material-ui/issues/33519
+            "&:has(> input:-webkit-autofill)": {
+              backgroundColor: getWebkitAutofillBackgroundColor(theme)
+            }
+          })
         }
       },
       MuiLink: {

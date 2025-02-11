@@ -1,11 +1,11 @@
 import FormattedDuration from "components/FormattedDuration";
 import MlTaskStatus from "components/MlTaskStatus";
 import SummaryGrid from "components/SummaryGrid";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { ML_TASK_STATUS, OPTSCALE_MODE, SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { ML_TASK_STATUS, OPTSCALE_CAPABILITY, SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 
 const TaskSummaryGrid = ({ task, recommendations, isGetRecommendationsLoading, isTaskDetailsLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const { status, last_run_duration: lastRunDuration, total_cost: totalCost = 0 } = task;
   const { total_count: recommendationsCount, total_saving: totalSaving } = recommendations;

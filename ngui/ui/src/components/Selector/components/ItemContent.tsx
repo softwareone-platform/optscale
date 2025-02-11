@@ -1,9 +1,14 @@
 import { type ElementType, type ReactNode } from "react";
+import { TooltipProps } from "@mui/material";
 import { Box } from "@mui/system";
 import Tooltip from "components/Tooltip";
 
 type ItemContentProps = {
   children: ReactNode;
+  tooltip?: {
+    title: ReactNode;
+    placement?: TooltipProps["placement"];
+  };
   icon?: {
     IconComponent: ElementType;
     placement?: "start" | "end";
@@ -11,12 +16,12 @@ type ItemContentProps = {
   };
 };
 
-const ItemContent = ({ icon, children }: ItemContentProps) => {
+const ItemContent = ({ icon, tooltip, children }: ItemContentProps) => {
   if (icon) {
-    const { placement = "start", IconComponent, tooltipTitle } = icon;
+    const { placement = "start", IconComponent, tooltipTitle: iconTooltipTitle } = icon;
 
     const iconElement = (
-      <Tooltip title={tooltipTitle}>
+      <Tooltip title={iconTooltipTitle}>
         <Box
           mr={placement === "start" ? "0.4rem" : 0}
           ml={placement === "end" ? "0.4rem" : 0}
@@ -28,16 +33,26 @@ const ItemContent = ({ icon, children }: ItemContentProps) => {
       </Tooltip>
     );
 
+    const renderChildren = () => (
+      <Tooltip title={tooltip?.title ?? undefined} placement={tooltip?.placement}>
+        <span>{children}</span>
+      </Tooltip>
+    );
+
     return (
       <Box display="flex" alignItems="center">
         {placement === "start" && iconElement}
-        {children}
+        {renderChildren()}
         {placement === "end" && iconElement}
       </Box>
     );
   }
 
-  return children;
+  return (
+    <Tooltip title={tooltip?.title ?? undefined} placement={tooltip?.placement}>
+      <span>{children}</span>
+    </Tooltip>
+  );
 };
 
 export default ItemContent;

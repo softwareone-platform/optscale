@@ -15,7 +15,7 @@ const PoolSelector = ({ pools, fullWidth = false, isLoading = false, isReadOnly 
     isLoading={isLoading}
     items={pools.map(({ id, name: poolName, pool_purpose: poolPurpose }) => ({
       value: id,
-      content: <ItemContentWithPoolIcon poolType={poolPurpose}>{poolName}</ItemContentWithPoolIcon>
+      content: <ItemContentWithPoolIcon poolType={poolPurpose} label={poolName} />
     }))}
   />
 );

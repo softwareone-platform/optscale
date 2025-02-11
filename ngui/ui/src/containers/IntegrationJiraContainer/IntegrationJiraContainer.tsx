@@ -1,5 +1,5 @@
 import Jira from "components/Integrations/Jira";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import EmployeesService from "services/EmployeesService";
 import JiraOrganizationStatusService from "services/JiraOrganizationStatusService";
 

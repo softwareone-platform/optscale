@@ -41,7 +41,8 @@ const ABORT_CONDITION_REACHED_GOALS_CHECKBOX_FIELD_NAME = FIELD_NAMES.REACHED_GO
 const ABORT_CONDITION_MAX_DURATION_CHECKBOX_FIELD_NAME = FIELD_NAMES.MAX_DURATION_CHECKBOX;
 const ABORT_CONDITION_MAX_DURATION_VALUE_FIELD_NAME = FIELD_NAMES.MAX_DURATION_VALUE;
 const SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME = FIELD_NAMES.USE_SPOT_INSTANCES;
-const SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME = FIELD_NAMES.MAX_ATTEMPTS;
+const SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME = FIELD_NAMES.MAX_SPOT_ATTEMPTS;
+const SPOT_INSTANCES_MAX_PRICE_FIELD_NAME = FIELD_NAMES.MAX_SPOT_COST_PER_HOUR;
 
 const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, instanceTypes, regions, isLoading }) => {
   const {
@@ -84,7 +85,8 @@ const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, in
 
         if (spotSettings) {
           setValue(SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME, true);
-          setValue(SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME, spotSettings.tries);
+          setValue(SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME, spotSettings.tries ?? "");
+          setValue(SPOT_INSTANCES_MAX_PRICE_FIELD_NAME, spotSettings.spot_price ?? "");
         }
 
         Object.values(hyperparameters).forEach((environmentVariableName) => {
@@ -206,7 +208,14 @@ const MlRunsetConfigurationForm = ({ runsetTemplate = {}, latestRunset = {}, onS
             hyperparameters: formData[HYPERPARAMETERS_FIELD_NAME],
             destroy_conditions: getDestroyConditions(),
             ...(formData[SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME]
-              ? { spot_settings: { tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]) } }
+              ? {
+                  spot_settings: {
+                    tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]),
+                    spot_price: formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME]
+                      ? Number(formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME])
+                      : undefined
+                  }
+                }
               : {})
           };
 

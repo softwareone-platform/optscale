@@ -6,7 +6,17 @@ import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
-const useGet = ({ taskIds, runIds, organizationId, arceeToken } = {}) => {
+const useGet = ({
+  taskIds,
+  runIds,
+  organizationId,
+  arceeToken
+}: {
+  taskIds?: string[];
+  runIds?: string[];
+  organizationId?: string;
+  arceeToken?: string;
+} = {}) => {
   const dispatch = useDispatch();
 
   const {

@@ -1,65 +1,57 @@
-import { Box, Stack, Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
-import { FormattedMessage } from "react-intl";
-import ButtonLoader from "components/ButtonLoader";
+import { Box, Stack } from "@mui/material";
 import Logo from "components/Logo";
-import PageTitle from "components/PageTitle";
-import { SPACING_4 } from "utils/layouts";
+import { SPACING_6 } from "utils/layouts";
+import Loading from "./Loading";
+import Retry from "./Retry";
+import SetupCapability from "./SetupCapability";
 
 type GenerateLiveDemoProps = {
   retry: () => void;
   isLoading?: boolean;
   showRetry?: boolean;
+  organizationId?: string;
+  onSetupCapabilityError: () => void;
+  onSetupCapabilitySuccess: () => void;
 };
 
-const GenerateLiveDemo = ({ retry, isLoading = false, showRetry = false }: GenerateLiveDemoProps) => (
-  <Stack spacing={SPACING_4} alignItems="center">
-    <Box>
-      <Logo width={200} dataTestId="img_logo" />
-    </Box>
-    {isLoading ? (
-      <>
-        <Box pl={2} pr={2}>
-          <PageTitle dataTestId="p_preparing_ld" align="center">
-            <FormattedMessage id="preparingLiveDemoMessage" />
-          </PageTitle>
-          <Typography align="center" data-test-id="p_process_ld">
-            <FormattedMessage
-              id="usuallyTheProcessTakesLessThanSeconds"
-              values={{
-                value: 20
-              }}
-            />
-          </Typography>
-        </Box>
-        <Box height={60}>
-          <CircularProgress data-test-id="svg_loading" />
-        </Box>
-      </>
-    ) : (
-      <>
-        {showRetry ? (
-          <>
-            <Box pl={2} pr={2}>
-              <PageTitle dataTestId="title_failed-live-demo" align="center">
-                <FormattedMessage id="failedLiveDemoMessage" />
-              </PageTitle>
-            </Box>
-            <Box>
-              <ButtonLoader
-                size="large"
-                messageId="retry"
-                color="primary"
-                variant="contained"
-                onClick={retry}
-                isLoading={isLoading}
-              />
-            </Box>
-          </>
-        ) : null}
-      </>
-    )}
-  </Stack>
-);
+const GenerateLiveDemo = ({
+  retry,
+  isLoading = false,
+  showRetry = false,
+  organizationId,
+  onSetupCapabilitySuccess,
+  onSetupCapabilityError
+}: GenerateLiveDemoProps) => {
+  const renderContent = () => {
+    if (isLoading) {
+      return <Loading />;
+    }
+
+    if (showRetry) {
+      return <Retry retry={retry} />;
+    }
+
+    if (organizationId) {
+      return (
+        <SetupCapability
+          organizationId={organizationId}
+          onSuccess={onSetupCapabilitySuccess}
+          onError={onSetupCapabilityError}
+        />
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <Stack spacing={SPACING_6} alignItems="center">
+      <Box>
+        <Logo width={200} dataTestId="img_logo" />
+      </Box>
+      {renderContent()}
+    </Stack>
+  );
+};
 
 export default GenerateLiveDemo;

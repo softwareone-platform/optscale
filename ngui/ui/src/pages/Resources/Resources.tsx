@@ -2,7 +2,7 @@ import { Navigate, useSearchParams } from "react-router-dom";
 import Mocked from "components/Mocked";
 import { ResourcesMocked } from "components/Resources";
 import ResourcesContainer from "containers/ResourcesContainer";
-import { useOrganizationPerspectives } from "hooks/coreData";
+import { useOrganizationPerspectives } from "hooks/coreData/useOrganizationPerspectives";
 import {
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
   DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME,

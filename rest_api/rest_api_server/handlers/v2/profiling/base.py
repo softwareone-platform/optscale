@@ -1,4 +1,5 @@
 import hashlib
+from requests.exceptions import HTTPError
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.utils import run_task
@@ -7,8 +8,13 @@ from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 
 class ProfilingHandler(BaseHandler):
     async def _get_profiling_token(self, organization_id):
-        res = await run_task(
-            self.controller.get_profiling_token, organization_id)
+        try:
+            res = await run_task(
+                self.controller.get_profiling_token, organization_id)
+        except HTTPError as ex:
+            if ex.response.status_code == 409:
+                raise OptHTTPError(409, Err.OE0526, [organization_id])
+            raise
         return res
 
     async def check_md5_profiling_token(

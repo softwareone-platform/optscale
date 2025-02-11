@@ -1,5 +1,5 @@
 import uuid
-
+from copy import deepcopy
 from unittest.mock import patch
 
 from rest_api.rest_api_server.tests.unittests.test_infrastructure_base import (
@@ -73,6 +73,14 @@ class TestRunsetsApi(TestInfrastructureBase):
         self.assertEqual(res.get('duration'), 100)
         # Hardcoded based on duration and flavor cost (hourly cost is 0.175)
         self.assertEqual(res.get('cost'), 0.0049)
+
+    def test_create_spot_price(self):
+        params = deepcopy(self.valid_runset)
+        params['spot_settings']['spot_price'] = "123"
+        code, resp = self.client.runset_create(
+            self.organization_id, str(uuid.uuid4()), params)
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OE0466')
 
     def test_create_nonexisting(self):
         code, _ = self.client.runset_create(

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { FormControl } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Checkbox, NumberInput } from "components/forms/common/fields";
@@ -9,7 +8,8 @@ import { FIELD_NAMES } from "../constants";
 import { FormValues } from "../types";
 
 const USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME = FIELD_NAMES.USE_SPOT_INSTANCES;
-const MAX_ATTEMPTS_FIELD_NAME = FIELD_NAMES.MAX_ATTEMPTS;
+const MAX_SPOT_ATTEMPTS_FIELD_NAME = FIELD_NAMES.MAX_SPOT_ATTEMPTS;
+const MAX_SPOT_COST_PER_HOUR_FIELD_NAME = FIELD_NAMES.MAX_SPOT_COST_PER_HOUR;
 
 const SpotInstanceFields = () => {
   const { formState, watch, trigger } = useFormContext<FormValues>();
@@ -27,43 +27,52 @@ const SpotInstanceFields = () => {
      * so we need to trigger the budget validation when the checkbox is changed
      */
     if (isSubmitted) {
-      trigger(MAX_ATTEMPTS_FIELD_NAME);
+      trigger(MAX_SPOT_ATTEMPTS_FIELD_NAME);
+      trigger(MAX_SPOT_COST_PER_HOUR_FIELD_NAME);
     }
   }, [isSubmitted, trigger, isEnabled]);
 
   return (
-    <FormControl fullWidth>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-start" }}>
-        <Checkbox name={USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME} label={<FormattedMessage id="requestSpotInstances" />} />
-        <div
-          style={{
-            flexGrow: 1
-          }}
-        >
-          <NumberInput
-            name={MAX_ATTEMPTS_FIELD_NAME}
-            margin="none"
-            label={<FormattedMessage id="maxAttempts" />}
-            dataTestId="input_max_tries"
-            required={isEnabled}
-            max={isEnabled ? 64 : null}
-            min={isEnabled ? 1 : null}
-            validate={isEnabled ? { positiveInteger: (value) => positiveInteger(value) } : undefined}
-            InputProps={{
-              endAdornment: (
-                <QuestionMark
-                  messageId="maxAttemptsTooltip"
-                  messageValues={{
-                    i: (chunks) => <i>{chunks}</i>
-                  }}
-                  dataTestId="qmark_max_attempts"
-                />
-              )
-            }}
-          />
-        </div>
-      </div>
-    </FormControl>
+    <>
+      <Checkbox name={USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME} label={<FormattedMessage id="requestSpotInstances" />} />
+      <NumberInput
+        name={MAX_SPOT_ATTEMPTS_FIELD_NAME}
+        label={<FormattedMessage id="maxAttempts" />}
+        dataTestId="input_max_tries"
+        required={isEnabled}
+        max={isEnabled ? 64 : null}
+        min={isEnabled ? 1 : null}
+        validate={isEnabled ? { positiveInteger: (value) => positiveInteger(value) } : undefined}
+        InputProps={{
+          endAdornment: (
+            <QuestionMark
+              messageId="maxAttemptsTooltip"
+              messageValues={{
+                i: (chunks) => <i>{chunks}</i>
+              }}
+              dataTestId="qmark_max_attempts"
+            />
+          )
+        }}
+      />
+      <NumberInput
+        name={MAX_SPOT_COST_PER_HOUR_FIELD_NAME}
+        label={<FormattedMessage id="maxCostPerHour" />}
+        dataTestId="input_max_spot_cost_per_hour"
+        validate={
+          isEnabled
+            ? {
+                positiveInteger: (value) => {
+                  if (!value) {
+                    return true;
+                  }
+                  return positiveInteger(value);
+                }
+              }
+            : undefined
+        }
+      />
+    </>
   );
 };
 

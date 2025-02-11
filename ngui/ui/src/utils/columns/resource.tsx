@@ -2,7 +2,7 @@ import { FormattedMessage } from "react-intl";
 import CaptionedCell from "components/CaptionedCell";
 import CloudResourceId from "components/CloudResourceId";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { getCloudResourceIdentifier } from "utils/resources";
 import { RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 

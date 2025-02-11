@@ -256,7 +256,7 @@ export const ACTIVE_BE_FILTER = "active";
 export const ACTIVE_FILTER = "active";
 
 export const RECOMMENDATIONS_BE_FILTER = "recommendations";
-export const AVAILABLE_SAVINGS_FILTER = "availableSavings";
+export const RECOMMENDATIONS_FILTER = "recommendations";
 
 export const CONSTRAINT_VIOLATED_BE_FILTER = "constraint_violated";
 export const CONSTRAINT_VIOLATED_FILTER = "constraintViolated";
@@ -544,6 +544,29 @@ export const DEFAULT_BAR_CHART_MARGIN = Object.freeze({
   right: 50,
   left: 75
 });
+
+export const DEFAULT_LINE_CHART_HEIGHT = 50;
+
+export const DEFAULT_LINE_CHART_MARGIN = Object.freeze({ top: 20, right: 35, left: 75, bottom: 50 });
+
+export const CHART_LEGEND_WIDTH = 200;
+
+export const CHART_LEGEND_LAYOUT_SETTINGS = {
+  anchor: "top-right",
+  direction: "column",
+  translateX: 8,
+  itemWidth: 0,
+  itemHeight: 16,
+  itemsSpacing: 4,
+  symbolSize: 16,
+  symbolSpacing: 8
+} as const;
+
+export const MAX_LEGEND_LABEL_WIDTH =
+  CHART_LEGEND_WIDTH -
+  CHART_LEGEND_LAYOUT_SETTINGS.translateX -
+  CHART_LEGEND_LAYOUT_SETTINGS.symbolSize -
+  CHART_LEGEND_LAYOUT_SETTINGS.symbolSpacing;
 
 export const RESOURCE_LIMIT_HIT_STATE = Object.freeze({
   RED: "red",
@@ -980,8 +1003,7 @@ export const LAYOUT_TYPES = Object.freeze({
   RESOURCE_RAW_EXPENSES_COLUMNS: "resource_raw_expenses_columns"
 });
 
-export const OPTSCALE_MODE_OPTION = "optscale_mode";
-export const OPTSCALE_MODE = Object.freeze({
+export const OPTSCALE_CAPABILITY = Object.freeze({
   FINOPS: "finops",
   MLOPS: "mlops"
 });

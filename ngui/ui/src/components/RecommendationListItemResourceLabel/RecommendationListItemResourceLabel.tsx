@@ -1,7 +1,7 @@
 import CloudResourceId from "components/CloudResourceId";
 import CloudTypeIcon from "components/CloudTypeIcon";
 import IconLabel from "components/IconLabel";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { getCloudResourceIdentifier } from "utils/resources";
 
 const RecommendationListItemResourceLabel = ({ item }) => {

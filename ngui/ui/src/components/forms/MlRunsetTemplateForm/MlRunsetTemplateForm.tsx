@@ -3,8 +3,8 @@ import FormLabel from "@mui/material/FormLabel";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import PageContentDescription from "components/PageContentDescription/PageContentDescription";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { OPTSCALE_MODE } from "utils/constants";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { FIELD_NAMES } from "./constants";
 import {
   FormButtons,
@@ -24,7 +24,7 @@ import { FormValues } from "./types";
 const UNLIMITED_BUDGET = 999999;
 
 const MlRunsetTemplateForm = ({ tasks, dataSources, onSubmit, onCancel, isLoading = {}, defaultValues, isEdit }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const { isGetAllTasksLoading = false, isGetRunsetTemplateLoading = false, isSubmitLoading = false } = isLoading;
 

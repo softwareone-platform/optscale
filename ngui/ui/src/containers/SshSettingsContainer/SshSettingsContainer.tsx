@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { getSshKeys, createSshKey, updateSshKey } from "api";
 import { GET_SSH_KEYS } from "api/restapi/actionTypes";
 import SshSettings from "components/SshSettings";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 

@@ -14,7 +14,7 @@ export const useSyncQueryParamWithState = ({ queryParamName, possibleStates, def
   const [query, setQuery] = useState(() => {
     const { [queryParamName]: queryValue } = getQueryParams();
 
-    if (!queryValue) {
+    if (queryValue === undefined) {
       return defaultValue;
     }
 

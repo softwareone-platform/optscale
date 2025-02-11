@@ -1,24 +1,24 @@
 import { useMemo } from "react";
 import { useTheme } from "@mui/material/styles";
+import { usePartialTheme } from "@nivo/core";
 import { remToPx } from "utils/fonts";
 
 export const useChartTheme = () => {
   const theme = useTheme();
 
-  const themeTextFontSize = theme.typography.caption.fontSize;
+  const muiThemeTextFontSize = theme.typography.caption.fontSize;
 
-  const themTextFontSizePixelsNumber = themeTextFontSize.toString().includes("rem")
-    ? remToPx(parseFloat(themeTextFontSize))
-    : parseInt(themeTextFontSize, 10);
+  const muiThemeTextFontSizePixelsNumber = muiThemeTextFontSize.toString().includes("rem")
+    ? remToPx(parseFloat(muiThemeTextFontSize))
+    : parseInt(muiThemeTextFontSize, 10);
 
-  // https://nivo.rocks/guides/theming
-  return useMemo(
+  const chartTheme = useMemo(
     () => ({
       canvas: {
         text: {
           fontFamily: theme.typography.fontFamily,
-          fontSize: `${themTextFontSizePixelsNumber}px`,
-          font: `${themTextFontSizePixelsNumber}px ${theme.typography.fontFamily}`
+          fontSize: `${muiThemeTextFontSizePixelsNumber}px`,
+          font: `${muiThemeTextFontSizePixelsNumber}px ${theme.typography.fontFamily}`
         },
         marker: {
           xOffset: 14,
@@ -26,12 +26,18 @@ export const useChartTheme = () => {
           lineDash: [10, 10],
           lineWidth: 2,
           color: theme.palette.error.main,
-          font: `${themTextFontSizePixelsNumber}px ${theme.typography.fontFamily}`
+          font: `${muiThemeTextFontSizePixelsNumber}px ${theme.typography.fontFamily}`
         }
       },
       labels: {
         text: {
-          fontSize: themTextFontSizePixelsNumber,
+          fontSize: muiThemeTextFontSizePixelsNumber,
+          fontFamily: theme.typography.fontFamily
+        }
+      },
+      legends: {
+        text: {
+          fontSize: muiThemeTextFontSizePixelsNumber,
           fontFamily: theme.typography.fontFamily
         }
       },
@@ -49,7 +55,7 @@ export const useChartTheme = () => {
           },
           text: {
             // Canvas implementation doesn't support rems, it expects unitless value
-            fontSize: themTextFontSizePixelsNumber,
+            fontSize: muiThemeTextFontSizePixelsNumber,
             fontFamily: theme.typography.fontFamily,
             fill: theme.palette.text.primary
           }
@@ -60,7 +66,7 @@ export const useChartTheme = () => {
       }
     }),
     [
-      themTextFontSizePixelsNumber,
+      muiThemeTextFontSizePixelsNumber,
       theme.palette.error.main,
       theme.palette.info.light,
       theme.palette.text.primary,
@@ -68,4 +74,6 @@ export const useChartTheme = () => {
       theme.zIndex.tooltip
     ]
   );
+
+  return usePartialTheme(chartTheme);
 };

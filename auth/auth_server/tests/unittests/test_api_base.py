@@ -44,6 +44,9 @@ class TestAuthBase(tornado.testing.AsyncHTTPTestCase):
               return_value=secret).start()
         patch('optscale_client.config_client.client.Client.zoho_params',
               return_value={}).start()
+        patch('optscale_client.config_client.client.'
+              'Client.disable_email_verification',
+              return_value=None).start()
         patch('auth.auth_server.utils.get_encryption_salt',
               return_value=gen_salt()).start()
         patch('auth.auth_server.controllers.token.TokenController.expiration',

@@ -1,6 +1,6 @@
 import CloudLabel from "components/CloudLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { AZURE_CNR } from "utils/constants";
 
 const ParentDataSource = ({ parentDataSourceId }) => {

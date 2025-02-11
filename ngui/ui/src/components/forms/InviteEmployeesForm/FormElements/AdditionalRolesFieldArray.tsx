@@ -69,11 +69,7 @@ const AdditionalRolesFieldArray = ({ isGetAvailablePoolsLoading, availablePools,
       isLoading={isGetAvailablePoolsLoading}
       items={flatPools.map((obj) => ({
         value: obj.id,
-        content: (
-          <Box>
-            <ItemContentWithPoolIcon poolType={obj.pool_purpose}>{obj.name}</ItemContentWithPoolIcon>
-          </Box>
-        ),
+        content: <ItemContentWithPoolIcon poolType={obj.pool_purpose} label={obj.name} />,
         depth: obj.level,
         disabled: (field) => busyPoolIds.includes(obj.id) && obj.id !== field.value
       }))}
@@ -90,6 +86,7 @@ const AdditionalRolesFieldArray = ({ isGetAvailablePoolsLoading, availablePools,
       label={<FormattedMessage id="organization" />}
       type="text"
       dataTestId={`input_org_${count}`}
+      multiline
     />
   );
 

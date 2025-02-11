@@ -10,17 +10,17 @@ import MlRunStatusCell from "components/MlRunStatusCell";
 import MlRunStatusHeaderCell from "components/MlRunStatusHeaderCell";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { getMlTaskRunUrl, getMlRunsetDetailsUrl } from "urls";
 import { duration, startedAt, hyperparameters, dataset, metrics, tags } from "utils/columns";
-import { FORMATTED_MONEY_TYPES, OPTSCALE_MODE } from "utils/constants";
+import { FORMATTED_MONEY_TYPES, OPTSCALE_CAPABILITY } from "utils/constants";
 import { formatRunFullName, getFirstMetricEntryKey, getRunsReachedGoalsKeyNameEntries } from "utils/ml";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
 const RunsTable = ({ runs }) => {
   const theme = useTheme();
 
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const formatMoney = useMoneyFormatter();
 

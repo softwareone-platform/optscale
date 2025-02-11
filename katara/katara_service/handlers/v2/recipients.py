@@ -84,7 +84,7 @@ class RecipientAsyncItemHandler(BaseAsyncItemHandler):
             Modifies a recipient with specified id \n\n
             Required permission: CLUSTER_SECRET
         parameters:
-        -   name: id
+        -   name: recipient_id
             in: path
             description: Recipient ID
             required: true
@@ -264,6 +264,7 @@ class RecipientAsyncCollectionHandler(BaseAsyncCollectionHandler):
             400:
                 description: |
                     Wrong arguments:
+                    - OKA0004: User does not exist
                     - OKA0009: Incorrect request body received
                     - OKA0012: Unexpected parameters
                     - OKA0016: Incorrect meta format

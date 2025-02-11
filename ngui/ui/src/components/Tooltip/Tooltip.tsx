@@ -1,4 +1,4 @@
-import MuiTooltip from "@mui/material/Tooltip";
+import MuiTooltip, { TooltipProps } from "@mui/material/Tooltip";
 import { withStyles } from "tss-react/mui";
 
 const StyledTooltip = withStyles(MuiTooltip, (theme) => ({
@@ -11,10 +11,16 @@ const StyledTooltip = withStyles(MuiTooltip, (theme) => ({
   }
 }));
 
-const Tooltip = ({ enterTouchDelay = 0, children, placement = "right", ...rest }) => (
-  <StyledTooltip enterTouchDelay={enterTouchDelay} placement={placement} {...rest}>
-    {children}
-  </StyledTooltip>
-);
+const Tooltip = ({ enterTouchDelay = 0, children, placement = "right", title, ...rest }: TooltipProps) => {
+  if (!title && title !== 0) {
+    return children;
+  }
+
+  return (
+    <StyledTooltip enterTouchDelay={enterTouchDelay} placement={placement} title={title} {...rest}>
+      {children}
+    </StyledTooltip>
+  );
+};
 
 export default Tooltip;

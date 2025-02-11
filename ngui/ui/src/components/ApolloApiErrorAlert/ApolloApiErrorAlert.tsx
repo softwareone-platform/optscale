@@ -8,7 +8,7 @@ import { GET_ERROR } from "graphql/api/common";
 const ApolloApiErrorAlert = () => {
   const { data = {} } = useQuery(GET_ERROR);
 
-  const { error: { id, error_code: errorCode, reason: errorReason, url, params } = {} } = data;
+  const { error: { id, error_code: errorCode, reason: errorReason, url, params, apolloErrorMessage } = {} } = data;
 
   const [open, setOpen] = useState(false);
 
@@ -23,7 +23,17 @@ const ApolloApiErrorAlert = () => {
     setOpen(false);
   };
 
-  const errorMessage = errorCode && <ApiErrorMessage errorCode={errorCode} reason={errorReason} url={url} params={params} />;
+  const getErrorMessage = () => {
+    if (errorCode) {
+      return <ApiErrorMessage errorCode={errorCode} reason={errorReason} url={url} params={params} />;
+    }
+    if (apolloErrorMessage) {
+      return apolloErrorMessage;
+    }
+    return null;
+  };
+
+  const errorMessage = getErrorMessage();
 
   return (
     errorMessage !== null && (

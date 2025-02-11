@@ -26,6 +26,7 @@ const getData = (breakdown) => {
         total: { cost_with_offer: itemTotalCostWithOffer = 0, cost_without_offer: itemTotalCostWithoutOffer = 0 } = {}
       } = item;
 
+      // eslint-disable-next-line no-param-reassign
       res[index] = {
         ...res[index],
         sp_usage_hrs: spUsageHrs + itemSpUsageHrs,

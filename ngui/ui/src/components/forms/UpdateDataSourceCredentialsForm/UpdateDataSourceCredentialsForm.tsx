@@ -21,14 +21,15 @@ import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
 import {
-  DOCS_HYSTAX_AUTO_BILLING_AWS,
+  DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
-  DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
-  DOCS_HYSTAX_CONNECT_GCP_CLOUD,
-  DOCS_HYSTAX_DISCOVER_RESOURCES,
+  DOCS_HYSTAX_CONNECT_AZURE_TENANT,
+  DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
+  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
   GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
   DATABRICKS_CREATE_SERVICE_PRINCIPAL,
-  DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0
+  DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0,
+  DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION
 } from "urls";
 import {
   ALIBABA_CNR,
@@ -58,7 +59,12 @@ const Description = ({ type, config }) => {
                 id="createAwsLinkedDocumentationReference3"
                 values={{
                   discoverResourcesLink: (chunks) => (
-                    <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_DISCOVER_RESOURCES} target="_blank" rel="noopener">
+                    <Link
+                      data-test-id="link_iam_user"
+                      href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES}
+                      target="_blank"
+                      rel="noopener"
+                    >
                       {chunks}
                     </Link>
                   )
@@ -72,7 +78,7 @@ const Description = ({ type, config }) => {
                   id="createAwsRootDocumentationReference"
                   values={{
                     link: (chunks) => (
-                      <Link data-test-id="link_guide" href={DOCS_HYSTAX_AUTO_BILLING_AWS} target="_blank" rel="noopener">
+                      <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
                         {chunks}
                       </Link>
                     ),
@@ -109,7 +115,7 @@ const Description = ({ type, config }) => {
             id="createAzureSubscriptionDocumentationReference"
             values={{
               link: (chunks) => (
-                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_TENANT} target="_blank" rel="noopener">
                   {chunks}
                 </Link>
               ),
@@ -125,7 +131,7 @@ const Description = ({ type, config }) => {
             id="createAzureSubscriptionDocumentationReference"
             values={{
               link: (chunks) => (
-                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION} target="_blank" rel="noopener">
                   {chunks}
                 </Link>
               ),
@@ -175,7 +181,7 @@ const Description = ({ type, config }) => {
             id="createGCPDocumentationReference"
             values={{
               link: (chunks) => (
-                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+                <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD} target="_blank" rel="noopener">
                   {chunks}
                 </Link>
               ),
