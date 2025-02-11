@@ -21,6 +21,7 @@ export type ApiEmployeeEmail = {
     | "new_security_recommendation"
     | "environment_changes"
     | "report_imports_passed_for_org"
+    | "report_import_failed"
     | "invite";
   enabled: boolean;
   employee_id: string;

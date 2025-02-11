@@ -554,6 +554,7 @@ export const FINOPS_HOWTOS = "https://finopsinpractice.org/blog-posts-list-for-o
 export const JIRA_MARKETPLACE = "https://marketplace.atlassian.com/apps/1227110/hystax-optscale-for-jira";
 
 // Hystax documentation urls
+<<<<<<< HEAD
 export const DOCS_HYSTAX_OPTSCALE = "https://docs.platform.softwareone.com/extensions/finops-for-cloud/";
 export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_aws_root_cur.html#automatic-billing-data-import-in-aws`;
 export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_aws_migrate_cur1_cur2.html`;
@@ -567,6 +568,44 @@ export const DOCS_HYSTAX_CLUSTERS = `${DOCS_HYSTAX_OPTSCALE}clusters.html`;
 export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}optscales_recommendations.html#clean-up-scripts-based-on-optscale-s-recommendations`;
 export const DOCS_HYSTAX_SLACK_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#slack-app`;
 export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#google-calendar`;
+=======
+export const DOCS_HYSTAX_OPTSCALE = "https://hystax.com/documentation/optscale/";
+
+const docUrl = (path: string) => `${DOCS_HYSTAX_OPTSCALE}${path}` as const;
+
+// Recommendations
+export const DOCS_HYSTAX_CLEANUP_SCRIPTS = docUrl(
+  "optscales_recommendations.html#clean-up-scripts-based-on-optscale-s-recommendations" as const
+);
+
+// Data Source Connection
+const dataSourceConnectionDocUrl = (docPath: string) => docUrl(`e2e_guides/${docPath}`);
+
+export const DOCS_HYSTAX_CONNECT_AWS_ROOT = dataSourceConnectionDocUrl(
+  "e2e_aws.html#root-account-data-export-already-configured"
+);
+export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = dataSourceConnectionDocUrl(
+  "e2e_aws.html#migrating-from-cur-to-cur-20"
+);
+export const DOCS_HYSTAX_CONNECT_AWS_LINKED = dataSourceConnectionDocUrl("e2e_aws.html#connecting-an-aws-linked-account");
+export const DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES = dataSourceConnectionDocUrl("e2e_aws.html#discover-resources_2");
+export const DOCS_HYSTAX_CONNECT_AZURE_TENANT = dataSourceConnectionDocUrl("e2e_azure.html#tenant");
+export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = dataSourceConnectionDocUrl("e2e_azure.html#subscription");
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD = dataSourceConnectionDocUrl("e2e_gcp.html#google-cloud");
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = dataSourceConnectionDocUrl("e2e_gcp.html#google-cloud-tenant");
+export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = dataSourceConnectionDocUrl("e2e_alibaba.html");
+export const DOCS_HYSTAX_CONNECT_KUBERNETES = dataSourceConnectionDocUrl("e2e_kubernetes.html#kubernetes");
+
+// Clusters
+export const DOCS_HYSTAX_CLUSTERS = docUrl("clusters.html");
+
+// Resources constraints & Pool constraint policies
+export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = docUrl("resource_constraints.html");
+
+// Integrations
+export const DOCS_HYSTAX_SLACK_INTEGRATION = docUrl("integrations.html#slack-app");
+export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = docUrl("integrations.html#google-calendar");
+>>>>>>> upstream/integration
 
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =
@@ -593,5 +632,7 @@ export const isProduction = () => window.location.origin === PRODUCTION;
 export const isDemo = () => window.location.origin === DEMO;
 
 export const USER_EMAIL_QUERY_PARAMETER_NAME = "userEmail";
+
+export const OPTSCALE_MODE_QUERY_PARAMETER_NAME = "mode";
 
 export const NEXT_QUERY_PARAMETER_NAME = "next";

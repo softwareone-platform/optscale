@@ -211,6 +211,7 @@ class Infra:
             key=None,
             tags=None,
             open_ingress=False,
+            spot_price=None,
     ):
         gen_cls = self.generator
         gen = gen_cls(
@@ -223,7 +224,8 @@ class Infra:
             user_data,
             key,
             tags,
-            open_ingress
+            open_ingress,
+            spot_price
         )
         template = gen.render()
         path = os.path.join(os.path.dirname(self.path), self.seed)

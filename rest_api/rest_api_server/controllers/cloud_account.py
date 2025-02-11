@@ -95,6 +95,14 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             raise NotFoundException(
                 Err.OE0005, [Organization.__name__, organization_id])
 
+    def _exists(self, cloud_account_id):
+        return self.session.query(
+            exists().where(and_(
+                CloudAccount.id == cloud_account_id,
+                CloudAccount.deleted.is_(False)
+            ))
+        ).scalar()
+
     def _validate(self, cloud_acc, is_new=True, **kwargs):
         org_id = kwargs.get('organization_id')
         if org_id:
@@ -109,6 +117,11 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             process_recommendations = kwargs.get('process_recommendations')
             if process_recommendations:
                 raise FailedDependency(Err.OE0476, [])
+        parent_id = kwargs.get('parent_id')
+        if parent_id and is_new:
+            if not self._exists(parent_id):
+                raise NotFoundException(
+                    Err.OE0005, [CloudAccount.__name__, parent_id])
 
     def handle_config(self, adapter_cls, config, organization=None):
         self.validate_config(adapter_cls, config,
@@ -564,7 +577,6 @@ class CloudAccountController(BaseController, ClickHouseMixin):
 
     def delete(self, item_id):
         cloud_account = self.get(item_id)
-        self.delete_children_accounts(cloud_account)
         c_type_ctrl_map = {
             CloudTypes.KUBERNETES_CNR: CloudBasedCostModelController,
             CloudTypes.DATABRICKS: SkuBasedCostModelController
@@ -575,6 +587,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         elif cloud_account.type == CloudTypes.ENVIRONMENT:
             raise FailedDependency(Err.OE0477, [])
         super().delete(item_id)
+        self.delete_children_accounts(cloud_account)
         expense_ctrl = ExpenseController(self._config)
         expense_ctrl.delete_cloud_expenses(item_id)
         self.clean_clickhouse(cloud_account.id, cloud_account.type)
@@ -757,10 +770,14 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         for c_config in configs:
             c_name = c_config.get('name')
             try:
-                self.create(
+                ca = self.create(
                     organization_id=root_account.organization_id,
                     parent_id=root_account.id, root_config=root_config.copy(),
                     **c_config)
+                if not self._exists(ca.parent_id):
+                    # Corner case for parent removal during the iteration
+                    self.delete(ca.id)
+                    return
                 if c_name in skipped_subscriptions:
                     skipped_subscriptions.pop(c_name, None)
             except ConflictException:

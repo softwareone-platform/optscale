@@ -1,13 +1,14 @@
 import { useTheme } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useIntl } from "react-intl";
-import BreakdownLabel from "components/BreakdownLabel";
+import BreakdownLabel, { getBreakdownLabelText } from "components/BreakdownLabel";
 import CircleLabel from "components/CircleLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import LineChart from "components/LineChart";
 import { useIsOrganizationWeekend } from "hooks/useIsOrganizationWeekend";
 import { useShowWeekends } from "hooks/useShowWeekends";
 import { getLength } from "utils/arrays";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import { useRenderWeekendsHighlightLayer } from "./Layer";
 
 const ChartTooltip = ({ points: allPoints, isOrganizationWeekend, breakdownBy }) => {
@@ -83,7 +84,7 @@ const ChartTooltip = ({ points: allPoints, isOrganizationWeekend, breakdownBy })
   );
 };
 
-const ResourceCountBreakdownLineChart = ({ data, colors, isLoading, style, breakdownBy, dataTestId }) => {
+const ResourceCountBreakdownLineChart = ({ data, colors, isLoading, style, breakdownBy, dataTestId, withLegend = false }) => {
   const isOrganizationWeekend = useIsOrganizationWeekend();
 
   const { showWeekends } = useShowWeekends();
@@ -103,6 +104,17 @@ const ResourceCountBreakdownLineChart = ({ data, colors, isLoading, style, break
       renderTooltipBody={({ slice = {} }) => {
         const { points: allPoints = [] } = slice;
         return <ChartTooltip points={allPoints} isOrganizationWeekend={isOrganizationWeekend} breakdownBy={breakdownBy} />;
+      }}
+      withLegend={withLegend}
+      legendLabel={(serie) => {
+        const pointData = serie.data[0].data;
+
+        const label = pointData.translatedSerieId ?? getBreakdownLabelText(pointData.details);
+
+        return sliceByLimitWithEllipsis(label, 30);
+      }}
+      axisLeft={{
+        format: (value) => value
       }}
       overlayLayers={
         showWeekends

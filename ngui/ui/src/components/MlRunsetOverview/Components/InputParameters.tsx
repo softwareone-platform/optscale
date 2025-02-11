@@ -8,12 +8,12 @@ import FormattedMoney from "components/FormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import QuestionMark from "components/QuestionMark";
 import SummaryList from "components/SummaryList";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { ML_RUNSET_ABORT_CONDITION_TYPES, OPTSCALE_MODE } from "utils/constants";
+import { ML_RUNSET_ABORT_CONDITION_TYPES, OPTSCALE_CAPABILITY } from "utils/constants";
 
 const InputParameters = ({ runset, isLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const { isDemo } = useOrganizationInfo();
 
@@ -64,25 +64,45 @@ const InputParameters = ({ runset, isLoading }) => {
                 dataTestIds={{ key: "p_maximum_parallel_runs_key", value: "p_maximum_parallel_runs_value" }}
               />
               {spotSettings && (
-                <KeyValueLabel
-                  keyMessageId="spotInstances"
-                  value={
-                    <Box display="flex" alignItems="center">
-                      <span>
-                        <FormattedMessage
-                          id="xAttemptsBeforePayAsYouGo"
-                          values={{
-                            value: spotSettings.tries,
-                            strong: (chunks) => <strong>{chunks}</strong>
-                          }}
+                <>
+                  <KeyValueLabel
+                    keyMessageId="spotInstances"
+                    value={
+                      <Box display="flex" alignItems="center">
+                        <span>
+                          <FormattedMessage
+                            id="xAttemptsBeforePayAsYouGo"
+                            values={{
+                              value: spotSettings.tries,
+                              strong: (chunks) => <strong>{chunks}</strong>
+                            }}
+                          />
+                        </span>
+                        <QuestionMark
+                          messageId="xAttemptsBeforePayAsYouGoDescription"
+                          fontSize="small"
+                          Icon={InfoOutlinedIcon}
                         />
-                      </span>
-                      <QuestionMark messageId="xAttemptsBeforePayAsYouGoDescription" fontSize="small" Icon={InfoOutlinedIcon} />
-                    </Box>
-                  }
-                  isBoldValue={false}
-                  dataTestIds={{ key: "p_using_spot_instances_key", value: "p_using_spot_instances_value" }}
-                />
+                      </Box>
+                    }
+                    isBoldValue={false}
+                    dataTestIds={{ key: "p_using_spot_instances_key", value: "p_using_spot_instances_value" }}
+                  />
+                  {/* 
+                    spot_price can be undefined or null depending on parameters it was created with 
+                    we need to check for both values to avoid displaying the label when it's not set
+                  */}
+                  {[undefined, null].includes(spotSettings.spot_price) ? null : (
+                    <KeyValueLabel
+                      keyMessageId="spotInstancesMaxCostPerHour"
+                      value={<FormattedMoney value={spotSettings.spot_price} />}
+                      dataTestIds={{
+                        key: "p_using_spot_instances_max_cost_per_hour_key",
+                        value: "p_using_spot_instances_max_cost_per_hour_value"
+                      }}
+                    />
+                  )}
+                </>
               )}
             </>
           }

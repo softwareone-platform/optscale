@@ -10,17 +10,30 @@ import IconButton from "components/IconButton";
 import PoolLabel from "components/PoolLabel";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
+import Tooltip from "components/Tooltip";
 import { FORMATTED_MONEY_TYPES, EXPENSES_FILTERBY_TYPES } from "utils/constants";
+import { sliceByLimitWithEllipsis } from "utils/strings";
+
+const MAX_NAME_LENGTH = 64;
 
 const getNameCellContentGetter = (filterBy) => {
-  const getNameLabel = ({ link, name }) =>
-    link ? (
-      <Link to={link} component={RouterLink}>
-        {name}
-      </Link>
-    ) : (
-      name
+  const getNameLabel = ({ link, name }) => {
+    const isNameLong = name.length > MAX_NAME_LENGTH;
+
+    const nameToDisplay = isNameLong ? sliceByLimitWithEllipsis(name, MAX_NAME_LENGTH) : name;
+
+    return (
+      <Tooltip title={isNameLong ? name : undefined}>
+        {link ? (
+          <Link to={link} component={RouterLink}>
+            {nameToDisplay}
+          </Link>
+        ) : (
+          <span>{nameToDisplay}</span>
+        )}
+      </Tooltip>
     );
+  };
 
   const getDataSourceNameCellContent = (original) => <CloudLabel label={getNameLabel(original)} type={original.type} />;
 

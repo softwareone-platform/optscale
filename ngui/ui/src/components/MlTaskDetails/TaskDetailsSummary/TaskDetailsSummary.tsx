@@ -2,18 +2,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { Box, Stack } from "@mui/material";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import CloudLabel from "components/CloudLabel";
 import ExecutorLabel from "components/ExecutorLabel";
 import FormattedMoney from "components/FormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel";
 import LastTaskRunGoals from "components/LastTaskRunGoals";
 import Markdown from "components/Markdown";
-import ModeWrapper from "components/ModeWrapper";
 import SummaryList from "components/SummaryList";
 import TypographyLoader from "components/TypographyLoader";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { getEditMlTaskUrl } from "urls";
-import { ML_TASK_DETAILS_TAB_NAME, OPTSCALE_MODE } from "utils/constants";
+import { ML_TASK_DETAILS_TAB_NAME, OPTSCALE_CAPABILITY } from "utils/constants";
 import { getTimeDistance } from "utils/datetime";
 import { SPACING_2 } from "utils/layouts";
 import { getQueryParams } from "utils/network";
@@ -127,9 +127,9 @@ const SummaryInfo = ({
                 />
               }
             />,
-            <ModeWrapper key="lastRunCost" mode={OPTSCALE_MODE.FINOPS}>
+            <CapabilityWrapper key="lastRunCost" capability={OPTSCALE_CAPABILITY.FINOPS}>
               <KeyValueLabel keyMessageId="lastRunCost" value={<FormattedMoney value={lastRunCost} />} />
-            </ModeWrapper>,
+            </CapabilityWrapper>,
             <KeyValueLabel key="owner" keyMessageId="owner" value={ownerName} />
           ]}
         />

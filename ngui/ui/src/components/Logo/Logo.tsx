@@ -9,7 +9,50 @@ const Logo = ({ dataTestId, demo = false, active = false, width = "auto", height
   /* MPT_TODO: Add 'swo-logo' translation */
   // const intl = useIntl();
 
+<<<<<<< HEAD
   const renderLogo = <img width={width} height={height} src={getLogo(demo)} alt={"swo-logo"} data-test-id={dataTestId} />;
+=======
+const getLogo = (demo, white, size) => {
+  if (demo) {
+    return logosMap[`logo${capitalize(size)}Demo`];
+  }
+  if (white) {
+    return logosMap[`logo${capitalize(size)}White`];
+  }
+  return logosMap.logo;
+};
+
+type LogoProps = {
+  dataTestId?: string;
+  demo?: boolean;
+  active?: boolean;
+  white?: boolean;
+  width?: string | number;
+  height?: string | number;
+  size?: string;
+};
+
+const Logo = ({
+  dataTestId,
+  demo = false,
+  active = false,
+  white = false,
+  width = "auto",
+  height = "auto",
+  size = LOGO_SIZE.FULL
+}: LogoProps) => {
+  const intl = useIntl();
+
+  const renderLogo = (
+    <img
+      width={width}
+      height={height}
+      src={getLogo(demo, white, size)}
+      alt={intl.formatMessage({ id: "optscale" })}
+      data-test-id={dataTestId}
+    />
+  );
+>>>>>>> upstream/integration
 
   return active ? (
     <Link component={RouterLink} sx={{ display: "flex" }} to={HOME}>

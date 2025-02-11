@@ -6,9 +6,9 @@ import {
   HYSTAX,
   // Hystax documentation urls
   DOCS_HYSTAX_OPTSCALE,
-  DOCS_HYSTAX_AUTO_BILLING_AWS,
-  DOCS_HYSTAX_DISCOVER_RESOURCES,
-  DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
+  DOCS_HYSTAX_CONNECT_AWS_ROOT,
+  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
+  DOCS_HYSTAX_CONNECT_AZURE_TENANT,
   DOCS_HYSTAX_RESOURCE_CONSTRAINTS,
   GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
   GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
@@ -41,15 +41,15 @@ const linksDefinition = {
       usages: ['Page title -> "DOCUMENTATION" button', '"OptScale Privacy Policy" alert dialog']
     },
     {
-      link: DOCS_HYSTAX_AUTO_BILLING_AWS,
+      link: DOCS_HYSTAX_CONNECT_AWS_ROOT,
       usages: ["Connect cloud account form description (AWS Root and AWS Linked)"]
     },
     {
-      link: DOCS_HYSTAX_DISCOVER_RESOURCES,
+      link: DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
       usages: ["Connect cloud account form description (AWS Linked - 'read-only policy for resource discovery' label)"]
     },
     {
-      link: DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
+      link: DOCS_HYSTAX_CONNECT_AZURE_TENANT,
       usages: ["Connect cloud account form description (Azure)"]
     },
     {

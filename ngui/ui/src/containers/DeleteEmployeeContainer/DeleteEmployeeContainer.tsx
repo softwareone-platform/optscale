@@ -3,7 +3,7 @@ import { deleteEmployee } from "api";
 import { DELETE_EMPLOYEE } from "api/restapi/actionTypes";
 import DeleteEmployeeForm from "components/forms/DeleteEmployeeForm";
 import { FormValues } from "components/forms/DeleteEmployeeForm/types";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isError } from "utils/api";

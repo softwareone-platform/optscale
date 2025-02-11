@@ -15,8 +15,8 @@ import ServiceFilter from "./ServiceType";
 import StatusFilter from "./StatusFilter";
 import TagFilter from "./TagFilter";
 import TasksFilter from "./TasksFilter";
-import WithAvailableSavingsFilter from "./WithAvailableSavingsFilter";
 import WithoutTagFilter from "./WithoutTagFilter";
+import WithRecommendationsFilter from "./WithRecommendationsFilter";
 import WithViolatedConstraintsFilter from "./WithViolatedConstraintsFilter";
 
 export const ALL_CATEGORY = "all";
@@ -42,7 +42,7 @@ export const RESOURCE_FILTERS = [
   ServiceFilter,
   ResourceTypeFilter,
   ResourceStateFilter,
-  WithAvailableSavingsFilter,
+  WithRecommendationsFilter,
   WithViolatedConstraintsFilter,
   K8sNodeFilter,
   K8sNamespaceFilter,

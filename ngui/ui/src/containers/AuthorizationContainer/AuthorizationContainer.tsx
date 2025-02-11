@@ -18,12 +18,13 @@ import {
   EMAIL_VERIFICATION,
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
-  NEXT_QUERY_PARAMETER_NAME
+  NEXT_QUERY_PARAMETER_NAME,
+  OPTSCALE_MODE_QUERY_PARAMETER_NAME
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import { SPACING_4 } from "utils/layouts";
 import macaroon from "utils/macaroons";
-import { formQueryString, getQueryParams, updateQueryParams } from "utils/network";
+import { formQueryString, getQueryParams } from "utils/network";
 
 const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
@@ -49,6 +50,7 @@ const AuthorizationContainer = () => {
 
   const [createUser, { loading: registerLoading }] = useMutation(CREATE_USER);
 
+<<<<<<< HEAD
   const [, { loading: signInLoading }] = useMutation(SIGN_IN, {
     onCompleted: (data) => {
       const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
@@ -58,41 +60,47 @@ const AuthorizationContainer = () => {
         updateQueryParams({
           [SHOW_POLICY_QUERY_PARAM]: true
         });
+=======
+  const [signIn, { loading: signInLoading }] = useMutation(SIGN_IN);
+
+  const handleLogin = async ({ email, password }) => {
+    try {
+      const { data } = await createToken({ variables: { email, password } });
+      const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
+      dispatch(initialize({ ...data.token, caveats }));
+    } catch (error) {
+      if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
+        navigate(`${EMAIL_VERIFICATION}?${formQueryString({ email })}`);
+>>>>>>> upstream/integration
       }
-      dispatch(initialize({ ...data.signIn, caveats }));
     }
-  });
-
-  const handleLogin = ({ email, password }) => {
-    createToken({ variables: { email, password } })
-      .then(({ data }) => {
-        const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
-        dispatch(initialize({ ...data.token, caveats }));
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
-          navigate(`${EMAIL_VERIFICATION}?${formQueryString({ email })}`);
-        }
-      });
   };
 
-  const handleRegister = ({ email, password, name }) => {
-    createUser({ variables: { email, password, name } })
-      .then(() => {
-        trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: "optscale" });
-        return Promise.resolve();
-      })
-      .then(() => sendEmailVerificationCode(email))
-      .then(() => {
-        navigate(
-          `${EMAIL_VERIFICATION}?${formQueryString({
-            email
-          })}`
-        );
-      });
+  const handleRegister = async ({ email, password, name }: { email: string; password: string; name: string }) => {
+    const { data } = await createUser({ variables: { email, password, name } });
+
+    trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: "optscale" });
+
+    if (data.user.verified) {
+      const caveats = macaroon.processCaveats(macaroon.deserialize(data.user.token).getCaveats());
+      return dispatch(initialize({ ...data.user, caveats }));
+    }
+
+    await sendEmailVerificationCode(email);
+
+    const { [OPTSCALE_MODE_QUERY_PARAMETER_NAME]: mode } = getQueryParams() as {
+      [OPTSCALE_MODE_QUERY_PARAMETER_NAME]: string;
+    };
+
+    return navigate(
+      `${EMAIL_VERIFICATION}?${formQueryString({
+        email,
+        mode
+      })}`
+    );
   };
 
+<<<<<<< HEAD
   // const handleThirdPartySignIn = ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
   //   signIn({ variables: { provider, token: thirdPartyToken, tenantId, redirectUri } }).then(({ data }) => {
   //     const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
@@ -102,6 +110,19 @@ const AuthorizationContainer = () => {
   //     dispatch(initialize({ ...data.signIn, caveats }));
   //   });
   // };
+=======
+  const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
+    const { data } = await signIn({
+      variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
+    });
+
+    const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
+    if (caveats.register) {
+      trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
+    }
+    dispatch(initialize({ ...data.signIn, caveats }));
+  };
+>>>>>>> upstream/integration
 
   const isInvited = queryInvited !== undefined;
 
@@ -133,16 +154,19 @@ const AuthorizationContainer = () => {
   const getRedirectionPath = () => {
     const {
       [NEXT_QUERY_PARAMETER_NAME]: next,
+      [OPTSCALE_MODE_QUERY_PARAMETER_NAME]: mode,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
       [SHOW_POLICY_QUERY_PARAM]: showPolicy
     } = getQueryParams() as {
       [NEXT_QUERY_PARAMETER_NAME]: string;
+      [OPTSCALE_MODE_QUERY_PARAMETER_NAME]: string;
       [USER_EMAIL_QUERY_PARAMETER_NAME]: string;
       [SHOW_POLICY_QUERY_PARAM]: boolean | string;
     };
 
     return `${INITIALIZE}?${formQueryString({
-      [NEXT_QUERY_PARAMETER_NAME]: next || INITIALIZE,
+      [NEXT_QUERY_PARAMETER_NAME]: next,
+      [OPTSCALE_MODE_QUERY_PARAMETER_NAME]: mode,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
       [SHOW_POLICY_QUERY_PARAM]: showPolicy
     })}`;

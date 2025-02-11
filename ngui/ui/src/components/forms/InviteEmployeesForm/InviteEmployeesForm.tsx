@@ -109,6 +109,7 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
           label={<FormattedMessage id="organization" />}
           type="text"
           dataTestId="input_org"
+          multiline
         />
       </Grid>
     </Grid>

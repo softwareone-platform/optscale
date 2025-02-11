@@ -48,6 +48,7 @@ class TFGenerator:
                  key=None,
                  tags=None,
                  open_ingress=False,
+                 spot_price=None,
                  ):
         if tags is None:
             tags = dict()
@@ -63,6 +64,7 @@ class TFGenerator:
         self.user_data = user_data
         self.tags = tags
         self.open_ingress = open_ingress
+        self.spot_price = spot_price
 
     @property
     def image(self):
@@ -102,6 +104,8 @@ class TFGenerator:
         }
         if self.user_data:
             d.update({"user_data": self.user_data})
+        if self.spot_price:
+            d.update({"spot_price": self.spot_price})
         return d
 
 

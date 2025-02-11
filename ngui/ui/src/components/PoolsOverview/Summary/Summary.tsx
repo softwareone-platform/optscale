@@ -1,6 +1,6 @@
 import SummaryGrid from "components/SummaryGrid";
 import { getPoolIdWithSubPools, getResourcesExpensesUrl } from "urls";
-import { AVAILABLE_SAVINGS_FILTER, POOL_ID_FILTER, SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
+import { RECOMMENDATIONS_FILTER, POOL_ID_FILTER, SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 import { getCurrentMonthRange } from "utils/datetime";
 import { getPoolColorStatus } from "utils/layouts";
 import { intPercentXofY } from "utils/math";
@@ -105,7 +105,7 @@ const Summary = ({ data, isLoading = false }: SummaryProps) => {
         show: true,
         link: getResourcesExpensesUrl({
           [POOL_ID_FILTER]: getPoolIdWithSubPools(id),
-          [AVAILABLE_SAVINGS_FILTER]: true,
+          [RECOMMENDATIONS_FILTER]: true,
           sStartDate: startOfMonth,
           sEndDate: today
         }),

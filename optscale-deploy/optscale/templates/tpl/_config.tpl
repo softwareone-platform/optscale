@@ -188,6 +188,7 @@ etcd:
     rows_limit: {{ .Values.cleanmongodb.rows_limit }}
     archive_enable: {{ .Values.cleanmongodb.archive_enable }}
     file_max_rows: {{ .Values.cleanmongodb.file_max_rows }}
+  disable_email_verification: {{ .Values.disable_email_verification }}
   encryption_salt: {{ .Values.encryption_salt }}
   encryption_salt_auth: {{ .Values.encryption_salt_auth }}
 {{ if .Values.zohocrm.regapp }}

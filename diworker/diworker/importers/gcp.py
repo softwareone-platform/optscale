@@ -158,21 +158,29 @@ class GcpReportImporter(BaseReportImporter):
     @staticmethod
     def _get_resource_type_and_name(expense):
         cost_type = expense.get('cost_type')
-        sku = expense.get('sku')
+        sku = expense.get('sku', '')
+        sku_lower = sku.lower()
         region = expense.get('region')
         service = expense.get('service')
+        resource_hash = expense.get('resource_hash')
         r_name = None
         if cost_type == 'regular':
-            if 'Snapshot' in sku:
+            if 'snapshot' in sku_lower:
                 r_type = 'Snapshot'
-            elif 'Image' in sku:
+            elif 'image' in sku_lower:
                 r_type = 'Image'
-            elif 'PD Capacity' in sku:
+            elif 'pd capacity' in sku_lower:
                 r_type = 'Volume'
-            elif 'Storage' in sku:
+            elif service == 'Cloud Storage' and (
+                    'storage' in sku_lower or resource_hash):
                 r_type = 'Bucket'
-            elif 'Instance' in sku and 'discount' not in sku:
+            elif 'instance' in sku_lower and 'discount' not in sku_lower:
                 r_type = 'Instance'
+            elif resource_hash and service == 'Compute Engine' and (
+                    'ip charge on' in sku_lower or 'network' in sku_lower):
+                r_type = 'Instance'
+            elif 'ip charge' in sku_lower:
+                r_type = 'IP Address'
             else:
                 r_type = f'{service}'
             r_name = f'{sku} {region}'
@@ -198,10 +206,14 @@ class GcpReportImporter(BaseReportImporter):
         return res
 
     def get_resource_info_from_expenses(self, expenses):
+        expense = expenses[-1]
+        if expense.get('service') == 'Compute Engine':
+            expense = next((x for x in expenses if 'Instance' in x.get('sku')),
+                           expense)
         r_type, r_name = self._get_resource_type_and_name(
-            expenses[-1])
-        service = expenses[-1].get('service')
-        region = self.cloud_adapter.fix_region(expenses[-1].get('region'))
+            expense)
+        service = expense.get('service')
+        region = self.cloud_adapter.fix_region(expense.get('region'))
         first_seen = opttime.utcnow()
         last_seen = opttime.utcfromtimestamp(0).replace()
         tags = {}

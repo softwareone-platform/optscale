@@ -1,8 +1,7 @@
 import { Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
-import { NameField } from "./FormElements";
-import FormButtons from "./FormElements/FormButtons";
+import { NameField, FormButtons, CapabilityField } from "./FormElements";
 import { CreateOrganizationFormProps, FormValues } from "./types";
 import { getDefaultValues } from "./utils";
 
@@ -11,16 +10,18 @@ const CreateOrganizationForm = ({ onSubmit, onCancel, isLoading }: CreateOrganiz
     defaultValues: getDefaultValues()
   });
 
-  const { handleSubmit } = methods;
-
   return (
     <>
-      <Typography paragraph>
-        <FormattedMessage id="createNewOrganizationDescription" />
-      </Typography>
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+          <Typography gutterBottom>
+            <FormattedMessage id="createNewOrganizationDescription" />
+          </Typography>
           <NameField />
+          <Typography gutterBottom>
+            <FormattedMessage id="createNewOrganizationCapabilitiesDescription" />
+          </Typography>
+          <CapabilityField />
           <FormButtons onCancel={onCancel} isLoading={isLoading} />
         </form>
       </FormProvider>

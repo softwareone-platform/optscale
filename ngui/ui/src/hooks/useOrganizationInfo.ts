@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";
 import localeManager from "translations/localeManager";
-import { useOrganizations } from "./coreData";
+import { useOrganizations } from "./coreData/useOrganizations";
 
 const useCurrentOrganization = (organizations = []) => {
   // Take current/active organization ID from storage

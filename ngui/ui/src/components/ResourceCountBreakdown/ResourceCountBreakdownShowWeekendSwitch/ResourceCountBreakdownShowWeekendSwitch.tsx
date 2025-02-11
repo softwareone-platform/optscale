@@ -15,9 +15,6 @@ const ResourceCountBreakdownShowWeekendSwitch = () => {
         </Typography>
       }
       labelPlacement="start"
-      sx={{
-        marginRight: (theme) => theme.spacing(2)
-      }}
     />
   );
 };

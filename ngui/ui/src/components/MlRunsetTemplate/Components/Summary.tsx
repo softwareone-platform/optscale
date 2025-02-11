@@ -1,6 +1,6 @@
 import SummaryGrid from "components/SummaryGrid";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { OPTSCALE_MODE, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { OPTSCALE_CAPABILITY, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 
 type SummaryProps = {
   runsCount: number;
@@ -10,7 +10,7 @@ type SummaryProps = {
 };
 
 const Summary = ({ runsCount, lastRunsetExpenses, totalExpenses, isLoading = false }: SummaryProps) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   return (
     <SummaryGrid

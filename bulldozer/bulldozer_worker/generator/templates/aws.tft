@@ -51,6 +51,9 @@ resource "aws_spot_instance_request" "optscale_instance_{{seed}}" {
   {{#key}}
   key_name = "{{key_name}}"
   {{/key}}
+  {{#spot_price}}
+  spot_price = "{{spot_price}}"
+  {{/spot_price}}
   instance_type = "{{instance_type}}"
   vpc_security_group_ids = ["${aws_security_group.optscale_sg_{{seed}}.id}"]
   root_block_device {

@@ -3,7 +3,7 @@ import { useApiData } from "hooks/useApiData";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { hasIntersection, getLength, isIdentical } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
-import { useOrganizationAllowedActions } from "./coreData";
+import { useOrganizationAllowedActions } from "./coreData/useOrganizationAllowedActions";
 
 const CHECK_PERMISSION_CONDITION = Object.freeze({
   OR: "or",

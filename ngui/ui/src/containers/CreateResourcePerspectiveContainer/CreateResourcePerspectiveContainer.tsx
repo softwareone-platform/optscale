@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import CreateResourcePerspectiveForm from "components/forms/CreateResourcePerspectiveForm";
 import { GET_ORGANIZATION_PERSPECTIVES, UPDATE_ORGANIZATION_PERSPECTIVES } from "graphql/api/restapi/queries/restapi.queries";
-import { useOrganizationPerspectives } from "hooks/coreData";
+import { useOrganizationPerspectives } from "hooks/coreData/useOrganizationPerspectives";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
 const CreateResourcePerspectiveContainer = ({ filters, breakdownBy, breakdownData, onSuccess, onCancel }) => {

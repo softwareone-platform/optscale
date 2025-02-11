@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import Slack from "components/Integrations/Slack";
 import { GET_INSTALLATION_PATH } from "graphql/api/slacker/queries";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import EmployeesService from "services/EmployeesService";
 
 const IntegrationsSlackContainer = () => {
