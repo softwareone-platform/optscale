@@ -5,7 +5,13 @@ import { FIELD_NAMES } from "../constants";
 const FIELD_NAME = FIELD_NAMES.NAME;
 
 const NameField = () => (
-  <TextInput name={FIELD_NAME} label={<FormattedMessage id="name" />} required dataTestId="input_new_organization_name" />
+  <TextInput
+    name={FIELD_NAME}
+    label={<FormattedMessage id="name" />}
+    required
+    dataTestId="input_new_organization_name"
+    margin="normal"
+  />
 );
 
 export default NameField;

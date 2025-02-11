@@ -7,13 +7,13 @@ import FormattedMoney from "components/FormattedMoney";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { getMlRunsetTemplateUrl, ML_RUNSET_TEMPLATE_CREATE } from "urls";
 import { mlRunsCount } from "utils/columns";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 
 const MlRunsetTemplatesTable = ({ data, isLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const columns = useMemo(
     () => [

@@ -5,7 +5,7 @@ import FormattedOrganizationCurrency from "components/FormattedOrganizationCurre
 import IconButton from "components/IconButton";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import EditOrganizationCurrencyFormContainer from "containers/EditOrganizationCurrencyFormContainer";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ENVIRONMENT } from "utils/constants";

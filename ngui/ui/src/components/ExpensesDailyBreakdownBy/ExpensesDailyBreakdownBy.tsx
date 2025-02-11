@@ -1,5 +1,6 @@
 import { Box, Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
+import ChartLegendToggle from "components/ChartLegendToggle/ChartLegendToggle";
 import Selector, { Item, ItemContent } from "components/Selector";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import { DAILY_EXPENSES_SPLIT_PARAMETER_NAME } from "urls";
@@ -10,11 +11,17 @@ import { SPACING_1 } from "utils/layouts";
 import BreakdownBy from "./BreakdownBy";
 import ExpensesDailyBreakdownByBarChart from "./ExpensesDailyBreakdownByBarChart";
 
-const ExpensesDailyBreakdownBy = ({ breakdown, breakdownByValue, onBreakdownByChange, isLoading = false }) => {
+const ExpensesDailyBreakdownBy = ({ counts, breakdown, breakdownByValue, onBreakdownByChange, isLoading = false }) => {
   const [split, setSplit] = useSyncQueryParamWithState({
     queryParamName: DAILY_EXPENSES_SPLIT_PARAMETER_NAME,
     possibleStates: SPLITS,
     defaultValue: EXPENSES_SPLIT_PERIODS.DAILY
+  });
+
+  const [withLegend, setWithLegend] = useSyncQueryParamWithState({
+    queryParamName: "withLegend",
+    possibleStates: [true, false],
+    defaultValue: "true"
   });
 
   return (
@@ -30,12 +37,15 @@ const ExpensesDailyBreakdownBy = ({ breakdown, breakdownByValue, onBreakdownByCh
             </Item>
           ))}
         </Selector>
+        <ChartLegendToggle checked={withLegend} onChange={setWithLegend} />
       </Box>
       <Box>
         <ExpensesDailyBreakdownByBarChart
           dataTestId="expenses_breakdown_chart"
           breakdown={breakdown}
           breakdownBy={breakdownByValue}
+          showLegend={withLegend}
+          counts={counts}
           isLoading={isLoading}
           split={split}
           axisFormat={AXIS_FORMATS.MONEY}

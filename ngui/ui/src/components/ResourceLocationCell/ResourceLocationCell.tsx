@@ -1,6 +1,6 @@
 import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 
 const ResourceLocationCell = ({ dataSource, caption }) => {
   const dataSources = useAllDataSources();

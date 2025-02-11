@@ -76,15 +76,24 @@ def generate_email(config_client, to, subject, template_params,
     return msg
 
 
-def get_templates_path():
+def get_template_path(template_name, custom=False):
     dir_path = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(dir_path, 'templates')
-    return template_path
+    custom_folder_map = {
+        True: 'custom_templates',
+        False: 'templates'
+    }
+    templates_folder = custom_folder_map[custom]
+    return os.path.join(dir_path, templates_folder, template_name)
 
 
 def _generate_body(context, template_type='default'):
-    template_path = os.path.join(
-        get_templates_path(), '%s.html' % template_type)
+    template_name = '%s.html' % template_type
+    custom_template_path = get_template_path(template_name, custom=True)
+    if os.path.exists(custom_template_path):
+        template_path = custom_template_path
+        LOG.info('Will use custom email template: %s', template_name)
+    else:
+        template_path = get_template_path(template_name)
     with open(template_path, 'r', encoding="utf-8") as tmp:
         base_email_template = tmp.read()
     body = MIMEText(pystache.render(base_email_template, context), 'html')

@@ -41,8 +41,9 @@ export const concatenate = (array, pre, separator) => {
 
 export const concatenateUrl = (array, pre = "/", separator = "/") => concatenate(array, pre, separator);
 
-export const sliceByLimitWithEllipsis = (str = "", limit) => (str.length <= limit ? str : `${str.slice(0, limit)}...`);
-export const sliceFromEndByLimitWithEllipsis = (str = "", limit) => (str.length <= limit ? str : `...${str.slice(-limit)}`);
+export const sliceByLimitWithEllipsis = (str = "", limit: number) => (str.length <= limit ? str : `${str.slice(0, limit)}...`);
+export const sliceFromEndByLimitWithEllipsis = (str = "", limit: number) =>
+  str.length <= limit ? str : `...${str.slice(-limit)}`;
 
 export const isValidEmail = (email) => emailRegex.test(email);
 

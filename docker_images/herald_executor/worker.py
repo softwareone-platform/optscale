@@ -48,7 +48,7 @@ TASK_QUEUE = Queue(QUEUE_NAME, TASK_EXCHANGE, bindings=[
         routing_key='organization.recommendation.new_security_recommendation'),
     binding(TASK_EXCHANGE,
             routing_key='organization.recommendation.saving_spike'),
-    binding(TASK_EXCHANGE, routing_key='organization.report_import.passed'),
+    binding(TASK_EXCHANGE, routing_key='organization.report_import.#'),
     binding(TASK_EXCHANGE, routing_key='insider.error.sslerror'),
     binding(TASK_EXCHANGE, routing_key='arcee.system.#')
 ])
@@ -70,6 +70,7 @@ class HeraldTemplates(Enum):
     RESOURCE_OWNER_VIOLATION_ALERT = 'resource_owner_violation_alert'
     TAGGING_POLICY = 'organization_policy_tagging'
     REPORT_IMPORT_PASSED = 'report_imports_passed_for_org'
+    REPORT_IMPORT_FAILED = 'report_import_failed'
     INSIDER_SSLERROR = 'insider_prices_sslerror'
     FIRST_TASK_CREATED = 'first_task_created'
     FIRST_RUN_STARTED = 'first_run_started'
@@ -336,7 +337,8 @@ class HeraldExecutorWorker(ConsumerMixin):
         status_changed_info = {
             'environment_status_changed': {
                 'changed_environment': {
-                    'name': resource.get('name') or resource.get('cloud_resource_id'),
+                    'name': resource.get('name') or resource.get(
+                        'cloud_resource_id'),
                     'id': resource['id'],
                     'status': updated_value
                 }
@@ -783,6 +785,45 @@ class HeraldExecutorWorker(ConsumerMixin):
         }
         self._send_service_email(title, template_type, template_params)
 
+    def execute_report_import_failed(self, cloud_account_id, organization_id):
+        _, organization = self.rest_cl.organization_get(organization_id)
+        _, cloud_account = self.rest_cl.cloud_account_get(cloud_account_id)
+        title = "Report import failed"
+        subject = '[%s] %s' % (self.config_cl.public_ip(), title)
+        template_params = {
+            'texts': {
+                'organization': {
+                    'id': organization['id'],
+                    'name': organization['name']},
+                'cloud_account': {
+                    'id': cloud_account['id'],
+                    'name': cloud_account['name'],
+                    'type': cloud_account['type'],
+                    'last_import_at': datetime.fromtimestamp(
+                        cloud_account['last_import_at']).strftime(
+                        '%m/%d/%Y %H:%M:%S UTC')
+                },
+                'reason': cloud_account['last_import_attempt_error']
+            }}
+
+        _, employees = self.rest_cl.employee_list(organization_id, roles=True)
+        employees_emails = set()
+        for emp in employees['employees']:
+            assignments = [
+                (assign['assignment_resource_type'], assign['purpose'])
+                for assign in emp['assignments']
+            ]
+            if ('organization', 'optscale_manager') in assignments and (
+                    self.is_email_enabled(
+                        emp['id'], HeraldTemplates.REPORT_IMPORT_FAILED.value)):
+                employees_emails.add(emp['user_email'])
+        if employees_emails:
+            for email in employees_emails:
+                self.herald_cl.email_send(
+                    [email], title,
+                    template_type=HeraldTemplates.REPORT_IMPORT_FAILED.value,
+                    template_params=template_params)
+
     def execute(self, task):
         organization_id = task.get('organization_id')
         action = task.get('action')
@@ -804,6 +845,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             'organization_constraint_violated': task_params,
             'new_security_recommendation': [organization_id, meta],
             'saving_spike': [object_id, meta],
+            'report_import_failed': task_params,
             'report_import_passed': [object_id],
             'insider_prices_sslerror': [],
             'first_task_created': [object_id, object_name, profiling_token],
@@ -824,6 +866,7 @@ class HeraldExecutorWorker(ConsumerMixin):
                 self.execute_organization_constraint_violated,
             'new_security_recommendation':
                 self.execute_new_security_recommendation,
+            'report_import_failed': self.execute_report_import_failed,
             'saving_spike': self.execute_saving_spike,
             'report_import_passed': self.execute_report_imports_passed_for_org,
             'insider_prices_sslerror': self.execute_insider_prices,

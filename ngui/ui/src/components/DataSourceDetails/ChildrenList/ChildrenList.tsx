@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import CloudLabel from "components/CloudLabel";
 import SubTitle from "components/SubTitle";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { isEmpty } from "utils/arrays";
 
 const ChildrenList = ({ parentId }) => {

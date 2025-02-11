@@ -1,3 +1,4 @@
-import BreakdownLabel from "./BreakdownLabel";
+import BreakdownLabel, { getBreakdownLabelText } from "./BreakdownLabel";
 
 export default BreakdownLabel;
+export { getBreakdownLabelText };

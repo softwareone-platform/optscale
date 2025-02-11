@@ -2,7 +2,7 @@ import { useIntl } from "react-intl";
 import { Selector } from "components/forms/common/fields";
 import QuestionMark from "components/QuestionMark";
 import { ItemContent } from "components/Selector";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { FIELD_NAMES } from "../constants";
 
 type OwnerSelectorProps = {

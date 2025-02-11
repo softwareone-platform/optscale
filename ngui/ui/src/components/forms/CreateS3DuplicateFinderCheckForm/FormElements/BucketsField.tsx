@@ -16,7 +16,12 @@ const FIELD_NAME = FIELD_NAMES.BUCKETS;
 
 const MAX_SELECTED_BUCKETS = 100;
 
-const TableField = ({ buckets, value, dataSources, onChange, errors }) => {
+const VALIDATION_TYPE = {
+  AT_LEAST_ONE_SELECTED: "atLeastOneSelected",
+  MAX_BUCKETS: "maxBuckets"
+} as const;
+
+const TableField = ({ buckets, value, dataSources, onChange }) => {
   const tableData = useMemo(
     () =>
       buckets.map((bucket) => {
@@ -54,25 +59,22 @@ const TableField = ({ buckets, value, dataSources, onChange, errors }) => {
   );
 
   return (
-    <>
-      <Table
-        columns={columns}
-        withSearch
-        enableSearchQueryParam={false}
-        data={tableData}
-        memoBodyCells
-        withSelection
-        rowSelection={value}
-        getRowId={(row) => getCloudResourceIdentifier(row)}
-        onRowSelectionChange={onChange}
-        pageSize={10}
-        enablePaginationQueryParam={false}
-        localization={{
-          emptyMessageId: "noBuckets"
-        }}
-      />
-      {!!errors[FIELD_NAME] && <FormHelperText error>{errors[FIELD_NAME].message}</FormHelperText>}
-    </>
+    <Table
+      columns={columns}
+      withSearch
+      enableSearchQueryParam={false}
+      data={tableData}
+      memoBodyCells
+      withSelection
+      rowSelection={value}
+      getRowId={(row) => getCloudResourceIdentifier(row)}
+      onRowSelectionChange={onChange}
+      pageSize={10}
+      enablePaginationQueryParam={false}
+      localization={{
+        emptyMessageId: "noBuckets"
+      }}
+    />
   );
 };
 
@@ -102,13 +104,13 @@ const BucketsField = ({ buckets, dataSources, isLoading }) => {
         name={FIELD_NAME}
         rules={{
           validate: {
-            atLeastOneSelected: (value) =>
+            [VALIDATION_TYPE.AT_LEAST_ONE_SELECTED]: (value) =>
               isEmptyObject(value)
                 ? intl.formatMessage({
                     id: "atLeastOneBucketMustBeSelected"
                   })
                 : true,
-            maxBuckets: (value) => {
+            [VALIDATION_TYPE.MAX_BUCKETS]: (value) => {
               const bucketsCount = Object.keys(value).length;
               return bucketsCount > MAX_SELECTED_BUCKETS
                 ? intl.formatMessage(
@@ -137,6 +139,7 @@ const BucketsField = ({ buckets, dataSources, isLoading }) => {
                   <strong>{Object.keys(selectedBuckets).join(", ")}</strong>
                 </Typography>
               )}
+              {!!errors[FIELD_NAME] && <FormHelperText error>{errors[FIELD_NAME].message}</FormHelperText>}
             </>
           )
         }

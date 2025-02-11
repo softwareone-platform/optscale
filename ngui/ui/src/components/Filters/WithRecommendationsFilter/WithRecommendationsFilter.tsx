@@ -1,16 +1,16 @@
 import { FormattedMessage } from "react-intl";
 import { intl } from "translations/react-intl-config";
-import { AVAILABLE_SAVINGS_FILTER, RECOMMENDATIONS_BE_FILTER } from "utils/constants";
+import { RECOMMENDATIONS_FILTER, RECOMMENDATIONS_BE_FILTER } from "utils/constants";
 import Filter from "../Filter";
 
-class WithAvailableSavingsFilter extends Filter {
-  static filterName = AVAILABLE_SAVINGS_FILTER;
+class WithRecommendationsFilter extends Filter {
+  static filterName = RECOMMENDATIONS_FILTER;
 
   static apiName = RECOMMENDATIONS_BE_FILTER;
 
-  static displayedName = (<FormattedMessage id="withAvailableSavings" />);
+  static displayedName = (<FormattedMessage id="withRecommendations" />);
 
-  static displayedNameString = intl.formatMessage({ id: "withAvailableSavings" });
+  static displayedNameString = intl.formatMessage({ id: "withRecommendations" });
 
   // TODO: Use ajv TS integration to create schema based on types def
   static filterItemSchema = {
@@ -43,4 +43,4 @@ class WithAvailableSavingsFilter extends Filter {
   }
 }
 
-export default WithAvailableSavingsFilter;
+export default WithRecommendationsFilter;

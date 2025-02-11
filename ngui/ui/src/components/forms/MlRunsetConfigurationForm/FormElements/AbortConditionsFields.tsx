@@ -5,9 +5,9 @@ import { FormattedMessage, useIntl } from "react-intl";
 import CheckboxComponent from "components/Checkbox";
 import { Checkbox as CheckboxField, NumberInput } from "components/forms/common/fields";
 import Tooltip from "components/Tooltip";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { MAX_INT_32, OPTSCALE_MODE } from "utils/constants";
+import { MAX_INT_32, OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { positiveInteger } from "utils/validation";
 import { FIELD_NAMES } from "../constants";
@@ -142,7 +142,7 @@ const GoalsPlateau = () => (
 );
 
 const AbortConditionsFields = () => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   return (
     <Stack spacing={SPACING_1}>

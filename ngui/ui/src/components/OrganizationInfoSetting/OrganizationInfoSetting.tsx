@@ -1,17 +1,17 @@
 import { useState } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import { FormattedMessage } from "react-intl";
+import CapabilityWrapper from "components/CapabilityWrapper";
 import CopyText from "components/CopyText";
 import IconButton from "components/IconButton";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import ModeWrapper from "components/ModeWrapper";
 import EditOrganizationFormContainer from "containers/EditOrganizationFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_MODE } from "utils/constants";
-import { MPT_SPACING_2, SPACING_1 } from "utils/layouts";
-import InlineSeverityAlert from "../InlineSeverityAlert";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { SPACING_1 } from "utils/layouts";
 import OrganizationCurrency from "./OrganizationCurrency";
 
 const OrganizationId = ({ id }) => (
@@ -69,14 +69,16 @@ const OrganizationInfoSetting = () => {
       <Box display="flex">
         <OrganizationName name={organizationName} />
       </Box>
-      <ModeWrapper mode={OPTSCALE_MODE.FINOPS}>
+      <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
+        <Box>
+          <Typography>
+            <FormattedMessage id="organizationCurrencyDescription" />
+          </Typography>
+        </Box>
         <Box>
           <OrganizationCurrency currencyCode={currency} />
         </Box>
-        <Box marginTop={MPT_SPACING_2}>
-          <InlineSeverityAlert messageId="organizationCurrencyDescription" />
-        </Box>
-      </ModeWrapper>
+      </CapabilityWrapper>
     </Stack>
   );
 };

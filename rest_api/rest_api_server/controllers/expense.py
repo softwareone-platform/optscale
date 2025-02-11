@@ -2011,14 +2011,12 @@ class RegionExpenseController(FilteredFormattedExpenseController,
             cloud_type = ca_type_map.get(
                 group.get('_id', {}).get('cloud_account_id'))
             key = (region, cloud_type)
-            if region is None and not info_map.get(key):
+            if key not in info_map.keys():
                 info_map.update(
                     self._generate_info_map_element(
-                        None, {'longitude': None, 'latitude': None},
+                        region, {'longitude': None, 'latitude': None},
                         cloud_type=cloud_type)
                 )
-            if key not in info_map.keys():
-                continue
 
             if group['_id']['date'] >= starting_time:
                 result['total'] += group['cost']

@@ -9,7 +9,7 @@ import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import PageContentWrapper from "components/PageContentWrapper";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import RiSpCoverageContainer from "containers/RiSpCoverageContainer";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import { RECOMMENDATIONS, RI_SP_QUERY_PARAMETERS } from "urls";

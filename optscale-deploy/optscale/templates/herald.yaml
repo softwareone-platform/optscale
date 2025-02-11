@@ -100,3 +100,11 @@ spec:
           value: {{ .Values.etcd.service.externalPort | quote }}
         - name: HERALD_SERVICE
           value: {{ $config.engine.role }}
+        volumeMounts:
+          - name: herald-email-templates-volume
+            mountPath: /usr/src/app/herald/modules/email_generator/custom_templates
+      volumes:
+        - name: herald-email-templates-volume
+          hostPath:
+            path: /optscale/email_templates
+            type: DirectoryOrCreate

@@ -9,10 +9,10 @@ import SubTitle from "components/SubTitle";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { getMlTaskDetailsUrl, getMlRunsetDetailsUrl } from "urls";
 import { duration, expenses, startedAt, text } from "utils/columns";
-import { ML_RUN_STATUS, OPTSCALE_MODE } from "utils/constants";
+import { ML_RUN_STATUS, OPTSCALE_CAPABILITY } from "utils/constants";
 import { formatRunFullName } from "utils/ml";
 
 const RunsetNameCell = ({
@@ -48,7 +48,7 @@ const RunsetNameCell = ({
 );
 
 const RunsetsTable = ({ runsets, isLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const columns = useMemo(
     () => [

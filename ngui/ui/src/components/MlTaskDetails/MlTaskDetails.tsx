@@ -8,8 +8,8 @@ import MlTaskModelVersionsContainer from "containers/MlTaskModelVersionsContaine
 import MlTaskRecommendationsContainer from "containers/MlTaskRecommendationsContainer";
 import MlTaskRunsListContainer from "containers/MlTaskRunsListContainer";
 import MlTaskSummaryCardsContainer from "containers/MlTaskSummaryCardsContainer";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
-import { ML_TASK_DETAILS_TABS, ML_TASK_DETAILS_TAB_NAME, OPTSCALE_MODE } from "utils/constants";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
+import { ML_TASK_DETAILS_TABS, ML_TASK_DETAILS_TAB_NAME, OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import TaskActionBar from "./TaskActionBar";
 import TaskDetailsSummary from "./TaskDetailsSummary";
@@ -17,7 +17,7 @@ import TaskDetailsSummary from "./TaskDetailsSummary";
 const Tabs = ({ task, isLoading = false }) => {
   const [activeTab, setActiveTab] = useState();
 
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const tabs = [
     {

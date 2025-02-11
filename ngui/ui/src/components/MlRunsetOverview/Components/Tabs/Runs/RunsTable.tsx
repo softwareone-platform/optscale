@@ -12,17 +12,17 @@ import MlRunStatusHeaderCell from "components/MlRunStatusHeaderCell";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { getMlTaskRunUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { duration, startedAt, dataset, hyperparameters, metrics } from "utils/columns";
-import { OPTSCALE_MODE } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { formatRunFullName, getFirstMetricEntryKey, getRunsReachedGoalsKeyNameEntries } from "utils/ml";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { CELL_EMPTY_VALUE } from "utils/tables";
 
 const ExecutorsCellContent = ({ executors }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   return isEmptyArray(executors) ? (
     CELL_EMPTY_VALUE

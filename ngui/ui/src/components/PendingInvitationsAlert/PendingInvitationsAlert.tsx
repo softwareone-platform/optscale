@@ -4,7 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import SnackbarAlert from "components/SnackbarAlert";
-import { useInvitations } from "hooks/coreData";
+import { useInvitations } from "hooks/coreData/useInvitations";
 import { SETTINGS_TABS } from "pages/Settings/Settings";
 import { getSettingsUrl } from "urls";
 import { isEmpty } from "utils/arrays";

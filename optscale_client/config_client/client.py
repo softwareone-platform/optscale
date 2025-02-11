@@ -515,6 +515,10 @@ class Client(etcd.Client):
         """
         return self._get_url_from_branch('/thanos_query')
 
+    def disable_email_verification(self):
+        result = self.get("/disable_email_verification").value
+        return result if result == "True" else None
+
     def encryption_salt(self):
         """
         Salt for encode user information

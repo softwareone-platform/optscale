@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import DataSourceMultiSelect from "components/DataSourceMultiSelect";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import { FormValues } from "../types";

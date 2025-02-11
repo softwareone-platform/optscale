@@ -1,3 +1,4 @@
+import { FormattedNumber } from "react-intl";
 import FormattedMoney from "components/FormattedMoney";
 import HeartLineChart from "components/HeartLineChart";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
@@ -8,7 +9,8 @@ const AnomalyRunChartCell = ({ breakdown, today, average, threshold, type, today
   const onlyValues = Object.values(breakdown);
   onlyValues.push(today);
 
-  const getFormattedValue = (value) => (type === EXPENSE_ANOMALY ? <FormattedMoney value={value} /> : Math.round(value));
+  const getFormattedValue = (value) =>
+    type === EXPENSE_ANOMALY ? <FormattedMoney value={value} /> : <FormattedNumber value={value} maximumFractionDigits={0} />;
 
   return onlyValues.length < 2 ? (
     CELL_EMPTY_VALUE

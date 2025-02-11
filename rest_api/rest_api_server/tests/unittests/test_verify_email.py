@@ -10,6 +10,8 @@ class TestVerifyEmail(TestApiBase):
               ).start()
         patch('optscale_client.config_client.client.Client.auth_url').start()
         patch('optscale_client.config_client.client.Client.herald_url').start()
+        patch('optscale_client.config_client.client.'
+              'Client.disable_email_verification', return_value=None).start()
         super().setUp(version)
 
     def test_verify(self):
@@ -79,6 +81,22 @@ class TestVerifyEmail(TestApiBase):
         p_auth = patch('optscale_client.auth_client.client_v2.Client'
                        '.verification_code_create',
                        side_effect=raise_404).start()
+        p_herald = patch('optscale_client.herald_client.client_v2.Client'
+                         '.email_send').start()
+        code, resp = self.client.verify_email(email)
+        self.assertEqual(code, 201)
+        self.assertEqual(resp['status'], 'ok')
+        self.assertEqual(resp['email'], email)
+        p_auth.assert_called_once_with(email, ANY)
+        p_herald.assert_not_called()
+
+    def test_disable_email_verification(self):
+        email = 'example@email.com'
+        patch('optscale_client.config_client.client.'
+              'Client.disable_email_verification', return_value=True).start()
+        p_auth = patch('optscale_client.auth_client.client_v2.Client'
+                       '.verification_code_create',
+                       return_value=(201, {'email': email})).start()
         p_herald = patch('optscale_client.herald_client.client_v2.Client'
                          '.email_send').start()
         code, resp = self.client.verify_email(email)

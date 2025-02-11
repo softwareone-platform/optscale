@@ -2,14 +2,22 @@ import { useMemo } from "react";
 import { Typography } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import { useTheme as useMuiTheme } from "@mui/material/styles";
+import { useOrdinalColorScale } from "@nivo/colors";
 import { ResponsiveWrapper, useDimensions } from "@nivo/core";
+import { renderLegendToCanvas } from "@nivo/legends";
 import { ResponsiveLineCanvas } from "@nivo/line";
 import { computeXYScalesForSeries } from "@nivo/scales";
 import { FormattedMessage } from "react-intl";
 import ChartTooltip from "components/ChartTooltip";
 import { useChartTheme } from "hooks/useChartTheme";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { getColorScale, TICK_COUNT, getLineYTicks, getLineChartBottomTickValues } from "utils/charts";
+import { getColorScale, TICK_COUNT, getLineYTicks, getLineChartBottomTickValues, truncateCanvasText } from "utils/charts";
+import {
+  CHART_LEGEND_LAYOUT_SETTINGS,
+  DEFAULT_LINE_CHART_HEIGHT,
+  DEFAULT_LINE_CHART_MARGIN,
+  MAX_LEGEND_LABEL_WIDTH
+} from "utils/constants";
 import CanvasLayer from "./CanvasLayer";
 import SliceTooltipLayer from "./SliceTooltipLayer";
 
@@ -144,6 +152,8 @@ const useLineYTicks = ({ yScaleSpec: defaultYScaleSpec, outerHeight, y }) => {
   };
 };
 
+const DEFAULT_LAYERS = ["grid", "markers", "axes", "areas", "crosshair", "lines", "points", "slices", "mesh"];
+
 const Line = ({
   data,
   axisBottom: axisBottomSpec = {},
@@ -161,7 +171,9 @@ const Line = ({
   enableGridY = true,
   overlayLayers = [],
   xScale: xScaleSpecProp,
-  yScale: yScaleSpecProp
+  yScale: yScaleSpecProp,
+  withLegend,
+  legendLabel
 }) => {
   const chartTheme = useChartTheme();
 
@@ -192,6 +204,18 @@ const Line = ({
   const isStackedChart = updatedYScaleSpec.stacked;
 
   const defaultPalette = useDefaultPalette(data, isStackedChart);
+  const colorsSpec = typeof colors === "function" ? colors : defaultPalette;
+
+  const serieColorScale = useOrdinalColorScale(colorsSpec, "id");
+
+  const seriesWithColor = useMemo(
+    () =>
+      series.map((serie) => ({
+        ...serie,
+        color: serieColorScale(serie)
+      })),
+    [serieColorScale, series]
+  );
 
   const getAxisBottom = () => {
     if (axisBottomSpec === null) {
@@ -226,7 +250,6 @@ const Line = ({
 
   const axisBottom = getAxisBottom();
 
-  const colorsSpec = typeof colors === "function" ? colors : defaultPalette;
   const pointBorderColor = { from: "serieColor" };
 
   const overlayLayerProps = useMemo(
@@ -263,9 +286,7 @@ const Line = ({
         sliceTooltip={({ slice }) => <ChartTooltip body={renderTooltipBody({ slice, stacked: isStackedChart })} />}
         xFormat={xFormat}
         yFormat={yFormat}
-        data={data}
-        colors={colorsSpec}
-        series={series}
+        series={seriesWithColor}
         pointColor={pointColor}
         pointBorderColor={pointBorderColor}
         enableSlices="x"
@@ -305,6 +326,34 @@ const Line = ({
         pointBorderColor={pointBorderColor}
         theme={chartTheme}
         lineWidth={1}
+        layers={[
+          ...DEFAULT_LAYERS,
+          ...(withLegend
+            ? [
+                ({ ctx, ...layerContext }) => {
+                  // Explicitly set font to correctly measure text width
+                  ctx.save();
+                  ctx.font = `${chartTheme.legends.text.fontSize}px ${chartTheme.legends.text.fontFamily}`;
+
+                  const getLegendData = (serie) => {
+                    const label = typeof legendLabel === "function" ? legendLabel(serie) : serie.id;
+
+                    return { id: serie.id, label: truncateCanvasText(ctx, label, MAX_LEGEND_LABEL_WIDTH), color: serie.color };
+                  };
+
+                  renderLegendToCanvas(ctx, {
+                    data: layerContext.series.map(getLegendData).toReversed(),
+                    ...CHART_LEGEND_LAYOUT_SETTINGS,
+                    containerWidth: layerContext.innerWidth,
+                    containerHeight: layerContext.innerHeight,
+                    theme: chartTheme
+                  });
+
+                  ctx.restore();
+                }
+              ]
+            : [])
+        ]}
       />
     </div>
   );
@@ -317,10 +366,17 @@ const ResponsiveLine = ({
   emptyMessageId = "noDataToDisplay",
   emptyMessageValues = {},
   style = {},
+  withLegend = false,
   ...rest
 }) => {
   const theme = useMuiTheme();
-  const { height = 50, margin = { top: 20, right: 35, left: 75, bottom: 50 } } = style;
+  const {
+    height = DEFAULT_LINE_CHART_HEIGHT,
+    margin = {
+      ...DEFAULT_LINE_CHART_MARGIN,
+      right: withLegend ? 200 : DEFAULT_LINE_CHART_MARGIN.right
+    }
+  } = style;
 
   return (
     <div
@@ -359,6 +415,7 @@ const ResponsiveLine = ({
               data={data}
               margin={margin}
               pointColor={theme.palette.common.white}
+              withLegend={withLegend}
               {...rest}
             />
           );

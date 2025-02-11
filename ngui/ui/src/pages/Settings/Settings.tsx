@@ -4,7 +4,6 @@ import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
-
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
 
 const actionBarDefinition = {
@@ -18,13 +17,14 @@ export const SETTINGS_TABS = Object.freeze({
   EMAIL_NOTIFICATIONS: "emailNotifications",
   INVITATIONS: "invitations"
   // MTP_TODO: disabled to meet BDR requirements
+  // CAPABILITIES: "capabilities",
   // MODE: "mode",
   // SSH: "sshKeys"
 });
 
 const Settings = () => {
   // MTP_TODO: disabled to meet BDR requirements
-  // const isFinOpsModeEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  // const isFinOpsCapabilityEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const tabs = [
     {
@@ -38,11 +38,11 @@ const Settings = () => {
       node: <InvitationsContainer />
     },
     // {
-    //   title: SETTINGS_TABS.MODE,
-    //   dataTestId: `tab_${SETTINGS_TABS.MODE}`,
-    //   node: <ModeContainer />
+    //   title: SETTINGS_TABS.CAPABILITIES,
+    //   dataTestId: `tab_${SETTINGS_TABS.CAPABILITIES}`,
+    //   node: <CapabilityContainer />
     // },
-    // ...(isFinOpsModeEnabled
+    // ...(isFinOpsCapabilityEnabled
     //   ? [
     //       {
     //         title: SETTINGS_TABS.SSH,

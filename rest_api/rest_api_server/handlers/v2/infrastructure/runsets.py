@@ -41,6 +41,7 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
     }
     SPOT_VALIDATION_MAP = {
         'tries': (check_int_attribute, False),
+        'spot_price': (check_float_attribute, False),
     }
 
     def _get_controller_class(self):
@@ -121,6 +122,11 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
             description: Organization id
             required: true
             type: string
+        -   name: template_id
+            in: path
+            description: Runset template id
+            required: true
+            type: string
         -   in: body
             name: body
             description: Template parameters
@@ -187,8 +193,18 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         type: object
                         description: Related runners spot settings
                         required: false
+                        properties:
+                            tries:
+                                type: integer
+                                description: number of spot instance tries
+                                required: false
+                            spot_price:
+                                type: number
+                                description: spot instance price
+                                required: false
                         example:
                             tries: 4
+                            spot_price: 1.1
         responses:
             201:
                 description: Returns created runset

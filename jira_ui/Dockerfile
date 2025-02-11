@@ -12,8 +12,7 @@ WORKDIR /usr/src/app/ui
 COPY jira_ui/ui/package*.json ./
 RUN npm ci --ignore-scripts --legacy-peer-deps
 COPY jira_ui/ui/ ./
-# .eslintrc.json on build step will produce an error, but it is still needed on testing
-RUN mv .eslintrc.json .disabled.eslintrc.json
+RUN mv eslint.config.mjs eslint.config.mjs
 RUN npm run build && rm -rf node_modules
 
 # -------- Server --------

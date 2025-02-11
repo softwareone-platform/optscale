@@ -5,7 +5,7 @@ import { RESTAPI, bookEnvironment, createSshKey, getSshKeys } from "api";
 import { BOOK_ENVIRONMENT, GET_SSH_KEYS, CREATE_SSH_KEY } from "api/restapi/actionTypes";
 import BookEnvironmentForm from "components/forms/BookEnvironmentForm";
 import { FormValues } from "components/forms/BookEnvironmentForm/types";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";

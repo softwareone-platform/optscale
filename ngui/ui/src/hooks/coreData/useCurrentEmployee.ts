@@ -5,12 +5,13 @@ import { useOrganizationInfo } from "../useOrganizationInfo";
 export const useCurrentEmployee = () => {
   const { organizationId } = useOrganizationInfo();
 
-  const { data: { currentEmployee = {} } = {} } = useQuery(GET_CURRENT_EMPLOYEE, {
+  const { data } = useQuery(GET_CURRENT_EMPLOYEE, {
     variables: {
       organizationId
     },
     fetchPolicy: "cache-only"
   });
 
-  return currentEmployee;
+  // The current user is not always returned by the API in some corner test cases
+  return data?.currentEmployee ?? {};
 };
