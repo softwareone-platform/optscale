@@ -8,6 +8,8 @@ const GcpProperties = ({ accountId, config }) => {
   return (
     <>
       <KeyValueLabel
+        isBoldKeyLabel
+        variant="property"
         keyMessageId="GCPProjectId"
         value={accountId}
         dataTestIds={{
@@ -16,17 +18,23 @@ const GcpProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
+        isBoldKeyLabel
+        variant="property"
         keyMessageId="billingDataDatasetName"
         value={datasetName}
         dataTestIds={{ key: "p_dataset_name_key", value: "p_dataset_name_value" }}
       />
       <KeyValueLabel
+        isBoldKeyLabel
+        variant="property"
         keyMessageId="billingDataTableName"
         value={tableName}
         dataTestIds={{ key: "p_table_name_key", value: "p_table_name_value" }}
       />
       {projectId && (
         <KeyValueLabel
+          isBoldKeyLabel
+          variant="property"
           keyMessageId="billingDataProjectId"
           value={projectId}
           dataTestIds={{ key: "p_project_id", value: "p_project_id" }}

@@ -3,7 +3,7 @@ import {expect} from "@playwright/test";
 
 test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
-        expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com/');
+        expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
     })
 
     test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
@@ -25,7 +25,6 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
 
     test('Verify Homepage matches screenshots', async ({homePage}) => {
         await test.step('Verify Home Page content', async () => {
-
             //Organization Expenses forecast column seems to be recalculated daily so
             await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
             await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
@@ -149,6 +148,7 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
     })
 
     test('Verify Pools page matches screenshots', async ({poolsPage}) => {
+        test.slow();
         await test.step('Navigate to Pools page', async () => {
             await poolsPage.navigateToURL(true);
         });

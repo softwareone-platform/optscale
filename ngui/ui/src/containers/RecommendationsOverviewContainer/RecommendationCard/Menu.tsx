@@ -3,6 +3,7 @@ import ContentBackdropLoader from "components/ContentBackdropLoader";
 import IconButton from "components/IconButton";
 import Popover from "components/Popover";
 import Tooltip from "components/Tooltip";
+import { MPT_BRAND_TYPE } from "../../../utils/layouts";
 
 const Menu = ({ items, Icon, tooltipMessage, disabled, isLoading }) => (
   <Popover
@@ -26,7 +27,7 @@ const Menu = ({ items, Icon, tooltipMessage, disabled, isLoading }) => (
     label={
       <Tooltip title={isLoading ? undefined : tooltipMessage}>
         <span>
-          <IconButton icon={<Icon />} disabled={disabled} isLoading={isLoading} />
+          <IconButton sx={{ color: MPT_BRAND_TYPE }} icon={<Icon />} disabled={disabled} isLoading={isLoading} />
         </span>
       </Tooltip>
     }

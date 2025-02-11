@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { FormControl } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
 import LinearSelector from "components/LinearSelector";
 import TypographyLoader from "components/TypographyLoader";
 import { useResourceFilters } from "hooks/useResourceFilters";
@@ -9,6 +8,7 @@ import AvailableFiltersService from "services/AvailableFiltersService";
 import { getPoolIdWithSubPools } from "urls";
 import { POOL_ID_FILTER } from "utils/constants";
 import { getLast30DaysRange } from "utils/datetime";
+import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 import { CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES } from "../constants";
 
 const FIELD_NAME = CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS;
@@ -29,7 +29,7 @@ const FiltersView = ({ filters }) => {
         render={({ field: { onChange, value: formFilterValue } }) => (
           // TODO: Unify with ExpensesFilters
           <LinearSelector
-            label={<FormattedMessage id="filters" />}
+            label={<LabelColon messageId="filters" />}
             value={resourceFilters.getAppliedValues()}
             items={resourceFilters.getFilterSelectors()}
             onChange={({ name: filterName, value, checked }) => {

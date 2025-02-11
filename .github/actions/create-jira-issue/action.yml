@@ -1,0 +1,38 @@
+name: 'Create Jira Issue'
+description: 'Create a new Jira Issue'
+inputs:
+  jira_base_url:
+    description: 'The base URL of the Jira Cloud instance.'
+    required: true
+  jira_user_email:
+    description: 'Jira username or email address.'
+    required: true
+  jira_api_token:
+    description: 'Jira API token.'
+    required: true
+  project:
+    description: 'The Project Key.'
+    required: true
+  summary:
+    description: 'The Issue Summary.'
+    required: true
+  issue_type:
+    description: 'The Issue Type.'
+    required: true
+  fix_version:
+    description: 'The Fix Version.'
+    required: true
+  component:
+    description: 'The Component.'
+    required: true
+  description:
+    description: 'Optional Description.'
+  epic:
+    description: 'Optional Parent Epic.'
+  assignee:
+    description: 'Optional Assignee.'
+  
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

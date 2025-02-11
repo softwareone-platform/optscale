@@ -1,4 +1,4 @@
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+// import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
 import recommendations from "utils/routes/recommendationsRoute";
@@ -13,7 +13,8 @@ class RecommendationsMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RECOMMENDATIONS;
 
-  icon = ThumbUpAltOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = ThumbUpAltOutlinedIcon;
 
   capability = OPTSCALE_CAPABILITY.FINOPS;
 

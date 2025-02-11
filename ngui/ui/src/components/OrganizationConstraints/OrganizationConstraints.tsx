@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import ActionBar from "components/ActionBar";
 import OrganizationConstraintsTable from "components/OrganizationConstraintsTable";
@@ -8,11 +9,13 @@ const OrganizationConstraints = ({ actionBarDefinition, constraints, addButtonLi
   <>
     <ActionBar data={actionBarDefinition} />
     <PageContentWrapper>
-      <Grid container spacing={SPACING_2}>
-        <Grid item xs={12}>
-          <OrganizationConstraintsTable constraints={constraints} isLoading={isLoading} addButtonLink={addButtonLink} />
+      <Box className={"MTPBoxShadow"}>
+        <Grid container spacing={SPACING_2}>
+          <Grid item xs={12}>
+            <OrganizationConstraintsTable constraints={constraints} isLoading={isLoading} addButtonLink={addButtonLink} />
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
     </PageContentWrapper>
   </>
 );

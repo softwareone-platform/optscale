@@ -60,7 +60,7 @@ const ApplyResourcePerspective = ({ perspectives, appliedPerspectiveName, onAppl
           {Object.keys(perspectives).map((perspectiveName) => (
             <Chip
               key={perspectiveName}
-              variant={selectedPerspectiveName === perspectiveName ? "filled" : "outlined"}
+              variant={"outlined"}
               size="medium"
               onClick={() => setSelectedPerspectiveName(perspectiveName)}
               color={selectedPerspectiveName === perspectiveName ? "secondary" : "info"}

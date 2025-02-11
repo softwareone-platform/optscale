@@ -1,0 +1,87 @@
+name: Sync Branch and Create PR
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday at 09:00 UTC
+  workflow_dispatch:  # Manual trigger option
+
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for Existing Jira Ticket
+        id: check_jira_ticket
+        uses: ./.github/actions/check-jira-issues
+        with:
+          jira_base_url: ${{ secrets.JIRA_BASE_URL }}
+          jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
+          jql: "project = MPT AND parentEpic = MPT-3562 AND summary ~ __SYNC_UPSTREAM__ AND status NOT IN (Done, Rejected)"
+
+      - name: Create Jira Ticket
+        id: create_jira_ticket
+        if: steps.check_jira_ticket.outputs.issue == ''
+        uses: ./.github/actions/create-jira-issue
+        with:
+          jira_base_url: ${{ secrets.JIRA_BASE_URL }}
+          jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
+          project: "MPT"
+          issue_type: "Story"
+          summary: "__SYNC_UPSTREAM__ Sync OptScale integration -> main"
+          description: "This task involves syncing the upstream branch with the main branch and creating a PR."
+          fix_version: "v4"
+          component: "Extension FinOps"
+          assignee: ${{ secrets.JIRA_ASSIGNEE }}
+          epic: "MPT-3562"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/hystax/optscale.git
+          git fetch upstream
+
+      - name: Sync branch with upstream
+        run: |
+          git checkout integration
+          git merge upstream/integration --no-edit
+
+      - name: Push changes to integration
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin integration
+
+      - name: Check if PR exists
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          prs=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'integration' \
+              --base 'main' \
+              --json title \
+              --jq 'length')
+          if ((prs > 0)); then
+              echo "pr_exists=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request exist."
+          fi
+          
+
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'integration' \
+              --base 'main' \
+              --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
+              --body "This PR syncs the latest changes from upstream."

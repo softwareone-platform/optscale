@@ -16,7 +16,8 @@ import { MetadataNodes } from "utils/metadata";
 import { isEmpty } from "utils/objects";
 import CollapsableTableCell from "../CollapsableTableCell";
 
-const renderKeyValueLabels = (options) => options.map((opt) => <KeyValueLabel key={opt.keyMessageId} {...opt} />);
+const renderKeyValueLabels = (options) =>
+  options.map((opt) => <KeyValueLabel isBoldKeyLabel variant="property" key={opt.keyMessageId} {...opt} />);
 
 const getIdLabelDefinition = ({ cloudResourceIdentifier, isActive }) => ({
   value: (
@@ -320,14 +321,14 @@ const ResourceDetails = (props) => {
   return (
     <Grid container spacing={SPACING_2}>
       <Grid item xs={12} sm={columnSize}>
-        <SubTitle>
+        <SubTitle fontWeight="bold" sx={{ marginBottom: "20px" }}>
           <FormattedMessage id="resourceProperties" />
         </SubTitle>
         {resourceProperties}
       </Grid>
       {shouldRenderMetadata && (
         <Grid item xs={12} sm={columnSize}>
-          <SubTitle>
+          <SubTitle fontWeight="bold" sx={{ marginBottom: "20px" }}>
             <FormattedMessage id="resourceMetadata" />
           </SubTitle>
           <CollapsableTableCell maxRows={10} tags={metadataTags} sorted={false} />
@@ -335,7 +336,7 @@ const ResourceDetails = (props) => {
       )}
       {shouldRenderTagsTable && (
         <Grid item xs={12} sm={columnSize}>
-          <SubTitle>
+          <SubTitle fontWeight="bold" sx={{ marginBottom: "20px" }}>
             <FormattedMessage id="tags" />
           </SubTitle>
           <CollapsableTableCell tags={tags} />

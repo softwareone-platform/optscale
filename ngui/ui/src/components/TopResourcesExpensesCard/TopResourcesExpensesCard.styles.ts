@@ -1,6 +1,6 @@
 import { lighten } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_1, SPACING_2 } from "utils/layouts";
 
 const ALPHA = 0.9;
 const useStyles = makeStyles()((theme) => ({
@@ -25,7 +25,7 @@ const useStyles = makeStyles()((theme) => ({
     left: 0,
     height: "100%",
     backgroundColor: lighten(theme.palette.lightBlue.main, ALPHA),
-    borderRadius: "4px"
+    borderRadius: MPT_SPACING_1
   }
 }));
 

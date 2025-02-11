@@ -20,6 +20,7 @@ import Popover from "components/Popover";
 import { useAllowedItems } from "hooks/useAllowedActions";
 import { isEmpty, splitIntoTwoChunks } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./ActionBar.styles";
 import { COLLAPSE_MODE, HIDE_MODE, useHideActionsForSmallScreens } from "./useHideActionsForSmallScreens";
 
@@ -241,8 +242,12 @@ const ActionBar = ({ data, isPage = true }) => {
   return title || !isEmptyActions ? (
     <AppBar position="static" className={mapBarClass}>
       <Toolbar disableGutters ref={wrapperRef}>
-        <Box pt={isPage ? 2 : 0} pb={isPage ? 2 : 0} width="100%">
-          {showBreadcrumbs ? <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs> : null}
+        <Box width={"100%"} display={"flex"} alignItems={"center"}>
+          {showBreadcrumbs ? (
+            <Box>
+              <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs>
+            </Box>
+          ) : null}
           <Box display="flex" width="100%">
             {title ? (
               <Box display="flex" flexGrow="1" alignItems="center">
@@ -252,10 +257,16 @@ const ActionBar = ({ data, isPage = true }) => {
             {!isEmptyActions ? (
               <Box className={classes.itemsWrapper} ref={buttonsRef}>
                 {!isEmpty(hidden) && (
-                  <Box component="div" className={actionsClasses}>
+                  <Box component="div" width={"100%"} sx={{ display: "flex" }} className={actionsClasses}>
                     <Popover
                       renderMenu={({ closeHandler }) => <DropDownMenu items={hidden} onClose={closeHandler} />}
-                      label={<IconButton isLoading={hidden.some((item) => item.isLoading)} icon={<MoreVertOutlinedIcon />} />}
+                      label={
+                        <IconButton
+                          sx={{ color: MPT_BRAND_TYPE }}
+                          isLoading={hidden.some((item) => item.isLoading)}
+                          icon={<MoreVertOutlinedIcon />}
+                        />
+                      }
                     />
                   </Box>
                 )}

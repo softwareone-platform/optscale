@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 import Grid from "@mui/material/Grid";
-import CapabilityWrapper from "components/CapabilityWrapper";
-import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getSquareNodesStyle } from "utils/layouts";
+import ModeWrapper from "components/ModeWrapper";
+import { OPTSCALE_MODE } from "utils/constants";
+// import { getSquareNodesStyle } from "utils/layouts";
 
 type DashboardGridLayoutProps = {
   topResourcesExpensesCard: ReactNode;
@@ -27,40 +27,42 @@ const DashboardGridLayout = ({
     {
       key: "recentModelsCard",
       node: recentModelsCard,
-      capability: OPTSCALE_CAPABILITY.MLOPS
+      mode: OPTSCALE_MODE.MLOPS
     },
     {
       key: "recentTasksCard",
       node: recentTasksCard,
-      capability: OPTSCALE_CAPABILITY.MLOPS
+      mode: OPTSCALE_MODE.MLOPS
     },
     { key: "organizationExpenses", node: organizationExpenses },
     {
       key: "topResourcesExpensesCard",
       node: topResourcesExpensesCard,
-      capability: OPTSCALE_CAPABILITY.FINOPS
+      mode: OPTSCALE_MODE.FINOPS
     },
     { key: "recommendationsCard", node: recommendationsCard },
     {
       key: "policiesCard",
       node: policiesCard,
-      capability: OPTSCALE_CAPABILITY.FINOPS
+      mode: OPTSCALE_MODE.FINOPS
     },
     {
       key: "poolsRequiringAttentionCard",
       node: poolsRequiringAttentionCard,
-      capability: OPTSCALE_CAPABILITY.FINOPS
+      mode: OPTSCALE_MODE.FINOPS
     }
   ].filter(({ node }) => Boolean(node));
 
   return (
-    <Grid container>
-      {squareNodes.map(({ key, node, capability }, i) => (
-        <CapabilityWrapper capability={capability} key={key}>
-          <Grid item xs={12} lg={6} sx={getSquareNodesStyle(squareNodes.length, i)}>
+    <Grid spacing={3} borderRight={"none"} borderLeft={"none"} container>
+      {squareNodes.map(({ key, node, mode }) => (
+        <ModeWrapper mode={mode} key={key}>
+          <Grid item xs={12} lg={6}>
+            {" "}
+            {/* TODO_KU disabled sx={getSquareNodesStyle(squareNodes.length, i)} */}
             {node}
           </Grid>
-        </CapabilityWrapper>
+        </ModeWrapper>
       ))}
     </Grid>
   );

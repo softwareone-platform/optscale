@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountCircleOutlined from "@mui/icons-material/AccountCircleOutlined";
 import LiveHelpOutlinedIcon from "@mui/icons-material/LiveHelpOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -16,6 +16,7 @@ import ProfileMenuContainer from "containers/ProfileMenuContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = () => {
@@ -47,7 +48,7 @@ const HeaderButtons = () => {
       <Box component="div" className={classes.sectionDesktop}>
         <IconButton
           dataTestId="btn_doc"
-          color="primary"
+          color="info"
           href={DOCS_HYSTAX_OPTSCALE}
           icon={<MenuBookOutlinedIcon />}
           tooltip={{
@@ -57,7 +58,7 @@ const HeaderButtons = () => {
         />
         <IconButton
           dataTestId="btn_product_tour"
-          color="primary"
+          color="info"
           icon={<LiveHelpOutlinedIcon />}
           onClick={startProductTour}
           disabled={!isTourAvailableForCurrentBreakpoint}
@@ -66,21 +67,22 @@ const HeaderButtons = () => {
             value: <FormattedMessage id="productTour" />
           }}
         />
-        <IconButton
-          icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}
-          onClick={toggleCommunityDocs}
-          color="primary"
-          tooltip={{
-            show: true,
-            value: <FormattedMessage id="communityDocs" />
-          }}
-        />
+        {/* MPT_TODO: disabled because it doesn't not exist in documentation */}
+        {/* <IconButton */}
+        {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}
+        {/*  onClick={setIsCommunityDocsOpened} */}
+        {/*  color="info" */}
+        {/*  tooltip={{ */}
+        {/*    show: true, */}
+        {/*    value: <FormattedMessage id="communityDocs" /> */}
+        {/*  }} */}
+        {/* /> */}
         <Popover
           label={
             <IconButton
               dataTestId="btn_profile"
-              icon={<AccountCircleIcon />}
-              color="primary"
+              icon={<AccountCircleOutlined />}
+              color="info"
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="profile" />
@@ -93,14 +95,14 @@ const HeaderButtons = () => {
       {/* TODO: Maybe we can make the Popup component more universal and include the case below */}
       {/* TODO: https://datatrendstech.atlassian.net/browse/NGUI-2808 to handle dynamic header buttons, product tour is hidden on mdDown (when hamburger menu is activated) */}
       <Box component="div" className={classes.sectionMobile}>
-        <IconButton icon={<MoreVertIcon />} color="primary" onClick={openMobileMenu} />
+        <IconButton icon={<MoreVertIcon />} sx={{ color: MPT_BRAND_TYPE }} onClick={openMobileMenu} />
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMobileMenu}>
           <Box className={classes.customMenuItem}>
             <IconButton
               href={DOCS_HYSTAX_OPTSCALE}
               icon={<MenuBookOutlinedIcon />}
               size="medium"
-              color="primary"
+              sx={{ color: MPT_BRAND_TYPE }}
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="documentation" />
@@ -111,7 +113,7 @@ const HeaderButtons = () => {
             <IconButton
               icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />}
               onClick={toggleCommunityDocs}
-              color="primary"
+              sx={{ color: MPT_BRAND_TYPE }}
               tooltip={{
                 show: true,
                 value: <FormattedMessage id="communityDocs" />
@@ -122,9 +124,9 @@ const HeaderButtons = () => {
             <Popover
               label={
                 <IconButton
-                  icon={<AccountCircleIcon />}
+                  icon={<AccountCircleOutlined />}
                   size="medium"
-                  color="primary"
+                  sx={{ color: MPT_BRAND_TYPE }}
                   tooltip={{
                     show: true,
                     value: <FormattedMessage id="profile" />

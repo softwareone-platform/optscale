@@ -15,7 +15,7 @@ const AnomaliesFilters = ({ filters, showAll = false }) => {
     <ExpandableList
       items={appliedItems}
       render={({ name, value, displayedValue, displayedName }) => (
-        <KeyValueLabel key={`${name}-${value}`} keyText={displayedName} value={displayedValue} />
+        <KeyValueLabel isBoldKeyLabel key={`${name}-${value}`} keyText={displayedName} value={displayedValue} />
       )}
       maxRows={showAll ? appliedItems.length : 5}
     />

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo } from "react";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { Button } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
-import DashedTypography from "components/DashedTypography";
 import { PoolModal } from "components/SideModalManager/SideModals";
 import { POOL_TABS } from "components/SideModalManager/SideModals/PoolModal";
 import Table from "components/Table";
@@ -61,9 +62,16 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
         node: (
           <Tooltip title={<FormattedMessage id="expandRequiresAttentionHelp" />}>
             <span>
-              <DashedTypography onClick={expandRequiresAttentionHandler} dataTestId="expandRequiringAttention">
+              <Button
+                endIcon={<PriorityHighIcon />}
+                sx={{ textTransform: "none" }}
+                onClick={expandRequiresAttentionHandler}
+                variant="outlined"
+                color="primary"
+                data-testid="expandRequiringAttention"
+              >
                 <FormattedMessage id="expandRequiringAttention" />
-              </DashedTypography>
+              </Button>
             </span>
           </Tooltip>
         )

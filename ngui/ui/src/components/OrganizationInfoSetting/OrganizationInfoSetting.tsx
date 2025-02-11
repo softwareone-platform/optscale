@@ -1,21 +1,22 @@
 import { useState } from "react";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
-import { FormattedMessage } from "react-intl";
-import CapabilityWrapper from "components/CapabilityWrapper";
 import CopyText from "components/CopyText";
 import IconButton from "components/IconButton";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import ModeWrapper from "components/ModeWrapper";
 import EditOrganizationFormContainer from "containers/EditOrganizationFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
+import { OPTSCALE_MODE } from "utils/constants";
+import { MPT_SPACING_2, SPACING_1 } from "utils/layouts";
+import InlineSeverityAlert from "../InlineSeverityAlert";
 import OrganizationCurrency from "./OrganizationCurrency";
 
 const OrganizationId = ({ id }) => (
   <KeyValueLabel
+    isBoldKeyLabel
     keyMessageId="id"
     value={
       <CopyText
@@ -42,7 +43,7 @@ const OrganizationName = ({ name }) => {
     <EditOrganizationFormContainer onCancel={disableEditMode} onSuccess={disableEditMode} />
   ) : (
     <Box display="flex" alignItems="center">
-      <KeyValueLabel keyMessageId="name" value={name} sx={{ marginRight: 1 }} />
+      <KeyValueLabel keyMessageId="name" isBoldKeyLabel value={name} sx={{ marginRight: 1 }} />
       {isEditAllowed && (
         <IconButton
           icon={<CreateOutlinedIcon />}
@@ -68,16 +69,14 @@ const OrganizationInfoSetting = () => {
       <Box display="flex">
         <OrganizationName name={organizationName} />
       </Box>
-      <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
-        <Box>
-          <Typography>
-            <FormattedMessage id="organizationCurrencyDescription" />
-          </Typography>
-        </Box>
+      <ModeWrapper mode={OPTSCALE_MODE.FINOPS}>
         <Box>
           <OrganizationCurrency currencyCode={currency} />
         </Box>
-      </CapabilityWrapper>
+        <Box marginTop={MPT_SPACING_2}>
+          <InlineSeverityAlert messageId="organizationCurrencyDescription" />
+        </Box>
+      </ModeWrapper>
     </Stack>
   );
 };

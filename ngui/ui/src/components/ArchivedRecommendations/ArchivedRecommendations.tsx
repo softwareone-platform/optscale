@@ -42,7 +42,7 @@ const ArchivedRecommendations = ({
     }
 
     return (
-      <Box>
+      <Box className={"MTPBoxShadow"}>
         <ArchivedResourcesCountBarChart onSelect={onBarChartSelect} breakdown={archivedRecommendationsChartBreakdown} />
       </Box>
     );

@@ -9,19 +9,26 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import ActionBar from "components/ActionBar";
+import ButtonGroup from "components/ButtonGroup";
 import Checkbox from "components/Checkbox";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
-import LinearSelector from "components/LinearSelector";
 import PageContentWrapper from "components/PageContentWrapper";
 import RangePickerForm from "components/RangePickerForm";
 import SearchInput from "components/SearchInput";
 import Table from "components/Table";
 import { useInitialMount } from "hooks/useInitialMount";
 import { isEmpty } from "utils/arrays";
-import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
+import { EVENT_LEVEL } from "utils/constants";
 import { EN_FULL_FORMAT, formatUTC } from "utils/datetime";
 import { SPACING_1, SPACING_2, SPACING_3 } from "utils/layouts";
 import { getQueryParams, updateQueryParams, removeQueryParam } from "utils/network";
+
+const actionBarDefinition = {
+  title: {
+    messageId: "events",
+    dataTestId: "lbl_events"
+  }
+};
 
 const Loader = () => (
   <Box width="100%" textAlign="center" pt={2}>
@@ -51,57 +58,42 @@ const Picker = ({ onApply }) => {
 
 const EVENT_LEVEL_ITEMS = [
   {
-    name: "all",
+    id: "all",
+    messageId: "all",
     value: EVENT_LEVEL.ALL,
     type: "text",
     dataTestId: "event_lvl_all"
   },
   {
-    name: "info",
+    id: "info",
+    messageId: "info",
     value: EVENT_LEVEL.INFO,
     type: "text",
     dataTestId: "event_lvl_info"
   },
   {
-    name: "warning",
+    id: "warning",
+    messageId: "warning",
     value: EVENT_LEVEL.WARNING,
     type: "text",
     dataTestId: "event_lvl_warning"
   },
   {
-    name: "error",
+    id: "error",
+    messageId: "error",
     value: EVENT_LEVEL.ERROR,
     type: "text",
     dataTestId: "event_lvl_error"
   }
 ];
 
-const DEFAULT_EVENT_LEVEL = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => itemValue === EVENT_LEVEL.ALL);
-
 const formatEventTime = (eventTime) => `${formatUTC(eventTime, EN_FULL_FORMAT)} UTC`;
 
 const EventLevelSelector = ({ eventLevel, onApply }) => {
-  const getValue = () => {
-    const { name, value } = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => eventLevel === itemValue) ?? DEFAULT_EVENT_LEVEL;
+  const activeButtonIndex = EVENT_LEVEL_ITEMS.findIndex(({ value }) => value === eventLevel);
+  const buttons = EVENT_LEVEL_ITEMS.map((e) => ({ ...e, action: () => onApply({ level: e.value }) }));
 
-    return {
-      name,
-      value
-    };
-  };
-
-  return (
-    <LinearSelector
-      value={getValue()}
-      label={<FormattedMessage id="eventLevel" />}
-      onChange={({ value }) =>
-        onApply({
-          level: value
-        })
-      }
-      items={EVENT_LEVEL_ITEMS}
-    />
-  );
+  return <ButtonGroup buttons={buttons} activeButtonIndex={activeButtonIndex === -1 ? 0 : activeButtonIndex} />;
 };
 
 const getEventsGroupedByTime = (events) =>
@@ -115,29 +107,13 @@ const getEventsGroupedByTime = (events) =>
 
 const EventIcon = ({ eventLevel }) =>
   ({
-    [EVENT_LEVEL.INFO]: <InfoIcon fontSize="small" color="info" />,
+    [EVENT_LEVEL.INFO]: <InfoIcon fontSize="small" color="primary" />,
     [EVENT_LEVEL.WARNING]: <ErrorIcon fontSize="small" color="warning" />,
     [EVENT_LEVEL.ERROR]: <ErrorIcon fontSize="small" color="error" />,
     [EVENT_LEVEL.DEBUG]: <PestControlIcon fontSize="small" color="info" />
   })[eventLevel];
 
-const Events = ({
-  eventLevel,
-  descriptionLike,
-  includeDebugEvents,
-  onScroll,
-  applyFilter,
-  events,
-  isLoading = false,
-  isFetchingMore = false
-}) => {
-  const actionBarDefinition = {
-    title: {
-      messageId: "events",
-      dataTestId: "lbl_events"
-    }
-  };
-
+const Events = ({ eventLevel, includeDebugEvents, descriptionLike, onScroll, applyFilter, events, isLoading = false }) => {
   const [expanded, setExpanded] = useState("");
   const queryParams = getQueryParams();
 
@@ -247,9 +223,7 @@ const Events = ({
           <Box display="flex" mr={0.5}>
             <EventIcon eventLevel={event.level} />
           </Box>
-          <Typography variant="body2" noWrap>
-            {`${formatEventTime(event.time)} | ${event.description}`}
-          </Typography>
+          <Typography variant="body2">{`${formatEventTime(event.time)} | ${event.description}`}</Typography>
         </Box>
         {getAccordionContent(event)}
       </Accordion>
@@ -258,43 +232,27 @@ const Events = ({
   const renderEventList = () => {
     const noEvents = isEmpty(events);
 
-    if (isLoading) {
-      return <Loader />;
-    }
-
     if (noEvents) {
-      return <FormattedMessage id="noEvents" />;
+      return isLoading ? (
+        <Loader />
+      ) : (
+        <Typography>
+          <FormattedMessage id="noEvents" />
+        </Typography>
+      );
     }
 
     return (
-      <Box
-        onScroll={onScroll}
-        display="flex"
-        flexDirection="column"
-        flexGrow={1}
-        flexBasis="0px"
-        overflow="auto"
-        /**
-         * Set an approximate maximum height for the events section to ensure it remains scrollable on large screens.
-         * The maximum height should be determined based on the height of the container when all events belong to a single date.
-         * In this scenario, the container's height will be close to its minimum possible value.
-         *
-         * EVENTS_LIMIT represents the maximum number of events that can be fetched in a single request.
-         * Each event is assumed to occupy approximately 25 pixels in height.
-         */
-        maxHeight={`${EVENTS_LIMIT * 25}px`}
-      >
-        <Box>
-          <Stack spacing={SPACING_3}>
-            {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
-              <Box key={groupKey}>
-                <Typography>{groupKey}</Typography>
-                {renderAccordion(groupData, index)}
-              </Box>
-            ))}
-          </Stack>
-          {isFetchingMore ? <Loader /> : null}
-        </Box>
+      <Box>
+        <Stack spacing={SPACING_3}>
+          {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
+            <Box key={groupKey}>
+              <Typography variant="subtitle1">{groupKey}</Typography>
+              {renderAccordion(groupData, index)}
+            </Box>
+          ))}
+        </Stack>
+        {isLoading ? <Loader /> : null}
       </Box>
     );
   };
@@ -304,9 +262,9 @@ const Events = ({
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Stack spacing={SPACING_1} height="100%">
-          <Box display="flex" flexWrap="wrap" gap={SPACING_2}>
+          <Box display="flex" flexWrap="wrap" gap={SPACING_2} className={"MTPBoxShadow"}>
             <Box display="flex" gap={2}>
-              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} />
+              <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} showDebugEvent={includeDebugEvents} />
               <FormControlLabel
                 control={
                   <Checkbox
@@ -362,7 +320,25 @@ const Events = ({
               </Box>
             </Box>
           </Box>
-          {renderEventList()}
+          <Box
+            onScroll={onScroll}
+            display="flex"
+            flexDirection="column"
+            flexGrow={1}
+            // flexBasis="0px"
+            // overflow="auto"
+            /**
+             * Set an approximate maximum height for the events section to ensure it remains scrollable on large screens.
+             * The maximum height should be determined based on the height of the container when all events belong to a single date.
+             * In this scenario, the container's height will be close to its minimum possible value.
+             *
+             * EVENTS_LIMIT represents the maximum number of events that can be fetched in a single request.
+             * Each event is assumed to occupy approximately 25 pixels in height.
+             */
+            // maxHeight={`${EVENTS_LIMIT * 25}px`}
+          >
+            {renderEventList()}
+          </Box>
         </Stack>
       </PageContentWrapper>
     </>

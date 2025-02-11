@@ -12,12 +12,14 @@ import SubTitle from "components/SubTitle";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { useToggle } from "hooks/useToggle";
 import { RI_SP_CHART_PALETTE } from "theme";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_1, SPACING_1, SPACING_2 } from "utils/layouts";
 
 const UsageTitle = () => (
   <SubTitle>
-    <Box display="flex" alignItems="center">
-      <FormattedMessage id="usage" />
+    <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
+      <Typography variant={"subtitle1"}>
+        <FormattedMessage id="usage" />
+      </Typography>
     </Box>
   </SubTitle>
 );
@@ -29,7 +31,7 @@ const DescriptionMarker = ({ label, color }) => {
     <>
       {/*
       Wrapping the SVG Circle icon and the first label word in a separate span element
-      to ensure that the SVG icon and the text are displayed on the same line 
+      to ensure that the SVG icon and the text are displayed on the same line
       */}
       <span
         style={{
@@ -74,8 +76,10 @@ const ExpensesTitle = ({ showSavingsCheckbox }) => {
 
   return (
     <SubTitle>
-      <Box display="flex" alignItems="center">
-        <FormattedMessage id="expenses" />
+      <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
+        <Typography variant={"subtitle1"}>
+          <FormattedMessage id="expenses" />
+        </Typography>
         <FormControlLabel
           // A trick to prevent the switch to take extra vertical space. Consider this solution for other places
           style={{ height: 0 }}
@@ -145,22 +149,18 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
       {isUpMd ? (
         <>
           <Grid item xs={6}>
-            {usageTitle}
+            <Box className={"MTPBoxShadow"} height={"100%"}>
+              {usageTitle}
+              {usageDescription}
+              {coverageBarChart}
+            </Box>
           </Grid>
           <Grid item xs={6}>
-            {expensesTitle}
-          </Grid>
-          <Grid item xs={6}>
-            {usageDescription}
-          </Grid>
-          <Grid item xs={6}>
-            {expensesDescription}
-          </Grid>
-          <Grid item xs={6}>
-            {coverageBarChart}
-          </Grid>
-          <Grid item xs={6}>
-            {expensesBarChart}
+            <Box className={"MTPBoxShadow"}>
+              {expensesTitle}
+              {expensesDescription}
+              {expensesBarChart}
+            </Box>
           </Grid>
         </>
       ) : (
@@ -177,11 +177,13 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
           </Grid>
         </>
       )}
-      <Grid item xs={12}>
-        <RiSpCoverageTable
-          breakdown={[...Object.values(usageBreakdown).flat(), ...Object.values(expensesBreakdown).flat()]}
-          isLoading={isGetUsageBreakdownLoading || isGetExpensesBreakdownLoading}
-        />
+      <Grid item xs={12} marginTop={MPT_SPACING_1}>
+        <Box className={"MTPBoxShadow"}>
+          <RiSpCoverageTable
+            breakdown={[...Object.values(usageBreakdown).flat(), ...Object.values(expensesBreakdown).flat()]}
+            isLoading={isGetUsageBreakdownLoading || isGetExpensesBreakdownLoading}
+          />
+        </Box>
       </Grid>
     </Grid>
   );

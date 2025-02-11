@@ -2,6 +2,7 @@ import { Slider } from "@mui/material";
 import Box from "@mui/material/Box";
 import ActionBar from "components/ActionBar";
 import SearchInput from "components/SearchInput";
+import { MPT_SPACING_1, MPT_SPACING_2 } from "../../../../utils/layouts";
 import ColumnSets from "../ColumnSets";
 import ColumnsSelector from "../ColumnsSelector";
 import useStyles from "./TableActions.styles";
@@ -71,48 +72,53 @@ const TableActions = ({
   }
 
   return (
-    <Box className={classes.actionsWrapper}>
-      {showActionBar && (
-        <TableActionBar
-          actionBarDefinition={actionBarDefinition}
-          tableContext={tableContext}
-          selectedRowsCount={selectedRowsCount}
-        />
-      )}
-      <Box
-        sx={{
-          marginLeft: showActionBar ? "" : "auto",
-          display: "flex",
-          flexWrap: withSearch && withColumnSetsSelector && withColumnsSelector ? "wrap" : "nowrap",
-          gap: 1
-        }}
-      >
-        {withSearch && <SearchInput onSearch={onSearchChange} initialSearchText={searchValue} dataTestIds={dataTestIds} />}
-        <Box display="flex" flexWrap="nowrap">
-          {withColumnsSelector && <ColumnsSelector tableContext={tableContext} dataTestIds={columnsSelectorTestIds} />}
-          {withColumnSetsSelector && <ColumnSets tableContext={tableContext} />}
-        </Box>
-      </Box>
-      {withRangeFilter && (
-        <Box flexGrow={1} px={2}>
-          {rangeFilter.title(rangeValue)}
-          <Slider
-            getAriaLabel={() => ""}
-            value={rangeValue}
-            step={rangeFilter.step}
-            min={rangeFilter.min}
-            max={rangeFilter.max}
-            onChange={(_, segment) => {
-              let [a, b] = segment;
-              a = a === b && b === rangeFilter.max ? Math.max(0, a - rangeFilter.step) : a;
-              b = a === b && b !== rangeFilter.max ? Math.min(rangeFilter.max, a + rangeFilter.step) : b;
-              onRangeChange([a, b]);
-            }}
-            valueLabelDisplay="off"
+    <>
+      <Box className={classes.actionsWrapper}>
+        {showActionBar && (
+          <TableActionBar
+            actionBarDefinition={actionBarDefinition}
+            tableContext={tableContext}
+            selectedRowsCount={selectedRowsCount}
           />
+        )}
+        <Box
+          sx={{
+            marginLeft: showActionBar ? "" : "auto",
+            display: "flex",
+            flexWrap: withSearch && withColumnSetsSelector && withColumnsSelector ? "wrap" : "nowrap",
+            fontSize: MPT_SPACING_1,
+            gap: 1,
+            marginTop: 0,
+            marginBottom: MPT_SPACING_2
+          }}
+        >
+          {withSearch && <SearchInput onSearch={onSearchChange} initialSearchText={searchValue} dataTestIds={dataTestIds} />}
+          <Box display="flex" flexWrap="nowrap">
+            {withColumnsSelector && <ColumnsSelector tableContext={tableContext} dataTestIds={columnsSelectorTestIds} />}
+            {withColumnSetsSelector && <ColumnSets tableContext={tableContext} />}
+          </Box>
         </Box>
-      )}
-    </Box>
+        {withRangeFilter && (
+          <Box flexGrow={1} px={2}>
+            {rangeFilter.title(rangeValue)}
+            <Slider
+              getAriaLabel={() => ""}
+              value={rangeValue}
+              step={rangeFilter.step}
+              min={rangeFilter.min}
+              max={rangeFilter.max}
+              onChange={(_, segment) => {
+                let [a, b] = segment;
+                a = a === b && b === rangeFilter.max ? Math.max(0, a - rangeFilter.step) : a;
+                b = a === b && b !== rangeFilter.max ? Math.min(rangeFilter.max, a + rangeFilter.step) : b;
+                onRangeChange([a, b]);
+              }}
+              valueLabelDisplay="off"
+            />
+          </Box>
+        )}
+      </Box>
+    </>
   );
 };
 

@@ -70,7 +70,11 @@ const useStyles = makeStyles()((theme) => ({
     backgroundColor: theme.palette.common.white
   },
   rightSideGrid: {
-    backgroundColor: "#333F53"
+    backgroundColor: theme.palette.primary.main,
+    backgroundImage: "url('/background-auth.jpeg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    position: "relative"
   },
   ...getFormAndMapWrapperClasses(theme)
 }));

@@ -29,7 +29,7 @@ const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading
       pdfId: pdfIds.totalExpensesForPreviousPeriod
     }
   ];
-  return <SummaryGrid summaryData={summaryData} />;
+  return <SummaryGrid summaryStyle={"customBox"} summaryData={summaryData} />;
 };
 
 export default ExpensesBreakdownSummaryCards;

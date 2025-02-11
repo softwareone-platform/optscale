@@ -12,7 +12,9 @@ const useStyles = makeStyles()((theme) => ({
   },
   activeButton: {
     backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
+    ".MuiTypography-root": {
+      color: theme.palette.primary.white
+    },
     "&:hover": {
       backgroundColor: theme.palette.secondary.light
     }

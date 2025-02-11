@@ -1,4 +1,5 @@
 import { Stack } from "@mui/material";
+import { Box } from "@mui/system";
 import ActionBar from "components/ActionBar";
 import CloudAccountsTable from "components/CloudAccountsTable";
 import CloudExpensesChart from "components/CloudExpensesChart";
@@ -152,7 +153,9 @@ const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = f
             </div>
           )}
           <div>
-            <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
+            <Box className={"MTPBoxShadow"}>
+              <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
+            </Box>
           </div>
         </Stack>
       </PageContentWrapper>

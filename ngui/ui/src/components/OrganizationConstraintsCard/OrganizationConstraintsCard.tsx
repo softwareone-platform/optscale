@@ -50,6 +50,7 @@ const ConstraintsTable = ({ constraints }) => {
 
 const OrganizationConstraintsCard = ({ constraints, isLoading = false }) => (
   <WrapperCard
+    variant="shadow"
     needAlign
     title={<FormattedMessage id="policyViolations" />}
     dataTestIds={{

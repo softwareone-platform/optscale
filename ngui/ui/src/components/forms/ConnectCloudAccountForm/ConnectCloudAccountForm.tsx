@@ -8,15 +8,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
-import CapabilityWrapper from "components/CapabilityWrapper";
 import {
-  ALIBABA_CREDENTIALS_FIELD_NAMES,
   AZURE_TENANT_CREDENTIALS_FIELD_NAMES,
   AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES,
   GCP_CREDENTIALS_FIELD_NAMES,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
-  KUBERNETES_CREDENTIALS_FIELD_NAMES,
-  DATABRICKS_CREDENTIALS_FIELD_NAMES,
   AWS_ROOT_CREDENTIALS_FIELD_NAMES,
   AWS_ROOT_BILLING_BUCKET_FIELD_NAMES,
   AWS_ROOT_EXPORT_TYPE_FIELD_NAMES,
@@ -24,49 +20,35 @@ import {
   AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
+import ModeWrapper from "components/ModeWrapper";
 import { useIsDataSourceTypeConnectionEnabled } from "hooks/useIsDataSourceTypeConnectionEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useResizeObserver } from "hooks/useResizeObserver";
-import AlibabaLogoIcon from "icons/AlibabaLogoIcon";
 import AwsLogoIcon from "icons/AwsLogoIcon";
 import AzureLogoIcon from "icons/AzureLogoIcon";
-import DatabricksLogoIcon from "icons/DatabricksLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
-import K8sLogoIcon from "icons/K8sLogoIcon";
-import NebiusLogoIcon from "icons/NebiusLogoIcon";
+
 import {
   DOCS_HYSTAX_AUTO_BILLING_AWS,
   DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
   DOCS_HYSTAX_DISCOVER_RESOURCES,
-  GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
   GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
-  DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
-  DOCS_HYSTAX_CONNECT_GCP_CLOUD,
-  DATABRICKS_CREATE_SERVICE_PRINCIPAL,
-  DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE
+  DOCS_HYSTAX_CONNECT_GCP_CLOUD
 } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import {
   AWS_CNR,
   AZURE_CNR,
   AZURE_TENANT,
-  KUBERNETES_CNR,
   AWS_ROOT_CONNECT_CONFIG_SCHEMES,
   ALIBABA_CNR,
   AWS_ROOT_ACCOUNT,
   AWS_LINKED_ACCOUNT,
   AZURE_SUBSCRIPTION,
   AZURE_TENANT_ACCOUNT,
-  KUBERNETES,
   ALIBABA_ACCOUNT,
   GCP_CNR,
   GCP_ACCOUNT,
-  NEBIUS_ACCOUNT,
-  NEBIUS,
-  DATABRICKS,
-  DATABRICKS_ACCOUNT,
-  OPTSCALE_CAPABILITY,
   GCP_TENANT_ACCOUNT,
   GCP_TENANT
 } from "utils/constants";
@@ -88,10 +70,10 @@ const getCloudType = (connectionType) =>
     [AZURE_TENANT_ACCOUNT]: AZURE_TENANT,
     [ALIBABA_ACCOUNT]: ALIBABA_CNR,
     [GCP_ACCOUNT]: GCP_CNR,
-    [GCP_TENANT_ACCOUNT]: GCP_TENANT,
-    [NEBIUS_ACCOUNT]: NEBIUS,
-    [DATABRICKS_ACCOUNT]: DATABRICKS,
-    [KUBERNETES]: KUBERNETES_CNR
+    [GCP_TENANT_ACCOUNT]: GCP_TENANT
+    // [NEBIUS_ACCOUNT]: NEBIUS,
+    // [DATABRICKS_ACCOUNT]: DATABRICKS,
+    // [KUBERNETES]: KUBERNETES_CNR
   })[connectionType];
 
 const isLinked = (connectionType) =>
@@ -156,24 +138,24 @@ const getAzureSubscriptionParameters = (formData) => ({
   }
 });
 
-const getKubernetesParameters = (formData) => ({
-  name: formData[DATA_SOURCE_NAME_FIELD_NAME],
-  type: KUBERNETES_CNR,
-  config: {
-    password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
-    user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
-    cost_model: {}
-  }
-});
+// const getKubernetesParameters = (formData) => ({
+//   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+//   type: KUBERNETES_CNR,
+//   config: {
+//     password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
+//     user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
+//     cost_model: {}
+//   }
+// });
 
-const getAlibabaParameters = (formData) => ({
-  name: formData[DATA_SOURCE_NAME_FIELD_NAME],
-  type: ALIBABA_CNR,
-  config: {
-    access_key_id: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
-    secret_access_key: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]
-  }
-});
+// const getAlibabaParameters = (formData) => ({
+//   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+//   type: ALIBABA_CNR,
+//   config: {
+//     access_key_id: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
+//     secret_access_key: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]
+//   }
+// });
 
 const getGoogleParameters = async (formData) => {
   const credentials = await readFileAsText(formData[GCP_CREDENTIALS_FIELD_NAMES.CREDENTIALS]);
@@ -208,36 +190,36 @@ const getGoogleTenantParameters = async (formData) => {
   };
 };
 
-const getNebiusParameters = (formData) => ({
-  name: formData[DATA_SOURCE_NAME_FIELD_NAME],
-  type: NEBIUS,
-  config: {
-    // name of a cloud in Nebius console
-    cloud_name: formData[NEBIUS_FIELD_NAMES.CLOUD_NAME],
-    // id of a service account
-    service_account_id: formData[NEBIUS_FIELD_NAMES.SERVICE_ACCOUNT_ID],
-    // authorized key
-    key_id: formData[NEBIUS_FIELD_NAMES.KEY_ID],
-    private_key: formData[NEBIUS_FIELD_NAMES.PRIVATE_KEY],
-    // access key
-    access_key_id: formData[NEBIUS_FIELD_NAMES.ACCESS_KEY_ID],
-    secret_access_key: formData[NEBIUS_FIELD_NAMES.SECRET_ACCESS_KEY],
-    // bucket where report files are located
-    bucket_name: formData[NEBIUS_FIELD_NAMES.BUCKET_NAME],
-    bucket_prefix: formData[NEBIUS_FIELD_NAMES.BUCKET_PREFIX]
-  }
-});
+// const getNebiusParameters = (formData) => ({
+//   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+//   type: NEBIUS,
+//   config: {
+//     // name of a cloud in Nebius console
+//     cloud_name: formData[NEBIUS_FIELD_NAMES.CLOUD_NAME],
+//     // id of a service account
+//     service_account_id: formData[NEBIUS_FIELD_NAMES.SERVICE_ACCOUNT_ID],
+//     // authorized key
+//     key_id: formData[NEBIUS_FIELD_NAMES.KEY_ID],
+//     private_key: formData[NEBIUS_FIELD_NAMES.PRIVATE_KEY],
+//     // access key
+//     access_key_id: formData[NEBIUS_FIELD_NAMES.ACCESS_KEY_ID],
+//     secret_access_key: formData[NEBIUS_FIELD_NAMES.SECRET_ACCESS_KEY],
+//     // bucket where report files are located
+//     bucket_name: formData[NEBIUS_FIELD_NAMES.BUCKET_NAME],
+//     bucket_prefix: formData[NEBIUS_FIELD_NAMES.BUCKET_PREFIX]
+//   }
+// });
 
-const getDatabricksParameters = (formData) => ({
-  name: formData[DATA_SOURCE_NAME_FIELD_NAME],
-  type: DATABRICKS,
-  config: {
-    account_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.ACCOUNT_ID],
-    client_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
-    client_secret: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_SECRET],
-    cost_model: {}
-  }
-});
+// const getDatabricksParameters = (formData) => ({
+//   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+//   type: DATABRICKS,
+//   config: {
+//     account_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.ACCOUNT_ID],
+//     client_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
+//     client_secret: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_SECRET],
+//     cost_model: {}
+//   }
+// });
 
 const renderConnectionTypeDescription = (settings) =>
   settings.map(({ key, messageId, values }, index) => (
@@ -330,68 +312,68 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    [KUBERNETES]: renderConnectionTypeDescription([
-      {
-        key: "createKubernetesDocumentationReference1",
-        messageId: "createKubernetesDocumentationReference1",
-        values: {
-          link: (chunks) => (
-            <Link
-              data-test-id="link_guide"
-              href={DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE}
-              target="_blank"
-              rel="noopener"
-            >
-              {chunks}
-            </Link>
-          )
-        }
-      },
-      {
-        key: "createKubernetesDocumentationReference2",
-        messageId: "createKubernetesDocumentationReference2"
-      },
-      {
-        key: "createKubernetesDocumentationReference3",
-        messageId: "createKubernetesDocumentationReference3",
-        values: {
-          kubernetesConnectGuide: (
-            <Link data-test-id="link_guide" href={GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR} target="_blank" rel="noopener">
-              {GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR}
-            </Link>
-          ),
-          p: (chunks) => <p>{chunks}</p>
-        }
-      }
-    ]),
-    [ALIBABA_ACCOUNT]: renderConnectionTypeDescription([
-      {
-        key: "createAlibabaDocumentationReference",
-        messageId: "createAlibabaDocumentationReference",
-        values: {
-          link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD} target="_blank" rel="noopener">
-              {chunks}
-            </Link>
-          ),
-          strong: (chunks) => <strong>{chunks}</strong>
-        }
-      }
-    ]),
-    [DATABRICKS_ACCOUNT]: renderConnectionTypeDescription([
-      {
-        key: "createDatabricksDocumentationReference",
-        messageId: "createDatabricksDocumentationReference",
-        values: {
-          link: (chunks) => (
-            <Link data-test-id="link_guide" href={DATABRICKS_CREATE_SERVICE_PRINCIPAL} target="_blank" rel="noopener">
-              {chunks}
-            </Link>
-          ),
-          strong: (chunks) => <strong>{chunks}</strong>
-        }
-      }
-    ]),
+    // [KUBERNETES]: renderConnectionTypeDescription([
+    //   {
+    //     key: "createKubernetesDocumentationReference1",
+    //     messageId: "createKubernetesDocumentationReference1",
+    //     values: {
+    //       link: (chunks) => (
+    //         <Link
+    //           data-test-id="link_guide"
+    //           href={DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE}
+    //           target="_blank"
+    //           rel="noopener"
+    //         >
+    //           {chunks}
+    //         </Link>
+    //       )
+    //     }
+    //   },
+    //   {
+    //     key: "createKubernetesDocumentationReference2",
+    //     messageId: "createKubernetesDocumentationReference2"
+    //   },
+    //   {
+    //     key: "createKubernetesDocumentationReference3",
+    //     messageId: "createKubernetesDocumentationReference3",
+    //     values: {
+    //       kubernetesConnectGuide: (
+    //         <Link data-test-id="link_guide" href={GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR} target="_blank" rel="noopener">
+    //           {GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR}
+    //         </Link>
+    //       ),
+    //       p: (chunks) => <p>{chunks}</p>
+    //     }
+    //   }
+    // ]),
+    // [ALIBABA_ACCOUNT]: renderConnectionTypeDescription([
+    //   {
+    //     key: "createAlibabaDocumentationReference",
+    //     messageId: "createAlibabaDocumentationReference",
+    //     values: {
+    //       link: (chunks) => (
+    //         <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD} target="_blank" rel="noopener">
+    //           {chunks}
+    //         </Link>
+    //       ),
+    //       strong: (chunks) => <strong>{chunks}</strong>
+    //     }
+    //   }
+    // ]),
+    // [DATABRICKS_ACCOUNT]: renderConnectionTypeDescription([
+    //   {
+    //     key: "createDatabricksDocumentationReference",
+    //     messageId: "createDatabricksDocumentationReference",
+    //     values: {
+    //       link: (chunks) => (
+    //         <Link data-test-id="link_guide" href={DATABRICKS_CREATE_SERVICE_PRINCIPAL} target="_blank" rel="noopener">
+    //           {chunks}
+    //         </Link>
+    //       ),
+    //       strong: (chunks) => <strong>{chunks}</strong>
+    //     }
+    //   }
+    // ]),
     [GCP_ACCOUNT]: renderConnectionTypeDescription([
       {
         key: "createGCPDocumentationReference",
@@ -496,46 +478,46 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: GCP_TENANT_ACCOUNT,
       dataTestId: "btn_gcp_tenant_account",
       action: () => defaultTileAction(GCP_TENANT_ACCOUNT, GCP_TENANT)
-    },
-    {
-      id: ALIBABA_ACCOUNT,
-      icon: AlibabaLogoIcon,
-      messageId: ALIBABA_ACCOUNT,
-      dataTestId: "btn_alibaba_account",
-      action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR)
-    },
-    {
-      id: NEBIUS_ACCOUNT,
-      icon: NebiusLogoIcon,
-      messageId: NEBIUS_ACCOUNT,
-      dataTestId: "btn_nebius_account",
-      action: () => defaultTileAction(NEBIUS_ACCOUNT, NEBIUS),
-      capability: OPTSCALE_CAPABILITY.FINOPS
-    },
-    {
-      id: DATABRICKS_ACCOUNT,
-      icon: DatabricksLogoIcon,
-      messageId: DATABRICKS_ACCOUNT,
-      dataTestId: "btn_databricks_account",
-      action: () => defaultTileAction(DATABRICKS_ACCOUNT, DATABRICKS),
-      capability: OPTSCALE_CAPABILITY.FINOPS
-    },
-    {
-      id: KUBERNETES,
-      icon: K8sLogoIcon,
-      messageId: KUBERNETES,
-      dataTestId: "btn_kubernetes",
-      action: () => defaultTileAction(KUBERNETES, KUBERNETES_CNR),
-      capability: OPTSCALE_CAPABILITY.FINOPS
     }
+    // {
+    //   id: ALIBABA_ACCOUNT,
+    //   icon: AlibabaLogoIcon,
+    //   messageId: ALIBABA_ACCOUNT,
+    //   dataTestId: "btn_alibaba_account",
+    //   action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR)
+    // },
+    // {
+    //   id: NEBIUS_ACCOUNT,
+    //   icon: NebiusLogoIcon,
+    //   messageId: NEBIUS_ACCOUNT,
+    //   dataTestId: "btn_nebius_account",
+    //   action: () => defaultTileAction(NEBIUS_ACCOUNT, NEBIUS),
+    //   mode: OPTSCALE_MODE.FINOPS
+    // },
+    // {
+    //   id: DATABRICKS_ACCOUNT,
+    //   icon: DatabricksLogoIcon,
+    //   messageId: DATABRICKS_ACCOUNT,
+    //   dataTestId: "btn_databricks_account",
+    //   action: () => defaultTileAction(DATABRICKS_ACCOUNT, DATABRICKS),
+    //   mode: OPTSCALE_MODE.FINOPS
+    // },
+    // {
+    //   id: KUBERNETES,
+    //   icon: K8sLogoIcon,
+    //   messageId: KUBERNETES,
+    //   dataTestId: "btn_kubernetes",
+    //   action: () => defaultTileAction(KUBERNETES, KUBERNETES_CNR),
+    //   mode: OPTSCALE_MODE.FINOPS
+    // }
   ].filter(({ id }) => isDataSourceTypeConnectionEnabled(id));
 
   return (
     <FormProvider {...methods}>
       <Stack>
         <div style={{ display: "flex", flexWrap: "wrap", width: "fit-content" }} ref={ref}>
-          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }, index) => (
-            <CapabilityWrapper capability={capability} key={id}>
+          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, mode }, index) => (
+            <ModeWrapper mode={mode} key={id}>
               <Paper
                 className={cx(classes.tile, connectionType !== id && classes.inactiveTile)}
                 variant="outlined"
@@ -559,7 +541,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                   <FormattedMessage id={messageId} />
                 </Typography>
               </Paper>
-            </CapabilityWrapper>
+            </ModeWrapper>
           ))}
         </div>
         <Box sx={{ width: { md: `max(50%, ${width}px)` } }}>
@@ -576,11 +558,11 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                       [AZURE_TENANT]: getAzureTenantParameters,
                       [AZURE_CNR]: getAzureSubscriptionParameters,
                       [GCP_CNR]: getGoogleParameters,
-                      [GCP_TENANT]: getGoogleTenantParameters,
-                      [ALIBABA_CNR]: getAlibabaParameters,
-                      [NEBIUS]: getNebiusParameters,
-                      [KUBERNETES_CNR]: getKubernetesParameters,
-                      [DATABRICKS]: getDatabricksParameters
+                      [GCP_TENANT]: getGoogleTenantParameters
+                      // [ALIBABA_CNR]: getAlibabaParameters,
+                      // [NEBIUS]: getNebiusParameters,
+                      // [KUBERNETES_CNR]: getKubernetesParameters,
+                      // [DATABRICKS]: getDatabricksParameters
                     }[cloudType];
 
                     onSubmit(await getParameters(formData));

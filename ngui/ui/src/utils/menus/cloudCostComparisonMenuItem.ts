@@ -1,4 +1,4 @@
-import CompareOutlinedIcon from "@mui/icons-material/CompareOutlined";
+// import CompareOutlinedIcon from "@mui/icons-material/CompareOutlined";
 import cloudCostComparisonRoute from "utils/routes/cloudCostComparisonRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class CloudCostComparisonMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_comparison";
 
-  icon = CompareOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = CompareOutlinedIcon;
 }
 
 export default new CloudCostComparisonMenuItem();

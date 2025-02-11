@@ -1,4 +1,5 @@
 import { Link } from "@mui/material";
+import Box from "@mui/material/Box";
 import { FormattedMessage } from "react-intl";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -71,7 +72,9 @@ const CreateOrganizationConstraint = () => {
     <Protector allowedActions={["EDIT_PARTNER"]}>
       <ActionBar data={actionBar} />
       <PageContentWrapper>
-        <CreateOrganizationConstraintFormContainer navigateAwayLink={navigateAwayLink} types={types} />
+        <Box className={"MTPBoxShadow"}>
+          <CreateOrganizationConstraintFormContainer navigateAwayLink={navigateAwayLink} types={types} />
+        </Box>
       </PageContentWrapper>
     </Protector>
   );

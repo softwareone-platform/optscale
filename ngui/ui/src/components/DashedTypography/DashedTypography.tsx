@@ -7,12 +7,13 @@ const DashedTypography = ({
   disablePointerOnHover = false,
   hasRightMargin = false,
   dataTestId,
+  chipMode = false,
   ...rest
 }) => {
   const { classes, cx } = useStyles();
 
   const typographyClasses = cx(
-    classes.dashed,
+    chipMode ? classes.chip : classes.dashed,
     disablePointerOnHover ? "" : classes.cursorPointer,
     hasRightMargin ? classes.right : "",
     className

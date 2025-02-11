@@ -8,7 +8,7 @@ type SubTitleProps = {
 } & TypographyProps;
 
 const SubTitle = ({ children, dataProductTourId, dataTestId, ...rest }: SubTitleProps) => (
-  <Typography component="h4" variant="subtitle1" data-product-tour-id={dataProductTourId} data-test-id={dataTestId} {...rest}>
+  <Typography component="h4" variant="body1" data-product-tour-id={dataProductTourId} data-test-id={dataTestId} {...rest}>
     {children}
   </Typography>
 );

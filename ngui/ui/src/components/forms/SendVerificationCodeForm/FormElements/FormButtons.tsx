@@ -4,10 +4,9 @@ import FormButtonsWrapper from "components/FormButtonsWrapper";
 const FormButtons = ({ isLoading = false }) => (
   <FormButtonsWrapper mt={3} mb={2}>
     <ButtonLoader
-      uppercase
       fullWidth
       variant="contained"
-      color="lightBlue"
+      color="primary"
       isLoading={isLoading}
       messageId="sendVerificationCode"
       type="submit"

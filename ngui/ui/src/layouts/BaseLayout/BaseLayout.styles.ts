@@ -1,22 +1,41 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1 } from "utils/layouts";
+import { MPT_GRADIENT, SPACING_1 } from "utils/layouts";
 
-export const DRAWER_WIDTH = 205;
+export const DRAWER_WIDTH = 250;
 
 const useStyles = makeStyles()((theme) => ({
   appBar: {
     boxShadow: "none"
   },
+  headerSpacer: {
+    background: MPT_GRADIENT,
+    height: "3px"
+  },
   toolbar: {
     display: "flex",
-    height: theme.spacing(7),
+    height: "75px",
+    alightItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.palette.info.header
+    backgroundColor: "white",
+    paddingLeft: "21px",
+    paddingRight: "21px"
   },
   logo: {
     [theme.breakpoints.down("md")]: {
       flex: 1
-    }
+    },
+    display: "flex",
+    gap: "30px",
+    alignItems: "center"
+  },
+  headerTitle: {
+    fontSize: "26px",
+    color: "black",
+    fontWeight: "bold",
+    alignItems: "center",
+    gap: "10px",
+    justifyContent: "middle",
+    display: "flex"
   },
   marginRight1: {
     marginRight: theme.spacing(SPACING_1)
@@ -26,7 +45,8 @@ const useStyles = makeStyles()((theme) => ({
   },
   drawerPaper: {
     position: "relative",
-    width: DRAWER_WIDTH
+    width: DRAWER_WIDTH,
+    paddingTop: theme.spacing(SPACING_1)
   },
   content: {
     overflowY: "auto",

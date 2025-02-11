@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import DeleteOrganization from "components/DeleteOrganization";
 import OrganizationInfoSetting from "components/OrganizationInfoSetting";
 import { useIsAllowed } from "hooks/useAllowedActions";
 
@@ -11,7 +10,8 @@ const OrganizationSettings = () => {
       <Box mb={isDeleteOrganizationAllowed ? 2 : 0}>
         <OrganizationInfoSetting />
       </Box>
-      {isDeleteOrganizationAllowed && <DeleteOrganization />}
+      {/* MTP_TODO: disabled to meet BDR requirements */}
+      {/* {isDeleteOrganizationAllowed && <DeleteOrganization />} */}
     </>
   );
 };

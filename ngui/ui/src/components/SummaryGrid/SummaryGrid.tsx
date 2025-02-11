@@ -8,7 +8,8 @@ import SummaryCardExtended from "components/SummaryCardExtended";
 import Tooltip from "components/Tooltip";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
+import { SPACING_3 } from "utils/layouts";
+import useStyles from "./SummaryGrid.styles";
 
 const getValueComponentSettings = (type, CustomComponent) => ({
   component: {
@@ -127,20 +128,21 @@ const getCardRenderer = (cardType) =>
     [SUMMARY_CARD_TYPES.EXTENDED]: renderExtendedSummaryCard
   })[cardType];
 
-const SummaryGrid = ({ summaryData }) => {
+const SummaryGrid = ({ summaryData, summaryStyle = "customBox" }) => {
+  const { classes } = useStyles();
   const renderSummary = () =>
     summaryData.map(({ key, renderCondition, type = SUMMARY_CARD_TYPES.BASIC, isLoading, ...rest }) => {
       const shouldRender = renderCondition ? renderCondition() || isLoading : true;
       const renderCard = getCardRenderer(type);
       return renderCard && shouldRender ? (
-        <Grid item key={key || uuidv4()}>
+        <Grid className={summaryStyle === "customBox" ? classes.customBox : ""} item key={key || uuidv4()}>
           {renderCard({ isLoading, ...rest })}
         </Grid>
       ) : null;
     });
 
   return (
-    <Grid container item spacing={SPACING_2}>
+    <Grid container item spacing={SPACING_3}>
       {renderSummary()}
     </Grid>
   );
