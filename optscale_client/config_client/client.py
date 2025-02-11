@@ -343,13 +343,14 @@ class Client(etcd.Client):
             raise ConcurrencyException(key)
 
     def mongo_params(self):
-        """
-        Get tuple with access args for mongo db (report service)
-        :return: ('user', 'pass', 'host', 'port', 'database')
-        """
-        params = self.read_branch('/mongo')
-        return (params['user'], params['pass'], params['host'],
-                params['port'], params['database'])
+         params = self.read_branch('/mongo')
+         if "url" in params:
+             return (params["url"], params["database"])
+         url = "mongodb://%s:%s@%s:%s"  % (
+            params['user'], params['pass'],
+            params['host'], params['port']
+         )
+         return (url, params["database"])
 
     def rabbit_params(self):
         """

@@ -1,7 +1,8 @@
+import asyncio
 import time
 from collections import OrderedDict, defaultdict
 from datetime import datetime, timezone, timedelta
-import asyncio
+from urllib.parse import urlparse
 
 from etcd import Lock as EtcdLock, Client as EtcdClient
 from typing import Tuple
@@ -60,7 +61,7 @@ async def add_spent_time(request, response):
                                           spend_time))
 
 
-def get_arcee_db_params() -> Tuple[str, str, str, str, str]:
+def get_arcee_db_params() -> Tuple[str, str]:
     arcee_db_params = config_client.arcee_params()
     return asyncio.run(arcee_db_params)
 
@@ -69,9 +70,12 @@ async def get_cluster_secret() -> str:
     return await config_client.cluster_secret()
 
 
-name, password, host, port, db_name = get_arcee_db_params()
-uri = "mongodb://{u}:{p}@{host}:{port}/admin".format(
-    u=name, p=password, host=host, port=port)
+conn_url, db_name = get_arcee_db_params()
+components = urlparse(conn_url)
+user_data, host_data = components.netloc.split("@", 1)
+name, password = user_data.split(":", 1)
+host, port = host_data.split(":", 1)
+uri = f"{components.scheme}://{components.netloc}/admin?{components.query}"
 client = motor.motor_asyncio.AsyncIOMotorClient(uri)
 # https://stackoverflow.com/a/69065287
 client.get_io_loop = asyncio.get_running_loop
@@ -2699,11 +2703,11 @@ if __name__ == '__main__':
     # trick to lock migrations
     with EtcdLock(
             EtcdClient(host=etcd_host, port=etcd_port), 'arcee_migrations'):
+        
         config_params = {
             'mongo_username': name,
             'mongo_password': password,
-            'mongo_url': "mongodb://{host}:{port}/admin".format(
-                host=host, port=port),
+            'mongo_url': uri,
             'mongo_database': db_name,
             'mongo_migrations_path': os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), 'migrations')

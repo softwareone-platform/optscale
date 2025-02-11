@@ -64,8 +64,7 @@ class PowerScheduleWorker(ConsumerMixin):
     @cached_property
     def mongo_cl(self):
         mongo_params = self.config_cl.mongo_params()
-        mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-        return MongoClient(mongo_conn_string)
+        return MongoClient(mongo_params[0])
 
     def get_consumers(self, consumer, channel):
         return [consumer(queues=[TASK_QUEUE], accept=['json'],

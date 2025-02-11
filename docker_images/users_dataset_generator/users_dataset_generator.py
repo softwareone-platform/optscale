@@ -42,10 +42,8 @@ def _get_session_to_my_db(config_cl):
 
 
 def _get_mongo_client(config_cl):
-    user, password, host, port, db_name = config_cl.mongo_params()
-    mongo_conn_string = "mongodb://%s:%s@%s:%s" % (
-        user, password, host, port)
-    return MongoClient(mongo_conn_string)
+    mongo_params = config_cl.mongo_params()
+    return MongoClient(mongo_params[0])
 
 
 def _get_clickhouse_client(config_cl):
