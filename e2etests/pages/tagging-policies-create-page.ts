@@ -2,8 +2,6 @@ import {BaseCreatePage} from "./base-create-page";
 import {Locator, Page} from "@playwright/test";
 
     export class TaggingPoliciesCreatePage extends BaseCreatePage {
-        readonly page: Page;
-        readonly main: Locator;
         readonly heading: Locator;
         readonly startDateSelect: Locator;
         readonly requiredTagsBtn: Locator;
@@ -16,8 +14,6 @@ import {Locator, Page} from "@playwright/test";
 
         constructor(page: Page) {
             super(page, '/tagging-policies/create');
-            this.page = page;
-            this.main = this.page.locator('main');
             this.heading = this.main.getByTestId('lbl_create_tagging_policy');
             this.startDateSelect = this.main.getByTestId('input_startDate');
             this.requiredTagsBtn = this.main.getByTestId('tags_strategy_taggingPolicy.requiredTag');

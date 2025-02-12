@@ -2,8 +2,7 @@ import {Locator, Page} from "@playwright/test";
 import { BasePage } from "./base-page";
 
 export class ExpensesPage extends BasePage {
-    readonly page: Page;
-    readonly expensesHeading: Locator;
+    readonly heading: Locator;
     readonly expensesSelectedPeriodValue: Locator;
     readonly expensesPreviousPeriodValue: Locator;
     readonly dailyBtn: Locator;
@@ -18,9 +17,8 @@ export class ExpensesPage extends BasePage {
 
     constructor(page: Page) {
         super(page, '/expenses');
-        this.page = page;
         this.costExploreBreadcrumb = this.main.locator('//a[.="Cost Explorer"]');
-        this.expensesHeading = this.page.locator('//h1[contains(text(), "Expenses of")]');
+        this.heading = this.page.locator('//h1[contains(text(), "Expenses of")]');
         this.expensesSelectedPeriodValue = this.page.locator('//div[.="Total expenses for selected period"]/./following-sibling::div');
         this.expensesPreviousPeriodValue = this.page.locator('//div[.="Total expenses for previous period"]/./following-sibling::div');
         this.dailyBtn = this.page.getByTestId('breakdown_ls_item_daily');

@@ -2,8 +2,6 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export abstract class BaseCreatePage extends BasePage {
-    readonly page: Page;
-    readonly main: Locator;
     readonly nameInput: Locator;
     readonly typeSelect: Locator;
     readonly suggestedFiltersFilter: Locator;
@@ -19,13 +17,13 @@ export abstract class BaseCreatePage extends BasePage {
     readonly k8sNodeFilter: Locator;
     readonly k8sNamespaceFilter: Locator;
     readonly k8ServiceFilter: Locator;
+    readonly tagFilter: Locator;
+    readonly withoutTagFilter: Locator;
     readonly saveBtn: Locator;
     readonly cancelBtn: Locator;
 
     protected constructor(page: Page, url: string) {
         super(page, '');
-        this.page = page;
-        this.main = this.page.locator('main');
         this.nameInput = this.main.getByTestId('input_name');
         this.typeSelect = this.main.getByTestId('type-selector-select');
         this.suggestedFiltersFilter = this.main.getByTestId('selector_suggestedFilters');
@@ -41,6 +39,8 @@ export abstract class BaseCreatePage extends BasePage {
         this.k8sNodeFilter = this.main.getByTestId('selector_k8sNode');
         this.k8sNamespaceFilter = this.main.getByTestId('selector_k8sNamespace');
         this.k8ServiceFilter = this.main.getByTestId('selector_k8sService');
+        this.tagFilter = this.main.getByTestId('selector_tag');
+        this.withoutTagFilter = this.main.getByTestId('selector_withoutTag');
         this.saveBtn = this.main.getByTestId('btn_create');
         this.cancelBtn = this.main.getByTestId('btn_cancel');
     }

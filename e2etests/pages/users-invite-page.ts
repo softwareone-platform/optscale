@@ -2,8 +2,7 @@ import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
 
 export class UsersInvitePage extends BasePage {
-    readonly page: Page;
-    readonly inviteUsersHeading: Locator;
+    readonly heading: Locator;
     readonly inviteUserEmailInput: Locator;
     readonly addRoleBtn: Locator;
     readonly roleSelect: Locator;
@@ -13,8 +12,7 @@ export class UsersInvitePage extends BasePage {
 
     constructor(page: Page) {
         super(page, '/users/invite');
-        this.page = page;
-        this.inviteUsersHeading = this.main.getByTestId('lbl_users_invitation');
+        this.heading = this.main.getByTestId('lbl_users_invitation');
         this.inviteUserEmailInput = this.main.getByTestId('input_email');
         this.addRoleBtn = this.main.locator('[data-testid="AddOutlinedIcon"]');
         this.roleSelect = this.main.getByTestId('role-selector-select');

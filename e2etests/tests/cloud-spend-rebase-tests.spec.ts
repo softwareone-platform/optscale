@@ -71,14 +71,14 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         await test.step('Verify Resources page on landing', async () => {
             await resourcesPage.waitForCanvas();
             await resourcesPage.searchInput.waitFor();
-            await resourcesPage.resourcesHeading.hover();
+            await resourcesPage.heading.hover();
             // await resourcesPage.page.waitForTimeout(5000);
             await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
         });
 
         await test.step('Verify Resources page breakdown by expenses', async () => {
             await resourcesPage.clickCardsExpensesIfNotActive();
-            await resourcesPage.resourcesHeading.hover();
+            await resourcesPage.heading.hover();
             await resourcesPage.expensesBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
             // await resourcesPage.page.waitForTimeout(5000);
@@ -87,7 +87,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Resources page breakdown by resource count', async () => {
             await resourcesPage.resourceCountBtn.click();
-            await resourcesPage.resourcesHeading.hover();
+            await resourcesPage.heading.hover();
             await resourcesPage.resourceCountBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
             // await resourcesPage.page.waitForTimeout(5000);
@@ -96,7 +96,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Resources page breakdown by tags', async () => {
             await resourcesPage.tagsBtn.click();
-            await resourcesPage.resourcesHeading.hover();
+            await resourcesPage.heading.hover();
             await resourcesPage.tagsBreakdownChart.waitFor();
             await resourcesPage.waitForCanvas();
             // await resourcesPage.page.waitForTimeout(5000);
@@ -183,7 +183,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Expenses page content - daily selected', async () => {
             await expensesPage.clickDailyBtnIfNotSelected();
-            await expensesPage.expensesHeading.hover();
+            await expensesPage.heading.hover();
             await expensesPage.waitForCanvas();
             // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-daily-screenshot.png');
@@ -191,7 +191,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Expenses page content - weekly selected', async () => {
             await expensesPage.clickWeeklyBtn();
-            await expensesPage.expensesHeading.hover();
+            await expensesPage.heading.hover();
             await expensesPage.waitForCanvas();
             // await expensesPage.page.waitForTimeout(5000);
             await expect(expensesPage.main).toHaveScreenshot('Expenses-weekly-screenshot.png');
@@ -199,7 +199,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
 
         await test.step('Verify Expenses page content - monthly selected', async () => {
            await expensesPage.clickMonthlyBtn();
-           await expensesPage.expensesHeading.hover();
+           await expensesPage.heading.hover();
            await expensesPage.waitForCanvas();
             // await expensesPage.page.waitForTimeout(5000);
            await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
@@ -246,7 +246,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Anomalies page content', async () => {
-            await anomaliesPage.anomaliesHeading.hover();
+            await anomaliesPage.heading.hover();
             await anomaliesPage.waitForCanvas();
             // await anomaliesPage.page.waitForTimeout(5000);
             await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-screenshot.png');
@@ -267,7 +267,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Policies page content', async () => {
-            await policiesPage.policiesHeading.hover();
+            await policiesPage.heading.hover();
             // await policiesPage.page.waitForTimeout(5000);
             await expect(policiesPage.main).toHaveScreenshot('Policies-screenshot.png');
         });
@@ -286,7 +286,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Tagging Policies page content', async () => {
-           await taggingPoliciesPage.taggingPoliciesHeading.hover();
+           await taggingPoliciesPage.heading.hover();
            // await taggingPoliciesPage.page.waitForTimeout(5000);
            await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
         });
@@ -306,14 +306,14 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Users page content', async () => {
-            await usersPage.usersHeading.hover();
+            await usersPage.heading.hover();
             await usersPage.page.waitForTimeout(5000);
             await expect(usersPage.main).toHaveScreenshot('Users-screenshot.png');
         });
 
         await test.step('Verify invite user page', async () => {
             await usersPage.clickInviteBtn();
-            await usersInvitePage.inviteUsersHeading.hover();
+            await usersInvitePage.heading.hover();
             await usersInvitePage.page.waitForTimeout(5000);
             await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
         });

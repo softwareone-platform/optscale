@@ -2,7 +2,6 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class Header extends BasePage {
-    readonly page: Page;
     readonly header: Locator;
     readonly swoLogo: Locator;
     readonly liveDemoAlert: Locator;
@@ -16,7 +15,6 @@ export class Header extends BasePage {
 
     constructor(page: Page) {
         super(page, '/');
-        this.page = page;
         this.header = this.page.locator('header').first();
         this.swoLogo = this.header.getByTestId('img_logo');
         this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({ hasText: 'You are in a live demo mode' });
