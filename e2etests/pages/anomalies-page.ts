@@ -3,6 +3,7 @@ import {Locator, Page} from "@playwright/test";
 
 export class AnomaliesPage extends BasePage {
     readonly page: Page;
+    readonly main: Locator;
     readonly anomaliesHeading: Locator;
     readonly addBtn: Locator;
     readonly searchInput: Locator;
@@ -10,8 +11,13 @@ export class AnomaliesPage extends BasePage {
     constructor(page: Page) {
         super(page, '/anomalies');
         this.page = page;
+        this.main = this.page.locator('main');
         this.anomaliesHeading = this.page.getByTestId('lbl_constraints_detection');
         this.addBtn = this.page.getByTestId('btn_add');
         this.searchInput = this.page.getByPlaceholder('Search');
+    }
+
+    async clickAddBtn() {
+        await this.addBtn.click();
     }
 }

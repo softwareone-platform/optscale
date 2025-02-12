@@ -1,11 +1,10 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
 
-export class CreateAnomalyPage extends BasePage {
+import {Locator, Page} from "@playwright/test";
+import {BaseCreatePage} from "./base-create-page";
+
+export class CreateAnomalyPage extends BaseCreatePage {
     readonly page: Page;
     readonly createAnomalyHeading: Locator;
-    readonly nameInput: Locator;
-    readonly typeSelect: Locator;
     readonly evaluationPeriodInput: Locator;
     readonly thresholdInput: Locator;
     readonly suggestedFilterSelect: Locator;
@@ -22,16 +21,12 @@ export class CreateAnomalyPage extends BasePage {
     readonly k8sServiceSelect: Locator;
     readonly tagSelect: Locator;
     readonly withoutTagSelect: Locator;
-    readonly saveBtn: Locator;
-    readonly cancelBtn: Locator;
 
 
     constructor(page: Page) {
         super(page, '/anomalies/create');
         this.page = page;
         this.createAnomalyHeading = this.page.getByTestId('lbl_create_anomaly_detection_policy');
-        this.nameInput = this.page.getByTestId('input_name');
-        this.typeSelect = this.page.getByTestId('type-selector');
         this.evaluationPeriodInput = this.page.getByTestId('input_evaluationPeriod');
         this.thresholdInput = this.page.getByTestId('input_threshold');
         this.suggestedFilterSelect = this.page.getByTestId('selector_suggestedFilters');
@@ -48,8 +43,6 @@ export class CreateAnomalyPage extends BasePage {
         this.k8sServiceSelect = this.page.getByTestId('selector_k8sService');
         this.tagSelect = this.page.getByTestId('selector_tag');
         this.withoutTagSelect = this.page.getByTestId('selector_withoutTag');
-        this.saveBtn = this.page.getByTestId('btn_create');
-        this.cancelBtn = this.page.getByTestId('btn_cancel');
     }
 
     async selectType(type: string) {

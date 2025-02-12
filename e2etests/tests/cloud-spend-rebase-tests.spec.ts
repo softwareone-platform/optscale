@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     test.beforeAll(() => {
         expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
     })
@@ -238,4 +238,66 @@ test.describe.only('Cloud Spend Rebase Tests @cloudspend', () => {
             await expect(expensesPage.main).toHaveScreenshot('Expenses-owner-screenshot.png');
         });
     });
+
+    test('Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
+        // test.slow();
+        await test.step('Navigate to Anomalies page', async () => {
+            await anomaliesPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Anomalies page content', async () => {
+            await anomaliesPage.anomaliesHeading.hover();
+            await anomaliesPage.waitForCanvas();
+            // await anomaliesPage.page.waitForTimeout(5000);
+            await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-screenshot.png');
+        });
+
+        await test.step('Verify create anomaly page', async () => {
+            await anomaliesPage.clickAddBtn();
+            await anomaliesCreatePage.heading.waitFor();
+            // await anomaliesPage.page.waitForTimeout(5000);
+            await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-create-screenshot.png');
+        });
+    })
+
+    test('Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
+        // test.slow();
+        await test.step('Navigate to Policies page', async () => {
+            await policiesPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Policies page content', async () => {
+            await policiesPage.policiesHeading.hover();
+            // await policiesPage.page.waitForTimeout(5000);
+            await expect(policiesPage.main).toHaveScreenshot('Policies-screenshot.png');
+        });
+
+        await test.step('Verify create policy page', async () => {
+            await policiesPage.clickAddBtn();
+            await policiesCreatePage.heading.hover();
+            // await policiesCreatePage.page.waitForTimeout(5000);
+            await expect(policiesCreatePage.main).toHaveScreenshot('Policies-create-screenshot.png');
+        });
+    })
+
+    test.only('Verify Tagging Policies page matches screenshots', async ({taggingPoliciesPage, taggingPoliciesCreatePage}) => {
+        await test.step('Navigate to Tagging Policies page', async () => {
+            await taggingPoliciesPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Tagging Policies page content', async () => {
+           await taggingPoliciesPage.taggingPoliciesHeading.hover();
+           // await taggingPoliciesPage.page.waitForTimeout(5000);
+           await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
+        });
+
+        await test.step('Verify create tagging policy page', async () => {
+            await taggingPoliciesPage.clickAddBtn();
+            await taggingPoliciesCreatePage.k8ServiceFilter.waitFor();
+            await taggingPoliciesCreatePage.heading.hover();
+            // await taggingPoliciesCreatePage.page.waitForTimeout(5000);
+            await expect(taggingPoliciesCreatePage.main).toHaveScreenshot('TaggingPolicies-create-screenshot.png');
+        });
+    })
+
 })
