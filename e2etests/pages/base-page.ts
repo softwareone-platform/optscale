@@ -3,10 +3,12 @@ import {Locator, Page} from "@playwright/test";
 export abstract class BasePage {
     readonly page: Page
     readonly url: string
+    readonly main: Locator
 
     protected constructor(page: Page, url: string) {
         this.page = page
         this.url = url
+        this.main = this.page.locator('main');
     }
 
     async navigateToURL(waitForPageLoad = false): Promise<void> {

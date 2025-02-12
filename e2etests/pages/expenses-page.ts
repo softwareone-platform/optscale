@@ -3,7 +3,6 @@ import { BasePage } from "./base-page";
 
 export class ExpensesPage extends BasePage {
     readonly page: Page;
-    readonly main: Locator;
     readonly expensesHeading: Locator;
     readonly expensesSelectedPeriodValue: Locator;
     readonly expensesPreviousPeriodValue: Locator;
@@ -20,7 +19,6 @@ export class ExpensesPage extends BasePage {
     constructor(page: Page) {
         super(page, '/expenses');
         this.page = page;
-        this.main = this.page.locator('main');
         this.costExploreBreadcrumb = this.main.locator('//a[.="Cost Explorer"]');
         this.expensesHeading = this.page.locator('//h1[contains(text(), "Expenses of")]');
         this.expensesSelectedPeriodValue = this.page.locator('//div[.="Total expenses for selected period"]/./following-sibling::div');

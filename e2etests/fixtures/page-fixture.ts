@@ -19,6 +19,7 @@ import {ResourceDetailsPage} from "../pages/resource-details-page";
 import {AnomaliesCreatePage} from "../pages/anomalies-create-page";
 import {PoliciesCreatePage} from "../pages/policies-create-page";
 import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
+import {UsersInvitePage} from "../pages/users-invite-page";
 
 
 export const test = base.extend<{
@@ -42,6 +43,7 @@ export const test = base.extend<{
     taggingPoliciesPage: TaggingPoliciesPage;
     taggingPoliciesCreatePage: TaggingPoliciesCreatePage;
     usersPage: UsersPage;
+    usersInvitePage: UsersInvitePage;
 }>({
     anomaliesPage: async ({page}, use) => {
         const anomaliesPage = new AnomaliesPage(page);
@@ -122,6 +124,10 @@ export const test = base.extend<{
     usersPage: async ({page}, use) => {
         const usersPage = new UsersPage(page);
         await use(usersPage);
+    },
+    usersInvitePage: async ({page}, use) => {
+        const usersInvitePage = new UsersInvitePage(page);
+        await use(usersInvitePage);
     },
 });
 

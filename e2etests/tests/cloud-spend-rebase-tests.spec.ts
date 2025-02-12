@@ -280,7 +280,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
     })
 
-    test.only('Verify Tagging Policies page matches screenshots', async ({taggingPoliciesPage, taggingPoliciesCreatePage}) => {
+    test('Verify Tagging Policies page matches screenshots', async ({taggingPoliciesPage, taggingPoliciesCreatePage}) => {
         await test.step('Navigate to Tagging Policies page', async () => {
             await taggingPoliciesPage.navigateToURL(true);
         });
@@ -297,6 +297,25 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
             await taggingPoliciesCreatePage.heading.hover();
             // await taggingPoliciesCreatePage.page.waitForTimeout(5000);
             await expect(taggingPoliciesCreatePage.main).toHaveScreenshot('TaggingPolicies-create-screenshot.png');
+        });
+    })
+
+    test.only('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
+        await test.step('Navigate to Users page', async () => {
+            await usersPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Users page content', async () => {
+            await usersPage.usersHeading.hover();
+            await usersPage.page.waitForTimeout(5000);
+            await expect(usersPage.main).toHaveScreenshot('Users-screenshot.png');
+        });
+
+        await test.step('Verify invite user page', async () => {
+            await usersPage.clickInviteBtn();
+            await usersInvitePage.inviteUsersHeading.hover();
+            await usersInvitePage.page.waitForTimeout(5000);
+            await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
         });
     })
 
