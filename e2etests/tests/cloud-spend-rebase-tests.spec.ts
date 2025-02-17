@@ -198,11 +198,11 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
 
         await test.step('Verify Expenses page content - monthly selected', async () => {
-           await expensesPage.clickMonthlyBtn();
-           await expensesPage.heading.hover();
-           await expensesPage.waitForCanvas();
+            await expensesPage.clickMonthlyBtn();
+            await expensesPage.heading.hover();
+            await expensesPage.waitForCanvas();
             // await expensesPage.page.waitForTimeout(5000);
-           await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
+            await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
         });
     });
 
@@ -280,15 +280,18 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
     })
 
-    test('Verify Tagging Policies page matches screenshots', async ({taggingPoliciesPage, taggingPoliciesCreatePage}) => {
+    test('Verify Tagging Policies page matches screenshots', async ({
+                                                                        taggingPoliciesPage,
+                                                                        taggingPoliciesCreatePage
+                                                                    }) => {
         await test.step('Navigate to Tagging Policies page', async () => {
             await taggingPoliciesPage.navigateToURL(true);
         });
 
         await test.step('Verify Tagging Policies page content', async () => {
-           await taggingPoliciesPage.heading.hover();
-           // await taggingPoliciesPage.page.waitForTimeout(5000);
-           await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
+            await taggingPoliciesPage.heading.hover();
+            // await taggingPoliciesPage.page.waitForTimeout(5000);
+            await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
         });
 
         await test.step('Verify create tagging policy page', async () => {
@@ -300,7 +303,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
         });
     })
 
-    test.only('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
+    test('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
         await test.step('Navigate to Users page', async () => {
             await usersPage.navigateToURL(true);
         });
@@ -316,6 +319,78 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
             await usersInvitePage.heading.hover();
             await usersInvitePage.page.waitForTimeout(5000);
             await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
+        });
+    })
+
+    test('Verify Cloud Account page matches screenshots', async ({
+                                                                     cloudAccountsPage,
+                                                                     cloudAccountsConnectPage
+                                                                 }) => {
+        // test.slow();
+        await test.step('Navigate to Cloud Accounts page', async () => {
+            await cloudAccountsPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Cloud Accounts page content', async () => {
+            await cloudAccountsPage.heading.hover();
+            // await cloudAccountsPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsPage.main).toHaveScreenshot('CloudAccounts-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - AWS Root', async () => {
+            await cloudAccountsPage.clickAddBtn();
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.awsRootBtn);
+            await cloudAccountsConnectPage.toggleCheckbox(cloudAccountsConnectPage.automaticallyDetectExistingDataSourcesCheckbox);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-root-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - AWS Linked', async () => {
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.awsLinkedBtn);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-linked-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - Azure Tenant', async () => {
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.azureTenantBtn);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-tenant-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - Azure Subscription', async () => {
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.azureSubscriptionBtn);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-subscription-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - Google Cloud', async () => {
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.googleCloudBtn);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-screenshot.png');
+        });
+
+        await test.step('Verify Cloud Accounts connect page - Google Cloud Tenant', async () => {
+            await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.googleCloudTenantBtn);
+            await cloudAccountsConnectPage.heading.hover();
+            // await cloudAccountsConnectPage.page.waitForTimeout(5000);
+            await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-tenant-screenshot.png');
+        });
+    })
+
+    test('Verify Events page matches screenshots', async ({eventsPage}) => {
+        await test.step('Navigate to Events page', async () => {
+            await eventsPage.navigateToURL(true);
+        });
+
+        await test.step('Verify Events page content', async () => {
+            await eventsPage.heading.hover();
+            // await eventsPage.page.waitForTimeout(5000);
+            await expect(eventsPage.main).toHaveScreenshot('Events-screenshot.png');
         });
     })
 

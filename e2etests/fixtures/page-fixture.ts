@@ -20,12 +20,14 @@ import {AnomaliesCreatePage} from "../pages/anomalies-create-page";
 import {PoliciesCreatePage} from "../pages/policies-create-page";
 import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
+import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
 
 
 export const test = base.extend<{
     anomaliesPage: AnomaliesPage;
     anomaliesCreatePage: AnomaliesCreatePage;
     cloudAccountsPage: CloudAccountsPage;
+    cloudAccountsConnectPage: CloudAccountsConnectPage;
     eventsPage: EventsPage;
     expensesPage: ExpensesPage;
     header: Header;
@@ -56,6 +58,10 @@ export const test = base.extend<{
     cloudAccountsPage: async ({page}, use) => {
         const cloudAccountsPage = new CloudAccountsPage(page);
         await use(cloudAccountsPage);
+    },
+    cloudAccountsConnectPage: async ({page}, use) => {
+        const cloudAccountsConnectPage = new CloudAccountsConnectPage(page);
+        await use(cloudAccountsConnectPage);
     },
     eventsPage: async ({page}, use) => {
         const eventsPage = new EventsPage(page);

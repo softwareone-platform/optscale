@@ -27,4 +27,32 @@ export interface UsersResponse {
     }
   ]
 }
+export interface Expenses {
+  last_month: {
+    total: number;
+    date: number;
+  };
+  this_month: {
+    total: number;
+    date: number;
+  };
+  this_month_forecast: {
+    total: number;
+    date: number;
+  };
+}
 
+export interface Pool {
+  id: string;
+  purpose: string;
+  name: string;
+  limit: number;
+  this_month_expenses: number;
+  this_month_forecast: number;
+}
+
+export interface HomePageOrganizationExpensesResponse {
+  expenses: Expenses;
+  total: number;
+  pools: Pool[];
+}
