@@ -39,9 +39,9 @@ class Configurator(object):
             mongo_url = config["mongo"]["url"]
         else:
             mongo_url = "mongodb://%s:%s@%s:%s" % (
-            config['mongo']['user'], config['mongo']['pass'],
-            config['mongo']['host'], config['mongo']['port']
-        )
+                config['mongo']['user'], config['mongo']['pass'],
+                config['mongo']['host'], config['mongo']['port']
+            )
         self.mongo_client = MongoClient(mongo_url)
 
         rabbit_config = config['rabbit']

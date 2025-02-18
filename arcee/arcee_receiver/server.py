@@ -2703,7 +2703,7 @@ if __name__ == '__main__':
     # trick to lock migrations
     with EtcdLock(
             EtcdClient(host=etcd_host, port=etcd_port), 'arcee_migrations'):
-        
+
         config_params = {
             'mongo_username': name,
             'mongo_password': password,

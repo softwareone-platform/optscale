@@ -66,7 +66,6 @@ async def get_cluster_secret() -> str:
     return await config_client.cluster_secret()
 
 
-
 conn_url, db_name = get_db_params()
 components = urlparse(conn_url)
 user_data, host_data = components.netloc.split("@", 1)
