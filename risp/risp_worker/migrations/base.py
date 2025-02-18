@@ -26,8 +26,7 @@ class MigrationBase:
     def mongo_client(self):
         if self._mongo_client is None:
             mongo_params = self.config_client.mongo_params()
-            mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-            self._mongo_client = MongoClient(mongo_conn_string)
+            self._mongo_client = MongoClient(mongo_params[0])
         return self._mongo_client
 
     @property

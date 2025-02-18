@@ -36,8 +36,7 @@ def publish_tasks(config_client, count):
 
 def main(config_client):
     mongo_params = config_client.mongo_params()
-    mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-    mongo_cl = MongoClient(mongo_conn_string)
+    mongo_cl = MongoClient(mongo_params[0])
     live_demos_collection = mongo_cl.restapi.live_demos
     dt = utcnow() - timedelta(days=DEMO_LIFETIME_DAYS)
     count = DEMO_COUNT - live_demos_collection.count_documents({

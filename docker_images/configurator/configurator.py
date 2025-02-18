@@ -35,10 +35,14 @@ class Configurator(object):
             host=config['restdb']['host'],
             port=config['restdb']['port'])
         )
-        self.mongo_client = MongoClient("mongodb://%s:%s@%s:%s" % (
-            config['mongo']['user'], config['mongo']['pass'],
-            config['mongo']['host'], config['mongo']['port']
-        ))
+        if "url" in config["mongo"]:
+            mongo_url = config["mongo"]["url"]
+        else:
+            mongo_url = "mongodb://%s:%s@%s:%s" % (
+                config['mongo']['user'], config['mongo']['pass'],
+                config['mongo']['host'], config['mongo']['port']
+            )
+        self.mongo_client = MongoClient(mongo_url)
 
         rabbit_config = config['rabbit']
         credentials = pika.PlainCredentials(rabbit_config['user'],

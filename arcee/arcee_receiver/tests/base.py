@@ -14,7 +14,7 @@ SECRET = "secret"
 class AConfigClMock(AConfigCl):
 
     async def arcee_params(self):
-        return 'name', 'password', '127.0.0.1', 80, 'arcee'
+        return 'mongodb://name:password@127.0.0.1:80', 'arcee'
 
     async def cluster_secret(self):
         return SECRET

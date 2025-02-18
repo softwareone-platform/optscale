@@ -45,8 +45,7 @@ class BaseExporter:
     @cached_property
     def mongo_cl(self) -> MongoClient:
         mongo_params = self._config_cl.mongo_params()
-        mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-        return MongoClient(mongo_conn_string)
+        return MongoClient(mongo_params[0])
 
     @cached_property
     def clickhouse_cl(self) -> ClickHouseClient:

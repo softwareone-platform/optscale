@@ -1,6 +1,7 @@
 import datetime
 import asyncio
 from typing import Tuple
+from urllib.parse import urlparse
 from enum import Enum
 import os
 import uuid
@@ -56,7 +57,7 @@ class RunsetState(int, Enum):
 MAX_RUNNER_NUM = 15
 
 
-def get_db_params() -> Tuple[str, str, str, str, str]:
+def get_db_params() -> Tuple[str, str]:
     db_params = config_client.bulldozer_params()
     return asyncio.run(db_params)
 
@@ -65,8 +66,12 @@ async def get_cluster_secret() -> str:
     return await config_client.cluster_secret()
 
 
-name, password, host, port, db_name = get_db_params()
-uri = f"mongodb://{name}:{password}@{host}:{port}/admin"
+conn_url, db_name = get_db_params()
+components = urlparse(conn_url)
+user_data, host_data = components.netloc.split("@", 1)
+name, password = user_data.split(":", 1)
+host, port = host_data.split(":", 1)
+uri = f"{components.scheme}://{components.netloc}/admin?{components.query}"
 client = motor.motor_asyncio.AsyncIOMotorClient(uri)
 db = client[db_name]
 
@@ -930,8 +935,7 @@ if __name__ == '__main__':
         config_params = {
             'mongo_username': name,
             'mongo_password': password,
-            'mongo_url': "mongodb://{host}:{port}/admin".format(
-                host=host, port=port),
+            'mongo_url': uri,
             'mongo_database': db_name
         }
         manager = MigrationManager(config=Configuration(config=config_params))

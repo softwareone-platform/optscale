@@ -52,8 +52,7 @@ def get_etcd_config_client():
 def get_mongo_client():
     config_cl = get_etcd_config_client()
     mongo_params = config_cl.mongo_params()
-    mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-    mongo_client = MongoClient(mongo_conn_string)
+    mongo_client = MongoClient(mongo_params[0])
     return mongo_client
 
 
