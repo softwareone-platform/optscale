@@ -28,18 +28,28 @@ class AConfigCl(ClientV2):
         Returns
         :return:
         """
-        branch = await self.read_branch("/mongo")
-        return (branch['user'], branch['pass'], branch['host'],
-                branch['port'], 'arcee')
+        params = self.read_branch('/mongo')
+        if "url" in params:
+            return (params["url"], 'arcee')
+        url = "mongodb://%s:%s@%s:%s"  % (
+            params['user'], params['pass'],
+            params['host'], params['port']
+        )
+        return (url, 'arcee')
 
     async def bulldozer_params(self):
         """
         Returns
         :return:
         """
-        branch = await self.read_branch("/mongo")
-        return (branch['user'], branch['pass'], branch['host'],
-                branch['port'], 'bulldozer')
+        params = self.read_branch('/mongo')
+        if "url" in params:
+            return (params["url"], 'bulldozer')
+        url = "mongodb://%s:%s@%s:%s"  % (
+            params['user'], params['pass'],
+            params['host'], params['port']
+        )
+        return (url, 'bulldozer')
 
     async def cluster_secret(self):
         return await self.get_value("/secret/cluster")

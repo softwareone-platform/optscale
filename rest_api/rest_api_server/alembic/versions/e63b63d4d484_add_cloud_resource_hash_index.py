@@ -32,8 +32,7 @@ def _get_etcd_config_client():
 def _get_restapi_resources_mongo():
     config_cl = _get_etcd_config_client()
     mongo_params = config_cl.mongo_params()
-    mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
-    mongo_client = MongoClient(mongo_conn_string)
+    mongo_client = MongoClient(mongo_params[0])
     return mongo_client.restapi.resources
 
 
