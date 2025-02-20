@@ -545,7 +545,7 @@ export const getEditPowerScheduleUrl = (id: string) => EDIT_POWER_SCHEDULE.repla
 export const PRODUCTION = "https://my.optscale.com";
 export const DEMO = "https://demo.optscale.com";
 export const HYSTAX = "https://hystax.com";
-export const HYSTAX_PRIVACY_POLICY = "https://hystax.com/privacy-policy/";
+export const HYSTAX_PRIVACY_POLICY = "https://www.softwareone.com/privacy-statement";
 
 export const FINOPS = "https://finopsinpractice.org/";
 export const FINOPS_FEATURES = "https://finopsinpractice.org/finops-in-practice-features-for-optscale/";
@@ -555,16 +555,17 @@ export const JIRA_MARKETPLACE = "https://marketplace.atlassian.com/apps/1227110/
 
 // Hystax documentation urls
 export const DOCS_HYSTAX_OPTSCALE = "https://docs.platform.softwareone.com/extensions/finops-for-cloud/";
-export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_aws_root_cur.html#automatic-billing-data-import-in-aws`;
+export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#automatic-billing-data-import-in-aws`;
+export const DOCS_HYSTAX_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-linked#discover-resources`;
+export const DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_GCP_CLOUD = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}resources-constraints-and-pool-constraint-policies`;
+export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}recommendations/clean-up-scripts-based-on-recommendations`;
+
 export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_aws_migrate_cur1_cur2.html`;
 export const DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_kubernetes.html#connecting-a-kubernetes-cluster-to-optscale`;
-export const DOCS_HYSTAX_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_aws_linked.html#discover-resources`;
 export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_alibaba.html`;
-export const DOCS_HYSTAX_CONNECT_GCP_CLOUD = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_gcp.html`;
-export const DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_azure.html`;
-export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}resource_constraints.html`;
 export const DOCS_HYSTAX_CLUSTERS = `${DOCS_HYSTAX_OPTSCALE}clusters.html`;
-export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}optscales_recommendations.html#clean-up-scripts-based-on-optscale-s-recommendations`;
 export const DOCS_HYSTAX_SLACK_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#slack-app`;
 export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#google-calendar`;
 
@@ -585,9 +586,9 @@ export const NEBIUS_GET_FOLDER_REPORT = "https://nebius.com/il/docs/billing/oper
 export const DATABRICKS_CREATE_SERVICE_PRINCIPAL = "https://docs.databricks.com/en/dev-tools/authentication-oauth.html";
 
 // Emails
-export const EMAIL_SUPPORT = "support@hystax.com";
-export const EMAIL_SALES = "sales@hystax.com";
-export const EMAIL_INFO = "info@hystax.com";
+export const EMAIL_SUPPORT = "marketplace-support@softwareone.com";
+export const EMAIL_SALES = "marketplace-support@softwareone.com";
+export const EMAIL_INFO = "marketplace-support@softwareone.com";
 
 export const isProduction = () => window.location.origin === PRODUCTION;
 export const isDemo = () => window.location.origin === DEMO;
