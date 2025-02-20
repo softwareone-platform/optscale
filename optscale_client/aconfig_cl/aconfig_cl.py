@@ -28,7 +28,7 @@ class AConfigCl(ClientV2):
         Returns
         :return:
         """
-        params = self.read_branch('/mongo')
+        params = await self.read_branch('/mongo')
         if "url" in params:
             return (params["url"], 'arcee')
         url = "mongodb://%s:%s@%s:%s"  % (
