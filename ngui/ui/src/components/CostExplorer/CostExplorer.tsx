@@ -1,13 +1,15 @@
+import React from "react";
 import BusinessIcon from "@mui/icons-material/Business";
+import ChevronRight from "@mui/icons-material/ChevronRight";
 import CloudIcon from "@mui/icons-material/Cloud";
 import PeopleIcon from "@mui/icons-material/People";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BarChartLoader from "components/BarChartLoader";
-import ButtonSwitch from "components/ButtonSwitch";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import ExpensesBreakdownBarChart from "components/ExpensesBreakdown/BarChart";
 import ExpensesBreakdownByPeriodWidget from "components/ExpensesBreakdown/BreakdownByPeriodWidget";
@@ -17,9 +19,11 @@ import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
 import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
-import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
+import { SPACING_2, SPACING_4 } from "utils/layouts";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+import Button from "../Button";
+import useStyles from "./CostExplorer.styles";
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -42,6 +46,7 @@ const CostExplorer = ({
   const navigate = useNavigate();
 
   const breakdownData = useBreakdownData(breakdown);
+  const { classes } = useStyles();
 
   const actionBarData = {
     title: {
@@ -144,7 +149,7 @@ const CostExplorer = ({
       <ActionBar data={actionBarData} />
       <PageContentWrapper>
         <Grid container direction="row" justifyContent="space-between" spacing={SPACING_2}>
-          <Grid item>
+          <Grid item xs={12}>
             <ExpensesBreakdownSummaryCards
               total={total}
               previousTotal={previousTotal}
@@ -156,36 +161,51 @@ const CostExplorer = ({
               // }}
             />
           </Grid>
-          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
-            <Box>
-              <ExpensesBreakdownByPeriodWidget
-                customContent={
-                  <ResponsiveStack>
-                    <LabelColon messageId={"dateRange"} />
-                    <RangePickerFormContainer
-                      onApply={onApply}
-                      initialStartDateValue={startDateTimestamp}
-                      initialEndDateValue={endDateTimestamp}
-                      pdfId={PDF_ELEMENTS.costExplorer.dates}
-                      rangeType="expenses"
-                      hideLabel
-                      definedRanges={getBasicRangesSet()}
-                    />
-                  </ResponsiveStack>
-                }
-                render={(periodType) => (
-                  <Grid container spacing={SPACING_2}>
-                    {renderBarChart(periodType)}
-                  </Grid>
-                )}
-              />
-            </Box>
-            <Grid item direction={"row"} alignItems={"baseline"} paddingTop={MPT_SPACING_3} xs={12}>
+          <Grid container item spacing={SPACING_4}>
+            <Grid item lg={9}>
               <Box className={"MTPBoxShadow"}>
-                <ResponsiveStack>
-                  <LabelColon messageId={"seeExpensesBreakdownBy"} />
-                  <ButtonSwitch buttons={breakdownByButtons} />
-                </ResponsiveStack>
+                <ExpensesBreakdownByPeriodWidget
+                  customContent={
+                    <ResponsiveStack>
+                      <LabelColon messageId={"dateRange"} />
+                      <RangePickerFormContainer
+                        onApply={onApply}
+                        initialStartDateValue={startDateTimestamp}
+                        initialEndDateValue={endDateTimestamp}
+                        pdfId={PDF_ELEMENTS.costExplorer.dates}
+                        rangeType="expenses"
+                        hideLabel
+                        definedRanges={getBasicRangesSet()}
+                      />
+                    </ResponsiveStack>
+                  }
+                  render={(periodType) => (
+                    <Grid container spacing={SPACING_2}>
+                      {renderBarChart(periodType)}
+                    </Grid>
+                  )}
+                />
+              </Box>
+            </Grid>
+
+            <Grid item lg={3}>
+              <Box className={"MTPBoxShadow"}>
+                <Typography variant="subtitle1" lineHeight={"normal"} component="div">
+                  <FormattedMessage id={"seeExpensesBreakdownBy"} />:
+                </Typography>
+                <div className={classes.costExplorerSubMenu}>
+                  {breakdownByButtons.map(({ messageId, link, icon }) => (
+                    <Button
+                      key={messageId}
+                      messageId={messageId}
+                      startIcon={icon}
+                      endIcon={<ChevronRight />}
+                      link={link}
+                      variant="text"
+                      color="primary"
+                    />
+                  ))}
+                </div>
               </Box>
             </Grid>
           </Grid>
