@@ -5,7 +5,6 @@ import CloudIcon from "@mui/icons-material/Cloud";
 import PeopleIcon from "@mui/icons-material/People";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -17,11 +16,12 @@ import ExpensesBreakdownSummaryCards from "components/ExpensesBreakdown/SummaryC
 import PageContentWrapper from "components/PageContentWrapper";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
-import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER } from "urls";
+import { EXPENSES_BY_CLOUD, EXPENSES_BY_OWNER, EXPENSES_BY_POOL, getResourcesExpensesUrl } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
 import { SPACING_2, SPACING_4 } from "utils/layouts";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+import { EVariantOptions } from "../../shared/models/EVariantOptions";
 import Button from "../Button";
 import useStyles from "./CostExplorer.styles";
 
@@ -190,9 +190,7 @@ const CostExplorer = ({
 
             <Grid item lg={3}>
               <Box className={"MTPBoxShadow"}>
-                <Typography variant="subtitle1" lineHeight={"normal"} component="div">
-                  <FormattedMessage id={"seeExpensesBreakdownBy"} />:
-                </Typography>
+                <LabelColon messageId={"seeExpensesBreakdownBy"} variant={EVariantOptions.SUBTITLE1} />
                 <div className={classes.costExplorerSubMenu}>
                   {breakdownByButtons.map(({ messageId, link, icon }) => (
                     <Button
