@@ -1,6 +1,7 @@
-import { Fragment, createRef } from "react";
+import React, { Fragment, createRef } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -244,9 +245,12 @@ const ActionBar = ({ data, isPage = true }) => {
       <Toolbar disableGutters ref={wrapperRef}>
         <Box width={"100%"} display={"flex"} alignItems={"center"}>
           {showBreadcrumbs ? (
-            <Box>
-              <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs>
-            </Box>
+            <>
+              <ChevronLeft color={"primary"} sx={{ fontSize: "18px" }} />
+              <Box>
+                <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs>
+              </Box>
+            </>
           ) : null}
           <Box display="flex" width="100%">
             {title ? (
