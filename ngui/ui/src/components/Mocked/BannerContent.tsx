@@ -26,7 +26,8 @@ const CONNECT_DATA_SOURCE = "connectDataSource";
 // MPT_TODO: disabled to meet BDR requirements
 // const ADD_ENVIRONMENT = "addEnvironment";
 const SET_POOL = "setPoolLimit";
-const CLOUD_CONNECTION_BACKDROP_MESSAGE = "cloudConnectionBackdropMessage";
+// MPT_TODO: disabled to meet BDR requirements
+// const CLOUD_CONNECTION_BACKDROP_MESSAGE = "cloudConnectionBackdropMessage";
 
 const redirectToCreateCloudAccount = (navigate) => navigate(CLOUD_ACCOUNT_CONNECT);
 const redirectToCreateK8sAccount = (navigate) => navigate(CLOUD_ACCOUNT_CONNECT_K8S);
@@ -94,7 +95,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "dataSourcesBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -113,7 +115,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "awsDataSourcesBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -162,7 +165,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["recommendationsBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample"],
@@ -228,7 +232,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "k8sBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateK8sAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -318,7 +323,7 @@ const BannerContent = ({ messageType }) => {
           data-test-id={messageDataTestIds ? messageDataTestIds[index] : null}
           key={messageId}
           variant={isSubMessage ? "caption" : null}
-          className={isSubMessage ? "" : classes.bold}
+          className={isSubMessage ? "" : classes.normal}
           paragraph={isLastTypography && !isSubMessage}
           align="center"
           gutterBottom
