@@ -144,6 +144,7 @@ const ExpensesDailyBreakdownByMockup = ({ startDateTimestamp: startDateSecondsTi
       isLoading={false}
       breakdown={getBreakdown(startDateSecondsTimestamp)}
       breakdownByValue={breakdownByValue}
+      counts={getBreakdown(startDateSecondsTimestamp)}
       onBreakdownByChange={() => console.log("Click")}
     />
   );

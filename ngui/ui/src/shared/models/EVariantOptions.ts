@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-shadow
 export enum EVariantOptions {
   H1 = "h1",
   H2 = "h2",
