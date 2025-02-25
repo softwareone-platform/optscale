@@ -147,7 +147,9 @@ class FlavorController(BaseController):
 
     def get_azure_locations(self):
         location_map = self.azure.location_map
-        return {v: k for k, v in location_map.items()}
+        result = {v: k for k, v in location_map.items()}
+        result.update(self.azure.alias_location_map())
+        return result
 
     def get_azure_flavors(self):
         return self.azure.get_flavors_info()
@@ -220,6 +222,8 @@ class FlavorController(BaseController):
                         continue
             flavor = flavors_info.get(p['armSkuName'])
             if not flavor:
+                continue
+            if mode != "current" and "Promo" in flavor:
                 continue
             product_name = p['productName']
             # according to azure pricing api we have 'windows'
@@ -375,10 +379,15 @@ class FlavorController(BaseController):
         additional_params = additional_params or {}
         vcpu = additional_params.get('cpu', 0)
         source_flavor_id = family_specs['source_flavor_id']
+        source_flavor_family = source_flavor_id.split("-")[0]
+        ram = None
+        if 'custom' in source_flavor_id:
+            ram = int(source_flavor_id.split("-")[-1]) / 1024
         with CachedThreadPoolExecutor(self.mongo_client) as executor:
             try:
                 instance_types = executor.submit(
-                    self.gcp.get_instance_types_priced, region).result()
+                    self.gcp.get_instance_types_priced, region,
+                    source_flavor_id, mode).result()
             except RegionNotFoundException:
                 raise WrongArgumentsException(Err.OI0012, [region])
             except ValueError as ex:
@@ -386,7 +395,6 @@ class FlavorController(BaseController):
             except ForbiddenException:
                 raise OptForbidden(Err.OI0020, [])
 
-        source_flavor_family = source_flavor_id.split("-")[0]
         flavors = []
         relevant_flavor = None
         for flavor_id, flavor_details in instance_types.items():
@@ -411,8 +419,9 @@ class FlavorController(BaseController):
                 if flavor_cpu < vcpu:
                     continue
                 if flavor_cpu == vcpu:
-                    flavors.append(flavor_result)
-                    continue
+                    if not ram or flavor_ram >= ram:
+                        flavors.append(flavor_result)
+                        continue
                 if not relevant_flavor:
                     relevant_flavor = flavor_result
                     continue

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-duplicates */
 import {
   addDays as addDaysFNS,
   addMonths,

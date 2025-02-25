@@ -1,29 +1,35 @@
-import Typography from "@mui/material/Typography";
+import { forwardRef, ReactNode } from "react";
+import Typography, { TypographyProps } from "@mui/material/Typography";
 import useStyles from "./DashedTypography.styles";
 
-const DashedTypography = ({
-  className,
-  children,
-  disablePointerOnHover = false,
-  hasRightMargin = false,
-  dataTestId,
-  chipMode = false,
-  ...rest
-}) => {
-  const { classes, cx } = useStyles();
+type DashedTypographyProps = {
+  className?: string;
+  children: ReactNode;
+  disablePointerOnHover?: boolean;
+  hasRightMargin?: boolean;
+  dataTestId?: string;
+  chipMode?: boolean;
+} & TypographyProps;
 
-  const typographyClasses = cx(
-    chipMode ? classes.chip : classes.dashed,
-    disablePointerOnHover ? "" : classes.cursorPointer,
-    hasRightMargin ? classes.right : "",
-    className
-  );
+const DashedTypography = forwardRef<HTMLElement, DashedTypographyProps>(
+  (
+    { className, children, disablePointerOnHover = false, hasRightMargin = false, dataTestId, chipMode = false, ...rest },
+    ref
+  ) => {
+    const { classes, cx } = useStyles();
 
-  return (
-    <Typography className={typographyClasses} data-test-id={dataTestId} {...rest}>
-      {children}
-    </Typography>
-  );
-};
+    const typographyClasses = cx(
+      chipMode ? classes.chip : classes.dashed,
+      disablePointerOnHover ? "" : classes.cursorPointer,
+      hasRightMargin ? classes.right : "",
+      className
+    );
+    return (
+      <Typography component="span" ref={ref} className={typographyClasses} data-test-id={dataTestId} {...rest}>
+        {children}
+      </Typography>
+    );
+  }
+);
 
 export default DashedTypography;

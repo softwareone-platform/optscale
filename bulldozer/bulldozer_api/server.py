@@ -1,4 +1,3 @@
-import datetime
 import asyncio
 from typing import Tuple
 from urllib.parse import urlparse

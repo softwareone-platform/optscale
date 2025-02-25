@@ -1,7 +1,11 @@
 import { forwardRef } from "react";
-import MuiCheckbox from "@mui/material/Checkbox";
+import MuiCheckbox, { CheckboxProps as MuiCheckboxProps } from "@mui/material/Checkbox";
 
-const Checkbox = forwardRef(({ cssColor, ...rest }, ref) => {
+type CheckboxProps = {
+  cssColor?: string;
+} & MuiCheckboxProps;
+
+const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(({ cssColor, ...rest }, ref) => {
   const sx = cssColor
     ? {
         color: cssColor,

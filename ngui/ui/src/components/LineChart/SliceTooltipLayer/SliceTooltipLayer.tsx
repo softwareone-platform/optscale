@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useInheritedColor, useOrdinalColorScale } from "@nivo/colors";
+import { useInheritedColor } from "@nivo/colors";
 import { useTheme, useValueFormatter } from "@nivo/core";
 import { ChartsTooltipContext } from "contexts/ChartsTooltipContext";
 import { usePoints, useSlices } from "./hooks";
@@ -31,9 +31,7 @@ export const SliceTooltipLayer = ({
   sliceTooltip,
   xFormat,
   yFormat,
-  data,
-  colors,
-  series: rawSeries,
+  series,
   pointColor,
   pointBorderColor,
   enableSlices,
@@ -42,26 +40,10 @@ export const SliceTooltipLayer = ({
   const { outerHeight, outerWidth, linesAreaRectangle } = layerProps;
   const theme = useTheme();
 
-  const getColor = useOrdinalColorScale(colors, "id");
   const getPointColor = useInheritedColor(pointColor, theme);
   const getPointBorderColor = useInheritedColor(pointBorderColor, theme);
   const formatX = useValueFormatter(xFormat);
   const formatY = useValueFormatter(yFormat);
-
-  const series = useMemo(() => {
-    const dataWithColor = data.map((line) => ({
-      id: line.id,
-      label: line.id,
-      color: getColor(line)
-    }));
-
-    return dataWithColor
-      .map((datum) => ({
-        ...rawSeries.find((serie) => serie.id === datum.id),
-        color: datum.color
-      }))
-      .filter((item) => Boolean(item.id));
-  }, [data, rawSeries, getColor]);
 
   const points = usePoints({
     series,

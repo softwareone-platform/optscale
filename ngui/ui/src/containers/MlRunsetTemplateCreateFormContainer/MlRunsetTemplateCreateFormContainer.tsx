@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import MlRunsetTemplateForm from "components/forms/MlRunsetTemplateForm";
 import { FIELD_NAMES } from "components/forms/MlRunsetTemplateForm/constants";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import MlRunsetTemplatesService from "services/MlRunsetTemplatesService";
 import MlTasksService from "services/MlTasksService";
 import { ML_RUNSET_TEMPLATES } from "urls";

@@ -22,6 +22,7 @@ const CREATE_USER = gql`
       token
       user_id
       user_email
+      verified
     }
   }
 `;

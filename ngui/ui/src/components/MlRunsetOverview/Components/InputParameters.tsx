@@ -8,12 +8,12 @@ import FormattedMoney from "components/FormattedMoney";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import QuestionMark from "components/QuestionMark";
 import SummaryList from "components/SummaryList";
-import { useIsOptScaleModeEnabled } from "hooks/useIsOptScaleModeEnabled";
+import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { ML_RUNSET_ABORT_CONDITION_TYPES, OPTSCALE_MODE } from "utils/constants";
+import { ML_RUNSET_ABORT_CONDITION_TYPES, OPTSCALE_CAPABILITY } from "utils/constants";
 
 const InputParameters = ({ runset, isLoading }) => {
-  const isFinOpsEnabled = useIsOptScaleModeEnabled(OPTSCALE_MODE.FINOPS);
+  const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const { isDemo } = useOrganizationInfo();
 

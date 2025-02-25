@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import CloudLabel from "components/CloudLabel";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { SPACING_1 } from "utils/layouts";
 
 const SelectedCloudAccounts = ({ cloudAccountIds }) => {

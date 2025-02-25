@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { getPool } from "api";
 import { GET_POOL } from "api/restapi/actionTypes";
 import CloudAccountsOverview from "components/CloudAccountsOverview";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";

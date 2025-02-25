@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import UserEmailNotificationSettings from "components/UserEmailNotificationSettings";
 import { GET_EMPLOYEE_EMAILS } from "graphql/api/restapi/queries/restapi.queries";
-import { useCurrentEmployee } from "hooks/coreData";
+import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 
 const UserEmailNotificationSettingsContainer = () => {
   const currentEmployee = useCurrentEmployee();

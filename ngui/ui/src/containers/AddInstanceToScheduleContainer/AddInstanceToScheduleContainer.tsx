@@ -18,6 +18,11 @@ import {
 } from "utils/constants";
 import { getXDaysAgoRange } from "utils/datetime";
 
+type AddInstanceToScheduleContainerProps = {
+  powerScheduleId: string;
+  handleClose: () => void;
+};
+
 const INSTANCES_COUNT_LIMIT = 5000;
 
 const useGetInstances = (range, selectedDataSourceIds, appliedFilters) => {
@@ -46,7 +51,7 @@ const useGetInstances = (range, selectedDataSourceIds, appliedFilters) => {
   };
 };
 
-const useGetAvailableFilter = (range) => {
+const useGetAvailableFilter = (range: { start: number; end: number }) => {
   const { start, end } = range;
 
   const { useGet: useGetFilters } = AvailableFiltersService();
@@ -65,7 +70,7 @@ const useGetAvailableFilter = (range) => {
   };
 };
 
-const AddInstanceToScheduleContainer = ({ powerScheduleId, handleClose }) => {
+const AddInstanceToScheduleContainer = ({ powerScheduleId, handleClose }: AddInstanceToScheduleContainerProps) => {
   const { useAttachInstancesToSchedule } = PowerScheduleService();
 
   const { onAttach, isLoading: isAttachLoading } = useAttachInstancesToSchedule();

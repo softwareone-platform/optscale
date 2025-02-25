@@ -37,6 +37,7 @@ class TestBase(tornado.testing.AsyncHTTPTestCase):
     def setUp(self):
         super().setUp()
         secret = gen_id()
+        patch('optscale_client.config_client.client.Client.auth_url').start()
         patch('optscale_client.config_client.client.Client.cluster_secret',
               return_value=secret).start()
         http_provider = FetchMethodHttpProvider(self.fetch, rethrow=False)

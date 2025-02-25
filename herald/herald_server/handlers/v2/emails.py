@@ -1,5 +1,5 @@
 import os.path
-from herald.modules.email_generator.generator import get_templates_path
+from herald.modules.email_generator.generator import get_template_path
 from herald.herald_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler
 )
@@ -33,8 +33,8 @@ class EmailAsyncHandler(BaseAsyncCollectionHandler,
             raise_not_provided_error('template_type')
         if not subject:
             raise_not_provided_error('subject')
-        template_path = os.path.join(get_templates_path(),
-                                     '%s.html' % template_type)
+        template_path = os.path.join(
+            get_template_path('%s.html' % template_type))
         if not os.path.exists(template_path):
             raise_invalid_argument_exception('template_type')
         if template_params is not None and not isinstance(

@@ -38,6 +38,7 @@ class AuthClient extends BaseClient {
       token: result.token,
       user_email: result.email,
       user_id: result.id,
+      verified: result.verified,
     };
   }
 

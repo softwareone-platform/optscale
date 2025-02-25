@@ -6,7 +6,7 @@ import { mapAvailableFilterKeys } from "services/AvailableFiltersService";
 import OrganizationConstraintsService from "services/OrganizationConstraintsService";
 import {
   ACTIVE_FILTER,
-  AVAILABLE_SAVINGS_FILTER,
+  RECOMMENDATIONS_FILTER,
   CONSTRAINT_VIOLATED_FILTER,
   EMPTY_UUID,
   EXPENSE_ANOMALY,
@@ -19,7 +19,7 @@ import {
 import { millisecondsToSeconds } from "utils/datetime";
 
 // This is temporary. The following filters must be send as plain values without putting them into an array. Will be changed.
-const PLAIN_FILTERS = [ACTIVE_FILTER, CONSTRAINT_VIOLATED_FILTER, AVAILABLE_SAVINGS_FILTER];
+const PLAIN_FILTERS = [ACTIVE_FILTER, CONSTRAINT_VIOLATED_FILTER, RECOMMENDATIONS_FILTER];
 
 const transformFilterValuesToObject = (filters) =>
   Object.fromEntries(

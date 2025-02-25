@@ -9,7 +9,7 @@ import ActionBar from "components/ActionBar";
 import AssignmentRuleForm from "components/forms/AssignmentRuleForm";
 import { FIELD_NAMES } from "components/forms/AssignmentRuleForm/utils";
 import PageContentWrapper from "components/PageContentWrapper";
-import { useAllDataSources } from "hooks/coreData";
+import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useAssignmentRulesAvailableFilters } from "hooks/useAssignmentRulesAvailableFilters";

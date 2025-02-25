@@ -1,6 +1,8 @@
 import json
 import uuid
-
+from unittest.mock import patch
+from requests.exceptions import HTTPError
+from requests.models import Response
 from katara.katara_service.tests.unittests.test_api_base import TestBase
 
 
@@ -90,8 +92,11 @@ class TestRecipientApi(TestBase):
         self.assertEqual(recipient['scope_id'], payload['scope_id'])
 
     def test_recipient_create_user_id(self):
+        user_id = str(uuid.uuid4())
+        patch('optscale_client.auth_client.client_v2.Client.user_get',
+              return_value=(200, {'user_id': user_id})).start()
         payload = {
-            "user_id": str(uuid.uuid4()),
+            "user_id": user_id,
             "scope_id": str(uuid.uuid4()),
         }
         code, recipient = self.client.recipient_create(**payload)
@@ -99,6 +104,23 @@ class TestRecipientApi(TestBase):
         self.assertNotEqual(recipient['id'], None)
         self.assertEqual(recipient['user_id'], payload['user_id'])
         self.assertEqual(recipient['scope_id'], payload['scope_id'])
+
+    def test_recipient_create_user_id_not_exists(self):
+        def raise_404(*_args, **_kwargs):
+            err = HTTPError('User not found')
+            err.response = Response()
+            err.response.status_code = 404
+            raise err
+
+        patch('optscale_client.auth_client.client_v2.Client.user_get',
+              side_effect=raise_404).start()
+        payload = {
+            "user_id": str(uuid.uuid4()),
+            "scope_id": str(uuid.uuid4()),
+        }
+        code, response = self.client.recipient_create(**payload)
+        self.assertEqual(code, 400)
+        self.assertEqual(response['error']['error_code'], 'OKA0004')
 
     def test_recipient_create_unassigned(self):
         payload = {

@@ -10,7 +10,7 @@ import { useIsAllowed } from "hooks/useAllowedActions";
 import { getSumByNestedObjectKey, isEmpty as isEmptyArray } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, SUMMARY_CARD_TYPES, AWS_CNR } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { getPercentageChangeModule } from "utils/math";
+import { getPercentageChangeModule, round } from "utils/math";
 
 type SummaryProps = {
   totalExpenses: number;
@@ -117,9 +117,9 @@ const AwsLinkedAccountsWarning = () => {
 };
 
 const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = false }) => {
-  const totalExpenses = getSumByNestedObjectKey(cloudAccounts, "details", "cost");
-  const totalForecast = getSumByNestedObjectKey(cloudAccounts, "details", "forecast");
-  const lastMonthCost = getSumByNestedObjectKey(cloudAccounts, "details", "last_month_cost");
+  const totalExpenses = round(getSumByNestedObjectKey(cloudAccounts, "details", "cost"), 2);
+  const totalForecast = round(getSumByNestedObjectKey(cloudAccounts, "details", "forecast"), 2);
+  const lastMonthCost = round(getSumByNestedObjectKey(cloudAccounts, "details", "last_month_cost"), 2);
 
   const awsDataSources = cloudAccounts.filter(({ type }) => type === AWS_CNR);
   const onlyAwsLinkedAccountsConnected = !isEmptyArray(awsDataSources) && awsDataSources.every(({ config }) => config.linked);
