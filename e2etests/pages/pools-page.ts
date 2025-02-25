@@ -2,9 +2,8 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class PoolsPage extends BasePage {
-    readonly page: Page;
     readonly main: Locator;
-    readonly poolsHeading: Locator;
+    readonly heading: Locator;
     readonly configureAssignmentRulesBtn: Locator;
     readonly organizationLimitValue: Locator;
     readonly expensesThisMonthValue: Locator;
@@ -14,9 +13,8 @@ export class PoolsPage extends BasePage {
 
     constructor(page: Page) {
         super(page, '/pools');
-        this.page = page;
         this.main = this.page.locator('main');
-        this.poolsHeading = this.page.getByTestId('lbl_pool_name');
+        this.heading = this.page.getByTestId('lbl_pool_name');
         this.configureAssignmentRulesBtn = this.page.getByTestId('btn_configure_assignment_rules');
         this.organizationLimitValue = this.page.locator('//div[.="Organization limit"]/./following-sibling::div');
         this.expensesThisMonthValue = this.page.locator('//div[.="Expenses this month"]/./following-sibling::div');

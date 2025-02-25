@@ -2,9 +2,7 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class RecommendationsPage extends BasePage {
-    readonly page: Page;
-    readonly main: Locator;
-    readonly recommendationsHeading: Locator;
+    readonly heading: Locator;
     readonly archiveBtn: Locator;
     readonly forceCheckBtn: Locator;
     readonly dataSourcesSelect: Locator;
@@ -24,24 +22,22 @@ export class RecommendationsPage extends BasePage {
 
     constructor(page: Page) {
         super(page, '/recommendations');
-        this.page = page;
-        this.main = this.page.locator('main');
-        this.recommendationsHeading = this.page.getByTestId('lbl_recommendations');
-        this.archiveBtn = this.page.getByTestId('btn_archive');
-        this.forceCheckBtn = this.page.getByTestId('btn_force_check');
-        this.dataSourcesSelect = this.page.locator('//div[@id="select-data-source"]');
-        this.possibleMonthlySavingsDiv = this.page.getByTestId('card_saving');
-        this.possibleMonthlySavingsValue = this.page.getByTestId('p_saving_value');
-        this.lastCheckTimeValue = this.page.getByTestId('p_last_time');
-        this.nextCheckTimeValue = this.page.locator('//span[.="Next check time"]/../following-sibling::div');
-        this.s3DuplicatesBtn = this.page.getByTestId('btn_s3_duplicates');
-        this.s3DuplicatesValue = this.page.getByTestId('p_s3_duplicates_value');
-        this.categoriesSelect = this.page.locator('//label[.="Categories"]/../div');
-        this.applicableServices = this.page.locator('//label[.="Applicable services"]/../div')
-        this.cardsBtn = this.page.getByRole('button', {name: 'Cards'});
-        this.tableBtn = this.page.getByRole('button', {name: 'Table'});
-        this.searchInput = this.page.getByPlaceholder('Search');
-        this.firstCard = this.page.locator('//div[contains(@class, "tss-x60kca-card")]').first();
+        this.heading = this.main.getByTestId('lbl_recommendations');
+        this.archiveBtn = this.main.getByTestId('btn_archive');
+        this.forceCheckBtn = this.main.getByTestId('btn_force_check');
+        this.dataSourcesSelect = this.main.locator('//div[@id="select-data-source"]');
+        this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
+        this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
+        this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
+        this.nextCheckTimeValue = this.main.locator('//span[.="Next check time"]/../following-sibling::div');
+        this.s3DuplicatesBtn = this.main.getByTestId('btn_s3_duplicates');
+        this.s3DuplicatesValue = this.main.getByTestId('p_s3_duplicates_value');
+        this.categoriesSelect = this.main.locator('//label[.="Categories"]/../div');
+        this.applicableServices = this.main.locator('//label[.="Applicable services"]/../div')
+        this.cardsBtn = this.main.getByRole('button', {name: 'Cards'});
+        this.tableBtn = this.main.getByRole('button', {name: 'Table'});
+        this.searchInput = this.main.getByPlaceholder('Search');
+        this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
         this.table = this.main.locator('table');
     }
 

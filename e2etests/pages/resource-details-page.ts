@@ -2,8 +2,6 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class ResourceDetailsPage extends BasePage {
-    readonly page: Page;
-    readonly main: Locator;
     readonly heading: Locator;
     readonly totalExpenses: Locator;
     readonly expensesThisMonth: Locator;
@@ -23,8 +21,6 @@ export class ResourceDetailsPage extends BasePage {
 
     constructor(page: Page) {
         super(page, '');
-        this.page = page;
-        this.main = this.page.locator('main');
         this.heading = this.page.getByTestId('lbl_resource_name');
         this.totalExpenses = this.page.getByTestId('card_total_exp');
         this.expensesThisMonth = this.page.getByTestId('card_exp_this_month');

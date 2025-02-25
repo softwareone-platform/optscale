@@ -3,7 +3,6 @@ import {expect, Locator, Page} from "@playwright/test";
 
 
 export class MainMenu extends BasePage {
-    readonly page: Page;
     readonly menu: Locator;
     readonly homeBtn: Locator;
     readonly recommendationsBtn: Locator;
@@ -30,7 +29,6 @@ export class MainMenu extends BasePage {
 
     constructor(page: Page) {
         super(page, '/');
-        this.page = page;
         this.menu = this.page.locator('nav[class*="MuiList-root"]');
         this.homeBtn = this.menu.getByTestId('btn_home');
         this.recommendationsBtn = this.menu.getByTestId('btn_recommend');
@@ -55,7 +53,6 @@ export class MainMenu extends BasePage {
         this.eventsBtn = this.menu.getByTestId('btn_events');
         this.settingsBtn = this.menu.getByTestId('btn_settings');
     }
-
     async expandMenu() {
         if (await this.finOpsBtn.isVisible() && await this.finOpsBtn.getAttribute('aria-expanded') === 'false') {
             await this.finOpsBtn.click();
@@ -79,7 +76,7 @@ export class MainMenu extends BasePage {
     }
 
     async clickUserManagement() {
-        if (await this.systemBtn.getAttribute('aria-expanded') === 'false') {
+        if(await this.systemBtn.getAttribute('aria-expanded') === 'false') {
             await this.systemBtn.click();
         }
         await this.userManagementBtn.click();

@@ -2,13 +2,10 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class PerspectivesPage extends BasePage {
-
-    readonly page: Page;
-    readonly perspectivesHeading: Locator;
+    readonly heading: Locator;
 
     constructor(page: Page) {
         super(page, '/resources/perspectives');
-        this.page = page;
-        this.perspectivesHeading = this.page.getByTestId('lbl_perspectives');
+        this.heading = this.page.getByTestId('lbl_perspectives');
     }
 }

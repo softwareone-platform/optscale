@@ -3,10 +3,12 @@ import {Locator, Page} from "@playwright/test";
 export abstract class BasePage {
     readonly page: Page
     readonly url: string
+    readonly main: Locator
 
     protected constructor(page: Page, url: string) {
         this.page = page
         this.url = url
+        this.main = this.page.locator('main');
     }
 
     async navigateToURL(waitForPageLoad = false): Promise<void> {
@@ -87,7 +89,6 @@ export abstract class BasePage {
      * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
      */
     async evaluateActiveButton(button: Locator) {
-        const hasActiveButtonClass = await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
-        return hasActiveButtonClass;
+        return await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
     }
 }

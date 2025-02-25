@@ -2,9 +2,7 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
 export class ResourcesPage extends BasePage {
-    readonly page: Page;
-    readonly main: Locator;
-    readonly resourcesHeading: Locator;
+    readonly heading: Locator;
     readonly perspectivesBtn: Locator;
     readonly savePerspectiveBtn: Locator;
     readonly configureClusterTypesBtn: Locator;
@@ -34,34 +32,32 @@ export class ResourcesPage extends BasePage {
 
     constructor(page: Page) {
         super(page, '/resources');
-        this.page = page;
-        this.main = this.page.locator('main');
-        this.resourcesHeading = this.page.getByTestId('lbl_resources');
-        this.perspectivesBtn = this.page.getByRole('button', {name: 'Perspectives'});
-        this.savePerspectiveBtn = this.page.getByRole('button', {name: 'Save perspective'});
-        this.configureClusterTypesBtn = this.page.getByRole('button', {name: 'Configure cluster types'});
-        this.totalExpensesValue = this.page.getByTestId('p_expenses_value');
-        this.resourceCountValue = this.page.getByTestId('p_count_value');
-        this.expensesBtn = this.page.getByTestId('breakdown_ls_item_expenses');
-        this.resourceCountBtn = this.page.getByTestId('breakdown_ls_item_resource_count');
-        this.tagsBtn = this.page.getByTestId('breakdown_ls_item_tags');
-        this.selectedDateText = this.page.getByTestId('text_selected_dates');
-        this.selectDateBtn = this.page.getByTestId('btn_select_date');
-        this.previousMonthSelect = this.page.getByTestId('selector_previous_month');
-        this.previousYearSelect = this.page.getByTestId('selector_previous_year');
-        this.applyDateButton = this.page.getByTestId('btn_apply_date');
-        this.filtersSelect = this.page.getByTestId('selector_suggestedFilters');
-        this.categorizeBySelect = this.page.getByTestId('resource-categorize-by-selector-select');
-        this.expensesSelect = this.page.getByTestId('expenses-split-selector-select');
-        this.poolBtn = this.page.getByTestId('ls_item_pool');
-        this.ownerBtn = this.page.getByTestId('ls_item_owner');
-        this.tagSelect = this.page.getByTestId('selector_tag');
-        this.showWeekendsCheckbox = this.page.getByLabel('Show weekends');
-        this.searchInput = this.page.getByPlaceholder('Search');
-        this.expensesBreakdownChart = this.page.getByTestId('expenses_breakdown_chart');
-        this.resourceCountBreakdownChart = this.page.getByTestId('resource_count_breakdown_chart');
-        this.tagsBreakdownChart = this.page.getByTestId('tags_breakdown_chart');
-        this.sunflowerEuFraLinkToDetails = this.page.locator('//a[.="sunflower-eu-fra"]');
+        this.heading = this.main.getByTestId('lbl_resources');
+        this.perspectivesBtn = this.main.getByRole('button', {name: 'Perspectives'});
+        this.savePerspectiveBtn = this.main.getByRole('button', {name: 'Save perspective'});
+        this.configureClusterTypesBtn = this.main.getByRole('button', {name: 'Configure cluster types'});
+        this.totalExpensesValue = this.main.getByTestId('p_expenses_value');
+        this.resourceCountValue = this.main.getByTestId('p_count_value');
+        this.expensesBtn = this.main.getByTestId('breakdown_ls_item_expenses');
+        this.resourceCountBtn = this.main.getByTestId('breakdown_ls_item_resource_count');
+        this.tagsBtn = this.main.getByTestId('breakdown_ls_item_tags');
+        this.selectedDateText = this.main.getByTestId('text_selected_dates');
+        this.selectDateBtn = this.main.getByTestId('btn_select_date');
+        this.previousMonthSelect = this.main.getByTestId('selector_previous_month');
+        this.previousYearSelect = this.main.getByTestId('selector_previous_year');
+        this.applyDateButton = this.main.getByTestId('btn_apply_date');
+        this.filtersSelect = this.main.getByTestId('selector_suggestedFilters');
+        this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
+        this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
+        this.poolBtn = this.main.getByTestId('ls_item_pool');
+        this.ownerBtn = this.main.getByTestId('ls_item_owner');
+        this.tagSelect = this.main.getByTestId('selector_tag');
+        this.showWeekendsCheckbox = this.main.getByLabel('Show weekends');
+        this.searchInput = this.main.getByPlaceholder('Search');
+        this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
+        this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
+        this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
+        this.sunflowerEuFraLinkToDetails = this.main.locator('//a[.="sunflower-eu-fra"]');
     }
 
     async clickCardsExpensesIfNotActive() {
