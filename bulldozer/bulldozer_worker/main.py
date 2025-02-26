@@ -77,12 +77,16 @@ class BulldozerWorker(ConsumerProducerMixin):
     def minio_cl(self):
         if self._minio_cl is None:
             s3_params = self.config_cl.read_branch('/minio')
+            kwargs = {
+                "aws_access_key_id": s3_params['access'],
+                "aws_secret_access_key": s3_params['secret'],
+                "config": BotoConfig(s3={'addressing_style': 'path'})
+            }
+            if "host" in s3_params and "port" in s3_params:
+                kwargs["endpoint_url"] = f"http://{s3_params['host']}:{s3_params['port']}"
             self._minio_cl = boto3.client(
                 's3',
-                endpoint_url=f"http://{s3_params['host']}:{s3_params['port']}",
-                aws_access_key_id=s3_params['access'],
-                aws_secret_access_key=s3_params['secret'],
-                config=BotoConfig(s3={'addressing_style': 'path'})
+                **kwargs,
             )
             try:
                 # trying to create bucket for state
