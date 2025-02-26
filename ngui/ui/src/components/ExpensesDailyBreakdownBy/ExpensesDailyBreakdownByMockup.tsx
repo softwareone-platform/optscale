@@ -1,5 +1,4 @@
-import { useBreakdownBy } from "hooks/useBreakdownBy";
-import { DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME } from "urls";
+import { RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY } from "utils/constants";
 import { addDaysToTimestamp } from "utils/datetime";
 import ExpensesDailyBreakdownBy from "./ExpensesDailyBreakdownBy";
 
@@ -134,16 +133,37 @@ const getBreakdown = (startDateSecondsTimestamp) => ({
   ]
 });
 
+const getCounts = (breakdown) =>
+  Object.values(breakdown)
+    .flatMap((dayData) => dayData)
+    .reduce(
+      (counts, { id, name, cost }) => ({
+        ...counts,
+        [id]: {
+          id,
+          name,
+          total: (counts[id]?.total || 0) + cost
+        }
+      }),
+      {}
+    );
+
+const getData = (startDateSecondsTimestamp) => {
+  const breakdown = getBreakdown(startDateSecondsTimestamp);
+  const counts = getCounts(breakdown);
+
+  return { breakdown, counts };
+};
+
 const ExpensesDailyBreakdownByMockup = ({ startDateTimestamp: startDateSecondsTimestamp }) => {
-  const [{ value: breakdownByValue }] = useBreakdownBy({
-    queryParamName: DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME
-  });
+  const { breakdown, counts } = getData(startDateSecondsTimestamp);
 
   return (
     <ExpensesDailyBreakdownBy
       isLoading={false}
-      breakdown={getBreakdown(startDateSecondsTimestamp)}
-      breakdownByValue={breakdownByValue}
+      breakdown={breakdown}
+      counts={counts}
+      breakdownByValue={RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY.EMPLOYEE_ID}
       onBreakdownByChange={() => console.log("Click")}
     />
   );
