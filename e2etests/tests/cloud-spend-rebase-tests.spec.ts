@@ -5,8 +5,15 @@ import {
   OrganizationExpensesPoolsResponse, PoolsResponse
 } from "../test-data/homepage-data";
 import {interceptApiRequest} from "../utils/interceptor";
+import {
+  GeminisResponse, OptimisationsResponse,
+  OptionsResponse,
+  RIBreakdownResponse,
+  SPBreakdownResponse,
+  SummaryExpensesResponse
+} from "../test-data/recommendations-page-data";
 
-test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
+test.describe('Cloud Spend Rebase Tests @customisation', () => {
   test.beforeAll(() => {
     // URL should be more generic, we need to test it on dev, staging envs but also in our local hosts
     // expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
@@ -25,7 +32,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
       interceptApiRequest({page: homePage.page, urlPattern, mockResponse})
     ));
 
-    await loginPage.page.clock.setFixedTime(new Date('2025-01-31T12:00:00Z'));
+    await loginPage.page.clock.setFixedTime(new Date('2025-01-25T12:00:00Z'));
     await loginPage.loginToLiveDemo(process.env.DEFAULT_USER_EMAIL);
     await header.liveDemoAlert.waitFor();
     await homePage.page.waitForLoadState('networkidle');
@@ -41,7 +48,7 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     });
   })
 
-  test.only('Verify Homepage matches screenshots', async ({homePage}) => {
+  test('Verify Homepage matches screenshots', async ({homePage}) => {
     await test.step('Verify Home Page content', async () => {
       await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
       await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
@@ -51,8 +58,23 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     });
   })
 
-  test('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
+  test.only('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+      const apiInterceptions = [
+        {urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
+        {urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
+        {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
+        {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
+        {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
+        {urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
+      ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: recommendationsPage.page, urlPattern, mockResponse})
+    ));
+
+    });
     await test.step('Navigate to Recommendations page', async () => {
       await mainMenu.clickRecommendations();
     });
@@ -60,7 +82,6 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     await test.step('Verify Recommendations page content - cards', async () => {
       await recommendationsPage.clickCardsButtonIfNotActive();
       // await recommendationsPage.page.waitForTimeout(5000);
-      //Dynamic values check time data are not fixed so we can't match the screenshot 100%
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
       await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
       await expect(recommendationsPage.firstCard).toHaveScreenshot('Recommendations-cards-first-card-screenshot.png');
@@ -69,7 +90,6 @@ test.describe('Cloud Spend Rebase Tests @cloudspend', () => {
     await test.step('Verify Recommendations page content - table', async () => {
       await recommendationsPage.clickTableButton();
       // await recommendationsPage.page.waitForTimeout(5000);
-      //Dynamic values check time data are not fixed so we can't match the screenshot 100%
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png');
       await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
       await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-table--screenshot.png');
