@@ -61,19 +61,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   test.only('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
     // test.slow();
     await test.step('Set up test data', async () => {
-      const apiInterceptions = [
-        {urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
-        {urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
-        {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
-        {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
-        {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
-        {urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
-      ];
-
-        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-            interceptApiRequest({page: recommendationsPage.page, urlPattern, mockResponse})
-    ));
-
+      await recommendationsPage.setupApiInterceptions();
     });
     await test.step('Navigate to Recommendations page', async () => {
       await mainMenu.clickRecommendations();

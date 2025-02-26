@@ -1,3 +1,6 @@
+import { GeminisResponse,
+    OptimisationsResponse, OptionsResponse, RIBreakdownResponse, SPBreakdownResponse, SummaryExpensesResponse } from "../test-data/recommendations-page-data";
+import { interceptApiRequest } from "../utils/interceptor";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
@@ -40,7 +43,20 @@ export class RecommendationsPage extends BasePage {
         this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
         this.table = this.main.locator('table');
     }
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
+            {urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
+            {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
+            {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
+            {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
+        ];
 
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
     async selectDataSource(dataSource: string) {
         await this.selectFromComboBox(this.dataSourcesSelect, dataSource, true);
     }
