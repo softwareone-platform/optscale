@@ -88,14 +88,13 @@ def make_app(etcd_host, etcd_port, wait=False, mongo_client_class=None):
     )
     if wait:
         config_cl.wait_configured()
-    mongo_params = config_cl.mongo_params()
-    mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
+    mongo_conn_string, mobgo_db_name = config_cl.mongo_params()
     mongo_client = MongoClient(mongo_conn_string)
     connection_params = {}
     if mongo_client_class:
         connection_params["mongo_client_class"] = mongo_client_class
     connect(
-        host="%s/%s?authSource=admin" % (mongo_conn_string, mongo_params[-1]),
+        host="%s/%s?authSource=admin" % (mongo_conn_string, mobgo_db_name),
         **connection_params
     )
 
