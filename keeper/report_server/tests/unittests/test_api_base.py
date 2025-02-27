@@ -22,10 +22,7 @@ class TestReportBase(tornado.testing.AsyncHTTPTestCase):
         secret = str(uuid.uuid4())
         p_config = patch("optscale_client.config_client.client.Client").start()
         p_config.return_value.mongo_params.return_value = (
-            "root",
-            "pass",
-            "localhost",
-            27017,
+            "mongodb://root:pass@localhost:27017",
             "keeper",
         )
         p_config.return_value.cluster_secret.return_value = secret
