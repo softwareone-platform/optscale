@@ -35,7 +35,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
+  test('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
     // test.slow();
     await test.step('Set up test data', async () => {
       await recommendationsPage.setupApiInterceptions();
@@ -61,8 +61,12 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
+  test.only('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+        await resourcesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Resources page', async () => {
       await mainMenu.clickResources();
     });
@@ -71,7 +75,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
       await resourcesPage.waitForCanvas();
       await resourcesPage.searchInput.waitFor();
       await resourcesPage.heading.hover();
-      await resourcesPage.page.waitForTimeout(5000);
+      // await resourcesPage.page.waitForTimeout(5000);
       await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
     });
 
