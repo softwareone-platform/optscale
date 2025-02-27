@@ -181,7 +181,7 @@ export const EVENT_LEVEL = Object.freeze({
   DEBUG: "DEBUG"
 });
 
-export const EVENTS_LIMIT = 80;
+export const EVENTS_LIMIT = 40;
 
 export const CLOUD_ACCOUNT_TYPES_LIST = Object.keys(CLOUD_ACCOUNT_TYPE);
 
