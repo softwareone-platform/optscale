@@ -1,17 +1,5 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {
-  OrganizationCleanExpansesResponse, OrganizationConstraintsResponse,
-  OrganizationExpensesPoolsResponse, PoolsResponse
-} from "../test-data/homepage-data";
-import {interceptApiRequest} from "../utils/interceptor";
-import {
-  GeminisResponse, OptimisationsResponse,
-  OptionsResponse,
-  RIBreakdownResponse,
-  SPBreakdownResponse,
-  SummaryExpensesResponse
-} from "../test-data/recommendations-page-data";
 
 test.describe('Cloud Spend Rebase Tests @customisation', () => {
   test.beforeAll(() => {
@@ -20,7 +8,6 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
-
     await homePage.setupApiInterceptions();
     await loginPage.page.clock.setFixedTime(new Date('2025-01-25T12:00:00Z'));
     await loginPage.loginToLiveDemo(process.env.DEFAULT_USER_EMAIL);
