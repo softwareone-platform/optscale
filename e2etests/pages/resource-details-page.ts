@@ -1,5 +1,7 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {interceptApiRequest} from "../utils/interceptor";
+import {ResourceDetailsResponse} from "../test-data/resource-details-data";
 
 export class ResourceDetailsPage extends BasePage {
     readonly heading: Locator;
@@ -38,6 +40,15 @@ export class ResourceDetailsPage extends BasePage {
         this.recommendationsTab = this.page.getByTestId('tab_recommendations');
     }
 
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `restapi/v2/cloud_resources`, mockResponse: ResourceDetailsResponse},
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
     async isTabSelected(tab: Locator) {
         return await tab.getAttribute('aria-selected') === 'true';
     }
