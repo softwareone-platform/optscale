@@ -1,5 +1,12 @@
+import {
+    OrganizationCleanExpansesResponse,
+    OrganizationConstraintsResponse,
+    OrganizationExpensesPoolsResponse,
+    PoolsResponse
+} from "../test-data/homepage-data";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {interceptApiRequest} from "../utils/interceptor";
 
 export class HomePage extends BasePage {
     readonly connectDataSourceBanner: Locator;
@@ -48,7 +55,18 @@ export class HomePage extends BasePage {
         this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
         this.progressBar = this.page.getByRole('progressbar');
     }
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `/v2/organizations/[^/]+/pool_expenses`, mockResponse: OrganizationExpensesPoolsResponse},
+            {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: OrganizationCleanExpansesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/organization_constraints`, mockResponse: OrganizationConstraintsResponse},
+            {urlPattern: `/v2/pools/`, mockResponse: PoolsResponse}
+        ];
 
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
     async selectPerspectives(option: string) {
         await this.topResourcesPerspectives.click();
         await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();

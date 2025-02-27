@@ -21,17 +21,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
 
   test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
 
-    const apiInterceptions = [
-      {urlPattern: `/v2/organizations/[^/]+/pool_expenses`, mockResponse: OrganizationExpensesPoolsResponse},
-      {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: OrganizationCleanExpansesResponse},
-      {urlPattern: `/v2/organizations/[^/]+/organization_constraints`, mockResponse: OrganizationConstraintsResponse},
-      {urlPattern: `/v2/pools/`, mockResponse: PoolsResponse}
-    ];
-
-    await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-      interceptApiRequest({page: homePage.page, urlPattern, mockResponse})
-    ));
-
+    await homePage.setupApiInterceptions();
     await loginPage.page.clock.setFixedTime(new Date('2025-01-25T12:00:00Z'));
     await loginPage.loginToLiveDemo(process.env.DEFAULT_USER_EMAIL);
     await header.liveDemoAlert.waitFor();
