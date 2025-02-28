@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import ErrorIcon from "@mui/icons-material/Error";
 import InfoIcon from "@mui/icons-material/Info";
 import PestControlIcon from "@mui/icons-material/PestControl";
-import ButtonLoader from "components/ButtonLoader";
 import { FormControlLabel, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -11,6 +10,7 @@ import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import ActionBar from "components/ActionBar";
 import ButtonGroup from "components/ButtonGroup";
+import ButtonLoader from "components/ButtonLoader";
 import Checkbox from "components/Checkbox";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import PageContentWrapper from "components/PageContentWrapper";
@@ -253,12 +253,7 @@ const EventList = ({
     }
 
     return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        flexGrow={1}
-        flexBasis="auto"
-      >
+      <Box display="flex" flexDirection="column" flexGrow={1} flexBasis="auto">
         <Box>
           <Stack spacing={SPACING_3}>
             {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
@@ -268,7 +263,7 @@ const EventList = ({
               </Box>
             ))}
           </Stack>
-          <Box display="flex" justifyContent="center" py={2}>    
+          <Box display="flex" justifyContent="center" py={2}>
             <ButtonLoader
               onClick={getMoreEvents}
               variant="contained"
@@ -280,7 +275,6 @@ const EventList = ({
               dataTestId="btn_load_more_events"
             />
           </Box>
-        
         </Box>
       </Box>
     );
