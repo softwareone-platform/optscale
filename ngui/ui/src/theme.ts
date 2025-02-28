@@ -561,6 +561,26 @@ const getThemeConfig = (settings = {}) => {
             flexDirection: "column",
             minHeight: "100vh"
           },
+          body: {
+            "::-webkit-scrollbar": {
+              width: "5px"
+            },
+            "::-webkit-scrollbar-track": {
+              background: MPT_GRAY_4
+            },
+            "::-webkit-scrollbar-thumb": {
+              borderRadius: "0",
+              backgroundClip: "padding-box",
+              backgroundColor: MPT_GRAY_4
+            },
+            "::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: MPT_GRAY_4
+            },
+            "*": {
+              scrollbarColor: `${MPT_GRAY_4} transparent`,
+              scrollbarWidth: "thin"
+            }
+          },
           // https://github.com/mui/material-ui/issues/33519
           "input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active": {
             WebkitBoxShadow: `0 0 0 30px ${getWebkitAutofillBackgroundColor(theme)} inset !important`
