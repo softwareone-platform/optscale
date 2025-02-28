@@ -1,5 +1,7 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {interceptApiRequest} from "../utils/interceptor";
+import {AllowedActionsPoolResponse, PoolResponse} from "../test-data/pools-data";
 
 export class PoolsPage extends BasePage {
     readonly main: Locator;
@@ -22,6 +24,17 @@ export class PoolsPage extends BasePage {
         this.expandRequiringAttentionBtn = this.page.locator('[data-testid="expandRequiringAttention"]');
         this.columnSelectBtn = this.page.locator('[data-testid="ViewColumnIcon"]');
     }
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `restapi/v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolResponse},
+            {urlPattern: `auth/v2/allowed_actions?pool=`, mockResponse: AllowedActionsPoolResponse},
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
+
 
     async clickExpandRequiringAttentionBtn() {
         await this.expandRequiringAttentionBtn.click();

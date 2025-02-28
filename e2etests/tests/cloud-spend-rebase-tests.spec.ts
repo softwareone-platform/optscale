@@ -107,7 +107,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Resource details page matches screenshots', async ({
+  test('Verify Resource details page matches screenshots', async ({
                                                                     mainMenu,
                                                                     resourcesPage,
                                                                     resourceDetailsPage
@@ -164,8 +164,12 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test('Verify Pools page matches screenshots', async ({poolsPage}) => {
+  test.only('Verify Pools page matches screenshots', async ({poolsPage}) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+      await poolsPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Pools page', async () => {
       await poolsPage.navigateToURL(true);
     });
