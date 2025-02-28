@@ -1,7 +1,11 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 import {interceptApiRequest} from "../utils/interceptor";
-import {ResourceDetailsResponse} from "../test-data/resource-details-data";
+import {
+    AllowedActionsSunflowerEUResponse,
+    LimitHitsResponse, RawExpensesResponse,
+    ResourceDetailsResponse
+} from "../test-data/resource-details-data";
 
 export class ResourceDetailsPage extends BasePage {
     readonly heading: Locator;
@@ -42,7 +46,10 @@ export class ResourceDetailsPage extends BasePage {
 
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `restapi/v2/cloud_resources`, mockResponse: ResourceDetailsResponse},
+            {urlPattern: `restapi/v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
+            {urlPattern: `restapi/v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
+            {urlPattern: `auth/v2/allowed_actions?cloud_resource=`, mockResponse: AllowedActionsSunflowerEUResponse},
+            {urlPattern: `restapi/v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
