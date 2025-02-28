@@ -35,7 +35,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
+  test('Verify Recommendations page matches screenshots', async ({mainMenu, recommendationsPage}) => {
     // test.slow();
     await test.step('Set up test data', async () => {
       await recommendationsPage.setupApiInterceptions();
@@ -63,6 +63,10 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
 
   test('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+        await resourcesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Resources page', async () => {
       await mainMenu.clickResources();
     });
@@ -71,7 +75,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
       await resourcesPage.waitForCanvas();
       await resourcesPage.searchInput.waitFor();
       await resourcesPage.heading.hover();
-      await resourcesPage.page.waitForTimeout(5000);
+      // await resourcesPage.page.waitForTimeout(5000);
       await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
     });
 
@@ -103,12 +107,16 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test('Verify Resource details page matches screenshots', async ({
+  test.only('Verify Resource details page matches screenshots', async ({
                                                                     mainMenu,
                                                                     resourcesPage,
                                                                     resourceDetailsPage
                                                                   }) => {
-    // test.slow();
+    test.slow();
+    await test.step('Set up test data', async () => {
+        await resourceDetailsPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
       await mainMenu.clickResources();
       await resourcesPage.waitForCanvas();
@@ -119,7 +127,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     await test.step('Verify Resource details page content - Details tab', async () => {
       if (!await resourceDetailsPage.isTabSelected(resourceDetailsPage.detailsTab)) await resourceDetailsPage.clickDetailsTab();
       await resourceDetailsPage.heading.hover();
-      // await resourceDetailsPage.page.waitForTimeout(5000);
+      await resourceDetailsPage.page.waitForTimeout(5000);
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png', {maxDiffPixelRatio: 0.01});
     });
 
@@ -127,7 +135,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
       await resourceDetailsPage.clickConstraintsTab();
       await resourceDetailsPage.heading.hover();
       await resourceDetailsPage.constraintsTable.waitFor();
-      // await resourceDetailsPage.page.waitForTimeout(5000);
+      await resourceDetailsPage.page.waitForTimeout(5000);
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
     });
 
@@ -136,12 +144,12 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
       await resourceDetailsPage.clickExpensesGroupedButtonIfNotActive();
       await resourceDetailsPage.heading.hover();
       await resourceDetailsPage.waitForCanvas();
-      // await resourceDetailsPage.page.waitForTimeout(5000);
+      await resourceDetailsPage.page.waitForTimeout(5000);
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-grouped-screenshot.png');
       await resourceDetailsPage.clickExpensesDetailedButton();
       await resourceDetailsPage.heading.hover();
       await resourceDetailsPage.waitForCanvas();
-      // await resourceDetailsPage.page.waitForTimeout(5000);
+      await resourceDetailsPage.page.waitForTimeout(5000);
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png', {maxDiffPixelRatio: 0.01});
       // await resourceDetailsPage.clickExpensesPaidNetworkTrafficButton();
       // await resourceDetailsPage.heading.hover();

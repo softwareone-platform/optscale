@@ -1,5 +1,13 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {SummaryExpensesResponse} from "../test-data/recommendations-page-data";
+import {interceptApiRequest} from "../utils/interceptor";
+import {
+    AvailableFiltersResponse,
+    BreakdownExpensesResponse, BreakdownTagsResponse,
+    CleanExpensesResponse,
+    ResourcesCountResponse
+} from "../test-data/resources-data";
 
 export class ResourcesPage extends BasePage {
     readonly heading: Locator;
@@ -58,6 +66,21 @@ export class ResourcesPage extends BasePage {
         this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
         this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
         this.sunflowerEuFraLinkToDetails = this.main.locator('//a[.="sunflower-eu-fra"]');
+    }
+
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`, mockResponse: BreakdownExpensesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: CleanExpensesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/available_filters`, mockResponse: AvailableFiltersResponse},
+            {urlPattern: `/v2/organizations/[^/]+/resources_count`, mockResponse: ResourcesCountResponse},
+            {urlPattern: `/v2/organizations/[^/]+/breakdown_tags`, mockResponse: BreakdownTagsResponse},
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
     }
 
     async clickCardsExpensesIfNotActive() {
