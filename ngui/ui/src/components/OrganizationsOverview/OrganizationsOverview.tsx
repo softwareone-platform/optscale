@@ -1,13 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import {useState, useEffect, useMemo} from "react";
 import Grid from "@mui/material/Grid";
 import ActionBar from "components/ActionBar";
 import ButtonGroup from "components/ButtonGroup";
 import OrganizationsOverviewTable from "components/OrganizationsOverviewTable";
 import PageContentWrapper from "components/PageContentWrapper";
-import { HOME } from "urls";
-import { ORGANIZATIONS_OVERVIEW_FILTERS } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import {HOME} from "urls";
+import {ORGANIZATIONS_OVERVIEW_FILTERS} from "utils/constants";
+import {SPACING_2} from "utils/layouts";
+import {getQueryParams, updateQueryParams} from "utils/network";
+import {Box} from "@mui/material";
 
 const actionBarDefinition = {
   title: {
@@ -25,15 +26,15 @@ const actionBarDefinition = {
   ]
 };
 
-const OrganizationsOverview = ({ data, isLoading = false }) => {
-  const { filterBy } = getQueryParams();
+const OrganizationsOverview = ({data, isLoading = false}) => {
+  const {filterBy} = getQueryParams();
 
   const [activeFilter, setActiveFilter] = useState(
     Object.values(ORGANIZATIONS_OVERVIEW_FILTERS).includes(filterBy) ? filterBy : ORGANIZATIONS_OVERVIEW_FILTERS.ALL
   );
 
   useEffect(() => {
-    updateQueryParams({ filterBy: activeFilter });
+    updateQueryParams({filterBy: activeFilter});
   }, [activeFilter]);
 
   const updatedData = useMemo(
@@ -43,12 +44,12 @@ const OrganizationsOverview = ({ data, isLoading = false }) => {
         const exceededForecasts = [];
         const exceededOrganizationIds = new Set();
 
-        const { pools = [] } = organization;
-        const { children = [], ...rootPool } = pools[0];
+        const {pools = []} = organization;
+        const {children = [], ...rootPool} = pools[0];
         const rootPoolWithChildren = [rootPool, ...children];
 
         rootPoolWithChildren.forEach((child) => {
-          const { cost = 0, limit: childLimit = 0, forecast = 0 } = child;
+          const {cost = 0, limit: childLimit = 0, forecast = 0} = child;
 
           if (cost > childLimit) {
             exceededPools.push(child);
@@ -109,7 +110,7 @@ const OrganizationsOverview = ({ data, isLoading = false }) => {
 
   return (
     <>
-      <ActionBar data={actionBarDefinition} />
+      <ActionBar data={actionBarDefinition}/>
       <PageContentWrapper>
         <Grid container spacing={SPACING_2}>
           <Grid item xs={12}>
@@ -119,7 +120,9 @@ const OrganizationsOverview = ({ data, isLoading = false }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <OrganizationsOverviewTable data={tableData} total={data.length} isLoading={isLoading} />
+            <Box className={"MTPBoxShadow"}>
+              <OrganizationsOverviewTable data={tableData} total={data.length} isLoading={isLoading}/>
+            </Box>
           </Grid>
         </Grid>
       </PageContentWrapper>
