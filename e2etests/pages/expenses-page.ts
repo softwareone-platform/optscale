@@ -1,5 +1,13 @@
 import {Locator, Page} from "@playwright/test";
 import { BasePage } from "./base-page";
+import {AllowedActionsPoolResponse, PoolResponse} from "../test-data/pools-data";
+import {interceptApiRequest} from "../utils/interceptor";
+import {
+    PoolsExpensesOwnerResponse,
+    PoolsExpensesPoolResponse,
+    PoolsExpensesResponse,
+    PoolsExpensesSourceResponse
+} from "../test-data/expenses-data";
 
 export class ExpensesPage extends BasePage {
     readonly heading: Locator;
@@ -29,6 +37,18 @@ export class ExpensesPage extends BasePage {
         this.sourceBtn = this.main.getByRole('button', {name: 'Source'});
         this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
         this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
+    }
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
+            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
+            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=employee`, mockResponse: PoolsExpensesOwnerResponse},
+            {urlPattern: `restapi/v2/pools_expenses/[^/]+?end_date=[^/]+&start_date=`, mockResponse: PoolsExpensesResponse},
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
     }
 
     async clickDailyBtnIfNotSelected() {

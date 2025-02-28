@@ -164,7 +164,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Pools page matches screenshots', async ({poolsPage}) => {
+  test('Verify Pools page matches screenshots', async ({poolsPage}) => {
     // test.slow();
     await test.step('Set up test data', async () => {
       await poolsPage.setupApiInterceptions();
@@ -186,8 +186,12 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   });
 
-  test('Verify Expenses page matches screenshots', async ({expensesPage}) => {
+  test.only('Verify Expenses page matches screenshots', async ({expensesPage}) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+        await expensesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL(true);
     });
@@ -218,7 +222,11 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   });
 
   test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
-    // test.slow();
+    test.slow();
+    await test.step('Set up test data', async () => {
+      await expensesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL(true);
     });

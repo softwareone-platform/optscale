@@ -15,5 +15,6 @@ export async function interceptApiRequest(config: IInterceptorConfig): Promise<v
       contentType: "application/json",
       body: JSON.stringify(mockResponse),
     });
+    console.log(`Intercepted request for urlPattern ${urlPattern}`);
   });
 }
