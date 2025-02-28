@@ -179,13 +179,14 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading = false }) => {
 
                     return shouldSlice ? (
                       <Tooltip title={name}>
-                        <PerspectiveMenuItem key={name}
+                        <PerspectiveMenuItem
+                          key={name}
                           name={sliceByLimitWithEllipsis(name, PERSPECTIVE_NAME_SLICE_THRESHOLD)}
                           onClick={onClick}
                         />
                       </Tooltip>
                     ) : (
-                      <PerspectiveMenuItem name={name}  key={name} onClick={onClick} />
+                      <PerspectiveMenuItem name={name} key={name} onClick={onClick} />
                     );
                   })}
                   <PerspectiveMenuItem
