@@ -1,8 +1,10 @@
 ---
 # latest tested with k8s
-required_docker_version: "19.03"
+kubernetes_version: "1.32"
 
-kubernetes_version: 1.17.3
+nerdctl_version: "1.7.6"
+
+buildkit_version: "0.16.0"
 
 logstash_host: 127.0.0.1
 

@@ -162,7 +162,7 @@ spec:
           path: /optscale/etcd
           type: DirectoryOrCreate
       nodeSelector:
-        node-role.kubernetes.io/master:
+        node-role.kubernetes.io/control-plane:
 {{- end }}
 ---
 apiVersion: v1
@@ -218,5 +218,5 @@ spec:
         configMap:
           name: optscale-etcd
       nodeSelector:
-        node-role.kubernetes.io/master:
+        node-role.kubernetes.io/control-plane:
   backoffLimit: 10

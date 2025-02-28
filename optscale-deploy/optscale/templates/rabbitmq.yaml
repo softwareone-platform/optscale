@@ -85,7 +85,7 @@ data:
   rabbitmq.conf: |
 {{ include "rabbitmq.conf" . | indent 4 }}
 ---
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: "{{ $config.name }}"
@@ -148,7 +148,7 @@ spec:
     storage: {{ $config.mnesiaSize }}
   accessModes:
     - ReadWriteMany
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: "/optscale/rabbitmq"
 ---
@@ -297,7 +297,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - 'wget -O - -q --header "Authorization: Basic `echo -n \"$RABBIT_MANAGEMENT_USER:$RABBIT_MANAGEMENT_PASSWORD\" | base64`" http://localhost:15672/api/healthchecks/node | grep -qF "{\"status\":\"ok\"}"'
+              - 'wget -O - -q --header "Authorization: Basic `echo -n \"$RABBIT_MANAGEMENT_USER:$RABBIT_MANAGEMENT_PASSWORD\" | base64`" http://127.0.0.1:15672/api/healthchecks/node | grep -qF "{\"status\":\"ok\"}"'
         readinessProbe:
           initialDelaySeconds: 20
           periodSeconds: 5
@@ -307,7 +307,7 @@ spec:
             command:
               - /bin/sh
               - -c
-              - 'wget -O - -q --header "Authorization: Basic `echo -n \"$RABBIT_MANAGEMENT_USER:$RABBIT_MANAGEMENT_PASSWORD\" | base64`" http://localhost:15672/api/healthchecks/node | grep -qF "{\"status\":\"ok\"}"'
+              - 'wget -O - -q --header "Authorization: Basic `echo -n \"$RABBIT_MANAGEMENT_USER:$RABBIT_MANAGEMENT_PASSWORD\" | base64`" http://127.0.0.1:15672/api/healthchecks/node | grep -qF "{\"status\":\"ok\"}"'
         volumeMounts:
         - name: datadir
           mountPath: /var/lib/rabbitmq

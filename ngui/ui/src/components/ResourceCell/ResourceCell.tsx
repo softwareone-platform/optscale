@@ -1,10 +1,9 @@
+import React from "react";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
-import { Box } from "@mui/material";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import CaptionedCell from "components/CaptionedCell";
 import Circle from "components/Circle";
 import IconLabel from "components/IconLabel";
 import OnScheduleLabel from "components/OnScheduleLabel";
@@ -12,59 +11,6 @@ import ResourceLabel from "components/ResourceLabel";
 import ResourceName from "components/ResourceName";
 import { getResourceUrl } from "urls";
 import { getCloudResourceIdentifier } from "utils/resources";
-
-const getCaptionedCellProps = ({
-  resourceName,
-  resourceId,
-  cloudResourceIdentifier,
-  showIsActive,
-  showIsConstraintViolated,
-  powerScheduleId
-}) => {
-  const resourceNameString = resourceName ?? "";
-
-  const captionSettings = [
-    {
-      key: resourceId,
-      node: <ResourceName name={resourceNameString} />,
-      show: resourceNameString !== cloudResourceIdentifier
-    },
-    {
-      key: `statuses-${resourceId}`,
-      node: (
-        <Box display="flex" flexDirection="column">
-          {showIsActive && (
-            <IconLabel
-              icon={<Circle color="success" />}
-              label={
-                <Typography variant="caption" noWrap>
-                  <FormattedMessage id="active" />
-                </Typography>
-              }
-            />
-          )}
-          {powerScheduleId && <OnScheduleLabel powerScheduleId={powerScheduleId} />}
-          {showIsConstraintViolated && (
-            <IconLabel
-              icon={<ErrorOutlineOutlinedIcon fontSize="inherit" color="error" />}
-              label={
-                <Link to={`${getResourceUrl(resourceId)}?tab=constraints`} component={RouterLink}>
-                  <Typography variant="caption" noWrap>
-                    <FormattedMessage id="constraintViolations" />
-                  </Typography>
-                </Link>
-              }
-              component={RouterLink}
-            />
-          )}
-        </Box>
-      ),
-      show: showIsActive || powerScheduleId || showIsConstraintViolated
-    }
-  ].filter(({ show }) => Boolean(show));
-
-  return captionSettings;
-};
 
 const ResourceCell = ({ rowData, disableActivityIcon, disableConstraintViolationIcon, dataTestIds = {} }) => {
   const {
@@ -78,22 +24,49 @@ const ResourceCell = ({ rowData, disableActivityIcon, disableConstraintViolation
   const { labelIds: labelDataTestIds } = dataTestIds;
 
   return (
-    <CaptionedCell
-      caption={getCaptionedCellProps({
-        resourceName,
-        resourceId,
-        cloudResourceIdentifier: getCloudResourceIdentifier(rowData),
-        showIsActive: isActive && !disableActivityIcon,
-        showIsConstraintViolated: isConstraintViolated && !disableConstraintViolationIcon,
-        powerScheduleId
-      })}
-    >
+    <>
       <ResourceLabel
         resourceId={resourceId}
         cloudResourceIdentifier={getCloudResourceIdentifier(rowData)}
         dataTestIds={labelDataTestIds}
       />
-    </CaptionedCell>
+      {resourceName && resourceName !== getCloudResourceIdentifier(rowData) ? (
+        <div>
+          <ResourceName name={resourceName} />
+        </div>
+      ) : null}
+      {isActive && !disableActivityIcon ? (
+        <IconLabel
+          icon={<Circle color="success" />}
+          display="flex"
+          label={
+            <Typography variant="caption" noWrap>
+              <FormattedMessage id="active" />
+            </Typography>
+          }
+        />
+      ) : null}
+      {powerScheduleId ? <OnScheduleLabel powerScheduleId={powerScheduleId} display="flex" /> : null}
+      {isConstraintViolated && !disableConstraintViolationIcon ? (
+        <IconLabel
+          icon={<ErrorOutlineOutlinedIcon fontSize="inherit" color="error" />}
+          display="flex"
+          label={
+            <Link
+              to={`${getResourceUrl(resourceId)}?tab=constraints`}
+              component={RouterLink}
+              variant="caption"
+              sx={{
+                fontWeight: "normal",
+                whiteSpace: "nowrap"
+              }}
+            >
+              <FormattedMessage id="constraintViolations" />
+            </Link>
+          }
+        />
+      ) : null}
+    </>
   );
 };
 

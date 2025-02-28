@@ -9,16 +9,16 @@ LOG = logging.getLogger(__name__)
 
 class VerifyEmailController(RestorePasswordController):
 
-    def _generate_link(self, email, code):
+    def _generate_link(self, email, code, link_params):
         host = self._config.public_ip()
-        params = query_url(email=email, code=code)
+        params = query_url(email=email, code=code, **link_params)
         return f'https://{host}/email-verification{params}'
 
-    def send_verification_email(self, email, code):
+    def send_verification_email(self, email, code, link_params):
         if self._config.disable_email_verification():
             LOG.warning("Skipping sending verification email")
             return
-        link = self._generate_link(email, code)
+        link = self._generate_link(email, code, link_params)
         HeraldClient(
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()

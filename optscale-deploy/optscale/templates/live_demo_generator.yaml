@@ -38,7 +38,7 @@ spec:
         - name: HX_ETCD_PORT
           value: {{ .Values.etcd.service.externalPort | quote }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}-scheduler

@@ -78,7 +78,7 @@ const getFilterValues = ({ tasks }) => {
   const owners = [
     ...new Map(
       tasks.map(({ owner }) => {
-        if (isEmptyObject(owner)) {
+        if ([null, undefined].includes(owner) || isEmptyObject(owner)) {
           return [null, null];
         }
 
@@ -163,7 +163,7 @@ const MlTasks = ({ tasks, isLoading }) => {
 
         if (filterType === OWNER_ID_FILTER) {
           if (filterValue === EMPTY_UUID) {
-            return isEmptyObject(task.owner);
+            return [null, undefined].includes(task.owner) || isEmptyObject(task.owner);
           }
           return task.owner.id === filterValue;
         }

@@ -1,5 +1,5 @@
 import { FormattedMessage } from "react-intl";
-import CaptionedCell from "components/CaptionedCell";
+import CellCaption from "components/CellCaption";
 import PoolLabel from "components/PoolLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
 
@@ -28,11 +28,26 @@ const resourcePoolOwner = ({
     const owner = getOwner(original);
     const pool = getPool(original);
 
-    return pool || owner ? (
-      <CaptionedCell caption={owner ? owner.name : ""}>
-        {pool && <PoolLabel dataTestId={`resource_pool_${rowId}`} id={pool.id} name={pool.name} type={pool.purpose} />}
-      </CaptionedCell>
+    if (!pool && !owner) {
+      return null;
+    }
+
+    const poolLabel = pool ? (
+      <PoolLabel dataTestId={`resource_pool_${rowId}`} id={pool.id} name={pool.name} type={pool.purpose} />
     ) : null;
+
+    const caption = owner ? owner.name : "";
+
+    if (caption) {
+      return (
+        <>
+          {poolLabel}
+          <CellCaption text={caption} typographyProps={{ display: "block" }} />
+        </>
+      );
+    }
+
+    return poolLabel;
   }
 });
 

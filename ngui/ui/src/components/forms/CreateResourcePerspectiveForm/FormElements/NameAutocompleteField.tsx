@@ -10,6 +10,8 @@ type NameAutocompleteFieldProps = {
   perspectiveNames: string[];
 };
 
+const NAME_MAX_SIZE = 300;
+
 const NameAutocompleteField = ({ perspectiveNames = [] }: NameAutocompleteFieldProps) => {
   const intl = useIntl();
 
@@ -26,6 +28,13 @@ const NameAutocompleteField = ({ perspectiveNames = [] }: NameAutocompleteFieldP
         required: {
           value: true,
           message: intl.formatMessage({ id: "thisFieldIsRequired" })
+        },
+        maxLength: {
+          value: NAME_MAX_SIZE,
+          message: intl.formatMessage(
+            { id: "maxLength" },
+            { inputName: intl.formatMessage({ id: "name" }), max: NAME_MAX_SIZE }
+          )
         }
       }}
       render={({ field: { value: formFieldValue, onChange } }) => (

@@ -1,12 +1,8 @@
-import { useMutation } from "@apollo/client";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import { Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { makeStyles } from "tss-react/mui";
 import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
-import { CREATE_ORGANIZATION } from "graphql/api/restapi/queries";
-import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
@@ -23,19 +19,8 @@ const useStyles = makeStyles()((theme) => ({
   }
 }));
 
-const AcceptInvitations = ({
-  invitations,
-  refetchInvitations,
-  refetchOrganizations,
-  userEmail,
-  organizations,
-  getRedirectionPath
-}) => {
-  const navigate = useNavigate();
-
+const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
   const { classes } = useStyles();
-
-  const [createOrganization, { loading: createOrganizationLoading }] = useMutation(CREATE_ORGANIZATION);
 
   return (
     <>
@@ -45,7 +30,6 @@ const AcceptInvitations = ({
           styleProps={{ buttonsJustifyContent: "center" }}
           onSuccessAccept={() => {
             refetchInvitations();
-            refetchOrganizations();
           }}
           onSuccessDecline={() => {
             refetchInvitations();
@@ -55,28 +39,12 @@ const AcceptInvitations = ({
       </Box>
       <Box>
         <ButtonLoader
+          dataTestId="btn_proceed_to_optscale"
           messageId="proceedToOptScale"
           size="medium"
           color="primary"
           variant="contained"
-          onClick={() => {
-            const redirect = () => navigate(getRedirectionPath(userEmail));
-
-            if (isEmptyArray(organizations)) {
-              createOrganization({
-                variables: {
-                  organizationName: `${userEmail}'s Organization`
-                }
-              })
-                .then(() => refetchOrganizations())
-                .then(() => {
-                  redirect();
-                });
-            } else {
-              redirect();
-            }
-          }}
-          isLoading={createOrganizationLoading}
+          onClick={onProceed}
           startIcon={<NavigationIcon />}
           customWrapperClass={classes.dashboardButton}
         />

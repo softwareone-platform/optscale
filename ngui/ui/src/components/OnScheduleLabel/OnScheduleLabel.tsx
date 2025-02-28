@@ -9,6 +9,7 @@ type PowerScheduleId = string;
 
 type OnScheduleLabelProps = {
   powerScheduleId: PowerScheduleId;
+  display?: string;
 };
 
 const useShowLink = (powerScheduleId: PowerScheduleId) => {
@@ -28,25 +29,27 @@ const useShowLink = (powerScheduleId: PowerScheduleId) => {
   return true;
 };
 
-const OnScheduleLabel = ({ powerScheduleId }: OnScheduleLabelProps) => {
-  const label = (
-    <Typography variant="caption" noWrap>
-      <FormattedMessage id="onSchedule" />
-    </Typography>
-  );
-
+const OnScheduleLabel = ({ powerScheduleId, display = "inline-flex" }: OnScheduleLabelProps) => {
   const showLink = useShowLink(powerScheduleId);
 
   return (
     <IconLabel
       icon={<ScheduleOutlinedIcon fontSize="inherit" color="success" />}
+      display={display}
       label={
         showLink ? (
-          <Link to={getPowerScheduleDetailsUrl(powerScheduleId)} component={RouterLink}>
-            {label}
+          <Link
+            to={getPowerScheduleDetailsUrl(powerScheduleId)}
+            component={RouterLink}
+            variant="caption"
+            sx={{ fontWeight: "normal", whiteSpace: "nowrap" }}
+          >
+            <FormattedMessage id="onSchedule" />
           </Link>
         ) : (
-          label
+          <Typography variant="caption" noWrap>
+            <FormattedMessage id="onSchedule" />
+          </Typography>
         )
       }
     />

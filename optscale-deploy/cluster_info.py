@@ -1,11 +1,14 @@
 #!/usr/bin/env python
+
 import argparse
 import logging
 import os
-
-import docker
 import yaml
+
 from kubernetes import client as k8s_client, config as k8s_config
+from python_on_whales import DockerClient
+from python_on_whales.exceptions import NoSuchImage
+
 
 LOG = logging.getLogger(__name__)
 LABELS = ['build_url', 'commit']
@@ -13,39 +16,39 @@ CONFIGMAP_NAME = 'optscale-version'
 NAMESPACE = 'default'
 
 
-class ClusterInfo(object):
-    def __init__(self, config, host, no_urls):
-        self.host = host
+class ClusterInfo:
+    def __init__(self, config, no_urls, insecure=False):
         self.config = config
         k8s_config.load_kube_config(self.config)
         self.core_api = k8s_client.CoreV1Api()
-        self.docker_host = host
         self.no_urls = no_urls
-        self._docker_cl = None
+        self.insecure = insecure
+        self._ctrl_cl = None
 
     @property
-    def docker_cl(self):
-        if self._docker_cl is None:
-            if self.host is None:
-                self._docker_cl = docker.from_env()
-            else:
-                if self.host.find(':') == -1:
-                    self.host = self.host + ':2376'
-                self._docker_cl = docker.DockerClient(
-                    base_url='tcp://%s' % self.host)
-        return self._docker_cl
+    def ctrd_cl(self):
+        cmd = ["nerdctl"]
+        if not self._ctrl_cl:
+            if self.insecure:
+                cmd.append("--insecure-registry")
+            LOG.info("Connecting to ctd daemon")
+            self._ctrl_cl = DockerClient(client_call=cmd)
+        return self._ctrl_cl
 
     def get_cluster_info(self):
         version_map_data = self.core_api.read_namespaced_config_map(
-            name=CONFIGMAP_NAME, namespace=NAMESPACE).data
-        version_map = yaml.safe_load(version_map_data['component_versions.yaml'])
+            name=CONFIGMAP_NAME, namespace=NAMESPACE
+        ).data
+        version_map = yaml.safe_load(
+            version_map_data['component_versions.yaml'])
+
         if self.no_urls:
             return version_map
 
-        for image in version_map['images'].copy():
+        for image in list(version_map['images']):
             try:
-                self.docker_cl.images.get('{0}:local'.format(image))
-            except docker.errors.ImageNotFound:
+                self.ctrd_cl.image.inspect(f"{image}:local")
+            except NoSuchImage:
                 LOG.warning('image %s not found', image)
                 del version_map['images'][image]
                 continue
@@ -67,16 +70,16 @@ if __name__ == "__main__":
     parser.add_argument(
         '--no-urls',
         action='store_true',
-        help='Only show content of the OptScale version configmap, don\'t print '
-             'build urls for images',
+        help='Only show content of the OptScale version configmap, don\'t print build URLs for images',
     )
     parser.add_argument(
-        '--host',
-        help='Ip of the host on which docker images must be examined',
-        default=None,
+        '--insecure',
+        action='store_true',
+        help='Allow insecure container registry connections',
     )
     arguments = parser.parse_args()
 
-    info = ClusterInfo(arguments.config, arguments.host, arguments.no_urls)
+    info = ClusterInfo(arguments.config, arguments.no_urls,
+                       arguments.insecure)
     result = info.get_cluster_info()
     print(yaml.dump(result, default_flow_style=False, sort_keys=False))

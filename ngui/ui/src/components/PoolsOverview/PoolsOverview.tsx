@@ -5,17 +5,28 @@ import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
 import PoolsTable from "components/PoolsTable";
 import PoolTypeIcon from "components/PoolTypeIcon";
+import Tooltip from "components/Tooltip";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ASSIGNMENT_RULES } from "urls";
 import { POOL_TYPE_BUSINESS_UNIT } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import Summary from "./Summary";
 
-const PoolsOverview = ({ data, isLoading, isDataReady, isGetPoolAllowedActionsLoading }) => {
+const MAX_POOL_NAME_LENGTH = 64;
+
+const PoolsOverview = ({ data, isLoading = false, isDataReady = false, isGetPoolAllowedActionsLoading = false }) => {
   const { name } = useOrganizationInfo();
+
+  const isNameLong = name.length > MAX_POOL_NAME_LENGTH;
+
   const actionBarDefinition = {
     title: {
-      text: name,
+      text: (
+        <Tooltip title={isNameLong ? name : undefined}>
+          <span>{isNameLong ? sliceByLimitWithEllipsis(name, MAX_POOL_NAME_LENGTH) : name}</span>
+        </Tooltip>
+      ),
       logo: {
         icon: <PoolTypeIcon fontSize="medium" type={POOL_TYPE_BUSINESS_UNIT} hasRightMargin dataTestId="img_type" />
       },

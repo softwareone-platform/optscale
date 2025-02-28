@@ -5,7 +5,7 @@ import Tooltip from "components/Tooltip";
 
 const CellCaption = ({ text, tooltipText, enableCaptionTextCopy, copyTextDataTestIds = {}, typographyProps = {} }, ref) => {
   const textElement = enableCaptionTextCopy ? (
-    <CopyText text={text} copyIconType="animated" variant="inherit" dataTestIds={copyTextDataTestIds}>
+    <CopyText text={text} dynamicCopyIcon variant="inherit" dataTestIds={copyTextDataTestIds}>
       {text}
     </CopyText>
   ) : (

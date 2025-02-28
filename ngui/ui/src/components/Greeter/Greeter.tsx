@@ -5,44 +5,23 @@ import { useTheme } from "@mui/material/styles";
 import Logo from "components/Logo";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import { ALERT_TYPES } from "components/TopAlertWrapper/TopAlertWrapper";
+// import { useIsDownMediaQuery, useIsUpMediaQuery } from "hooks/useMediaQueries";
+// import { HYSTAX, LIVE_DEMO, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
+// import { tag as tagHotjar } from "utils/hotjar";
 import { SPACING_2, SPACING_1 } from "utils/layouts";
-import useStyles from "./Greeter.styles";
-
-// MPT_TODO: disabled other authentication sources
-// import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
-// import Link from "@mui/material/Link";
-// import Typography from "@mui/material/Typography";
-// import { FormattedMessage, useIntl } from "react-intl";
-// import { useNavigate } from "react-router-dom";
-// import anomalyDetectionToAvoidBudgetOverruns from "assets/welcome/anomaly-detection-to-avoid-budget-overruns.svg";
-// import cloudResourceUsageCostTransparency from "assets/welcome/cloud-resource-usage-cost-transparency.svg";
-// import finopsCloudCostOptimization from "assets/welcome/finops-cloud-cost-optimization.svg";
-// import mlAiProfilingOptimization from "assets/welcome/ml-ai-profiling-optimization.svg";
-// import optimalPerformanceInfrastructureCostForMlAiTasks from "assets/welcome/optimal-performance-infrastructure-cost-for-ml-ai-tasks.svg";
-// import runsetsToRunExperimentsInParallel from "assets/welcome/runsets-to-run-experiments-in-parallel.svg";
-// import Button from "components/Button";
-// import CustomersGallery from "components/CustomersGallery";
-// import IconLabel from "components/IconLabel";
-// import IntegrationsGallery from "components/IntegrationsGallery";
-// import SubTitle from "components/SubTitle";
-// import { useIsUpMediaQuery } from "hooks/useMediaQueries";
-// import { HYSTAX, LIVE_DEMO } from "urls";
-// import { tag as tagxotjar } from "utils/hotjar";
 // import { isEven } from "utils/math";
+// import { getQueryParams } from "utils/network";
+// import { buildQueryParameters } from "utils/strings";
+import useStyles from "./Greeter.styles";
 
 type GreeterProps = {
   content: ReactNode;
 };
 
-// MPT_TODO: disabled other authentication sources
-// type LiveDemoButtonProps = {
-//   onClick: () => void;
-// };
-
 // const OptScaleLink = () => {
 //   const { classes, cx } = useStyles();
 //   const intl = useIntl();
-//
+
 //   return (
 //     <Typography component="div" variant="body2" color="white">
 //       <IconLabel
@@ -65,13 +44,13 @@ type GreeterProps = {
 //     </Typography>
 //   );
 // };
-//
+
 // const ImagesWithCaptions = () => {
 //   const intl = useIntl();
 //   const { classes, cx } = useStyles();
-//
+
 //   const isUpLg = useIsUpMediaQuery("lg");
-//
+
 //   return (
 //     <Grid container spacing={isUpLg ? SPACING_6 : SPACING_2} className={classes.imagesWithCaptions}>
 //       {[
@@ -97,17 +76,31 @@ type GreeterProps = {
 //     </Grid>
 //   );
 // };
-//
-// const LiveDemoButton = ({ onClick }: LiveDemoButtonProps) => (
-//   <Button
-//     dataTestId="btn_live_demo"
-//     color="lightYellow"
-//     variant="contained"
-//     messageId="liveDemo"
-//     size="large"
-//     onClick={onClick}
-//   />
-// );
+
+// const LiveDemoButton = () => {
+//   const navigate = useNavigate();
+
+//   const onClick = () => {
+//     const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams();
+
+//     const url = buildQueryParameters(LIVE_DEMO, [
+//       capability ? `${OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME}=${capability}` : ""
+//     ]);
+
+//     navigate(url);
+//   };
+
+//   return (
+//     <Button
+//       dataTestId="btn_live_demo"
+//       color="lightYellow"
+//       variant="contained"
+//       messageId="liveDemo"
+//       size="large"
+//       onClick={onClick}
+//     />
+//   );
+// };
 
 // const defaultOrder = [0, 1, 2, 3, 4, 5] as const;
 
@@ -128,7 +121,6 @@ const Greeter = ({ content }: GreeterProps) => {
   const { classes, cx } = useStyles();
   const theme = useTheme();
   // MPT_TODO: Override with custom order and gridDefinition to math BDR requirements
-  // const navigate = useNavigate();
 
   // const isInVerticalOrder = useIsDownMediaQuery("md");
 

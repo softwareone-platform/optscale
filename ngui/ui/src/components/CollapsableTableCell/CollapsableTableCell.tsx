@@ -13,7 +13,7 @@ const CopyText = ({ children, textToCopy, dataTestId }) => (
   <CopyTextComponent
     dataTestIds={{ text: dataTestId }}
     variant="inherit"
-    copyIconType="animated"
+    dynamicCopyIcon
     text={textToCopy}
     sx={{ fontWeight: "inherit", display: "inline-flex" }}
   >

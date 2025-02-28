@@ -23,7 +23,7 @@
   become: yes
 
 - name: Enable scheduling on master node
-  shell: kubectl taint nodes --all node-role.kubernetes.io/master-
+  shell: kubectl taint nodes --all node-role.kubernetes.io/control-plane-
   ignore_errors: true
   run_once: true
 
@@ -36,14 +36,6 @@
 - name: Fix helm cluster roles
   shell: kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
   ignore_errors: true
-  run_once: true
-
-- name: Wait untill Tiller is up and running
-  shell: kubectl --namespace kube-system get pods | awk '/tiller/ { print $0 }'
-  register: result
-  until: (result.stdout.find("Running") != -1) and (result.stdout.find("1/1") != -1)
-  retries: 30
-  delay: 10
   run_once: true
 
 - name: Copy openssl config
@@ -63,13 +55,13 @@
 - name: Add Helm repos
   shell: helm repo add {{ item }}
   with_items:
-    - stable https://charts.helm.sh/stable
+    - bitnami https://charts.bitnami.com/bitnami
 
 - name: Update Helm repos
   shell: helm repo update
 
 - name: Install nginx ingress controller
-  shell: helm upgrade --install ngingress stable/nginx-ingress --set rbac.create=true --set controller.hostNetwork=true --set controller.extraArgs.default-ssl-certificate=default/defaultcert --set controller.kind=DaemonSet
+  shell: helm upgrade --install ngingress bitnami/nginx-ingress-controller --version 11.3.17 --set hostNetwork=true --set extraArgs.default-ssl-certificate=default/defaultcert --set kind=DaemonSet --set daemonset.useHostPort=true --set containerPorts.http=80 --set containerPorts.https=443 --set resources.limits.memory=896Mi --set resources.requests.memory=384Mi
   run_once: true
 
 - name: Copy custom nginx-ingress chart
@@ -79,10 +71,6 @@
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
     mode: 0644
-  run_once: true
-
-- name: Install etcd-operator
-  shell: helm upgrade --install etcd-operator --set backupOperator.replicaCount=0 --set restoreOperator.replicaCount=0 stable/etcd-operator --set etcdOperator.image.pullPolicy=IfNotPresent
   run_once: true
 
 - name: Check domain presence
@@ -109,6 +97,23 @@
     line: 'KUBELET_EXTRA_ARGS=--hostname-override={{ ansible_hostname }} --image-gc-high-threshold={{ image_gc_high_threshold }} --image-gc-low-threshold={{ image_gc_low_threshold }} --eviction-hard={{ eviction_hard }}'
     state: present
     create: yes
+  become: yes
+
+- name: Ensure kubelet config file exists
+  lineinfile:
+    path: /var/lib/kubelet/config.yaml
+    line: ''
+    create: yes
+    mode: '0644'
+  become: yes
+
+- name: Set maxPods to 250 in kubelet config
+  lineinfile:
+    path: /var/lib/kubelet/config.yaml
+    regexp: '^maxPods:'
+    line: 'maxPods: 250'
+    backup: yes
+    mode: '0644'
   become: yes
 
 - name: Restart kubelet service
@@ -146,3 +151,6 @@
     state: present
   become: yes
   when: cloud_init_hosts.stat.exists
+
+- name: Reset SSH connection
+  meta: reset_connection

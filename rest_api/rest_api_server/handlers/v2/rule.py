@@ -2,7 +2,8 @@ import json
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.controllers.rule import RuleAsyncController
-from rest_api.rest_api_server.controllers.rule_apply import RuleApplyAsyncController
+from rest_api.rest_api_server.controllers.rule_apply import (
+    RuleApplyAsyncController)
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler, BaseAsyncItemHandler)
 from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
@@ -10,7 +11,6 @@ from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.utils import (
     run_task, ModelEncoder, check_string_attribute, check_bool_attribute,
     raise_unexpected_exception)
-from rest_api.rest_api_server.exceptions import Err
 
 
 class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
@@ -23,7 +23,7 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
         ---
         description: |
             Create pool owner detection rule
-            Required permission: INFO_ORGANIZATION
+            Required permission: EDIT_PARTNER
         tags: [rules]
         summary: Create rule
         parameters:
@@ -146,7 +146,7 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
         security:
         - token: []
         """
-        await self.check_permissions('INFO_ORGANIZATION', 'organization',
+        await self.check_permissions('EDIT_PARTNER', 'organization',
                                      organization_id)
         data = self._request_body()
         data.update(url_params)
@@ -329,7 +329,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         ---
         description: |
             Edit existing rule
-            Required permission: INFO_ORGANIZATION
+            Required permission: EDIT_PARTNER
         tags: [rules]
         summary: Edit rule
         parameters:
@@ -451,7 +451,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         """
         data = self._request_body()
         item = await self._get_item(id)
-        await self.check_permissions('INFO_ORGANIZATION', 'organization',
+        await self.check_permissions('EDIT_PARTNER', 'organization',
                                      item.organization_id)
         self._validate_params(item, **kwargs)
         res = await run_task(self.controller.edit_rule, id, self.token, **data)
@@ -462,7 +462,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         ---
         description: |
             Deletes rule with specified id
-            Required permission: INFO_ORGANIZATION
+            Required permission: EDIT_PARTNER
         tags: [rules]
         summary: Delete rule
         parameters:
@@ -490,7 +490,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         - token: []
         """
         item = await self._get_item(id)
-        await self.check_permissions('INFO_ORGANIZATION', 'organization',
+        await self.check_permissions('EDIT_PARTNER', 'organization',
                                      item.organization_id)
         await super().delete(id, **kwargs)
 
@@ -510,7 +510,7 @@ class RulePriorityAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         ---
         description: |
             Prioritize the rule
-            Required permission: INFO_ORGANIZATION
+            Required permission: EDIT_PARTNER
         tags: [rules]
         summary: Prioritize the rule
         parameters:
@@ -601,7 +601,7 @@ class RulePriorityAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
         - token: []
         """
         item = await self._get_item(rule_id)
-        await self.check_permissions('INFO_ORGANIZATION', 'organization',
+        await self.check_permissions('EDIT_PARTNER', 'organization',
                                      item.organization_id)
         data = self._request_body()
         res = await run_task(self.controller.update_priority, rule_id, **data)

@@ -10,10 +10,10 @@ import ConfirmVerificationCodeContainer from "containers/ConfirmVerificationCode
 import CreateNewPasswordContainer from "containers/CreateNewPasswordContainer";
 import { initialize } from "containers/InitializeContainer/redux";
 import SendVerificationCodeContainer from "containers/SendVerificationCodeContainer";
-import { INITIALIZE } from "urls";
+import { INITIALIZE, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import macaroon from "utils/macaroons";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { formQueryString, getQueryParams, updateQueryParams } from "utils/network";
 
 const SEND_VERIFICATION_CODE = 0;
 const CONFIRM_VERIFICATION_CODE = 1;
@@ -89,7 +89,16 @@ const PasswordRecovery = () => {
               onClick={() => {
                 const caveats = macaroon.processCaveats(macaroon.deserialize(verificationCodeToken.token).getCaveats());
                 dispatch(initialize({ ...verificationCodeToken, caveats }));
-                navigate(INITIALIZE);
+
+                const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+                  [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
+                };
+
+                navigate(
+                  `${INITIALIZE}?${formQueryString({
+                    [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
+                  })}`
+                );
               }}
             >
               <FormattedMessage id="proceedToOptScale" />

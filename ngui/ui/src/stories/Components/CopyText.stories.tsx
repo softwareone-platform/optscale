@@ -24,12 +24,6 @@ export default {
         "inherit"
       ],
       defaultValue: "body2"
-    },
-    copyIconType: {
-      name: "Copy icon type",
-      control: "select",
-      options: ["static", "animated"],
-      defaultValue: "static"
     }
   }
 };

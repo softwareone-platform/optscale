@@ -1,0 +1,77 @@
+- name: Setup nerdctl
+  block:
+    - name: Download nerdctl
+      get_url:
+        url: https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+        dest: /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+    
+    - name: Extract nerdctl
+      shell: tar Cxzf /usr/local/bin /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+      become: yes
+
+    - name: Create bin directory in the user's home
+      file:
+        path: "{{ ansible_env.HOME }}/bin"
+        state: directory
+        mode: '0700'
+
+    - name: Copy nerdctl to user's bin directory
+      copy:
+        src: /usr/local/bin/nerdctl
+        dest: "{{ ansible_env.HOME }}/bin"
+        remote_src: yes
+
+    - name: Change ownership of nerdctl
+      command: chown root "{{ ansible_env.HOME }}/bin/nerdctl"
+      become: yes
+
+    - name: setuid nerdctl
+      command: chmod 4755 "{{ ansible_env.HOME }}/bin/nerdctl"
+      become: yes
+ 
+    - name: Cleanup temporary file
+      file:
+        path: /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+        state: absent
+
+    - name: Create conf directory
+      file:
+        path: "/etc/nerdctl"
+        state: directory
+        mode: '0755'
+      become: yes
+
+    - name: set default namespace k8s.io
+      copy:
+        dest: "/etc/nerdctl/nerdctl.toml"
+        content: |
+          namespace = "k8s.io"
+        mode: 0644
+      become: yes
+
+- name: Setup and run buildkit
+  block:
+    - name: Download buildkit
+      get_url:
+        url: https://github.com/moby/buildkit/releases/download/v{{ buildkit_version }}/buildkit-v{{ buildkit_version }}.linux-amd64.tar.gz
+        dest: /tmp/buildkit-{{ buildkit_version }}-linux-amd64.tar.gz
+
+    - name: Extract buildkit
+      shell: tar Cxzf {{ ansible_env.HOME }} /tmp/buildkit-{{ buildkit_version }}-linux-amd64.tar.gz
+
+    - name: Create systemd unit file
+      template:
+        src: buildkit.service
+        dest: /lib/systemd/system/buildkit.service
+      become: yes
+
+    - name: Reload the system configureation
+      shell: systemctl daemon-reload
+      become: yes
+
+    - name: Start buildkitd service
+      systemd:
+        name: buildkit.service
+        enabled: true
+        state: started
+      become: yes

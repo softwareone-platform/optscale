@@ -12,7 +12,7 @@ data:
   cluster_secret: {{ .Values.secrets.cluster | b64enc | quote }}
 {{- range $period, $schedule := .Values.report_import_schedules }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}-{{ $period }}

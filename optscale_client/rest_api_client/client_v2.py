@@ -2212,9 +2212,12 @@ class Client(Client_v1):
     def restore_password_url():
         return 'restore_password'
 
-    def restore_password(self, email):
+    def restore_password(self, email, link_params=None):
         url = self.restore_password_url()
-        return self.post(url, {'email': email})
+        body = {'email': email}
+        if link_params:
+            body['link_params'] = link_params
+        return self.post(url, body)
 
     @staticmethod
     def profiling_token_info_url(profiling_token):
@@ -2227,9 +2230,12 @@ class Client(Client_v1):
     def verify_email_url():
         return 'verify_email'
 
-    def verify_email(self, email):
+    def verify_email(self, email, link_params=None):
         url = self.verify_email_url()
-        return self.post(url, {'email': email})
+        body = {'email': email}
+        if link_params:
+            body['link_params'] = link_params
+        return self.post(url, body)
 
     @staticmethod
     def employee_emails_url(employee_id):

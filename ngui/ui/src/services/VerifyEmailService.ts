@@ -13,10 +13,10 @@ const useSendEmailVerificationCode = () => {
   const { isLoading } = useApiState(VERIFY_EMAIL);
 
   const onSend = useCallback(
-    (email: string) =>
+    (email: string, linkParams: Record<string, string | undefined>) =>
       new Promise((resolve, reject) => {
         dispatch((_, getState) => {
-          dispatch(verifyEmail(email)).then(() => {
+          dispatch(verifyEmail({ email, linkParams })).then(() => {
             if (!isError(VERIFY_EMAIL, getState())) {
               return resolve();
             }

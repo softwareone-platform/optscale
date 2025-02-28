@@ -29,11 +29,14 @@ import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
 
 import {
-  DOCS_HYSTAX_AUTO_BILLING_AWS,
-  DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT,
-  DOCS_HYSTAX_DISCOVER_RESOURCES,
+  DOCS_HYSTAX_CONNECT_AWS_ROOT,
+  DOCS_HYSTAX_CONNECT_AZURE_TENANT,
+  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
   GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
-  DOCS_HYSTAX_CONNECT_GCP_CLOUD
+  DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
+  DOCS_HYSTAX_CONNECT_AWS_LINKED,
+  DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION,
+  DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT
 } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import {
@@ -236,7 +239,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsRootDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_AUTO_BILLING_AWS} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -250,7 +253,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsLinkedDocumentationReference1",
         values: {
           autoBillingAwsLink: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_AUTO_BILLING_AWS} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_LINKED} target="_blank" rel="noopener">
               {chunks}
             </Link>
           )
@@ -277,7 +280,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAwsLinkedDocumentationReference3",
         values: {
           discoverResourcesLink: (chunks) => (
-            <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_DISCOVER_RESOURCES} target="_blank" rel="noopener">
+            <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES} target="_blank" rel="noopener">
               {chunks}
             </Link>
           )
@@ -290,7 +293,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAzureSubscriptionDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_TENANT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -304,7 +307,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createAzureSubscriptionDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -380,7 +383,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createGCPDocumentationReference",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),
@@ -399,7 +402,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         messageId: "createGCPTenantDocumentationReference2",
         values: {
           link: (chunks) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GCP_CLOUD} target="_blank" rel="noopener">
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT} target="_blank" rel="noopener">
               {chunks}
             </Link>
           ),

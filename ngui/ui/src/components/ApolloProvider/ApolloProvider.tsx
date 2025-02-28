@@ -7,22 +7,25 @@ import { createClient } from "graphql-ws";
 import { v4 as uuidv4 } from "uuid";
 import { GET_ERROR } from "graphql/api/common";
 import { useGetToken } from "hooks/useGetToken";
+import { useSignOut } from "hooks/useSignOut";
 import { getEnvironmentVariable } from "utils/env";
 
 const httpBase = getEnvironmentVariable("VITE_APOLLO_HTTP_BASE");
 const wsBase = getEnvironmentVariable("VITE_APOLLO_WS_BASE");
 
 const writeErrorToCache = (cache: DefaultContext, graphQLError: GraphQLError) => {
-  const { extensions: { response: { url, body: { error } = {} } = {} } = {} } = graphQLError;
+  const { extensions: { response: { url, body: { error } = {} } = {} } = {}, message } = graphQLError;
 
   cache.writeQuery({
     query: GET_ERROR,
-    data: { error: { __typename: "Error", id: uuidv4(), ...error, url } }
+    data: { error: { __typename: "Error", id: uuidv4(), ...error, apolloErrorMessage: message, url } }
   });
 };
 
 const ApolloClientProvider = ({ children }) => {
   const { token } = useGetToken();
+
+  const signOut = useSignOut();
 
   const httpLink = new HttpLink({
     uri: `${httpBase}/api`,
@@ -39,7 +42,15 @@ const ApolloClientProvider = ({ children }) => {
 
   const errorLink = onError(({ graphQLErrors, networkError, operation }: ErrorResponse) => {
     if (graphQLErrors) {
-      graphQLErrors.forEach(({ message, path }) => console.log(`[GraphQL error]: Message: ${message}, Path: ${path}`));
+      graphQLErrors.forEach((graphQLError) => {
+        const { message, path, extensions } = graphQLError;
+
+        console.log(`[GraphQL error]: Message: ${message}, Path: ${path}`);
+
+        if (extensions?.response?.status === 401) {
+          signOut();
+        }
+      });
 
       const { cache } = operation.getContext();
       writeErrorToCache(cache, graphQLErrors[0]);

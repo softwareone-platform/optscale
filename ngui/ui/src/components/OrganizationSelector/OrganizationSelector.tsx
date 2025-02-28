@@ -10,9 +10,12 @@ import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
+
+const MAX_ORGANIZATION_NAME_LENGTH = 24;
 
 const SELECTOR_SX = {
   "&.MuiFormControl-root": {
@@ -85,17 +88,32 @@ const OrganizationSelector = ({
       >
         {[...organizations]
           .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
-          .map((obj) => (
-            <Item key={obj.name} value={obj.id}>
-              <ItemContent
-                icon={{
-                  IconComponent: ApartmentIcon
-                }}
-              >
-                {obj.name}
-              </ItemContent>
-            </Item>
-          ))}
+          .map((organization) => {
+            const isNameLong = organization.name.length > MAX_ORGANIZATION_NAME_LENGTH;
+            const renderedOrganizationName = isNameLong
+              ? sliceByLimitWithEllipsis(organization.name, MAX_ORGANIZATION_NAME_LENGTH)
+              : organization.name;
+
+            const tooltip = isNameLong
+              ? {
+                  title: organization.name
+                }
+              : undefined;
+
+            return (
+              <Item key={organization.name} value={organization.id}>
+                <ItemContent
+                  icon={{
+                    IconComponent: ApartmentIcon,
+                    tooltipTitle: organization.name
+                  }}
+                  tooltip={tooltip}
+                >
+                  {renderedOrganizationName}
+                </ItemContent>
+              </Item>
+            );
+          })}
         <Divider />
         <Button
           icon={{

@@ -4,14 +4,17 @@ import Typography from "@mui/material/Typography";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { PASSWORD_RECOVERY } from "urls";
-import { getQueryParams } from "utils/network";
+import { PASSWORD_RECOVERY, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
+import { formQueryString, getQueryParams } from "utils/network";
 import { EmailField, FormButtons, PasswordField } from "./FormElements";
 import { FormValues, LoginFormProps } from "./types";
 import { getDefaultValues } from "./utils";
 
 const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: LoginFormProps) => {
-  const { email = "" } = getQueryParams() as { email?: string };
+  const { email = "", [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+    email?: string;
+    [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
+  };
 
   const methods = useForm<FormValues>({
     defaultValues: getDefaultValues({
@@ -23,6 +26,10 @@ const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = 
 
   // const search = getSearch();
 
+  const passwordRecoveryUrl = `${PASSWORD_RECOVERY}?${formQueryString({
+    [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
+  })}`;
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -31,7 +38,7 @@ const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = 
         <FormButtons isLoading={isLoading} disabled={disabled} />
         <Box display="flex" justifyContent="space-evenly">
           <Typography>
-            <Link color="primary" to={PASSWORD_RECOVERY} component={RouterLink}>
+            <Link color="primary" to={passwordRecoveryUrl} component={RouterLink}>
               <FormattedMessage id="forgotPassword" />
             </Link>
           </Typography>

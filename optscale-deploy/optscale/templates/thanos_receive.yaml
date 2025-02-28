@@ -72,7 +72,7 @@ spec:
     storage: {{ $config.dataSize }}
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: "/optscale/{{ $config.name }}"
 ---
@@ -136,6 +136,7 @@ spec:
           resources:
             limits:
               memory: {{ $config.memory_limit }}Mi
+              cpu: {{ $config.cpu_limit }}
           command:
             - thanos
           args:

@@ -53,7 +53,7 @@ const Hyperparameters = ({ hyperparameters, isLoading }) => {
           key={hyperparameterKey}
           keyText={hyperparameterKey}
           value={
-            <CopyText copyIconType="animated" sx={{ fontWeight: "inherit" }} text={hyperparameterValue}>
+            <CopyText dynamicCopyIcon sx={{ fontWeight: "inherit" }} text={hyperparameterValue}>
               {hyperparameterValue}
             </CopyText>
           }
@@ -79,7 +79,7 @@ const Tags = ({ tags, isLoading }) => {
           key={tagKey}
           keyText={tagKey}
           value={
-            <CopyText copyIconType="animated" sx={{ fontWeight: "inherit" }} text={tagValue}>
+            <CopyText dynamicCopyIcon sx={{ fontWeight: "inherit" }} text={tagValue}>
               {tagValue}
             </CopyText>
           }
@@ -106,7 +106,7 @@ const GitStatus = ({ git, isLoading }) => {
       <KeyValueLabel
         keyText={<FormattedMessage id="remote" />}
         value={
-          <CopyText copyIconType="animated" sx={{ fontWeight: "inherit" }} text={remote}>
+          <CopyText dynamicCopyIcon sx={{ fontWeight: "inherit" }} text={remote}>
             {remote}
           </CopyText>
         }
@@ -114,7 +114,7 @@ const GitStatus = ({ git, isLoading }) => {
       <KeyValueLabel
         keyText={<FormattedMessage id="branch" />}
         value={
-          <CopyText copyIconType="animated" sx={{ fontWeight: "inherit" }} text={remote}>
+          <CopyText dynamicCopyIcon sx={{ fontWeight: "inherit" }} text={remote}>
             {branch}
           </CopyText>
         }
@@ -122,7 +122,7 @@ const GitStatus = ({ git, isLoading }) => {
       <KeyValueLabel
         keyText={<FormattedMessage id="commit" />}
         value={
-          <CopyText copyIconType="animated" sx={{ fontWeight: "inherit" }} text={remote}>
+          <CopyText dynamicCopyIcon sx={{ fontWeight: "inherit" }} text={remote}>
             {commitId}
           </CopyText>
         }

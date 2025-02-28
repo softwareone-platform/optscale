@@ -171,7 +171,7 @@ spec:
             key: mariadb.cnf
 {{- if .Values.db_backup.enabled }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: db-backup

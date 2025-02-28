@@ -5,13 +5,14 @@ import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
 import CopyText from "components/CopyText";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import ExpensesFilters from "components/ExpensesFilters";
 import PageContentWrapper from "components/PageContentWrapper";
 import { ApplyResourcePerspectiveModal, CreateResourcePerspectiveModal } from "components/SideModalManager/SideModals";
+import Tooltip from "components/Tooltip";
 import TypographyLoader from "components/TypographyLoader";
 import CleanExpensesBreakdownContainer from "containers/CleanExpensesBreakdownContainer";
 import ExpensesSummaryContainer from "containers/ExpensesSummaryContainer";
@@ -33,6 +34,7 @@ import { BREAKDOWN_BUTTON_GROUP_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANG
 import { MPT_SPACING_2 } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import DividerHorizontal from "../../shared/components/DividerHorizontal/DividerHorizontal";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
@@ -58,6 +60,8 @@ const BreakdownLinearSelector = ({ value, onChange }) => {
   return <ButtonGroup onButtonClick={handleButtonClick} buttons={BREAKDOWN_BUTTON_GROUP_ITEMS} activeButtonIndex={position} />;
 };
 
+const MAX_PERSPECTIVE_NAME_LENGTH = 60;
+
 const SelectedPerspectiveTitle = ({ perspectiveName }) => {
   const intl = useIntl();
 
@@ -71,12 +75,25 @@ const SelectedPerspectiveTitle = ({ perspectiveName }) => {
     })
   ].join("");
 
+  const isPerspectiveNameLong = perspectiveName.length > MAX_PERSPECTIVE_NAME_LENGTH;
+
   return (
     <CopyText text={copyUrl} variant="h6" Icon={LinkOutlinedIcon} copyMessageId="copyUrl">
-      {intl.formatMessage(
-        { id: "value - value" },
-        { value1: intl.formatMessage({ id: "resources" }), value2: perspectiveName }
-      )}
+      <FormattedMessage
+        id="value - value"
+        values={{
+          value1: intl.formatMessage({ id: "resources" }),
+          value2: (
+            <Tooltip title={isPerspectiveNameLong ? perspectiveName : undefined}>
+              <span>
+                {isPerspectiveNameLong
+                  ? sliceByLimitWithEllipsis(perspectiveName, MAX_PERSPECTIVE_NAME_LENGTH)
+                  : perspectiveName}
+              </span>
+            </Tooltip>
+          )
+        }}
+      />
     </CopyText>
   );
 };

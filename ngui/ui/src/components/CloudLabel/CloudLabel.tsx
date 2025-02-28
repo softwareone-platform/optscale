@@ -26,15 +26,30 @@ const CloudLabel = ({
   disableLink = false,
   whiteSpace = "nowrap",
   display = "flex"
-}) => (
-  <Box display={display} alignItems="center" whiteSpace={whiteSpace}>
-    {startAdornment}
+}) => {
+  const hasAdornment = startAdornment || endAdornment;
+
+  const renderIconLabel = ({ display: iconLabelDisplay } = {}) => (
     <IconLabel
+      display={iconLabelDisplay}
       icon={<CloudTypeIcon type={type} hasRightMargin {...iconProps} />}
       label={label ? <span data-test-id={dataTestId}>{label}</span> : renderLabel({ disableLink, name, id, dataTestId })}
     />
-    {endAdornment}
-  </Box>
-);
+  );
+
+  if (hasAdornment) {
+    return (
+      <Box display={display} alignItems="center" whiteSpace={whiteSpace}>
+        {startAdornment}
+        {renderIconLabel()}
+        {endAdornment}
+      </Box>
+    );
+  }
+
+  return renderIconLabel({
+    display
+  });
+};
 
 export default CloudLabel;

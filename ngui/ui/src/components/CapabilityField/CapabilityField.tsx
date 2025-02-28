@@ -1,5 +1,4 @@
-import { Box } from "@mui/material";
-import { FormControl, FormHelperText } from "@mui/material";
+import { Box, FormControl, FormHelperText } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import CapabilityCard from "components/CapabilityCard";
