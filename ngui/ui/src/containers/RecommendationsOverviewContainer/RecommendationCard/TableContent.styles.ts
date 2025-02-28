@@ -1,7 +1,11 @@
 import { makeStyles } from "tss-react/mui";
 import { SPACING_1 } from "utils/layouts";
 
-const useStyles = makeStyles()((theme, columnsCount) => ({
+type Params = {
+  columnsCount: number;
+};
+
+const useStyles = makeStyles<Params>()((theme, { columnsCount }) => ({
   grid: {
     justifyContent: "space-between",
     display: "grid",

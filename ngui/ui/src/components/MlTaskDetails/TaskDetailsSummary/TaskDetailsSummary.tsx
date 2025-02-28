@@ -130,7 +130,7 @@ const SummaryInfo = ({
             <CapabilityWrapper key="lastRunCost" capability={OPTSCALE_CAPABILITY.FINOPS}>
               <KeyValueLabel keyMessageId="lastRunCost" value={<FormattedMoney value={lastRunCost} />} />
             </CapabilityWrapper>,
-            <KeyValueLabel key="owner" keyMessageId="owner" value={ownerName} />
+            <KeyValueLabel key="owner" keyMessageId="owner" value={ownerName ?? "-"} />
           ]}
         />
       </Box>
@@ -148,7 +148,6 @@ const TaskDetailsSummary = ({ task, isTaskDetailsLoading = false }) => {
     description,
     last_run_cost: lastRunCost = 0,
     run_metrics: lastRunMetrics = [],
-    owner: { name: ownerName } = {},
     last_successful_run: lastSuccessfulRunTimestamp,
     runs_count: runsCount = 0,
     last_run_executor: lastRunExecutor,
@@ -176,7 +175,7 @@ const TaskDetailsSummary = ({ task, isTaskDetailsLoading = false }) => {
           isLoading={isTaskDetailsLoading}
           lastSuccessfulRunTimestamp={lastSuccessfulRunTimestamp}
           lastRunCost={lastRunCost}
-          ownerName={ownerName}
+          ownerName={task.owner?.name}
           lastRunExecutor={lastRunExecutor}
         />
       </div>

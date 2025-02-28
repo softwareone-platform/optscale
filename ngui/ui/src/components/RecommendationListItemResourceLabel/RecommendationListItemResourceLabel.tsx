@@ -12,6 +12,7 @@ const RecommendationListItemResourceLabel = ({ item }) => {
   return (
     <IconLabel
       icon={<CloudTypeIcon type={cloudType} hasRightMargin />}
+      alignItems="flex-start"
       label={
         <CloudResourceId
           disableLink={!dataSources.find(({ id }) => id === dataSourceId)}

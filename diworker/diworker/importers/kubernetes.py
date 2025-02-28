@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import logging
 import math
-
+import re
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pymongo import UpdateOne
@@ -350,6 +350,15 @@ class KubernetesReportImporter(BaseReportImporter):
             if changes:
                 self.mongo_raw.bulk_write(changes)
 
+    @staticmethod
+    def extract_pod_uuid(container_id):
+        match = re.search(r'pod([a-f0-9_]+)\.slice$', container_id)
+        if match:
+            return match.group(1).replace('_', '-')
+        else:
+            # fallback old resource
+            return container_id.split('/pod')[-1]
+
     def load_raw_data(self):
         now = opttime.utcnow()
         dt = now + timedelta(days=1)
@@ -394,7 +403,7 @@ class KubernetesReportImporter(BaseReportImporter):
                     dt_timestamp, value = value_set
                     expense = r['metric'].copy()
                     pod_name = expense.get('pod')
-                    resource_id = expense.pop('id').split('/pod')[-1]
+                    resource_id = self.extract_pod_uuid(expense.pop('id'))
                     start_date = opttime.utcfromtimestamp(
                         dt_timestamp) - timedelta(days=1)
                     end_date = opttime.utcfromtimestamp(dt_timestamp)

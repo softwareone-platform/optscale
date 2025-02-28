@@ -28,6 +28,12 @@ class VerifyEmailAsyncCollectionHandler(RestorePasswordAsyncCollectionHandler):
                         description: Contact email
                         required: true
                         example: example@mail.com
+                    link_params:
+                        type: object
+                        description: Query parameters added to link
+                        required: false
+                        example:
+                            capability: mlops
         responses:
             201:
                 description: Flow initialized and email sent
@@ -44,6 +50,7 @@ class VerifyEmailAsyncCollectionHandler(RestorePasswordAsyncCollectionHandler):
                     - OE0215: Wrong argument's length
                     - OE0216: Argument is not provided
                     - OE0218: Argument has incorrect format
+                    - OE0344: Argument should be a dictionary
                     - OE0416: Argument should not contain only whitespaces
         """
         await super().post()

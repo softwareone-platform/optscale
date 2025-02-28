@@ -19,6 +19,9 @@ elk:
 error_pages:
 etcd:
 failed_imports_dataset_generator:
+filebeat:
+gemini_scheduler:
+gemini_worker:
 grafana:
 grafana_nginx:
 herald:
@@ -33,6 +36,7 @@ katara_service:
 katara_worker:
 keeper:
 keeper_executor:
+layout_cleaner:
 live_demo_generator:
 mariadb:
 metroculus_api:
@@ -44,6 +48,7 @@ ohsu:
 organization_violations:
 pharos_receiver:
 pharos_worker:
+power_schedule:
 redis:
 resource_discovery:
 resource_observer:
@@ -57,7 +62,3 @@ trapper_scheduler:
 trapper_worker:
 users_dataset_generator:
 webhook_executor:
-gemini_scheduler:
-gemini_worker:
-power_schedule:
-layout_cleaner:

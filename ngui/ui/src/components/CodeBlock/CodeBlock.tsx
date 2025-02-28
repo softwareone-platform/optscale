@@ -2,7 +2,13 @@ import Box from "@mui/material/Box";
 import CopyText from "components/CopyText";
 import useStyles from "./CodeBlock.styles";
 
-const CodeBlock = ({ text, maxHeight, height }) => {
+type CodeBlockProps = {
+  text: string;
+  maxHeight: string;
+  height: string;
+};
+
+const CodeBlock = ({ text, maxHeight, height }: CodeBlockProps) => {
   const { classes } = useStyles();
 
   return (

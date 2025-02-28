@@ -1,5 +1,6 @@
 import json
 import os
+import etcd
 import logging
 from bson.objectid import ObjectId
 from optscale_client.config_client.client import Client as ConfigClient
@@ -7,14 +8,23 @@ from datetime import datetime, timezone
 from pymongo import MongoClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from retrying import retry
 
 ARCHIVE_ENABLED = False
 ARCHIVE_PATH = '/src/archive'
 FILE_MAX_ROWS = 10000
 CHUNK_SIZE = 500
 ROWS_LIMIT = 10000
+DEFAULT_STOP_MAX_ATTEMPT_NUMBER = 5
+DEFAULT_RETRY_ARGS = dict(stop_max_attempt_number=10, wait_fixed=1000)
 
 LOG = logging.getLogger(__name__)
+
+
+def _retry(exc):
+    if isinstance(exc, etcd.EtcdKeyNotFound):
+        return True
+    return False
 
 
 class CleanMongoDB(object):
@@ -67,11 +77,16 @@ class CleanMongoDB(object):
             self._config_client = ConfigClient(host=etcd_host, port=etcd_port)
         return self._config_client
 
+    @retry(**DEFAULT_RETRY_ARGS, retry_on_exception=_retry)
+    def get_mongo_params(self, config_client):
+        return config_client.mongo_params()
+
     @property
     def mongo_client(self):
         if not self._mongo_client:
-            mongo_params = self.config_client.mongo_params()
-            self._mongo_client = MongoClient(mongo_params[0])
+            mongo_params = self.get_mongo_params(self.config_client)
+            mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
+            self._mongo_client = MongoClient(mongo_conn_string)
         return self._mongo_client
 
     def get_settings(self):

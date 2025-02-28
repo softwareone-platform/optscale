@@ -11,11 +11,12 @@ LOG = logging.getLogger(__name__)
 
 
 class RestorePasswordController(BaseController):
-    def restore_password(self, email):
+    def restore_password(self, email, **kwargs):
         generated_code = self._generate_code()
-        verification_code = self.create_verification_code(email, generated_code)
+        verification_code = self.create_verification_code(
+            email, generated_code)
         if verification_code:
-            self.send_verification_email(email, generated_code)
+            self.send_verification_email(email, generated_code, **kwargs)
 
     @staticmethod
     def _generate_code():
@@ -33,13 +34,13 @@ class RestorePasswordController(BaseController):
         except requests.exceptions.HTTPError:
             return
 
-    def _generate_link(self, email, code):
+    def _generate_link(self, email, code, link_params):
         host = self._config.public_ip()
-        params = query_url(email=email, code=code)
+        params = query_url(email=email, code=code, **link_params)
         return f'https://{host}/password-recovery{params}'
 
-    def send_verification_email(self, email, code):
-        link = self._generate_link(email, code)
+    def send_verification_email(self, email, code, link_params):
+        link = self._generate_link(email, code, link_params)
         HeraldClient(
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()

@@ -2751,22 +2751,24 @@ export const deleteLayout = (organizationId, layoutId) =>
     entityId: layoutId
   });
 
-export const restorePassword = (email) =>
+export const restorePassword = (params) =>
   apiAction({
     url: `${API_URL}/restore_password`,
     method: "POST",
     label: RESTORE_PASSWORD,
     params: {
-      email
+      email: params.email,
+      link_params: params.linkParams
     }
   });
 
-export const verifyEmail = (email) =>
+export const verifyEmail = (params) =>
   apiAction({
     url: `${API_URL}/verify_email`,
     method: "POST",
     label: VERIFY_EMAIL,
     params: {
-      email
+      email: params.email,
+      link_params: params.linkParams
     }
   });

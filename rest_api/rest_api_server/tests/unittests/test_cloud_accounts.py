@@ -2053,8 +2053,17 @@ class TestCloudAccountApi(TestApiBase):
                 },
             }
         }
+        patch('tools.cloud_adapter.clouds.gcp_tenant.GcpTenant'
+              '._test_bigquery_connection').start()
+        code, resp = self.create_cloud_account(self.org_id, body)
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OE0455')
+
+        client_id = 'test_client'
+        body['config']['credentials']['client_id'] = client_id
         code, parent_ca = self.create_cloud_account(self.org_id, body)
         self.assertEqual(code, 201)
+        self.assertEqual(parent_ca['account_id'], client_id)
         self.assertEqual(parent_ca['type'], body['type'])
         self.assertDictEqual(parent_ca['config']['billing_data'], {
             'dataset_name': 'billing_data',
@@ -2085,6 +2094,7 @@ class TestCloudAccountApi(TestApiBase):
                     "type": "service_account",
                     "private_key_id": "redacted",
                     "private_key": "redacted",
+                    'client_id': client_id
                 })
                 ca_obj = self.get_cloud_account_object(child_ca_id)
                 conf = decode_config(ca_obj.config)

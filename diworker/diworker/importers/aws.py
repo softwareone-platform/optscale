@@ -757,7 +757,7 @@ class AWSReportImporter(CSVBaseReportImporter):
             'Bucket': product and 'AmazonS3' in product and (
                     bool(resource_id) and bucket_type in operation),
             ip_address_type: (extract_type_by_product_type(ip_address_type) or
-                              'PublicIP' in usage_type),
+                              usage_type and 'PublicIP' in usage_type),
             sp_type: bool(sp_id) and 'SavingsPlan' in item_type,
             ri_type: bool(ri_id),
             'Other': (tax_type or resource_type or product_family or

@@ -27,7 +27,7 @@ from arcee.arcee_receiver.models import (
     LeaderboardTemplatePatchIn, Log, Platform,
     StatsPostIn, ModelPatchIn, ModelPostIn, Model, ModelVersionIn,
     ModelVersion, Metric, MetricPostIn, MetricPatchIn,
-    Task, TaskPatchIn, TaskPostIn
+    Task, TaskPatchIn, TaskPostIn, MetricFunc, MetricTendency
 )
 from arcee.arcee_receiver.modules.leader_board import (
     get_calculated_leaderboard, Tendencies)
@@ -492,8 +492,16 @@ async def create_task_run(request, body: RunPostIn, name: str):
 
     o = await db.task.find_one({"token": token, "key": name, "deleted_at": 0})
     if not o:
-        raise SanicException("Not found", status_code=404)
-
+        task_cnt = await db.task.count_documents({"token": token})
+        # create new task
+        tb = {"key": name, "name": name, "metrics": []}
+        o = await _create_task(token=token, **tb)
+        if not task_cnt:
+            await publish_activities_task(
+                token, o["_id"], name, "task",
+                "first_task_created", routing_key='arcee.system')
+        await publish_activities_task(
+            token, o["_id"], name, "task", "task_created")
     task_id = o["_id"]
     run_cnt = await db.run.count_documents({"task_id": task_id})
     r = Run(task_id=task_id, number=run_cnt + 1, **body.model_dump())
@@ -796,6 +804,42 @@ async def get_milestones(request, run_id: str):
     return json(res)
 
 
+async def update_metrics(token: str, data: dict, task_id: str):
+    task = await db.task.find_one(
+        {"token": token, "_id": task_id, "deleted_at": 0})
+    if not task:
+        return
+    metrics_to_add = []
+    for k in data.keys():
+        metric = await db.metric.find_one({"token": token, "key": k})
+        if not metric:
+            # create default metric
+            body = {
+                "key": k,
+                "name": k,
+                "target_value": 0.0,
+                "func": MetricFunc.last.value,
+                "tendency": MetricTendency.more.value
+            }
+            metric = await _create_metric(
+                token=token, **body)
+            await publish_activities_task(
+                token, metric["_id"], k, "metric", "metric_created"
+            )
+            # check metric is assigned and assign metric
+            # only for case metric is implicitly created
+            metric_id = metric["_id"]
+            task["metrics"].append(metric_id)
+            await db.task.update_one(
+                {"_id": task_id},
+                {'$set': {"metrics": task["metrics"]}}
+            )
+            metrics_to_add.append(metric_id)
+    if metrics_to_add:
+        await _send_task_metric_updated(
+            set(metrics_to_add), set(), token, task_id, task["name"])
+
+
 @app.route('/arcee/v2/collect', methods=["POST", ], ctx_label='token')
 @validate(json=StatsPostIn)
 async def collect(request, body: StatsPostIn):
@@ -803,6 +847,7 @@ async def collect(request, body: StatsPostIn):
 
     platform = body.platform
     instance_id = platform.instance_id
+    new_data = body.data
     run_id = body.run
     run = await db.run.find_one({"_id": run_id})
     if instance_id:
@@ -823,13 +868,15 @@ async def collect(request, body: StatsPostIn):
 
     log = Log(instance_id=instance_id, project=body.project,
               run_id=body.run, data=body.data)
+    # implicit metric update
+    await update_metrics(token, body.data, run["task_id"])
     await db.log.insert_one(log.model_dump(by_alias=True))
 
     executors = run.get("executors", [])
     if instance_id:
         executors.append(instance_id)
     old_data = run.get("data", {})
-    new_data = body.data
+
     await db.run.update_one(
         {"_id": run_id}, {
             '$set': {

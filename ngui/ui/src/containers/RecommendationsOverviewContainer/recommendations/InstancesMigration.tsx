@@ -2,6 +2,7 @@ import { FormattedMessage } from "react-intl";
 import CloudTypeIcon from "components/CloudTypeIcon";
 import FormattedMoney from "components/FormattedMoney";
 import IconLabel from "components/IconLabel";
+import RecommendationListItemFlavorLabel from "components/RecommendationListItemFlavorLabel";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS } from "hooks/useRecommendationServices";
@@ -74,7 +75,7 @@ class InstancesMigration extends BaseRecommendation {
       },
       {
         key: `${item.cloud_resource_id}-region`,
-        value: <IconLabel icon={<CloudTypeIcon fontSize="small" type={item.cloud_type} />} label={item.recommended_region} />
+        value: <RecommendationListItemFlavorLabel item={item} />
       },
       {
         key: `${item.cloud_resource_id}-saving`,

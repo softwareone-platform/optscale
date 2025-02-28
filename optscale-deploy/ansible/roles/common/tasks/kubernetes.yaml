@@ -5,24 +5,71 @@
     state: present
   become: yes
 
-- name: Add kubernetes key
-  apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: B53DC80D13EDEF05
-    state: present
+- name: add Kubernetes apt-key
+  get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/Release.key
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+    mode: '0644'
+    force: true
   become: yes
 
-# xenial is always used, because bionic repo doesn't exist yet
-- name: Add kubernetes repo
+- name: add Kubernetes' APT repository
   apt_repository:
-    repo: deb http://mirror.reenigne.net/apt.kubernetes.io/ kubernetes-xenial main
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/ /"
     state: present
-    filename: kubernetes
+    update_cache: yes
   become: yes
 
+- name: add Docker apt-key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker-apt-keyring.asc
+    mode: '0644'
+    force: true
+  become: yes
+
+- name: add Docker's APT repository
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker-apt-keyring.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: install Containerd
+  apt:
+    name: containerd.io
+    state: present
+  become: yes
+
+- name: add Containerd configuration
+  shell: /usr/bin/containerd config default > /etc/containerd/config.toml
+  become: yes
+
+- name: configuring the systemd cgroup driver for Containerd
+  lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: '            SystemdCgroup = false'
+    line: '            SystemdCgroup = true'
+  become: yes
+
+- name: configuring the pause image for Containerd
+  lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: 'sandbox_image = \"registry.k8s.io/pause:.*\"'
+    line: '    sandbox_image = "registry.k8s.io/pause:3.9"'
+  become: yes
+
+- name: enable the Containerd service and start it
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
+    daemon-reload: yes
+  become: yes
+      
 - name: Install kubernetes packages
   apt:
-    name: "{{ item }}={{ kubernetes_version }}-*"
+    name: "{{ item }}={{ kubernetes_version }}.0-*"
     state: present
     update_cache: yes
   become: yes
@@ -40,6 +87,42 @@
     state: absent
   become: yes
 
+- name: create an empty file for the Containerd module
+  copy:
+    content: ""
+    dest: /etc/modules-load.d/containerd.conf
+    force: no
+  become: yes
+
+- name: configure modules for Containerd
+  blockinfile:
+    path: /etc/modules-load.d/containerd.conf
+    block: |
+         overlay
+         br_netfilter
+  become: yes
+
+- name: create an empty file for Kubernetes sysctl params
+  copy:
+    content: ""
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+    force: no
+  become: yes
+
+- name: configure sysctl params for Kubernetes
+  lineinfile:
+    path: /etc/sysctl.d/99-kubernetes-cri.conf
+    line: "{{ item }}"
+  with_items:
+    - 'net.bridge.bridge-nf-call-iptables  = 1'
+    - 'net.ipv4.ip_forward                 = 1'
+    - 'net.bridge.bridge-nf-call-ip6tables = 1'
+  become: yes
+
+- name: apply sysctl params without reboot
+  command: sysctl --system
+  become: yes
+  
 - name: Disable swap
   command: swapoff -a
   become: yes

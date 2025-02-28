@@ -9,7 +9,7 @@ type CountdownMessageProps = {
 };
 
 type SendVerificationCodeAgainMessageProps = {
-  onSend: () => Promise<void>;
+  onSend: () => Promise<unknown>;
   sendingVerificationCode?: boolean;
 };
 

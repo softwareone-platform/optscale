@@ -71,6 +71,9 @@ const CapabilityCard = ({
       elevation={0}
       sx={{
         border: (theme) => `1px solid ${lighten(theme.palette.info.main, 0.8)}`,
+        "&:hover": {
+          backgroundColor: (theme) => theme.palette.action.hover
+        },
         ...sx
       }}
     >

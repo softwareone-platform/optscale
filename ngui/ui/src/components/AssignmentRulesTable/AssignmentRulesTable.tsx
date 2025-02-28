@@ -13,6 +13,7 @@ import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { getCreateAssignmentRuleUrl, getEditAssignmentRuleUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -23,6 +24,8 @@ const isPriorityActionDisabled = (rulePriority, condition) => rulePriority === c
 
 const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpdatePriority }) => {
   const { isGetAssignmentRulesLoading, isGetManagedPoolsLoading } = isLoadingProps;
+
+  const isManageAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
 
   const navigate = useNavigate();
 
@@ -104,30 +107,36 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
       poolOwner(),
       conditions(),
       priority(),
-      {
-        header: (
-          <TextWithDataTestId dataTestId="lbl_actions">
-            <FormattedMessage id="actions" />
-          </TextWithDataTestId>
-        ),
-        enableSorting: false,
-        id: "actions",
-        cell: ({ row: { id, original } }) => (
-          <TableCellActions
-            items={[...priorityActions, ...basicActions].map((item) => ({
-              key: item.messageId,
-              messageId: item.messageId,
-              color: item.color,
-              dataTestId: `${item.dataTestId}_${id}`,
-              disabled: item.disabledPriority ? isPriorityActionDisabled(original.priority, item.disabledPriority) : false,
-              icon: item.icon,
-              action: () => item.action(original.id)
-            }))}
-          />
-        )
-      }
+      ...(isManageAllowed
+        ? [
+            {
+              header: (
+                <TextWithDataTestId dataTestId="lbl_actions">
+                  <FormattedMessage id="actions" />
+                </TextWithDataTestId>
+              ),
+              enableSorting: false,
+              id: "actions",
+              cell: ({ row: { id, original } }) => (
+                <TableCellActions
+                  items={[...priorityActions, ...basicActions].map((item) => ({
+                    key: item.messageId,
+                    messageId: item.messageId,
+                    color: item.color,
+                    dataTestId: `${item.dataTestId}_${id}`,
+                    disabled: item.disabledPriority
+                      ? isPriorityActionDisabled(original.priority, item.disabledPriority)
+                      : false,
+                    icon: item.icon,
+                    action: () => item.action(original.id)
+                  }))}
+                />
+              )
+            }
+          ]
+        : [])
     ];
-  }, [rulesCount, navigate, onUpdatePriority, openSideModal]);
+  }, [rulesCount, navigate, onUpdatePriority, openSideModal, isManageAllowed]);
 
   const actionBarDefinition = {
     items: [
@@ -139,7 +148,8 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         variant: "contained",
         type: "button",
         dataTestId: "btn_add",
-        action: addButtonAction
+        action: addButtonAction,
+        requiredActions: ["EDIT_PARTNER"]
       },
       {
         key: "bu-reapply",

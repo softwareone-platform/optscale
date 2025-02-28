@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import QuestionMark from "components/QuestionMark";
-import { isEmpty } from "utils/arrays";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 import Actions from "../Actions";
 import RecommendationCard, { ServicesChipsGrid, TableContent, Header } from "../RecommendationCard";
 import { usePinnedRecommendations } from "../redux/pinnedRecommendations/hooks";
@@ -43,7 +43,7 @@ const Cards = ({
     ];
   }
 
-  if (isEmpty(orderedRecommendations)) {
+  if (isEmptyArray(orderedRecommendations)) {
     return (
       <Typography>
         <FormattedMessage id="noRecommendationsFound" />
@@ -96,7 +96,7 @@ const Cards = ({
         />
       }
     >
-      <TableContent data={r.previewItems.slice(0, 3)} />
+      {isEmptyArray(r.previewItems) ? null : <TableContent data={r.previewItems.slice(0, 3)} />}
     </RecommendationCard>
   ));
 };

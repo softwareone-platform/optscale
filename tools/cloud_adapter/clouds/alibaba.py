@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timezone
 
 import math
+
 from aliyunsdkbssopenapi.request.v20171214 import (
     DescribeInstanceBillRequest,
     DescribePricingModuleRequest,
@@ -335,9 +336,14 @@ class Alibaba(CloudBase):
     def _discover_region_instances(self, region_details):
         request = DescribeInstancesRequest.DescribeInstancesRequest()
         request.set_PageSize(100)
-        instances = self._send_paged_request(
-            request, paged_item='Instance',
-            region_id=region_details['RegionId'])
+        try:
+            instances = self._send_paged_request(
+                request, paged_item='Instance',
+                region_id=region_details['RegionId'])
+        except ClientException as exc:
+            LOG.warning("Error connecting to region %s: %s",
+                        region_details['RegionId'], exc.message)
+            return
         vpc_id_to_name = self._discover_region_vpcs(region_details)
         for item in instances:
             vpc_id = item.get('VpcAttributes', {}).get('VpcId')
@@ -469,9 +475,14 @@ class Alibaba(CloudBase):
     def _discover_region_rds_instances(self, region_details):
         request = DescribeDBInstancesRequest.DescribeDBInstancesRequest()
         request.set_PageSize(100)
-        instances = list(self._send_paged_request(
-            request, paged_item='DBInstance',
-            region_id=region_details['RegionId']))
+        try:
+            instances = list(self._send_paged_request(
+                request, paged_item='DBInstance',
+                region_id=region_details['RegionId']))
+        except ClientException as exc:
+            LOG.warning("Error connecting to region %s: %s",
+                        region_details['RegionId'], exc.message)
+            return
         instance_ids = [x['DBInstanceId'] for x in instances]
         tag_map = self._get_rds_tags(region_details['RegionId'])
         details_map = {x['DBInstanceId']: x for x in self._get_rds_details(

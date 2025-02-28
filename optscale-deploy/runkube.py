@@ -10,18 +10,19 @@ import time
 
 import yaml
 import subprocess
-import docker
+
+from python_on_whales import DockerClient
+from python_on_whales.exceptions import NoSuchImage
+
 from urllib.parse import urlsplit
 from kubernetes import client as k8s_client, config as k8s_config
 from kubernetes.client.rest import ApiException as K8SApiException
 from kubernetes.stream import stream as k8s_stream
-from docker import DockerClient
 from kubernetes.stream.ws_client import ERROR_CHANNEL
-from docker.errors import ImageNotFound
 REPOSITORY = 'hystax/optscale'
-DESCRIPTION = f"Script to deploy OptScale on k8s. " \
-              f"See deployment instructions at https://github.com/{REPOSITORY}"
-HELM_DELETE_CMD = 'helm delete --purge {release}'
+DESCRIPTION = "Script to deploy OptScale on k8s. " \
+              "See deployment instructions at https://github.com/hystax/optscale"
+HELM_DELETE_CMD = 'helm uninstall {release}'
 HELM_UPDATE_CMD = 'helm upgrade --install {overlays} {release} {chart}'
 GET_FAKE_CERT_CMD = 'cat /ingress-controller/ssl/default-defaultcert.pem'
 HELM_LIST_CMD = 'helm list -a'
@@ -37,15 +38,24 @@ OPTSCALE_K8S_NAMESPACE = 'default'
 COMPONENTS_FILE = 'components.yaml'
 LOCAL_TAG = 'local'
 LATEST_TAG = 'latest'
+DOCKER_SOCKET = 'unix:///var/run/docker.sock'
+CONTAINERD_SOCKET = '/run/containerd/containerd.sock'
 
 LOG = logging.getLogger(__name__)
+
+# https://github.com/kubernetes-client/python/issues/895
+from kubernetes.client.models.v1_container_image import V1ContainerImage
+
+def names(self, names):
+    self._names = names
+V1ContainerImage.names = V1ContainerImage.names.setter(names)
 
 
 class Runkube:
     def __init__(self, name, config, overlays, dport, dregistry, dregistry_user,
                  dregistry_password, no_pull, pull_by_master_ip, with_elk,
-                 external_clickhouse, external_mongo, use_socket, version,
-                 wait_timeout=0):
+                 external_clickhouse, external_mongo, use_socket, insecure,
+                 version, wait_timeout=0):
         self.name = name
         if config is None:
             self.config = os.path.join(os.environ.get('HOME'), '.kube/config')
@@ -66,6 +76,7 @@ class Runkube:
         self.external_mongo = external_mongo
         k8s_config.load_kube_config(self.config)
         self.use_socket = use_socket
+        self.insecure = insecure
         self.version = version
         self._versions_info = None
         self.wait_timeout = wait_timeout
@@ -87,8 +98,8 @@ class Runkube:
         return self._master_ip
 
     @staticmethod
-    def _get_image(docker_cl, image_name, tag):
-        return docker_cl.images.get('{}:{}'.format(image_name, tag))
+    def _get_image(ctrd_cl, image_name, tag):
+        return ctrd_cl.image.inspect('{}:{}'.format(image_name, tag))
 
     def get_node_ips(self):
         LOG.debug("Getting node ips...")
@@ -108,13 +119,17 @@ class Runkube:
         return [n.metadata.labels.get('kubernetes.io/hostname')
                 for n in self.kube_cl.list_node().items]
 
-    def get_docker_cl(self, node):
+    def get_ctrd_cl(self, node):
+        cmd = ["nerdctl"]
         if self.use_socket:
-            return docker.from_env()
-        else:
-            LOG.debug("Connecting to docker daemon %s:%s", node, self.dport)
-            cl = DockerClient(base_url='tcp://{0}:{1}'.format(node, self.dport))
-            return cl
+            LOG.info("Using Docker socket..")
+            os.environ["DOCKER_HOST"] = DOCKER_SOCKET
+            os.environ["CONTAINERD_ADDRESS"] = CONTAINERD_SOCKET
+        LOG.info("Connecting to ctd daemon %s:%s", node, self.dport)
+        if self.insecure:
+            cmd.append("--insecure-registry")
+        cl = DockerClient(client_call=cmd)
+        return cl
 
     @property
     def versions_info(self):
@@ -127,45 +142,48 @@ class Runkube:
             }
         return self._versions_info
 
-    def _pull_image(self, docker_cl, image_name, tag, auth_config):
+    def _pull_image(self, ctrd_cl, image_name, tag, auth_config):
         full_image_name = os.path.join(self.dregistry, image_name)
         LOG.info("Pulling image %s with tag %s", full_image_name, tag)
-        params = {'repository': full_image_name, 'tag': tag}
-        if auth_config:
-            params['auth_config'] = auth_config
-        image = docker_cl.images.pull(**params)
-        LOG.debug("Pulled image with id %s", image.id)
+        ctrd_cl.image.pull('{}:{}'.format(full_image_name, tag))
+        image = ctrd_cl.image.inspect('{}:{}'.format(full_image_name, tag)).id
+        LOG.debug("Pulled image with id %s", image)
         return image
 
-    def pull_images(self, docker_cl):
-        LOG.debug("Logging into docker registry %s", self.dregistry)
+    def pull_images(self, ctrd_cl):
+        LOG.debug("Logging into container registry %s", self.dregistry)
         auth_config = {}
         if self.dregistry_user or self.dregistry_password:
             auth_config = {
+                'server': self.dregistry,
                 'username': self.dregistry_user,
                 'password': self.dregistry_password
             }
+            ctrd_cl.login(**auth_config)
         images = {}
         for image_name in self.versions_info['images']:
-            image = self._pull_image(docker_cl, image_name, self.version,
+            image = self._pull_image(ctrd_cl, image_name, self.version,
                                      auth_config)
             images[image_name] = image
+        if auth_config:
+            ctrd_cl.logout(auth_config['server'])
         return images
 
-    def _find_image(self, docker_cl, name, version):
+    def _find_image(self, ctrd_cl, name, version):
+        image = None
         for image_name in [name, os.path.join(self.dregistry, name)]:
             try:
-                image = self._get_image(docker_cl, image_name, version)
+                image = self._get_image(ctrd_cl, image_name, version)
                 break
-            except ImageNotFound:
-                image = None
+            except NoSuchImage:
+                pass
         return image
 
-    def get_local_images(self, docker_cl):
+    def get_local_images(self, ctrd_cl):
         images = {}
         for name in self.versions_info['images']:
-            image = self._find_image(docker_cl, name, self.version)
-            local_image = self._find_image(docker_cl, name, LOCAL_TAG)
+            image = self._find_image(ctrd_cl, name, self.version)
+            local_image = self._find_image(ctrd_cl, name, LOCAL_TAG)
             if not image:
                 if not local_image:
                     raise Exception('Image %s not found' % name)
@@ -174,20 +192,17 @@ class Runkube:
                 images[name] = image
         return images
 
-    def tag_images_local(self, images):
+    def tag_images_local(self, images, ctrd_cl):
         for image_name, image in images.items():
-            # this dirty hack required to make etcd operator work with our etcd image
-            if image_name == 'etcd':
-                image.tag(repository=image_name, tag='vlocal')
             LOG.info("Tagging %s as %s:%s" % (image, image_name, LOCAL_TAG))
-            image.tag(repository=image_name, tag=LOCAL_TAG)
+            ctrd_cl.image.tag(source_image=image, new_tag='{}:{}'.format(image_name,LOCAL_TAG))
 
     def get_image_id_map(self):
         LOG.debug("Getting map of image ids...")
-        docker_cl = self.get_docker_cl(self.master_ip)
+        ctrd_cl = self.get_ctrd_cl(self.master_ip)
         images = {}
         for service in self.versions_info['images']:
-            image = self._get_image(docker_cl, service, LOCAL_TAG)
+            image = self._get_image(ctrd_cl, service, LOCAL_TAG)
             images[service] = image.id
         LOG.debug("Image ids map: %s", images)
         return images
@@ -334,15 +349,14 @@ class Runkube:
         self.check_releases(update)
         self.check_version()
         for node in self.get_node_ips():
-            docker_cl = self.get_docker_cl(node)
+            ctrd_cl = self.get_ctrd_cl(node)
             if not self.no_pull:
                 LOG.info("Pulling images for %s", node)
-                images = self.pull_images(docker_cl)
+                images = self.pull_images(ctrd_cl)
             else:
                 LOG.info('Сomparing local images for %s' % node)
-                images = self.get_local_images(docker_cl)
-            LOG.info('images for tag: %s' % images)
-            self.tag_images_local(images)
+                images = self.get_local_images(ctrd_cl)
+            self.tag_images_local(images, ctrd_cl)
         overlays = []
         LOG.debug("Creating temp dir %s", TEMP_DIR)
         os.makedirs(TEMP_DIR, mode=0o755, exist_ok=True)
@@ -438,6 +452,8 @@ if __name__ == '__main__':
                         help="Only update images and restart related pods")
     parser.add_argument('--use-socket', action='store_true',
                         default=False, help="Use docker socket")
+    parser.add_argument('--insecure', action='store_true',
+                        default=False, help="Use insecure registry")
     parser.add_argument('-w', '--wait', type=int, default=0,
                         help="Wait for deployment completion for "
                              "specified number of seconds")
@@ -459,6 +475,7 @@ if __name__ == '__main__':
         external_clickhouse=args.external_clickhouse,
         external_mongo=args.external_mongo,
         use_socket=args.use_socket,
+        insecure=args.insecure,
         version=args.version,
         wait_timeout=args.wait,
     )

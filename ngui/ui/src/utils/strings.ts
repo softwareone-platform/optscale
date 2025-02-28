@@ -61,7 +61,7 @@ export const isWhitespaceString = (string) => /^\s+$/.test(string);
 
 export const splitAndTrim = (rawString, separator = ",") => rawString?.split(separator).map((s) => s.trim()) || [];
 
-export const buildQueryParameters = (base, parameters) =>
+export const buildQueryParameters = (base: string, parameters: Array<`${string}=${string}` | "">) =>
   `${base}${concatenateUrl(
     parameters.filter((el) => el !== ""),
     "?",

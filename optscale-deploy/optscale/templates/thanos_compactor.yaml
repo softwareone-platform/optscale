@@ -32,7 +32,7 @@ spec:
     storage: {{ $config.dataSize }}
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: "/optscale/{{ $config.name }}"
 ---
@@ -48,7 +48,7 @@ spec:
     requests:
       storage: {{ $config.dataSize }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ $config.name }}

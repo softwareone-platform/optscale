@@ -1,11 +1,10 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import { Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
-import CaptionedCell from "components/CaptionedCell";
 import CloudLabel from "components/CloudLabel";
 import ExpenseCell from "components/ExpenseCell";
 import ExpensesTableHeader from "components/ExpensesTableHeader";
-import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import ResourceCell from "components/ResourceCell";
 import ResourcePaidNetworkTrafficList from "components/ResourcePaidNetworkTrafficList";
 import ResourceTypeLabel from "components/ResourceTypeLabel";
@@ -13,12 +12,11 @@ import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { intl } from "translations/react-intl-config";
 import { getCreateAssignmentRuleUrl } from "urls";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmpty, isEmpty as isEmptyArray } from "utils/arrays";
 import { resourcePoolOwner, tags } from "utils/columns";
 import { CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX } from "utils/constants";
 import { MetadataNodes } from "utils/metadata";
 import { CELL_EMPTY_VALUE, RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
-import CollapsableTableCell from "../CollapsableTableCell";
 
 const LocationNodes = ({ region, service_name: serviceName, k8s_node: k8sNode, k8sNamespace }) => {
   const captionSettings = [
@@ -33,7 +31,11 @@ const LocationNodes = ({ region, service_name: serviceName, k8s_node: k8sNode, k
   const getNodes = () =>
     captionSettings.map(({ value, messageId }) => ({
       key: value,
-      node: <KeyValueLabel variant="caption" value={value} keyMessageId={messageId} />
+      node: (
+        <Typography variant="caption" component="div">
+          {intl.formatMessage({ id: messageId })}:&nbsp;<strong>{value}</strong>
+        </Typography>
+      )
     }));
 
   return {
@@ -83,7 +85,14 @@ const CleanExpensesTable = ({
           </TextWithDataTestId>
         ),
         accessorKey: "cost",
-        cell: ({ row: { original, id } }) => <ExpenseCell rowData={original} id={id} />,
+        cell: ({ row: { original } }) => (
+          <ExpenseCell
+            cost={original.cost}
+            saving={original.saving}
+            clusterTypeId={original.cluster_type_id}
+            resourceId={original.resource_id}
+          />
+        ),
         defaultSort: "desc",
         enableHiding: false
       },
@@ -114,26 +123,18 @@ const CleanExpensesTable = ({
             <ResourcePaidNetworkTrafficList trafficExpenses={trafficExpenses} />
           )
       },
-      {
-        header: (
-          <TextWithDataTestId dataTestId="lbl_metadata">
-            <FormattedMessage id="metadata" />
-          </TextWithDataTestId>
-        ),
+      tags({
+        headerDataTestId: "lbl_metadata",
+        headerMessageId: "metadata",
+        accessorKey: "metadataString",
+        getTags: (rowOriginal) => rowOriginal.metadataTags ?? {},
         columnSelector: {
           accessor: "metadata",
           messageId: "metadata",
           dataTestId: "btn_toggle_column_metadata"
         },
-        accessorKey: "metadataString",
-        style: {
-          minWidth: "200px"
-        },
-        cell: ({ row: { original } }) => {
-          const metadataTags = MetadataNodes(original).getTags();
-          return <CollapsableTableCell maxRows={2} tags={metadataTags} sorted={false} limit={33} />;
-        }
-      },
+        sorted: false
+      }),
       resourcePoolOwner({
         accessorKey: "pool/owner",
         columnSelector: {
@@ -214,10 +215,21 @@ const CleanExpensesTable = ({
 
           const locationCaptionNodes = LocationNodes(original).getNodes();
 
+          const cloudLabel = (
+            <CloudLabel dataTestId={`resource_location_${id}`} id={cloudId} name={cloudName} type={cloudType} />
+          );
+
+          if (isEmpty(locationCaptionNodes)) {
+            return cloudLabel;
+          }
+
           return (
-            <CaptionedCell caption={locationCaptionNodes}>
-              <CloudLabel dataTestId={`resource_location_${id}`} id={cloudId} name={cloudName} type={cloudType} />
-            </CaptionedCell>
+            <>
+              {cloudLabel}
+              {locationCaptionNodes.map(({ key, node }) => (
+                <React.Fragment key={key}>{node}</React.Fragment>
+              ))}
+            </>
           );
         }
       },
@@ -247,6 +259,7 @@ const CleanExpensesTable = ({
           .map(([key, val]) => `${key}: ${val}`) // making array of key: value strings
           .join(" "); // joining with space
 
+        updatedExpense.metadataTags = MetadataNodes(e).getTags();
         updatedExpense.metadataString = MetadataNodes(e).toString();
         updatedExpense.locationString = `${e.cloud_account_name} ${e.cloud_account_type} ${LocationNodes(e).toString()}`;
 

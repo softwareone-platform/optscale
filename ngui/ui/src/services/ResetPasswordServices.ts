@@ -11,10 +11,10 @@ const useSendVerificationCode = () => {
 
   const { isLoading } = useApiState(RESTORE_PASSWORD);
 
-  const onSend = (email: string) =>
+  const onSend = (email: string, linkParams: Record<string, string | undefined>) =>
     new Promise((resolve, reject) => {
       dispatch((_, getState) => {
-        dispatch(restorePassword(email)).then(() => {
+        dispatch(restorePassword({ email, linkParams })).then(() => {
           if (!isError(RESTORE_PASSWORD, getState())) {
             return resolve();
           }

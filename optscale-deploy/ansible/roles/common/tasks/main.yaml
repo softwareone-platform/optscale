@@ -1,7 +1,7 @@
 ---
 - import_tasks: optscale-requirements.yaml
-- import_tasks: docker.yaml
 - import_tasks: kubernetes.yaml
+- import_tasks: nerdctl.yaml
 - import_tasks: tools.yaml
 - import_tasks: optscale-tools.yaml
 - import_tasks: hosts.yaml

@@ -37,14 +37,12 @@ const PerspectiveMenuItem = forwardRef<
     name: ReactNode;
     onClick: () => void;
   }
->(({ name, onClick, ...rest }, ref) => {
-  return (
-    <MenuItem onClick={onClick} {...rest} ref={ref}>
-      <ListItemIcon>{/* <ExitToAppOutlinedIcon /> */}</ListItemIcon>
-      <ListItemText primary={name} />
-    </MenuItem>
-  );
-});
+>(({ name, onClick, ...rest }, ref) => (
+  <MenuItem onClick={onClick} {...rest} ref={ref}>
+    <ListItemIcon>{/* <ExitToAppOutlinedIcon /> */}</ListItemIcon>
+    <ListItemText primary={name} />
+  </MenuItem>
+));
 
 const Property = ({ messageId, value }: { messageId: string; value: ReactNode }) => (
   <Typography component="div">

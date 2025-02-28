@@ -9,11 +9,9 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import unusedImportsPlugin from "eslint-plugin-unused-imports";
 import globals from "globals";
 
-const extensions = ["ts", "tsx"];
-
 export default [
   {
-    files: [`src/**/*.{${extensions.join(",")}}`],
+    files: [`src/**/*.{ts,tsx}`],
     ignores: ["src/stories/**"],
     plugins: {
       react: reactPlugin,
@@ -43,19 +41,22 @@ export default [
     settings: {
       "import/resolver": {
         node: {
-          extensions: extensions.map((extension) => `.${extension}`),
+          // if unset, default is just '.js', but it must be re-added explicitly if set
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
           moduleDirectory: ["node_modules", "src/"]
         }
       },
       react: {
         version: "detect"
-      }
+      },
+      "import/ignore": ["node_modules"]
     },
     rules: {
       ...js.configs.recommended.rules,
       ...typescriptPlugin.configs.recommended.rules,
       ...reactPlugin.configs.flat.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      ...eslintPluginImport.flatConfigs.recommended.rules,
       "class-methods-use-this": "error",
       "no-param-reassign": [
         "error",
@@ -95,6 +96,7 @@ export default [
       "no-bitwise": "off",
       "no-console": "off",
       "default-param-last": "off",
+      "arrow-body-style": ["warn", "as-needed"],
 
       "unused-imports/no-unused-imports": "warn",
 

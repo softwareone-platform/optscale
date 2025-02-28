@@ -43,7 +43,7 @@ const MlTasksTable = ({ tasks, filterValues, appliedFilters, onFilterChange }) =
           </TextWithDataTestId>
         ),
         id: "owner.name",
-        accessorFn: (originalRow) => originalRow.owner.name,
+        accessorFn: (originalRow) => originalRow.owner?.name,
         columnSelector: {
           accessor: "owner",
           messageId: "owner",

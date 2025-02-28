@@ -6,13 +6,20 @@ import useStyles from "./CloudResourceId.styles";
 
 const SHORTENED_CLOUD_RESOURCE_ID_PREFIX = ".../";
 
-const CloudResourceIdString = ({ cloudResourceIdentifier, resourceId, resourceType, dataTestId, disableLink = false }) => {
+const CloudResourceIdString = ({
+  cloudResourceIdentifier,
+  resourceId,
+  resourceType,
+  dataTestId,
+  disableLink = false,
+  tooltip
+}) => {
   const {
     classes: { longNamesBreak }
   } = useStyles();
 
-  if (resourceId && !disableLink) {
-    return (
+  const content =
+    resourceId && !disableLink ? (
       <Link
         to={resourceType ? `${getResourceUrl(resourceId)}?resourceType=${resourceType}` : getResourceUrl(resourceId)}
         component={RouterLink}
@@ -21,14 +28,17 @@ const CloudResourceIdString = ({ cloudResourceIdentifier, resourceId, resourceTy
       >
         {cloudResourceIdentifier}
       </Link>
+    ) : (
+      <span className={longNamesBreak} data-test-id={dataTestId}>
+        {cloudResourceIdentifier}
+      </span>
     );
+
+  if (tooltip) {
+    return <Tooltip title={tooltip}>{content}</Tooltip>;
   }
 
-  return (
-    <span className={longNamesBreak} data-test-id={dataTestId}>
-      {cloudResourceIdentifier}
-    </span>
-  );
+  return content;
 };
 
 const CloudResourceId = (props) => {
@@ -39,11 +49,11 @@ const CloudResourceId = (props) => {
     const shortenedCloudResourceId = `${SHORTENED_CLOUD_RESOURCE_ID_PREFIX}${cloudResourceIdentifier.split(separator).pop()}`;
 
     return (
-      <Tooltip title={disableFullNameTooltip ? undefined : cloudResourceIdentifier}>
-        <span>
-          <CloudResourceIdString {...props} cloudResourceIdentifier={shortenedCloudResourceId} />
-        </span>
-      </Tooltip>
+      <CloudResourceIdString
+        {...props}
+        cloudResourceIdentifier={shortenedCloudResourceId}
+        tooltip={disableFullNameTooltip ? undefined : cloudResourceIdentifier}
+      />
     );
   }
 

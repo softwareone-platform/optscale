@@ -36,7 +36,7 @@ spec:
     storage: {{ $config.dataSize }}
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: "/optscale/{{ $config.name }}"
 ---

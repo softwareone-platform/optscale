@@ -16,7 +16,7 @@
   shell: python3 -m venv {{ tools_venv_path }}
 
 - name: Upgrade pip
-  shell: "{{ tools_venv_path }}/bin/pip install --upgrade pip==20.3.4"
+  shell: "{{ tools_venv_path }}/bin/pip install --upgrade pip==24.0.0"
 
 - name: Install requirements
   shell: "{{ tools_venv_path }}/bin/pip install -r {{ remote_requirements_path }}"

@@ -1,76 +1,99 @@
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
-import Typography from "@mui/material/Typography";
+import { SxProps, Theme } from "@mui/material/styles";
+import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FormattedMessage } from "react-intl";
 import Tooltip from "components/Tooltip";
 import useStyles from "./CopyText.styles";
 
-const STATIC = "static";
-const ANIMATED = "animated";
+type CopyTextProps = {
+  text: string;
+  children?: ReactNode;
+  variant?: TypographyOwnProps["variant"];
+  dataTestIds?: {
+    text?: string;
+    button?: string;
+  };
+  Icon?: typeof FileCopyOutlinedIcon;
+  dynamicCopyIcon?: boolean;
+  copyMessageId?: string;
+  copiedMessageId?: string;
+  sx?: SxProps<Theme>;
+};
 
 const CopyText = ({
   text,
   children,
   variant,
-  copyIconType = STATIC,
   dataTestIds = {},
   Icon = FileCopyOutlinedIcon,
+  dynamicCopyIcon = false,
   copyMessageId = "copy",
   copiedMessageId = "copied",
   sx = {}
-}) => {
+}: CopyTextProps) => {
   const { classes, cx } = useStyles();
-
   const { text: textDataTestId, button: buttonDataTestId } = dataTestIds;
-
   const [titleMessageId, setTitleMessageId] = useState(copyMessageId);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const { display = "flex", alignItems = "center", ...restSx } = sx;
+  const handleMouseLeave = () => {
+    setTitleMessageId(copyMessageId);
+    setIsHovered(false);
+  };
 
   return (
     <Typography
       component="span"
       variant={variant}
       sx={{
-        display,
-        alignItems,
-        ...restSx
+        position: "relative",
+        display: "inline-flex",
+        alignItems: "center",
+        ...sx
       }}
-      className={classes.wrapper}
       data-test-id={textDataTestId}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
     >
-      {children}
-      <Typography
-        component="span"
-        onMouseLeave={() => {
-          setTitleMessageId(copyMessageId);
-        }}
-        variant={variant}
-        data-test-id={buttonDataTestId}
-        className={cx(classes.copyWrapper, copyIconType === ANIMATED ? "animatedCopyIcon" : "")}
-      >
-        <CopyToClipboard
-          text={text}
-          onCopy={(copiedText, result) => {
-            if (result) {
-              setTitleMessageId(copiedMessageId);
-            }
-          }}
+      <span>{children}</span>
+      {dynamicCopyIcon && !isHovered ? null : (
+        <Typography
+          component="span"
+          variant={variant}
+          data-test-id={buttonDataTestId}
+          className={cx(classes.copyWrapper)}
+          sx={
+            dynamicCopyIcon
+              ? {
+                  position: "absolute",
+                  left: "100%"
+                }
+              : undefined
+          }
         >
-          <Tooltip
-            leaveDelay={0}
-            // force a re-render to hide the tooltip immediately after changing the "titleMessageId"
-            key={titleMessageId}
-            title={<FormattedMessage id={titleMessageId} />}
-            placement="top"
-            disableFocusListener
-            disableTouchListener
+          <CopyToClipboard
+            text={text}
+            onCopy={(_text: string, result: boolean) => {
+              if (result) {
+                setTitleMessageId(copiedMessageId);
+              }
+            }}
           >
-            <Icon fontSize="inherit" />
-          </Tooltip>
-        </CopyToClipboard>
-      </Typography>
+            <Tooltip
+              leaveDelay={0}
+              key={titleMessageId}
+              title={<FormattedMessage id={titleMessageId} />}
+              placement="top"
+              disableFocusListener
+              disableTouchListener
+            >
+              <Icon fontSize="inherit" />
+            </Tooltip>
+          </CopyToClipboard>
+        </Typography>
+      )}
     </Typography>
   );
 };

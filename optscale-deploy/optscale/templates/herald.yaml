@@ -33,7 +33,6 @@ spec:
     matchLabels:
       app: {{ $config.name }}{{ $config.api.role }}
       release: {{ .Release.Name }}
-  serviceName: {{ $config.service.name }}
   template:
     metadata:
       labels:

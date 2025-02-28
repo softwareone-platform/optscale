@@ -184,13 +184,26 @@ elk:
     name: *elk_name
     elastic_port: &ex_port 9200
     externalPort: *ex_port
-    logstash_tcp_port: 12201
+    logstash_tcp_port: &logstash_tcp_port 12201
     logstash_udp_port: 12201
     internal_kibana_port: 80
     external_kibana_port: 30081
   env:
     htpasswd_user: userforelk
     htpasswd_pass: passwordforelk
+
+filebeat:
+  name: &filebeat filebeat
+  image:
+    id:
+    repository: *filebeat
+    tag: *tag
+    pullPolicy: Never
+  service:
+    name: *filebeat
+    logstash_beats_port: *logstash_tcp_port
+    logstash_host_address: "127.0.0.1"
+    external_port: 9666
 
 ngui:
   name: &ngui_name ngui
@@ -751,7 +764,8 @@ thanos_receive:
   replicaCount: 1
   tsdbRetention: 4h
   memory_limit: 8192
-  maxConcurrency: 30
+  cpu_limit: 2
+  maxConcurrency: 20
   image:
     id:
     pullPolicy: IfNotPresent

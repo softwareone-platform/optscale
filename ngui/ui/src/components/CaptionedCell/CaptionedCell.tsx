@@ -1,4 +1,4 @@
-import Grid from "@mui/material/Grid";
+import { Stack } from "@mui/material";
 import CellCaption from "components/CellCaption";
 import { isObject } from "utils/objects";
 
@@ -11,24 +11,26 @@ const Caption = ({ caption, tooltipText, enableTextCopy, copyTextDataTestIds }) 
   />
 );
 
-const CaptionGridItem = ({ node, caption, ...rest }) => <Grid item>{node ?? <Caption caption={caption} {...rest} />}</Grid>;
+const CaptionItem = ({ node, caption, ...rest }) => <div>{node ?? <Caption caption={caption} {...rest} />}</div>;
 
-const renderCaptionGridItem = (caption, rest) => {
+const renderCaption = (caption, rest) => {
   if (Array.isArray(caption)) {
-    return caption.map(({ key, ...captionProps }) => <CaptionGridItem key={key} {...captionProps} />);
+    return caption.map(({ key, ...captionProps }) => <CaptionItem key={key} {...captionProps} />);
   }
   if (isObject(caption)) {
-    const { key, ...captionProps } = caption;
-    return <CaptionGridItem key={key} {...captionProps} />;
+    return <CaptionItem {...caption} />;
   }
-  return <CaptionGridItem caption={caption} {...rest} />;
+  return <CaptionItem caption={caption} {...rest} />;
 };
 
-const CaptionedCell = ({ children, caption, ...rest }) => (
-  <Grid container direction="column">
-    <Grid item>{children}</Grid>
-    {caption && renderCaptionGridItem(caption, rest)}
-  </Grid>
-);
+const CaptionedCell = ({ children, caption, ...rest }) =>
+  caption ? (
+    <Stack>
+      <div>{children}</div>
+      {renderCaption(caption, rest)}
+    </Stack>
+  ) : (
+    children
+  );
 
 export default CaptionedCell;
