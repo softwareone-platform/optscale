@@ -111,7 +111,6 @@ const EventList = ({
   eventLevel,
   descriptionLike,
   includeDebugEvents,
-  // onScroll,
   eventsCount,
   getMoreEvents,
   applyFilter,
