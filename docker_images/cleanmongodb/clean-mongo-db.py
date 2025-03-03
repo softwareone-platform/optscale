@@ -84,8 +84,7 @@ class CleanMongoDB(object):
     @property
     def mongo_client(self):
         if not self._mongo_client:
-            mongo_params = self.get_mongo_params(self.config_client)
-            mongo_conn_string = "mongodb://%s:%s@%s:%s" % mongo_params[:-1]
+            mongo_conn_string, _ = self.get_mongo_params(self.config_client)
             self._mongo_client = MongoClient(mongo_conn_string)
         return self._mongo_client
 
