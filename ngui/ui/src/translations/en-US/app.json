@@ -832,7 +832,7 @@
   "fromX": "From: {value}",
   "fullName": "Full name",
   "garbageCollector": "Garbage Collector",
-  "gcp": "Google Cloud",
+  "gcpProject": "Google Cloud project",
   "gcpTenant": "Google Cloud tenant",
   "general": "General",
   "generateLink": "Generate public link",

@@ -7,7 +7,6 @@ LOG = logging.getLogger(__name__)
 
 MAX_RETRIES = 20
 
-# TODO: move to etcd
 ARCEE_WAIT_TIMEOUT_SEC = 10 * 60
 
 
@@ -483,6 +482,15 @@ class WaitArcee(ContinueWithDestroyConditions):
     def update_task_state(self):
         self.body['state'] = TaskState.STARTED
 
+    @property
+    def arcee_wait_timeout(self):
+        try:
+            result = int(self.config_cl.get(
+                "/bulldozer_worker/arcee_wait_timeout").value)
+        except (ValueError, TypeError):
+            result = ARCEE_WAIT_TIMEOUT_SEC
+        return result
+
     def _exec(self):
         runner_id = self.body.get('runner_id')
         LOG.info("starting waiting arcee for runner %s", runner_id)
@@ -498,7 +506,7 @@ class WaitArcee(ContinueWithDestroyConditions):
             # check timeout
             last_updated = int(self.body.get("updated"))
             current_time = utcnow_timestamp()
-            wait_time = last_updated + ARCEE_WAIT_TIMEOUT_SEC
+            wait_time = last_updated + self.arcee_wait_timeout
             LOG.info("runs not found. current time: %d, wait time: %s",
                      current_time, wait_time)
             if current_time > wait_time:

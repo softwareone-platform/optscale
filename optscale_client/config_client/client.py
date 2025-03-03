@@ -132,7 +132,8 @@ class Client(etcd.Client):
         if always_update is None:
             always_update = []
         keys = self.read(base_key, recursive=False)
-        children = [r.key.split('/')[-1] for r in keys.children]
+        children = [r.key.split(base_key)[-1].split('/')[-1]
+                    for r in keys.children]
         added = set(structure.keys()) - set(children)
         if remove_keys:
             removed = set(children) - set(structure.keys())

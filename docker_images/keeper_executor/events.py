@@ -45,6 +45,12 @@ class Events(enum.Enum):
         ['object_name', 'object_id'],
         "INFO"
     ]
+    N0030 = [
+        'Resource discovery failed for cloud account {object_name} '
+        '({object_id}) for {resource_type} resources, error: {message}',
+        ['object_name', 'object_id', 'resource_type', 'message'],
+        "ERROR"
+    ]
     N0065 = [
         '{contact_type} alert for pool {pool_name}{with_subpools} for '
         '{warn_type} {threshold_string} deleted',

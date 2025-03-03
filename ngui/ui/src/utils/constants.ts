@@ -67,7 +67,7 @@ export const AZURE_TENANT_ACCOUNT = "azureTenant";
 export const DATABRICKS_ACCOUNT = "databricks";
 export const KUBERNETES = "kubernetes";
 export const ALIBABA_ACCOUNT = "alibaba";
-export const GCP_ACCOUNT = "gcp";
+export const GCP_ACCOUNT = "gcpProject";
 export const GCP_TENANT_ACCOUNT = "gcpTenant";
 export const NEBIUS_ACCOUNT = "nebius";
 
@@ -81,7 +81,7 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [AZURE_TENANT]: "azureTenant",
   [DATABRICKS]: "databricks",
   [ALIBABA_CNR]: "alibaba",
-  [GCP_CNR]: "gcp",
+  [GCP_CNR]: "gcpProject",
   [GCP_TENANT]: "gcpTenant",
   [ENVIRONMENT]: "environment",
   [NEBIUS]: "nebius",
