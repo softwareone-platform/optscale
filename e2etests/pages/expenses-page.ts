@@ -43,7 +43,7 @@ export class ExpensesPage extends BasePage {
             {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
             {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
             {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=employee`, mockResponse: PoolsExpensesOwnerResponse},
-            {urlPattern: `restapi/v2/pools_expenses/[^/]+?end_date=[^/]+&start_date=`, mockResponse: PoolsExpensesResponse},
+            {urlPattern: `restapi/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`, mockResponse: PoolsExpensesResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>

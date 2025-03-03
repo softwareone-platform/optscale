@@ -60,7 +60,7 @@ export class HomePage extends BasePage {
         const apiInterceptions = [
             {urlPattern: `/v2/organizations/[^/]+/pool_expenses`, mockResponse: OrganizationExpensesPoolsResponse},
             {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: OrganizationCleanExpansesResponse},
-            {urlPattern: `/v2/organizations/[^/]+/organization_constraints`, mockResponse: OrganizationConstraintsResponse},
+            {urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`, mockResponse: OrganizationConstraintsResponse},
             {urlPattern: `/v2/pools/`, mockResponse: PoolsResponse},
             {urlPattern: `/v2/allowed_actions`, mockResponse: AllowedActionsResponse}
         ];

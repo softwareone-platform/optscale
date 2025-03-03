@@ -26,8 +26,8 @@ export class PoolsPage extends BasePage {
     }
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `restapi/v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolResponse},
-            {urlPattern: `auth/v2/allowed_actions?pool=`, mockResponse: AllowedActionsPoolResponse},
+            {urlPattern: `v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolResponse},
+            {urlPattern: `v2/allowed_actions?pool=`, mockResponse: AllowedActionsPoolResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
