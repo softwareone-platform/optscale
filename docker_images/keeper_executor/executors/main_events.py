@@ -16,6 +16,7 @@ class MainEventExecutor(BaseEventExecutor):
             'organization_created': Events.N0027,
             'organization_deleted': Events.N0028,
             'organization_updated': Events.N0029,
+            'resource_discovery_failed': Events.N0030,
             'alert_removed': Events.N0065,
             'cloud_account_created': Events.N0066,
             'cloud_account_updated': Events.N0067,

@@ -469,18 +469,18 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       action: () => defaultTileAction(AZURE_SUBSCRIPTION, AZURE_CNR)
     },
     {
-      id: GCP_ACCOUNT,
-      icon: GcpLogoIcon,
-      messageId: GCP_ACCOUNT,
-      dataTestId: "btn_gcp_account",
-      action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR)
-    },
-    {
       id: GCP_TENANT_ACCOUNT,
       icon: GcpLogoIcon,
       messageId: GCP_TENANT_ACCOUNT,
       dataTestId: "btn_gcp_tenant_account",
       action: () => defaultTileAction(GCP_TENANT_ACCOUNT, GCP_TENANT)
+    },
+    {
+      id: GCP_ACCOUNT,
+      icon: GcpLogoIcon,
+      messageId: GCP_ACCOUNT,
+      dataTestId: "btn_gcp_account",
+      action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR)
     }
     // {
     //   id: ALIBABA_ACCOUNT,

@@ -605,10 +605,7 @@ bulldozer_worker:
   name: bulldozerworker
   replicaCount: 1
   config:
-    max_retries: 5
-    wait_timeout: 7200
-    task_timeout: 3600
-    run_period: 10800
+    arcee_wait_timeout: 600 # arcee hb wait timeout for runners in seconds
   image:
     id:
     repository: bulldozer_worker

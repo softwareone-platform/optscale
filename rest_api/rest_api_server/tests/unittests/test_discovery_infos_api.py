@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from unittest.mock import patch
 from tools.optscale_time import utcnow_timestamp
 from tools.cloud_adapter.model import ResourceTypes
@@ -152,6 +153,23 @@ class TestDiscoveryInfo(TestApiBase):
             {'last_discovery_at': utcnow_timestamp()}
         )
         self.assertEqual(code, 404)
+
+    def test_update_discovery_info_error_event(self):
+        valid_aws_creds = self.valid_aws_creds.copy()
+        valid_aws_creds['name'] = 'new_creds'
+        _, cloud_account = self.create_cloud_account(
+            self.org_id, valid_aws_creds, update_discovery_info=False)
+        _, res = self.client.discovery_info_list(self.cloud_acc_id)
+        di_info_id = res['discovery_info'][0]['id']
+        act_task_m = patch('rest_api.rest_api_server.controllers.base.'
+                           'BaseController.publish_activities_task').start()
+        code, res = self.client.discovery_info_update(
+            di_info_id,
+            {'last_error': 'test',
+             'last_error_at': int(datetime(2025, 1, 1).timestamp())}
+        )
+        self.assertEqual(code, 200)
+        self.assertEqual(act_task_m.call_count, 1)
 
     def test_disable_discovery_info(self):
         _, res = self.client.discovery_info_list(self.cloud_acc_id)

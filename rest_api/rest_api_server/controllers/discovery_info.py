@@ -3,8 +3,11 @@ import logging
 from sqlalchemy.sql import and_
 
 from tools.cloud_adapter.model import ResourceTypes, RES_MODEL_MAP
+from tools.optscale_time import utcfromtimestamp
 from rest_api.rest_api_server.controllers.base import BaseController
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base_async import (
+    BaseAsyncControllerWrapper
+)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.models import (
     CloudAccount, DiscoveryInfo, Organization)
@@ -72,9 +75,33 @@ class DiscoveryInfoController(BaseController):
             DiscoveryInfo.deleted.is_(False),
             DiscoveryInfo.cloud_account_id == cloud_account_id))
         if resource_type:
-            data_set_q = data_set_q.filter(DiscoveryInfo.resource_type == resource_type)
+            data_set_q = data_set_q.filter(
+                DiscoveryInfo.resource_type == resource_type)
         res = data_set_q.all()
         return list(res)
+
+    def edit(self, item_id, **kwargs):
+        last_error_at = kwargs.get('last_error_at')
+        if last_error_at:
+            # send event once a day
+            item = self.get(item_id)
+            old_date_t = tuple(utcfromtimestamp(
+                item.last_error_at).timetuple())[:3]
+            new_date_t = tuple(utcfromtimestamp(last_error_at).timetuple())[:3]
+            if new_date_t != old_date_t:
+                cloud_account = self.session.query(CloudAccount).filter(
+                    CloudAccount.id == item.cloud_account_id).one_or_none()
+                action = 'resource_discovery_failed'
+                object_type = 'cloud_account'
+                meta = {
+                    'object_name': cloud_account.name,
+                    'resource_type': item.to_dict()['resource_type'],
+                    'message': kwargs.get('last_error')
+                }
+                self.publish_activities_task(
+                    cloud_account.organization_id, item.cloud_account_id,
+                    object_type, action, meta, '.'.join([object_type, action]))
+        return super().edit(item_id, **kwargs)
 
 
 class DiscoveryInfoAsyncController(BaseAsyncControllerWrapper):
