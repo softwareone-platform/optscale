@@ -22,7 +22,8 @@ export abstract class BaseCreatePage extends BasePage {
     readonly saveBtn: Locator;
     readonly cancelBtn: Locator;
 
-    protected constructor(page: Page) {
+
+    protected constructor(page: Page, url: string) {
         super(page, '');
         this.nameInput = this.main.getByTestId('input_name');
         this.typeSelect = this.main.getByTestId('type-selector-select');

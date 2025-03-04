@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe('Cloud Spend Rebase Tests @customisation', () => {
+test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
   test.beforeAll(() => {
     // URL should be more generic, we need to test it on dev, staging envs but also in our local hosts
     // expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
@@ -27,6 +27,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
 
   test('Verify Homepage matches screenshots', async ({homePage}) => {
     await test.step('Verify Home Page content', async () => {
+        // await homePage.page.waitForTimeout(5000);
       await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
       await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
       await expect(homePage.recommendationsBlock).toHaveScreenshot('RecommendationsBlock-screenshot.png');
@@ -62,7 +63,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
-    test.slow();
+    // test.slow();
     await test.step('Set up test data', async () => {
         await resourcesPage.setupApiInterceptions();
     });
@@ -222,7 +223,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   });
 
   test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
-    // test.slow();
+    test.slow();
     await test.step('Set up test data', async () => {
       await expensesPage.setupApiInterceptions();
     });
@@ -259,7 +260,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   });
 
   test('Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
-    // test.slow();
+    test.slow();
     await test.step('Set up test data', async () => {
       await anomaliesPage.setupApiInterceptions();
     });
@@ -284,7 +285,11 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test('Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
-    // test.slow();
+    test.slow();
+    await test.step('Set up test data', async () => {
+        await policiesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Policies page', async () => {
       await policiesPage.navigateToURL(true);
     });
@@ -309,6 +314,10 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
                                                                     taggingPoliciesCreatePage
                                                                   }) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+        await taggingPoliciesPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Tagging Policies page', async () => {
       await taggingPoliciesPage.navigateToURL(true);
     });
@@ -328,7 +337,7 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
+  test('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
     // test.slow();
     await test.step('Set up test data', async () => {
       await usersPage.setupApiInterceptions();
@@ -357,6 +366,9 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
                                                                  cloudAccountsConnectPage
                                                                }) => {
     // test.slow();
+    await test.step('Set up test data', async () => {
+      await cloudAccountsPage.setupApiInterceptions();
+    });
     await test.step('Navigate to Cloud Accounts page', async () => {
       await cloudAccountsPage.navigateToURL(true);
     });
@@ -413,6 +425,11 @@ test.describe('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test('Verify Events page matches screenshots', async ({eventsPage}) => {
+
+    await test.step('Set up test data', async () => {
+      await eventsPage.setupApiInterceptions();
+    });
+
     await test.step('Navigate to Events page', async () => {
       await eventsPage.navigateToURL(true);
     });

@@ -13,7 +13,7 @@ import {Locator, Page} from "@playwright/test";
         readonly correlatedTagInput: Locator;
 
         constructor(page: Page) {
-            super(page, '/tagging-policies/create');
+            super(page, "/anomalies/create");
             this.heading = this.main.getByTestId('lbl_create_tagging_policy');
             this.startDateSelect = this.main.getByTestId('input_startDate');
             this.requiredTagsBtn = this.main.getByTestId('tags_strategy_taggingPolicy.requiredTag');

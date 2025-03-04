@@ -40,10 +40,10 @@ export class ExpensesPage extends BasePage {
     }
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
-            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
-            {urlPattern: `restapi/v2/pools_expenses/[^/]+filter_by=employee`, mockResponse: PoolsExpensesOwnerResponse},
-            {urlPattern: `restapi/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`, mockResponse: PoolsExpensesResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`, mockResponse: PoolsExpensesOwnerResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`, mockResponse: PoolsExpensesResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
