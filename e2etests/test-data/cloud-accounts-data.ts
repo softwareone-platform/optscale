@@ -16,31 +16,6 @@ export const DataSourcesResponse = {
     "data": {
         "dataSources": [
             {
-                "account_id": "fb03c667-736b-4255-8b09-7e3e0ec6d81a",
-                "id": "6b58c03c-fb24-4118-94dc-3a54cdf65ef4",
-                "last_getting_metric_attempt_at": 1740394800,
-                "last_getting_metric_attempt_error": "mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 66c71b502daf0022ab351be2, topology_type: Unknown, servers: [<ServerDescription ('mongo', 80) server_type: Unknown, rtt: None, error=NetworkTimeout('mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>",
-                "last_getting_metrics_at": 1740394800,
-                "last_import_at": 1740394800,
-                "last_import_attempt_at": 1740394800,
-                "last_import_attempt_error": "6e8e9be5e1cc4eff8a9c9496e2bbebd5",
-                "name": "Ali dev",
-                "parent_id": null,
-                "type": "alibaba_cnr",
-                "details": {
-                    "cost": 54.48746881999995,
-                    "resources": 79,
-                    "forecast": 496.13,
-                    "last_month_cost": 468.9463580600006,
-                    "__typename": "DataSourceDetails"
-                },
-                "config": {
-                    "access_key_id": null,
-                    "__typename": "AlibabaConfig"
-                },
-                "__typename": "AlibabaDataSource"
-            },
-            {
                 "account_id": "7dbad33c-5732-43aa-82f2-6e5b6c3a26d7",
                 "id": "4dafda38-1dfa-44ed-a196-30e0e582a33b",
                 "last_getting_metric_attempt_at": 1740394800,
@@ -207,36 +182,6 @@ export const DataSourcesResponse = {
                     "__typename": "GcpConfig"
                 },
                 "__typename": "GcpDataSource"
-            },
-            {
-                "account_id": "3020885f-15d7-4a4b-b92b-a4625fc3e936",
-                "id": "2706c742-127b-43fb-a5fe-85c6e3547e76",
-                "last_getting_metric_attempt_at": 1741096403,
-                "last_getting_metric_attempt_error": "Received an HTTP error while contacting Prometheus: 422 Client Error: Unprocessable Entity for url: http://thanos-query:10902/api/v1/query?query=avg_over_time%28container_memory_usage_bytes%7Bcloud_account_id%20%3D%20%22360fb86a-1fe8-40a9-a1d6-6edf04e421c2%22%2C%20pod%20%21%3D%20%22%22%2C%20name%3D%22%22%7D%5B4545m%3A900s%5D%29%5B4545m%3A900s%5D&time=1694836800",
-                "last_getting_metrics_at": 1741096403,
-                "last_import_at": 1741096403,
-                "last_import_attempt_at": 1741096403,
-                "last_import_attempt_error": "'node'",
-                "name": "K8s dev",
-                "parent_id": null,
-                "type": "kubernetes_cnr",
-                "details": {
-                    "cost": 32.03127379882864,
-                    "resources": 47,
-                    "forecast": 298.68,
-                    "last_month_cost": 283.99324044361714,
-                    "__typename": "DataSourceDetails"
-                },
-                "config": {
-                    "cost_model": {
-                        "cpu_hourly_cost": 0.006,
-                        "memory_hourly_cost": 0.004,
-                        "__typename": "K8CostModelConfig"
-                    },
-                    "user": "optscale",
-                    "__typename": "K8sConfig"
-                },
-                "__typename": "K8sDataSource"
             }
         ]
     }

@@ -30,7 +30,7 @@ export async function interceptEventRequest(config: IInterceptorConfig): Promise
                 contentType: "application/json",
                 body: JSON.stringify(mockResponse),
             });
-            console.log(`Intercepted Event request for operationName ${requestPostData.operationName}`);
+            console.log(`Intercepted request for operationName ${requestPostData.operationName}`);
         } else {
             await route.continue();
         }
@@ -46,7 +46,7 @@ export async function interceptDataSourcesRequest(config: IInterceptorConfig): P
                 contentType: "application/json",
                 body: JSON.stringify(mockResponse),
             });
-            console.log(`Intercepted Event request for operationName ${requestPostData.operationName}`);
+            console.log(`Intercepted request for operationName ${requestPostData.operationName}`);
         } else {
             await route.continue();
         }
