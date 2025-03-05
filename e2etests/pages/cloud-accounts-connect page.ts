@@ -85,6 +85,26 @@ export class CloudAccountsConnectPage extends BasePage {
         }
     }
 
+    async clickAWSLinkedAccount(): Promise<void> {
+        await this.awsLinkedBtn.click();
+    }
+
+    async clickAzureTenant(): Promise<void> {
+        await this.azureTenantBtn.click();
+    }
+
+    async clickAzureSubscription(): Promise<void> {
+        await this.azureSubscriptionBtn.click();
+    }
+
+    async clickGoogleCloudTenant(): Promise<void> {
+        await this.googleCloudTenantBtn.click();
+    }
+
+    async clickGoogleCloud(): Promise<void> {
+        await this.googleCloudBtn.click();
+    }
+
     async toggleCheckbox(checkbox: Locator): Promise<void> {
         const isChecked = await checkbox.isChecked();
         if (isChecked) {

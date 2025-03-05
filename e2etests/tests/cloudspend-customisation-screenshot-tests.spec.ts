@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe.only('MPT-7367 Cloudspend screenshot Tests @customisation', () => {
+test.describe('MPT-7367 Cloudspend screenshot Tests @customisation', () => {
   test.beforeAll(() => {
     // URL should be more generic, we need to test it on dev, staging envs but also in our local hosts
     // expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
@@ -359,7 +359,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot Tests @customisation', () => 
     });
   })
 
-  test('Verify Cloud Account page matches screenshots', async ({
+  test.only('Verify Cloud Account page matches screenshots', async ({
                                                                  cloudAccountsPage,
                                                                  cloudAccountsConnectPage
                                                                }) => {
@@ -387,35 +387,35 @@ test.describe.only('MPT-7367 Cloudspend screenshot Tests @customisation', () => 
     });
 
     await test.step('Verify Cloud Accounts connect page - AWS Linked', async () => {
-      await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.awsLinkedBtn);
+      await cloudAccountsConnectPage.clickAWSLinkedAccount();
       await cloudAccountsConnectPage.heading.hover();
       // await cloudAccountsConnectPage.page.waitForTimeout(5000);
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-linked-screenshot.png');
     });
 
     await test.step('Verify Cloud Accounts connect page - Azure Tenant', async () => {
-      await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.azureTenantBtn);
+      await cloudAccountsConnectPage.clickAzureTenant();
       await cloudAccountsConnectPage.heading.hover();
       // await cloudAccountsConnectPage.page.waitForTimeout(5000);
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-tenant-screenshot.png');
     });
 
     await test.step('Verify Cloud Accounts connect page - Azure Subscription', async () => {
-      await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.azureSubscriptionBtn);
+      await cloudAccountsConnectPage.clickAzureSubscription();
       await cloudAccountsConnectPage.heading.hover();
       // await cloudAccountsConnectPage.page.waitForTimeout(5000);
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-subscription-screenshot.png');
     });
 
     await test.step('Verify Cloud Accounts connect page - Google Cloud', async () => {
-      await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.googleCloudBtn);
+      await cloudAccountsConnectPage.clickGoogleCloud();
       await cloudAccountsConnectPage.heading.hover();
       // await cloudAccountsConnectPage.page.waitForTimeout(5000);
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-screenshot.png');
     });
 
     await test.step('Verify Cloud Accounts connect page - Google Cloud Tenant', async () => {
-      await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.googleCloudTenantBtn);
+      await cloudAccountsConnectPage.clickGoogleCloudTenant();
       await cloudAccountsConnectPage.heading.hover();
       // await cloudAccountsConnectPage.page.waitForTimeout(5000);
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-tenant-screenshot.png');
