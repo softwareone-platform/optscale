@@ -1,7 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {interceptApiRequest} from "../utils/interceptor";
-import {CloudAccountsResponse} from "../test-data/cloud-accounts-data";
+import {interceptApiRequest, interceptDataSourcesRequest} from "../utils/interceptor";
+import {CloudAccountsResponse, DataSourcesResponse} from "../test-data/cloud-accounts-data";
 
 export class CloudAccountsPage extends BasePage {
     readonly heading: Locator;
@@ -22,6 +22,16 @@ export class CloudAccountsPage extends BasePage {
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
             interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
+
+    async setupDataSourcesInterceptions() {
+        const dataSourcesInterceptions = [
+            {urlPattern: `/api`, mockResponse: DataSourcesResponse},
+        ];
+
+        await Promise.all(dataSourcesInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptDataSourcesRequest({page: this.page, urlPattern, mockResponse})
         ));
     }
 

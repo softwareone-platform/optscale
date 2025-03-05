@@ -15,8 +15,8 @@ export class UsersPage extends BasePage {
 
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `v2/organizations/[^/]+/employees`, mockResponse: EmployeesResponse},
-            {urlPattern: `v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mockResponse: UsersPoolsPermissionsResponse},
+            {urlPattern: `/v2/organizations/[^/]+/employees`, mockResponse: EmployeesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mockResponse: UsersPoolsPermissionsResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>

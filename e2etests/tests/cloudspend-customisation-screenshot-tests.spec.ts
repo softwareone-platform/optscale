@@ -1,14 +1,15 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
+test.describe.only('MPT-7367 Cloudspend screenshot Tests @customisation', () => {
   test.beforeAll(() => {
     // URL should be more generic, we need to test it on dev, staging envs but also in our local hosts
     // expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
   })
 
-  test.beforeEach('Login to live-demo', async ({loginPage, header, homePage}) => {
+  test.beforeEach('Login to live-demo', async ({loginPage, header, homePage, cloudAccountsPage}) => {
     await homePage.setupApiInterceptions();
+    await cloudAccountsPage.setupDataSourcesInterceptions();
     await loginPage.page.clock.setFixedTime(new Date('2025-01-25T12:00:00Z'));
     await loginPage.loginToLiveDemo(process.env.DEFAULT_USER_EMAIL);
     await header.liveDemoAlert.waitFor();
@@ -63,7 +64,7 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test('Verify Resources page matches screenshots', async ({mainMenu, resourcesPage}) => {
-    // test.slow();
+    // // test.slow();
     await test.step('Set up test data', async () => {
         await resourcesPage.setupApiInterceptions();
     });
@@ -152,9 +153,6 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
       await resourceDetailsPage.waitForCanvas();
       // await resourceDetailsPage.page.waitForTimeout(5000);
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png');
-      // await resourceDetailsPage.clickExpensesPaidNetworkTrafficButton();
-      // await resourceDetailsPage.heading.hover();
-      // await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-paid-network-traffic-screenshot.png');
     });
 
     await test.step('Verify Resource details page content - Recommendations tab', async () => {
@@ -223,7 +221,7 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
   });
 
   test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
-    test.slow();
+    // test.slow();
     await test.step('Set up test data', async () => {
       await expensesPage.setupApiInterceptions();
     });
@@ -260,7 +258,7 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
   });
 
   test('Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
-    test.slow();
+    // test.slow();
     await test.step('Set up test data', async () => {
       await anomaliesPage.setupApiInterceptions();
     });
@@ -278,14 +276,14 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
 
     await test.step('Verify create anomaly page', async () => {
       await anomaliesPage.clickAddBtn();
-      await anomaliesCreatePage.heading.waitFor();
+      await anomaliesCreatePage.withoutTagFilter.waitFor();
       // await anomaliesPage.page.waitForTimeout(5000);
-      await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-create-screenshot.png');
+      await expect(anomaliesCreatePage.main).toHaveScreenshot('Anomalies-create-screenshot.png');
     });
   })
 
   test('Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
-    test.slow();
+    // test.slow();
     await test.step('Set up test data', async () => {
         await policiesPage.setupApiInterceptions();
     });
@@ -338,7 +336,7 @@ test.describe.only('Cloud Spend Rebase Tests @customisation', () => {
   })
 
   test('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
-    // test.slow();
+    // // test.slow();
     await test.step('Set up test data', async () => {
       await usersPage.setupApiInterceptions();
     });

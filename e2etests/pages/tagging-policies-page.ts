@@ -16,7 +16,7 @@ export class TaggingPoliciesPage extends BasePage {
 
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`, mockResponse: TaggingPolicyResponse},
+            {urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`, mockResponse: TaggingPolicyResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>

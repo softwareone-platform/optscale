@@ -14,7 +14,7 @@ export class EventsPage extends BasePage {
 
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `api`, mockResponse: EventsResponse},
+            {urlPattern: `/api`, mockResponse: EventsResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>

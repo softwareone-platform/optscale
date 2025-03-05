@@ -20,7 +20,6 @@ export async function interceptApiRequest(config: IInterceptorConfig): Promise<v
     });
 }
 
-
 export async function interceptEventRequest(config: IInterceptorConfig): Promise<void> {
   const {page, urlPattern, mockResponse} = config;
     await page.route(new RegExp(urlPattern), async (route: Route) => {
@@ -37,4 +36,19 @@ export async function interceptEventRequest(config: IInterceptorConfig): Promise
         }
     });
 }
-
+export async function interceptDataSourcesRequest(config: IInterceptorConfig): Promise<void> {
+    const {page, urlPattern, mockResponse} = config;
+    await page.route(new RegExp(urlPattern), async (route: Route) => {
+        const requestPostData = JSON.parse(route.request().postData() || '{}');
+        if (requestPostData.operationName === "DataSources") {
+            await route.fulfill({
+                status: 200,
+                contentType: "application/json",
+                body: JSON.stringify(mockResponse),
+            });
+            console.log(`Intercepted Event request for operationName ${requestPostData.operationName}`);
+        } else {
+            await route.continue();
+        }
+    });
+}

@@ -1,7 +1,8 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {BaseCreatePage} from "./base-create-page";
 
-export class AnomaliesCreatePage extends BasePage {
+export class AnomaliesCreatePage extends BaseCreatePage {
 
     readonly page: Page;
     readonly heading: Locator;

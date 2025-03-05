@@ -46,10 +46,10 @@ export class ResourceDetailsPage extends BasePage {
 
     async setupApiInterceptions() {
         const apiInterceptions = [
-            {urlPattern: `restapi/v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
-            {urlPattern: `restapi/v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
+            {urlPattern: `/v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
+            {urlPattern: `/v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
             {urlPattern: `auth/v2/allowed_actions?cloud_resource=`, mockResponse: AllowedActionsSunflowerEUResponse},
-            {urlPattern: `restapi/v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
+            {urlPattern: `/v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
         ];
 
         await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
