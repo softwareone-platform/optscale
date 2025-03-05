@@ -32,7 +32,7 @@ export async function interceptEventRequest(config: IInterceptorConfig): Promise
             });
             console.log(`Intercepted Event request for operationName ${requestPostData.operationName}`);
         } else {
-            throw new Error(`Unexpected operationName: ${requestPostData.operationName}`);
+            await route.continue();
         }
     });
 }
@@ -48,7 +48,7 @@ export async function interceptDataSourcesRequest(config: IInterceptorConfig): P
             });
             console.log(`Intercepted Event request for operationName ${requestPostData.operationName}`);
         } else {
-            throw new Error(`Unexpected operationName: ${requestPostData.operationName}`);
+            await route.continue();
         }
     });
 }
