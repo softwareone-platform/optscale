@@ -1,6 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import { BasePage } from "./base-page";
-import {AllowedActionsPoolResponse, PoolResponse} from "../test-data/pools-data";
 import {interceptApiRequest} from "../utils/interceptor";
 import {
     PoolsExpensesOwnerResponse,
@@ -9,6 +8,10 @@ import {
     PoolsExpensesSourceResponse
 } from "../test-data/expenses-data";
 
+/**
+ * Represents the Expenses Page.
+ * Extends the BasePage class.
+ */
 export class ExpensesPage extends BasePage {
     readonly heading: Locator;
     readonly expensesSelectedPeriodValue: Locator;
@@ -23,6 +26,10 @@ export class ExpensesPage extends BasePage {
     readonly ownerBtn: Locator;
     readonly costExploreBreadcrumb: Locator;
 
+    /**
+     * Initializes a new instance of the ExpensesPage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/expenses');
         this.costExploreBreadcrumb = this.main.locator('//a[.="Cost Explorer"]');
@@ -38,6 +45,12 @@ export class ExpensesPage extends BasePage {
         this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
         this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
     }
+
+    /**
+     * Sets up API interceptions for the Expenses page.
+     * Intercepts API requests and provides mock responses.
+     * @returns {Promise<void>}
+     */
     async setupApiInterceptions() {
         const apiInterceptions = [
             {urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
@@ -51,32 +64,60 @@ export class ExpensesPage extends BasePage {
         ));
     }
 
+    /**
+     * Clicks the daily button if it is not already selected.
+     * @returns {Promise<void>}
+     */
     async clickDailyBtnIfNotSelected() {
         if (!(await this.evaluateActiveButton(this.dailyBtn))) {
             await this.dailyBtn.click();
         }
     }
 
+    /**
+     * Clicks the weekly button.
+     * @returns {Promise<void>}
+     */
     async clickWeeklyBtn() {
-            await this.weeklyBtn.click();
+        await this.weeklyBtn.click();
     }
 
+    /**
+     * Clicks the monthly button.
+     * @returns {Promise<void>}
+     */
     async clickMonthlyBtn() {
-            await this.monthlyBtn.click();
+        await this.monthlyBtn.click();
     }
 
+    /**
+     * Clicks the Cost Explorer breadcrumb.
+     * @returns {Promise<void>}
+     */
     async clickCostExploreBreadcrumb() {
         await this.costExploreBreadcrumb.click();
     }
 
+    /**
+     * Clicks the Source button.
+     * @returns {Promise<void>}
+     */
     async clickSourceBtn() {
         await this.sourceBtn.click();
     }
 
+    /**
+     * Clicks the Pool button.
+     * @returns {Promise<void>}
+     */
     async clickPoolBtn() {
         await this.poolBtn.click();
     }
 
+    /**
+     * Clicks the Owner button.
+     * @returns {Promise<void>}
+     */
     async clickOwnerBtn() {
         await this.ownerBtn.click();
     }

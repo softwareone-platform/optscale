@@ -1,11 +1,11 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 
-test.describe('MPT-7367 Cloudspend screenshot Tests @customisation', () => {
-  test.beforeAll(() => {
-    // URL should be more generic, we need to test it on dev, staging envs but also in our local hosts
-    // expect(process.env.BASE_URL).toBe('https://cloudspend.velasuci.com');
-  })
+/**
+ * These tests are designed as regression tests to ensure the SWO Finops UI customisation is not broken by merges
+ * with Hystax code.
+ */
+test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', () => {
 
   test.beforeEach('Login to live-demo', async ({loginPage, header, homePage, cloudAccountsPage}) => {
     await homePage.setupApiInterceptions();
@@ -359,7 +359,7 @@ test.describe('MPT-7367 Cloudspend screenshot Tests @customisation', () => {
     });
   })
 
-  test.only('Verify Cloud Account page matches screenshots', async ({
+  test('Verify Cloud Account page matches screenshots', async ({
                                                                  cloudAccountsPage,
                                                                  cloudAccountsConnectPage
                                                                }) => {

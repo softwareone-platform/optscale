@@ -9,6 +9,10 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 import {interceptApiRequest} from "../utils/interceptor";
 
+/**
+ * Represents the Home Page.
+ * Extends the BasePage class.
+ */
 export class HomePage extends BasePage {
     readonly connectDataSourceBanner: Locator;
     readonly organizationExpensesBlock: Locator;
@@ -32,6 +36,10 @@ export class HomePage extends BasePage {
     readonly poolsReqAttnExceededForecastedOverspendBtn: Locator;
     readonly progressBar: Locator;
 
+    /**
+     * Initializes a new instance of the HomePage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/');
         this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
@@ -56,6 +64,12 @@ export class HomePage extends BasePage {
         this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
         this.progressBar = this.page.getByRole('progressbar');
     }
+
+    /**
+     * Sets up API interceptions for the Home page.
+     * Intercepts API requests and provides mock responses.
+     * @returns {Promise<void>}
+     */
     async setupApiInterceptions() {
         const apiInterceptions = [
             {urlPattern: `/v2/organizations/[^/]+/pool_expenses`, mockResponse: OrganizationExpensesPoolsResponse},
@@ -69,12 +83,22 @@ export class HomePage extends BasePage {
             interceptApiRequest({page: this.page, urlPattern, mockResponse})
         ));
     }
+
+    /**
+     * Selects a perspective from the top resources perspectives.
+     * @param {string} option - The perspective option to select.
+     * @returns {Promise<void>}
+     */
     async selectPerspectives(option: string) {
         await this.topResourcesPerspectives.click();
         await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
     }
 
-    async  waitForAllProgressBarsToDisappear() {
+    /**
+     * Waits for all progress bars to disappear.
+     * @returns {Promise<void>}
+     */
+    async waitForAllProgressBarsToDisappear() {
         console.log('Waiting for all progress bars appear');
         await this.progressBar.first().waitFor({state: 'visible'});
         const progressBars = this.progressBar;

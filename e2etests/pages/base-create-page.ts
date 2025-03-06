@@ -1,6 +1,10 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
+/**
+ * Abstract class representing the base structure for create pages.
+ * Extends the BasePage class.
+ */
 export abstract class BaseCreatePage extends BasePage {
     readonly nameInput: Locator;
     readonly typeSelect: Locator;
@@ -22,7 +26,11 @@ export abstract class BaseCreatePage extends BasePage {
     readonly saveBtn: Locator;
     readonly cancelBtn: Locator;
 
-
+    /**
+     * Initializes a new instance of the BaseCreatePage class.
+     * @param {Page} page - The Playwright page object.
+     * @param {string} url - The URL of the page.
+     */
     protected constructor(page: Page, url: string) {
         super(page, '');
         this.nameInput = this.main.getByTestId('input_name');
