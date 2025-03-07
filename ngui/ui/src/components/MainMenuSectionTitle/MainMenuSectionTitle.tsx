@@ -8,7 +8,7 @@ const MainMenuSectionTitle = ({ messageId, icon: Icon = null }) => {
   return (
     <ListItem className={classes.textWrapper}>
       <Typography className={classes.text}>
-        {Icon && <Icon className={classes.titleIcon} fontSize="xsmall" />}
+        {Icon && <Icon className={classes.titleIcon} />}
         <FormattedMessage id={messageId} />
       </Typography>
     </ListItem>
