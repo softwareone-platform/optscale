@@ -1,6 +1,7 @@
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
+import { FormattedMessage } from "react-intl";
 import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
 import PoolsTable from "components/PoolsTable";
@@ -23,9 +24,12 @@ const PoolsOverview = ({ data, isLoading = false, isDataReady = false, isGetPool
   const actionBarDefinition = {
     title: {
       text: (
-        <Tooltip title={isNameLong ? name : undefined}>
-          <span>{isNameLong ? sliceByLimitWithEllipsis(name, MAX_POOL_NAME_LENGTH) : name}</span>
-        </Tooltip>
+        <>
+          <FormattedMessage id="poolsFor" />
+          <Tooltip title={isNameLong ? name : undefined}>
+            <span>{isNameLong ? sliceByLimitWithEllipsis(name, MAX_POOL_NAME_LENGTH) : name}</span>
+          </Tooltip>
+        </>
       ),
       logo: {
         icon: <PoolTypeIcon fontSize="medium" type={POOL_TYPE_BUSINESS_UNIT} hasRightMargin dataTestId="img_type" />

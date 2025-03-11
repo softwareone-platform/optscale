@@ -8,7 +8,7 @@ const Employees = ({ employees, isLoading }) => (
     <ActionBar
       data={{
         title: {
-          messageId: "users",
+          messageId: "userManagementTitle",
           dataTestId: "lbl_users"
         }
       }}

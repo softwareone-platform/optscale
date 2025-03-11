@@ -57,7 +57,7 @@ const CostExplorer = ({
     title: {
       text: (
         <FormattedMessage
-          id="expensesOf"
+          id="costExplorerFor"
           values={{
             name: (
               <Tooltip title={isNameLong ? organizationName : undefined}>
