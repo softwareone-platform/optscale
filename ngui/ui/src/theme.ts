@@ -20,6 +20,7 @@ import {
   MPT_SPACING_3,
   MPT_ALERTS_SUCCESS_2,
   MPT_ALERTS_SUCCESS_4,
+  MPT_ALERTS_INFO_1,
   MPT_ALERTS_WARNING_2,
   MPT_ALERTS_WARNING_3,
   MPT_ALERTS_WARNING_4,
@@ -36,6 +37,15 @@ declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides {
     header: true;
     property: true;
+  }
+}
+
+declare module "@mui/material/Chip" {
+  interface ChipPropsColorOverrides {
+    dark: true;
+  }
+  interface ChipPropsVariantOverrides {
+    organization: true;
   }
 }
 
@@ -75,9 +85,19 @@ const applyPaletteSettings = (settings) => {
 
   const secondary = mergeIfSettingIsNotEmpty(
     {
-      main: MPT_BRAND_PRIMARY
+      main: MPT_BRAND_PRIMARY,
+      button: MPT_ALERTS_INFO_1,
+      contrastText: MPT_BRAND_PRIMARY
     },
     "secondary"
+  );
+
+  const dark = mergeIfSettingIsNotEmpty(
+    {
+      main: MPT_BRAND_TYPE,
+      contrastText: MPT_BRAND_WHITE
+    },
+    "dark"
   );
 
   const success = mergeIfSettingIsNotEmpty(
@@ -111,6 +131,7 @@ const applyPaletteSettings = (settings) => {
 
   const text = mergeIfSettingIsNotEmpty(
     {
+      main: MPT_BRAND_TYPE,
       primary: getDarken(info.main),
       secondary: primary.main
     },
@@ -124,7 +145,8 @@ const applyPaletteSettings = (settings) => {
     success,
     error,
     warning,
-    text
+    text,
+    dark
   };
 };
 const applyChartPaletteSettings = (settings) => {
@@ -296,7 +318,7 @@ export const getThemeSpacingCoefficient = (theme) => {
 // Main theme config
 const getThemeConfig = (settings = {}) => {
   const baseColorsPalette = applyPaletteSettings(settings);
-  const { primary, secondary, info, success, error, warning, text } = baseColorsPalette;
+  const { primary, secondary, info, success, error, warning, text, dark } = baseColorsPalette;
 
   const { chart, monoChart } = applyChartPaletteSettings(settings);
 
@@ -438,6 +460,16 @@ const getThemeConfig = (settings = {}) => {
             })
           },
           {
+            props: { variant: "contained", color: "secondary" },
+            style: ({ theme }) => ({
+              backgroundColor: theme.palette.secondary.button,
+              "&:hover": {
+                backgroundColor: darken(theme.palette.secondary.button, 0.08),
+                boxShadow: "none"
+              }
+            })
+          },
+          {
             props: { variant: "text", color: "info" },
             style: ({ theme }) => ({
               color: theme.palette.text.primary
@@ -447,7 +479,11 @@ const getThemeConfig = (settings = {}) => {
         styleOverrides: {
           root: {
             padding: `6px ${MPT_SPACING_2}`,
-            borderRadius: MPT_SPACING_1
+            borderRadius: MPT_SPACING_1,
+            boxShadow: "none",
+            "&:hover": {
+              boxShadow: "none"
+            }
           }
         }
       },
@@ -459,7 +495,24 @@ const getThemeConfig = (settings = {}) => {
               fontSize: "13px"
             }
           }
-        }
+        },
+        variants: [
+          {
+            props: { variant: "organization" },
+            style: ({ theme }) => ({
+              padding: `${MPT_SPACING_2}`,
+              borderRadius: MPT_SPACING_1,
+              background: "none",
+              color: theme.palette.text.main,
+              border: `1px solid ${MPT_GRAY_2}`,
+              fontSize: "16px",
+              fontWeight: "bold",
+              ".MuiChip-icon": {
+                color: theme.palette.text.main
+              }
+            })
+          }
+        ]
       },
       MuiButtonGroup: {
         styleOverrides: {
@@ -927,6 +980,7 @@ const getThemeConfig = (settings = {}) => {
       success,
       error,
       warning,
+      dark,
       common,
       background: {
         default: BACKGROUND

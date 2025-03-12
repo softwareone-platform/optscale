@@ -42,7 +42,7 @@
   "abortedStatusDescription": "<strong>Aborted</strong>: indicates that the run was terminated prematurely due to some breaking conditions, such as timeout exceeded or some goal reached plateau.",
   "aboutToStart": "About to start",
   "accept": "Accept",
-  "acceptInvitationTitle": "User <strong>{ownerName}</strong> ({ownerEmail}) has invited you to join <strong>{organization}</strong> organization.",
+  "acceptInvitationTitle": "User <strong>{ownerName}</strong> ({ownerEmail}) has invited you to join the organization",
   "accessKey": "Access key",
   "accessKeyId": "Access key ID",
   "accountId": "Account ID",
