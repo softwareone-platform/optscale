@@ -24,8 +24,9 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
 
   return (
     <>
-      <Box pl={2} pr={2}>
+      <Box width={{ sm: "600px", md: "900px", lg: "1200px" }}>
         <Invitations
+          widget
           invitations={invitations}
           styleProps={{ buttonsJustifyContent: "center" }}
           onSuccessAccept={() => {

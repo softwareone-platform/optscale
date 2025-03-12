@@ -1,3 +1,5 @@
+import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
+import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
@@ -5,16 +7,19 @@ import FormButtonsWrapper from "components/FormButtonsWrapper";
 import Invitation from "components/Invitation";
 import TypographyLoader from "components/TypographyLoader";
 import InvitationActionsContainer from "containers/InvitationActionsContainer";
-import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arrays";
-import { MPT_SPACING_4, SPACING_4 } from "utils/layouts";
-import useStyles from "./Invitations.styles";
-import { Typography } from "@mui/material";
 import { DOCS_MARKETPLACE_PENDING_INVITATIONS } from "urls";
+import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arrays";
+import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
+import useStyles from "./Invitations.styles";
 
-const NoIvitationsPending = () => {
+const NoIvitationsPending = ({ widget = false }: { widget: boolean }) => {
+  const { classes } = useStyles();
   return (
-    <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"}>
-      <Box>
+    <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"} className={widget ? classes.gridBox : ""}>
+      <Box textAlign={widget ? "center" : "left"}>
+        <Typography marginBottom={MPT_SPACING_1}>
+          <MarkAsUnreadOutlinedIcon sx={{ fontSize: 100 }} />
+        </Typography>
         <Typography component="h4" variant="subtitle1" marginBottom={MPT_SPACING_4}>
           <FormattedMessage id="noPendingInvitationsLeft" />
         </Typography>
@@ -23,7 +28,7 @@ const NoIvitationsPending = () => {
             id="noPendingInvitationsLeftDescription"
             values={{
               invitationDocsLink: (chunks) => (
-                <a href={DOCS_MARKETPLACE_PENDING_INVITATIONS} target="_blank">
+                <a href={DOCS_MARKETPLACE_PENDING_INVITATIONS} target="_blank" rel="noreferrer">
                   {chunks}
                 </a>
               )
@@ -35,7 +40,14 @@ const NoIvitationsPending = () => {
   );
 };
 
-const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading = false, styleProps = {} }) => {
+const Invitations = ({
+  invitations,
+  onSuccessAccept,
+  onSuccessDecline,
+  isLoading = false,
+  styleProps = {},
+  widget = false
+}) => {
   const { classes } = useStyles();
 
   if (isLoading) {
@@ -48,10 +60,11 @@ const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading
       direction="row"
       spacing={SPACING_4}
       sx={{
+        justifyContent: widget ? "center" : "flexStart",
         alignItems: "stretch"
       }}
     >
-      {isEmptyArray(invitations) && <NoIvitationsPending />}
+      {isEmptyArray(invitations) && <NoIvitationsPending widget={widget} />}
       {invitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
         const organizationNameInvitedTo = organization;
 
@@ -61,7 +74,7 @@ const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading
         );
 
         return (
-          <Grid item md={6} lg={4} key={id} className={classes.grid}>
+          <Grid item md={6} lg={4} key={id} className={widget ? classes.gridBox : classes.grid}>
             <Box>
               <Invitation
                 owner={{ name, email }}
