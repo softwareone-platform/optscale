@@ -586,6 +586,8 @@ export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = dataSourceConnectionDocUr
 export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = dataSourceConnectionDocUrl("e2e_alibaba.html");
 export const DOCS_HYSTAX_CONNECT_KUBERNETES = dataSourceConnectionDocUrl("e2e_kubernetes.html#kubernetes");
 
+export const DOCS_MARKETPLACE_PENDING_INVITATIONS = docUrl(`pending-invitations`);// TODO: set correct url when available 
+
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =
   "https://github.com/hystax/helm-charts/tree/main/charts/kube-cost-metrics-collector";

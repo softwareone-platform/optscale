@@ -6,18 +6,40 @@ import Invitation from "components/Invitation";
 import TypographyLoader from "components/TypographyLoader";
 import InvitationActionsContainer from "containers/InvitationActionsContainer";
 import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arrays";
-import { SPACING_4 } from "utils/layouts";
+import { MPT_SPACING_4, SPACING_4 } from "utils/layouts";
 import useStyles from "./Invitations.styles";
+import { Typography } from "@mui/material";
+import { DOCS_MARKETPLACE_PENDING_INVITATIONS } from "urls";
+
+const NoIvitationsPending = () => {
+  return (
+    <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"}>
+      <Box>
+        <Typography component="h4" variant="subtitle1" marginBottom={MPT_SPACING_4}>
+          <FormattedMessage id="noPendingInvitationsLeft" />
+        </Typography>
+        <Typography variant="body1">
+          <FormattedMessage
+            id="noPendingInvitationsLeftDescription"
+            values={{
+              invitationDocsLink: (chunks) => (
+                <a href={DOCS_MARKETPLACE_PENDING_INVITATIONS} target="_blank">
+                  {chunks}
+                </a>
+              )
+            }}
+          />
+        </Typography>
+      </Box>
+    </Grid>
+  );
+};
 
 const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading = false, styleProps = {} }) => {
   const { classes } = useStyles();
 
   if (isLoading) {
     return <TypographyLoader linesCount={4} />;
-  }
-
-  if (isEmptyArray(invitations)) {
-    return <FormattedMessage id="noPendingInvitationsLeft" />;
   }
 
   return (
@@ -29,6 +51,7 @@ const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading
         alignItems: "stretch"
       }}
     >
+      {isEmptyArray(invitations) && <NoIvitationsPending />}
       {invitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
         const organizationNameInvitedTo = organization;
 
