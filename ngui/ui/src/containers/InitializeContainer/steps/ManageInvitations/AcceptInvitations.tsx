@@ -4,6 +4,9 @@ import { makeStyles } from "tss-react/mui";
 import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
+import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
+import { NetworkStatus, useQuery } from "@apollo/client";
+import { Error, Loading } from "containers/InitializeContainer/common";
 
 const useStyles = makeStyles()((theme) => ({
   dashboardButton: {
@@ -21,6 +24,28 @@ const useStyles = makeStyles()((theme) => ({
 
 const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
   const { classes } = useStyles();
+  const {
+    data: data,
+    networkStatus: getOrganizationsNetworkStatus,
+    error: getOrganizationsError,
+    refetch: refetchOrganizations
+  } = useQuery(GET_ORGANIZATIONS, {
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true
+  });
+
+  const getOrganizationsLoading = getOrganizationsNetworkStatus === NetworkStatus.loading;
+  const getOrganizationsRefetching = getOrganizationsNetworkStatus === NetworkStatus.refetch;
+
+  if (getOrganizationsLoading || getOrganizationsRefetching) {
+    return <Loading />;
+  }
+
+  if (getOrganizationsError) {
+    return <Error />;
+  }
+
+  const userHasOrganizations = data && data.organizations.length > 0;
 
   return (
     <>
@@ -30,6 +55,7 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
           invitations={invitations}
           styleProps={{ buttonsJustifyContent: "center" }}
           onSuccessAccept={() => {
+            refetchOrganizations();
             refetchInvitations();
           }}
           onSuccessDecline={() => {
@@ -39,16 +65,18 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
         />
       </Box>
       <Box>
-        <ButtonLoader
-          dataTestId="btn_proceed_to_optscale"
-          messageId="proceedToOptScale"
-          size="medium"
-          color="primary"
-          variant="contained"
-          onClick={onProceed}
-          startIcon={<NavigationIcon />}
-          customWrapperClass={classes.dashboardButton}
-        />
+        {userHasOrganizations && (
+          <ButtonLoader
+            dataTestId="btn_proceed_to_optscale"
+            messageId="proceedToOptScale"
+            size="medium"
+            color="primary"
+            variant="contained"
+            onClick={onProceed}
+            startIcon={<NavigationIcon />}
+            customWrapperClass={classes.dashboardButton}
+          />
+        )}
       </Box>
     </>
   );

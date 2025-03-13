@@ -38,6 +38,7 @@ import finOpsPortalRoute from "./finOpsPortalRoute";
 import homeRoute from "./homeRoute";
 import initializeRoute from "./initializeRoute";
 import integrationsRoute from "./integrationsRoute";
+import pendingInvitationsRoute from "./pendingInvitationsRoute";
 import invitedRoute from "./invitedRoute";
 import inviteEmployeesRoute from "./inviteEmployeesRoute";
 import k8sRightsizingRoute from "./k8sRightsizingRoute";
@@ -130,6 +131,7 @@ export const routes = [
   homeRoute,
   loginRoute,
   registerRoute,
+  pendingInvitationsRoute,
   invitedRoute,
   liveDemoRoute,
   resetPasswordRoute,
