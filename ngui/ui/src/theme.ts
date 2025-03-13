@@ -41,9 +41,6 @@ declare module "@mui/material/Typography" {
 }
 
 declare module "@mui/material/Chip" {
-  interface ChipPropsColorOverrides {
-    dark: true;
-  }
   interface ChipPropsVariantOverrides {
     organization: true;
   }
@@ -86,18 +83,9 @@ const applyPaletteSettings = (settings) => {
   const secondary = mergeIfSettingIsNotEmpty(
     {
       main: MPT_BRAND_PRIMARY,
-      button: MPT_ALERTS_INFO_1,
-      contrastText: MPT_BRAND_PRIMARY
+      button: MPT_ALERTS_INFO_1
     },
     "secondary"
-  );
-
-  const dark = mergeIfSettingIsNotEmpty(
-    {
-      main: MPT_BRAND_TYPE,
-      contrastText: MPT_BRAND_WHITE
-    },
-    "dark"
   );
 
   const success = mergeIfSettingIsNotEmpty(
@@ -145,8 +133,7 @@ const applyPaletteSettings = (settings) => {
     success,
     error,
     warning,
-    text,
-    dark
+    text
   };
 };
 const applyChartPaletteSettings = (settings) => {
@@ -318,7 +305,7 @@ export const getThemeSpacingCoefficient = (theme) => {
 // Main theme config
 const getThemeConfig = (settings = {}) => {
   const baseColorsPalette = applyPaletteSettings(settings);
-  const { primary, secondary, info, success, error, warning, text, dark } = baseColorsPalette;
+  const { primary, secondary, info, success, error, warning, text } = baseColorsPalette;
 
   const { chart, monoChart } = applyChartPaletteSettings(settings);
 
@@ -463,6 +450,7 @@ const getThemeConfig = (settings = {}) => {
             props: { variant: "contained", color: "secondary" },
             style: ({ theme }) => ({
               backgroundColor: theme.palette.secondary.button,
+              color: theme.palette.secondary.main,
               "&:hover": {
                 backgroundColor: darken(theme.palette.secondary.button, 0.08),
                 boxShadow: "none"
@@ -980,7 +968,6 @@ const getThemeConfig = (settings = {}) => {
       success,
       error,
       warning,
-      dark,
       common,
       background: {
         default: BACKGROUND
