@@ -7,7 +7,7 @@ const useStyles = makeStyles()(() => ({
       padding: MPT_SPACING_3,
       borderRight: `1px solid ${MPT_GRAY_2}`
     },
-    "&:nth-child(3n) > div": {
+    "&:nth-of-type(3n) > div": {
       borderRight: "none"
     }
   },

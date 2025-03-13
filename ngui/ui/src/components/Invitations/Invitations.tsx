@@ -17,9 +17,11 @@ const NoIvitationsPending = ({ widget = false }: { widget: boolean }) => {
   return (
     <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"} className={widget ? classes.gridBox : ""}>
       <Box textAlign={widget ? "center" : "left"}>
-        <Typography marginBottom={MPT_SPACING_1}>
-          <MarkAsUnreadOutlinedIcon sx={{ fontSize: 100 }} />
-        </Typography>
+        {widget && (
+          <Typography marginBottom={MPT_SPACING_1}>
+            <MarkAsUnreadOutlinedIcon sx={{ fontSize: 100 }} />
+          </Typography>
+        )}
         <Typography component="h4" variant="subtitle1" marginBottom={MPT_SPACING_4}>
           <FormattedMessage id="noPendingInvitationsLeft" />
         </Typography>
