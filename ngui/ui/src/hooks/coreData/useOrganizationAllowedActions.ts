@@ -5,9 +5,7 @@ import { useOrganizationInfo } from "../useOrganizationInfo";
 export const useOrganizationAllowedActions = () => {
   const { organizationId } = useOrganizationInfo();
 
-  const {
-    data: { organizationAllowedActions }
-  } = useQuery(GET_ORGANIZATION_ALLOWED_ACTIONS, {
+  const { data: data } = useQuery(GET_ORGANIZATION_ALLOWED_ACTIONS, {
     fetchPolicy: "cache-only",
     variables: {
       requestParams: {
@@ -16,5 +14,5 @@ export const useOrganizationAllowedActions = () => {
     }
   });
 
-  return organizationAllowedActions;
+  return data && data.organizationAllowedActions;
 };
