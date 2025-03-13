@@ -28,7 +28,7 @@ const FormButtonsWrapper = ({
       justifyContent={justifyContent}
       flexDirection={horizontal ? "column" : "row"}
       alignItems={alignItems}
-      className={horizontal ? classes.wrapperHorizontal : classes.wrapper}
+      className={horizontal ? classes.wrapperHorizontal : classes.wrapperVertical}
     >
       {children}
     </Box>

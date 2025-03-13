@@ -12,6 +12,29 @@ import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arra
 import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
 import useStyles from "./Invitations.styles";
 
+interface InvitationAssignment {
+  scope_type: string;
+}
+
+interface InvitationData {
+  owner_name: string;
+  owner_email: string;
+  id: string;
+  organization: string;
+  invite_assignments: InvitationAssignment[];
+}
+
+interface InvitationsProps {
+  invitations: InvitationData[];
+  onSuccessAccept: (id: string) => void;
+  onSuccessDecline: (id: string) => void;
+  isLoading?: boolean;
+  styleProps?: {
+    buttonsJustifyContent?: string;
+  };
+  widget?: boolean;
+}
+
 const NoInvitationsPending = ({ widget = false }: { widget: boolean }) => {
   const { classes } = useStyles();
   return (
@@ -49,7 +72,7 @@ const Invitations = ({
   isLoading = false,
   styleProps = {},
   widget = false
-}) => {
+}: InvitationsProps) => {
   const { classes } = useStyles();
 
   if (isLoading) {
@@ -66,7 +89,7 @@ const Invitations = ({
         alignItems: "stretch"
       }}
     >
-      {isEmptyArray(invitations) && <NoIvitationsPending widget={widget} />}
+      {isEmptyArray(invitations) && <NoInvitationsPending widget={widget} />}
       {invitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
         const organizationNameInvitedTo = organization;
 

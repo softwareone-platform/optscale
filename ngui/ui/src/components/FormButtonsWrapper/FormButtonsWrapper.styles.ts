@@ -2,7 +2,7 @@ import { makeStyles } from "tss-react/mui";
 import { MPT_SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
-  wrapper: {
+  wrapperVertical: {
     "& > *": {
       marginRight: theme.spacing(1),
       "&:last-child": {

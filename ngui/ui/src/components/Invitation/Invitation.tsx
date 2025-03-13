@@ -34,6 +34,10 @@ type InvitationProps = {
   invitesToPools: TODO[];
 };
 
+interface OrganizationProps {
+  name: string;
+}
+
 const MAX_ROLE_TARGET_LENGTH = 64;
 
 const InviteListElement = ({ message }: InviteListElementProps) => <Typography>●&nbsp;{message}</Typography>;
@@ -65,17 +69,14 @@ const PermissionsList = ({ roleTargetMessageId, invites }: PermissionsListProps)
     );
   });
 
-const Organization = ({ name }: { name: string }) => {
+const Organization = ({ name }: OrganizationProps) => {
   const isNameLong = name.length > MAX_ROLE_TARGET_LENGTH;
+  const label = isNameLong ? sliceByLimitWithEllipsis(name, MAX_ROLE_TARGET_LENGTH) : name;
+
   return (
     <Box marginBottom={MPT_SPACING_3}>
       <Tooltip title={isNameLong ? name : undefined}>
-        <Chip
-          style={{ height: MPT_SPACING_6 }}
-          variant="organization"
-          icon={<ApartmentIcon />}
-          label={isNameLong ? sliceByLimitWithEllipsis(name, MAX_ROLE_TARGET_LENGTH) : name}
-        />
+        <Chip style={{ height: MPT_SPACING_6 }} variant="organization" icon={<ApartmentIcon />} label={label} />
       </Tooltip>
     </Box>
   );
