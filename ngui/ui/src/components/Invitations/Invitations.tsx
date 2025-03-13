@@ -12,7 +12,7 @@ import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arra
 import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
 import useStyles from "./Invitations.styles";
 
-const NoIvitationsPending = ({ widget = false }: { widget: boolean }) => {
+const NoInvitationsPending = ({ widget = false }: { widget: boolean }) => {
   const { classes } = useStyles();
   return (
     <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"} className={widget ? classes.gridBox : ""}>
