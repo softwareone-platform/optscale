@@ -13,7 +13,7 @@ const useStyles = makeStyles()(() => ({
   },
   gridBox: {
     "> div": {
-      backgroundColor: "white",
+      backgroundColor: MPT_BRAND_WHITE
       borderRadius: MPT_SPACING_2,
       boxShadow: MPT_BOX_SHADOW,
       padding: MPT_SPACING_3
