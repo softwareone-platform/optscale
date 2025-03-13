@@ -5,7 +5,7 @@ import BaseMenuItem from "./baseMenuItem";
 class TaggingPoliciesMenuItem extends BaseMenuItem {
   route = taggingPolicies;
 
-  messageId = "tagging";
+  messageId = "taggingPolicy.taggingPoliciesTitle";
 
   dataTestId = "btn_tagging_policies";
 

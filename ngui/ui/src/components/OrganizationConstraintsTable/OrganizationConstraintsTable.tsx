@@ -163,7 +163,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
       {
         header: (
           <TextWithDataTestId dataTestId="lbl_filters">
-            <LabelColon messageId="filters" />
+            <LabelColon messageId="filters" suffix={false} />
           </TextWithDataTestId>
         ),
         accessorKey: "filtersString",

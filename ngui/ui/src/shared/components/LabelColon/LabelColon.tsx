@@ -6,7 +6,7 @@ import { EVariantOptions } from "../../models/EVariantOptions";
 interface ILabelProps {
   messageId: string;
   variant?: EVariantOptions;
-  suffix?: string;
+  suffix?: string | false;
   noWrap?: boolean;
 }
 

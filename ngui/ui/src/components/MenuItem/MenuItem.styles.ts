@@ -29,7 +29,7 @@ const useStyles = makeStyles()((theme) => ({
     }
   },
   activeLink: {
-    color: "black",
+    color: MPT_BRAND_PRIMARY,
     "& .MuiListItemText-root:before": {
       width: 10
     },
@@ -38,7 +38,7 @@ const useStyles = makeStyles()((theme) => ({
         color: "black"
       },
       "& span": {
-        color: "black"
+        color: MPT_BRAND_PRIMARY
       },
       "& .MuiIconButton-root": {
         "&:hover": {
@@ -53,12 +53,11 @@ const useStyles = makeStyles()((theme) => ({
       }
     },
     "& .listItem": {
-      // backgroundColor: theme.palette.action.selected,
       "& svg": {
         color: "black"
       },
       "& span": {
-        color: "black"
+        color: MPT_BRAND_PRIMARY
       }
     }
   }
