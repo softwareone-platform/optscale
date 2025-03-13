@@ -50,6 +50,10 @@ const useScopedAllowedActions = (entityType, entityId) => {
     apiData: { allowedActions = {} }
   } = useApiData(label);
 
+  if(!organizationId){
+    return [];
+  }
+
   const organizationAllowedActions = useOrganizationAllowedActions();
 
   if (entityType === SCOPE_TYPES.ORGANIZATION) {
