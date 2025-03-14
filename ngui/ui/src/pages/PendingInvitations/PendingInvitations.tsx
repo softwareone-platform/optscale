@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import { FormattedMessage } from "react-intl";
 import ActionBar from "components/ActionBar";
 import Backdrop from "components/Backdrop";
 import Invitations from "components/Invitations";
@@ -7,9 +8,6 @@ import PageContentWrapper from "components/PageContentWrapper";
 import { GET_INVITATIONS } from "graphql/api/restapi/queries";
 import { MPT_SPACING_2, SPACING_2 } from "utils/layouts";
 import { Error } from "../../containers/InitializeContainer/common";
-import SubTitle from "components/SubTitle";
-import { Form } from "react-router-dom";
-import { FormattedMessage } from "react-intl";
 
 const actionBarDefinition = {
   title: {
