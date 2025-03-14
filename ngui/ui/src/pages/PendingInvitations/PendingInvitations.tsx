@@ -1,16 +1,19 @@
 import { useQuery } from "@apollo/client";
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import ActionBar from "components/ActionBar";
 import Backdrop from "components/Backdrop";
 import Invitations from "components/Invitations";
 import PageContentWrapper from "components/PageContentWrapper";
 import { GET_INVITATIONS } from "graphql/api/restapi/queries";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_2, SPACING_2 } from "utils/layouts";
 import { Error } from "../../containers/InitializeContainer/common";
+import SubTitle from "components/SubTitle";
+import { Form } from "react-router-dom";
+import { FormattedMessage } from "react-intl";
 
 const actionBarDefinition = {
   title: {
-    messageId: "pendingInvitationsTitle"
+    messageId: "noOrganizations.pendingInvitations"
   }
 };
 
@@ -44,9 +47,16 @@ const PendingInvitations = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2}>
-          <Box className={"MTPBoxShadow"} />
-          <Box width={{ sm: "600px", md: "900px", lg: "1200px" }}>
+        <Stack spacing={SPACING_2} width={"100%"}>
+          <Box className={"MTPBoxShadow"}>
+            <Typography component="h1" variant="subtitle1" marginBottom={MPT_SPACING_2}>
+              <FormattedMessage id="noOrganizations.welcomeHeader" />
+            </Typography>
+            <Typography variant="body1">
+              <FormattedMessage id="noOrganizations.welcome" />
+            </Typography>
+          </Box>
+          <Box>
             <Invitations
               widget
               invitations={invitations.invitations}
