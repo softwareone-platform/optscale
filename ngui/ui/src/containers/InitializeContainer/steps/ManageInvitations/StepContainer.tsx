@@ -4,9 +4,9 @@ import { GET_INVITATIONS } from "graphql/api/restapi/queries";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
 import { Error, Loading } from "../../common";
+import ProceedToApplication from "../ProceedToApplication";
 import SetupOrganization from "../SetupOrganization/StepContainer";
 import AcceptInvitations from "./AcceptInvitations";
-import ProceedToApplication from "../ProceedToApplication";
 
 const StepContainer = () => {
   const [proceedToNext, setProceedToNext] = useState(false);

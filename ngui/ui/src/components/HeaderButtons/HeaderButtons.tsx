@@ -15,11 +15,13 @@ import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
 import ProfileMenuContainer from "containers/ProfileMenuContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useMainMenuState } from "hooks/useMainMenuState";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = () => {
+  const { organizationId } = useOrganizationInfo();
   const startTour = useStartTour();
   const { classes } = useStyles();
 
@@ -40,7 +42,6 @@ const HeaderButtons = () => {
   };
 
   const isTourAvailableForCurrentBreakpoint = useIsTourAvailableForCurrentBreakpoint();
-
   const { isCommunityDocsOpened, toggleCommunityDocs } = useCommunityDocsContext();
 
   return (
@@ -56,17 +57,19 @@ const HeaderButtons = () => {
             value: <FormattedMessage id="documentation" />
           }}
         />
-        <IconButton
-          dataTestId="btn_product_tour"
-          color="info"
-          icon={<LiveHelpOutlinedIcon />}
-          onClick={startProductTour}
-          disabled={!isTourAvailableForCurrentBreakpoint}
-          tooltip={{
-            show: true,
-            value: <FormattedMessage id="productTour" />
-          }}
-        />
+        {organizationId && (
+          <IconButton
+            dataTestId="btn_product_tour"
+            color="info"
+            icon={<LiveHelpOutlinedIcon />}
+            onClick={startProductTour}
+            disabled={!isTourAvailableForCurrentBreakpoint}
+            tooltip={{
+              show: true,
+              value: <FormattedMessage id="productTour" />
+            }}
+          />
+        )}
         {/* MPT_TODO: disabled because it doesn't not exist in documentation */}
         {/* <IconButton */}
         {/*  icon={isCommunityDocsOpened ? <SchoolIcon /> : <SchoolOutlinedIcon />} */}

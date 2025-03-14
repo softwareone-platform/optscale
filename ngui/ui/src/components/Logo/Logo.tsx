@@ -4,8 +4,16 @@ import logoDemo from "assets/logo/swo-logo-demo.svg";
 import logo from "assets/logo/swo-logo.svg";
 import { HOME } from "urls";
 
+interface LogoProps {
+  dataTestId: string;
+  demo?: boolean;
+  active?: boolean;
+  width?: string | number;
+  height?: string | number;
+}
+
 const getLogo = (demo) => (demo ? logoDemo : logo);
-const Logo = ({ dataTestId, demo = false, active = false, width = "auto", height = "auto" }) => {
+const Logo = ({ dataTestId, demo = false, active = false, width = "auto", height = "auto" }: LogoProps) => {
   /* MPT_TODO: Add 'swo-logo' translation */
   // const intl = useIntl();
 

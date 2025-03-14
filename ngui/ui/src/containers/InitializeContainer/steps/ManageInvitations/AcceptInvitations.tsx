@@ -1,12 +1,12 @@
+import { NetworkStatus, useQuery } from "@apollo/client";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import { Box } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
-import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
-import { NetworkStatus, useQuery } from "@apollo/client";
 import { Error, Loading } from "containers/InitializeContainer/common";
+import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
+import { SPACING_1, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   dashboardButton: {

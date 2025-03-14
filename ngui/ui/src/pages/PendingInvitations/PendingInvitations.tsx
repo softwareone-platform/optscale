@@ -1,12 +1,12 @@
 import { useQuery } from "@apollo/client";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import ActionBar from "components/ActionBar";
+import Backdrop from "components/Backdrop";
+import Invitations from "components/Invitations";
 import PageContentWrapper from "components/PageContentWrapper";
 import { GET_INVITATIONS } from "graphql/api/restapi/queries";
-import { Error, Loading } from "../../containers/InitializeContainer/common";
-import Invitations from "components/Invitations";
 import { SPACING_2 } from "utils/layouts";
-import Backdrop from "components/Backdrop";
+import { Error } from "../../containers/InitializeContainer/common";
 
 const actionBarDefinition = {
   title: {
@@ -33,7 +33,7 @@ const PendingInvitations = () => {
       <Backdrop aboveDrawers>
         <CircularProgress />
       </Backdrop>
-    )    
+    );
   }
 
   if (error) {
@@ -45,7 +45,7 @@ const PendingInvitations = () => {
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Stack spacing={SPACING_2}>
-          <Box className={"MTPBoxShadow"}></Box>
+          <Box className={"MTPBoxShadow"} />
           <Box width={{ sm: "600px", md: "900px", lg: "1200px" }}>
             <Invitations
               widget
