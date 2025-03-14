@@ -36,6 +36,7 @@ export const INVITED = "/invited";
 export const INITIALIZE = "/initialize";
 export const RESET_PASSWORD = "/reset-password";
 export const ACCEPT_INVITATION = "/accept-invitation";
+export const PENDING_INVITATIONS = "/pending-invitations";
 export const ACCEPT_INVITATIONS = "/accept-invitations";
 export const PASSWORD_RECOVERY = "/password-recovery";
 export const EMAIL_VERIFICATION = "/email-verification";

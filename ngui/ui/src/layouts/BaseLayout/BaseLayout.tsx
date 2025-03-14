@@ -42,7 +42,7 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
   const isDownMd = useIsDownMediaQuery("md");
   const isDownSm = useIsDownMediaQuery("sm");
 
-  const { isDemo } = useOrganizationInfo();
+  const { isDemo, organizationId } = useOrganizationInfo();
 
   // MPT_TODO: disabled to meet BDR requirements
   // const navigate = useNavigate();
@@ -64,7 +64,13 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
           />
         )}
         <div style={{ height: logoHeight }} className={classes.logo}>
-          <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight} demo={isDemo} active />
+          <Logo
+            size={getLogoSize(isDemo, isDownMd, isDownSm)}
+            dataTestId="img_logo"
+            height={logoHeight}
+            demo={isDemo}
+            active={organizationId !== undefined}
+          />
 
           <Hidden mode="down" breakpoint="md">
             <Typography data-test-id="p_live_demo_mode" className={classes.headerTitle}>

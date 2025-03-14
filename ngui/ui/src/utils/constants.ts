@@ -1015,3 +1015,5 @@ export const AUTH_PROVIDERS = Object.freeze({
   GOOGLE: "google",
   MICROSOFT: "microsoft"
 });
+
+export const ALLOW_ORGANIZATION_CREATION = false;
