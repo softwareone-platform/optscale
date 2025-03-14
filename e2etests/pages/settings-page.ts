@@ -1,13 +1,19 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
+/**
+ * Represents the Settings Page.
+ * Extends the BasePage class.
+ */
 export class SettingsPage extends BasePage {
-    readonly page: Page;
-    readonly settingsHeading: Locator;
+    readonly heading: Locator;
 
+    /**
+     * Initializes a new instance of the SettingsPage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/settings');
-        this.page = page;
-        this.settingsHeading = this.page.locator('//h1[.="Settings"]');
+        this.heading = this.page.locator('//h1[.="Settings"]');
     }
 }

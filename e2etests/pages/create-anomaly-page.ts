@@ -1,115 +1,167 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
+import { BaseCreatePage } from "./base-create-page";
 
-export class CreateAnomalyPage extends BasePage {
-    readonly page: Page;
-    readonly createAnomalyHeading: Locator;
-    readonly nameInput: Locator;
-    readonly typeSelect: Locator;
+/**
+ * Represents the Create Anomaly Page.
+ * Extends the BaseCreatePage class.
+ */
+export class CreateAnomalyPage extends BaseCreatePage {
+    readonly heading: Locator;
     readonly evaluationPeriodInput: Locator;
     readonly thresholdInput: Locator;
-    readonly suggestedFilterSelect: Locator;
-    readonly poolSelect: Locator;
-    readonly ownerSelect: Locator;
-    readonly regionSelect: Locator;
-    readonly serviceSelect: Locator;
-    readonly resourceTypeSelect: Locator;
-    readonly resourceStateSelect: Locator;
-    readonly withAvailableSavingsSelect: Locator;
-    readonly withViolatedConstraintsSelect: Locator;
-    readonly k8sNodeSelect: Locator;
-    readonly k8sNamespaceSelect: Locator;
-    readonly k8sServiceSelect: Locator;
-    readonly tagSelect: Locator;
-    readonly withoutTagSelect: Locator;
-    readonly saveBtn: Locator;
-    readonly cancelBtn: Locator;
 
-
+    /**
+     * Initializes a new instance of the CreateAnomalyPage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/anomalies/create');
-        this.page = page;
-        this.createAnomalyHeading = this.page.getByTestId('lbl_create_anomaly_detection_policy');
-        this.nameInput = this.page.getByTestId('input_name');
-        this.typeSelect = this.page.getByTestId('type-selector');
-        this.evaluationPeriodInput = this.page.getByTestId('input_evaluationPeriod');
-        this.thresholdInput = this.page.getByTestId('input_threshold');
-        this.suggestedFilterSelect = this.page.getByTestId('selector_suggestedFilters');
-        this.poolSelect = this.page.getByTestId('selector_poolId');
-        this.ownerSelect = this.page.getByTestId('selector_ownerId');
-        this.regionSelect = this.page.getByTestId('selector_region');
-        this.serviceSelect = this.page.getByTestId('selector_serviceName');
-        this.resourceTypeSelect = this.page.getByTestId('selector_resourceType');
-        this.resourceStateSelect = this.page.getByTestId('selector_active');
-        this.withAvailableSavingsSelect = this.page.getByTestId('selector_availableSavings');
-        this.withViolatedConstraintsSelect = this.page.getByTestId('selector_constraintViolated');
-        this.k8sNodeSelect = this.page.getByTestId('selector_k8sNode');
-        this.k8sNamespaceSelect = this.page.getByTestId('selector_k8sNamespace');
-        this.k8sServiceSelect = this.page.getByTestId('selector_k8sService');
-        this.tagSelect = this.page.getByTestId('selector_tag');
-        this.withoutTagSelect = this.page.getByTestId('selector_withoutTag');
-        this.saveBtn = this.page.getByTestId('btn_create');
-        this.cancelBtn = this.page.getByTestId('btn_cancel');
+        this.heading = this.main.getByTestId('lbl_create_anomaly_detection_policy');
+        this.evaluationPeriodInput = this.main.getByTestId('input_evaluationPeriod');
+        this.thresholdInput = this.main.getByTestId('input_threshold');
     }
 
+    /**
+     * Selects a type from the type combo box.
+     * @param {string} type - The type to select.
+     * @returns {Promise<void>}
+     */
     async selectType(type: string) {
         await this.selectFromComboBox(this.typeSelect, type);
     }
 
+    /**
+     * Selects a suggested filter from the suggested filters combo box.
+     * @param {string} filter - The filter to select.
+     * @returns {Promise<void>}
+     */
     async selectSuggestedFilters(filter: string) {
-        await this.selectFromComboBox(this.suggestedFilterSelect, filter);
+        await this.selectFromComboBox(this.suggestedFiltersFilter, filter);
     }
 
+    /**
+     * Selects a data source from the data source combo box.
+     * @param {string} dataSource - The data source to select.
+     * @returns {Promise<void>}
+     */
+    async selectDataSource(dataSource: string) {
+        await this.selectFromComboBox(this.dataSourceFilter, dataSource);
+    }
+
+    /**
+     * Selects a pool from the pool combo box.
+     * @param {string} pool - The pool to select.
+     * @returns {Promise<void>}
+     */
     async selectPool(pool: string) {
-        await this.selectFromComboBox(this.poolSelect, pool);
+        await this.selectFromComboBox(this.poolFilter, pool);
     }
 
+    /**
+     * Selects an owner from the owner combo box.
+     * @param {string} owner - The owner to select.
+     * @returns {Promise<void>}
+     */
     async selectOwner(owner: string) {
-        await this.selectFromComboBox(this.ownerSelect, owner);
+        await this.selectFromComboBox(this.ownerFilter, owner);
     }
 
+    /**
+     * Selects a region from the region combo box.
+     * @param {string} region - The region to select.
+     * @returns {Promise<void>}
+     */
     async selectRegion(region: string) {
-        await this.selectFromComboBox(this.regionSelect, region);
+        await this.selectFromComboBox(this.regionFilter, region);
     }
 
+    /**
+     * Selects a service from the service combo box.
+     * @param {string} service - The service to select.
+     * @returns {Promise<void>}
+     */
     async selectService(service: string) {
-        await this.selectFromComboBox(this.serviceSelect, service);
+        await this.selectFromComboBox(this.serviceFilter, service);
     }
 
+    /**
+     * Selects a resource type from the resource type combo box.
+     * @param {string} resourceType - The resource type to select.
+     * @returns {Promise<void>}
+     */
     async selectResourceType(resourceType: string) {
-        await this.selectFromComboBox(this.resourceTypeSelect, resourceType);
+        await this.selectFromComboBox(this.resourceTypeFilter, resourceType);
     }
 
+    /**
+     * Selects a resource state from the resource state combo box.
+     * @param {string} resourceState - The resource state to select.
+     * @returns {Promise<void>}
+     */
     async selectResourceState(resourceState: string) {
-        await this.selectFromComboBox(this.resourceStateSelect, resourceState);
+        await this.selectFromComboBox(this.resourceStateFilter, resourceState);
     }
 
+    /**
+     * Selects an available savings option from the available savings combo box.
+     * @param {string} availableSavings - The available savings option to select.
+     * @returns {Promise<void>}
+     */
     async selectWithAvailableSavings(availableSavings: string) {
-        await this.selectFromComboBox(this.withAvailableSavingsSelect, availableSavings);
+        await this.selectFromComboBox(this.withAvailableSavingsFilter, availableSavings);
     }
 
+    /**
+     * Selects a violated constraints option from the violated constraints combo box.
+     * @param {string} violatedConstraints - The violated constraints option to select.
+     * @returns {Promise<void>}
+     */
     async selectWithViolatedConstraints(violatedConstraints: string) {
-        await this.selectFromComboBox(this.withViolatedConstraintsSelect, violatedConstraints);
+        await this.selectFromComboBox(this.withViolatedConstraintsFilter, violatedConstraints);
     }
 
+    /**
+     * Selects a Kubernetes node from the Kubernetes node combo box.
+     * @param {string} k8sNode - The Kubernetes node to select.
+     * @returns {Promise<void>}
+     */
     async selectK8sNode(k8sNode: string) {
-        await this.selectFromComboBox(this.k8sNodeSelect, k8sNode);
+        await this.selectFromComboBox(this.k8sNodeFilter, k8sNode);
     }
 
+    /**
+     * Selects a Kubernetes namespace from the Kubernetes namespace combo box.
+     * @param {string} k8sNamespace - The Kubernetes namespace to select.
+     * @returns {Promise<void>}
+     */
     async selectK8sNamespace(k8sNamespace: string) {
-        await this.selectFromComboBox(this.k8sNamespaceSelect, k8sNamespace);
+        await this.selectFromComboBox(this.k8sNamespaceFilter, k8sNamespace);
     }
 
+    /**
+     * Selects a Kubernetes service from the Kubernetes service combo box.
+     * @param {string} k8sService - The Kubernetes service to select.
+     * @returns {Promise<void>}
+     */
     async selectK8sService(k8sService: string) {
-        await this.selectFromComboBox(this.k8sServiceSelect, k8sService);
+        await this.selectFromComboBox(this.k8ServiceFilter, k8sService);
     }
 
+    /**
+     * Selects a tag from the tag combo box.
+     * @param {string} tag - The tag to select.
+     * @returns {Promise<void>}
+     */
     async selectTag(tag: string) {
-        await this.selectFromComboBox(this.tagSelect, tag);
+        await this.selectFromComboBox(this.tagFilter, tag);
     }
 
+    /**
+     * Selects a without tag option from the without tag combo box.
+     * @param {string} withoutTag - The without tag option to select.
+     * @returns {Promise<void>}
+     */
     async selectWithoutTag(withoutTag: string) {
-        await this.selectFromComboBox(this.withoutTagSelect, withoutTag);
+        await this.selectFromComboBox(this.withoutTagFilter, withoutTag);
     }
-
 }

@@ -44,4 +44,4 @@ jira_ui/*/build/
 /e2etests/node_modules/
 /e2etests/playwright-report/
 /e2etests/results.json
-/e2etests/.cache/
+/e2etests/.cache/*

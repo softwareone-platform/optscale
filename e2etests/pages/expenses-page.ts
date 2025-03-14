@@ -1,10 +1,19 @@
 import {Locator, Page} from "@playwright/test";
 import { BasePage } from "./base-page";
+import {interceptApiRequest} from "../utils/interceptor";
+import {
+    PoolsExpensesOwnerResponse,
+    PoolsExpensesPoolResponse,
+    PoolsExpensesResponse,
+    PoolsExpensesSourceResponse
+} from "../test-data/expenses-data";
 
+/**
+ * Represents the Expenses Page.
+ * Extends the BasePage class.
+ */
 export class ExpensesPage extends BasePage {
-    readonly page: Page;
-    readonly main: Locator;
-    readonly expensesHeading: Locator;
+    readonly heading: Locator;
     readonly expensesSelectedPeriodValue: Locator;
     readonly expensesPreviousPeriodValue: Locator;
     readonly dailyBtn: Locator;
@@ -17,12 +26,14 @@ export class ExpensesPage extends BasePage {
     readonly ownerBtn: Locator;
     readonly costExploreBreadcrumb: Locator;
 
+    /**
+     * Initializes a new instance of the ExpensesPage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/expenses');
-        this.page = page;
-        this.main = this.page.locator('main');
         this.costExploreBreadcrumb = this.main.locator('//a[.="Cost Explorer"]');
-        this.expensesHeading = this.page.locator('//h1[contains(text(), "Expenses of")]');
+        this.heading = this.page.locator('//h1[contains(text(), "Expenses of")]');
         this.expensesSelectedPeriodValue = this.page.locator('//div[.="Total expenses for selected period"]/./following-sibling::div');
         this.expensesPreviousPeriodValue = this.page.locator('//div[.="Total expenses for previous period"]/./following-sibling::div');
         this.dailyBtn = this.page.getByTestId('breakdown_ls_item_daily');
@@ -35,32 +46,78 @@ export class ExpensesPage extends BasePage {
         this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
     }
 
+    /**
+     * Sets up API interceptions for the Expenses page.
+     * Intercepts API requests and provides mock responses.
+     * @returns {Promise<void>}
+     */
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`, mockResponse: PoolsExpensesSourceResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`, mockResponse: PoolsExpensesOwnerResponse},
+            {urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`, mockResponse: PoolsExpensesResponse},
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
+
+    /**
+     * Clicks the daily button if it is not already selected.
+     * @returns {Promise<void>}
+     */
     async clickDailyBtnIfNotSelected() {
         if (!(await this.evaluateActiveButton(this.dailyBtn))) {
             await this.dailyBtn.click();
         }
     }
 
+    /**
+     * Clicks the weekly button.
+     * @returns {Promise<void>}
+     */
     async clickWeeklyBtn() {
-            await this.weeklyBtn.click();
+        await this.weeklyBtn.click();
     }
 
+    /**
+     * Clicks the monthly button.
+     * @returns {Promise<void>}
+     */
     async clickMonthlyBtn() {
-            await this.monthlyBtn.click();
+        await this.monthlyBtn.click();
     }
 
+    /**
+     * Clicks the Cost Explorer breadcrumb.
+     * @returns {Promise<void>}
+     */
     async clickCostExploreBreadcrumb() {
         await this.costExploreBreadcrumb.click();
     }
 
+    /**
+     * Clicks the Source button.
+     * @returns {Promise<void>}
+     */
     async clickSourceBtn() {
         await this.sourceBtn.click();
     }
 
+    /**
+     * Clicks the Pool button.
+     * @returns {Promise<void>}
+     */
     async clickPoolBtn() {
         await this.poolBtn.click();
     }
 
+    /**
+     * Clicks the Owner button.
+     * @returns {Promise<void>}
+     */
     async clickOwnerBtn() {
         await this.ownerBtn.click();
     }

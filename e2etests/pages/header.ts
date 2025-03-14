@@ -1,8 +1,11 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 
+/**
+ * Represents the Header component of the page.
+ * Extends the BasePage class.
+ */
 export class Header extends BasePage {
-    readonly page: Page;
     readonly header: Locator;
     readonly swoLogo: Locator;
     readonly liveDemoAlert: Locator;
@@ -14,9 +17,12 @@ export class Header extends BasePage {
     readonly profileUserEmail: Locator;
     readonly profileSignOutBtn: Locator;
 
+    /**
+     * Initializes a new instance of the Header class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/');
-        this.page = page;
         this.header = this.page.locator('header').first();
         this.swoLogo = this.header.getByTestId('img_logo');
         this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({ hasText: 'You are in a live demo mode' });
@@ -29,11 +35,20 @@ export class Header extends BasePage {
         this.profileSignOutBtn = this.page.getByTestId('btn_signout');
     }
 
+    /**
+     * Selects an organization from the organization selector.
+     * @param {string} organization - The name of the organization to select.
+     * @returns {Promise<void>}
+     */
     async selectOrganization(organization: string) {
         await this.organizationSelect.click();
         await this.page.getByRole('option', { name: organization }).click();
     }
 
+    /**
+     * Opens the profile menu.
+     * @returns {Promise<void>}
+     */
     async openProfileMenu() {
         await this.profileBtn.click();
     }
