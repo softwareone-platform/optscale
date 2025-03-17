@@ -25,6 +25,9 @@ export class ExpensesPage extends BasePage {
     readonly poolBtn: Locator;
     readonly ownerBtn: Locator;
     readonly costExploreBreadcrumb: Locator;
+    readonly dataSourceHeading: Locator;
+    readonly poolHeading: Locator;
+    readonly ownerHeading: Locator;
 
     /**
      * Initializes a new instance of the ExpensesPage class.
@@ -32,15 +35,18 @@ export class ExpensesPage extends BasePage {
      */
     constructor(page: Page) {
         super(page, '/expenses');
-        this.costExploreBreadcrumb = this.main.locator('//a[.="Cost Explorer"]');
-        this.heading = this.page.locator('//h1[contains(text(), "Expenses of")]');
-        this.expensesSelectedPeriodValue = this.page.locator('//div[.="Total expenses for selected period"]/./following-sibling::div');
-        this.expensesPreviousPeriodValue = this.page.locator('//div[.="Total expenses for previous period"]/./following-sibling::div');
-        this.dailyBtn = this.page.getByTestId('breakdown_ls_item_daily');
-        this.weeklyBtn = this.page.getByTestId('breakdown_ls_item_weekly');
-        this.monthlyBtn = this.page.getByTestId('breakdown_ls_item_monthly');
-        this.selectedDateText = this.page.getByTestId('text_selected_dates');
-        this.selectDateBtn = this.page.getByTestId('btn_select_date');
+        this.costExploreBreadcrumb = this.main.locator('[href="/expenses"]');
+        this.heading = this.main.locator('//h1[contains(text(), "Cost explorer for")]');
+        this.dataSourceHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Data Source")]');
+        this.poolHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Pool")]');
+        this.ownerHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Owner")]');
+        this.expensesSelectedPeriodValue = this.main.locator('//div[.="Total expenses for selected period"]/./following-sibling::div');
+        this.expensesPreviousPeriodValue = this.main.locator('//div[.="Total expenses for previous period"]/./following-sibling::div');
+        this.dailyBtn = this.main.getByTestId('breakdown_ls_item_daily');
+        this.weeklyBtn = this.main.getByTestId('breakdown_ls_item_weekly');
+        this.monthlyBtn = this.main.getByTestId('breakdown_ls_item_monthly');
+        this.selectedDateText = this.main.getByTestId('text_selected_dates');
+        this.selectDateBtn = this.main.getByTestId('btn_select_date');
         this.sourceBtn = this.main.getByRole('button', {name: 'Source'});
         this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
         this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});

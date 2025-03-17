@@ -51,7 +51,7 @@ import {BasePage} from "./base-page";
              */
             constructor(page: Page) {
                 super(page, '/cloud-accounts/connect');
-                this.heading = this.main.locator('//h1[.="Connect Data Source"]');
+                this.heading = this.main.locator('//h1[.="Connect data source"]');
                 this.awsRootBtn = this.main.getByTestId('btn_aws_root_account');
                 this.awsLinkedBtn = this.main.getByTestId('btn_aws_linked_account');
                 this.azureTenantBtn = this.main.getByTestId('btn_azure_tenant');

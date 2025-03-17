@@ -18,7 +18,7 @@ export class CloudAccountsPage extends BasePage {
      */
     constructor(page: Page) {
         super(page, '/cloud-accounts');
-        this.heading = this.main.locator('//h1[.="Data Sources"]');
+        this.heading = this.main.locator('//h1[.="Data sources"]');
         this.table = this.main.locator('//table');
         this.addBtn = this.main.getByTestId('btn_add');
     }
