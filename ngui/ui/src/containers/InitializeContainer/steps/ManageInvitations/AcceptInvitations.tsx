@@ -6,8 +6,8 @@ import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
 import { Error, Loading } from "containers/InitializeContainer/common";
 import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
-import { SPACING_1, SPACING_2 } from "utils/layouts";
 import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
+import { SPACING_1, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   dashboardButton: {
