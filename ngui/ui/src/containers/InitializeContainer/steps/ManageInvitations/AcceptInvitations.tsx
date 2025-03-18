@@ -6,6 +6,7 @@ import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
 import { Error, Loading } from "containers/InitializeContainer/common";
 import { GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
+import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
@@ -46,6 +47,11 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
   }
 
   const userHasOrganizations = data && data.organizations.length > 0;
+  const redirectToPendingInvitations = !ALLOW_ORGANIZATION_CREATION && !userHasOrganizations;
+
+  if (redirectToPendingInvitations) {
+    return onProceed();
+  }
 
   return (
     <>
@@ -65,18 +71,16 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
         />
       </Box>
       <Box>
-        {userHasOrganizations && (
-          <ButtonLoader
-            dataTestId="btn_proceed_to_optscale"
-            messageId="proceedToOptScale"
-            size="medium"
-            color="primary"
-            variant="contained"
-            onClick={onProceed}
-            startIcon={<NavigationIcon />}
-            customWrapperClass={classes.dashboardButton}
-          />
-        )}
+        <ButtonLoader
+          dataTestId="btn_proceed_to_optscale"
+          messageId="proceedToOptScale"
+          size="medium"
+          color="primary"
+          variant="contained"
+          onClick={onProceed}
+          startIcon={<NavigationIcon />}
+          customWrapperClass={classes.dashboardButton}
+        />
       </Box>
     </>
   );
