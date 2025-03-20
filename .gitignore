@@ -45,3 +45,6 @@ jira_ui/*/build/
 /e2etests/playwright-report/
 /e2etests/results.json
 /e2etests/.cache/
+
+# generated email templates
+email_templates/

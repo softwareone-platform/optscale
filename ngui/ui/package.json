@@ -97,7 +97,8 @@
     "check": "pnpm lint:check && pnpm prettier:check && pnpm build",
     "fix": "pnpm lint:fix && pnpm prettier:fix",
     "fix:all": "pnpm fix && pnpm translate:sort && pnpm translate:fix",
-    "type:check": "tsc"
+    "type:check": "tsc",
+    "generateEmails": "node generateEmails.js --input ./custom --output ../../email_templates"
   },
   "browserslist": {
     "production": [
