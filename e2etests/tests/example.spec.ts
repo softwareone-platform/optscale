@@ -192,6 +192,6 @@ test('Verify Home page objects when data source connected', async ({homePage, he
         });
         await test.step('Verify perspectives page', async () => {
             await expect(perspectivesPage.page).toHaveURL(perspectivesPage.url);
-            await expect(perspectivesPage.perspectivesHeading).toBeVisible();
+            await expect(perspectivesPage.heading).toBeVisible();
         });
     });

@@ -1,8 +1,19 @@
+import {
+    AllowedActionsResponse,
+    OrganizationCleanExpansesResponse,
+    OrganizationConstraintsResponse,
+    OrganizationExpensesPoolsResponse,
+    PoolsResponse
+} from "../test-data/homepage-data";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {interceptApiRequest} from "../utils/interceptor";
 
+/**
+ * Represents the Home Page.
+ * Extends the BasePage class.
+ */
 export class HomePage extends BasePage {
-    readonly page: Page;
     readonly connectDataSourceBanner: Locator;
     readonly organizationExpensesBlock: Locator;
     readonly organizationExpensesBtn: Locator;
@@ -25,9 +36,12 @@ export class HomePage extends BasePage {
     readonly poolsReqAttnExceededForecastedOverspendBtn: Locator;
     readonly progressBar: Locator;
 
+    /**
+     * Initializes a new instance of the HomePage class.
+     * @param {Page} page - The Playwright page object.
+     */
     constructor(page: Page) {
         super(page, '/');
-        this.page = page;
         this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
         this.organizationExpensesBlock = this.page.getByTestId('block_org_expenses');
         this.organizationExpensesBtn = this.organizationExpensesBlock.getByTestId('btn_go_to_org_expenses');
@@ -51,12 +65,40 @@ export class HomePage extends BasePage {
         this.progressBar = this.page.getByRole('progressbar');
     }
 
+    /**
+     * Sets up API interceptions for the Home page.
+     * Intercepts API requests and provides mock responses.
+     * @returns {Promise<void>}
+     */
+    async setupApiInterceptions() {
+        const apiInterceptions = [
+            {urlPattern: `/v2/organizations/[^/]+/pool_expenses`, mockResponse: OrganizationExpensesPoolsResponse},
+            {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: OrganizationCleanExpansesResponse},
+            {urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`, mockResponse: OrganizationConstraintsResponse},
+            {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolsResponse},
+            {urlPattern: `/v2/allowed_actions`, mockResponse: AllowedActionsResponse}
+        ];
+
+        await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
+            interceptApiRequest({page: this.page, urlPattern, mockResponse})
+        ));
+    }
+
+    /**
+     * Selects a perspective from the top resources perspectives.
+     * @param {string} option - The perspective option to select.
+     * @returns {Promise<void>}
+     */
     async selectPerspectives(option: string) {
         await this.topResourcesPerspectives.click();
         await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
     }
 
-    async  waitForAllProgressBarsToDisappear() {
+    /**
+     * Waits for all progress bars to disappear.
+     * @returns {Promise<void>}
+     */
+    async waitForAllProgressBarsToDisappear() {
         console.log('Waiting for all progress bars appear');
         await this.progressBar.first().waitFor({state: 'visible'});
         const progressBars = this.progressBar;

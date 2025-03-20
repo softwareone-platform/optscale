@@ -11,7 +11,8 @@
   "playwright:headed": "npx playwright test --headed --workers=1",
   "playwright:ui": "npx playwright test --ui",
   "playwright:trace": "npx playwright test --trace",
-  "playwright:single-worker": "npx playwright test --workers=1"
+  "playwright:single-worker": "npx playwright test --workers=1",
+  "playwright:update-screenshots": "npx playwright test --update-snapshots"
 },
   "keywords": [],
   "author": "",
