@@ -101,7 +101,7 @@ function readFileSafe(filePath) {
  */
 function getContentFiles() {
     const contentFiles = fs.readdirSync(absoluteInputPath)
-        .filter(file => file.endsWith('.html')); // Includes all .html files
+        .filter(file => file.endsWith('.html'));
 
     if (contentFiles.length === 0) {
         console.error(`❌ Error: No valid content files found in "${absoluteInputPath}". Exiting...`);
@@ -137,8 +137,8 @@ function processContentFile(contentFile, header, footer) {
 }
 
 function main() {
-    const { header, footer } = setup(); // Ensure all required files exist and get header/footer
-    const contentFiles = getContentFiles(); // Load all .html files
+    const { header, footer } = setup();
+    const contentFiles = getContentFiles();
 
     // Process each content file
     contentFiles.forEach(contentFile => processContentFile(contentFile, header, footer));
