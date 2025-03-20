@@ -5,7 +5,6 @@ import {generateRandomEmail, generateRandomOrganizationName} from "../utils/rand
 import {saveOrganizationId} from "../utils/organization-helpers";
 
 setup('Create user, organization and user auth token via API', async ({ authRequest, restAPIRequest }) => {
-    // const email = process.env.DEFAULT_USER_EMAIL;
     const email = generateRandomEmail();
     const password = process.env.DEFAULT_USER_PASSWORD;
     let userToken: string;
