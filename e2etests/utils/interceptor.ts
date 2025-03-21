@@ -23,7 +23,6 @@ import { Page, Route } from "@playwright/test";
                 contentType: "application/json",
                 body: JSON.stringify(mockResponse),
             });
-            console.log(`Intercepted request for urlPattern ${urlPattern}`);
         });
     }
 
