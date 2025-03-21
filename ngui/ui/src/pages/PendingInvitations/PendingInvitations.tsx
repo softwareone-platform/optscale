@@ -73,7 +73,6 @@ const PendingInvitations = () => {
               invitations={invitations.invitations}
               styleProps={{ buttonsJustifyContent: "center" }}
               onSuccessAccept={() => {
-                console.log("STEP: onSuccessAccept");
                 refetchOrganizations();
                 setProceedToNext(true);
               }}
