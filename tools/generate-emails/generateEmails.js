@@ -144,6 +144,7 @@ function main() {
     contentFiles.forEach(contentFile => processContentFile(contentFile, header, footer));
 
     console.log('🎉 All email templates have been successfully generated.');
+    process.exit(0);
 }
 
 // Run the script
