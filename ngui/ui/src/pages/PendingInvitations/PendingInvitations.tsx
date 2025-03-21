@@ -1,11 +1,13 @@
-import { useQuery } from "@apollo/client";
+import { useState } from "react";
+import { NetworkStatus, useQuery } from "@apollo/client";
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import ActionBar from "components/ActionBar";
 import Backdrop from "components/Backdrop";
 import Invitations from "components/Invitations";
 import PageContentWrapper from "components/PageContentWrapper";
-import { GET_INVITATIONS } from "graphql/api/restapi/queries";
+import ProceedToApplication from "containers/InitializeContainer/steps/ProceedToApplication";
+import { GET_INVITATIONS, GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
 import { MPT_SPACING_2, SPACING_2 } from "utils/layouts";
 import { Error } from "../../containers/InitializeContainer/common";
 
@@ -16,6 +18,11 @@ const actionBarDefinition = {
 };
 
 const PendingInvitations = () => {
+  const [proceedToNext, setProceedToNext] = useState(false);
+  const { networkStatus: getOrganizationsNetworkStatus, refetch: refetchOrganizations } = useQuery(GET_ORGANIZATIONS, {
+    notifyOnNetworkStatusChange: true
+  });
+
   const {
     data: invitations,
     loading: getInvitationsLoading,
@@ -25,11 +32,13 @@ const PendingInvitations = () => {
     fetchPolicy: "network-only"
   });
 
-  const isLoading = getInvitationsLoading;
+  const getOrganizationsLoading = getOrganizationsNetworkStatus === NetworkStatus.loading;
+  const getOrganizationsRefetching = getOrganizationsNetworkStatus === NetworkStatus.refetch;
 
+  const isLoading = getInvitationsLoading;
   const error = getInvitationsError;
 
-  if (isLoading) {
+  if (isLoading || getOrganizationsLoading || getOrganizationsRefetching) {
     return (
       <Backdrop aboveDrawers>
         <CircularProgress />
@@ -39,6 +48,10 @@ const PendingInvitations = () => {
 
   if (error) {
     return <Error />;
+  }
+
+  if (proceedToNext) {
+    return <ProceedToApplication />;
   }
 
   return (
@@ -60,7 +73,8 @@ const PendingInvitations = () => {
               invitations={invitations.invitations}
               styleProps={{ buttonsJustifyContent: "center" }}
               onSuccessAccept={() => {
-                refetchInvitations();
+                refetchOrganizations();
+                setProceedToNext(true);
               }}
               onSuccessDecline={() => {
                 refetchInvitations();
