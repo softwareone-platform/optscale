@@ -1,11 +1,12 @@
-import { defineConfig, devices } from '@playwright/test';
-import {EStorageState} from "./utils/enums";
+import { defineConfig } from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
-const storageState = EStorageState.defaultUser;
+// TODO_E2E: we don't use it in live demo tests. When you remove your .cache folder you will get error
+// const storageState = EStorageState.defaultUser;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -49,7 +50,7 @@ export default defineConfig({
       name: "chrome",
       use: {
         channel: "chrome",
-        storageState,
+        // storageState, //TODO_E2E: we don't use it in live demo tests. When you remove your .cache folder you will get error
       },
       // dependencies: ["setup"],
     }
