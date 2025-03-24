@@ -4,10 +4,6 @@
  * Requirements:
  * This script requires Node.js (v12 or later).
  *
- * Description:
- * Generates email templates by combining a common header, content files, and footer.
- * Original optScale files are located in folder herald/modules/email_generator/templates
- *
  * Usage:
  *   node tools/generate-emails/generateEmails.js --input <input_directory> --output <output_directory>
  *
@@ -30,7 +26,7 @@ function getArgValue(flag) {
 }
 
 // Get input and output paths from CLI flags or use default values
-const inputPath = getArgValue('--input') || path.join(__dirname, 'custom');
+const inputPath = getArgValue('--input') || path.join(__dirname, 'templates');
 const outputPath = getArgValue('--output') || path.join(__dirname, '../../email_templates');
 
 // Resolve absolute paths for consistency
