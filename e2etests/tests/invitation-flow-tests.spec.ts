@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect, Page} from "@playwright/test";
 import {generateRandomEmail} from "../utils/random-data";
-import {EmailVerificationPage} from "../pages/email-verification-page";
+import {PendingInvitationPage} from "../pages/pending-invitation-page";
 
 test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
     let invitationEmail: string
@@ -30,7 +30,7 @@ test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
             await header.signOut();
         });
 
-        await test.step("View email in mailpit", async () => {
+        await test.step("View invitation email in mailpit", async () => {
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
             await mailpitPage.confirmInvitationEmailReceived(invitationEmail);
         });
@@ -42,9 +42,9 @@ test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
 
         await test.step("Verify and accept invitation from email", async () => {
             const popupPage = await mailpitPage.openEmailVerification(invitationEmail);
-            const emailVerificationPage = new EmailVerificationPage(popupPage);
+            const emailVerificationPage = new PendingInvitationPage(popupPage);
             await emailVerificationPage.acceptInviteFlow();
         });
-        
+
     });
 });
