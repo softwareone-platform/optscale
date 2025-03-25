@@ -5,7 +5,7 @@ import {expect} from "@playwright/test";
  * These tests are designed as regression tests to ensure the SWO Finops UI customisation is not broken by merges
  * with Hystax code.
  */
-test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', () => {
+test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation', () => {
 
   test.beforeEach('Login to live-demo', async ({loginPage, header, homePage, cloudAccountsPage}) => {
     await homePage.setupApiInterceptions();

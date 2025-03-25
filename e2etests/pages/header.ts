@@ -52,4 +52,9 @@ export class Header extends BasePage {
     async openProfileMenu() {
         await this.profileBtn.click();
     }
+
+    async signOut() {
+        await this.openProfileMenu();
+        await this.profileSignOutBtn.click();
+    }
 }
