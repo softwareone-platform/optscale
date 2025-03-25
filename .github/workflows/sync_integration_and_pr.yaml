@@ -73,7 +73,7 @@ jobs:
         run: |
           prs=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
-              --head '${{ steps.latest_tag.outputs.LATEST_TAG }}' \
+              --head 'sync-${{ steps.latest_tag.outputs.LATEST_TAG }}' \
               --base 'main' \
               --json title \
               --jq 'length')
@@ -93,7 +93,7 @@ jobs:
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
-              --head '${{ steps.latest_tag.outputs.LATEST_TAG }}' \
+              --head 'sync-${{ steps.latest_tag.outputs.LATEST_TAG }}' \
               --base 'main' \
-              --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
+              --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/${{ steps.latest_tag.outputs.LATEST_TAG }} -> main ${{ steps.current_date.outputs.date }}' \
               --body "This PR syncs the latest changes from upstream."
