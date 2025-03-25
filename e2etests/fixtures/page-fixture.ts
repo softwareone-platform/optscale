@@ -23,6 +23,7 @@ import {UsersInvitePage} from "../pages/users-invite-page";
 import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
 import {MailpitPage} from "../pages/mailpit-page";
 import {RegisterPage} from "../pages/register-page";
+import {PendingInvitationPage} from "../pages/pending-invitation-page";
 
 
 export const test = base.extend<{
@@ -35,8 +36,8 @@ export const test = base.extend<{
     header: Header;
     homePage: HomePage;
     loginPage: LoginPage;
-    mailpitPage: MailpitPage;
     mainMenu: MainMenu;
+    pendingInvitationPage: PendingInvitationPage;
     perspectivesPage: PerspectivesPage;
     policiesPage: PoliciesPage;
     policiesCreatePage: PoliciesCreatePage;
@@ -87,13 +88,13 @@ export const test = base.extend<{
         const loginPage = new LoginPage(page);
         await use(loginPage);
     },
-    mailpitPage: async ({page}, use) => {
-        const mailpitPage = new MailpitPage(page);
-        await use(mailpitPage);
-    },
     mainMenu: async ({page}, use) => {
         const mainMenu = new MainMenu(page);
         await use(mainMenu);
+    },
+    pendingInvitationPage: async ({page}, use) => {
+        const pendingInvitationPage = new PendingInvitationPage(page);
+        await use(pendingInvitationPage);
     },
     perspectivesPage: async ({page}, use) => {
         const perspectivesPage = new PerspectivesPage(page);
