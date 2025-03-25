@@ -38,21 +38,33 @@ jobs:
           assignee: ${{ secrets.JIRA_ASSIGNEE }}
           epic: "MPT-3562"
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Add upstream remote
         run: |
           git remote add upstream https://github.com/hystax/optscale.git
-          git fetch upstream
+          git fetch upstream --tags
 
-      - name: Sync branch with upstream
+      - name: Get latest tag
+        id: latest_tag
         run: |
-          git checkout integration
-          git merge upstream/integration --no-edit
+          LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-      - name: Push changes to integration
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if branch exists
         run: |
-          git push origin integration
+          if git ls-remote --heads origin sync-${{ steps.latest_tag.outputs.LATEST_TAG }} | grep sync-${{ steps.latest_tag.outputs.LATEST_TAG }}; then
+            echo "Branch already exists. Skipping..."
+            exit 0
+          fi
+
+      - name: Create new branch from latest tag
+        run: |
+          git checkout -b sync-${{ steps.latest_tag.outputs.LATEST_TAG }} ${{ steps.latest_tag.outputs.LATEST_TAG }}
+          git push origin sync-${{ steps.latest_tag.outputs.LATEST_TAG }}
 
       - name: Check if PR exists
         id: check_pr
@@ -61,7 +73,7 @@ jobs:
         run: |
           prs=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
-              --head 'integration' \
+              --head '${{ steps.latest_tag.outputs.LATEST_TAG }}' \
               --base 'main' \
               --json title \
               --jq 'length')
@@ -81,7 +93,7 @@ jobs:
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
-              --head 'integration' \
+              --head '${{ steps.latest_tag.outputs.LATEST_TAG }}' \
               --base 'main' \
               --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/integration -> main ${{ steps.current_date.outputs.date }}' \
               --body "This PR syncs the latest changes from upstream."
