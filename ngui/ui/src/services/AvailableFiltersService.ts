@@ -23,7 +23,8 @@ import {
   POOL_ID_FILTER,
   K8S_SERVICE_FILTER,
   NETWORK_TRAFFIC_FROM_FILTER,
-  NETWORK_TRAFFIC_TO_FILTER
+  NETWORK_TRAFFIC_TO_FILTER,
+  EMPTY_UUID
 } from "utils/constants";
 
 export const mapAvailableFilterKeys = (params) => ({
@@ -44,6 +45,39 @@ export const mapAvailableFilterKeys = (params) => ({
   traffic_from: params[NETWORK_TRAFFIC_FROM_FILTER],
   traffic_to: params[NETWORK_TRAFFIC_TO_FILTER]
 });
+
+export const mapFiltersToApiParams = (filters) => {
+  const getObjectValue = (getter) => (obj) => {
+    if (obj === null) {
+      return EMPTY_UUID;
+    }
+
+    if (typeof getter === "function") {
+      return getter(obj);
+    }
+
+    return obj[getter];
+  };
+
+  return {
+    pool_id: filters.pool?.map(getObjectValue("id")),
+    cloud_account_id: filters.cloud_account?.map(getObjectValue("id")),
+    owner_id: filters.owner?.map(getObjectValue("id")),
+    service_name: filters.service_name?.map(getObjectValue("name")),
+    region: filters.region?.map(getObjectValue("name")),
+    resource_type: filters.resource_type?.map(getObjectValue((obj) => `${obj.name}:${obj.type}`)),
+    active: filters.active,
+    recommendations: filters.recommendations,
+    constraint_violated: filters.constraint_violated,
+    k8s_node: filters.k8s_node?.map(getObjectValue("name")),
+    tag: filters.tag,
+    without_tag: filters.without_tag,
+    k8s_namespace: filters.k8s_namespace?.map(getObjectValue("name")),
+    k8s_service: filters.k8s_service?.map(getObjectValue("name")),
+    traffic_from: filters.traffic_from?.map(getObjectValue((obj) => `${obj.name}:${obj.cloud_type}`)),
+    traffic_to: filters.traffic_to?.map(getObjectValue((obj) => `${obj.name}:${obj.cloud_type}`))
+  };
+};
 
 export const useGet = (params = {}, exceptions) => {
   const dispatch = useDispatch();

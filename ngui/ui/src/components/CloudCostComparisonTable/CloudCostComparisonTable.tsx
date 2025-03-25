@@ -9,7 +9,8 @@ import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useSelectedSizes, useSelectionActions } from "reducers/cloudCostComparisonSelectedSizes/hooks";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { AWS_CNR, AZURE_CNR, NEBIUS } from "utils/constants";
+import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
+import { getQueryParams } from "utils/network";
 import { cpu as cpuColumn, ram as ramColumn, flavors as flavorsColumn } from "./columns";
 
 const CompareButton = () => {
@@ -44,7 +45,9 @@ const ClearSelectionButton = () => {
   );
 };
 
-const CloudCostComparisonTable = ({ relevantSizes, cloudProviders, errors }) => {
+const CloudCostComparisonTable = ({ relevantSizes, errors }) => {
+  const { cloudProvider } = getQueryParams();
+
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
 
   const { resetSelection } = useSelectionActions();
@@ -53,7 +56,11 @@ const CloudCostComparisonTable = ({ relevantSizes, cloudProviders, errors }) => 
 
   const columns = useMemo(() => {
     const getSizesColumn = (cloudType) =>
-      isEmptyArray(cloudProviders) || cloudProviders.includes(cloudType)
+      /**
+       * If there is no cloud provider selected, then the api will return all sizes
+       * Otherwise, we want to show only the sizes for the selected cloud providers
+       */
+      !cloudProvider || cloudProvider.includes(cloudType)
         ? flavorsColumn({
             cloudType,
             error: errors[cloudType]
@@ -65,9 +72,10 @@ const CloudCostComparisonTable = ({ relevantSizes, cloudProviders, errors }) => 
       ramColumn(),
       getSizesColumn(AWS_CNR),
       getSizesColumn(AZURE_CNR),
+      getSizesColumn(GCP_CNR),
       isNebiusConnectionEnabled ? getSizesColumn(NEBIUS) : undefined
     ].filter(Boolean);
-  }, [cloudProviders, errors, isNebiusConnectionEnabled]);
+  }, [cloudProvider, errors, isNebiusConnectionEnabled]);
 
   const tableData = useMemo(
     () =>

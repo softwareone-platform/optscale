@@ -81,3 +81,9 @@ class Err(enum.Enum):
     OI0020 = [
         "Forbidden"
     ]
+    OI0021 = [
+        "%s must be used with %s"
+    ]
+    OI0022 = [
+        "%s must be positive"
+    ]

@@ -617,7 +617,6 @@ export const RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY = Object.freeze({
 export const RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY_VALUES = Object.freeze(Object.values(RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY));
 
 export const RESOURCE_COUNT_ANOMALY = "resource_count_anomaly";
-
 export const EXPENSE_ANOMALY = "expense_anomaly";
 export const ANOMALY_TYPES = Object.freeze({
   [RESOURCE_COUNT_ANOMALY]: "resourceCount",

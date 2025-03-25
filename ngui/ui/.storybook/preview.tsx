@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import configureMockStore from "redux-mock-store";
 import ThemeProviderWrapper from "../src/components/ThemeProviderWrapper";
+import ApolloProvider from "../src/components/ApolloProvider";
 import {
   MOCKED_ORGANIZATION_POOL_ID,
   MOCKED_RESOURCE_ID,
@@ -38,13 +39,15 @@ const preview: Preview = {
 
       return (
         <Provider store={mockStore({ state: {} })}>
-          <IntlProvider {...intlConfig}>
-            <Router>
-              <ThemeProviderWrapper>
-                <Story />
-              </ThemeProviderWrapper>
-            </Router>
-          </IntlProvider>
+          <ApolloProvider>
+            <IntlProvider {...intlConfig}>
+              <Router>
+                <ThemeProviderWrapper>
+                  <Story />
+                </ThemeProviderWrapper>
+              </Router>
+            </IntlProvider>
+          </ApolloProvider>
         </Provider>
       );
     },

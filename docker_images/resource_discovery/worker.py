@@ -15,12 +15,16 @@ import urllib3
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from tools.cloud_adapter.exceptions import InvalidResourceTypeException
-from tools.cloud_adapter.model import ResourceTypes, RES_MODEL_MAP
+from tools.cloud_adapter.model import (
+    ResourceTypes, RES_MODEL_MAP, InstanceResource, RdsInstanceResource
+)
 from optscale_client.config_client.client import Client as ConfigClient
+from optscale_client.insider_client.client import Client as InsiderClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from tools.optscale_time import utcnow, utcnow_timestamp
 
 
+BYTES_IN_MB = 1024 * 1024
 CHUNK_SIZE = 200
 EXCHANGE_NAME = 'resource-discovery'
 QUEUE_NAME = 'discovery'
@@ -32,9 +36,13 @@ DEFAULT_DISCOVER_SIZE = 10000
 
 
 class ResourcesSaver:
-    def __init__(self, rest_cl, limit, timeout, pause_timeout):
+
+    MODEL_MAP_INVERTED = {v: k for k, v in RES_MODEL_MAP.items()}
+
+    def __init__(self, rest_cl, insider_cl, limit, timeout, pause_timeout):
         queue_len = int(limit / CHUNK_SIZE) if CHUNK_SIZE else 0
         self.queue = queue.Queue(queue_len)
+        self.insider_cl = insider_cl
         self.rest_cl = rest_cl
         self.timeout = timeout
         self.pause_timeout = pause_timeout
@@ -95,9 +103,9 @@ class ResourcesSaver:
     def _save_chunks(self):
         while True:
             try:
-                chunk, resource_type, cloud_acc_id = self.queue.get(timeout=1)
+                chunk = self.queue.get(timeout=1)
                 self.empty.clear()
-                self.save_bulk_resources(chunk, resource_type, cloud_acc_id)
+                self.save_bulk_resources(chunk)
             except queue.Empty:
                 self.empty.set()
             except Exception as exc:
@@ -110,23 +118,52 @@ class ResourcesSaver:
         except KeyError:
             raise Exception(f'Invalid resource type {resource_type}')
 
-    def build_payload(self, resource, resource_type):
+    def build_payload(self, resource):
         obj = {}
         for field in resource.fields(meta_fields_incl=False):
             val = getattr(resource, field)
             if val is not None and (isinstance(val, bool) or val):
                 obj[field] = val
-        obj.pop('resource_id', None)
-        obj.pop('organization_id', None)
-        obj['resource_type'] = getattr(ResourceTypes, resource_type).value
+        for param in ['resource_id', 'organization_id', 'cloud_type']:
+            obj.pop(param, None)
+        for cl, resource_type in self.MODEL_MAP_INVERTED.items():
+            if issubclass(type(resource), cl):
+                obj['resource_type'] = getattr(ResourceTypes,
+                                               resource_type).value
         obj['last_seen'] = utcnow_timestamp()
         obj['active'] = True
-        return obj
+        cloud_acc_id = obj.pop('cloud_account_id')
+        return obj, cloud_acc_id
 
-    def save_bulk_resources(self, resources, resource_type, cloud_acc_id):
+    def process_resource_obj(self, resources):
+        flavors = {}
+        resource_type = None
+        for resource in resources:
+            if resource.cloud_type != 'azure_cnr' or type(resource) not in [
+                    InstanceResource, RdsInstanceResource]:
+                break
+            flavor = flavors.get(resource.flavor)
+            if not flavor:
+                if not resource_type:
+                    resource_type = getattr(
+                        ResourceTypes, self.MODEL_MAP_INVERTED[
+                            type(resource)]).name
+                _, flavor = self.insider_cl.find_flavor(
+                    resource.cloud_type, resource_type, resource.region,
+                    {'source_flavor_id': resource.flavor}, 'current',
+                    cloud_account_id=resource.cloud_account_id)
+            if flavor:
+                flavors[resource.flavor] = flavor
+                resource.cpu_count = flavor['cpu']
+                resource.ram = flavor['ram'] * BYTES_IN_MB
+        return resources
+
+    def save_bulk_resources(self, resources):
         payload = []
+        resources = self.process_resource_obj(resources)
         for rss in resources:
-            payload.append(self.build_payload(rss, resource_type))
+            obj, cloud_acc_id = self.build_payload(rss)
+            payload.append(obj)
         if payload:
             _, response = self.rest_cl.cloud_resource_create_bulk(
                 cloud_acc_id, {'resources': payload},
@@ -143,6 +180,7 @@ class DiscoveryWorker(ConsumerMixin):
         self.connection = connection
         self.config_cl = config_cl
         self.set_discover_settings()
+        self._insider_cl = None
         self._rest_cl = None
         self._res_saving = None
         self.running = True
@@ -152,6 +190,14 @@ class DiscoveryWorker(ConsumerMixin):
     def __del__(self):
         if self._res_saving:
             self.res_saving.shutdown()
+
+    @property
+    def insider_cl(self):
+        if not self._insider_cl:
+            self._insider_cl = InsiderClient(
+                url=self.config_cl.insider_url(),
+                secret=self.config_cl.cluster_secret())
+        return self._insider_cl
 
     @property
     def rest_cl(self):
@@ -166,6 +212,7 @@ class DiscoveryWorker(ConsumerMixin):
     def res_saving(self):
         if self._res_saving is None:
             self._res_saving = ResourcesSaver(
+                insider_cl=self.insider_cl,
                 rest_cl=self.rest_cl,
                 limit=self.discover_size,
                 timeout=self.timeout,
@@ -256,7 +303,7 @@ class DiscoveryWorker(ConsumerMixin):
             return
         config = self.get_config(cloud_acc_id)
         gen_list = self.discover(config, resource_type)
-        discovered_resources = []
+        discovered_resources = set()
         resources_count = 0
         max_parallel_requests = self.max_parallel_requests(config)
         errors = set()
@@ -279,18 +326,18 @@ class DiscoveryWorker(ConsumerMixin):
                         gen_list_chunk.remove(gen)
                         errors.add(str(res))
                     elif res:
-                        discovered_resources.append(res)
+                        res.cloud_account_id = cloud_acc_id
+                        res.cloud_type = config['type']
+                        discovered_resources.add(res)
                     else:
                         gen_list_chunk.remove(gen)
                     if len(discovered_resources) >= CHUNK_SIZE:
                         resources_count += len(discovered_resources)
-                        self.res_saving.send((discovered_resources.copy(),
-                                              resource_type, cloud_acc_id))
+                        self.res_saving.send(discovered_resources)
                         discovered_resources.clear()
         if len(discovered_resources):
             resources_count += len(discovered_resources)
-            self.res_saving.send((
-                discovered_resources.copy(), resource_type, cloud_acc_id))
+            self.res_saving.send(discovered_resources)
         LOG.info("%s %s resources have been discovered for cloud %s",
                  resources_count, resource_type, cloud_acc_id)
         self.res_saving.pause()

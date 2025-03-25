@@ -14,6 +14,9 @@ class TestRelevantFlavorsApi(TestBase):
         self.aws_cad = patch(
             'insider.insider_api.controllers.relevant_flavor.'
             'AwsProvider.cloud_adapter').start()
+        self.gcp_cad = patch(
+            'insider.insider_api.controllers.relevant_flavor.'
+            'GcpProvider.cloud_adapter').start()
         self.nebius_cad = patch(
             'insider.insider_api.controllers.relevant_flavor.'
             'NebiusProvider.cloud_adapter').start()
@@ -161,6 +164,19 @@ class TestRelevantFlavorsApi(TestBase):
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OI0011')
 
+    def test_negative_conversion_rate(self):
+        code, resp = self.client.get_relevant_flavors(
+            'aws_cnr', 'af', currency_conversion_rate=-1,
+            preferred_currency='EUR')
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OI0022')
+
+        code, resp = self.client.get_relevant_flavors(
+            'aws_cnr', 'af', currency_conversion_rate=0,
+            preferred_currency='EUR')
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OI0022')
+
     def test_azure_flavors(self):
         self.azure_cad.location_map = {
             'westus': 'West US', 'westus2': 'West US 2', 'uksouth': 'UK South'
@@ -253,6 +269,42 @@ class TestRelevantFlavorsApi(TestBase):
              'location': 'US East (N. Virginia)', 'memory': 8.0,
              'name': 'm2a.16xlarge'}
         ]})
+
+    def test_gcp_conversion_rate(self):
+        price = 1.1
+        patch('insider.insider_api.controllers.relevant_flavor.'
+              'GcpProvider.get_regions',
+              return_value=['africa-south1']).start()
+        self.gcp_cad.get_instance_types_priced.return_value = {
+            "n2d-highcpu-2": {
+                "name": "f1-micro",
+                "cpu_cores": 1,
+                "ram_gb": 2,
+                "family": "n2d-highcpu-2",
+                "family_description": "General purpose",
+                "custom": False,
+                "price": price,
+                "region": 'africa-south1'
+            }}
+        code, resp = self.client.get_relevant_flavors(
+            'gcp_cnr', 'af', currency_conversion_rate=2,
+            preferred_currency='EUR')
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['gcp_cnr']), 1)
+        self.assertEqual(resp['gcp_cnr'][0]['cost'], price * 2)
+        self.assertEqual(resp['gcp_cnr'][0]['currency'], 'EUR')
+
+        code, resp = self.client.get_relevant_flavors(
+            'gcp_cnr', 'af', currency_conversion_rate=2)
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OI0021')
+
+        code, resp = self.client.get_relevant_flavors(
+            'gcp_cnr', 'af', preferred_currency='EUR')
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['gcp_cnr']), 1)
+        self.assertEqual(resp['gcp_cnr'][0]['cost'], price)
+        self.assertEqual(resp['gcp_cnr'][0]['currency'], 'USD')
 
     def test_nebius_flavors(self):
         self.nebius_cad.get_prices.return_value = [

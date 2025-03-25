@@ -153,11 +153,11 @@ etcd:
     db: jira-bus
     port: {{ .Values.mariadb.service.externalPort }}
   mongo:
-    {{ if .Values.mongo.url }}
-      url: {{ .Values.mongo.url }}
-    {{ else }}
-      url: mongodb://{{ .Values.mongo.credentials.username }}:{{ .Values.mongo.credentials.password }}@{{ .Values.mongo.service.host }}:{{ .Values.mongo.service.externalPort }}
-    {{ end }}
+  {{ if .Values.mongo.url }}
+    url: {{ .Values.mongo.url }}
+  {{ else }}
+    url: mongodb://{{ .Values.mongo.credentials.username }}:{{ .Values.mongo.credentials.password }}@{{ .Values.mongo.service.host }}:{{ .Values.mongo.service.externalPort }}
+  {{ end }}
     database: keeper
   influxdb:
     host: {{ .Values.influxdb.service.name }}

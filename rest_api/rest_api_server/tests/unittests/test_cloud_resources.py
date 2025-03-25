@@ -618,8 +618,18 @@ class TestCloudResourceApi(TestProfilingBase):
         )
 
     def test_get_cloud_resource(self):
-        code, employee = self.client.employee_create(self.org_id,
-                                                     {'name': 'John Smith'})
+        _, employee = self.client.employee_create(self.org_id,
+                                                  {'name': 'John Smith'})
+        ps_name = 'power_schedule'
+        ps = {
+            'name': ps_name,
+            'power_on': '11:00',
+            'power_off': '10:00',
+            'timezone': 'UTC',
+            'enabled': True
+        }
+        _, ps = self.client.power_schedule_create(
+            self.org_id, ps)
         resource_dict = {
             'cloud_resource_id': str(uuid.uuid4()),
             'name': 'resource',
@@ -627,7 +637,8 @@ class TestCloudResourceApi(TestProfilingBase):
             'employee_id': employee['id'],
             'pool_id': self.org['pool_id'],
             'region': 'us-east',
-            'service_name': 'service'
+            'service_name': 'service',
+            'power_schedule': ps['id']
         }
         with freeze_time(datetime(2020, 2, 14)):
             _, resource = self.cloud_resource_create(
@@ -678,6 +689,7 @@ class TestCloudResourceApi(TestProfilingBase):
             self.assertEqual(code, 200)
             for k, v in resource_dict.items():
                 self.assertEqual(response[k], v)
+            self.assertEqual(response['power_schedule_name'], 'power_schedule')
             details = response.get('details')
             self.assertIsNotNone(details)
             self.assertEqual(details['cost'], 350)

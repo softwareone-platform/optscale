@@ -123,6 +123,18 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                 List of organizations with connected cloud accounts
             required: false
             type: boolean
+        -   name: limit
+            in: query
+            description: |
+                limit number of organizations in response
+            required: false
+            type: integer
+        -   name: offset
+            in: query
+            description: |
+                offset for query selection
+            required: false
+            type: integer
         responses:
             200:
                 description: Organization list
@@ -172,7 +184,7 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
         if is_by_user:
             try:
                 res = await run_task(self.controller.root_organizations_list,
-                                     self.token)
+                                     self.token, **args)
             except UnauthorizedException as ex:
                 raise OptHTTPError.from_opt_exception(401, ex)
         else:
@@ -188,6 +200,7 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
             args.update({k: self.get_arg(k, bool, False) for k in [
                 'is_demo', 'with_shareable_bookings', 'with_connected_accounts'
             ]})
+        args.update({k: self.get_arg(k, int, 0) for k in ['limit', 'offset']})
         unexpected_args = list(filter(
             lambda x: x not in args.keys(), self.request.arguments.keys()))
         if unexpected_args:

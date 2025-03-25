@@ -618,10 +618,11 @@ class Azure(CloudBase):
         Discovers instance cloud resources
         :return: list(model.InstanceResource)
         """
-        vnet_id_to_name = self._discover_vnets()
         virtual_machines = self.compute.virtual_machines.list_all()
-        flavors = self.get_flavors_info()
+        vnet_id_to_name = None
         for vm in virtual_machines:
+            if not vnet_id_to_name:
+                vnet_id_to_name = self._discover_vnets()
             os_type = vm.storage_profile.os_disk.os_type.value
             tags = vm.tags or {}
             spotted = vm.priority == 'Spot'
@@ -631,20 +632,15 @@ class Azure(CloudBase):
             # the latest value of stopped_allocated from db resource meta
             stopped_allocated = status if status is None else status == 'stopped'
             cloud_console_link = self._generate_cloud_link(vm.id)
-            flavor = vm.hardware_profile.vm_size
-            flavor_info = flavors.get(flavor, {})
-            cpu_count = flavor_info.get('vcpus')
-            ram = mibs_to_bytes(flavor_info.get('ram'))
             vnet_id = self._get_vnet_id_by_instance(vm)
             sgs_ids = self._get_sgs_by_instance(vm)
+            # cpu and ram are filled in into discovery worker
             instance_resource = InstanceResource(
                 cloud_resource_id=vm.id.lower(),
                 cloud_account_id=self.cloud_account_id,
                 region=self.location_map.get(vm.location),
                 name=vm.name,
                 flavor=vm.hardware_profile.vm_size,
-                cpu_count=cpu_count,
-                ram=ram,
                 stopped_allocated=stopped_allocated,
                 organization_id=self.organization_id,
                 tags=tags,

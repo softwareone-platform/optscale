@@ -21,7 +21,7 @@ const ExpensesDailyBreakdownBy = ({ counts, breakdown, breakdownByValue, onBreak
   const [withLegend, setWithLegend] = useSyncQueryParamWithState({
     queryParamName: "withLegend",
     possibleStates: [true, false],
-    defaultValue: "true"
+    defaultValue: true
   });
 
   return (

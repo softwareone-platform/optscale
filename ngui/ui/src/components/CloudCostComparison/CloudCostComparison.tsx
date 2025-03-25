@@ -9,36 +9,53 @@ import { SPACING_1 } from "utils/layouts";
 
 const actionBarDefinition = {
   title: {
-    text: "Cloud Cost Comparison",
+    messageId: "cloudCostComparisonTitle",
     dataTestId: "lbl_cloud_cost_comparison"
   }
 };
 
-const CloudCostComparison = ({ isLoading, relevantSizes, defaultFormValues, onFiltersApply, cloudProviders, errors }) => (
-  <>
-    <ActionBar data={actionBarDefinition} />
-    <PageContentWrapper>
-      <PageContentDescription
-        position="top"
-        alertProps={{
-          messageId: "cloudCostComparisonDescription",
-          messageValues: { br: <br /> }
-        }}
-      />
-      <Stack spacing={SPACING_1}>
+const CloudCostComparison = ({ relevantSizes, onFiltersApply, errors, isLoading = false }) => {
+  const renderContent = () => {
+    if (isLoading) {
+      return (
         <div>
-          <CloudCostComparisonFiltersForm onSubmit={onFiltersApply} defaultValues={defaultFormValues} />
+          <TableLoader />
         </div>
-        <div>
-          {isLoading ? (
-            <TableLoader />
-          ) : (
-            <CloudCostComparisonTable relevantSizes={relevantSizes} cloudProviders={cloudProviders} errors={errors} />
-          )}
-        </div>
-      </Stack>
-    </PageContentWrapper>
-  </>
-);
+      );
+    }
+
+    // undefined - when the user has not applied any filters yet
+    if (relevantSizes === undefined) {
+      return null;
+    }
+
+    return (
+      <div>
+        <CloudCostComparisonTable relevantSizes={relevantSizes} errors={errors} />
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <ActionBar data={actionBarDefinition} />
+      <PageContentWrapper>
+        <PageContentDescription
+          position="top"
+          alertProps={{
+            messageId: "cloudCostComparisonDescription",
+            messageValues: { br: <br /> }
+          }}
+        />
+        <Stack spacing={SPACING_1}>
+          <div>
+            <CloudCostComparisonFiltersForm onSubmit={onFiltersApply} isLoading={isLoading} />
+          </div>
+          {renderContent()}
+        </Stack>
+      </PageContentWrapper>
+    </>
+  );
+};
 
 export default CloudCostComparison;

@@ -440,3 +440,121 @@ class TestBreakdownTagsApi(TestApiBase):
             self.org_id, start, end)
         self.assertEqual(code, 200)
         self.assertEqual(len(response['breakdown']), 3)
+
+    def test_breakdown_tags_filter_by_first_seen(self):
+        day_in_month = datetime(2025, 1, 1)
+        time = int(day_in_month.timestamp())
+        resource1 = self._create_resource(
+            self.cloud_acc1['id'], name='res1', first_seen=time,
+            last_seen=time + 1, tags={'tag1': 'val1'})
+        resource2 = self._create_resource(
+            self.cloud_acc1['id'], name='res2', first_seen=time - 1,
+            last_seen=time, tags={'tag2': 'val2'})
+        expenses = [
+            {
+                'cost': 300,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 70,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource2['id'],
+            }
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+
+        filters = {'first_seen_lte': time - 1}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 1)
+        self.assertEqual(response['breakdown'][0]['cost'], 70)
+
+        filters = {'first_seen_lte': time + 1}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 2)
+
+        filters = {'first_seen_gte': time - 1}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 2)
+
+        filters = {'first_seen_gte': time}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 1)
+        self.assertEqual(response['breakdown'][0]['cost'], 300)
+
+    def test_breakdown_tags_filter_by_last_seen(self):
+        day_in_month = datetime(2025, 1, 1)
+        time = int(day_in_month.timestamp())
+        resource1 = self._create_resource(
+            self.cloud_acc1['id'], name='res1', first_seen=time,
+            last_seen=time + 1, tags={'tag1': 'val1'})
+        resource2 = self._create_resource(
+            self.cloud_acc1['id'], name='res2', first_seen=time - 1,
+            last_seen=time, tags={'tag2': 'val2'})
+        expenses = [
+            {
+                'cost': 300,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 70,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource2['id'],
+            }
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+
+        filters = {'last_seen_lte': time}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 1)
+        self.assertEqual(response['breakdown'][0]['cost'], 70)
+
+        filters = {'last_seen_lte': time + 1}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 2)
+
+        filters = {'last_seen_gte': time}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 2)
+
+        filters = {'last_seen_gte': time + 1}
+        code, response = self.client.breakdown_tags_get(
+            self.org_id, time - 1, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['breakdown']), 1)
+        self.assertEqual(response['breakdown'][0]['cost'], 300)

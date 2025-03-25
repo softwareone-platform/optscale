@@ -90,11 +90,15 @@
   run_once: true
   when: configure_dts_domain and domain_set.rc == 1
 
+- name: Get the current hostname
+  command: hostname
+  register: hostname_result
+
 - name: Place current hostname into kubelet args (so change of hostname won't break k8s); also place image eviction policy
   lineinfile:
     path: /etc/default/kubelet
     regexp: '^KUBELET_EXTRA_ARGS='
-    line: 'KUBELET_EXTRA_ARGS=--hostname-override={{ ansible_hostname }} --image-gc-high-threshold={{ image_gc_high_threshold }} --image-gc-low-threshold={{ image_gc_low_threshold }} --eviction-hard={{ eviction_hard }}'
+    line: 'KUBELET_EXTRA_ARGS=--hostname-override={{  hostname_result.stdout }} --image-gc-high-threshold={{ image_gc_high_threshold }} --image-gc-low-threshold={{ image_gc_low_threshold }} --eviction-hard={{ eviction_hard }}'
     state: present
     create: yes
   become: yes

@@ -112,19 +112,52 @@ class InstanceType:
         "small": 0.5,
         "medium": 1,
     }
+    FAMILIES = {
+        'c4a': 'General purpose',
+        'c4': 'General purpose',
+        'c3': 'General purpose',
+        'c3d': 'General purpose',
+        'n4': 'General purpose',
+        'n2': 'General purpose',
+        'n2d': 'General purpose',
+        'n1': 'General purpose',
+        't2d': 'General purpose',
+        't2a': 'General purpose',
+        'f1': 'General purpose',
+        'g1': 'General purpose',
+        'e2': 'Cost optimized',
+        'z3': 'Storage optimized',
+        'h3': 'Compute optimized',
+        'c2': 'Compute optimized',
+        'c2d': 'Compute optimized',
+        'x4': 'Memory optimized',
+        'm3': 'Memory optimized',
+        'm2': 'Memory optimized',
+        'm1': 'Memory optimized',
+        'a3': 'Accelerator optimized',
+        'a2': 'Accelerator optimized',
+        'g2': 'Accelerator optimized',
+    }
 
     def __init__(self, type_name=None, cpu_cores=None, ram_gb=None,
-                 family=None, price=None, custom=False):
+                 family=None, price=None, custom=False, region=None):
         self.type_name = type_name
         self.cpu_cores = cpu_cores
         self.ram_gb = ram_gb
         self.family = family
+        self.family_description = None
         self.custom = custom
         self.price = price
+        self.region = region
+        self.parse_family_description()
+
+    def parse_family_description(self):
+        self.family_description = self.FAMILIES.get(self.family)
 
     def parse_machine_family(self):
         # turn e.g. "e2-standard-4" into "e2"
         self.family = self.type_name.split("-")[0]
+        self.parse_family_description()
 
     def parse_custom(self):
         if "custom" in self.type_name:
@@ -157,7 +190,8 @@ class InstanceType:
             cpu_value) or float(cpu_value)
 
     def __str__(self) -> str:
-        return f"{self.family} {self.cpu_cores} {self.ram_gb} {round(self.price, 4)}"
+        return f"{self.family} {self.cpu_cores} {self.ram_gb} " \
+               f"{round(self.price, 4)} {self.region}"
 
     def to_dict(self) -> dict:
         return {
@@ -165,8 +199,10 @@ class InstanceType:
             "cpu_cores": self.cpu_cores,
             "ram_gb": self.ram_gb,
             "family": self.family,
+            "family_description": self.family_description,
             "custom": self.custom,
             "price": self.price,
+            "region": self.region
         }
 
 
@@ -1264,10 +1300,13 @@ class Gcp(CloudBase):
         return result
 
     @staticmethod
-    def _parse_price(row) -> float:
+    def _parse_price(row, usd=True) -> float:
+        amount_field = "account_currency_amount"
+        if usd:
+            amount_field = "usd_amount"
         # use tier 0 rate because this is the base price
         # and we don't know if a customer has any usage discounts.
-        highest_price = row.list_price["tiered_rates"][0]["usd_amount"]
+        highest_price = row.list_price["tiered_rates"][0][amount_field]
         return highest_price
 
     def _parse_machine_family(self, row) -> (str, str):
@@ -1310,7 +1349,7 @@ class Gcp(CloudBase):
                 ("m1", False)].ram_gb_price
 
     def _get_machine_family_resource_prices(
-        self, region: str
+        self, region: str, usd: bool=True
     ) -> Dict[Tuple, MachineFamilyResourcePrice]:
 
         def _get_prices(sku_pattern, inst_family_prices):
@@ -1318,7 +1357,7 @@ class Gcp(CloudBase):
                 machine_family, custom = self._parse_machine_family(row)
                 if not machine_family:
                     continue
-                price = self._parse_price(row)
+                price = self._parse_price(row, usd)
                 inst_family_prices[(machine_family, custom)].set_price(
                     sku_text, price)
             return inst_family_prices
@@ -1341,7 +1380,8 @@ class Gcp(CloudBase):
         self._update_m2_prices(instance_family_prices)
         return instance_family_prices
 
-    def _get_special_instance_type_prices(self, region: str) -> dict:
+    def _get_special_instance_type_prices(
+            self, region: str, usd: bool=True) -> dict:
         # get prices for instance types which are not prices separately for
         # each CPU core and each GB of RAM
         locations = self._get_region_locations(region)
@@ -1355,11 +1395,11 @@ class Gcp(CloudBase):
                     sku_text, location, wildcard_prefix=False
                 )
                 for row in self._query_prices(sku_desription_pattern):
-                    price = self._parse_price(row)
+                    price = self._parse_price(row, usd)
                     instance_type_prices[instance_type] = price
         return instance_type_prices
 
-    def get_instance_types(self, region: str) -> dict[str, InstanceType]:
+    def get_instance_types(self, region: str) -> Dict[str, InstanceType]:
         request = compute.AggregatedListMachineTypesRequest(
             filter=f"zone:{region}*",
             project=self.project_id,
@@ -1370,8 +1410,9 @@ class Gcp(CloudBase):
         result = {}
         for zone, node_types in response:
             for machine_type in node_types.machine_types:
-                instance_type = InstanceType()
+                instance_type = InstanceType(region=region)
                 instance_type.parse_compute_machine_type(machine_type)
+                instance_type.parse_machine_family()
                 result[instance_type.type_name] = instance_type
         return result
 
@@ -1384,7 +1425,7 @@ class Gcp(CloudBase):
         return cpu_price + ram_price
 
     def get_instance_type_by_name(
-            self, region: str, flavor: str) -> dict[str, InstanceType]:
+            self, region: str, flavor: str) -> Dict[str, InstanceType]:
         request = compute.GetMachineTypeRequest(
             zone=region,
             project=self.project_id,
@@ -1394,7 +1435,7 @@ class Gcp(CloudBase):
             request=request, **DEFAULT_KWARGS
         )
         result = {}
-        instance_type = InstanceType()
+        instance_type = InstanceType(region=region)
         instance_type.parse_compute_machine_type(response)
         return result
 
@@ -1468,7 +1509,9 @@ class Gcp(CloudBase):
 
     def _generate_instance_types(
             self, source_instance_type: InstanceType,
-            instance_types: Dict[str, InstanceType]=None):
+            instance_types: Dict[str, InstanceType]=None,
+            region: str=None
+    ):
         custom_instance_types = {}
         ram_step = 256
         predefined_flavors = []
@@ -1491,7 +1534,7 @@ class Gcp(CloudBase):
                 if cpu_fraction < min_cpu:
                     continue
                 instance_type = InstanceType(cpu_cores=cpu_fraction,
-                                             custom=True)
+                                             custom=True, region=region)
                 cpu_name = next(
                     k for k, v in instance_type.SHARED_CPU_VALUES.items()
                     if v == cpu_fraction
@@ -1507,6 +1550,7 @@ class Gcp(CloudBase):
                     instance_type.ram_gb = self.mbs_to_gbs(ram_mb)
                     instance_type.type_name = f"{source_instance_type.family}" \
                                               f"-custom-{cpu_name}-{ram_mb}"
+                    instance_type.parse_machine_family()
                     custom_instance_types[instance_type.type_name] = instance_type
         min_cpu = 2
         for cpu in range(min_cpu, max_cpu, cpu_step):
@@ -1527,7 +1571,9 @@ class Gcp(CloudBase):
                               f"-{cpu}-{ram_mb}"
                 instance_type = InstanceType(
                     type_name=flavor_name, cpu_cores=cpu, ram_gb=ram_gb,
-                    family=source_instance_type.family, custom=True)
+                    family=source_instance_type.family, custom=True,
+                    region=region
+                )
                 custom_instance_types[
                     instance_type.type_name] = instance_type
         return custom_instance_types
@@ -1535,7 +1581,8 @@ class Gcp(CloudBase):
     def get_custom_instance_types(
             self, machine_family_prices: Dict[Tuple, MachineFamilyResourcePrice],
             source_flavor_id: str=None, mode: str=None,
-            instance_types: Dict[str, InstanceType]=None
+            instance_types: Dict[str, InstanceType]=None,
+            region: str=None
     ):
         custom_instance_types = {}
         source_instance_type = InstanceType(source_flavor_id)
@@ -1546,7 +1593,7 @@ class Gcp(CloudBase):
                 continue
             if mode == 'current':
                 # parse source instance type
-                instance_type = InstanceType(source_flavor_id)
+                instance_type = InstanceType(source_flavor_id, region=region)
                 instance_type.parse_machine_family()
                 instance_type.parse_ram_cpu_from_flavor_name()
                 instance_type.parse_custom()
@@ -1564,7 +1611,7 @@ class Gcp(CloudBase):
             else:
                 # generate available custom instance types by family
                 custom_instance_types = self._generate_instance_types(
-                    source_instance_type, instance_types)
+                    source_instance_type, instance_types, region)
         return custom_instance_types
 
     @staticmethod
@@ -1572,14 +1619,20 @@ class Gcp(CloudBase):
         return source_flavor_id and "custom" in source_flavor_id
 
     def get_instance_types_priced(
-            self, region: str, source_flavor_id: str=None, mode: str=None
+            self, region: str, source_flavor_id: str=None, mode: str=None,
+            use_usd_price: bool=True
     ) -> Dict[str, dict]:
         instance_types = self.get_instance_types(region)
-        machine_family_prices = self._get_machine_family_resource_prices(region)
-        instance_type_prices = self._get_special_instance_type_prices(region)
-        if self._is_custom_flavor(source_flavor_id) or mode != "current":
+        machine_family_prices = self._get_machine_family_resource_prices(
+            region, use_usd_price)
+        instance_type_prices = self._get_special_instance_type_prices(
+            region, use_usd_price)
+        if self._is_custom_flavor(source_flavor_id) or (
+                mode != "current" and source_flavor_id):
             custom_types = self.get_custom_instance_types(
-                machine_family_prices, source_flavor_id, mode, instance_types)
+                machine_family_prices, source_flavor_id, mode, instance_types,
+                region
+            )
             instance_types.update(custom_types)
         result = {}
         for instance_type_name, instance_type in instance_types.items():
@@ -1707,7 +1760,11 @@ class Gcp(CloudBase):
                 "longitude": 72.8775,
                 "name": "Mumbai",
             },
-            "asia-south2": {"latitude": 28.61, "longitude": 77.23, "name": "Delhi"},
+            "asia-south2": {
+                "latitude": 28.61,
+                "longitude": 77.23,
+                "name": "Delhi"
+            },
             "asia-southeast1": {
                 "latitude": 1.339722,
                 "longitude": 103.704444,
@@ -1728,6 +1785,11 @@ class Gcp(CloudBase):
                 "longitude": 144.966667,
                 "name": "Melbourne",
             },
+            "africa-south1": {
+                "latitude": -26.195246,
+                "longitude": 28.034088,
+                "name": "Johannesburg",
+            },
             "europe-central2": {
                 "latitude": 52.23,
                 "longitude": 21.011111,
@@ -1738,12 +1800,21 @@ class Gcp(CloudBase):
                 "longitude": 27.2,
                 "name": "Finland",
             },
+            "europe-north2": {
+                "latitude": 59.334591,
+                "longitude": 18.06324,
+                "name": "Stockholm",
+            },
             "europe-southwest1": {
                 "latitude": 40.416667,
                 "longitude": -3.716667,
                 "name": "Madrid",
             },
-            "europe-west1": {"latitude": 50.45, "longitude": 3.816667, "name": "EMEA"},
+            "europe-west1": {
+                "latitude": 50.45,
+                "longitude": 3.816667,
+                "name": "EMEA"
+            },
             "europe-west2": {
                 "latitude": 51.507222,
                 "longitude": -0.1275,
@@ -1764,11 +1835,40 @@ class Gcp(CloudBase):
                 "longitude": 8.541111,
                 "name": "Zurich",
             },
-            "europe-west8": {"latitude": 45.466944, "longitude": 9.19, "name": "Milan"},
+            "europe-west8": {
+                "latitude": 45.466944,
+                "longitude": 9.19,
+                "name": "Milan"
+            },
             "europe-west9": {
                 "latitude": 48.856613,
                 "longitude": 2.352222,
                 "name": "Paris",
+            },
+            "europe-west10": {
+                "latitude": 52.520008,
+                "longitude": 13.404954,
+                "name": "Berlin",
+            },
+            "europe-west12": {
+                "latitude": 45.116177,
+                "longitude": 7.742615,
+                "name": "Turin",
+            },
+            "me-central1": {
+                "latitude": 25.286106,
+                "longitude": 51.534817,
+                "name": "Doha",
+            },
+            "me-central2": {
+                "latitude": 26.425699,
+                "longitude": 50.055164,
+                "name": "Dammam",
+            },
+            "me-west1": {
+                "latitude": 32.109333,
+                "longitude": 34.855499,
+                "name": "Tel Aviv",
             },
             "northamerica-northeast1": {
                 "latitude": 45.508889,
@@ -1779,6 +1879,11 @@ class Gcp(CloudBase):
                 "latitude": 43.741667,
                 "longitude": -79.373333,
                 "name": "Toronto",
+            },
+            "northamerica-south1": {
+                "latitude": 19.432608,
+                "longitude": -99.133209,
+                "name": "Mexico",
             },
             "southamerica-east1": {
                 "latitude": -23.532778,
@@ -1811,6 +1916,11 @@ class Gcp(CloudBase):
                 "latitude": 39.962222,
                 "longitude": -83.000556,
                 "name": "Columbus",
+            },
+            "us-south1": {
+                "latitude": 32.779167,
+                "longitude": -96.808891,
+                "name": "Dallas",
             },
             "us-west1": {
                 "latitude": 45.601111,

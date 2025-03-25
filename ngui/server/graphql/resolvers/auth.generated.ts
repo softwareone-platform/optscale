@@ -22,7 +22,7 @@ export type Mutation = {
   signIn?: Maybe<Token>;
   token?: Maybe<Token>;
   updateUser?: Maybe<Token>;
-  user?: Maybe<Token>;
+  user?: Maybe<User>;
 };
 
 
@@ -77,6 +77,14 @@ export type Token = {
 export type UpdateUserParams = {
   name?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  token?: Maybe<Scalars['String']['output']>;
+  user_email: Scalars['String']['output'];
+  user_id: Scalars['ID']['output'];
+  verified: Scalars['Boolean']['output'];
 };
 
 
@@ -159,6 +167,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Token: ResolverTypeWrapper<Token>;
   UpdateUserParams: UpdateUserParams;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -172,13 +181,14 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   Token: Token;
   UpdateUserParams: UpdateUserParams;
+  User: User;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   signIn?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'provider' | 'token'>>;
   token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationTokenArgs, 'email'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'id' | 'params'>>;
-  user?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationUserArgs, 'email' | 'name' | 'password'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUserArgs, 'email' | 'name' | 'password'>>;
 };
 
 export interface OrganizationAllowedActionsScalarScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['OrganizationAllowedActionsScalar'], any> {
@@ -196,10 +206,19 @@ export type TokenResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user_email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  verified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   OrganizationAllowedActionsScalar?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Token?: TokenResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 

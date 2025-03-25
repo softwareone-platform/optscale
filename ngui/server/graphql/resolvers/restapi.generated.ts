@@ -152,6 +152,40 @@ export type AzureTenantDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export enum BreakdownBy {
+  CloudAccountId = 'cloud_account_id',
+  EmployeeId = 'employee_id',
+  K8sNamespace = 'k8s_namespace',
+  K8sNode = 'k8s_node',
+  K8sService = 'k8s_service',
+  PoolId = 'pool_id',
+  Region = 'region',
+  ResourceType = 'resource_type',
+  ServiceName = 'service_name'
+}
+
+export type BreakdownParams = {
+  active?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  breakdown_by: BreakdownBy;
+  cloud_account_id?: InputMaybe<Array<Scalars['String']['input']>>;
+  constraint_violated?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  end_date: Scalars['Int']['input'];
+  k8s_namespace?: InputMaybe<Array<Scalars['String']['input']>>;
+  k8s_node?: InputMaybe<Array<Scalars['String']['input']>>;
+  k8s_service?: InputMaybe<Array<Scalars['String']['input']>>;
+  owner_id?: InputMaybe<Array<Scalars['String']['input']>>;
+  pool_id?: InputMaybe<Array<Scalars['String']['input']>>;
+  recommendations?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  region?: InputMaybe<Array<Scalars['String']['input']>>;
+  resource_type?: InputMaybe<Array<Scalars['String']['input']>>;
+  service_name?: InputMaybe<Array<Scalars['String']['input']>>;
+  start_date: Scalars['Int']['input'];
+  tag?: InputMaybe<Array<Scalars['String']['input']>>;
+  traffic_from?: InputMaybe<Array<Scalars['String']['input']>>;
+  traffic_to?: InputMaybe<Array<Scalars['String']['input']>>;
+  without_tag?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type CreateDataSourceInput = {
   alibabaConfig?: InputMaybe<AlibabaConfigInput>;
   awsLinkedConfig?: InputMaybe<AwsLinkedConfigInput>;
@@ -281,6 +315,17 @@ export type EnvironmentDataSource = DataSourceInterface & {
   name: Scalars['String']['output'];
   parent_id?: Maybe<Scalars['String']['output']>;
   type: DataSourceType;
+};
+
+export type ExpensesDailyBreakdown = {
+  __typename?: 'ExpensesDailyBreakdown';
+  breakdown: Scalars['JSONObject']['output'];
+  breakdown_by: BreakdownBy;
+  counts: Scalars['JSONObject']['output'];
+  previous_range_start: Scalars['Int']['output'];
+  previous_total: Scalars['Int']['output'];
+  start_date: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
 };
 
 export type GcpBillingDataConfig = {
@@ -553,18 +598,58 @@ export type Organization = {
   pool_id: Scalars['String']['output'];
 };
 
+export type OrganizationConstraint = {
+  __typename?: 'OrganizationConstraint';
+  created_at: Scalars['Int']['output'];
+  definition: Scalars['JSONObject']['output'];
+  deleted_at: Scalars['Int']['output'];
+  filters: Scalars['JSONObject']['output'];
+  id: Scalars['ID']['output'];
+  last_run: Scalars['Int']['output'];
+  last_run_result: Scalars['JSONObject']['output'];
+  name: Scalars['String']['output'];
+  organization_id: Scalars['String']['output'];
+  type: OrganizationConstraintType;
+};
+
+export enum OrganizationConstraintType {
+  ExpenseAnomaly = 'expense_anomaly',
+  ExpiringBudget = 'expiring_budget',
+  RecurringBudget = 'recurring_budget',
+  ResourceCountAnomaly = 'resource_count_anomaly',
+  ResourceQuota = 'resource_quota',
+  TaggingPolicy = 'tagging_policy'
+}
+
+export type OrganizationLimitHit = {
+  __typename?: 'OrganizationLimitHit';
+  constraint_id: Scalars['String']['output'];
+  constraint_limit: Scalars['Float']['output'];
+  created_at: Scalars['Int']['output'];
+  deleted_at: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  organization_id: Scalars['String']['output'];
+  run_result: Scalars['JSONObject']['output'];
+  value: Scalars['Float']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   currentEmployee?: Maybe<Employee>;
   dataSource?: Maybe<DataSourceInterface>;
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
+  expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
   optscaleCapability?: Maybe<OptscaleCapability>;
+  organizationConstraint?: Maybe<OrganizationConstraint>;
   organizationFeatures?: Maybe<Scalars['JSONObject']['output']>;
+  organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
   organizationPerspectives?: Maybe<Scalars['JSONObject']['output']>;
   organizationThemeSettings?: Maybe<Scalars['JSONObject']['output']>;
   organizations?: Maybe<Array<Maybe<Organization>>>;
+  relevantFlavors?: Maybe<Scalars['JSONObject']['output']>;
+  resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
 };
 
 
@@ -589,12 +674,29 @@ export type QueryEmployeeEmailsArgs = {
 };
 
 
+export type QueryExpensesDailyBreakdownArgs = {
+  organizationId: Scalars['ID']['input'];
+  params?: InputMaybe<BreakdownParams>;
+};
+
+
 export type QueryOptscaleCapabilityArgs = {
   organizationId: Scalars['ID']['input'];
 };
 
 
+export type QueryOrganizationConstraintArgs = {
+  constraintId: Scalars['ID']['input'];
+};
+
+
 export type QueryOrganizationFeaturesArgs = {
+  organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryOrganizationLimitHitsArgs = {
+  constraintId: Scalars['ID']['input'];
   organizationId: Scalars['ID']['input'];
 };
 
@@ -606,6 +708,30 @@ export type QueryOrganizationPerspectivesArgs = {
 
 export type QueryOrganizationThemeSettingsArgs = {
   organizationId: Scalars['ID']['input'];
+};
+
+
+export type QueryRelevantFlavorsArgs = {
+  organizationId: Scalars['ID']['input'];
+  requestParams?: InputMaybe<Scalars['JSONObject']['input']>;
+};
+
+
+export type QueryResourceCountBreakdownArgs = {
+  organizationId: Scalars['ID']['input'];
+  params?: InputMaybe<BreakdownParams>;
+};
+
+export type ResourceCountBreakdown = {
+  __typename?: 'ResourceCountBreakdown';
+  breakdown: Scalars['JSONObject']['output'];
+  breakdown_by: BreakdownBy;
+  count: Scalars['Int']['output'];
+  counts: Scalars['JSONObject']['output'];
+  end_date: Scalars['Int']['output'];
+  first_breakdown: Scalars['Int']['output'];
+  last_breakdown: Scalars['Int']['output'];
+  start_date: Scalars['Int']['output'];
 };
 
 export type UpdateDataSourceInput = {
@@ -733,6 +859,8 @@ export type ResolversTypes = {
   AzureTenantConfigInput: AzureTenantConfigInput;
   AzureTenantDataSource: ResolverTypeWrapper<AzureTenantDataSource>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  BreakdownBy: BreakdownBy;
+  BreakdownParams: BreakdownParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: ResolverTypeWrapper<DataSourceDetails>;
   DataSourceDiscoveryInfos: ResolverTypeWrapper<DataSourceDiscoveryInfos>;
@@ -745,6 +873,7 @@ export type ResolversTypes = {
   Employee: ResolverTypeWrapper<Employee>;
   EmployeeEmail: ResolverTypeWrapper<EmployeeEmail>;
   EnvironmentDataSource: ResolverTypeWrapper<EnvironmentDataSource>;
+  ExpensesDailyBreakdown: ResolverTypeWrapper<ExpensesDailyBreakdown>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   GcpBillingDataConfig: ResolverTypeWrapper<GcpBillingDataConfig>;
   GcpBillingDataConfigInput: GcpBillingDataConfigInput;
@@ -771,7 +900,11 @@ export type ResolversTypes = {
   OptscaleCapability: ResolverTypeWrapper<OptscaleCapability>;
   OptscaleCapabilityParams: OptscaleCapabilityParams;
   Organization: ResolverTypeWrapper<Organization>;
+  OrganizationConstraint: ResolverTypeWrapper<OrganizationConstraint>;
+  OrganizationConstraintType: OrganizationConstraintType;
+  OrganizationLimitHit: ResolverTypeWrapper<OrganizationLimitHit>;
   Query: ResolverTypeWrapper<{}>;
+  ResourceCountBreakdown: ResolverTypeWrapper<ResourceCountBreakdown>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UpdateDataSourceInput: UpdateDataSourceInput;
   UpdateEmployeeEmailInput: UpdateEmployeeEmailInput;
@@ -796,6 +929,7 @@ export type ResolversParentTypes = {
   AzureTenantConfigInput: AzureTenantConfigInput;
   AzureTenantDataSource: AzureTenantDataSource;
   Boolean: Scalars['Boolean']['output'];
+  BreakdownParams: BreakdownParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: DataSourceDetails;
   DataSourceDiscoveryInfos: DataSourceDiscoveryInfos;
@@ -807,6 +941,7 @@ export type ResolversParentTypes = {
   Employee: Employee;
   EmployeeEmail: EmployeeEmail;
   EnvironmentDataSource: EnvironmentDataSource;
+  ExpensesDailyBreakdown: ExpensesDailyBreakdown;
   Float: Scalars['Float']['output'];
   GcpBillingDataConfig: GcpBillingDataConfig;
   GcpBillingDataConfigInput: GcpBillingDataConfigInput;
@@ -833,7 +968,10 @@ export type ResolversParentTypes = {
   OptscaleCapability: OptscaleCapability;
   OptscaleCapabilityParams: OptscaleCapabilityParams;
   Organization: Organization;
+  OrganizationConstraint: OrganizationConstraint;
+  OrganizationLimitHit: OrganizationLimitHit;
   Query: {};
+  ResourceCountBreakdown: ResourceCountBreakdown;
   String: Scalars['String']['output'];
   UpdateDataSourceInput: UpdateDataSourceInput;
   UpdateEmployeeEmailInput: UpdateEmployeeEmailInput;
@@ -1035,6 +1173,17 @@ export type EnvironmentDataSourceResolvers<ContextType = any, ParentType extends
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExpensesDailyBreakdownResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExpensesDailyBreakdown'] = ResolversParentTypes['ExpensesDailyBreakdown']> = {
+  breakdown?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  breakdown_by?: Resolver<ResolversTypes['BreakdownBy'], ParentType, ContextType>;
+  counts?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  previous_range_start?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  previous_total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  start_date?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GcpBillingDataConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['GcpBillingDataConfig'] = ResolversParentTypes['GcpBillingDataConfig']> = {
   dataset_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1201,17 +1350,60 @@ export type OrganizationResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type OrganizationConstraintResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrganizationConstraint'] = ResolversParentTypes['OrganizationConstraint']> = {
+  created_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  definition?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  deleted_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  filters?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  last_run?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_run_result?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  organization_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['OrganizationConstraintType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OrganizationLimitHitResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrganizationLimitHit'] = ResolversParentTypes['OrganizationLimitHit']> = {
+  constraint_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  constraint_limit?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  deleted_at?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  organization_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  run_result?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  value?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   currentEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, RequireFields<QueryCurrentEmployeeArgs, 'organizationId'>>;
   dataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<QueryDataSourceArgs, 'dataSourceId'>>;
   dataSources?: Resolver<Maybe<Array<Maybe<ResolversTypes['DataSourceInterface']>>>, ParentType, ContextType, RequireFields<QueryDataSourcesArgs, 'organizationId'>>;
   employeeEmails?: Resolver<Maybe<Array<Maybe<ResolversTypes['EmployeeEmail']>>>, ParentType, ContextType, RequireFields<QueryEmployeeEmailsArgs, 'employeeId'>>;
+  expensesDailyBreakdown?: Resolver<Maybe<ResolversTypes['ExpensesDailyBreakdown']>, ParentType, ContextType, RequireFields<QueryExpensesDailyBreakdownArgs, 'organizationId'>>;
   invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invitation']>>>, ParentType, ContextType>;
   optscaleCapability?: Resolver<Maybe<ResolversTypes['OptscaleCapability']>, ParentType, ContextType, RequireFields<QueryOptscaleCapabilityArgs, 'organizationId'>>;
+  organizationConstraint?: Resolver<Maybe<ResolversTypes['OrganizationConstraint']>, ParentType, ContextType, RequireFields<QueryOrganizationConstraintArgs, 'constraintId'>>;
   organizationFeatures?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationFeaturesArgs, 'organizationId'>>;
+  organizationLimitHits?: Resolver<Maybe<Array<ResolversTypes['OrganizationLimitHit']>>, ParentType, ContextType, RequireFields<QueryOrganizationLimitHitsArgs, 'constraintId' | 'organizationId'>>;
   organizationPerspectives?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationPerspectivesArgs, 'organizationId'>>;
   organizationThemeSettings?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationThemeSettingsArgs, 'organizationId'>>;
   organizations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Organization']>>>, ParentType, ContextType>;
+  relevantFlavors?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryRelevantFlavorsArgs, 'organizationId'>>;
+  resourceCountBreakdown?: Resolver<Maybe<ResolversTypes['ResourceCountBreakdown']>, ParentType, ContextType, RequireFields<QueryResourceCountBreakdownArgs, 'organizationId'>>;
+};
+
+export type ResourceCountBreakdownResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResourceCountBreakdown'] = ResolversParentTypes['ResourceCountBreakdown']> = {
+  breakdown?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  breakdown_by?: Resolver<ResolversTypes['BreakdownBy'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  counts?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  end_date?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  first_breakdown?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  last_breakdown?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  start_date?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -1231,6 +1423,7 @@ export type Resolvers<ContextType = any> = {
   Employee?: EmployeeResolvers<ContextType>;
   EmployeeEmail?: EmployeeEmailResolvers<ContextType>;
   EnvironmentDataSource?: EnvironmentDataSourceResolvers<ContextType>;
+  ExpensesDailyBreakdown?: ExpensesDailyBreakdownResolvers<ContextType>;
   GcpBillingDataConfig?: GcpBillingDataConfigResolvers<ContextType>;
   GcpConfig?: GcpConfigResolvers<ContextType>;
   GcpDataSource?: GcpDataSourceResolvers<ContextType>;
@@ -1248,6 +1441,9 @@ export type Resolvers<ContextType = any> = {
   NebiusDataSource?: NebiusDataSourceResolvers<ContextType>;
   OptscaleCapability?: OptscaleCapabilityResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
+  OrganizationConstraint?: OrganizationConstraintResolvers<ContextType>;
+  OrganizationLimitHit?: OrganizationLimitHitResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  ResourceCountBreakdown?: ResourceCountBreakdownResolvers<ContextType>;
 };
 

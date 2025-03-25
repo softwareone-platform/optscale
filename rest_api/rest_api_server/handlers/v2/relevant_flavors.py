@@ -9,7 +9,7 @@ from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from tools.optscale_exceptions.http_exc import OptHTTPError
 
 GLOBAL_REGIONS = ['ap', 'eu', 'ca', 'sa', 'us', 'af', 'me']
-SUPPORTED_CLOUDS = ['aws_cnr', 'azure_cnr', 'nebius']
+SUPPORTED_CLOUDS = ['aws_cnr', 'azure_cnr', 'gcp_cnr', 'nebius']
 
 
 class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,
@@ -27,7 +27,9 @@ class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,
             'min_ram': self.get_arg('min_ram', int),
             'max_ram': self.get_arg('max_ram', int),
             'region': self.get_arg('region', str),
-            'preferred_currency': self.get_arg('preferred_currency', str)
+            'preferred_currency': self.get_arg('preferred_currency', str),
+            'currency_conversion_rate': self.get_arg(
+                'currency_conversion_rate', float),
         }
 
     @staticmethod
@@ -39,7 +41,8 @@ class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,
         required_params = [('region', str)]
         optional_params = [
             ('min_cpu', int), ('max_cpu', int), ('min_ram', int),
-            ('max_ram', int), ('preferred_currency', str)
+            ('max_ram', int), ('preferred_currency', str),
+            ('currency_conversion_rate', float)
         ]
         if not isinstance(params, dict):
             raise OptHTTPError(400, Err.OE0233, [])
@@ -64,6 +67,10 @@ class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,
             max_v = params.get(max_k)
             if min_v is not None and max_v is not None and min_v > max_v:
                 raise OptHTTPError(400, Err.OE0446, [max_k, min_k])
+        currency_conversion_rate = params.get('currency_conversion_rate')
+        if currency_conversion_rate is not None and currency_conversion_rate <= 0:
+            raise OptHTTPError(400, Err.OE0446,
+                               ['currency_conversion_rate', 0])
 
     async def get(self, organization_id):
         """
@@ -110,6 +117,11 @@ class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,
             required: false
             type: string
             default: USD
+        -   in: query
+            name: currency_conversion_rate
+            description: currency conversion rate (GCP only)
+            required: false
+            type: number
         responses:
             200:
                 description: list of relevant flavors

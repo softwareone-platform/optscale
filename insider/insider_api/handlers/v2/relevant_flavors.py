@@ -26,7 +26,9 @@ class RelevantFlavorCollectionHandler(SecretHandler):
             'min_ram': self.get_arg('min_ram', int),
             'max_ram': self.get_arg('max_ram', int),
             'region': self.get_arg('region', str),
-            'preferred_currency': self.get_arg('preferred_currency', str)
+            'preferred_currency': self.get_arg('preferred_currency', str),
+            'currency_conversion_rate': self.get_arg(
+                'currency_conversion_rate', float),
         }
 
     @staticmethod
@@ -37,7 +39,8 @@ class RelevantFlavorCollectionHandler(SecretHandler):
                            ('max_cpu', int),
                            ('min_ram', int),
                            ('max_ram', int),
-                           ('preferred_currency', str)
+                           ('preferred_currency', str),
+                           ('currency_conversion_rate', float)
                            ]
         if not isinstance(params, dict):
             raise OptHTTPError(400, Err.OI0004, [])
@@ -55,6 +58,13 @@ class RelevantFlavorCollectionHandler(SecretHandler):
         region = params['region']
         if region not in GLOBAL_REGIONS:
             raise OptHTTPError(400, Err.OI0012, [region])
+        if params.get('currency_conversion_rate') is not None and not params.get(
+                'preferred_currency'):
+            raise OptHTTPError(400, Err.OI0021, ['currency_conversion_rate',
+                                                 'preferred_currency'])
+        currency_conversion_rate = params.get('currency_conversion_rate')
+        if currency_conversion_rate is not None and currency_conversion_rate <= 0:
+            raise OptHTTPError(400, Err.OI0022, ['currency_conversion_rate'])
 
     async def get(self, cloud_type):
         """
@@ -101,6 +111,11 @@ class RelevantFlavorCollectionHandler(SecretHandler):
             required: false
             type: string
             default: USD
+        -   in: query
+            name: currency_conversion_rate
+            description: currency conversion rate (GCP only)
+            required: false
+            type: number
         responses:
             200:
                 description: list of relevant flavors
@@ -129,11 +144,13 @@ class RelevantFlavorCollectionHandler(SecretHandler):
             400:
                 description: |
                     Wrong arguments:
-                    - OI0008: Invalid cloud_type
+                    - OI0008: Invalid argument
                     - OI0010: Cloud is not supported
                     - OI0011: Required argument is not provided
                     - OI0012: Region is not available
                     - OI0015: Operating system is not available
+                    - OI0021: currency_conversion_rate must be used with preferred_currency
+                    - OI0022: currency_conversion_rate must be positive
             401:
                 description: |
                     Unauthorized:

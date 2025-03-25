@@ -424,6 +424,93 @@ input UpdateEmployeeEmailInput {
   emailId: ID!
   action: UpdateEmployeeEmailsAction!
 }
+enum OrganizationConstraintType {
+  resource_count_anomaly
+  expense_anomaly
+  resource_quota
+  recurring_budget
+  expiring_budget
+  tagging_policy
+}
+
+type OrganizationConstraint {
+  created_at: Int!
+  definition: JSONObject!
+  deleted_at: Int!
+  filters: JSONObject!
+  id: ID!
+  last_run: Int!
+  last_run_result: JSONObject!
+  name: String!
+  organization_id: String!
+  type: OrganizationConstraintType!
+}
+
+enum BreakdownBy {
+  service_name
+  region
+  resource_type
+  cloud_account_id
+  employee_id
+  pool_id
+  k8s_node
+  k8s_namespace
+  k8s_service
+}
+
+input BreakdownParams {
+  start_date: Int!
+  end_date: Int!
+  breakdown_by: BreakdownBy!
+  pool_id: [String!]
+  cloud_account_id: [String!]
+  owner_id: [String!]
+  service_name: [String!]
+  region: [String!]
+  resource_type: [String!]
+  active: [Boolean!]
+  recommendations: [Boolean!]
+  constraint_violated: [Boolean!]
+  k8s_node: [String!]
+  tag: [String!]
+  without_tag: [String!]
+  k8s_namespace: [String!]
+  k8s_service: [String!]
+  traffic_from: [String!]
+  traffic_to: [String!]
+}
+
+type ResourceCountBreakdown {
+  start_date: Int!
+  end_date: Int!
+  count: Int!
+  breakdown: JSONObject!
+  first_breakdown: Int!
+  last_breakdown: Int!
+  breakdown_by: BreakdownBy!
+  counts: JSONObject!
+}
+
+type ExpensesDailyBreakdown {
+  breakdown: JSONObject!
+  breakdown_by: BreakdownBy!
+  counts: JSONObject!
+  previous_range_start: Int!
+  previous_total: Int!
+  start_date: Int!
+  total: Int!
+}
+
+type OrganizationLimitHit {
+  constraint_id: String!
+  constraint_limit: Float!
+  created_at: Int!
+  deleted_at: Int!
+  value: Float!
+  id: ID!
+  organization_id: String!
+  run_result: JSONObject!
+}
 
 type Organization {
   id: String!
@@ -484,6 +571,20 @@ type Query {
   optscaleCapability(organizationId: ID!): OptscaleCapability
   organizationThemeSettings(organizationId: ID!): JSONObject
   organizationPerspectives(organizationId: ID!): JSONObject
+  organizationConstraint(constraintId: ID!): OrganizationConstraint
+  resourceCountBreakdown(
+    organizationId: ID!
+    params: BreakdownParams
+  ): ResourceCountBreakdown
+  expensesDailyBreakdown(
+    organizationId: ID!
+    params: BreakdownParams
+  ): ExpensesDailyBreakdown
+  organizationLimitHits(
+    organizationId: ID!
+    constraintId: ID!
+  ): [OrganizationLimitHit!]
+  relevantFlavors(organizationId: ID!, requestParams: JSONObject): JSONObject
 }
 
 type Mutation {

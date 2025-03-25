@@ -454,9 +454,10 @@ class BaseReportImporter:
                                            'last_import_attempt_at': ts})
 
     def update_cloud_import_attempt(self, ts, error=None):
-        self.rest_cl.cloud_account_update(self.cloud_acc_id,
-                                          {'last_import_attempt_at': ts,
-                                           'last_import_attempt_error': error})
+        self.rest_cl.cloud_account_update(
+            self.cloud_acc_id,
+            {'last_import_attempt_at': ts,
+             'last_import_attempt_error': error[:255]})
 
     def update_cloud_account_config(self):
         pass
@@ -739,7 +740,7 @@ class CSVBaseReportImporter(BaseReportImporter):
             self.rest_cl.cloud_account_update(
                 cloud_acc_id,
                 {'last_import_attempt_at': ts,
-                 'last_import_attempt_error': error})
+                 'last_import_attempt_error': error[:255]})
 
     def update_cloud_import_time(self, ts):
         for cloud_acc_id in self.detected_cloud_accounts:

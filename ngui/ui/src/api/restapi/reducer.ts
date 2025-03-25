@@ -58,7 +58,6 @@ import {
   SET_EXPENSES_DAILY_BREAKDOWN,
   SET_ORGANIZATION_CONSTRAINT,
   UPDATE_ORGANIZATION_CONSTRAINT,
-  SET_ORGANIZATION_LIMIT_HITS,
   SET_RECOMMENDATIONS_DOWNLOAD_OPTIONS,
   SET_GLOBAL_POOL_POLICIES,
   SET_GLOBAL_RESOURCE_CONSTRAINTS,
@@ -96,7 +95,6 @@ import {
   SET_ML_RUNSET_EXECUTORS,
   SET_ORGANIZATION_BI_EXPORTS,
   SET_BI_EXPORT,
-  SET_RELEVANT_FLAVORS,
   SET_ORGANIZATION_CLOUD_RESOURCES,
   SET_ORGANIZATION_GEMINIS,
   SET_GEMINI,
@@ -589,12 +587,6 @@ const reducer = (state = {}, action) => {
         }
       };
     }
-    case SET_ORGANIZATION_LIMIT_HITS: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
     case SET_GLOBAL_POOL_POLICIES: {
       const { resource_policies: resourcePolicies = [] } = action.payload;
 
@@ -791,12 +783,6 @@ const reducer = (state = {}, action) => {
       };
     }
     case SET_BI_EXPORT: {
-      return {
-        ...state,
-        [action.label]: action.payload
-      };
-    }
-    case SET_RELEVANT_FLAVORS: {
       return {
         ...state,
         [action.label]: action.payload

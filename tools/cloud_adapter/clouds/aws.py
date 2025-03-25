@@ -1407,7 +1407,8 @@ class Aws(S3CloudMixin):
                 IncludeMarketplace=include_marketplace)
         except ClientError as ex:
             error_message = str(ex)
-            if 'InvalidParameter' in error_message:
+            if ('InvalidParameter' in error_message
+                    or 'InvalidInput' in error_message):
                 raise InvalidParameterException(error_message)
             raise
 

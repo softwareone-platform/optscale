@@ -144,7 +144,7 @@ source ~/.profile
 ```
 to add local ~/bin path to the system $PATH variable
 
-You can build local images running
+**Note:** you can build local images running
 
 ```
 cd .. && ./build.sh --use-nerdctl
@@ -159,13 +159,19 @@ Pay attention to "service_credentials" parameter, as OptScale uses it to retriev
 
 #### Cluster installation
 
-run the following command:
+Run the following command to start cluster from the required version:
 
 ```
 ./runkube.py --with-elk  -o overlay/user_template.yml -- <deployment name> <version>
 ```
 
-or if you want to use socket:
+or use `--no-pull` to start cluster from local images:
+
+```
+./runkube.py --with-elk --no-pull -o overlay/user_template.yml -- <deployment name> local
+```
+
+If you want to use socket:
 
 ```
 ./runkube.py --use-socket --with-elk  -o overlay/user_template.yml -- <deployment name> <version>
@@ -189,7 +195,7 @@ If you have insecure registry (with self-signed certificate) you can use --insec
 **please note**: if you use key authentication, you should have the required key (id_rsa) on the machine
 
 Check the state of the pods using `kubectl get pods` command.
-When all of the pods are running your OptScale is ready to use. Try to access it by `https://<ip address>`.
+When all the pods are running your OptScale is ready to use. Try to access it by `https://<ip address>`.
 
 #### Cluster update
 

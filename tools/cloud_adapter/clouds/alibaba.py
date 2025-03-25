@@ -96,6 +96,15 @@ def _retry_on_error(exc):
     return False
 
 
+def handle_discovery_client_exc(discovery_func, *args, **kwargs):
+    try:
+        return discovery_func(*args, **kwargs)
+    except ClientException as exc:
+        LOG.warning("Error connecting to region %s: %s",
+                    kwargs.get('region_id'), exc.message)
+        return []
+
+
 class Alibaba(CloudBase):
     BILLING_CREDS = [
         CloudParameter(name='access_key_id', type=str, required=True),
@@ -302,7 +311,8 @@ class Alibaba(CloudBase):
     def _discover_region_volumes(self, region_details):
         request = DescribeDisksRequest.DescribeDisksRequest()
         request.set_PageSize(100)
-        volumes = self._send_paged_request(
+        volumes = handle_discovery_client_exc(
+            self._send_paged_request,
             request, paged_item='Disk', region_id=region_details['RegionId'])
         for item in volumes:
             tags = self._extract_tags(item)
@@ -325,25 +335,25 @@ class Alibaba(CloudBase):
 
     def _discover_region_vpcs(self, region_details):
         request = DescribeVpcsRequest.DescribeVpcsRequest()
-        resp = self._send_request(request, region_details['RegionId'])
-        vpcs = resp.get('Vpcs')
-        if vpcs:
-            vpc_list = vpcs.get('Vpc', [])
-            if vpc_list:
-                return {vpc['VpcId']: vpc.get('VpcName') for vpc in vpc_list if vpc.get('VpcId')}
+        resp = handle_discovery_client_exc(
+            self._send_request,
+            request, region_id=region_details['RegionId'])
+        if resp:
+            vpcs = resp.get('Vpcs')
+            if vpcs:
+                vpc_list = vpcs.get('Vpc', [])
+                if vpc_list:
+                    return {vpc['VpcId']: vpc.get('VpcName')
+                            for vpc in vpc_list if vpc.get('VpcId')}
         return {}
 
     def _discover_region_instances(self, region_details):
         request = DescribeInstancesRequest.DescribeInstancesRequest()
         request.set_PageSize(100)
-        try:
-            instances = self._send_paged_request(
-                request, paged_item='Instance',
-                region_id=region_details['RegionId'])
-        except ClientException as exc:
-            LOG.warning("Error connecting to region %s: %s",
-                        region_details['RegionId'], exc.message)
-            return
+        instances = handle_discovery_client_exc(
+            self._send_paged_request,
+            request, paged_item='Instance',
+            region_id=region_details['RegionId'])
         vpc_id_to_name = self._discover_region_vpcs(region_details)
         for item in instances:
             vpc_id = item.get('VpcAttributes', {}).get('VpcId')
@@ -378,7 +388,8 @@ class Alibaba(CloudBase):
         if chain_id:
             request.set_SnapshotLinkId(chain_id)
         request.set_PageSize(100)
-        snapshots = self._send_paged_request(
+        snapshots = handle_discovery_client_exc(
+            self._send_paged_request,
             request, paged_item='Snapshot',
             region_id=region_details['RegionId'])
         for item in snapshots:
@@ -404,7 +415,8 @@ class Alibaba(CloudBase):
             self, region_details, include_snapshots=True):
         request = DescribeSnapshotLinksRequest.DescribeSnapshotLinksRequest()
         request.set_PageSize(100)
-        snapshot_chains = self._send_paged_request(
+        snapshot_chains = handle_discovery_client_exc(
+            self._send_paged_request,
             request, paged_item='SnapshotLink',
             region_id=region_details['RegionId'])
         for item in snapshot_chains:
@@ -475,14 +487,10 @@ class Alibaba(CloudBase):
     def _discover_region_rds_instances(self, region_details):
         request = DescribeDBInstancesRequest.DescribeDBInstancesRequest()
         request.set_PageSize(100)
-        try:
-            instances = list(self._send_paged_request(
-                request, paged_item='DBInstance',
-                region_id=region_details['RegionId']))
-        except ClientException as exc:
-            LOG.warning("Error connecting to region %s: %s",
-                        region_details['RegionId'], exc.message)
-            return
+        instances = handle_discovery_client_exc(
+            self._send_paged_request,
+            request, paged_item='DBInstance',
+            region_id=region_details['RegionId'])
         instance_ids = [x['DBInstanceId'] for x in instances]
         tag_map = self._get_rds_tags(region_details['RegionId'])
         details_map = {x['DBInstanceId']: x for x in self._get_rds_details(
@@ -521,9 +529,10 @@ class Alibaba(CloudBase):
     def _discover_ip_addresses(self, region_details):
         eip_address_request = DescribeEipAddressesRequest.DescribeEipAddressesRequest()
         eip_address_request.set_PageSize(100)
-        ip_addresses = list(self._send_paged_request(
+        ip_addresses = handle_discovery_client_exc(
+            self._send_paged_request,
             eip_address_request, paged_item='EipAddress',
-            region_id=region_details['RegionId']))
+            region_id=region_details['RegionId'])
         instance_map = {
             'EcsInstance': {
                 'request': DescribeInstancesRequest.DescribeInstancesRequest(),
@@ -576,8 +585,9 @@ class Alibaba(CloudBase):
             request.set_Filters(filter_by)
         if by_owner:
             request.set_ImageOwnerAlias('self')
-        response = self._send_paged_request(
-            request, 'Image', region_id=region_details['RegionId'])
+        response = handle_discovery_client_exc(
+            self._send_paged_request,
+            request, paged_item='Image', region_id=region_details['RegionId'])
         for image in response:
             image_resource = ImageResource(
                 cloud_resource_id=image['ImageId'],

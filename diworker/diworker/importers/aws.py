@@ -794,6 +794,14 @@ class AWSReportImporter(CSVBaseReportImporter):
         info_map.update(regular_res_info_map)
         return info_map
 
+    def _update_imported_raw_interval(self, expense):
+        if (expense['start_date'] < self.min_date_import_threshold and
+                expense.get('lineItem/LineItemType') == 'RIFee'):
+            # diworker update RIFee expenses on every import no matter on
+            # start_date, so can't use its start_date for clearing rudiments
+            return
+        super()._update_imported_raw_interval(expense)
+
     def clean_expenses_for_resource(self, resource_id, expenses):
         clean_expenses = {}
         for e in expenses:

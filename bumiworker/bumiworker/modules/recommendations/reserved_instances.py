@@ -80,6 +80,11 @@ class ReservedInstances(ReservedInstancesBase):
                         'product description - %s',
                         raw_info['_id'], str(ex))
             return None
+        # Mac instances don't support reservations
+        if raw_info['flavor'].startswith('mac'):
+            LOG.warning('Instance %s skipped due to unsupported flavor - %s',
+                        raw_info['_id'], raw_info['flavor'])
+            return None
         tenancy = 'dedicated' if raw_info['tenancy'] == 'dedicated' else 'default'
         return (self.cloud_type, pd, tenancy, raw_info['flavor'],
                 SECS_IN_YEAR, SECS_IN_YEAR, False)

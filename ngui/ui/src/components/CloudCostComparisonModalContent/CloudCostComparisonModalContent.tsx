@@ -76,7 +76,7 @@ const ComparisonTable = ({ sizes }) => {
             {
               value: moneyFormatter(FORMATTED_MONEY_TYPES.TINY, flavor.cost, {
                 format: flavor.currency,
-                maximumFractionDigits: 20
+                maximumFractionDigits: 4
               })
             }
           )

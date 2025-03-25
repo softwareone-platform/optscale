@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
 import { getQueryParams, updateQueryParams } from "utils/network";
 
+type SyncQueryParamWithStateProps<T, P extends boolean = false> = {
+  queryParamName: string;
+  possibleStates?: T[];
+  defaultValue: P extends true ? T[] : T;
+  parameterIsArray?: P;
+};
+
+type ReturnType<T, P extends boolean = false> = [P extends true ? T[] : T, (value: P extends true ? T[] : T) => void];
+
 /**
  * Syncing url query param with state
- * @param {Object} props State definition object
- * @param {string} props.queryParamName Parameter name from url search string
- * @param {string[]} [props.possibleStates] Possible query values array
- * @param {string} [props.defaultValue] Default state value if query is not set or not presented in possible states
- * @param {boolean} [props.parameterIsArray] Query parameter value always parses as array, even for single value
- * @returns {[string | string[], function]} React state/setState
  */
-export const useSyncQueryParamWithState = ({ queryParamName, possibleStates, defaultValue = "", parameterIsArray = false }) => {
+export const useSyncQueryParamWithState = <T, P extends boolean = false>({
+  queryParamName,
+  possibleStates,
+  defaultValue,
+  parameterIsArray = false as P
+}: SyncQueryParamWithStateProps<T, P>): ReturnType<T, P> => {
   const [query, setQuery] = useState(() => {
-    const { [queryParamName]: queryValue } = getQueryParams();
+    const params = getQueryParams(true);
+    const queryValue = params[queryParamName] as T;
 
     if (queryValue === undefined) {
       return defaultValue;
@@ -33,5 +42,5 @@ export const useSyncQueryParamWithState = ({ queryParamName, possibleStates, def
     updateQueryParams({ [queryParamName]: query });
   }, [query, queryParamName]);
 
-  return [query, setQuery];
+  return [query, setQuery] as ReturnType<T, P>;
 };

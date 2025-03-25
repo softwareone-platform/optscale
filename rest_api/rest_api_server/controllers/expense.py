@@ -934,7 +934,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         return list(result.values())
 
     def get_expenses(self, cloud_account_ids, resource_ids, start_date,
-                     end_date, limit=None) -> tuple:
+                     end_date, limit=0) -> tuple:
         return self._get_expenses_clickhouse(
             cloud_account_ids, resource_ids, start_date, end_date, limit)
 
@@ -962,7 +962,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
             params={
                 'start_date': start_date,
                 'end_date': end_date,
-                'limit': limit
+                'limit': limit,
             },
             external_tables=[
                 {
@@ -1031,7 +1031,8 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         extra = {'active', 'recommendations', 'constraint_violated',
                  'service_name', 'created_by_kind', 'created_by_name',
                  'k8s_namespace', 'k8s_node', 'k8s_service', 'traffic_from',
-                 'traffic_to'}
+                 'traffic_to', 'first_seen_lte', 'first_seen_gte',
+                 'last_seen_lte', 'last_seen_gte'}
         other_filters = {}
         for f_key in extra:
             f_val = params.pop(f_key, None)
@@ -1046,7 +1047,8 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
     def split_params(self, organization_id, params):
         query_filters, data_filters, extra_filters = self._split_params(
             organization_id, params)
-        extra_filters['limit'] = query_filters.pop('limit', None)
+        extra_filters['limit'] = query_filters.pop('limit', 0)
+        extra_filters['offset'] = query_filters.pop('offset', 0)
         return query_filters, data_filters, extra_filters
 
     @staticmethod
@@ -1127,19 +1129,44 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                     {'cloud_account_id': None}
                 ]}
             else:
-                main_filters[False] = {'cloud_account_id': {'$in': cloud_account_ids}}
+                main_filters[False] = {
+                    'cloud_account_id': {'$in': cloud_account_ids}
+                }
+
         query = {
             '$and': [
                 {'$or': list(main_filters.values())},
-                {'_first_seen_date': {'$lte': timestamp_to_day_start(
-                    end_date)}},
-                {'_last_seen_date': {'$gte': timestamp_to_day_start(
-                    start_date)}},
-                {'first_seen': {'$lte': end_date}},
-                {'last_seen': {'$gte': start_date}},
                 {'deleted_at': 0}
             ]
         }
+        first_seen_lte = data_filters.get('first_seen_lte')
+        if first_seen_lte is not None:
+            end_date = min(end_date, first_seen_lte)
+        last_seen_gte = data_filters.get('last_seen_gte')
+        if last_seen_gte is not None:
+            start_date = max(start_date, last_seen_gte)
+        seen_filters = {
+            'first_seen': {'$lte': end_date},
+            '_first_seen_date': {'$lte': timestamp_to_day_start(
+                end_date)},
+            'last_seen': {'$gte': start_date},
+            '_last_seen_date': {'$gte': timestamp_to_day_start(
+                start_date)}
+        }
+        first_seen_gte = data_filters.get('first_seen_gte')
+        if first_seen_gte is not None:
+            seen_filters['first_seen'].update({'$gte': first_seen_gte})
+            seen_filters['_first_seen_date'].update({
+                '$gte': timestamp_to_day_start(first_seen_gte)
+            })
+        last_seen_lte = data_filters.get('last_seen_lte')
+        if last_seen_lte is not None:
+            seen_filters['last_seen'].update({'$lte': last_seen_lte})
+            seen_filters['_last_seen_date'].update({
+                '$lte': timestamp_to_day_start(last_seen_lte)
+            })
+        query['$and'].append(seen_filters)
+
         resource_type_condition = self.get_resource_type_condition(
             params.pop('resource_type', []))
         if resource_type_condition:
@@ -1384,12 +1411,16 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         total_cost = 0
         cloud_account_ids = kwargs['cloud_account_id']
         limit = kwargs['limit']
+        offset = kwargs['offset'] or 0
         _, organization_cloud_accs = self.get_organization_and_cloud_accs(
             organization_id)
         if not_clustered_resources:
+            _lim = limit
+            if offset:
+                _lim = 0
             not_clustered_expenses, cost = self.get_expenses(
                 cloud_account_ids, not_clustered_resources, self.start_date,
-                self.end_date, limit)
+                self.end_date, limit=_lim)
             total_cost += cost
         if clustered_resources_map:
             all_account_ids = list(map(
@@ -1402,10 +1433,16 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                           key=lambda x: x['cost'], reverse=True)
         resource_ids = set()
         if limit:
-            expenses = expenses[:limit]
+            offset_ids = list(map(
+                lambda x: x['resource_id'], expenses[:offset]))
+            expenses = expenses[offset:offset+limit]
             resource_ids.update(
                 list(map(lambda x: x.get('resource_id'), expenses))
             )
+            if offset and len(resource_ids) < limit:
+                joined_ids = list(filter(
+                    lambda x: x not in offset_ids, joined_ids
+                ))[offset - len(offset_ids):]
             for r_id in joined_ids:
                 if len(resource_ids) == limit:
                     break
@@ -1430,6 +1467,8 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         }
         if limit:
             res['limit'] = limit
+        if offset:
+            res['offset'] = offset
         return res
 
     def handle_filters(self, params, filters, organization_id):
@@ -1640,7 +1679,7 @@ class RawExpenseController(CleanExpenseController):
         return res
 
     def get_expenses(self, cloud_account_ids, resource_ids, start_date,
-                     end_date, limit=None) -> tuple:
+                     end_date, limit=0) -> tuple:
         start = datetime.fromtimestamp(start_date)
         end = datetime.fromtimestamp(end_date)
         (
