@@ -19,17 +19,22 @@ test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
     });
 
-    test("Invite new user to organisation", async ({header, mainMenu, usersPage, usersInvitePage, registerPage, pendingInvitationPage}) => {
+    test("Invite new user to organisation", async ({
+                                                       header,
+                                                       mainMenu,
+                                                       usersPage,
+                                                       usersInvitePage,
+                                                       registerPage,
+                                                       pendingInvitationPage
+                                                   }) => {
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
             await usersPage.clickInviteBtn();
         });
 
         await test.step("Invite a new user to the organisation", async () => {
-
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
-            // await expect(usersInvitePage.userInvitedAlert).toBeVisible();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -59,5 +64,8 @@ test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
             await pendingInvitationPage.acceptInviteFlow();
         });
 
+        await test.step("Assert organization", async () => {
+            await expect(header.organizationSelect).toContainText("QA Test Organization");
+        });
     });
 });
