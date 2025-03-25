@@ -1,6 +1,6 @@
 import { GeminisResponse,
         OptimisationsResponse, OptionsResponse, RIBreakdownResponse, SPBreakdownResponse, SummaryExpensesResponse } from "../test-data/recommendations-page-data";
-    import { interceptApiRequest } from "../utils/interceptor";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
     import {BasePage} from "./base-page";
     import {Locator, Page} from "@playwright/test";
 
@@ -57,19 +57,17 @@ import { GeminisResponse,
          * Intercepts API requests and provides mock responses.
          * @returns {Promise<void>}
          */
-        async setupApiInterceptions() {
-            const apiInterceptions = [
-                {urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
-                {urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
-                {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
-                {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
-                {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
-                {urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
+        async setupApiInterceptions(): Promise<void> {
+            const apiInterceptions: IInterceptorConfig[] = [
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
+                {page: this.page,urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
             ];
 
-            await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                interceptApiRequest({page: this.page, urlPattern, mockResponse})
-            ));
+            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
 
         /**

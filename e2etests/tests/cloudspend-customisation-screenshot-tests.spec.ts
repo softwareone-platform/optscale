@@ -26,7 +26,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
   test('Verify Homepage matches screenshots', async ({homePage}) => {
     await test.step('Set up test data', async () => {
       await homePage.setupApiInterceptions();
-      await homePage.page.goto('/', { waitUntil: 'networkidle'});
+      await homePage.page.goto('/', {waitUntil: 'networkidle'});
     });
     await test.step('Verify Home Page content', async () => {
       await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
@@ -60,8 +60,8 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
 
   test('Verify Resources page matches screenshots', async ({page, resourcesPage}) => {
     await test.step('Set up test data', async () => {
-        await resourcesPage.setupApiInterceptions();
-        await page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
+      await resourcesPage.setupApiInterceptions();
+      await page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
     });
 
     await test.step('Verify Resources page on landing', async () => {
@@ -102,7 +102,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
                                                                     resourceDetailsPage
                                                                   }) => {
     await test.step('Set up test data', async () => {
-        await resourceDetailsPage.setupApiInterceptions();
+      await resourceDetailsPage.setupApiInterceptions();
     });
 
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
@@ -122,6 +122,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
       await resourceDetailsPage.clickConstraintsTab();
       await resourceDetailsPage.heading.hover();
       await resourceDetailsPage.constraintsTable.waitFor();
+      // await resourceDetailsPage.page.waitForTimeout(50000)
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
     });
 
@@ -165,7 +166,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
 
   test('Verify Expenses page matches screenshots', async ({expensesPage}) => {
     await test.step('Set up test data', async () => {
-        await expensesPage.setupApiInterceptions();
+      await expensesPage.setupApiInterceptions();
     });
 
     await test.step('Navigate to Expenses page', async () => {
@@ -205,9 +206,12 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
 
     await test.step('Verify Expenses page breakdowns - source', async () => {
       await expensesPage.clickSourceBtn();
+
       await expensesPage.dataSourceHeading.hover();
       await expensesPage.waitForCanvas();
+
       await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
+
     });
 
     await test.step('Verify Expenses page breakdowns - pool', async () => {
@@ -251,7 +255,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
 
   test('Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
     await test.step('Set up test data', async () => {
-        await policiesPage.setupApiInterceptions();
+      await policiesPage.setupApiInterceptions();
     });
 
     await test.step('Navigate to Policies page', async () => {
@@ -276,7 +280,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
                                                                     taggingPoliciesCreatePage
                                                                   }) => {
     await test.step('Set up test data', async () => {
-        await taggingPoliciesPage.setupApiInterceptions();
+      await taggingPoliciesPage.setupApiInterceptions();
     });
 
     await test.step('Navigate to Tagging Policies page', async () => {
@@ -318,13 +322,12 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
     });
   })
 
-  test('Verify Cloud Account page matches screenshots', async ({
-                                                                 cloudAccountsPage,
-                                                                 cloudAccountsConnectPage
-                                                               }) => {
+  test('Verify Cloud Account page matches screenshots', async ({cloudAccountsPage, cloudAccountsConnectPage}) => {
+
     await test.step('Set up test data', async () => {
       await cloudAccountsPage.setupApiInterceptions();
     });
+
     await test.step('Navigate to Cloud Accounts page', async () => {
       await cloudAccountsPage.navigateToURL(true);
     });
@@ -339,6 +342,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
       await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.awsRootBtn);
       await cloudAccountsConnectPage.toggleCheckbox(cloudAccountsConnectPage.automaticallyDetectExistingDataSourcesCheckbox);
       await cloudAccountsConnectPage.heading.hover();
+
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-root-screenshot.png');
     });
 
@@ -385,8 +389,8 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
 
     await test.step('Verify Events page content', async () => {
       await eventsPage.heading.hover();
+      await eventsPage.page.waitForTimeout(5000);
       await expect(eventsPage.main).toHaveScreenshot('Events-screenshot.png');
     });
   })
-
 })

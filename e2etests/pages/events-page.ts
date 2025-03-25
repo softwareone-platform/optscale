@@ -1,6 +1,6 @@
 import {Locator, Page} from "@playwright/test";
     import {BasePage} from "./base-page";
-    import {interceptEventRequest} from "../utils/interceptor";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
     import {EventsResponse} from "../test-data/events-data";
 
     /**
@@ -25,12 +25,15 @@ import {Locator, Page} from "@playwright/test";
          * @returns {Promise<void>}
          */
         async setupApiInterceptions(): Promise<void> {
-            const apiInterceptions = [
-                {urlPattern: `/api`, mockResponse: EventsResponse},
+            const apiInterceptions: IInterceptorConfig[] = [
+                {
+                    page: this.page,
+                    urlPattern: "/api$",
+                    mockResponse: EventsResponse,
+                    graphQlOperationName: "events"
+                },
             ];
 
-            await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                interceptEventRequest({page: this.page, urlPattern, mockResponse})
-            ));
+            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
     }

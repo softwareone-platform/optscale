@@ -1,71 +1,54 @@
 import { Page, Route } from "@playwright/test";
 
-    /**
-     * Interface for interceptor configuration.
-     */
-    interface IInterceptorConfig {
-        page: Page;
-        urlPattern: string;
-        mockResponse: any;
+/**
+ * Interface for interceptor configuration.
+ */
+export type IInterceptorConfig<T = unknown> =
+  | {
+  page: Page;
+  urlPattern: "/api$"; // ✅ Literal string with slash
+  mockResponse: T;
+  graphQlOperationName: string; // Required when urlPattern is exactly "/api$"
+}
+  | {
+  page: Page;
+  urlPattern: Exclude<string, "/api$">; // ✅ Any string EXCEPT "/api$"
+  mockResponse: T;
+  graphQlOperationName?: undefined; // Not allowed here
+};
+
+const fulfillWithMock = async <T>(route: Route, mockResponse: T) => {
+  await route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify(mockResponse),
+  });
+};
+
+export async function interceptApiRequest<T>({
+                                               urlPattern,
+                                               mockResponse,
+                                               page,
+                                               graphQlOperationName = undefined,
+                                             }: IInterceptorConfig<T>): Promise<void> {
+  const patternRegex = new RegExp(urlPattern);
+
+  await page.route(patternRegex, async (route, request) => {
+    if (request.method() === "POST" && graphQlOperationName) {
+      try {
+        const body = JSON.parse(request.postData() || "{}");
+
+        if (body.operationName === graphQlOperationName) {
+          return await fulfillWithMock(route, mockResponse);
+        }
+
+        return await route.fallback();
+      } catch (error) {
+        console.warn("Failed to parse POST data:", error);
+        return await route.fallback();
+      }
     }
 
-    /**
-     * Intercepts API requests and provides mock responses.
-     * @param {IInterceptorConfig} config - The configuration for the interceptor.
-     * @returns {Promise<void>}
-     */
-    export async function interceptApiRequest(config: IInterceptorConfig): Promise<void> {
-        const { page, urlPattern, mockResponse } = config;
-
-        await page.route(new RegExp(urlPattern), async (route: Route) => {
-            await route.fulfill({
-                status: 200,
-                contentType: "application/json",
-                body: JSON.stringify(mockResponse),
-            });
-        });
-    }
-
-    /**
-     * Intercepts event requests and provides mock responses.
-     * @param {IInterceptorConfig} config - The configuration for the interceptor.
-     * @returns {Promise<void>}
-     */
-    export async function interceptEventRequest(config: IInterceptorConfig): Promise<void> {
-        const { page, urlPattern, mockResponse } = config;
-        await page.route(new RegExp(urlPattern), async (route: Route) => {
-            const requestPostData = JSON.parse(route.request().postData() || '{}');
-            if (requestPostData.operationName === "events") {
-                await route.fulfill({
-                    status: 200,
-                    contentType: "application/json",
-                    body: JSON.stringify(mockResponse),
-                });
-                console.log(`Intercepted request for operationName ${requestPostData.operationName}`);
-            } else {
-                await route.continue();
-            }
-        });
-    }
-
-    /**
-     * Intercepts data sources requests and provides mock responses.
-     * @param {IInterceptorConfig} config - The configuration for the interceptor.
-     * @returns {Promise<void>}
-     */
-    export async function interceptDataSourcesRequest(config: IInterceptorConfig): Promise<void> {
-        const { page, urlPattern, mockResponse } = config;
-        await page.route(new RegExp(urlPattern), async (route: Route) => {
-            const requestPostData = JSON.parse(route.request().postData() || '{}');
-            if (requestPostData.operationName === "DataSources") {
-                await route.fulfill({
-                    status: 200,
-                    contentType: "application/json",
-                    body: JSON.stringify(mockResponse),
-                });
-                console.log(`Intercepted request for operationName ${requestPostData.operationName}`);
-            } else {
-                await route.continue();
-            }
-        });
-    }
+    return await fulfillWithMock(route, mockResponse);
+  });
+}

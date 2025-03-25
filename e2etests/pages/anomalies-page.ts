@@ -1,6 +1,6 @@
 import {BasePage} from "./base-page";
     import {Locator, Page} from "@playwright/test";
-    import {interceptApiRequest} from "../utils/interceptor";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
     import {AnomaliesAvailableFilters, AnomaliesConstraintsResponse} from "../test-data/anomalies-data";
 
     /**
@@ -29,17 +29,20 @@ import {BasePage} from "./base-page";
          * @returns {Promise<void>}
          */
         async setupApiInterceptions(): Promise<void> {
-            const apiInterceptions = [
+            const apiInterceptions: IInterceptorConfig[] = [
                 {
-                    urlPattern: `v2/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,
-                    mockResponse: AnomaliesConstraintsResponse
+                    urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,
+                    mockResponse: AnomaliesConstraintsResponse,
+                    page: this.page,
                 },
-                {urlPattern: `v2/organizations/[^/]+available_filters`, mockResponse: AnomaliesAvailableFilters},
+                {
+                    urlPattern: `v2/organizations/[^/]+available_filters`,
+                    mockResponse: AnomaliesAvailableFilters,
+                    page: this.page,
+                },
             ];
 
-            await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                interceptApiRequest({page: this.page, urlPattern, mockResponse})
-            ));
+            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
 
         /**

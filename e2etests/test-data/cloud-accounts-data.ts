@@ -24,7 +24,7 @@ export const DataSourcesResponse = {
                 "last_import_at": 1740394800,
                 "last_import_attempt_at": 1740394800,
                 "last_import_attempt_error": "500 Server Error: Internal Server Error for url: http://restapi:80/restapi/v2/cloud_accounts/fd09fa10-1b30-4a39-9a6b-fc1d7e85d9f3/cloud_resources/bulk?behavior=skip_existing&return_resources=True&is_report_import=True",
-                "name": "AWS HQ",
+                "name": "E2E_NAME AWS HQ",
                 "parent_id": null,
                 "type": "aws_cnr",
                 "details": {

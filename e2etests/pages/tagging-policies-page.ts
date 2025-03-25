@@ -1,7 +1,7 @@
 import {Locator, Page} from "@playwright/test";
     import {BasePage} from "./base-page";
     import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../test-data/user-data";
-    import {interceptApiRequest} from "../utils/interceptor";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
     import {TaggingPolicyResponse} from "../test-data/tagging-data";
 
     /**
@@ -27,21 +27,19 @@ import {Locator, Page} from "@playwright/test";
          * Intercepts API requests and provides mock responses.
          * @returns {Promise<void>}
          */
-        async setupApiInterceptions() {
-            const apiInterceptions = [
-                {urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`, mockResponse: TaggingPolicyResponse},
+        async setupApiInterceptions(): Promise<void> {
+            const apiInterceptions: IInterceptorConfig[] = [
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`, mockResponse: TaggingPolicyResponse},
             ];
 
-            await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                interceptApiRequest({page: this.page, urlPattern, mockResponse})
-            ));
+            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
 
         /**
          * Clicks the Add button.
          * @returns {Promise<void>}
          */
-        async clickAddBtn() {
+        async clickAddBtn(): Promise<void> {
             await this.addBtn.click();
         }
     }
