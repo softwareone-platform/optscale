@@ -1030,3 +1030,8 @@ class Err(enum.Enum):
         ['environment'],
         []
     ]
+    OE0561 = [
+        "Cannot use %s without %s",
+        ["offset", "limit"],
+        ["Cannot use offset without limit"]
+    ]

@@ -32,7 +32,7 @@ class CloudResource:
                  'region', 'organization_id', 'pool_id', 'owner_id',
                  'pool_name', 'owner_name', 'pool_purpose', 'resource_id',
                  'last_seen', 'active', 'tags', 'cloud_console_link',
-                 'cluster_id', 'cluster_type_id')
+                 'cluster_id', 'cluster_type_id', 'cloud_type')
 
     def __init__(self, cloud_resource_id=None, cloud_account_id=None,
                  region=None, organization_id=None,
@@ -54,6 +54,7 @@ class CloudResource:
         self.cluster_id = None  # placeholder
         self.cluster_type_id = None  # placeholder
         self.cloud_account_name = None  # placeholder
+        self.cloud_type = None  # placeholder
 
     def _is_field(self, attribute):
         if attribute.startswith('_'):

@@ -1,10 +1,10 @@
 import { jsPDF as JSPDF } from "jspdf";
+import { autoTable } from "jspdf-autotable";
 import { PDF_THEME } from "theme";
 import { intl } from "translations/react-intl-config";
 import { PRODUCTION as URL_PRODUCTION } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
 import UbuntuFilePath from "../assets/fonts/Ubuntu-Regular.ttf";
-import "jspdf-autotable";
 import logo from "../assets/logo/logo_pdf.png";
 
 const defaultFileName = "optscale-report-%___time___%";
@@ -155,7 +155,7 @@ const createSummaryCard = (doc, value, parameters) => {
     smallFont * 1.15 + bigFont * 1.15 + paddingSmall.top + paddingSmall.bottom + paddingBig.top + paddingBig.bottom; // todo: will work only for cards without wordwrap
   checkAvailablePageSpace({ doc, dy: heightTotal, addPage: true, moveCursor: false });
 
-  doc.autoTable({
+  autoTable(doc, {
     head: [["", ""]],
     body: [
       ["", parameters.header],

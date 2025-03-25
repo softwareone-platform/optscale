@@ -151,8 +151,6 @@ import {
   SET_ORGANIZATION_CONSTRAINT,
   DELETE_ORGANIZATION_CONSTRAINT,
   UPDATE_ORGANIZATION_CONSTRAINT,
-  GET_ORGANIZATION_LIMIT_HITS,
-  SET_ORGANIZATION_LIMIT_HITS,
   GET_RECOMMENDATIONS_DOWNLOAD_OPTIONS,
   SET_RECOMMENDATIONS_DOWNLOAD_OPTIONS,
   GET_GLOBAL_POOL_POLICIES,
@@ -243,8 +241,6 @@ import {
   SET_BI_EXPORT,
   DELETE_BI_EXPORT,
   UPDATE_BI_EXPORT,
-  GET_RELEVANT_FLAVORS,
-  SET_RELEVANT_FLAVORS,
   SET_ORGANIZATION_CLOUD_RESOURCES,
   SET_ORGANIZATION_GEMINIS,
   CREATE_ORGANIZATION_GEMINI,
@@ -1747,19 +1743,6 @@ export const getDailyExpensesBreakdown = (organizationId, params) =>
     params
   });
 
-export const getOrganizationLimitHits = (organizationId, params) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/organization_limit_hits`,
-    method: "GET",
-    label: GET_ORGANIZATION_LIMIT_HITS,
-    ttl: 5 * MINUTE,
-    hash: hashParams({ organizationId, ...params }),
-    onSuccess: handleSuccess(SET_ORGANIZATION_LIMIT_HITS),
-    params: {
-      constraint_id: params.constraintId
-    }
-  });
-
 export const getGlobalPoolPolicies = (organizationId, params) =>
   apiAction({
     url: `${API_URL}/organizations/${organizationId}/resource_policies`,
@@ -2522,17 +2505,6 @@ export const deleteBIExport = (biExportId) =>
     method: "DELETE",
     label: DELETE_BI_EXPORT,
     affectedRequests: [GET_ORGANIZATION_BI_EXPORT]
-  });
-
-export const getRelevantFlavors = (organizationId, params) =>
-  apiAction({
-    url: `${API_URL}/organizations/${organizationId}/relevant_flavors`,
-    method: "GET",
-    label: GET_RELEVANT_FLAVORS,
-    onSuccess: handleSuccess(SET_RELEVANT_FLAVORS),
-    hash: hashParams({ organizationId, params }),
-    ttl: 5 * MINUTE,
-    params
   });
 
 export const getS3DuplicatesOrganizationSettings = (organizationId) =>

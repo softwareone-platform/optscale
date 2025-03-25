@@ -279,13 +279,19 @@ class GcpReportImporter(BaseReportImporter):
 
         r_id_filters = distinct_filters.copy()
         r_id_filters['resource_id'] = {'$exists': True, '$ne': None}
-        resource_ids = self.mongo_raw.distinct('resource_id', r_id_filters)
+        resource_ids = list(x['_id'] for x in self.mongo_raw.aggregate([
+            {'$match': r_id_filters},
+            {'$group': {'_id': '$resource_id'}}
+        ]))
 
         r_hash_filters = distinct_filters.copy()
         r_hash_filters['$or'] = [{'resource_id': {'$exists': False}},
                                  {'resource_id': {'$eq': None}}]
         r_hash_filters['resource_hash'] = {'$exists': True}
-        resource_hashes = self.mongo_raw.distinct('resource_hash', r_hash_filters)
+        resource_hashes = list(x['_id'] for x in self.mongo_raw.aggregate([
+            {'$match': r_hash_filters},
+            {'$group': {'_id': '$resource_hash'}}
+        ]))
 
         LOG.info('Resources with ids count: %s', len(resource_ids))
         save_expenses(resource_ids, 'resource_id')

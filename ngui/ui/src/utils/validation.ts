@@ -19,6 +19,13 @@ export const costModelValueMaxFractionDigitsValidation = (value) => {
     : true;
 };
 
+export const maxFractionDigitsValidation = (maxFractionDigits: number) => (value: string) => {
+  const [, fractionDigits = ""] = value.split(".");
+  return fractionDigits.length > maxFractionDigits
+    ? intl.formatMessage({ id: "maxFractionDigits" }, { max: maxFractionDigits })
+    : true;
+};
+
 export const positiveInteger = (value) => {
   const valueAsNumber = Number(value);
   return Number.isInteger(valueAsNumber) && valueAsNumber > 0 ? true : intl.formatMessage({ id: "positiveInteger" });

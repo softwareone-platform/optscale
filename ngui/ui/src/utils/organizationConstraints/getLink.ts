@@ -1,5 +1,3 @@
-import Filters from "components/Filters";
-import { RESOURCE_FILTERS } from "components/Filters/constants";
 import { RESOURCES, RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME } from "urls";
 import {
   CLEAN_EXPENSES_BREAKDOWN_TYPES,
@@ -12,6 +10,7 @@ import {
   START_DATE_FILTER,
   TAGGING_POLICY
 } from "utils/constants";
+import { getFilters } from "./getFilters";
 
 const constraintTypeToResourcesBreakdownMap = {
   [EXPENSE_ANOMALY]: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
@@ -33,21 +32,7 @@ const getResourcesBreakdown = (
 ) => constraintTypeToResourcesBreakdownMap[type];
 
 const getFiltersParams = (constraint) => {
-  // Implicit filters might be returned in conditions, since they are excluded in available filters, e.g. tagging policies
-  const allFilters = {
-    ...constraint.filters,
-    ...(constraint.type === TAGGING_POLICY
-      ? Object.entries(constraint.definition?.conditions ?? {}).reduce(
-          (result, [key, value]) => ({ ...result, [key]: [value] }),
-          {}
-        )
-      : {})
-  };
-
-  const filtersInstance = new Filters({
-    filters: RESOURCE_FILTERS,
-    filterValues: allFilters
-  });
+  const filtersInstance = getFilters(constraint);
 
   return filtersInstance.toQueryParametersString();
 };

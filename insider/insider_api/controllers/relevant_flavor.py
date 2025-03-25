@@ -3,10 +3,11 @@ from botocore.exceptions import ClientError as AwsClientError
 from grpc._channel import _InactiveRpcError
 from pymongo import MongoClient
 from tools.optscale_exceptions.common_exc import (
-    NotFoundException, UnauthorizedException, WrongArgumentsException)
+    NotFoundException, WrongArgumentsException)
 from tools.cloud_adapter.clouds.azure import Azure
 from tools.cloud_adapter.exceptions import AuthorizationException
 from tools.cloud_adapter.clouds.aws import Aws
+from tools.cloud_adapter.clouds.gcp import Gcp
 from tools.cloud_adapter.clouds.nebius import Nebius, PLATFORMS
 from insider.insider_api.exceptions import Err
 from insider.insider_api.controllers.flavor import FlavorController
@@ -242,6 +243,80 @@ class AwsProvider(BaseProvider):
         return list(filter(lambda x: x.split('-')[0] == global_region, regions))
 
 
+class GcpProvider(BaseProvider):
+    REGION_CODES = {
+        'ap': ['asia', 'australia'],
+        'eu': ['europe'],
+        'ca': ['northamerica'],
+        'sa': ['southamerica'],
+        'af': ['africa']
+    }
+
+    def get_regions(self, global_region):
+        prefixes = [global_region]
+        region_codes = self.REGION_CODES.get(global_region)
+        if region_codes:
+            prefixes.extend(region_codes)
+        return list(filter(
+            lambda x: x.split('-')[0] in prefixes, self.cloud_adapter.regions))
+
+    def _extract_cpu(self, flavor):
+        return float(flavor['cpu_cores'])
+
+    def _extract_memory(self, flavor):
+        return float(flavor['ram_gb'])
+
+    @property
+    def cloud_adapter(self):
+        if self._cloud_adapter is None:
+            config = self._config_cl.read_branch('/service_credentials/gcp')
+            self._cloud_adapter = Gcp(config)
+        return self._cloud_adapter
+
+    def _format_flavor(self, obj, **kwargs):
+        cost = obj['price']
+        currency_conversion_rate = kwargs.get('currency_conversion_rate')
+        if currency_conversion_rate:
+            cost = cost * currency_conversion_rate
+        family = obj['family_description'] or obj['family']
+        return {
+            'cpu': self._extract_cpu(obj),
+            'memory': self._extract_memory(obj),
+            'instance_family': family,
+            'name': kwargs['name'],
+            'location': obj['region'],
+            'cost': cost,
+            'currency': kwargs['currency']
+        }
+
+    def get_gcp_prices(self, region, use_usd_price):
+        return self.cloud_adapter.get_instance_types_priced(
+            region, use_usd_price=use_usd_price)
+
+    def get_relevant_flavors(self, **kwargs):
+        result = []
+        regions = self.get_regions(kwargs['region'])
+        currency = kwargs.get('preferred_currency') or 'USD'
+        currency_conversion_rate = kwargs.get('currency_conversion_rate')
+        if not currency_conversion_rate:
+            currency = 'USD'
+        with CachedThreadPoolExecutor(self.mongo_client) as executor:
+            futures = []
+            for region in regions:
+                futures.append(executor.submit(
+                    self.get_gcp_prices, region, use_usd_price=True))
+            for f in futures:
+                res = f.result()
+                if not res:
+                    continue
+                for name, flavor in res.items():
+                    if self._check_flavor(flavor, **kwargs):
+                        result.append(self._format_flavor(
+                            flavor, name=name, currency=currency,
+                            currency_conversion_rate=currency_conversion_rate))
+        return result
+
+
 class NebiusProvider(BaseProvider):
     region_map = {'me': 'Israel'}
 
@@ -325,6 +400,7 @@ class RelevantFlavorProvider:
     __modules__ = {
         'azure_cnr': AzureProvider,
         'aws_cnr': AwsProvider,
+        'gcp_cnr': GcpProvider,
         'nebius': NebiusProvider
     }
 

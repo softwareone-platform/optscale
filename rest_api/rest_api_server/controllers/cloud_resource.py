@@ -23,8 +23,8 @@ from rest_api.rest_api_server.controllers.calendar_synchronization import (
     CalendarSynchronizationController)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.models import (
-    CloudAccount, Employee, Organization, Pool, ResourceConstraint, PoolPolicy,
-    ShareableBooking, CalendarSynchronization)
+    CloudAccount, Employee, Pool, ResourceConstraint, PoolPolicy,
+    ShareableBooking, CalendarSynchronization, PowerSchedule)
 from rest_api.rest_api_server.models.enums import (CloudTypes, ThresholdBasedTypes)
 from rest_api.rest_api_server.utils import (
     check_string_attribute, check_int_attribute, check_dict_attribute,
@@ -86,12 +86,22 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
         }
         return cloud_type_set_status_func_map.get(resource_type)
 
+    def _get_power_schedule(self, power_schedule_id):
+        return self.session.query(PowerSchedule.name).filter(
+            PowerSchedule.id == power_schedule_id,
+            PowerSchedule.deleted == 0
+        ).one_or_none()
+
     def get(self, item_id, include_deleted=False, **kwargs):
         result = self.list(include_deleted, _id=[item_id])
         if len(result) > 1:
             raise WrongArgumentsException(Err.OE0177, [])
         if len(result) == 1:
-            return result[0]
+            resource = result[0]
+            if 'power_schedule' in resource:
+                ps_name = self._get_power_schedule(resource['power_schedule'])
+                resource['power_schedule_name'] = ps_name[0] if ps_name else None
+            return resource
         raise NotFoundException(Err.OE0002, ['Resource', item_id])
 
     def delete_bookings(self, item_id):

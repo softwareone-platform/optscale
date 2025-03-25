@@ -3,11 +3,6 @@ import { useBreakdownBy } from "hooks/useBreakdownBy";
 import ResourcesCountBreakdownService from "services/ResourcesCountBreakdownService";
 import { DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME } from "urls";
 
-const getCountKeysSortedByAverageInDescendingOrder = (counts) =>
-  Object.entries(counts)
-    .sort(([, { average: averageA }], [, { average: averageB }]) => averageB - averageA)
-    .map(([name]) => name);
-
 const ResourceCountBreakdownContainer = ({ requestParams }) => {
   const { useGet } = ResourcesCountBreakdownService();
 
@@ -15,25 +10,15 @@ const ResourceCountBreakdownContainer = ({ requestParams }) => {
     queryParamName: DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME
   });
 
-  const {
-    isGetResourceCountBreakdownLoading,
-    data: { breakdown = {}, counts = {} }
-  } = useGet(breakdownByValue, requestParams);
-
-  const countKeysSortedByTotalInDescendingOrder = getCountKeysSortedByAverageInDescendingOrder(counts);
+  const { isGetResourceCountBreakdownLoading, data } = useGet(breakdownByValue, requestParams);
 
   return (
     <ResourceCountBreakdown
-      breakdown={breakdown}
-      counts={counts}
+      resourceCountBreakdown={data}
       breakdownByValue={breakdownByValue}
       onBreakdownByChange={onBreakdownByChange}
-      countKeys={countKeysSortedByTotalInDescendingOrder}
       isLoading={isGetResourceCountBreakdownLoading}
-      appliedRange={{
-        startSecondsTimestamp: Number(requestParams.startDate),
-        endSecondsTimestamp: Number(requestParams.endDate)
-      }}
+      showTable
     />
   );
 };

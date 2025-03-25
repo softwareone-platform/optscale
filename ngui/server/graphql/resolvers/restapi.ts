@@ -82,6 +82,49 @@ const resolvers: Resolvers = {
     ) => {
       return dataSources.restapi.getOrganizationPerspectives(organizationId);
     },
+    organizationConstraint: async (_, { constraintId }, { dataSources }) => {
+      return dataSources.restapi.getOrganizationConstraint(constraintId);
+    },
+    resourceCountBreakdown: async (
+      _,
+      { organizationId, params },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.getResourceCountBreakdown(
+        organizationId,
+        params
+      );
+    },
+    expensesDailyBreakdown: async (
+      _,
+      { organizationId, params },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.getExpensesDailyBreakdown(
+        organizationId,
+        params
+      );
+    },
+    organizationLimitHits: async (
+      _,
+      { organizationId, constraintId },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.getOrganizationLimitHits(
+        organizationId,
+        constraintId
+      );
+    },
+    relevantFlavors: async (
+      _,
+      { organizationId, requestParams },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.getRelevantFlavors(
+        organizationId,
+        requestParams
+      );
+    },
   },
   Mutation: {
     createDataSource: async (

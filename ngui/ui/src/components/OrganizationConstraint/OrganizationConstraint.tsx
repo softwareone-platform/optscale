@@ -5,7 +5,7 @@ import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import { Skeleton, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { FormattedMessage, FormattedNumber } from "react-intl";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import AnomaliesFilters from "components/AnomaliesFilters";
 import DetectedConstraintsHistory from "components/DetectedConstraintsHistory";
@@ -32,6 +32,7 @@ import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import { MPT_SPACING_2, SPACING_2 } from "../../utils/layouts";
 import SlicedText from "../SlicedText";
+import BreakdownChart from "./BreakdownChart";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
 
 const ConstraintName = ({ id, name }) => {
@@ -164,6 +165,8 @@ const OrganizationConstraint = ({
   limitHits,
   isLoadingProps = {}
 }) => {
+  const { anomalyId } = useParams();
+
   const navigate = useNavigate();
 
   const openSideModal = useOpenSideModal();
@@ -234,6 +237,7 @@ const OrganizationConstraint = ({
           </Box>
           {limitHits.length > 0 && (
             <Box className={"MTPBoxShadow"}>
+              {anomalyId && <BreakdownChart constraint={constraint} isGetConstraintLoading={isGetConstraintLoading} />}
               <DetectedConstraintsHistory
                 constraint={constraint}
                 limitHits={limitHits}

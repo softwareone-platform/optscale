@@ -194,20 +194,29 @@ class OrganizationController(BaseController, ClickHouseMixin):
             self.create_report_subscriptions(organization.id)
         return organization
 
-    def root_organizations_list(self, token):
+    def _apply_limit_offset(self, query, limit=0, offset=0):
+        query = query.order_by(self.model_type.created_at)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        return query
+
+    def root_organizations_list(self, token, limit=0, offset=0):
         assignments = self._get_assignments_by_token(token)
         resource_ids = list(map(
             lambda x: x['assignment_resource'], assignments))
-        result = self.session.query(self.model_type).filter(
+        query = self.session.query(self.model_type).filter(
             and_(
                 self.model_type.deleted.is_(False),
                 self.model_type.id.in_(resource_ids)
             )
-        ).all()
-        return result
+        )
+        query = self._apply_limit_offset(query, limit, offset)
+        return query.all()
 
     def get_org_list(self, is_demo=False, with_shareable_bookings=False,
-                     with_connected_accounts=False):
+                     with_connected_accounts=False, limit=0, offset=0):
         organizations_query = self.session.query(self.model_type).filter(
             and_(
                 self.model_type.deleted.is_(False),
@@ -227,6 +236,8 @@ class OrganizationController(BaseController, ClickHouseMixin):
                     CloudAccount.deleted.is_(False)
                 )
             )
+        organizations_query = self._apply_limit_offset(organizations_query,
+                                                       limit, offset)
         return organizations_query.all()
 
     @staticmethod

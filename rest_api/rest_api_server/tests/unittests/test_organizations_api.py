@@ -1,5 +1,6 @@
 import time
 import uuid
+from freezegun import freeze_time
 from cryptography.fernet import Fernet
 from unittest.mock import patch, ANY, call, PropertyMock
 from rest_api.rest_api_server.models.db_base import BaseDB
@@ -8,6 +9,7 @@ from rest_api.rest_api_server.models.models import (
     CloudTypes, OrganizationConstraint, OrganizationLimitHit, OrganizationBI)
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 from sqlalchemy import and_
+from datetime import datetime, timedelta
 
 
 class TestOrganizationApi(TestApiBase):
@@ -256,6 +258,9 @@ class TestOrganizationApi(TestApiBase):
         _, organization_list = self.client.organization_list()
         self.assertEqual(len(organization_list['organizations']), 2)
 
+        _, organization_list = self.client.organization_list({'limit': 1})
+        self.assertEqual(len(organization_list['organizations']), 1)
+
     def test_event_organization(self):
         p_publish_activities = patch(
             'rest_api.rest_api_server.controllers.base.BaseController.'
@@ -346,19 +351,38 @@ class TestOrganizationApi(TestApiBase):
            'OrganizationAsyncCollectionHandler.check_cluster_secret',
            return_value=True)
     def test_get_org_list_with_secret(self, p_check):
-        code, org1 = self.client.organization_create({'name': 'org1'})
-        self.assertEqual(code, 201)
-        code, org2 = self.client.organization_create({'name': 'org2'})
-        self.assertEqual(code, 201)
-        code, org3 = self.client.organization_create({'name': 'org3'})
-        self.assertEqual(code, 201)
-        code, org4 = self.client.organization_create({'name': 'org4'})
-        self.assertEqual(code, 201)
+        dt1 = datetime.now() + timedelta(seconds=1)
+        dt2 = dt1 + timedelta(seconds=1)
+        dt3 = dt2 + timedelta(seconds=1)
+        dt4 = dt3 + timedelta(seconds=1)
+        with freeze_time(dt3):
+            code, org3 = self.client.organization_create({'name': 'org3'})
+            self.assertEqual(code, 201)
+        with freeze_time(dt4):
+            code, org4 = self.client.organization_create({'name': 'org4'})
+            self.assertEqual(code, 201)
+        with freeze_time(dt1):
+            code, org1 = self.client.organization_create({'name': 'org1'})
+            self.assertEqual(code, 201)
+        with freeze_time(dt2):
+            code, org2 = self.client.organization_create({'name': 'org2'})
+            self.assertEqual(code, 201)
         self.delete_organization(org4['id'])
         code, org_list = self.client.organization_list()
         self.assertEqual(code, 200)
         self.assertCountEqual(org_list['organizations'],
                               [self.root, self.organization, org1, org2, org3])
+        # def test pagination
+        for params, expected_orgs in [
+            ({'limit': 1, 'offset': 2}, [org1['id']]),
+            ({'offset': 2}, [org1['id'], org2['id'], org3['id']]),
+            ({'offset': 5}, [])
+        ]:
+            code, org_list = self.client.organization_list(params)
+            self.assertEqual(code, 200)
+            self.assertEqual(len(org_list['organizations']), len(expected_orgs))
+            for x in org_list['organizations']:
+                self.assertTrue(x['id'] in expected_orgs)
 
     @patch('rest_api.rest_api_server.handlers.v2.organizations.'
            'OrganizationAsyncCollectionHandler.check_cluster_secret',

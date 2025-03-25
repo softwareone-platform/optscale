@@ -15,6 +15,19 @@ class TestRelevantFlavorsApi(TestApiBase):
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OE0217')
 
+    def test_negative_conversion_rate(self):
+        code, resp = self.client.get_relevant_flavors(
+            'aws_cnr', 'af', currency_conversion_rate=-1,
+            preferred_currency='EUR')
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OE0446')
+
+        code, resp = self.client.get_relevant_flavors(
+            'aws_cnr', 'af', currency_conversion_rate=0,
+            preferred_currency='EUR')
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OE0446')
+
     def test_invalid_cloud_type(self):
         code, resp = self.client.get_relevant_flavors(
             self.org['id'], 'af', cloud_type='ss')
@@ -27,7 +40,8 @@ class TestRelevantFlavorsApi(TestApiBase):
         self.verify_error_code(resp, 'OE0436')
 
     def test_invalid_params(self):
-        for p in ['min_cpu', 'max_cpu', 'min_ram', 'max_ram']:
+        for p in ['min_cpu', 'max_cpu', 'min_ram', 'max_ram',
+                  'currency_conversion_rate']:
             body = {p: 'test'}
             code, resp = self.client.get_relevant_flavors(
                 self.org['id'], 'af', cloud_type='aws_cnr', **body)

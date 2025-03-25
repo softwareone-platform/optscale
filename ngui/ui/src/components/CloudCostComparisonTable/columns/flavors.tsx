@@ -11,7 +11,7 @@ import QuestionMark from "components/QuestionMark";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import Tooltip from "components/Tooltip";
 import { useIsSizeSelected, useSelectionActions } from "reducers/cloudCostComparisonSelectedSizes/hooks";
-import { AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
+import { AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 
 const Flavor = ({ flavor }) => {
   const { addSize, removeSize } = useSelectionActions();
@@ -68,9 +68,7 @@ const Flavor = ({ flavor }) => {
         <FormattedMessage
           id="valuePerHour"
           values={{
-            value: (
-              <FormattedMoney value={cost} format={currency} type={FORMATTED_MONEY_TYPES.TINY} maximumFractionDigits={20} />
-            )
+            value: <FormattedMoney value={cost} format={currency} type={FORMATTED_MONEY_TYPES.TINY} maximumFractionDigits={4} />
           }}
         />
       </div>
@@ -107,6 +105,7 @@ const Header = ({ cloudType, error }) => {
           {
             [AWS_CNR]: <CloudLabel name={intl.formatMessage({ id: "aws" })} type={AWS_CNR} disableLink />,
             [AZURE_CNR]: <CloudLabel name={intl.formatMessage({ id: "azure" })} type={AZURE_CNR} disableLink />,
+            [GCP_CNR]: <CloudLabel name={intl.formatMessage({ id: "gcp" })} type={GCP_CNR} disableLink />,
             [NEBIUS]: <CloudLabel name={intl.formatMessage({ id: "nebius" })} type={NEBIUS} disableLink />
           }[cloudType]
         }

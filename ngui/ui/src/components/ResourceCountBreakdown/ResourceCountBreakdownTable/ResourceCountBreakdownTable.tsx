@@ -12,6 +12,7 @@ import TableCellActions from "components/TableCellActions";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import TextWithDate from "components/TextWithDate";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 
 const AVERAGE_APPROXIMATE_ZERO_THRESHOLD = 0.5;
 
@@ -29,7 +30,7 @@ const ResourceCountBreakdownTable = ({
   isLoading,
   onToggleResourceCountDisplay,
   onToggleAllResourceCountsDisplay,
-  resourceCountBreakdownChartDisplaySettings,
+  hiddenLines,
   breakdownBy
 }) => {
   const tableData = useMemo(() => getTotalBreakdownTableData(counts), [counts]);
@@ -90,21 +91,19 @@ const ResourceCountBreakdownTable = ({
       },
       {
         header: () => {
-          const showAll = Object.values(resourceCountBreakdownChartDisplaySettings).some((isVisible) => isVisible === false);
-
-          const { messageId, Icon } = showAll
+          const { messageId, Icon } = isEmptyArray(hiddenLines)
             ? {
-                messageId: "showAllBreakdown",
-                Icon: VisibilityOutlinedIcon
-              }
-            : {
                 messageId: "hideAllBreakdowns",
                 Icon: VisibilityOffOutlinedIcon
+              }
+            : {
+                messageId: "showAllBreakdown",
+                Icon: VisibilityOutlinedIcon
               };
 
           return (
             <IconButton
-              onClick={() => onToggleAllResourceCountsDisplay(showAll)}
+              onClick={() => onToggleAllResourceCountsDisplay()}
               dataTestId="btn_toggle_all"
               tooltip={{
                 show: true,
@@ -117,7 +116,7 @@ const ResourceCountBreakdownTable = ({
         id: "actions",
         enableSorting: false,
         cell: ({ row: { original: { id } = {}, index } }) => {
-          const isLineVisible = resourceCountBreakdownChartDisplaySettings[id];
+          const isLineVisible = !hiddenLines.includes(id);
           const { messageId, Icon } = isLineVisible
             ? {
                 messageId: "hideBreakdown",
@@ -145,13 +144,13 @@ const ResourceCountBreakdownTable = ({
       }
     ],
     [
-      appliedRange.endSecondsTimestamp,
       appliedRange.startSecondsTimestamp,
+      appliedRange.endSecondsTimestamp,
       colors,
+      breakdownBy,
+      hiddenLines,
       onToggleAllResourceCountsDisplay,
-      onToggleResourceCountDisplay,
-      resourceCountBreakdownChartDisplaySettings,
-      breakdownBy
+      onToggleResourceCountDisplay
     ]
   );
 

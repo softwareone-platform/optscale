@@ -38,6 +38,30 @@ class BreakdownExpensesAsyncHandler(BreakdownExpensesBaseAsyncHandler):
             enum: ['employee_id', 'pool_id', 'cloud_account_id',
                 'service_name', 'region', 'resource_type', 'k8s_node',
                 'k8s_namespace', 'k8s_service']
+        -   name: first_seen_gte
+            in: query
+            description: |
+                Timestamp in seconds resource first seen is greater then
+            required: false
+            type: integer
+        -   name: fist_seen_lte
+            in: query
+            description: |
+                Timestamp in seconds resource first seen is less then
+            required: false
+            type: integer
+        -   name: last_seen_gte
+            in: query
+            description: |
+                Timestamp in seconds resource first seen is greater then
+            required: false
+            type: integer
+        -   name: last_seen_lte
+            in: query
+            description: |
+                Timestamp in seconds resource last seen is less then
+            required: false
+            type: integer
         -   name: cloud_account_id
             in: query
             description: cloud account id

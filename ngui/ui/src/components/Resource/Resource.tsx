@@ -98,7 +98,9 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
     shareable = false,
     env_properties: environmentProperties = {},
     ssh_only: isSshRequired = false,
-    meta = {}
+    meta = {},
+    power_schedule: powerScheduleId,
+    power_schedule_name: powerScheduleName
   } = resource;
 
   const { cloud_console_link: cloudConsoleLink } = meta;
@@ -300,6 +302,8 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
             k8sNode={k8sNode}
             shareable={shareable}
             meta={meta}
+            powerScheduleId={powerScheduleId}
+            powerScheduleName={powerScheduleName}
           />
         </>
       )

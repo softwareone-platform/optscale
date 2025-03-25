@@ -572,7 +572,9 @@ class SupportedFiltersMixin(object):
         self.str_filters = [
             'name_like', 'cloud_resource_id_like'
         ]
-        self.int_filters = []
+        self.int_filters = [
+            'first_seen_gte', 'first_seen_lte', 'last_seen_gte',
+            'last_seen_lte']
 
 
 def _get_http_error_message(ex):

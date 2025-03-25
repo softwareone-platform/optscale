@@ -17,6 +17,6 @@ export type FormValues = {
 };
 
 export type CloudCostComparisonFiltersFormProps = {
-  defaultValues: FormValues;
   onSubmit: (formData: FormValues) => void;
+  isLoading?: boolean;
 };

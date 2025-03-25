@@ -338,6 +338,19 @@ const GET_EMPLOYEE_EMAILS = gql`
   }
 `;
 
+const GET_ORGANIZATION_CONSTRAINT = gql`
+  query GetOrganizationConstraint($constraintId: ID!) {
+    organizationConstraint(constraintId: $constraintId) {
+      id
+      name
+      type
+      definition
+      filters
+      last_run_result
+    }
+  }
+`;
+
 const UPDATE_EMPLOYEE_EMAILS = gql`
   mutation UpdateEmployeeEmails($employeeId: ID!, $params: UpdateEmployeeEmailsInput!) {
     updateEmployeeEmails(employeeId: $employeeId, params: $params) {
@@ -346,6 +359,17 @@ const UPDATE_EMPLOYEE_EMAILS = gql`
       email_template
       enabled
       available_by_role
+    }
+  }
+`;
+
+const GET_RESOURCE_COUNT_BREAKDOWN = gql`
+  query GetResourceCountBreakdown($organizationId: ID!, $params: BreakdownParams) {
+    resourceCountBreakdown(organizationId: $organizationId, params: $params) {
+      breakdown
+      counts
+      start_date
+      end_date
     }
   }
 `;
@@ -393,6 +417,32 @@ const DELETE_DATA_SOURCE = gql`
   }
 `;
 
+const GET_EXPENSES_DAILY_BREAKDOWN = gql`
+  query GetExpensesDailyBreakdown($organizationId: ID!, $params: BreakdownParams) {
+    expensesDailyBreakdown(organizationId: $organizationId, params: $params) {
+      breakdown
+      counts
+    }
+  }
+`;
+
+const GET_ORGANIZATION_LIMIT_HITS = gql`
+  query GetOrganizationLimitHits($organizationId: ID!, $constraintId: ID!) {
+    organizationLimitHits(organizationId: $organizationId, constraintId: $constraintId) {
+      run_result
+      created_at
+      value
+      constraint_limit
+    }
+  }
+`;
+
+const GET_RELEVANT_FLAVORS = gql`
+  query RelevantFlavors($organizationId: ID!, $requestParams: JSONObject) {
+    relevantFlavors(organizationId: $organizationId, requestParams: $requestParams)
+  }
+`;
+
 export {
   CREATE_DATA_SOURCE,
   UPDATE_DATA_SOURCE,
@@ -415,5 +465,10 @@ export {
   UPDATE_EMPLOYEE_EMAIL,
   UPDATE_ORGANIZATION_THEME_SETTINGS,
   GET_ORGANIZATION_PERSPECTIVES,
-  UPDATE_ORGANIZATION_PERSPECTIVES
+  UPDATE_ORGANIZATION_PERSPECTIVES,
+  GET_ORGANIZATION_CONSTRAINT,
+  GET_RESOURCE_COUNT_BREAKDOWN,
+  GET_EXPENSES_DAILY_BREAKDOWN,
+  GET_ORGANIZATION_LIMIT_HITS,
+  GET_RELEVANT_FLAVORS
 };

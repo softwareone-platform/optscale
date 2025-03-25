@@ -12,6 +12,11 @@ import {
   QueryOrganizationPerspectivesArgs,
   QueryOrganizationFeaturesArgs,
   MutationUpdateOptscaleCapabilityArgs,
+  QueryOrganizationConstraintArgs,
+  QueryResourceCountBreakdownArgs,
+  QueryExpensesDailyBreakdownArgs,
+  QueryOrganizationLimitHitsArgs,
+  QueryEmployeeEmailsArgs,
 } from "../../graphql/resolvers/restapi.generated.js";
 
 class RestApiClient extends BaseClient {
@@ -108,7 +113,7 @@ class RestApiClient extends BaseClient {
     return dataSource;
   }
 
-  async getEmployeeEmails(employeeId: string) {
+  async getEmployeeEmails(employeeId: QueryEmployeeEmailsArgs["employeeId"]) {
     const path = `employees/${employeeId}/emails`;
 
     const emails = await this.get(path);
@@ -288,6 +293,96 @@ class RestApiClient extends BaseClient {
     organizationId: MutationDeleteOrganizationArgs["organizationId"]
   ) {
     return await this.delete(`organizations/${organizationId}`);
+  }
+
+  async getOrganizationConstraint(
+    constraintId: QueryOrganizationConstraintArgs["constraintId"]
+  ) {
+    const path = `organization_constraints/${constraintId}`;
+
+    const organizationConstraint = await this.get(path);
+
+    return organizationConstraint;
+  }
+
+  async getResourceCountBreakdown(
+    organizationId: QueryResourceCountBreakdownArgs["organizationId"],
+    params: QueryResourceCountBreakdownArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/resources_count`;
+
+    const stringParams = Object.fromEntries(
+      Object.entries(params).map(([key, value]) => [
+        key,
+        Array.isArray(value) ? value.map(String) : String(value),
+      ])
+    );
+
+    const urlSearchParams = new URLSearchParams(stringParams);
+
+    const resourceCountBreakdown = await this.get(
+      `${path}?${urlSearchParams.toString()}`
+    );
+
+    return resourceCountBreakdown;
+  }
+
+  async getExpensesDailyBreakdown(
+    organizationId: QueryExpensesDailyBreakdownArgs["organizationId"],
+    params: QueryExpensesDailyBreakdownArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/breakdown_expenses`;
+
+    const stringParams = Object.fromEntries(
+      Object.entries(params).map(([key, value]) => [
+        key,
+        Array.isArray(value) ? value.map(String) : String(value),
+      ])
+    );
+
+    const urlSearchParams = new URLSearchParams(stringParams);
+
+    const dailyExpensesBreakdown = await this.get(
+      `${path}?${urlSearchParams.toString()}`
+    );
+
+    return dailyExpensesBreakdown;
+  }
+
+  async getOrganizationLimitHits(
+    organizationId: QueryOrganizationLimitHitsArgs["organizationId"],
+    constraintId: QueryOrganizationLimitHitsArgs["constraintId"]
+  ) {
+    const path = `organizations/${organizationId}/organization_limit_hits?constraint_id=${constraintId}`;
+
+    const organizationLimitHits = await this.get(path);
+
+    return organizationLimitHits.organization_limit_hits;
+  }
+
+  async getRelevantFlavors(organizationId, requestParams) {
+    // Rewrite with utility function
+    const getParams = (params: Record<string, string | string[]>) => {
+      const urlParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value) && value.length > 0) {
+          value.forEach((datum) => {
+            urlParams.append(key, datum);
+          });
+        } else {
+          urlParams.append(key, value.toString());
+        }
+      });
+      return urlParams.toString();
+    };
+
+    const path = `organizations/${organizationId}/relevant_flavors?${getParams(
+      requestParams
+    )}`;
+
+    const flavors = await this.get(path);
+
+    return flavors;
   }
 }
 

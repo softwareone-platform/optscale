@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useIntl } from "react-intl";
@@ -110,62 +110,56 @@ const useLineData = (breakdown, countKeys) => {
   return topLines;
 };
 
-const useChartLinesDisplaySettings = (countKeys) => {
-  const [chartLinesDisplaySettings, setChartLinesDisplaySettings] = useState({});
-
-  const updateLineDisplaySettings = (key) => {
-    setChartLinesDisplaySettings((currentSettings) => ({
-      ...currentSettings,
-      [key]: !currentSettings[key]
-    }));
-  };
-
-  const updateAllLinesDisplaySettings = (isVisible) => {
-    setChartLinesDisplaySettings((currentSettings) =>
-      Object.fromEntries(Object.keys(currentSettings).map((key) => [key, isVisible]))
-    );
-  };
-
-  useEffect(() => {
-    const showAllLinesByDefault = () => Object.fromEntries(countKeys.map((key) => [key, true]));
-    setChartLinesDisplaySettings(showAllLinesByDefault());
-  }, [countKeys]);
-
-  return {
-    chartLinesDisplaySettings,
-    updateLineDisplaySettings,
-    updateAllLinesDisplaySettings
-  };
-};
+const getCountKeysSortedByAverageInDescendingOrder = (counts) =>
+  Object.entries(counts)
+    .sort(([, { average: averageA }], [, { average: averageB }]) => averageB - averageA)
+    .map(([name]) => name);
 
 const ResourceCountBreakdown = ({
-  countKeys,
+  resourceCountBreakdown,
   breakdownByValue,
   onBreakdownByChange,
-  counts,
-  breakdown,
-  appliedRange,
-  isLoading = false
+  isLoading = false,
+  showTable = false
 }) => {
-  const { chartLinesDisplaySettings, updateLineDisplaySettings, updateAllLinesDisplaySettings } =
-    useChartLinesDisplaySettings(countKeys);
+  const { breakdown = {}, start_date: startDate = 0, end_date: endDate = 0, counts = {} } = resourceCountBreakdown;
+
+  const appliedRange = {
+    startSecondsTimestamp: startDate,
+    endSecondsTimestamp: endDate
+  };
+
+  const countKeys = useMemo(() => getCountKeysSortedByAverageInDescendingOrder(counts), [counts]);
+
+  const [hiddenLines, setHiddenLines] = useState<string[]>([]);
+
+  useEffect(() => {
+    setHiddenLines([]);
+  }, [breakdown]);
 
   const { tableColors, chartColors } = useColors(countKeys);
 
-  const excludeHiddenResourceTypes = () => countKeys.filter((type) => chartLinesDisplaySettings[type]);
-
-  const lineData = useLineData(breakdown, excludeHiddenResourceTypes());
+  const lineData = useLineData(
+    breakdown,
+    countKeys.filter((key) => !hiddenLines.includes(key))
+  );
 
   const [withLegend, setWithLegend] = useSyncQueryParamWithState({
     queryParamName: "withLegend",
     possibleStates: [true, false],
-    defaultValue: "true"
+    defaultValue: true
   });
 
   return (
     <Stack spacing={SPACING_1}>
       <Box display="flex">
-        <BreakdownBy value={breakdownByValue} onChange={onBreakdownByChange} />
+        <BreakdownBy
+          value={breakdownByValue}
+          onChange={(newBreakdown) => {
+            setHiddenLines([]);
+            onBreakdownByChange(newBreakdown);
+          }}
+        />
         <ResourceCountBreakdownShowWeekendSwitch />
         <ChartLegendToggle checked={withLegend} onChange={setWithLegend} />
       </Box>
@@ -179,18 +173,33 @@ const ResourceCountBreakdown = ({
           dataTestId="resource_count_breakdown_chart"
         />
       </Box>
-      <Box>
-        <ResourceCountBreakdownTable
-          counts={counts}
-          colors={tableColors}
-          isLoading={isLoading}
-          appliedRange={appliedRange}
-          onToggleResourceCountDisplay={updateLineDisplaySettings}
-          onToggleAllResourceCountsDisplay={updateAllLinesDisplaySettings}
-          resourceCountBreakdownChartDisplaySettings={chartLinesDisplaySettings}
-          breakdownBy={breakdownByValue}
-        />
-      </Box>
+      {showTable && (
+        <Box>
+          <ResourceCountBreakdownTable
+            counts={counts}
+            colors={tableColors}
+            isLoading={isLoading}
+            appliedRange={appliedRange}
+            onToggleResourceCountDisplay={(key) => {
+              setHiddenLines((currentHiddenLines) =>
+                currentHiddenLines.includes(key)
+                  ? currentHiddenLines.filter((lineKey) => lineKey !== key)
+                  : [...currentHiddenLines, key]
+              );
+            }}
+            onToggleAllResourceCountsDisplay={() => {
+              setHiddenLines((currentHiddenLines) => {
+                if (currentHiddenLines.length === countKeys.length) {
+                  return [];
+                }
+                return countKeys;
+              });
+            }}
+            hiddenLines={hiddenLines}
+            breakdownBy={breakdownByValue}
+          />
+        </Box>
+      )}
     </Stack>
   );
 };

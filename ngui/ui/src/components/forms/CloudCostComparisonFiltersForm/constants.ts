@@ -1,4 +1,9 @@
-import { AWS_CNR, AZURE_CNR, NEBIUS } from "utils/constants";
+import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
+
+export const MIN_CPU = "1";
+export const MAX_CPU = "416";
+export const MIN_RAM = "0";
+export const MAX_RAM = "18432";
 
 export const FIELD_NAMES = Object.freeze({
   CLOUD_PROVIDER: "cloudProvider",
@@ -21,13 +26,17 @@ export const REGIONS = Object.freeze({
 });
 
 export const SUPPORTED_CLOUD_TYPES = [
-  { name: "aws", type: AWS_CNR } as const,
+  { name: "aws", type: AWS_CNR },
   {
     name: "azure",
     type: AZURE_CNR
-  } as const,
+  },
+  {
+    name: "gcp",
+    type: GCP_CNR
+  },
   {
     name: "nebius",
     type: NEBIUS
-  } as const
-];
+  }
+] as const;

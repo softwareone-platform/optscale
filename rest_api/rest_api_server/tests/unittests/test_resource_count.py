@@ -777,3 +777,117 @@ class TestResourcesCountApi(TestApiBase):
             self.org_id, self.day1, self.day2_inside, 'cloud_account_id')
         self.assertEqual(code, 200)
         self.assertEqual(res['count'], 3)
+
+    def test_resource_count_filter_by_first_seen(self):
+        day_in_month = datetime(2025, 1, 1)
+        time = int(day_in_month.timestamp())
+        resource1 = self._create_resource(
+            self.cloud_acc1['id'], name='res1', first_seen=time,
+            last_seen=time + 1)[0]
+        resource2 = self._create_resource(
+            self.cloud_acc1['id'], name='res2', first_seen=time - 1,
+            last_seen=time)[0]
+        expenses = [
+            {
+                'cost': 300,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 70,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource2['id'],
+            }
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+
+        filters = {'first_seen_lte': time - 1}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 1)
+
+        filters = {'first_seen_lte': time + 1}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 2)
+
+        filters = {'first_seen_gte': time - 1}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 2)
+
+        filters = {'first_seen_gte': time}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 1)
+
+    def test_resource_count_filter_by_last_seen(self):
+        day_in_month = datetime(2025, 1, 1)
+        time = int(day_in_month.timestamp())
+        resource1 = self._create_resource(
+            self.cloud_acc1['id'], name='res1', first_seen=time,
+            last_seen=time + 1)[0]
+        resource2 = self._create_resource(
+            self.cloud_acc1['id'], name='res2', first_seen=time - 1,
+            last_seen=time)[0]
+        expenses = [
+            {
+                'cost': 300,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 70,
+                'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource2['id'],
+            }
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+
+        filters = {'last_seen_lte': time}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 1)
+
+        filters = {'last_seen_lte': time + 1}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 2)
+
+        filters = {'last_seen_gte': time}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 2)
+
+        filters = {'last_seen_gte': time + 1}
+        code, response = self.client.resources_count_get(
+            self.org_id, time - 1, time + 1, 'cloud_account_id', filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['count'], 1)

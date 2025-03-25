@@ -1,6 +1,7 @@
 import { FormControl, Grid } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
-import Button from "components/Button";
+import ButtonLoader from "components/ButtonLoader";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { SPACING_1 } from "utils/layouts";
 import {
   CloudProviderField,
@@ -12,10 +13,13 @@ import {
   MaxRamField
 } from "./FormElements";
 import { CloudCostComparisonFiltersFormProps, FormValues } from "./types";
+import { getDefaultValues } from "./utils";
 
-const CloudCostComparisonFiltersForm = ({ defaultValues, onSubmit }: CloudCostComparisonFiltersFormProps) => {
+const CloudCostComparisonFiltersForm = ({ onSubmit, isLoading = false }: CloudCostComparisonFiltersFormProps) => {
+  const { currency } = useOrganizationInfo();
+
   const methods = useForm<FormValues>({
-    defaultValues
+    defaultValues: getDefaultValues({ currency })
   });
 
   const { handleSubmit } = methods;
@@ -48,7 +52,7 @@ const CloudCostComparisonFiltersForm = ({ defaultValues, onSubmit }: CloudCostCo
         </Grid>
         <div>
           <FormControl>
-            <Button type="submit" messageId="filter" color="primary" />
+            <ButtonLoader type="submit" messageId="filter" color="primary" isLoading={isLoading} />
           </FormControl>
         </div>
       </form>

@@ -4,6 +4,7 @@ WORKDIR /usr/src/app/
 ENV PYTHONPATH /usr/src/app/
 
 COPY optscale_client/config_client optscale_client/config_client
+COPY optscale_client/insider_client optscale_client/insider_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
 COPY tools/cloud_adapter tools/cloud_adapter
 COPY tools/optscale_time tools/optscale_time
