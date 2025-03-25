@@ -4,7 +4,7 @@ import { Locator, Page } from "@playwright/test";
  * Abstract class representing the base structure for all pages.
  */
 export abstract class BasePage {
-    page: Page;
+    readonly page: Page;
     readonly url: string;
     readonly main: Locator;
 

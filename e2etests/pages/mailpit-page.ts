@@ -17,16 +17,21 @@ export class MailpitPage extends BasePage {
         await this.page.locator(`//div[contains(text(), "${email}")]`).waitFor();
     }
 
-    // async clickFinOpsForCloudLink(): Promise<Page> {
-    //     const [newPage] = await Promise.all([
-    //         this.page.waitForEvent('popup'), // Playwright will catch the new page
-    //         this.page.frameLocator('#preview-html').getByRole('link', { name: 'Go to FinOps for Cloud' }).click(),
-    //     ]);
-    //     return newPage;
-    // }
-
     async waitForInviteLink(inviteLink: string): Promise<void> {
         await this.page.frameLocator('#preview-html').getByText(inviteLink).waitFor();
     }
+    async openEmailVerification(invitationEmail: string): Promise<Page> {
+        await this.page.goto('https://cloudspend.velasuci.com/mailpit/');
 
+        const popupPromise = this.page.waitForEvent('popup');
+
+        await this.page.getByRole('link', {
+            name: `From: To: ${invitationEmail} OptScale email verification FinOps`
+        }).click();
+
+        const iframe = await this.page.locator('#preview-html').contentFrame();
+        await iframe.getByRole('link', { name: 'Verify email' }).click();
+
+        return await popupPromise;
+    }
 }

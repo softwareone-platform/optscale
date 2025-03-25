@@ -1,6 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect, Page} from "@playwright/test";
 import {generateRandomEmail} from "../utils/random-data";
+import {EmailVerificationPage} from "../pages/email-verification-page";
 
 test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
     let invitationEmail: string
@@ -38,5 +39,12 @@ test.describe.only("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
             await registerPage.navigateToRegistration(inviteLink);
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
+
+        await test.step("Verify and accept invitation from email", async () => {
+            const popupPage = await mailpitPage.openEmailVerification(invitationEmail);
+            const emailVerificationPage = new EmailVerificationPage(popupPage);
+            await emailVerificationPage.acceptInviteFlow();
+        });
+        
     });
 });
