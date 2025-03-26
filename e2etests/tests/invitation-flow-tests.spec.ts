@@ -69,14 +69,14 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
         });
     });
 
-    test.only("Invite new user to organisation, but user declines", async ({
-                                                       header,
-                                                       mainMenu,
-                                                       usersPage,
-                                                       usersInvitePage,
-                                                       registerPage,
-                                                       pendingInvitationsPage
-                                                   }) => {
+    test("Invite new user to organisation, but user declines", async ({
+                                                                          header,
+                                                                          mainMenu,
+                                                                          usersPage,
+                                                                          usersInvitePage,
+                                                                          registerPage,
+                                                                          pendingInvitationsPage
+                                                                      }) => {
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
             await usersPage.clickInviteBtn();
@@ -117,5 +117,94 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
         await test.step("Assert no pending invitations message", async () => {
             await expect(pendingInvitationsPage.noPendingInvitationsMessage).toBeVisible();
         });
+    });
+
+    test.only("Invite new user to organisation, who has previously declined", async ({
+                                                                                         header,
+                                                                                         loginPage,
+                                                                                         mainMenu,
+                                                                                         usersPage,
+                                                                                         usersInvitePage,
+                                                                                         registerPage,
+                                                                                         pendingInvitationsPage
+                                                                                     }) => {
+        test.slow();
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a new user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail);
+            await usersInvitePage.userInvitedAlert.waitFor();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("Sign up user", async () => {
+            await registerPage.navigateToRegistration(inviteLink);
+            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
+        });
+
+        await test.step("Verify email", async () => {
+            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
+            await mailpitPage.page.bringToFront();
+            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
+        });
+        await test.step("Verify and accept invitation from email", async () => {
+            await pendingInvitationsPage.page.goto(verifyUrl);
+            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.declineInviteFlow();
+        });
+
+        await test.step("Assert no pending invitations message", async () => {
+            await expect(pendingInvitationsPage.noPendingInvitationsMessage).toBeVisible();
+        });
+
+        await test.step("Sign out user", async () => {
+            await header.signOut();
+        })
+
+        await test.step("Log back in as admin", async () => {
+            await loginPage.loginWithoutNavigation(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        })
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a new user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail);
+            await usersInvitePage.userInvitedAlert.waitFor();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("View invitation email in mailpit", async () => {
+            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
+            await mailpitPage.page.bringToFront();
+            await mailpitPage.clickInvitationEmail(invitationEmail);
+            await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
+        });
+
+        await test.step("Login as new user", async () => {
+            await registerPage.navigateToRegistration(inviteLink);
+            await registerPage.page.bringToFront();
+            await registerPage.clickAlreadyHaveAccountLink();
+            await loginPage.loginWithPreFilledEmail(process.env.Default_USER_PASSWORD);
+        });
+
+        await test.step("Accept invitation", async () => {
+            await pendingInvitationsPage.clickAcceptBtn();
+        });
+
+        await test.step("Assert organization", async () => {
+            await expect(header.organizationSelect).toContainText("QA Test Organization");
+        });
+
     });
 });

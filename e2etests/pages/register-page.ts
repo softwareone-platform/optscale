@@ -10,6 +10,7 @@ export class RegisterPage extends BasePage {
     readonly passwordInput: Locator;
     readonly confirmPasswordInput: Locator;
     readonly registerBtn: Locator;
+    readonly alreadyHaveAccountLink: Locator;
 
     /**
      * Initializes a new instance of the RegisterPage class.
@@ -21,6 +22,7 @@ export class RegisterPage extends BasePage {
         this.passwordInput = this.page.getByTestId('input_pass');
         this.confirmPasswordInput = this.page.getByTestId('input_conf_pass');
         this.registerBtn = this.page.getByTestId('btn_register');
+        this.alreadyHaveAccountLink = this.main.getByRole("link", {name: "Already have an account? Sign in"});
     }
 
     /**
@@ -43,5 +45,9 @@ export class RegisterPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.confirmPasswordInput.fill(password);
         await this.registerBtn.click();
+    }
+
+    async clickAlreadyHaveAccountLink() {
+        await this.alreadyHaveAccountLink.click();
     }
 }

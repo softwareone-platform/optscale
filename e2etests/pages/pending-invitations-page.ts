@@ -44,4 +44,8 @@ export class PendingInvitationsPage extends BasePage {
         await this.proceedToFinOpsBtn.click();
         await this.declineBtn.click();
     }
+
+    async clickAcceptBtn() {
+        await this.acceptBtn.click();
+    }
 }

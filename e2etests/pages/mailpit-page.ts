@@ -31,7 +31,7 @@ export class MailpitPage extends BasePage {
      * @returns {Promise<void>}
      */
     async clickInvitationEmail(email: string) {
-        await this.page.locator(`//div[contains(text(), "${email}")]`).click();
+        await this.page.locator(`//div[contains(text(), "${email}")]`).first().click();
     }
 
     /**
