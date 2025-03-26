@@ -7,8 +7,6 @@ export function safeWriteJsonFile(path: string, data: any) {
   if (!fs.existsSync(path)) {
     throw new Error(`❌ File does not exist after write: ${path}`);
   }
-
-  console.log(`✅ Successfully wrote file: ${path}`);
 }
 
 export function safeReadJsonFile<T = any>(path: EStorageState): T {

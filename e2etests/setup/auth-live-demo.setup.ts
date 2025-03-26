@@ -30,6 +30,5 @@ setup('Login as live demo user', async ({ page }) => {
     };
 
     safeWriteJsonFile(storageStatePath, modifiedState);
-    console.log(`✅ Storage state written to: ${storageStatePath}`);
   });
 });
