@@ -3,7 +3,7 @@ import {expect, Page} from "@playwright/test";
 import {generateRandomEmail} from "../utils/random-data";
 import {MailpitPage} from "../pages/mailpit-page";
 
-test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
+test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
     let invitationEmail: string;
     let inviteLink: string;
     let mailpitPage: MailpitPage;
@@ -19,7 +19,7 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
     });
 
-    test("Invite new user to organisation", async ({
+    test("Invite new user to organisation, user accepts", async ({
                                                        header,
                                                        mainMenu,
                                                        usersPage,
@@ -108,7 +108,7 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
             await mailpitPage.page.bringToFront();
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
         });
-        await test.step("Verify and accept invitation from email", async () => {
+        await test.step("Verify and decline invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
             await pendingInvitationsPage.page.bringToFront();
             await pendingInvitationsPage.declineInviteFlow();
@@ -119,7 +119,7 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
         });
     });
 
-    test.only("Invite new user to organisation, who has previously declined", async ({
+    test("Invite new user to organisation, who has previously declined", async ({
                                                                                          header,
                                                                                          loginPage,
                                                                                          mainMenu,
@@ -153,7 +153,7 @@ test.describe("MPT-8230 Invitation Flow Tests @invitation-flow", () => {
             await mailpitPage.page.bringToFront();
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
         });
-        await test.step("Verify and accept invitation from email", async () => {
+        await test.step("Verify and decline invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
             await pendingInvitationsPage.page.bringToFront();
             await pendingInvitationsPage.declineInviteFlow();
