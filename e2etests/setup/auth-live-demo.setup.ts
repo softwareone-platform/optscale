@@ -9,7 +9,7 @@ setup('Login as live demo user', async ({ page }) => {
   });
 
   await setup.step('Fill User Email and Proceed', async () => {
-    const email = process.env.DEFAULT_USER_EMAIL || 'demo@user.com';
+    const email = process.env.DEFAULT_USER_EMAIL || 'FinOpsTest1@outlook.com';
 
     await injectLocalforage(page);
 
