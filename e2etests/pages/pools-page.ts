@@ -41,7 +41,7 @@ export class PoolsPage extends BasePage {
   async setupApiInterceptions(): Promise<void> {
     const apiInterceptions: IInterceptorConfig[] = [
       {page: this.page, urlPattern: `v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolResponse},
-      {page: this.page, urlPattern: `v2/allowed_actions?pool=`, mockResponse: AllowedActionsPoolResponse},
+      {page: this.page, urlPattern: `v2/allowed_actions\\?pool=[^&]+.*`, mockResponse: AllowedActionsPoolResponse},
     ];
 
     await Promise.all(apiInterceptions.map(interceptApiRequest));
@@ -51,7 +51,7 @@ export class PoolsPage extends BasePage {
    * Clicks the Expand Requiring Attention button.
    * @returns {Promise<void>}
    */
-  async clickExpandRequiringAttentionBtn() {
+  async clickExpandRequiringAttentionBtn(): Promise<void> {
     await this.expandRequiringAttentionBtn.click();
   }
 }
