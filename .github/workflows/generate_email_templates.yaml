@@ -24,8 +24,8 @@ jobs:
       - name: Run Email Generation Script
         run: node tools/custom_email_templates/generateEmails.js
 
-      - name: Upload Generated Templates
-        uses: actions/upload-artifact@v3
-        with:
-          name: email_templates
-          path: email_templates
+#      - name: Upload Generated Templates
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: email_templates
+#          path: email_templates
