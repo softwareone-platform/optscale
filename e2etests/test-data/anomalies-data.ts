@@ -4,7 +4,7 @@ export const AnomaliesConstraintsResponse = {
             "deleted_at": 0,
             "id": "274c55fc-07b1-45fa-8721-26bc1f91b8f9",
             "created_at": 1694587419,
-            "name": "Marketing expenses",
+            "name": "E2EName expenses",
             "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
             "type": "expense_anomaly",
             "definition": {

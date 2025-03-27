@@ -1,6 +1,5 @@
 import { FullConfig } from '@playwright/test';
 import dotenv from "dotenv";
-import fs from "fs";
 
 async function globalSetup(config: FullConfig) {
     if (!config) console.error("No config found");
