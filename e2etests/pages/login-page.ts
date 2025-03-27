@@ -42,6 +42,7 @@ import {BasePage} from "./base-page";
                 await this.emailInput.fill(email);
                 await this.passwordInput.fill(password);
                 await this.loginBtn.click();
+                await this.loginBtn.waitFor({state: 'detached'});
             }
 
             async loginWithPreFilledEmail(password: string) {
