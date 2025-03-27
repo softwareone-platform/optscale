@@ -1,0 +1,29 @@
+name: Generate Email Templates
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-emails:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Email Generation Script
+        run: node tools/custom_email_templates/generateEmails.js
+
+      - name: Upload Generated Templates
+        uses: actions/upload-artifact@v3
+        with:
+          name: email_templates
+          path: email_templates
