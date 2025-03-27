@@ -32,7 +32,6 @@ export async function interceptApiRequest<T>({
                                                graphQlOperationName = undefined,
                                              }: IInterceptorConfig<T>): Promise<void> {
   const patternRegex = new RegExp(urlPattern);
-
   await page.route(patternRegex, async (route, request) => {
     if (request.method() === "POST" && graphQlOperationName) {
       try {

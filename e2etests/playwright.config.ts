@@ -2,10 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
-import {EStorageState} from "./utils/enums";
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
-
-const storageState = EStorageState.liveDemoUser;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -43,23 +40,23 @@ export default defineConfig({
         },
       },
 
-  /* Configure projects for major browsers */
   projects: [
     {name: "setup", testMatch: /.*\.setup\.ts/},
     {
       name: "chrome",
       use: {
         channel: "chrome",
-        storageState,
+        viewport: { width: 1920, height: 1080 }
       },
       dependencies: ["setup"],
-    }
-    //
+    },
     // {
     //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   use: {
+    //     browserName: "firefox",
+    //   },
+    //   dependencies: ["setup"],
     // },
-    //
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },

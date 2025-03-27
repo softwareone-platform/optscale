@@ -1,11 +1,15 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 import {setLocalforageRoot} from "../utils/localforage-auth";
+import {EStorageState} from "../utils/enums";
 
 /**
  * These tests are designed as regression tests to ensure the SWO Finops UI customisation is not broken by merges
  * with Hystax code.
  */
+
+test.use({ storageState: EStorageState.liveDemoUser });
+
 test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', () => {
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
@@ -102,6 +106,7 @@ test.describe.only('MPT-7367 Cloudspend screenshot tests @swo_customisation', ()
                                                                     resourceDetailsPage
                                                                   }) => {
     await test.step('Set up test data', async () => {
+      await resourcesPage.setupApiInterceptions();
       await resourceDetailsPage.setupApiInterceptions();
     });
 
