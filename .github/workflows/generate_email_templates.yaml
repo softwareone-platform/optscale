@@ -1,7 +1,9 @@
 name: Generate Email Templates
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - 'feature/MPT-8039/email-templates-update'
 
 jobs:
   generate-emails:
