@@ -18,8 +18,8 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Dependencies
-        run: npm install
+#      - name: Install Dependencies
+#        run: npm install
 
       - name: Run Email Generation Script
         run: node tools/custom_email_templates/generateEmails.js
