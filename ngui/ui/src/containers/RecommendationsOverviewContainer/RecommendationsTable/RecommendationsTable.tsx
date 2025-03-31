@@ -71,9 +71,6 @@ const RecommendationsTable = ({
         <Table
           data={tableData}
           columns={columns}
-          counters={{
-            show: false
-          }}
         />
       )}
     </Box>
