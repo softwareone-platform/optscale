@@ -83,7 +83,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
             overflowWrap: "anywhere"
           }}
         >
-          <span style={{ fontWeight: isBoldKeyLabel ? "bold" : "normal" }}>
+          <span style={{ fontWeight: isBoldKeyLabel ? "bold" : "normal", display: "flex" }}>
             {renderKey()}
             {<>:&nbsp;</>}
           </span>
