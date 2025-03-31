@@ -1,8 +1,8 @@
-import {useMemo} from "react";
-import {Box} from "@mui/material";
+import { useMemo } from "react";
+import { Box } from "@mui/material";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
-import {possibleMonthlySavings, text} from "utils/columns";
+import { possibleMonthlySavings, text } from "utils/columns";
 import Actions from "../Actions";
 import actions from "./columns/actions";
 import buttonLink from "./columns/buttonLink";
@@ -10,14 +10,14 @@ import services from "./columns/services";
 import status from "./columns/status";
 
 const RecommendationsTable = ({
-                                isLoading,
-                                recommendations = [],
-                                downloadLimit,
-                                onRecommendationClick,
-                                isDownloadAvailable,
-                                isGetIsDownloadAvailableLoading,
-                                selectedDataSourceIds
-                              }) => {
+  isLoading,
+  recommendations = [],
+  downloadLimit,
+  onRecommendationClick,
+  isDownloadAvailable,
+  isGetIsDownloadAvailableLoading,
+  selectedDataSourceIds
+}) => {
   const tableData = useMemo(
     () =>
       recommendations.map((r) => ({
@@ -38,18 +38,18 @@ const RecommendationsTable = ({
         headerDataTestId: "recommendation-name-header",
         accessorKey: "title",
         onClick: ({
-                    row: {
-                      original: {recommendation}
-                    }
-                  }) => onRecommendationClick(recommendation)
+          row: {
+            original: { recommendation }
+          }
+        }) => onRecommendationClick(recommendation)
       }),
-      status({headerDataTestId: "status-header", accessorKey: "status"}),
-      text({headerDataTestId: "items-count-header", headerMessageId: "items", accessorKey: "items"}),
-      possibleMonthlySavings({headerDataTestId: "savings-header", accessorKey: "saving"}),
-      services({headerDataTestId: "services-header", accessorKey: "services"}),
+      status({ headerDataTestId: "status-header", accessorKey: "status" }),
+      text({ headerDataTestId: "items-count-header", headerMessageId: "items", accessorKey: "items" }),
+      possibleMonthlySavings({ headerDataTestId: "savings-header", accessorKey: "saving" }),
+      services({ headerDataTestId: "services-header", accessorKey: "services" }),
       actions({
         headerDataTestId: "actions-header",
-        cell: ({row: {original}}) => (
+        cell: ({ row: { original } }) => (
           <Actions
             downloadLimit={downloadLimit}
             recommendation={original.recommendation}
@@ -64,7 +64,7 @@ const RecommendationsTable = ({
   );
 
   return (
-    <Box sx={{width: "100%"}} className="MuiBox-WhiteCard">
+    <Box sx={{ width: "100%" }} className="MuiBox-WhiteCard">
       {isLoading ? <TableLoader columnsCounter={columns.length} /> : <Table data={tableData} columns={columns} />}
     </Box>
   );
