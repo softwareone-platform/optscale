@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_BRAND_TYPE, MPT_GRAY_3, MPT_SPACING_1 } from "../../utils/layouts";
+import {MPT_BRAND_PRIMARY, MPT_BRAND_TYPE, MPT_GRAY_3, MPT_SPACING_1} from "../../utils/layouts";
 
 const useStyles = makeStyles()(() => ({
   dashed: {
@@ -23,7 +23,9 @@ const useStyles = makeStyles()(() => ({
   },
   cursorPointer: {
     "&:hover": {
-      cursor: "pointer"
+      cursor: "pointer",
+      background: "transparent",
+      borderColor: MPT_BRAND_PRIMARY
     }
   },
   right: {
