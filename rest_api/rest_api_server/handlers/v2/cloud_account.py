@@ -173,6 +173,18 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             type: boolean
             description: Show only cloud accounts with enabled recommendations
             required: false
+        -   name: limit
+            in: query
+            description: |
+                limit number of cloud accounts in response
+            required: false
+            type: integer
+        -   name: offset
+            in: query
+            description: |
+                offset for query selection
+            required: false
+            type: integer
         responses:
             200:
                 description: Cloud accounts list
@@ -289,12 +301,17 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             secure = True
             await self.check_permissions(
                 'INFO_ORGANIZATION', 'organization', organization_id)
+
+        limit = self.get_arg("limit", int, 0)
+        offset = self.get_arg("offset", int, 0)
         params = dict(
             organization_id=organization_id,
             details=self.get_arg('details', bool, False),
             secure=secure,
             only_linked=self.get_arg('only_linked', bool),
             type=self.get_arg('type', str),
+            limit=limit,
+            offset=offset,
         )
 
         auto_import = self.get_arg('auto_import', bool)
@@ -305,7 +322,15 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             params['process_recommendations'] = process_recommendations
 
         res = await run_task(self.controller.list, **params)
-        cloud_acc_dict = {'cloud_accounts': res}
+
+        cloud_accounts, total_count = res
+
+        cloud_acc_dict = {
+            'cloud_accounts': cloud_accounts,
+            'total_count': total_count,
+            'limit': limit,
+            'offset': offset,
+        }
         self.write(json.dumps(cloud_acc_dict, cls=ModelEncoder))
 
 

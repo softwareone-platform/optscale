@@ -684,8 +684,16 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         return CloudAccountController._get_cloud_expenses(
             expense_ctrl, start, end, cloud_acc_ids)
 
+    def _apply_limit_offset(self, query, limit=0, offset=0):
+        query = query.order_by(self.model_type.created_at)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        return query
+
     def list(self, details=False, secure=True, only_linked=None, type=None,
-             **kwargs):
+             limit=0, offset=0, **kwargs):
         organization_id = kwargs.get('organization_id')
         if organization_id:
             self._check_organization(kwargs['organization_id'])
@@ -703,6 +711,9 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         if len(kwargs) > 0:
             query = query.filter_by(**kwargs)
 
+        total_count = query.count()
+        query = self._apply_limit_offset(query, limit, offset)
+
         cloud_accounts = query.all()
 
         if only_linked:
@@ -713,7 +724,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             cloud_accounts = linked_accounts
 
         if not details:
-            return list(map(lambda x: x.to_dict(secure), cloud_accounts))
+            return list(map(lambda x: x.to_dict(secure), cloud_accounts)), total_count
 
         cloud_acc_ids = [x.id for x in cloud_accounts]
 
@@ -744,7 +755,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                 'last_month_cost': last_stats['cost'],
                 'discovery_infos': discovery_infos.get(acc.id, {})
             }
-        return list(result.values())
+        return list(result.values()), total_count
 
     def get_employee(self, user_id, org_id):
         return self.employee_ctrl.get_employee_by_user_and_organization(

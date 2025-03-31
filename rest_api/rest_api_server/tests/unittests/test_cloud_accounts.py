@@ -506,7 +506,15 @@ class TestCloudAccountApi(TestApiBase):
         code, cloud_acc_list = self.client.cloud_account_list(self.org_id)
         self.assertEqual(code, 200)
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 2)
+        self.assertEqual(cloud_acc_list["total_count"], 2)
         self.assertIsNone(cloud_acc_list['cloud_accounts'][0].get('resources'))
+
+        code, cloud_acc_list = self.client.cloud_account_list(self.org_id, limit=1, offset=0)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 1)
+        self.assertEqual(cloud_acc_list["total_count"], 2)
+        self.assertEqual(cloud_acc_list["limit"], 1)
+        self.assertEqual(cloud_acc_list["offset"], 0)
 
     def test_list_by_secret(self):
         code, cloud_acc = self.create_cloud_account(
@@ -514,14 +522,28 @@ class TestCloudAccountApi(TestApiBase):
             self.valid_aws_cloud_acc)
         self.assertEqual(code, 201)
 
+        cloud_acc_params2 = deepcopy(self.valid_aws_cloud_acc)
+        cloud_acc_params2['name'] = 'awesome cloud_acc'
+        code, cloud_acc2 = self.create_cloud_account(
+            self.org_id, cloud_acc_params2)
+        self.assertEqual(code, 201)
+
         code, ca_list = self.client.cloud_account_list(self.org_id)
         self.assertEqual(code, 200)
-        self.assertEqual(len(ca_list['cloud_accounts']), 1)
+        self.assertEqual(len(ca_list['cloud_accounts']), 2)
+        self.assertEqual(ca_list["total_count"], 2)
 
         self.assertDictEqual(
             self.valid_aws_cloud_acc['config'],
             ca_list['cloud_accounts'][0]['config']
         )
+
+        code, ca_list = self.client.cloud_account_list(self.org_id, limit=1, offset=0)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(ca_list['cloud_accounts']), 1)
+        self.assertEqual(ca_list["total_count"], 2)
+        self.assertEqual(ca_list["limit"], 1)
+        self.assertEqual(ca_list["offset"], 0)
 
     def test_verify_credentials(self):
         credentials = self.valid_aws_cloud_acc.copy()

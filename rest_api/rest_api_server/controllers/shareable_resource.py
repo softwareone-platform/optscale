@@ -155,7 +155,7 @@ class ShareableBookingController(BaseController, MongoMixin,
                 raise WrongArgumentsException(Err.OE0482, [])
 
     def contains_shareable_resource(self, organization_id):
-        cloud_accounts = CloudAccountController(
+        cloud_accounts, _ = CloudAccountController(
             self.session, self._config, self.token).list(
             organization_id=organization_id)
         cloud_acc_ids = list(x['id'] for x in cloud_accounts)
@@ -217,7 +217,7 @@ class ShareableBookingController(BaseController, MongoMixin,
         return instances_clusters, not_instances_clusters, already_shareable
 
     def _check_resources(self, organization_id, resource_ids):
-        cloud_accounts = CloudAccountController(
+        cloud_accounts, _ = CloudAccountController(
             self.session, self._config, self.token).list(
             organization_id=organization_id)
         cloud_accs = set(x['id'] for x in cloud_accounts)
@@ -462,7 +462,7 @@ class ShareableBookingController(BaseController, MongoMixin,
 
     def get_shareable_resources(self, organization_id):
         self.get_organization(organization_id)
-        cloud_accounts = CloudAccountController(
+        cloud_accounts, _ = CloudAccountController(
             self.session, self._config, self.token).list(
                 organization_id=organization_id)
         cloud_accounts_map = {ca['id']: ca for ca in cloud_accounts}

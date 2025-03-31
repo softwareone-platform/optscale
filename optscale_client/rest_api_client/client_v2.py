@@ -95,11 +95,12 @@ class Client(Client_v1):
 
     def cloud_account_list(self, org_id, details=False, auto_import=None,
                            type=None, only_linked=None,
-                           process_recommendations=None):
+                           process_recommendations=None, **kwargs):
         url = self.cloud_account_url(org_id=org_id) + self.query_url(
             details=details, auto_import=auto_import, type=type,
             only_linked=only_linked,
-            process_recommendations=process_recommendations
+            process_recommendations=process_recommendations,
+            **kwargs,
         )
         return self.get(url)
 
