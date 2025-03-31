@@ -321,6 +321,15 @@ const getThemeConfig = (settings = {}) => {
   const SKELETON_COLOR = getLighten(info.main, 0.8);
 
   return Object.freeze({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 1000,
+        lg: 1200,
+        xl: 1536
+      }
+    },
     typography: {
       fontFamily: "'Arial', sans-serif",
       mono: {
