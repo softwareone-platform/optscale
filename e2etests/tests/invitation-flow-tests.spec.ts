@@ -226,20 +226,26 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
     });
 
     test("Invitation is visible in Settings Tab", async ({
-                                                                          loginPage,
-                                                                          header,
-                                                                          mainMenu,
-                                                                          usersPage,
-                                                                          usersInvitePage,
-                                                                          registerPage,
-                                                                          settingsPage,
-                                                                          pendingInvitationsPage
-                                                                      }) => {
+                                                             loginPage,
+                                                             header,
+                                                             mainMenu,
+                                                             usersPage,
+                                                             usersInvitePage,
+                                                             registerPage,
+                                                             settingsPage,
+                                                             pendingInvitationsPage
+                                                         }) => {
         test.slow();
 
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
             await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Verify no pending invitations in Settings tab", async () => {
+            await mainMenu.clickSettings();
+            await settingsPage.clickInvitationsTab();
+            await expect(settingsPage.page.getByText("No invitations pending")).toBeVisible();
         });
 
         await test.step("Invite a new user to the organisation", async () => {
@@ -307,3 +313,98 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         });
     });
 });
+
+test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+    let invitationEmail: string;
+    let inviteLink: string;
+    let mailpitPage: MailpitPage;
+    let verifyUrl: string;
+
+    test.beforeEach('Login admin user', async ({loginPage, context}) => {
+        invitationEmail = generateRandomEmail();
+        inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
+
+        const mailpitTab = await context.newPage();
+        mailpitPage = new MailpitPage(mailpitTab);
+        await loginPage.page.bringToFront();
+        await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+    });
+
+    test("Invite existing user with a new role", async ({
+                                                                                    header,
+                                                                                    loginPage,
+                                                                                    mainMenu,
+                                                                                    usersPage,
+                                                                                    usersInvitePage,
+                                                                                    registerPage,
+                                                                                    settingsPage,
+                                                                                    pendingInvitationsPage
+                                                                                }) => {
+        test.slow();
+
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a new user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail);
+            await usersInvitePage.userInvitedAlert.waitFor();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("Sign up user", async () => {
+            await registerPage.navigateToRegistration(inviteLink);
+            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
+        });
+
+        await test.step("Verify email", async () => {
+            await mailpitPage.page.bringToFront();
+            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
+
+            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
+        });
+
+        await test.step("Verify and accept invitation from email", async () => {
+            await pendingInvitationsPage.page.goto(verifyUrl);
+            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.acceptInviteFlow();
+        });
+
+        await test.step("Sign out user", async () => {
+            await header.signOut();
+        })
+
+        await test.step("Log back in as admin", async () => {
+            await loginPage.loginWithoutNavigation(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        })
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a existing user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail, 'Organization manager');
+            await usersInvitePage.userInvitedAlert.waitFor();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("Login as new user", async () => {
+            await loginPage.loginWithoutNavigation(invitationEmail, process.env.DEFAULT_USER_PASSWORD);
+        });
+
+        await test.step("View invitation in Settings", async () => {
+            await settingsPage.navigateToURL(true);
+            await settingsPage.clickInvitationsTab();
+            await expect(settingsPage.page.getByText('● Manager of QA Test Organization organization')).toBeVisible();
+        });
+    });
+});
+
+

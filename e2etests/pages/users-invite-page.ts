@@ -48,7 +48,7 @@ export class UsersInvitePage extends BasePage {
             await this.selectFromComboBox(this.roleSelect, role);
             if(pool) {
                 await this.selectFromComboBox(this.poolSelect, pool);
-            } else throw new Error('Pool is required for role');
+            }
         }
         await this.page.waitForTimeout(1000);
         await this.inviteBtn.click();
