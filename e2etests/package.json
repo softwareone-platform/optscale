@@ -1,7 +1,7 @@
 {
-  "name": "optscale",
+  "name": "swo-optscale-e2e-tests",
   "version": "1.0.0",
-  "description": "<p align=\"center\">\r ⭐ Drop a star to support OptScale ⭐\r </p>",
+  "description": "E2E tests for optScale instance used by SWO",
   "main": "index.js",
 "scripts": {
   "playwright:show-report": "npx playwright show-report",

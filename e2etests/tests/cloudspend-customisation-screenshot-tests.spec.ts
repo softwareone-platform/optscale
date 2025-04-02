@@ -8,7 +8,7 @@ import {EStorageState} from "../utils/enums";
  * with Hystax code.
  */
 
-test.use({ storageState: EStorageState.liveDemoUser });
+test.use({storageState: EStorageState.liveDemoUser});
 
 test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () => {
 
@@ -82,6 +82,13 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
       await resourcesPage.waitForCanvas();
       await expect(resourcesPage.expensesBreakdownChart).toHaveScreenshot('Resources-expenses-chart-screenshot.png');
     });
+    await test.step('Verify Resources page breakdown by tags', async () => {
+      await resourcesPage.tagsBtn.click();
+      await resourcesPage.heading.hover();
+      await resourcesPage.tagsBreakdownChart.waitFor();
+      await resourcesPage.waitForCanvas();
+      await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
+    });
 
     await test.step('Verify Resources page breakdown by resource count', async () => {
       await resourcesPage.resourceCountBtn.click();
@@ -89,14 +96,6 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
       await resourcesPage.resourceCountBreakdownChart.waitFor();
       await resourcesPage.waitForCanvas();
       await expect(resourcesPage.resourceCountBreakdownChart).toHaveScreenshot('Resources-resource-count-chart-screenshot.png');
-    });
-
-    await test.step('Verify Resources page breakdown by tags', async () => {
-      await resourcesPage.tagsBtn.click();
-      await resourcesPage.heading.hover();
-      await resourcesPage.tagsBreakdownChart.waitFor();
-      await resourcesPage.waitForCanvas();
-      await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
     });
   })
 
@@ -126,7 +125,6 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
       await resourceDetailsPage.clickConstraintsTab();
       await resourceDetailsPage.heading.hover();
       await resourceDetailsPage.constraintsTable.waitFor();
-      // await resourceDetailsPage.page.waitForTimeout(50000)
       await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
     });
 

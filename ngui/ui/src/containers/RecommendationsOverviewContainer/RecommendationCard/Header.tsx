@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import SubTitle from "components/SubTitle";
 import TitleValue from "components/TitleValue";
 import { ERROR, SUCCESS, WARNING } from "../../../utils/constants";
-import { MPT_SPACING_3 } from "../../../utils/layouts";
+import { MPT_SPACING_2, MPT_SPACING_3 } from "../../../utils/layouts";
 import { useIsRecommendationPinned } from "../redux/pinnedRecommendations/hooks";
 import useStyles from "./Header.styles";
 
@@ -34,7 +34,7 @@ const Header = ({ recommendationType, color, title, subtitle, value, valueLabel 
           <div className={classes.titleText}>
             {renderIcon(color)}
 
-            <TitleValue component="h3" style={{ fontSize: "14px", fontWeight: "bold" }}>
+            <TitleValue component="h3" style={{ fontSize: MPT_SPACING_2, fontWeight: "bold" }}>
               {title}
             </TitleValue>
             {isPinned && (

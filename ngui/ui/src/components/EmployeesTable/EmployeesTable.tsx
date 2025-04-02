@@ -19,6 +19,7 @@ import JiraIcon from "icons/JiraIcon";
 import SlackIcon from "icons/SlackIcon";
 import { EMPLOYEES_INVITE } from "urls";
 import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES } from "utils/constants";
+import { MPT_GRAY_4 } from "../../utils/layouts";
 
 const EmployeeCell = ({ rowId, rowOriginal }) => {
   const {
@@ -34,7 +35,7 @@ const EmployeeCell = ({ rowId, rowOriginal }) => {
   const intl = useIntl();
 
   const caption = [
-    { caption: employeeId, key: "employeeId" },
+    { caption: <span style={{ color: MPT_GRAY_4 }}>{employeeId}</span>, key: "employeeId" },
     lastLogin !== undefined && {
       caption: `${intl.formatMessage({ id: "lastLogin" })}: ${
         lastLogin === 0 ? intl.formatMessage({ id: "never" }).toLocaleLowerCase() : formatTimeAgo(lastLogin, 1)

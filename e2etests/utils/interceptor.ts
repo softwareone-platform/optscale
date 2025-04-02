@@ -6,15 +6,15 @@ import { Page, Route } from "@playwright/test";
 export type IInterceptorConfig<T = unknown> =
   | {
   page: Page;
-  urlPattern: "/api$"; // ✅ Literal string with slash
+  urlPattern: "/api$";
   mockResponse: T;
-  graphQlOperationName: string; // Required when urlPattern is exactly "/api$"
+  graphQlOperationName: string;
 }
   | {
   page: Page;
-  urlPattern: Exclude<string, "/api$">; // ✅ Any string EXCEPT "/api$"
+  urlPattern: Exclude<string, "/api$">;
   mockResponse: T;
-  graphQlOperationName?: undefined; // Not allowed here
+  graphQlOperationName?: undefined;
 };
 
 const fulfillWithMock = async <T>(route: Route, mockResponse: T) => {

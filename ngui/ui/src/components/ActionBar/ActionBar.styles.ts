@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_GRAY_2, MPT_SPACING_1, SPACING_5 } from "utils/layouts";
+import { MPT_GRAY_2, SPACING_3, SPACING_5 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   bar: {
@@ -9,9 +9,9 @@ const useStyles = makeStyles()((theme) => ({
   },
   isPage: {
     paddingRight: theme.spacing(SPACING_5),
-    paddingLeft: theme.spacing(SPACING_5),
-    paddingTop: MPT_SPACING_1,
-    paddingBottom: MPT_SPACING_1,
+    paddingLeft: theme.spacing(SPACING_3),
+    paddingTop: "5px",
+    paddingBottom: "5px",
     borderBottom: `1px solid ${MPT_GRAY_2}`
   },
   itemsWrapper: {
