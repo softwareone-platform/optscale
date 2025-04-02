@@ -3,7 +3,7 @@ import {expect, Page} from "@playwright/test";
 import {generateRandomEmail} from "../utils/random-data";
 import {MailpitPage} from "../pages/mailpit-page";
 
-test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
+test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
     let invitationEmail: string;
     let inviteLink: string;
     let mailpitPage: MailpitPage;
@@ -209,7 +209,7 @@ test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flo
     });
 });
 
-test.describe.only("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
+test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
     let invitationEmail: string;
     let inviteLink: string;
     let mailpitPage: MailpitPage;
@@ -314,7 +314,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
     });
 });
 
-test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
     let invitationEmail: string;
     let inviteLink: string;
     let mailpitPage: MailpitPage;
