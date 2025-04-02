@@ -216,7 +216,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
     let mailpitPage: MailpitPage;
     let verifyUrl: string;
 
-    test.beforeEach('Login admin user', async ({loginPage, context}) => {
+    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
         inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
 
@@ -224,6 +224,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         mailpitPage = new MailpitPage(mailpitTab);
         await loginPage.page.bringToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        await header.selectOrganization("QA Test Organization");
     });
 
     test("Invitation is visible in Settings Tab", async ({
@@ -321,7 +322,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
     let mailpitPage: MailpitPage;
     let verifyUrl: string;
 
-    test.beforeEach('Login admin user', async ({loginPage, context}) => {
+    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
         inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
 
@@ -329,6 +330,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         mailpitPage = new MailpitPage(mailpitTab);
         await loginPage.page.bringToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        await header.selectOrganization("QA Test Organization");
     });
 
     test("Invite existing user with a new role", async ({
