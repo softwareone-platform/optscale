@@ -19,15 +19,12 @@ import {
   MPT_SPACING_2,
   MPT_SPACING_3,
   MPT_ALERTS_SUCCESS_2,
-  MPT_ALERTS_SUCCESS_4,
   MPT_ALERTS_INFO_1,
   MPT_ALERTS_WARNING_2,
   MPT_ALERTS_WARNING_3,
-  MPT_ALERTS_WARNING_4,
   MPT_ALERTS_DANGER_1,
   MPT_ALERTS_DANGER_2,
   MPT_ALERTS_DANGER_3,
-  MPT_ALERTS_DANGER_4,
   MPT_GRADIENT,
   MPT_BRAND_TYPE,
   MPT_ALERTS_SUCCESS_3
@@ -90,7 +87,7 @@ const applyPaletteSettings = (settings) => {
 
   const success = mergeIfSettingIsNotEmpty(
     {
-      main: MPT_ALERTS_SUCCESS_4,
+      main: MPT_ALERTS_SUCCESS_3,
       secondary: MPT_ALERTS_SUCCESS_2,
       card: MPT_ALERTS_SUCCESS_3
     },
@@ -99,7 +96,7 @@ const applyPaletteSettings = (settings) => {
 
   const error = mergeIfSettingIsNotEmpty(
     {
-      main: MPT_ALERTS_DANGER_4,
+      main: MPT_ALERTS_DANGER_3,
       primary: MPT_ALERTS_DANGER_1,
       secondary: MPT_ALERTS_DANGER_2,
       text: MPT_ALERTS_DANGER_3,
@@ -110,7 +107,7 @@ const applyPaletteSettings = (settings) => {
 
   const warning = mergeIfSettingIsNotEmpty(
     {
-      main: MPT_ALERTS_WARNING_4,
+      main: MPT_ALERTS_WARNING_3,
       secondary: MPT_ALERTS_WARNING_2,
       card: MPT_ALERTS_WARNING_3
     },
@@ -321,6 +318,15 @@ const getThemeConfig = (settings = {}) => {
   const SKELETON_COLOR = getLighten(info.main, 0.8);
 
   return Object.freeze({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 1000,
+        lg: 1200,
+        xl: 1536
+      }
+    },
     typography: {
       fontFamily: "'Arial', sans-serif",
       mono: {
@@ -638,7 +644,7 @@ const getThemeConfig = (settings = {}) => {
               boxShadow: MPT_BOX_SHADOW,
               background: "#FFFFFF",
               padding: MPT_SPACING_3,
-              borderRadius: MPT_SPACING_1
+              borderRadius: MPT_SPACING_2
             }
           },
           ".MuiBox-WhiteCard": {

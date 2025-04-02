@@ -21,6 +21,7 @@ const actionBarDefinition = {
       messageId: "goToDashboard",
       type: "button",
       link: HOME,
+      variant: "primary",
       dataTestId: "btn_add"
     }
   ]

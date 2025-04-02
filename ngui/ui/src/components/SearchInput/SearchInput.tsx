@@ -67,10 +67,10 @@ const SearchInput = ({ onSearch, initialSearchText = "", dataTestIds = {}, sx = 
             }}
           />
         ),
-        endAdornment: currentText !== "" && (
+        endAdornment: (
           <IconButton
             dataTestId={deleteSearchButtonDataTestId}
-            sx={{ padding: MPT_SPACING_1 }}
+            sx={{ padding: MPT_SPACING_1, paddingRight: 0, opacity: currentText !== "" ? 1 : 0 }}
             icon={<CancelIcon className={classes.clearSearchIcon} />}
             onClick={() => {
               inputRef.current.focus();
