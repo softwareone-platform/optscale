@@ -120,7 +120,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
     });
 
-    test("Invite new user to organisation, who has previously declined", async ({
+    test("Invite new user to organisation, who has previously declined @slow", async ({
                                                                                     header,
                                                                                     loginPage,
                                                                                     mainMenu,
@@ -227,7 +227,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         await header.selectOrganization("QA Test Organization");
     });
 
-    test("Invitation is visible in Settings Tab", async ({
+    test.only("Invitation is visible in Settings Tab @slow", async ({
                                                              loginPage,
                                                              header,
                                                              mainMenu,
@@ -238,16 +238,15 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
                                                              pendingInvitationsPage
                                                          }) => {
         test.slow();
-
-        await test.step("Navigate to the invitation page", async () => {
-            await mainMenu.clickUserManagement();
-            await usersPage.clickInviteBtn();
-        });
-
         await test.step("Verify no pending invitations in Settings tab", async () => {
             await mainMenu.clickSettings();
             await settingsPage.clickInvitationsTab();
             await expect(settingsPage.page.getByText("No invitations pending")).toBeVisible();
+        });
+
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
         });
 
         await test.step("Invite a new user to the organisation", async () => {
@@ -333,7 +332,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await header.selectOrganization("QA Test Organization");
     });
 
-    test("Invite existing user with a new role", async ({
+    test("Invite existing user with a new role @slow", async ({
                                                                                     header,
                                                                                     loginPage,
                                                                                     mainMenu,
