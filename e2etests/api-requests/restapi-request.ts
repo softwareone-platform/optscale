@@ -22,7 +22,7 @@ export class RestAPIRequest extends BaseRequest {
                 currency: currency
             }
         });
-        console.log(JSON.stringify(response));
+
         if (response.status() !== 201) {
             throw new Error('Failed to create organization');
         }

@@ -234,6 +234,7 @@ const OrganizationConstraint = ({
           </Box>
           {limitHits.length > 0 && (
             <Box className={"MTPBoxShadow"}>
+              {anomalyId && <BreakdownChart constraint={constraint} isGetConstraintLoading={isGetConstraintLoading} />}
               <DetectedConstraintsHistory
                 constraint={constraint}
                 limitHits={limitHits}

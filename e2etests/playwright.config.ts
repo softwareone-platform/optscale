@@ -4,9 +4,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
-// TODO_E2E: we don't use it in live demo tests. When you remove your .cache folder you will get error
-// const storageState = EStorageState.defaultUser;
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -43,23 +40,23 @@ export default defineConfig({
         },
       },
 
-  /* Configure projects for major browsers */
   projects: [
     {name: "setup", testMatch: /.*\.setup\.ts/},
     {
       name: "chrome",
       use: {
         channel: "chrome",
-        // storageState, //TODO_E2E: we don't use it in live demo tests. When you remove your .cache folder you will get error
+        viewport: { width: 1920, height: 1080 }
       },
-      // dependencies: ["setup"],
-    }
-    //
+      dependencies: ["setup"],
+    },
     // {
     //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   use: {
+    //     browserName: "firefox",
+    //   },
+    //   dependencies: ["setup"],
     // },
-    //
     // {
     //   name: 'webkit',
     //   use: { ...devices['Desktop Safari'] },

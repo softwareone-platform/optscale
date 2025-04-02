@@ -1,7 +1,7 @@
 import {BasePage} from "./base-page";
     import {Locator, Page} from "@playwright/test";
     import {SummaryExpensesResponse} from "../test-data/recommendations-page-data";
-    import {interceptApiRequest} from "../utils/interceptor";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
     import {
         AvailableFiltersResponse,
         BreakdownExpensesResponse, BreakdownTagsResponse,
@@ -80,26 +80,24 @@ import {BasePage} from "./base-page";
          * Intercepts API requests and provides mock responses.
          * @returns {Promise<void>}
          */
-        async setupApiInterceptions() {
-            const apiInterceptions = [
-                {urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
-                {urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`, mockResponse: BreakdownExpensesResponse},
-                {urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: CleanExpensesResponse},
-                {urlPattern: `/v2/organizations/[^/]+/available_filters`, mockResponse: AvailableFiltersResponse},
-                {urlPattern: `/v2/organizations/[^/]+/resources_count`, mockResponse: ResourcesCountResponse},
-                {urlPattern: `/v2/organizations/[^/]+/breakdown_tags`, mockResponse: BreakdownTagsResponse},
+        async setupApiInterceptions(): Promise<void> {
+            const apiInterceptions: IInterceptorConfig[] = [
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/summary_expenses`, mockResponse: SummaryExpensesResponse},
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`, mockResponse: BreakdownExpensesResponse},
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/clean_expenses`, mockResponse: CleanExpensesResponse},
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/available_filters`, mockResponse: AvailableFiltersResponse},
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/resources_count`, mockResponse: ResourcesCountResponse},
+                {page: this.page, urlPattern: `/v2/organizations/[^/]+/breakdown_tags`, mockResponse: BreakdownTagsResponse},
             ];
 
-            await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                interceptApiRequest({page: this.page, urlPattern, mockResponse})
-            ));
+            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
 
         /**
          * Clicks the Expenses button if it is not already active.
          * @returns {Promise<void>}
          */
-        async clickCardsExpensesIfNotActive() {
+        async clickCardsExpensesIfNotActive(): Promise<void> {
             if (!await this.evaluateActiveButton(this.expensesBtn)) {
                 await this.expensesBtn.click();
             }

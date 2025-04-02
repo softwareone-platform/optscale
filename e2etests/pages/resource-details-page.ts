@@ -1,6 +1,6 @@
 import {BasePage} from "./base-page";
         import {Locator, Page} from "@playwright/test";
-        import {interceptApiRequest} from "../utils/interceptor";
+        import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
         import {
             AllowedActionsSunflowerEUResponse,
             LimitHitsResponse, RawExpensesResponse,
@@ -56,17 +56,15 @@ import {BasePage} from "./base-page";
              * Intercepts API requests and provides mock responses.
              * @returns {Promise<void>}
              */
-            async setupApiInterceptions() {
-                const apiInterceptions = [
-                    {urlPattern: `/v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
-                    {urlPattern: `/v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
-                    {urlPattern: `auth/v2/allowed_actions?cloud_resource=`, mockResponse: AllowedActionsSunflowerEUResponse},
-                    {urlPattern: `/v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
+            async setupApiInterceptions(): Promise<void> {
+                const apiInterceptions: IInterceptorConfig[] = [
+                    {page: this.page, urlPattern: `v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
+                    {page: this.page, urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
+                    {page: this.page, urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mockResponse: AllowedActionsSunflowerEUResponse},
+                    {page: this.page, urlPattern: `v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
                 ];
 
-                await Promise.all(apiInterceptions.map(({urlPattern, mockResponse}) =>
-                    interceptApiRequest({page: this.page, urlPattern, mockResponse})
-                ));
+                await Promise.all(apiInterceptions.map(interceptApiRequest));
             }
 
             /**
