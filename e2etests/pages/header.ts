@@ -41,8 +41,10 @@ export class Header extends BasePage {
      * @returns {Promise<void>}
      */
     async selectOrganization(organization: string) {
-        await this.organizationSelect.click();
-        await this.page.getByRole('option', { name: organization }).click();
+        if (await this.organizationSelect.textContent() !== organization) {
+            await this.organizationSelect.click();
+            await this.page.getByRole('option', {name: organization}).click();
+        }
     }
 
     /**

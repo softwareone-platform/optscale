@@ -10,7 +10,7 @@ import {EStorageState} from "../utils/enums";
 
 test.use({ storageState: EStorageState.liveDemoUser });
 
-test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation', () => {
+test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () => {
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
     await setLocalforageRoot(page);

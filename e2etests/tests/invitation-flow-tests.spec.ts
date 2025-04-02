@@ -9,7 +9,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     let mailpitPage: MailpitPage;
     let verifyUrl: string;
 
-    test.beforeEach('Login admin user', async ({loginPage, context}) => {
+    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
         inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
 
@@ -17,6 +17,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         mailpitPage = new MailpitPage(mailpitTab);
         await loginPage.page.bringToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        await header.selectOrganization("QA Test Organization");
     });
 
     test("Invite new user to organisation, user accepts", async ({
