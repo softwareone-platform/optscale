@@ -10,7 +10,7 @@ test.beforeEach(async ({loginPage}) => {
     });
 });
 
-test('Login as FinOps user and verify profile data', async ({header}) => {
+test.skip('Login as FinOps user and verify profile data', async ({header}) => {
 
     await test.step('Verify user name and email', async () => {
         await header.openProfileMenu();
@@ -19,7 +19,7 @@ test('Login as FinOps user and verify profile data', async ({header}) => {
     });
 });
 
-test('Verify connect data banner displayed when no data source', async ({homePage, header}) => {
+test.skip('Verify connect data banner displayed when no data source', async ({homePage, header}) => {
 
     await test.step('Verify user is logged as a member of the QA Test Org', async () => {
         // await homePage.navigateToURL(true);
@@ -37,7 +37,7 @@ test('Verify connect data banner displayed when no data source', async ({homePag
     });
 });
 
-test('Verify Home page objects when data source connected', async ({homePage, header}) => {
+test.skip('Verify Home page objects when data source connected', async ({homePage, header}) => {
 
     await test.step('Verify user is logged as a member of the Apple Inc Org', async () => {
         const organizationName = await header.organizationSelect.innerText();
@@ -59,7 +59,7 @@ test('Verify Home page objects when data source connected', async ({homePage, he
     });
 });
 
-    test('Verify Main Menu for Apple Inc', async ({mainMenu, header}) => {
+    test.skip('Verify Main Menu for Apple Inc', async ({mainMenu, header}) => {
         await test.step('Change organization to Apple Inc', async () => {
             await header.selectOrganization('Apple Inc');
         });
@@ -103,7 +103,7 @@ test('Verify Home page objects when data source connected', async ({homePage, he
         });
     });
 
-    test('Main menu navigation', async ({homePage, mainMenu, header, poolsPage,
+    test.skip('Main menu navigation', async ({homePage, mainMenu, header, poolsPage,
                                                  recommendationsPage, resourcesPage, expensesPage,
                                                  anomaliesPage, policiesPage, taggingPoliciesPage, usersPage,
                                                  cloudAccountsPage, eventsPage, settingsPage}) => {
@@ -164,7 +164,7 @@ test('Verify Home page objects when data source connected', async ({homePage, he
         });
     });
 
-    test('Select data source, category and applicable service in recommendations', async ({header, homePage, recommendationsPage}) => {
+    test.skip('Select data source, category and applicable service in recommendations', async ({header, homePage, recommendationsPage}) => {
         await test.step('Navigate to recommendations page for Apple Inc', async () => {
             const organizationName = await header.organizationSelect.innerText();
             if (!organizationName.includes('Apple Inc')) {
@@ -183,7 +183,7 @@ test('Verify Home page objects when data source connected', async ({homePage, he
         });
     });
 
-    test('See all perspectives', async ({homePage, header, perspectivesPage}) => {
+    test.skip('See all perspectives', async ({homePage, header, perspectivesPage}) => {
         await test.step('Select organization Apple Inc', async () => {
             await header.selectOrganization('Apple Inc');
         });

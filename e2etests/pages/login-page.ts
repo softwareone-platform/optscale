@@ -38,6 +38,18 @@ import {BasePage} from "./base-page";
                 await this.loginBtn.click();
             }
 
+            async loginWithoutNavigation(email: string, password: string) {
+                await this.emailInput.fill(email);
+                await this.passwordInput.fill(password);
+                await this.loginBtn.click();
+                await this.loginBtn.waitFor({state: 'detached'});
+            }
+
+            async loginWithPreFilledEmail(password: string) {
+                await this.passwordInput.fill(password);
+                await this.loginBtn.click();
+            }
+
             /**
              * Logs in to the live demo using the provided email.
              * @param {string} email - The email address to use for login.

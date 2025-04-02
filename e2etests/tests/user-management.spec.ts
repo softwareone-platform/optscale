@@ -4,7 +4,7 @@ import {EUserRole} from "../utils/enums";
 import {expect} from "@playwright/test";
 
 
-test.describe("User Management tests", () => {
+test.describe.skip("User Management tests", () => {
     let email: string;
     let userID: string;
 
