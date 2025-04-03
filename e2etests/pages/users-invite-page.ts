@@ -13,6 +13,7 @@ export class UsersInvitePage extends BasePage {
     readonly poolSelect: Locator;
     readonly inviteBtn: Locator;
     readonly cancelBtn: Locator;
+    readonly userInvitedAlert: Locator;
 
     /**
      * Initializes a new instance of the UsersInvitePage class.
@@ -23,10 +24,11 @@ export class UsersInvitePage extends BasePage {
         this.heading = this.main.getByTestId('lbl_users_invitation');
         this.inviteUserEmailInput = this.main.getByTestId('input_email');
         this.addRoleBtn = this.main.locator('[data-testid="AddOutlinedIcon"]');
-        this.roleSelect = this.main.getByTestId('role-selector-select');
+        this.roleSelect = this.main.getByTestId('role-selector-form-control');
         this.poolSelect = this.main.getByTestId('pool-selector-form-control');
         this.inviteBtn = this.main.getByTestId('btn_invite');
         this.cancelBtn = this.main.getByTestId('btn_cancel');
+        this.userInvitedAlert = this.page.getByText('User has been invited');
     }
 
     /**
@@ -38,14 +40,17 @@ export class UsersInvitePage extends BasePage {
      * @throws Will throw an error if the role is provided but the pool is not.
      */
     async inviteUser(email: string, role?: string, pool?: string) {
+        await this.inviteUserEmailInput.waitFor();
+        await this.page.waitForTimeout(1000);
         await this.inviteUserEmailInput.fill(email);
         if (role) {
             await this.addRoleBtn.click();
-            await this.roleSelect.selectOption({label: role});
+            await this.selectFromComboBox(this.roleSelect, role);
             if(pool) {
-                await this.poolSelect.selectOption({label: pool});
-            } else throw new Error('Pool is required for role');
+                await this.selectFromComboBox(this.poolSelect, pool);
+            }
         }
+        await this.page.waitForTimeout(1000);
         await this.inviteBtn.click();
     }
 }

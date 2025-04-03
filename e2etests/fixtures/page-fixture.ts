@@ -21,6 +21,9 @@ import {PoliciesCreatePage} from "../pages/policies-create-page";
 import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
 import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
+import {MailpitPage} from "../pages/mailpit-page";
+import {RegisterPage} from "../pages/register-page";
+import {PendingInvitationsPage} from "../pages/pending-invitations-page";
 
 
 export const test = base.extend<{
@@ -34,11 +37,13 @@ export const test = base.extend<{
     homePage: HomePage;
     loginPage: LoginPage;
     mainMenu: MainMenu;
+    pendingInvitationsPage: PendingInvitationsPage;
     perspectivesPage: PerspectivesPage;
     policiesPage: PoliciesPage;
     policiesCreatePage: PoliciesCreatePage;
     poolsPage: PoolsPage;
     recommendationsPage: RecommendationsPage;
+    registerPage: RegisterPage;
     resourcesPage: ResourcesPage;
     resourceDetailsPage: ResourceDetailsPage;
     settingsPage: SettingsPage;
@@ -87,6 +92,10 @@ export const test = base.extend<{
         const mainMenu = new MainMenu(page);
         await use(mainMenu);
     },
+    pendingInvitationsPage: async ({page}, use) => {
+        const pendingInvitationsPage = new PendingInvitationsPage(page);
+        await use(pendingInvitationsPage);
+    },
     perspectivesPage: async ({page}, use) => {
         const perspectivesPage = new PerspectivesPage(page);
         await use(perspectivesPage);
@@ -106,6 +115,10 @@ export const test = base.extend<{
     recommendationsPage: async ({page}, use) => {
         const recommendationsPage = new RecommendationsPage(page);
         await use(recommendationsPage);
+    },
+    registerPage: async ({page}, use) => {
+        const registerPage = new RegisterPage(page);
+        await use(registerPage);
     },
     resourcesPage: async ({page}, use) => {
         const resourcesPage = new ResourcesPage(page);
