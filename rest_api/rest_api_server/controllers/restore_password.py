@@ -45,7 +45,7 @@ class RestorePasswordController(BaseController):
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()
         ).email_send(
-            [email], 'OptScale password recovery',
+            [email], 'FinOps for Cloud password recovery',
             template_type="restore_password",
             template_params={
                 'texts': {

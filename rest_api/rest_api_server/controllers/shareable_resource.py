@@ -196,7 +196,7 @@ class ShareableBookingController(BaseController, MongoMixin,
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()
         ).email_send(
-            [recipient], 'OptScale shared environments notification',
+            [recipient], 'FinOps for Cloud shared environments notification',
             template_type="first_shareable_resources",
             template_params=template_params)
 

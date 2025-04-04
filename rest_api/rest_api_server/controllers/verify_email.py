@@ -23,7 +23,7 @@ class VerifyEmailController(RestorePasswordController):
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()
         ).email_send(
-            [email], 'OptScale email verification',
+            [email], 'FinOps for Cloud email verification',
             template_type="verify_email",
             template_params={
                 'texts': {
