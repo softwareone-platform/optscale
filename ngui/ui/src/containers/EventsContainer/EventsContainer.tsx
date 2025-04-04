@@ -250,31 +250,30 @@ const EventsContainer = () => {
 
     const lastEvent = getLastElement(events);
 
-      fetchMoreAbortControllerRef.current = new AbortController();
+    fetchMoreAbortControllerRef.current = new AbortController();
 
-      setIsFetchingMore(true);
+    setIsFetchingMore(true);
 
-      fetchMoreEvents({
-        variables: getQueryVariables({
-          ...filters,
-          lastId: lastEvent.id
-        }),
-        context: {
-          fetchOptions: {
-            signal: fetchMoreAbortControllerRef.current?.signal
-          }
+    fetchMoreEvents({
+      variables: getQueryVariables({
+        ...filters,
+        lastId: lastEvent.id
+      }),
+      context: {
+        fetchOptions: {
+          signal: fetchMoreAbortControllerRef.current?.signal
+        }
+      }
+    })
+      .then(({ data }) => {
+        if (data) {
+          setEvents((currentEvents) => [...currentEvents, ...data.events]);
+          setEventsCount(data.events.length);
         }
       })
-        .then(({ data }) => {
-          if (data) {
-            setEvents((currentEvents) => [...currentEvents, ...data.events]);
-            setEventsCount(data.events.length);
-          }
-        })
-        .finally(() => {
-          setIsFetchingMore(false);
-        });
-    }
+      .finally(() => {
+        setIsFetchingMore(false);
+      });
   };
 
   return (
