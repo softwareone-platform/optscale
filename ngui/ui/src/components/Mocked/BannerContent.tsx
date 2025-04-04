@@ -23,9 +23,11 @@ import { isEmpty as isEmptyArray } from "utils/arrays";
 import useStyles from "./BannerContent.styles";
 
 const CONNECT_DATA_SOURCE = "connectDataSource";
-const ADD_ENVIRONMENT = "addEnvironment";
+// MPT_TODO: disabled to meet BDR requirements
+// const ADD_ENVIRONMENT = "addEnvironment";
 const SET_POOL = "setPoolLimit";
-const CLOUD_CONNECTION_BACKDROP_MESSAGE = "cloudConnectionBackdropMessage";
+// MPT_TODO: disabled to meet BDR requirements
+// const CLOUD_CONNECTION_BACKDROP_MESSAGE = "cloudConnectionBackdropMessage";
 
 const redirectToCreateCloudAccount = (navigate) => navigate(CLOUD_ACCOUNT_CONNECT);
 const redirectToCreateK8sAccount = (navigate) => navigate(CLOUD_ACCOUNT_CONNECT_K8S);
@@ -93,7 +95,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "dataSourcesBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -112,7 +115,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "awsDataSourcesBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -133,11 +137,12 @@ const getConfiguration = (messageType) =>
         // TODO: generalize approach to render buttons
         // currently we support 2 types of definition: array and plain properties
         buttons: [
-          {
-            messageId: ADD_ENVIRONMENT,
-            onClick: redirectToCreateEnvironment,
-            dataTestId: "btn_add_env"
-          },
+          // MPT_TODO: Disabled to meet BDR requirements
+          // {
+          //   messageId: ADD_ENVIRONMENT,
+          //   onClick: redirectToCreateEnvironment,
+          //   dataTestId: "btn_add_env"
+          // },
           {
             messageId: CONNECT_DATA_SOURCE,
             onClick: redirectToCreateCloudAccount,
@@ -160,7 +165,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["recommendationsBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
         dataTestIds: {
           mainMessage: ["p_sample"],
@@ -226,7 +232,8 @@ const getConfiguration = (messageType) =>
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "k8sBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
-        subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
+        // MPT_TODO: disabled to meet BDR requirements
+        // subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateK8sAccount,
         dataTestIds: {
           mainMessage: ["p_sample", "p_connect_ca"],
@@ -316,7 +323,7 @@ const BannerContent = ({ messageType }) => {
           data-test-id={messageDataTestIds ? messageDataTestIds[index] : null}
           key={messageId}
           variant={isSubMessage ? "caption" : null}
-          className={isSubMessage ? "" : classes.bold}
+          className={isSubMessage ? "" : classes.normal}
           paragraph={isLastTypography && !isSubMessage}
           align="center"
           gutterBottom
@@ -337,7 +344,7 @@ const BannerContent = ({ messageType }) => {
           customClass={!isEmptyArray(subMessageIds) ? classes.buttonMargin : ""}
           size="medium"
           variant="contained"
-          color="success"
+          color="primary"
           onClick={() => onButtonClick(navigate, organizationPoolId, { openSideModal, organizationInfo })}
           messageId={buttonMessageId}
         />
@@ -348,12 +355,11 @@ const BannerContent = ({ messageType }) => {
             <Button
               key={messageId}
               messageId={messageId}
-              customClass={classes.buttonWidth}
               onClick={() => onClick(navigate, organizationPoolId, { openSideModal, organizationInfo })}
               dataTestId={dataTestId}
               size="medium"
               variant="contained"
-              color="success"
+              color="primary"
             />
           ))}
         </div>

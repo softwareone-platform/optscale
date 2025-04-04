@@ -7,6 +7,8 @@ const DatabricksProperties = ({ accountId, config }) => {
   return (
     <>
       <KeyValueLabel
+        isBoldKeyLabel
+        variant="property"
         keyMessageId="accountId"
         value={accountId}
         dataTestIds={{
@@ -15,6 +17,8 @@ const DatabricksProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
+        isBoldKeyLabel
+        variant="property"
         keyMessageId="clientId"
         value={clientId}
         dataTestIds={{

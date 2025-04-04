@@ -1,4 +1,5 @@
 import { makeStyles } from "tss-react/mui";
+import { MPT_SPACING_3 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   spacer: {
@@ -12,8 +13,7 @@ const useStyles = makeStyles()((theme) => ({
     paddingTop: theme.spacing(1)
   },
   card: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
+    padding: MPT_SPACING_3
   },
   buttonLink: {
     "&:hover": {

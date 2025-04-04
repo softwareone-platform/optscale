@@ -144,7 +144,7 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         key: "bu-add",
         icon: <AddOutlinedIcon fontSize="small" />,
         messageId: "add",
-        color: "success",
+        color: "primary",
         variant: "contained",
         type: "button",
         dataTestId: "btn_add",

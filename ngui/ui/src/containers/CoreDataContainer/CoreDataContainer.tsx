@@ -14,6 +14,7 @@ import {
 } from "graphql/api/restapi/queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
+import { PENDING_INVITATIONS } from "urls";
 import { getQueryParams, removeQueryParam } from "utils/network";
 
 const CoreDataContainer = ({ children }) => {
@@ -28,6 +29,13 @@ const CoreDataContainer = ({ children }) => {
           newScopeId: organizationId
         });
         removeQueryParam("organizationId");
+      }
+
+      if (data.organizations.length === 0) {
+        updateScope({
+          newScopeId: "none",
+          redirectTo: PENDING_INVITATIONS
+        });
       }
     }
   });

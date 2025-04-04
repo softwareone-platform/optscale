@@ -5,6 +5,7 @@ import MenuGroupWrapper from "components/MenuGroupWrapper";
 import MenuItem from "components/MenuItem";
 import { PRODUCT_TOUR, useProductTour, PRODUCT_TOUR_IDS } from "components/Tour";
 import { useGetOptscaleCapability } from "hooks/coreData/useGetOptscaleCapability";
+import useStyles from "./MainMenu.styles";
 
 const SimpleItem = ({ menuItem, optscaleCapability }) => (
   <CapabilityWrapper capability={menuItem.capability}>
@@ -29,6 +30,7 @@ const SimpleItem = ({ menuItem, optscaleCapability }) => (
 
 const MainMenu = ({ menu }) => {
   const { isOpen: isProductTourOpen, stepId: productTourStepId } = useProductTour(PRODUCT_TOUR);
+  const { classes } = useStyles();
 
   useEffect(() => {
     if (!productTourStepId || !isProductTourOpen) {
@@ -51,7 +53,7 @@ const MainMenu = ({ menu }) => {
 
   return (
     <>
-      <List component="nav" sx={{ padding: 0 }}>
+      <List className={classes.MainMenu} component="nav" sx={{ padding: 0 }}>
         {menu.map(({ items, menuSectionTitle, id, capability }) => (
           <CapabilityWrapper key={id} capability={capability}>
             <MenuGroupWrapper id={id} menuSectionTitle={menuSectionTitle} keepExpanded={isProductTourOpen}>

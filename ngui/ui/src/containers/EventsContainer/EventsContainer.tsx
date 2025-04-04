@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { SECOND } from "api/constants";
-import Events from "components/Events";
+import EventList from "components/Events/EventList";
 import { GET_EVENTS } from "graphql/api/keeper/queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { getLastElement } from "utils/arrays";
 import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
-import { scrolledToBottom } from "utils/layouts";
 import { getQueryParams, updateQueryParams } from "utils/network";
 
 type FilterParams = {
@@ -102,6 +101,7 @@ const EventsContainer = () => {
   const intervalId = useRef();
 
   const [events, setEvents] = useState([]);
+  const [eventsCount, setEventsCount] = useState(0);
 
   const getEventsAbortControllerRef = useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -174,6 +174,7 @@ const EventsContainer = () => {
     })
       .then(({ data }) => {
         setEvents(data.events);
+        setEventsCount(data.events.length);
         setPolling(variables);
       })
       .finally(() => {
@@ -242,13 +243,12 @@ const EventsContainer = () => {
     }
   };
 
-  const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+  const getMoreEvents = () => {
     if (isFetchingMore) {
       return;
     }
 
-    if (scrolledToBottom(event.target)) {
-      const lastEvent = getLastElement(events);
+    const lastEvent = getLastElement(events);
 
       fetchMoreAbortControllerRef.current = new AbortController();
 
@@ -268,6 +268,7 @@ const EventsContainer = () => {
         .then(({ data }) => {
           if (data) {
             setEvents((currentEvents) => [...currentEvents, ...data.events]);
+            setEventsCount(data.events.length);
           }
         })
         .finally(() => {
@@ -277,14 +278,15 @@ const EventsContainer = () => {
   };
 
   return (
-    <Events
+    <EventList
       eventLevel={filters.level}
       descriptionLike={filters.descriptionLike}
       includeDebugEvents={filters.includeDebugEvents}
       events={events}
       isLoading={isLoading}
       isFetchingMore={isFetchingMore}
-      onScroll={handleScroll}
+      getMoreEvents={getMoreEvents}
+      eventsCount={eventsCount}
       applyFilter={applyFilter}
     />
   );

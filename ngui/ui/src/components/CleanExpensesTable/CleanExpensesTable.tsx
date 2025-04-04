@@ -1,12 +1,7 @@
 import React, { useState, useMemo } from "react";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
-import DnsOutlinedIcon from "@mui/icons-material/DnsOutlined";
 import { Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
-import { useDispatch } from "react-redux";
-import { markResourcesAsEnvironments } from "api";
-import { MARK_RESOURCES_AS_ENVIRONMENTS } from "api/restapi/actionTypes";
 import CloudLabel from "components/CloudLabel";
 import ExpenseCell from "components/ExpenseCell";
 import ExpensesTableHeader from "components/ExpensesTableHeader";
@@ -15,13 +10,11 @@ import ResourcePaidNetworkTrafficList from "components/ResourcePaidNetworkTraffi
 import ResourceTypeLabel from "components/ResourceTypeLabel";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useApiState } from "hooks/useApiState";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
 import { getCreateAssignmentRuleUrl } from "urls";
 import { isEmpty, isEmpty as isEmptyArray } from "utils/arrays";
 import { resourcePoolOwner, tags } from "utils/columns";
-import { CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX, DOWNLOAD_FILE_FORMATS } from "utils/constants";
+import { CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX } from "utils/constants";
 import { MetadataNodes } from "utils/metadata";
 import { CELL_EMPTY_VALUE, RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 
@@ -54,16 +47,17 @@ const LocationNodes = ({ region, service_name: serviceName, k8s_node: k8sNode, k
 const CleanExpensesTable = ({
   expenses,
   disableColumnsSelection = false,
-  downloadResources,
-  isDownloadingResources = false,
+  // downloadResources,
+  // isDownloadingResources = false,
   startDateTimestamp,
   endDateTimestamp,
   assignmentRuleCreationLinkParameters,
   totalResourcesCount
 }) => {
-  const dispatch = useDispatch();
-  const { organizationId } = useOrganizationInfo();
-  const { isLoading: isMarkResourcesAsEnvironmentsLoading } = useApiState(MARK_RESOURCES_AS_ENVIRONMENTS);
+  // MTP_TODO: Disabled to meet BDR requirements
+  // const dispatch = useDispatch();
+  // const { organizationId } = useOrganizationInfo();
+  // const { isLoading: isMarkResourcesAsEnvironmentsLoading } = useApiState(MARK_RESOURCES_AS_ENVIRONMENTS);
 
   const [rowSelection, setRowSelection] = useState({});
 
@@ -279,51 +273,54 @@ const CleanExpensesTable = ({
   );
 
   const getActionBarItems = () => {
-    const selectedResourceIds = Object.keys(rowSelection);
+    // MPT_TODO: Disabled download
+    // const selectedResourceIds = Object.keys(rowSelection);
 
     const actionBarItems = [
-      {
-        key: "markAsEnvironment",
-        icon: <DnsOutlinedIcon fontSize="small" />,
-        messageId: "markAsEnvironment",
-        enableIfSelectedRows: true,
-        type: "button",
-        isLoading: isMarkResourcesAsEnvironmentsLoading,
-        requiredActions: ["MANAGE_RESOURCES"],
-        dataTestId: "btn_mark_as_environment",
-        action: () => {
-          dispatch(markResourcesAsEnvironments(organizationId, selectedResourceIds));
-        }
-      }
+      // MPT_TODO: Disabled download
+      // {
+      //   key: "markAsEnvironment",
+      //   icon: <DnsOutlinedIcon fontSize="small" />,
+      //   messageId: "markAsEnvironment",
+      //   enableIfSelectedRows: true,
+      //   type: "button",
+      //   isLoading: isMarkResourcesAsEnvironmentsLoading,
+      //   requiredActions: ["MANAGE_RESOURCES"],
+      //   dataTestId: "btn_mark_as_environment",
+      //   action: () => {
+      //     dispatch(markResourcesAsEnvironments(organizationId, selectedResourceIds));
+      //   }
+      // }
     ];
 
-    if (typeof downloadResources === "function") {
-      actionBarItems.push({
-        key: "download",
-        startIcon: <CloudDownloadOutlinedIcon />,
-        messageId: "download",
-        type: "dropdown",
-        action: downloadResources,
-        isLoading: isDownloadingResources,
-        menu: {
-          items: [
-            {
-              key: "xlsx",
-              messageId: "xlsxFile",
-              action: () => downloadResources(DOWNLOAD_FILE_FORMATS.XLSX),
-              dataTestId: "btn_download_xlsx"
-            },
-            {
-              key: "json",
-              messageId: "jsonFile",
-              action: () => downloadResources(DOWNLOAD_FILE_FORMATS.JSON),
-              dataTestId: "btn_download_json"
-            }
-          ]
-        },
-        dataTestId: "btn_download"
-      });
-    }
+    // MPT_TODO: Disabled download
+    // if (typeof downloadResources === "function") {
+    //   actionBarItems.push({
+    //     key: "download",
+    //     startIcon: <CloudDownloadOutlinedIcon />,
+    //     messageId: "download",
+    //     type: "dropdown",
+    //     action: downloadResources,
+    //     isLoading: isDownloadingResources,
+    //     menu: {
+    //       items: [
+    //         {
+    //           key: "xlsx",
+    //           messageId: "xlsxFile",
+    //           action: () => downloadResources(DOWNLOAD_FILE_FORMATS.XLSX),
+    //           dataTestId: "btn_download_xlsx"
+    //         },
+    //         {
+    //           key: "json",
+    //           messageId: "jsonFile",
+    //           action: () => downloadResources(DOWNLOAD_FILE_FORMATS.JSON),
+    //           dataTestId: "btn_download_json"
+    //         }
+    //       ]
+    //     },
+    //     dataTestId: " btn_download"
+    //   });
+    // }
 
     if (assignmentRuleCreationLinkParameters) {
       actionBarItems.push({

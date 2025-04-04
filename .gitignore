@@ -31,7 +31,23 @@ ngui/*/storybook
 **/yarn-debug.log*
 **/yarn-error.log*
 
+# MPT_TODO: prevent accidental package-lock commits
+ngui/server/package-lock.json
+ngui/ui/package-lock.json
+
+#Email templates
+email_templates/
+
 # jira_ui
 jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
+
+# Playwright E2E tests
+/e2etests/.env.local
+/e2etests/test-results/
+/e2etests/node_modules/
+/e2etests/playwright-report/
+/e2etests/results.json
+/e2etests/.cache/
+/e2etests/.cache/*

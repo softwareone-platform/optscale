@@ -27,11 +27,13 @@ const getActionBar = ({ forceCheck, isForceCheckAvailable }) => ({
       dataTestId: "btn_archive",
       icon: <RestoreOutlinedIcon />,
       messageId: "archive",
+      color: "primary",
       type: "button",
       link: ARCHIVED_RECOMMENDATIONS
     },
     {
       key: "forceCheck",
+      color: "primary",
       type: "button",
       show: isForceCheckAvailable,
       icon: <CachedOutlinedIcon />,
@@ -70,7 +72,7 @@ const RecommendationsPage = ({ isMock }) => {
     <>
       <ActionBar data={recommendationsActionBar} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2} sx={{ minHeight: "100%" }}>
+        <Stack spacing={SPACING_2} sx={{ minHeight: "100%", width: "100%" }}>
           <div>
             <DataSourceMultiSelect
               allDataSources={dataSources.filter((dataSource) =>
