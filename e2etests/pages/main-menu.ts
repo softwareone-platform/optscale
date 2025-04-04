@@ -119,4 +119,8 @@ import {BasePage} from "./base-page";
         async clickResources() {
             await this.resourcesBtn.click();
         }
+
+        async clickSettings() {
+            await this.settingsBtn.click();
+        }
     }

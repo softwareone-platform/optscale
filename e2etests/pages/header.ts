@@ -41,8 +41,10 @@ export class Header extends BasePage {
      * @returns {Promise<void>}
      */
     async selectOrganization(organization: string) {
-        await this.organizationSelect.click();
-        await this.page.getByRole('option', { name: organization }).click();
+        if (!(await this.organizationSelect.textContent()).includes(organization)) {
+            await this.organizationSelect.click();
+            await this.page.getByRole('option', {name: organization}).click();
+        }
     }
 
     /**
@@ -51,5 +53,10 @@ export class Header extends BasePage {
      */
     async openProfileMenu() {
         await this.profileBtn.click();
+    }
+
+    async signOut() {
+        await this.openProfileMenu();
+        await this.profileSignOutBtn.click();
     }
 }
