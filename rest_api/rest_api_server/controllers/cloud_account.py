@@ -8,7 +8,7 @@ from optscale_client.herald_client.client_v2 import Client as HeraldClient
 
 from sqlalchemy import Enum, true
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql import and_, exists
+from sqlalchemy.sql import and_, exists, or_
 from tools.cloud_adapter.exceptions import (
     InvalidParameterException, ReportConfigurationException,
     CloudSettingNotSupported, BucketNameValidationError,
@@ -768,8 +768,25 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             'skipped_subscriptions', {})
         skipped_subscriptions = root_skipped_subscriptions.copy()
         for c_config in configs:
-            c_name = c_config.get('name')
+            c_base_name = c_config.get('name')
+            c_name = c_base_name
             try:
+                ca_exists = self.session.query(
+                    exists().where(and_(
+                        CloudAccount.name == c_base_name,
+                        CloudAccount.deleted.is_(False),
+                        or_(
+                            CloudAccount.parent_id != root_account.id,
+                            CloudAccount.parent_id.is_(None),
+                        ),
+                        CloudAccount.organization_id == root_account.organization_id
+                    ))
+                ).scalar()
+                if ca_exists:
+                    # cloud account with the same name already exists, so add
+                    # parent account id to children's name
+                    c_name = c_base_name + f' ({root_account.account_id})'
+                    c_config['name'] = c_name
                 ca = self.create(
                     organization_id=root_account.organization_id,
                     parent_id=root_account.id, root_config=root_config.copy(),
@@ -779,10 +796,10 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                     self.delete(ca.id)
                     return
                 if c_name in skipped_subscriptions:
-                    skipped_subscriptions.pop(c_name, None)
+                    skipped_subscriptions.pop(c_base_name, None)
             except ConflictException:
                 if c_name in skipped_subscriptions:
-                    skipped_subscriptions.pop(c_name, None)
+                    skipped_subscriptions.pop(c_base_name, None)
             except Exception as ex:
                 if c_name not in skipped_subscriptions:
                     # Add error reason to root config

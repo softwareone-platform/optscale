@@ -9,7 +9,7 @@ import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useSelectedSizes, useSelectionActions } from "reducers/cloudCostComparisonSelectedSizes/hooks";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import { getQueryParams } from "utils/network";
 import { cpu as cpuColumn, ram as ramColumn, flavors as flavorsColumn } from "./columns";
 
@@ -73,6 +73,7 @@ const CloudCostComparisonTable = ({ relevantSizes, errors }) => {
       getSizesColumn(AWS_CNR),
       getSizesColumn(AZURE_CNR),
       getSizesColumn(GCP_CNR),
+      getSizesColumn(ALIBABA_CNR),
       isNebiusConnectionEnabled ? getSizesColumn(NEBIUS) : undefined
     ].filter(Boolean);
   }, [cloudProvider, errors, isNebiusConnectionEnabled]);

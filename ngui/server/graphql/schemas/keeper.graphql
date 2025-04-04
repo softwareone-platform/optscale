@@ -31,7 +31,6 @@ input EventsRequestParams {
   includeRead: Boolean = true
   readOnGet: Boolean = true
   descriptionLike: String
-  requestId: String
 }
 
 type Query {

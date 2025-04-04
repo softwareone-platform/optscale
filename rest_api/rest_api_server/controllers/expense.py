@@ -1517,6 +1517,19 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                         e['traffic_expenses'] = []
                     e['traffic_expenses'].extend(traffic_expenses)
 
+    @staticmethod
+    def _is_cluster_excluded_by_sub_res(sub_resource, filters, last_run):
+        input_rec_filter = filters.get('recommendations')
+        input_active_filter = filters.get('active')
+        # exclude the whole cluster if recommendation or active is
+        # False and at least 1 sub-resource doesn't suit these
+        # filters
+        if (input_rec_filter is False and sub_resource.get(
+                'recommendations', {}).get(
+            'run_timestamp', 0) >= last_run) or (
+                input_active_filter is False and sub_resource.get('active')):
+            return True
+
     def _extract_unique_values_from_resources(
             self, resources_data, input_filters, organization_id,
             include_subresources=True):
@@ -1525,7 +1538,6 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         cloud_account_ids = set()
         input_resource_ids = input_filters.get('resource_id', [])
         input_ca_ids = input_filters.get('cloud_account_id', [])
-        input_rec_filter = input_filters.get('recommendations')
         cluster_id_cloud_res = defaultdict(list)
         cluster_ids = set()
         for data in resources_data:
@@ -1565,11 +1577,8 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                 if cluster_id in clusters_to_exclude:
                     continue
                 if sub_res_id not in clustered_resources_map:
-                    # exclude the whole cluster if recommendation=False and at
-                    # least 1 sub-resource has recommendations
-                    if input_rec_filter is False and s.get(
-                            'recommendations', {}).get(
-                                'run_timestamp', 0) >= last_run:
+                    if self._is_cluster_excluded_by_sub_res(
+                            s, input_filters, last_run):
                         clusters_to_exclude.add(cluster_id)
                         continue
                     clustered_resources_map[sub_res_id] = s['cluster_id']
@@ -1817,7 +1826,8 @@ class SummaryExpenseController(CleanExpenseController):
         return [
             {'$project': {
                 '_id': 1, 'recommendations': 1, 'cluster_id': 1,
-                'cluster_type_id': 1, 'cloud_account_id': 1, 'first_seen': 1}},
+                'cluster_type_id': 1, 'cloud_account_id': 1, 'first_seen': 1,
+                'active': 1}},
             {'$unwind': {
                 'path': '$recommendations',
                 'preserveNullAndEmptyArrays': True}},
@@ -1829,7 +1839,7 @@ class SummaryExpenseController(CleanExpenseController):
                 '_id': 1, 'cluster_id': 1, 'cluster_type_id': 1,
                 'run_timestamp': '$recommendations.run_timestamp',
                 'saving': '$recommendations.modules.saving',
-                'cloud_account_id': 1, 'first_seen': 1
+                'cloud_account_id': 1, 'first_seen': 1, 'active': 1
             }},
         ]
 
@@ -1840,6 +1850,7 @@ class SummaryExpenseController(CleanExpenseController):
             '$group': {
                 '_id': '$cluster_id',
                 'resource_ids': {'$addToSet': '$_id'},
+                'active': {'$addToSet': '$active'},
                 'run_timestamp': {'$addToSet': '$run_timestamp'},
                 'total_saving': {
                     '$sum': {
@@ -1876,6 +1887,7 @@ class SummaryExpenseController(CleanExpenseController):
         self._process_traffic_filters(
             query_filters['cloud_account_id'], data_filters)
         last_run_ts = self.get_last_run_ts_by_org_id(organization_id)
+        active = params.get('active')
         recommendation = params.get('recommendations')
         filter_cond = self.generate_filters_pipeline(
             organization_id, self.start_date, self.end_date,
@@ -1936,6 +1948,9 @@ class SummaryExpenseController(CleanExpenseController):
                     continue
                 if recommendation is False and res_group['run_timestamp']:
                     excl_clusters.add(cluster_id)
+                    continue
+                if active is False and cluster_id not in all_resource_ids:
+                    # cluster for this clustered resource is active
                     continue
                 if 'cloud_account_id' not in filters:
                     if cluster_id not in cluster_savings_map:

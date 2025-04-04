@@ -1908,6 +1908,63 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertEqual(len(resp['cloud_accounts']), 0)
 
+    def test_az_tenant_children_name_exist(self):
+        conflict_name = 'test'
+        tenant = 'azure tenant'
+        params = self.valid_aws_cloud_acc.copy()
+        params['name'] = conflict_name
+        code, test_cloud_acc = self.create_cloud_account(
+            self.org_id, params)
+        self.assertEqual(code, 201)
+
+        body = {
+            'name': 'azure cloud_acc',
+            'type': 'azure_tenant',
+            'config': {
+                'secret': 'secret',
+                'client_id': 'id',
+                'tenant': tenant
+            }
+        }
+        patch('tools.cloud_adapter.clouds.azure_tenant.AzureTenant.'
+              'validate_credentials',
+              return_value={'account_id': tenant, 'warnings': []}
+              ).start()
+        code, parent_ca = self.create_cloud_account(self.org_id, body)
+        self.assertEqual(code, 201)
+        self.p_configure_azure.return_value = {
+            'config_updates': {'expense_import_scheme': 'raw_usage'},
+            'warnings': []
+        }
+
+        patch('tools.cloud_adapter.clouds.azure_tenant.AzureTenant.get_children_configs',
+              return_value=[
+                  {
+                      'name': conflict_name,
+                      'config': {'subscription_id': 'subscription_1'},
+                      'type': 'azure_cnr'
+                  }
+              ]).start()
+        patch('tools.cloud_adapter.clouds.azure.Azure.validate_credentials',
+              return_value={'account_id': 'subscription_1', 'warnings': []}
+              ).start()
+        code, _ = self.client.observe_resources(self.org_id)
+        self.assertEqual(code, 204)
+        code, resp = self.client.cloud_account_list(self.org_id)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['cloud_accounts']), 3)
+        for acc in resp['cloud_accounts']:
+            if acc['id'] not in [parent_ca['id'], test_cloud_acc['id']]:
+                self.assertEqual(acc['type'], 'azure_cnr')
+                self.assertEqual(acc['name'], conflict_name + f' ({tenant})')
+                self.assertEqual(acc['config'], {
+                    'secret': 'secret',
+                    'client_id': 'id',
+                    'tenant': tenant,
+                    'subscription_id': 'subscription_1',
+                    'expense_import_scheme': 'raw_usage'
+                })
+
     def test_create_nebius_cloud_acc(self):
         code, cloud_acc = self.create_cloud_account(
             self.org_id, self.valid_nebius_cloud_acc)

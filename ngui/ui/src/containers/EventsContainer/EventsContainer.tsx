@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { v4 as uuidv4 } from "uuid";
 import { SECOND } from "api/constants";
 import EventList from "components/Events/EventList";
 import { GET_EVENTS } from "graphql/api/keeper/queries";
@@ -27,9 +26,7 @@ type RequestParams = Pick<FilterParams, Exclude<keyof FilterParams, "level" | "i
 
 type Variables = {
   organizationId: string;
-  requestParams: RequestParams & {
-    requestId: string;
-  };
+  requestParams: RequestParams;
 };
 
 const POLL_INTERVAL = 10 * SECOND;
@@ -94,13 +91,7 @@ const EventsContainer = () => {
           lastId: params.lastId,
           descriptionLike: params.descriptionLike,
           limit: EVENTS_LIMIT,
-          level: getLevelParameter(),
-          /**
-           * Adding a unique requestId ensures each request is treated as distinct, even if the parameters are the same.
-           * This prevents issues where a new request is not triggered after canceling a previous one
-           * See OS-7903 PR for more details
-           */
-          requestId: uuidv4()
+          level: getLevelParameter()
         }
       };
     },
@@ -112,34 +103,34 @@ const EventsContainer = () => {
   const [events, setEvents] = useState([]);
   const [eventsCount, setEventsCount] = useState(0);
 
-  const [getEvents, { loading: isLoading }] = useLazyQuery(GET_EVENTS, {
+  const getEventsAbortControllerRef = useRef<AbortController | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [getEvents] = useLazyQuery(GET_EVENTS, {
     fetchPolicy: "no-cache"
   });
 
-  const [refetchAbortController, setRefetchAbortController] = useState(new AbortController());
+  const refetchAbortControllerRef = useRef<AbortController | null>(null);
   const [refetchEvents] = useLazyQuery(GET_EVENTS, {
-    fetchPolicy: "no-cache",
-    context: {
-      fetchOptions: {
-        signal: refetchAbortController.signal
-      }
-    }
+    fetchPolicy: "no-cache"
   });
 
-  const [fetchMoreAbortController, setFetchMoreAbortController] = useState(new AbortController());
-  const [fetchMoreEvents, { loading: isFetchingMore }] = useLazyQuery(GET_EVENTS, {
-    fetchPolicy: "no-cache",
-    context: {
-      fetchOptions: {
-        signal: fetchMoreAbortController.signal
-      }
-    }
+  const fetchMoreAbortControllerRef = useRef<AbortController | null>(null);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [fetchMoreEvents] = useLazyQuery(GET_EVENTS, {
+    fetchPolicy: "no-cache"
   });
 
   const refetch = useCallback(
     (variables: Variables) => {
+      refetchAbortControllerRef.current = new AbortController();
+
       refetchEvents({
-        variables
+        variables,
+        context: {
+          fetchOptions: {
+            signal: refetchAbortControllerRef.current?.signal
+          }
+        }
       }).then(({ data }) => {
         if (data) {
           setEvents((currentEvents) => {
@@ -176,13 +167,19 @@ const EventsContainer = () => {
   useEffect(() => {
     const variables = getQueryVariables(getQueryParamFilters());
 
+    setIsLoading(true);
+
     getEvents({
       variables
-    }).then(({ data }) => {
-      setEvents(data.events);
-      setEventsCount(data.events.length);
-      setPolling(variables);
-    });
+    })
+      .then(({ data }) => {
+        setEvents(data.events);
+        setEventsCount(data.events.length);
+        setPolling(variables);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [getEvents, getQueryVariables, setPolling]);
 
   useEffect(
@@ -213,20 +210,36 @@ const EventsContainer = () => {
 
       const variables = getQueryVariables(filterParams);
 
-      refetchAbortController.abort();
-      setRefetchAbortController(new AbortController());
-
-      fetchMoreAbortController.abort();
-      setFetchMoreAbortController(new AbortController());
+      if (refetchAbortControllerRef.current) {
+        refetchAbortControllerRef.current.abort("Abort refetch events");
+      }
+      if (fetchMoreAbortControllerRef.current) {
+        fetchMoreAbortControllerRef.current.abort("Abort fetch more events");
+      }
+      if (getEventsAbortControllerRef.current) {
+        getEventsAbortControllerRef.current.abort("Aborting get events");
+      }
+      getEventsAbortControllerRef.current = new AbortController();
 
       resetPolling();
 
+      setIsLoading(true);
+
       getEvents({
-        variables
-      }).then(({ data }) => {
-        setEvents(data.events);
-        setPolling(variables);
-      });
+        variables,
+        context: {
+          fetchOptions: {
+            signal: getEventsAbortControllerRef.current?.signal
+          }
+        }
+      })
+        .then(({ data }) => {
+          setEvents(data.events);
+          setPolling(variables);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
@@ -237,17 +250,30 @@ const EventsContainer = () => {
 
     const lastEvent = getLastElement(events);
 
+    fetchMoreAbortControllerRef.current = new AbortController();
+
+    setIsFetchingMore(true);
+
     fetchMoreEvents({
       variables: getQueryVariables({
         ...filters,
         lastId: lastEvent.id
-      })
-    }).then(({ data }) => {
-      if (data) {
-        setEvents((currentEvents) => [...currentEvents, ...data.events]);
-        setEventsCount(data.events.length);
+      }),
+      context: {
+        fetchOptions: {
+          signal: fetchMoreAbortControllerRef.current?.signal
+        }
       }
-    });
+    })
+      .then(({ data }) => {
+        if (data) {
+          setEvents((currentEvents) => [...currentEvents, ...data.events]);
+          setEventsCount(data.events.length);
+        }
+      })
+      .finally(() => {
+        setIsFetchingMore(false);
+      });
   };
 
   return (

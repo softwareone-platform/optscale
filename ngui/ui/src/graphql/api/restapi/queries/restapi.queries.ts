@@ -443,6 +443,12 @@ const GET_RELEVANT_FLAVORS = gql`
   }
 `;
 
+const GET_CLEAN_EXPENSES = gql`
+  query CleanExpenses($organizationId: ID!, $params: CleanExpensesParams) {
+    cleanExpenses(organizationId: $organizationId, params: $params)
+  }
+`;
+
 export {
   CREATE_DATA_SOURCE,
   UPDATE_DATA_SOURCE,
@@ -470,5 +476,6 @@ export {
   GET_RESOURCE_COUNT_BREAKDOWN,
   GET_EXPENSES_DAILY_BREAKDOWN,
   GET_ORGANIZATION_LIMIT_HITS,
-  GET_RELEVANT_FLAVORS
+  GET_RELEVANT_FLAVORS,
+  GET_CLEAN_EXPENSES
 };

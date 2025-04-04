@@ -13,7 +13,7 @@ from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.models import (
     ConstraintLimitHit, Pool, Employee, CloudAccount, Checklist,
     ResourceConstraint, PoolPolicy, OrganizationConstraint,
-    OrganizationLimitHit)
+    OrganizationLimitHit, PowerSchedule, PowerScheduleTrigger)
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 import tools.optscale_time as opttime
 
@@ -1819,7 +1819,30 @@ BASIC_PRESET = {
             "created_at_offset": 0,
             "_created_at_dt_offset": 0
         }
-    ]
+    ],
+    "power_schedules": [
+        {
+            "id": "82c5d81f-7187-4b3a-bb58-62b4dc33e95e",
+            "name": "string2",
+            "timezone": "Asia/Yerevan",
+            "enabled": True,
+            "last_run_error": None,
+            "created_at_offset": -17838,
+            "start_date_offset": -17838,
+            "end_date_offset": 0,
+            "last_eval_offset": -27608,
+            "last_run_offset": 0
+        },
+    ],
+    "power_schedule_triggers": [
+        {
+            "id": "c22879a1-993c-42a7-a44e-2e2f4a74e33e",
+            "power_schedule_id": "82c5d81f-7187-4b3a-bb58-62b4dc33e95e",
+            "time": "09:00",
+            "action": "power_on",
+            "created_at_offset": -17838
+        },
+    ],
 }
 
 
@@ -1872,7 +1895,8 @@ class TestLiveDemosApi(TestApiBase):
         session = self.init_db_session()
         for model in [Pool, Employee, CloudAccount, Checklist,
                       ResourceConstraint, PoolPolicy, ConstraintLimitHit,
-                      OrganizationConstraint, OrganizationLimitHit]:
+                      OrganizationConstraint, OrganizationLimitHit,
+                      PowerSchedule, PowerScheduleTrigger]:
             cnt = len(session.query(model).all())
             if check_empty:
                 # we don't rollback org pool and appropriate employee

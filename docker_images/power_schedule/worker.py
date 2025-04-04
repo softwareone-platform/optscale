@@ -47,6 +47,7 @@ class PowerScheduleReasons:
     DISABLED = 'Power schedule is disabled'
     OUTDATED = 'Power schedule is outdated'
     NO_CHANGES = 'Changing state is not required'
+    CONFLICT = 'Conflicting triggers'
 
 
 class PowerScheduleWorker(ConsumerMixin):
@@ -123,11 +124,11 @@ class PowerScheduleWorker(ConsumerMixin):
         first_point = max(a[0])
         last_point = min(a[1])
         if first_point < last_point:
-            result = [first_point, last_point]
+            result = (first_point, last_point)
         elif first_point == last_point:
-            result = [first_point]
+            result = (first_point,)
         else:
-            result = []
+            result = ()
         return result
 
     def get_action(self, schedule):
@@ -135,49 +136,60 @@ class PowerScheduleWorker(ConsumerMixin):
         now_dt = datetime.now(tz=pytz.utc)
         last_eval_dt = datetime.fromtimestamp(
             schedule['last_eval'], tz=pytz.utc)
-        power_off_today = self._local_time_to_utc(
-            schedule['power_off'], local_tz)
-        power_on_today = self._local_time_to_utc(
-            schedule['power_on'], local_tz)
-        if power_off_today == power_on_today:
-            self.result['reason'] = PowerScheduleReasons.NO_CHANGES
-            return None
-        power_off_tomorrow = power_off_today + timedelta(hours=24)
-        power_on_tomorrow = power_on_today + timedelta(hours=24)
-        power_off_segment = [power_off_today, power_off_tomorrow]
-        power_on_segment = [power_on_today, power_on_tomorrow]
-        run_dt = [last_eval_dt, now_dt]
+        times_today = []
+        time_action_map = {}
+        for trigger in schedule['triggers']:
+            action = trigger['action']
+            time = self._local_time_to_utc(trigger['time'], local_tz)
+            if time in time_action_map:
+                raise PowerScheduleException(
+                    'Conflicting triggers for time: {}'.format(
+                        trigger['time']))
+            times_today.append(time)
+            time_action_map[time] = action
+        # collect power on/off segments during day
+        times_today = sorted(times_today)
+        time_periods = zip(times_today[:-1], times_today[1:])
 
-        action = None
-        schedule_time = None
-        # list of state changes already come
-        action_time = [x for x in power_off_segment + power_on_segment
-                       if x < now_dt]
-        if action_time:
-            # get nearest past action time
-            last_action_time = min(action_time, key=lambda x: abs(x - now_dt))
-            if last_action_time in power_on_segment:
-                action = 'start_instance'
-                schedule_time = power_on_segment
-            elif last_action_time in power_off_segment:
-                action = 'stop_instance'
-                schedule_time = power_off_segment
-        else:
-            # no action changes required yet
-            self.result['reason'] = PowerScheduleReasons.NO_CHANGES
-            return None
+        run_dt = (last_eval_dt, now_dt)
+        if len(times_today) == 1:
+            time = times_today[0]
+            if last_eval_dt <= time <= now_dt:
+                action = time_action_map[times_today[0]]
+                LOG.info('Action required: %s', action)
+                return action
 
-        cross = None
-        # intersect power on or power off schedule with check times to check if
-        # the last action has already been applied
-        if schedule_time:
-            cross = self._intersect(schedule_time, run_dt)
-        if cross == run_dt or cross is None:
+        candidate = None
+        for period in time_periods:
+            cross = self._intersect(period, run_dt)
+            if cross and cross == run_dt:
+                # trigger's time hasn't come
+                # (period_start <= last_eval <= now <= period_end)
+                self.result['reason'] = PowerScheduleReasons.NO_CHANGES
+                return None
+            elif cross and cross != run_dt and cross != period:
+                # found nearest trigger in the past
+                # (last_eval <= period_start <= now <= period_end) OR
+                # (period_start <= last_eval <= period_end <= now)
+                time = max([x for x in period if x <= now_dt])
+                action = time_action_map[time]
+                LOG.info('Action required: %s', action)
+                return action
+            elif cross and cross == period:
+                # too much time passed between runs, continue iterating between
+                # periods to find the nearest trigger
+                # (last_eval <= period_start <= period_end <= now)
+                if not candidate:
+                    candidate = period[1]
+                else:
+                    candidate = max(candidate, period[1])
+        if not candidate:
+            # triggers' times hasn't come
             self.result['reason'] = PowerScheduleReasons.NO_CHANGES
             return None
-        else:
-            LOG.info('Action required: %s', action)
-            return action
+        action = time_action_map[candidate]
+        LOG.info('Action required: %s', action)
+        return action
 
     @staticmethod
     def get_resource_data(resource, cloud_type):
@@ -279,9 +291,14 @@ class PowerScheduleWorker(ConsumerMixin):
             return
         required_action = self.get_action(schedule)
         if required_action:
-            self.process_resources(schedule, required_action)
+            action_func_map = {
+                'power_on': 'start_instance',
+                'power_off': 'stop_instance',
+            }
+            self.process_resources(schedule, action_func_map[required_action])
 
     def process_task(self, body, message):
+        now_ts = int(datetime.now(tz=pytz.utc).timestamp())
         self.result = self.default_result().copy()
         error = None
         power_schedule_id = body.get('power_schedule_id')
@@ -296,7 +313,6 @@ class PowerScheduleWorker(ConsumerMixin):
             LOG.error('Task failed: %s', error)
         LOG.info('Power schedule %s results:\n%s',
                  power_schedule_id, self.result)
-        now_ts = int(datetime.now(tz=pytz.utc).timestamp())
         updates = {
             'last_eval': now_ts,
         }

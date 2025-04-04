@@ -2,21 +2,27 @@ import { useEffect } from "react";
 import { Box } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { type PowerScheduleResponse } from "services/PowerScheduleService";
-import { MERIDIEM_NAMES, formatTimeString, moveDateToUTC, secondsToMilliseconds } from "utils/datetime";
+import {
+  EN_TIME_FORMAT,
+  EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM,
+  formatTimeString,
+  moveDateToUTC,
+  parse,
+  secondsToMilliseconds
+} from "utils/datetime";
 import { FIELD_NAMES } from "./constants";
 import {
   ExpirationDateField,
   FormButtons,
   InitiationDateField,
   NameField,
-  PowerOnField,
-  PowerOffField,
-  TimeZoneField
+  TimeZoneField,
+  TriggersFieldArray
 } from "./FormElements";
-import { type FormValues } from "./types";
+import { Meridiem, type FormValues } from "./types";
 
 type EditPowerScheduleFormProps = {
-  powerSchedule: PowerScheduleResponse;
+  powerSchedule: Partial<PowerScheduleResponse>;
   onSubmit: (formData: FormValues) => void;
   onCancel: () => void;
   isLoadingProps?: {
@@ -25,40 +31,37 @@ type EditPowerScheduleFormProps = {
   };
 };
 
-const getPowerSwitchTimeFormValues = (powerSwitchTime: string) =>
-  formatTimeString({
-    timeString: powerSwitchTime,
-    timeStringFormat: "HH:mm",
-    parsedTimeStringFormat: "hh:mm a"
-  }).split(" ") as [string, "AM" | "PM"];
+const getDefaultFormValues = (powerSchedule: EditPowerScheduleFormProps["powerSchedule"]): FormValues => ({
+  [FIELD_NAMES.NAME]: powerSchedule.name ?? "",
+  [FIELD_NAMES.TIME_ZONE]: powerSchedule.timezone ?? "",
+  [FIELD_NAMES.INITIATION_DATE]: powerSchedule.start_date
+    ? new Date(moveDateToUTC(secondsToMilliseconds(powerSchedule.start_date)))
+    : undefined,
+  [FIELD_NAMES.EXPIRATION_DATE]: powerSchedule.end_date
+    ? new Date(moveDateToUTC(secondsToMilliseconds(powerSchedule.end_date)))
+    : undefined,
+  [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.FIELD_NAME]:
+    powerSchedule.triggers
+      ?.toSorted((triggerA, triggerB) => {
+        const timeA = parse(triggerA.time, EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM, new Date());
+        const timeB = parse(triggerB.time, EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM, new Date());
 
-const getDefaultFormValues = (powerSchedule: EditPowerScheduleFormProps["powerSchedule"]): FormValues => {
-  const [powerOnTime, powerOnTimeOfDay] = powerSchedule.power_on
-    ? getPowerSwitchTimeFormValues(powerSchedule.power_on)
-    : ["", MERIDIEM_NAMES.AM];
-  const [powerOffTime, powerOffTimeOfDay] = powerSchedule.power_off
-    ? getPowerSwitchTimeFormValues(powerSchedule.power_off)
-    : ["", MERIDIEM_NAMES.AM];
+        return timeA.getTime() - timeB.getTime();
+      })
+      .map((trigger) => {
+        const [time, meridiem] = formatTimeString({
+          timeString: trigger.time,
+          timeStringFormat: EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM,
+          parsedTimeStringFormat: EN_TIME_FORMAT
+        }).split(" ");
 
-  return {
-    [FIELD_NAMES.NAME]: powerSchedule.name ?? "",
-    [FIELD_NAMES.POWER_ON.FIELD]: {
-      [FIELD_NAMES.POWER_ON.TIME]: powerOnTime,
-      [FIELD_NAMES.POWER_ON.TIME_OF_DAY]: powerOnTimeOfDay
-    },
-    [FIELD_NAMES.POWER_OFF.FIELD]: {
-      [FIELD_NAMES.POWER_OFF.TIME]: powerOffTime,
-      [FIELD_NAMES.POWER_OFF.TIME_OF_DAY]: powerOffTimeOfDay
-    },
-    [FIELD_NAMES.TIME_ZONE]: powerSchedule.timezone ?? "",
-    [FIELD_NAMES.INITIATION_DATE]: powerSchedule.start_date
-      ? new Date(moveDateToUTC(secondsToMilliseconds(powerSchedule.start_date)))
-      : undefined,
-    [FIELD_NAMES.EXPIRATION_DATE]: powerSchedule.end_date
-      ? new Date(moveDateToUTC(secondsToMilliseconds(powerSchedule.end_date)))
-      : undefined
-  };
-};
+        return {
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.TIME]: time,
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.MERIDIEM]: meridiem as Meridiem,
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.ACTION]: trigger.action
+        };
+      }) ?? []
+});
 
 const EditPowerScheduleForm = ({ powerSchedule, onSubmit, onCancel, isLoadingProps = {} }: EditPowerScheduleFormProps) => {
   const { isSubmitLoading = false, isGetDataLoading = false } = isLoadingProps;
@@ -85,11 +88,10 @@ const EditPowerScheduleForm = ({ powerSchedule, onSubmit, onCancel, isLoadingPro
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <NameField isLoading={isGetDataLoading} />
-          <PowerOnField isLoading={isGetDataLoading} />
-          <PowerOffField isLoading={isGetDataLoading} />
           <TimeZoneField isLoading={isGetDataLoading} />
           <InitiationDateField isLoading={isGetDataLoading} />
           <ExpirationDateField isLoading={isGetDataLoading} />
+          <TriggersFieldArray isLoading={isGetDataLoading} />
           <FormButtons submitButtonMessageId="edit" onCancel={onCancel} isLoading={isSubmitLoading || isGetDataLoading} />
         </form>
       </FormProvider>

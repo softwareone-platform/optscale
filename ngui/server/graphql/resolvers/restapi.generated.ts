@@ -186,6 +186,29 @@ export type BreakdownParams = {
   without_tag?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type CleanExpensesParams = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  cloud_account_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  constraint_violated?: InputMaybe<Scalars['Boolean']['input']>;
+  end_date: Scalars['Int']['input'];
+  format?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  k8s_namespace?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  k8s_node?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  k8s_service?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  owner_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  pool_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  recommendations?: InputMaybe<Scalars['Boolean']['input']>;
+  region?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  resource_type?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  service_name?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  start_date: Scalars['Int']['input'];
+  tag?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  traffic_from?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  traffic_to?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  without_tag?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
 export type CreateDataSourceInput = {
   alibabaConfig?: InputMaybe<AlibabaConfigInput>;
   awsLinkedConfig?: InputMaybe<AwsLinkedConfigInput>;
@@ -429,7 +452,7 @@ export type K8CostModelConfig = {
 export type K8sConfig = {
   __typename?: 'K8sConfig';
   cost_model?: Maybe<K8CostModelConfig>;
-  user: Scalars['String']['output'];
+  user?: Maybe<Scalars['String']['output']>;
 };
 
 export type K8sConfigInput = {
@@ -635,6 +658,7 @@ export type OrganizationLimitHit = {
 
 export type Query = {
   __typename?: 'Query';
+  cleanExpenses?: Maybe<Scalars['JSONObject']['output']>;
   currentEmployee?: Maybe<Employee>;
   dataSource?: Maybe<DataSourceInterface>;
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
@@ -650,6 +674,12 @@ export type Query = {
   organizations?: Maybe<Array<Maybe<Organization>>>;
   relevantFlavors?: Maybe<Scalars['JSONObject']['output']>;
   resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
+};
+
+
+export type QueryCleanExpensesArgs = {
+  organizationId: Scalars['ID']['input'];
+  params?: InputMaybe<CleanExpensesParams>;
 };
 
 
@@ -861,6 +891,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   BreakdownBy: BreakdownBy;
   BreakdownParams: BreakdownParams;
+  CleanExpensesParams: CleanExpensesParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: ResolverTypeWrapper<DataSourceDetails>;
   DataSourceDiscoveryInfos: ResolverTypeWrapper<DataSourceDiscoveryInfos>;
@@ -930,6 +961,7 @@ export type ResolversParentTypes = {
   AzureTenantDataSource: AzureTenantDataSource;
   Boolean: Scalars['Boolean']['output'];
   BreakdownParams: BreakdownParams;
+  CleanExpensesParams: CleanExpensesParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: DataSourceDetails;
   DataSourceDiscoveryInfos: DataSourceDiscoveryInfos;
@@ -1272,7 +1304,7 @@ export type K8CostModelConfigResolvers<ContextType = any, ParentType extends Res
 
 export type K8sConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['K8sConfig'] = ResolversParentTypes['K8sConfig']> = {
   cost_model?: Resolver<Maybe<ResolversTypes['K8CostModelConfig']>, ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1377,6 +1409,7 @@ export type OrganizationLimitHitResolvers<ContextType = any, ParentType extends 
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  cleanExpenses?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryCleanExpensesArgs, 'organizationId'>>;
   currentEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, RequireFields<QueryCurrentEmployeeArgs, 'organizationId'>>;
   dataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<QueryDataSourceArgs, 'dataSourceId'>>;
   dataSources?: Resolver<Maybe<Array<Maybe<ResolversTypes['DataSourceInterface']>>>, ParentType, ContextType, RequireFields<QueryDataSourcesArgs, 'organizationId'>>;

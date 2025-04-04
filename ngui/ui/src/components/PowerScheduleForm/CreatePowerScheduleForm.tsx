@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
+import { POWER_SCHEDULE_ACTIONS } from "utils/constants";
 import { MERIDIEM_NAMES } from "utils/datetime";
 import { FIELD_NAMES } from "./constants";
 import {
@@ -7,9 +8,8 @@ import {
   FormButtons,
   InitiationDateField,
   NameField,
-  PowerOnField,
-  PowerOffField,
-  TimeZoneField
+  TimeZoneField,
+  TriggersFieldArray
 } from "./FormElements";
 import { type FormValues } from "./types";
 
@@ -27,17 +27,16 @@ const CreatePowerScheduleForm = ({ onSubmit, onCancel, isLoadingProps = {} }: Cr
   const methods = useForm<FormValues>({
     defaultValues: {
       [FIELD_NAMES.NAME]: "",
-      [FIELD_NAMES.POWER_ON.FIELD]: {
-        [FIELD_NAMES.POWER_ON.TIME]: "",
-        [FIELD_NAMES.POWER_ON.TIME_OF_DAY]: MERIDIEM_NAMES.AM
-      },
-      [FIELD_NAMES.POWER_OFF.FIELD]: {
-        [FIELD_NAMES.POWER_OFF.TIME]: "",
-        [FIELD_NAMES.POWER_OFF.TIME_OF_DAY]: MERIDIEM_NAMES.AM
-      },
       [FIELD_NAMES.TIME_ZONE]: Intl.DateTimeFormat().resolvedOptions().timeZone,
       [FIELD_NAMES.INITIATION_DATE]: undefined,
-      [FIELD_NAMES.EXPIRATION_DATE]: undefined
+      [FIELD_NAMES.EXPIRATION_DATE]: undefined,
+      [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.FIELD_NAME]: [
+        {
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.TIME]: "",
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.MERIDIEM]: MERIDIEM_NAMES.AM,
+          [FIELD_NAMES.TRIGGERS_FIELD_ARRAY.ACTION]: POWER_SCHEDULE_ACTIONS.POWER_ON
+        }
+      ]
     }
   });
 
@@ -52,11 +51,10 @@ const CreatePowerScheduleForm = ({ onSubmit, onCancel, isLoadingProps = {} }: Cr
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <NameField />
-          <PowerOnField />
-          <PowerOffField />
           <TimeZoneField />
           <InitiationDateField />
           <ExpirationDateField />
+          <TriggersFieldArray />
           <FormButtons submitButtonMessageId="create" onCancel={onCancel} isLoading={isSubmitLoading} />
         </form>
       </FormProvider>

@@ -26,7 +26,7 @@ requirements = [
     "azure-mgmt-monitor==0.10.0",
     "azure-mgmt-commerce==1.0.1",
     "msrest==0.6.6",
-    "urllib3==1.26.18",
+    "urllib3==1.26.20",
     "azure-identity==1.16.1",
 
     # Gcp

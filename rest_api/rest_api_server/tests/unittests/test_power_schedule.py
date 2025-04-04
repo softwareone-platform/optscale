@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
 from freezegun import freeze_time
@@ -38,8 +39,10 @@ class TestPowerSchedule(TestApiBase):
         end_date = int(
             (datetime.now(tz=timezone.utc) + timedelta(days=10)).timestamp())
         self.valid_ps = {
-            'power_off': '10:33',
-            'power_on': '11:22',
+            'triggers': [{
+                'action': 'power_on',
+                'time': '12:34'
+            }],
             'timezone': 'Europe/Vienna',
             'start_date': start_date,
             'end_date': end_date,
@@ -74,11 +77,40 @@ class TestPowerSchedule(TestApiBase):
             self.org_id_1, self.valid_ps)
         self.assertEqual(201, code)
         self.assertTrue(res['enabled'])
+        triggers = self.valid_ps['triggers']
+        self.assertEqual(triggers, res['triggers'])
         self.assertEqual(res['resources_count'], 0)
         for k, v in self.valid_ps.items():
             self.assertEqual(res[k], v)
         self.assertEqual(res['last_run'], 0)
         self.assertEqual(res['last_eval'], 0)
+
+    def test_create_no_triggers(self):
+        ps = self.valid_ps.copy()
+        ps.pop('start_date', None)
+        code, res = self.client.power_schedule_create(
+            self.org_id_1, ps)
+        self.assertEqual(201, code)
+        self.assertTrue(res['triggers'], [])
+
+    def test_create_invalid_trigger_action(self):
+        params = self.valid_ps.copy()
+        params['triggers'][0]['action'] = 'invalid_action'
+        code, res = self.client.power_schedule_create(
+            self.org_id_1, params)
+        self.assertEqual(400, code)
+        self.assertEqual(res['error']['error_code'], 'OE0287')
+
+    def test_create_invalid_trigger_time(self):
+        params = self.valid_ps.copy()
+        params['triggers'][0]['time'] = 'invalid_time'
+        for val in [1, 'test', {'test': 'test'}, '25:12', '22.11', '123',
+                    '22:121']:
+            params['triggers'][0]['time'] = val
+            code, res = self.client.power_schedule_create(
+                self.org_id_1, params)
+            self.assertEqual(400, code)
+            self.assertEqual(res['error']['error_code'], 'OE0550')
 
     def test_create_no_start_date(self):
         ps = self.valid_ps.copy()
@@ -108,15 +140,6 @@ class TestPowerSchedule(TestApiBase):
                 self.assertEqual(code, 400)
                 self.assertEqual(res['error']['error_code'], 'OE0214')
 
-        for param in ['power_on', 'power_off']:
-            for value in [123, {}, []]:
-                params = self.valid_ps.copy()
-                params[param] = value
-                code, res = self.client.power_schedule_create(
-                    self.org_id_1, params)
-                self.assertEqual(code, 400)
-                self.assertEqual(res['error']['error_code'], 'OE0550')
-
         for param in ['start_date', 'end_date']:
             for value in ['123', {}, []]:
                 params = self.valid_ps.copy()
@@ -133,23 +156,6 @@ class TestPowerSchedule(TestApiBase):
                 self.org_id_1, params)
             self.assertEqual(code, 400)
             self.assertEqual(res['error']['error_code'], 'OE0226')
-
-        for param in ['power_off', 'power_on']:
-            for value in ['25:12', '22.11', '123', '22:121']:
-                params = self.valid_ps.copy()
-                params[param] = value
-                code, res = self.client.power_schedule_create(
-                    self.org_id_1, params)
-                self.assertEqual(code, 400)
-                self.assertEqual(res['error']['error_code'], 'OE0550')
-
-        params = self.valid_ps.copy()
-        params['power_on'] = '22:22'
-        params['power_off'] = '22:22'
-        code, res = self.client.power_schedule_create(
-            self.org_id_1, params)
-        self.assertEqual(code, 400)
-        self.assertEqual(res['error']['error_code'], 'OE0552')
 
         now = int(datetime.now(tz=timezone.utc).timestamp())
         params = self.valid_ps.copy()
@@ -197,8 +203,31 @@ class TestPowerSchedule(TestApiBase):
             self.assertEqual(code, 400)
             self.assertEqual(res['error']['error_code'], 'OE0215')
 
+        params = deepcopy(self.valid_ps)
+        for val in [1, 'test', {'test': 'test'}]:
+            params['triggers'] = val
+            code, res = self.client.power_schedule_create(
+                self.org_id_1, params)
+            self.assertEqual(400, code)
+            self.assertEqual(res['error']['error_code'], 'OE0385')
+
+        params = deepcopy(self.valid_ps)
+        params['triggers'][0]['test'] = 'test'
+        code, res = self.client.power_schedule_create(
+            self.org_id_1, params)
+        self.assertEqual(400, code)
+        self.assertEqual(res['error']['error_code'], 'OE0212')
+
+        for param in ('action', 'time'):
+            params = deepcopy(self.valid_ps)
+            params['triggers'][0].pop(param)
+            code, res = self.client.power_schedule_create(
+                self.org_id_1, params)
+            self.assertEqual(400, code)
+            self.assertEqual(res['error']['error_code'], 'OE0216')
+
     def test_create_required(self):
-        for param in ['name', 'power_on', 'power_off', 'timezone']:
+        for param in ['name', 'timezone']:
             params = self.valid_ps.copy()
             params.pop(param, None)
             code, res = self.client.power_schedule_create(
@@ -220,8 +249,6 @@ class TestPowerSchedule(TestApiBase):
             self.org_id_1, self.valid_ps)
         self.assertEqual(201, code)
         updates = {
-            'power_off': '11:44',
-            'power_on': '23:59',
             'timezone': 'Europe/Vienna',
             'start_date': int(datetime.now(tz=timezone.utc).timestamp()),
             'end_date': int(datetime.now(tz=timezone.utc).timestamp()) + 10000,
@@ -229,7 +256,11 @@ class TestPowerSchedule(TestApiBase):
             'enabled': False,
             'last_eval': 12,
             'last_run': 12,
-            'last_run_error': 'error'
+            'last_run_error': 'error',
+            'triggers': [{
+                'action': 'power_off',
+                'time': '07:21'
+            }]
         }
         code, res = self.client.power_schedule_update(ps['id'], updates)
         self.assertEqual(200, code)
@@ -245,8 +276,10 @@ class TestPowerSchedule(TestApiBase):
             self.org_id_1, self.valid_ps)
         self.assertEqual(201, code)
         updates = {
-            'power_off': '11:44',
-            'power_on': '23:59',
+            'triggers': [{
+                'action': 'power_off',
+                'time': '05:33'
+            }],
             'timezone': 'Europe/Vienna',
             'start_date': utcnow_timestamp(),
             'name': 'my schedule 1',
@@ -263,24 +296,6 @@ class TestPowerSchedule(TestApiBase):
                     ps['id'], params)
                 self.assertEqual(code, 400)
                 self.assertEqual(res['error']['error_code'], 'OE0214')
-
-        for param in ['power_on', 'power_off']:
-            for value in ['28:22', '22:99', '21.21', '222:22', '21:199', '123',
-                          123, {}, []]:
-                params = updates.copy()
-                params[param] = value
-                code, res = self.client.power_schedule_update(
-                    ps['id'], params)
-                self.assertEqual(code, 400)
-                self.assertEqual(res['error']['error_code'], 'OE0550')
-
-        params = updates.copy()
-        params['power_on'] = '10:10'
-        params['power_off'] = '10:10'
-        code, res = self.client.power_schedule_update(
-            ps['id'], params)
-        self.assertEqual(code, 400)
-        self.assertEqual(res['error']['error_code'], 'OE0552')
 
         for param in ['start_date', 'end_date']:
             for value in ['123', {}, []]:
@@ -341,6 +356,29 @@ class TestPowerSchedule(TestApiBase):
             code, res = self.client.power_schedule_update(ps['id'], params)
             self.assertEqual(code, 400)
             self.assertEqual(res['error']['error_code'], 'OE0215')
+
+        params = deepcopy(self.valid_ps)
+        for val in [1, 'test', {'test': 'test'}]:
+            params['triggers'] = val
+            code, res = self.client.power_schedule_update(
+                ps['id'], params)
+            self.assertEqual(400, code)
+            self.assertEqual(res['error']['error_code'], 'OE0385')
+
+        params = deepcopy(self.valid_ps)
+        params['triggers'][0]['test'] = 'test'
+        code, res = self.client.power_schedule_update(
+            ps['id'], params)
+        self.assertEqual(400, code)
+        self.assertEqual(res['error']['error_code'], 'OE0212')
+
+        for param in ('action', 'time'):
+            params = deepcopy(self.valid_ps)
+            params['triggers'][0].pop(param)
+            code, res = self.client.power_schedule_update(
+                ps['id'], params)
+            self.assertEqual(400, code)
+            self.assertEqual(res['error']['error_code'], 'OE0216')
 
     def test_update_outdated(self):
         end_date = datetime.now(timezone.utc) - timedelta(days=1)
@@ -404,6 +442,7 @@ class TestPowerSchedule(TestApiBase):
         self.assertEqual(200, code)
         self.assertEqual(ps['resources_count'], 1)
         self.assertEqual(ps['resources'][0]['power_schedule'], ps['id'])
+        self.assertEqual(self.valid_ps['triggers'], ps['triggers'])
 
         code, res = self.client.power_schedule_get('123')
         self.assertEqual(404, code)
@@ -420,12 +459,16 @@ class TestPowerSchedule(TestApiBase):
         code, resp = self.client.power_schedule_list(self.org_id_1)
         self.assertEqual(200, code)
         self.assertEqual(resp['power_schedules'][0]['resources_count'], 0)
+        self.assertEqual(self.valid_ps['triggers'],
+                         resp['power_schedules'][0]['triggers'])
 
         self.create_cloud_resource(self.cloud_acc['id'],
                                    power_schedule=ps['id'])
         code, resp = self.client.power_schedule_list(self.org_id_1)
         self.assertEqual(200, code)
         self.assertEqual(resp['power_schedules'][0]['resources_count'], 1)
+        self.assertEqual(self.valid_ps['triggers'],
+                         resp['power_schedules'][0]['triggers'])
 
         code, resp = self.client.power_schedule_list('123')
         self.assertEqual(404, code)

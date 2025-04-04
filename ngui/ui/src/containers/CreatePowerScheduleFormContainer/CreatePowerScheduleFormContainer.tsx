@@ -3,10 +3,9 @@ import { CreatePowerScheduleForm, FormValues } from "components/PowerScheduleFor
 import {
   getEndDateApiParam,
   getNameApiParam,
-  getPowerOffApiParam,
-  getPowerOnApiParam,
   getStartDateApiParam,
-  getTimeZoneApiParam
+  getTimeZoneApiParam,
+  getTriggersApiParam
 } from "components/PowerScheduleForm/utils";
 import PowerScheduleService, { type PowerScheduleApiParams } from "services/PowerScheduleService";
 import { POWER_SCHEDULES } from "urls";
@@ -20,8 +19,7 @@ const CreatePowerScheduleFormContainer = () => {
   const onSubmit = (formData: FormValues) => {
     const data: PowerScheduleApiParams = {
       name: getNameApiParam(formData),
-      power_on: getPowerOnApiParam(formData),
-      power_off: getPowerOffApiParam(formData),
+      triggers: getTriggersApiParam(formData),
       timezone: getTimeZoneApiParam(formData),
       start_date: getStartDateApiParam(formData),
       end_date: getEndDateApiParam(formData),

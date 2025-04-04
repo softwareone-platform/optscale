@@ -1,4 +1,5 @@
 import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { ObjectValues } from "utils/types";
 import { FIELD_NAMES } from "./constants";
 
 export type FormValues = {
@@ -8,7 +9,7 @@ export type FormValues = {
   };
 };
 
-export type Option = Record<(typeof OPTSCALE_CAPABILITY)[keyof typeof OPTSCALE_CAPABILITY], boolean>;
+export type Option = Record<ObjectValues<typeof OPTSCALE_CAPABILITY>, boolean>;
 
 export type CapabilityFormProps = {
   option: Option;

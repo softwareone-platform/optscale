@@ -47,7 +47,6 @@ export type EventsRequestParams = {
   level?: InputMaybe<Array<EventLevel>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   readOnGet?: InputMaybe<Scalars['Boolean']['input']>;
-  requestId?: InputMaybe<Scalars['String']['input']>;
   timeEnd?: InputMaybe<Scalars['Int']['input']>;
   timeStart?: InputMaybe<Scalars['Int']['input']>;
 };

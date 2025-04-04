@@ -258,7 +258,7 @@ type K8CostModelConfig {
 
 type K8sConfig {
   cost_model: K8CostModelConfig
-  user: String!
+  user: String
 }
 
 type K8sDataSource implements DataSourceInterface {
@@ -557,6 +557,29 @@ input UpdateOrganizationInput {
   currency: String
 }
 
+input CleanExpensesParams {
+  start_date: Int!
+  end_date: Int!
+  limit: Int
+  active: Boolean
+  constraint_violated: Boolean
+  recommendations: Boolean
+  cloud_account_id: [String]
+  format: [String]
+  k8s_namespace: [String]
+  k8s_node: [String]
+  k8s_service: [String]
+  owner_id: [String]
+  pool_id: [String]
+  region: [String]
+  resource_type: [String]
+  service_name: [String]
+  tag: [String]
+  without_tag: [String]
+  traffic_from: [String]
+  traffic_to: [String]
+}
+
 type Query {
   organizations: [Organization]
   currentEmployee(organizationId: ID!): Employee
@@ -585,6 +608,7 @@ type Query {
     constraintId: ID!
   ): [OrganizationLimitHit!]
   relevantFlavors(organizationId: ID!, requestParams: JSONObject): JSONObject
+  cleanExpenses(organizationId: ID!, params: CleanExpensesParams): JSONObject
 }
 
 type Mutation {

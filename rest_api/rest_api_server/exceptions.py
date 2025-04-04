@@ -1035,3 +1035,8 @@ class Err(enum.Enum):
         ["offset", "limit"],
         ["Cannot use offset without limit"]
     ]
+    OE0562 = [
+        "Duplicated triggers for time \"%s\"",
+        ['time'],
+        ['12:34']
+    ]

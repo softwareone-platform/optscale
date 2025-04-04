@@ -1,3 +1,4 @@
+import qs from "qs";
 import BaseClient from "../baseClient.js";
 import {
   DataSourceRequestParams,
@@ -383,6 +384,16 @@ class RestApiClient extends BaseClient {
     const flavors = await this.get(path);
 
     return flavors;
+  }
+
+  async getCleanExpenses(organizationId, params) {
+    const queryString = qs.stringify(params, { arrayFormat: "repeat" });
+
+    const path = `organizations/${organizationId}/clean_expenses?${queryString}`;
+
+    const cleanExpenses = await this.get(path);
+
+    return cleanExpenses;
   }
 }
 

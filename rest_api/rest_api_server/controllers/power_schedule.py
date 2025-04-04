@@ -1,6 +1,11 @@
 import logging
+import uuid
 from datetime import datetime, timezone
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import and_, exists
+
+from rest_api.rest_api_server.utils import check_list_attribute, \
+    check_dict_attribute
 from tools.optscale_exceptions.common_exc import (
     ConflictException, WrongArgumentsException, NotFoundException)
 from rest_api.rest_api_server.controllers.base import (
@@ -11,7 +16,9 @@ from rest_api.rest_api_server.controllers.base_async import (
 from rest_api.rest_api_server.controllers.cloud_resource import (
     CloudResourceController
 )
-from rest_api.rest_api_server.models.models import PowerSchedule
+from rest_api.rest_api_server.models.models import (
+    PowerSchedule, PowerScheduleTrigger
+)
 from rest_api.rest_api_server.exceptions import Err
 
 LOG = logging.getLogger(__name__)
@@ -19,6 +26,10 @@ LOG = logging.getLogger(__name__)
 
 class PowerScheduleController(BaseController, OrganizationValidatorMixin,
                               MongoMixin, ResourceFormatMixin):
+    def __init__(self, db_session, config=None, token=None, engine=None):
+        super().__init__(db_session, config, token, engine)
+        self._power_schedule_trigger_ctrl = None
+
     def _get_model_type(self):
         return PowerSchedule
 
@@ -33,9 +44,6 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
                 item.start_date >= item.end_date):
             raise WrongArgumentsException(
                 Err.OE0541, ['start_date', 'end_date'])
-        if item.power_on == item.power_off:
-            raise WrongArgumentsException(
-                Err.OE0552, ['power_on', 'power_off'])
         now = int(datetime.now(tz=timezone.utc).timestamp())
         end_date = kwargs.get('end_date')
         if isinstance(end_date, int) and end_date < now:
@@ -55,13 +63,59 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
                     {'details': res_ctrl.get_resource_details(resource)})
                 power_schedule['resources'].append(resource)
 
+    @staticmethod
+    def _validate_triggers(triggers):
+        check_list_attribute('triggers', triggers)
+        times = []
+        required = ('action', 'time')
+        for trigger in triggers:
+            check_dict_attribute('trigger', trigger)
+            unexpected = set(trigger.keys()) - set(required)
+            if unexpected:
+                raise WrongArgumentsException(
+                    Err.OE0212, [', '.join(unexpected)])
+            missing = set(required) - set(trigger.keys())
+            if missing:
+                raise WrongArgumentsException(Err.OE0216, [missing.pop()])
+            time = trigger.get('time')
+            if time in times:
+                raise WrongArgumentsException(Err.OE0562, [time])
+            times.append(time)
+
+    def _create_triggers(self, power_schedule_id, triggers):
+        for trigger in triggers:
+            self.session.add(PowerScheduleTrigger(
+                power_schedule_id=power_schedule_id, **trigger))
+
+    def _delete_triggers(self, power_schedule_id):
+        self.session.query(PowerScheduleTrigger).filter(
+            PowerScheduleTrigger.power_schedule_id == power_schedule_id,
+        ).delete()
+
     def create(self, organization_id: str, **kwargs):
         self.check_organization(organization_id)
         start_date = kwargs.get('start_date')
         if start_date is None:
             kwargs['start_date'] = int(datetime.now(timezone.utc).timestamp())
-        power_schedule = super().create(
-            organization_id=organization_id, **kwargs).to_dict()
+        triggers = kwargs.pop("triggers", [])
+        self._validate_triggers(triggers)
+        self.check_create_restrictions(**kwargs)
+        try:
+            ps_id = str(uuid.uuid4())
+            item = PowerSchedule(id=ps_id, organization_id=organization_id,
+                                 **kwargs)
+            self._validate(item, True, **kwargs)
+            LOG.info("Creating %s with parameters %s",
+                     self._get_model_type().__name__, kwargs)
+            self.session.add(item)
+            self._create_triggers(ps_id, triggers)
+            self.session.commit()
+        except IntegrityError as ex:
+            self.session.rollback()
+            raise WrongArgumentsException(Err.OE0003, [str(ex)])
+        except TypeError as ex:
+            raise WrongArgumentsException(Err.OE0004, [str(ex)])
+        power_schedule = item.to_dict()
         power_schedule['resources_count'] = 0
         self.publish_activities_task(
             organization_id, power_schedule["id"], "power_schedule",
@@ -95,7 +149,15 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
         if not item:
             raise NotFoundException(
                 Err.OE0002, [self.model_type.__name__, item_id])
-        schedule = super().edit(item_id, **kwargs).to_dict()
+        triggers = kwargs.pop("triggers", None)
+        if triggers is not None:
+            self._validate_triggers(triggers)
+            self._delete_triggers(item_id)
+            self._create_triggers(item_id, triggers)
+            if not kwargs:
+                self.session.commit()
+        super().edit(item_id, **kwargs)
+        schedule = self.get_item(item_id)
         self._set_resources(schedule, show_resources=True)
         # not spam events on every schedule run
         if set(kwargs) - {'last_eval', 'last_run_error', 'last_run'}:
@@ -144,6 +206,7 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
             "power_schedule_deleted", {"object_name": item.name},
             "power_schedule.power_schedule_deleted"
         )
+        self._delete_triggers(power_schedule_id)
         super().delete(power_schedule_id)
 
 

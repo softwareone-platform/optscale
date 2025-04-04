@@ -242,7 +242,7 @@ class OrganizationsOverviewAsyncHandler(OrganizationAsyncCollectionHandler_v1,
         try:
             org_ctrl = OrganizationAsyncController(
                 self.session(), self._config, self.token)
-            orgs = await run_task(
+            orgs, _ = await run_task(
                 org_ctrl.root_organizations_list, self.token)
             for org in orgs:
                 org_data = org.to_dict()

@@ -113,7 +113,8 @@ class RelevantFlavorCollectionHandler(SecretHandler):
             default: USD
         -   in: query
             name: currency_conversion_rate
-            description: currency conversion rate (GCP only)
+            description: |
+                currency conversion rate (GCP, Alibaba)
             required: false
             type: number
         responses:
@@ -151,6 +152,7 @@ class RelevantFlavorCollectionHandler(SecretHandler):
                     - OI0015: Operating system is not available
                     - OI0021: currency_conversion_rate must be used with preferred_currency
                     - OI0022: currency_conversion_rate must be positive
+                    - OI0023: Service credentials for cloud are not configured
             401:
                 description: |
                     Unauthorized:

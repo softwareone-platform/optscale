@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 requirements = ['requests==2.32.3', 'SQLAlchemy==1.3.24',
-                'optscale-exceptions==0.0.23', 'netaddr==0.7.18']
+                'optscale-exceptions==0.0.0', 'netaddr==0.7.19']
 
 setup(name='optscale-types',
       description='OptScale Types',

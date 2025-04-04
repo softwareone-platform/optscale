@@ -1,7 +1,7 @@
 pymongo==4.6.3
 kombu==5.3.4
 boto3==1.34.7
-clickhouse-driver==0.2.6
+clickhouse-driver==0.2.9
 # OptScale packages
 -e tools/cloud_adapter
 -e tools/optscale_time

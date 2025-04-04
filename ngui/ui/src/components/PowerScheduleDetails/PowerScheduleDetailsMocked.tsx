@@ -10,8 +10,16 @@ const PowerScheduleDetailsMocked = () => (
       power_off: "19:00",
       enabled: true,
       timezone: "Europe/Vienna",
-      start_date: 1696912229,
-      end_date: 1697274449,
+      triggers: [
+        { action: "power_on", time: "00:00" },
+        { action: "power_off", time: "02:00" },
+        { action: "power_on", time: "04:00" },
+        { action: "power_off", time: "06:00" },
+        { action: "power_on", time: "08:00" },
+        { action: "power_off", time: "10:00" },
+        { action: "power_on", time: "12:00" },
+        { action: "power_off", time: "14:00" }
+      ],
       last_run: 0,
       last_run_error: null,
       created_at: 1696912229,

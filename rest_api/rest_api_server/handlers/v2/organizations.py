@@ -3,6 +3,7 @@ from tools.optscale_exceptions.common_exc import (NotFoundException,
                                                   UnauthorizedException)
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from rest_api.rest_api_server.exceptions import Err
+from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from rest_api.rest_api_server.handlers.v1.organizations import (
     OrganizationAsyncCollectionHandler as OrganizationAsyncCollectionHandler_v1)
@@ -10,7 +11,7 @@ from rest_api.rest_api_server.controllers.organization import OrganizationAsyncC
 from rest_api.rest_api_server.handlers.v1.organizations import (
     OrganizationAsyncItemHandler as OrganizationAsyncItemHandler_v1)
 from rest_api.rest_api_server.controllers.register import RegisterAsyncController
-from rest_api.rest_api_server.utils import ModelEncoder, run_task
+from rest_api.rest_api_server.utils import ModelEncoder, run_task, check_int_attribute
 
 
 class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, BaseHandler):
@@ -164,7 +165,8 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                                         description: "Organization currency"}
             400: {description: "Unauthorized: \n\n
                 - OE0212: Unexpected parameters\n\n
-                - OE0536: Invalid currency"}
+                - OE0536: Invalid currency\n\n
+                - OE0224: Wrong integer argument value"}
             401: {description: "Unauthorized: \n\n
                 - OE0235: Unauthorized\n\n
                 - OE0237: This resource requires authorization"}
@@ -190,8 +192,15 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
         else:
             res = await run_task(self.controller.get_org_list, **args)
 
-        organizations_dict = {'organizations': [
-            organization.to_dict() for organization in res]}
+        organizations, total_count = res
+        organizations_dict = {
+            'organizations': [
+                organization.to_dict() for organization in organizations
+            ],
+            'total_count': total_count,
+            'limit': args['limit'],
+            'offset': args['offset'],
+        }
         self.write(json.dumps(organizations_dict, cls=ModelEncoder))
 
     def get_org_arguments(self, is_by_user):
@@ -200,7 +209,15 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
             args.update({k: self.get_arg(k, bool, False) for k in [
                 'is_demo', 'with_shareable_bookings', 'with_connected_accounts'
             ]})
-        args.update({k: self.get_arg(k, int, 0) for k in ['limit', 'offset']})
+        pagination_args = {
+            k: self.get_arg(k, int, 0) for k in ['limit', 'offset']
+        }
+        try:
+            for name, value in pagination_args.items():
+                check_int_attribute(name, value)
+        except WrongArgumentsException as ex:
+            raise OptHTTPError.from_opt_exception(400, ex)
+        args.update(pagination_args)
         unexpected_args = list(filter(
             lambda x: x not in args.keys(), self.request.arguments.keys()))
         if unexpected_args:

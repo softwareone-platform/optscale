@@ -100,15 +100,17 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
     ssh_only: isSshRequired = false,
     meta = {},
     power_schedule: powerScheduleId,
-    power_schedule_name: powerScheduleName
+    power_schedule_name: powerScheduleName,
+    region,
+    service_name: serviceName,
+    active = false,
+    first_seen: firstSeen,
+    last_seen: lastSeen
   } = resource;
 
   const { cloud_console_link: cloudConsoleLink } = meta;
   const {
-    active = false,
     cloud_type: cloudType,
-    first_seen: firstSeen,
-    last_seen: lastSeen,
     cost = 0,
     total_cost: totalCost = 0,
     forecast = 0,
@@ -116,7 +118,11 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
     policies,
     env_properties_collector_link: envPropertiesCollectorLink,
     total_traffic_expenses: totalTrafficExpenses = 0,
-    total_traffic_usage: totalTrafficUsage = 0
+    total_traffic_usage: totalTrafficUsage = 0,
+    pool_name: poolName,
+    pool_purpose: poolPurpose,
+    owner_name: ownerName,
+    cloud_name: cloudName
   } = details;
 
   const savings = getSumByObjectKey(modules, "saving");
@@ -273,9 +279,7 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
       dataTestId: "tab_details",
       node: !!id && (
         <>
-          {details.is_environment || shareable ? (
-            <EnvironmentProperties environmentId={id} properties={environmentProperties} />
-          ) : null}
+          {isEnvironment || shareable ? <EnvironmentProperties environmentId={id} properties={environmentProperties} /> : null}
           <ResourceDetails
             poolId={poolId}
             resourceType={resourceType}
@@ -285,18 +289,18 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
             subResources={subResources}
             clusterId={clusterId}
             clusterTypeId={clusterTypeId}
-            serviceName={details.service_name}
-            poolName={details.pool_name}
-            poolType={details.pool_purpose}
-            ownerName={details.owner_name}
-            cloudName={details.cloud_name}
+            serviceName={serviceName}
+            poolName={poolName}
+            poolType={poolPurpose}
+            ownerName={ownerName}
+            cloudName={cloudName}
             cloudAccountId={cloudAccountId}
-            cloudType={details.cloud_type}
-            region={details.region}
-            firstSeen={details.first_seen}
-            lastSeen={details.last_seen}
-            isActive={details.active}
-            isEnvironment={details.is_environment}
+            cloudType={cloudType}
+            region={region}
+            firstSeen={firstSeen}
+            lastSeen={lastSeen}
+            isActive={active}
+            isEnvironment={isEnvironment}
             k8sService={k8sService}
             k8sNamespace={k8sNamespace}
             k8sNode={k8sNode}
@@ -317,8 +321,8 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
           resourceName={name}
           isSshRequired={isSshRequired}
           poolId={poolId}
-          poolName={details.pool_name}
-          poolType={details.pool_purpose}
+          poolName={poolName}
+          poolType={poolPurpose}
           resourceType={resourceType}
         />
       ),

@@ -87,3 +87,6 @@ class Err(enum.Enum):
     OI0022 = [
         "%s must be positive"
     ]
+    OI0023 = [
+        "Service credentials for cloud %s are not configured"
+    ]

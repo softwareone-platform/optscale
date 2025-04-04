@@ -976,7 +976,10 @@ class Alibaba(CloudBase):
             request.set_ModuleLists(module_lists)
             response = self._send_request(request)
             try:
-                return response['Data']['ModuleDetails']['ModuleDetail']
+                result = response['Data']['ModuleDetails']['ModuleDetail']
+                for data in result:
+                    data['Currency'] = response['Data']['Currency']
+                return result
             except KeyError:
                 pricing_not_found_code = 'PRICE.PRICING_PLAN_RESULT_NOT_FOUND'
                 if response.get('Message') == pricing_not_found_code:
@@ -1057,7 +1060,9 @@ class Alibaba(CloudBase):
             request.set_ModuleLists(module_list[i:i + page_size])
             response = self._send_request(request)
             try:
-                for item in response['Data']['ModuleDetails']['ModuleDetail']:
+                data = response['Data']
+                for item in data['ModuleDetails']['ModuleDetail']:
+                    item['Currency'] = data['Currency']
                     yield item
             except KeyError:
                 raise ValueError('Unexpected response format: {}'.format(

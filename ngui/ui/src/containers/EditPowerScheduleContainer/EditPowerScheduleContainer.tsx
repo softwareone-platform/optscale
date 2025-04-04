@@ -4,10 +4,9 @@ import { type FormValues } from "components/PowerScheduleForm";
 import {
   getEndDateApiParam,
   getNameApiParam,
-  getPowerOffApiParam,
-  getPowerOnApiParam,
   getStartDateApiParam,
-  getTimeZoneApiParam
+  getTimeZoneApiParam,
+  getTriggersApiParam
 } from "components/PowerScheduleForm/utils";
 import PowerScheduleService, { type PowerScheduleApiParams } from "services/PowerScheduleService";
 import { getPowerScheduleDetailsUrl } from "urls";
@@ -24,11 +23,10 @@ const EditPowerScheduleContainer = () => {
   const onSubmit = (formData: FormValues) => {
     const data: Partial<PowerScheduleApiParams> = {
       name: getNameApiParam(formData),
-      power_on: getPowerOnApiParam(formData),
-      power_off: getPowerOffApiParam(formData),
       timezone: getTimeZoneApiParam(formData),
       start_date: getStartDateApiParam(formData),
-      end_date: getEndDateApiParam(formData)
+      end_date: getEndDateApiParam(formData),
+      triggers: getTriggersApiParam(formData)
     };
 
     onUpdate(powerScheduleId, data).then(() => navigate(getPowerScheduleDetailsUrl(powerScheduleId)));
