@@ -74,6 +74,7 @@ const PendingInvitations = () => {
               styleProps={{ buttonsJustifyContent: "center" }}
               onSuccessAccept={() => {
                 refetchOrganizations();
+                refetchInvitations();
                 setProceedToNext(true);
               }}
               onSuccessDecline={() => {
