@@ -31,7 +31,7 @@ PARAMETER_DUMPS = {
     },
     'employee_greetings': {
         'email': ['andersonmatthew_hwp@hystax.com'],
-        'subject': 'Thank you for registering at OptScale. Please proceed with the setup',
+        'subject': 'Thank you for registering at FinOps for Cloud. Please proceed with the setup',
         'template_type': 'employee_greetings',
         'template_params': {
             'texts': {
@@ -46,7 +46,7 @@ PARAMETER_DUMPS = {
                 }}}},
     'invite': {
         "email": ["me@1.com"],
-        "subject": "OptScale invitation notification",
+        "subject": "FinOps for Cloud invitation notification",
         "template_type": "invite",
         "template_params": {
             "texts": {
@@ -156,7 +156,7 @@ PARAMETER_DUMPS = {
     },
     'pool_exceed_report': {
         'email': ['james31_pza@hystax.com'],
-        'subject': 'Action Required: Hystax OptScale Pool Limit Exceed Alert',
+        'subject': 'Action Required: SoftwareOne FinOps for Cloud Pool Limit Exceed Alert',
         'template_type': 'pool_exceed_report',
         'template_params': {
             'texts': {
@@ -188,7 +188,7 @@ PARAMETER_DUMPS = {
     },
     'pool_exceed_resources_report': {
         'email': ['ranxygcrfg@novaemail.com'],
-        'subject': 'Action Required: Hystax OptScale Pool Limit Exceed Alert',
+        'subject': 'Action Required: SoftwareOne FinOps for Cloud Pool Limit Exceed Alert',
         'template_type': 'pool_exceed_resources_report',
         'template_params': {
             'texts': {
@@ -770,7 +770,7 @@ PARAMETER_DUMPS = {
     },
     'pool_owner_violation_report': {
         'email': ['lori54_lskqtdln@hystax.com'],
-        'subject': 'Action required: Hystax OptScale Resource Constraints Report',
+        'subject': 'Action required: SoftwareOne FinOps for Cloud Resource Constraints Report',
         'template_type': 'pool_owner_violation_report',
         'template_params': {
             'texts': {
@@ -822,7 +822,7 @@ PARAMETER_DUMPS = {
     'resource_owner_violation_alert': {
         "email": ["kepler71@de.io"],
         "template_type": "resource_owner_violation_alert",
-        "subject": "Action required: Hystax OptScale Resource Constraint Violation Alert",
+        "subject": "Action required: SoftwareOne FinOps for Cloud Resource Constraint Violation Alert",
         "template_params": {
             "texts": {
                 "total_violated": 2,
@@ -862,7 +862,7 @@ PARAMETER_DUMPS = {
     'resource_owner_violation_report': {
         "email": ["root@hystax.com"],
         "template_type": "resource_owner_violation_report",
-        "subject": "Action required: Hystax OptScale Resource Constraints Report",
+        "subject": "Action required: SoftwareOne FinOps for Cloud Resource Constraints Report",
         "template_params": {
             "texts": {
                 "total_differ": 1,
@@ -926,7 +926,7 @@ PARAMETER_DUMPS = {
     'weekly_expense_report': {
         "email": ["root@hystax.com"],
         "template_type": "weekly_expense_report",
-        "subject": "OptScale weekly expense report",
+        "subject": "FinOps for Cloud weekly expense report",
         "template_params": {
             "texts": {
                 "organization": {
@@ -1022,7 +1022,7 @@ PARAMETER_DUMPS = {
             }}},
     'first_shareable_resources': {
         "email": ["azaza@ma.il"],
-        "subject": "OptScale shared environments notification",
+        "subject": "FinOps for Cloud shared environments notification",
         "template_type": "first_shareable_resources",
         "template_params": {
             "texts": {
@@ -1476,7 +1476,7 @@ PARAMETER_DUMPS = {
                 }}}},
     'restore_password': {
         'email': ['serviceuser@hystax.com'],
-        'subject': 'OptScale password recovery',
+        'subject': 'FinOps for Cloud password recovery',
         'template_type': 'restore_password',
         'template_params': {
             'texts': {
@@ -1490,7 +1490,7 @@ PARAMETER_DUMPS = {
     },
     'first_task_created': {
         "email": ["azaza@ma.il"],
-        "subject": "OptScale task created notification",
+        "subject": "FinOps for Cloud task created notification",
         "template_type": "first_task_created",
         "template_params": {
             "texts": {
@@ -1507,7 +1507,7 @@ PARAMETER_DUMPS = {
     },
     'first_run_started': {
         "email": ["azaza@ma.il"],
-        "subject": "OptScale run started notification",
+        "subject": "FinOps for Cloud run started notification",
         "template_type": "first_run_started",
         "template_params": {
             "texts": {
@@ -1528,7 +1528,7 @@ PARAMETER_DUMPS = {
     },
     'verify_email': {
         'email': ['serviceuser@hystax.com'],
-        'subject': 'OptScale email verification',
+        'subject': 'FinOps for Cloud email verification',
         'template_type': 'verify_email',
         'template_params': {
             'texts': {
