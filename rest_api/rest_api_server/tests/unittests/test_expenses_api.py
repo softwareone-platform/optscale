@@ -4469,6 +4469,122 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(response['total_count'], 2)
         self.assertEqual(response['total_saving'], 0)
 
+    def test_summary_clean_expenses_active_clusters(self):
+        code, cluster_type = self.client.cluster_type_create(
+            self.org_id, {'name': 'awesome', 'tag_key': 'tag'})
+        self.assertEqual(code, 201)
+        code, resource1 = self.create_cloud_resource(
+            self.cloud_acc1['id'], tags={'tag': 'val'}, region='us-east')
+        self.assertEqual(code, 201)
+        code, resource2 = self.create_cloud_resource(
+            self.cloud_acc1['id'], tags={'tag': 'val2'}, region='us-west')
+        self.assertEqual(code, 201)
+
+        dt = utcnow()
+        expenses = [
+            {
+                'cost': 150, 'date': dt,
+                'cloud_acc': self.cloud_acc1['id'],
+                'region': resource1['region'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 300, 'date': dt,
+                'cloud_acc': self.cloud_acc2['id'],
+                'region': resource2['region'],
+                'resource_id': resource2['id'],
+            },
+        ]
+        for e in expenses:
+            self.expenses.append({
+                'resource_id': e['resource_id'],
+                'cost': e['cost'],
+                'date': e['date'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+        time = int(dt.timestamp())
+        self._make_resources_active([resource1['id']])
+        self._make_resources_active([resource1['cluster_id']])
+
+        body = {'active': False}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+        self.assertTrue(len(response['clean_expenses']) == 1)
+        self.assertIsNotNone(
+            response['clean_expenses'][0].get('cluster_type_id'))
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+
+        body = {'active': True}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 150)
+        self.assertEqual(response['total_count'], 1)
+        self.assertTrue(len(response['clean_expenses']) == 1)
+        self.assertIsNotNone(
+            response['clean_expenses'][0].get('cluster_type_id'))
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 150)
+        self.assertEqual(response['total_count'], 1)
+
+        body = {}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 450)
+        self.assertEqual(response['total_count'], 2)
+        self.assertTrue(len(response['clean_expenses']) == 2)
+        for expense in response['clean_expenses']:
+            self.assertIsNotNone(expense.get('cluster_type_id'))
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 450)
+        self.assertEqual(response['total_count'], 2)
+
+        body = {'active': False, 'cloud_account_id': self.cloud_acc1['id']}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 0)
+        self.assertEqual(response['total_count'], 0)
+        self.assertTrue(len(response['clean_expenses']) == 0)
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 0)
+        self.assertEqual(response['total_count'], 0)
+
+        body = {'active': False, 'cloud_account_id': None}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+        self.assertTrue(len(response['clean_expenses']) == 1)
+        self.assertIsNotNone(
+            response['clean_expenses'][0].get('cluster_type_id'))
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, time - 100, time + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_cost'], 300)
+        self.assertEqual(response['total_count'], 1)
+
     def test_clean_expenses_shareables(self):
         code, resource1 = self.create_cloud_resource(
             self.cloud_acc1['id'], region='us-east')

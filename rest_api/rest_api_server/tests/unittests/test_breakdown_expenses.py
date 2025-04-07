@@ -1,5 +1,3 @@
-import os
-
 from datetime import datetime, timezone, timedelta
 from unittest.mock import patch
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
@@ -583,6 +581,73 @@ class TestBreakdownExpensesApi(TestApiBase):
         )
         self.assertEqual(response['breakdown'], {
             str(time): {'awesome:cluster': {'cost': 550}},
+            str(time + DAY_IN_SECONDS): {}
+        })
+
+    def test_breakdown_expenses_clusters_active(self):
+        code, cluster_type = self.client.cluster_type_create(
+            self.org_id, {'name': 'awesome', 'tag_key': 'tag'})
+        dt = datetime(2021, 2, 1, tzinfo=timezone.utc)
+        first_seen = int((dt - timedelta(days=1)).timestamp())
+        last_seen = int(dt.timestamp())
+        self.assertEqual(code, 201)
+        resource1 = self._create_resource(
+            self.cloud_acc1['id'], tags={'tag': 'val'}, region='us-east',
+            first_seen=first_seen, last_seen=last_seen)
+        resource2 = self._create_resource(
+            self.cloud_acc1['id'], tags={'tag': 'val2'}, region='us-west',
+            first_seen=first_seen, last_seen=last_seen)
+
+        expenses = [
+            {
+                'cost': 150, 'date': dt,
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 125, 'date': dt - timedelta(days=1),
+                'cloud_acc': self.cloud_acc1['id'],
+                'resource_id': resource1['id'],
+            },
+            {
+                'cost': 300, 'date': dt,
+                'cloud_acc': self.cloud_acc2['id'],
+                'resource_id': resource2['id'],
+            }
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'resource_id': e['resource_id'],
+                'cost': e['cost'],
+                'date': e['date'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+        self._make_resources_active([resource1['id']])
+        self._make_resources_active([resource1['cluster_id']])
+
+        time = int(dt.timestamp())
+
+        code, response = self.client.breakdown_expenses_get(
+            self.org_id, time, time + DAY_IN_SECONDS, params={'active': False})
+        self.assertEqual(code, 200)
+        self.assertEqual(response['counts'], {
+            'null': {'total': 300, 'previous_total': 0}
+        })
+        self.assertEqual(response['breakdown'], {
+            str(time): {'null': {'cost': 300}},
+            str(time + DAY_IN_SECONDS): {}
+        })
+
+        code, response = self.client.breakdown_expenses_get(
+            self.org_id, time, time + DAY_IN_SECONDS, params={'active': True})
+        self.assertEqual(code, 200)
+        self.assertEqual(response['counts'], {
+            'null': {'total': 150, 'previous_total': 125}
+        })
+        self.assertEqual(response['breakdown'], {
+            str(time): {'null': {'cost': 150}},
             str(time + DAY_IN_SECONDS): {}
         })
 

@@ -35,7 +35,7 @@ from rest_api.rest_api_server.models.types import (
     MediumNullableString, MediumString, MediumLargeNullableString,
     ConstraintLimitState, OrganizationConstraintType, ConstraintDefinition,
     RunResult, BIOrganizationStatus, BIType, Float, GeminiStatus,
-    HMTimeString, TimezoneString)
+    HMTimeString, TimezoneString, PowerScheduleAction)
 
 
 class PermissionKeys(Enum):
@@ -1631,7 +1631,7 @@ class OrganizationGemini(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
         return res
 
 
-class PowerSchedule(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
+class PowerSchedule(Base, CreatedMixin, MutableMixin, ValidatorMixin):
     __tablename__ = "power_schedule"
 
     organization_id = Column(Uuid("organization_id"),
@@ -1639,16 +1639,12 @@ class PowerSchedule(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
                              info=ColumnPermissions.create_only)
     name = Column(BaseString('name'), nullable=False,
                   info=ColumnPermissions.full)
-    power_off = Column(HMTimeString('power_off'), nullable=False,
-                       info=ColumnPermissions.full)
-    power_on = Column(HMTimeString('power_on'), nullable=False,
-                      info=ColumnPermissions.full)
     timezone = Column(TimezoneString('timezone'), nullable=False,
                       info=ColumnPermissions.full)
     enabled = Column(NullableBool('enabled'), nullable=False,
                      info=ColumnPermissions.full)
-    start_date = Column(NullableInt("start_date"), default=0, nullable=False,
-                        info=ColumnPermissions.full)
+    start_date = Column(NullableInt("start_date"), default=0,
+                        nullable=False, info=ColumnPermissions.full)
     end_date = Column(NullableInt("end_date"), default=0,
                       nullable=False, info=ColumnPermissions.full)
     last_eval = Column(Int("last_eval"), default=0,
@@ -1666,11 +1662,53 @@ class PowerSchedule(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
     def unique_fields(self):
         return ['organization_id', 'name']
 
-    @validates('organization_id', 'name', 'power_off', 'power_on', 'timezone',
-               'enabled', 'start_date', 'end_date', 'last_eval', 'last_run',
+    @validates('organization_id', 'name', 'timezone', 'enabled',
+               'start_date', 'end_date', 'last_eval', 'last_run',
                'last_run_error')
     def _validate(self, key, value):
         return self.get_validator(key, value)
+
+    def to_dict(self):
+        result = super().to_dict()
+        result['triggers'] = []
+        # pylint: disable=no-member
+        for trigger in self.triggers:
+            result['triggers'].append(trigger.to_dict(short=True))
+        return result
+
+
+class PowerScheduleTrigger(Base, BaseMixin, ValidatorMixin):
+    __tablename__ = "power_schedule_trigger"
+
+    id = Column(Uuid("id"), primary_key=True, default=gen_id,
+                info=ColumnPermissions.create_only)
+    power_schedule_id = Column(Uuid("power_schedule_id"),
+                               ForeignKey("power_schedule.id"), nullable=False)
+    power_schedule = relationship("PowerSchedule",
+                                  foreign_keys=[power_schedule_id],
+                                  backref="triggers")
+    time = Column(HMTimeString("time"), nullable=False,
+                  info=ColumnPermissions.full)
+    action = Column(PowerScheduleAction, nullable=False,
+                    info=ColumnPermissions.full)
+    created_at = Column(Integer, default=now_timestamp, nullable=False,
+                        info=ColumnPermissions.create_only)
+
+    @validates("power_schedule_id", "time", "action")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+    __table_args__ = (UniqueConstraint(
+        "power_schedule_id", "time",
+        name="uc_power_schedule_id_time"),)
+
+    def to_dict(self, short=False):
+        trigger = super().to_dict()
+        trigger["action"] = trigger["action"].value
+        if short:
+            fields_to_show = ["time", "action"]
+            trigger = {k: v for k, v in trigger.items() if k in fields_to_show}
+        return trigger
 
 
 class Layout(Base, BaseMixin, ValidatorMixin):

@@ -28,8 +28,11 @@ spec:
     spec:
       containers:
         - name: {{ .Values.clickhouse.name }}
-          image: "yandex/clickhouse-server:21.10"
+          image: "clickhouse/clickhouse-server:24.12"
           imagePullPolicy: {{ .Values.clickhouse.image.pullPolicy }}
+          env:
+            - name: CLICKHOUSE_SKIP_USER_SETUP
+              value: "1"
           ports:
             - name: http
               containerPort: {{ .Values.clickhouse.service.httpPort }}
@@ -59,10 +62,16 @@ spec:
               mountPath: /var/lib/clickhouse/
             - name: config-volume
               mountPath: /etc/clickhouse-server/
+            - name: clickhouse-logs
+              mountPath: /var/log/clickhouse-server/
       volumes:
         - name: clickhouse-data-volume
           hostPath:
             path: /optscale/clickhouse
+            type: DirectoryOrCreate
+        - name: clickhouse-logs
+          hostPath:
+            path: /optscale/clickhouse/logs
             type: DirectoryOrCreate
         - name: config-volume
           configMap:

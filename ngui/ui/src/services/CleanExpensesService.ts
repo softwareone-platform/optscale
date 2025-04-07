@@ -1,7 +1,9 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
+import { useQuery } from "@apollo/client";
 import { useDispatch } from "react-redux";
 import { RESTAPI, getCleanExpenses } from "api";
-import { GET_CLEAN_EXPENSES } from "api/restapi/actionTypes";
+import { GET_CLEAN_EXPENSES as GET_CLEAN_EXPENSES_REDUX } from "api/restapi/actionTypes";
+import { GET_CLEAN_EXPENSES as GET_CLEAN_EXPENSES_GRAPHQL } from "graphql/api/restapi/queries/restapi.queries";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useInScopeOfPageMockup } from "hooks/useInScopeOfPageMockup";
@@ -225,38 +227,41 @@ export const mapCleanExpensesRequestParamsToApiParams = (params) => ({
 export const useGet = ({ params = {} } = {}) => {
   const inScopeOfPageMockup = useInScopeOfPageMockup();
 
-  const dispatch = useDispatch();
   const { organizationId } = useOrganizationInfo();
-  const { apiData: data } = useApiData(GET_CLEAN_EXPENSES);
 
-  const { isLoading, shouldInvoke } = useApiState(GET_CLEAN_EXPENSES, {
-    organizationId,
-    ...mapCleanExpensesRequestParamsToApiParams(params)
+  const { data, loading } = useQuery(GET_CLEAN_EXPENSES_GRAPHQL, {
+    variables: {
+      organizationId: organizationId,
+      params: mapCleanExpensesRequestParamsToApiParams(params)
+    },
+    skip: inScopeOfPageMockup
   });
 
-  useEffect(() => {
-    if (shouldInvoke && !inScopeOfPageMockup) {
-      dispatch(getCleanExpenses(organizationId, mapCleanExpensesRequestParamsToApiParams(params)));
-    }
-  }, [dispatch, organizationId, params, shouldInvoke, inScopeOfPageMockup]);
-
-  return { isLoading, data: inScopeOfPageMockup ? mockedData : data };
+  return inScopeOfPageMockup
+    ? {
+        isLoading: false,
+        data: mockedData
+      }
+    : {
+        isLoading: loading,
+        data: data?.cleanExpenses ?? {}
+      };
 };
 
 const useGetOnDemand = () => {
   const dispatch = useDispatch();
   const { organizationId } = useOrganizationInfo();
-  const { apiData: data } = useApiData(GET_CLEAN_EXPENSES);
+  const { apiData: data } = useApiData(GET_CLEAN_EXPENSES_REDUX);
 
-  const { isLoading } = useApiState(GET_CLEAN_EXPENSES);
+  const { isLoading } = useApiState(GET_CLEAN_EXPENSES_REDUX);
 
   const getData = useCallback(
     (params) =>
       new Promise((resolve, reject) => {
         dispatch((_, getState) => {
           dispatch(getCleanExpenses(organizationId, mapCleanExpensesRequestParamsToApiParams(params))).then(() => {
-            if (!isError(GET_CLEAN_EXPENSES, getState())) {
-              const apiData = getState()?.[RESTAPI]?.[GET_CLEAN_EXPENSES];
+            if (!isError(GET_CLEAN_EXPENSES_REDUX, getState())) {
+              const apiData = getState()?.[RESTAPI]?.[GET_CLEAN_EXPENSES_REDUX];
               return resolve(apiData);
             }
             return reject();

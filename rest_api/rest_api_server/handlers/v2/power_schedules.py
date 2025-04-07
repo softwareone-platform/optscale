@@ -50,21 +50,11 @@ class PowerSchedulesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         type: string
                         description: timezone name used to power on/off instances
                         required: True
-                    power_off:
-                        type: string
-                        description: power off time in format HH:MM
-                        required: True
-                        example: "14:21"
-                    power_on:
-                        type: string
-                        description: power on time in format HH:MM
-                        required: True
-                        example: "05:48"
                     start_date:
                         type: integer
                         description: power schedule start time timestamp UTC
                         required: False
-                        example: 1698731002
+                        example: 1698732002
                     end_date:
                         type: integer
                         description: power schedule end time timestamp UTC
@@ -74,26 +64,42 @@ class PowerSchedulesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         type: boolean
                         description: should power schedule be applied or not
                         required: False
+                    triggers:
+                        description: power schedule trigger
+                        required: False
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                action:
+                                    type: string
+                                    description: |
+                                        Action performed by power schedule
+                                    example: "power_on"
+                                time:
+                                    type: string
+                                    description: |
+                                        Trigger time in format HH:MM
+                                    example: "05:48"
         responses:
             201:
                 description: Success (returns created object)
                 schema:
                     type: object
                     example:
-                        -   id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
-                            organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
-                            name: "my schedule"
-                            timezone: "Europe/Vienna"
-                            power_off: "14:21"
-                            power_on: "05:48"
-                            enabled: True
-                            start_date: 1687029026
-                            end_date: 1697029026
-                            created_at: 1587029026
-                            deleted_at: 0
-                            last_run: 0
-                            last_run_error: null
-                            resources_count: 0
+                        id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
+                        organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
+                        name: "my schedule"
+                        timezone: "Europe/Vienna"
+                        enabled: True
+                        start_date: 1687029026
+                        end_date: 1697029026
+                        created_at: 1587029026
+                        deleted_at: 0
+                        last_run: 0
+                        last_run_error: null
+                        resources_count: 0
+                        triggers: []
             400:
                 description: |
                     Wrong arguments:
@@ -108,8 +114,8 @@ class PowerSchedulesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                     - OE0226: enabled should be True or False
                     - OE0461: end_date can't be in past
                     - OE0550: Parameter should be time string in format HH:MM
-                    - OE0552: Parameter power_on can\'t be equal to power_off
                     - OE0553: timezone should be a timezone name
+                    - OE0562: Duplicated triggers for time
             401:
                 description: |
                     Unauthorized:
@@ -170,19 +176,20 @@ class PowerSchedulesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                     timezone:
                                         type: string
                                         description: |
-                                          timezone name used to power on/off instances
-                                    power_off:
-                                        type: string
-                                        description: power off time in format HH:MM
-                                        example: "14:21"
-                                    power_on:
-                                        type: string
-                                        description: power on time in format HH:MM
-                                        example: "05:48"
+                                            timezone name used to power on/off
+                                            instances
+                                    triggers:
+                                        type: array
+                                        description: |
+                                            power schedule triggers
+                                        example:
+                                            - {"action": "power_on",
+                                               "time": "11:22"}
                                     start_date:
                                         type: integer
                                         description: |
-                                            power schedule start time timestamp UTC
+                                            power schedule start time timestamp
+                                            UTC
                                         example: 1698731002
                                     end_date:
                                         type: integer
@@ -200,8 +207,9 @@ class PowerSchedulesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                     last_run_error:
                                         type: string
                                         description: |
-                                            error for the last failed run, must be
-                                            empty if the last run was successful
+                                            error for the last failed run, must
+                                            be empty if the last run was
+                                            successful
                                     deleted_at:
                                         type: integer
                                         example: 0
@@ -261,21 +269,20 @@ class PowerSchedulesAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                 schema:
                     type: object
                     example:
-                        -   id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
-                            organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
-                            name: "my schedule"
-                            timezone: "Europe/Vienna"
-                            power_off: "14:21"
-                            power_on: "05:48"
-                            enabled: True
-                            start_date: 1687029026
-                            end_date: 1697029026
-                            created_at: 1587029026
-                            deleted_at: 0
-                            last_run: 0
-                            last_run_error: null
-                            resources_count: 0
-                            resources: []
+                        id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
+                        organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
+                        name: "my schedule"
+                        timezone: "Europe/Vienna"
+                        enabled: True
+                        start_date: 1687029026
+                        end_date: 1697029026
+                        created_at: 1587029026
+                        deleted_at: 0
+                        last_run: 0
+                        last_run_error: null
+                        resources_count: 0
+                        resources: []
+                        triggers: []
             401:
                 description: |
                     Unauthorized:
@@ -333,16 +340,23 @@ class PowerSchedulesAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                         type: string
                         description: timezone name used to power on/off instances
                         required: True
-                    power_off:
-                        type: string
-                        description: power off time in format HH:MM
-                        required: True
-                        example: "14:21"
-                    power_on:
-                        type: string
-                        description: power on time in format HH:MM
-                        required: True
-                        example: "05:48"
+                    triggers:
+                        description: power schedule trigger
+                        required: False
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                action:
+                                    type: string
+                                    description: |
+                                        Action performed by power schedule
+                                    example: "power_on"
+                                time:
+                                    type: string
+                                    description: |
+                                        Trigger time in format HH:MM
+                                    example: "05:48"
                     start_date:
                         type: integer
                         description: power schedule start time timestamp UTC
@@ -374,21 +388,20 @@ class PowerSchedulesAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                 schema:
                     type: object
                     example:
-                        -   id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
-                            organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
-                            name: "my schedule"
-                            timezone: "Europe/Vienna"
-                            power_off: "14:21"
-                            power_on: "05:48"
-                            enabled: True
-                            start_date: 1687029026
-                            end_date: 1697029026
-                            created_at: 1587029026
-                            deleted_at: 0
-                            last_run: 0
-                            last_run_error: null
-                            resources_count: 0
-                            resources: []
+                        id: "86c4fdf2-8920-46dd-b7e0-fff443a43f1c"
+                        organization_id: "9148a512-8b5e-48cd-8ac5-188875cf2f99"
+                        name: "my schedule"
+                        timezone: "Europe/Vienna"
+                        enabled: True
+                        start_date: 1687029026
+                        end_date: 1697029026
+                        created_at: 1587029026
+                        deleted_at: 0
+                        last_run: 0
+                        last_run_error: null
+                        resources_count: 0
+                        resources: []
+                        triggers: []
             400:
                 description: |
                     Wrong arguments:
@@ -403,8 +416,8 @@ class PowerSchedulesAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                     - OE0226: enabled should be True or False
                     - OE0461: end_date can't be in past
                     - OE0550: Parameter should be time string in format HH:MM
-                    - OE0552: Parameter power_on can\'t be equal to power_off
                     - OE0553: timezone should be a timezone name
+                    - OE0561: Duplicated triggers for time
             401:
                 description: |
                     Unauthorized:

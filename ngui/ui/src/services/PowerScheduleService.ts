@@ -22,6 +22,8 @@ import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isError } from "utils/api";
+import { POWER_SCHEDULE_ACTIONS } from "utils/constants";
+import { ObjectValues } from "utils/types";
 
 export type PowerScheduleResponse =
   | {
@@ -41,13 +43,19 @@ export type PowerScheduleResponse =
       last_run_error: string | null;
       resources_count: number;
       resources: object[];
+      triggers: {
+        time: string;
+        action: ObjectValues<typeof POWER_SCHEDULE_ACTIONS>;
+      }[];
     }
   | Record<string, never>;
 
 export type PowerScheduleApiParams = {
   name: string;
-  power_on: string;
-  power_off: string;
+  triggers: {
+    time: string;
+    action: ObjectValues<typeof POWER_SCHEDULE_ACTIONS>;
+  }[];
   timezone: string;
   enabled?: boolean;
   start_date?: number;

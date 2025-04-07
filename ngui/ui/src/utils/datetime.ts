@@ -49,7 +49,8 @@ import {
   areIntervalsOverlapping,
   roundToNearestMinutes,
   parse,
-  subHours
+  subHours,
+  differenceInMinutes
 } from "date-fns";
 
 import { enUS } from "date-fns/locale";
@@ -697,6 +698,14 @@ const MERIDIEM_NAMES = Object.freeze({
   PM: "PM"
 });
 
+const minutesFromStartOfDay = (dateString: string, formatString: string) => {
+  const date = parse(dateString, formatString, new Date());
+
+  const midnight = startOfDay(date);
+
+  return differenceInMinutes(date, midnight);
+};
+
 export {
   addMonths,
   addHours,
@@ -747,5 +756,7 @@ export {
   formatTimeString,
   subHours,
   generateDayHours,
+  minutesFromStartOfDay,
+  differenceInMinutes,
   MERIDIEM_NAMES
 };

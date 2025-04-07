@@ -66,7 +66,7 @@ export const AZURE_SUBSCRIPTION = "azureSubscription";
 export const AZURE_TENANT_ACCOUNT = "azureTenant";
 export const DATABRICKS_ACCOUNT = "databricks";
 export const KUBERNETES = "kubernetes";
-export const ALIBABA_ACCOUNT = "alibaba";
+export const ALIBABA_ACCOUNT = "alibabaCloud";
 export const GCP_ACCOUNT = "gcpProject";
 export const GCP_TENANT_ACCOUNT = "gcpTenant";
 export const NEBIUS_ACCOUNT = "nebius";
@@ -80,7 +80,7 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [AZURE_CNR]: "azureSubscription",
   [AZURE_TENANT]: "azureTenant",
   [DATABRICKS]: "databricks",
-  [ALIBABA_CNR]: "alibaba",
+  [ALIBABA_CNR]: "alibabaCloud",
   [GCP_CNR]: "gcpProject",
   [GCP_TENANT]: "gcpTenant",
   [ENVIRONMENT]: "environment",
@@ -1013,6 +1013,11 @@ export const DATASET_PATH_LENGTH_LIMIT = 70;
 export const AUTH_PROVIDERS = Object.freeze({
   GOOGLE: "google",
   MICROSOFT: "microsoft"
+});
+
+export const POWER_SCHEDULE_ACTIONS = Object.freeze({
+  POWER_ON: "power_on",
+  POWER_OFF: "power_off"
 });
 
 export const ALLOW_ORGANIZATION_CREATION = false;

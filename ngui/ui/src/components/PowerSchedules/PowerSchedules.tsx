@@ -2,9 +2,13 @@ import { useMemo } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PowerSettingsNewOutlinedIcon from "@mui/icons-material/PowerSettingsNewOutlined";
-import { FormattedMessage } from "react-intl";
+import { Box, Typography } from "@mui/material";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
+import ExpandableList from "components/ExpandableList";
+import HeaderHelperCell from "components/HeaderHelperCell";
+import IconLabel from "components/IconLabel";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DeletePowerScheduleModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
@@ -15,7 +19,11 @@ import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { type PowerScheduleResponse } from "services/PowerScheduleService";
 import { CREATE_POWER_SCHEDULE } from "urls";
-import { formattedTime, powerScheduleLastRun, powerScheduleName, powerScheduleValidityPeriod, text } from "utils/columns";
+import { isEmpty as isEmptyArray } from "utils/arrays";
+import { powerScheduleLastRun, powerScheduleName, powerScheduleValidityPeriod, text } from "utils/columns";
+import { POWER_SCHEDULE_ACTIONS } from "utils/constants";
+import { EN_TIME_FORMAT, EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM, formatTimeString, parse } from "utils/datetime";
+import { CELL_EMPTY_VALUE } from "utils/tables";
 
 type PowerSchedulesProps = {
   powerSchedules: PowerScheduleResponse[];
@@ -37,6 +45,7 @@ const PowerSchedules = ({
 }: PowerSchedulesProps) => {
   const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
+  const intl = useIntl();
 
   const isManagePowerScheduleAllowed = useIsAllowed({
     requiredActions: ["EDIT_PARTNER"]
@@ -125,20 +134,77 @@ const PowerSchedules = ({
         headerDataTestId: "lbl_number_of_resources_on_schedule",
         accessorKey: "resources_count"
       }),
-      formattedTime({
-        accessorKey: "power_on",
-        headerMessageId: "instancePowerOn",
-        headerDataTestId: "lbl_power_on",
-        timeStringFormat: "HH:mm",
-        parsedTimeStringFormat: "hh:mm a"
-      }),
-      formattedTime({
-        accessorKey: "power_off",
-        headerMessageId: "instancePowerOff",
-        headerDataTestId: "lbl_power_off",
-        timeStringFormat: "HH:mm",
-        parsedTimeStringFormat: "hh:mm a"
-      }),
+      {
+        header: (
+          <HeaderHelperCell
+            titleMessageId="triggers"
+            helperMessageId="triggersDescription"
+            helperMessageValues={{ br: <br /> }}
+          />
+        ),
+        id: "triggers",
+        enableSorting: false,
+        accessorFn: (originalRow) =>
+          originalRow.triggers
+            .map((trigger) => {
+              const formattedTime = formatTimeString({
+                timeString: trigger.time,
+                timeStringFormat: EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM,
+                parsedTimeStringFormat: EN_TIME_FORMAT
+              });
+
+              const action =
+                trigger.action === POWER_SCHEDULE_ACTIONS.POWER_ON
+                  ? intl.formatMessage({ id: "on" })
+                  : intl.formatMessage({ id: "off" });
+
+              return `${formattedTime}: ${action}`;
+            })
+            .join(" "),
+        cell: ({ row: { original } }) => {
+          const { triggers } = original;
+
+          return isEmptyArray(triggers) ? (
+            CELL_EMPTY_VALUE
+          ) : (
+            <ExpandableList
+              items={triggers.toSorted((triggerA, triggerB) => {
+                const timeA = parse(triggerA.time, EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM, new Date());
+                const timeB = parse(triggerB.time, EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM, new Date());
+
+                return timeA.getTime() - timeB.getTime();
+              })}
+              render={({ time, action }) => {
+                const formattedTime = formatTimeString({
+                  timeString: time,
+                  timeStringFormat: EN_TIME_FORMAT_24_HOURS_CLOCK_HH_MM,
+                  parsedTimeStringFormat: EN_TIME_FORMAT
+                });
+
+                const isOn = action === POWER_SCHEDULE_ACTIONS.POWER_ON;
+
+                return (
+                  <Box display="flex" alignItems="center" key={formattedTime}>
+                    <Typography>
+                      {formattedTime}
+                      :&nbsp;{" "}
+                    </Typography>
+                    <IconLabel
+                      icon={<PowerSettingsNewOutlinedIcon fontSize="small" color={isOn ? "success" : "error"} />}
+                      label={
+                        <Typography variant="body2" fontWeight="bold">
+                          <FormattedMessage id={isOn ? "on" : "off"} />
+                        </Typography>
+                      }
+                    />
+                  </Box>
+                );
+              }}
+              maxRows={5}
+            />
+          );
+        }
+      },
       text({
         headerMessageId: "timeZone",
         headerDataTestId: "lbl_time_zone",
@@ -150,7 +216,15 @@ const PowerSchedules = ({
       }),
       ...(isManagePowerScheduleAllowed ? [getActionsColumn()] : [])
     ];
-  }, [isManagePowerScheduleAllowed, isUpdatePowerScheduleLoading, onActivate, onDeactivate, openSideModal, updatingEntityId]);
+  }, [
+    intl,
+    isManagePowerScheduleAllowed,
+    isUpdatePowerScheduleLoading,
+    onActivate,
+    onDeactivate,
+    openSideModal,
+    updatingEntityId
+  ]);
 
   return (
     <>

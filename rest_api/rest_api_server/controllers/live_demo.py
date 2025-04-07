@@ -32,11 +32,10 @@ from rest_api.rest_api_server.models.models import (
     ResourceConstraint, ConstraintLimitHit, Rule, Condition, DiscoveryInfo,
     ClusterType, K8sNode, CostModel, ShareableBooking, OrganizationOption,
     OrganizationConstraint, OrganizationLimitHit, OrganizationGemini,
-    ProfilingToken, PowerSchedule)
+    ProfilingToken, PowerSchedule, PowerScheduleTrigger)
 from rest_api.rest_api_server.utils import (
     gen_id, encode_config, timestamp_to_day_start)
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
-from optscale_client.auth_client.client_v2 import Client as AuthClient
 
 
 LOG = logging.getLogger(__name__)
@@ -82,6 +81,7 @@ class ObjectGroups(enum.Enum):
     Pools = 'pools'
     ClusterTypes = 'cluster_types'
     PowerSchedules = 'power_schedules'
+    PowerScheduleTriggers = 'power_schedule_triggers'
     Resources = 'resources'
     RawExpenses = 'raw_expenses'
     CleanExpenses = 'clean_expenses'
@@ -185,7 +185,8 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             ObjectGroups.LeaderboardTemplates: self.build_leaderboard_template,
             ObjectGroups.Leaderboards: self.build_leaderboard,
             ObjectGroups.OrganizationGeminis: self.build_organization_gemini,
-            ObjectGroups.PowerSchedules: self.build_power_schedule
+            ObjectGroups.PowerSchedules: self.build_power_schedule,
+            ObjectGroups.PowerScheduleTriggers: self.build_power_schedule_trigger,
         }
         self._dest_map = {
             ObjectGroups.Resources: self.resources_collection,
@@ -250,7 +251,8 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             'primary_metric': ObjectGroups.Metrics.value,
             'other_metrics': ObjectGroups.Metrics.value,
             'filters': ObjectGroups.Metrics.value,
-            'power_schedule': ObjectGroups.PowerSchedules.value
+            'power_schedule': ObjectGroups.PowerSchedules.value,
+            'power_schedule_id': ObjectGroups.PowerSchedules.value,
         }
         self._multiplier = None
         self._run_factors = defaultdict(lambda: (1, 1, 1))
@@ -1174,6 +1176,12 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             'created_at', 'start_date', 'end_date', 'last_eval', 'last_run'
         ], now, obj)
         return PowerSchedule(**obj)
+
+    def build_power_schedule_trigger(self, obj, now, **_kwargs):
+        obj['id'] = str(uuid.uuid4())
+        obj = self.refresh_relations(['power_schedule_id'], obj)
+        obj = self.offsets_to_timestamps(['created_at'], now, obj)
+        return PowerScheduleTrigger(**obj)
 
     def rollback(self, insertions_map):
         for group, ids in insertions_map.items():

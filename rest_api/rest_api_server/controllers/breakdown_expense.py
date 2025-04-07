@@ -132,7 +132,8 @@ class BreakdownExpenseController(BreakdownBaseController):
     def process_data(self, resources_data, organization_id, filters, **kwargs):
         breakdown_by = kwargs.get('breakdown_by')
         extracted_values = self._extract_values_from_data(
-            resources_data, filters, breakdown_by=breakdown_by)
+            resources_data, filters, organization_id,
+            breakdown_by=breakdown_by)
         resource_cluster_map, resource_breakdown_map = extracted_values
         ids_for_pop = set()
         for k, v in resource_cluster_map.items():
@@ -198,11 +199,13 @@ class BreakdownExpenseController(BreakdownBaseController):
         return res
 
     def _extract_values_from_data(self, resources_data, input_filters,
-                                  breakdown_by):
+                                  organization_id, breakdown_by):
         clustered_resources_map = {}
         input_ca_ids = input_filters.get('cloud_account_id', [])
         cluster_ids = []
         breakdown_map = {}
+        last_run = self.get_last_run_ts_by_org_id(organization_id)
+        clusters_to_exclude = set()
         for data in resources_data:
             _id = data.pop('_id')
             ca_id = _id.get('cloud_account_id')
@@ -217,21 +220,30 @@ class BreakdownExpenseController(BreakdownBaseController):
                 if cluster_id and not input_ca_ids:
                     clustered_resources_map.update(
                         {r: cluster_id for r in r_ids})
+                elif cluster_id and input_ca_ids:
+                    continue
             for r in r_ids:
                 value = _id.get(breakdown_by)
                 if breakdown_by == 'resource_type' and (is_cluster or is_env):
                     value = self.get_value_resource_type(
                         value, is_cluster, is_env)
                 breakdown_map[r] = value
-        ext_cluster_ids = set()
-        for cl_id in cluster_ids:
-            if cl_id not in set(clustered_resources_map.values()):
-                ext_cluster_ids.add(cl_id)
-        if ext_cluster_ids:
-            sub_resources = self.resources_collection.find(
-                {'cluster_id': {'$in': list(ext_cluster_ids)}}, ['cluster_id'])
-            for s in sub_resources:
-                clustered_resources_map[s['_id']] = s['cluster_id']
+        sub_resources = self.resources_collection.find(
+            {'cluster_id': {'$in': cluster_ids + list(set(
+                clustered_resources_map.values()))}})
+        for s in sub_resources:
+            cluster_id = s['cluster_id']
+            if (cluster_id not in clusters_to_exclude and
+                    self._is_cluster_excluded_by_sub_res(
+                        s, input_filters, last_run)):
+                clusters_to_exclude.add(cluster_id)
+            clustered_resources_map[s['_id']] = cluster_id
+        if clusters_to_exclude:
+            for res_id, cluster_id in clustered_resources_map.copy().items():
+                if cluster_id in clusters_to_exclude:
+                    breakdown_map.pop(res_id, None)
+                    breakdown_map.pop(cluster_id, None)
+                    clustered_resources_map.pop(res_id, None)
         return clustered_resources_map, breakdown_map
 
     def get_breakdown_expenses(self, cloud_account_ids, resources):

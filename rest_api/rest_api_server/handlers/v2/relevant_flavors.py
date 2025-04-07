@@ -9,7 +9,7 @@ from rest_api.rest_api_server.handlers.v2.base import BaseHandler
 from tools.optscale_exceptions.http_exc import OptHTTPError
 
 GLOBAL_REGIONS = ['ap', 'eu', 'ca', 'sa', 'us', 'af', 'me']
-SUPPORTED_CLOUDS = ['aws_cnr', 'azure_cnr', 'gcp_cnr', 'nebius']
+SUPPORTED_CLOUDS = ['aws_cnr', 'azure_cnr', 'alibaba_cnr', 'gcp_cnr', 'nebius']
 
 
 class RelevantFlaforsAsyncCollectionHandler(BaseAsyncCollectionHandler,

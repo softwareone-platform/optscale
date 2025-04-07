@@ -11,7 +11,7 @@ import QuestionMark from "components/QuestionMark";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import Tooltip from "components/Tooltip";
 import { useIsSizeSelected, useSelectionActions } from "reducers/cloudCostComparisonSelectedSizes/hooks";
-import { AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 
 const Flavor = ({ flavor }) => {
   const { addSize, removeSize } = useSelectionActions();
@@ -98,18 +98,17 @@ const FlavorsCell = ({ flavors }) => (
 const Header = ({ cloudType, error }) => {
   const intl = useIntl();
 
+  const title = {
+    [AWS_CNR]: <CloudLabel name={intl.formatMessage({ id: "aws" })} type={AWS_CNR} disableLink />,
+    [AZURE_CNR]: <CloudLabel name={intl.formatMessage({ id: "azure" })} type={AZURE_CNR} disableLink />,
+    [GCP_CNR]: <CloudLabel name={intl.formatMessage({ id: "gcp" })} type={GCP_CNR} disableLink />,
+    [ALIBABA_CNR]: <CloudLabel name={intl.formatMessage({ id: "alibaba" })} type={ALIBABA_CNR} disableLink />,
+    [NEBIUS]: <CloudLabel name={intl.formatMessage({ id: "nebius" })} type={NEBIUS} disableLink />
+  }[cloudType];
+
   return (
     <Box display="flex" alignItems="center">
-      <TextWithDataTestId dataTestId={`lbl_${cloudType}`}>
-        {
-          {
-            [AWS_CNR]: <CloudLabel name={intl.formatMessage({ id: "aws" })} type={AWS_CNR} disableLink />,
-            [AZURE_CNR]: <CloudLabel name={intl.formatMessage({ id: "azure" })} type={AZURE_CNR} disableLink />,
-            [GCP_CNR]: <CloudLabel name={intl.formatMessage({ id: "gcp" })} type={GCP_CNR} disableLink />,
-            [NEBIUS]: <CloudLabel name={intl.formatMessage({ id: "nebius" })} type={NEBIUS} disableLink />
-          }[cloudType]
-        }
-      </TextWithDataTestId>
+      <TextWithDataTestId dataTestId={`lbl_${cloudType}`}>{title}</TextWithDataTestId>
       {error && <QuestionMark fontSize="small" tooltipText={error} Icon={PriorityHighOutlinedIcon} color="error" />}
     </Box>
   );

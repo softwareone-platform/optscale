@@ -33,8 +33,10 @@ class TestPSWorker(unittest.TestCase):
             'enabled': True,
             'start_date': 0,
             'end_date': int((datetime.now() + timedelta(days=10)).timestamp()),
-            'power_on': '22:00',
-            'power_off': '11:00',
+            'triggers': [
+                {'time': '22:00', 'action': 'power_on'},
+                {'time': '11:00', 'action': 'power_off'},
+            ],
             'timezone': 'Asia/Yerevan',
             'last_eval': 0,
             'last_run': 0,
@@ -86,8 +88,10 @@ class TestPSWorker(unittest.TestCase):
         ps = self.valid_ps.copy()
         ps['start_date'] = 1
         ps['end_date'] = 0
-        ps['power_on'] = '04:00'
-        ps['power_off'] = '02:00'
+        ps['triggers'] = [
+            {'time': '04:00', 'action': 'power_on'},
+            {'time': '02:00', 'action': 'power_off'},
+        ]
         self.worker.rest_cl.power_schedule_get = MagicMock(
             return_value=(200, ps))
         ps_tz = pytz.timezone(ps['timezone'])
@@ -148,8 +152,10 @@ class TestPSWorker(unittest.TestCase):
         ps_tz = pytz.timezone(ps['timezone'])
         now = datetime.now(ps_tz).replace(
             hour=3, minute=0, second=0, microsecond=0)
-        ps['power_on'] = '04:00'
-        ps['power_off'] = '02:00'
+        ps['triggers'] = [
+            {'time': '04:00', 'action': 'power_on'},
+            {'time': '02:00', 'action': 'power_off'},
+        ]
         self.worker.rest_cl.power_schedule_get = MagicMock(
             return_value=(200, ps))
 
@@ -208,8 +214,10 @@ class TestPSWorker(unittest.TestCase):
             now = base_date.replace(hour=now_h)
             power_on = '%s:00' % power_on_h
             power_off = '%s:00' % power_off_h
-            ps['power_on'] = power_on
-            ps['power_off'] = power_off
+            ps['triggers'] = [
+                {'time': power_on, 'action': 'power_on'},
+                {'time': power_off, 'action': 'power_off'},
+            ]
             self.worker.rest_cl.power_schedule_get = MagicMock(
                 return_value=(200, ps))
 
@@ -261,8 +269,10 @@ class TestPSWorker(unittest.TestCase):
             now = base_date.replace(hour=now_h)
             power_on = '%s:00' % power_on_h
             power_off = '%s:00' % power_off_h
-            ps['power_on'] = power_on
-            ps['power_off'] = power_off
+            ps['triggers'] = [
+                {'time': power_on, 'action': 'power_on'},
+                {'time': power_off, 'action': 'power_off'},
+            ]
             self.worker.rest_cl.power_schedule_get = MagicMock(
                 return_value=(200, ps))
 
@@ -317,8 +327,10 @@ class TestPSWorker(unittest.TestCase):
             now = base_date.replace(hour=now_h)
             power_on = '%s:00' % power_on_h
             power_off = '%s:00' % power_off_h
-            ps['power_on'] = power_on
-            ps['power_off'] = power_off
+            ps['triggers'] = [
+                {'time': power_on, 'action': 'power_on'},
+                {'time': power_off, 'action': 'power_off'},
+            ]
             self.worker.rest_cl.power_schedule_get = MagicMock(
                 return_value=(200, ps))
 
@@ -348,8 +360,10 @@ class TestPSWorker(unittest.TestCase):
         ps_tz = pytz.timezone(ps['timezone'])
         now = datetime.now(ps_tz).replace(
             hour=3, minute=0, second=0, microsecond=0)
-        ps['power_on'] = '04:00'
-        ps['power_off'] = '02:00'
+        ps['triggers'] = [
+            {'time': '04:00', 'action': 'power_on'},
+            {'time': '02:00', 'action': 'power_off'},
+        ]
         self.worker.rest_cl.power_schedule_get = MagicMock(
             return_value=(200, ps))
 
@@ -391,8 +405,10 @@ class TestPSWorker(unittest.TestCase):
         ps_tz = pytz.timezone(ps['timezone'])
         now = datetime.now(ps_tz).replace(
             hour=3, minute=0, second=0, microsecond=0)
-        ps['power_on'] = '04:00'
-        ps['power_off'] = '02:00'
+        ps['triggers'] = [
+            {'time': '04:00', 'action': 'power_on'},
+            {'time': '02:00', 'action': 'power_off'},
+        ]
         self.worker.rest_cl.power_schedule_get = MagicMock(
             return_value=(200, ps))
 
@@ -437,6 +453,33 @@ class TestPSWorker(unittest.TestCase):
         self.assertEqual(
             self.worker.rest_cl.power_schedule_update.call_args[0][1][
                 'last_run_error'], None)
+
+    def test_conflicting_triggers(self):
+        ps = self.valid_ps.copy()
+        ps['triggers'] = [
+            {'time': '02:00', 'action': 'power_on'},
+            {'time': '02:00', 'action': 'power_off'},
+        ]
+        self.worker.rest_cl.power_schedule_get = MagicMock(
+            return_value=(200, ps))
+        self.worker.process_task(
+            body={'power_schedule_id': self.ps_id},
+            message=self.message)
+
+        result = self.default_result.copy()
+        result['error'] = 0
+        result['reason'] = 'Conflicting triggers for time: 02:00'
+        self.assertEqual(result, self.worker.result)
+        self.worker.rest_cl.power_schedule_update.assert_called_once()
+        self.assertIn(
+            'last_eval',
+            self.worker.rest_cl.power_schedule_update.call_args[0][1])
+        self.assertIn(
+            'last_run',
+            self.worker.rest_cl.power_schedule_update.call_args[0][1])
+        self.assertIn(
+            'last_run_error',
+            self.worker.rest_cl.power_schedule_update.call_args[0][1])
 
 
 if __name__ == '__main__':

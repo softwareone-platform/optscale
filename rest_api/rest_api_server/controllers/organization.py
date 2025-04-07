@@ -212,8 +212,9 @@ class OrganizationController(BaseController, ClickHouseMixin):
                 self.model_type.id.in_(resource_ids)
             )
         )
+        total_count = query.count()
         query = self._apply_limit_offset(query, limit, offset)
-        return query.all()
+        return query.all(), total_count
 
     def get_org_list(self, is_demo=False, with_shareable_bookings=False,
                      with_connected_accounts=False, limit=0, offset=0):
@@ -236,9 +237,10 @@ class OrganizationController(BaseController, ClickHouseMixin):
                     CloudAccount.deleted.is_(False)
                 )
             )
+        total_count = organizations_query.count()
         organizations_query = self._apply_limit_offset(organizations_query,
                                                        limit, offset)
-        return organizations_query.all()
+        return organizations_query.all(), total_count
 
     @staticmethod
     def _get_assignments_by_token(token):

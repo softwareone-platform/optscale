@@ -460,7 +460,6 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
         employee_name = employee.name if employee else None
         min_date = summary.get('mindate')
         created_at = resource.get('created_at')
-        last_seen = resource.get('last_seen')
         first_seen = int(min_date.timestamp() if min_date else created_at)
         if pool:
             pool_name = pool.name
@@ -482,12 +481,7 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
             pool_name = None
             policies = {}
             pool_purpose = None
-        last_seen = last_seen or created_at
-        active = True
-        if not resource.get('active', False):
-            active = False
-            maxdate = summary.get('maxdate')
-            last_seen = maxdate.timestamp() if maxdate else created_at
+        active = resource.get('active', False)
         constraints_set = self.session.query(
             ResourceConstraint
         ).filter(and_(
@@ -516,14 +510,9 @@ class CloudResourceController(BaseController, MongoMixin, ResourceFormatMixin):
             'total_cost': summary.get('total_cost', 0),
             'cost': month_cost,
             'forecast': forecast,
-            'service_name': summary.get('service_name'),
-            'region': summary.get('region'),
             'pool_name': pool_name,
             'pool_purpose': pool_purpose,
             'owner_name': employee_name,
-            'last_seen': int(last_seen),
-            'first_seen': int(first_seen),
-            'active': active,
             'policies': policies,
             'constraints': constraints,
             'shareable_bookings': bookings_list,

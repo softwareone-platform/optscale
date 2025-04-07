@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { ObjectValues } from "utils/types";
 import { useGetOptscaleCapability } from "./coreData/useGetOptscaleCapability";
 
-type Capability = "finops" | "mlops";
+type Capability = ObjectValues<typeof OPTSCALE_CAPABILITY>;
 
-export const useIsOptScaleCapabilityEnabled = (capability: Capability) => {
-  const [isEnabled, setIsEnabled] = useState(false);
+type CapabilityParameter = Capability | undefined;
 
+export const useIsOptScaleCapabilityEnabled = (capability: CapabilityParameter) => {
   const { optscaleCapability } = useGetOptscaleCapability();
 
-  useEffect(() => {
-    // This handles 2 cases, in both of them we need to display children.
-    // 1. If there is no capability explicitly defined for a component
-    // 2. if there is no OPTSCALE_CAPABILITY defined at all
-    setIsEnabled(optscaleCapability?.[capability] ?? true);
-  }, [optscaleCapability, capability]);
+  if (!capability) {
+    return true;
+  }
 
-  return isEnabled;
+  // Return true in two cases:
+  // 1. When the capability exists in optscaleCapability and is enabled (true)
+  // 2. When the capability doesn't exist in optscaleCapability (undefined), treating it as enabled
+  return optscaleCapability?.[capability] ?? true;
 };

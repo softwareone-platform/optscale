@@ -1,11 +1,17 @@
+import concurrent.futures
+import logging
 import re
+
+import etcd
 from botocore.exceptions import ClientError as AwsClientError
+from collections import defaultdict
 from grpc._channel import _InactiveRpcError
 from pymongo import MongoClient
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, WrongArgumentsException)
-from tools.cloud_adapter.clouds.azure import Azure
+from tools.cloud_adapter.clouds.alibaba import Alibaba
 from tools.cloud_adapter.exceptions import AuthorizationException
+from tools.cloud_adapter.clouds.azure import Azure
 from tools.cloud_adapter.clouds.aws import Aws
 from tools.cloud_adapter.clouds.gcp import Gcp
 from tools.cloud_adapter.clouds.nebius import Nebius, PLATFORMS
@@ -14,6 +20,8 @@ from insider.insider_api.controllers.flavor import FlavorController
 from insider.insider_api.controllers.base import (BaseAsyncControllerWrapper,
                                                   CachedThreadPoolExecutor)
 from insider.insider_api.utils import handle_credentials_error
+
+LOG = logging.getLogger(__name__)
 
 
 def extract_substring_between(string, sub_1, sub_2):
@@ -69,6 +77,140 @@ class BaseProvider:
         return True
 
 
+class AlibabaProvider(BaseProvider):
+
+    @property
+    def cloud_adapter(self):
+        if self._cloud_adapter is None:
+            try:
+                config = self._config_cl.read_branch(
+                    '/service_credentials/alibaba')
+            except etcd.EtcdKeyNotFound:
+                raise WrongArgumentsException(Err.OI0023, ['alibaba'])
+            self._cloud_adapter = Alibaba(config)
+        return self._cloud_adapter
+
+    def _extract_cpu(self, flavor):
+        return flavor['CpuCoreCount']
+
+    def _extract_memory(self, flavor):
+        return flavor['MemorySize']
+
+    def _format_flavor(self, obj, **kwargs):
+        return {
+            'cpu': self._extract_cpu(obj),
+            'memory': self._extract_memory(obj),
+            'instance_family': obj['InstanceTypeFamily'],
+            'name': obj['InstanceTypeId'],
+            'location': kwargs['region'],
+            'currency': kwargs.get('currency')
+        }
+
+    def get_all_flavors(self, region):
+        return self.cloud_adapter.get_all_flavors(region)
+
+    def get_available_flavors(self, region):
+        return self.cloud_adapter.get_available_flavors(region)
+
+    def get_alibaba_prices(self, flavor_ids, region):
+        return self.cloud_adapter.get_flavor_prices(flavor_ids, region,
+                                                    price_only=False)
+
+    def get_regions(self, global_region):
+        regions = self.cloud_adapter.get_regions_coordinates()
+        return {k: v for k, v in regions.items()
+                if k.split('-')[0] == global_region}
+
+    def get_region_flavors(self, regions, **kwargs):
+        """
+        Retrieve and format flavor information for each region.
+
+        Parameters:
+            regions (iterable): An iterable of region identifiers.
+            preferred_currency (str): The currency to use in formatting.
+            kwargs: Additional parameters passed to helper functions.
+
+        Returns:
+            A defaultdict mapping each region to a dict of flavor_name: flavor_info.
+        """
+        currency = kwargs.get('preferred_currency', 'USD')
+        result = defaultdict(lambda: defaultdict(dict))
+        region_flavors_map = defaultdict(lambda: defaultdict(dict))
+        available_flavors_map = defaultdict(list)
+        with CachedThreadPoolExecutor(self.mongo_client) as executor:
+            futures_map = defaultdict(tuple)
+            for region in regions:
+                future = executor.submit(self.get_available_flavors, region)
+                futures_map[future] = (region, 'available')
+                future = executor.submit(self.get_all_flavors, region)
+                futures_map[future] = (region, 'all')
+
+            for future in concurrent.futures.as_completed(futures_map):
+                region, func_name = futures_map[future]
+                try:
+                    res = future.result()
+                except Exception as e:
+                    LOG.warning('Error getting flavors for region %s: %s',
+                                region, str(e))
+                    continue
+                if not res:
+                    continue
+                if func_name == 'available':
+                    available_flavors_map[region].extend(res)
+                else:
+                    for name, info in res.items():
+                        if name not in region_flavors_map[region] and self._check_flavor(
+                                info, **kwargs):
+                            region_flavors_map[region][name] = self._format_flavor(
+                                info, region=region, currency=currency)
+
+            for region, flavors_list in available_flavors_map.items():
+                for flavor_name in flavors_list:
+                    if flavor_name in region_flavors_map[region]:
+                        result[region][flavor_name] = region_flavors_map[region][
+                            flavor_name]
+        return result
+
+    def set_flavors_prices(self, region_flavors_map, **kwargs):
+        currency_conversion_rate = kwargs.get('currency_conversion_rate')
+        with CachedThreadPoolExecutor(self.mongo_client) as executor:
+            future_region_map = defaultdict(tuple)
+            for region, flavors in region_flavors_map.items():
+                if not flavors:
+                    continue
+                future = executor.submit(
+                    self.get_alibaba_prices, list(flavors), region)
+                future_region_map[future] = region
+
+            for future in concurrent.futures.as_completed(future_region_map):
+                region = future_region_map[future]
+                try:
+                    res = future.result()
+                except Exception as e:
+                    LOG.warning('Error getting flavors for region %s: %s',
+                                region, str(e))
+                if not res:
+                    continue
+                for name, data in res.items():
+                    price = data['CostAfterDiscount']
+                    if currency_conversion_rate:
+                        price = price * currency_conversion_rate
+                    else:
+                        region_flavors_map[region][name].update(
+                            {'currency': data['Currency']})
+                    region_flavors_map[region][name].update(
+                        {'cost': price})
+        return region_flavors_map
+
+    def get_relevant_flavors(self, **kwargs):
+        regions_map = self.get_regions(kwargs['region'])
+        region_flavors_map = self.get_region_flavors(regions_map, **kwargs)
+        region_flavors_map = self.set_flavors_prices(
+            region_flavors_map, **kwargs)
+        return [info for data in region_flavors_map.values()
+                for region, info in data.items()]
+
+
 class AzureProvider(BaseProvider):
     region_map = {
         'ap': ['Australia', 'India', 'Asia', 'Japan', 'Korea'],
@@ -81,7 +223,11 @@ class AzureProvider(BaseProvider):
     @property
     def cloud_adapter(self):
         if self._cloud_adapter is None:
-            config = self._config_cl.read_branch('/service_credentials/azure')
+            try:
+                config = self._config_cl.read_branch(
+                    '/service_credentials/azure')
+            except etcd.EtcdKeyNotFound:
+                raise WrongArgumentsException(Err.OI0023, ['azure'])
             self._cloud_adapter = Azure(config)
         return self._cloud_adapter
 
@@ -176,7 +322,11 @@ class AwsProvider(BaseProvider):
     @property
     def cloud_adapter(self):
         if self._cloud_adapter is None:
-            config = self._config_cl.read_branch('/service_credentials/aws')
+            try:
+                config = self._config_cl.read_branch(
+                    '/service_credentials/aws')
+            except etcd.EtcdKeyNotFound:
+                raise WrongArgumentsException(Err.OI0023, ['aws'])
             self._cloud_adapter = Aws(config)
         return self._cloud_adapter
 
@@ -269,7 +419,11 @@ class GcpProvider(BaseProvider):
     @property
     def cloud_adapter(self):
         if self._cloud_adapter is None:
-            config = self._config_cl.read_branch('/service_credentials/gcp')
+            try:
+                config = self._config_cl.read_branch(
+                    '/service_credentials/gcp')
+            except etcd.EtcdKeyNotFound:
+                raise WrongArgumentsException(Err.OI0023, ['gcp'])
             self._cloud_adapter = Gcp(config)
         return self._cloud_adapter
 
@@ -323,7 +477,11 @@ class NebiusProvider(BaseProvider):
     @property
     def cloud_adapter(self):
         if self._cloud_adapter is None:
-            config = self._config_cl.read_branch('/service_credentials/nebius')
+            try:
+                config = self._config_cl.read_branch(
+                    '/service_credentials/nebius')
+            except etcd.EtcdKeyNotFound:
+                raise WrongArgumentsException(Err.OI0023, ['nebius'])
             self._cloud_adapter = Nebius(config)
         return self._cloud_adapter
 
@@ -398,6 +556,7 @@ class NebiusProvider(BaseProvider):
 
 class RelevantFlavorProvider:
     __modules__ = {
+        'alibaba_cnr': AlibabaProvider,
         'azure_cnr': AzureProvider,
         'aws_cnr': AwsProvider,
         'gcp_cnr': GcpProvider,

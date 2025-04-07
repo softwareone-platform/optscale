@@ -160,3 +160,8 @@ class GeminiStatuses(enum.Enum):
     RUNNING = 'RUNNING'
     FAILED = 'FAILED'
     SUCCESS = 'SUCCESS'
+
+
+class PowerScheduleActions(str, enum.Enum):
+    POWER_ON = 'power_on'
+    POWER_OFF = 'power_off'

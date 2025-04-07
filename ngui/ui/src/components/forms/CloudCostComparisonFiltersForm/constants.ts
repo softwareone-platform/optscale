@@ -1,4 +1,4 @@
-import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
+import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 
 export const MIN_CPU = "1";
 export const MAX_CPU = "416";
@@ -34,6 +34,10 @@ export const SUPPORTED_CLOUD_TYPES = [
   {
     name: "gcp",
     type: GCP_CNR
+  },
+  {
+    name: "alibaba",
+    type: ALIBABA_CNR
   },
   {
     name: "nebius",
