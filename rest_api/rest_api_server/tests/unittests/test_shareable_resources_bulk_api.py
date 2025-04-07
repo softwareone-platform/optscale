@@ -222,7 +222,7 @@ class TestShareableResourcesApi(TestApiBase):
             self.org_id, resource_ids=[self.instance_resource['id']])
         self.assertEqual(code, 201)
         p_email_send.assert_called_once_with(
-            [ANY], 'OptScale shared environments notification',
+            [ANY], 'FinOps for Cloud shared environments notification',
             template_type='first_shareable_resources',
             template_params={
                 'texts': {'organization': {

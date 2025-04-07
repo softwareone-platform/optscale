@@ -43,6 +43,7 @@ export class MailpitPage extends BasePage {
         return this.page.frameLocator('#preview-html').getByText(inviteLink);
     }
 
+
     /**
      * Gets the verification link from the invitation email.
      * @param {string} invitationEmail - The email address to search for.
@@ -52,7 +53,7 @@ export class MailpitPage extends BasePage {
     async getVerificationLink(invitationEmail: string): Promise<string> {
         await this.page.goto('https://cloudspend.velasuci.com/mailpit/');
         await this.page.getByRole('link', {
-            name: `From: To: ${invitationEmail} OptScale email verification FinOps`
+            name: `From: To: ${invitationEmail} FinOps for Cloud email verification`
         }).click();
 
         const iframe = this.page.locator('#preview-html').contentFrame();
