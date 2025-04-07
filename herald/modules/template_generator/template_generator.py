@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 
 def generate_event_template_params(event, config_client):
-    subject = 'Hystax OptScale Notification (%s) - %s' % (
+    subject = 'SoftwareOne FinOps for Cloud Notification (%s) - %s' % (
         event.get('level'), event.get('evt_class'))
     template_params = {
         'images': {
@@ -16,7 +16,7 @@ def generate_event_template_params(event, config_client):
         },
         'texts': {
             'object_name': event.get('object_name'),
-            'title': 'Hystax notifications service',
+            'title': 'FinOps for Cloud notifications service',
             'top_text': 'You have received the following notification for the customer ',
             'bottom_text1': 'You have received this email because you have event '
                             'notification turned on. Please use ',
@@ -73,7 +73,7 @@ def get_default_template():
                 'https://cdn.hystax.com/OptScale/email-images/optscale-finops-capabilities.png',
         },
         'texts': {
-            'product': 'Hystax OptScale',
+            'product': 'SoftwareOne FinOps for Cloud',
             'dont_reply': 'Please do not reply to this email',
             'copyright': 'Copyright © 2016-%s' % datetime.now(
                 tz=timezone.utc).year,

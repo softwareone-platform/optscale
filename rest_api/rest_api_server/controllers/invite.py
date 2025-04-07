@@ -329,7 +329,7 @@ class InviteController(BaseController):
 
     def send_notification(self, email, url, organization_name, organization_id,
                           currency):
-        subject = 'OptScale invitation notification'
+        subject = 'FinOps for Cloud invitation notification'
         template_params = {
             'texts': {
                 'organization': {

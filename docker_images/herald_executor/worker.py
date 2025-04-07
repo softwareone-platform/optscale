@@ -412,7 +412,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             }
         }
         self.herald_cl.email_send(
-            [email], 'OptScale pool limit alert',
+            [email], 'FinOps for Cloud pool limit alert',
             template_type=HeraldTemplates.POOL_ALERT.value,
             template_params=template_params)
         LOG.info('sending email notification to user %s' % email)
@@ -464,7 +464,7 @@ class HeraldExecutorWorker(ConsumerMixin):
         params = {
             'email': [user['email']],
             'template_type': HeraldTemplates.RESOURCE_OWNER_VIOLATION_ALERT.value,
-            'subject': 'Action required: Hystax OptScale Resource Constraint'
+            'subject': 'Action required: FinOps for Cloud Resource Constraint'
                        ' Violation Alert',
             'template_params': {
                 'texts': {
@@ -746,7 +746,7 @@ class HeraldExecutorWorker(ConsumerMixin):
     def execute_first_task_created(self, task_id, task_name, profiling_token):
         LOG.info('SEND SERVICE EMAIL: execute_first_task_created: %s, %s' % (
             task_id, task_name))
-        title = 'OptScale first task created notification'
+        title = 'FinOps for Cloud first task created notification'
         template_type = HeraldTemplates.FIRST_TASK_CREATED.value
         org_id, org_name = self._get_organization_info_by_token(profiling_token)
         template_params = {
