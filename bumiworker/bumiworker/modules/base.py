@@ -151,9 +151,9 @@ class ModuleBase(ServiceBase):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            user, password, host, db_name = self.config_cl.clickhouse_params()
+            user, password, host, db_name, secure = self.config_cl.clickhouse_params()
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=db_name, user=user)
+                host=host, password=password, database=db_name, user=user, secure=secure)
         return self._clickhouse_client
 
     @property

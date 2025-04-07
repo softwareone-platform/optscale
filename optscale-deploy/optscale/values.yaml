@@ -480,6 +480,7 @@ clickhouse:
     name: default
     user: default
     password: secure-password-1-clk
+    secure:
   image:
     id:
     pullPolicy: IfNotPresent

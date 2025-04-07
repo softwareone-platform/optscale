@@ -235,9 +235,9 @@ class ClickHouseMixin:
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            user, password, host, db_name = Config().clickhouse_params
+            user, password, host, db_name, secure = Config().clickhouse_params
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=db_name, user=user)
+                host=host, password=password, database=db_name, user=user, secure=secure)
         return self._clickhouse_client
 
     def execute_clickhouse(self, query, **params):

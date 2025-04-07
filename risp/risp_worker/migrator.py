@@ -20,9 +20,9 @@ class Migrator:
         self._clickhouse_client = None
 
     def init_db(self):
-        user, password, host, _ = self.config_cl.clickhouse_params()
+        user, password, host, _, secure = self.config_cl.clickhouse_params()
         client = ClickHouseClient(
-            host=host, password=password, user=user)
+            host=host, password=password, user=user, secure=secure)
         client.execute(
             f"""CREATE DATABASE IF NOT EXISTS {self.DB_NAME}""")
         client.disconnect()
@@ -30,10 +30,10 @@ class Migrator:
     @property
     def clickhouse_client(self):
         if self._clickhouse_client is None:
-            user, password, host, _ = self.config_cl.clickhouse_params()
+            user, password, host, _, secure = self.config_cl.clickhouse_params()
             self.init_db()
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=self.DB_NAME, user=user)
+                host=host, password=password, database=self.DB_NAME, user=user, secure=secure)
         return self._clickhouse_client
 
     def create_versions_table(self):
