@@ -9,9 +9,9 @@ Adds a clickhouse database for expenses.
 
 class Migration(BaseMigration):
     def _get_clickhouse_client(self):
-        user, password, host, db_name = self.config_cl.clickhouse_params()
+        user, password, host, db_name, secure = self.config_cl.clickhouse_params()
         return ClickHouseClient(
-            host=host, password=password, database=db_name, user=user)
+            host=host, password=password, database=db_name, user=user, secure=secure)
 
     def upgrade(self):
         clickhouse_client = self._get_clickhouse_client()

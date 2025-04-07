@@ -33,9 +33,9 @@ class RiBreakdownController(CleanExpenseController):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            user, password, host, _ = self._config.clickhouse_params()
+            user, password, host, _, secure = self._config.clickhouse_params()
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=CH_DB_NAME, user=user)
+                host=host, password=password, database=CH_DB_NAME, user=user, secure=secure)
         return self._clickhouse_client
 
     def get_usage_breakdown(self, cloud_account_ids):
