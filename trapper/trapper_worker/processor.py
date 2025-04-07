@@ -41,9 +41,9 @@ class BaseTrafficExpenseProcessor:
     @property
     def clickhouse_cl(self):
         if not self._clickhouse_cl:
-            user, password, host, db_name = self.config_cl.clickhouse_params()
+            user, password, host, db_name, secure = self.config_cl.clickhouse_params()
             self._clickhouse_cl = ClickHouseClient(
-                host=host, password=password, database=db_name, user=user)
+                host=host, password=password, database=db_name, user=user, secure=secure)
         return self._clickhouse_cl
 
     @staticmethod

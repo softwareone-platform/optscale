@@ -45,9 +45,9 @@ def get_mongo_client():
 
 def _get_clickhouse_client():
     config_cl = _get_etcd_config_client()
-    user, password, host, db_name = config_cl.clickhouse_params()
+    user, password, host, db_name, secure = config_cl.clickhouse_params()
     return ClickHouseClient(
-        host=host, password=password, database=db_name, user=user)
+        host=host, password=password, database=db_name, user=user, secure=secure)
 
 
 def get_cloud_account_ids():

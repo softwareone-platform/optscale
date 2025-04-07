@@ -50,9 +50,9 @@ class Worker(ConsumerMixin):
     @property
     def clickhouse_client(self) -> ClickHouseClient:
         if self._clickhouse_client is None:
-            user, password, host, _ = self.config_client.clickhouse_params()
+            user, password, host, _, secure = self.config_client.clickhouse_params()
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=DB_NAME, user=user
+                host=host, password=password, database=DB_NAME, user=user, secure=secure
             )
         return self._clickhouse_client
 
