@@ -25,7 +25,7 @@ export class Header extends BasePage {
         super(page, '/');
         this.header = this.page.locator('header').first();
         this.swoLogo = this.header.getByTestId('img_logo');
-        this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({ hasText: 'You are in a live demo mode' });
+        this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({hasText: 'You are in a live demo mode'});
         this.organizationSelect = this.header.getByTestId('organization-selector-select');
         this.documentationBtn = this.header.getByTestId('btn_doc');
         this.productTourBtn = this.header.getByTestId('btn_product_tour');
@@ -37,6 +37,7 @@ export class Header extends BasePage {
 
     /**
      * Selects an organization from the organization selector.
+     * Only selects the organization if it is not already selected.
      * @param {string} organization - The name of the organization to select.
      * @returns {Promise<void>}
      */
@@ -55,6 +56,10 @@ export class Header extends BasePage {
         await this.profileBtn.click();
     }
 
+    /**
+     * Signs out the current user.
+     * @returns {Promise<void>}
+     */
     async signOut() {
         await this.openProfileMenu();
         await this.profileSignOutBtn.click();
