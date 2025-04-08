@@ -47,6 +47,11 @@ export class RegisterPage extends BasePage {
         await this.registerBtn.click();
     }
 
+    /**
+     * Clicks the "Already have an account?" link on the registration page.
+     * This method is used to navigate to the sign-in page from the registration page.
+     * @returns {Promise<void>} A promise that resolves when the link is clicked.
+     */
     async clickAlreadyHaveAccountLink() {
         await this.alreadyHaveAccountLink.click();
     }

@@ -18,11 +18,11 @@ export class PendingInvitationsPage extends BasePage {
      */
     constructor(page: Page) {
         super(page, '/pending_invitations');
-        this.confirmBtn = this.page.getByRole('button', { name: 'Confirm' });
-        this.proceedToFinOpsBtn = this.page.getByRole('button', { name: 'Proceed to FinOps for Cloud' });
-        this.acceptBtn = this.page.getByRole('button', { name: 'Accept' });
-        this.declineBtn = this.page.getByRole('button', { name: 'Decline' });
-        this.noPendingInvitationsMessage = this.main.getByRole('heading', { name: 'No invitations pending' });
+        this.confirmBtn = this.page.getByRole('button', {name: 'Confirm'});
+        this.proceedToFinOpsBtn = this.page.getByRole('button', {name: 'Proceed to FinOps for Cloud'});
+        this.acceptBtn = this.page.getByRole('button', {name: 'Accept'});
+        this.declineBtn = this.page.getByRole('button', {name: 'Decline'});
+        this.noPendingInvitationsMessage = this.main.getByRole('heading', {name: 'No invitations pending'});
     }
 
     /**
@@ -45,6 +45,11 @@ export class PendingInvitationsPage extends BasePage {
         await this.declineBtn.click();
     }
 
+    /**
+     * Clicks the Accept button.
+     * This method is used to accept an invitation by clicking the Accept button.
+     * @returns {Promise<void>} A promise that resolves when the Accept button is clicked.
+     */
     async clickAcceptBtn() {
         await this.acceptBtn.click();
     }

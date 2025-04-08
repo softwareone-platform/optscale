@@ -8,9 +8,8 @@ import {EStorageState} from "../utils/enums";
  * with Hystax code.
  */
 
-test.use({storageState: EStorageState.liveDemoUser});
-
 test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () => {
+  test.use({storageState: EStorageState.liveDemoUser});
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
     await setLocalforageRoot(page);
@@ -388,7 +387,6 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
 
     await test.step('Verify Events page content', async () => {
       await eventsPage.heading.hover();
-      await eventsPage.page.waitForTimeout(5000);
       await expect(eventsPage.main).toHaveScreenshot('Events-screenshot.png');
     });
   })

@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import {Locator, Page} from "@playwright/test";
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -25,7 +25,7 @@ export abstract class BasePage {
      * @returns {Promise<void>} A promise that resolves when the navigation is complete.
      */
     async navigateToURL(waitForPageLoad = false): Promise<void> {
-        await this.page.goto(this.url, { waitUntil: waitForPageLoad ? "networkidle" : "domcontentloaded" });
+        await this.page.goto(this.url, {waitUntil: waitForPageLoad ? "networkidle" : "domcontentloaded"});
     }
 
     /**
@@ -37,7 +37,7 @@ export abstract class BasePage {
      */
     async selectFromComboBox(comboBox: Locator, option: string, closeList = false): Promise<void> {
         await comboBox.click();
-        await this.page.getByRole('option', { name: option, exact: true }).click();
+        await this.page.getByRole('option', {name: option, exact: true}).click();
         if (closeList) await this.page.locator('body').click();
     }
 
@@ -53,7 +53,7 @@ export abstract class BasePage {
                 ...route.request().headers(),
                 Authorization: `Bearer ${token}`
             };
-            route.continue({ headers });
+            route.continue({headers});
         });
     }
 
@@ -70,7 +70,7 @@ export abstract class BasePage {
 
             // Check if any canvas has non-zero pixel data
             return Array.from(canvases).some(canvas => {
-                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const ctx = canvas.getContext('2d', {willReadFrequently: true});
                 if (!ctx) return false;
 
                 const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -86,7 +86,7 @@ export abstract class BasePage {
      * @returns {Promise<void>} A promise that resolves when the text content includes the expected text.
      */
     async waitForTextContent(locator: Locator, expectedText: string): Promise<void> {
-        await locator.filter({ hasText: expectedText }).waitFor();
+        await locator.filter({hasText: expectedText}).waitFor();
     }
 
     /**
@@ -96,5 +96,14 @@ export abstract class BasePage {
      */
     async evaluateActiveButton(button: Locator): Promise<boolean> {
         return await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
+    }
+
+    /**
+     * Brings the context of the current page to the front.
+     * This method is useful when multiple pages or contexts are open and you need to focus on the current page.
+     * @returns {Promise<void>} A promise that resolves when the context is brought to the front.
+     */
+    async bringContextToFront(): Promise<void> {
+        await this.page.bringToFront();
     }
 }

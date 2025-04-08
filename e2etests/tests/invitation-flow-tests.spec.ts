@@ -15,7 +15,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
 
         const mailpitTab = await context.newPage();
         mailpitPage = new MailpitPage(mailpitTab);
-        await loginPage.page.bringToFront();
+        await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
@@ -43,25 +43,25 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
 
         await test.step("View invitation email in mailpit", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
             await mailpitPage.clickInvitationEmail(invitationEmail);
             await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
         });
 
         await test.step("Sign up user", async () => {
-            await registerPage.page.bringToFront();
+            await registerPage.bringContextToFront();
             await registerPage.navigateToRegistration(inviteLink);
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
 
         await test.step("Verify email", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
         });
         await test.step("Verify and accept invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
@@ -93,25 +93,25 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
 
         await test.step("View invitation email in mailpit", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
             await mailpitPage.clickInvitationEmail(invitationEmail);
             await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
         });
 
         await test.step("Sign up user", async () => {
-            await registerPage.page.bringToFront();
+            await registerPage.bringContextToFront();
             await registerPage.navigateToRegistration(inviteLink);
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
 
         await test.step("Verify email", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
         });
         await test.step("Verify and decline invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.declineInviteFlow();
         });
 
@@ -151,12 +151,12 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
 
         await test.step("Verify email", async () => {
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
         });
         await test.step("Verify and decline invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.declineInviteFlow();
         });
 
@@ -187,14 +187,14 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
 
         await test.step("View invitation email in mailpit", async () => {
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             await mailpitPage.clickInvitationEmail(invitationEmail);
             await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
         });
 
         await test.step("Login as new user", async () => {
             await registerPage.navigateToRegistration(inviteLink);
-            await registerPage.page.bringToFront();
+            await registerPage.bringContextToFront();
             await registerPage.clickAlreadyHaveAccountLink();
             await loginPage.loginWithPreFilledEmail(process.env.Default_USER_PASSWORD);
         });
@@ -222,12 +222,12 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
 
         const mailpitTab = await context.newPage();
         mailpitPage = new MailpitPage(mailpitTab);
-        await loginPage.page.bringToFront();
+        await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
 
-    test.only("Invitation is visible in Settings Tab @slow", async ({
+    test("Invitation is visible in Settings Tab @slow", async ({
                                                              loginPage,
                                                              header,
                                                              mainMenu,
@@ -264,7 +264,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         });
 
         await test.step("Verify email", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
 
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
@@ -272,7 +272,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
 
         await test.step("Verify and accept invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.acceptInviteFlow();
         });
         //Bug https://softwareone.atlassian.net/browse/MPT-8362 is causing test to fail
@@ -327,7 +327,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
 
         const mailpitTab = await context.newPage();
         mailpitPage = new MailpitPage(mailpitTab);
-        await loginPage.page.bringToFront();
+        await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
@@ -364,7 +364,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         });
 
         await test.step("Verify email", async () => {
-            await mailpitPage.page.bringToFront();
+            await mailpitPage.bringContextToFront();
             await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
 
             verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
@@ -372,7 +372,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
 
         await test.step("Verify and accept invitation from email", async () => {
             await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.page.bringToFront();
+            await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
