@@ -15,9 +15,17 @@ class BaseController(object):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            user, password, host, db_name, secure = self.config_cl.clickhouse_params()
+            host, port, secure, user, password, db_name = (
+                self.config_cl.clickhouse_params()
+            )
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=db_name, user=user, secure=secure)
+                host=host,
+                port=port,
+                secure=secure,
+                user=user,
+                password=password,
+                database=db_name,
+            )
         return self._clickhouse_client
 
 
