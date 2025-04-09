@@ -439,12 +439,13 @@ class Client(etcd.Client):
     def clickhouse_params(self):
         """
         Get tuple with access args for clickhouse db
-        :return: ('username', 'password', 'host ip', 'db name', 'secure')
+        :return: ('host', 'port', 'secure', 'user', 'pass', 'db')
         """
         params = self.read_branch('/clickhouse')
+        port = int(params['port']) if 'port' in params else None
         secure = params.get('secure', '').lower() == "true"
-        return (params['user'], params['password'], params['host'],
-                params['db'], secure)
+        return (params['host'], port, secure, 
+                params['user'], params['password'], params['db'])
 
     def zoho_params(self):
         """
