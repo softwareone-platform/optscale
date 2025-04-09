@@ -15,9 +15,17 @@ BULK_SIZE = 10000
 
 class Migration(BaseMigration):
     def get_clickhouse_client(self):
-        user, password, host, db_name, secure = self.config_cl.clickhouse_params()
+        host, port, secure, user, password, db_name = (
+            self.config_cl.clickhouse_params()
+        )
         return ClickHouseClient(
-            host=host, password=password, database=db_name, user=user, secure=secure)
+            host=host,
+            port=port,
+            secure=secure,
+            user=user,
+            password=password,
+            database=db_name,
+        )
 
     @property
     def rest_cl(self):
