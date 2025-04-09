@@ -25,8 +25,9 @@ class MigrationBase:
         if self._clickhouse_client is None:
             host, port, secure, user, password, _ = self.config_client.clickhouse_params()
             self._clickhouse_client = ClickHouseClient(
-                host=host, port=port, secure=secure, 
-                user=user, password=password, database=CH_DB_NAME)
+                host=host, port=port, secure=secure,
+                user=user, password=password, database=CH_DB_NAME,
+            )
         return self._clickhouse_client
 
     def upgrade(self):
