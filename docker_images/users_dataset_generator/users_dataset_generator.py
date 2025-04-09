@@ -47,17 +47,17 @@ def _get_mongo_client(config_cl):
 
 
 def _get_clickhouse_client(config_cl):
-        host, port, secure, user, password, db_name = (
-            config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
-        )
+    host, port, secure, user, password, db_name = (
+        config_cl.clickhouse_params()
+    )
+    return ClickHouseClient(
+        host=host,
+        port=port,
+        secure=secure,
+        user=user,
+        password=password,
+        database=db_name,
+    )
 
 
 def _get_aws_s3_session(access_key, secret_key):

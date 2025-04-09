@@ -48,7 +48,7 @@ class Migrator:
                 password=password,
                 database=DB_NAME,
             )
-  
+
         return self._clickhouse_client
 
     def create_versions_table(self):
