@@ -25,7 +25,7 @@ class Migrator:
             host, port, secure, user, password, _ = (
                 self.config_cl.clickhouse_params()
             )
-            self.clickhouse_client = ClickHouseClient(
+            self._clickhouse_client = ClickHouseClient(
                 host=host,
                 port=port,
                 secure=secure,
