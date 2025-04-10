@@ -20,7 +20,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await header.selectOrganization("QA Test Organization");
     });
 
-    test("Invite new user to organisation, user accepts", async ({
+    test("[229865] Invite new user to organisation, user accepts", async ({
                                                                      header,
                                                                      mainMenu,
                                                                      usersPage,
@@ -70,7 +70,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
     });
 
-    test("Invite new user to organisation, but user declines", async ({
+    test("[229866] Invite new user to organisation, but user declines", async ({
                                                                           header,
                                                                           mainMenu,
                                                                           usersPage,
@@ -120,7 +120,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
     });
 
-    test("Invite new user to organisation, who has previously declined @slow", async ({
+    test("[229867] Invite new user to organisation, who has previously declined @slow", async ({
                                                                                     header,
                                                                                     loginPage,
                                                                                     mainMenu,
@@ -227,7 +227,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         await header.selectOrganization("QA Test Organization");
     });
 
-    test("Invitation is visible in Settings Tab @slow", async ({
+    test("[229868] Invitation is visible in Settings Tab @slow", async ({
                                                              loginPage,
                                                              header,
                                                              mainMenu,
@@ -275,7 +275,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
             await pendingInvitationsPage.bringContextToFront();
             await pendingInvitationsPage.acceptInviteFlow();
         });
-        //Bug https://softwareone.atlassian.net/browse/MPT-8362 is causing test to fail
+
         await test.step("Verify no pending invitations in Settings tab", async () => {
             await mainMenu.clickSettings();
             await settingsPage.clickInvitationsTab();
@@ -332,7 +332,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await header.selectOrganization("QA Test Organization");
     });
 
-    test("Invite existing user with a new role @slow", async ({
+    test("[229869] Invite existing user with a new role @slow", async ({
                                                                                     header,
                                                                                     loginPage,
                                                                                     mainMenu,
