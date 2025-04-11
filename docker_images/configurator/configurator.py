@@ -11,6 +11,7 @@ import etcd
 import boto3
 from boto3.session import Config as BotoConfig
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from pymongo import MongoClient
 from influxdb import InfluxDBClient
 from optscale_client.config_client.client import Client as EtcdClient
@@ -34,7 +35,8 @@ class Configurator(object):
             user=config['restdb']['user'],
             password=config['restdb']['password'],
             host=config['restdb']['host'],
-            port=config['restdb']['port'])
+            port=config['restdb']['port']), 
+            connect_args={"connect_timeout": 5}
         )
         if "url" in config["mongo"]:
             mongo_url = config["mongo"]["url"]
@@ -175,23 +177,24 @@ class Configurator(object):
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def create_databases(self):
         LOG.info("Creating databases")
-        for db in self.config.get('databases'):
-            # heat migrations fail with utf8mb4
-            if db != 'heat':
-                # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
-                LOG.info("CREATE DATABASE IF NOT EXISTS `%s`", db)
+        with self.engine.connect() as conn:
+            for db in self.config.get('databases'):
                 try:
-                    self.engine.execute(
-                        "CREATE DATABASE IF NOT EXISTS `{0}` "
-                        "DEFAULT CHARACTER SET `utf8mb4` "
-                        "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
-                except Exception as e:
-                    LOG.error("Failed to create database %s, error %s", db, e)
-            else:
-                LOG.info("CREATE DATABASE IF NOT EXISTS `%s`", db)
-                try:
-                    self.engine.execute(
-                        'CREATE DATABASE IF NOT EXISTS `{0}`'.format(db))
+                    LOG.info("CREATE DATABASE IF NOT EXISTS `%s`", db)
+                    result = conn.execute(text("SHOW DATABASES LIKE :name"), {"name": db})
+                    if not result.fetchone():
+                        # heat migrations fail with utf8mb4
+                        if db != 'heat':
+                            # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
+                            conn.execute(
+                                "CREATE DATABASE IF NOT EXISTS `{0}` "
+                                "DEFAULT CHARACTER SET `utf8mb4` "
+                                "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
+                        else:
+                            conn.execute('CREATE DATABASE IF NOT EXISTS `{0}`'.format(db))
+                        LOG.info("Database %s created", db)
+                    else:
+                        LOG.info("Database %s already exists", db)
                 except Exception as e:
                     LOG.error("Failed to create database %s, error %s", db, e)
 
