@@ -8,14 +8,14 @@ import {EStorageState} from "../utils/enums";
  * with Hystax code.
  */
 
-test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () => {
+test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
   test.use({storageState: EStorageState.liveDemoUser});
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
     await setLocalforageRoot(page);
   })
 
-  test("Verify Header and Main Menu", async ({homePage, header, mainMenu}) => {
+  test("[229889] Verify Header and Main Menu", async ({homePage, header, mainMenu}) => {
     await homePage.navigateToURL(true);
     await test.step('Verify header', async () => {
       await expect(header.header).toHaveScreenshot('Header-screenshot.png');
@@ -26,7 +26,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Homepage matches screenshots', async ({homePage}) => {
+  test('[229890] Verify Homepage matches screenshots', async ({homePage}) => {
     await test.step('Set up test data', async () => {
       await homePage.setupApiInterceptions();
       await homePage.navigateToURL(true);
@@ -40,7 +40,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Recommendations page matches screenshots', async ({recommendationsPage}) => {
+  test('[229891] Verify Recommendations page matches screenshots', async ({recommendationsPage}) => {
     await test.step('Set up test data', async () => {
       await recommendationsPage.setupApiInterceptions();
       await recommendationsPage.navigateToURL(true);
@@ -61,7 +61,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Resources page matches screenshots', async ({resourcesPage}) => {
+  test('[229892] Verify Resources page matches screenshots', async ({resourcesPage}) => {
     await test.step('Set up test data', async () => {
       await resourcesPage.setupApiInterceptions();
       await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
@@ -98,7 +98,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Resource details page matches screenshots', async ({
+  test('[229893] Verify Resource details page matches screenshots', async ({
                                                                     resourcesPage,
                                                                     resourceDetailsPage
                                                                   }) => {
@@ -108,7 +108,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
 
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
-      await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
+      await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
       await resourcesPage.waitForCanvas();
       await resourcesPage.sunflowerEuFraLinkToDetails.click();
       await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower-eu-fra');
@@ -146,7 +146,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Pools page matches screenshots', async ({poolsPage}) => {
+  test('[229894] Verify Pools page matches screenshots', async ({poolsPage}) => {
     await test.step('Set up test data', async () => {
       await poolsPage.setupApiInterceptions();
     });
@@ -165,7 +165,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   });
 
-  test('Verify Expenses page matches screenshots', async ({expensesPage}) => {
+  test('[229895] Verify Expenses page matches screenshots', async ({expensesPage}) => {
     await test.step('Set up test data', async () => {
       await expensesPage.setupApiInterceptions();
     });
@@ -196,7 +196,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   });
 
-  test('Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
+  test('[229896] Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
     await test.step('Set up test data', async () => {
       await expensesPage.setupApiInterceptions();
     });
@@ -232,7 +232,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   });
 
-  test('Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
+  test('[229897] Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
     await test.step('Set up test data', async () => {
       await anomaliesPage.setupApiInterceptions();
     });
@@ -254,7 +254,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
+  test('[229898] Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
     await test.step('Set up test data', async () => {
       await policiesPage.setupApiInterceptions();
     });
@@ -276,7 +276,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Tagging Policies page matches screenshots', async ({
+  test('[229899] Verify Tagging Policies page matches screenshots', async ({
                                                                     taggingPoliciesPage,
                                                                     taggingPoliciesCreatePage
                                                                   }) => {
@@ -301,7 +301,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
+  test('[229900] Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
     await test.step('Set up test data', async () => {
       await usersPage.setupApiInterceptions();
     });
@@ -322,7 +322,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Cloud Account page matches screenshots', async ({cloudAccountsPage, cloudAccountsConnectPage}) => {
+  test('[229901] Verify Cloud Account page matches screenshots', async ({cloudAccountsPage, cloudAccountsConnectPage}) => {
     await test.step('Set up test data', async () => {
       await cloudAccountsPage.setupApiInterceptions();
     });
@@ -376,7 +376,7 @@ test.describe('MPT-7367 Cloudspend screenshot tests @swo_customisation @ui', () 
     });
   })
 
-  test('Verify Events page matches screenshots', async ({eventsPage}) => {
+  test('[229902] Verify Events page matches screenshots', async ({eventsPage}) => {
     await test.step('Set up test data', async () => {
       await eventsPage.setupApiInterceptions();
     });
