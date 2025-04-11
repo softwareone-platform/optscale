@@ -108,7 +108,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
 
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
-      await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
+      await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
       await resourcesPage.waitForCanvas();
       await resourcesPage.sunflowerEuFraLinkToDetails.click();
       await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower-eu-fra');
