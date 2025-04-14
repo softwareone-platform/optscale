@@ -33,9 +33,6 @@ const RegistrationForm = ({ onSubmit, isLoading = false, disabled = false, isInv
         <FullNameField />
         <PasswordField />
         <ConfirmPassword />
-        <Typography data-test-id="p_no_credit" align="center">
-          <FormattedMessage id="noCreditCardRequired" />
-        </Typography>
         <Box className={classes.registerButtonWrapper}>
           <ButtonLoader
             dataTestId="btn_register"
