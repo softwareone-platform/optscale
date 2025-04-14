@@ -363,6 +363,7 @@ const CleanExpensesTable = ({
             }
       }
       dataTestIds={{
+        container: "CleanExpensesTable",
         infoArea: {
           displayed: "counter_displayed",
           selected: "counter_selected"

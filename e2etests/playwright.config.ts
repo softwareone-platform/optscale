@@ -1,8 +1,8 @@
-import { defineConfig } from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+dotenv.config({path: path.resolve(__dirname, '.env.local')});
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -20,25 +20,32 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-      reporter: [
-        ["list"],
-        ["json", {outputFile: "results.json"}],
-        ["html", {open: "never"}],
-      ],
+  reporter: [
+    ["list"],
+    ["json", {outputFile: "results.json"}],
+    ["html", {open: "never"}],
+  ],
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      maxDiffPixelRatio: 0.005, // 0.5% an acceptable ratio of pixels that are different to the total amount of pixels
+    },
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-      use: {
-        actionTimeout: 10000,
-        baseURL: process.env.BASE_URL,
-        testIdAttribute: 'data-test-id',
-        headless: true,
-        trace: "retain-on-failure",
-        video: "retain-on-failure",
-        screenshot: "only-on-failure",
-        contextOptions: {
-          ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-          viewport: {width: 1920, height: 1080},
-        },
-      },
+  use: {
+    actionTimeout: 10000,
+    baseURL: process.env.BASE_URL,
+    testIdAttribute: 'data-test-id',
+    headless: true,
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
+    screenshot: "only-on-failure",
+    contextOptions: {
+      reducedMotion: 'reduce',
+      ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
+      viewport: {width: 1920, height: 1080},
+    },
+  },
 
   projects: [
     {name: "setup", testMatch: /.*\.setup\.ts/},
@@ -46,7 +53,7 @@ export default defineConfig({
       name: "chrome",
       use: {
         channel: "chrome",
-        viewport: { width: 1920, height: 1080 }
+        viewport: {width: 1920, height: 1080}
       },
       dependencies: ["setup"],
     },

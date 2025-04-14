@@ -39,7 +39,7 @@ import {BasePage} from "./base-page";
         readonly expensesBreakdownChart: Locator;
         readonly resourceCountBreakdownChart: Locator;
         readonly tagsBreakdownChart: Locator;
-        readonly sunflowerEuFraLinkToDetails: Locator;
+        readonly firstResourceItemInTable: Locator;
 
         /**
          * Initializes a new instance of the ResourcesPage class.
@@ -72,7 +72,9 @@ import {BasePage} from "./base-page";
             this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
             this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
             this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
-            this.sunflowerEuFraLinkToDetails = this.main.locator('//a[.="sunflower-eu-fra"]');
+            this.firstResourceItemInTable = this.main.locator(
+              '[data-test-id="CleanExpensesTable"] [data-test-id="row_0"] a[data-test-id^="resource_name_"]'
+            );
         }
 
         /**
