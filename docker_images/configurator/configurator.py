@@ -108,6 +108,22 @@ class Configurator(object):
         except etcd.EtcdKeyNotFound:
             LOG.info("Skipping update ch port due to missing key")
 
+    def stitch_ch_to_http(self):
+        try:
+            ch_host = self.etcd_cl.get('/clickhouse/host').value
+            ch_port = self.etcd_cl.get('/clickhouse/port').value
+            # switch to http port only for local host
+            LOG.info("Ch host: %s", ch_host)
+            LOG.info("Ch port: %s", ch_port)
+            if ch_host == CH_LOCAL_NAME and str(ch_port) != str(CH_HTTP_PORT):
+                LOG.info("Updating clickhouse port to %s", CH_HTTP_PORT)
+                self.etcd_cl.write(
+                    "/clickhouse/port",
+                    CH_HTTP_PORT
+                )
+        except etcd.EtcdKeyNotFound:
+            LOG.info("Skipping update ch port due to missing key")
+
     def commit_config(self):
         LOG.info("Creating /configured key")
         self.etcd_cl.write('/configured', time.time())
