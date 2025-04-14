@@ -61,7 +61,7 @@ class AgrMetricsController(BaseController):
         """
         return resource_id, metric, avg, max, [quantiles(0.5), quantiles(0.99)]
         """
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             f'''
             SELECT resource_id, metric, AVG(value), MAX(value), quantiles(0.5, 0.99)(value)
             FROM average_metrics
@@ -71,7 +71,7 @@ class AgrMetricsController(BaseController):
                 AND date <= '{end_date}'
             GROUP BY resource_id, metric
             '''
-        )
+        ).result_rows
 
 
 class AgrMetricsAsyncController(BaseAsyncControllerWrapper):

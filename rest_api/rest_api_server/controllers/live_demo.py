@@ -1352,14 +1352,19 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
 
     def _insert_clickhouse(self, table, bulk):
         db = CLICKHOUSE_TABLE_DB_MAP[table]
-        return self.clickhouse_client.execute(
-            f'INSERT INTO {db}.{table} VALUES', bulk)
+        column_names = bulk[0].keys()
+        insert_data = []
+        for exp in bulk:
+            vals = list(exp.values())
+            insert_data.append(vals)
+        return self.clickhouse_client.insert(
+            f'{db}.{table}', insert_data, column_names=column_names)
 
     def delete_clickhouse_info(self, cloud_accounts):
         cloud_account_ids = list(map(lambda x: x.id, cloud_accounts))
         for table in CLICKHOUSE_TABLE_DB_MAP:
             db = CLICKHOUSE_TABLE_DB_MAP[table]
-            self.clickhouse_client.execute(
+            self.clickhouse_client.query(
                 f'ALTER TABLE {db}.{table} DELETE '
                 f'WHERE cloud_account_id in {cloud_account_ids}')
 

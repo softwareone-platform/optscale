@@ -19,6 +19,7 @@ from rest_api.rest_api_server.controllers.base import (
     ResourceFormatMixin)
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcfromtimestamp, utcnow
 
 LOG = logging.getLogger(__name__)
@@ -87,11 +88,11 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
                 HAVING SUM(sign) > 0
                 ORDER BY total_cost DESC
             """,
-            params={
+            parameters={
                 'start_date': start_date,
                 'end_date': end_date,
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('_id', 'String'),
@@ -99,7 +100,7 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
                     ('group_field', 'Nullable(String)'),
                 ],
                 'data': external_resource_table
-            }],
+            }]),
         )
 
         return [{
@@ -145,18 +146,18 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
         """
         return self.execute_clickhouse(
             query=query,
-            params={
+            parameters={
                 'start_date': start_date,
                 'end_date': end_date
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'cloud_accounts',
                 'structure': [
                     ('_id', 'String'),
                     ('count', 'Int32')
                 ],
                 'data': resource_counts
-            }],
+            }]),
         )
 
     def get_monthly_forecast(self, cost, month_cost, first_expense=None):
@@ -203,10 +204,10 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
             })
         return self.execute_clickhouse(
             query=query,
-            params={
+            parameters={
                 'date': date
             },
-            external_tables=external_tables
+            external_data=ExternalDataConverter()(external_tables)
         )
 
     def get_first_expenses_for_forecast(self, field, values):
@@ -273,12 +274,12 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
                 WHERE cloud_account_id in %(cloud_account_ids)s
                 GROUP BY resources.id
             """,
-            params={
+            parameters={
                 'cloud_account_ids': list(set([
                     r['cloud_account_id'] for r in external_table
                 ]))
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
@@ -286,7 +287,7 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
                     ('resource_id', 'String')
                 ],
                 'data': external_table
-            }]
+            }])
         )
         return {
             res_id: {'cost': cost, 'usage': usage}
@@ -338,7 +339,7 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
     def delete_cloud_expenses(self, cloud_account_id):
         self.execute_clickhouse(
             'ALTER TABLE expenses DELETE WHERE cloud_account_id=%(ca_id)s',
-            params={'ca_id': cloud_account_id})
+            parameters={'ca_id': cloud_account_id})
 
 
 class FormattedExpenseController(BaseController):
@@ -951,20 +952,17 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                 AND date >= %(start_date)s
                 AND date <= %(end_date)s
             GROUP BY cloud_account_id, resource_id
-            WITH TOTALS
             HAVING SUM(sign) > 0
             ORDER BY total_cost DESC
         """
         if limit:
             query += 'LIMIT %(limit)s'
-        result = self.execute_clickhouse(
-            query=query,
-            params={
+        params = {
                 'start_date': start_date,
                 'end_date': end_date,
                 'limit': limit,
-            },
-            external_tables=[
+            }
+        external_tables = [
                 {
                     'name': 'resource_ids',
                     'structure': [('_id', 'String')],
@@ -975,10 +973,34 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                     'structure': [('_id', 'String')],
                     'data': [{'_id': r_id} for r_id in cloud_account_ids]
                 }
-            ],
+            ]
+        result = self.execute_clickhouse(
+            query=query,
+            parameters=params,
+            external_data=ExternalDataConverter()(external_tables),
         )
-        totals = result.pop(-1)
-        total = next(filter(lambda k: k, totals), 0)
+        # since current clickhouse-connect doesn't support totals
+        totals_query = """
+            SELECT
+                SUM(cost * sign) AS total_cost
+            FROM expenses
+            WHERE cloud_account_id IN cloud_account_ids
+                AND resource_id IN resource_ids
+                AND date >= %(start_date)s
+                AND date <= %(end_date)s
+                AND sign > 0
+        """
+        if limit:
+            query += 'LIMIT %(limit)s'
+        totals_result = self.execute_clickhouse(
+            query=totals_query,
+            parameters=params,
+            external_data=ExternalDataConverter()(external_tables),
+        )
+        try:
+            total = totals_result[0][0]
+        except IndexError:
+            total = 0
         return [{
             'cloud_account_id': x[0],
             'resource_id': x[1],
@@ -1336,7 +1358,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                 WHERE {where_exp}
                 GROUP BY cloud_account_id, resource_id, from, to
             """,
-            params=params
+            parameters=params
         )
         traffic_expenses_map = defaultdict(list)
         for (t,) in traffic_expenses:
@@ -1798,17 +1820,17 @@ class SummaryExpenseController(CleanExpenseController):
                     AND date >= %(start_date)s
                     AND date <= %(end_date)s
             """,
-            params={
+            parameters={
                 'start_date': self.start_date,
                 'end_date': self.end_date,
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resource_ids',
                 'structure': [
                     ('_id', 'String'),
                 ],
                 'data': [{'_id': r_id} for r_id in resource_ids]
-            }],
+            }]),
         )
         return result[0][0]
 

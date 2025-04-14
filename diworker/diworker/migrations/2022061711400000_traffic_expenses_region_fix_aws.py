@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 from diworker.diworker.migrations.base import BaseMigration
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
 """
@@ -25,16 +25,11 @@ class Migration(BaseMigration):
         return self.db.raw_expenses
 
     def _get_clickhouse_client(self):
-        host, port, secure, user, password, db_name = (
-            self.config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
+        user, password, host, db_name, port, secure = (
+            self.config_cl.clickhouse_params())
+        return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure
         )
 
     def upgrade(self):
@@ -75,14 +70,14 @@ class Migration(BaseMigration):
 
         if accs_to_fix:
             LOG.info('Drop traffic expenses')
-            clickhouse_client.execute(
+            clickhouse_client.query(
                 """
                     ALTER TABLE traffic_expenses
                     DELETE
                     WHERE cloud_account_id in %(cloud_accounts)s
-                """, params={'cloud_accounts': accs_to_fix}
+                """, parameters={'cloud_accounts': accs_to_fix}
             )
-            clickhouse_client.execute('OPTIMIZE TABLE traffic_expenses FINAL')
+            clickhouse_client.query('OPTIMIZE TABLE traffic_expenses FINAL')
         now = int(datetime.now(tz=timezone.utc).timestamp())
         for ca in accs_to_fix:
             LOG.info('Create traffic processing task for %s' % ca)

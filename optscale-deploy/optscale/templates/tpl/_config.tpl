@@ -177,7 +177,7 @@ etcd:
     secret: {{ .Values.minio.credentials.secret }}
   clickhouse:
     host: {{ .Values.clickhouse.service.host }}
-    port: {{ .Values.clickhouse.service.externalPort }}
+    port: {{ .Values.clickhouse.service.httpPort }}
     user: {{ .Values.clickhouse.db.user }}
     password: {{ .Values.clickhouse.db.password }}
     db: {{ .Values.clickhouse.db.name }}

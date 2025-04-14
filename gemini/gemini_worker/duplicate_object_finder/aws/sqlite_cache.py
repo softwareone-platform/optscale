@@ -12,7 +12,9 @@ class SqliteCache:
         self._stats = stats
 
         cursor = self._connection.cursor()
-        create_table_query = f"CREATE TABLE '{self._table_name}' (tag TEXT, bucket TEXT, key TEXT, size integer);"
+        create_table_query = (
+            f"CREATE TABLE '{self._table_name}' ("
+            f"tag TEXT, bucket TEXT, key TEXT, size integer);")
         cursor.execute(create_table_query)
         create_index_query = (
             f"CREATE INDEX {self._table_name}_idx ON {self._table_name}(tag);"

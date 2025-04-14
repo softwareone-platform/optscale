@@ -1,10 +1,14 @@
 import logging
 from collections import defaultdict
 from datetime import datetime
+
 from rest_api.rest_api_server.controllers.ri_breakdown import (
     RiBreakdownController)
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper)
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 
 CH_DB_NAME = 'risp'
 LOG = logging.getLogger(__name__)
@@ -26,14 +30,19 @@ class SpBreakdownController(RiBreakdownController):
                GROUP BY cloud_account_id, date
                HAVING sum(sign) > 0
                """,
-            params={
+            parameters={
                 'start_date': datetime.fromtimestamp(start_date),
                 'end_date': datetime.fromtimestamp(end_date)
             },
-            external_tables=[{'name': 'cloud_account_ids',
-                              'structure': [('id', 'String')],
-                              'data': [{'id': r_id} for r_id in
-                                       cloud_account_ids]}]
+            external_data=ExternalDataConverter()(
+                [
+                    {
+                        'name': 'cloud_account_ids',
+                        'structure': [('id', 'String')],
+                        'data': [{'id': r_id} for r_id in cloud_account_ids]
+                    }
+                ]
+            )
         )
 
     def get_flavors(self, cloud_account_ids):
@@ -45,14 +54,18 @@ class SpBreakdownController(RiBreakdownController):
                  date >= %(start_date)s AND date <= %(end_date)s AND
                  offer_type='sp' and sp_rate!=0
                """,
-            params={
+            parameters={
                 'start_date': datetime.fromtimestamp(self.start_date),
                 'end_date': datetime.fromtimestamp(self.end_date)
             },
-            external_tables=[{'name': 'cloud_account_ids',
-                              'structure': [('id', 'String')],
-                              'data': [{'id': r_id} for r_id in
-                                       cloud_account_ids]}])
+            external_data=ExternalDataConverter()([
+                {
+                    'name': 'cloud_account_ids',
+                    'structure': [('id', 'String')],
+                    'data': [{'id': r_id} for r_id in cloud_account_ids]
+                }
+            ])
+        )
         # todo: it could be two different rates for flavor
         for flavor in flavors:
             flavor_name, sp_rate = flavor
@@ -98,11 +111,17 @@ class SpBreakdownController(RiBreakdownController):
                    GROUP BY cloud_account_id, date"""
         return self.execute_clickhouse(
             query,
-            params={'start_date': start_date, 'end_date': end_date},
-            external_tables=[{'name': 'cloud_account_ids',
-                              'structure': [('id', 'String')],
-                              'data': [{'id': r_id} for r_id in
-                                       cloud_account_ids]}])
+            parameters={'start_date': start_date, 'end_date': end_date},
+            external_data=ExternalDataConverter()(
+                [
+                    {
+                        'name': 'cloud_account_ids',
+                        'structure': [('id', 'String')],
+                        'data': [{'id': r_id} for r_id in cloud_account_ids]
+                    }
+                ]
+            )
+        )
 
     def fill_overprovisioning(self, flavor_rate_map, cloud_account_usage,
                               start_date, end_date, offer_type='sp'):

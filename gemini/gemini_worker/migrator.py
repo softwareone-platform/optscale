@@ -3,7 +3,7 @@ import hashlib
 import importlib
 import logging
 from datetime import datetime, timezone
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 LOG = logging.getLogger(__name__)
 
@@ -20,39 +20,26 @@ class Migrator:
         self._clickhouse_client = None
 
     def init_db(self):
-        host, port, secure, user, password, _ = (
-            self.config_client.clickhouse_params()
-        )
-        client = ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-        )
-        client.execute(f"""CREATE DATABASE IF NOT EXISTS {DB_NAME}""")
-        client.disconnect()
+        user, password, host, _, port, secure = (
+            self.config_client.clickhouse_params())
+        client = clickhouse_connect.get_client(
+                host=host, password=password, user=user,
+                port=port, secure=secure)
+        client.query(f"""CREATE DATABASE IF NOT EXISTS {DB_NAME}""")
 
     @property
     def clickhouse_client(self):
         if self._clickhouse_client is None:
-            host, port, secure, user, password, _ = (
-                self.config_client.clickhouse_params()
-            )
+            user, password, host, _, port, secure = (
+                self.config_client.clickhouse_params())
             self.init_db()
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=DB_NAME,
-            )
-
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=DB_NAME, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     def create_versions_table(self):
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             f"""CREATE TABLE IF NOT EXISTS {VERSIONS_TABLE} (
                  version UInt32,
                  md5 String,
@@ -64,21 +51,21 @@ class Migrator:
 
     def get_clickhouse_versions(self):
         versions_list = []
-        ch_versions = self.clickhouse_client.execute(
+        ch_versions_q = self.clickhouse_client.query(
             f"""SELECT script from {VERSIONS_TABLE}"""
         )
-        for ch_version in ch_versions:
+        for ch_version in ch_versions_q.result_rows:
             script_name = ch_version[0]
             # fix script names
             if script_name.endswith("sql"):
                 new_script_name = script_name.replace("sql", "py")
-                self.clickhouse_client.execute(
+                self.clickhouse_client.query(
                     f"""
                     ALTER TABLE {VERSIONS_TABLE}
                     UPDATE script='{new_script_name}'
                     WHERE script='{script_name}'"""
                 )
-                self.clickhouse_client.execute(
+                self.clickhouse_client.query(
                     f"""OPTIMIZE TABLE {VERSIONS_TABLE} FINAL"""
                 )
             script_base_name = script_name.replace(".py", "").replace(
@@ -127,15 +114,14 @@ class Migrator:
 
     def update_versions_table(self, filename):
         version = [
-            {
-                "version": self._get_version_from_name(filename),
-                "md5": self._get_script_from_name(filename),
-                "script": self._get_script_from_name(filename),
-                "created_at": datetime.now(tz=timezone.utc).replace(tzinfo=None),
-            }
+                self._get_version_from_name(filename),
+                self._get_script_from_name(filename),
+                self._get_script_from_name(filename),
+                datetime.now(tz=timezone.utc).replace(tzinfo=None),
         ]
-        self.clickhouse_client.execute(
-            f"INSERT INTO {VERSIONS_TABLE} VALUES", version)
+        column_names = ['version', 'md5', 'script', 'created_at']
+        self.clickhouse_client.insert(VERSIONS_TABLE, [version],
+                                      column_names=column_names)
 
     def migrate(self):
         self.create_versions_table()

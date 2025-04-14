@@ -1,8 +1,11 @@
 import hashlib
 import logging
 import threading
+
+import clickhouse_connect
+
 import tools.optscale_time as opttime
-from clickhouse_driver import Client as ClickHouseClient
+
 from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 from pymongo import MongoClient
@@ -235,19 +238,15 @@ class ClickHouseMixin:
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            host, port, secure, user, password, db_name = Config().clickhouse_params
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                Config().clickhouse_params)
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     def execute_clickhouse(self, query, **params):
-        return self.clickhouse_client.execute(query=query, **params)
+        return self.clickhouse_client.query(query=query, **params).result_rows
 
 
 class FilterValidationMixin(SupportedFiltersMixin):
@@ -337,9 +336,6 @@ class BaseController:
                         self.model_type.__table__.columns))
 
     def on_finish(self):
-        clickhouse_cl = getattr(self, '_clickhouse_client', None)
-        if clickhouse_cl is not None:
-            clickhouse_cl.disconnect()
         mongo_cl = getattr(self, '_mongo_client', None)
         if mongo_cl is not None:
             mongo_cl.close()

@@ -2,10 +2,12 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 from rest_api.rest_api_server.controllers.base import (
-    BaseProfilingTokenController, MongoMixin, ClickHouseMixin)
+    BaseProfilingTokenController, MongoMixin, ClickHouseMixin
+)
 from rest_api.rest_api_server.models.enums import RunStates
 from rest_api.rest_api_server.models.models import CloudAccount
 from rest_api.rest_api_server.utils import handle_http_exc
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcnow_timestamp
 
 DAY_IN_HOURS = 24
@@ -195,11 +197,11 @@ class RunCostsMixin(MongoMixin, ClickHouseMixin):
         """
         expenses = self.execute_clickhouse(
             query=query,
-            params={
+            parameters={
                 'start_date': start_date,
                 'end_date': end_date,
             },
-            external_tables=[
+            external_data=ExternalDataConverter()([
                 {
                     'name': 'resource_ids',
                     'structure': [('_id', 'String')],
@@ -212,7 +214,7 @@ class RunCostsMixin(MongoMixin, ClickHouseMixin):
                     'structure': [('_id', 'String')],
                     'data': [{'_id': r_id} for r_id in cloud_account_ids]
                 }
-            ],
+            ]),
         )
         result = {}
         for r_id, cost in expenses:

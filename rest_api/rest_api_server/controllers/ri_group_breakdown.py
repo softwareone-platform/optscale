@@ -6,6 +6,9 @@ from rest_api.rest_api_server.controllers.base_async import (
 from rest_api.rest_api_server.controllers.ri_breakdown import (
     RiBreakdownController)
 
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
+
 CHUNK_SIZE = 200
 LOG = logging.getLogger(__name__)
 SEC_IN_HR = 3600
@@ -25,14 +28,20 @@ class RiGroupBreakdownController(RiBreakdownController):
                GROUP BY cloud_account_id, date, resource_id, instance_type,
                  location, os
                HAVING sum(sign) > 0""",
-            params={
+            parameters={
                 'start_date': datetime.fromtimestamp(self.start_date),
                 'end_date': datetime.fromtimestamp(self.end_date)
             },
-            external_tables=[{'name': 'cloud_account_ids',
-                              'structure': [('id', 'String')],
-                              'data': [{'id': r_id} for r_id in
-                                       cloud_account_ids]}])
+            external_data=ExternalDataConverter()(
+                [
+                    {
+                        'name': 'cloud_account_ids',
+                        'structure': [('id', 'String')],
+                        'data': [{'id': r_id} for r_id in cloud_account_ids]
+                    }
+                ]
+            )
+        )
 
     def get_resources_info(self, resource_account_map):
         resources_info = {}

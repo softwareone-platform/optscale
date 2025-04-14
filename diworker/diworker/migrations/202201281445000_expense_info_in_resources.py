@@ -1,9 +1,11 @@
 import logging
 from pymongo import UpdateOne
 from diworker.diworker.migrations.base import BaseMigration
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from diworker.diworker.utils import retry_mongo_upsert
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 
 """
 Add total cost and last expense info in mongo resources
@@ -15,17 +17,11 @@ BULK_SIZE = 10000
 
 class Migration(BaseMigration):
     def get_clickhouse_client(self):
-        host, port, secure, user, password, db_name = (
-            self.config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
-        )
+        user, password, host, db_name, port, secure = (
+            self.config_cl.clickhouse_params())
+        return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
 
     @property
     def rest_cl(self):
@@ -66,7 +62,7 @@ class Migration(BaseMigration):
                     clickhouse_cl, cloud_account_id, bulk_ids)
 
     def get_totals(self, clickhouse_cl, cloud_account_id, bulk):
-        total_expenses = clickhouse_cl.execute(
+        total_expenses_q = clickhouse_cl.query(
             query="""
                 SELECT resource_id, max(date), sum(cost*sign)
                 FROM expenses
@@ -74,23 +70,23 @@ class Migration(BaseMigration):
                     AND expenses.resource_id = resources.id
                 GROUP BY resource_id
             """,
-            params={
+            parameters={
                 'cloud_account_id': cloud_account_id
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
                 ],
                 'data': [{'id': k} for k in bulk]
-            }]
+            }])
         )
-        return {r[0]: (r[1], r[2]) for r in total_expenses}
+        return {r[0]: (r[1], r[2]) for r in total_expenses_q.result_rows}
 
     @staticmethod
     def get_last_expenses(clickhouse_cl, cloud_account_id,
                           resource_totals_map):
-        last_expenses = clickhouse_cl.execute(
+        last_expenses_q = clickhouse_cl.query(
             query="""
                 SELECT resource_id, sum(cost*sign)
                 FROM expenses
@@ -100,10 +96,10 @@ class Migration(BaseMigration):
                     AND expenses.date = resources.date
                 GROUP BY resource_id
             """,
-            params={
+            parameters={
                 'cloud_account_id': cloud_account_id
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
@@ -115,9 +111,9 @@ class Migration(BaseMigration):
                         'date': v[0]
                     } for k, v in resource_totals_map.items()
                 ]
-            }]
+            }])
         )
-        return {r[0]: r[1] for r in last_expenses}
+        return {r[0]: r[1] for r in last_expenses_q.result_rows}
 
     def process_bulk_ids(self, clickhouse_cl, cloud_account_id, bulk):
         resource_totals_map = self.get_totals(

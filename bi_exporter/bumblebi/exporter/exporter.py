@@ -12,7 +12,10 @@ import boto3
 from boto3 import Session
 from botocore.client import BaseClient as BotoClient
 
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
+from clickhouse_connect.driver.httpclient import HttpClient as ClickHouseClient
+
+
 from pymongo import MongoClient
 from kombu.log import get_logger
 
@@ -21,6 +24,8 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
 from bi_exporter.bumblebi.common.consts import HEADERS, CLOUD_NAME_MAP
 from bi_exporter.bumblebi.common.enums import DataSetEnum
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 
 LOG = get_logger(__name__)
 DEFAULT_REGION = 'us-east-1'
@@ -49,17 +54,11 @@ class BaseExporter:
 
     @cached_property
     def clickhouse_cl(self) -> ClickHouseClient:
-        host, port, secure, user, password, db_name = (
-            self._config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
-        )
+        user, password, host, db_name, port, secure = (
+            self._config_cl.clickhouse_params())
+        return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
 
     def _upload(
         self, org_bi: Dict, data_set: DataSetEnum, filename: str,
@@ -101,15 +100,15 @@ class BaseExporter:
         if limit:
             query += "LIMIT %(offset)s, %(limit)s"
 
-        result = self.clickhouse_cl.execute(
+        result_q = self.clickhouse_cl.query(
             query=query,
-            params={
+            parameters={
                 "start_date": start_date,
                 "end_date": end_date,
                 "limit": limit,
                 "offset": offset,
             },
-            external_tables=[
+            external_data=ExternalDataConverter()([
                 {
                     "name": "cloud_account_ids",
                     "structure": [("_id", "String")],
@@ -120,10 +119,10 @@ class BaseExporter:
                     "structure": [("_id", "String")],
                     "data": [{"_id": r_id} for r_id in resource_ids],
                 }
-            ],
+            ]),
         )
 
-        return result
+        return result_q.result_rows
 
     __PROJECT_RESOURCE_FIELDS = {
         "_id": 1,

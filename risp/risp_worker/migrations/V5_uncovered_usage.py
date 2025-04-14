@@ -10,10 +10,10 @@ SECONDS_IN_HOUR = 3600
 
 class Migration(MigrationBase):
     def get_ch_expenses(self, cloud_account_id):
-        dates = self.clickhouse_client.execute(
+        dates = self.clickhouse_client.query(
             """SELECT DISTINCT date FROM uncovered_usage
                WHERE cloud_account_id=%(cloud_account_id)s""",
-            params={'cloud_account_id': cloud_account_id})
+            parameters={'cloud_account_id': cloud_account_id}).result_rows
         return [x[0] for x in dates]
 
     @staticmethod
@@ -63,8 +63,18 @@ class Migration(MigrationBase):
                 'usage': usage_hrs,
                 'sign': 1
             })
-        self.clickhouse_client.execute(
-            'INSERT INTO uncovered_usage VALUES', new_expenses)
+
+        if new_expenses:
+            column_names = new_expenses[0].keys()
+            insert_data = []
+            for exp in new_expenses:
+                vals = list(exp.values())
+                insert_data.append(vals)
+            self.clickhouse_client.insert(
+                'uncovered_usage',
+                insert_data,
+                column_names=column_names
+            )
 
     def fill_table(self):
         rest_cl = RestClient(
@@ -116,5 +126,5 @@ class Migration(MigrationBase):
                            ENGINE = CollapsingMergeTree(sign)
                            PARTITION BY toYYYYMM(date)
                            ORDER BY (cloud_account_id, resource_id, date)"""
-        self.clickhouse_client.execute(query)
+        self.clickhouse_client.query(query)
         self.fill_table()

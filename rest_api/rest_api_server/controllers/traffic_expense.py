@@ -1,8 +1,11 @@
 import json
 import logging
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 from rest_api.rest_api_server.controllers.expense import CleanExpenseController
 from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
+
 
 DAY_IN_SECONDS = 86400
 LOG = logging.getLogger(__name__)
@@ -144,18 +147,18 @@ class TrafficExpenseController(CleanExpenseController):
                     AND cloud_account_id in %(cloud_account_ids)s
                 GROUP BY cloud_account_id, from, to
             """,
-            params={
+            parameters={
                 'start_date': self.start_date,
                 'end_date': self.end_date,
                 'cloud_account_ids': cloud_account_ids
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
                 ],
                 'data': [{'id': r_id} for r_id in cloud_resource_ids]
-            }]
+            }])
         )
 
 

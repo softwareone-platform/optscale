@@ -550,29 +550,29 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         self.execute_clickhouse(
             """ALTER TABLE traffic_expenses DELETE
                WHERE cloud_account_id=%(cloud_account_id)s""",
-            params={'cloud_account_id': cloud_account_id}
+            parameters={'cloud_account_id': cloud_account_id}
         )
         self.execute_clickhouse(
             """ALTER TABLE average_metrics DELETE
                WHERE cloud_account_id=%(cloud_account_id)s""",
-            params={'cloud_account_id': cloud_account_id}
+            parameters={'cloud_account_id': cloud_account_id}
         )
         if cloud_type == CloudTypes.KUBERNETES_CNR:
             self.execute_clickhouse(
                 """ALTER TABLE k8s_metrics DELETE
                    WHERE cloud_account_id=%(cloud_account_id)s""",
-                params={'cloud_account_id': cloud_account_id}
+                parameters={'cloud_account_id': cloud_account_id}
             )
         elif cloud_type == CloudTypes.AWS_CNR:
             self.execute_clickhouse(
                 """ALTER TABLE risp.ri_sp_usage DELETE
                    WHERE cloud_account_id=%(cloud_account_id)s""",
-                params={'cloud_account_id': cloud_account_id}
+                parameters={'cloud_account_id': cloud_account_id}
             )
             self.execute_clickhouse(
                 """ALTER TABLE risp.uncovered_usage DELETE
                    WHERE cloud_account_id=%(cloud_account_id)s""",
-                params={'cloud_account_id': cloud_account_id}
+                parameters={'cloud_account_id': cloud_account_id}
             )
 
     def delete(self, item_id):

@@ -11,17 +11,24 @@ class Migration(MigrationBase):
 
     def update_table(self):
         # default value is 0
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage ADD COLUMN
             IF NOT EXISTS sp_rate FLOAT AFTER ri_norm_factor""")
         # default value is ''
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage ADD COLUMN
             IF NOT EXISTS instance_type String AFTER date""")
 
     def insert_ch_expenses(self, expenses):
-        self.clickhouse_client.execute(
-            """INSERT INTO ri_sp_usage VALUES""", expenses)
+        column_names = expenses[0].keys()
+        insert_data = []
+        for exp in expenses:
+            vals = list(exp.values())
+            insert_data.append(vals)
+        self.clickhouse_client.insert(
+            "ri_sp_usage", insert_data,
+            column_names=column_names
+        )
 
     def query_raw_expenses(self, cloud_account_id, resource_id, offer_ids,
                            dates, offer_type):
@@ -86,11 +93,14 @@ class Migration(MigrationBase):
                           AND offer_type=%(offer_type)s
                       GROUP BY resource_id, date, offer_id, instance_type
                       HAVING sum(sign) > 0"""
-        expenses = self.clickhouse_client.execute(
-            ch_query, params={'cloud_account_id': cloud_account_id,
-                              'offer_type': offer_type})
+        expenses_q = self.clickhouse_client.query(
+            ch_query, parameters={
+                'cloud_account_id': cloud_account_id,
+                'offer_type': offer_type
+            }
+        )
         ex_ch_exp_map = {}
-        for expense in expenses:
+        for expense in expenses_q.result_rows:
             (resource_id, date, offer_id, instance_type, offer_cost,
              on_demand_cost, usage, ri_norm_factor, sp_rate,
              expected_cost) = expense
@@ -177,5 +187,5 @@ class Migration(MigrationBase):
                 self.fill_records(cloud_account_id, 'ri')
                 self.fill_records(cloud_account_id, 'sp')
 
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """OPTIMIZE TABLE ri_sp_usage FINAL""")

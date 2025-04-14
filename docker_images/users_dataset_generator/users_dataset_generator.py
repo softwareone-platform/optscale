@@ -7,12 +7,14 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from urllib import parse
 
+import clickhouse_connect
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from pymongo import MongoClient
 import boto3
-from clickhouse_driver import Client as ClickHouseClient
 from optscale_client.config_client.client import Client as ConfigClient
+from tools.optscale_data.clickhouse import ExternalDataConverter
 
 DEFAULT_ETCD_HOST = 'etcd'
 DEFAULT_ETCD_PORT = 80
@@ -47,16 +49,10 @@ def _get_mongo_client(config_cl):
 
 
 def _get_clickhouse_client(config_cl):
-    host, port, secure, user, password, db_name = (
-        config_cl.clickhouse_params()
-    )
-    return ClickHouseClient(
-        host=host,
-        port=port,
-        secure=secure,
-        user=user,
-        password=password,
-        database=db_name,
+    user, password, host, db_name, port, secure = config_cl.clickhouse_params()
+    return clickhouse_connect.get_client(
+        host=host, password=password, database=db_name, user=user,
+        port=port, secure=secure
     )
 
 
@@ -205,20 +201,20 @@ def _get_expenses_by_clouds(ch_cl, cloud_account_ids):
             AND cloud_account_id IN cloud_account_ids
         GROUP BY cloud_account_id
     """
-    result = ch_cl.execute(
+    q = ch_cl.query(
         query=query,
-        params={
+        parameters={
             "start_date": start_date,
         },
-        external_tables=[
+        external_data=ExternalDataConverter()([
             {
                 'name': 'cloud_account_ids',
                 'structure': [('_id', 'String')],
                 'data': [{'_id': r_id} for r_id in cloud_account_ids]
             }
-        ],
+        ]),
     )
-    return {ca_id: cost for ca_id, cost in result}
+    return {ca_id: cost for ca_id, cost in q.result_rows}
 
 
 def main(config_cl):

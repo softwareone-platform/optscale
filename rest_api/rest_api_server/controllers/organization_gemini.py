@@ -2,7 +2,7 @@ import json
 import logging
 from typing import List
 
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 from rest_api.rest_api_server.controllers.base import (
     BaseController, ClickHouseMixin)
@@ -60,15 +60,12 @@ class GeminiDataController(BaseController, ClickHouseMixin):
     """
     @property
     def clickhouse_client(self):
-        host, port, secure, user, password, _ = self._config.clickhouse_params()
-        self._clickhouse_client = ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database="gemini",
-        )
+        if not self._clickhouse_client:
+            user, password, host, _, port, secure = (
+                self._config.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database="gemini", user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     def get(self, gemini_id: str, buckets: list) -> list:
@@ -86,7 +83,7 @@ class GeminiDataController(BaseController, ClickHouseMixin):
                     WHERE id=%(gemini_id)s AND bucket=%(bucket)s
                     AND tag IN (SELECT tag FROM gemini GROUP BY tag HAVING COUNT(tag) > 1)
                 """,
-                params={"gemini_id": gemini_id, "bucket": unique_buckets[0]},
+                parameters={"gemini_id": gemini_id, "bucket": unique_buckets[0]},
             )
 
             # Cannot use grouping in the query, we must return distinct rows at all times
@@ -111,7 +108,7 @@ class GeminiDataController(BaseController, ClickHouseMixin):
                         WHERE id=%(gemini_id)s AND bucket=%(bucket_2)s
                     )
                 """,
-                params={
+                parameters={
                     "gemini_id": gemini_id,
                     "buckets": unique_buckets,
                     "bucket_1": unique_buckets[0],

@@ -1,5 +1,5 @@
 ARG BUILDTAG=build
-FROM clickhouse/clickhouse-server:22.8 AS clickhouse
+FROM clickhouse/clickhouse-server:24.12 AS clickhouse
 FROM rest_api:${BUILDTAG}
 LABEL org.opencontainers.image.authors="Hystax"
 
