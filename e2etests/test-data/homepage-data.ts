@@ -26,6 +26,457 @@ export const OrganizationExpensesPoolsResponse = {
     ]
 };
 
+export const OrganizationCleanExpansesResponseGraphQL = {
+    "data": {
+        "cleanExpenses": {
+            "start_date": 1742079600,
+            "end_date": 1744667999,
+            "total_count": 769,
+            "total_cost": 5128.394924390386,
+            "clean_expenses": [
+                {
+                    "cloud_account_id": "f53423c6-c474-4a91-8666-65fcc3608297",
+                    "cloud_resource_id": "sunflower-eu-fra(E2E)",
+                    "applied_rules": [
+                        {
+                            "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
+                            "name": "Rule for AWS HQ_1686203940",
+                            "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                        }
+                    ],
+                    "employee_id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                    "first_seen": 1677628800,
+                    "pool_id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                    "region": "us-west-2",
+                    "resource_type": "Bucket",
+                    "service_name": "AmazonS3",
+                    "tags": {
+                        "aws:createdBy": "IAMUser:AIDAIWGUBPAVMAWKKOLBA:s3-user"
+                    },
+                    "last_expense": {
+                        "date": 1742428800,
+                        "cost": 3.1997823431000003
+                    },
+                    "total_cost": 1113.6198607578817,
+                    "meta": {
+                        "cloud_console_link": "https://console.aws.amazon.com/s3/buckets/sunflower-eu-fra?region=eu-central-1&tab=objects",
+                        "is_public_policy": false,
+                        "is_public_acls": false
+                    },
+                    "_last_seen_date": "2025-04-20T00:00:00",
+                    "_first_seen_date": "2023-03-01T00:00:00",
+                    "active": true,
+                    "constraint_violated": true,
+                    "created_at": 1688191177,
+                    "last_seen": 1745150456,
+                    "deleted_at": 0,
+                    "id": "f1e60467-f37d-4210-b6c0-3861c65e4361",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 475.52782927899995,
+                    "cloud_account_name": "AWS HQ",
+                    "cloud_account_type": "aws_cnr",
+                    "owner": {
+                        "id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                        "name": "Demo User"
+                    },
+                    "pool": {
+                        "id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "f1e60467-f37d-4210-b6c0-3861c65e4361",
+                    "resource_name": "sunflower-eu-fra",
+                    "shareable": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "us-west-2",
+                            "to": "us-west-2",
+                            "usage": 0.9438315928,
+                            "cost": 0.018876632
+                        },
+                        {
+                            "from": "us-west-2",
+                            "to": "us-east-1",
+                            "usage": 0.0925126578,
+                            "cost": 0.0018502532000000001
+                        },
+                        {
+                            "from": "us-west-2",
+                            "to": "eu-north-1",
+                            "usage": 39.403122946399996,
+                            "cost": 0.7880624582
+                        },
+                        {
+                            "from": "us-west-2",
+                            "to": "External",
+                            "usage": 2313.7951013734,
+                            "cost": 190.9531722956
+                        }
+                    ]
+                },
+                {
+                    "cloud_account_id": "f53423c6-c474-4a91-8666-65fcc3608297",
+                    "cloud_resource_id": "75f200eb-1176-44b5-be56-01e9b6386a9a",
+                    "_first_seen_date": "2024-04-18T00:00:00",
+                    "_last_seen_date": "2025-04-24T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
+                            "name": "Rule for AWS HQ_1686203940",
+                            "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                        }
+                    ],
+                    "employee_id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                    "first_seen": 1713398400,
+                    "meta": {
+                        "payment_option": "No Upfront",
+                        "offering_type": "ComputeSavingsPlans",
+                        "purchase_term": "1yr",
+                        "applied_region": "Any",
+                        "start": 1715427794,
+                        "end": 1746963793,
+                        "cloud_console_link": null
+                    },
+                    "pool_id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                    "region": "global",
+                    "resource_type": "Savings Plan",
+                    "service_name": "AmazonEC2",
+                    "tags": {},
+                    "last_expense": {
+                        "date": 1743379200,
+                        "cost": 3.6
+                    },
+                    "total_cost": 428.769147491455,
+                    "created_at": 1715518837,
+                    "last_seen": 1745452800,
+                    "deleted_at": 0,
+                    "id": "31a3473d-6e87-4303-b709-ba0ba86ee10b",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 201.60000000000005,
+                    "cloud_account_name": "AWS HQ",
+                    "cloud_account_type": "aws_cnr",
+                    "owner": {
+                        "id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                        "name": "Demo User"
+                    },
+                    "pool": {
+                        "id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "31a3473d-6e87-4303-b709-ba0ba86ee10b",
+                    "resource_name": null,
+                    "active": false,
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "f53423c6-c474-4a91-8666-65fcc3608297",
+                    "cloud_resource_id": "sunflower-infra-backup",
+                    "applied_rules": [
+                        {
+                            "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
+                            "name": "Rule for AWS HQ_1686203940",
+                            "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                        }
+                    ],
+                    "employee_id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                    "first_seen": 1683072000,
+                    "pool_id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                    "region": "us-east-2",
+                    "resource_type": "Bucket",
+                    "service_name": "AmazonS3",
+                    "tags": {
+                        "aws:createdBy": "IAMUser:AIDAQUWY5LJ43W43UDRWX:ds-temp-admin"
+                    },
+                    "last_expense": {
+                        "date": 1742428800,
+                        "cost": 0.0030401859000000002
+                    },
+                    "total_cost": 267.9518372080704,
+                    "meta": {
+                        "cloud_console_link": "https://console.aws.amazon.com/s3/buckets/sunflower-infra-backup?region=us-east-2&tab=objects",
+                        "is_public_policy": false,
+                        "is_public_acls": false
+                    },
+                    "_last_seen_date": "2025-04-20T00:00:00",
+                    "_first_seen_date": "2023-05-03T00:00:00",
+                    "active": true,
+                    "created_at": 1688191181,
+                    "last_seen": 1745150456,
+                    "deleted_at": 0,
+                    "id": "4365c9cb-7c9d-4a1b-8e1c-3c1ee90d2f52",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 120.5093084834,
+                    "cloud_account_name": "AWS HQ",
+                    "cloud_account_type": "aws_cnr",
+                    "owner": {
+                        "id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                        "name": "Demo User"
+                    },
+                    "pool": {
+                        "id": "31b34c23-0850-4181-bd91-c8a37e35a446",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "4365c9cb-7c9d-4a1b-8e1c-3c1ee90d2f52",
+                    "resource_name": "sunflower-infra-backup",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "us-east-2",
+                            "to": "eu-north-1",
+                            "usage": 0.00035167360000000003,
+                            "cost": 0.0000070341999999999995
+                        },
+                        {
+                            "from": "us-east-2",
+                            "to": "External",
+                            "usage": 1.470272997,
+                            "cost": 0.1254404704
+                        }
+                    ]
+                },
+                {
+                    "cloud_account_id": "f7f7bc62-8799-49ee-8d5b-4b9c0849721c",
+                    "cloud_resource_hash": "d006c295487ed3e62ce7442282c9600b3b108678",
+                    "cloud_resource_id": "4392293229427720751",
+                    "_first_seen_date": "2025-03-06T00:00:00",
+                    "_last_seen_date": "2025-04-04T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "d266bc8f-e320-4c78-9aba-6957dcd5f9b7",
+                            "name": "QA clusters",
+                            "pool_id": "c604606d-2ce6-475f-9966-86a63ffcb041"
+                        }
+                    ],
+                    "cloud_created_at": 1741241537,
+                    "employee_id": "d98ff761-3b6f-4075-8791-9ca8c2c95ae9",
+                    "first_seen": 1741240800,
+                    "meta": {
+                        "flavor": "e2-highcpu-16",
+                        "cloud_console_link": null,
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1741785677,
+                        "spotted": false,
+                        "security_groups": [
+                            "http-server",
+                            "https-server"
+                        ],
+                        "image_id": "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-2404-lts",
+                        "vpc_id": "2177475127665740261",
+                        "vpc_name": "default",
+                        "zone_id": "us-central1-c",
+                        "cpu_count": "16"
+                    },
+                    "pool_id": "d129c9b8-070a-4fc2-bb99-ab7982d294de",
+                    "region": "us-central1",
+                    "resource_type": "Instance",
+                    "tags": {
+                        "goog-ops-agent-policy": "v2-x86-template-1-4-0",
+                        "orchid_tracking_id": "d006c295487ed3e62ce7442282c9600b3b108678"
+                    },
+                    "has_metrics": false,
+                    "service_name": "Compute Engine",
+                    "last_expense": {
+                        "date": 1741737600,
+                        "cost": 3.799046999999999
+                    },
+                    "total_cost": 106.83841600000001,
+                    "created_at": 1743228836,
+                    "last_seen": 1743775200,
+                    "deleted_at": 0,
+                    "id": "5b1fe4de-30f9-47e4-a1ac-54d1b5cd0adb",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 106.838416,
+                    "cloud_account_name": "GCP dev",
+                    "cloud_account_type": "gcp_cnr",
+                    "owner": {
+                        "id": "d98ff761-3b6f-4075-8791-9ca8c2c95ae9",
+                        "name": "Charlie Rodriguez"
+                    },
+                    "pool": {
+                        "id": "d129c9b8-070a-4fc2-bb99-ab7982d294de",
+                        "name": "QA",
+                        "purpose": "team"
+                    },
+                    "resource_id": "5b1fe4de-30f9-47e4-a1ac-54d1b5cd0adb",
+                    "resource_name": "issuetestcluster",
+                    "active": false,
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "c17bab1e-3257-464f-bf2b-df41a80f1924",
+                    "cloud_resource_id": "i-0e464cfbf9650bd21",
+                    "applied_rules": [
+                        {
+                            "id": "6cceb6b7-53af-4b28-b824-dfe145e247c7",
+                            "name": "Rule for AWS Marketing_1686203897",
+                            "pool_id": "31595720-ccc1-47b1-9366-e7f9774533b0"
+                        }
+                    ],
+                    "employee_id": "772d4218-8cbb-4c29-878c-581f61d7aab4",
+                    "first_seen": 1677628800,
+                    "meta": {
+                        "os": "Linux",
+                        "preinstalled": "NA",
+                        "flavor": "t2.large",
+                        "cloud_console_link": "https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#InstanceDetails:instanceId=i-0e464cfbf9650bd21",
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1742539238,
+                        "spotted": false,
+                        "security_groups": [
+                            "sg-0d99e8ecd70254ebe"
+                        ],
+                        "image_id": "ami-0896ae01b544f65a8",
+                        "vpc_id": "vpc-f9b9c481"
+                    },
+                    "pool_id": "9d0e2794-b080-447e-8527-6720d38e6410",
+                    "region": "us-west-2",
+                    "resource_type": "Instance",
+                    "service_name": "AmazonEC2",
+                    "tags": {
+                        "aws:createdBy": "IAMUser:AIDA4YBYU3OICYSASYZ2E:eskywalker"
+                    },
+                    "last_expense": {
+                        "date": 1742428800,
+                        "cost": 0.5259792537
+                    },
+                    "total_cost": 243.87042537526895,
+                    "cloud_created_at": 1607339156,
+                    "has_metrics": true,
+                    "_last_seen_date": "2025-04-20T00:00:00",
+                    "_first_seen_date": "2023-03-01T00:00:00",
+                    "active": true,
+                    "created_at": 1688191184,
+                    "last_seen": 1745150456,
+                    "deleted_at": 0,
+                    "id": "d4f06e52-7e93-4fc2-9449-a720ff544f39",
+                    "is_environment": false,
+                    "saving": 193.1507807784405,
+                    "cost": 101.15379443959998,
+                    "cloud_account_name": "AWS Marketing",
+                    "cloud_account_type": "aws_cnr",
+                    "owner": {
+                        "id": "772d4218-8cbb-4c29-878c-581f61d7aab4",
+                        "name": "Andy Simpson"
+                    },
+                    "pool": {
+                        "id": "9d0e2794-b080-447e-8527-6720d38e6410",
+                        "name": "AWS Marketing",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "d4f06e52-7e93-4fc2-9449-a720ff544f39",
+                    "resource_name": "finops-practice",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "us-west-2",
+                            "to": "us-west-2",
+                            "usage": 0.010333783400000001,
+                            "cost": 0.00008893900000000001
+                        },
+                        {
+                            "from": "us-west-2",
+                            "to": "External",
+                            "usage": 3.2392191128,
+                            "cost": 0.2580415468
+                        },
+                        {
+                            "from": "us-west-2",
+                            "to": "eu-west-1",
+                            "usage": 0.00014457339999999997,
+                            "cost": 0.0000028922
+                        }
+                    ]
+                },
+                {
+                    "cloud_account_id": "d78fc45d-c829-4b68-ba9d-42fd3e62e894",
+                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.compute/virtualmachines/aqa-westus2-underutilized-instance",
+                    "applied_rules": [
+                        {
+                            "id": "8d682b4b-1bdf-45b8-8215-267a5559e245",
+                            "name": "Rule for Azure QA_1680758110",
+                            "pool_id": "bbf504b7-a1a4-483a-bc6a-a27c6bdcc0dc"
+                        }
+                    ],
+                    "employee_id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                    "first_seen": 1672531200,
+                    "pool_id": "9bd5b45e-d38f-4c15-a286-c7c9b7c43fac",
+                    "region": "West US 2",
+                    "resource_type": "Instance",
+                    "service_name": "microsoft.compute",
+                    "tags": {
+                        "purpose": "testing"
+                    },
+                    "last_expense": {
+                        "date": 1742428800,
+                        "cost": 0.604800381823629
+                    },
+                    "total_cost": 214.61883119173882,
+                    "meta": {
+                        "os": "Linux",
+                        "flavor": "Standard_A2_v2",
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourceGroups/AQA/providers/Microsoft.Compute/virtualMachines/aqa-westus2-underutilized-instance/overview",
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1742539245,
+                        "spotted": false,
+                        "vpc_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourceGroups/aqa/providers/Microsoft.Network/virtualNetworks/aqavnet321",
+                        "vpc_name": "aqavnet321",
+                        "security_groups": [
+                            "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourceGroups/aqa/providers/Microsoft.Network/networkSecurityGroups/aqa-westus2-underutilized-instance-nsg"
+                        ],
+                        "cpu_count": 2,
+                        "ram": 4294967296
+                    },
+                    "has_metrics": true,
+                    "_last_seen_date": "2025-04-20T00:00:00",
+                    "_first_seen_date": "2023-01-01T00:00:00",
+                    "active": true,
+                    "created_at": 1682745332,
+                    "last_seen": 1745150456,
+                    "deleted_at": 0,
+                    "id": "085caa9f-19ed-49a4-82c6-764c9b3ca88c",
+                    "is_environment": false,
+                    "saving": 57.02,
+                    "cost": 98.50971773692007,
+                    "cloud_account_name": "Azure QA",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "77320df5-5cc2-46f3-935e-78b68c4df280",
+                        "name": "Demo User"
+                    },
+                    "pool": {
+                        "id": "9bd5b45e-d38f-4c15-a286-c7c9b7c43fac",
+                        "name": "Azure QA",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "085caa9f-19ed-49a4-82c6-764c9b3ca88c",
+                    "resource_name": "aqa-westus2-underutilized-instance",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "westus2",
+                            "to": "Inter-Region",
+                            "usage": 0.0042484998703007475,
+                            "cost": 0.0000846682782130722
+                        }
+                    ]
+                }
+            ],
+            "limit": 6
+        }
+    }
+}
+
 export const OrganizationCleanExpansesResponse = {
     "start_date": 1737500400,
     "end_date": 1740092399,
