@@ -23,7 +23,7 @@
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.19.0",
     "remark-gfm": "^4.0.0",
-    "vite": "^6.2.4",
+    "vite": "^6.2.5",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "scripts": {
