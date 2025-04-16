@@ -54,8 +54,8 @@ class PoolExceedResources(Base):
         return {
             'email': [self.report_data['user_email']],
             'template_type': self.get_template_type(__file__),
-            'subject': 'Action Required: Hystax OptScale Pool Limit '
-                       'Exceed Alert',
+            'subject': 'Action Required: SoftwareOne FinOps for '
+                       'Cloud Pool Limit Exceed Alert',
             'template_params': {
                 'texts': {
                     'organization': {
