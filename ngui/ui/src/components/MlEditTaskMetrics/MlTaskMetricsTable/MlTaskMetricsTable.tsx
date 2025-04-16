@@ -69,6 +69,7 @@ const MlTaskMetricsTable = ({ metrics, onAttachChange, isLoading }) => {
       },
       text({ headerMessageId: "key", headerDataTestId: "lbl_key", accessorKey: "key", copy: true }),
       tendency(),
+      text({ headerMessageId: "unit", headerDataTestId: "lbl_unit", accessorKey: "unit" }),
       aggregateFunction(),
       {
         header: (

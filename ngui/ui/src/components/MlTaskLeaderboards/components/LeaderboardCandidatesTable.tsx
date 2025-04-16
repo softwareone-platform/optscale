@@ -12,6 +12,7 @@ import ExpandableList from "components/ExpandableList";
 import IconLabel from "components/IconLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import LeaderboardDatasetsCoverageRules from "components/LeaderboardDatasetsCoverageRules";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import { LeaderboardCandidateDetailsModal } from "components/SideModalManager/SideModals";
 import SlicedText from "components/SlicedText";
 import Table from "components/Table";
@@ -214,7 +215,11 @@ const LeaderboardCandidatesTable = ({ leaderboard, leaderboardCandidates }) => {
           width: "150px",
           backgroundColor: lighten(theme.palette.success.main, 0.95)
         },
-        cell: ({ cell }) => <DynamicFractionDigitsValue value={cell.getValue()} />
+        cell: ({ cell, row: { original } }) => {
+          const unit = original.primary_metric?.[primaryMetric.key]?.unit ?? "";
+
+          return <MetricUnitLabel label={<DynamicFractionDigitsValue value={cell.getValue()} />} unit={unit} />;
+        }
       },
       {
         header: (
@@ -237,11 +242,15 @@ const LeaderboardCandidatesTable = ({ leaderboard, leaderboardCandidates }) => {
           ) : (
             <ExpandableList
               items={Object.values(metrics).sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))}
-              render={({ name, value }) => (
+              render={({ name, value, unit }) => (
                 <KeyValueLabel
                   key={name}
                   keyText={<SlicedText text={name} limit={METRIC_NAME_LENGTH_LIMIT} />}
-                  value={value === null ? undefined : <DynamicFractionDigitsValue value={value} />}
+                  value={
+                    value === null ? undefined : (
+                      <MetricUnitLabel label={<DynamicFractionDigitsValue value={value} />} unit={unit} />
+                    )
+                  }
                 />
               )}
               maxRows={5}

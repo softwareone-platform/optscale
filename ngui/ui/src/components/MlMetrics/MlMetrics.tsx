@@ -58,6 +58,7 @@ const MlMetrics = ({ metrics, isLoading }) => {
         accessorKey: "target_value",
         titleMessageId: "targetValue"
       }),
+      text({ headerMessageId: "unit", headerDataTestId: "lbl_unit", accessorKey: "unit" }),
       aggregateFunction(),
       ...(areActionsAllowed
         ? [

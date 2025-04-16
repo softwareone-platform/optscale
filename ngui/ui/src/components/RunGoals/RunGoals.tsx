@@ -1,9 +1,16 @@
 import GoalLabel from "components/GoalLabel";
 
-const RunGoals = ({ goals = {} }) =>
-  Object.entries(goals).map(([key, { name, value, target_value: targetValue, reached }]) => (
+const RunGoals = ({ goals = {}, displayInOneLine = false }) =>
+  Object.entries(goals).map(([key, { name, value, target_value: targetValue, reached, unit }]) => (
     <div key={key}>
-      <GoalLabel name={name} goalValue={value} targetGoalValue={targetValue} reached={reached} />
+      <GoalLabel
+        name={name}
+        goalValue={value}
+        targetGoalValue={targetValue}
+        reached={reached}
+        unit={unit}
+        displayInOneLine={displayInOneLine}
+      />
     </div>
   ));
 

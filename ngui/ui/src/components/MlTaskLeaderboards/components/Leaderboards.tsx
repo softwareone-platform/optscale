@@ -2,6 +2,7 @@ import { Autocomplete, Box, Stack, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import DynamicFractionDigitsValue from "components/DynamicFractionDigitsValue";
 import Input from "components/Input";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import SlicedText from "components/SlicedText";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -59,7 +60,8 @@ const LeaderboardsListSection = ({
           flexGrow: 1
         }}
         renderOption={(props, option) => {
-          const { name, primary_metric: { name: primaryMetricName, value: primaryMetricValue } = {} } = option;
+          const { name, primary_metric: { name: primaryMetricName, value: primaryMetricValue, unit: primaryMetricUnit } = {} } =
+            option;
 
           return (
             <li {...props}>
@@ -71,7 +73,14 @@ const LeaderboardsListSection = ({
                   <SlicedText text={primaryMetricName} limit={15} />
                   &#58;&nbsp;
                   <strong>
-                    {primaryMetricValue === null ? "-" : <DynamicFractionDigitsValue value={primaryMetricValue} />}
+                    {primaryMetricValue === null ? (
+                      "-"
+                    ) : (
+                      <MetricUnitLabel
+                        label={<DynamicFractionDigitsValue value={primaryMetricValue} />}
+                        unit={primaryMetricUnit}
+                      />
+                    )}
                   </strong>
                 </Typography>
               </Box>

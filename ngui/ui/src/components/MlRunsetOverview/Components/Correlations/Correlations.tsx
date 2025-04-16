@@ -14,6 +14,7 @@ import { useResizeObserver } from "hooks/useResizeObserver";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_1 } from "utils/layouts";
 import { removeKey } from "utils/objects";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import GoalsSelector from "../GoalsSelector";
 import useStyles from "./Correlations.styles";
 import {
@@ -191,6 +192,16 @@ const Correlations = ({ runs = [], setSelectedRunNumbers }) => {
 
   const goalKeys = Object.keys(goalsDefinition).map((key) => key) ?? [];
 
+  const getGoalNameWithUnitByKey = (goalKey) => {
+    const { name, unit } = goalsDefinition[goalKey];
+
+    if (unit) {
+      return `${sliceByLimitWithEllipsis(name, 15)} (${sliceByLimitWithEllipsis(unit, 15)})`;
+    }
+
+    return sliceByLimitWithEllipsis(name, 15);
+  };
+
   const getGoalNameByKey = (goalKey) => goalsDefinition[goalKey]?.name;
 
   const intl = useIntl();
@@ -237,7 +248,7 @@ const Correlations = ({ runs = [], setSelectedRunNumbers }) => {
   };
 
   const initializeGoalDimension = (goalKey) => ({
-    label: getGoalNameByKey(goalKey),
+    label: getGoalNameWithUnitByKey(goalKey),
     dimensionName: goalKey,
     dimensionGroup: DIMENSION_GROUPS.GOALS,
     values: chartRunsData.map((run) => {
@@ -290,7 +301,7 @@ const Correlations = ({ runs = [], setSelectedRunNumbers }) => {
           <GoalsSelector
             hyperparametersDimensionsNames={hyperparameterNames}
             goalDimensionsNames={goalKeys}
-            getGoalDimensionName={(k) => getGoalNameByKey(k)}
+            getGoalDimensionName={(key) => getGoalNameByKey(key)}
             selected={getParametersDimensions(dimensionsState).map(({ dimensionName }) => dimensionName)}
             onChange={(newSelected) => {
               setDimensionsState(([runNamesDimension, ...restDimensions]) => {

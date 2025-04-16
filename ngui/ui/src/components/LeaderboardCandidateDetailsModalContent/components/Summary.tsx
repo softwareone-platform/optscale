@@ -5,6 +5,7 @@ import DynamicFractionDigitsValue from "components/DynamicFractionDigitsValue";
 import ExpandableList from "components/ExpandableList";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import LeaderboardDatasetsCoverageRules from "components/LeaderboardDatasetsCoverageRules";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import SubTitle from "components/SubTitle";
 import SummaryList from "components/SummaryList";
 import { isEmpty as isEmptyObject } from "utils/objects";
@@ -26,11 +27,15 @@ const Summary = ({ tags, metrics, hyperparameters, coverage }) => (
         items={
           <ExpandableList
             items={Object.entries(metrics).sort(([nameA], [nameB]) => nameA.localeCompare(nameB))}
-            render={([name, value]) => (
+            render={([name, { value, unit }]) => (
               <KeyValueLabel
                 key={name}
                 keyText={name}
-                value={value !== null ? <DynamicFractionDigitsValue value={value} /> : undefined}
+                value={
+                  value !== null ? (
+                    <MetricUnitLabel label={<DynamicFractionDigitsValue value={value} />} unit={unit} />
+                  ) : undefined
+                }
               />
             )}
             maxRows={5}
