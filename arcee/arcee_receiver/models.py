@@ -227,7 +227,7 @@ class LeaderboardPatchIn(LeaderboardTemplatePatchIn):
 
 
 class LeaderboardPostIn(LeaderboardPatchIn):
-    pass
+    name: Optional[str] = ""
 
 
 class Leaderboard(LeaderboardPostIn):
@@ -349,11 +349,12 @@ class MetricTendency(str, Enum):
 
 
 class MetricPostIn(BaseClass):
-    name: Optional[str] = None
+    name: Optional[str] = ""
     key: str
     target_value: float
     func: MetricFunc
     tendency: MetricTendency
+    unit: Optional[str] = ""
 
 
 class MetricPatchIn(MetricPostIn):

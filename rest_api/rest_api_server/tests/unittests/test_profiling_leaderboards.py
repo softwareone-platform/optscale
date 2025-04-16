@@ -75,6 +75,7 @@ class TestLeaderboardApi(TestProfilingBase):
         expected_result = self.valid_leaderboard_template.copy()
         expected_result['primary_metric'] = self.metric1
         expected_result['filters'][0]['name'] = self.metric1['name']
+        expected_result['filters'][0]['unit'] = self.metric1['unit']
         for k, v in expected_result.items():
             self.assertEqual(resp.get(k), v)
 

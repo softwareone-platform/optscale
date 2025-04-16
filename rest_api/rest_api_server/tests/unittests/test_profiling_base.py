@@ -119,7 +119,8 @@ class TestProfilingBase(TestApiBase):
             'tendency': 'more',
             'name': key,
             'key': key,
-            'function': func
+            'function': func,
+            'unit': '%'
         }
         if kwargs:
             metric_obj.update(kwargs)
@@ -370,7 +371,8 @@ class ArceeMock:
         return 200, list(self.profiling_metrics.find(
             {'token': self.token}))
 
-    def metrics_create(self, key, target_value, tendency, name, func):
+    def metrics_create(self, key, target_value, tendency, name, func,
+                       unit=None):
         existing = list(self.profiling_metrics.find(
             {'token': self.token, 'key': key}))
         if existing:
@@ -384,12 +386,14 @@ class ArceeMock:
             'token': self.token,
             '_id': str(uuid.uuid4())
         }
+        if unit is not None:
+            b.update({'unit': unit})
         inserted = self.profiling_metrics.insert_one(b)
         return 201, list(self.profiling_metrics.find(
             {'_id': inserted.inserted_id}))[0]
 
     def metrics_update(self, metric_id, target_value=None, tendency=None,
-                       name=None, func=None):
+                       name=None, func=None, unit=None):
 
         b = dict()
         if target_value is not None:
@@ -407,6 +411,10 @@ class ArceeMock:
         if func is not None:
             b.update({
                 "func": func,
+            })
+        if unit is not None:
+            b.update({
+                "unit": unit,
             })
         self.profiling_metrics.update_one(
             filter={

@@ -13,7 +13,8 @@ class TestMetricsApi(TestProfilingBase):
             'tendency': 'more',
             'key': 'test_name',
             'name': 'Test metric',
-            'function': 'avg'
+            'function': 'avg',
+            'unit': 'count/s'
         }
 
     def test_create_req_params(self):
@@ -52,6 +53,12 @@ class TestMetricsApi(TestProfilingBase):
         code, resp = self.client.metric_create(self.org['id'], params)
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OE0217')
+
+        params = self.valid_metric.copy()
+        params.pop('unit', None)
+        code, resp = self.client.metric_create(self.org['id'], params)
+        self.assertEqual(code, 201)
+        self.assertNotIn('unit', resp)
 
     def test_create_unexpected(self):
         for k in ['id', 'another']:
@@ -159,7 +166,8 @@ class TestMetricsApi(TestProfilingBase):
         updates = {
             'target_value': 0.6,
             'tendency': 'less',
-            'name': 'Another metric name'
+            'name': 'Another metric name',
+            'unit': '%'
         }
         code, resp = self.client.metric_update(
             self.org['id'], '123', updates)

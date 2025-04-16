@@ -19,7 +19,8 @@ class MetricAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
         return MetricAsyncController
 
     def _validate_params(self, **data):
-        allowed_args = ['target_value', 'tendency', 'name', 'key', 'function']
+        allowed_args = ['target_value', 'tendency', 'name', 'key', 'function',
+                        'unit']
         unexpected_args = list(filter(lambda x: x not in allowed_args, data))
         if unexpected_args:
             message = ', '.join(unexpected_args)
@@ -40,6 +41,8 @@ class MetricAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
             function = data.get('function')
             if function not in ['avg', 'sum', 'max', 'last']:
                 raise OptHTTPError(400, Err.OE0217, ['function'])
+            unit = data.get('unit')
+            check_string_attribute('unit', unit, allow_empty=True)
         except WrongArgumentsException as exc:
             raise OptHTTPError.from_opt_exception(400, exc)
 
@@ -91,6 +94,11 @@ class MetricAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                         required: true
                         enum: ['avg', 'sum', 'max', 'last']
                         example: sum
+                    unit:
+                        type: string
+                        description: Metric unit of measurement
+                        required: false
+                        example: count/s
         responses:
             201:
                 description: Returns created metric
@@ -103,6 +111,7 @@ class MetricAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                         tendency: more
                         name: accuracy_calc
                         function: sum
+                        unit: count/s
             400:
                 description: |
                     Wrong arguments:
@@ -220,7 +229,7 @@ class MetricsAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
         return MetricAsyncController
 
     def _validate_params(self, **data):
-        allowed_args = ['target_value', 'tendency', 'name', 'function']
+        allowed_args = ['target_value', 'tendency', 'name', 'function', 'unit']
         unexpected_args = list(filter(lambda x: x not in allowed_args, data))
         if unexpected_args:
             message = ', '.join(unexpected_args)
@@ -242,6 +251,8 @@ class MetricsAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
             if function is not None and function not in ['avg', 'sum', 'max',
                                                          'last']:
                 raise OptHTTPError(400, Err.OE0217, ['function'])
+            unit = data.get('unit')
+            check_string_attribute('unit', unit, allow_empty=True)
         except WrongArgumentsException as exc:
             raise OptHTTPError.from_opt_exception(400, exc)
 
@@ -360,6 +371,11 @@ class MetricsAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                         description: Aggregate function
                         required: False
                         example: avg
+                    unit:
+                        type: string
+                        description: Metric unit of measurement
+                        required: false
+                        example: count/s
         responses:
             200:
                 description: New metric object
