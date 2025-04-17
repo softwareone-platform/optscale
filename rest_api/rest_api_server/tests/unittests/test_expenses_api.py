@@ -3698,6 +3698,73 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(response['total_count'], 3)
         self.assertEqual(response['total_saving'], 0)
 
+    def test_clean_expenses_total_neg(self):
+        day_in_month = datetime(2020, 1, 14)
+        time = int(day_in_month.timestamp())
+        _, resource1 = self.create_cloud_resource(
+            self.cloud_acc1['id'], self.employee1['id'], self.org['pool_id'],
+            name='name_1', first_seen=time, tags={'tag': 'val'},
+            region='region_1',
+            service_name='service_name_1', resource_type='resource_type_1')
+        _, resource2 = self.create_cloud_resource(
+            self.cloud_acc2['id'], self.employee2['id'], self.org['pool_id'],
+            name='name_2', first_seen=time, tags={'tag_2': 'val'}, region='region_2',
+            service_name='service_name_2', resource_type='resource_type_2')
+        expenses = [
+            {
+                'cost': 150, 'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'region': 'us-east',
+                'resource_id': resource1['id'],
+                'owner_id': self.employee1['id'],
+                'pool_id': self.org['pool_id'],
+            },
+            {
+                'cost': 200, 'date': day_in_month,
+                'cloud_acc': self.cloud_acc1['id'],
+                'region': 'us-east',
+                'resource_id': resource2['id'],
+                'owner_id': self.employee1['id'],
+                'pool_id': self.org['pool_id'],
+            },
+
+        ]
+
+        for e in expenses:
+            self.expenses.append({
+                'cost': e['cost'],
+                'date': e['date'],
+                'resource_id': e['resource_id'],
+                'cloud_account_id': e['cloud_acc'],
+                'sign': 1
+            })
+        code, clean_response = self.client.clean_expenses_get(
+            self.org_id, time, time + 1)
+        self.assertEqual(code, 200)
+        total1 = clean_response["total_cost"]
+        self.assertEqual(total1, 350)
+
+        self.expenses.extend([
+            {
+                'cost': 400,
+                'date': day_in_month,
+                'resource_id': resource1['id'],
+                'cloud_account_id': self.cloud_acc1['id'],
+                'sign': 1
+            },
+            {
+                'cost': 400,
+                'date': day_in_month,
+                'resource_id': resource1['id'],
+                'cloud_account_id': self.cloud_acc1['id'],
+                'sign': -1
+            },
+        ])
+        code, clean_response = self.client.clean_expenses_get(
+            self.org_id, time, time + 1)
+        self.assertEqual(code, 200)
+        self.assertEqual(clean_response["total_cost"], total1)
+
     def test_clean_expenses_kubernetes_fields(self):
         code, resource = self.create_cloud_resource(
             self.cloud_acc3['id'], created_by_kind='ReplicaSet',
