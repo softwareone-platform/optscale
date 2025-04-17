@@ -97,8 +97,9 @@ class AwsProvider(BaseProvider):
             self._region_map = {}
             coord_map = self.cloud_adapter.get_regions_coordinates()
             for region, data in coord_map.items():
-                if 'name' in data:
-                    self._region_map[region] = data['name']
+                region_code = data.get('alias') or data.get('name')
+                if region_code:
+                    self._region_map[region] = region_code
         return self._region_map
 
     @property
