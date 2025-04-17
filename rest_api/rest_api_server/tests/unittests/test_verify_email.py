@@ -27,7 +27,7 @@ class TestVerifyEmail(TestApiBase):
         self.assertEqual(resp['email'], email)
         p_auth.assert_called_once_with(email, ANY)
         p_herald.assert_called_once_with(
-            [email], 'OptScale email verification',
+            [email], 'FinOps for Cloud email verification',
             template_type='verify_email',
             template_params={
                 'texts': {'code': ANY},

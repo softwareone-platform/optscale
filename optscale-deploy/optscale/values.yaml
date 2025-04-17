@@ -480,6 +480,8 @@ clickhouse:
     name: default
     user: default
     password: secure-password-1-clk
+    port: 9000
+    secure:
   image:
     id:
     pullPolicy: IfNotPresent

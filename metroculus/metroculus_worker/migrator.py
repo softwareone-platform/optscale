@@ -22,9 +22,17 @@ class Migrator:
     @property
     def clickhouse_client(self):
         if self._clickhouse_client is None:
-            user, password, host, _ = self.config_cl.clickhouse_params()
+            host, port, secure, user, password, _ = (
+                self.config_cl.clickhouse_params()
+            )
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=self.DB_NAME, user=user)
+                host=host,
+                port=port,
+                secure=secure,
+                user=user,
+                password=password,
+                database=self.DB_NAME,
+            )
         return self._clickhouse_client
 
     def create_versions_table(self):
@@ -93,7 +101,7 @@ class Migrator:
     @staticmethod
     def _get_md5(filename):
         return hashlib.md5(open(
-            f"{MIGRATIONS_FOLDER}/{filename}.py", 'rb').read()).hexdigest()
+            f"{MIGRATIONS_FOLDER}/{filename}.py", 'rb').read(), usedforsecurity=False).hexdigest()
 
     def update_versions_table(self, filename):
         version = [{

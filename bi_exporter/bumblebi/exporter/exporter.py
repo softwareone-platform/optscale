@@ -49,9 +49,16 @@ class BaseExporter:
 
     @cached_property
     def clickhouse_cl(self) -> ClickHouseClient:
-        user, password, host, db_name = self._config_cl.clickhouse_params()
+        host, port, secure, user, password, db_name = (
+            self._config_cl.clickhouse_params()
+        )
         return ClickHouseClient(
-            host=host, password=password, database=db_name, user=user
+            host=host,
+            port=port,
+            secure=secure,
+            user=user,
+            password=password,
+            database=db_name,
         )
 
     def _upload(

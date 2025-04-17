@@ -60,10 +60,15 @@ class GeminiDataController(BaseController, ClickHouseMixin):
     """
     @property
     def clickhouse_client(self):
-        if not self._clickhouse_client:
-            user, password, host, _ = self._config.clickhouse_params()
-            self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database="gemini", user=user)
+        host, port, secure, user, password, _ = self._config.clickhouse_params()
+        self._clickhouse_client = ClickHouseClient(
+            host=host,
+            port=port,
+            secure=secure,
+            user=user,
+            password=password,
+            database="gemini",
+        )
         return self._clickhouse_client
 
     def get(self, gemini_id: str, buckets: list) -> list:

@@ -43,7 +43,7 @@ const PerspectiveChip = ({ perspectiveName, selectedPerspectiveName, onClick }) 
   return (
     <Chip
       key={perspectiveName}
-      variant={selectedPerspectiveName === perspectiveName ? "filled" : "outlined"}
+      variant={selectedPerspectiveName === perspectiveName ? "filled" : "outlined"} // TODO: validate outlined??
       size="medium"
       onClick={onClick}
       color={selectedPerspectiveName === perspectiveName ? "secondary" : "info"}

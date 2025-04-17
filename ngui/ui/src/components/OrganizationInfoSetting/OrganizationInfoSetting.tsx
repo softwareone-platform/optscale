@@ -28,6 +28,7 @@ const MAX_ORGANIZATION_NAME_LENGTH = 64;
 
 const OrganizationId = ({ id }: OrganizationIdProps) => (
   <KeyValueLabel
+    isBoldKeyLabel
     keyMessageId="id"
     value={
       <CopyText
@@ -60,11 +61,13 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
     <Box display="flex" alignItems="center" gap={SPACING_1} width="50%">
       <KeyValueLabel
         keyMessageId="name"
+        isBoldKeyLabel
         value={
           <Tooltip title={isNameLong ? name : undefined} placement="top">
             <span>{isNameLong ? sliceByLimitWithEllipsis(name, MAX_ORGANIZATION_NAME_LENGTH) : name}</span>
           </Tooltip>
         }
+        sx={{ marginRight: 1 }}
       />
       {isEditAllowed && (
         <IconButton

@@ -11,6 +11,7 @@ import etcd
 import boto3
 from boto3.session import Config as BotoConfig
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from pymongo import MongoClient
 from influxdb import InfluxDBClient
 from optscale_client.config_client.client import Client as EtcdClient
@@ -24,6 +25,7 @@ RABBIT_PRECONDIFITON_FAILED_CODE = 406
 
 class Configurator(object):
     def __init__(self, config_path='config.yml', host='etcd', port=2379):
+        LOG.info("INIT CONFIGURATOR")
         self.config = yaml.safe_load(open(config_path, 'r'))
         self.etcd_cl = EtcdClient(host=host, port=port)
         config = self.config['etcd']
@@ -33,7 +35,8 @@ class Configurator(object):
             user=config['restdb']['user'],
             password=config['restdb']['password'],
             host=config['restdb']['host'],
-            port=config['restdb']['port'])
+            port=config['restdb']['port']), 
+            connect_args={"connect_timeout": 5}
         )
         if "url" in config["mongo"]:
             mongo_url = config["mongo"]["url"]
@@ -75,15 +78,22 @@ class Configurator(object):
 
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def configure_influx(self):
-        self.influx_client.create_database(
-            self.config['etcd']['influxdb']['database'])
+        db_name = self.config['etcd']['influxdb']['database']
+        LOG.info("Create database Influx %s", db_name)
+        try:
+            existing_dbs = self.influx_client.get_list_database()
+            if not any(db['name'] == db_name for db in existing_dbs):
+                self.influx_client.create_database(db_name)
+            else:
+                LOG.info("Influx database %s already exists", db_name)
+        except Exception as e:
+            LOG.error("Failed to create influx database %s", e)
 
     def commit_config(self):
         LOG.info("Creating /configured key")
         self.etcd_cl.write('/configured', time.time())
 
     def pre_configure(self):
-        LOG.info("Creating databases")
         self.create_databases()
         self.configure_influx()
         self.configure_thanos()
@@ -104,6 +114,7 @@ class Configurator(object):
             except etcd.EtcdKeyNotFound:
                 pass
         self.etcd_cl.write_branch('/', config, overwrite_lists=True)
+
         LOG.info("Configuring database server")
         self.configure_databases()
         self.configure_auth_salt()
@@ -165,20 +176,31 @@ class Configurator(object):
 
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def create_databases(self):
-        for db in self.config.get('databases'):
-            # heat migrations fail with utf8mb4
-            if db != 'heat':
-                # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
-                self.engine.execute(
-                    "CREATE DATABASE IF NOT EXISTS `{0}` "
-                    "DEFAULT CHARACTER SET `utf8mb4` "
-                    "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
-            else:
-                self.engine.execute(
-                    'CREATE DATABASE IF NOT EXISTS `{0}`'.format(db))
+        LOG.info("Creating databases")
+        with self.engine.connect() as conn:
+            for db in self.config.get('databases'):
+                try:
+                    LOG.info("CREATE DATABASE IF NOT EXISTS `%s`", db)
+                    result = conn.execute(text("SHOW DATABASES LIKE :name"), {"name": db})
+                    if not result.fetchone():
+                        # heat migrations fail with utf8mb4
+                        if db != 'heat':
+                            # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
+                            conn.execute(
+                                "CREATE DATABASE IF NOT EXISTS `{0}` "
+                                "DEFAULT CHARACTER SET `utf8mb4` "
+                                "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
+                        else:
+                            conn.execute('CREATE DATABASE IF NOT EXISTS `{0}`'.format(db))
+                        LOG.info("Database %s created", db)
+                    else:
+                        LOG.info("Database %s already exists", db)
+                except Exception as e:
+                    LOG.error("Failed to create database %s, error %s", db, e)
 
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def configure_thanos(self):
+        LOG.info("Creating thanos bucket")
         bucket_name = 'thanos'
         prefix = 'data'
         try:

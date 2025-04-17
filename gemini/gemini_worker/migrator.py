@@ -20,19 +20,35 @@ class Migrator:
         self._clickhouse_client = None
 
     def init_db(self):
-        user, password, host, _ = self.config_client.clickhouse_params()
-        client = ClickHouseClient(host=host, password=password, user=user)
+        host, port, secure, user, password, _ = (
+            self.config_client.clickhouse_params()
+        )
+        client = ClickHouseClient(
+            host=host,
+            port=port,
+            secure=secure,
+            user=user,
+            password=password,
+        )
         client.execute(f"""CREATE DATABASE IF NOT EXISTS {DB_NAME}""")
         client.disconnect()
 
     @property
     def clickhouse_client(self):
         if self._clickhouse_client is None:
-            user, password, host, _ = self.config_client.clickhouse_params()
+            host, port, secure, user, password, _ = (
+                self.config_client.clickhouse_params()
+            )
             self.init_db()
             self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=DB_NAME, user=user
+                host=host,
+                port=port,
+                secure=secure,
+                user=user,
+                password=password,
+                database=DB_NAME,
             )
+
         return self._clickhouse_client
 
     def create_versions_table(self):
@@ -106,7 +122,7 @@ class Migrator:
     @staticmethod
     def _get_md5(filename):
         return hashlib.md5(
-            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read()
+            open(f"{MIGRATIONS_FOLDER}/{filename}.py", "rb").read(), usedforsecurity=False
         ).hexdigest()
 
     def update_versions_table(self, filename):

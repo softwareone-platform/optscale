@@ -485,7 +485,7 @@ class TestInviteApi(TestApiBase):
         self.assertEqual(code, 201)
         send_email_patch.assert_called_once_with(
             ['test@email.com'],
-            'OptScale invitation notification',
+            'FinOps for Cloud invitation notification',
             template_params={
                 'texts': {
                     'organization': {

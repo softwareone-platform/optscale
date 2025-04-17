@@ -27,6 +27,7 @@ const OrganizationCurrency = () => {
     <Box display="flex" alignItems="center">
       <KeyValueLabel
         keyMessageId="currency"
+        isBoldKeyLabel
         value={<FormattedOrganizationCurrency currencyCode={currencyCode} />}
         sx={{ marginRight: 1 }}
       />
