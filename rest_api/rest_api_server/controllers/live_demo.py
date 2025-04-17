@@ -1357,8 +1357,9 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
         for exp in bulk:
             vals = list(exp.values())
             insert_data.append(vals)
-        return self.clickhouse_client.insert(
+        result = self.clickhouse_client.insert(
             f'{db}.{table}', insert_data, column_names=column_names)
+        return result.written_rows
 
     def delete_clickhouse_info(self, cloud_accounts):
         cloud_account_ids = list(map(lambda x: x.id, cloud_accounts))
