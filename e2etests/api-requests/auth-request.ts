@@ -7,6 +7,7 @@ export class AuthRequest extends BaseRequest {
     readonly request: APIRequestContext;
     readonly userEndpoint: string;
     readonly tokenEndpoint: string;
+    readonly verificationCodesEndpoint: string;
 
     /**
      * Constructs an instance of AuthRequest.
@@ -17,6 +18,7 @@ export class AuthRequest extends BaseRequest {
         this.request = request;
         this.userEndpoint = "/auth/v2/users";
         this.tokenEndpoint = "/auth/v2/tokens";
+        this.verificationCodesEndpoint = "/auth/v2/verification_codes";
     }
 
     /**
@@ -135,7 +137,26 @@ export class AuthRequest extends BaseRequest {
         });
 
         if (response.status() !== 201) {
-            throw new Error('Failed to create user');
+            throw new Error(`Failed to create user: Status ${response.status()}`);
+        }
+        return response;
+    }
+
+    async setVerificationCode(email: string, code = "123456"): Promise<APIResponse> {
+        const response = await this.request.post(this.verificationCodesEndpoint, {
+            headers: {
+                "Content-Type": "application/json",
+                Secret: process.env.CLUSTER_SECRET
+            },
+            data: {
+                email,
+                code
+            }
+        });
+        const payload = JSON.parse(await response.text());
+        if (response.status() !== 201) {
+            const reason = payload.error?.reason || "Unknown error";
+            throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
         }
         return response;
     }

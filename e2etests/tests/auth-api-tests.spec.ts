@@ -7,6 +7,15 @@ test.describe.skip("Auth API tests @api_tests", () => {
     const email = process.env.DEFAULT_USER_EMAIL;
     const password = process.env.DEFAULT_USER_PASSWORD;
 
+    test("Get verification codes", async ({ authRequest }) => {
+        const response = await authRequest.setVerificationCode(email, password);
+
+        await test.step("Verify response status and payload fields", async () => {
+            expect(response.status()).toBe(201);
+        });
+
+    });
+
     test("Authorize user payload", async ({ authRequest }) => {
         const response = await authRequest.authorization(email, password);
         const payload = JSON.parse(await response.text()) as AuthResponse;

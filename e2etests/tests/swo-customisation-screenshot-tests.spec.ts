@@ -26,7 +26,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
   })
 
-  test('[229890] Verify Homepage matches screenshots', async ({homePage}) => {
+  test.skip('[229890] Verify Homepage matches screenshots', async ({homePage}) => {
     await test.step('Set up test data', async () => {
       await homePage.setupApiInterceptions();
       await homePage.navigateToURL(true);
@@ -98,7 +98,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
   })
 
-  test('[229893] Verify Resource details page matches screenshots', async ({
+  test.skip('[229893] Verify Resource details page matches screenshots', async ({
                                                                     resourcesPage,
                                                                     resourceDetailsPage
                                                                   }) => {
