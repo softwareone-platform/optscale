@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import AbandonedImages from "containers/RecommendationsOverviewContainer/recommendations/AbandonedImages";
 import AbandonedInstances from "containers/RecommendationsOverviewContainer/recommendations/AbandonedInstances";
 import AbandonedKinesisStreams from "containers/RecommendationsOverviewContainer/recommendations/AbandonedKinesisStreams";
+import AbandonedLoadBalancers from "containers/RecommendationsOverviewContainer/recommendations/AbandonedLoadBalancers";
 import AbandonedNebiusS3Buckets from "containers/RecommendationsOverviewContainer/recommendations/AbandonedNebiusS3Buckets";
 import AbandonedS3Buckets from "containers/RecommendationsOverviewContainer/recommendations/AbandonedS3Buckets";
 import CvocAgreementOpportunities from "containers/RecommendationsOverviewContainer/recommendations/CvocAgreementOpportunities";
@@ -54,6 +55,7 @@ export const useOptscaleRecommendations = () => {
       AbandonedS3Buckets,
       AbandonedKinesisStreams,
       AbandonedInstances,
+      AbandonedLoadBalancers,
       PublicS3Buckets,
       ObsoleteImages,
       AbandonedImages,

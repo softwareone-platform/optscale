@@ -480,14 +480,16 @@ class TestPowerSchedule(TestApiBase):
         self.assertEqual(201, code)
         resource = self.create_cloud_resource(
             self.cloud_acc['id'], active=True)['id']
+        resource2 = self.create_cloud_resource(
+            self.cloud_acc['id'])['id']
         body = {
             'action': 'attach',
-            'instance_id': [resource]
+            'instance_id': [resource, resource2]
         }
         code, resp = self.client.power_schedule_actions(
             ps['id'], body)
         self.assertEqual(code, 200)
-        self.assertEqual(resp['failed'], [])
+        self.assertEqual(resp['failed'], [resource2])
         self.assertEqual(resp['succeeded'], [resource])
         schedule = self.resources_collection.find_one(
             {'_id': resource})['power_schedule']
@@ -495,13 +497,13 @@ class TestPowerSchedule(TestApiBase):
 
         body = {
             'action': 'detach',
-            'instance_id': [resource]
+            'instance_id': [resource, resource2]
         }
         code, resp = self.client.power_schedule_actions(
             ps['id'], body)
         self.assertEqual(code, 200)
         self.assertEqual(resp['failed'], [])
-        self.assertEqual(resp['succeeded'], [resource])
+        self.assertEqual(resp['succeeded'], [resource, resource2])
         schedule = self.resources_collection.find_one(
             {'_id': resource})
         self.assertIsNone(schedule.get('power_schedule'))

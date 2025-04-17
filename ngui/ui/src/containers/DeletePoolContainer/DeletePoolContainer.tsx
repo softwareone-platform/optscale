@@ -5,9 +5,12 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import DeleteEntity from "components/DeleteEntity";
 import PoolLabel from "components/PoolLabel";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import PoolsService from "services/PoolsService";
 
 const DeletePoolContainer = ({ id, onCancel }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const [isConfirmed, setIsConfirmed] = useState(false);
 
   const { useGetAvailablePools, useDelete } = PoolsService();
@@ -26,8 +29,12 @@ const DeletePoolContainer = ({ id, onCancel }) => {
       deleteButtonProps={{
         color: "error",
         variant: "contained",
-        disabled: !isConfirmed,
-        onDelete: onSubmit
+        disabled: isRestricted || !isConfirmed,
+        onDelete: onSubmit,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete_pool",

@@ -82,29 +82,7 @@ class AwsProvider(BaseProvider):
             'sql web': 'SQL Web',
             'sql ent': 'SQL Ent'
         }
-        self.region_map = {
-            'ap-northeast-2': 'Asia Pacific (Seoul)',
-            'eu-north-1': 'EU (Stockholm)',
-            'eu-central-1': 'EU (Frankfurt)',
-            'us-east-1': 'US East (N. Virginia)',
-            'eu-west-1': 'EU (Ireland)',
-            'me-south-1': 'Middle East (Bahrain)',
-            'us-west-1': 'US West (N. California)',
-            'ap-northeast-3': 'Asia Pacific (Osaka-Local)',
-            'ca-central-1': 'Canada (Central)',
-            'us-west-2': 'US West (Oregon)',
-            'ap-southeast-2': 'Asia Pacific (Sydney)',
-            'us-east-2': 'US East (Ohio)',
-            'ap-northeast-1': 'Asia Pacific (Tokyo)',
-            'eu-west-3': 'EU (Paris)',
-            'ap-southeast-1': 'Asia Pacific (Singapore)',
-            'eu-west-2': 'EU (London)',
-            'af-south-1': 'Africa (Cape Town)',
-            'ap-east-1': 'Asia Pacific (Hong Kong)',
-            'eu-south-1': 'EU (Milan)',
-            'ap-south-1': 'Asia Pacific (Mumbai)',
-            'sa-east-1': 'South America (Sao Paulo)'
-        }
+        self._region_map = None
 
     @property
     def cloud_adapter(self):
@@ -112,6 +90,16 @@ class AwsProvider(BaseProvider):
             config = self._config_cl.read_branch('/service_credentials/aws')
             self._cloud_adapter = Aws(config)
         return self._cloud_adapter
+
+    @property
+    def region_map(self):
+        if self._region_map is None:
+            self._region_map = {}
+            coord_map = self.cloud_adapter.get_regions_coordinates()
+            for region, data in coord_map.items():
+                if 'name' in data:
+                    self._region_map[region] = data['name']
+        return self._region_map
 
     @property
     def prices_collection(self):

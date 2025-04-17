@@ -94,6 +94,11 @@ class BookingObserverWorker(ConsumerMixin):
     def _process(self, organization_id, observe_time):
         end_date = utcnow_timestamp()
         start_date = self.get_start_date(organization_id)
+        _, org = self.rest_cl.organization_get(organization_id)
+        if org.get('disabled'):
+            LOG.info('Organization %s is disabled.', organization_id)
+            self._update_observe_time(observe_time, organization_id)
+            return
         _, bookings = self.rest_cl.shareable_book_list(
             organization_id, start_date, end_date)
 

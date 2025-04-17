@@ -596,6 +596,8 @@ def handle_http_exc(func):
                     Err.OE0287, [_get_http_error_message(ex)])
             elif ex.response.status_code == 401:
                 # track possible token related problems
+                if _get_http_error_message(ex) == 'Token is disabled':
+                    raise ForbiddenException(Err.OE0234, [])
                 raise UnauthorizedException(
                     Err.OE0543, [_get_http_error_message(ex)])
             elif ex.response.status_code == 403:

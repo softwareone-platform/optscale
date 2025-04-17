@@ -154,7 +154,7 @@ class ArtifactsAsyncCollectionHandler(
             'created_at_lt': MAX_TIMESTAMP,
             'created_at_gt': MAX_TIMESTAMP,
             'limit': MAX_MONGO_INT,
-            'start_from': MAX_MONGO_INT
+            'offset': MAX_MONGO_INT
         }
         try:
             for param in ['run_id', 'task_id']:
@@ -225,7 +225,7 @@ class ArtifactsAsyncCollectionHandler(
             description: limit artifacts to return
             required: false
             type: integer
-        -   name: start_from
+        -   name: offset
             in: query
             description: return artifacts starting from this number
             required: false
@@ -279,7 +279,7 @@ class ArtifactsAsyncCollectionHandler(
                         total_count:
                             type: integer
                             description: Total artifacts count
-                        start_from:
+                        offset:
                             type: integer
                             description: Start artifact number
                         limit:

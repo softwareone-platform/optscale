@@ -7,6 +7,7 @@ import { DELETE_GLOBAL_RESOURCE_CONSTRAINT } from "api/restapi/actionTypes";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import { useApiState } from "hooks/useApiState";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { checkError } from "utils/api";
 import { CONSTRAINTS_TYPES } from "utils/constraints";
 
@@ -17,6 +18,8 @@ const DeleteGlobalResourceConstraintContainer = ({
   cloudResourceId,
   closeSideModal
 }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const dispatch = useDispatch();
 
   const { isLoading } = useApiState(DELETE_GLOBAL_RESOURCE_CONSTRAINT);
@@ -48,7 +51,18 @@ const DeleteGlobalResourceConstraintContainer = ({
         </Typography>
       </Box>
       <Box display="flex">
-        <ButtonLoader color="error" messageId="delete" variant="contained" onClick={onSubmit} isLoading={isLoading} />
+        <ButtonLoader
+          color="error"
+          messageId="delete"
+          variant="contained"
+          onClick={onSubmit}
+          disabled={isRestricted}
+          tooltip={{
+            show: isRestricted,
+            value: restrictionReasonMessage
+          }}
+          isLoading={isLoading}
+        />
         <Button messageId="cancel" variant="outlined" onClick={closeSideModal} />
       </Box>
     </>

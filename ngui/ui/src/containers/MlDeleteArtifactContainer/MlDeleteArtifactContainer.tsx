@@ -1,5 +1,5 @@
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlArtifactsService from "services/MlArtifactsService";
 
 type MlDeleteArtifactContainerProps = {
@@ -10,7 +10,7 @@ type MlDeleteArtifactContainerProps = {
 };
 
 const MlDeleteArtifactContainer = ({ id, name, onSuccess, closeSideModal }: MlDeleteArtifactContainerProps) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { useDelete } = MlArtifactsService();
   const { onDelete, isLoading } = useDelete();
@@ -28,8 +28,11 @@ const MlDeleteArtifactContainer = ({ id, name, onSuccess, closeSideModal }: MlDe
       isLoading={isLoading}
       deleteButtonProps={{
         onDelete: onDatasetDelete,
-        disabled: isDemo,
-        tooltip: { show: isDemo, messageId: "notAvailableInLiveDemo" }
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

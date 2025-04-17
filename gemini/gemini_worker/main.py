@@ -15,7 +15,6 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from gemini.gemini_worker.migrator import Migrator
 from gemini.gemini_worker.duplicate_object_finder.aws.stats import Stats
 
-
 DB_NAME = "gemini"
 EXCHANGE_NAME = "gemini-tasks"
 QUEUE_NAME = "gemini-task"
@@ -596,6 +595,10 @@ class Worker(ConsumerMixin):
         try:
             _, gemini = self.rest_client.gemini_get(gemini_id)
             status = gemini.get("status")
+            org_id = gemini.get("organization_id")
+            _, org = self.rest_client.organization_get(org_id)
+            if org.get('disabled'):
+                raise Exception(f"Organization {org_id} is disabled")
 
             if status not in self.valid_states:
                 raise Exception(

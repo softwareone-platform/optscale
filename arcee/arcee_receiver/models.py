@@ -30,6 +30,20 @@ date_start = Field(
         alias='_created_at_dt')
 
 
+class TokenPatchIn(BaseClass):
+    disabled: bool = False
+
+
+class TokenPostIn(BaseClass):
+    token: str
+
+
+class Token(TokenPostIn, TokenPatchIn):
+    id: str = id_
+    created_at: int = now
+    deleted_at: int = 0
+
+
 class ConsolePostIn(BaseClass):
     output: str
     error: str
@@ -387,7 +401,7 @@ class ArtifactSearchParams(BaseModel):
     created_at_lt: Optional[NonNegativeInt] = timestamp
     created_at_gt: Optional[NonNegativeInt] = timestamp
     limit: Optional[NonNegativeInt] = max_mongo_int
-    start_from: Optional[NonNegativeInt] = max_mongo_int
+    offset: Optional[NonNegativeInt] = max_mongo_int
     run_id: Optional[Union[list, str]] = []
     task_id: Optional[Union[list, str]] = []
     text_like: Optional[str] = None
@@ -403,7 +417,7 @@ class ArtifactSearchParams(BaseModel):
           return: {"limit": "1", "text_like": "test"}
         """
         numeric_fields = ['created_at_lt', 'created_at_gt',
-                          'limit', 'start_from']
+                          'limit', 'offset']
         for k, v in self.items():
             if isinstance(v, list) and len(v) == 1:
                 v = v[0]

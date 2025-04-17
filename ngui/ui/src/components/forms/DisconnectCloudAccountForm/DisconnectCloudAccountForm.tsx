@@ -3,6 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import DeleteEntity from "components/DeleteEntity";
 import PageContentDescription from "components/PageContentDescription";
 import { useDataSources } from "hooks/useDataSources";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { AZURE_TENANT, GCP_TENANT } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import Survey from "./FormElements/Survey";
@@ -17,6 +18,8 @@ const DisconnectCloudAccountForm = ({
   isLoading = false,
   isLastDataSource = false
 }: DisconnectCloudAccountFormProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { disconnectQuestionId } = useDataSources(type);
   const isAzureTenant = type === AZURE_TENANT;
   const isGcpTenant = type === GCP_TENANT;
@@ -58,7 +61,12 @@ const DisconnectCloudAccountForm = ({
           }}
           isLoading={isLoading}
           deleteButtonProps={{
-            messageId: "disconnect"
+            messageId: "disconnect",
+            disabled: isRestricted,
+            tooltip: {
+              show: isRestricted,
+              value: restrictionReasonMessage
+            }
           }}
           onCancel={onCancel}
         >

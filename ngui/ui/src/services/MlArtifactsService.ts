@@ -31,7 +31,7 @@ export type Artifact = {
 type GetApiParams = {
   runId?: string | string[];
   limit?: number;
-  startFrom?: number;
+  offset?: number;
   textLike?: string;
   createdAtGt?: number;
   createdAtLt?: number;

@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 import csv
-import gzip
 import logging
 import math
 import os
 import re
 import pyarrow
-import shutil
-import uuid
 import zipfile
 import json
 from collections import defaultdict, OrderedDict
@@ -20,7 +17,6 @@ import pyarrow.parquet as pq
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
-GZIP_ENDING = '.gz'
 IGNORE_EXPENSE_TYPES = ['Credit']
 RI_PLATFORMS = [
     'Linux/UNIX',
@@ -76,7 +72,8 @@ class AWSReportImporter(CSVBaseReportImporter):
             'Snapshot': ['Storage Snapshot'],
             'Volume': ['Storage'],
             'Savings Plan': [],
-            'Reserved Instances': []
+            'Reserved Instances': [],
+            'Load Balancer': []
         }
         self.import_start_ts = int(opttime.utcnow().timestamp())
         self.current_billing_period = None
@@ -101,28 +98,6 @@ class AWSReportImporter(CSVBaseReportImporter):
                     dest_dir, f_zip.filelist[0].filename)
 
             return new_report_path
-
-    @staticmethod
-    def gunzip_report(report_path, dest_dir):
-        LOG.info('Extracting %s as gzip archive to %s',
-                 report_path, dest_dir)
-        new_report_path = os.path.basename(report_path)
-        if new_report_path.endswith(GZIP_ENDING):
-            new_report_path = new_report_path[
-                              :len(new_report_path) - len(GZIP_ENDING)]
-        else:
-            new_report_path = str(uuid.uuid4())
-        new_report_path = os.path.join(dest_dir, new_report_path)
-        try:
-            with gzip.open(report_path, 'rb') as f_gzip:
-                with open(new_report_path, 'wb') as f_out:
-                    shutil.copyfileobj(f_gzip, f_out)
-        except Exception:
-            if os.path.exists(new_report_path):
-                os.remove(new_report_path)
-            return
-
-        return new_report_path
 
     @staticmethod
     def to_camel_case(snake_str):
@@ -302,6 +277,7 @@ class AWSReportImporter(CSVBaseReportImporter):
         )
 
     def _set_resource_id(self, expense):
+        item_res_id = expense.get('lineItem/ResourceId', '')
         if (expense.get('resource_id') is None or (
                 # move SavingsPlanCoveredUsage expenses from applied
                 # resource to 'Savings Plan' resource
@@ -311,6 +287,10 @@ class AWSReportImporter(CSVBaseReportImporter):
             res_id = self.compose_resource_id(expense)
             if res_id:
                 expense['resource_id'] = res_id
+        elif 'elasticloadbalancing:' in item_res_id:
+            # classic load balancer resources may have the same value of name
+            # in different regions, so use full resource_id
+            expense['resource_id'] = item_res_id
 
     def _to_csv_tag(self, prefix, tag, root=True):
         if root and tag in SERVICE_TAGS_MAP:
@@ -620,6 +600,8 @@ class AWSReportImporter(CSVBaseReportImporter):
                 if not preinstalled and 'product/preInstalledSw' in e:
                     preinstalled = e['product/preInstalledSw']
                     meta_dict['preinstalled'] = preinstalled
+            elif resource_type == 'Load Balancer':
+                name = self.short_resource_id(e['lineItem/ResourceId'])
             elif resource_type == 'Savings Plan':
                 if not payment_option and 'savingsPlan/PaymentOption' in e:
                     payment_option = e['savingsPlan/PaymentOption']
@@ -721,6 +703,7 @@ class AWSReportImporter(CSVBaseReportImporter):
         tax_type = raw_expense.get('lineItem/TaxType')
         product = raw_expense.get('lineItem/ProductCode')
         product_family = raw_expense.get('product/productFamily')
+        product_name = raw_expense.get('product/ProductName')
         resource_id = raw_expense.get('lineItem/ResourceId')
         ri_id = raw_expense.get('reservation/ReservationARN')
         sp_id = raw_expense.get('savingsPlan/SavingsPlanARN')
@@ -732,6 +715,7 @@ class AWSReportImporter(CSVBaseReportImporter):
         bucket_type = 'Bucket'
         sp_type = 'Savings Plan'
         ri_type = 'Reserved Instances'
+        lb_type = 'Load Balancer'
 
         def extract_type_by_product_type(res_type):
             return product_family and res_type in product_family
@@ -760,6 +744,8 @@ class AWSReportImporter(CSVBaseReportImporter):
                               usage_type and 'PublicIP' in usage_type),
             sp_type: bool(sp_id) and 'SavingsPlan' in item_type,
             ri_type: bool(ri_id),
+            lb_type: (extract_type_by_product_type(lb_type) or
+                      product_name == 'Elastic Load Balancing'),
             'Other': (tax_type or resource_type or product_family or
                       usage_type or item_type)
         })

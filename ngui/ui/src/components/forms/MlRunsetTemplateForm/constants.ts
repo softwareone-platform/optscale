@@ -12,5 +12,6 @@ export const FIELD_NAMES = Object.freeze({
   NAME: "name",
   RESOURCE_NAME_PREFIX: "resourceNamePrefix",
   REGIONS: "regions",
-  TASKS: "tasks"
+  TASKS: "tasks",
+  MAXIMUM_RUNSET_RUNNERS: "maximumRunsetRunners"
 });

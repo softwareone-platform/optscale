@@ -91,6 +91,7 @@ class TestInfrastructureBase(TestApiBase):
             'instance_types': ['p4', 'p3', 'p2', 'm5'],
             'budget': 1234,
             'name_prefix': 'test_prefix',
+            'max_runner_num': 2,
             'tags': {
                 'template': 'test'
             },
@@ -277,7 +278,7 @@ class BulldozerMock:
 
     def template_create(self, name, task_ids, cloud_account_ids,
                         region_ids, instance_types, budget, name_prefix,
-                        tags, hyperparameters):
+                        tags, hyperparameters, max_runner_num=None):
         b = {
             "name": name,
             "task_ids": task_ids,
@@ -288,9 +289,11 @@ class BulldozerMock:
             "name_prefix": name_prefix,
             "tags": tags,
             "hyperparameters": hyperparameters,
-            '_id': str(uuid.uuid4()),
-            'token': self.token
+            "_id": str(uuid.uuid4()),
+            "token": self.token
         }
+        if max_runner_num:
+            b["max_runner_num"] = max_runner_num
         inserted = self.infra_templates.insert_one(b)
         template = list(self.infra_templates.find(
             {'_id': inserted.inserted_id}))[0]
@@ -311,7 +314,8 @@ class BulldozerMock:
     def template_update(
             self, id_, name=None, task_ids=None, cloud_account_ids=None,
             region_ids=None, instance_types=None, budget=None,
-            name_prefix=None, tags=None, hyperparameters=None):
+            name_prefix=None, tags=None, hyperparameters=None,
+            max_runner_num=None):
         b = dict()
         if name is not None:
             b.update({"name": name})
@@ -331,6 +335,8 @@ class BulldozerMock:
             b.update({"tags": tags})
         if hyperparameters is not None:
             b.update({"hyperparameters": hyperparameters})
+        if max_runner_num is not None:
+            b.update({"max_runner_num": max_runner_num})
         self.infra_templates.update_one(
             filter={
                 '_id': id_,

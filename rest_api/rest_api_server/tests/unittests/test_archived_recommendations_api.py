@@ -291,7 +291,7 @@ class TestArchivedRecommendationsDetailsApi(TestArchivedRecommendationsBase):
             'ArchivedRecommendationsDetailsController._build_pipeline',
             wraps=self.patched_build_pipeline).start()
 
-    def patched_build_pipeline(self, match_filter, limit=None, start_from=0):
+    def patched_build_pipeline(self, match_filter, limit=None, offset=0):
         # mongo mock is unable to slice using $count as limit so hardcoded it
         # to good enough value
         if limit is None:
@@ -308,7 +308,7 @@ class TestArchivedRecommendationsDetailsApi(TestArchivedRecommendationsBase):
             }},
             {"$project": {
                 '_id': 0,
-                "items": {"$slice": ['$items', start_from, limit]},
+                "items": {"$slice": ['$items', offset, limit]},
                 'count': 1
             }},
         ]
@@ -438,7 +438,7 @@ class TestArchivedRecommendationsDetailsApi(TestArchivedRecommendationsBase):
             self.assertEqual(code, 400)
             self.assertEqual(res['error']['error_code'], 'OE0224')
 
-    def test_details_start_from(self):
+    def test_details_offset(self):
         count = 15
         module = 'module'
         reason = 'reason'
@@ -449,14 +449,14 @@ class TestArchivedRecommendationsDetailsApi(TestArchivedRecommendationsBase):
         for i in range(count):
             code, res = self.client.archived_recommendations_details_get(
                 self.org_id, type=module, reason=reason,
-                archived_at=self.start_date, start_from=i)
+                archived_at=self.start_date, offset=i)
             self.assertEqual(code, 200)
             self.assertEqual(res['count'], count)
             self.assertEqual(len(res['items']), count - i)
 
         code, res = self.client.archived_recommendations_details_get(
             self.org_id, type=module, reason=reason,
-            archived_at=self.start_date, start_from=-1)
+            archived_at=self.start_date, offset=-1)
         self.assertEqual(code, 400)
         self.assertEqual(res['error']['error_code'], 'OE0224')
 
@@ -516,20 +516,20 @@ class TestArchivedRecommendationsDetailsApi(TestArchivedRecommendationsBase):
         for i in range(0, count, limit):
             code, res = self.client.archived_recommendations_details_get(
                 self.org_id, type=module, reason=reason,
-                archived_at=self.start_date, start_from=i, limit=limit)
+                archived_at=self.start_date, offset=i, limit=limit)
             self.assertEqual(code, 200)
             self.assertEqual(res['count'], count)
             self.assertEqual(len(res['items']), limit)
             for item in res['items']:
                 self.assertEqual(item['page'], i // limit)
 
-        start_from = 12
+        offset = 12
         code, res = self.client.archived_recommendations_details_get(
             self.org_id, type=module, reason=reason,
-            archived_at=self.start_date, start_from=start_from, limit=limit)
+            archived_at=self.start_date, offset=offset, limit=limit)
         self.assertEqual(code, 200)
         self.assertEqual(res['count'], count)
-        self.assertEqual(len(res['items']), count - start_from)
+        self.assertEqual(len(res['items']), count - offset)
 
 
 class TestArchivedRecommendationsCountApi(TestArchivedRecommendationsBase):

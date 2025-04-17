@@ -33,7 +33,8 @@ const MlRunsetTemplate = ({
     cloud_accounts: dataSources = [],
     tasks = [],
     instance_types: instanceTypes = [],
-    regions = []
+    regions = [],
+    max_runner_num: maximumRunsetRunners
   } = runsetTemplate;
 
   const actionBarDefinition = {
@@ -97,6 +98,7 @@ const MlRunsetTemplate = ({
               regions={regions}
               instanceTypes={instanceTypes}
               maximumRunsetBudget={budget}
+              maximumRunsetRunners={maximumRunsetRunners}
               resourceNamePrefix={resourceNamePrefix}
               tags={tags}
               hyperparameters={hyperparameters}

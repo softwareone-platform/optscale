@@ -3,8 +3,11 @@ import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { useApiState } from "hooks/useApiState";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const FormButtons = ({ isLoading = false, isEdit, onCancel }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { isLoading: isGetPoolOwnerLoading } = useApiState(GET_POOL_OWNERS);
 
   return (
@@ -16,6 +19,11 @@ const FormButtons = ({ isLoading = false, isEdit, onCancel }) => {
         variant="contained"
         type="submit"
         isLoading={isLoading || isGetPoolOwnerLoading}
+        disabled={isRestricted}
+        tooltip={{
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }}
       />
       <Button messageId="cancel" dataTestId="btn_cancel" onClick={onCancel} />
     </FormButtonsWrapper>

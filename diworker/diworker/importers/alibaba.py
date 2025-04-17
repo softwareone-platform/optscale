@@ -3,15 +3,15 @@ import logging
 import re
 from calendar import monthrange
 from datetime import datetime, timedelta, timezone
-from pymongo import UpdateOne
 
 from diworker.diworker.importers.base import BaseReportImporter
-from diworker.diworker.utils import bytes_to_gb, retry_mongo_upsert
+from diworker.diworker.utils import bytes_to_gb
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
+DISK_TABLE = "YUNDISK_CONFIG"
 SYSTEM_DISK_BILLING_ITEMS = [
     'System Disk Size',  # Ordinary VMs
     'systemdisk'  # Subscription VMs
@@ -39,7 +39,7 @@ class AlibabaReportImporter(BaseReportImporter):
         return {
             item['AttachedInstanceId']: item['InstanceId']
             for item in self.cloud_adapter.get_raw_usage(
-                'YunDisk', 'Hour', start_time, end_time)
+                DISK_TABLE, 'Hour', start_time, end_time)
             if (item['Portable'] == '0' and 'AttachedInstanceId' in item
                 and 'InstanceId' in item)
         }

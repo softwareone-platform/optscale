@@ -154,10 +154,20 @@ class DIWorker(ConsumerMixin):
             _, ca = self.rest_cl.cloud_account_get(
                 importer_params.get('cloud_account_id'))
             organization_id = ca.get('organization_id')
+            _, org = self.rest_cl.organization_get(organization_id)
+            if org.get('disabled'):
+                reason = ('Import cancelled due to disabled '
+                          'organization: %s') % self.report_import_id
+                self.rest_cl.report_import_update(
+                    self.report_import_id, {'state': 'failed',
+                                            'state_reason': reason})
+                return
             start_last_import_ts = ca.get('last_import_at', 0)
             previous_attempt_ts = ca.get('last_import_attempt_at', 0)
             cc_type = ca.get('type')
-            importer = get_importer_class(cc_type)(**importer_params)
+            export_scheme = ca['config'].get('expense_import_scheme')
+            importer = get_importer_class(cc_type, export_scheme)(
+                **importer_params)
             importer.import_report()
             self.rest_cl.report_import_update(
                 self.report_import_id, {'state': 'completed'})

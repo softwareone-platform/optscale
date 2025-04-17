@@ -19,7 +19,15 @@ const ParentDataSource = ({ parentDataSourceId }) => {
 };
 
 const AzureProperties = ({ config, parentId }) => {
-  const { client_id: clientId, tenant, expense_import_scheme: expenseImportScheme, subscription_id: subscriptionId } = config;
+  const {
+    client_id: clientId,
+    tenant,
+    expense_import_scheme: expenseImportScheme,
+    subscription_id: subscriptionId,
+    export_name: exportName,
+    container,
+    directory
+  } = config;
 
   return (
     <>
@@ -57,6 +65,27 @@ const AzureProperties = ({ config, parentId }) => {
         value={expenseImportScheme}
         dataTestIds={{ key: "p_expense_import_scheme_key", value: "p_expense_import_scheme_value" }}
       />
+      {exportName && (
+        <KeyValueLabel
+          keyMessageId="exportName"
+          value={exportName}
+          dataTestIds={{ key: "p_export_name_key", value: "p_export_name_value" }}
+        />
+      )}
+      {container && (
+        <KeyValueLabel
+          keyMessageId="storageContainer"
+          value={container}
+          dataTestIds={{ key: "p_storage_container_key", value: "p_storage_container_value" }}
+        />
+      )}
+      {directory && (
+        <KeyValueLabel
+          keyMessageId="storageDirectory"
+          value={directory}
+          dataTestIds={{ key: "p_storage_directory_key", value: "p_storage_directory_value" }}
+        />
+      )}
     </>
   );
 };

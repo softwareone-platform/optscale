@@ -9,6 +9,7 @@ import { ML_RUNSET_TEMPLATES } from "urls";
 const defaultValues = {
   [FIELD_NAMES.NAME]: "",
   [FIELD_NAMES.BUDGET]: "",
+  [FIELD_NAMES.MAXIMUM_RUNSET_RUNNERS]: "",
   [FIELD_NAMES.RESOURCE_NAME_PREFIX]: "",
   [FIELD_NAMES.TAG_KEY]: "",
   [FIELD_NAMES.TAG_VALUE]: "",

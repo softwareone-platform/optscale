@@ -60,7 +60,7 @@ const K8sRightsizingContainer = () => {
     definition: {
       /*
         Action bar doesn't support mobile view for "custom" items
-        See OS-5925
+        OSN-140
       */
       hideItemsOnSmallScreens: false,
       items: [

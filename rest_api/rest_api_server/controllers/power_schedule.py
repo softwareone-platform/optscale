@@ -175,9 +175,11 @@ class PowerScheduleController(BaseController, OrganizationValidatorMixin,
                 Err.OE0002, [self.model_type.__name__, power_schedule_id])
         action = data['action']
         instance_ids = data['instance_id']
-        resources = self.resources_collection.find(
-            {'_id': {'$in': instance_ids}, 'resource_type': 'Instance',
-             'active': True}, ['_id'])
+        query_params = {'_id': {'$in': instance_ids},
+                        'resource_type': 'Instance'}
+        if action == 'attach':
+            query_params['active'] = True
+        resources = self.resources_collection.find(query_params, ['_id'])
         res_exist = [x['_id'] for x in resources]
         if res_exist and action == 'attach':
             self.resources_collection.update_many(

@@ -41,6 +41,11 @@ class TestFlavorPricesApi(TestBase):
         self.aws_cad = patch(
             'insider.insider_api.controllers.flavor_price.'
             'AwsProvider.cloud_adapter').start()
+        patch(
+            'insider.insider_api.controllers.flavor_price.'
+            'AwsProvider.cloud_adapter.get_regions_coordinates',
+            return_value={'us-west-2': {'name': 'US West (Oregon)'}}
+        ).start()
         self.alibaba_cad = patch(
             'insider.insider_api.controllers.flavor_price.'
             'AlibabaProvider.cloud_adapter').start()

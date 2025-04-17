@@ -52,8 +52,13 @@ class Scheduler(ConsumerProducerMixin):
 
         geminis = response.get("geminis", [])
 
-        created_geminis = list(
-            filter(lambda gemini: gemini.get("status") == "CREATED", geminis)
+        _, orgs = self.rest_client.organization_list(
+            {'is_demo': False, 'disabled': False})
+        org_ids = [x['id'] for x in orgs['organizations']]
+
+        created_geminis = list(filter(
+            lambda gemini: gemini.get("status") == "CREATED" and gemini.get(
+                'organization_id') in org_ids, geminis)
         )
 
         return created_geminis

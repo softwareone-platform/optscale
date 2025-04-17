@@ -6,6 +6,7 @@ import { FormattedMessage } from "react-intl";
 import { ConstraintLimitMessage } from "components/ConstraintMessage";
 import EditPoolPolicyLimitForm from "components/forms/EditPoolPolicyLimitForm";
 import IconButton from "components/IconButton";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { CONSTRAINT_MESSAGE_FORMAT } from "utils/constraints";
 
 export const MODE = Object.freeze({
@@ -23,6 +24,8 @@ const EditablePoolPolicyLimit = ({
   isLoading = false,
   dataTestIds = {}
 }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const [editMode, setEditMode] = useState(false);
 
   const onEditMode = () => {
@@ -84,11 +87,12 @@ const EditablePoolPolicyLimit = ({
       {isAllowedToEdit && (
         <IconButton
           key="create"
+          disabled={isRestricted}
           icon={<CreateOutlinedIcon />}
           onClick={() => onEditMode()}
           tooltip={{
-            show: true,
-            messageId: "edit"
+            show: isRestricted,
+            value: restrictionReasonMessage
           }}
           dataTestId={editButtonDataTestId}
         />

@@ -87,6 +87,7 @@ const onMenuItemClick = (action, onClose) => {
 
 /**
  * TODO: There is no mobile support for custom nodes, e.g date pickers
+ * See OSN-140
  */
 const DropDownMenu = ({ items, onClose }) => {
   const { classes } = useStyles();

@@ -12,13 +12,17 @@ import PoolLabel from "components/PoolLabel";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import Tooltip from "components/Tooltip";
 import { useIsAllowed, useIsAllowedForSome } from "hooks/useAllowedActions";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import PoolPolicyService from "services/PoolPolicyService";
 import { RESOURCE_LIFECYCLE_CREATE_POOL_POLICY } from "urls";
 import { SCOPE_TYPES } from "utils/constants";
 import { CONSTRAINTS_TYPES, CONSTRAINT_MESSAGE_FORMAT } from "utils/constraints";
 
 const UpdatePoolPolicyActivityContainer = ({ policyId, poolId, active }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { useUpdateGlobalPoolPolicyActivity } = PoolPolicyService();
 
   const { update: updatePolicyActivity } = useUpdateGlobalPoolPolicyActivity();
@@ -66,13 +70,17 @@ const UpdatePoolPolicyActivityContainer = ({ policyId, poolId, active }) => {
     );
 
     return (
-      <Switch
-        checkedIcon={icon}
-        icon={icon}
-        disabled={isUpdateActivityLoading}
-        onChange={onActivityChange}
-        checked={isChecked}
-      />
+      <Tooltip title={restrictionReasonMessage}>
+        <div>
+          <Switch
+            checkedIcon={icon}
+            icon={icon}
+            disabled={isRestricted || isUpdateActivityLoading}
+            onChange={onActivityChange}
+            checked={isChecked}
+          />
+        </div>
+      </Tooltip>
     );
   };
 

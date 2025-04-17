@@ -7,8 +7,8 @@ import {
   END_DATE_FILTER,
   TAB_QUERY_PARAM_NAME,
   EMPTY_UUID,
-  KUBERNETES,
-  DATASOURCE_TYPE
+  CONNECTION_TYPE_SEARCH_PARAMETER,
+  CONNECTION_TYPES
 } from "utils/constants";
 import { getLast30DaysRange, getCurrentMonthRange } from "utils/datetime";
 import { formQueryString } from "utils/network";
@@ -178,7 +178,11 @@ export const CLOUD_ACCOUNT = concatenateUrl([CLOUD_ACCOUNTS_BASE_URL, CLOUD_ACCO
 export const getCloudAccountUrl = (cloudAccountId) => CLOUD_ACCOUNT.replace(CLOUD_ACCOUNT_IDENTIFIER, cloudAccountId);
 
 export const CLOUD_ACCOUNT_CONNECT = concatenateUrl([CLOUD_ACCOUNT_BASE_URL, CONNECT]);
-export const CLOUD_ACCOUNT_CONNECT_K8S = concatenateUrl([CLOUD_ACCOUNT_CONNECT, `${DATASOURCE_TYPE}=${KUBERNETES}`], "", "?");
+export const CLOUD_ACCOUNT_CONNECT_K8S = concatenateUrl(
+  [CLOUD_ACCOUNT_CONNECT, `${CONNECTION_TYPE_SEARCH_PARAMETER}=${CONNECTION_TYPES.KUBERNETES}`],
+  "",
+  "?"
+);
 
 // Resources
 const RESOURCES_BASE = "resources";

@@ -6,7 +6,7 @@ import { FormattedMessage } from "react-intl";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import Tooltip from "components/Tooltip";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ML_METRICS } from "urls";
 import { tendency, text } from "utils/columns";
 import aggregateFunction from "utils/columns/aggregateFunction";
@@ -29,7 +29,7 @@ const tableActionBar = {
 };
 
 const MlTaskMetricsTable = ({ metrics, onAttachChange, isLoading }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const columns = useMemo(
     () => [
@@ -41,10 +41,10 @@ const MlTaskMetricsTable = ({ metrics, onAttachChange, isLoading }) => {
         ),
         id: "actions",
         cell: ({ row: { original } }) => (
-          <Tooltip title={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : undefined}>
+          <Tooltip title={restrictionReasonMessage}>
             <div>
               <Switch
-                disabled={isDemo}
+                disabled={isRestricted}
                 onChange={(event) => {
                   const action = event.target.checked ? "attach" : "detach";
 
@@ -79,7 +79,7 @@ const MlTaskMetricsTable = ({ metrics, onAttachChange, isLoading }) => {
         accessorKey: "target_value"
       }
     ],
-    [isDemo, onAttachChange]
+    [isRestricted, onAttachChange, restrictionReasonMessage]
   );
 
   return (

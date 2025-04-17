@@ -5,12 +5,15 @@ import ActionBar from "components/ActionBar";
 import { MlEditArtifactForm } from "components/forms/MlArtifactForm";
 import { TABS } from "components/MlTaskRun/Components/Tabs";
 import PageContentWrapper from "components/PageContentWrapper";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import MlArtifactsService from "services/MlArtifactsService";
 import MlTasksService from "services/MlTasksService";
 import { ML_TASKS, getMlTaskDetailsUrl, getMlTaskRunUrl } from "urls";
 import { formatRunFullName } from "utils/ml";
 
 const MlEditRunArtifactContainer = () => {
+  const { organizationId } = useOrganizationInfo();
+
   const { runId, taskId, artifactId } = useParams() as { artifactId: string; taskId: string; runId: string };
   const navigate = useNavigate();
 
@@ -22,7 +25,7 @@ const MlEditRunArtifactContainer = () => {
 
   const { isLoading: isUpdateArtifactLoading, onUpdate } = useUpdate();
 
-  const { isLoading: isGetRunLoading, run } = useGetTaskRun(runId);
+  const { isLoading: isGetRunLoading, run } = useGetTaskRun(organizationId, runId);
   const { name: runName, number: runNumber, task: { name: taskName = "" } = {} } = run;
 
   const taskDetailsUrl = getMlTaskDetailsUrl(taskId);

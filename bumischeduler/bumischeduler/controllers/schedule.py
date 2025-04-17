@@ -73,9 +73,14 @@ class ScheduleController(object):
         now = utcnow()
         checklists = self.get_checklists()
         bumi_worker_params = self.get_bumi_worker_params()
+        _, res = self.rest_cl.organization_list(
+            {'is_demo': False, 'disabled': False})
+        org_ids = [x['id'] for x in res['organizations']]
         scheduled = []
         tasks = []
         for checklist in checklists:
+            if checklist['organization_id'] not in org_ids:
+                continue
             next_run = checklist['next_run']
             last_completed = checklist['last_completed']
             last_run = checklist['last_run']

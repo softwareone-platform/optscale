@@ -491,6 +491,8 @@ class Alibaba(CloudBase):
             self._send_paged_request,
             request, paged_item='DBInstance',
             region_id=region_details['RegionId'])
+        if instances:
+            instances = list(instances)
         instance_ids = [x['DBInstanceId'] for x in instances]
         tag_map = self._get_rds_tags(region_details['RegionId'])
         details_map = {x['DBInstanceId']: x for x in self._get_rds_details(

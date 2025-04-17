@@ -39,7 +39,8 @@ class TestTemplateApi(TestInfrastructureBase):
             'region_ids': '6',
             'instance_types': {7: 7},
             'budget': 'eight',
-            'name_prefix': -1
+            'name_prefix': -1,
+            'max_runner_num': '23.4'
         }
         for k, v in incorrect_updates.items():
             valid_template = self.valid_template.copy()
@@ -58,6 +59,9 @@ class TestTemplateApi(TestInfrastructureBase):
 
     def test_create_missing(self):
         for k, v in self.valid_template.items():
+            # max_runner_num not required
+            if k == 'max_runner_num':
+                continue
             valid_template = self.valid_template.copy()
             valid_template.pop(k)
             code, res = self.client.template_create(
@@ -221,7 +225,8 @@ class TestTemplateApi(TestInfrastructureBase):
             'region_ids': '6',
             'instance_types': {7: 7},
             'budget': 'eight',
-            'name_prefix': -1
+            'name_prefix': -1,
+            'max_runner_num': '23.4'
         }
         for k, v in updates_base.items():
             updates = {k: v}

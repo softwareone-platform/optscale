@@ -5,6 +5,7 @@ import { GET_OPTIMIZATIONS_OVERVIEW } from "api/restapi/actionTypes";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
 const useGetOptimizationsOverview = (cloudAccountIds) => {
@@ -29,11 +30,12 @@ const useForceCheck = () => {
   const isManageChecklistsAllowed = useIsAllowed({
     requiredActions: ["MANAGE_CHECKLISTS"]
   });
-  const { isDemo } = useOrganizationInfo();
+
+  const { isRestricted } = useOrganizationActionRestrictions();
 
   return {
     forceCheck: () => dispatch(updateOptimizations(optimizations.id, { nextRun: 1 })),
-    isForceCheckAvailable: isManageChecklistsAllowed && !isDemo
+    isForceCheckAvailable: isManageChecklistsAllowed && !isRestricted
   };
 };
 

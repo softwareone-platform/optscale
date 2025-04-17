@@ -11,7 +11,8 @@ const getMessageId = (resourceType) =>
     snapshot_chain: "resourceType.snapshotChain",
     rds_instance: "resourceType.rdsInstance",
     ip_address: "resourceType.ipAddress",
-    image: "resourceType.image"
+    image: "resourceType.image",
+    load_balancer: "resourceType.loadBalancer"
   })[resourceType];
 
 const resourceType = ({

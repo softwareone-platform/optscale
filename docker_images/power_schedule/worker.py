@@ -45,6 +45,7 @@ class PowerScheduleReasons:
     """
     NO_RESOURCES = 'No resources assigned'
     DISABLED = 'Power schedule is disabled'
+    DISABLED_ORG = 'Organization is disabled'
     OUTDATED = 'Power schedule is outdated'
     NO_CHANGES = 'Changing state is not required'
     CONFLICT = 'Conflicting triggers'
@@ -105,7 +106,7 @@ class PowerScheduleWorker(ConsumerMixin):
             'start_instance': 0,
             'stop_instance': 0,
             'error': 0,
-            'excluded': 0,
+            'not_active': 0,
             'reason': None
         }
 
@@ -115,6 +116,11 @@ class PowerScheduleWorker(ConsumerMixin):
             return False
         if is_schedule_outdated(power_schedule):
             self.result['reason'] = PowerScheduleReasons.OUTDATED
+            return False
+        _, org = self.rest_cl.organization_get(
+            power_schedule['organization_id'])
+        if org.get('disabled'):
+            self.result['reason'] = PowerScheduleReasons.DISABLED_ORG
             return False
         return True
 
@@ -208,13 +214,6 @@ class PowerScheduleWorker(ConsumerMixin):
                     resource.get('meta', {}).get('zone_id'))
         return data
 
-    def exclude_resources_from_schedule(self, excluded_resources):
-        if excluded_resources:
-            self.mongo_cl.restapi.resources.update_many(
-                {'_id': {'$in': excluded_resources}},
-                {'$unset': {'power_schedule': 1}})
-        self.result['excluded'] += len(excluded_resources)
-
     @staticmethod
     def _cloud_action(cloud_adapter, resource_data, action):
         func = getattr(cloud_adapter, action)
@@ -227,7 +226,6 @@ class PowerScheduleWorker(ConsumerMixin):
 
     def process_resources(self, power_schedule, action):
         power_schedule_id = power_schedule['id']
-        excluded_resources = []
         resources = list(self.mongo_cl.restapi.resources.find(
             {'power_schedule': power_schedule_id}))
         if not resources:
@@ -237,12 +235,10 @@ class PowerScheduleWorker(ConsumerMixin):
         cloud_acc_resources = defaultdict(list)
         for resource in resources:
             if not resource.get('active'):
-                excluded_resources.append(resource['_id'])
+                self.result['not_active'] += 1
                 continue
             cloud_account_id = resource.get('cloud_account_id')
             cloud_acc_resources[cloud_account_id].append(resource)
-
-        self.exclude_resources_from_schedule(excluded_resources)
 
         for cloud_account_id, resources in cloud_acc_resources.items():
             _, cloud_acc = self.rest_cl.cloud_account_get(cloud_account_id)
@@ -274,7 +270,7 @@ class PowerScheduleWorker(ConsumerMixin):
                 'success_count': (self.result['start_instance'] +
                                   self.result['stop_instance']),
                 'error_count': self.result['error'],
-                'excluded_count': self.result['excluded'],
+                'not_active_count': self.result['not_active'],
                 'vm_action': 'on' if action == 'start_instance' else 'off'
             }
             self.publish_activities_task(
@@ -318,7 +314,8 @@ class PowerScheduleWorker(ConsumerMixin):
         }
         if self.result['reason'] not in [PowerScheduleReasons.NO_CHANGES,
                                          PowerScheduleReasons.DISABLED,
-                                         PowerScheduleReasons.OUTDATED]:
+                                         PowerScheduleReasons.OUTDATED,
+                                         PowerScheduleReasons.DISABLED_ORG]:
             updates['last_run'] = now_ts
             # we should reset error only if instances have been powered on/off
             # during this run

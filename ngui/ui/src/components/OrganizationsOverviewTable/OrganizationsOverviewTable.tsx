@@ -44,9 +44,11 @@ const OrganizationsOverviewTable = ({ data, total = data.length, isLoading = fal
         accessorKey: "name",
         cell: ({
           row: {
-            original: { name, id: organizationId }
+            original: { name, id: organizationId, disabled }
           }
-        }) => <OrganizationLabel name={name} id={organizationId} dataTestId={`link_org_${organizationId}`} />
+        }) => (
+          <OrganizationLabel name={name} id={organizationId} dataTestId={`link_org_${organizationId}`} isInactive={disabled} />
+        )
       },
       {
         header: <span data-test-id="lbl_pool">{intl.formatMessage({ id: "limit" })}</span>,

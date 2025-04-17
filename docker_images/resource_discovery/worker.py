@@ -18,10 +18,10 @@ from tools.cloud_adapter.exceptions import InvalidResourceTypeException
 from tools.cloud_adapter.model import (
     ResourceTypes, RES_MODEL_MAP, InstanceResource, RdsInstanceResource
 )
+from tools.optscale_time import utcnow, utcnow_timestamp
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.insider_client.client import Client as InsiderClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from tools.optscale_time import utcnow, utcnow_timestamp
 
 
 BYTES_IN_MB = 1024 * 1024
@@ -247,6 +247,10 @@ class DiscoveryWorker(ConsumerMixin):
             break
         return enabled
 
+    def is_org_disabled(self, organization_id):
+        _, org = self.rest_cl.organization_get(organization_id)
+        return org.get('disabled')
+
     @staticmethod
     def max_parallel_requests(config):
         # check if MAX_PARALLEL_REQUESTS is set for cloud adapter
@@ -302,6 +306,11 @@ class DiscoveryWorker(ConsumerMixin):
                      resource_type)
             return
         config = self.get_config(cloud_acc_id)
+        if self.is_org_disabled(config['organization_id']):
+            LOG.info('Discover of cloud account id %s for resource type %s is '
+                     'skipped due to disabled organization.', cloud_acc_id,
+                     resource_type)
+            return
         gen_list = self.discover(config, resource_type)
         discovered_resources = set()
         resources_count = 0

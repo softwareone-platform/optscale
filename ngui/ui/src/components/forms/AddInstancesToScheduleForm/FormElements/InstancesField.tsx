@@ -19,6 +19,7 @@ const TableField = ({ instances, value, onChange }) => {
       powerScheduleInstance({
         idAccessor: "resource_id",
         nameAccessor: "resource_name",
+        activeAccessor: "active",
         powerScheduleAccessor: "power_schedule",
         headerDataTestId: "lbl_instance_to_add",
         titleMessageId: "instance"

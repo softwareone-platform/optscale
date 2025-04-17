@@ -13,89 +13,72 @@ import { useSelectedSizes, useSelectionActions } from "reducers/cloudCostCompari
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 
-const getSizeAccessor = (size) => size.id.replace(/\./g, "_");
-
-const INDICATOR_ACCESSOR_KEY = "indicatorName";
-
 const ComparisonTable = ({ sizes }) => {
   const intl = useIntl();
   const moneyFormatter = useMoneyFormatter();
-
   const { removeSize } = useSelectionActions();
 
   const columns = useMemo(
     () => [
       {
         header: "",
-        accessorKey: INDICATOR_ACCESSOR_KEY,
-        cell: ({ cell }) => <strong>{cell.getValue()}</strong>,
-        enableSorting: false
-      },
-      ...sizes.map((size) => ({
-        header: (
-          <Box display="flex">
-            <CloudLabel name={size.name} type={size.cloud_type} disableLink />
+        id: "size",
+        cell: ({ row }) => (
+          <Box display="flex" alignItems="center">
+            <CloudLabel name={row.original.name} type={row.original.cloud_type} disableLink />
             <Tooltip title={<FormattedMessage id="removeFromComparison" />}>
-              <IconButton onClick={() => removeSize(size)} icon={<PlaylistRemoveOutlinedIcon />} />
+              <IconButton onClick={() => removeSize(row.original)} icon={<PlaylistRemoveOutlinedIcon />} />
             </Tooltip>
           </Box>
         ),
-        accessorKey: getSizeAccessor(size),
         enableSorting: false
-      }))
-    ],
-    [removeSize, sizes]
-  );
-
-  const tableData = useMemo(() => {
-    const getRowData = ({ indicatorMessageId, accessor }) => {
-      const flavorData = Object.fromEntries(
-        sizes.map((flavor) => [getSizeAccessor(flavor), typeof accessor === "function" ? accessor(flavor) : flavor[accessor]])
-      );
-
-      return {
-        [INDICATOR_ACCESSOR_KEY]: intl.formatMessage({ id: indicatorMessageId }),
-        ...flavorData
-      };
-    };
-
-    return [
-      getRowData({
-        indicatorMessageId: "cpu",
-        accessor: "cpu"
-      }),
-      getRowData({
-        indicatorMessageId: "ram",
-        accessor: "ram"
-      }),
-      getRowData({
-        indicatorMessageId: "cost",
-        accessor: (flavor) =>
+      },
+      {
+        header: intl.formatMessage({ id: "cpu" }),
+        accessorKey: "cpu",
+        cell: ({ row }) => row.original.cpu,
+        enableSorting: false
+      },
+      {
+        header: intl.formatMessage({ id: "ram" }),
+        accessorKey: "ram",
+        cell: ({ row }) => row.original.ram,
+        enableSorting: false
+      },
+      {
+        header: intl.formatMessage({ id: "cost" }),
+        accessorKey: "cost",
+        cell: ({ row }) =>
           intl.formatMessage(
             { id: "valuePerHour" },
             {
-              value: moneyFormatter(FORMATTED_MONEY_TYPES.TINY, flavor.cost, {
-                format: flavor.currency,
-                maximumFractionDigits: 4
+              value: moneyFormatter(FORMATTED_MONEY_TYPES.TINY, row.original.cost, {
+                format: row.original.currency
               })
             }
-          )
-      }),
-      getRowData({
-        indicatorMessageId: "location",
-        accessor: "location"
-      }),
-      getRowData({
-        indicatorMessageId: "instanceFamily",
-        accessor: "instance_family"
-      })
-    ];
-  }, [intl, moneyFormatter, sizes]);
+          ),
+        defaultSort: "desc"
+      },
+      {
+        header: intl.formatMessage({ id: "location" }),
+        accessorKey: "location",
+        cell: ({ row }) => row.original.location,
+        enableSorting: false
+      },
+      {
+        header: intl.formatMessage({ id: "instanceFamily" }),
+        accessorKey: "instance_family",
+        cell: ({ row }) => row.original.instance_family,
+        enableSorting: false
+      }
+    ],
+    [intl, moneyFormatter, removeSize]
+  );
 
   return (
     <Table
       columns={columns}
-      data={tableData}
+      data={sizes}
       counters={{
         show: false
       }}

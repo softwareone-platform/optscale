@@ -68,6 +68,38 @@ class TestOrganizationApi(TestApiBase):
         _, customer_dict = self.client.organization_get(organization_id)
         self.assertEqual(customer_dict["name"], "new name")
 
+    def test_disable_organization(self):
+        organization_id = self.organization['id']
+        code, organization_dict = self.client.organization_update(
+            organization_id, {'disabled': False})
+        self.assertEqual(code, 200)
+        self.assertEqual(organization_dict['disabled'], False)
+
+        patch('rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler.'
+              'check_cluster_secret', return_value=False).start()
+        code, resp = self.client.organization_update(
+            organization_id, {'disabled': False})
+        self.assertEqual(code, 403)
+        self.assertEqual(resp['error']['error_code'], 'OE0561')
+
+    def test_get_disabled_organizations(self):
+        _, org = self.client.organization_create({'name': 'disabled'})
+        self.client.organization_update(org['id'], {'disabled': True})
+        code, resp = self.client.organization_list({'disabled': True})
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['organizations']), 1)
+        self.assertEqual(resp['organizations'][0]['id'], org['id'])
+
+        code, resp = self.client.organization_list({'disabled': False})
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['organizations']), 2)
+        ids = [x['id'] for x in resp['organizations']]
+        self.assertNotIn(org['id'], ids)
+
+        code, resp = self.client.organization_list()
+        self.assertEqual(code, 200)
+        self.assertEqual(len(resp['organizations']), 3)
+
     def test_get_organization(self):
         organization_id = self.organization['id']
         code, organization = self.client.organization_get(organization_id)

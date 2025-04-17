@@ -20,7 +20,7 @@ import { DOCS_HYSTAX_OPTSCALE } from "urls";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
-const HeaderButtons = () => {
+const HeaderButtons = ({ isProductTourAvailable = false }) => {
   const { organizationId } = useOrganizationInfo();
   const startTour = useStartTour();
   const { classes } = useStyles();
@@ -63,7 +63,7 @@ const HeaderButtons = () => {
             color="info"
             icon={<LiveHelpOutlinedIcon />}
             onClick={startProductTour}
-            disabled={!isTourAvailableForCurrentBreakpoint}
+            disabled={!isProductTourAvailable || !isTourAvailableForCurrentBreakpoint}
             tooltip={{
               show: true,
               value: <FormattedMessage id="productTour" />

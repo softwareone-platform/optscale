@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+import os
 import enum
 import logging
 import re
@@ -23,8 +24,9 @@ from msrestazure.azure_exceptions import CloudError
 from msrest.exceptions import AuthenticationError, ClientRequestError
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
-                                   ResourceNotFoundError)
+                                   ResourceNotFoundError, ServiceRequestError)
 from azure.identity import ClientSecretCredential
+from azure.storage.blob import BlobServiceClient
 from msrest import Deserializer
 
 from tools.cloud_adapter.lib.azure_partner.client import AzurePartnerClient
@@ -37,6 +39,7 @@ from tools.cloud_adapter.model import (
     VolumeResource,
     BucketResource,
     IpAddressResource,
+    LoadBalancerResource,
 )
 from tools.cloud_adapter.exceptions import (
     ResourceNotFound,
@@ -45,7 +48,8 @@ from tools.cloud_adapter.exceptions import (
     CloudSettingNotSupported,
     CloudConnectionError,
     MetricsNotFoundException,
-    MetricsServerTimeoutException
+    MetricsServerTimeoutException,
+    ReportFilesNotFoundException
 )
 from tools.cloud_adapter.utils import (
     CloudParameter,
@@ -109,6 +113,7 @@ class ExpenseImportScheme(enum.Enum):
     usage = 'usage'
     raw_usage = 'raw_usage'
     partner_raw_usage = 'partner_raw_usage'
+    export = 'export'
 
 
 class Azure(CloudBase):
@@ -124,6 +129,13 @@ class Azure(CloudBase):
         CloudParameter(name='partner_client_id', type=str, required=False),
         CloudParameter(name='partner_secret', type=str, required=False,
                        protected=True),
+
+        # Additional credentials for 'export' expense import scheme
+        CloudParameter(name='export_name', type=str, required=False),
+        CloudParameter(name='sa_connection_string', type=str, required=False,
+                       protected=True),
+        CloudParameter(name='container', type=str, required=False),
+        CloudParameter(name='directory', type=str, required=False),
     ]
     SUPPORTS_REPORT_UPLOAD = False
     DEFAULT_CURRENCY = 'USD'
@@ -143,6 +155,7 @@ class Azure(CloudBase):
         self._location_map = None
         self._billing = None
         self._partner = None
+        self._blob = None
         self._usage = None
         self._monitor = None
         self._currency = self.DEFAULT_CURRENCY
@@ -174,7 +187,8 @@ class Azure(CloudBase):
             InstanceResource: self.instance_discovery_calls,
             SnapshotResource: self.snapshot_discovery_calls,
             IpAddressResource: self.ip_address_discovery_calls,
-            BucketResource: self.bucket_discovery_calls
+            BucketResource: self.bucket_discovery_calls,
+            LoadBalancerResource: self.load_balancers_discovery_calls,
         }
 
     @property
@@ -250,6 +264,27 @@ class Azure(CloudBase):
         self._storage = StorageManagementClient(
             self.service_principal_credentials, self._subscription_id)
         return self._storage
+
+    @property
+    def blob(self):
+        if self._blob:
+            return self._blob
+        try:
+            self._blob = BlobServiceClient.from_connection_string(
+                self.config.get('sa_connection_string'))
+        except ValueError as exc:
+            raise CloudConnectionError(
+                f"Could not connect to cloud by subscription "
+                f"{self._subscription_id}: {str(exc)}")
+        return self._blob
+
+    def download_report_file(self, blob_path, file_obj):
+        blob_client = self.blob.get_blob_client(
+            container=self.config.get('container'),
+            blob=blob_path
+        )
+        download_stream = blob_client.download_blob()
+        file_obj.write(download_stream.readall())
 
     @property
     def consumption(self):
@@ -483,6 +518,13 @@ class Azure(CloudBase):
             'warnings': warnings,
         }
 
+    @property
+    def _is_export_provided(self):
+        return ('sa_connection_string' in self.config and
+                'export_name' in self.config and
+                'container' in self.config and
+                'directory' in self.config)
+
     def _check_expense_import_scheme(self, scheme_name=None):
         if scheme_name is not None:
             try:
@@ -496,6 +538,11 @@ class Azure(CloudBase):
                     not self._is_partner_account):
                 raise InvalidParameterException(
                     'Please, provide partner credentials to use partner '
+                    'expense import scheme')
+            if (scheme == ExpenseImportScheme.export.value and
+                    not self._is_export_provided()):
+                raise InvalidParameterException(
+                    'Please, provide export parameters to use export '
                     'expense import scheme')
 
     def _check_partner_account(self):
@@ -551,11 +598,18 @@ class Azure(CloudBase):
         return result
 
     def configure_report(self):
-        billing_info = self._retry(self._get_billing_info)
-        LOG.info('Billing info for subscription %s: %s',
-                 self._subscription_id, billing_info)
+        if self._is_export_provided:
+            self._check_report_download()
+            LOG.info('Successfully downloaded report for export %s',
+                     self.config['export_name'])
+            billing_info = {}
+        else:
+            billing_info = self._retry(self._get_billing_info)
+            LOG.info('Billing info for subscription %s: %s',
+                     self._subscription_id, billing_info)
 
-        if billing_info['currency'] != self._currency:
+        currency = billing_info.get('currency')
+        if currency and currency != self._currency:
             raise CloudSettingNotSupported(
                 "Account currency '%s' doesn’t match organization"
                 " currency '%s'" % (billing_info['currency'], self._currency))
@@ -564,7 +618,9 @@ class Azure(CloudBase):
         if scheme is None:
             if self._is_partner_account:
                 scheme = ExpenseImportScheme.partner_raw_usage.value
-            elif billing_info['consumption_api_supported']:
+            elif self._is_export_provided:
+                scheme = ExpenseImportScheme.export.value
+            elif billing_info.get('consumption_api_supported'):
                 scheme = ExpenseImportScheme.usage.value
             else:
                 scheme = ExpenseImportScheme.raw_usage.value
@@ -573,7 +629,7 @@ class Azure(CloudBase):
             'config_updates': {
                 'expense_import_scheme': scheme,
             },
-            'warnings': billing_info['warnings']
+            'warnings': billing_info.get('warnings', [])
         }
 
     def configure_last_import_modified_at(self):
@@ -795,6 +851,76 @@ class Azure(CloudBase):
 
     def ip_address_discovery_calls(self):
         return [(self.discover_ip_address_resources, ())]
+
+    def discover_load_balancers_resources(self):
+        all_lbs = list(self.network.load_balancers.list_all())
+        for lb in all_lbs:
+            cloud_console_link = self._generate_cloud_link(lb)
+            resource = LoadBalancerResource(
+                cloud_account_id=self.cloud_account_id,
+                organization_id=self.organization_id,
+                cloud_console_link=cloud_console_link,
+                cloud_resource_id=lb.id.lower(),
+                region=self.location_map.get(lb.location),
+                name=lb.name,
+                tags=lb.tags or {}
+            )
+            yield resource
+
+    def load_balancers_discovery_calls(self):
+        return [(self.discover_load_balancers_resources, ())]
+
+    def _check_report_download(self):
+        reports = self.get_report_files()
+        if reports:
+            report = reports.popitem()[1][0]
+            with open(os.devnull, 'wb') as f:
+                self.download_report_file(report['name'], f)
+
+    def list_report_files(self):
+        container_cl = self.blob.get_container_client(self.config['container'])
+        name_starts_with = f'{self.config["directory"]}/' \
+                           f'{self.config["export_name"]}'
+        try:
+            result = list(container_cl.list_blobs(
+                name_starts_with=name_starts_with))
+        except AzureResourceNotFoundError:
+            raise ReportFilesNotFoundException(
+                f'Export files for export {self.config["export_name"]} not '
+                f'found in container {self.config["container"]}')
+        except (ServiceRequestError, AzureAuthenticationError):
+            raise ReportFilesNotFoundException(
+                f'Export files for export {self.config["export_name"]} not '
+                f'found. Please check storage account connection string')
+        return result
+
+    def get_report_files(self):
+        f_paths = self.list_report_files()
+        reports = {}
+        uuid_regex = '[0-9a-f]{{8}}-[0-9a-f]{{4}}-[0-9a-f]{{4}}-' \
+                     '[0-9a-f]{{4}}-[0-9a-f]{{12}}'
+        group_part = '[0-9]{8}-[0-9]{8}'
+        report_regex_fmt = '^{0}/{1}/[0-9]{{8}}-[0-9]{{8}}/%s/' \
+                           'part_[0-9]_[0-9]{{4}}.(csv|csv.gz|parquet|' \
+                           'snappy.parquet)$' % uuid_regex
+
+        report_regex = re.compile(
+            report_regex_fmt.format(re.escape(self.config['directory']),
+                                    re.escape(self.config['export_name'])))
+        try:
+            for report in [f for f in f_paths
+                           if re.match(report_regex, f['name'])]:
+                group = re.search(group_part, report['name']).group(0)
+                if group not in reports:
+                    reports[group] = []
+                reports[group].append(report)
+        except KeyError:
+            pass
+        if not reports:
+            raise ReportFilesNotFoundException(
+                f'Export files for export {self.config["export_name"]} not '
+                f'found in directory {self.config["directory"]}')
+        return reports
 
     def get_usage(self, start_date, range_end=None, limit=None):
         """

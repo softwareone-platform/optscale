@@ -18,6 +18,7 @@ import { DeletePowerScheduleModal } from "components/SideModalManager/SideModals
 import TabsWrapper from "components/TabsWrapper";
 import Tooltip from "components/Tooltip";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { PowerScheduleResponse } from "services/PowerScheduleService";
 import { POWER_SCHEDULES, getEditPowerScheduleUrl } from "urls";
 import { SPACING_4 } from "utils/layouts";
@@ -38,6 +39,8 @@ const TABS = Object.freeze({
 });
 
 const PowerScheduleDetails = ({ powerSchedule, onActivate, onDeactivate, isLoadingProps = {} }: PowerScheduleDetailsProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const navigate = useNavigate();
 
   const { isGetPowerScheduleLoading = false, isUpdatePowerScheduleLoading = false } = isLoadingProps;
@@ -104,7 +107,12 @@ const PowerScheduleDetails = ({ powerSchedule, onActivate, onDeactivate, isLoadi
             type: "button",
             action: onDeactivate,
             isLoading: isGetPowerScheduleLoading || isUpdatePowerScheduleLoading,
-            requiredActions: ["EDIT_PARTNER"]
+            requiredActions: ["EDIT_PARTNER"],
+            disabled: isRestricted,
+            tooltip: {
+              show: isRestricted,
+              value: restrictionReasonMessage
+            }
           }
         : {
             key: "activate",
@@ -114,7 +122,12 @@ const PowerScheduleDetails = ({ powerSchedule, onActivate, onDeactivate, isLoadi
             type: "button",
             action: onActivate,
             isLoading: isGetPowerScheduleLoading || isUpdatePowerScheduleLoading,
-            requiredActions: ["EDIT_PARTNER"]
+            requiredActions: ["EDIT_PARTNER"],
+            disabled: isRestricted,
+            tooltip: {
+              show: isRestricted,
+              value: restrictionReasonMessage
+            }
           },
       {
         key: "delete",

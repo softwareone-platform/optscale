@@ -5,7 +5,7 @@ import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { DeleteMlModelModal } from "components/SideModalManager/SideModals";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ML_MODELS } from "urls";
 
 type MlModelFormButtonsProps = {
@@ -29,7 +29,7 @@ type CloseButtonProps = {
 };
 
 const SaveButton = ({ isLoading }: SaveButtonProps) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <ButtonLoader
@@ -38,8 +38,11 @@ const SaveButton = ({ isLoading }: SaveButtonProps) => {
       color="primary"
       variant="contained"
       type="submit"
-      disabled={isDemo}
-      tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
+      disabled={isRestricted}
+      tooltip={{
+        show: isRestricted,
+        value: restrictionReasonMessage
+      }}
       isLoading={isLoading}
     />
   );

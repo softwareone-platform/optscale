@@ -31,6 +31,7 @@ const TableActionBar = ({ actionBarDefinition, tableContext, selectedRowsCount }
       <ActionBar
         isPage={false}
         data={{
+          ...actionBarDefinition,
           items: getActionBarItems()
         }}
       />

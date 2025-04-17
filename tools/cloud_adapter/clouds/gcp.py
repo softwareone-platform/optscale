@@ -157,14 +157,28 @@ class InstanceType:
     def parse_machine_family(self):
         # turn e.g. "e2-standard-4" into "e2"
         self.family = self.type_name.split("-")[0]
+        # N1 family flavors haven't flavor family prefix, example:
+        # "custom-2-24576-ext"
+        if self.family == "custom":
+            self.family = "n1"
         self.parse_family_description()
 
     def parse_custom(self):
         if "custom" in self.type_name:
             self.custom = True
 
-    def _cpu_value_from_flavor(self):
-        return self.type_name.split('-')[-2]
+    def _cpu_value_from_flavor(self, flavor: str=None):
+        if not flavor:
+            flavor = self.type_name
+        elements = flavor.split("-")
+        try:
+            if len(elements) > 2 and "mem" not in flavor and "cpu" not in flavor:
+                cpu_value = flavor.split("-")[-2]
+            else:
+                cpu_value = flavor.split("-")[-1]
+        except ValueError:
+            return
+        return cpu_value
 
     def parse_cpu_cores(self, machine_type: compute.MachineType):
         self.cpu_cores = machine_type.guest_cpus
@@ -184,14 +198,32 @@ class InstanceType:
         self.parse_cpu_cores(machine_type)
 
     def parse_ram_cpu_from_flavor_name(self):
-        self.ram_gb = int(self.type_name.split('-')[-1]) / 1024
-        cpu_value = self._cpu_value_from_flavor()
-        self.cpu_cores = self.SHARED_CPU_VALUES.get(
-            cpu_value) or float(cpu_value)
+        elements = self.type_name.split("-")
+        ram = None
+        cpu_value = None
+        try:
+            if len(elements) > 2:
+                ram = int(elements[-1])
+            cpu_value = self._cpu_value_from_flavor()
+        except ValueError:
+            # handle flavors ends with string, examples:
+            # custom-2-26624-ext, c4a-highmem-4-lssd
+            ram = int(elements[-2])
+            cpu_value = self._cpu_value_from_flavor(
+                flavor="-".join(elements[:-1]))
+        if cpu_value:
+            try:
+                self.cpu_cores = self.SHARED_CPU_VALUES.get(
+                    cpu_value) or float(cpu_value)
+            except ValueError:
+                pass
+        if ram and "mem" not in self.type_name and "cpu" not in self.type_name:
+            self.ram_gb = ram / 1024
+
 
     def __str__(self) -> str:
         return f"{self.family} {self.cpu_cores} {self.ram_gb} " \
-               f"{round(self.price, 4)} {self.region}"
+               f"{round(self.price, 4) if self.price else None} {self.region}"
 
     def to_dict(self) -> dict:
         return {
@@ -1222,11 +1254,13 @@ class Gcp(CloudBase):
             "C2D AMD Instance": "c2d",
             "Compute optimized": "c2",
             "C3 Instance": "c3",
+            "C3D Instance": "c3d",
             "C4 Instance": "c4",
+            "C4A Arm Instance": "c4a",
             "E2 Instance": "e2",
             "G2 Instance": "g2",
-            "M1 Memory-optimized Instance": "m1",
-            "M2 Memory-optimized Instance": "m2",
+            "Memory-optimized Instance": "m1",
+            "Memory Optimized Upgrade Premium for Memory-optimized Instance": "m2",
             "M3 Memory-optimized Instance": "m3",
             "N1 Predefined Instance": "n1",
             "N2 Instance": "n2",
@@ -1472,16 +1506,18 @@ class Gcp(CloudBase):
             "n1": {
                 "cpu": {"min": 1, "max": 96},
                 "ram": {"min": 1, "max": 624},
-                "min_ram_per_cpu": 0.5,
+                "min_ram_per_cpu": 1,
                 "max_ram_per_cpu": 6.5,
                 "cpu_step": 2,
+                "extended": True
             },
             "n2": {
                 "cpu": {"min": 2, "max": 128},
                 "ram": {"min": 2, "max": 864},
                 "min_ram_per_cpu": 0.5,
                 "max_ram_per_cpu": 8,
-                "cpu_step": 2
+                "cpu_step": 2,
+                "extended": True
             },
             "n2d": {
                 "cpu": {"min": 2, "max": 224},
@@ -1489,6 +1525,7 @@ class Gcp(CloudBase):
                 "min_ram_per_cpu": 0.5,
                 "max_ram_per_cpu": 8,
                 "cpu_step": 2,
+                "extended": True
             },
             "n4": {
                 "cpu": {"min": 2, "max": 80},
@@ -1496,6 +1533,7 @@ class Gcp(CloudBase):
                 "min_ram_per_cpu": 2,
                 "max_ram_per_cpu": 8,
                 "cpu_step": 2,
+                "extended": True
             }
         }
 
@@ -1510,7 +1548,7 @@ class Gcp(CloudBase):
     def _generate_instance_types(
             self, source_instance_type: InstanceType,
             instance_types: Dict[str, InstanceType]=None,
-            region: str=None
+            region: str=None, cpu_limit: float=0
     ):
         custom_instance_types = {}
         ram_step = 256
@@ -1518,8 +1556,8 @@ class Gcp(CloudBase):
         if instance_types:
             predefined_flavors = [
                 (value.cpu_cores, value.ram_gb)
-                for name, value in instance_types.items()
-                if source_instance_type.family in name]
+                for value in instance_types.values()
+                if source_instance_type.family == value.family]
         family_description = self._family_max_cpu_map.get(
             source_instance_type.family)
         min_cpu = family_description["cpu"]["min"]
@@ -1527,9 +1565,16 @@ class Gcp(CloudBase):
         min_ram_gb = family_description["ram"]["min"]
         max_ram_gb = family_description["ram"]["max"]
         min_ram_per_cpu = family_description["min_ram_per_cpu"]
-        max_ram_per_cpu = family_description["max_ram_per_cpu"]
+        family_max_ram_per_cpu = family_description["max_ram_per_cpu"]
+        extended = family_description.get("extended")
         cpu_step = family_description["cpu_step"]
-        if min_cpu < 2:
+
+        max_ram_per_cpu = family_max_ram_per_cpu
+        if source_instance_type.type_name.endswith("-ext") and extended:
+            # extended memory flavors has no max ram per cpu limit
+            max_ram_per_cpu = max_ram_gb
+
+        if cpu_limit <= min_cpu < 2:
             for cpu_fraction in [0.25, 0.5, 1]:
                 if cpu_fraction < min_cpu:
                     continue
@@ -1554,6 +1599,9 @@ class Gcp(CloudBase):
                     custom_instance_types[instance_type.type_name] = instance_type
         min_cpu = 2
         for cpu in range(min_cpu, max_cpu, cpu_step):
+            # generate nearest flavors
+            if cpu_limit and not cpu_limit <= cpu < cpu_limit + cpu_step:
+                continue
             size_ram_max_gb = cpu * max_ram_per_cpu
             if size_ram_max_gb > max_ram_gb:
                 size_ram_max_gb = max_ram_gb
@@ -1567,8 +1615,11 @@ class Gcp(CloudBase):
                 ram_gb = self.mbs_to_gbs(ram_mb)
                 if (cpu, ram_gb) in predefined_flavors:
                     continue
-                flavor_name = f"{source_instance_type.family}-custom" \
-                              f"-{cpu}-{ram_mb}"
+                flavor_name = f"custom-{cpu}-{ram_mb}"
+                if source_instance_type.family != "n1":
+                    flavor_name = f"{source_instance_type.family}-" + flavor_name
+                if ram_gb > cpu * family_max_ram_per_cpu:
+                    flavor_name = flavor_name + '-ext'
                 instance_type = InstanceType(
                     type_name=flavor_name, cpu_cores=cpu, ram_gb=ram_gb,
                     family=source_instance_type.family, custom=True,
@@ -1582,7 +1633,7 @@ class Gcp(CloudBase):
             self, machine_family_prices: Dict[Tuple, MachineFamilyResourcePrice],
             source_flavor_id: str=None, mode: str=None,
             instance_types: Dict[str, InstanceType]=None,
-            region: str=None
+            region: str=None, cpu: float=0
     ):
         custom_instance_types = {}
         source_instance_type = InstanceType(source_flavor_id)
@@ -1607,11 +1658,14 @@ class Gcp(CloudBase):
                         instance_type.type_name = instance_type.type_name.replace(
                             str(instance_type.cpu_cores), cpu_name
                         )
+                if (source_flavor_id.endswith('-ext') and
+                        source_flavor_id[:-4] == instance_type.type_name):
+                    instance_type.type_name = source_flavor_id
                 custom_instance_types[instance_type.type_name] = instance_type
             else:
                 # generate available custom instance types by family
                 custom_instance_types = self._generate_instance_types(
-                    source_instance_type, instance_types, region)
+                    source_instance_type, instance_types, region, cpu)
         return custom_instance_types
 
     @staticmethod
@@ -1620,8 +1674,7 @@ class Gcp(CloudBase):
 
     def get_instance_types_priced(
             self, region: str, source_flavor_id: str=None, mode: str=None,
-            use_usd_price: bool=True
-    ) -> Dict[str, dict]:
+            cpu: float=0, use_usd_price: bool=True) -> Dict[str, dict]:
         instance_types = self.get_instance_types(region)
         machine_family_prices = self._get_machine_family_resource_prices(
             region, use_usd_price)
@@ -1631,7 +1684,7 @@ class Gcp(CloudBase):
                 mode != "current" and source_flavor_id):
             custom_types = self.get_custom_instance_types(
                 machine_family_prices, source_flavor_id, mode, instance_types,
-                region
+                region, cpu
             )
             instance_types.update(custom_types)
         result = {}
@@ -1734,6 +1787,7 @@ class Gcp(CloudBase):
                 "latitude": 24.07555,
                 "longitude": 120.545067,
                 "name": "APAC",
+                "alias": "Taiwan"
             },
             "asia-east2": {
                 "latitude": 22.396427,
@@ -1813,7 +1867,8 @@ class Gcp(CloudBase):
             "europe-west1": {
                 "latitude": 50.45,
                 "longitude": 3.816667,
-                "name": "EMEA"
+                "name": "EMEA",
+                "alias": "Belgium"
             },
             "europe-west2": {
                 "latitude": 51.507222,

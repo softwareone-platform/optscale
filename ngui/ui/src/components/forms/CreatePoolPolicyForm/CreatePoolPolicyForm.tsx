@@ -6,6 +6,7 @@ import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { FIELD_NAMES } from "./constants";
 import { PolicyLimitInput, PolicyTypeSelector, PoolSelector } from "./FormElements";
@@ -21,6 +22,8 @@ const CreatePoolPolicyForm = ({
   isDataReady = false,
   isSubmitLoading = false
 }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const methods = useForm({
     defaultValues: {
       [POOL_ID]: "",
@@ -112,7 +115,11 @@ const CreatePoolPolicyForm = ({
                 type="submit"
                 isLoading={isGetLoading || isSubmitLoading}
                 dataTestId="btn_save"
-                disabled={isSubmitDisabled()}
+                disabled={isRestricted || isSubmitDisabled()}
+                tooltip={{
+                  show: isRestricted,
+                  value: restrictionReasonMessage
+                }}
               />
               <Button dataTestId="btn_cancel" messageId="cancel" onClick={onCancel} />
             </Box>

@@ -17,7 +17,8 @@ import {
   DataSourcesField,
   RegionsField,
   InstanceTypesField,
-  TasksField
+  TasksField,
+  MaximumRunsetRunners
 } from "./FormElements";
 import { FormValues } from "./types";
 
@@ -50,12 +51,6 @@ const MlRunsetTemplateForm = ({ tasks, dataSources, onSubmit, onCancel, isLoadin
           }
         }}
       />
-      {/* <InlineSeverityAlert
-        messageId="runsetTemplateDescription"
-        sx={{
-          width: "100%"
-        }}
-      /> */}
       <form
         data-test-id="runset_template_form"
         onSubmit={handleSubmit((formData) => {
@@ -77,7 +72,8 @@ const MlRunsetTemplateForm = ({ tasks, dataSources, onSubmit, onCancel, isLoadin
 
                 return [hyperparameterName, hyperparameterEnvironmentVariable];
               })
-            )
+            ),
+            max_runner_num: Number(formData[FIELD_NAMES.MAXIMUM_RUNSET_RUNNERS])
           };
 
           onSubmit(data);
@@ -97,6 +93,7 @@ const MlRunsetTemplateForm = ({ tasks, dataSources, onSubmit, onCancel, isLoadin
         <InstanceTypesField isLoading={isGetRunsetTemplateLoading} />
         <MaximumParallelRunsField />
         {isFinOpsEnabled && <MaximumRunsetBudgetField isLoading={isGetRunsetTemplateLoading} />}
+        <MaximumRunsetRunners isLoading={isGetRunsetTemplateLoading} />
         <PrefixField isLoading={isGetRunsetTemplateLoading} />
         <CustomTagField isLoading={isGetRunsetTemplateLoading} />
         <HyperparametersFieldArray isLoading={isGetRunsetTemplateLoading} />

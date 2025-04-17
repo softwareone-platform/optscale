@@ -17,6 +17,7 @@ import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { type PowerScheduleResponse } from "services/PowerScheduleService";
 import { CREATE_POWER_SCHEDULE } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -43,6 +44,8 @@ const PowerSchedules = ({
   updatingEntityId,
   isLoadingProps = {}
 }: PowerSchedulesProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
   const intl = useIntl();
@@ -85,7 +88,12 @@ const PowerSchedules = ({
                   color: "error",
                   dataTestId: `btn_deactivate_${index}`,
                   isLoading: updatingEntityId === id && isUpdatePowerScheduleLoading,
-                  action: () => onDeactivate(id)
+                  action: () => onDeactivate(id),
+                  disabled: isRestricted,
+                  tooltip: {
+                    show: isRestricted,
+                    value: restrictionReasonMessage
+                  }
                 }
               : {
                   key: "activate",
@@ -94,7 +102,12 @@ const PowerSchedules = ({
                   color: "success",
                   dataTestId: `btn_activate_${index}`,
                   isLoading: updatingEntityId === id && isUpdatePowerScheduleLoading,
-                  action: () => onActivate(id)
+                  action: () => onActivate(id),
+                  disabled: isRestricted,
+                  tooltip: {
+                    show: isRestricted,
+                    value: restrictionReasonMessage
+                  }
                 },
             {
               key: "deletePowerSchedule",
@@ -219,10 +232,12 @@ const PowerSchedules = ({
   }, [
     intl,
     isManagePowerScheduleAllowed,
+    isRestricted,
     isUpdatePowerScheduleLoading,
     onActivate,
     onDeactivate,
     openSideModal,
+    restrictionReasonMessage,
     updatingEntityId
   ]);
 

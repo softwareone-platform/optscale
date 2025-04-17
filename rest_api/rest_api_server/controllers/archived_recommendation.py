@@ -126,7 +126,7 @@ class ArchivedRecommendationsDetailsController(BaseArchivedRecommendations):
                 res.append({self._get_pipeline_filter_key(k): v})
         return res
 
-    def _build_pipeline(self, match_filter, limit=None, start_from=0):
+    def _build_pipeline(self, match_filter, limit=None, offset=0):
         if limit is None:
             limit = '$count'
         res = [
@@ -141,7 +141,7 @@ class ArchivedRecommendationsDetailsController(BaseArchivedRecommendations):
             }},
             {"$project": {
                 '_id': 0,
-                "items": {"$slice": ['$items', start_from, limit]},
+                "items": {"$slice": ['$items', offset, limit]},
                 'count': 1
             }},
         ]
@@ -149,10 +149,10 @@ class ArchivedRecommendationsDetailsController(BaseArchivedRecommendations):
 
     def _get_data(self, organization_id, **params):
         limit = params.pop('limit', None)
-        start_from = params.pop('start_from')
+        offset = params.pop('offset')
         match_filter = self._get_pipeline_filter(organization_id, **params)
         pipeline = self._build_pipeline(
-            match_filter, limit=limit, start_from=start_from)
+            match_filter, limit=limit, offset=offset)
         return list(self.archived_recommendations_collection.aggregate(
             pipeline))
 

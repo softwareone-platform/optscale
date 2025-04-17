@@ -20,6 +20,7 @@ const MlRunsetTemplateEdit = ({ runsetTemplate, tasks, dataSources, onSubmit, on
     const {
       name,
       budget,
+      max_runner_num: maximumRunsetRunners,
       name_prefix: resourceNamePrefix,
       tags = {},
       hyperparameters = {},
@@ -34,6 +35,7 @@ const MlRunsetTemplateEdit = ({ runsetTemplate, tasks, dataSources, onSubmit, on
     return {
       [FIELD_NAMES.NAME]: name,
       [FIELD_NAMES.BUDGET]: budget,
+      [FIELD_NAMES.MAXIMUM_RUNSET_RUNNERS]: maximumRunsetRunners,
       [FIELD_NAMES.RESOURCE_NAME_PREFIX]: resourceNamePrefix,
       [FIELD_NAMES.TAG_KEY]: tagKey,
       [FIELD_NAMES.TAG_VALUE]: tagName,

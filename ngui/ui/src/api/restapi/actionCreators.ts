@@ -2270,7 +2270,7 @@ export const getMlArtifacts = (organizationId, params = {}) =>
     params: {
       limit: params.limit,
       run_id: params.runId,
-      start_from: params.startFrom,
+      offset: params.offset,
       text_like: params.textLike,
       created_at_gt: params.createdAtGt,
       created_at_lt: params.createdAtLt,

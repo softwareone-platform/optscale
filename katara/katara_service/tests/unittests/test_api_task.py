@@ -150,3 +150,11 @@ class TestTasktApi(TestBase):
         }
         code, _ = self.client.tasks_create([task_payload])
         self.assertEqual(code, 400)
+
+    @patch(PUT_TASK)
+    def test_task_update_completed_no_schedule(self, _p_put_tasks):
+        tasks = self.generate_tasks(1)
+        self.client.schedule_delete(tasks[0].schedule_id)
+        code, _ = self.client.task_update(
+            tasks[0].id, state='completed')
+        self.assertEqual(code, 200)

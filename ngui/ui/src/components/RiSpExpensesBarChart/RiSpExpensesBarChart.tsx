@@ -31,7 +31,7 @@ const getChartData = (breakdown) =>
         const spCostHrsAggregated = round(spCostWithOffer + itemSpCostWithOffer, 2);
         const riCostHrsAggregated = round(riCostWithOffer + itemRiCostWithOffer, 2);
         const totalCostWithHrsAggregated = round(totalCostWithOffer + itemTotalCostWithOffer, 2);
-        const totalCostWithoutHrsAggregated = round(totalCostWithoutOffer + itemTotalCostWithoutOffer);
+        const totalCostWithoutHrsAggregated = round(totalCostWithoutOffer + itemTotalCostWithoutOffer, 2);
 
         return {
           ...result,

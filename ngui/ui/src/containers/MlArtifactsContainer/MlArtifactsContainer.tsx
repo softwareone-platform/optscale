@@ -153,7 +153,7 @@ const MlArtifactsContainer = ({
   const params = useMemo(
     () => ({
       limit: PAGE_SIZE,
-      startFrom: pageIndex * PAGE_SIZE,
+      offset: pageIndex * PAGE_SIZE,
       runId,
       textLike: searchValue,
       createdAtGt: debouncedRange[0],

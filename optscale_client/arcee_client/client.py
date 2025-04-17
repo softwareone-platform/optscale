@@ -526,6 +526,17 @@ class Client:
         }
         return self.post(self.tokens_url(), b)
 
+    def token_update(self, token_or_id: str, disabled: bool):
+        """
+        :param token_or_id: id or token
+        :param disabled: is token disabled
+        :return:
+        """
+        params = {
+            "disabled": disabled,
+        }
+        return self.patch(self.tokens_url(token_or_id), params)
+
     def token_delete(self, id: str):
         """
         :param id: id or token

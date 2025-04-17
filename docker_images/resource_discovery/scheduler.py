@@ -1,16 +1,15 @@
 import logging
 import os
 import requests
-from datetime import datetime
 from kombu import Connection as QConnection, Exchange
 from kombu.pools import producers
 from collections import defaultdict
 
 from tools.cloud_adapter.cloud import Cloud
 from tools.cloud_adapter.model import RES_MODEL_MAP
+from tools.optscale_time import utcnow, utcnow_timestamp
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from tools.optscale_time import utcnow, utcnow_timestamp
 
 LOG = logging.getLogger(__name__)
 IGNORED_CLOUD_TYPES = ['environment']
@@ -88,7 +87,8 @@ def _update_discovery_info(rest_cl, cloud_account_type, cloud_account_id,
 def process(config_cl):
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False,
                          secret=config_cl.cluster_secret())
-    _, response = rest_cl.organization_list({'with_connected_accounts': True})
+    _, response = rest_cl.organization_list({
+        'with_connected_accounts': True, 'disabled': False})
     tasks_map = defaultdict(list)
     now = utcnow_timestamp()
     _, _, _, observe_timeout = config_cl.resource_discovery_params()

@@ -27,19 +27,8 @@ import {
   ServiceAccountCredentialsDescription
 } from "components/NebiusConfigFormElements";
 import QuestionMark from "components/QuestionMark";
-import {
-  AWS_ROOT_CONNECT_CONFIG_SCHEMES,
-  AWS_ROOT_ACCOUNT,
-  AWS_LINKED_ACCOUNT,
-  AZURE_SUBSCRIPTION,
-  AZURE_TENANT_ACCOUNT,
-  KUBERNETES,
-  ALIBABA_ACCOUNT,
-  GCP_ACCOUNT,
-  NEBIUS_ACCOUNT,
-  DATABRICKS_ACCOUNT,
-  GCP_TENANT_ACCOUNT
-} from "utils/constants";
+import { AWS_ROOT_CONNECT_CONFIG_SCHEMES, CONNECTION_TYPES } from "utils/constants";
+import { ObjectValues } from "utils/types";
 
 export const AWS_ROOT_INPUTS_FIELD_NAMES = {
   IS_FIND_REPORT: "isFindReport",
@@ -122,27 +111,29 @@ const NebiusInputs = () => (
   </>
 );
 
-const ConnectionInputs = ({ connectionType }) => {
+type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
+
+const ConnectionInputs = ({ connectionType }: { connectionType: ConnectionType }) => {
   switch (connectionType) {
-    case AWS_ROOT_ACCOUNT:
+    case CONNECTION_TYPES.AWS_ROOT:
       return <AwsRootInputs />;
-    case AWS_LINKED_ACCOUNT:
+    case CONNECTION_TYPES.AWS_LINKED:
       return <AwsLinkedCredentials />;
-    case AZURE_TENANT_ACCOUNT:
+    case CONNECTION_TYPES.AZURE_TENANT:
       return <AzureTenantCredentials />;
-    case AZURE_SUBSCRIPTION:
+    case CONNECTION_TYPES.AZURE_SUBSCRIPTION:
       return <AzureSubscriptionCredentials />;
-    case ALIBABA_ACCOUNT:
+    case CONNECTION_TYPES.ALIBABA:
       return <AlibabaCredentials />;
-    case GCP_ACCOUNT:
+    case CONNECTION_TYPES.GCP_PROJECT:
       return <GcpCredentials />;
-    case GCP_TENANT_ACCOUNT:
+    case CONNECTION_TYPES.GCP_TENANT:
       return <GcpTenantCredentials />;
-    case NEBIUS_ACCOUNT:
+    case CONNECTION_TYPES.NEBIUS:
       return <NebiusInputs />;
-    case DATABRICKS_ACCOUNT:
+    case CONNECTION_TYPES.DATABRICKS:
       return <DatabricksCredentials />;
-    case KUBERNETES:
+    case CONNECTION_TYPES.KUBERNETES:
       return <KubernetesCredentials />;
     default:
       return null;

@@ -36,8 +36,18 @@ class TokenStore(object):
             raise UnauthorizedException(Err.OA0011, [])
 
     def check_permissions(self, user, action_name, context, ass_type,
-                          scope_id=None):
+                          scope_id=None, org_disabled=False):
         actions = {action_name}
+        if org_disabled:
+            # for disabled organization only optscale_member role actions
+            # allowed
+            member_actions = self.session.query(Action).join(
+                RoleAction, RoleAction.action_id == Action.id).join(
+                Role, and_(
+                    Role.purpose == 'optscale_member',
+                    RoleAction.role_id == Role.id)).all()
+            if action_name not in list(map(lambda x: x.name, member_actions)):
+                raise ForbiddenException(Err.OA0074, [])
         if user is None:
             raise ForbiddenException(Err.OA0012, [])
         context_values = get_context_values(context)

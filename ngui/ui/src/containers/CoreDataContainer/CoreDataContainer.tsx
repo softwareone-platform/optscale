@@ -1,6 +1,5 @@
-import { useQuery } from "@apollo/client";
-import { CircularProgress } from "@mui/material";
-import Backdrop from "components/Backdrop";
+import { ReactNode } from "react";
+import { ApolloError, useQuery } from "@apollo/client";
 import { GET_ORGANIZATION_ALLOWED_ACTIONS } from "graphql/api/auth/queries";
 import {
   GET_ORGANIZATIONS,
@@ -12,15 +11,37 @@ import {
   GET_ORGANIZATION_THEME_SETTINGS,
   GET_ORGANIZATION_PERSPECTIVES
 } from "graphql/api/restapi/queries";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { PENDING_INVITATIONS } from "urls";
 import { getQueryParams, removeQueryParam } from "utils/network";
 
-const CoreDataContainer = ({ children }) => {
+type CoreDataContainerProps = {
+  render: (props: {
+    organizationId: string;
+    error: ApolloError | undefined;
+    isLoadingProps: {
+      getOrganizationsLoading: boolean;
+      getOrganizationAllowedActionsLoading: boolean;
+      getCurrentEmployeeLoading: boolean;
+      getDataSourcesLoading: boolean;
+      getInvitationsLoading: boolean;
+      getOrganizationFeaturesLoading: boolean;
+      getOptscaleCapabilityLoading: boolean;
+      getOrganizationThemeSettingsLoading: boolean;
+      getOrganizationPerspectivesLoading: boolean;
+    };
+  }) => ReactNode;
+};
+
+const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
   const updateScope = useUpdateScope();
 
-  const { loading: getOrganizationsLoading, error: getOrganizationsError } = useQuery(GET_ORGANIZATIONS, {
+  const {
+    loading: getOrganizationsLoading,
+    error: getOrganizationsError,
+    data: getOrganizationsData
+  } = useQuery(GET_ORGANIZATIONS, {
     onCompleted: (data) => {
       const { organizationId } = getQueryParams() as { organizationId: string };
 
@@ -40,7 +61,7 @@ const CoreDataContainer = ({ children }) => {
     }
   });
 
-  const { organizationId } = useOrganizationInfo();
+  const { organizationId } = useCurrentOrganization(getOrganizationsData?.organizations);
 
   const skipRequest = !organizationId;
 
@@ -108,17 +129,6 @@ const CoreDataContainer = ({ children }) => {
     }
   );
 
-  const isLoading =
-    getOrganizationsLoading ||
-    getOrganizationAllowedActionsLoading ||
-    getCurrentEmployeeLoading ||
-    getDataSourcesLoading ||
-    getInvitationsLoading ||
-    getOrganizationFeaturesLoading ||
-    getOptscaleCapabilityLoading ||
-    getOrganizationThemeSettingsLoading ||
-    getOrganizationPerspectivesLoading;
-
   const error =
     getOrganizationsError ||
     getOrganizationAllowedActionsError ||
@@ -130,15 +140,21 @@ const CoreDataContainer = ({ children }) => {
     getOrganizationThemeSettingsError ||
     getOrganizationPerspectivesError;
 
-  if (isLoading) {
-    return (
-      <Backdrop aboveDrawers>
-        <CircularProgress />
-      </Backdrop>
-    );
-  }
-
-  return error ? "tbd error" : children;
+  return render({
+    organizationId,
+    error,
+    isLoadingProps: {
+      getOrganizationsLoading,
+      getOrganizationAllowedActionsLoading,
+      getCurrentEmployeeLoading,
+      getDataSourcesLoading,
+      getInvitationsLoading,
+      getOrganizationFeaturesLoading,
+      getOptscaleCapabilityLoading,
+      getOrganizationThemeSettingsLoading,
+      getOrganizationPerspectivesLoading
+    }
+  });
 };
 
 export default CoreDataContainer;

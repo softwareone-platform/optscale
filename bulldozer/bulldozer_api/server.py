@@ -52,10 +52,6 @@ class RunsetState(int, Enum):
     STOPPED = 6
 
 
-# runner number is limited
-MAX_RUNNER_NUM = 15
-
-
 def get_db_params() -> Tuple[str, str]:
     db_params = config_client.bulldozer_params()
     return asyncio.run(db_params)
@@ -102,7 +98,7 @@ async def extract_token(request):
     return token
 
 
-async def check_token(token):
+async def check_token(token, request):
     token = await db.token.find_one({
         "$and": [
             {"deleted_at": 0},
@@ -111,6 +107,8 @@ async def check_token(token):
     })
     if not token:
         raise SanicException("Token not found", status_code=401)
+    if request.method != "GET" and token.get("disabled"):
+        raise SanicException("Token is disabled", status_code=401)
 
 
 async def extract_secret(request, raise_on):
@@ -183,6 +181,37 @@ async def create_token(request):
     return json(d)
 
 
+@app.route('/bulldozer/v2/tokens/<token>', methods=["PATCH", ])
+async def update_token(request, token: str):
+    """
+    updates token
+    :param request:
+    :param token:
+    :return:
+    """
+    await check_secret(request)
+    doc = request.json
+    o = await db.token.find_one({
+        "$and": [
+            {"deleted_at": 0},
+            {
+                "$or": [
+                    {"token": token},
+                    {"_id": token}
+                ]
+            }
+        ]
+    })
+    if not o:
+        raise SanicException("Token not found", status_code=404)
+    if "disabled" in doc:
+        await db.token.update_one({"_id": o["_id"]},
+                                  {"$set": {"disabled": request.json.get(
+                                      "disabled")}})
+        o = await db.token.find_one({"_id": o["_id"]})
+    return json(o)
+
+
 @app.route('/bulldozer/v2/tokens/<token>', methods=["DELETE", ])
 async def delete_token(request, token: str):
     """
@@ -217,7 +246,7 @@ async def delete_token(request, token: str):
 @app.route('/bulldozer/v2/templates', methods=["POST", ])
 async def create_template(request):
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     doc = request.json
     # TODO: validators
     template_name = doc.get("name")
@@ -271,6 +300,13 @@ async def create_template(request):
         "created_at": utcnow_timestamp(),
         "deleted_at": 0
     }
+    if "max_runner_num" in doc:
+        max_runner_num = doc["max_runner_num"]
+        if not isinstance(max_runner_num, int) or max_runner_num <= 0:
+            raise SanicException(
+                "max_runner_num should be integer greater than 0",
+                status_code=400)
+        d["max_runner_num"] = doc["max_runner_num"]
     await db.template.insert_one(d)
     await publish_activities_task(
         token, runset_template_id, template_name, "runset_template",
@@ -287,7 +323,7 @@ async def get_templates(request):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     # TODO: exclude deleted
     res = [doc async for doc in db.template.find(
         {"$and": [
@@ -306,7 +342,7 @@ async def get_template(request, id_: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     o = await db.template.find_one(
         {"$and": [
             {"token": token},
@@ -327,7 +363,7 @@ async def update_template(request, id_: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     o = await db.template.find_one(
         {"$and": [
             {"token": token},
@@ -397,6 +433,15 @@ async def update_template(request, id_: str):
     hp = doc.get("hyperparameters")
     if hp is not None:
         d.update({"hyperparameters": hp})
+
+    max_runner_num = doc.get("max_runner_num")
+    if max_runner_num is not None:
+        if not isinstance(max_runner_num, int) or max_runner_num < 0:
+            raise SanicException(
+                "max_runner_num should be integer greater than 0",
+                status_code=400)
+        d.update({"max_runner_num": max_runner_num})
+
     if d:
         await db.template.update_one(
             {"_id": id_}, {'$set': d})
@@ -416,7 +461,7 @@ async def delete_template(request, id_: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     # TODO: deleted?
     o = await db.template.find_one({"token": token, "_id": id_})
     if not o:
@@ -508,7 +553,7 @@ async def create_runset(request, template_id: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     doc = request.json
     # TODO: validators
     o = await db.template.find_one(
@@ -564,8 +609,10 @@ async def create_runset(request, template_id: str):
     # TODO: create runners
     runners_hp = permutation(hyperparameters)
     runners = list()
+    max_runner_num = o["max_runner_num"]
     for num, i in enumerate(runners_hp):
-        if num == MAX_RUNNER_NUM:
+        if num == max_runner_num:
+            logger.info("Max runner limit is reached")
             break
         id_ = await _create_runner(
             runset_id,
@@ -606,7 +653,7 @@ async def get_runsets(request, template_id: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     # TODO: exclude deleted
     res = [doc async for doc in db.runset.find({"token": token,
                                                 "template_id": template_id})]
@@ -626,7 +673,7 @@ async def get_runset(request, id_: str):
     res = await check_secret(request, False)
     if not res:
         token = await extract_token(request)
-        await check_token(token)
+        await check_token(token, request)
     if token:
         o = await db.runset.find_one({"token": token, "_id": id_})
     else:
@@ -657,7 +704,7 @@ async def set_runset_state(request, id_: str):
     res = await check_secret(request, False)
     if not res:
         token = await extract_token(request)
-        await check_token(token)
+        await check_token(token, request)
     if token:
         o = await db.runset.find_one({"token": token, "_id": id_})
     else:
@@ -715,7 +762,7 @@ async def get_runners(request, id_: str):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
     # TODO: exclude deleted
     runners = [doc async for doc in db.runner.find({"token": token,
                                                     "runset_id": id_})]
@@ -758,7 +805,7 @@ async def bulk_get_runners(request):
     :return:
     """
     token = await extract_token(request)
-    await check_token(token)
+    await check_token(token, request)
 
     runset_ids = []
     runset_id = "runset_id"

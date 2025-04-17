@@ -16,10 +16,12 @@ const renderActions = (items, allowedItems, isGetAllowedActionsLoading) => {
       onClick={item.action}
       disabled={item.disabled}
       isLoading={(isGetAllowedActionsLoading && !isEmpty(item.requiredActions)) || item.isLoading}
-      tooltip={{
-        show: true,
-        value: <FormattedMessage id={item.messageId} />
-      }}
+      tooltip={
+        item.tooltip ?? {
+          show: true,
+          value: <FormattedMessage id={item.messageId} />
+        }
+      }
     />
   ));
 };

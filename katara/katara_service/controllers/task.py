@@ -97,7 +97,8 @@ class TaskController(BaseController):
                     task.completed_at = now
                     self.session.add(task)
                     # child obj changes are possible only if obj in session
-                    task.schedule.last_run = now
+                    if task.schedule:
+                        task.schedule.last_run = now
                 self.session.add(task)
                 self.session.commit()
         except IntegrityError as ex:

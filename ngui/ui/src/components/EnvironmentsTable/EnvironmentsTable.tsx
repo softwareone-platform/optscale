@@ -28,6 +28,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { ENVIRONMENTS_TOUR_IDS } from "components/Tour";
 import UpcomingBooking from "components/UpcomingBooking";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ENVIRONMENTS_TABLE } from "reducers/columns";
 import { ENVIRONMENT_CREATE } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
@@ -88,6 +89,8 @@ const getUniqueSortedEnvironmentProperties = (data) => {
 const getProductTourIdForDynamicField = (field) => ENVIRONMENT_TOUR_IDS_BY_DYNAMIC_FIELDS[field] || undefined;
 
 const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = {} }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const openSideModal = useOpenSideModal();
 
   const {
@@ -133,7 +136,12 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
         isLoading: (isUpdateEnvironmentLoading && id === entityId) || isGetResourceAllowedActionsLoading,
         color,
         requiredActions: ["MANAGE_RESOURCES"],
-        dataTestId: `${dataTestId}_${index}`
+        dataTestId: `${dataTestId}_${index}`,
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       };
     };
 
@@ -415,7 +423,16 @@ const EnvironmentsTable = ({ data, onUpdateActivity, entityId, isLoadingProps = 
         )
       }
     ];
-  }, [isUpdateEnvironmentLoading, entityId, isGetResourceAllowedActionsLoading, onUpdateActivity, tableData, openSideModal]);
+  }, [
+    entityId,
+    isGetResourceAllowedActionsLoading,
+    isRestricted,
+    isUpdateEnvironmentLoading,
+    onUpdateActivity,
+    openSideModal,
+    restrictionReasonMessage,
+    tableData
+  ]);
 
   return isGetEnvironmentsLoading ? (
     <TableLoader columnsCounter={5} showHeader />

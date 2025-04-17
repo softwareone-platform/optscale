@@ -5,11 +5,14 @@ import DeleteEntity from "components/DeleteEntity";
 import ResourceLabel from "components/ResourceLabel";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { resourceLocation } from "utils/columns";
 import { getCloudResourceIdentifier } from "utils/resources";
 import { RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 
 const RemoveInstancesFromSchedule = ({ instancesToRemove, onDelete, onCancel, isLoading = false }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const tableData = useMemo(() => instancesToRemove, [instancesToRemove]);
 
   const columns = useMemo(
@@ -47,7 +50,12 @@ const RemoveInstancesFromSchedule = ({ instancesToRemove, onDelete, onCancel, is
       isLoading={isLoading}
       deleteButtonProps={{
         messageId: "remove",
-        onDelete
+        onDelete,
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_remove_instances_from_schedule",

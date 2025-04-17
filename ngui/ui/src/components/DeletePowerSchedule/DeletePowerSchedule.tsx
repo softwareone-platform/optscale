@@ -1,5 +1,5 @@
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 type DeletePowerScheduleProps = {
   name: string;
@@ -9,7 +9,7 @@ type DeletePowerScheduleProps = {
 };
 
 const DeletePowerSchedule = ({ name, onSubmit, onCancel, isLoading = false }: DeletePowerScheduleProps) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <DeleteEntity
@@ -20,8 +20,11 @@ const DeletePowerSchedule = ({ name, onSubmit, onCancel, isLoading = false }: De
         color: "error",
         variant: "contained",
         onDelete: onSubmit,
-        disabled: isDemo,
-        tooltip: { show: isDemo, messageId: "notAvailableInLiveDemo" }
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete_power_schedule",

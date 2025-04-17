@@ -15,14 +15,15 @@ import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { getCreateAssignmentRuleUrl, getEditAssignmentRuleUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { conditions, name, poolOwner, priority } from "./columns";
 import prepareData from "./utils/prepareData";
 
-const isPriorityActionDisabled = (rulePriority, condition) => rulePriority === condition;
-
 const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpdatePriority }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { isGetAssignmentRulesLoading, isGetManagedPoolsLoading } = isLoadingProps;
 
   const isManageAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
@@ -71,6 +72,11 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         dataTestId: "btn_prioritize",
         action: (rowDataId) => {
           onUpdatePriority(rowDataId, "prioritize");
+        },
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       },
       {
@@ -80,6 +86,11 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         dataTestId: "btn_promote",
         action: (rowDataId) => {
           onUpdatePriority(rowDataId, "promote");
+        },
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       },
       {
@@ -89,6 +100,11 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         dataTestId: "btn_demote",
         action: (rowDataId) => {
           onUpdatePriority(rowDataId, "demote");
+        },
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       },
       {
@@ -98,6 +114,11 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
         dataTestId: "btn_deprioritize",
         action: (rowDataId) => {
           onUpdatePriority(rowDataId, "deprioritize");
+        },
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       }
     ];
@@ -119,24 +140,32 @@ const AssignmentRulesTable = ({ rules, managedPools, isLoadingProps = {}, onUpda
               id: "actions",
               cell: ({ row: { id, original } }) => (
                 <TableCellActions
-                  items={[...priorityActions, ...basicActions].map((item) => ({
-                    key: item.messageId,
-                    messageId: item.messageId,
-                    color: item.color,
-                    dataTestId: `${item.dataTestId}_${id}`,
-                    disabled: item.disabledPriority
-                      ? isPriorityActionDisabled(original.priority, item.disabledPriority)
-                      : false,
-                    icon: item.icon,
-                    action: () => item.action(original.id)
-                  }))}
+                  items={[
+                    ...priorityActions.map((item) => ({
+                      key: item.messageId,
+                      messageId: item.messageId,
+                      dataTestId: `${item.dataTestId}_${id}`,
+                      disabled: item.disabled || original.priority === item.disabledPriority,
+                      icon: item.icon,
+                      tooltip: item.tooltip,
+                      action: () => item.action(original.id)
+                    })),
+                    ...basicActions.map((item) => ({
+                      key: item.messageId,
+                      messageId: item.messageId,
+                      icon: item.icon,
+                      action: () => item.action(original.id),
+                      dataTestId: `${item.dataTestId}_${id}`,
+                      color: item.color
+                    }))
+                  ]}
                 />
               )
             }
           ]
         : [])
     ];
-  }, [rulesCount, navigate, onUpdatePriority, openSideModal, isManageAllowed]);
+  }, [isRestricted, restrictionReasonMessage, rulesCount, isManageAllowed, navigate, openSideModal, onUpdatePriority]);
 
   const actionBarDefinition = {
     items: [

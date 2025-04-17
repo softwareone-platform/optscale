@@ -14,7 +14,8 @@ from rest_api.rest_api_server.controllers.register import RegisterAsyncControlle
 from rest_api.rest_api_server.utils import ModelEncoder, run_task, check_int_attribute
 
 
-class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, BaseHandler):
+class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1,
+                                         BaseHandler):
     def _get_controller_class(self):
         return OrganizationAsyncController
 
@@ -45,6 +46,10 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                         description: Organization currency
                         required: False
                         default: USD
+                    disabled:
+                        type: boolean
+                        description: is organization disabled
+                        required: False
         responses:
             201:
                 description: Success (returns created object)
@@ -58,6 +63,7 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                         deleted_at: 0
                         is_demo: False
                         currency: USD
+                        disabled: False
             400:
                 description: |
                     Wrong arguments:
@@ -124,6 +130,11 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                 List of organizations with connected cloud accounts
             required: false
             type: boolean
+        -   name: disabled
+            in: query
+            description: List of enabled/disabled organizations
+            required: false
+            type: boolean
         -   name: limit
             in: query
             description: |
@@ -163,6 +174,8 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
                                         description: "Is demo organization or not"}
                                     currency: {type: string,
                                         description: "Organization currency"}
+                                    disabled: {type: boolean,
+                                        description: "Is organization disabled"}
             400: {description: "Unauthorized: \n\n
                 - OE0212: Unexpected parameters\n\n
                 - OE0536: Invalid currency\n\n
@@ -218,6 +231,9 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1, 
         except WrongArgumentsException as ex:
             raise OptHTTPError.from_opt_exception(400, ex)
         args.update(pagination_args)
+        disabled = self.get_arg('disabled', bool)
+        if disabled is not None:
+            args['disabled'] = disabled
         unexpected_args = list(filter(
             lambda x: x not in args.keys(), self.request.arguments.keys()))
         if unexpected_args:
@@ -262,6 +278,8 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                             description: "Is demo organization or not"}
                         currency: {type: string,
                             description: "Organization currency"}
+                        disabled: {type: boolean,
+                            description: "Is organization disabled or not"}
             400:
                 description: |
                     Wrong arguments:
@@ -318,6 +336,10 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                         example: USD
                         description: new organization currency
                         required: False
+                    disabled:
+                        type: boolean
+                        description: is organization disabled
+                        required: False
         responses:
             200:
                 description: Modified organization
@@ -338,7 +360,8 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                 - OE0224: Wrong int argument value \n\n
                 - OE0214: Argument should be a string \n\n
                 - OE0215: Wrong argument's length \n\n
-                - OE0536: Invalid currency"}
+                - OE0536: Invalid currency \n\n
+                - OE0561: Cannot use disabled without secret"}
             404: {description: "Not found: \n\n
                 - OE0002: Organization not found"}
             403:
@@ -346,6 +369,7 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                     Forbidden:
                     - OE0379: Target owner doesn't have enough permissions for target pool
                     - OE0234: Forbidden
+                    - OE0561: Cannot use disabled without secret
             401: {description: "Unauthorized: \n\n
                 - OE0235: Unauthorized\n\n
                 - OE0237: This resource requires authorization"}
@@ -358,6 +382,10 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
         - token: []
         - secret: []
         """
+        body = self._request_body()
+        if 'disabled' in body and not self.check_cluster_secret(raises=False):
+            raise OptHTTPError(403, Err.OE0561,
+                               ['disabled', 'secret'])
         await super().patch(id, **kwargs)
 
     async def delete(self, id, **kwargs):

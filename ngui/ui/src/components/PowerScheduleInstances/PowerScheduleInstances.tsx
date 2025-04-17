@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { AddInstanceToScheduleModal, RemoveInstancesFromScheduleModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { powerScheduleInstance, resourceLocation, resourcePoolOwner, size, tags } from "utils/columns";
 
@@ -37,7 +36,6 @@ type PowerScheduleInstancesProps = {
 
 const PowerScheduleInstances = ({ instances }: PowerScheduleInstancesProps) => {
   const { powerScheduleId } = useParams();
-  const { isDemo } = useOrganizationInfo();
 
   const openSideModal = useOpenSideModal();
 
@@ -45,6 +43,7 @@ const PowerScheduleInstances = ({ instances }: PowerScheduleInstancesProps) => {
     () =>
       instances.map((instance) => ({
         id: instance.id,
+        active: instance.active,
         cloud_resource_id: instance.cloud_resource_id,
         name: instance.name,
         owner_name: instance.details?.owner_name,
@@ -66,6 +65,7 @@ const PowerScheduleInstances = ({ instances }: PowerScheduleInstancesProps) => {
       powerScheduleInstance({
         idAccessor: "id",
         nameAccessor: "name",
+        activeAccessor: "active",
         headerDataTestId: "lbl_instance",
         titleMessageId: "instance"
       }),
@@ -145,8 +145,7 @@ const PowerScheduleInstances = ({ instances }: PowerScheduleInstancesProps) => {
             messageId: "removeInstancesFromSchedule",
             type: "button",
             dataTestId: "btn_delete_instances_from_schedule",
-            disabled: isEmptyArray(selectedRows) || isDemo,
-            tooltip: { show: isDemo, messageId: "notAvailableInLiveDemo" },
+            disabled: isEmptyArray(selectedRows),
             requiredActions: ["EDIT_PARTNER"],
             action: () =>
               openSideModal(RemoveInstancesFromScheduleModal, {
