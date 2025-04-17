@@ -106,9 +106,15 @@ class MetricsProcessor(object):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            user, password, host, db_name = self.config_cl.clickhouse_params()
-            self._clickhouse_client = ClickHouseClient(
-                host=host, password=password, database=db_name, user=user)
+            host, port, secure, user, password, db_name = self.config_cl.clickhouse_params()
+            self._clickhouse_cl = ClickHouseClient(
+                host=host,
+                port=port,
+                secure=secure,
+                user=user,
+                password=password,
+                database=db_name,
+            )
         return self._clickhouse_client
 
     @property
