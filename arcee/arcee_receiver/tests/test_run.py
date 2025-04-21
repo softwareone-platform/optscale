@@ -254,7 +254,7 @@ async def test_patch_invalid_params_types(app):
             assert response.status == 400
             assert "Input should be a valid dictionary" in response.text
 
-    for value in [48, "test", ['test']]:
+    for value in ["test", ['test']]:
         updates = {
             "finish": value
         }
@@ -262,7 +262,7 @@ async def test_patch_invalid_params_types(app):
                                          data=json.dumps(updates),
                                          headers={"x-api-key": TOKEN1})
         assert response.status == 400
-        assert "Input should be a valid boolean" in response.text
+        assert "Input should be a valid integer" in response.text
 
     for value in [1.11, "test", ['test']]:
         updates = {

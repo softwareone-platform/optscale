@@ -86,7 +86,7 @@ class Dataset(DatasetPostIn):
 
 
 class RunPatchIn(BaseClass):
-    finish: Optional[bool] = None
+    finish: Optional[int] = None
     tags: Optional[dict] = {}
     hyperparameters: Optional[dict] = {}
     reason: Optional[str] = None

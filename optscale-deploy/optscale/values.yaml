@@ -939,6 +939,15 @@ layout_cleaner:
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
 
+run_observer:
+  name: run-observer
+  image:
+    repository: run_observer
+    tag: *tag
+    pullPolicy: Never
+  startingDeadlineSeconds: 100
+  schedule: "*/30 * * * *"
+
 # list of databases to create (if not exist) during DC initialization
 databases:
   - auth-db

@@ -56,6 +56,7 @@ resource_violations:
 rest_api:
 risp_scheduler:
 risp_worker:
+run_observer:
 slacker:
 slacker_executor:
 trapper_scheduler:
