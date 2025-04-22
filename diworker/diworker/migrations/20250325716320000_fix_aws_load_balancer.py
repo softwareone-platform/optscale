@@ -71,7 +71,7 @@ class Migration(BaseMigration):
                 updates.clear()
             lb_id = lb_res_ids_map[exp["_id"]]
             cloud_res_id = exp["lineItem/ResourceId"]
-            if cloud_res_id in lb_res_ids_map:
+            if not cloud_res_id or cloud_res_id in lb_res_ids_map:
                 continue
             updates.append(UpdateOne(
                 {"_id": lb_id},
