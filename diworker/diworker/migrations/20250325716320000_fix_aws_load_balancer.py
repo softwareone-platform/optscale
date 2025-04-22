@@ -70,9 +70,12 @@ class Migration(BaseMigration):
                 self.mongo_resources.bulk_write(updates)
                 updates.clear()
             lb_id = lb_res_ids_map[exp["_id"]]
+            cloud_res_id = exp["lineItem/ResourceId"]
+            if cloud_res_id in lb_res_ids_map:
+                continue
             updates.append(UpdateOne(
                 {"_id": lb_id},
-                {"$set": {"cloud_resource_id": exp["lineItem/ResourceId"]}}))
+                {"$set": {"cloud_resource_id": cloud_res_id}}))
         if updates:
             self.mongo_resources.bulk_write(updates)
 
