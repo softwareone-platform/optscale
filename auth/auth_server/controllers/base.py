@@ -156,18 +156,9 @@ class BaseController(object):
 
         return dict(zip(range(len(type_list)), type_list))
 
-    def _get_organization(self, organization_id):
-        return self.restapi_client.organization_get(organization_id)
-
     def check_permissions(self, token, res_type, scope_id, action):
         try:
             context = self.get_context(res_type, scope_id)
-            organization_id = context.get('organization', [])
-            org_disabled = False
-            if organization_id:
-                _, organization = self._get_organization(organization_id[0])
-                if organization.get('disabled') is True:
-                    org_disabled = True
             scope_type_name = self.context_level[len(context)]
             try:
                 scope_type = self.session.query(Type).filter(
@@ -186,8 +177,7 @@ class BaseController(object):
             # get initiator user
             user = self.get_user(token)
             assignments = TokenStore(session=self.session).check_permissions(
-                user, action, context, scope_type, scope_id,
-                org_disabled=org_disabled)
+                user, action, context, scope_type, scope_id)
             LOG.info("Access granted: %s", ','.join(
                 str(x) for x in assignments))
             return assignments

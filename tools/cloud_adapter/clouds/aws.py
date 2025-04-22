@@ -536,7 +536,7 @@ class Aws(S3CloudMixin):
             tags = self._parse_lb_tags(tags)
             # ARN is not returned for classic LBs, generate it
             cloud_resource_id = (f'arn:aws:elasticloadbalancing:{region}:'
-                                 f'{self.config['account_id']}:'
+                                 f'{self.config["account_id"]}:'
                                  f'loadbalancer/{name}')
             lb_resource = LoadBalancerResource(
                 name=name,

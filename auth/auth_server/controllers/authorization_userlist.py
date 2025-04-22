@@ -41,7 +41,7 @@ class AuthorizationUserlistController(BaseController):
             elif exc.response.status_code == 404:
                 raise NotFoundException(Err.OA0003, [scope_type, scope_id])
             raise
-        context_values = get_context_values(context)
+        context_values, _ = get_context_values(context)
         scope_type_name = self.context_level[len(context)]
         actual_type = self.get_type_by_name(scope_type_name)
         allowed_lvls = ([x.id for x in actual_type.parent_tree] +

@@ -403,9 +403,6 @@ class TestAuthorize(TestAuthBase):
             self.db_session.add(val)
         self.db_session.commit()
         self.client.token = self.get_token(email, password)
-        patch("auth.auth_server.controllers.base."
-              "BaseController._get_organization",
-              return_value=(200, {'disabled': True})).start()
         body = {
             "resource_type": "organization",
             "action": "INFO_ORGANIZATION",
@@ -416,9 +413,28 @@ class TestAuthorize(TestAuthBase):
 
         body = {
             "resource_type": "organization",
-            "action": "EDIT_ORGANIZATION",
+            "action": "EDIT_PARTNER",
+            "uuid": org_id
+        }
+        code, _ = self.client.post('authorize', body)
+        self.assertEqual(code, 200)
+
+        p_get_context.return_value = {
+            "organization": [{org_id: ['INFO_ORGANIZATION']}]
+        }
+        body = {
+            "resource_type": "organization",
+            "action": "INFO_ORGANIZATION",
+            "uuid": org_id
+        }
+        code, resp = self.client.post('authorize', body)
+        self.assertEqual(code, 200)
+
+        body = {
+            "resource_type": "organization",
+            "action": "EDIT_PARTNER",
             "uuid": org_id
         }
         code, err = self.client.post('authorize', body)
         self.assertEqual(code, 403)
-        self.assertEqual(err['error']['error_code'], 'OA0074')
+        self.assertEqual(err['error']['error_code'], 'OA0012')

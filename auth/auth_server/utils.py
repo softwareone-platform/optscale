@@ -218,12 +218,19 @@ def popkey(obj, key):
 
 def get_context_values(context):
     values = list()
+    restrictions = {}
     for value in context.values():
         if isinstance(value, list):
-            values.extend(value)
+            for val in value:
+                if isinstance(val, dict):
+                    for k, v in val.items():
+                        values.append(k)
+                        restrictions[k] = v
+                else:
+                    values.append(val)
         else:
             values.append(value)
-    return values
+    return values, restrictions
 
 
 async def run_task(func, *args, **kwargs):
