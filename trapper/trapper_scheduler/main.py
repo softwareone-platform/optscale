@@ -40,7 +40,7 @@ def get_cloud_account_map(config_client):
     rest_cl = RestClient(url=config_client.restapi_url(), verify=False)
     rest_cl.secret = config_client.cluster_secret()
 
-    _, response = rest_cl.organization_list()
+    _, response = rest_cl.organization_list({'disabled': False})
     cloud_account_map = {}
     for org_id in list(map(lambda x: x['id'], response['organizations'])):
         try:

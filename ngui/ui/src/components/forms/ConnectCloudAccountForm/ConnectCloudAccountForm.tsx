@@ -1,12 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
+import ButtonGroup from "components/ButtonGroup/ButtonGroup";
 import ButtonLoader from "components/ButtonLoader";
 import CapabilityWrapper from "components/CapabilityWrapper";
 import {
@@ -21,9 +21,8 @@ import {
   AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import { useIsDataSourceTypeConnectionEnabled } from "hooks/useIsDataSourceTypeConnectionEnabled";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { useResizeObserver } from "hooks/useResizeObserver";
+import { useIsDataSourceConnectionTypeEnabled } from "hooks/useIsDataSourceConnectionTypeEnabled";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import AwsLogoIcon from "icons/AwsLogoIcon";
 import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
@@ -45,45 +44,89 @@ import {
   AZURE_TENANT,
   AWS_ROOT_CONNECT_CONFIG_SCHEMES,
   ALIBABA_CNR,
-  AWS_ROOT_ACCOUNT,
-  AWS_LINKED_ACCOUNT,
-  AZURE_SUBSCRIPTION,
-  AZURE_TENANT_ACCOUNT,
-  ALIBABA_ACCOUNT,
   GCP_CNR,
-  GCP_ACCOUNT,
-  GCP_TENANT_ACCOUNT,
-  GCP_TENANT
+  GCP_TENANT,
+  CONNECTION_TYPES,
+  CLOUD_PROVIDERS
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
 import { getQueryParams } from "utils/network";
+import { ObjectValues } from "utils/types";
 import useStyles from "./ConnectCloudAccountForm.styles";
 import { ConnectionInputs, DataSourceNameField } from "./FormElements";
 import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./FormElements/ConnectionFields";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
 
-const TILE_DIMENSION = 110;
+type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
 
-const getCloudType = (connectionType) =>
-  ({
-    [AWS_ROOT_ACCOUNT]: AWS_CNR,
-    [AWS_LINKED_ACCOUNT]: AWS_CNR,
-    [AZURE_SUBSCRIPTION]: AZURE_CNR,
-    [AZURE_TENANT_ACCOUNT]: AZURE_TENANT,
-    [ALIBABA_ACCOUNT]: ALIBABA_CNR,
-    [GCP_ACCOUNT]: GCP_CNR,
-    [GCP_TENANT_ACCOUNT]: GCP_TENANT
-    // [NEBIUS_ACCOUNT]: NEBIUS,
-    // [DATABRICKS_ACCOUNT]: DATABRICKS,
-    // [KUBERNETES]: KUBERNETES_CNR
-  })[connectionType];
+type CloudProvider = ObjectValues<typeof CLOUD_PROVIDERS>;
 
-const isLinked = (connectionType) =>
-  ({
-    [AWS_ROOT_ACCOUNT]: false,
-    [AWS_LINKED_ACCOUNT]: true
-  })[connectionType];
+type CloudType =
+  | typeof AWS_CNR
+  | typeof AZURE_TENANT
+  | typeof AZURE_CNR
+  | typeof GCP_TENANT
+  | typeof GCP_CNR
+  | typeof ALIBABA_CNR;
+// | typeof NEBIUS
+// | typeof DATABRICKS
+// | typeof KUBERNETES_CNR;
+
+type CloudProviderTypes = Record<
+  CloudProvider,
+  | {
+      connectionType: ConnectionType;
+      messageId: string;
+      cloudType: CloudType;
+    }[]
+  | {
+      connectionType: ConnectionType;
+      cloudType: CloudType;
+    }
+>;
+
+const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
+  [CLOUD_PROVIDERS.AWS]: [
+    { connectionType: CONNECTION_TYPES.AWS_ROOT, messageId: "root", cloudType: AWS_CNR },
+    { connectionType: CONNECTION_TYPES.AWS_LINKED, messageId: "linked", cloudType: AWS_CNR }
+  ],
+  [CLOUD_PROVIDERS.AZURE]: [
+    { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
+    { connectionType: CONNECTION_TYPES.AZURE_SUBSCRIPTION, messageId: "subscription", cloudType: AZURE_CNR }
+  ],
+  [CLOUD_PROVIDERS.GCP]: [
+    { connectionType: CONNECTION_TYPES.GCP_TENANT, messageId: "tenant", cloudType: GCP_TENANT },
+    { connectionType: CONNECTION_TYPES.GCP_PROJECT, messageId: "project", cloudType: GCP_CNR }
+  ]
+  // [CLOUD_PROVIDERS.ALIBABA]: { connectionType: CONNECTION_TYPES.ALIBABA, cloudType: ALIBABA_CNR },
+  // [CLOUD_PROVIDERS.NEBIUS]: { connectionType: CONNECTION_TYPES.NEBIUS, cloudType: NEBIUS },
+  // [CLOUD_PROVIDERS.DATABRICKS]: { connectionType: CONNECTION_TYPES.DATABRICKS, cloudType: DATABRICKS },
+  // [CLOUD_PROVIDERS.KUBERNETES]: { connectionType: CONNECTION_TYPES.KUBERNETES, cloudType: KUBERNETES_CNR }
+};
+
+const getCloudProviderFromConnectionType = (connectionType: ConnectionType): CloudProvider => {
+  const providerEntry = Object.entries(CLOUD_PROVIDER_TYPES).find(([, connectionTypes]) =>
+    Array.isArray(connectionTypes)
+      ? connectionTypes.some((type) => type.connectionType === connectionType)
+      : connectionTypes.connectionType === connectionType
+  );
+
+  return providerEntry?.[0] as CloudProvider;
+};
+
+const getCloudTypeFromConnectionType = (connectionType: ConnectionType): CloudType => {
+  const provider = getCloudProviderFromConnectionType(connectionType);
+
+  const providerTypes = CLOUD_PROVIDER_TYPES[provider];
+
+  if (Array.isArray(providerTypes)) {
+    const type = providerTypes.find((type) => type.connectionType === connectionType) as { cloudType: CloudType };
+    return type.cloudType;
+  }
+
+  return providerTypes.cloudType;
+};
 
 const getAwsParameters = (formData) => {
   const getConfigSchemeParameters = () =>
@@ -137,7 +180,15 @@ const getAzureSubscriptionParameters = (formData) => ({
     subscription_id: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SUBSCRIPTION_ID],
     client_id: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
     tenant: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.TENANT],
-    secret: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET]
+    secret: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET],
+    ...(formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.USE_BILLING_EXPORT]
+      ? {
+          export_name: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.EXPORT_NAME],
+          sa_connection_string: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_ACCOUNT_CONNECTION_STRING],
+          container: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_CONTAINER],
+          directory: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_DIRECTORY]
+        }
+      : {})
   }
 });
 
@@ -231,9 +282,9 @@ const renderConnectionTypeDescription = (settings) =>
     </Typography>
   ));
 
-const renderConnectionTypeInfoMessage = (connectionType) =>
+const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
   ({
-    [AWS_ROOT_ACCOUNT]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.AWS_ROOT]: renderConnectionTypeDescription([
       {
         key: "createAwsRootDocumentationReference",
         messageId: "createAwsRootDocumentationReference",
@@ -247,7 +298,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    [AWS_LINKED_ACCOUNT]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.AWS_LINKED]: renderConnectionTypeDescription([
       {
         key: "createAwsLinkedDocumentationReference1",
         messageId: "createAwsLinkedDocumentationReference1",
@@ -287,7 +338,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    [AZURE_TENANT_ACCOUNT]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.AZURE_TENANT]: renderConnectionTypeDescription([
       {
         key: "createAzureSubscriptionDocumentationReference",
         messageId: "createAzureSubscriptionDocumentationReference",
@@ -301,7 +352,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    [AZURE_SUBSCRIPTION]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.AZURE_SUBSCRIPTION]: renderConnectionTypeDescription([
       {
         key: "createAzureSubscriptionDocumentationReference",
         messageId: "createAzureSubscriptionDocumentationReference",
@@ -315,18 +366,13 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    // [KUBERNETES]: renderConnectionTypeDescription([
+    // [CONNECTION_TYPES.KUBERNETES]: renderConnectionTypeDescription([
     //   {
     //     key: "createKubernetesDocumentationReference1",
     //     messageId: "createKubernetesDocumentationReference1",
     //     values: {
     //       link: (chunks) => (
-    //         <Link
-    //           data-test-id="link_guide"
-    //           href={DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE}
-    //           target="_blank"
-    //           rel="noopener"
-    //         >
+    //         <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_KUBERNETES} target="_blank" rel="noopener">
     //           {chunks}
     //         </Link>
     //       )
@@ -349,7 +395,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
     //     }
     //   }
     // ]),
-    // [ALIBABA_ACCOUNT]: renderConnectionTypeDescription([
+    // [CONNECTION_TYPES.ALIBABA]: renderConnectionTypeDescription([
     //   {
     //     key: "createAlibabaDocumentationReference",
     //     messageId: "createAlibabaDocumentationReference",
@@ -363,7 +409,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
     //     }
     //   }
     // ]),
-    // [DATABRICKS_ACCOUNT]: renderConnectionTypeDescription([
+    // [CONNECTION_TYPES.DATABRICKS]: renderConnectionTypeDescription([
     //   {
     //     key: "createDatabricksDocumentationReference",
     //     messageId: "createDatabricksDocumentationReference",
@@ -377,7 +423,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
     //     }
     //   }
     // ]),
-    [GCP_ACCOUNT]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.GCP_PROJECT]: renderConnectionTypeDescription([
       {
         key: "createGCPDocumentationReference",
         messageId: "createGCPDocumentationReference",
@@ -392,7 +438,7 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
         }
       }
     ]),
-    [GCP_TENANT_ACCOUNT]: renderConnectionTypeDescription([
+    [CONNECTION_TYPES.GCP_TENANT]: renderConnectionTypeDescription([
       {
         key: "createGCPTenantDocumentationReference1",
         messageId: "createGCPTenantDocumentationReference1"
@@ -410,154 +456,173 @@ const renderConnectionTypeInfoMessage = (connectionType) =>
           p: (chunks) => <p>{chunks}</p>
         }
       }
-    ])
+    ]),
+    [CONNECTION_TYPES.NEBIUS]: null
   })[connectionType];
+
+const getConnectionTypeFromQueryParams = () => {
+  const { type: connectionTypeQueryParameter } = getQueryParams();
+
+  if (Object.values(CONNECTION_TYPES).includes(connectionTypeQueryParameter as ConnectionType)) {
+    return connectionTypeQueryParameter as ConnectionType;
+  }
+
+  return undefined;
+};
+
+const trackConnectionTypeChangeEvent = (connectionType: ConnectionType) => {
+  trackEvent({
+    category: GA_EVENT_CATEGORIES.DATA_SOURCE,
+    action: "Switch",
+    label: getCloudTypeFromConnectionType(connectionType)
+  });
+};
 
 const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCancel = true }) => {
   const methods = useForm();
 
-  const ref = useRef();
-
-  const { width } = useResizeObserver(ref);
-
-  const { type } = getQueryParams();
-
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { handleSubmit } = methods;
 
-  const isDataSourceTypeConnectionEnabled = useIsDataSourceTypeConnectionEnabled();
+  const isDataSourceConnectionTypeEnabled = useIsDataSourceConnectionTypeEnabled();
 
-  const [connectionType, setConnectionType] = useState(() =>
-    getCloudType(type) && isDataSourceTypeConnectionEnabled(type) ? type : AWS_ROOT_ACCOUNT
-  );
+  const [connectionType, setConnectionType] = useState<ConnectionType>(() => {
+    const connectionTypeFromQueryParams = getConnectionTypeFromQueryParams();
+
+    if (connectionTypeFromQueryParams && isDataSourceConnectionTypeEnabled(connectionTypeFromQueryParams)) {
+      return connectionTypeFromQueryParams;
+    }
+
+    return CONNECTION_TYPES.AWS_ROOT;
+  });
+
+  const selectedProvider = getCloudProviderFromConnectionType(connectionType);
 
   const { classes, cx } = useStyles();
 
-  const defaultTileAction = (id, label) => {
-    setConnectionType(id);
-    trackEvent({ category: GA_EVENT_CATEGORIES.DATA_SOURCE, action: "Switch", label });
-  };
+  useEffect(() => {
+    trackConnectionTypeChangeEvent(connectionType);
+  }, [connectionType]);
 
   const tiles = [
     {
-      id: AWS_ROOT_ACCOUNT,
+      id: CLOUD_PROVIDERS.AWS,
       icon: AwsLogoIcon,
-      messageId: AWS_ROOT_ACCOUNT,
-      dataTestId: "btn_aws_root_account",
-      action: () => defaultTileAction(AWS_ROOT_ACCOUNT, AWS_CNR)
+      messageId: "aws",
+      dataTestId: "btn_aws_account",
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_ROOT)
     },
     {
-      id: AWS_LINKED_ACCOUNT,
-      icon: AwsLogoIcon,
-      messageId: AWS_LINKED_ACCOUNT,
-      dataTestId: "btn_aws_linked_account",
-      action: () => defaultTileAction(AWS_LINKED_ACCOUNT, AWS_CNR)
-    },
-    {
-      id: AZURE_TENANT_ACCOUNT,
+      id: CLOUD_PROVIDERS.AZURE,
       icon: AzureLogoIcon,
-      messageId: AZURE_TENANT_ACCOUNT,
-      dataTestId: "btn_azure_tenant",
-      action: () => defaultTileAction(AZURE_TENANT_ACCOUNT, AZURE_TENANT)
+      messageId: "azure",
+      dataTestId: "btn_azure_account",
+      action: () => setConnectionType(CONNECTION_TYPES.AZURE_TENANT)
     },
     {
-      id: AZURE_SUBSCRIPTION,
-      icon: AzureLogoIcon,
-      messageId: AZURE_SUBSCRIPTION,
-      dataTestId: "btn_azure_subscription",
-      action: () => defaultTileAction(AZURE_SUBSCRIPTION, AZURE_CNR)
-    },
-    {
-      id: GCP_TENANT_ACCOUNT,
+      id: CLOUD_PROVIDERS.GCP,
       icon: GcpLogoIcon,
-      messageId: GCP_TENANT_ACCOUNT,
-      dataTestId: "btn_gcp_tenant_account",
-      action: () => defaultTileAction(GCP_TENANT_ACCOUNT, GCP_TENANT)
-    },
-    {
-      id: GCP_ACCOUNT,
-      icon: GcpLogoIcon,
-      messageId: GCP_ACCOUNT,
+      messageId: "gcp",
       dataTestId: "btn_gcp_account",
-      action: () => defaultTileAction(GCP_ACCOUNT, GCP_CNR)
+      action: () => setConnectionType(CONNECTION_TYPES.GCP_TENANT)
     }
     // {
-    //   id: ALIBABA_ACCOUNT,
+    //   id: CLOUD_PROVIDERS.ALIBABA,
     //   icon: AlibabaLogoIcon,
-    //   messageId: ALIBABA_ACCOUNT,
+    //   messageId: "alibaba",
     //   dataTestId: "btn_alibaba_account",
-    //   action: () => defaultTileAction(ALIBABA_ACCOUNT, ALIBABA_CNR)
+    //   action: () => setConnectionType(CONNECTION_TYPES.ALIBABA)
     // },
     // {
-    //   id: NEBIUS_ACCOUNT,
+    //   id: CLOUD_PROVIDERS.NEBIUS,
     //   icon: NebiusLogoIcon,
-    //   messageId: NEBIUS_ACCOUNT,
+    //   messageId: "nebius",
     //   dataTestId: "btn_nebius_account",
-    //   action: () => defaultTileAction(NEBIUS_ACCOUNT, NEBIUS),
+    //   action: () => setConnectionType(CONNECTION_TYPES.NEBIUS),
     //   capability: OPTSCALE_CAPABILITY.FINOPS
     // },
     // {
-    //   id: DATABRICKS_ACCOUNT,
+    //   id: CLOUD_PROVIDERS.DATABRICKS,
     //   icon: DatabricksLogoIcon,
-    //   messageId: DATABRICKS_ACCOUNT,
+    //   messageId: "databricks",
     //   dataTestId: "btn_databricks_account",
-    //   action: () => defaultTileAction(DATABRICKS_ACCOUNT, DATABRICKS),
+    //   action: () => setConnectionType(CONNECTION_TYPES.DATABRICKS),
     //   capability: OPTSCALE_CAPABILITY.FINOPS
     // },
     // {
-    //   id: KUBERNETES,
+    //   id: CLOUD_PROVIDERS.KUBERNETES,
     //   icon: K8sLogoIcon,
-    //   messageId: KUBERNETES,
-    //   dataTestId: "btn_kubernetes",
-    //   action: () => defaultTileAction(KUBERNETES, KUBERNETES_CNR),
+    //   messageId: "kubernetes",
+    //   dataTestId: "btn_kubernetes_account",
+    //   action: () => setConnectionType(CONNECTION_TYPES.KUBERNETES),
     //   capability: OPTSCALE_CAPABILITY.FINOPS
     // }
-  ].filter(({ id }) => isDataSourceTypeConnectionEnabled(id));
+  ].filter(({ id }) => {
+    const providerTypes = CLOUD_PROVIDER_TYPES[id];
+
+    return Array.isArray(providerTypes)
+      ? providerTypes.some((subtype) => isDataSourceConnectionTypeEnabled(subtype.connectionType))
+      : isDataSourceConnectionTypeEnabled(providerTypes.connectionType);
+  });
 
   return (
     <FormProvider {...methods}>
-      <Stack>
-        <div style={{ display: "flex", flexWrap: "wrap", width: "fit-content" }} ref={ref}>
-          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }, index) => (
+      <Box sx={{ width: { md: "50%" } }}>
+        <Box display="grid" gap={SPACING_2} mb={SPACING_2} gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))">
+          {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }) => (
             <CapabilityWrapper capability={capability} key={id}>
               <Paper
-                className={cx(classes.tile, connectionType !== id && classes.inactiveTile)}
+                key={id}
+                className={cx(classes.tile, selectedProvider !== id && classes.inactiveTile)}
                 variant="outlined"
-                sx={(theme) => ({
-                  width: TILE_DIMENSION,
-                  height: TILE_DIMENSION,
-                  marginRight: index + 1 === tiles.length ? 0 : SPACING_2,
+                sx={{
+                  height: 70,
                   display: "flex",
-                  marginBottom: SPACING_2,
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  fontSize: theme.typography.pxToRem(48),
                   cursor: "pointer"
-                })}
+                }}
                 onClick={action}
                 data-test-id={dataTestId}
               >
-                <Icon fontSize="inherit" />
-                <Typography>
+                <Icon fontSize="large" />
+                <Typography noWrap>
                   <FormattedMessage id={messageId} />
                 </Typography>
               </Paper>
             </CapabilityWrapper>
           ))}
-        </div>
-        <Box sx={{ width: { md: `max(50%, ${width}px)` } }}>
+        </Box>
+        <Box>
+          {Array.isArray(CLOUD_PROVIDER_TYPES[selectedProvider]) && (
+            <Box alignItems="center" display="flex" mb={1}>
+              <Typography sx={{ mr: 1 }}>
+                <FormattedMessage id="connectionType" />{" "}
+              </Typography>
+              <ButtonGroup
+                buttons={CLOUD_PROVIDER_TYPES[selectedProvider]
+                  .filter((subtype) => isDataSourceConnectionTypeEnabled(subtype.connectionType))
+                  .map((subtype) => ({
+                    id: subtype.connectionType,
+                    messageId: subtype.messageId,
+                    action: () => setConnectionType(subtype.connectionType)
+                  }))}
+                activeButtonId={connectionType}
+              />
+            </Box>
+          )}
           <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage(connectionType)}</Box>
           <form
             onSubmit={
-              isDemo
+              isRestricted
                 ? (e) => e.preventDefault()
                 : handleSubmit(async (formData) => {
-                    const cloudType = getCloudType(connectionType);
+                    const cloudType = getCloudTypeFromConnectionType(connectionType);
 
                     const getParameters = {
-                      [AWS_CNR]: isLinked(connectionType) ? getAwsLinkedParameters : getAwsParameters,
+                      [AWS_CNR]: connectionType === CONNECTION_TYPES.AWS_LINKED ? getAwsLinkedParameters : getAwsParameters,
                       [AZURE_TENANT]: getAzureTenantParameters,
                       [AZURE_CNR]: getAzureSubscriptionParameters,
                       [GCP_CNR]: getGoogleParameters,
@@ -582,16 +647,19 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                 messageId="connect"
                 color="primary"
                 variant="contained"
-                disabled={isDemo}
+                disabled={isRestricted}
                 isLoading={isLoading}
-                tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
+                tooltip={{
+                  show: isRestricted,
+                  value: restrictionReasonMessage
+                }}
                 type="submit"
               />
               {showCancel && <Button dataTestId="btn_cancel_cloud_account" messageId="cancel" onClick={onCancel} />}
             </FormButtonsWrapper>
           </form>
         </Box>
-      </Stack>
+      </Box>
     </FormProvider>
   );
 };

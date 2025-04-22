@@ -17,6 +17,7 @@ import { DeleteOrganizationConstraintModal } from "components/SideModalManager/S
 import EditOrganizationConstraintNameFormContainer from "containers/EditOrganizationConstraintNameFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import {
   ANOMALY_TYPES,
   EXPIRING_BUDGET_POLICY,
@@ -36,6 +37,8 @@ import BreakdownChart from "./BreakdownChart";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
 
 const ConstraintName = ({ id, name }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const [isEditMode, setIsEditMode] = useState(false);
   const openEditMode = () => setIsEditMode(true);
   const closeEditMode = () => setIsEditMode(false);
@@ -59,9 +62,10 @@ const ConstraintName = ({ id, name }) => {
           key="edit"
           icon={<EditOutlinedIcon />}
           onClick={openEditMode}
+          disabled={isRestricted}
           tooltip={{
             show: true,
-            messageId: "edit"
+            value: isRestricted ? restrictionReasonMessage : <FormattedMessage id="edit" />
           }}
         />
       ) : null}

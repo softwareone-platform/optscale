@@ -25,7 +25,6 @@ import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useDataSources } from "hooks/useDataSources";
 import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { CLOUD_ACCOUNTS } from "urls";
 import {
   AWS_CNR,
@@ -55,7 +54,6 @@ const {
 } = CLOUD_ACCOUNT_DETAILS_PAGE_TABS;
 
 const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoading }) => {
-  const { isDemo } = useOrganizationInfo();
   const openSideModal = useOpenSideModal();
 
   // TODO: initial values from useDataSources are default ones, which means logo is empty, Icon is null, JSX error in console.
@@ -64,10 +62,6 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
   const { logo, icon: Icon } = useDataSources(type);
 
   const getActionBarItems = () => {
-    if (isDemo) {
-      return [];
-    }
-
     const getBillingReimportButton = () => {
       const hasPreviousImport = lastImportAt !== 0;
 
@@ -278,7 +272,6 @@ const Tabs = ({
   isTenant
 }) => {
   const isAwsReportUploadEnabled = useIsFeatureEnabled("show_aws_upload_report");
-  const { isDemo } = useOrganizationInfo();
 
   const tabs = [
     {
@@ -307,7 +300,7 @@ const Tabs = ({
       title: UPLOAD_TAB,
       dataTestId: "tab_upload",
       node: !!id && <UploadCloudReportDataContainer cloudAccountId={id} />,
-      renderCondition: () => type === AWS_CNR && !isDemo && isAwsReportUploadEnabled
+      renderCondition: () => type === AWS_CNR && isAwsReportUploadEnabled
     },
     {
       title: NODES_TAB,

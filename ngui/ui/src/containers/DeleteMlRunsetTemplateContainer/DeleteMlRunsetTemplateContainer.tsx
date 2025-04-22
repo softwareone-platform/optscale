@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlRunsetTemplatesService from "services/MlRunsetTemplatesService";
 import { ML_RUNSET_TEMPLATES } from "urls";
 
 const DeleteMlRunsetTemplateContainer = ({ id, onCancel }) => {
   const navigate = useNavigate();
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { useDeleteMlRunsetTemplate } = MlRunsetTemplatesService();
 
@@ -23,10 +23,10 @@ const DeleteMlRunsetTemplateContainer = ({ id, onCancel }) => {
         color: "error",
         variant: "contained",
         onDelete: onSubmit,
-        disabled: isDemo,
+        disabled: isRestricted,
         tooltip: {
-          show: isDemo,
-          messageId: "notAvailableInLiveDemo"
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       }}
       dataTestIds={{

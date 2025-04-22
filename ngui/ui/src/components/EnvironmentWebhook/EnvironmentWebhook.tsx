@@ -14,7 +14,7 @@ import DownloadEnvironmentWebhookAuditLogsContainer from "containers/DownloadEnv
 import EditEnvironmentWebhookActivityContainer from "containers/EditEnvironmentWebhookActivityContainer";
 import EditEnvironmentWebhookFormContainer from "containers/EditEnvironmentWebhookFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ACTIONS } from "services/WebhooksService";
 import { isEmpty } from "utils/objects";
 
@@ -33,7 +33,7 @@ const EnvironmentWebhook = ({ webhook, action, resourceId, isLoadingProps = {} }
   const enableEditMode = () => setIsEditMode(true);
   const disableEditMode = () => setIsEditMode(false);
 
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const canManageBookings = useIsAllowed({ requiredActions: ["MANAGE_RESOURCES"] });
 
@@ -47,12 +47,12 @@ const EnvironmentWebhook = ({ webhook, action, resourceId, isLoadingProps = {} }
         <KeyValueLabel keyMessageId="url" value={value} sx={{ marginRight: 1 }} />
         {canManageBookings && (
           <IconButton
-            disabled={isDemo}
+            disabled={isRestricted}
             icon={<CreateOutlinedIcon />}
             onClick={enableEditMode}
             tooltip={{
               show: true,
-              messageId: isDemo ? "notAvailableInLiveDemo" : "edit"
+              value: isRestricted ? restrictionReasonMessage : "edit"
             }}
           />
         )}

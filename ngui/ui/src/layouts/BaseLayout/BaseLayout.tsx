@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { CircularProgress } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -15,6 +16,7 @@ import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Logo from "components/Logo";
 import MainMenu from "components/MainMenu";
+import PageContentWrapper from "components/PageContentWrapper";
 import PendingInvitationsAlert from "components/PendingInvitationsAlert";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import CoreDataContainer from "containers/CoreDataContainer";
@@ -29,14 +31,20 @@ import useStyles from "./BaseLayout.styles";
 
 const logoHeight = 30;
 
-const getLogoSize = (isDemo, isDownMd, isDownSm) => {
+const getLogoSize = (isDemo = false, isDownMd = false, isDownSm = false) => {
   if (isDemo) {
     return isDownMd ? LOGO_SIZE.SHORT : LOGO_SIZE.FULL;
   }
   return isDownSm ? LOGO_SIZE.SHORT : LOGO_SIZE.FULL;
 };
 
-const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrganizationSelector = false }) => {
+const AppToolbar = ({
+  onMenuIconClick,
+  showMainMenu = false,
+  showOrganizationSelector = false,
+  isOrganizationSelectorLoading = false,
+  isProductTourAvailable = false
+}) => {
   const { classes } = useStyles();
   // const navigate = useNavigate();
   const isDownMd = useIsDownMediaQuery("md");
@@ -100,10 +108,10 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
         <Box display="flex" alignItems="center">
           {showOrganizationSelector && (
             <Box mr={1}>
-              <OrganizationSelectorContainer mainMenu={mainMenu} />
+              <OrganizationSelectorContainer isLoading={isOrganizationSelectorLoading} />
             </Box>
           )}
-          <HeaderButtons />
+          <HeaderButtons isProductTourAvailable={isProductTourAvailable} />
         </Box>
       </Toolbar>
       <div className={classes.headerSpacer} />
@@ -112,8 +120,6 @@ const AppToolbar = ({ onMenuIconClick, mainMenu, showMainMenu = false, showOrgan
 };
 
 const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector = false, mainMenu }) => {
-  const { organizationId } = useOrganizationInfo();
-
   const { classes, cx } = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -125,56 +131,79 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
   const { isCommunityDocsOpened } = useCommunityDocsContext();
 
   return (
-    <>
-      <TopAlertWrapper />
-      <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
-        <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
-          <PendingInvitationsAlert />
-          <AppBar position="static" className={classes.appBar}>
-            <AppToolbar
-              showMainMenu={showMainMenu}
-              onMenuIconClick={handleDrawerToggle}
-              showOrganizationSelector={showOrganizationSelector}
-              // mainMenu={mainMenu}
-            />
-          </AppBar>
-          <Box className={classes.menuAndContentWrapper}>
-            {showMainMenu && (
-              <>
-                <Hidden mode="down" breakpoint="md">
-                  <CollapsableMenuDrawer>
-                    <MainMenu menu={mainMenu} />
-                  </CollapsableMenuDrawer>
-                </Hidden>
-                <Hidden mode="up" breakpoint="md">
-                  <Drawer
-                    variant="temporary"
-                    classes={{
-                      paper: classes.drawerPaper
-                    }}
-                    onClose={handleDrawerToggle}
-                    open={mobileOpen}
-                    ModalProps={{
-                      keepMounted: true
-                    }}
-                  >
-                    <MainMenu menu={mainMenu} />
-                  </Drawer>
-                </Hidden>
-              </>
-            )}
-            <Container key={organizationId} id={BASE_LAYOUT_CONTAINER_ID} component="main" className={classes.content}>
-              <ErrorBoundary>
-                <CoreDataContainer>{children}</CoreDataContainer>
-              </ErrorBoundary>
-            </Container>
-          </Box>
-        </Box>
-        <Box>
-          <DocsPanel />
-        </Box>
-      </Box>
-    </>
+    <CoreDataContainer
+      render={({ organizationId, isLoadingProps }) => {
+        const someApiLoading = Object.values(isLoadingProps).some((isLoading) => isLoading);
+
+        const renderPageContent = () => {
+          if (someApiLoading) {
+            return (
+              <PageContentWrapper>
+                <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                  <CircularProgress />
+                </Box>
+              </PageContentWrapper>
+            );
+          }
+
+          return (
+            <Box className={classes.menuAndContentWrapper}>
+              {showMainMenu && (
+                <>
+                  <Hidden mode="down" breakpoint="md">
+                    <CollapsableMenuDrawer>
+                      <MainMenu menu={mainMenu} />
+                    </CollapsableMenuDrawer>
+                  </Hidden>
+                  <Hidden mode="up" breakpoint="md">
+                    <Drawer
+                      variant="temporary"
+                      classes={{
+                        paper: classes.drawerPaper
+                      }}
+                      onClose={handleDrawerToggle}
+                      open={mobileOpen}
+                      ModalProps={{
+                        keepMounted: true
+                      }}
+                    >
+                      <MainMenu menu={mainMenu} />
+                    </Drawer>
+                  </Hidden>
+                </>
+              )}
+              <Container key={organizationId} id={BASE_LAYOUT_CONTAINER_ID} component="main" className={classes.content}>
+                <ErrorBoundary>{children}</ErrorBoundary>
+              </Container>
+            </Box>
+          );
+        };
+
+        return (
+          <>
+            <TopAlertWrapper />
+            <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
+              <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
+                {isLoadingProps.getInvitationsLoading ? null : <PendingInvitationsAlert />}
+                <AppBar position="static" className={classes.appBar}>
+                  <AppToolbar
+                    showMainMenu={showMainMenu}
+                    onMenuIconClick={handleDrawerToggle}
+                    showOrganizationSelector={showOrganizationSelector}
+                    isOrganizationSelectorLoading={isLoadingProps.getOrganizationsLoading}
+                    isProductTourAvailable={!someApiLoading}
+                  />
+                </AppBar>
+                {renderPageContent()}
+              </Box>
+              <Box>
+                <DocsPanel />
+              </Box>
+            </Box>
+          </>
+        );
+      }}
+    />
   );
 };
 

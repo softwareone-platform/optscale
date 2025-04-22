@@ -27,7 +27,8 @@ from arcee.arcee_receiver.models import (
     LeaderboardTemplatePatchIn, Log, Platform,
     StatsPostIn, ModelPatchIn, ModelPostIn, Model, ModelVersionIn,
     ModelVersion, Metric, MetricPostIn, MetricPatchIn,
-    Task, TaskPatchIn, TaskPostIn, MetricFunc, MetricTendency
+    Task, TaskPatchIn, TaskPostIn, MetricFunc, MetricTendency,
+    TokenPatchIn, TokenPostIn, Token
 )
 from arcee.arcee_receiver.modules.leader_board import (
     get_calculated_leaderboard, Tendencies)
@@ -107,7 +108,7 @@ async def extract_token(request, raise_on=True):
     return token
 
 
-async def check_token(token, raise_on=True):
+async def check_token(token, request, raise_on=True):
     token = await db.token.find_one({
         "$and": [
             {"deleted_at": 0},
@@ -116,6 +117,8 @@ async def check_token(token, raise_on=True):
     })
     if not token and raise_on:
         raise SanicException("Token not found", status_code=401)
+    if request.method != "GET" and token.get("disabled") and raise_on:
+        raise SanicException("Token is disabled", status_code=401)
     return bool(token)
 
 
@@ -151,7 +154,7 @@ async def handle_auth(request):
         raise SanicException('Unknown auth validation type', status_code=500)
     elif request.route.ctx.label == 'token':
         token = await extract_token(request)
-        await check_token(token, raise_on=True)
+        await check_token(token, request, raise_on=True)
         request.ctx.token = token
     elif request.route.ctx.label == 'secret':
         secret = await extract_secret(request, raise_on=True)
@@ -161,7 +164,7 @@ async def handle_auth(request):
         is_valid_secret = await check_secret(secret, raise_on=False)
         if not is_valid_secret:
             token = await extract_token(request)
-            await check_token(token, raise_on=True)
+            await check_token(token, request, raise_on=True)
             request.ctx.token = token
 
 
@@ -1304,29 +1307,55 @@ async def get_imports(request, task_id: str):
     return json(r)
 
 
+async def _create_token(**kwargs):
+    token = Token(**kwargs).model_dump(by_alias=True)
+    await db.token.insert_one(token)
+    return token
+
+
 @app.route('/arcee/v2/tokens', methods=["POST", ], ctx_label='secret')
-async def create_token(request):
+@validate(json=TokenPostIn)
+async def create_token(request, body: TokenPostIn):
     """
     creates token
     :param request:
+    :param body:
     :return:
     """
-    doc = request.json
-    token = doc.get("token")
-    if not token:
-        raise SanicException('token is required', status_code=400)
-    o = await db.token.find_one({"token": token})
+    o = await db.token.find_one({"token": body.token})
     if o:
         raise SanicException("Token exists", status_code=409)
-    d = {
-        "_id": str(uuid.uuid4()),
-        "token": token,
-        "created": opttime.utcnow_timestamp(),
-        "deleted_at": 0,
-    }
-    await db.token.insert_one(
-        d
-    )
+    token = await _create_token(**body.model_dump(exclude_unset=True))
+    return json(token)
+
+
+@app.route('/arcee/v2/tokens/<token>', methods=["PATCH", ],
+           ctx_label='secret')
+@validate(json=TokenPatchIn)
+async def update_token(request, body: TokenPatchIn, token: str):
+    """
+    updates token
+    :param request:
+    :param body:
+    :param token:
+    :return:
+    """
+    o = await db.token.find_one({
+        "$and": [
+            {"deleted_at": 0},
+            {
+                "$or": [
+                    {"token": token},
+                    {"_id": token}
+                ]
+            }
+        ]
+    })
+    if not o:
+        raise SanicException("Token not found", status_code=404)
+    d = body.model_dump(exclude_unset=True)
+    await db.token.update_one({"_id": o["_id"]}, {"$set": d})
+    d = await db.token.find_one({"_id": o["_id"]})
     return json(d)
 
 
@@ -2645,7 +2674,7 @@ async def list_artifacts(request):
     result = {
         'artifacts': [],
         'limit': query.limit,
-        'start_from': query.start_from,
+        'offset': query.offset,
         'count': 0,
         'total_count': 0
     }
@@ -2665,7 +2694,7 @@ async def list_artifacts(request):
     pipeline = _build_artifact_filter_pipeline(runs_ids, query)
     pipeline.append({'$sort': {'created_at': -1, '_id': 1}})
 
-    paginate_pipeline = [{'$skip': query.start_from}]
+    paginate_pipeline = [{'$skip': query.offset}]
     if query.limit:
         paginate_pipeline.append({'$limit': query.limit})
     pipeline.extend(paginate_pipeline)
@@ -2676,7 +2705,7 @@ async def list_artifacts(request):
         res = _format_artifact(artifact, runs_map[artifact['run_id']], tasks)
         result['artifacts'].append(res)
     if len(result['artifacts']) != 0 and not query.limit:
-        result['count'] = len(result['artifacts']) + query.start_from
+        result['count'] = len(result['artifacts']) + query.offset
     else:
         pipeline = _build_artifact_filter_pipeline(runs_ids, query)
         pipeline.append({'$count': 'count'})

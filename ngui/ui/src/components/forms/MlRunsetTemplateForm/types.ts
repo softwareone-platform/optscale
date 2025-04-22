@@ -21,6 +21,7 @@ export type FormValues = {
     cloudType: string;
   }[];
   [FIELD_NAMES.BUDGET]: string;
+  [FIELD_NAMES.MAXIMUM_RUNSET_RUNNERS]: string;
   [FIELD_NAMES.RESOURCE_NAME_PREFIX]: string;
   [FIELD_NAMES.TAG_KEY]: string;
   [FIELD_NAMES.TAG_VALUE]: string;

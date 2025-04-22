@@ -1,23 +1,23 @@
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { FormattedMessage } from "react-intl";
 import IconButton from "components/IconButton";
 import { DeleteWebhookModal } from "components/SideModalManager/SideModals";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const DeleteWebhook = ({ id, action, url }) => {
   const openSideModal = useOpenSideModal();
-  const { isDemo } = useOrganizationInfo();
+
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <IconButton
       color="error"
       icon={<DeleteOutlinedIcon />}
       onClick={() => openSideModal(DeleteWebhookModal, { id, action, url })}
-      disabled={isDemo}
+      disabled={isRestricted}
       tooltip={{
-        show: true,
-        value: <FormattedMessage id={isDemo ? "notAvailableInLiveDemo" : "delete"} />
+        show: isRestricted,
+        value: restrictionReasonMessage
       }}
     />
   );

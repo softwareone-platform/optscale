@@ -41,7 +41,8 @@ def get_org_ids(config_client):
     rest_cl = RestClient(url=config_client.restapi_url(), verify=False)
     rest_cl.secret = config_client.cluster_secret()
 
-    _, response = rest_cl.organization_list({'with_shareable_bookings': True})
+    _, response = rest_cl.organization_list(
+        {'with_shareable_bookings': True, 'disabled': False})
     return [org['id'] for org in response['organizations']]
 
 

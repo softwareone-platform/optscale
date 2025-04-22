@@ -4,8 +4,11 @@ import { FormControl } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import Button from "components/Button";
 import UpdateEnvironmentPropertiesFormContainer from "containers/UpdateEnvironmentPropertiesFormContainer";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const CreateEnvironmentProperties = ({ environmentId, existingProperties }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const [createFormContainers, setCreateFormContainers] = useState([]);
 
   const removeContainer = (containerId) =>
@@ -44,7 +47,13 @@ const CreateEnvironmentProperties = ({ environmentId, existingProperties }) => {
           messageId="addProperty"
           size="medium"
           color="primary"
+          fullWidth
           onClick={addContainer}
+          disabled={isRestricted}
+          tooltip={{
+            show: isRestricted,
+            value: restrictionReasonMessage
+          }}
         />
       </FormControl>
     </>

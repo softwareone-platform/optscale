@@ -8,13 +8,13 @@ import Button from "components/Button";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import PageContentWrapper from "components/PageContentWrapper";
 import SubmitButtonLoader from "components/SubmitButtonLoader";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ML_METRICS } from "urls";
 import { SPACING_1 } from "utils/layouts";
 import { NameField, KeyField, TendencySelector, AggregateFunctionSelector, TargetValueField } from "./FormElements";
 
 const MlMetricForm = ({ onSubmit, isGetLoading = false, defaultValues, onCancel, isSubmitLoading = false, isEdit = false }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const methods = useForm({ defaultValues });
   const { reset, handleSubmit } = methods;
@@ -54,8 +54,11 @@ const MlMetricForm = ({ onSubmit, isGetLoading = false, defaultValues, onCancel,
                   messageId={isEdit ? "save" : "create"}
                   isLoading={isSubmitLoading}
                   dataTestId="btn_create"
-                  tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
-                  disabled={isDemo}
+                  tooltip={{
+                    show: isRestricted,
+                    value: restrictionReasonMessage
+                  }}
+                  disabled={isRestricted}
                 />
                 <Button messageId="cancel" onClick={onCancel} dataTestId="btn_cancel" />
               </FormButtonsWrapper>

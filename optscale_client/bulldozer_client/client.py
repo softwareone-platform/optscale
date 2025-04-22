@@ -212,6 +212,17 @@ class Client:
         }
         return self.post(self.tokens_url(), b)
 
+    def token_update(self, token_or_id: str, disabled: bool):
+        """
+        :param token_or_id: id or token
+        :param disabled: is token disabled
+        :return:
+        """
+        params = {
+            "disabled": disabled,
+        }
+        return self.patch(self.tokens_url(token_or_id), params)
+
     def token_delete(self, id: str):
         """
         :param id: id or token
@@ -236,7 +247,8 @@ class Client:
             budget: decimal.Decimal,
             name_prefix: str,
             tags: dict,
-            hyperparameters: dict
+            hyperparameters: dict,
+            max_runner_num: int=None
     ):
         b = {
             "name": name,
@@ -248,6 +260,7 @@ class Client:
             "name_prefix": name_prefix,
             "tags": tags,
             "hyperparameters": hyperparameters,
+            "max_runner_num": max_runner_num,
         }
         return self.post(self.templates_url(), b)
 
@@ -262,7 +275,8 @@ class Client:
             budget: Union[decimal.Decimal, None] = None,
             name_prefix: Union[str, None] = None,
             tags: Union[dict, None] = None,
-            hyperparameters: Union[dict, None] = None
+            hyperparameters: Union[dict, None] = None,
+            max_runner_num: Union[int, None] = None,
     ):
         b = dict()
         if name is not None:
@@ -283,6 +297,8 @@ class Client:
             b.update({"tags": tags})
         if hyperparameters is not None:
             b.update({"hyperparameters": hyperparameters})
+        if max_runner_num is not None:
+            b.update({"max_runner_num": max_runner_num})
         return self.patch(self.templates_url(id_), b)
 
     def templates_list(self):

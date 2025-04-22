@@ -37,7 +37,8 @@ def get_org_ids(config_cl):
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False)
     rest_cl.secret = config_cl.cluster_secret()
 
-    _, response = rest_cl.organization_list({'with_connected_accounts': True})
+    _, response = rest_cl.organization_list(
+        {'with_connected_accounts': True, 'disabled': False})
     return [org['id'] for org in response['organizations']]
 
 

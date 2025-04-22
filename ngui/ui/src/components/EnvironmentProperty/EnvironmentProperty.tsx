@@ -9,8 +9,11 @@ import { DeleteEnvironmentPropertyModal } from "components/SideModalManager/Side
 import UpdateEnvironmentPropertiesFormContainer from "containers/UpdateEnvironmentPropertiesFormContainer";
 import { useIsAllowedToCUDEnvironmentProperties } from "hooks/useIsAllowedToCUDEnvironmentProperties";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const EnvironmentProperty = ({ environmentId, propertyName, propertyValue, existingProperties }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const [editMode, setEditMode] = useState(false);
 
   const openSideModal = useOpenSideModal();
@@ -41,12 +44,17 @@ const EnvironmentProperty = ({ environmentId, propertyName, propertyValue, exist
             <IconButton
               icon={<CreateOutlinedIcon />}
               onClick={() => setEditMode(true)}
-              tooltip={{ show: true, messageId: "edit" }}
+              disabled={isRestricted}
+              tooltip={{
+                show: true,
+                value: isRestricted ? restrictionReasonMessage : "edit"
+              }}
             />
             <IconButton
               color="error"
               icon={<DeleteOutlinedIcon />}
               onClick={() => openSideModal(DeleteEnvironmentPropertyModal, { environmentId, propertyName })}
+              tooltip={{ show: true, messageId: "delete" }}
             />
           </>
         )

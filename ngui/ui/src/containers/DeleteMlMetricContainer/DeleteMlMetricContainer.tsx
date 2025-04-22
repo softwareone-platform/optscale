@@ -1,9 +1,9 @@
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlMetricsService from "services/MlMetricsService";
 
 const DeleteMlMetricContainer = ({ id, name, onCancel }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { useDeleteMlMetric } = MlMetricsService();
 
@@ -17,8 +17,11 @@ const DeleteMlMetricContainer = ({ id, name, onCancel }) => {
       isLoading={isLoading}
       deleteButtonProps={{
         onDelete: onDeleteHandler,
-        disabled: isDemo,
-        tooltip: { show: isDemo, messageId: "notAvailableInLiveDemo" }
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

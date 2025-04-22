@@ -7,7 +7,7 @@ from tools.cloud_adapter.clouds.alibaba import Alibaba
 from tools.cloud_adapter.clouds.aws import Aws
 from tools.cloud_adapter.clouds.azure import Azure
 from tools.cloud_adapter.clouds.nebius import Nebius
-from tools.cloud_adapter.clouds.gcp import Gcp
+from tools.cloud_adapter.clouds.gcp import Gcp, InstanceType
 from tools.cloud_adapter.exceptions import (RegionNotFoundException,
                                             ForbiddenException)
 from tools.optscale_exceptions.common_exc import (
@@ -379,15 +379,14 @@ class FlavorController(BaseController):
         additional_params = additional_params or {}
         vcpu = additional_params.get('cpu', 0)
         source_flavor_id = family_specs['source_flavor_id']
-        source_flavor_family = source_flavor_id.split("-")[0]
-        ram = None
-        if 'custom' in source_flavor_id:
-            ram = int(source_flavor_id.split("-")[-1]) / 1024
+        source_flavor = InstanceType(source_flavor_id)
+        source_flavor.parse_machine_family()
+        source_flavor.parse_ram_cpu_from_flavor_name()
         with CachedThreadPoolExecutor(self.mongo_client) as executor:
             try:
                 instance_types = executor.submit(
                     self.gcp.get_instance_types_priced, region,
-                    source_flavor_id, mode).result()
+                    source_flavor_id, mode, cpu=vcpu).result()
             except RegionNotFoundException:
                 raise WrongArgumentsException(Err.OI0012, [region])
             except ValueError as ex:
@@ -398,7 +397,7 @@ class FlavorController(BaseController):
         flavors = []
         relevant_flavor = None
         for flavor_id, flavor_details in instance_types.items():
-            if flavor_details['family'] != source_flavor_family:
+            if flavor_details['family'] != source_flavor.family:
                 continue
             flavor_cpu = flavor_details['cpu_cores']
             flavor_ram = flavor_details['ram_gb']
@@ -419,7 +418,8 @@ class FlavorController(BaseController):
                 if flavor_cpu < vcpu:
                     continue
                 if flavor_cpu == vcpu:
-                    if not ram or flavor_ram >= ram:
+                    if (not source_flavor.ram_gb or
+                            flavor_ram >= source_flavor.ram_gb):
                         flavors.append(flavor_result)
                         continue
                 if not relevant_flavor:

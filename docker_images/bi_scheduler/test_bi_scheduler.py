@@ -22,6 +22,12 @@ class TestBIScheduler(unittest.TestCase):
               new_callable=PropertyMock).start()
         self.scheduler.rest_cl.bi_list = MagicMock(
             return_value=(200, {'organization_bis': []}))
+        self.org_id = str(uuid.uuid4())
+        self.scheduler.rest_cl.organization_list = MagicMock(
+            return_value=(200, {'organizations': [{
+                'id': self.org_id,
+                'disabled': False
+            }]}))
         self.scheduler._publish_tasks = MagicMock()
         self.next_run = int(self.scheduler.now.timestamp()) + DEFAULT_RUN_PERIOD
 
@@ -37,7 +43,8 @@ class TestBIScheduler(unittest.TestCase):
         for state in ['ACTIVE', 'SUCCESS', 'FAILED']:
             self.scheduler.rest_cl.bi_list = MagicMock(
                 return_value=(200, {
-                    'organization_bis': [{
+                    "organization_bis": [{
+                        "organization_id": self.org_id,
                         "next_run": 1,
                         "status": state,
                         "id": id_
@@ -54,7 +61,8 @@ class TestBIScheduler(unittest.TestCase):
             # task hangs in processing
             self.scheduler.rest_cl.bi_list = MagicMock(
                 return_value=(200, {
-                    'organization_bis': [{
+                    "organization_bis": [{
+                        "organization_id": self.org_id,
                         "next_run": next_run,
                         "status": state,
                         "id": id_
@@ -70,7 +78,8 @@ class TestBIScheduler(unittest.TestCase):
             next_run = int(self.scheduler.now.timestamp()) - TASK_WAIT_TIMEOUT + 10
             self.scheduler.rest_cl.bi_list = MagicMock(
                 return_value=(200, {
-                    'organization_bis': [{
+                    "organization_bis": [{
+                        "organization_id": self.org_id,
                         "next_run": next_run,
                         "status": state,
                         "id": id_
@@ -85,7 +94,8 @@ class TestBIScheduler(unittest.TestCase):
         for state in ['ACTIVE', 'SUCCESS', 'FAILED', 'RUNNING', 'QUEUED']:
             self.scheduler.rest_cl.bi_list = MagicMock(
                 return_value=(200, {
-                    'organization_bis': [{
+                    "organization_bis": [{
+                        "organization_id": self.org_id,
                         "next_run": int(self.scheduler.now.timestamp()) + 100,
                         "status": state,
                         "id": id_
@@ -100,11 +110,13 @@ class TestBIScheduler(unittest.TestCase):
         id_2 = str(uuid.uuid4())
         self.scheduler.rest_cl.bi_list = MagicMock(
             return_value=(200, {
-                'organization_bis': [{
+                "organization_bis": [{
+                    "organization_id": self.org_id,
                     "next_run": 0,
                     "status": "ACTIVE",
                     "id": id_1
                 }, {
+                    "organization_id": self.org_id,
                     "next_run": 0,
                     "status": "FAILED",
                     "id": id_2
@@ -114,6 +126,23 @@ class TestBIScheduler(unittest.TestCase):
         self.scheduler._publish_tasks.assert_called_once_with(
             [id_1, id_2], self.next_run)
 
+    def test_disabled_orgs(self):
+        self.scheduler.rest_cl.bi_list = MagicMock(
+            return_value=(200, {
+                "organization_bis": [{
+                    "organization_id": self.org_id,
+                    "next_run": 0,
+                    "status": "ACTIVE",
+                    "id": str(uuid.uuid4())
+                }]}))
+        self.scheduler.rest_cl.organization_list = MagicMock(
+            return_value=(200, {'organizations': [{
+                'id': self.org_id,
+                'disabled': True
+            }]}))
+        self.scheduler.run()
+        self.scheduler._publish_tasks.assert_called_once_with(
+            [], self.next_run)
 
 if __name__ == '__main__':
     unittest.main()

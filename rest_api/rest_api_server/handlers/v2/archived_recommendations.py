@@ -204,7 +204,7 @@ class ArchivedRecommendationsDetailsAsyncHandler(SupportedFiltersMixin,
         self.bool_filters = []
         self.str_filters = ['type', 'reason', 'format']
         self.int_filters = ['archived_at', 'start_date', 'end_date',
-                            'start_from', 'limit']
+                            'offset', 'limit']
 
     def _get_controller_class(self):
         return ArchivedRecommendationsDetailsAsyncController
@@ -236,7 +236,7 @@ class ArchivedRecommendationsDetailsAsyncHandler(SupportedFiltersMixin,
             'archived_at': (None, 1),
             'start_date': (None, 0),
             'end_date': (None, 1),
-            'start_from': (0, 0),
+            'offset': (0, 0),
             'limit': (None, 1)
         }
         for filter_name in self.int_filters:
@@ -290,7 +290,7 @@ class ArchivedRecommendationsDetailsAsyncHandler(SupportedFiltersMixin,
             description: Archiving reason
             required: false
             type: string
-        -   name: start_from
+        -   name: offset
             in: query
             description: Start records from certain element
             required: false

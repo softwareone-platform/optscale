@@ -18,7 +18,7 @@ def get_cloud_accounts(config_cl):
     cloud_accounts_list = []
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False)
     rest_cl.secret = config_cl.cluster_secret()
-    _, response = rest_cl.organization_list()
+    _, response = rest_cl.organization_list({'disabled': False})
     for org in response['organizations']:
         try:
             _, cloud_accounts = rest_cl.cloud_account_list(org['id'])

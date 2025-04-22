@@ -7,13 +7,17 @@ from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
 from rest_api.rest_api_server.handlers.v1.base_async import (
     BaseAsyncCollectionHandler, BaseAsyncItemHandler)
 from rest_api.rest_api_server.utils import (
-    run_task, ModelEncoder, check_string_attribute,
+    run_task, ModelEncoder, check_string_attribute, check_int_attribute,
     check_dict_attribute, check_list_attribute, check_float_attribute)
 from rest_api.rest_api_server.handlers.v2.infrastructure.base import (
     InfrastructureHandler)
 
 from tools.optscale_exceptions.http_exc import OptHTTPError
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
+
+
+def _validate_max_runner_num(param_name, param_value):
+    check_int_attribute(param_name, param_value, min_length=1)
 
 
 class TemplatesAsyncCollectionHandler(BaseAsyncCollectionHandler,
@@ -28,7 +32,8 @@ class TemplatesAsyncCollectionHandler(BaseAsyncCollectionHandler,
         'instance_types': (check_list_attribute, True),
         'budget': (check_float_attribute, True),
         'name': (check_string_attribute, True),
-        'name_prefix': (check_string_attribute, True)
+        'name_prefix': (check_string_attribute, True),
+        'max_runner_num': (_validate_max_runner_num, False),
     }
 
     def _get_controller_class(self):
@@ -137,6 +142,11 @@ class TemplatesAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         example:
                         -   us-east-1
                         -   us-west-1
+                    max_runner_num:
+                        type: integer
+                        description: Maximum runners number
+                        required: false
+                        example: 15
         responses:
             201:
                 description: Returns created template
@@ -231,7 +241,8 @@ class TemplatesAsyncItemHandler(BaseAsyncItemHandler,
         'instance_types': (check_list_attribute, False),
         'budget': (check_float_attribute, False),
         'name': (check_string_attribute, False),
-        'name_prefix': (check_string_attribute, False)
+        'name_prefix': (check_string_attribute, False),
+        'max_runner_num': (_validate_max_runner_num, False),
     }
 
     def _get_controller_class(self):
@@ -459,6 +470,11 @@ class TemplatesAsyncItemHandler(BaseAsyncItemHandler,
                         example:
                         -   us-east-1
                         -   us-west-1
+                    max_runner_num:
+                        type: integer
+                        description: Maximum runners number
+                        required: false
+                        example: 15
         responses:
             200:
                 description: New task object

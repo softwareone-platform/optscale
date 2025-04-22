@@ -9,6 +9,7 @@ import RecommendationsOverviewContainer from "containers/RecommendationsOverview
 import RecommendationsOverviewContainerMocked from "containers/RecommendationsOverviewContainer/RecommendationsOverviewContainerMocked";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
 import RecommendationsOverviewService from "services/RecommendationsOverviewService";
 import { ARCHIVED_RECOMMENDATIONS } from "urls";
@@ -16,38 +17,13 @@ import { AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR, NEBIUS } from "utils/constant
 import { SPACING_2 } from "utils/layouts";
 
 const DATA_SOURCES_QUERY_NAME = "dataSourceId";
-const getActionBar = ({ forceCheck, isForceCheckAvailable }) => ({
-  title: {
-    messageId: "recommendations",
-    dataTestId: "lbl_recommendations"
-  },
-  items: [
-    {
-      key: "archive",
-      dataTestId: "btn_archive",
-      icon: <RestoreOutlinedIcon />,
-      messageId: "archive",
-      color: "primary",
-      type: "button",
-      link: ARCHIVED_RECOMMENDATIONS
-    },
-    {
-      key: "forceCheck",
-      color: "primary",
-      type: "button",
-      show: isForceCheckAvailable,
-      icon: <CachedOutlinedIcon />,
-      action: forceCheck,
-      dataTestId: "btn_force_check",
-      messageId: "forceCheck"
-    }
-  ]
-});
 
 // Always included in recommendations
 const RECOMMENDABLE_DATA_SOURCES_BASE = [AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR];
 
 const RecommendationsPage = ({ isMock }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const dataSources = useAllDataSources();
 
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
@@ -66,7 +42,38 @@ const RecommendationsPage = ({ isMock }) => {
   );
 
   const { forceCheck, isForceCheckAvailable } = RecommendationsOverviewService().useForceCheck();
-  const recommendationsActionBar = getActionBar({ forceCheck, isForceCheckAvailable });
+
+  const recommendationsActionBar = {
+    title: {
+      messageId: "recommendations",
+      dataTestId: "lbl_recommendations"
+    },
+    items: [
+      {
+        key: "archive",
+        dataTestId: "btn_archive",
+        icon: <RestoreOutlinedIcon />,
+        messageId: "archive",
+        type: "button",
+        color: "primary",
+        link: ARCHIVED_RECOMMENDATIONS
+      },
+      {
+        key: "forceCheck",
+        dataTestId: "btn_force_check",
+        icon: <CachedOutlinedIcon />,
+        messageId: "forceCheck",
+        type: "button",
+        color: "primary",
+        disabled: isRestricted || !isForceCheckAvailable,
+        action: forceCheck,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
+      }
+    ]
+  };
 
   return (
     <>

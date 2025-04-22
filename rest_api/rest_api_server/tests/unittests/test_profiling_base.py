@@ -1031,7 +1031,7 @@ class ArceeMock:
         result = {
             'artifacts': [],
             'limit': kwargs.get('limit', 0),
-            'start_from': kwargs.get('start_from', 0),
+            'offset': kwargs.get('offset', 0),
             'total_count': 0
         }
         task_query = {'token': self.token}
@@ -1067,8 +1067,8 @@ class ArceeMock:
                 ]}}
             ]
         pipeline.append({'$sort': {'created_at': -1}})
-        if 'start_from' in kwargs:
-            pipeline.append({'$skip': kwargs['start_from']})
+        if 'offset' in kwargs:
+            pipeline.append({'$skip': kwargs['offset']})
         if 'limit' in kwargs:
             pipeline.append({'$limit': kwargs['limit']})
         artifacts = list(self.profiling_artifacts.aggregate(pipeline))

@@ -4,8 +4,10 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import EditablePoolPolicyLimit, { MODE } from "components/EditablePoolPolicyLimit";
+import Tooltip from "components/Tooltip";
 import WidgetTitle from "components/WidgetTitle";
 import { useIsAllowed } from "hooks/useAllowedActions";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { SCOPE_TYPES } from "utils/constants";
 import {
   CONSTRAINTS_TYPES,
@@ -16,7 +18,6 @@ import {
   TTL
 } from "utils/constraints";
 import { isEmpty } from "utils/objects";
-import useStyles from "./PoolConstraintForm.styles";
 
 const getDataTestIds = (type) =>
   ({
@@ -44,7 +45,7 @@ const getDataTestIds = (type) =>
   })[type];
 
 const PoolConstraintForm = ({ update, create, updateActivity, policy = {}, policyType, poolId, isLoadingProps = {} }) => {
-  const { classes } = useStyles();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { isGetDataLoading, isUpdateLoading, isCreateLoading, isUpdateActivityLoading } = isLoadingProps;
 
@@ -94,15 +95,17 @@ const PoolConstraintForm = ({ update, create, updateActivity, policy = {}, polic
 
   const renderCardTitleSwitch = () =>
     isManagePoolsAllowed ? (
-      <div className={classes.switchWrapper}>
-        <Switch
-          className={classes.absoluteSwitch}
-          key="switch"
-          onChange={() => updateActivity(policy.id, !policy.active)}
-          checked={!isEmpty(policy) && policy.active}
-          data-test-id={switchDataTestId}
-        />
-      </div>
+      <Tooltip title={restrictionReasonMessage}>
+        <div>
+          <Switch
+            key="switch"
+            disabled={isRestricted}
+            onChange={() => updateActivity(policy.id, !policy.active)}
+            checked={!isEmpty(policy) && policy.active}
+            data-test-id={switchDataTestId}
+          />
+        </div>
+      </Tooltip>
     ) : null;
 
   const renderCardTitle = () => {

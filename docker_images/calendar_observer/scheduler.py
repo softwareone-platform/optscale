@@ -38,8 +38,11 @@ def get_org_ids(config_cl):
         url=config_cl.restapi_url(), secret=config_cl.cluster_secret(),
         verify=False)
     _, response = rest_cl.calendar_synchronization_list()
+    _, data = rest_cl.organization_list({'is_demo': False, 'disabled': False})
+    orgs_map = {x['id']: x for x in data['organizations']}
     return [obj['organization_id']
-            for obj in response['calendar_synchronizations']]
+            for obj in response['calendar_synchronizations']
+            if orgs_map.get('organization_id', {}).get('disabled') is False]
 
 
 def main(config_cl):

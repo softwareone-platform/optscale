@@ -3,9 +3,12 @@ import { deleteEnvironment } from "api";
 import { DELETE_ENVIRONMENT } from "api/restapi/actionTypes";
 import DeleteEntity from "components/DeleteEntity";
 import { useApiState } from "hooks/useApiState";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { isError } from "utils/api";
 
 const DeleteEnvironmentContainer = ({ id, name, onCancel }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const dispatch = useDispatch();
 
   const { isLoading } = useApiState(DELETE_ENVIRONMENT);
@@ -29,7 +32,12 @@ const DeleteEnvironmentContainer = ({ id, name, onCancel }) => {
       onCancel={onCancel}
       isLoading={isLoading}
       deleteButtonProps={{
-        onDelete: onSubmit
+        onDelete: onSubmit,
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

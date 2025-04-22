@@ -5,7 +5,7 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { HOME } from "urls";
 
-const OrganizationSelectorContainer = () => {
+const OrganizationSelectorContainer = ({ isLoading = false }) => {
   const { data: { organizations = [] } = {} } = useQuery(GET_ORGANIZATIONS, {
     fetchPolicy: "cache-only"
   });
@@ -21,7 +21,14 @@ const OrganizationSelectorContainer = () => {
     });
   };
 
-  return <OrganizationSelector organizations={organizations} organizationId={organizationId} onChange={handleScopeChange} />;
+  return (
+    <OrganizationSelector
+      organizations={organizations}
+      organizationId={organizationId}
+      onChange={handleScopeChange}
+      isLoading={isLoading}
+    />
+  );
 };
 
 export default OrganizationSelectorContainer;

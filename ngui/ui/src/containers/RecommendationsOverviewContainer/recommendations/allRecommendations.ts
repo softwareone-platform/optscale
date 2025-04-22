@@ -1,6 +1,7 @@
 import AbandonedImages from "./AbandonedImages";
 import AbandonedInstances from "./AbandonedInstances";
 import AbandonedKinesisStreams from "./AbandonedKinesisStreams";
+import AbandonedLoadBalancers from "./AbandonedLoadBalancers";
 import AbandonedNebiusS3Buckets from "./AbandonedNebiusS3Buckets";
 import AbandonedS3Buckets from "./AbandonedS3Buckets";
 import CvocAgreementOpportunities from "./CvocAgreementOpportunities";
@@ -58,6 +59,7 @@ export const OPTSCALE_RECOMMENDATIONS = Object.fromEntries(
     AbandonedS3Buckets,
     AbandonedKinesisStreams,
     AbandonedInstances,
+    AbandonedLoadBalancers,
     PublicS3Buckets,
     ObsoleteImages,
     AbandonedImages,

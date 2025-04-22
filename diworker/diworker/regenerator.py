@@ -74,7 +74,10 @@ class Regenerator:
                     self.drop_expenses(cloud_acc['id'])
                     if cloud_acc['type'] == 'azure_cnr':
                         parameters['detect_period_start'] = False
-                    importer = get_importer_class(cloud_acc['type'])(**parameters)
+                    export_scheme = cloud_acc['config'].get(
+                        'expense_import_scheme')
+                    importer = get_importer_class(
+                        cloud_acc['type'], export_scheme)(**parameters)
                     importer.generate_clean_records(regeneration=True)
         except Exception as ex:
             LOG.error('Failed to re-generate: cloud_account_id: %s, error: %s'

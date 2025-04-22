@@ -1,6 +1,7 @@
 import { useTheme } from "@mui/material/styles";
 import { useIntl } from "react-intl";
-import { SI_UNITS, formatDigitalUnit } from "components/FormattedDigitalUnit";
+import { formatCompactNumber } from "components/CompactFormattedNumber";
+import { IEC_UNITS, formatDigitalUnit } from "components/FormattedDigitalUnit";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { getAverageLineValue, getTotalLineValue } from "utils/charts";
 import { METRIC_TYPES } from "utils/constants";
@@ -125,7 +126,7 @@ const diskOperationsChartProps = ({ metricType, metrics, colors, intl }) => {
 };
 
 const networkChartProps = ({ metricType, metrics, colors, intl }) => {
-  const getMemoryInLineDefinition = (data) => ({
+  const getNetworkInLineDefinition = (data) => ({
     line: {
       id: "in",
       data
@@ -137,7 +138,7 @@ const networkChartProps = ({ metricType, metrics, colors, intl }) => {
     }
   });
 
-  const getMemoryOutLineDefinition = (data) => ({
+  const getNetworkOutLineDefinition = (data) => ({
     line: {
       id: "out",
       data
@@ -150,8 +151,8 @@ const networkChartProps = ({ metricType, metrics, colors, intl }) => {
   });
 
   const definitionGetters = {
-    memoryInMetricData: getMemoryInLineDefinition,
-    memoryOutMetricData: getMemoryOutLineDefinition
+    memoryInMetricData: getNetworkInLineDefinition,
+    memoryOutMetricData: getNetworkOutLineDefinition
   };
 
   return getChartProps({
@@ -167,11 +168,166 @@ const networkChartProps = ({ metricType, metrics, colors, intl }) => {
         {
           value: formatDigitalUnit({
             value,
-            baseUnit: SI_UNITS.BYTE,
+            baseUnit: IEC_UNITS.BYTE,
             maximumFractionDigits: 1
           })
         }
       )
+  });
+};
+
+const bytesSentChartProps = ({ metricType, metrics, colors }) => {
+  const getBytesSentMetricLineDefinition = (data) => ({
+    line: {
+      id: "bytesSent",
+      data
+    },
+    markerData: {
+      name: "bytesSentAverage",
+      value: getAverageLineValue(data),
+      dataTestIdName: "bytes_sent"
+    }
+  });
+
+  const definitionGetters = {
+    bytesSentMetricData: getBytesSentMetricLineDefinition
+  };
+
+  return getChartProps({
+    metricType,
+    valueType: CHART_VALUE_TYPES.IEC_BYTE_BASE,
+    linesWithMarkerData: getLinesWithMarkerData(metrics, definitionGetters),
+    colors,
+    formatYValue: (value) =>
+      formatDigitalUnit({
+        value,
+        baseUnit: IEC_UNITS.BYTE,
+        maximumFractionDigits: 1
+      })
+  });
+};
+
+const packetsSentChartProps = ({ metricType, metrics, colors, intl }) => {
+  const getPacketsSentMetricLineDefinition = (data) => ({
+    line: {
+      id: "packetsSent",
+      data
+    },
+    markerData: {
+      name: "packetsSentAverage",
+      value: getAverageLineValue(data),
+      dataTestIdName: "packets_sent"
+    }
+  });
+
+  const definitionGetters = {
+    packetsSentMetricData: getPacketsSentMetricLineDefinition
+  };
+
+  return getChartProps({
+    metricType,
+    valueType: CHART_VALUE_TYPES.COMPACT_NUMBER,
+    linesWithMarkerData: getLinesWithMarkerData(metrics, definitionGetters),
+    colors,
+    formatYValue: (value) =>
+      formatCompactNumber(intl.formatNumber)({
+        value: value
+      })
+  });
+};
+
+const diskIOUsageChartProps = ({ metricType, metrics, colors, intl }) => {
+  const getDiskIOUsageMetricLineDefinition = (data) => ({
+    line: {
+      id: "diskIOUsage",
+      data
+    },
+    markerData: {
+      name: "diskIOUsageAverage",
+      value: getAverageLineValue(data),
+      dataTestIdName: "disk_io_usage"
+    }
+  });
+
+  const definitionGetters = {
+    diskIOUsageMetricData: getDiskIOUsageMetricLineDefinition
+  };
+
+  return getChartProps({
+    metricType,
+    valueType: CHART_VALUE_TYPES.PERCENT,
+    linesWithMarkerData: getLinesWithMarkerData(metrics, definitionGetters),
+    colors,
+    formatYValue: (value) =>
+      intl.formatNumber(value, {
+        format: "percentage",
+        maximumFractionDigits: 1
+      })
+  });
+};
+
+const consolidatedDiskIOChartProps = ({ metricType, metrics, colors, intl }) => {
+  const getConsolidatedDiskIOMetricLineDefinition = (data) => ({
+    line: {
+      id: "diskIO",
+      data
+    },
+    markerData: {
+      name: "diskIOAverage",
+      value: getAverageLineValue(data),
+      dataTestIdName: "consolidated_disk_io"
+    }
+  });
+
+  const definitionGetters = {
+    consolidatedDiskIOMetricData: getConsolidatedDiskIOMetricLineDefinition
+  };
+
+  return getChartProps({
+    metricType,
+    valueType: CHART_VALUE_TYPES.INPUT_OUTPUT_OPERATIONS_PER_SECOND,
+    linesWithMarkerData: getLinesWithMarkerData(metrics, definitionGetters),
+    colors,
+    formatYValue: (value) =>
+      intl.formatMessage(
+        {
+          id: "inputOutputOperationsPerSecond"
+        },
+        {
+          value: formatCompactNumber(intl.formatNumber)({
+            value: value
+          })
+        }
+      )
+  });
+};
+
+const requestsChartProps = ({ metricType, metrics, colors, intl }) => {
+  const getRequestsMetricLineDefinition = (data) => ({
+    line: {
+      id: "requests",
+      data
+    },
+    markerData: {
+      name: "requestsTotal",
+      value: getTotalLineValue(data),
+      dataTestIdName: "requests"
+    }
+  });
+
+  const definitionGetters = {
+    requestsMetricData: getRequestsMetricLineDefinition
+  };
+
+  return getChartProps({
+    metricType,
+    valueType: CHART_VALUE_TYPES.COMPACT_NUMBER,
+    linesWithMarkerData: getLinesWithMarkerData(metrics, definitionGetters),
+    colors,
+    formatYValue: (value) =>
+      formatCompactNumber(intl.formatNumber)({
+        value: value
+      })
   });
 };
 
@@ -214,6 +370,21 @@ const useChartPropsByMetricType = (metricType, metrics) => {
   }
   if (metricType === METRIC_TYPES.NETWORK) {
     return networkChartProps({ metricType, metrics: metricsLineData, colors, intl });
+  }
+  if (metricType === METRIC_TYPES.BYTES_SENT) {
+    return bytesSentChartProps({ metricType, metrics: metricsLineData, colors });
+  }
+  if (metricType === METRIC_TYPES.PACKETS_SENT) {
+    return packetsSentChartProps({ metricType, metrics: metricsLineData, colors, intl });
+  }
+  if (metricType === METRIC_TYPES.DISK_IO_USAGE) {
+    return diskIOUsageChartProps({ metricType, metrics: metricsLineData, colors, intl });
+  }
+  if (metricType === METRIC_TYPES.CONSOLIDATED_DISK_IO) {
+    return consolidatedDiskIOChartProps({ metricType, metrics: metricsLineData, colors, intl });
+  }
+  if (metricType === METRIC_TYPES.REQUESTS) {
+    return requestsChartProps({ metricType, metrics: metricsLineData, colors, intl });
   }
 
   throw new Error("Unknown metric type");

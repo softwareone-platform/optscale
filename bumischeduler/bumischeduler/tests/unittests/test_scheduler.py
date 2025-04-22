@@ -19,9 +19,15 @@ class TestScheduler(unittest.TestCase):
         self.task_timeout = 3600
         self.wait_timeout = 7200
         self.run_period = 10800
+        self.org_id = 'e9ce024e-588c-4ce9-9147-b894111738e9'
         patch('bumischeduler.bumischeduler.controllers.schedule.'
               'RestClient.checklist_update',
               lambda *args: (200, {'OK'})).start()
+        patch('bumischeduler.bumischeduler.controllers.schedule.'
+              'RestClient.organization_list',
+              lambda *args: (
+                  200, {'organizations': [{'id': self.org_id,
+                                           'disabled': False}]})).start()
         patch('bumischeduler.bumischeduler.controllers.schedule.'
               'ScheduleController.get_bumi_worker_params',
               return_value={
@@ -36,6 +42,7 @@ class TestScheduler(unittest.TestCase):
     def test_no_schedules(self, p_create_tasks, p_get_checklists):
         p_get_checklists.return_value = []
         controller = ScheduleController()
+        controller._config = MagicMock()
         controller.generate_tasks()
         p_create_tasks.assert_has_calls([call([])])
 
@@ -63,6 +70,7 @@ class TestScheduler(unittest.TestCase):
             'max_retries': self.max_retries
         }
         controller = ScheduleController(config=MagicMock())
+        controller._config = MagicMock()
         controller.generate_tasks()
         p_create_tasks.assert_has_calls([call([task])])
 
@@ -79,6 +87,7 @@ class TestScheduler(unittest.TestCase):
         }
         p_get_checklists.return_value = [checklist]
         controller = ScheduleController(config=MagicMock())
+        controller._config = MagicMock()
         controller.generate_tasks()
         p_create_tasks.assert_has_calls([call([])])
 
@@ -95,6 +104,7 @@ class TestScheduler(unittest.TestCase):
         }
         p_get_checklists.return_value = [checklist]
         controller = ScheduleController(config=MagicMock())
+        controller._config = MagicMock()
         controller.generate_tasks()
         p_create_tasks.assert_has_calls([call([])])
 
@@ -122,5 +132,6 @@ class TestScheduler(unittest.TestCase):
             'max_retries': self.max_retries
         }
         controller = ScheduleController(config=MagicMock())
+        controller._config = MagicMock()
         controller.generate_tasks()
         p_create_tasks.assert_has_calls([call([task])])

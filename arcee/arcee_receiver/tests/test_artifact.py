@@ -153,14 +153,14 @@ async def test_list_artifacts_empty(app):
     assert len(response.json['artifacts']) == 0
     assert response.json['total_count'] == 0
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
 
 
 @pytest.mark.asyncio
 async def test_list_invalid_query_params(app):
     client = app.asgi_client
     await prepare_token()
-    for param in ['created_at_lt', 'created_at_gt', 'limit', 'start_from']:
+    for param in ['created_at_lt', 'created_at_gt', 'limit', 'offset']:
         query_url = f'?{param}=test'
         _, response = await client.get(Urls.artifacts + query_url,
                                        headers={"x-api-key": TOKEN1})
@@ -269,7 +269,7 @@ async def test_list_artifacts_created_at(app):
     assert response.json['count'] == 1
     assert response.json['total_count'] == 3
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
 
 
 @pytest.mark.asyncio
@@ -291,7 +291,7 @@ async def test_list_artifacts_run_id(app):
     assert response.json['count'] == 2
     assert response.json['total_count'] == 3
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     for artifact in response.json['artifacts']:
         assert artifact['_id'] in [artifact1['_id'], artifact2['_id']]
 
@@ -315,7 +315,7 @@ async def test_list_artifacts_task_id(app):
     assert response.json['count'] == 2
     assert response.json['total_count'] == 3
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     for artifact in response.json['artifacts']:
         assert artifact['_id'] in [artifact1['_id'], artifact2['_id']]
         assert artifact['run']['task_name'] == task[0]['name']
@@ -338,7 +338,7 @@ async def test_list_artifacts_text_like(app):
     assert response.json['count'] == 1
     assert response.json['total_count'] == 4
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     assert response.json['artifacts'][0]['_id'] == artifact1['_id']
 
     _, response = await client.get(Urls.artifacts + f'?text_like=test2',
@@ -348,7 +348,7 @@ async def test_list_artifacts_text_like(app):
     assert response.json['count'] == 1
     assert response.json['total_count'] == 4
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     assert response.json['artifacts'][0]['_id'] == artifact2['_id']
 
     _, response = await client.get(Urls.artifacts + f'?text_like=test3',
@@ -358,7 +358,7 @@ async def test_list_artifacts_text_like(app):
     assert response.json['count'] == 1
     assert response.json['total_count'] == 4
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     assert response.json['artifacts'][0]['_id'] == artifact3['_id']
 
     _, response = await client.get(Urls.artifacts + f'?text_like=test4',
@@ -368,7 +368,7 @@ async def test_list_artifacts_text_like(app):
     assert response.json['count'] == 1
     assert response.json['total_count'] == 4
     assert response.json['limit'] == 0
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
     assert response.json['artifacts'][0]['_id'] == artifact4['_id']
 
 
@@ -388,16 +388,16 @@ async def test_list_artifacts_limit(app):
     assert response.json['artifacts'][0]['_id'] == artifact3['_id']
     assert response.json['total_count'] == 3
     assert response.json['limit'] == 1
-    assert response.json['start_from'] == 0
+    assert response.json['offset'] == 0
 
-    _, response = await client.get(Urls.artifacts + f'?limit=1&start_from=1',
+    _, response = await client.get(Urls.artifacts + f'?limit=1&offset=1',
                                    headers={"x-api-key": TOKEN1})
     assert response.status == 200
     assert len(response.json['artifacts']) == 1
     assert response.json['artifacts'][0]['_id'] == artifact2['_id']
     assert response.json['total_count'] == 3
     assert response.json['limit'] == 1
-    assert response.json['start_from'] == 1
+    assert response.json['offset'] == 1
 
 
 @pytest.mark.asyncio
@@ -420,12 +420,12 @@ async def test_list_artifacts_total_count(app):
     assert response.status == 200
     assert response.json['total_count'] == 3
 
-    _, response = await client.get(Urls.artifacts + f'?start_from=1',
+    _, response = await client.get(Urls.artifacts + f'?offset=1',
                                    headers={"x-api-key": TOKEN1})
     assert response.status == 200
     assert response.json['total_count'] == 3
 
-    _, response = await client.get(Urls.artifacts + f'?start_from=10',
+    _, response = await client.get(Urls.artifacts + f'?offset=10',
                                    headers={"x-api-key": TOKEN1})
     assert response.status == 200
     assert response.json['total_count'] == 3

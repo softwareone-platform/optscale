@@ -31,6 +31,10 @@ class KataraTaskTimeoutError(Exception):
     pass
 
 
+class KataraError(Exception):
+    pass
+
+
 class Base(object):
     def __init__(self, body, message, config_cl,
                  on_continue_cb, on_complete_cb):
@@ -193,8 +197,10 @@ class GetScopes(CheckTimeoutThreshold):
                          on_continue_cb=self.on_continue_cb,
                          on_complete_cb=self.on_complete_cb).execute()
             return
-
-        _, org = self.rest_cl.organization_get(recipient['scope_id'])
+        org_id = recipient['scope_id']
+        _, org = self.rest_cl.organization_get(org_id)
+        if org.get('disabled'):
+            raise KataraError(f"Organization {org_id} disabled")
         _, org_pool = self.rest_cl.pool_get(org['pool_id'], children=True)
         scope_ids = [recipient['scope_id']]
         if org_pool['children']:
