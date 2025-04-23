@@ -8,7 +8,7 @@ import {EStorageState} from "../utils/enums";
  * with Hystax code.
  */
 
-test.describe.only('MPT-7367 screenshot tests @swo_customisation @ui', () => {
+test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
   test.use({storageState: EStorageState.liveDemoUser});
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
