@@ -7,7 +7,7 @@ test.describe.skip("Auth API tests @api_tests", () => {
     const email = process.env.DEFAULT_USER_EMAIL;
     const password = process.env.DEFAULT_USER_PASSWORD;
 
-    test("Get verification codes", async ({ authRequest }) => {
+    test("Set verification codes", async ({ authRequest }) => {
         const response = await authRequest.setVerificationCode(email, password);
 
         await test.step("Verify response status and payload fields", async () => {

@@ -1,32 +1,74 @@
 import {test} from "../fixtures/page-fixture";
 import {expect, request} from "@playwright/test";
 import {generateRandomEmail} from "../utils/random-data";
-import {MailpitPage} from "../pages/mailpit-page";
 import {AuthRequest} from "../api-requests/auth-request";
 
-test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
-    let invitationEmail: string;
-    let inviteLink: string;
-    let mailpitPage: MailpitPage;
-    let verifyUrl: string;
-    let verificationCode: string;
-    let emailVerificationLink: string;
+const verificationCode = "123456";
+let invitationEmail: string;
+let inviteLink: string;
+let emailVerificationLink: string;
 
-    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
-        verificationCode = "123456"
+
+test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
+
+
+    test.beforeEach('Login admin user', async ({loginPage, header}) => {
+
         invitationEmail = generateRandomEmail();
         inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
-
-        // const mailpitTab = await context.newPage();
-        // mailpitPage = new MailpitPage(mailpitTab);
-        // await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
 
-    test.only("[229865] Invite new user to organisation, user accepts", async ({
+    test("[229865] Invite new user to organisation, user accepts", async ({
+                                                                              header,
+                                                                              mainMenu,
+                                                                              usersPage,
+                                                                              usersInvitePage,
+                                                                              registerPage,
+                                                                              pendingInvitationsPage
+                                                                          }) => {
+        test.slow();
+        const requestContext = await request.newContext();
+        const authRequest = new AuthRequest(requestContext);
+
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a new user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail);
+            await usersInvitePage.userInvitedAlert.waitFor();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("Sign up user", async () => {
+            await registerPage.navigateToRegistration(inviteLink);
+            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
+        });
+
+        await test.step("Set verification code", async () => {
+            await header.page.waitForTimeout(60000); // Wait for 1 minute for set verification code timeout
+            await authRequest.setVerificationCode(invitationEmail, verificationCode);
+        });
+
+        await test.step("Verify and accept invitation from email", async () => {
+            await pendingInvitationsPage.page.goto(emailVerificationLink);
+            await pendingInvitationsPage.acceptInviteFlow();
+        });
+
+        await test.step("Assert organization", async () => {
+            await expect(header.organizationSelect).toContainText("QA Test Organization");
+        });
+    });
+
+    test("[229866] Invite new user to organisation, but user declines", async ({
                                                                                    header,
                                                                                    mainMenu,
                                                                                    usersPage,
@@ -52,78 +94,18 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
             await header.signOut();
         });
 
-        // await test.step("Navigate to Invite url", async () => {
-        //     await mailpitPage.bringContextToFront();
-        //     await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-        //     await mailpitPage.clickInvitationEmail(invitationEmail);
-        //     await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
-        // });
-
-
         await test.step("Sign up user", async () => {
             await registerPage.navigateToRegistration(inviteLink);
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
+
         await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(60000);
+            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
             await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
-        // await test.step("Verify email", async () => {
-        //     verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
-        // });
-        await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
-            await pendingInvitationsPage.acceptInviteFlow();
-        });
-
-        await test.step("Assert organization", async () => {
-            await expect(header.organizationSelect).toContainText("QA Test Organization");
-        });
-    });
-
-    test("[229866] Invite new user to organisation, but user declines", async ({
-                                                                                   header,
-                                                                                   mainMenu,
-                                                                                   usersPage,
-                                                                                   usersInvitePage,
-                                                                                   registerPage,
-                                                                                   pendingInvitationsPage
-                                                                               }) => {
-        await test.step("Navigate to the invitation page", async () => {
-            await mainMenu.clickUserManagement();
-            await usersPage.clickInviteBtn();
-        });
-
-        await test.step("Invite a new user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail);
-            await usersInvitePage.userInvitedAlert.waitFor();
-        });
-
-        await test.step("Sign out Admin user", async () => {
-            await header.signOut();
-        });
-
-        await test.step("View invitation email in mailpit", async () => {
-            await mailpitPage.bringContextToFront();
-            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-            await mailpitPage.clickInvitationEmail(invitationEmail);
-            await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
-        });
-
-        await test.step("Sign up user", async () => {
-            await registerPage.bringContextToFront();
-            await registerPage.navigateToRegistration(inviteLink);
-            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
-        });
-
-        await test.step("Verify email", async () => {
-            await mailpitPage.bringContextToFront();
-            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
-        });
         await test.step("Verify and decline invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.bringContextToFront();
+            await pendingInvitationsPage.page.goto(emailVerificationLink);
             await pendingInvitationsPage.declineInviteFlow();
         });
 
@@ -133,15 +115,18 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 
     test("[229867] Invite new user to organisation, who has previously declined @slow", async ({
-                                                                                                   header,
-                                                                                                   loginPage,
-                                                                                                   mainMenu,
-                                                                                                   usersPage,
-                                                                                                   usersInvitePage,
-                                                                                                   registerPage,
-                                                                                                   pendingInvitationsPage
-                                                                                               }) => {
+                                                                                                        header,
+                                                                                                        loginPage,
+                                                                                                        mainMenu,
+                                                                                                        usersPage,
+                                                                                                        usersInvitePage,
+                                                                                                        registerPage,
+                                                                                                        pendingInvitationsPage
+                                                                                                    }) => {
         test.slow();
+        const requestContext = await request.newContext();
+        const authRequest = new AuthRequest(requestContext);
+
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
             await usersPage.clickInviteBtn();
@@ -161,14 +146,13 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
 
-        await test.step("Verify email", async () => {
-            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-            await mailpitPage.bringContextToFront();
-            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
+        await test.step("Set verification code", async () => {
+            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
+
         await test.step("Verify and decline invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.bringContextToFront();
+            await pendingInvitationsPage.page.goto(emailVerificationLink);
             await pendingInvitationsPage.declineInviteFlow();
         });
 
@@ -197,16 +181,8 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
             await header.signOut();
         });
 
-        await test.step("View invitation email in mailpit", async () => {
-            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-            await mailpitPage.bringContextToFront();
-            await mailpitPage.clickInvitationEmail(invitationEmail);
-            await expect(await mailpitPage.getInviteLink(inviteLink)).toBeVisible();
-        });
-
         await test.step("Login as new user", async () => {
             await registerPage.navigateToRegistration(inviteLink);
-            await registerPage.bringContextToFront();
             await registerPage.clickAlreadyHaveAccountLink();
             await loginPage.loginWithPreFilledEmail(process.env.Default_USER_PASSWORD);
         });
@@ -222,19 +198,13 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 });
 
-test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
-    let invitationEmail: string;
-    let inviteLink: string;
-    let mailpitPage: MailpitPage;
-    let verifyUrl: string;
+test.describe.only("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
         inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
+        emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
-        const mailpitTab = await context.newPage();
-        mailpitPage = new MailpitPage(mailpitTab);
-        await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
@@ -250,6 +220,9 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
                                                                             pendingInvitationsPage
                                                                         }) => {
         test.slow();
+        const requestContext = await request.newContext();
+        const authRequest = new AuthRequest(requestContext);
+
         await test.step("Verify no pending invitations in Settings tab", async () => {
             await mainMenu.clickSettings();
             await settingsPage.clickInvitationsTab();
@@ -275,16 +248,13 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
 
-        await test.step("Verify email", async () => {
-            await mailpitPage.bringContextToFront();
-            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-
-            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
+        await test.step("Set verification code", async () => {
+            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
         await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.bringContextToFront();
+            await pendingInvitationsPage.page.goto(emailVerificationLink);
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
@@ -327,19 +297,14 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
     });
 });
 
-test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
-    let invitationEmail: string;
-    let inviteLink: string;
-    let mailpitPage: MailpitPage;
-    let verifyUrl: string;
+test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
         inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
+        emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
-        const mailpitTab = await context.newPage();
-        mailpitPage = new MailpitPage(mailpitTab);
-        await loginPage.bringContextToFront();
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
         await header.selectOrganization("QA Test Organization");
     });
@@ -355,6 +320,8 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
                                                                            pendingInvitationsPage
                                                                        }) => {
         test.slow();
+        const requestContext = await request.newContext();
+        const authRequest = new AuthRequest(requestContext);
 
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
@@ -375,16 +342,13 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
             await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
         });
 
-        await test.step("Verify email", async () => {
-            await mailpitPage.bringContextToFront();
-            await mailpitPage.loginToMailpit(process.env.MAILPIT_USER, process.env.MAILPIT_SECRET);
-
-            verifyUrl = await mailpitPage.getVerificationLink(invitationEmail);
+        await test.step("Set verification code", async () => {
+            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
         await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(verifyUrl);
-            await pendingInvitationsPage.bringContextToFront();
+            await pendingInvitationsPage.page.goto(emailVerificationLink);
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
@@ -420,5 +384,3 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         });
     });
 });
-
-

@@ -106,4 +106,8 @@ export abstract class BasePage {
     async bringContextToFront(): Promise<void> {
         await this.page.bringToFront();
     }
+
+    async waitForElementDetached(element: Locator): Promise<void> {
+        await element.waitFor({state: 'detached'});
+    }
 }
