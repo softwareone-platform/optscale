@@ -10,7 +10,6 @@ body,
   color-adjust: exact !important;
   image-rendering: pixelated !important;
   backface-visibility: hidden !important;
-  font-family: 'Inter', sans-serif !important;
   caret-color: transparent !important;
 }
 

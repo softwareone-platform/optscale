@@ -28,7 +28,7 @@ export default defineConfig({
   expect: {
     toHaveScreenshot: {
       animations: "disabled",
-      stylePath: './fixtures/disable-antialiasing.css'
+      stylePath: './fixtures/pre-screenshot-styles.css'
     },
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
