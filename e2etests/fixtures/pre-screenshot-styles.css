@@ -1,0 +1,32 @@
+/* disable-antialiasing.css */
+html,
+body,
+* {
+  font-smooth: never !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  -webkit-text-stroke: 0.01px transparent !important;
+  text-shadow: none !important;
+  color-adjust: exact !important;
+  image-rendering: pixelated !important;
+  backface-visibility: hidden !important;
+  font-family: 'Inter', sans-serif !important;
+  caret-color: transparent !important;
+}
+
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Hide scrollbars across browsers */
+::-webkit-scrollbar {
+  display: none !important;
+}
+
+* {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;     /* Firefox */
+}

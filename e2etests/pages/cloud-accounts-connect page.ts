@@ -10,7 +10,6 @@ import {BasePage} from "./base-page";
             readonly awsRootBtn: Locator;
             readonly awsLinkedBtn: Locator;
             readonly azureTenantBtn: Locator;
-            readonly azureSubscriptionBtn: Locator;
             readonly googleCloudBtn: Locator;
             readonly googleCloudTenantBtn: Locator;
             readonly nameInput: Locator;
@@ -52,12 +51,11 @@ import {BasePage} from "./base-page";
             constructor(page: Page) {
                 super(page, '/cloud-accounts/connect');
                 this.heading = this.main.locator('//h1[.="Connect data source"]');
-                this.awsRootBtn = this.main.getByTestId('btn_aws_root_account');
+                this.awsRootBtn = this.main.getByTestId('btn_aws_account');
                 this.awsLinkedBtn = this.main.getByTestId('btn_aws_linked_account');
-                this.azureTenantBtn = this.main.getByTestId('btn_azure_tenant');
-                this.azureSubscriptionBtn = this.main.getByTestId('btn_azure_subscription');
+                this.azureTenantBtn = this.main.getByTestId('btn_azure_account');
                 this.googleCloudBtn = this.main.getByTestId('btn_gcp_account');
-                this.googleCloudTenantBtn = this.main.getByTestId('btn_gcp_tenant_account');
+                this.googleCloudTenantBtn = this.main.getByTestId('btn_gcp_account');
                 this.nameInput = this.main.getByTestId('input_cloud_account_name');
                 this.awsAccessKeyIDInput = this.main.getByTestId('input_aws_access_key_id');
                 this.awsSecretAccessKeyInput = this.main.getByTestId('input_secret_key');
@@ -118,14 +116,6 @@ import {BasePage} from "./base-page";
              */
             async clickAzureTenant(): Promise<void> {
                 await this.azureTenantBtn.click();
-            }
-
-            /**
-             * Clicks the Azure Subscription button.
-             * @returns {Promise<void>} A promise that resolves when the button is clicked.
-             */
-            async clickAzureSubscription(): Promise<void> {
-                await this.azureSubscriptionBtn.click();
             }
 
             /**

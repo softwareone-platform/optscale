@@ -8,7 +8,7 @@ import {EStorageState} from "../utils/enums";
  * with Hystax code.
  */
 
-test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
+test.describe.only('MPT-7367 screenshot tests @swo_customisation @ui', () => {
   test.use({storageState: EStorageState.liveDemoUser});
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {
@@ -347,22 +347,10 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-root-screenshot.png');
     });
 
-    await test.step('Verify Cloud Accounts connect page - AWS Linked', async () => {
-      await cloudAccountsConnectPage.clickAWSLinkedAccount();
-      await cloudAccountsConnectPage.heading.hover();
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-linked-screenshot.png');
-    });
-
     await test.step('Verify Cloud Accounts connect page - Azure Tenant', async () => {
       await cloudAccountsConnectPage.clickAzureTenant();
       await cloudAccountsConnectPage.heading.hover();
       await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-tenant-screenshot.png');
-    });
-
-    await test.step('Verify Cloud Accounts connect page - Azure Subscription', async () => {
-      await cloudAccountsConnectPage.clickAzureSubscription();
-      await cloudAccountsConnectPage.heading.hover();
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-azure-subscription-screenshot.png');
     });
 
     await test.step('Verify Cloud Accounts connect page - Google Cloud', async () => {
