@@ -4,8 +4,16 @@ import { MPT_BRAND_PRIMARY, MPT_BRAND_TYPE, MPT_GRAY_3, MPT_SPACING_1 } from "..
 const useStyles = makeStyles()(() => ({
   dashed: {
     display: "inline",
-    borderBottom: "1px dashed",
-    width: "fit-content"
+    position: "relative",
+    width: "fit-content",
+    "&:after": {
+      content: '""',
+      position: "absolute",
+      bottom: -1,
+      left: 0,
+      width: "100%",
+      borderBottom: "1px dashed"
+    }
   },
   chip: {
     display: "inline",

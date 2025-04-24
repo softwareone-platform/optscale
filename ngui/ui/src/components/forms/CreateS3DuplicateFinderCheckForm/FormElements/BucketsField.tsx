@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from "react";
 import { FormControl, FormHelperText } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import { Controller, useFormContext } from "react-hook-form";
 import { FormattedMessage, useIntl } from "react-intl";
 import CloudResourceId from "components/CloudResourceId";
+import S3DuplicatesBucketsList from "components/S3DuplicatesBucketsList";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import { resourceLocation } from "utils/columns";
@@ -131,14 +131,7 @@ const BucketsField = ({ buckets, dataSources, isLoading }) => {
           ) : (
             <>
               <TableField buckets={buckets} dataSources={dataSources} value={value} onChange={onChange} errors={errors} />
-              {!isEmptyObject(selectedBuckets) && (
-                // Intentionally avoided using KeyValue label due to inconvenience
-                <Typography variant="caption">
-                  <FormattedMessage id="selectedBuckets" />
-                  &#58;&nbsp;
-                  <strong>{Object.keys(selectedBuckets).join(", ")}</strong>
-                </Typography>
-              )}
+              {!isEmptyObject(selectedBuckets) && <S3DuplicatesBucketsList bucketNames={Object.keys(selectedBuckets)} />}
               {!!errors[FIELD_NAME] && <FormHelperText error>{errors[FIELD_NAME].message}</FormHelperText>}
             </>
           )
