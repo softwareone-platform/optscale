@@ -108,8 +108,8 @@ class RunObserver:
             if runs_to_update:
                 self.mongo_client.arcee.run.bulk_write(runs_to_update)
                 runs_to_update.clear()
-            LOG.info(f"Finished processing for organization {organization_id},"
-                     f"updated {run_count} runs")
+            LOG.info("Finished processing for organization %s,"
+                     "updated %s runs", organization_id, run_count)
 
 
 if __name__ == "__main__":
