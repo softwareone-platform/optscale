@@ -1,5 +1,6 @@
 name: Build trapper test images and run tests on it
 run-name: Build trapper test images and run tests on it - started by ${{ github.actor }}
+permissions: read-all
 on:
   pull_request:
     types: [opened, synchronize]

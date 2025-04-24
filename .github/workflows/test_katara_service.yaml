@@ -1,5 +1,6 @@
 name: Build katara_service test image and run tests on it
 run-name: Build katara_service test image and run tests on it - started by ${{ github.actor }}
+permissions: read-all
 on:
   pull_request:
     types: [opened, synchronize]
