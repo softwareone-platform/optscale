@@ -855,45 +855,6 @@ diproxy:
     externalPort: 80
     internalPort: 8935
 
-pharos_receiver:
-  name: pharos-receiver
-  replicaCount: 1
-  image:
-    id:
-    repository: pharos_receiver
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: pharos-receiver
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8946
-
-pharos_worker:
-  name: pharos-worker
-  replicaCount: 1
-  image:
-    id:
-    repository: pharos_worker
-    tag: *tag
-    pullPolicy: Never
-
-ohsu:
-  name: ohsu
-  replicaCount: 1
-  image:
-    id:
-    repository: ohsu
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: ohsu
-    type: NodePort
-    # TODO: list of ports?
-    clientPort: 9377
-    historyPort: 30180
-    externalPort: 80
-
 users_dataset_generator:
   name: users-dataset-generator
   image:

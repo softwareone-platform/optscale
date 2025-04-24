@@ -44,10 +44,7 @@ metroculus_scheduler:
 metroculus_worker:
 mongo:
 ngui:
-ohsu:
 organization_violations:
-pharos_receiver:
-pharos_worker:
 power_schedule:
 redis:
 resource_discovery:

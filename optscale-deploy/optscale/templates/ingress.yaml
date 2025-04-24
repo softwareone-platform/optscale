@@ -107,20 +107,6 @@ spec:
         pathType: Prefix
       - backend:
           service:
-            name: {{ .Values.pharos_receiver.service.name }}
-            port:
-              number: {{ .Values.pharos_receiver.service.externalPort }}
-        path: /pharos_receiver
-        pathType: Prefix
-      - backend:
-          service:
-            name: {{ .Values.ohsu.service.name }}
-            port:
-              number: {{ .Values.ohsu.service.externalPort }}
-        path: /ohsu
-        pathType: Prefix
-      - backend:
-          service:
             name: {{ .Values.arcee.service.name }}
             port:
               number: {{ .Values.arcee.service.externalPort }}
