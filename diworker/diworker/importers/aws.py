@@ -225,7 +225,10 @@ class AWSReportImporter(CSVBaseReportImporter):
             billing_period, skipped_accounts = self.load_parquet_report(
                 report_path, account_id_ca_id_map, billing_period,
                 skipped_accounts)
-        except pyarrow.lib.ArrowInvalid:
+        except pyarrow.lib.ArrowInvalid as exc:
+            LOG.warning(
+                f"Could not open source file as Parquet {report_path}: "
+                f"{str(exc)}. Will try to open it as CSV")
             billing_period, skipped_accounts = self.load_csv_report(
                 report_path, account_id_ca_id_map, billing_period,
                 skipped_accounts)
