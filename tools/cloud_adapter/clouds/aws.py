@@ -517,6 +517,7 @@ class Aws(S3CloudMixin):
                 region=region,
                 vpc_id=lb['VpcId'],
                 security_groups=lb.get('SecurityGroups'),
+                category=lb.get('Type'),
                 tags=tags,
                 cloud_console_link=self._generate_cloud_link(
                     LoadBalancerResource, region, lb_arn),
@@ -547,6 +548,7 @@ class Aws(S3CloudMixin):
                 vpc_id=lb['VPCId'],
                 security_groups=lb.get('SecurityGroups'),
                 tags=tags,
+                category='classic',
                 cloud_console_link=self._generate_cloud_link(
                     LoadBalancerResource, region, name),
             )

@@ -38,7 +38,7 @@ class Configurator(object):
             user=config['restdb']['user'],
             password=config['restdb']['password'],
             host=config['restdb']['host'],
-            port=config['restdb']['port']), 
+            port=config['restdb']['port']),
             connect_args={"connect_timeout": 5}
         )
         if "url" in config["mongo"]:

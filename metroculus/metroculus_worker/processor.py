@@ -206,11 +206,16 @@ class MetricsProcessor(object):
                 'Cloud %s is not supported' % cloud_type)
 
         adapter = self._get_cloud_adapter(cloud_account)
+        additional_params = {}
+        if cloud_type == 'azure_cnr':
+            # metrics are not supported for Basic LB
+            additional_params['meta.category'] = {'$ne': 'Basic'}
         cloud_account_resources = list(
             self.mongo_client.restapi.resources.find({
                 'cloud_account_id': cloud_account['id'],
                 'active': True,
-                'resource_type': {'$in': SUPPORTED_RESOURCE_TYPES}
+                'resource_type': {'$in': SUPPORTED_RESOURCE_TYPES},
+                **additional_params
             }, ['_id', 'last_seen', 'cloud_resource_id',
                 'region', 'resource_type', 'name', 'k8s_namespace',
                 'meta.source_cluster_id', 'meta.ram']

@@ -4,6 +4,7 @@ import enum
 import logging
 import re
 import time
+
 from requests.models import Request
 from urllib.parse import urlencode
 from multiprocessing import Process, Queue
@@ -862,6 +863,7 @@ class Azure(CloudBase):
                 cloud_console_link=cloud_console_link,
                 cloud_resource_id=lb.id.lower(),
                 region=self.location_map.get(lb.location),
+                category=lb.sku.name,
                 name=lb.name,
                 tags=lb.tags or {}
             )
