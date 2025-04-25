@@ -122,10 +122,14 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
 
   const saveEmails = (emails: string[]) => {
     emails.forEach((email) => {
+      const normalizedEmail = email.toLowerCase();
       if (isEmailValid(email)) {
-        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, email])] }));
+        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, normalizedEmail])] }));
       } else {
-        setValues((prevState) => ({ ...prevState, invalidEmails: [...new Set([...prevState.invalidEmails, email])] }));
+        setValues((prevState) => ({
+          ...prevState,
+          invalidEmails: [...new Set([...prevState.invalidEmails, email])]
+        }));
       }
       // Clear error state for email field
       setIsEmptyEmail(false);
