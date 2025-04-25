@@ -494,9 +494,11 @@ class Aws(S3CloudMixin):
         as tuples (adapter_method, arguments_tuple)
         """
         result = list()
-        bucket_list = self.s3.list_buckets()
-        for bucket in bucket_list['Buckets']:
-            result.append((self.discover_bucket_info, (bucket['Name'],)))
+        paginator = self.s3.get_paginator('list_buckets')
+        page_iterator  = paginator.paginate()
+        for page in page_iterator:
+            for bucket in page['Buckets']:
+                result.append((self.discover_bucket_info, (bucket['Name'],)))
         return result
 
     @staticmethod
