@@ -1058,6 +1058,7 @@ resource_discovery_settings:
   timeout:
   writing_timeout: 60
   observe_timeout: 7200
+  debug:
 
 encryption_salt:
 encryption_salt_auth:

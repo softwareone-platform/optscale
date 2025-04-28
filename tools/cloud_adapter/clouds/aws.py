@@ -499,6 +499,7 @@ class Aws(S3CloudMixin):
         for page in page_iterator:
             for bucket in page['Buckets']:
                 result.append((self.discover_bucket_info, (bucket['Name'],)))
+        LOG.debug("Detected buckets: %s", [x[1][0] for x in result])
         return result
 
     @staticmethod

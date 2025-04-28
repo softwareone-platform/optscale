@@ -91,7 +91,7 @@ def process(config_cl):
         'with_connected_accounts': True, 'disabled': False})
     tasks_map = defaultdict(list)
     now = utcnow_timestamp()
-    _, _, _, observe_timeout = config_cl.resource_discovery_params()
+    _, _, _, observe_timeout, _ = config_cl.resource_discovery_params()
     for organization in response['organizations']:
         try:
             _, ca_resp = rest_cl.cloud_account_list(organization['id'])
