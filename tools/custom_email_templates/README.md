@@ -44,7 +44,7 @@ Both approaches produce consistent, ready-to-use email templates for your projec
 
 ## CLI version
 ```bash
-node tools/generate-emails/generateEmails.js --input <input_directory> --output <output_directory>
+node tools/custom_email_templates/generateEmails.js --input <input_directory> --output <output_directory>
 ```
 ## 🐳 Docker Usage
 
