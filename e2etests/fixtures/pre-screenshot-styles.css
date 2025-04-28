@@ -11,8 +11,6 @@ body,
   image-rendering: pixelated !important;
   backface-visibility: hidden !important;
   caret-color: transparent !important;
-  transform: scale(1) !important;
-  zoom: 1 !important;
 }
 
 *,
