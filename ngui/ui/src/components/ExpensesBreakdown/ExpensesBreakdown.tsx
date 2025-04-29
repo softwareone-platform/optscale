@@ -1,7 +1,5 @@
-import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
-import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import BarChartLoader from "components/BarChartLoader";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
@@ -189,11 +187,7 @@ const ExpensesBreakdown = ({
     );
   };
 
-  const PieChartHeader = () => (
-    <Box justifyContent="center" display="flex">
-      <FormattedMessage id="expenses" />
-    </Box>
-  );
+  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""} />;
 
   const renderPieChartWidget = () => {
     if (isLoading) {
