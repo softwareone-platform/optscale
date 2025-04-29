@@ -94,13 +94,20 @@ export type AwsRootConfigInput = {
 export type AzureSubscriptionConfig = {
   __typename?: 'AzureSubscriptionConfig';
   client_id?: Maybe<Scalars['String']['output']>;
+  container?: Maybe<Scalars['String']['output']>;
+  directory?: Maybe<Scalars['String']['output']>;
   expense_import_scheme?: Maybe<Scalars['String']['output']>;
+  export_name?: Maybe<Scalars['String']['output']>;
   subscription_id?: Maybe<Scalars['String']['output']>;
   tenant?: Maybe<Scalars['String']['output']>;
 };
 
 export type AzureSubscriptionConfigInput = {
   client_id: Scalars['String']['input'];
+  container?: InputMaybe<Scalars['String']['input']>;
+  directory?: InputMaybe<Scalars['String']['input']>;
+  export_name?: InputMaybe<Scalars['String']['input']>;
+  sa_connection_string?: InputMaybe<Scalars['String']['input']>;
   secret: Scalars['String']['input'];
   subscription_id: Scalars['String']['input'];
   tenant: Scalars['String']['input'];
@@ -1065,7 +1072,10 @@ export type AwsDataSourceResolvers<ContextType = any, ParentType extends Resolve
 
 export type AzureSubscriptionConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['AzureSubscriptionConfig'] = ResolversParentTypes['AzureSubscriptionConfig']> = {
   client_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  container?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  directory?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expense_import_scheme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  export_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   subscription_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tenant?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

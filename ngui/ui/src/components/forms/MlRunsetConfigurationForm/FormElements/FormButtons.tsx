@@ -1,10 +1,10 @@
 import Button from "components/Button";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import SubmitButtonLoader from "components/SubmitButtonLoader";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const FormButtons = ({ onCancel, isLoading = false }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <FormButtonsWrapper>
@@ -14,8 +14,11 @@ const FormButtons = ({ onCancel, isLoading = false }) => {
         messageId="launch"
         type="submit"
         isLoading={isLoading}
-        tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
-        disabled={isDemo}
+        tooltip={{
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }}
+        disabled={isRestricted}
       />
       <Button messageId="cancel" onClick={onCancel} />
     </FormButtonsWrapper>

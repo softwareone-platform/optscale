@@ -9,6 +9,7 @@ import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import PoolLabel from "components/PoolLabel";
 import { useIsAllowed } from "hooks/useAllowedActions";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { EMPTY_UUID } from "utils/constants";
 import { PoolSelector, WithSubPoolsCheckbox } from "./FormElements";
 
@@ -23,6 +24,8 @@ const getChildren = (array, parentId) => {
 };
 
 const ReapplyRulesetForm = ({ onSubmit, managedPools, closeSideModal, isSubmitLoading }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const methods = useForm({
     defaultValues: {
       [POOL_ID]: "",
@@ -113,6 +116,11 @@ const ReapplyRulesetForm = ({ onSubmit, managedPools, closeSideModal, isSubmitLo
               variant="contained"
               isLoading={isSubmitLoading}
               type="submit"
+              disabled={isRestricted}
+              tooltip={{
+                show: isRestricted,
+                value: restrictionReasonMessage
+              }}
             />
             <Button dataTestId="cancel_btn" messageId="cancel" variant="outlined" onClick={closeSideModal} />
           </FormButtonsWrapper>

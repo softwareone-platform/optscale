@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import DeleteEntity from "components/DeleteEntity";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import OrganizationConstraintsService from "services/OrganizationConstraintsService";
 import { ANOMALIES, QUOTAS_AND_BUDGETS, TAGGING_POLICIES } from "urls";
 import { ANOMALY_TYPES, QUOTAS_AND_BUDGETS_TYPES, TAGGING_POLICY_TYPES } from "utils/constants";
 
 const DeleteAnomalyContainer = ({ onCancel, id, name, type }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const navigate = useNavigate();
 
   const { useDelete } = OrganizationConstraintsService();
@@ -35,7 +38,12 @@ const DeleteAnomalyContainer = ({ onCancel, id, name, type }) => {
       onCancel={onCancel}
       isLoading={isLoading}
       deleteButtonProps={{
-        onDelete
+        onDelete,
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

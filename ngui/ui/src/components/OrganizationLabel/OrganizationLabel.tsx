@@ -5,13 +5,16 @@ import Icon from "components/Icon";
 import Tooltip from "components/Tooltip";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { HOME } from "urls";
-import { sliceByLimitWithEllipsis } from "utils/strings";
+import { getOrganizationDisplayName } from "utils/organization";
+
+const MAX_ORGANIZATION_NAME_LENGTH = 32;
 
 type OrganizationLabelProps = {
   id: string;
   name: string;
   dataTestId?: string;
   disableLink?: boolean;
+  isInactive?: boolean;
 };
 
 type LabelLinkProps = {
@@ -19,8 +22,6 @@ type LabelLinkProps = {
   organizationName: string;
   dataTestId?: string;
 };
-
-const MAX_ORGANIZATION_NAME_LENGTH = 32;
 
 const LabelLink = forwardRef<HTMLButtonElement, LabelLinkProps>(
   ({ organizationId, organizationName, dataTestId, ...rest }, ref) => {
@@ -48,18 +49,21 @@ const LabelLink = forwardRef<HTMLButtonElement, LabelLinkProps>(
   }
 );
 
-const OrganizationLabel = ({ id, name, dataTestId, disableLink = false }: OrganizationLabelProps) => {
-  const isNameLong = name.length > MAX_ORGANIZATION_NAME_LENGTH;
-  const organizationName = isNameLong ? sliceByLimitWithEllipsis(name, MAX_ORGANIZATION_NAME_LENGTH) : name;
+const OrganizationLabel = ({ id, name, dataTestId, disableLink = false, isInactive = false }: OrganizationLabelProps) => {
+  const { displayName, isNameLong, originalName } = getOrganizationDisplayName({
+    name,
+    isInactive,
+    maxLength: MAX_ORGANIZATION_NAME_LENGTH
+  });
 
   return (
     <>
       <Icon icon={ApartmentIcon} hasRightMargin />
-      <Tooltip title={isNameLong ? name : undefined} placement="top">
+      <Tooltip title={isNameLong ? originalName : undefined} placement="top">
         {!disableLink ? (
-          <LabelLink organizationId={id} organizationName={organizationName} dataTestId={dataTestId} />
+          <LabelLink organizationId={id} organizationName={displayName} dataTestId={dataTestId} />
         ) : (
-          <span data-test-id={dataTestId}>{organizationName}</span>
+          <span data-test-id={dataTestId}>{displayName}</span>
         )}
       </Tooltip>
     </>

@@ -2,6 +2,7 @@ import logging
 import time
 import os
 import requests
+import gzip
 import shutil
 import uuid
 from functools import cached_property
@@ -19,6 +20,7 @@ import tools.optscale_time as opttime
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
 CSV_REWRITE_DAYS = 5
+GZIP_ENDING = '.gz'
 REPORTS_PATH_PREFIX = 'reports'
 
 
@@ -633,6 +635,52 @@ class CSVBaseReportImporter(BaseReportImporter):
     def get_current_reports(self, reports_groups, last_import_modified_at):
         raise NotImplementedError
 
+    def _get_legacy_key(self, old_key):
+        return
+
+    def _download_report_files(self, current_reports, last_import_modified_at):
+        for date, reports in current_reports.items():
+            for report in reports:
+                if last_import_modified_at < report['LastModified']:
+                    last_import_modified_at = report['LastModified']
+                target_path = self.get_new_report_path(date)
+                os.makedirs(os.path.join(self.reports_dir, date),
+                            exist_ok=True)
+                try:
+                    # python2 way
+                    with open(target_path, 'wb') as f_report:
+                        self.cloud_adapter.download_report_file(report['Key'],
+                                                                f_report)
+                except TypeError:
+                    # python3 way
+                    with open(target_path, 'w') as f_report:
+                        self.cloud_adapter.download_report_file(report['Key'],
+                                                                f_report)
+                self.report_files[date].append(target_path)
+        return last_import_modified_at
+
+    @staticmethod
+    def gunzip_report(report_path, dest_dir):
+        LOG.info('Extracting %s as gzip archive to %s',
+                 report_path, dest_dir)
+        new_report_path = os.path.basename(report_path)
+        if new_report_path.endswith(GZIP_ENDING):
+            new_report_path = new_report_path[
+                              :len(new_report_path) - len(GZIP_ENDING)]
+        else:
+            new_report_path = str(uuid.uuid4())
+        new_report_path = os.path.join(dest_dir, new_report_path)
+        try:
+            with gzip.open(report_path, 'rb') as f_gzip:
+                with open(new_report_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_gzip, f_out)
+        except Exception:
+            if os.path.exists(new_report_path):
+                os.remove(new_report_path)
+            return
+
+        return new_report_path
+
     def download_from_cloud(self):
         reports_groups = self.cloud_adapter.get_report_files()
         if self.last_import_modified_at <= 0:
@@ -653,24 +701,8 @@ class CSVBaseReportImporter(BaseReportImporter):
             current_reports = self.get_current_reports(
                 reports_groups, last_import_modified_at)
 
-        for date, reports in current_reports.items():
-            for report in reports:
-                if last_import_modified_at < report['LastModified']:
-                    last_import_modified_at = report['LastModified']
-                target_path = self.get_new_report_path(date)
-                os.makedirs(os.path.join(self.reports_dir, date),
-                            exist_ok=True)
-                try:
-                    # python2 way
-                    with open(target_path, 'wb') as f_report:
-                        self.cloud_adapter.download_report_file(report['Key'],
-                                                                f_report)
-                except TypeError:
-                    # python3 way
-                    with open(target_path, 'w') as f_report:
-                        self.cloud_adapter.download_report_file(report['Key'],
-                                                                f_report)
-                self.report_files[date].append(target_path)
+        last_import_modified_at = self._download_report_files(
+            current_reports, last_import_modified_at)
         self.last_import_modified_at = int(last_import_modified_at.timestamp())
 
     def unpack_report_files(self):
@@ -689,20 +721,23 @@ class CSVBaseReportImporter(BaseReportImporter):
     def get_linked_account_map(self):
         return {self.cloud_acc['account_id']: self.cloud_acc_id}
 
+    def _import_reports_ordered_by_date(self, account_id_ca_id_map):
+        dates = [x for x in self.report_files]
+        dates.sort(reverse=True)
+        for date in dates:
+            reports = self.report_files[date]
+            for report in reports:
+                self.load_report(report, account_id_ca_id_map)
+            LOG.info('Generating clean records')
+            self.generate_clean_records()
+            self.billing_periods = set()
+
     def data_import(self):
         if self.cloud_acc['last_import_at'] == 0 and self.import_file is None:
             # on first auto report import we will load raw data from reports and
             # generate expenses month by month from newest to oldest
             account_id_ca_id_map = self.get_linked_account_map()
-            dates = [x for x in self.report_files]
-            dates.sort(reverse=True)
-            for date in dates:
-                reports = self.report_files[date]
-                for report in reports:
-                    self.load_report(report, account_id_ca_id_map)
-                LOG.info('Generating clean records')
-                self.generate_clean_records()
-                self.billing_periods = set()
+            self._import_reports_ordered_by_date(account_id_ca_id_map)
         else:
             super().data_import()
 

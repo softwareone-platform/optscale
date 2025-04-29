@@ -1,4 +1,5 @@
 import DeleteEntity from "components/DeleteEntity";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlModelsService from "services/MlModelsService";
 
 type DeleteMlModelContainerProps = {
@@ -9,6 +10,8 @@ type DeleteMlModelContainerProps = {
 };
 
 const DeleteMlModelContainer = ({ onCancel, onSuccess, modelId, modelName }: DeleteMlModelContainerProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { useDelete } = MlModelsService();
   const { isLoading, onDelete } = useDelete();
 
@@ -19,9 +22,13 @@ const DeleteMlModelContainer = ({ onCancel, onSuccess, modelId, modelName }: Del
       deleteButtonProps={{
         onDelete: () =>
           onDelete(modelId).then(() => {
-            console.log("success");
             onSuccess();
-          })
+          }),
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

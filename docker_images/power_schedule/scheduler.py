@@ -62,7 +62,8 @@ class PowerScheduler:
 
     def run(self) -> None:
         ps_ids = set()
-        _, orgs = self.rest_cl.organization_list({'is_demo': False})
+        _, orgs = self.rest_cl.organization_list({
+            'is_demo': False, 'disabled': False})
         for org in orgs['organizations']:
             try:
                 _, ps_list = self.rest_cl.power_schedule_list(org['id'])

@@ -6,12 +6,15 @@ import DeleteEntity from "components/DeleteEntity";
 import Input from "components/Input";
 import OrganizationLabel from "components/OrganizationLabel";
 import { DELETE_ORGANIZATION } from "graphql/api/restapi/queries/restapi.queries";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useSignOut } from "hooks/useSignOut";
 
 const CONFIRMATION_TEXT = "delete";
 
 const DeleteOrganizationContainer = ({ onCancel }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { name: organizationName, organizationId } = useOrganizationInfo();
 
   const [confirmationTextInputValue, setConfirmationTextInputValue] = useState("");
@@ -40,8 +43,12 @@ const DeleteOrganizationContainer = ({ onCancel }) => {
         }
       }}
       deleteButtonProps={{
-        disabled: confirmationTextInputValue !== CONFIRMATION_TEXT,
-        onDelete
+        onDelete,
+        disabled: isRestricted || confirmationTextInputValue !== CONFIRMATION_TEXT,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       onCancel={onCancel}
       isLoading={loading}

@@ -12,15 +12,20 @@ from rest_api.rest_api_server.controllers.organization_gemini import Organizatio
 from rest_api.rest_api_server.controllers.organization_constraint import OrganizationConstraintController
 from rest_api.rest_api_server.controllers.pool import PoolController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import RolePurposes, OrganizationConstraintTypes
+from rest_api.rest_api_server.models.enums import (
+    RolePurposes, OrganizationConstraintTypes)
 from rest_api.rest_api_server.models.models import (
-    CloudAccount, CloudTypes, Organization, Pool, ShareableBooking)
+    CloudAccount, CloudTypes, Organization, Pool, ShareableBooking,
+    ProfilingToken)
+
 from tools.optscale_exceptions.common_exc import (
     FailedDependency, NotFoundException, UnauthorizedException,
     WrongArgumentsException)
 from rest_api.rest_api_server.utils import Config
 
+from optscale_client.arcee_client.client import Client as ArceeClient
 from optscale_client.auth_client.client_v2 import Client as AuthClient
+from optscale_client.bulldozer_client.client import Client as BulldozerClient
 from optscale_client.katara_client.client import Client as KataraClient
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 
@@ -53,6 +58,8 @@ class OrganizationController(BaseController, ClickHouseMixin):
 
     def __init__(self, db_session, config=None, token=None, engine=None):
         super().__init__(db_session, config, token, engine)
+        self._arcee_client = None
+        self._bulldozer_client = None
         self._katara_client = None
 
     @property
@@ -61,6 +68,20 @@ class OrganizationController(BaseController, ClickHouseMixin):
             self._katara_client = KataraClient(
                 url=Config().katara_url, secret=Config().cluster_secret)
         return self._katara_client
+
+    @property
+    def arcee_client(self):
+        if not self._arcee_client:
+            self._arcee_client = ArceeClient(
+                url=Config().arcee_url, secret=Config().cluster_secret)
+        return self._arcee_client
+
+    @property
+    def bulldozer_client(self):
+        if not self._bulldozer_client:
+            self._bulldozer_client = BulldozerClient(
+                url=Config().bulldozer_url, secret=Config().cluster_secret)
+        return self._bulldozer_client
 
     def _get_model_type(self):
         return Organization
@@ -95,6 +116,22 @@ class OrganizationController(BaseController, ClickHouseMixin):
             except IntegrityError as ex:
                 raise WrongArgumentsException(Err.OE0003, [str(ex)])
         organization = super().edit(item_id, **kwargs)
+        if 'disabled' in kwargs:
+            tokens = self.session.query(ProfilingToken).filter(
+                ProfilingToken.organization_id == item_id,
+                ProfilingToken.deleted_at == 0
+            ).all()
+            if tokens:
+                for token in tokens:
+                    try:
+                        self.arcee_client.token_update(
+                            token.token, kwargs['disabled'])
+                        self.bulldozer_client.token_update(
+                            token.infrastructure_token, kwargs['disabled'])
+                    except Exception as ex:
+                        LOG.warning("Can't update profiling token %s: %s",
+                                    token.token, str(ex))
+                        pass
         self._publish_organization_activity(
             organization, 'organization_updated')
         return organization
@@ -217,13 +254,18 @@ class OrganizationController(BaseController, ClickHouseMixin):
         return query.all(), total_count
 
     def get_org_list(self, is_demo=False, with_shareable_bookings=False,
-                     with_connected_accounts=False, limit=0, offset=0):
+                     with_connected_accounts=False, limit=0, offset=0,
+                     disabled=None):
         organizations_query = self.session.query(self.model_type).filter(
             and_(
                 self.model_type.deleted.is_(False),
                 self.model_type.is_demo.is_(true() if is_demo else false())
             )
         )
+        if disabled is not None:
+            organizations_query = organizations_query.filter(
+                self.model_type.disabled.is_(true() if disabled else false())
+            )
         if with_shareable_bookings:
             organizations_query = organizations_query.join(
                 ShareableBooking, and_(

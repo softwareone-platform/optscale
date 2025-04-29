@@ -104,7 +104,7 @@ class TestArtifactsApi(TestProfilingBase):
         code, resp = self.client.artifacts_get(
             self.org['id'], run_id=[self.valid_artifact['run_id']],
             task_id=[self.task['id']], created_at_gt=0,
-            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0
+            created_at_lt=artifact['created_at'] + 1, limit=1, offset=0
         )
         self.assertEqual(code, 200)
         self.assertEqual(len(resp['artifacts']), 1)
@@ -126,7 +126,7 @@ class TestArtifactsApi(TestProfilingBase):
         code, resp = self.client.artifacts_get(
             self.org['id'], run_id=[self.valid_artifact['run_id']],
             task_id=[self.task['id']], created_at_gt=0,
-            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, offset=0,
             token=self.get_md5_token_hash(self.profiling_token)
         )
         self.assertEqual(code, 200)
@@ -135,7 +135,7 @@ class TestArtifactsApi(TestProfilingBase):
 
         code, resp = self.client.artifacts_get(
             self.org['id'], task_id=[self.task['id']], created_at_gt=0,
-            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, offset=0,
             token=self.get_md5_token_hash(self.profiling_token)
         )
         self.assertEqual(code, 403)
@@ -144,14 +144,14 @@ class TestArtifactsApi(TestProfilingBase):
         code, resp = self.client.artifacts_get(
             self.org['id'], run_id=[self.valid_artifact['run_id']],
             task_id=[self.task['id']], created_at_gt=0,
-            created_at_lt=artifact['created_at'] + 1, limit=1, start_from=0,
+            created_at_lt=artifact['created_at'] + 1, limit=1, offset=0,
             token='123'
         )
         self.assertEqual(code, 403)
         self.assertEqual(resp['error']['error_code'], 'OE0234')
 
     def test_list_artifacts_invalid_params(self):
-        for param in ['created_at_gt', 'created_at_lt', 'start_from', 'limit']:
+        for param in ['created_at_gt', 'created_at_lt', 'offset', 'limit']:
             code, resp = self.client.artifacts_get(self.org['id'],
                                                    **{param: 'test'})
             self.assertEqual(code, 400)

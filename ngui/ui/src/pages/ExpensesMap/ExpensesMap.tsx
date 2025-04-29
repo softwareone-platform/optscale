@@ -16,7 +16,6 @@ import { SPACING_2 } from "utils/layouts";
 import { updateQueryParams } from "utils/network";
 
 const actionBarDefinition = {
-  hideItemsOnSmallScreens: false,
   title: {
     messageId: "costMapTitle"
   }

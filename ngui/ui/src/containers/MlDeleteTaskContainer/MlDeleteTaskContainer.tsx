@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlTasksService from "services/MlTasksService";
 import { ML_TASKS } from "urls";
 
 const MlDeleteTaskContainer = ({ name, id, onCancel }) => {
   const navigate = useNavigate();
-  const { isDemo } = useOrganizationInfo();
+
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { useDeleteTask } = MlTasksService();
   const { onDelete, isLoading } = useDeleteTask();
@@ -25,8 +26,11 @@ const MlDeleteTaskContainer = ({ name, id, onCancel }) => {
       isLoading={isLoading}
       deleteButtonProps={{
         onDelete: onTaskDelete,
-        disabled: isDemo,
-        tooltip: { show: isDemo, messageId: "notAvailableInLiveDemo" }
+        disabled: isRestricted,
+        tooltip: {
+          show: isRestricted,
+          value: restrictionReasonMessage
+        }
       }}
       dataTestIds={{
         text: "p_delete",

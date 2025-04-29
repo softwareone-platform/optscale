@@ -2,12 +2,15 @@ import { Box } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import PoolsService from "services/PoolsService";
 import { NameField, LimitField, TypeSelector, AutoExtendCheckbox, OwnerSelector } from "./FormElements";
 import { CreatePoolFormProps, CreatePoolFormValues } from "./types";
 import { getCreateFormDefaultValues } from "./utils";
 
 const CreatePoolForm = ({ parentId, onSuccess, unallocatedLimit }: CreatePoolFormProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { useCreatePool, useGetPoolOwners } = PoolsService();
   const { isLoading: isCreatePoolLoading, createPool } = useCreatePool();
 
@@ -38,6 +41,11 @@ const CreatePoolForm = ({ parentId, onSuccess, unallocatedLimit }: CreatePoolFor
               type="submit"
               isLoading={isCreatePoolLoading}
               dataTestId="btn_create"
+              disabled={isRestricted}
+              tooltip={{
+                show: isRestricted,
+                value: restrictionReasonMessage
+              }}
             />
           </Box>
         </FormButtonsWrapper>

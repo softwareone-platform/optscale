@@ -8,6 +8,7 @@ import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import OrganizationLabel from "components/OrganizationLabel";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { EMPLOYEES_INVITE } from "urls";
 import { OrganizationManagerSelector } from "./FormElements";
 import { DeleteEmployeeFormProps, FormValues } from "./types";
@@ -22,6 +23,8 @@ const DeleteEmployeeForm = ({
   isOnlyOneOrganizationManager = false,
   isLoading = false
 }: DeleteEmployeeFormProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const isYouAreOnlyOrganizationManager = isOnlyOneOrganizationManager && isDeletingMyself;
 
   const methods = useForm<FormValues>();
@@ -77,7 +80,18 @@ const DeleteEmployeeForm = ({
         )}
         <FormButtonsWrapper>
           {!isYouAreOnlyOrganizationManager && (
-            <ButtonLoader messageId="delete" color="error" variant="contained" type="submit" isLoading={isLoading} />
+            <ButtonLoader
+              messageId="delete"
+              color="error"
+              variant="contained"
+              type="submit"
+              isLoading={isLoading}
+              disabled={isRestricted}
+              tooltip={{
+                show: isRestricted,
+                value: restrictionReasonMessage
+              }}
+            />
           )}
           <Button messageId="cancel" dataTestId="btn_cancel" onClick={closeSideModal} />
         </FormButtonsWrapper>

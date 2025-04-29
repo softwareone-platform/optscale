@@ -4,7 +4,7 @@ from unittest.mock import patch
 from requests import HTTPError
 from auth.auth_server.tests.unittests.test_api_base import TestAuthBase
 from auth.auth_server.models.models import (Type, User, Role, Assignment,
-                                            Action, ActionGroup)
+                                            Action, ActionGroup, RoleAction)
 from auth.auth_server.models.models import gen_salt
 from auth.auth_server.utils import hash_password
 
@@ -27,30 +27,30 @@ class TestAuthorize(TestAuthBase):
                                  parent=user_admin.type)
         type_customer = Type(id_=20, name='customer', parent=self.type_partner)
         type_group = Type(id_=30, name='group', parent=type_customer)
-        salt = gen_salt()
+        self.salt = gen_salt()
         user_partner_password = 'partn33rp@sse00rD'
         user_partner = User('partner@domain.com', type_=self.type_partner,
                             password=hash_password(user_partner_password,
-                                                   salt),
+                                                   self.salt),
                             display_name='Generic partner user',
-                            salt=salt,
+                            salt=self.salt,
                             scope_id=self.partner_scope_id,
                             type_id=self.type_partner.id)
         self.user_customer_password = 'c4stom3r pasSw0RD!1'
         user_customer = User(
             'customer@domain.com', type_=type_customer,
             password=hash_password(self.user_customer_password,
-                                   salt),
+                                   self.salt),
             scope_id=self.customer_scope_id,
-            salt=salt,
+            salt=self.salt,
             display_name='Generic customer user', type_id=type_customer.id)
         self.user_operator_password = 'Op3R4tor!'
         self.user_operator = User(
             'op@domain.com', type_=type_customer,
             password=hash_password(self.user_operator_password,
-                                   salt),
+                                   self.salt),
             display_name='Generic operator user',
-            salt=salt,
+            salt=self.salt,
             scope_id=self.customer_scope_id
         )
         self.user_operator_email = self.user_operator.email
@@ -365,3 +365,60 @@ class TestAuthorize(TestAuthBase):
         code, _ = self.client.authorize('CREATE_GROUP', 'partner',
                                         child_partner_scope_id)
         self.assertEqual(code, 200)
+
+    @patch("auth.auth_server.controllers.base.BaseController.get_context")
+    def test_authorize_disabled_org(self, p_get_context):
+        org_id = str(uuid.uuid4())
+        p_get_context.return_value = {"organization": [org_id]}
+        self.db_session.query(Type).filter(Type.parent_id == 0).update(
+            {Type.name: "organization"})
+        type_member = self.db_session.query(Type).filter(
+            Type.parent_id == 0).one_or_none()
+        group1 = ActionGroup('member')
+        group2 = ActionGroup('manager')
+        info_action = Action(name='INFO_ORGANIZATION', type_=type_member,
+                             action_group=group1)
+        edit_action = Action(name='EDIT_PARTNER', type_=type_member,
+                             action_group=group2)
+        role_scope_id = str(uuid.uuid4())
+        member_role = Role(name='Member', type_=type_member, lvl=type_member,
+                           scope_id=role_scope_id, purpose='optscale_member')
+        manager_role = Role(name='Manager', type_=type_member, lvl=type_member,
+                            scope_id=role_scope_id, purpose='optscale_manager')
+        role_action1 = RoleAction(role=member_role, action=info_action)
+        role_action2 = RoleAction(role=manager_role, action=edit_action)
+        email = 'user@domain.com'
+        password = 'pass'
+        user = User(email, type_=type_member,
+                    password=hash_password(password, self.salt),
+                    display_name='User',
+                    salt=self.salt,
+                    scope_id=org_id,
+                    type_id=type_member.id)
+        assignment1 = Assignment(user, member_role, type_member, org_id)
+        assignment2 = Assignment(user, manager_role, type_member, org_id)
+        for val in [type_member, group1, group2, info_action, edit_action,
+                    member_role, manager_role, role_action1, role_action2,
+                    user, assignment1, assignment2]:
+            self.db_session.add(val)
+        self.db_session.commit()
+        self.client.token = self.get_token(email, password)
+        patch("auth.auth_server.controllers.base."
+              "BaseController._get_organization",
+              return_value=(200, {'disabled': True})).start()
+        body = {
+            "resource_type": "organization",
+            "action": "INFO_ORGANIZATION",
+            "uuid": org_id
+        }
+        code, _ = self.client.post('authorize', body)
+        self.assertEqual(code, 200)
+
+        body = {
+            "resource_type": "organization",
+            "action": "EDIT_ORGANIZATION",
+            "uuid": org_id
+        }
+        code, err = self.client.post('authorize', body)
+        self.assertEqual(code, 403)
+        self.assertEqual(err['error']['error_code'], 'OA0074')

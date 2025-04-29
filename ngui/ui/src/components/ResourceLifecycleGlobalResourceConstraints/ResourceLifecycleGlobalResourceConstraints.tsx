@@ -19,6 +19,7 @@ import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import {
   useIsAllowedToManageAnyResourceConstraint,
   useIsAllowedToManageResourceConstraint
@@ -30,6 +31,8 @@ import { getResourceDisplayedName } from "utils/resources";
 import { RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 
 const UpdateConstraintLimitContainer = ({ limit, formattedConstraintLimit, constraintId, type, employeeId, resourceId }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const dispatch = useDispatch();
 
   const [isEditModeOn, setIsEditModeOn] = useState(false);
@@ -71,9 +74,10 @@ const UpdateConstraintLimitContainer = ({ limit, formattedConstraintLimit, const
           dataTestId={`btn_edit_${type}`}
           icon={<CreateOutlinedIcon />}
           onClick={() => setIsEditModeOn(true)}
+          disabled={isRestricted}
           tooltip={{
             show: true,
-            messageId: "edit"
+            value: isRestricted ? restrictionReasonMessage : <FormattedMessage id="edit" />
           }}
         />
       )}

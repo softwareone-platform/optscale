@@ -39,6 +39,8 @@ IAM_CLIENT_CONFIG = CoreConfig(
 SECONDS_IN_DAY = 60 * 60 * 24
 CLOUD_LINK_PATTERN = '%s/%s/v2/home?region=%s#%s=%s'
 BUCKET_CLOUD_LINK_PATTERN = '%s/%s/buckets/%s?region=%s&tab=objects'
+LB_CLOUD_LINK_PATTERN = '%s/ec2/home?region=%s#%s=%s'
+# https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#LoadBalancer:loadBalancerArn=nklb-classic
 DEFAULT_BASE_URL = 'https://console.aws.amazon.com'
 BUCKET_ACCEPTED_PERMISSIONS = ['FULL_CONTROL', 'READ', 'WRITE', 'READ_ACP',
                                'WRITE_ACP']
@@ -117,7 +119,8 @@ class Aws(S3CloudMixin):
             InstanceResource: self.instance_discovery_calls,
             SnapshotResource: self.snapshot_discovery_calls,
             IpAddressResource: self.ip_address_discovery_calls,
-            BucketResource: self.bucket_discovery_calls
+            BucketResource: self.bucket_discovery_calls,
+            LoadBalancerResource: self.load_balancer_discovery_calls
         }
 
     @property
@@ -243,6 +246,9 @@ class Aws(S3CloudMixin):
             IpAddressResource: CLOUD_LINK_PATTERN % (
                 DEFAULT_BASE_URL, 'ec2', region,
                 'ElasticIpDetails:AllocationId', resource_value),
+            LoadBalancerResource: CLOUD_LINK_PATTERN % (
+                DEFAULT_BASE_URL, 'ec2', region,
+                'LoadBalancer:loadBalancerArn', resource_value),
         }
         return cloud_link_map.get(resource_type)
 
@@ -485,6 +491,76 @@ class Aws(S3CloudMixin):
         bucket_list = self.s3.list_buckets()
         for bucket in bucket_list['Buckets']:
             result.append((self.discover_bucket_info, (bucket['Name'],)))
+        return result
+
+    @staticmethod
+    def _parse_lb_tags(response):
+        tags = {}
+        if response:
+            tags = {x['Key']: x['Value'] for x in response[0].get('Tags', [])}
+        return tags
+
+    def discover_region_lbs_v2(self, region):
+        session = self.get_session()
+        elb = session.client('elbv2', region)
+        lbs = elb.describe_load_balancers().get('LoadBalancers', [])
+        for lb in lbs:
+            lb_arn = lb['LoadBalancerArn']
+            tags = elb.describe_tags(ResourceArns=[lb_arn]).get(
+                'TagDescriptions', [])
+            tags = self._parse_lb_tags(tags)
+            lb_resource = LoadBalancerResource(
+                name=lb['LoadBalancerName'],
+                cloud_resource_id=lb_arn,
+                cloud_account_id=self.cloud_account_id,
+                organization_id=self.organization_id,
+                region=region,
+                vpc_id=lb['VpcId'],
+                security_groups=lb.get('SecurityGroups'),
+                tags=tags,
+                cloud_console_link=self._generate_cloud_link(
+                    LoadBalancerResource, region, lb_arn),
+            )
+            yield lb_resource
+
+    def discover_region_lbs(self, region):
+        """Discover "classic" load balancer resources"""
+        session = self.get_session()
+        elb = session.client('elb', region)
+        lbs = elb.describe_load_balancers().get(
+            'LoadBalancerDescriptions', [])
+        for lb in lbs:
+            name = lb['LoadBalancerName']
+            tags = elb.describe_tags(LoadBalancerNames=[name]).get(
+                'TagDescriptions', [])
+            tags = self._parse_lb_tags(tags)
+            # ARN is not returned for classic LBs, generate it
+            cloud_resource_id = (f'arn:aws:elasticloadbalancing:{region}:'
+                                 f'{self.config['account_id']}:'
+                                 f'loadbalancer/{name}')
+            lb_resource = LoadBalancerResource(
+                name=name,
+                cloud_resource_id=cloud_resource_id,
+                cloud_account_id=self.cloud_account_id,
+                organization_id=self.organization_id,
+                region=region,
+                vpc_id=lb['VPCId'],
+                security_groups=lb.get('SecurityGroups'),
+                tags=tags,
+                cloud_console_link=self._generate_cloud_link(
+                    LoadBalancerResource, region, name),
+            )
+            yield lb_resource
+
+    def load_balancer_discovery_calls(self):
+        """
+        Returns list of discovery calls to discover load balancers presented
+        as tuples (adapter_method, arguments_tuple)
+        """
+        result = []
+        for r in self.list_regions():
+            result.append((self.discover_region_lbs_v2, (r,)))
+            result.append((self.discover_region_lbs, (r,)))
         return result
 
     def pod_discovery_calls(self):
@@ -1041,42 +1117,78 @@ class Aws(S3CloudMixin):
 
     def _get_coordinates_map(self):
         return {
-            'eu-central-1': {'longitude': 8.65399, 'latitude': 50.12581},
-            'eu-central-2': {'longitude': 8.545094, 'latitude': 47.373878},
-            'eu-west-1': {'longitude': -6.266155, 'latitude': 53.350140},
-            'eu-west-2': {'longitude': -0.11362, 'latitude': 51.51768},
-            'eu-west-3': {'longitude': 2.34293, 'latitude': 48.85717},
-            'eu-south-1': {'latitude': 45.4668, 'longitude': 9.1905},
-            'eu-south-2': {'latitude': 40.416775, 'longitude': -3.703790},
-            'eu-north-1': {'longitude': 18.04856, 'latitude': 59.33097},
-            'us-east-1': {'longitude': -78.45, 'latitude': 38.13},
-            'us-east-2': {'longitude': -83, 'latitude': 39.96},
-            'us-west-1': {'longitude': -121.96, 'latitude': 37.35},
-            'us-west-2': {'longitude': -123.88, 'latitude': 46.15},
-            'af-south-1': {'latitude': -33.928992, 'longitude': 18.417396},
-            'ap-east-1': {'longitude': 114.13624, 'latitude': 22.25424},
-            'ap-south-1': {'longitude': 72.86730, 'latitude': 19.07257},
-            'ap-south-2': {'longitude': 78.491684, 'latitude': 17.387140},
-            'ap-northeast-1': {'longitude': 139.42, 'latitude': 35.41},
-            'ap-northeast-2': {'longitude': 126.99272, 'latitude': 37.57444},
-            'ap-northeast-3': {'longitude': 135.50674, 'latitude': 34.69857},
-            'ap-southeast-1': {'longitude': 103.851959, 'latitude': 1.290270},
-            'ap-southeast-2': {'longitude': 151.2, 'latitude': -33.8},
-            'ap-southeast-3': {'longitude': 106.8455, 'latitude': -6.2087},
-            'ap-southeast-4': {'longitude': 144.946547, 'latitude': -37.840935},
-            'ap-southeast-5': {'longitude': 101.693207, 'latitude': 3.140853},
-            'ap-southeast-7': {'longitude': 100.523186, 'latitude': 13.736717},
-            'ca-central-1': {'longitude': -73.6, 'latitude': 45.5},
-            'ca-west-1': {'longitude': -114.066666, 'latitude': 51.049999},
-            'me-central-1': {'longitude': 55.296249, 'latitude': 24.467776},
-            'me-south-1': {'longitude': 50.6377716, 'latitude': 25.9304142},
-            'sa-east-1': {'longitude': -46.8754, 'latitude': -23.6815},
-            'cn-north-1': {'longitude': 116.38570, 'latitude': 39.90388},
-            'cn-northwest-1': {'longitude': 103.7300, 'latitude': 37.2931},
-            'us-gov-east-1': {'longitude': -83.0235, 'latitude': 39.9653},
-            'us-gov-west-1': {'longitude': -97.09434, 'latitude': 31.78395},
-            'il-central-1': {'longitude': 34.855499, 'latitude': 32.109333},
-            'mx-central-1': {'longitude': -99.133209, 'latitude': 19.432608},
+            'eu-central-1': {'name': 'Europe (Frankfurt)',
+                             'longitude': 8.65399, 'latitude': 50.12581},
+            'eu-central-2': {'name': 'Europe (Zurich)',
+                             'longitude': 8.545094, 'latitude': 47.373878},
+            'eu-west-1': {'name': 'Europe (Ireland)',
+                          'longitude': -6.266155, 'latitude': 53.350140},
+            'eu-west-2': {'name': 'Europe (London)',
+                          'longitude': -0.11362, 'latitude': 51.51768},
+            'eu-west-3': {'name': 'Europe (Paris)',
+                          'longitude': 2.34293, 'latitude': 48.85717},
+            'eu-south-1': {'name': 'Europe (Milan)',
+                           'latitude': 45.4668, 'longitude': 9.1905},
+            'eu-south-2': {'name': 'Europe (Spain)',
+                           'latitude': 40.416775, 'longitude': -3.703790},
+            'eu-north-1': {'name': 'Europe (Stockholm)',
+                           'longitude': 18.04856, 'latitude': 59.33097},
+            'us-east-1': {'name': 'US East (N. Virginia)',
+                          'longitude': -78.45, 'latitude': 38.13},
+            'us-east-2': {'name': 'US East (Ohio)',
+                          'longitude': -83, 'latitude': 39.96},
+            'us-west-1': {'name': 'US West (N. California)',
+                          'longitude': -121.96, 'latitude': 37.35},
+            'us-west-2': {'name': 'US West (Oregon)',
+                          'longitude': -123.88, 'latitude': 46.15},
+            'af-south-1': {'name': 'Africa (Cape Town)',
+                           'latitude': -33.928992, 'longitude': 18.417396},
+            'ap-east-1': {'name': 'Asia Pacific (Hong Kong)',
+                          'longitude': 114.13624, 'latitude': 22.25424},
+            'ap-south-1': {'name': 'Asia Pacific (Mumbai)',
+                           'longitude': 72.86730, 'latitude': 19.07257},
+            'ap-south-2': {'name': 'Asia Pacific (Hyderabad)',
+                           'longitude': 78.491684, 'latitude': 17.387140},
+            'ap-northeast-1': {'name': 'Asia Pacific (Tokyo)',
+                               'longitude': 139.42, 'latitude': 35.41},
+            'ap-northeast-2': {'name': 'Asia Pacific (Seoul)',
+                               'longitude': 126.99272, 'latitude': 37.57444},
+            'ap-northeast-3': {'name': 'Asia Pacific (Osaka)',
+                               'longitude': 135.50674, 'latitude': 34.69857},
+            'ap-southeast-1': {'name': 'Asia Pacific (Singapore)',
+                               'longitude': 103.851959, 'latitude': 1.290270},
+            'ap-southeast-2': {'name': 'Asia Pacific (Sydney)',
+                               'longitude': 151.2, 'latitude': -33.8},
+            'ap-southeast-3': {'name': 'Asia Pacific (Jakarta)',
+                               'longitude': 106.8455, 'latitude': -6.2087},
+            'ap-southeast-4': {'name': 'Asia Pacific (Melbourne)',
+                               'longitude': 144.946547, 'latitude': -37.840935},
+            'ap-southeast-5': {'name': 'Asia Pacific (Malaysia)',
+                               'longitude': 101.693207, 'latitude': 3.140853},
+            'ap-southeast-7': {'name': 'Asia Pacific (Thailand)',
+                               'longitude': 100.523186, 'latitude': 13.736717},
+            'ca-central-1': {'name': 'Canada (Central)',
+                             'longitude': -73.6, 'latitude': 45.5},
+            'ca-west-1': {'name': 'Canada West (Calgary)',
+                          'longitude': -114.066666, 'latitude': 51.049999},
+            'me-central-1': {'name': 'Middle East (UAE)',
+                             'longitude': 55.296249, 'latitude': 24.467776},
+            'me-south-1': {'name': 'Middle East (Bahrain)',
+                           'longitude': 50.6377716, 'latitude': 25.9304142},
+            'sa-east-1': {'name': 'South America (Sao Paulo)',
+                          'longitude': -46.8754, 'latitude': -23.6815},
+            'cn-north-1': {'name': 'China (Beijing)',
+                           'longitude': 116.38570, 'latitude': 39.90388},
+            'cn-northwest-1': {'name': 'China (Ningxia)',
+                               'longitude': 103.7300, 'latitude': 37.2931},
+            'us-gov-east-1': {'name': 'GovCloud (US-East)',
+                              'longitude': -83.0235, 'latitude': 39.9653},
+            'us-gov-west-1': {'name': 'GovCloud (US-West)',
+                              'longitude': -97.09434, 'latitude': 31.78395},
+            'il-central-1': {'name': 'Israel (Tel Aviv)',
+                             'longitude': 34.855499, 'latitude': 32.109333},
+            'mx-central-1': {'name': 'Mexico (Central)',
+                             'longitude': -99.133209, 'latitude': 19.432608},
             'global': {'longitude': -98.48424, 'latitude': 39.01190}
         }
 
@@ -1359,15 +1471,17 @@ class Aws(S3CloudMixin):
         return random.sample(skus, 10)
 
     def get_metric(self, namespace, metric_name, instance_ids, region,
-                   interval, start_date, end_date):
+                   interval, start_date, end_date, dimension='InstanceId',
+                   statistics='Average'):
         """
-        Get metric for instances
+        Get metric for resources
         :param metric_name: metric name
         :param instance_ids: instance ids
         :param region: instance's region name
         :param interval: time interval in seconds
         :param start_date: metric start datetime date
         :param end_date: metric end datetime date
+        :param dimension: metric dimension
         :return: dict
         """
         result = {}
@@ -1379,7 +1493,7 @@ class Aws(S3CloudMixin):
                 cloudwatch = session.client('cloudwatch', region_name=region)
                 params = {
                     'Dimensions': [{
-                        'Name': 'InstanceId',
+                        'Name': dimension,
                         'Value': instance_id
                     }],
                     'MetricName': metric_name,
@@ -1387,7 +1501,7 @@ class Aws(S3CloudMixin):
                     'StartTime': start_date,
                     'EndTime': end_date,
                     'Period': interval,
-                    'Statistics': ['Average'],
+                    'Statistics': [statistics],
                 }
                 futures_map[instance_id] = executor.submit(
                     self._retry, cloudwatch.get_metric_statistics, **params)

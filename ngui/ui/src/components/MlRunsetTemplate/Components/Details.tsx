@@ -24,6 +24,7 @@ const Details = ({
   instanceTypes,
   tasks,
   maximumRunsetBudget,
+  maximumRunsetRunners,
   resourceNamePrefix,
   tags,
   hyperparameters,
@@ -117,6 +118,7 @@ const Details = ({
                   value={maximumRunsetBudget === undefined ? null : <FormattedMoney value={maximumRunsetBudget} />}
                 />
               </CapabilityWrapper>
+              <KeyValueLabel keyMessageId="maximumRunsetRunners" value={maximumRunsetRunners} />
               <KeyValueLabel keyMessageId="resourceNamePrefix" value={resourceNamePrefix} />
               <KeyValueLabel
                 keyMessageId="tagForCreatedResources"

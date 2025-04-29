@@ -9,9 +9,13 @@ import CopyTextField from "components/CopyTextField";
 import QuestionMark from "components/QuestionMark";
 import SubTitle from "components/SubTitle";
 import TitleValue from "components/TitleValue";
+import Tooltip from "components/Tooltip";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { formatUTC, getLastMonthRange, FORMAT_YYYY_MM_DD } from "utils/datetime";
 
 const ShareSettings = ({ canEdit, currentLink, onChange, isLoading }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const intl = useIntl();
 
   const linkAvailable = currentLink !== "";
@@ -26,7 +30,13 @@ const ShareSettings = ({ canEdit, currentLink, onChange, isLoading }) => {
 
   const renderSwitch = () => (
     <FormControlLabel
-      control={<Switch disabled={!canEdit} checked={switchPosition} onChange={(e) => switchClickHandler(e.target.checked)} />}
+      control={
+        <Tooltip title={restrictionReasonMessage}>
+          <div>
+            <Switch disabled={isRestricted} checked={switchPosition} onChange={(e) => switchClickHandler(e.target.checked)} />
+          </div>
+        </Tooltip>
+      }
       label={
         <Box display="flex" alignItems="center">
           <Typography>

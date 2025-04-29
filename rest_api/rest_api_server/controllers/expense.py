@@ -2018,8 +2018,9 @@ class RegionExpenseController(FilteredFormattedExpenseController,
             # For Azure and Alibaba we use region display names in
             # expenses, so let's use names as keys if names exist in
             # coords map.
-            # For Gcp we have region names, but expenses are stored with region IDs.
-            if cloud_type == "gcp_cnr":
+            # For Gcp and AWS we have region names, but expenses are stored
+            # with region IDs.
+            if cloud_type in ["aws_cnr", "gcp_cnr"]:
                 region_name = region
             else:
                 region_name = info.get('name', region)

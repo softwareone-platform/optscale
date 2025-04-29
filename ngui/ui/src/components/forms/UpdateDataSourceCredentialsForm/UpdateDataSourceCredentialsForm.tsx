@@ -20,6 +20,7 @@ import {
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
@@ -314,14 +315,27 @@ const getConfig = (type, config) => {
           [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SUBSCRIPTION_ID]: config.subscription_id,
           [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.CLIENT_ID]: config.client_id,
           [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.TENANT]: config.tenant,
-          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET]: ""
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET]: "",
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.USE_BILLING_EXPORT]: !!config.export_name,
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.EXPORT_NAME]: config.export_name,
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_ACCOUNT_CONNECTION_STRING]: config.sa_connection_string,
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_CONTAINER]: config.container,
+          [AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_DIRECTORY]: config.directory
         }),
         parseFormDataToApiParams: (formData) => ({
           config: {
             subscription_id: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SUBSCRIPTION_ID],
             client_id: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
             tenant: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.TENANT],
-            secret: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET]
+            secret: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.SECRET],
+            ...(formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.USE_BILLING_EXPORT]
+              ? {
+                  export_name: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.EXPORT_NAME],
+                  sa_connection_string: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_ACCOUNT_CONNECTION_STRING],
+                  container: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_CONTAINER],
+                  directory: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_DIRECTORY]
+                }
+              : {})
           }
         })
       };
@@ -443,6 +457,8 @@ const getConfig = (type, config) => {
 };
 
 const UpdateDataSourceCredentialsForm = ({ id, type, config, onSubmit, onCancel, isLoading = false }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config);
 
   const methods = useForm({
@@ -471,6 +487,11 @@ const UpdateDataSourceCredentialsForm = ({ id, type, config, onSubmit, onCancel,
             variant="contained"
             type="submit"
             isLoading={isLoading}
+            disabled={isRestricted}
+            tooltip={{
+              show: isRestricted,
+              value: restrictionReasonMessage
+            }}
           />
           <Button dataTestId="btn_cancel_update_data_source_credentials" messageId="cancel" onClick={onCancel} />
         </FormButtonsWrapper>

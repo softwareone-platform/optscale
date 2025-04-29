@@ -60,18 +60,30 @@ export const NEBIUS = "nebius";
 export const KUBERNETES_CNR = "kubernetes_cnr";
 export const ENVIRONMENT = "environment";
 
-export const AWS_ROOT_ACCOUNT = "awsRoot";
-export const AWS_LINKED_ACCOUNT = "awsLinked";
-export const AZURE_SUBSCRIPTION = "azureSubscription";
-export const AZURE_TENANT_ACCOUNT = "azureTenant";
-export const DATABRICKS_ACCOUNT = "databricks";
-export const KUBERNETES = "kubernetes";
-export const ALIBABA_ACCOUNT = "alibabaCloud";
-export const GCP_ACCOUNT = "gcpProject";
-export const GCP_TENANT_ACCOUNT = "gcpTenant";
-export const NEBIUS_ACCOUNT = "nebius";
+export const CLOUD_PROVIDERS = Object.freeze({
+  AWS: "aws",
+  AZURE: "azure",
+  GCP: "gcp",
+  ALIBABA: "alibaba",
+  NEBIUS: "nebius",
+  DATABRICKS: "databricks",
+  KUBERNETES: "kubernetes"
+});
 
-export const DATASOURCE_TYPE = "type";
+export const CONNECTION_TYPES = Object.freeze({
+  AWS_ROOT: "awsRoot",
+  AWS_LINKED: "awsLinked",
+  AZURE_SUBSCRIPTION: "azureSubscription",
+  AZURE_TENANT: "azureTenant",
+  // ALIBABA: "alibaba",
+  GCP_PROJECT: "gcpProject",
+  GCP_TENANT: "gcpTenant"
+  // NEBIUS: "nebius",
+  // DATABRICKS: "databricks",
+  // KUBERNETES: "kubernetes"
+});
+
+export const CONNECTION_TYPE_SEARCH_PARAMETER = "type";
 
 export const NOT_SET_CLOUD_TYPE = "not_set";
 
@@ -79,13 +91,13 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [AWS_CNR]: "aws",
   [AZURE_CNR]: "azureSubscription",
   [AZURE_TENANT]: "azureTenant",
-  [DATABRICKS]: "databricks",
-  [ALIBABA_CNR]: "alibabaCloud",
+  // [DATABRICKS]: "databricks",
+  // [ALIBABA_CNR]: "alibabaCloud",
   [GCP_CNR]: "gcpProject",
   [GCP_TENANT]: "gcpTenant",
-  [ENVIRONMENT]: "environment",
-  [NEBIUS]: "nebius",
-  [KUBERNETES_CNR]: "kubernetes"
+  [ENVIRONMENT]: "environment"
+  // [NEBIUS]: "nebius",
+  // [KUBERNETES_CNR]: "kubernetes"
 });
 
 // Expenses
@@ -485,7 +497,12 @@ export const METRIC_TYPES = Object.freeze({
   CPU: "cpu",
   MEMORY: "memory",
   DISK_IO: "disk_io",
-  NETWORK: "network"
+  NETWORK: "network",
+  BYTES_SENT: "bytes_sent",
+  PACKETS_SENT: "packets_sent",
+  DISK_IO_USAGE: "disk_io_usage",
+  CONSOLIDATED_DISK_IO: "consolidated_disk_io",
+  REQUESTS: "requests"
 });
 
 export const COST_MODEL_TYPES = Object.freeze({

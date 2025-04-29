@@ -1,9 +1,9 @@
 import DeleteEntity from "components/DeleteEntity";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import MlLeaderboardsService from "services/MlLeaderboardsService";
 
 const DeleteLeaderboardContainer = ({ leaderboard, onSuccess, onCancel }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { useDeleteLeaderboard } = MlLeaderboardsService();
   const { isLoading: isDeleteLeaderboardLoading, onDelete } = useDeleteLeaderboard();
@@ -13,10 +13,10 @@ const DeleteLeaderboardContainer = ({ leaderboard, onSuccess, onCancel }) => {
       onCancel={onCancel}
       deleteButtonProps={{
         onDelete: () => onDelete(leaderboard.id).then(onSuccess),
-        disabled: isDemo,
+        disabled: isRestricted,
         tooltip: {
-          show: isDemo,
-          messageId: "notAvailableInLiveDemo"
+          show: isRestricted,
+          value: restrictionReasonMessage
         }
       }}
       isLoading={isDeleteLeaderboardLoading}

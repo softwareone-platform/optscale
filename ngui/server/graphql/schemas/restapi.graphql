@@ -107,6 +107,9 @@ type AzureSubscriptionConfig {
   expense_import_scheme: String
   subscription_id: String
   tenant: String
+  export_name: String
+  container: String
+  directory: String
 }
 
 type AzureSubscriptionDataSource implements DataSourceInterface {
@@ -319,6 +322,10 @@ input AzureSubscriptionConfigInput {
   secret: String!
   subscription_id: String!
   tenant: String!
+  export_name: String
+  sa_connection_string: String
+  container: String
+  directory: String
 }
 
 input AzureTenantConfigInput {
@@ -518,6 +525,7 @@ type Organization {
   is_demo: Boolean!
   currency: String!
   pool_id: String!
+  disabled: Boolean!
 }
 
 type Employee {

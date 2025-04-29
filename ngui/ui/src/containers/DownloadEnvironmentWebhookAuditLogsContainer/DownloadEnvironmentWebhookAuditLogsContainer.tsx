@@ -1,14 +1,13 @@
 import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
-import { FormattedMessage } from "react-intl";
 import { RESTAPI } from "api";
 import { getApiUrl } from "api/utils";
 import IconButton from "components/IconButton";
 import { useFetchAndDownload } from "hooks/useFetchAndDownload";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { DOWNLOAD_FILE_FORMATS } from "utils/constants";
 
 const DownloadEnvironmentWebhookAuditLogsContainer = ({ webhookId }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
 
@@ -23,10 +22,10 @@ const DownloadEnvironmentWebhookAuditLogsContainer = ({ webhookId }) => {
     <IconButton
       icon={<CloudDownloadOutlinedIcon />}
       onClick={() => download(DOWNLOAD_FILE_FORMATS.XLSX)}
-      disabled={isDemo}
+      disabled={isRestricted}
       tooltip={{
         show: true,
-        value: <FormattedMessage id={isDemo ? "notAvailableInLiveDemo" : "downloadAuditLogs"} />
+        value: isRestricted ? restrictionReasonMessage : "downloadAuditLogs"
       }}
       isLoading={isFileDownloading}
     />

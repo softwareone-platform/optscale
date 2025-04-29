@@ -1,25 +1,22 @@
 import Switch from "@mui/material/Switch";
-import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { updateWebhook } from "api";
 import Tooltip from "components/Tooltip";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const EditEnvironmentWebhookActivityContainer = ({ webhookId, isActive = false }) => {
   const dispatch = useDispatch();
 
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const toggle = (newIsActive) => dispatch(updateWebhook(webhookId, { active: newIsActive }));
 
-  return isDemo ? (
-    <Tooltip title={<FormattedMessage id="notAvailableInLiveDemo" />}>
+  return (
+    <Tooltip title={restrictionReasonMessage} placement="top">
       <span>
-        <Switch checked={isActive} disabled />
+        <Switch checked={isActive} disabled={isRestricted} onClick={(e) => toggle(e.target.checked)} />
       </span>
     </Tooltip>
-  ) : (
-    <Switch checked={isActive} onClick={(e) => toggle(e.target.checked)} />
   );
 };
 

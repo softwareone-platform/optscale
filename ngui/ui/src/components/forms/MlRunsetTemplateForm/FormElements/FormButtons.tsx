@@ -3,10 +3,10 @@ import Button from "components/Button";
 import ButtonLoader from "components/ButtonLoader";
 import DeleteMlRunsetTemplate from "components/DeleteMlRunsetTemplate";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const FormButtons = ({ onCancel, isEdit = false, isLoading = false }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <FormButtonsWrapper justifyContent="space-between">
@@ -17,8 +17,11 @@ const FormButtons = ({ onCancel, isEdit = false, isLoading = false }) => {
           color="primary"
           variant="contained"
           type="submit"
-          disabled={isDemo}
-          tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
+          disabled={isRestricted}
+          tooltip={{
+            show: isRestricted,
+            value: restrictionReasonMessage
+          }}
           isLoading={isLoading}
         />
         <Button messageId="cancel" dataTestId="btn_cancel" onClick={onCancel} />

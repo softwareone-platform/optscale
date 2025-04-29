@@ -164,6 +164,12 @@ class TestFlavorsApi(TestBase):
                 "price": 0.60376656,
                 "ram_gb": 64.0,
             },
+            "custom-2-26624-ext": {
+                "cpu_cores": 2,
+                "family": "n1",
+                "price": 0.3,
+                "ram_gb": 26.0,
+            },
         }
         gcp.get_instance_types_priced.__name__ = "get_instance_types_priced"
         gcp_params = {
@@ -199,6 +205,22 @@ class TestFlavorsApi(TestBase):
                 "price": 0.60376656,
                 "ram": 64.0,
             })
+
+        gcp_params = {
+            "cloud_type": "gcp_cnr",
+            "resource_type": "instance",
+            "region": "test",
+            "mode": "current",
+            "family_specs": {"source_flavor_id": "custom-2-26624-ext"},
+        }
+        code, resp = self.client.find_flavor(**gcp_params)
+        self.assertEqual(code, 200)
+        self.assertEqual(resp, {
+            "cpu": 2,
+            "flavor": "custom-2-26624-ext",
+            "price": 0.3,
+            "ram": 26.0,
+        })
 
     def test_find_azure_flavor_currency(self):
         code, resp = self.client.find_flavor(

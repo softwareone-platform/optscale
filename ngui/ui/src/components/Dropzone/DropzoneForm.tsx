@@ -5,7 +5,14 @@ import DropzoneArea from "./DropzoneArea";
 
 const FIELD_NAME = "upload";
 
-const DropzoneForm = ({ onUpload, acceptedFiles, isLoading, maxFileSizeMb = 512 }) => {
+const DropzoneForm = ({
+  onUpload,
+  acceptedFiles,
+  isLoading,
+  maxFileSizeMb = 512,
+  isSubmitDisabled = false,
+  submitButtonTooltip
+}) => {
   const methods = useForm();
 
   const { handleSubmit } = methods;
@@ -19,7 +26,15 @@ const DropzoneForm = ({ onUpload, acceptedFiles, isLoading, maxFileSizeMb = 512 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <DropzoneArea acceptedFiles={acceptedFiles} maxFileSizeMb={maxFileSizeMb} />
         <FormButtonsWrapper>
-          <ButtonLoader messageId="upload" color="primary" variant="contained" type="submit" isLoading={isLoading} />
+          <ButtonLoader
+            messageId="upload"
+            color="primary"
+            variant="contained"
+            type="submit"
+            isLoading={isLoading}
+            disabled={isSubmitDisabled}
+            tooltip={submitButtonTooltip}
+          />
         </FormButtonsWrapper>
       </form>
     </FormProvider>

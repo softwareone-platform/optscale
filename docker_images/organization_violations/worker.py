@@ -509,6 +509,10 @@ class OrganizationViolationsWorker(ConsumerMixin):
         force = task.get('force', False)
         if not org_id or not date_ts or not isinstance(date_ts, int):
             raise Exception('Invalid task received: {}'.format(task))
+        _, org = self.rest_cl.organization_get(org_id)
+        if org.get('disabled'):
+            LOG.info('Organization %s is disabled', org_id)
+            return
         date = datetime.fromtimestamp(date_ts)
         notifications = task.get('notifications')
         hit_days = [

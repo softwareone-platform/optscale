@@ -75,6 +75,9 @@ class BIScheduler:
             self.config_cl.bi_settings().get('task_wait_timeout',
                                              TASK_WAIT_TIMEOUT))
         _, response = self.rest_cl.bi_list()
+        _, data = self.rest_cl.organization_list(
+            {'is_demo': False, 'disabled': False})
+        organizations_map = {x['id']: x for x in data['organizations']}
 
         def ready(bi: Dict, task_wait_timeout: int) -> bool:
             if bi['next_run'] > int(self.now.timestamp()):
@@ -86,7 +89,8 @@ class BIScheduler:
             return True
 
         return [bi['id'] for bi in response['organization_bis']
-                if ready(bi, task_wait_timeout)]
+                if ready(bi, task_wait_timeout) and organizations_map.get(
+                    bi['organization_id'], {}).get('disabled') is False]
 
     def run(self) -> None:
         ids = self.get_org_bi_ids()

@@ -106,7 +106,7 @@ const CloudCostComparisonTable = ({ relevantSizes, errors }) => {
         definition: {
           /*
             Action bar doesn't support mobile view for "custom" items
-            See OS-5925
+            See OSN-140
           */
           hideItemsOnSmallScreens: false,
           items: [

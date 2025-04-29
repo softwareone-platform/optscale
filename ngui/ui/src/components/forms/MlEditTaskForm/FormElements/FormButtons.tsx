@@ -4,7 +4,7 @@ import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { MlDeleteTaskModal } from "components/SideModalManager/SideModals";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 
 const DeleteTaskButton = ({ id, name }) => {
   const openSideModal = useOpenSideModal();
@@ -26,7 +26,7 @@ const DeleteTaskButton = ({ id, name }) => {
 };
 
 const MlEditTaskFormButtons = ({ taskId, taskName, onCancel, isLoading = false }) => {
-  const { isDemo } = useOrganizationInfo();
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   return (
     <FormButtonsWrapper justifyContent="space-between">
@@ -37,9 +37,12 @@ const MlEditTaskFormButtons = ({ taskId, taskName, onCancel, isLoading = false }
           color="primary"
           variant="contained"
           type="submit"
-          disabled={isDemo}
+          disabled={isRestricted}
           isLoading={isLoading}
-          tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
+          tooltip={{
+            show: isRestricted,
+            value: restrictionReasonMessage
+          }}
         />
         <Button messageId="cancel" dataTestId="btn_cancel" onClick={onCancel} />
       </Box>

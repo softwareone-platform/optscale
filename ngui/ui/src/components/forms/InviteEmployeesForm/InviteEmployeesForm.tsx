@@ -9,6 +9,7 @@ import ButtonLoader from "components/ButtonLoader";
 import Chip from "components/Chip";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import Input from "components/Input";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
 import { getDifference, isEmpty as isEmptyArray } from "utils/arrays";
@@ -39,9 +40,11 @@ const getEmailInvitations = (
 };
 
 const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProps = {} }: InviteEmployeesFormProps) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const { isCreateInvitationsLoading = false, isGetAvailablePoolsLoading = false } = isLoadingProps;
 
-  const { name, organizationId, isDemo } = useOrganizationInfo();
+  const { name, organizationId } = useOrganizationInfo();
   const methods = useForm<FormValues>({
     shouldUnregister: true
   });
@@ -119,10 +122,14 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
 
   const saveEmails = (emails: string[]) => {
     emails.forEach((email) => {
+      const normalizedEmail = email.toLowerCase();
       if (isEmailValid(email)) {
-        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, email])] }));
+        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, normalizedEmail])] }));
       } else {
-        setValues((prevState) => ({ ...prevState, invalidEmails: [...new Set([...prevState.invalidEmails, email])] }));
+        setValues((prevState) => ({
+          ...prevState,
+          invalidEmails: [...new Set([...prevState.invalidEmails, email])]
+        }));
       }
       // Clear error state for email field
       setIsEmptyEmail(false);
@@ -227,7 +234,7 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
       />
       {organizationMemberRow}
       <FormProvider {...methods}>
-        <form onSubmit={isDemo ? (e) => e.preventDefault() : handleSubmit(onFormSubmit)} noValidate>
+        <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
           <AdditionalRolesFieldArray
             isGetAvailablePoolsLoading={isGetAvailablePoolsLoading}
             availablePools={availablePools}
@@ -242,8 +249,11 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
               color="primary"
               variant="contained"
               type="submit"
-              disabled={isDemo}
-              tooltip={{ show: isDemo, messageId: "notAvailableInLiveDemo" }}
+              disabled={isRestricted}
+              tooltip={{
+                show: isRestricted,
+                value: restrictionReasonMessage
+              }}
               isLoading={isCreateInvitationsLoading || isGetAvailablePoolsLoading}
             />
             <Button messageId="cancel" dataTestId="btn_cancel" onClick={onCancel} />

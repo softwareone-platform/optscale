@@ -55,6 +55,11 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
   };
 
   const actionBarDefinition = {
+    /*
+      Action bar doesn't support mobile view for "custom" items
+      See OSN-140
+    */
+    hideItemsOnSmallScreens: false,
     items: [
       {
         key: "expandRequiringAttention",

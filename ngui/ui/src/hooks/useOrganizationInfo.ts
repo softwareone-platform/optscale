@@ -3,7 +3,7 @@ import { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";
 import localeManager from "translations/localeManager";
 import { useOrganizations } from "./coreData/useOrganizations";
 
-const useCurrentOrganization = (organizations = []) => {
+export const useCurrentOrganization = (organizations = []) => {
   // Take current/active organization ID from storage
   const currentOrganizationId = useSelector((state) => state[SCOPE_ID]);
 
@@ -13,7 +13,8 @@ const useCurrentOrganization = (organizations = []) => {
     pool_id: organizationPoolId,
     name: organizationName,
     is_demo: isDemo = false,
-    currency = "USD"
+    currency = "USD",
+    disabled = false
   } = organizations.find((org) => org.id === currentOrganizationId) ?? organizations?.[0] ?? {};
 
   return {
@@ -21,6 +22,7 @@ const useCurrentOrganization = (organizations = []) => {
     name: organizationName,
     organizationPoolId,
     isDemo,
+    isInactive: disabled,
     currency,
     currencySymbol: currency ? localeManager.getCurrencySymbol(currency) : undefined
   };

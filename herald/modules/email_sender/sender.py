@@ -2,6 +2,7 @@ import os
 import logging
 import smtplib
 import ssl
+from email.utils import parseaddr
 
 from herald.herald_server.utils import (
     is_valid_port,
@@ -18,11 +19,14 @@ def send_email(message, config_client=None):
         if smtp_params is not None:
             if _is_valid_smtp_params(smtp_params):
                 server, port, email, login, password, protocol = smtp_params
+                _, from_email = parseaddr(email)
                 if not login:
                     LOG.warning('SMTP login is not set. Using email instead')
-                    login = email
+                    login = from_email
+
+                message['From'] = email
                 _send_email_to_user_smtp(
-                    server, port, email, login, password, message, protocol)
+                    server, port, from_email, login, password, message, protocol)
                 return
             else:
                 LOG.warning("User SMTP parameters are not valid")
@@ -38,7 +42,8 @@ def _is_valid_smtp_params(params):
             return False
     if not isinstance(server, str):
         return False
-    if not is_email_format(email):
+    _, from_email = parseaddr(email)
+    if not is_email_format(from_email):
         return False
     if protocol.upper() not in CRYPTOGRAPHIC_PROTOCOLS:
         return False
@@ -64,6 +69,7 @@ def _send_email_to_user_smtp(
     send_func = {
         'SSL': _send_email_smtp_ssl, 'TLS': _send_email_smtp_tls
     }.get(protocol)
+
     try:
         send_func(server, port, email, login, password, message)
     except Exception as e:

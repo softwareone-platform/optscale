@@ -12,7 +12,9 @@ import { ConstraintLimitMessage } from "components/ConstraintMessage";
 import EditResourceConstraintForm from "components/forms/EditResourceConstraintForm";
 import Icon from "components/Icon";
 import IconButton from "components/IconButton";
+import Tooltip from "components/Tooltip";
 import WidgetTitle from "components/WidgetTitle";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useToggle } from "hooks/useToggle";
 import { getPoolUrl } from "urls";
 import { TAB_QUERY_PARAM_NAME, ORGANIZATION_OVERVIEW_TABS, RESOURCE_LIMIT_HIT_STATE } from "utils/constants";
@@ -75,6 +77,8 @@ const ResourceConstraintCard = ({
   poolId,
   isLoadingProps = {}
 }) => {
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
   const {
     isGetDataLoading = false,
     isUpdateLoading = false,
@@ -184,9 +188,10 @@ const ResourceConstraintCard = ({
             dataTestId={`btn_edit_${constraintType}`}
             icon={<CreateOutlinedIcon />}
             onClick={() => onEditMode()}
+            disabled={isRestricted}
             tooltip={{
               show: true,
-              messageId: "edit"
+              value: isRestricted ? restrictionReasonMessage : <FormattedMessage id="edit" />
             }}
           />
         )}
@@ -214,7 +219,16 @@ const ResourceConstraintCard = ({
         </WidgetTitle>
 
         {canEdit && (
-          <Switch data-test-id={`checkbox_${constraintType}`} checked={isSwitchEnabled} onChange={() => changeSwitch()} />
+          <Tooltip title={restrictionReasonMessage}>
+            <div>
+              <Switch
+                data-test-id={`checkbox_${constraintType}`}
+                checked={isSwitchEnabled}
+                onChange={() => changeSwitch()}
+                disabled={isRestricted}
+              />
+            </div>
+          </Tooltip>
         )}
         {getStatus(constraintStatus, { classes, constraintType, poolId })}
       </Box>

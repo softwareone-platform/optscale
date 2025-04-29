@@ -25,9 +25,9 @@ class Events(enum.Enum):
     N0026 = [
         'Power schedule {object_name} ({object_id}) processing completed: '
         '{success_count} resources powered {vm_action}, {error_count} '
-        'resources failed, {excluded_count} resources excluded from schedule',
+        'resources failed, {not_active_count} resources are not active',
         ['object_name', 'object_id', 'success_count', 'error_count',
-         'excluded_count', 'vm_action'],
+         'not_active_count', 'vm_action'],
         "INFO"
     ]
     N0027 = [

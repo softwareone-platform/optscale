@@ -12,7 +12,8 @@ import TopAlert from "./TopAlert";
 export const ALERT_TYPES = Object.freeze({
   DATA_SOURCES_ARE_PROCESSING: 2,
   DATA_SOURCES_PROCEEDED: 3,
-  OPEN_SOURCE_ANNOUNCEMENT: 4
+  OPEN_SOURCE_ANNOUNCEMENT: 4,
+  INACTIVE_ORGANIZATION: 5
 });
 
 export const IS_EXISTING_USER = "isExistingUser";
@@ -47,7 +48,7 @@ const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) =>
 const TopAlertWrapper = ({ blacklistIds = [] }) => {
   const dispatch = useDispatch();
 
-  const { organizationId } = useOrganizationInfo();
+  const { organizationId, disabled: isOrganizationDisabled } = useOrganizationInfo();
 
   // const { userId } = useGetToken();
 
@@ -92,6 +93,20 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
     };
 
     return [
+      {
+        id: ALERT_TYPES.INACTIVE_ORGANIZATION,
+        condition: organizationId && isOrganizationDisabled,
+        getContent: () => <FormattedMessage id="inactiveOrganization" />,
+        onClose: () => {
+          updateOrganizationTopAlert({ id: ALERT_TYPES.INACTIVE_ORGANIZATION, closed: true });
+        },
+        type: "info",
+        triggered: isTriggered(ALERT_TYPES.INACTIVE_ORGANIZATION),
+        onTrigger: () => {
+          updateOrganizationTopAlert({ id: ALERT_TYPES.INACTIVE_ORGANIZATION, triggered: true });
+        },
+        dataTestId: "top_alert_inactive_organization"
+      },
       {
         id: ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING,
         condition: hasDataSourceInProcessing,
@@ -155,7 +170,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       //   dataTestId: "top_alert_open_source_announcement"
       // }
     ];
-  }, [storedAlerts, hasDataSourceInProcessing, updateOrganizationTopAlert]);
+  }, [storedAlerts, organizationId, isOrganizationDisabled, hasDataSourceInProcessing, updateOrganizationTopAlert]);
 
   const currentAlert = useMemo(
     () =>

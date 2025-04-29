@@ -46,44 +46,6 @@ AWS_REGION_MAP = {
     'us': ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2'],
 }
 AWS_SKU_INDEX = 'AwsSkuIndex'
-# this map is necessary to map human-readable names from SKU attributes to
-# region codes. I added method in cloud adapter to get this map, but it requires
-# permission ssm:GetParameter, so it may not work on most accounts. That's why
-# I saved it here
-AWS_REGION_NAMES_TO_CODES = {
-    'Africa (Cape Town)': 'af-south-1',
-    'Asia Pacific (Hong Kong)': 'ap-east-1',
-    'Asia Pacific (Tokyo)': 'ap-northeast-1',
-    'Asia Pacific (Seoul)': 'ap-northeast-2',
-    'Asia Pacific (Osaka)': 'ap-northeast-3',
-    'Asia Pacific (Mumbai)': 'ap-south-1',
-    'Asia Pacific (Hyderabad)': 'ap-south-2',
-    'Asia Pacific (Singapore)': 'ap-southeast-1',
-    'Asia Pacific (Sydney)': 'ap-southeast-2',
-    'Asia Pacific (Jakarta)': 'ap-southeast-3',
-    'Asia Pacific (Melbourne)': 'ap-southeast-4',
-    'Asia Pacific (Malaysia)': 'ap-southeast-5',
-    'Asia Pacific (Thailand)': 'ap-southeast-7',
-    'Canada (Central)': 'ca-central-1',
-    'Canada West (Calgary)': 'ca-west-1',
-    'Europe (Frankfurt)': 'eu-central-1',
-    'Europe (Zurich)': 'eu-central-2',
-    'Europe (Stockholm)': 'eu-north-1',
-    'Europe (Milan)': 'eu-south-1',
-    'Europe (Spain)': 'eu-south-2',
-    'Europe (Ireland)': 'eu-west-1',
-    'Europe (London)': 'eu-west-2',
-    'Europe (Paris)': 'eu-west-3',
-    'Israel (Tel Aviv)': 'il-central-1',
-    'Middle East (Bahrain)': 'me-south-1',
-    'Middle East (UAE)': 'me-central-1',
-    'Mexico (Central)': 'mx-central-1',
-    'South America (Sao Paulo)': 'sa-east-1',
-    'US East (N. Virginia)': 'us-east-1',
-    'US East (Ohio)': 'us-east-2',
-    'US West (N. California)': 'us-west-1',
-    'US West (Oregon)': 'us-west-2',
-}
 unique_sku_fields = [
     'location',
     'locationType',
@@ -171,6 +133,11 @@ class InstanceMigration(ModuleBase):
     def get_aws_recommendations(self, instance_map, cloud_account_map,
                                 excluded_pools):
         result = []
+        coordinates = self.aws.get_regions_coordinates()
+        aws_region_names_to_codes = {}
+        for region_id, coord in coordinates.items():
+            if 'name' in coord:
+                aws_region_names_to_codes[coord['name']] = region_id
         res = self.mongo_client.restapi.raw_expenses.aggregate([
             {'$match': {
                 '$and': [
@@ -205,9 +172,9 @@ class InstanceMigration(ModuleBase):
             for sku_dict in similar_skus:
                 _index = sku_dict['location'].index('(')
                 location_detailed = sku_dict['location'][_index:]
-                for test_region in AWS_REGION_NAMES_TO_CODES:
+                for test_region in aws_region_names_to_codes:
                     if location_detailed in test_region:
-                        region = AWS_REGION_NAMES_TO_CODES.get(test_region)
+                        region = aws_region_names_to_codes.get(test_region)
                         break
                 else:
                     continue

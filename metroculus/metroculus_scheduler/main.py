@@ -42,7 +42,7 @@ def get_cloud_account_ids(config_cl):
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False)
     rest_cl.secret = config_cl.cluster_secret()
 
-    _, response = rest_cl.organization_list()
+    _, response = rest_cl.organization_list({'disabled': False})
     cloud_account_ids = []
     for org_id in list(map(lambda x: x['id'], response['organizations'])):
         try:
