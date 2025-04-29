@@ -87,8 +87,8 @@ const getRenderTooltipBody = (sectionData) => {
   return (
     <div>
       <Typography gutterBottom>{date}</Typography>
-      {items.map(({ key, keyText, value }) => (
-        <KeyValueLabel key={key} keyText={keyText} value={value} />
+      {items.map(({ itemKey, keyText, value }) => (
+        <KeyValueLabel key={itemKey} keyText={keyText} value={value} />
       ))}
     </div>
   );
