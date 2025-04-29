@@ -119,7 +119,7 @@ const ExpensesBreakdown = ({
 
   const renderHeading = () => (
     <>
-      <Grid item xs={12} md={8}>
+      <Grid item xs={12}>
         <ExpensesBreakdownSummaryCards total={total} previousTotal={previousTotal} isLoading={isLoading} />
       </Grid>
 
