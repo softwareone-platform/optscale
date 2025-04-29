@@ -322,7 +322,7 @@ const getThemeConfig = (settings = {}) => {
       values: {
         xs: 0,
         sm: 600,
-        md: 1000,
+        md: 1170,
         lg: 1200,
         xl: 1536
       }
