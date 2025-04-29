@@ -107,7 +107,7 @@ const RiSpCoverageBarChart = ({ breakdown, isLoading = false }) => {
       emptyMessageId="noUsage"
       keys={["sp_usage_percent", "ri_usage_percent", "uncovered_usage_percent"]}
       renderTooltipBody={getRenderTooltipBody}
-      minMaxTicksEqualToMinMaxValues
+      allocateAdditionalTickAboveMaxValue={false}
       margin={{ top: 30, right: 10, bottom: 30, left: 40 }}
       axisFormat={AXIS_FORMATS.PERCENTAGE}
       isLoading={isLoading}
