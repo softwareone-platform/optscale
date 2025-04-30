@@ -30,16 +30,21 @@ class InstanceGenerationUpgrade(ArchiveBase,
 
     def _get_recommended_flavor(self, instance, raw_info, cloud_type):
         meter_id = raw_info.get('meter_id')
-        os_type = instance['meta'].get('os') or raw_info.get('os')
+        meta = instance.get('meta', {})
+        os_type = meta.get('os') or raw_info.get('os')
+        architecture = meta.get('architecture')
         preinstalled = raw_info.get('software')
         generation_params = {
             'cloud_type': cloud_type,
             'region': instance['region'],
-            'current_flavor': instance['meta'].get('flavor'),
+            'current_flavor': meta.get('flavor'),
             'os_type': os_type,
         }
-        if preinstalled and cloud_type == 'aws_cnr':
-            generation_params['preinstalled'] = preinstalled
+        if cloud_type == 'aws_cnr':
+            if architecture:
+                generation_params['architecture'] = architecture
+            if preinstalled:
+                generation_params['preinstalled'] = preinstalled
         if meter_id and cloud_type == 'azure_cnr':
             generation_params['meter_id'] = meter_id
         currency = self.get_organization_currency()

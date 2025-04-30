@@ -91,7 +91,7 @@ class InstanceResource(CloudResource):
                  'stopped_allocated', 'last_seen_not_stopped', 'image_id',
                  'cloud_created_at', 'cpu_count', 'os', 'preinstalled',
                  'vpc_id', 'vpc_name', 'folder_id', 'zone_id', 'cpu_fraction',
-                 'ram', 'platform_id', 'platform_name')
+                 'ram', 'platform_id', 'platform_name', 'architecture')
 
     def __init__(self, name=None, flavor=None, security_groups=None,
                  spotted=False, stopped_allocated=False,
@@ -99,10 +99,11 @@ class InstanceResource(CloudResource):
                  cloud_created_at=0, cpu_count=None, os=None,
                  preinstalled=None, vpc_id=None, vpc_name=None, folder_id=None,
                  zone_id=None, cpu_fraction=None, ram=None, platform_id=None,
-                 platform_name=None, **kwargs):
+                 platform_name=None, architecture=None, **kwargs):
         super().__init__(**kwargs)
         self.name = name
         self.flavor = flavor
+        self.architecture = architecture
         self.security_groups = security_groups
         self.spotted = spotted
         self.stopped_allocated = stopped_allocated
@@ -137,6 +138,7 @@ class InstanceResource(CloudResource):
             'security_groups': self.security_groups,
             'image_id': self.image_id,
             'flavor': self.flavor,
+            'architecture': self.architecture,
             'preinstalled': self.preinstalled,
             'vpc_id': self.vpc_id,
             'vpc_name': self.vpc_name,

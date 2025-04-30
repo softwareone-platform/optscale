@@ -296,12 +296,14 @@ class Aws(S3CloudMixin):
                         dates, default=None) or instance['LaunchTime']
                     spotted = instance.get('InstanceLifecycle') == 'spot'
                     vpc_id = instance.get('VpcId')
+                    architecture = instance['Architecture']
                     instance_resource = InstanceResource(
                         cloud_resource_id=instance['InstanceId'],
                         cloud_account_id=self.cloud_account_id,
                         region=region,
                         name=self._extract_tag(instance, 'Name'),
                         flavor=instance['InstanceType'],
+                        architecture=architecture,
                         security_groups=sg_ids,
                         organization_id=self.organization_id,
                         tags=self._extract_tags(instance),
