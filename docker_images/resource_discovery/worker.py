@@ -410,7 +410,6 @@ class DiscoveryWorker(ConsumerMixin):
 
 if __name__ == '__main__':
     urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-    setup_logging(loglevel='INFO', loggers=[''])
 
     config_cl = ConfigClient(
         host=os.environ.get('HX_ETCD_HOST'),
