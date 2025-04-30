@@ -235,6 +235,7 @@ etcd:
     timeout: {{ .Values.resource_discovery_settings.timeout }}
     writing_timeout: {{ .Values.resource_discovery_settings.writing_timeout }}
     observe_timeout: {{ .Values.resource_discovery_settings.observe_timeout }}
+    debug: {{ .Values.resource_discovery_settings.debug }}
   bi_settings:
     exporter_run_period: {{ .Values.bi_settings.exporter_run_period }}
     encryption_key: {{ .Values.bi_settings.encryption_key }}
