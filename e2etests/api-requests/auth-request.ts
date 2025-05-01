@@ -142,7 +142,7 @@ export class AuthRequest extends BaseRequest {
         return response;
     }
 
-    async setVerificationCode(email: string, code = "123456"): Promise<APIResponse> {
+    async setVerificationCode(email: string, code: string): Promise<APIResponse> {
         const response = await this.request.post(this.verificationCodesEndpoint, {
             headers: {
                 "Content-Type": "application/json",

@@ -19,7 +19,6 @@ test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flo
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-        await header.selectOrganization("QA Test Organization");
     });
 
     test("[229865] Invite new user to organisation, user accepts", async ({
@@ -206,7 +205,6 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-        await header.selectOrganization("QA Test Organization");
     });
 
     test("[229868] Invitation is visible in Settings Tab @slow", async ({
@@ -306,7 +304,6 @@ test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitat
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-        await header.selectOrganization("QA Test Organization");
     });
 
     test("[229869] Invite existing user with a new role @slow", async ({
