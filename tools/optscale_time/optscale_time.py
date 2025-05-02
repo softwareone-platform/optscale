@@ -16,3 +16,7 @@ def utcfromtimestamp(timestamp) -> datetime:
 
 def startday(date) -> datetime:
     return date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def startmonth(date) -> datetime:
+    return date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
