@@ -451,8 +451,14 @@ class Aws(S3CloudMixin):
 
     def discover_bucket_info(self, bucket_name):
         region_info = self.s3.get_bucket_location(Bucket=bucket_name)
-        # LocationConstraint will be None if bucket is located in us-east-1
-        region = region_info['LocationConstraint'] or 'us-east-1'
+        if not region_info['LocationConstraint']:
+            # LocationConstraint will be None if bucket is located in us-east-1
+            region = 'us-east-1'
+        elif region_info['LocationConstraint'].lower() == 'eu':
+            # LocationConstraint will be EU if bucket is located in eu-west-1
+            region = 'eu-west-1'
+        else:
+            region = region_info['LocationConstraint']
 
         # get_bucket_tagging fails for eu-south-1 if region is not set
         # explicitly, so we find region first and initialize client for
