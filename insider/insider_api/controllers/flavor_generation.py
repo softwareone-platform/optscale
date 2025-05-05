@@ -75,6 +75,8 @@ AZURE_FAMILY_GENERATION_MAP = {
     'standardNVSv3Family': 'standardNVSv4Family'
 }
 
+AWS_MEM_LIMIT_DIFF = 1024
+
 
 class FlavorGenerationController(FlavorController):
     def find_flavor_generation(self, cloud_type, region, current_flavor,
@@ -89,6 +91,7 @@ class FlavorGenerationController(FlavorController):
             'current_flavor': current_flavor,
             'os_type': kwargs.get('os_type'),
             'preinstalled': kwargs.get('preinstalled'),
+            'architecture': kwargs.get('architecture'),
             'meter_id': kwargs.get('meter_id'),
             'currency': kwargs.get('currency') or 'USD'
         }
@@ -96,8 +99,8 @@ class FlavorGenerationController(FlavorController):
 
     @handle_credentials_error(AwsClientError)
     def find_aws_flavor_generation(self, region, current_flavor, os_type=None,
-                                   preinstalled=None, meter_id=None,
-                                   currency='USD'):
+                                   preinstalled=None, currency='USD',
+                                   architecture=None, **_kwargs):
         if not os_type or os_type == 'NA':
             os_type = 'Linux'
         preinstalled = preinstalled or 'NA'
@@ -116,14 +119,17 @@ class FlavorGenerationController(FlavorController):
                 return {}
             vcpu = current_flavor_info['VCpuInfo']['DefaultVCpus']
             ram = int(current_flavor_info['MemoryInfo']['SizeInMiB'])
-            arch = current_flavor_info['ProcessorInfo']['SupportedArchitectures']
+            arch = current_flavor_info['ProcessorInfo'][
+                'SupportedArchitectures']
             region_flavors = [
                 t['InstanceType'] for t in all_instance_types
                 if (t['VCpuInfo']['DefaultVCpus'] == vcpu and
-                    t['MemoryInfo']['SizeInMiB'] == ram and
+                    ram <= t['MemoryInfo']['SizeInMiB'] < (
+                                         ram + AWS_MEM_LIMIT_DIFF) and
                     'on-demand' in t['SupportedUsageClasses'] and
-                    arch == t['ProcessorInfo']['SupportedArchitectures'] and
-                    t['CurrentGeneration'])
+                    (arch == t['ProcessorInfo']['SupportedArchitectures'] or
+                     architecture in t['ProcessorInfo'][
+                         'SupportedArchitectures']) and t['CurrentGeneration'])
             ]
             skus = self.get_aws_skus(executor, region_flavors, preinstalled,
                                      os_type)
@@ -152,8 +158,7 @@ class FlavorGenerationController(FlavorController):
         }
 
     def find_azure_flavor_generation(self, region, current_flavor, os_type=None,
-                                     preinstalled=None, meter_id=None,
-                                     currency='USD'):
+                                     meter_id=None, currency='USD', **_kwargs):
         windows_key = 'Windows'
         linux_key = 'Linux'
         if not os_type or os_type == 'NA':
@@ -267,8 +272,7 @@ class FlavorGenerationController(FlavorController):
         return suitable_family
 
     def find_alibaba_flavor_generation(self, region, current_flavor,
-                                       os_type=None, preinstalled=None,
-                                       meter_id=None, currency='USD'):
+                                       currency='USD', **_kwargs):
         with CachedThreadPoolExecutor(self.mongo_client) as executor:
             try:
                 all_flavors = executor.submit(
