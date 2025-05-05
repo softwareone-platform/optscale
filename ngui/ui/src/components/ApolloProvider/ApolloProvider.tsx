@@ -12,6 +12,9 @@ import { getEnvironmentVariable } from "utils/env";
 
 const httpBase = getEnvironmentVariable("VITE_APOLLO_HTTP_BASE");
 const wsBase = getEnvironmentVariable("VITE_APOLLO_WS_BASE");
+type OptScaleHeaders = {
+  "x-optscale-token"?: string;
+};
 
 const writeErrorToCache = (cache: DefaultContext, graphQLError: GraphQLError) => {
   const { extensions: { response: { url, body: { error } = {} } = {} } = {}, message } = graphQLError;
@@ -26,12 +29,15 @@ const ApolloClientProvider = ({ children }) => {
   const { token } = useGetToken();
 
   const signOut = useSignOut();
+  let headers: OptScaleHeaders = {};
+
+  if (token) {
+    headers["x-optscale-token"] = token;
+  }
 
   const httpLink = new HttpLink({
     uri: `${httpBase}/api`,
-    headers: {
-      "x-optscale-token": token
-    }
+    headers
   });
 
   const wsLink = new GraphQLWsLink(
