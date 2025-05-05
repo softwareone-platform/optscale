@@ -3,13 +3,16 @@ import logging
 from collections import OrderedDict
 from contextlib import ContextDecorator
 from datetime import datetime, timedelta
-from clickhouse_driver import Client as ClickHouseClient
+
+import clickhouse_connect
 from kombu import Connection as QConnection
 from kombu import Exchange
 from kombu.pools import producers
 from pymongo import MongoClient, UpdateOne
 
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import (utcfromtimestamp, utcnow, startday,
                                  utcnow_timestamp)
 
@@ -151,15 +154,11 @@ class ModuleBase(ServiceBase):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            host, port, secure, user, password, db_name = self.config_cl.clickhouse_params()
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                self.config_cl.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     @property
@@ -267,25 +266,36 @@ class ModuleBase(ServiceBase):
                 'id': r_id,
                 'date': get_by_cost_saving_timestamp(r, is_saving)
             } for r_id, r in filtered_resources.items()]
-            query = """
-                SELECT resource_id, sum(sign), sum(cost * sign)
-                FROM expenses
-                JOIN resources ON resource_id = resources.id
-                WHERE date >= resources.date
-                    AND or(date != %(today)s, cost != 0)
-                GROUP BY resource_id
-            """
-            return self.clickhouse_client.execute(
-                query=query,
-                external_tables=[{
-                    'name': 'resources',
-                    'structure': [('id', 'String'), ('date', 'Date')],
-                    'data': external_table
-                }],
-                params={
-                    'today': today
-                }
-            )
+            ext_data = ExternalDataConverter()(
+                        [
+                            {
+                                'name': 'resources',
+                                'structure': [('id', 'String'), ('date', 'Date')],
+                                'data': external_table
+                            }
+                        ]
+                    )
+            try:
+                query = """
+                    SELECT resource_id, sum(sign), sum(cost * sign)
+                    FROM expenses
+                    JOIN resources ON resource_id = resources.id
+                    WHERE date >= resources.date
+                        AND or(date != %(today)s, cost != 0)
+                    GROUP BY resource_id
+                """
+                return self.clickhouse_client.query(
+                    query=query,
+                    external_data=ext_data,
+                    parameters={
+                        'today': today
+                    }
+                ).result_rows
+            except Exception:
+                # for potential future debugging
+                LOG.error("Failed to process ext data: %s",
+                          [x.data for x in ext_data.files])
+                raise
 
         filtered_resources = {r['resource_id']: r
                               for r in resources if matched_resource(r)}

@@ -33,7 +33,8 @@ async def test_create_metric(app):
         'name': 'name',
         'tendency': 'less',
         'target_value': 0,
-        'func': 'max'
+        'func': 'max',
+        'unit': '%',
     }
     _, response = await client.post(Urls.metrics,
                                     data=json.dumps(metric),
@@ -81,7 +82,7 @@ async def test_create_metric_invalid_param(app):
         'func': 'avg',
         'target_value': 0
     }
-    for param in ['key', 'name', 'tendency', 'func']:
+    for param in ['key', 'name', 'tendency', 'func', 'unit']:
         for value in [33, ['value'], {'value': 'value'}]:
             params = metric.copy()
             params[param] = value
@@ -200,7 +201,7 @@ async def test_patch_invalid_params(app):
         'func': 'avg',
         'target_value': 0
     }
-    for param in ['key', 'name', 'tendency', 'func']:
+    for param in ['key', 'name', 'tendency', 'func', 'unit']:
         for value in [33, ['value'], {'value': 'value'}]:
             params = metric.copy()
             params[param] = value

@@ -123,7 +123,8 @@ class RoleController(BaseController):
                 if not check_action(action_resources, 'LIST_ROLES',
                                     role.type.name, role.scope_id):
                     context = self.get_context(user.type.name, user.scope_id)
-                    context_values = get_context_values(context) + [None]
+                    context_values, _ = get_context_values(context)
+                    context_values += [None]
                     if not (role.shared and role.scope_id in context_values):
                         raise ForbiddenException(Err.OA0012, [])
                     if (role.shared and user.type_id not in [role.lvl_id] +
@@ -277,7 +278,7 @@ class RoleController(BaseController):
                 action_resources['LIST_USERS']):
             return []
         context = self.get_context(user.type.name, user.scope_id)
-        context_values = get_context_values(context)
+        context_values, _ = get_context_values(context)
         downward_hierarchy = self.get_downward_hierarchy(user.type.name,
                                                          user.scope_id)
         shared_roles = [r for r in list_roles if
@@ -297,7 +298,8 @@ class RoleController(BaseController):
                                         list_roles):
         context = self.get_context(
             current_user.type.name, current_user.scope_id)
-        context_values = get_context_values(context) + [None]
+        context_values, _ = get_context_values(context)
+        context_values += [None]
         shared_roles = [r for r in list_roles if
                         r.shared and r.scope_id in context_values and
                         r.lvl_id in list(

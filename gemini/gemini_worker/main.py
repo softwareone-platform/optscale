@@ -8,7 +8,8 @@ from kombu.mixins import ConsumerMixin
 from kombu.utils.debug import setup_logging
 from gemini.gemini_worker.duplicate_object_finder.factory import Factory
 from etcd import Lock as EtcdLock
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
+from clickhouse_connect.driver.httpclient import HttpClient as ClickHouseClient
 from pymongo import MongoClient
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -49,17 +50,11 @@ class Worker(ConsumerMixin):
     @property
     def clickhouse_client(self) -> ClickHouseClient:
         if self._clickhouse_client is None:
-            host, port, secure, user, password, db_name = (
-                self.config_client.clickhouse_params()
-            )
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, _, port, secure = (
+                self.config_client.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=DB_NAME, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     @property
@@ -284,9 +279,9 @@ class Worker(ConsumerMixin):
             if index < len(buckets) - 1:
                 self_query += " UNION ALL "
 
-        self_result = self.clickhouse_client.execute(
+        self_result_q = self.clickhouse_client.query(
             f"SELECT bucket, count, size * (1 - 1/count) FROM ({self_query})",
-            params=params,
+            parameters=params,
         )
 
         self_matrix = {}
@@ -297,7 +292,7 @@ class Worker(ConsumerMixin):
                     bucket: {"duplicated_objects": 0, "duplicates_size": 0}
                 }
 
-            for row in self_result:
+            for row in self_result_q.result_rows:
                 if bucket in row:
                     self_matrix[bucket][bucket]["duplicated_objects"] += row[1]
                     self_matrix[bucket][bucket]["duplicates_size"] += row[2]
@@ -406,10 +401,12 @@ class Worker(ConsumerMixin):
             params[pair[0]] = pair[0]
             params[pair[1]] = pair[1]
 
+            pair_list_sql = ", ".join([f"'{bucket}'" for bucket in pair])
+
             cross_query += f"""
                 SELECT {index} index, tag, bucket, count(id) count, sum(size) size
                 FROM gemini
-                WHERE id=%(gemini_id)s AND bucket IN %({index})s AND tag in (
+                WHERE id=%(gemini_id)s AND bucket IN ({pair_list_sql}) AND tag in (
                     SELECT tag
                     FROM gemini
                     WHERE id=%(gemini_id)s AND bucket=%({pair[0]})s
@@ -420,17 +417,16 @@ class Worker(ConsumerMixin):
                     FROM gemini
                     WHERE id=%(gemini_id)s AND bucket=%({pair[1]})s
                 ) GROUP BY tag, bucket
-                """
-
+            """
             if index < len(bucket_pairs) - 1:
                 cross_query += " UNION ALL "
 
-        cross_result = self.clickhouse_client.execute(
+        cross_result_q = self.clickhouse_client.query(
             f"""
                 SELECT index, bucket, sum(count) count, size FROM ({cross_query})
                 GROUP BY index, bucket, size ORDER BY index
             """,
-            params=params,
+            parameters=params,
             # Query-level paramters to set the values to unlimited.
             # The query body exceeds the default limits if there are a lot of
             # buckets.
@@ -447,7 +443,7 @@ class Worker(ConsumerMixin):
             bucket_1_duplicates_size = 0
 
             filtered_cross_result = [
-                item for item in cross_result if item[0] == index]
+                item for item in cross_result_q.result_rows if item[0] == index]
 
             if filtered_cross_result:
                 for item in filtered_cross_result:
@@ -525,7 +521,7 @@ class Worker(ConsumerMixin):
                 }
         """
 
-        result = self.clickhouse_client.execute(
+        result_q = self.clickhouse_client.query(
             """
             SELECT groupArray(bucket), count(bucket), count(distinct bucket), size
             FROM gemini
@@ -537,7 +533,7 @@ class Worker(ConsumerMixin):
                     GROUP BY tag HAVING COUNT(tag) > 1
                 ) GROUP BY tag, size
             """,
-            params={"gemini_id": gemini_id},
+            parameters={"gemini_id": gemini_id},
         )
 
         duplicates_stats = {}
@@ -545,7 +541,7 @@ class Worker(ConsumerMixin):
         for bucket in buckets:
             objects_with_duplicates = 0
             objects_with_duplicates_size = 0
-            for r in result:
+            for r in result_q.result_rows:
                 # If bucket is not in results (no duplicates anywhere), skip.
                 bucket_occurance = r[0].count(bucket)
                 if bucket_occurance == 0:
@@ -637,19 +633,21 @@ class Worker(ConsumerMixin):
                 all_bucket_names += target_bucket_names
 
             duplicates, stats = Factory.get(data, filters)
+            column_names = ["id", "tag", "bucket", "key", "size"]
 
-            self.clickhouse_client.execute(
-                """INSERT INTO gemini VALUES""",
+            self.clickhouse_client.insert(
+                "gemini",
                 [
-                    (
+                    [
                         gemini_id,
                         duplicate.tag,
                         duplicate.bucket,
                         duplicate.key,
                         duplicate.size,
-                    )
+                    ]
                     for duplicate in duplicates
                 ],
+                column_names=column_names
             )
 
             buckets_stats, monthly_savings = self._calculate_buckets_stats(

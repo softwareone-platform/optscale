@@ -6,6 +6,7 @@ import ExpandableList from "components/ExpandableList";
 import HtmlSymbol from "components/HtmlSymbol";
 import KeyValueLabel from "components/KeyValueLabel";
 import LabelChip from "components/LabelChip";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import QuestionMark from "components/QuestionMark";
 import SlicedText from "components/SlicedText";
 import SummaryList from "components/SummaryList";
@@ -74,10 +75,16 @@ const QualificationProtocol = ({ qualificationProtocol = [], isLoading = false }
       isEmptyArray(qualificationProtocol) ? (
         <FormattedMessage id="noRestrictions" />
       ) : (
-        qualificationProtocol.map(({ name, min, max }) => (
+        qualificationProtocol.map(({ name, min, max, unit }) => (
           <KeyValueLabel
             key={name}
-            keyText={<SlicedText text={name} limit={METRIC_NAME_LENGTH_LIMIT} />}
+            keyText={
+              <MetricUnitLabel
+                label={<SlicedText text={name} limit={METRIC_NAME_LENGTH_LIMIT} />}
+                unit={unit}
+                showUnitInParentheses
+              />
+            }
             value={`min: ${min ?? "-"}, max: ${max ?? "-"}`}
           />
         ))

@@ -60,7 +60,7 @@ class ActionController(object):
                             type_, scope_id, deleted_type, deleted_id])
                     raise WrongArgumentsException(Err.OA0020, [type_])
                 raise exc
-            context_values = get_context_values(context)
+            context_values, _ = get_context_values(context)
             result[scope_id] = set(
                 map(
                     lambda x: x[2],

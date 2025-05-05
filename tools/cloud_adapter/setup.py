@@ -37,7 +37,7 @@ requirements = [
     'google-cloud-monitoring==2.15.1',
 
     # Nebius
-    'yandexcloud==0.191.0',
+    'yandexcloud==0.327.0',
 
     # Databricks
     'databricks-sdk==0.11.0',

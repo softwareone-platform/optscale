@@ -1,8 +1,12 @@
 import logging
 from collections import defaultdict
+
 from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
 from rest_api.rest_api_server.controllers.breakdown_expense import BreakdownBaseController
 from rest_api.rest_api_server.utils import encode_string
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 
 LOG = logging.getLogger(__name__)
 DAY_IN_SECONDS = 86400
@@ -72,19 +76,19 @@ class BreakdownTagController(BreakdownBaseController):
                     AND cloud_account_id in %(cloud_account_ids)s
                 GROUP BY resources.tag
             """,
-            params={
+            parameters={
                 'start_date': self.start_date,
                 'end_date': self.end_date,
                 'cloud_account_ids': list(cloud_account_ids)
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
                     ('tag', 'Nullable(String)'),
                 ],
                 'data': resources
-            }],
+            }]),
         )
         return {e[0]: e[1] for e in expenses}
 

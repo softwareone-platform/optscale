@@ -517,6 +517,7 @@ class Aws(S3CloudMixin):
                 region=region,
                 vpc_id=lb['VpcId'],
                 security_groups=lb.get('SecurityGroups'),
+                category=lb.get('Type'),
                 tags=tags,
                 cloud_console_link=self._generate_cloud_link(
                     LoadBalancerResource, region, lb_arn),
@@ -536,7 +537,7 @@ class Aws(S3CloudMixin):
             tags = self._parse_lb_tags(tags)
             # ARN is not returned for classic LBs, generate it
             cloud_resource_id = (f'arn:aws:elasticloadbalancing:{region}:'
-                                 f'{self.config['account_id']}:'
+                                 f'{self.config["account_id"]}:'
                                  f'loadbalancer/{name}')
             lb_resource = LoadBalancerResource(
                 name=name,
@@ -547,6 +548,7 @@ class Aws(S3CloudMixin):
                 vpc_id=lb['VPCId'],
                 security_groups=lb.get('SecurityGroups'),
                 tags=tags,
+                category='classic',
                 cloud_console_link=self._generate_cloud_link(
                     LoadBalancerResource, region, name),
             )
@@ -1118,20 +1120,26 @@ class Aws(S3CloudMixin):
     def _get_coordinates_map(self):
         return {
             'eu-central-1': {'name': 'Europe (Frankfurt)',
+                             'alias': 'EU (Frankfurt)',
                              'longitude': 8.65399, 'latitude': 50.12581},
             'eu-central-2': {'name': 'Europe (Zurich)',
                              'longitude': 8.545094, 'latitude': 47.373878},
             'eu-west-1': {'name': 'Europe (Ireland)',
+                          'alias': 'EU (Ireland)',
                           'longitude': -6.266155, 'latitude': 53.350140},
             'eu-west-2': {'name': 'Europe (London)',
+                          'alias': 'EU (London)',
                           'longitude': -0.11362, 'latitude': 51.51768},
             'eu-west-3': {'name': 'Europe (Paris)',
+                          'alias': 'EU (Paris)',
                           'longitude': 2.34293, 'latitude': 48.85717},
             'eu-south-1': {'name': 'Europe (Milan)',
+                           'alias': 'EU (Milan)',
                            'latitude': 45.4668, 'longitude': 9.1905},
             'eu-south-2': {'name': 'Europe (Spain)',
                            'latitude': 40.416775, 'longitude': -3.703790},
             'eu-north-1': {'name': 'Europe (Stockholm)',
+                           'alias': 'EU (Stockholm)',
                            'longitude': 18.04856, 'latitude': 59.33097},
             'us-east-1': {'name': 'US East (N. Virginia)',
                           'longitude': -78.45, 'latitude': 38.13},

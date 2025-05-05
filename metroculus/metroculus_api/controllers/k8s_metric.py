@@ -99,7 +99,7 @@ class K8sMetricsController(BaseController):
         return metric_values
 
     def _get_metrics(self, cloud_account_id, start_date, end_date):
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             f'''
             SELECT resource_id, AVG(pod_cpu_average_usage),
             AVG(pod_memory_average_usage), argMax(pod_cpu_provision, date),
@@ -128,7 +128,7 @@ class K8sMetricsController(BaseController):
                 AND date <= '{end_date}'
             GROUP BY resource_id
             '''
-        )
+        ).result_rows
 
 
 class K8sMetricsAsyncController(BaseAsyncControllerWrapper):

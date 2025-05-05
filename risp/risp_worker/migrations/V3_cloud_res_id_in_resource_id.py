@@ -13,8 +13,8 @@ class Migration(MigrationBase):
         queries_list = []
         query_template = "ALTER TABLE ri_sp_usage " \
                          "UPDATE cloud_resource_id='{0}' WHERE resource_id='{1}'"
-        resource_ids = list(x[0] for x in self.clickhouse_client.execute(
-            """SELECT DISTINCT resource_id FROM ri_sp_usage"""))
+        resource_ids = list(x[0] for x in self.clickhouse_client.query(
+            """SELECT DISTINCT resource_id FROM ri_sp_usage""").result_rows)
         for i in range(0, len(resource_ids), RES_CHUNK_SIZE):
             chunk = resource_ids[i:i+RES_CHUNK_SIZE]
             cloud_res_ids = self.mongo_client.restapi.resources.find(
@@ -53,11 +53,11 @@ class Migration(MigrationBase):
 
     def prepare_table(self):
         LOG.info('Preparing ri_sp_usage table')
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage
                 ADD COLUMN IF NOT EXISTS
                  cloud_resource_id String DEFAULT resource_id""")
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage
                 ADD COLUMN IF NOT EXISTS new_offer_id String DEFAULT SUBSTRING(
                     offer_id, POSITION(offer_id, '/') + 1)""")
@@ -67,7 +67,7 @@ class Migration(MigrationBase):
         queries_list.append("OPTIMIZE TABLE ri_sp_usage FINAL")
         for query in queries_list:
             LOG.info('Executing query: %s', query)
-            self.clickhouse_client.execute(query)
+            self.clickhouse_client.query(query)
 
     def copy_data_in_bulks(self):
         # copy data to new table using cloud_resource_id instead as resource_id
@@ -84,24 +84,24 @@ class Migration(MigrationBase):
                          offer_id, offer_type, on_demand_cost, sign) DESC
                        """
         offer_ids = [
-            x[0] for x in self.clickhouse_client.execute(
-                """SELECT DISTINCT offer_id from ri_sp_usage""")]
+            x[0] for x in self.clickhouse_client.query(
+                """SELECT DISTINCT offer_id from ri_sp_usage""").result_rows]
         for i, offer_id in enumerate(offer_ids):
             LOG.info("Copying data for offer %s (%s/%s)",
                      offer_id, i + 1, len(offer_ids))
-            count = self.clickhouse_client.execute(
+            count = self.clickhouse_client.query(
                 """SELECT COUNT(*) from ri_sp_usage WHERE offer_id=%(offer_id)s""",
-                params={"offer_id": offer_id})[0][0]
+                parameters={"offer_id": offer_id}).result_rows[0][0]
             if count:
                 for j in range(0, count, CH_CHUNK_SIZE):
                     query = insert_query + f'LIMIT {CH_CHUNK_SIZE} OFFSET {j}'
-                    self.clickhouse_client.execute(
-                        query, params={"offer_id": offer_id})
+                    self.clickhouse_client.query(
+                        query, parameters={"offer_id": offer_id})
 
     def create_new_table(self):
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """DROP TABLE IF EXISTS new_ri_sp_usage""")
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """CREATE TABLE new_ri_sp_usage (
                              cloud_account_id String,
                              resource_id String,
@@ -118,8 +118,8 @@ class Migration(MigrationBase):
                    offer_id, offer_type)""")
 
     def rename_new_table(self):
-        self.clickhouse_client.execute("""DROP TABLE ri_sp_usage""")
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query("""DROP TABLE ri_sp_usage""")
+        self.clickhouse_client.query(
             """RENAME TABLE new_ri_sp_usage TO ri_sp_usage""")
 
     def upgrade(self):

@@ -3,6 +3,8 @@ from collections import defaultdict
 from tools.optscale_exceptions.common_exc import (
     FailedDependency
 )
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper
 )
@@ -127,14 +129,14 @@ class AvailableFiltersController(CleanExpenseController):
                     AND traffic_expenses.date >= %(start_date)s
                     AND traffic_expenses.date <= %(end_date)s
             """,
-            params={
+            parameters={
                 'start_date': self.start_date,
                 'end_date': self.end_date,
                 'cloud_account_ids': [
                     c_id for c_id in cloud_account_ids if c_id
                 ]
             },
-            external_tables=[
+            external_data=ExternalDataConverter()([
                 {
                     'name': 'resources',
                     'structure': [
@@ -145,7 +147,7 @@ class AvailableFiltersController(CleanExpenseController):
                         {'id': k, 'cloud_type': v}
                         for k, v in cl_resource_acc_type_map.items() if v]
                 }
-            ]
+            ])
         )
         result_set = defaultdict(set)
         for (cloud_type, _from, _to), in res_filters:

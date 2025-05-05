@@ -13,6 +13,7 @@ import DynamicFractionDigitsValue, { useFormatDynamicFractionDigitsValue } from 
 import FormattedDigitalUnit, { IEC_UNITS, formatDigitalUnit } from "components/FormattedDigitalUnit";
 import IconButton from "components/IconButton";
 import LineChart from "components/LineChart";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import { RenameMlRunChartModal, SelectStageOrMilestoneModal } from "components/SideModalManager/SideModals";
 import TypographyLoader from "components/TypographyLoader";
 import { ChartsTooltipContextProvider } from "contexts/ChartsTooltipContext";
@@ -187,11 +188,13 @@ const ExecutionBreakdown = ({
 
   const goalsBreakdownConfig = useMemo(
     () =>
-      Object.entries(reachedGoals).map(([key, { name }]) => ({
+      Object.entries(reachedGoals).map(([key, { name, unit }]) => ({
         name: key,
         renderBreakdownName: () => name,
         getPointValue: (data) => data.data?.[key] ?? null,
-        formatValue: (value) => <DynamicFractionDigitsValue value={value} maximumFractionDigits={2} />,
+        formatValue: (value) => (
+          <MetricUnitLabel label={<DynamicFractionDigitsValue value={value} maximumFractionDigits={2} />} unit={unit} />
+        ),
         formatAxis: (value) =>
           formatDynamicFractionDigitsValue({
             value,

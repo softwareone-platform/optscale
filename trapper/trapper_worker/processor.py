@@ -1,9 +1,8 @@
 import re
 import requests
-from datetime import datetime
 from pymongo import MongoClient
 from kombu.log import get_logger
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -41,17 +40,11 @@ class BaseTrafficExpenseProcessor:
     @property
     def clickhouse_cl(self):
         if not self._clickhouse_cl:
-            host, port, secure, user, password, db_name = (
-                self.config_cl.clickhouse_params()
-            )
-            self._clickhouse_cl = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                self.config_cl.clickhouse_params())
+            self._clickhouse_cl = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_cl
 
     @staticmethod
@@ -79,17 +72,17 @@ class BaseTrafficExpenseProcessor:
             date_intervals.append(f"(date >= {task.get('start_date')} "
                                   f"AND date <= {task.get('end_date')})")
         date_intervals = " OR ".join(date_intervals)
-        expenses = self.clickhouse_cl.execute(f"""
+        expenses_q = self.clickhouse_cl.query(f"""
             SELECT resource_id, date, from, to, SUM(cost*sign), SUM(usage*sign)
             FROM traffic_expenses
             WHERE cloud_account_id = %(ca_id)s AND ({date_intervals})
             GROUP BY resource_id, date, from, to
-        """, params={
+        """, parameters={
             'ca_id': cloud_account_id
         })
         return {
             (e[0], e[1], e[2], e[3]): {'cost': e[4], 'usage': e[5]}
-            for e in expenses
+            for e in expenses_q.result_rows
         }
 
     def get_cloud_adapter(self, cloud_account_id):
@@ -178,12 +171,20 @@ class BaseTrafficExpenseProcessor:
                 new_expense.update({**expenses_map[k], 'sign': 1})
                 chunk.append(new_expense)
             if chunk:
-                cnt = self.clickhouse_cl.execute(
-                    'INSERT INTO traffic_expenses VALUES', chunk)
+                column_names = chunk[0].keys()
+                insert_data = []
+                for exp in chunk:
+                    vals = list(exp.values())
+                    insert_data.append(vals)
+                self.clickhouse_cl.insert(
+                    "traffic_expenses",
+                    insert_data,
+                    column_names=column_names)
+                # in clickhouse-connect insert() operation returns None on success
                 LOG.info(
-                    f'Inserted %s traffic expenses for '
+                    f'Inserted traffic expenses for '
                     f'cloud_account %s (%s collapsed)' % (
-                        cnt, cloud_account_id, collapsed_cnt))
+                        cloud_account_id, collapsed_cnt))
 
 
 class AwsTrafficExpenseProcessor(BaseTrafficExpenseProcessor):

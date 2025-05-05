@@ -92,7 +92,7 @@ class MetricsController(BaseController):
 
     def _get_metrics(
             self, cloud_account_id, resource_id, start_date, end_date):
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             f'''
             SELECT metric, value, date
             FROM average_metrics
@@ -102,7 +102,7 @@ class MetricsController(BaseController):
                 AND date <= '{end_date}'
             ORDER BY date ASC
             '''
-        )
+        ).result_rows
 
 
 class MetricsAsyncController(BaseAsyncControllerWrapper):

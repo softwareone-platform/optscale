@@ -69,7 +69,7 @@ class ActivityBreakdownController(BaseController):
         # In order to get correct DayOfWeek and Hour values we need
         # to shift date values by a half of the range length - 450 seconds.
         half_interval = METRIC_INTERVAL / 2
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             query='''
             SELECT resource_id, metric, avg(value) as value,
                    toDayOfWeek(date-%(half_interval)s) as day, toHour(date-%(half_interval)s) as hour
@@ -80,7 +80,7 @@ class ActivityBreakdownController(BaseController):
                 AND date-%(half_interval)s BETWEEN %(start_date)s AND %(end_date)s
             GROUP BY resource_id, metric, toDayOfWeek(date-%(half_interval)s), toHour(date-%(half_interval)s)
             ''',
-            params={
+            parameters={
                 'start_date': start_date,
                 'end_date': end_date,
                 'cloud_account_id': cloud_account_id,
@@ -88,7 +88,7 @@ class ActivityBreakdownController(BaseController):
                 'meter_names': meter_names,
                 'half_interval': half_interval,
             }
-        )
+        ).result_rows
 
 
 class ActivityBreakdownAsyncController(BaseAsyncControllerWrapper):

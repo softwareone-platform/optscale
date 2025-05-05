@@ -476,7 +476,10 @@ class RightsizingBase(ModuleBase):
                     continue
                 res_id = r['_id']['resource_id']
                 meter_id = r['_id']['meter_id']
-                day_cost = r['cost'] * HOURS_IN_DAY / r['usage_quantity']
+                usage = r['usage_quantity']
+                if not usage:
+                    continue
+                day_cost = r['cost'] * HOURS_IN_DAY / usage
                 data = {
                     'day_cost': day_cost,
                     'total_cost': r['cost'],

@@ -26,7 +26,7 @@ const columns = [
       <HeaderHelperCell
         titleDataTestId="lbl_ri_savings_min"
         titleMessageId="savingsWithMinimalCommitment"
-        helperMessageId="cvosSavingsWithSixMonthCommitmentHelp"
+        helperMessageId="savingsWithMinimalCommitmentHelp"
       />
     ),
     accessorKey: "saving",

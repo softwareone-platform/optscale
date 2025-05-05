@@ -12,6 +12,7 @@ from rest_api.rest_api_server.models.models import (
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   NotFoundException)
 from rest_api.rest_api_server.utils import tp_executor_context
+from sqlalchemy import true
 
 LOG = logging.getLogger(__name__)
 
@@ -174,6 +175,7 @@ class ContextController(MongoMixin):
         if deleted_object:
             raise WrongArgumentsException(Err.OE0472, [
                 source_type, uuid, deleted_object[0], deleted_object[1]])
+        self.restrict_allowed_actions(res)
         return res
 
     def check_deleted(self, result_map):
@@ -191,6 +193,32 @@ class ContextController(MongoMixin):
                 if deleted_objects:
                     return obj_type, deleted_objects[0][0]
         return None
+
+    def _get_disabled_organizations(self, ids):
+        return self.session.query(Organization.id).filter(
+            Organization.id.in_(ids),
+            Organization.deleted.is_(False),
+            Organization.disabled.is_(true())
+        ).all()
+
+    def restrict_allowed_actions(self, result_map):
+        # key: (get_restricted_objects, allowed_actions)
+        models = {
+            'organization': lambda x: (
+                self._get_disabled_organizations(x),
+                ['INFO_ORGANIZATION']
+            )
+        }
+        for obj_type, expr_set in models.items():
+            ids = result_map.get(obj_type)
+            if not ids:
+                continue
+            objects, allowed_actions = expr_set(ids)
+            result_map[obj_type] = [
+                _id if _id not in [
+                    r_id for (r_id,) in objects
+                ] else {_id: allowed_actions} for _id in ids
+            ]
 
     def get_hierarchy(self, item):
         model_type = item.__class__

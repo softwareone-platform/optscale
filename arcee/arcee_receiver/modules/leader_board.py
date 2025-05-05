@@ -384,10 +384,12 @@ async def rank_by_datasets(
             # try to get name and func from metrics
             metric_name = key_metrics_map.get(k, {}).get("name")
             func_name = key_metrics_map.get(k, {}).get("func")
+            unit = key_metrics_map.get(k, {}).get("unit")
             m[k] = {
                 "name": metric_name,
                 "value": v,
                 "func": func_name,
+                "unit": unit
             }
 
     qual_ds_ids = [x["_id"] for x in datasets]

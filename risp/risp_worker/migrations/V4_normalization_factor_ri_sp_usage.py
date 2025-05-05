@@ -10,7 +10,7 @@ class Migration(MigrationBase):
 
     def update_table(self):
         # default value is 0
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage ADD COLUMN
             IF NOT EXISTS ri_norm_factor FLOAT AFTER usage""")
 
@@ -18,55 +18,63 @@ class Migration(MigrationBase):
         result = defaultdict(lambda: defaultdict(set))
         # normalization factor is used in RI, so it doesn't matter for rows
         # with 'sp' type
-        data = self.clickhouse_client.execute(
+        data_q = self.clickhouse_client.query(
             """SELECT DISTINCT resource_id, date, offer_id FROM ri_sp_usage
             WHERE cloud_account_id=%(cloud_account_id)s
             AND ri_norm_factor=0 AND offer_type='ri'""",
-            params={"cloud_account_id": cloud_account_id})
-        for res_data in data:
+            parameters={"cloud_account_id": cloud_account_id})
+        for res_data in data_q.result_rows:
             resource_id, date, offer_id = res_data
             result[resource_id][offer_id].add(date)
         return result
 
     def update_ch_expenses(self, cloud_account_id, data):
         exp_to_add = []
+        column_names = [
+            'cloud_account_id', 'resource_id', 'offer_type',
+            'date', 'offer_id', 'offer_cost', 'on_demand_cost',
+            'usage', 'ri_norm_factor', 'sign'
+        ]
         for exp_data in data:
             resource_id, offer_id, date, factor = exp_data
-            ch_expenses = self.clickhouse_client.execute(
+            ch_expenses_q = self.clickhouse_client.query(
                 """SELECT sum(offer_cost * sign),
                     sum(on_demand_cost * sign), sum(usage * sign)
                 FROM ri_sp_usage
                 WHERE cloud_account_id=%(cloud_account_id)s
                 AND resource_id=%(resource_id)s AND offer_type='ri'
                 AND date=%(start_date)s AND ri_norm_factor=0""",
-                params={
+                parameters={
                     "cloud_account_id": cloud_account_id,
                     "resource_id": resource_id,
                     "start_date": date
                 })
-            for expense in ch_expenses:
+
+            for expense in ch_expenses_q.result_rows:
                 offer_cost, on_demand_cost, usage = expense
-                exp = {
-                    'cloud_account_id': cloud_account_id,
-                    'resource_id': resource_id,
-                    'offer_type': 'ri',
-                    'date': date,
-                    'offer_id': offer_id,
-                    'offer_cost': offer_cost,
-                    'on_demand_cost': on_demand_cost,
-                    'usage': usage,
-                    'ri_norm_factor': 0,
-                    'sign': 1
-                }
+
+                exp = [
+                    cloud_account_id,
+                    resource_id,
+                    'ri',
+                    date,
+                    offer_id,
+                    offer_cost,
+                    on_demand_cost,
+                    usage,
+                    0,
+                    1
+                ]
+
                 neg_exp = exp.copy()
-                neg_exp['sign'] = -1
+                neg_exp[9] = -1
                 exp_to_add.append(neg_exp)
 
-                exp['ri_norm_factor'] = factor
+                exp[8] = factor
                 exp_to_add.append(exp)
 
-        self.clickhouse_client.execute(
-            """INSERT INTO ri_sp_usage VALUES""", exp_to_add)
+        self.clickhouse_client.insert(
+            "ri_sp_usage", exp_to_add, column_names=column_names)
 
     def fill_norm_factor(self):
         rest_cl = RestClient(
@@ -113,7 +121,7 @@ class Migration(MigrationBase):
                                     resource_id, offer_id, start_date, factor))
                 if ch_expenses:
                     self.update_ch_expenses(cloud_account_id, ch_expenses)
-                    self.clickhouse_client.execute(
+                    self.clickhouse_client.query(
                         """OPTIMIZE TABLE ri_sp_usage FINAL""")
 
     def upgrade(self):

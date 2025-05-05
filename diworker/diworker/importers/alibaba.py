@@ -492,7 +492,7 @@ class AlibabaReportImporter(BaseReportImporter):
             sc_without_expenses = [
                 sc_ids_map[x] for x in sc_cloud_without_expenses
             ]
-            existing_expenses = self.clickhouse_cl.execute(
+            existing_expenses_q = self.clickhouse_cl.query(
                 """SELECT resource_id, date, SUM(cost * sign) AS total_cost
                    FROM expenses
                    WHERE cloud_account_id = %(cloud_account_id)s
@@ -501,22 +501,25 @@ class AlibabaReportImporter(BaseReportImporter):
                        AND resource_id in %(resource_ids)s
                    GROUP BY resource_id, date
                    HAVING SUM(sign) > 0""",
-                params={
+                parameters={
                     'cloud_account_id': self.cloud_acc_id,
                     'from_dt': self.period_start,
                     'to_dt': datetime.now(tz=timezone.utc).replace(tzinfo=None),
                     'resource_ids': sc_without_expenses
                 })
             clickhouse_expenses = []
-            for resource_id, date, total_cost in existing_expenses:
-                clickhouse_expenses.append({
-                    'cloud_account_id': self.cloud_acc_id,
-                    'resource_id': resource_id,
-                    'date': date,
-                    'cost': total_cost,
-                    'sign': -1
-                })
-            self.update_clickhouse_expenses(clickhouse_expenses)
+            column_names = [
+                "cloud_account_id", "resource_id", "date", "cost", "sign"]
+            for resource_id, date, total_cost in existing_expenses_q.result_rows:
+                clickhouse_expenses.append([
+                    self.cloud_acc_id,
+                    resource_id,
+                    date,
+                    total_cost,
+                    -1
+                ])
+            self.update_clickhouse_expenses(clickhouse_expenses,
+                                            column_names)
             LOG.info('Updating last_seen and last_expense for snapshot chains')
             last_expense_info = {}
             raw_expenses = self.mongo_raw.aggregate([

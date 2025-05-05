@@ -1,6 +1,6 @@
 import logging
 from diworker.diworker.migrations.base import BaseMigration
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from datetime import datetime, timezone
 
@@ -20,23 +20,17 @@ class Migration(BaseMigration):
         return self._rest_cl
 
     def _get_clickhouse_client(self):
-        host, port, secure, user, password, db_name = (
-            self.config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
-        )
+        user, password, host, db_name, port, secure = (
+            self.config_cl.clickhouse_params())
+        return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
 
     def upgrade(self):
         clickhouse_cl = self._get_clickhouse_client()
         LOG.info('Clearing clickhouse db...')
-        clickhouse_cl.execute('ALTER TABLE traffic_expenses DELETE WHERE 1')
-        clickhouse_cl.execute('OPTIMIZE TABLE traffic_expenses FINAL')
+        clickhouse_cl.query('ALTER TABLE traffic_expenses DELETE WHERE 1')
+        clickhouse_cl.query('OPTIMIZE TABLE traffic_expenses FINAL')
         LOG.info('Creating traffic processing tasks')
         _, orgs = self.rest_cl.organization_list()
         now_ts = int(datetime.now(tz=timezone.utc).timestamp())

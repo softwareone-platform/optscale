@@ -15,7 +15,7 @@ from sqlalchemy.sql import table, column
 from optscale_client.config_client.client import Client as EtcdClient
 from pymongo import MongoClient
 from sqlalchemy import Integer, select, String, and_
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 
 # revision identifiers, used by Alembic.
@@ -45,16 +45,10 @@ def get_mongo_client():
 
 def _get_clickhouse_client():
     config_cl = _get_etcd_config_client()
-    host, port, secure, user, password, db_name = (
-        config_cl.clickhouse_params()
-    )
-    return ClickHouseClient(
-        host=host,
-        port=port,
-        secure=secure,
-        user=user,
-        password=password,
-        database=db_name,
+    user, password, host, db_name, port, secure = config_cl.clickhouse_params()
+    return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure
     )
 
 
@@ -88,7 +82,7 @@ def upgrade():
     mongo_cl = get_mongo_client()
     cloud_accounts = list(get_cloud_account_ids())
     clickhouse_cl = _get_clickhouse_client()
-    table_exists = clickhouse_cl.execute("SHOW TABLES LIKE 'expenses'")
+    table_exists = clickhouse_cl.query("SHOW TABLES LIKE 'expenses'").result_rows
     for i, cloud_account in enumerate(cloud_accounts):
         LOG.info('Started deleting resources for '
                  'cloud account {0} ({1}/{2})'.format(
@@ -102,9 +96,9 @@ def upgrade():
         if not resource_ids:
             continue
         if table_exists:
-            clickhouse_cl.execute(
+            clickhouse_cl.query(
                 'ALTER TABLE expenses DELETE WHERE cloud_account_id=%(ca)s AND resource_id IN %(ids)s',
-                params={
+                parameters={
                     'ca': cloud_account_id,
                     'ids': resource_ids
                 })
@@ -113,7 +107,7 @@ def upgrade():
             'cloud_resource_id': {'$regex': 'SavingsPlanNegation'}
         })
     if table_exists:
-        clickhouse_cl.execute('OPTIMIZE TABLE expenses FINAL')
+        clickhouse_cl.query('OPTIMIZE TABLE expenses FINAL')
 
 
 def downgrade():

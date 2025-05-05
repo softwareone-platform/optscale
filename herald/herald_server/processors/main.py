@@ -88,22 +88,22 @@ class MainProcessor:
         template_type = email_task.get('template_type')
         LOG.info("task %s processed successfully", template_type)
 
-    def load_task(self, task, cleanup_on_fail=True):
+    def download_and_perform_email(self, task, cleanup_on_fail=True):
         bucket, filename = task['download_url'].split('/')
         report_path = 'task_%s' % int(datetime.now(tz=timezone.utc).timestamp())
         LOG.info('loading %s from %s', bucket, filename)
-
-        res = None
+        task_complete = False
         try:
             with open(report_path, 'wb') as f_report:
                 self.s3_client.download_fileobj(bucket, filename, f_report)
             with open(report_path, 'r') as f_in:
                 res = json.load(f_in)
-                return res
+                self.perform_email(res)
+                task_complete = True
         finally:
             if os.path.exists(report_path):
                 os.remove(report_path)
-            if res or cleanup_on_fail:
+            if task_complete or cleanup_on_fail:
                 self.s3_client.delete_object(Bucket=bucket, Key=filename)
 
     def process_task(self, task, ack_callback):
@@ -114,8 +114,8 @@ class MainProcessor:
             elif 'template_type' in task:
                 self.perform_email(task)
             elif 'download_url' in task:
-                res = self.load_task(task, task.get('retries', 0) <= 0)
-                self.perform_email(res)
+                self.download_and_perform_email(
+                    task, task.get('retries', 1) <= 1)
             else:
                 self.process_event(task)
         except Exception:

@@ -554,6 +554,7 @@ async def reached_goals(run):
                 "id": gl["_id"],
                 "tendency": gl["tendency"],
                 "target_value": gl["target_value"],
+                "unit": gl["unit"],
                 "name": gl["name"],
             }
 

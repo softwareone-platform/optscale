@@ -1,5 +1,6 @@
 name: Build live_demo_generator test image and run tests on it
 run-name: Build live_demo_generator test image and run tests on it - started by ${{ github.actor }}
+permissions: read-all
 on:
   pull_request:
     types: [opened, synchronize]

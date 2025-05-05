@@ -18,31 +18,28 @@ class Migration(MigrationBase):
                    ENGINE = MergeTree
                    PARTITION BY toYYYYMM(date)
                    ORDER BY (cloud_account_id, resource_id, date)"""
-        self.clickhouse_client.execute(query)
+        self.clickhouse_client.query(query)
 
     def insert_data(self):
         LOG.info("Start inserting data")
-        progress = self.clickhouse_client.execute_with_progress(
+        self.clickhouse_client.query(
             """INSERT INTO average_metrics_new SELECT * FROM average_metrics"""
         )
-        for num_rows, total_rows in progress:
-            if total_rows:
-                LOG.info('Progress: %s/%s (%s %%)', num_rows, total_rows,
-                         round(num_rows * 100 / total_rows))
+        LOG.info("Done inserting data")
 
     def rename_new_table(self):
         LOG.info("Dropping average_metrics table")
-        self.clickhouse_client.execute("""DROP TABLE average_metrics""")
+        self.clickhouse_client.query("""DROP TABLE average_metrics""")
         LOG.info("Renaming table: average_metrics_new -> average_metrics")
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """RENAME TABLE average_metrics_new TO average_metrics""")
 
     def upgrade(self):
         tables = [
-            x[0] for x in self.clickhouse_client.execute("""SHOW TABLES""")
+            x[0] for x in self.clickhouse_client.query("""SHOW TABLES""").result_rows
         ]
         if 'average_metrics_new' in tables and 'average_metrics' in tables:
-            self.clickhouse_client.execute(
+            self.clickhouse_client.query(
                 """DROP TABLE average_metrics_new""")
         self.create_new_table()
         self.insert_data()

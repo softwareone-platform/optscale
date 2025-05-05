@@ -13,13 +13,21 @@ class Migration(MigrationBase):
 
     def update_table(self):
         # default value is 0
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """ALTER TABLE ri_sp_usage ADD COLUMN
             IF NOT EXISTS expected_cost FLOAT AFTER ri_norm_factor""")
 
     def insert_ch_expenses(self, expenses):
-        self.clickhouse_client.execute(
-            """INSERT INTO ri_sp_usage VALUES""", expenses)
+        if expenses:
+            column_names = expenses[0].keys()
+            insert_data = []
+            for exp in expenses:
+                vals = list(exp.values())
+                insert_data.append(vals)
+            self.clickhouse_client.insert(
+                "ri_sp_usage", insert_data,
+                column_names=column_names
+            )
 
     @staticmethod
     def dates_range(start_date, end_date):
@@ -92,10 +100,13 @@ class Migration(MigrationBase):
         for ri_id, data in offer_cost_per_day.items():
             new_ch_expenses = []
             for date, cost in data.items():
-                expenses = self.clickhouse_client.execute(
-                    ch_query, params={'cloud_account_id': cloud_account_id,
-                                      'date': date,
-                                      'offer_id': ri_id})
+                expenses = self.clickhouse_client.query(
+                    ch_query, parameters={
+                        'cloud_account_id': cloud_account_id,
+                        'date': date,
+                        'offer_id': ri_id
+                    }
+                ).result_rows
                 if not expenses:
                     new_ch_expenses.append({
                         'cloud_account_id': cloud_account_id,
@@ -199,5 +210,5 @@ class Migration(MigrationBase):
     def upgrade(self):
         self.update_table()
         self.fill_expected_cost()
-        self.clickhouse_client.execute(
+        self.clickhouse_client.query(
             """OPTIMIZE TABLE ri_sp_usage FINAL""")

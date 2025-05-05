@@ -156,7 +156,7 @@ const metrics = ({
         return CELL_EMPTY_VALUE;
       }
 
-      return <RunGoals goals={reachedMetricValues} />;
+      return <RunGoals goals={reachedMetricValues} displayInOneLine />;
     },
     columnSelector
   };

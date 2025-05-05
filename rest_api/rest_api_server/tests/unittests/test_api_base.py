@@ -1,5 +1,4 @@
 import os
-import csv
 import uuid
 import subprocess
 import tempfile
@@ -7,6 +6,7 @@ import tools.optscale_time as opttime
 from ast import literal_eval
 from datetime import datetime, timezone
 from unittest.mock import patch, PropertyMock
+from clickhouse_connect.driver.external import ExternalData
 
 import mongomock
 import tornado.testing
@@ -569,8 +569,8 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         return result
 
     def patched_execute_clickhouse(self, query, **kwargs):
-        params = kwargs.pop('params', {})
-        external_tables = kwargs.pop('external_tables', [])
+        params = kwargs.pop('parameters', {})
+        external_tables = kwargs.pop('external_data', ExternalData())
         if kwargs:
             self.assertEqual(kwargs, {},
                              '%s parameters is not processed in unittests'
@@ -582,9 +582,14 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         query = ' '.join(list(filter(
             lambda x: x != '', query.replace('\n', ' ').split(' '))))
 
+        def remove_header(csv_bytes: bytes) -> bytes:
+            csv_str = csv_bytes.decode('utf-8')
+            lines = csv_str.splitlines()
+            data_lines = lines[1:]  # remove header
+            return '\n'.join(data_lines).encode('utf-8')
+
         def get_csv(path):
-            structure_str = ', '.join([f'{x[0]} {x[1]}' for x in structure])
-            return f"file('{path}/{name}.csv', 'CSV', '{structure_str}')"
+            return f"file('{path}/{name}.csv', 'CSV', '{structure}')"
         ch_expenses_map = {
             'expenses': (
                 [
@@ -661,16 +666,14 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             table_name = 'expenses'
         expense_field_types, data_source = ch_expenses_map[table_name]
         with tempfile.TemporaryDirectory() as tmp_dir:
-            for external_table in external_tables:
-                name = external_table['name']
-                structure = external_table['structure']
-                data = external_table['data']
+            for external_table in external_tables.files:
+                name = external_table.name
+                structure = external_table.structure
+                data = external_table.data
                 file_path = f'{tmp_dir}/{name}.csv'
-                with open(file_path, 'w', newline='') as csvfile:
-                    fieldnames = [s[0] for s in structure]
-                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    for d in data:
-                        writer.writerow({k: v for k, v in d.items()})
+                with open(file_path, 'wb') as csvfile:
+                    dat = remove_header(data)
+                    csvfile.write(dat)
                 if f'JOIN {name}' in query:
                     query = query.replace(
                         f"JOIN {name}",

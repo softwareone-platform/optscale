@@ -3,7 +3,7 @@ import MlRunHistoryChart from "components/MlRunHistoryChart";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 
 const LastTaskRunGoals = ({ lastRunMetrics, taskReachedGoals }) =>
-  Object.entries(taskReachedGoals).map(([key, { id, name, tendency, value, target_value: targetValue, reached }]) => {
+  Object.entries(taskReachedGoals).map(([key, { id, name, tendency, value, target_value: targetValue, reached, unit }]) => {
     const { history } = lastRunMetrics.find(({ id: lastRunMetricId }) => lastRunMetricId === id) ?? {};
 
     const hasHistory = !isEmptyArray(history);
@@ -25,9 +25,11 @@ const LastTaskRunGoals = ({ lastRunMetrics, taskReachedGoals }) =>
             marginRight: shouldRenderHistory ? "8px" : undefined
           }}
         >
-          <GoalLabel name={name} goalValue={value} targetGoalValue={targetValue} reached={reached} />
+          <GoalLabel name={name} goalValue={value} targetGoalValue={targetValue} reached={reached} unit={unit} />
         </div>
-        {shouldRenderHistory ? <MlRunHistoryChart history={history} targetValue={targetValue} tendency={tendency} /> : null}
+        {shouldRenderHistory ? (
+          <MlRunHistoryChart history={history} targetValue={targetValue} tendency={tendency} unit={unit} />
+        ) : null}
       </div>
     );
   });

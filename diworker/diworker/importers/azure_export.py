@@ -105,7 +105,10 @@ class AzureExportImporter(CSVBaseReportImporter, AzureImporterBase):
         try:
             skipped_accounts = self.load_parquet_report(
                 report_path)
-        except pyarrow.lib.ArrowInvalid:
+        except pyarrow.lib.ArrowInvalid as exc:
+            LOG.warning(
+                f"Could not open source file as Parquet {report_path}: "
+                f"{str(exc)}. Will try to open it as CSV")
             skipped_accounts = self.load_csv_report(
                 report_path)
 

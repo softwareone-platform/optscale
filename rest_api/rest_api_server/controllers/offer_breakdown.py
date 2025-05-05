@@ -1,10 +1,12 @@
 import logging
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 from collections import defaultdict
 from rest_api.rest_api_server.controllers.ri_breakdown import (
     RiBreakdownController)
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper)
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 
 CH_DB_NAME = 'risp'
 LOG = logging.getLogger(__name__)
@@ -16,15 +18,11 @@ class OfferBreakdownController(RiBreakdownController):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            host, port, secure, user, password, _ = self._config.clickhouse_params()
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=CH_DB_NAME,
-            )
+            user, password, host, _, port, secure = (
+                self._config.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=CH_DB_NAME, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     def get_ri_sp_usage(self, cloud_account_ids, start_date, end_date):
@@ -42,11 +40,17 @@ class OfferBreakdownController(RiBreakdownController):
                    date >= %(start_date)s AND date <= %(end_date)s)
                GROUP BY offer_id, date
                HAVING sum(sign) > 0""",
-            params={'start_date': start_date, 'end_date': end_date},
-            external_tables=[{'name': 'cloud_account_ids',
-                              'structure': [('id', 'String')],
-                              'data': [{'id': r_id} for r_id in
-                                       cloud_account_ids]}])
+            parameters={'start_date': start_date, 'end_date': end_date},
+            external_data=ExternalDataConverter()(
+                [
+                    {
+                        'name': 'cloud_account_ids',
+                        'structure': [('id', 'String')],
+                        'data': [{'id': r_id} for r_id in cloud_account_ids]
+                    }
+                ]
+            )
+        )
 
     def get(self, organization_id, **params):
         result = defaultdict(list)

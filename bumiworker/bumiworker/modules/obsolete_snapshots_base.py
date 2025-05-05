@@ -7,8 +7,14 @@ from pymongo import UpdateOne
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 
 from bumiworker.bumiworker.consts import ArchiveReason
-from bumiworker.bumiworker.modules.base import ArchiveBase, ModuleBase
+from bumiworker.bumiworker.modules.base import (
+    ArchiveBase,
+    ModuleBase,
+)
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcnow, startday
+
 
 BULK_SIZE = 2000
 DAYS_IN_MONTH = 30
@@ -160,20 +166,20 @@ class ObsoleteSnapshotsBase(ModuleBase):
             GROUP BY cloud_resource_id
             HAVING min_d < %(start_date)s
         """
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             query=query,
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('_id', 'String'),
                     ('cloud_resource_id', 'String')
                 ],
                 'data': snapshots
-            }],
-            params={
+            }]),
+            parameters={
                 'month_before_start': month_before_start,
                 'start_date': start_date
-            })
+            }).result_rows
 
     def _collect_resources(self, configs):
         now = datetime.now(tz=timezone.utc)

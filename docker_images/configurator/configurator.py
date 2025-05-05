@@ -22,6 +22,9 @@ ETCD_KEYS_TO_DELETE = ['/logstash_host', '/optscale_meter_enabled']
 RETRY_ARGS = dict(stop_max_attempt_number=300, wait_fixed=500)
 RABBIT_PRECONDIFITON_FAILED_CODE = 406
 
+CH_HTTP_PORT = 8123
+CH_LOCAL_NAME = "clickhouse"
+
 
 class Configurator(object):
     def __init__(self, config_path='config.yml', host='etcd', port=2379):
@@ -35,7 +38,7 @@ class Configurator(object):
             user=config['restdb']['user'],
             password=config['restdb']['password'],
             host=config['restdb']['host'],
-            port=config['restdb']['port']), 
+            port=config['restdb']['port']),
             connect_args={"connect_timeout": 5}
         )
         if "url" in config["mongo"]:
@@ -89,6 +92,22 @@ class Configurator(object):
         except Exception as e:
             LOG.error("Failed to create influx database %s", e)
 
+    def stitch_ch_to_http(self):
+        try:
+            ch_host = self.etcd_cl.get('/clickhouse/host').value
+            ch_port = self.etcd_cl.get('/clickhouse/port').value
+            # switch to http port only for local host
+            LOG.info("Ch host: %s", ch_host)
+            LOG.info("Ch port: %s", ch_port)
+            if ch_host == CH_LOCAL_NAME and str(ch_port) != str(CH_HTTP_PORT):
+                LOG.info("Updating clickhouse port to %s", CH_HTTP_PORT)
+                self.etcd_cl.write(
+                    "/clickhouse/port",
+                    CH_HTTP_PORT
+                )
+        except etcd.EtcdKeyNotFound:
+            LOG.info("Skipping update ch port due to missing key")
+
     def commit_config(self):
         LOG.info("Creating /configured key")
         self.etcd_cl.write('/configured', time.time())
@@ -96,6 +115,7 @@ class Configurator(object):
     def pre_configure(self):
         self.create_databases()
         self.configure_influx()
+        self.stitch_ch_to_http()
         self.configure_thanos()
         # setting to 0 to block updates until update is finished
         # and new images pushed into registry
