@@ -323,6 +323,7 @@ class Client:
             tags: dict,
             destroy_conditions: dict,
             commands: str,
+            venv: str = None,
             spot_settings: Union[dict, None] = None,
             open_ingress: bool = False,
             image: str = None,
@@ -339,6 +340,7 @@ class Client:
             "hyperparameters": hyperparameters,
             "destroy_conditions": destroy_conditions,
             "commands": commands,
+            "venv": venv,
             "spot_settings": spot_settings,
             "open_ingress": open_ingress,
         }
