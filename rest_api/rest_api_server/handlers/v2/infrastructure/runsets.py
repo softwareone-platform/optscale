@@ -31,6 +31,7 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
         'instance_type': (check_string_attribute, True),
         'image': (check_string_attribute, False),
         'commands': (check_string_attribute, True),
+        'venv': (check_string_attribute, False),
         'name_prefix': (check_string_attribute, True),
         'open_ingress': (check_bool_attribute, False),
         'spot_settings': (check_dict_attribute, False),
@@ -96,7 +97,7 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
                 if param_name == 'commands':
                     # directly restricting user data size
                     extras['max_length'] = 128 * KiB
-                if param_name == 'image':
+                if param_name in ['image', 'venv']:
                     extras['allow_empty'] = True
                 validation_func(param_name, param_value, **extras)
                 if (param_name == 'image' and param_value and
@@ -189,6 +190,11 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
                         type: string
                         description: User data to execute
                         required: true
+                    venv:
+                        type: string
+                        description: |
+                            Python virtual environment path on runners
+                        required: false
                     destroy_conditions:
                         type: object
                         description: Runset destroy conditions
