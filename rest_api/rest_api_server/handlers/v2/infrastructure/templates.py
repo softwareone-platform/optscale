@@ -33,7 +33,7 @@ class TemplatesAsyncCollectionHandler(BaseAsyncCollectionHandler,
         'budget': (check_float_attribute, True),
         'name': (check_string_attribute, True),
         'name_prefix': (check_string_attribute, True),
-        'max_runner_num': (_validate_max_runner_num, False),
+        'max_runner_num': (_validate_max_runner_num, True),
     }
 
     def _get_controller_class(self):

@@ -97,7 +97,7 @@ class RunsetsAsyncCollectionHandler(BaseAsyncCollectionHandler,
                 if param_name == 'commands':
                     # directly restricting user data size
                     extras['max_length'] = 128 * KiB
-                if param_name in ['image', 'venv']:
+                if param_name in ['image', 'venv', 'spot_settings']:
                     extras['allow_empty'] = True
                 validation_func(param_name, param_value, **extras)
                 if (param_name == 'image' and param_value and
