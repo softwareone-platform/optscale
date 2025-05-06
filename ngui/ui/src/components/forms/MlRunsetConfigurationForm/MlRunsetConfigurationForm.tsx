@@ -71,9 +71,9 @@ const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, in
     commands: latestRunsetCodeToExecute,
     destroy_conditions: latestRunsetAbortConditions = {},
     instance_size: { type: latestRunsetInstanceType },
-    spot_settings: spotSettings,
     image: latestRunsetImage = "",
-    venv: latestRunsetVirtualEnvironmentPath = ""
+    venv: latestRunsetVirtualEnvironmentPath = "",
+    spot_settings: spotSettings = {}
   } = latestRunset;
 
   const isKnownTask = () => tasks.find((task) => task.id === latestRunsetTaskId);
@@ -91,7 +91,7 @@ const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, in
         setValue(IMAGE_FIELD_NAME, latestRunsetImage);
         setValue(VIRTUAL_ENVIRONMENT_PATH_FIELD_NAME, latestRunsetVirtualEnvironmentPath);
 
-        if (spotSettings) {
+        if (!isEmptyObject(spotSettings)) {
           setValue(SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME, true);
           setValue(SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME, spotSettings.tries ?? "");
           setValue(SPOT_INSTANCES_MAX_PRICE_FIELD_NAME, spotSettings.spot_price ?? "");
@@ -217,16 +217,14 @@ const MlRunsetConfigurationForm = ({ runsetTemplate = {}, latestRunset = {}, onS
             destroy_conditions: getDestroyConditions(),
             image: formData[IMAGE_FIELD_NAME],
             venv: formData[VIRTUAL_ENVIRONMENT_PATH_FIELD_NAME],
-            ...(formData[SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME]
+            spot_settings: formData[SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME]
               ? {
-                  spot_settings: {
-                    tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]),
-                    spot_price: formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME]
-                      ? Number(formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME])
-                      : undefined
-                  }
+                  tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]),
+                  spot_price: formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME]
+                    ? Number(formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME])
+                    : undefined
                 }
-              : {})
+              : {}
           };
 
           onSubmit(data);
