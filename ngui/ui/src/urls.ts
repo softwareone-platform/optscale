@@ -10,10 +10,10 @@ import {
   CONNECTION_TYPE_SEARCH_PARAMETER,
   CONNECTION_TYPES
 } from "utils/constants";
-import { getLast30DaysRange, getCurrentMonthRange } from "utils/datetime";
-import { formQueryString } from "utils/network";
+import {getLast30DaysRange, getCurrentMonthRange} from "utils/datetime";
+import {formQueryString} from "utils/network";
 
-import { buildQueryParameters, concatenateUrl, hasSymbolAtTheEnd, isString } from "utils/strings";
+import {buildQueryParameters, concatenateUrl, hasSymbolAtTheEnd, isString} from "utils/strings";
 
 const CREATE = "create";
 const CONNECT = "connect";
@@ -89,7 +89,7 @@ export const getEditBIExportUrl = (biExportId) => EDIT_BI_EXPORT.replace(BI_EXPO
 // We should also check if we can generalize other get[Enitity]ExpensesUrl
 export const getPoolExpensesUrl = (poolId) => POOL_EXPENSES.replace(POOL_IDENTIFIER, poolId);
 export const getThisMonthPoolExpensesUrl = (poolId) => {
-  const { today, startOfMonth } = getCurrentMonthRange(true);
+  const {today, startOfMonth} = getCurrentMonthRange(true);
   return `${getPoolExpensesUrl(poolId)}?startDate=${startOfMonth}&endDate=${today}&filterBy=${EXPENSES_FILTERBY_TYPES.POOL}`;
 };
 
@@ -156,7 +156,7 @@ export const ASSIGNMENT_RULE = concatenateUrl([ASSIGNMENT_RULE_BASE]);
 export const ASSIGNMENT_RULES = concatenateUrl([ASSIGNMENT_RULES_BASE]);
 
 export const ASSIGNMENT_RULE_CREATE = concatenateUrl([ASSIGNMENT_RULE_BASE, CREATE]);
-export const getCreateAssignmentRuleUrl = ({ conditions = [] } = {}) => {
+export const getCreateAssignmentRuleUrl = ({conditions = []} = {}) => {
   const parsedConditions = conditions.map(
     (condition) => `${ASSIGNMENT_RULE_CONDITIONS_QUERY_PARAMETER}[]=${JSON.stringify(condition)}`
   );
@@ -194,12 +194,12 @@ export const RESOURCE = concatenateUrl([RESOURCES_BASE, RESOURCE_IDENTIFIER]);
 export const getResourceUrl = (resourceId) => RESOURCE.replace(RESOURCE_IDENTIFIER, resourceId);
 
 export const getThisMonthResourcesUrl = () => {
-  const { today, startOfMonth } = getCurrentMonthRange(true);
+  const {today, startOfMonth} = getCurrentMonthRange(true);
   return `${RESOURCES}?startDate=${startOfMonth}&endDate=${today}`;
 };
 
 export const getLast30DaysResourcesUrl = () => {
-  const { endDate: today, startDate: startOfMonth } = getLast30DaysRange();
+  const {endDate: today, startDate: startOfMonth} = getLast30DaysRange();
   return `${RESOURCES}?startDate=${startOfMonth}&endDate=${today}`;
 };
 
@@ -224,13 +224,13 @@ export const RESOURCES_PERSPECTIVE_PARAMETER_NAME = "perspective";
 export const RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME = "selectedPerspective";
 
 export const getResourcesExpensesUrl = ({
-  sStartDate,
-  sEndDate,
-  computedParams,
-  perspective,
-  organizationId,
-  ...restFilters
-}) => {
+                                          sStartDate,
+                                          sEndDate,
+                                          computedParams,
+                                          perspective,
+                                          organizationId,
+                                          ...restFilters
+                                        }) => {
   const query = formQueryString({
     [START_DATE_FILTER]: sStartDate,
     [END_DATE_FILTER]: sEndDate,
@@ -284,7 +284,7 @@ export const RECOMMENDATION_CATEGORY_QUERY_PARAMETER = "category";
 export const RECOMMENDATION_SERVICE_QUERY_PARAMETER = "service";
 export const RECOMMENDATION_VIEW_QUERY_PARAMETER = "view";
 
-export const getRecommendationsUrl = ({ category, service } = {}) => {
+export const getRecommendationsUrl = ({category, service} = {}) => {
   const categoryParameter = category ? (`${RECOMMENDATION_CATEGORY_QUERY_PARAMETER}=${category}` as const) : "";
   const serviceParameter = service ? (`${RECOMMENDATION_SERVICE_QUERY_PARAMETER}=${service}` as const) : "";
 
@@ -309,7 +309,7 @@ export const RI_SP_QUERY_PARAMETERS = Object.freeze({
   DATA_SOURCE_ID: "dataSourceId"
 });
 
-export const getRiSpCoverageUrl = ({ secondsStartDate, secondsEndDate, dataSourceId } = {}) => {
+export const getRiSpCoverageUrl = ({secondsStartDate, secondsEndDate, dataSourceId} = {}) => {
   const query = formQueryString({
     [RI_SP_QUERY_PARAMETERS.START_DATE]: secondsStartDate,
     [RI_SP_QUERY_PARAMETERS.END_DATE]: secondsEndDate,
@@ -342,7 +342,7 @@ export const ML_RUN_BASE = "run";
 
 export const ML_PUBLIC_RUN_BASE = "run";
 export const ML_PUBLIC_RUN = concatenateUrl([ML_PUBLIC_RUN_BASE, ML_TASK_RUN_IDENTIFIER]);
-export const getMlPublicRunUrl = (runId, { organizationId, arceeToken }) => {
+export const getMlPublicRunUrl = (runId, {organizationId, arceeToken}) => {
   const urlBase = ML_PUBLIC_RUN.replace(ML_TASK_RUN_IDENTIFIER, runId);
   const searchParams = new URLSearchParams({
     organizationId,
@@ -564,40 +564,36 @@ export const DOCS_HYSTAX_OPTSCALE = "https://docs.platform.softwareone.com/exten
 const docUrl = (path: string) => `${DOCS_HYSTAX_OPTSCALE}${path}` as const;
 const dataSourceConnectionDocUrl = (docPath: string) => docUrl(`e2e_guides/${docPath}`);
 
+export const DOCS_HYSTAX_CONNECT_AWS_ROOT = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured`;
+export const DOCS_HYSTAX_CONNECT_AWS_LINKED = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-linked`;
+export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_AZURE_TENANT = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}insights/resources/resources-constraint-policies`;
+export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}recommendations/clean-up-scripts-based-on-recommendations`;
+export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/migrate-from-cur-to-data-exports-cur-2.0`;
+export const DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#discover-resources`;
+export const DOCS_MARKETPLACE_PENDING_INVITATIONS = `https://docs.finops.softwareone.com/#first-time-login`;
+
+// Not in use
 export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#automatic-billing-data-import-in-aws`;
 export const DOCS_HYSTAX_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-linked#discover-resources`;
 export const DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
 export const DOCS_HYSTAX_CONNECT_GCP_CLOUD = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
-export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}resources-constraints-and-pool-constraint-policies`;
-export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}recommendations/clean-up-scripts-based-on-recommendations`;
-
+export const DOCS_HYSTAX_CONNECT_KUBERNETES = dataSourceConnectionDocUrl("e2e_kubernetes.html#kubernetes");
 export const DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_kubernetes.html#connecting-a-kubernetes-cluster-to-optscale`;
+
 export const DOCS_HYSTAX_CLUSTERS = `${DOCS_HYSTAX_OPTSCALE}clusters.html`;
 export const DOCS_HYSTAX_SLACK_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#slack-app`;
 export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#google-calendar`;
-
-export const DOCS_HYSTAX_CONNECT_AWS_ROOT = dataSourceConnectionDocUrl(
-  "e2e_aws.html#root-account-data-export-already-configured"
-);
-export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = dataSourceConnectionDocUrl(
-  "e2e_aws.html#migrating-from-cur-to-cur-20"
-);
-export const DOCS_HYSTAX_CONNECT_AWS_LINKED = dataSourceConnectionDocUrl("e2e_aws.html#connecting-an-aws-linked-account");
-export const DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES = dataSourceConnectionDocUrl("e2e_aws.html#discover-resources_2");
-export const DOCS_HYSTAX_CONNECT_AZURE_TENANT = dataSourceConnectionDocUrl("e2e_azure.html#tenant");
-export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = dataSourceConnectionDocUrl("e2e_azure.html#subscription");
-export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD = dataSourceConnectionDocUrl("e2e_gcp.html#google-cloud");
-export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = dataSourceConnectionDocUrl("e2e_gcp.html#google-cloud-tenant");
 export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = dataSourceConnectionDocUrl("e2e_alibaba.html");
-export const DOCS_HYSTAX_CONNECT_KUBERNETES = dataSourceConnectionDocUrl("e2e_kubernetes.html#kubernetes");
-
-export const DOCS_MARKETPLACE_PENDING_INVITATIONS = docUrl(`pending-invitations`); // TODO: set correct url when available
 
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =
   "https://github.com/hystax/helm-charts/tree/main/charts/kube-cost-metrics-collector";
-export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS = "https://github.com/hystax/optscale_tools/tree/main/extract_linked_reports";
 export const GITHUB_HYSTAX_OPTSCALE_REPO = "https://github.com/hystax/optscale";
+export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS = "https://github.com/hystax/optscale_tools/tree/main/extract_linked_reports";
 export const PYPI_OPTSCALE_ARCEE = "https://pypi.org/project/optscale-arcee";
 
 // Nebius documentation

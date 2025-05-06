@@ -190,16 +190,17 @@ const Resources = ({
         requiredActions: ["EDIT_PARTNER"],
         color: "primary",
         dataTestId: "btn_create_perspective"
-      },
-      {
-        key: "configureClusterTypes",
-        icon: <GroupWorkOutlinedIcon fontSize="small" />,
-        messageId: "configureClusterTypes",
-        type: "button",
-        color: "primary",
-        link: CLUSTER_TYPES,
-        dataTestId: "btn_configure_cluster_types"
       }
+      // MPT_TODO: disabled to meet BDR requirements
+      // {
+      //   key: "configureClusterTypes",
+      //   icon: <GroupWorkOutlinedIcon fontSize="small" />,
+      //   messageId: "configureClusterTypes",
+      //   type: "button",
+      //   color: "primary",
+      //   link: CLUSTER_TYPES,
+      //   dataTestId: "btn_configure_cluster_types"
+      // }
     ]
   };
 
