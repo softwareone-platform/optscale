@@ -9,7 +9,7 @@ let inviteLink: string;
 let emailVerificationLink: string;
 
 
-test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
+test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, header}) => {
@@ -63,7 +63,7 @@ test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flo
         });
 
         await test.step("Assert organization", async () => {
-            await expect(header.organizationSelect).toContainText("QA Test Organization");
+            await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
         });
     });
 
@@ -191,7 +191,7 @@ test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flo
         });
 
         await test.step("Assert organization", async () => {
-            await expect(header.organizationSelect).toContainText("QA Test Organization");
+            await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
         });
 
     });
@@ -201,7 +201,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
-        inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
+        inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
@@ -275,7 +275,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         });
 
         await test.step("Invite a existing user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'QA Test Organization');
+            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'SoftwareOne (Test Environment)');
             await usersInvitePage.userInvitedAlert.waitFor();
         });
 
@@ -295,7 +295,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
     });
 });
 
-test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
