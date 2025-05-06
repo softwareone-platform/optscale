@@ -3,6 +3,8 @@ export const FIELD_NAMES = Object.freeze({
   DATA_SOURCE: "dataSource",
   REGION: "region",
   INSTANCE_TYPE: "instanceType",
+  IMAGE: "image",
+  VIRTUAL_ENVIRONMENT_PATH: "virtualEnvironmentPath",
   USE_SPOT_INSTANCES: "useSpotInstances",
   MAX_SPOT_ATTEMPTS: "maxSpotAttempts",
   MAX_SPOT_COST_PER_HOUR: "maxSpotCostPerHour",

@@ -25,7 +25,9 @@ const InputParameters = ({ runset, isLoading }) => {
     hyperparameters = {},
     destroy_conditions: abortConditions = {},
     commands,
-    spot_settings: spotSettings
+    spot_settings: spotSettings,
+    image,
+    venv: virtualEnvironmentPath
   } = runset;
 
   return (
@@ -63,6 +65,20 @@ const InputParameters = ({ runset, isLoading }) => {
                 value={maximumParallelRuns}
                 dataTestIds={{ key: "p_maximum_parallel_runs_key", value: "p_maximum_parallel_runs_value" }}
               />
+              {image && (
+                <KeyValueLabel
+                  keyMessageId="image"
+                  value={image}
+                  dataTestIds={{ key: "p_image_key", value: "p_image_value" }}
+                />
+              )}
+              {virtualEnvironmentPath && (
+                <KeyValueLabel
+                  keyMessageId="virtualEnvironmentPath"
+                  value={virtualEnvironmentPath}
+                  dataTestIds={{ key: "p_virtual_environment_path_key", value: "p_virtual_environment_path_value" }}
+                />
+              )}
               {spotSettings && (
                 <>
                   <KeyValueLabel
