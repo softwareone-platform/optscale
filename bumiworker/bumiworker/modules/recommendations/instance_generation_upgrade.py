@@ -100,17 +100,21 @@ class InstanceGenerationUpgrade(ModuleBase):
                                                  bulk_ids)
             for raw_info in raw_expenses:
                 instance = instance_map.get(raw_info['_id'])
+                meta = instance.get('meta', {})
                 cloud_account_id = instance['cloud_account_id']
                 if cloud_account_id not in stats_map:
                     stats_map[cloud_account_id] = {
                         'success': 0, 'not_found_recommended_flavors': 0,
                         'cheap_old_flavor': 0}
                 pool_id = instance.get('pool_id')
-                flavor = instance['meta']['flavor']
+                flavor = meta.get('flavor')
+                if not flavor:
+                    continue
                 ca = cloud_account_map[cloud_account_id]
                 cloud_type = ca['type']
                 meter_id = raw_info.get('meter_id')
-                os_type = instance['meta'].get('os') or raw_info.get('os')
+                os_type = meta.get('os') or raw_info.get('os')
+                architecture = meta.get('architecture')
                 preinstalled = raw_info.get('software')
                 current_daily_cost = self.get_current_daily_cost(raw_info)
                 region = instance['region']
@@ -120,8 +124,11 @@ class InstanceGenerationUpgrade(ModuleBase):
                     'current_flavor': flavor,
                     'os_type': os_type,
                 }
-                if preinstalled and cloud_type == 'aws_cnr':
-                    generation_params['preinstalled'] = preinstalled
+                if cloud_type == 'aws_cnr':
+                    if architecture:
+                        generation_params['architecture'] = architecture
+                    if preinstalled:
+                        generation_params['preinstalled'] = preinstalled
                 if meter_id and cloud_type == 'azure_cnr':
                     generation_params['meter_id'] = meter_id
                 try:
