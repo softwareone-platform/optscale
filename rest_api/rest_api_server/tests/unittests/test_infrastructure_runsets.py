@@ -178,7 +178,7 @@ class TestRunsetsApi(TestInfrastructureBase):
                 self.assertEqual(
                     res.get('destroy_conditions', {}).get('max_budget'),
                     self.valid_template['budget'])
-            elif k in ['spot_settings', 'open_ingress', 'image']:
+            elif k in ['spot_settings', 'open_ingress', 'image', 'venv']:
                 # params above are optional and set based on bulldozer logic
                 self.assertEqual(code, 201)
             else:

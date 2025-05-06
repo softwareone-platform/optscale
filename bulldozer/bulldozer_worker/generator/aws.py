@@ -17,25 +17,38 @@ class TFGenerator:
 
     # default images by region id
     aws_image_region_map = {
-        "us-east-1": "ami-0261755bbcb8c4a84",
-        "us-east-2": "ami-0430580de6244e02e",
-        "us-west-1": "ami-04d1dcfb793f6fa37",
-        "us-west-2": "ami-0c65adc9a5c1b5d7c",
-        "ca-central-1": "ami-0940df33750ae6e7f",
-        "eu-central-1": "ami-0ab1a82de7ca5889c",
-        "eu-west-1": "ami-0136ddddd07f0584f",
-        "eu-west-2": "ami-007ec828a062d87a5",
-        "eu-south-1": "ami-0db8d6245dc15335a",
-        "eu-west-3": "ami-008bcc0a51a849165",
-        "eu-north-1": "ami-08766f81ab52792ce",
-        "sa-east-1": "ami-0f47fe3e9defb4cbf",
-        "ap-southeast-3": "ami-0dea4c77aa6baff5a",
-        "ap-south-1": "ami-08e5424edfe926b43",
-        "ap-northeast-3": "ami-0c5a66cf375fc12d8",
-        "ap-northeast-2": "ami-04341a215040f91bb",
-        "ap-southeast-1": "ami-002843b0a9e09324a",
-        "ap-southeast-2": "ami-0d02292614a3b0df1",
-        "ap-northeast-1": "ami-0ed99df77a82560e6",
+        "us-east-1": "ami-084568db4383264d4",
+        "us-east-2": "ami-04f167a56786e4b09",
+        "us-west-1": "ami-04f7a54071e74f488",
+        "us-west-2": "ami-075686beab831bb7f",
+        "ca-central-1": "ami-08355844f8bc94f55",
+        "ca-west-1": "ami-08de9ad05f5a6bf2a",
+        "eu-central-1": "ami-03250b0e01c28d196",
+        "eu-central-2": "ami-02e5b25bf94378a0c",
+        "eu-west-1": "ami-0df368112825f8d8f",
+        "eu-west-2": "ami-0a94c8e4ca2674d5a",
+        "eu-south-1": "ami-0e3232c2663eadfd3",
+        "eu-south-2": "ami-099d45c12f4cc3edc",
+        "eu-west-3": "ami-0160e8d70ebc43ee1",
+        "eu-north-1": "ami-0c1ac8a41498c1a9c",
+        "sa-east-1": "ami-0d866da98d63e2b42",
+        "ap-east-1": "ami-050f19c6ee04f419b",
+        "ap-southeast-3": "ami-05212caffa4a257da",
+        "ap-southeast-4": "ami-0633898896cb139bc",
+        "ap-southeast-5": "ami-0d6547c3f05df32d3",
+        "ap-southeast-7": "ami-0d968d1497ff9cf0c",
+        "ap-south-1": "ami-0e35ddab05955cf57",
+        "ap-south-2": "ami-053a0835435bf4f45",
+        "ap-northeast-3": "ami-08a7bc2c4efd0df53",
+        "ap-northeast-2": "ami-0d5bb3742db8fc264",
+        "ap-southeast-1": "ami-01938df366ac2d954",
+        "ap-southeast-2": "ami-0f5d1713c9af4fe30",
+        "ap-northeast-1": "ami-026c39f4021df9abe",
+        "af-south-1": "ami-0b7e05c6022fc830b",
+        "il-central-1": "ami-0ae7e1e8fb8251940",
+        "me-south-1": "ami-01bd9cab74e4931ba",
+        "me-central-1": "ami-09c1ab2520ee9181a",
+        "mx-central-1": "ami-08252046d3814a994",
     }
 
     def __init__(self, seed,
@@ -44,6 +57,7 @@ class TFGenerator:
                  region,
                  instance_type,
                  user_data=None,
+                 venv=None,
                  key=None,
                  tags=None,
                  open_ingress=False,
@@ -60,6 +74,7 @@ class TFGenerator:
         self.key_name = key
         self.instance_type = instance_type
         self.user_data = user_data
+        self.venv = venv
         self.tags = tags
         self.open_ingress = open_ingress
         self.spot_price = spot_price
@@ -98,6 +113,7 @@ class TFGenerator:
             "instance_type": self.instance_type,
             "tags": tags,
             "open_ingress": self.open_ingress,
+            "venv": self.venv,
         }
         if self.user_data:
             d.update({"user_data": self.user_data})

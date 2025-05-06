@@ -71,6 +71,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient(uri)
 db = client[db_name]
 
 cost_calc = CostCalc()
+DEFAULT_VENV = "/tmp/optscale-venv"
 
 
 async def publish_activities_task(infrastructure_token, object_id, object_name,
@@ -580,6 +581,9 @@ async def create_runset(request, template_id: str):
     destroy_conditions = doc.get("destroy_conditions")
     owner_id = doc.get("owner_id")
     commands = doc.get("commands")
+    venv = doc.get("venv") or DEFAULT_VENV
+    if venv and not isinstance(venv, str):
+        raise SanicException("venv should be a string", status_code=400)
     spot_settings = doc.get("spot_settings")
     open_ingress = doc.get("open_ingress", False)
     runset_id = str(uuid.uuid4())
@@ -602,6 +606,7 @@ async def create_runset(request, template_id: str):
         "destroy_conditions": destroy_conditions,
         "owner_id": owner_id,
         "commands": commands,
+        "venv": venv,
         "token": token,
         "state": RunsetState.CREATED,
         "created_at": created_at,
