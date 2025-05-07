@@ -11,7 +11,7 @@ import Tooltip from "components/Tooltip";
 import EditOrganizationFormContainer from "containers/EditOrganizationFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { OPTSCALE_CAPABILITY, ORGANIZATION_EDIT_ALLOWED } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import OrganizationCurrency from "./OrganizationCurrency";
@@ -49,7 +49,7 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
   const enableEditMode = () => setIsEditMode(true);
   const disableEditMode = () => setIsEditMode(false);
 
-  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
+  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] }) && ORGANIZATION_EDIT_ALLOWED;
 
   if (isEditMode) {
     return <EditOrganizationFormContainer onCancel={disableEditMode} onSuccess={disableEditMode} />;
