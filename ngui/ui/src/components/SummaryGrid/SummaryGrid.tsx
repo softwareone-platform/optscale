@@ -44,7 +44,7 @@ const renderSummaryCard = ({
   backdrop
 }) => {
   const { component: ValueComponent } = getValueComponentSettings(valueComponentType, CustomValueComponent);
-  console.log("ValueComponent", valueComponentProps);
+
   return (
     <SummaryCard
       value={ValueComponent ? <ValueComponent {...valueComponentProps} /> : value}
@@ -126,7 +126,7 @@ const SummaryGrid = ({ summaryData, summaryStyle = "customBox" }) => {
     summaryData.map(({ key, renderCondition, type = SUMMARY_CARD_TYPES.BASIC, isLoading, ...rest }) => {
       const shouldRender = renderCondition ? renderCondition() || isLoading : true;
       const renderCard = getCardRenderer(type);
-      console.log("renderCard", type);
+
       return renderCard && shouldRender ? (
         <Grid className={summaryStyle === "customBox" ? classes.customBox : ""} item key={key || uuidv4()}>
           {renderCard({ isLoading, ...rest })}
