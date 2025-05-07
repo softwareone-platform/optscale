@@ -12,12 +12,10 @@ import useStyles from "./SummaryGrid.styles";
 const getValueComponentSettings = (type, CustomComponent) => ({
   component: {
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedNumber]: FormattedNumber,
-    [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney]: ({ value, ...rest }) => {
+    [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney]: ({ value }) => {
       const { currency } = useOrganizationInfo();
 
-      return (
-        <FormattedNumber format={currency} value={value} />
-      );
+      return <FormattedNumber format={currency} value={value} />;
     },
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMessage]: FormattedMessage,
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedDigitalUnit]: FormattedDigitalUnit,
