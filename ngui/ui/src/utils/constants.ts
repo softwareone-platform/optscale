@@ -1038,3 +1038,4 @@ export const POWER_SCHEDULE_ACTIONS = Object.freeze({
 });
 
 export const ALLOW_ORGANIZATION_CREATION = false;
+export const ENABLE_PRODUCT_TOUR = false;
