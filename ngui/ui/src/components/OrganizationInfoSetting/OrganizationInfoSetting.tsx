@@ -95,11 +95,13 @@ const OrganizationInfoSetting = () => {
         <OrganizationName name={organizationName} />
       </Box>
       <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
-        <Box>
-          <Typography>
-            <FormattedMessage id="organizationCurrencyDescription" />
-          </Typography>
-        </Box>
+        {ORGANIZATION_EDIT_ALLOWED && (
+          <Box>
+            <Typography>
+              <FormattedMessage id="organizationCurrencyDescription" />
+            </Typography>
+          </Box>
+        )}
         <Box>
           <OrganizationCurrency currencyCode={currency} />
         </Box>
