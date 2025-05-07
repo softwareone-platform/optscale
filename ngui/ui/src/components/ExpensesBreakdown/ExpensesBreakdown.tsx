@@ -1,14 +1,14 @@
 import Grid from "@mui/material/Grid";
-import {useTheme} from "@mui/material/styles";
-import {useNavigate} from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import BarChartLoader from "components/BarChartLoader";
-import {getBasicRangesSet} from "components/DateRangePicker/defaults";
+import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import PageContentWrapper from "components/PageContentWrapper";
 import PieChartLoader from "components/PieChartLoader";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
-import {useBreakdownData} from "hooks/useBreakdownData";
-import {getResourcesExpensesUrl, getOwnerExpensesUrl, getCloudExpensesUrl, getPoolExpensesUrl} from "urls";
-import {getColorsMapByIds} from "utils/charts";
+import { useBreakdownData } from "hooks/useBreakdownData";
+import { getResourcesExpensesUrl, getOwnerExpensesUrl, getCloudExpensesUrl, getPoolExpensesUrl } from "urls";
+import { getColorsMapByIds } from "utils/charts";
 import {
   COST_EXPLORER,
   OWNER_DETAILS,
@@ -39,22 +39,22 @@ import ExpensesBreakdownSummaryCards from "./SummaryCards";
 import ExpensesBreakdownTableWidget from "./TableWidget";
 
 const ExpensesBreakdown = ({
-                             entityId,
-                             filterBy,
-                             type,
-                             breakdown,
-                             total,
-                             previousTotal,
-                             filteredBreakdown,
-                             startDateTimestamp,
-                             endDateTimestamp,
-                             isLoading,
-                             onApply,
-                             updateFilter,
-                             name,
-                             dataSourceType,
-                             isInScopeOfPageMockup = false
-                           }) => {
+  entityId,
+  filterBy,
+  type,
+  breakdown,
+  total,
+  previousTotal,
+  filteredBreakdown,
+  startDateTimestamp,
+  endDateTimestamp,
+  isLoading,
+  onApply,
+  updateFilter,
+  name,
+  dataSourceType,
+  isInScopeOfPageMockup = false
+}) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -91,8 +91,8 @@ const ExpensesBreakdown = ({
       },
       [POOL_DETAILS]: isTableWrapper
         ? {
-          [POOL_ID_FILTER]: entityId
-        }
+            [POOL_ID_FILTER]: entityId
+          }
         : {},
       [COST_EXPLORER]: {}
     })[type];
@@ -120,7 +120,7 @@ const ExpensesBreakdown = ({
   const renderHeading = () => (
     <>
       <Grid item xs={12}>
-        <ExpensesBreakdownSummaryCards total={total} previousTotal={previousTotal} isLoading={isLoading}/>
+        <ExpensesBreakdownSummaryCards total={total} previousTotal={previousTotal} isLoading={isLoading} />
       </Grid>
 
       {type !== COST_EXPLORER && (
@@ -138,7 +138,7 @@ const ExpensesBreakdown = ({
 
   const renderBarChartWidget = () => {
     if (isLoading) {
-      return <ExpensesBreakdownByPeriodWidget render={() => <BarChartLoader/>}/>;
+      return <ExpensesBreakdownByPeriodWidget render={() => <BarChartLoader />} />;
     }
     const isBreakdownDataEmpty = Object.values(breakdownData.daily).every((dailyData) =>
       dailyData.every((d) => d.expense === 0)
@@ -150,7 +150,7 @@ const ExpensesBreakdown = ({
       <ExpensesBreakdownByPeriodWidget
         customContent={
           <ResponsiveStack>
-            <LabelColon messageId={"dateRange"}/>
+            <LabelColon messageId={"dateRange"} />
             <RangePickerFormContainer
               onApply={onApply}
               initialStartDateValue={startDateTimestamp}
@@ -171,15 +171,15 @@ const ExpensesBreakdown = ({
               isInScopeOfPageMockup
                 ? undefined
                 : (bandDetails) => {
-                  navigate(
-                    getResourcesExpensesUrl({
-                      ...getFilterByEntity(),
-                      computedParams: getComputedParams(bandDetails),
-                      sStartDate: bandDetails.startDate,
-                      sEndDate: bandDetails.endDate
-                    })
-                  );
-                }
+                    navigate(
+                      getResourcesExpensesUrl({
+                        ...getFilterByEntity(),
+                        computedParams: getComputedParams(bandDetails),
+                        sStartDate: bandDetails.startDate,
+                        sEndDate: bandDetails.endDate
+                      })
+                    );
+                  }
             }
           />
         )}
@@ -187,14 +187,14 @@ const ExpensesBreakdown = ({
     );
   };
 
-  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""}/>;
+  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""} />;
 
   const renderPieChartWidget = () => {
     if (isLoading) {
       return (
         <>
-          <PieChartHeader/>
-          <PieChartLoader height={40}/>
+          <PieChartHeader />
+          <PieChartLoader height={40} />
         </>
       );
     }
@@ -214,17 +214,17 @@ const ExpensesBreakdown = ({
             isInScopeOfPageMockup
               ? undefined
               : (node) => {
-                const {data: {details: {link = ""} = {}} = {}} = node;
-                if (link) {
-                  navigate(link);
+                  const { data: { details: { link = "" } = {} } = {} } = node;
+                  if (link) {
+                    navigate(link);
+                  }
                 }
-              }
           }
-          getCustomDetails={({id, type: sectionEntityType}) => ({
+          getCustomDetails={({ id, type: sectionEntityType }) => ({
             link: getEntityExpensesUrl(id, sectionEntityType)
           })}
           getShouldApplyHoverStyles={(node) => {
-            const {data: {details: {link = ""} = {}} = {}} = node;
+            const { data: { details: { link = "" } = {} } = {} } = node;
             return !!link;
           }}
         />
@@ -246,31 +246,31 @@ const ExpensesBreakdown = ({
         isInScopeOfPageMockup
           ? undefined
           : navigate(
-            getResourcesExpensesUrl({
-              ...getFilterByEntity(true),
-              sStartDate: startDateTimestamp,
-              sEndDate: endDateTimestamp
-            })
-          )
+              getResourcesExpensesUrl({
+                ...getFilterByEntity(true),
+                sStartDate: startDateTimestamp,
+                sEndDate: endDateTimestamp
+              })
+            )
       }
       onRowActionClick={(rowData) =>
         isInScopeOfPageMockup
           ? undefined
           : navigate(
-            getResourcesExpensesUrl({
-              ...getFilterByEntity(),
-              computedParams: getComputedParams(rowData),
-              sStartDate: startDateTimestamp,
-              sEndDate: endDateTimestamp
-            })
-          )
+              getResourcesExpensesUrl({
+                ...getFilterByEntity(),
+                computedParams: getComputedParams(rowData),
+                sStartDate: startDateTimestamp,
+                sEndDate: endDateTimestamp
+              })
+            )
       }
     />
   );
 
   return (
     <>
-      <ExpensesBreakdownActionBar expensesBreakdownType={type} filterBy={filterBy} name={name} isLoading={isLoading}/>
+      <ExpensesBreakdownActionBar expensesBreakdownType={type} filterBy={filterBy} name={name} isLoading={isLoading} />
       <PageContentWrapper>
         <ExpensesBreakdownLayoutWrapper
           top={renderHeading()}

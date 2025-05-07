@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import AddchartOutlinedIcon from "@mui/icons-material/AddchartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
-import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -23,7 +22,6 @@ import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useResourceFilters } from "hooks/useResourceFilters";
 import {
-  CLUSTER_TYPES,
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
   DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME,
   getResourcesExpensesUrl,
