@@ -1,16 +1,37 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-FIND_CMD="find . -mindepth 2 -maxdepth 3 -print | grep Dockerfile | grep -vE '(test|.j2)'"
+# List of components to exclude
+EXCLUDE_LIST=("etcd" "mongo" "mariadb" "redis" "filebeat" "grafana" "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui" "slacker")
 
-MATRIX=""
+# Function to check if component is in the exclusion list
+should_exclude() {
+    local component="$1"
+    for excluded in "${EXCLUDE_LIST[@]}"; do
+        if [[ "$component" == "$excluded" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
 
-for DOCKERFILE in $(eval ${FIND_CMD} | xargs)
-do
-    COMPONENT=$(echo "${DOCKERFILE}" | awk -F '/' '{print $(NF-1)}')
-    MATRIX="${MATRIX}{\"name\": \"${COMPONENT}\",\"dockerfile\": \"$DOCKERFILE\"},"
-done
+# Initialize an array to store JSON objects
+entries=()
 
-MATRIX="[${MATRIX::-1}]"
+# Find Dockerfiles
+while IFS= read -r -d '' dockerfile; do
+    component=$(basename "$(dirname "$dockerfile")")
 
-echo -n "{\"include\": $MATRIX}"
+    if should_exclude "$component"; then
+        continue
+    fi
+
+    # Escape values for JSON
+    entries+=("{\"name\": \"${component}\", \"dockerfile\": \"${dockerfile}\"}")
+done < <(find . -mindepth 2 -maxdepth 3 -type f -name 'Dockerfile' ! -name '*test*' ! -name '*.j2' -print0)
+
+# Join entries with comma
+joined=$(IFS=, ; echo "${entries[*]}")
+
+# Output final JSON
+echo -n "{\"include\": [${joined}]}"
