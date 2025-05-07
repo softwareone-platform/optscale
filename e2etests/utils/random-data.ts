@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 /**
- * Generates a random email address for automated testing purposes.
- * @param domain Optional domain name to use; defaults to "example.com".
+ * Generates a random email address for automated testing purposes that will not bounce.
  * @returns A random, unique email address.
  */
 export function generateRandomEmail(): string {
