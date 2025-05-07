@@ -1844,7 +1844,7 @@
   "reset": "Reset",
   "resetPassword": "Reset password",
   "resetPasswordConfirmationMessage": "If we have an account associated with the email address you provided, we have sent you a link to reset your password. The link will be valid for <strong>1 hour</strong> and will expire after first use.",
-  "resetPasswordInstructions": "Enter the email address you used when creating your OptScale account. We will email you instructions to reset your password.",
+  "resetPasswordInstructions": "Enter the email address you used when creating your FinOps for Cloud account. We will email you instructions to reset your password.",
   "resolveBy": "Resolved by",
   "resource": "Resource",
   "resourceConstraintLimit": "Resource constraint limit",
