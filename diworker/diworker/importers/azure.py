@@ -262,7 +262,7 @@ class AzureImporterBase(BaseReportImporter):
                              'instance_location']
             region_set = {e.get(region_field)
                           for region_field in region_fields for e in expenses
-                          if e.get(region_field) is not None}
+                          if e.get(region_field)}
             # instance_location may contain network az (DE Zone 1) if record
             # relates to networking charges. we can't map such info to proper
             # region, so looking for smth present in our map

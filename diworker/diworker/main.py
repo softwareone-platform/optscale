@@ -12,7 +12,7 @@ from kombu.mixins import ConsumerMixin
 from kombu.utils.debug import setup_logging
 from pymongo import MongoClient
 from urllib3.exceptions import InsecureRequestWarning
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -75,15 +75,11 @@ class DIWorker(ConsumerMixin):
     @property
     def clickhouse_cl(self):
         if not self._clickhouse_cl:
-            host, port, secure, user, password, db_name = self.config_cl.clickhouse_params()
-            self._clickhouse_cl = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                self.config_cl.clickhouse_params())
+            self._clickhouse_cl = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_cl
 
     def publish_activities_task(self, organization_id, object_id, object_type,

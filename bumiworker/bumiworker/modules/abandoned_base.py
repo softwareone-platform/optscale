@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from bumiworker.bumiworker.modules.base import (
     ArchiveBase, ArchiveReason, ModuleBase, DAYS_IN_MONTH
 )
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcnow, startday
 
 
@@ -39,20 +40,20 @@ class AbandonedBase(ModuleBase):
                         AND cost != 0
                     GROUP BY resource_id
                 """
-        expenses = self.clickhouse_client.execute(
+        expenses_q = self.clickhouse_client.query(
             query=query,
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [('id', 'String')],
                 'data': external_table
-            }],
-            params={
+            }]),
+            parameters={
                 'today': today,
                 'start_date': start_date
             }
         )
         result = {}
-        for expense in expenses:
+        for expense in expenses_q.result_rows:
             days = (today - expense[2]).days
             result[expense[0]] = (expense[1] / days)
         return result

@@ -12,7 +12,8 @@
   "playwright:ui": "npx playwright test --ui",
   "playwright:trace": "npx playwright test --trace",
   "playwright:single-worker": "npx playwright test --workers=1",
-  "playwright:update-screenshots": "npx playwright test --update-snapshots"
+  "playwright:update-screenshots": "npx playwright test --update-snapshots",
+  "playwright:custom-screenshot": "npx playwright test tests/swo-customisation-screenshot-tests.spec.ts"
 },
   "keywords": [],
   "author": "",

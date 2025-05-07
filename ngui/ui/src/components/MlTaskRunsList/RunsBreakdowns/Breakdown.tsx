@@ -4,14 +4,19 @@ import { useParams } from "react-router-dom";
 import DynamicFractionDigitsValue, { useFormatDynamicFractionDigitsValue } from "components/DynamicFractionDigitsValue";
 import FormattedDigitalUnit, { IEC_UNITS, formatDigitalUnit } from "components/FormattedDigitalUnit";
 import FormattedMoney, { useMoneyFormatter } from "components/FormattedMoney";
+import MetricUnitLabel from "components/MetricUnitLabel";
+import Tooltip from "components/Tooltip";
 import { useFormatIntervalDuration } from "hooks/useFormatIntervalDuration";
 import { useTaskBreakdownState } from "reducers/taskBreakdown/useTaskBreakdownState";
 import { getColorsMap } from "utils/charts";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 import { intervalToDuration, INTERVAL_DURATION_VALUE_TYPES } from "utils/datetime";
+import { sliceByLimitWithEllipsis } from "utils/strings";
 import Layout from "./Layout";
 
 const BREAKDOWN_BY_QUERY_PARAMETER = "breakdownBy";
+
+const MAX_METRIC_NAME_LENGTH = 40;
 
 const getDurationFormatter =
   ({ formatInterval, formatMessage }) =>
@@ -126,15 +131,35 @@ const Breakdown = ({ runs }) => {
   ];
 
   const getMetricsBreakdownConfig = () => {
-    const metricBreakdownKeyNameMap = Object.fromEntries(
-      runs.filter(({ metrics }) => !!metrics).flatMap((run) => run.metrics.map(({ key, name }) => [key, name]))
+    const metricsConfig = Object.fromEntries(
+      runs
+        .filter(({ metrics }) => !!metrics)
+        .flatMap((run) =>
+          run.metrics.map(({ key, name, unit }) => [
+            key,
+            {
+              name,
+              unit
+            }
+          ])
+        )
     );
 
-    return Object.entries(metricBreakdownKeyNameMap).map(([key, name]) => ({
+    return Object.entries(metricsConfig).map(([key, { name, unit }]) => ({
       name: key,
-      renderBreakdownName: () => name,
+      renderBreakdownName: () => {
+        const isNameLong = name.length > 40;
+
+        return (
+          <Tooltip title={isNameLong ? name : undefined}>
+            {isNameLong ? sliceByLimitWithEllipsis(name, MAX_METRIC_NAME_LENGTH) : name}
+          </Tooltip>
+        );
+      },
       getPointValue: (run) => run.data?.[key] ?? null,
-      formatValue: (value) => <DynamicFractionDigitsValue value={value} maximumFractionDigits={2} />,
+      formatValue: (value) => (
+        <MetricUnitLabel label={<DynamicFractionDigitsValue value={value} maximumFractionDigits={2} />} unit={unit} />
+      ),
       formatAxis: (value) =>
         formatDynamicFractionDigitsValue({
           value,

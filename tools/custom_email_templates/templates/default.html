@@ -1,53 +1,34 @@
-<table align="left" cellpadding="0" cellspacing="0" width="100%" style="font-family: Arial">
+<!--section: organization-->
+<table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+       role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+    <tr>
+        <td class="pad" style="padding-bottom: 22px; ">
+            <div class="txtTinyMce-wrapper"
+                 style="font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                <p style="margin: 0; font-size: 24px; text-align: left">{{texts.top_text}}</p>
+                <p style="margin: 0; font-size: 14px; text-align: left">{{texts.customer_name}}</p>
+            </div>
+        </td>
+    </tr>
+</table>
+<!-- /section: organization-->
+
+<table align="left" cellpadding="0" cellspacing="0" width="100%">
     <tr>
 
         <td bgcolor="#FFFFFF" style="padding: 0">
-            <table align="left" cellpadding="0" cellspacing="0" width="90%">
-                <tr>
-                    <td>Organization: <strong>{{texts.organization.name}}</strong></td>
-                </tr>
-                <tr>
-                    <td align="left" style="font-size: 24px; padding-bottom: 20px;">
-                        {{texts.top_text}}{{texts.customer_name}}
-                    </td>
-                </tr>
-                <tr>
-                    <table cellpadding="0" cellspacing="0" width="100%">
-                        <tr>
-                            <td style="width: 1px; height: 1px;">
-                                <img src="{{images.level}}" width="75" height="75"
-                                     style="display: block; padding: 0px 15px 0px 0px;"/>
-                            </td>
-                            <td bgcolor="#FFFFFF" style="padding: 15px 15px 15px 15px;
-       height: 1px; border-radius: 5px; font-size: 14px;">
-                                <div style="display: block; font-weight: bold;">
-                                    {{texts.object_name}}
-                                </div>
-                                <div style="padding: 5px 0px 0px 0px;">{{texts.message}}</div>
-                            </td>
-                        </tr>
-                    </table>
-                </tr>
-                <tr>
-                    <td align="left" style="padding-top: 20px; padding-left: 0px;">
-                        {{texts.bottom_text1}}
-                        <a href="https://{{etcd.control_panel_link}}{{texts.control_panel_parameters}}"
-                           style="color: rgb(0,163,232)">
-                            <font color="00a3e8">{{texts.control_panel_name}}</font></a>
-                        {{texts.bottom_text2}}
-                    </td>
-                </tr>
-                <tr>
-                    <td align="left" style="padding-top: 20px; padding-left: 0px;">
-                        {{texts.dont_reply}}
-                    </td>
-                </tr>
-                <tr>
-                    <td align="left" style="padding-top: 20px; padding-left: 0px; padding-bottom: 40px">
-                        {{texts.copyright}}
-                    </td>
-                </tr>
-            </table>
+            <p style="font-size:15px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+            <strong>{{texts.object_name}}</strong>
+            </p>
+        </td>
+    </tr>
+    <tr>
+
+        <td bgcolor="#FFFFFF" style="padding: 0;">
+            <p style="font-size:15px; margin: 0; padding-top: 25px; padding-bottom: 10px; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                {{texts.message}}
+            </p>
         </td>
     </tr>
 </table>

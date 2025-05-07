@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from sqlalchemy import and_, or_
 from auth.auth_server.auth_token.macaroon import MacaroonToken
 from auth.auth_server.exceptions import Err
@@ -36,21 +37,11 @@ class TokenStore(object):
             raise UnauthorizedException(Err.OA0011, [])
 
     def check_permissions(self, user, action_name, context, ass_type,
-                          scope_id=None, org_disabled=False):
+                          scope_id=None):
         actions = {action_name}
-        if org_disabled:
-            # for disabled organization only optscale_member role actions
-            # allowed
-            member_actions = self.session.query(Action).join(
-                RoleAction, RoleAction.action_id == Action.id).join(
-                Role, and_(
-                    Role.purpose == 'optscale_member',
-                    RoleAction.role_id == Role.id)).all()
-            if action_name not in list(map(lambda x: x.name, member_actions)):
-                raise ForbiddenException(Err.OA0074, [])
         if user is None:
             raise ForbiddenException(Err.OA0012, [])
-        context_values = get_context_values(context)
+        context_values, restrictions = get_context_values(context)
         if scope_id and scope_id not in context_values:
             raise ForbiddenException(Err.OA0012, [])
         # requested level
@@ -99,7 +90,22 @@ class TokenStore(object):
                         ' context: %s', user.email, user.type, action_name,
                         str(context))
             raise ForbiddenException(Err.OA0012, [])
+        if restrictions:
+            self.check_restrictions(action_name, assignments, restrictions)
         return assignments
+
+    def check_restrictions(self, action_name, assignments, restrictions_map):
+        assignment_map = {a.resource_id: a for a in assignments}
+        for resource_id, allowed_actions in restrictions_map.items():
+            assignment = assignment_map.get(resource_id)
+            if assignment:
+                actions = set(map(lambda x: x.name, assignment.role.actions
+                                  )) & set(allowed_actions)
+                if action_name in actions:
+                    continue
+            LOG.warning('Access denied for restriction: %s, action_name: %s',
+                        {resource_id: allowed_actions}, action_name)
+            raise ForbiddenException(Err.OA0012, [])
 
     def action_resources(self, user, action_list=None):
         """

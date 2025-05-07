@@ -17,4 +17,4 @@ class Migration(MigrationBase):
                            PARTITION BY toYYYYMM(date)
                            ORDER BY (cloud_account_id, resource_id, date,
                                offer_id, offer_type)"""
-        self.clickhouse_client.execute(query)
+        self.clickhouse_client.query(query)

@@ -54,8 +54,16 @@ class AWSObjectEnumerator:
 
             # Buckets in region us-east-1 have a LocationConstraint of None
             # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/get_bucket_location.html
-            region = response.get("LocationConstraint") or "us-east-1"
-            LOG.info(f"Processing bucket {bucket} in {region}")
+
+            if not response.get("LocationConstraint"):
+                # LocationConstraint will be None if bucket is located in us-east-1
+                region = 'us-east-1'
+            elif response.get("LocationConstraint", "").lower() == 'eu':
+                # LocationConstraint will be EU if bucket is located in eu-west-1
+                region = 'eu-west-1'
+            else:
+                region = response.get("LocationConstraint")
+                LOG.info(f"Processing bucket {bucket} in {region}")
 
             paginator = self._client_factory.create_client(
                 region).get_paginator("list_objects_v2")

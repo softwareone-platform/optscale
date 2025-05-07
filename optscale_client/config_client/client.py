@@ -442,10 +442,9 @@ class Client(etcd.Client):
         :return: ('host', 'port', 'secure', 'user', 'pass', 'db')
         """
         params = self.read_branch('/clickhouse')
-        port = int(params['port']) if 'port' in params else None
-        secure = params.get('secure', '').lower() == "true"
-        return (params['host'], port, secure, 
-                params['user'], params['password'], params['db'])
+        return (params['user'], params['password'], params['host'],
+                params['db'], params.get('port', 8123),
+                params.get('secure', False))
 
     def zoho_params(self):
         """

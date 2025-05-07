@@ -89,6 +89,18 @@ const useStyles = makeStyles()((theme) => ({
     [theme.breakpoints.down("md")]: {
       visibility: "hidden"
     }
+  },
+  preloaderOverlay: {
+    position: "absolute",
+    zIndex: 100000,
+    width: "100%",
+    height: "100%",
+    background: "#ffffff",
+    top: 0,
+    left: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   }
 }));
 

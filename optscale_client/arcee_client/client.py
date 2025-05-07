@@ -273,7 +273,8 @@ class Client:
         """
         return self.get(self.metrics_url())
 
-    def metrics_create(self, key, target_value, tendency, name, func):
+    def metrics_create(self, key, target_value, tendency, name, func,
+                       unit=None):
         """
         Creates metric
         """
@@ -284,10 +285,12 @@ class Client:
             "name": name,
             "func": func
         }
+        if unit is not None:
+            b['unit'] = unit
         return self.post(self.metrics_url(), b)
 
     def metrics_update(self, metric_id, target_value=None, tendency=None,
-                       name=None, func=None):
+                       name=None, func=None, unit=None):
         b = dict()
         if target_value is not None:
             b.update({
@@ -304,6 +307,10 @@ class Client:
         if func is not None:
             b.update({
                 "func": func,
+            })
+        if unit is not None:
+            b.update({
+                "unit": unit,
             })
         return self.patch(self.metrics_url(metric_id), b)
 

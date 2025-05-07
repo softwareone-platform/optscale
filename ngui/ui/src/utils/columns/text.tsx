@@ -15,7 +15,7 @@ const text = ({ id, accessorFn, headerMessageId, headerDataTestId, accessorKey, 
   cell: ({ cell }) => {
     const value = cell.getValue();
 
-    if (value === undefined || value === null) {
+    if ([undefined, null, ""].includes(value)) {
       return CELL_EMPTY_VALUE;
     }
 

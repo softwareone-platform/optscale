@@ -14,4 +14,4 @@ class Migration(MigrationBase):
                 ENGINE = MergeTree
                 ORDER BY (id, tag, bucket, key)
                 """
-        self.clickhouse_client.execute(query)
+        self.clickhouse_client.query(query)

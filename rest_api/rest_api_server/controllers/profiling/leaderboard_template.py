@@ -33,6 +33,7 @@ class LeaderboardTemplateController(BaseProfilingController):
             filter_metric = metrics_map.get(filter_['id'])
             if filter_metric:
                 filter_['name'] = filter_metric.get('name')
+                filter_['unit'] = filter_metric.get('unit')
         primary_metric = metrics_map.pop(
             lb_template['primary_metric'], None)
         lb_template['primary_metric'] = primary_metric

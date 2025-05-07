@@ -11,7 +11,7 @@ import SubmitButtonLoader from "components/SubmitButtonLoader";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { ML_METRICS } from "urls";
 import { SPACING_1 } from "utils/layouts";
-import { NameField, KeyField, TendencySelector, AggregateFunctionSelector, TargetValueField } from "./FormElements";
+import { NameField, KeyField, TendencySelector, AggregateFunctionSelector, TargetValueField, UnitField } from "./FormElements";
 
 const MlMetricForm = ({ onSubmit, isGetLoading = false, defaultValues, onCancel, isSubmitLoading = false, isEdit = false }) => {
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
@@ -48,6 +48,7 @@ const MlMetricForm = ({ onSubmit, isGetLoading = false, defaultValues, onCancel,
               {!isEdit && <KeyField isLoading={isGetLoading} />}
               <TendencySelector isLoading={isGetLoading} />
               <TargetValueField isLoading={isGetLoading} />
+              <UnitField isLoading={isGetLoading} />
               <AggregateFunctionSelector isLoading={isGetLoading} />
               <FormButtonsWrapper>
                 <SubmitButtonLoader

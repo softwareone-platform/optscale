@@ -113,3 +113,6 @@ grafana:
 # google calendar etc. Defaults to internal ip, change it if internal ip
 # is not accessible in your network
 public_ip:
+
+# Email verification is disabled by default. Set the flag to `False` to enable it
+disable_email_verification: True

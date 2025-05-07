@@ -9,7 +9,7 @@ import logging
 import urllib3
 
 from etcd import Lock as EtcdLock
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 from pymongo import MongoClient
 from kombu import Connection, Exchange, Queue
 from kombu.mixins import ConsumerMixin
@@ -61,17 +61,11 @@ class RISPWorker(ConsumerMixin):
     @property
     def clickhouse_client(self):
         if self._clickhouse_client is None:
-            host, port, secure, user, password, _ = (
-                self.config_client.clickhouse_params()
-            )
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=CH_DB_NAME,
-            )
+            user, password, host, _, port, secure = (
+                self.config_client.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=CH_DB_NAME, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     @staticmethod
@@ -87,7 +81,7 @@ class RISPWorker(ConsumerMixin):
 
     def get_ri_sp_usage_expenses(self, cloud_account_id, resource_ids,
                                  offer_type, start_date, end_date):
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             """SELECT resource_id, date, instance_type, offer_id,
                     any(ri_norm_factor), any(sp_rate),
                     any(expected_cost), sum(offer_cost * sign),
@@ -100,17 +94,25 @@ class RISPWorker(ConsumerMixin):
                     AND resource_id in %(resource_ids)s
                 GROUP BY resource_id, date, instance_type, offer_id
                 HAVING sum(sign) > 0""",
-            params={
+            parameters={
                 'cloud_account_id': cloud_account_id,
                 'start_date': start_date,
                 'end_date': end_date,
                 'offer_type': offer_type,
                 'resource_ids': resource_ids
-            })
+            }).result_rows
 
     def insert_clickhouse_expenses(self, expenses, table='ri_sp_usage'):
-        self.clickhouse_client.execute(
-            f'INSERT INTO {table} VALUES', expenses)
+        column_names = expenses[0].keys()
+        insert_data = []
+        for exp in expenses:
+            d = list(exp.values())
+            insert_data.append(d)
+        self.clickhouse_client.insert(
+            table,
+            insert_data,
+            column_names=column_names
+        )
 
     @staticmethod
     def inverse_dict(d):
@@ -339,19 +341,19 @@ class RISPWorker(ConsumerMixin):
     def _get_offer_date_map(self, offer_ids, cloud_account_id,
                             start_date, end_date):
         result = defaultdict(list)
-        offer_dates = self.clickhouse_client.execute(
+        offer_dates_q = self.clickhouse_client.query(
             """SELECT DISTINCT offer_id, date
                FROM ri_sp_usage
                WHERE cloud_account_id = %(cloud_account_id)s AND
                  date >= %(start_date)s AND date <= %(end_date)s AND
                  offer_id in %(offer_ids)s
-            """, params={
+            """, parameters={
                 'cloud_account_id': cloud_account_id,
                 'start_date': start_date,
                 'end_date': end_date,
                 'offer_ids': offer_ids
             })
-        for data in offer_dates:
+        for data in offer_dates_q.result_rows:
             result[data[0]].append(data[1])
         return result
 
@@ -440,7 +442,7 @@ class RISPWorker(ConsumerMixin):
 
     def get_uncovered_usage_expenses(self, cloud_account_id, resource_ids,
                                      start_date, end_date):
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             """SELECT instance_type, os, location, resource_id, date,
                     sum(cost * sign), sum(usage * sign)
                 FROM uncovered_usage
@@ -451,12 +453,12 @@ class RISPWorker(ConsumerMixin):
                 GROUP BY resource_id, date, location, os,
                     instance_type
                 HAVING sum(sign) > 0
-            """, params={
+            """, parameters={
                 'cloud_account_id': cloud_account_id,
                 'start_date': start_date,
                 'end_date': end_date,
                 'resource_ids': resource_ids
-            })
+            }).result_rows
 
     @staticmethod
     def uncovered_usage_expense(

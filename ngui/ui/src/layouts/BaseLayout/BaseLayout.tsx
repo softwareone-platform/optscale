@@ -1,6 +1,5 @@
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { CircularProgress } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -139,9 +138,9 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
           if (someApiLoading) {
             return (
               <PageContentWrapper>
-                <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                  <CircularProgress />
-                </Box>
+                <div className={classes.preloaderOverlay}>
+                  <img src="https://swo-assets.azureedge.net/client-portal/app-loading.gif" alt="Loading page" />
+                </div>
               </PageContentWrapper>
             );
           }

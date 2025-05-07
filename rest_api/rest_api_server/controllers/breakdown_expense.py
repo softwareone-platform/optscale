@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 from datetime import timezone
+
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper
 )
@@ -8,7 +9,10 @@ from rest_api.rest_api_server.controllers.expense import CleanExpenseController
 from rest_api.rest_api_server.exceptions import Err
 
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcfromtimestamp
+
 
 LOG = logging.getLogger(__name__)
 DAY_IN_SECONDS = 86400
@@ -264,19 +268,19 @@ class BreakdownExpenseController(BreakdownBaseController):
                     AND cloud_account_id in %(cloud_account_ids)s
                 GROUP BY resources.group_field, date
             """,
-            params={
+            parameters={
                 'start_date': start_dt,
                 'end_date': end_dt,
                 'cloud_account_ids': list(cloud_account_ids)
             },
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('id', 'String'),
                     ('group_field', 'Nullable(String)'),
                 ],
                 'data': external_table
-            }],
+            }]),
         )
         result = defaultdict(dict)
         for value, date, cost in expenses:

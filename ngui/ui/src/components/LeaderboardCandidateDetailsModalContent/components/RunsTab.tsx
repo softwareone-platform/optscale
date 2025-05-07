@@ -5,6 +5,7 @@ import { Link as RouterLink } from "react-router-dom";
 import CaptionedCell from "components/CaptionedCell";
 import { useFormatDynamicFractionDigitsValue } from "components/DynamicFractionDigitsValue";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import MetricUnitLabel from "components/MetricUnitLabel";
 import SubTitle from "components/SubTitle";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
@@ -97,7 +98,7 @@ const RunsTable = ({ candidatePrimaryMetric, candidateSecondaryMetrics, runsData
         id: "dataset",
         accessorFn: (originalRow) => originalRow.dataset?.name
       }),
-      ...[candidatePrimaryMetric, ...candidateSecondaryMetrics].map(({ key, name }) => ({
+      ...[candidatePrimaryMetric, ...candidateSecondaryMetrics].map(({ key, name, unit }) => ({
         header: <TextWithDataTestId dataTestId={`lbl_${key}`}>{name}</TextWithDataTestId>,
         id: key,
         searchFn: (value, filterValue) => {
@@ -106,7 +107,7 @@ const RunsTable = ({ candidatePrimaryMetric, candidateSecondaryMetrics, runsData
           return formatDynamicFractionDigitsValue({ value }).includes(search);
         },
         accessorFn: (originalRow) => originalRow.data?.[key]?.value,
-        cell: ({ cell }) => formatDynamicFractionDigitsValue({ value: cell.getValue() })
+        cell: ({ cell }) => <MetricUnitLabel label={formatDynamicFractionDigitsValue({ value: cell.getValue() })} unit={unit} />
       }))
     ],
     [formatDynamicFractionDigitsValue, formatRunTimeAgo, candidatePrimaryMetric, candidateSecondaryMetrics]

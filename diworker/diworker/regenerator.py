@@ -2,7 +2,7 @@ import logging
 from pymongo import MongoClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from diworker.diworker.importers.factory import get_importer_class
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 LOG = logging.getLogger(__name__)
 
@@ -32,22 +32,18 @@ class Regenerator:
     @property
     def clickhouse_cl(self):
         if not self._clickhouse_cl:
-            host, port, secure, user, password, db_name = self.config_cl.clickhouse_params()
-            self._clickhouse_cl = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                self.config_cl.clickhouse_params())
+            self._clickhouse_cl = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_cl
 
     def drop_expenses(self, cloud_account_id):
-        self.clickhouse_cl.execute(
+        self.clickhouse_cl.query(
             'ALTER TABLE expenses DELETE WHERE cloud_account_id=%(ca_id)s',
-            params={'ca_id': cloud_account_id})
-        self.clickhouse_cl.execute('OPTIMIZE TABLE expenses FINAL')
+            parameters={'ca_id': cloud_account_id})
+        self.clickhouse_cl.query('OPTIMIZE TABLE expenses FINAL')
 
     def regenerate_expenses(self):
         mongo_raw = self.mongo_cl.restapi['raw_expenses']

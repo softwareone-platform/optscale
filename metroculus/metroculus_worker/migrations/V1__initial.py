@@ -14,4 +14,4 @@ class Migration(MigrationBase):
                    ENGINE = MergeTree
                    PARTITION BY cloud_account_id
                    ORDER BY (cloud_account_id, resource_id, date)"""
-        self.clickhouse_client.execute(query)
+        self.clickhouse_client.query(query)

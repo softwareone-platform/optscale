@@ -4,6 +4,8 @@ from datetime import datetime
 
 from tools.optscale_exceptions.common_exc import (
     NotFoundException, FailedDependency, WrongArgumentsException)
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
 from rest_api.rest_api_server.controllers.base import (
     BaseController, MongoMixin, ClickHouseMixin)
 from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
@@ -37,11 +39,11 @@ class TtlAnalysisController(BaseController, MongoMixin, ClickHouseMixin):
         """
         expenses = self.execute_clickhouse(
             query=query,
-            external_tables=[{
+            external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [('_id', 'String')],
                 'data': resources
-            }], params={
+            }]), parameters={
                 'start_date': start_date,
                 'end_date': end_date
             })

@@ -1,12 +1,16 @@
 import math
 from collections import defaultdict
 import time
+import clickhouse_connect
+
 from kombu.log import get_logger
 from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient, UpdateOne
-from clickhouse_driver import Client as ClickHouseClient
+
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
+
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcfromtimestamp, utcnow
 
 LOG = get_logger(__name__)
@@ -107,15 +111,11 @@ class MetricsProcessor(object):
     @property
     def clickhouse_client(self):
         if not self._clickhouse_client:
-            host, port, secure, user, password, db_name = self.config_cl.clickhouse_params()
-            self._clickhouse_client = ClickHouseClient(
-                host=host,
-                port=port,
-                secure=secure,
-                user=user,
-                password=password,
-                database=db_name,
-            )
+            user, password, host, db_name, port, secure = (
+                self.config_cl.clickhouse_params())
+            self._clickhouse_client = clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
         return self._clickhouse_client
 
     @property
@@ -134,20 +134,21 @@ class MetricsProcessor(object):
         return self._rest_client
 
     def get_metrics_dates(self, table_name, cloud_account_id, resource_ids):
-        metric_dates = self.clickhouse_client.execute(
+        metric_dates = self.clickhouse_client.query(
             """SELECT resource_id, max(date)
                FROM %s
                WHERE cloud_account_id='%s'
                AND resource_id IN resources
                GROUP BY resource_id""" % (table_name, cloud_account_id),
-            external_tables=[
+            external_data=ExternalDataConverter()([
                 {
                     'name': 'resources',
                     'structure': [('id', 'String')],
                     'data': [{'id': r_id} for r_id in resource_ids]
                 }
             ])
-        return {k: v for k, v in metric_dates}
+        )
+        return {k: v for k, v in metric_dates.result_rows}
 
     def update_metrics_flag(self, cloud_account_id, resource_ids):
         if resource_ids:
@@ -205,11 +206,16 @@ class MetricsProcessor(object):
                 'Cloud %s is not supported' % cloud_type)
 
         adapter = self._get_cloud_adapter(cloud_account)
+        additional_params = {}
+        if cloud_type == 'azure_cnr':
+            # metrics are not supported for Basic LB
+            additional_params['meta.category'] = {'$ne': 'Basic'}
         cloud_account_resources = list(
             self.mongo_client.restapi.resources.find({
                 'cloud_account_id': cloud_account['id'],
                 'active': True,
-                'resource_type': {'$in': SUPPORTED_RESOURCE_TYPES}
+                'resource_type': {'$in': SUPPORTED_RESOURCE_TYPES},
+                **additional_params
             }, ['_id', 'last_seen', 'cloud_resource_id',
                 'region', 'resource_type', 'name', 'k8s_namespace',
                 'meta.source_cluster_id', 'meta.ram']
@@ -300,13 +306,22 @@ class MetricsProcessor(object):
                 metric_chunk.extend(metrics)
             for i in range(0, len(metric_chunk), CH_BULK_SIZE):
                 chunk = metric_chunk[i:i + CH_BULK_SIZE]
-                self.clickhouse_client.execute(
-                    'INSERT INTO %s VALUES' % metric_table_name, chunk)
+                self._insert_chunk(metric_table_name, chunk)
                 resource_ids.update(r['resource_id'] for r in chunk)
         if cloud_type != KUBERNETES_CLOUD_TYPE:
             self.update_metrics_flag(self.cloud_account_id, resource_ids)
         self.update_getting_metrics_time()
         return list(resource_ids)
+
+    def _insert_chunk(self, metric_table, chunk):
+        if chunk:
+            column_names = chunk[0].keys()
+            insert_data = []
+            for el in chunk:
+                d = list(el.values())
+                insert_data.append(d)
+            self.clickhouse_client.insert(metric_table, insert_data,
+                                          column_names=column_names)
 
     @staticmethod
     def get_aws_metrics(cloud_account_id, cloud_resource_ids, resource_ids_map,

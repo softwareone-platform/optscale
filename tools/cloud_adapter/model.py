@@ -511,13 +511,15 @@ class ReservedInstancesResource(CloudResource):
 
 
 class LoadBalancerResource(CloudResource):
-    __slots__ = ('name', 'vpc_id', 'security_groups')
+    __slots__ = ('name', 'vpc_id', 'security_groups', 'category')
 
-    def __init__(self, name=None, vpc_id=None, security_groups=None, **kwargs):
+    def __init__(self, name=None, vpc_id=None, security_groups=None,
+                 category=None, **kwargs):
         super().__init__(**kwargs)
         self.name = name
         self.vpc_id = vpc_id
         self.security_groups = security_groups
+        self.category = category
 
     def __repr__(self):
         return 'Load Balancer {0} name={1}'.format(
@@ -529,6 +531,7 @@ class LoadBalancerResource(CloudResource):
         meta.update({
             'vpc_id': self.vpc_id,
             'security_groups': self.security_groups,
+            'category': self.category,
         })
         return meta
 

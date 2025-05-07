@@ -20,7 +20,7 @@ class ProfilingTokenAsyncCollectionHandler(BaseAsyncCollectionHandler,
         ---
         description: |
             Get organization profiling token
-            Required permission: INFO_ORGANIZATION
+            Required permission: INFO_ORGANIZATION or CLUSTER_SECRET
         tags: [profiling_tokens]
         summary: Organization profiling token
         parameters:
@@ -69,8 +69,9 @@ class ProfilingTokenAsyncCollectionHandler(BaseAsyncCollectionHandler,
         security:
         - token: []
         """
-        await self.check_permissions(
-            'INFO_ORGANIZATION', 'organization', organization_id)
+        if not self.check_cluster_secret(raises=False):
+            await self.check_permissions(
+                'INFO_ORGANIZATION', 'organization', organization_id)
         res = await run_task(self.controller.get,
                              organization_id=organization_id)
         self.write(json.dumps(res))

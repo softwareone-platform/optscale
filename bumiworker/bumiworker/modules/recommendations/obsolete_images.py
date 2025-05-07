@@ -3,8 +3,11 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from calendar import monthrange
 
-from bumiworker.bumiworker.modules.base import ModuleBase
+from bumiworker.bumiworker.modules.base import (
+    ModuleBase,
+)
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcnow
 
 DEFAULT_DAYS_THRESHOLD = 7
@@ -55,19 +58,23 @@ class ObsoleteImages(ModuleBase):
             JOIN resources ON resource_id = resources._id AND date >= %(date)s
             GROUP BY resource_id, cloud_resource_id
         """
-        return self.clickhouse_client.execute(
+        return self.clickhouse_client.query(
             query=query,
-            external_tables=[{
-                'name': 'resources',
-                'structure': [
-                    ('_id', 'String'),
-                    ('cloud_resource_id', 'String')
-                ],
-                'data': snapshots
-            }],
-            params={
+            external_data=ExternalDataConverter()(
+                [
+                    {
+                        'name': 'resources',
+                        'structure': [
+                            ('_id', 'String'),
+                            ('cloud_resource_id', 'String')
+                        ],
+                        'data': snapshots
+                    }
+                ]
+            ),
+            parameters={
                 'date': start_date
-            })
+            }).result_rows
 
     def get_snapshot_info_aws(self, bulk_ids, account_ids,
                               last_week_time):

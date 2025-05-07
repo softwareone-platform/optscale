@@ -14,7 +14,12 @@ from dateutil.relativedelta import relativedelta
 import boto3
 from boto3.session import Config as BotoConfig
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
-from diworker.diworker.utils import retry_mongo_upsert, get_month_start
+from diworker.diworker.utils import (
+    retry_mongo_upsert,
+    get_month_start,
+)
+
+from tools.optscale_data.clickhouse import ExternalDataConverter
 import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
@@ -175,35 +180,33 @@ class BaseReportImporter:
 
     @staticmethod
     def gen_clickhouse_expense(expense, new_cost=None):
-        expense = {
-            'cloud_account_id': expense['cloud_account_id'],
-            'resource_id': expense['resource_id'],
-            'date': expense['date'],
-            'cost': expense['cost'],
-            'sign': 1
-        }
+        expense = [
+            expense['cloud_account_id'],
+            expense['resource_id'],
+            expense['date'],
+            expense['cost'],
+            1
+        ]
         if new_cost is not None:
-            expense.update({
-                'cost': new_cost,
-                'sign': -1
-            })
+            expense[3] = new_cost
+            expense[4] = -1
         return expense
 
     def get_clickhouse_expenses(self, from_dt, to_dt, resource_ids,
                                 cloud_account_id):
-        return self.clickhouse_cl.execute("""
+        return self.clickhouse_cl.query("""
             SELECT resource_id, date, cost, sign
             FROM expenses
             WHERE cloud_account_id = %(cloud_account_id)s
                 AND date >= %(from_dt)s
                 AND date <= %(to_dt)s
                 AND resource_id in %(resource_ids)s
-        """, params={
+        """, parameters={
             'cloud_account_id': cloud_account_id,
             'from_dt': from_dt,
             'to_dt': to_dt,
             'resource_ids': list(resource_ids)
-        })
+        }).result_rows
 
     def get_resource_info_map(self, chunk):
         return {
@@ -225,6 +228,8 @@ class BaseReportImporter:
 
         clean_expenses = []
         last_expense_info = {}
+        column_names = [
+            "cloud_account_id", "resource_id", "date", "cost", "sign"]
         max_date, min_date = None, None
         for r_id, expenses in chunk.items():
             resource_id = resources_map[r_id]['id']
@@ -271,7 +276,8 @@ class BaseReportImporter:
                     clickhouse_expenses.append(
                         self.gen_clickhouse_expense(expense))
             if clickhouse_expenses:
-                self.update_clickhouse_expenses(clickhouse_expenses)
+                self.update_clickhouse_expenses(clickhouse_expenses,
+                                                column_names)
                 self.update_resource_expense_info(cloud_account_id,
                                                   last_expense_info)
 
@@ -306,22 +312,22 @@ class BaseReportImporter:
                 'Updated resources with expense info: %s' % r.bulk_api_result)
 
     def get_common_resource_expense_info(self, cloud_account_id, resource_ids):
-        info = self.clickhouse_cl.execute("""
+        info_q = self.clickhouse_cl.query("""
             SELECT resource_id, max(date), sum(cost*sign)
             FROM expenses
             WHERE cloud_account_id = %(cloud_account_id)s
                 AND resource_id IN resource_ids
             GROUP BY resource_id
-        """, params={
+        """, parameters={
             'cloud_account_id': cloud_account_id,
-        }, external_tables=[
+        }, external_data=ExternalDataConverter()([
             {
                 'name': 'resource_ids',
                 'structure': [('id', 'String')],
                 'data': [{'id': r_id} for r_id in resource_ids]
             }
-        ])
-        return {r[0]: (r[1], r[2]) for r in info}
+        ]))
+        return {r[0]: (r[1], r[2]) for r in info_q.result_rows}
 
     def get_resource_ids(self, cloud_account_id, period_start):
         base_filters = {'cloud_account_id': cloud_account_id}
@@ -447,8 +453,9 @@ class BaseReportImporter:
 
         LOG.info('Processing completed')
 
-    def update_clickhouse_expenses(self, expenses):
-        self.clickhouse_cl.execute('INSERT INTO expenses VALUES', expenses)
+    def update_clickhouse_expenses(self, expenses, column_names):
+        self.clickhouse_cl.insert(
+            'expenses', expenses, column_names=column_names)
 
     def update_cloud_import_time(self, ts):
         self.rest_cl.cloud_account_update(self.cloud_acc_id,
@@ -514,12 +521,12 @@ class BaseReportImporter:
             self.period_start = get_month_start(opttime.utcnow())
 
     def get_last_import_date(self, cloud_account_id, tzinfo=None):
-        max_dt = self.clickhouse_cl.execute(
+        max_dt_q = self.clickhouse_cl.query(
             'SELECT max(date), count(date) from expenses '
             'WHERE cloud_account_id=%(ca_id)s',
-            params={'ca_id': cloud_account_id})
+            parameters={'ca_id': cloud_account_id})
         result, count = 0, 0
-        for dt in max_dt:
+        for dt in max_dt_q.result_rows:
             m_dt, count = dt
             result = m_dt if count else 0
         if result and tzinfo:

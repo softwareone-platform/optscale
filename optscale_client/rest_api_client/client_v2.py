@@ -1692,8 +1692,8 @@ class Client(Client_v1):
     def metric_get(self, organization_id, metric_id):
         return self.get(self.metrics_url(organization_id, metric_id))
 
-    def metric_update(self, organization_id, name, metric_id):
-        return self.patch(self.metrics_url(organization_id, name), metric_id)
+    def metric_update(self, organization_id, metric_id, params):
+        return self.patch(self.metrics_url(organization_id, metric_id), params)
 
     def metric_delete(self, organization_id, metric_id):
         return self.delete(self.metrics_url(

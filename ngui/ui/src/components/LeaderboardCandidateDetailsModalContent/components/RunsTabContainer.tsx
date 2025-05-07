@@ -12,19 +12,21 @@ const RunsTabContainer = ({ taskId, candidateDetails, qualifiedRunIds, otherData
   const qualifiedRuns = runs.filter(({ id }) => qualifiedRunIds.includes(id));
   const otherDatasetRuns = runs.filter(({ id }) => otherDatasetRunIds.includes(id));
 
-  const [primaryMetricKey, { name: primaryMetricName, func: primaryMetricAggregationFunction } = {}] =
+  const [primaryMetricKey, { name: primaryMetricName, func: primaryMetricAggregationFunction, unit: primaryMetricUnit } = {}] =
     Object.entries(candidateDetails.primary_metric ?? {})[0] ?? [];
 
   const candidatePrimaryMetric = {
     key: primaryMetricKey,
     name: primaryMetricName,
-    aggregateFunction: primaryMetricAggregationFunction
+    aggregateFunction: primaryMetricAggregationFunction,
+    unit: primaryMetricUnit
   };
 
   const candidateSecondaryMetrics = Object.entries(candidateDetails.metrics ?? {}).map(([key, payload]) => ({
     key,
     name: payload.name,
-    aggregateFunction: payload.func
+    aggregateFunction: payload.func,
+    unit: payload.unit
   }));
 
   return (

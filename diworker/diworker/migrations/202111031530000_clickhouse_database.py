@@ -1,5 +1,5 @@
 from diworker.diworker.migrations.base import BaseMigration
-from clickhouse_driver import Client as ClickHouseClient
+import clickhouse_connect
 
 
 """
@@ -9,21 +9,15 @@ Adds a clickhouse database for expenses.
 
 class Migration(BaseMigration):
     def _get_clickhouse_client(self):
-        host, port, secure, user, password, db_name = (
-            self.config_cl.clickhouse_params()
-        )
-        return ClickHouseClient(
-            host=host,
-            port=port,
-            secure=secure,
-            user=user,
-            password=password,
-            database=db_name,
-        )
+        user, password, host, db_name, port, secure = (
+            self.config_cl.clickhouse_params())
+        return clickhouse_connect.get_client(
+                host=host, password=password, database=db_name, user=user,
+                port=port, secure=secure)
 
     def upgrade(self):
         clickhouse_client = self._get_clickhouse_client()
-        clickhouse_client.execute(
+        clickhouse_client.query(
             """
             CREATE TABLE expenses (
                 cloud_account_id String,
@@ -38,4 +32,4 @@ class Migration(BaseMigration):
 
     def downgrade(self):
         clickhouse_client = self._get_clickhouse_client()
-        clickhouse_client.execute('DROP TABLE IF EXISTS expenses')
+        clickhouse_client.query('DROP TABLE IF EXISTS expenses')
