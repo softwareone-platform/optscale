@@ -5,7 +5,7 @@ import { RecommendationModal } from "components/SideModalManager/SideModals";
 import Cards from "containers/RecommendationsOverviewContainer/Cards";
 import RecommendationCard from "containers/RecommendationsOverviewContainer/RecommendationCard";
 import { ALL_RECOMMENDATIONS } from "containers/RecommendationsOverviewContainer/recommendations/allRecommendations";
-import { ACTIVE } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
+import { STATUS } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import useStyles from "containers/RecommendationsOverviewContainer/RecommendationsOverview.styles";
 import { useGetIsRecommendationsDownloadAvailable } from "hooks/useGetIsRecommendationsDownloadAvailable";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
@@ -60,7 +60,7 @@ const MlTaskRecommendations = ({ taskId, recommendations, isLoading }) => {
     }
 
     const recommendationsInstances = Object.values(ALL_RECOMMENDATIONS)
-      .map((RecommendationClass) => new RecommendationClass(ACTIVE, recommendations))
+      .map((RecommendationClass) => new RecommendationClass(STATUS.ACTIVE, recommendations))
       .filter(({ count }) => count !== 0)
       .sort(({ count: countA }, { count: countB }) => countB - countA);
 

@@ -5,7 +5,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { AWS_EC2_VPC, AZURE_NETWORK, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, openPorts, resource, resourceLocation } from "utils/columns";
 import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -44,7 +44,7 @@ class InsecureSecurityGroups extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS];
 
-  categories = [CATEGORY_SECURITY];
+  categories = [CATEGORY.SECURITY];
 
   withExclusions = true;
 

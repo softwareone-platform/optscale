@@ -1,10 +1,10 @@
 import FormattedMoney from "components/FormattedMoney";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import AbandonedLoadBalancersModal from "components/SideModalManager/SideModals/recommendations/AbandonedLoadBalancersModal";
-import { AWS_EC2, AZURE_NETWORK } from "hooks/useRecommendationServices";
+import { ALIBABA_SLB, AWS_EC2, AZURE_NETWORK } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
-import { FORMATTED_MONEY_TYPES, AZURE_CNR, AWS_CNR } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import { FORMATTED_MONEY_TYPES, AZURE_CNR, AWS_CNR, ALIBABA_CNR } from "utils/constants";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -47,11 +47,11 @@ class AbandonedLoadBalancers extends BaseRecommendation {
 
   emptyMessageId = "noAbandonedLoadBalancers";
 
-  services = [AZURE_NETWORK, AWS_EC2];
+  services = [AZURE_NETWORK, AWS_EC2, ALIBABA_SLB];
 
-  appliedDataSources = [AZURE_CNR, AWS_CNR];
+  appliedDataSources = [AZURE_CNR, AWS_CNR, ALIBABA_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 
