@@ -17,6 +17,7 @@ import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
+import { ENABLE_PRODUCT_TOUR } from "utils/constants";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
@@ -57,7 +58,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
             value: <FormattedMessage id="documentation" />
           }}
         />
-        {organizationId && (
+        {ENABLE_PRODUCT_TOUR && organizationId && (
           <IconButton
             dataTestId="btn_product_tour"
             color="info"
