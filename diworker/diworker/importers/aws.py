@@ -631,7 +631,7 @@ class AWSReportImporter(CSVBaseReportImporter):
                     preinstalled = e['product/preInstalledSw']
                     meta_dict['preinstalled'] = preinstalled
             elif resource_type == 'Load Balancer':
-                name = self.short_resource_id(e['lineItem/ResourceId'])
+                name = self.short_resource_id(e['resource_id'])
             elif resource_type == 'Savings Plan':
                 if not payment_option and 'savingsPlan/PaymentOption' in e:
                     payment_option = e['savingsPlan/PaymentOption']
