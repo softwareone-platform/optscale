@@ -14,6 +14,7 @@ export class UsersInvitePage extends BasePage {
     readonly inviteBtn: Locator;
     readonly cancelBtn: Locator;
     readonly userInvitedAlert: Locator;
+    readonly userInvitedAlertCloseButton: Locator;
 
     /**
      * Initializes a new instance of the UsersInvitePage class.
@@ -29,6 +30,7 @@ export class UsersInvitePage extends BasePage {
         this.inviteBtn = this.main.getByTestId('btn_invite');
         this.cancelBtn = this.main.getByTestId('btn_cancel');
         this.userInvitedAlert = this.page.getByText('User has been invited');
+        this.userInvitedAlertCloseButton = this.page.getByLabel('Close');
     }
 
     /**

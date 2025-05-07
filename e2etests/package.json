@@ -5,7 +5,7 @@
   "main": "index.js",
 "scripts": {
   "playwright:show-report": "npx playwright show-report",
-  "playwright:debug": "npx playwright test --debug",
+  "playwright:debug": "npx playwright test --debug --workers=1",
   "playwright:test": "npx playwright test",
   "playwright:codegen": "npx playwright codegen cloudspend.velasuci.com",
   "playwright:headed": "npx playwright test --headed --workers=1",

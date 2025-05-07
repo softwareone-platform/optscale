@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @param domain Optional domain name to use; defaults to "example.com".
  * @returns A random, unique email address.
  */
-export function generateRandomEmail(domain: string = 'example.com'): string {
+export function generateRandomEmail(): string {
     // Get current timestamp
     const timestamp = Date.now();
 
@@ -13,7 +13,7 @@ export function generateRandomEmail(domain: string = 'example.com'): string {
     const randomNumber = Math.floor(Math.random() * 1_000);
 
     // Combine elements into a random email
-    return `test_${timestamp}_${randomNumber}@${domain}`;
+    return `mpt.qlt+execution-${timestamp}${randomNumber}@gmail.com`;
 }
 
 export function generateRandomOrganizationName(): string {

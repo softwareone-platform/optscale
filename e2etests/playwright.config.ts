@@ -55,7 +55,7 @@ export default defineConfig({
         channel: "chrome",
         viewport: {width: 1920, height: 1080},
       },
-      // dependencies: ["setup"],
+      dependencies: ["setup"],
     },
     // {
     //   name: 'firefox',

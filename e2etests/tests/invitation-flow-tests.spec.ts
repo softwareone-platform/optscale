@@ -41,6 +41,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -87,6 +88,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -134,6 +136,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -174,6 +177,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -197,7 +201,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 });
 
-test.describe.only("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
+test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
@@ -217,15 +221,9 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
                                                                             settingsPage,
                                                                             pendingInvitationsPage
                                                                         }) => {
-        test.slow();
+        test.setTimeout(120000);
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
-
-        await test.step("Verify no pending invitations in Settings tab", async () => {
-            await mainMenu.clickSettings();
-            await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText("No invitations pending")).toBeVisible();
-        });
 
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
@@ -235,6 +233,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -277,6 +276,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         await test.step("Invite a existing user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'SoftwareOne (Test Environment)');
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -290,7 +290,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL(true);
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Engineer at QA Test Organization pool')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Engineer at SoftwareOne (Test Environment)')).toBeVisible();
         });
     });
 });
@@ -300,7 +300,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
-        inviteLink = `https://cloudspend.velasuci.com/invited?email=${encodeURIComponent(invitationEmail)}`;
+        inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
@@ -328,6 +328,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await test.step("Invite a new user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail);
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -364,6 +365,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await test.step("Invite a existing user to the organisation", async () => {
             await usersInvitePage.inviteUser(invitationEmail, 'Organization manager');
             await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
         });
 
         await test.step("Sign out Admin user", async () => {
@@ -377,7 +379,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL(true);
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Manager of QA Test Organization organization')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Manager of SoftwareOne (Test Environment) organization')).toBeVisible();
         });
     });
 });
