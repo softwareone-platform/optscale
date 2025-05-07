@@ -6,7 +6,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS } from "hooks/useRecommendationServices";
 import { detectedAt, size, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -55,7 +55,7 @@ class InstanceSubscription extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   withExclusions = true;
 

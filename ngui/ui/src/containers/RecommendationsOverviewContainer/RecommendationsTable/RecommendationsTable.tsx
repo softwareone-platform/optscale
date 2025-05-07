@@ -4,10 +4,21 @@ import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import { possibleMonthlySavings, text } from "utils/columns";
 import Actions from "../Actions";
+import BaseRecommendation from "../recommendations/BaseRecommendation";
 import actions from "./columns/actions";
 import buttonLink from "./columns/buttonLink";
 import services from "./columns/services";
 import status from "./columns/status";
+
+type RecommendationsTableProps = {
+  isLoading: boolean;
+  recommendations: BaseRecommendation[];
+  downloadLimit: number;
+  onRecommendationClick: (id: string) => void;
+  isDownloadAvailable: boolean;
+  isGetIsDownloadAvailableLoading: boolean;
+  selectedDataSourceIds: string[];
+};
 
 const RecommendationsTable = ({
   isLoading,
@@ -17,7 +28,7 @@ const RecommendationsTable = ({
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
   selectedDataSourceIds
-}) => {
+}: RecommendationsTableProps) => {
   const tableData = useMemo(
     () =>
       recommendations.map((r) => ({

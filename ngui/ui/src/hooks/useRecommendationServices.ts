@@ -7,6 +7,7 @@ export const ALIBABA_ECS = "alibabaEcs";
 export const ALIBABA_ECS_VPC = "alibabaEcsVpc";
 export const ALIBABA_EBS = "alibabaEbs";
 export const ALIBABA_RDS = "alibabaRds";
+export const ALIBABA_SLB = "alibabaSlb";
 
 export const AWS_IAM = "awsIam";
 export const AWS_EC2 = "awsEc2";
@@ -41,6 +42,10 @@ const ALIBABA_SERVICES = Object.freeze({
   [ALIBABA_RDS]: {
     type: ALIBABA_CNR,
     name: "services.rds"
+  },
+  [ALIBABA_SLB]: {
+    type: ALIBABA_CNR,
+    name: "services.slb"
   }
 });
 

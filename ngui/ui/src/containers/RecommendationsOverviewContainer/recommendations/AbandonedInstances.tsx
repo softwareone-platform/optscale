@@ -4,7 +4,7 @@ import AbandonedInstancesModal from "components/SideModalManager/SideModals/reco
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS, AZURE_COMPUTE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES, NEBIUS, AZURE_CNR } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -50,7 +50,7 @@ class AbandonedInstances extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 

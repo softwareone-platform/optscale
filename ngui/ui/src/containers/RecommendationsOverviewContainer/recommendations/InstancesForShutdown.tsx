@@ -11,7 +11,7 @@ import {
 } from "hooks/useRecommendationServices";
 import { resource, resourceLocation, poolAndOwner, possibleShutdownPeriods, savings } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({ headerDataTestId: "lbl_is_resource" }),
@@ -46,7 +46,7 @@ class InstancesForShutdown extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   withExclusions = true;
 
