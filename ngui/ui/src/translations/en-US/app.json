@@ -1100,7 +1100,7 @@
   "lessOrEqual": "This field must be less than or equal to {max}",
   "lessThanForPreviousMonth": "Less than for previous month",
   "lifetimeCost": "Lifetime cost",
-  "limit": "Limit",
+  "limit": "Monthly Limit",
   "limitMaximumParallelRunsNumber": "Limit maximum parallel runs number",
   "linkExpirationMessage": "The link will be valid for <strong>{count} {value}</strong> and will expire after first use.",
   "linked": "Linked",
