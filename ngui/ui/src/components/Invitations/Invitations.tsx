@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -13,7 +14,10 @@ import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
 import useStyles from "./Invitations.styles";
 
 interface InvitationAssignment {
+  scope_id: string;
   scope_type: string;
+  purpose: string;
+  uniqueKey?: string;
 }
 
 interface InvitationData {
@@ -65,6 +69,10 @@ const NoInvitationsPending = ({ widget = false }: { widget: boolean }) => {
   );
 };
 
+interface UniqueInvitationsData extends InvitationData {
+  children: InvitationData[];
+}
+
 const Invitations = ({
   invitations,
   onSuccessAccept,
@@ -74,6 +82,47 @@ const Invitations = ({
   widget = false
 }: InvitationsProps) => {
   const { classes } = useStyles();
+
+  // To be extracted to helper function or custom hook
+  const uniqueInvitations: UniqueInvitationsData[] = useMemo(() => {
+    const uniqueInvitationsMap = new Map<string, UniqueInvitationsData>();
+    invitations.forEach((invitation) => {
+      const { owner_email: email, organization } = invitation;
+      const key = `${email}-${organization}`;
+      const existingInvitation = uniqueInvitationsMap.get(key);
+      if (existingInvitation) {
+        existingInvitation.children = existingInvitation.children || [];
+        existingInvitation.children.push(invitation);
+      } else {
+        uniqueInvitationsMap.set(key, {
+          ...invitation,
+          children: [{ ...invitation }]
+        });
+      }
+    });
+
+    return Array.from(uniqueInvitationsMap.values()).map((invitation) => {
+      const invitationAssignments = invitation.children
+        .reduce<InvitationAssignment[]>(
+          (assignments, childInvitations) => assignments.concat(childInvitations.invite_assignments),
+          []
+        )
+        .map((assignment) => ({
+          ...assignment,
+          uniqueKey: `${assignment.scope_type}_${assignment.purpose}`
+        }));
+
+      const uniqueAssignments = Array.from(new Set(invitationAssignments.map((assignment) => assignment.uniqueKey)))
+        .map((uniqueKey) => invitationAssignments.find((assignment) => assignment.uniqueKey === uniqueKey))
+        .filter((assignment) => assignment !== undefined);
+
+      return {
+        ...invitation,
+        invite_assignments: uniqueAssignments,
+        children: invitation.children || []
+      };
+    });
+  }, [invitations]);
 
   if (isLoading) {
     return <TypographyLoader linesCount={4} />;
@@ -90,7 +139,7 @@ const Invitations = ({
       }}
     >
       {isEmptyArray(invitations) && <NoInvitationsPending widget={widget} />}
-      {invitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
+      {uniqueInvitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
         const organizationNameInvitedTo = organization;
 
         const { pool: invitesToPools = [], organization: invitesToOrganization = [] } = createGroupsObjectFromArray(
