@@ -7,12 +7,7 @@ import { FormattedMessage, FormattedNumber } from "react-intl";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import RecommendationLink from "components/RecommendationLink";
 import WrapperCard from "components/WrapperCard";
-import {
-  CATEGORY_ALL,
-  CATEGORY_COST,
-  CATEGORY_CRITICAL,
-  CATEGORY_SECURITY
-} from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
+import { CATEGORY } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { ALL_SERVICES } from "hooks/useRecommendationServices";
 import { RECOMMENDATIONS, RECOMMENDATION_CATEGORY_QUERY_PARAMETER, RECOMMENDATION_SERVICE_QUERY_PARAMETER } from "urls";
 import { SPACING_2 } from "utils/layouts";
@@ -32,8 +27,8 @@ const RecommendationsCard = ({
     navigate({
       pathname: RECOMMENDATIONS,
       search: `?${createSearchParams({
-        [RECOMMENDATION_CATEGORY_QUERY_PARAMETER]: CATEGORY_ALL,
-        [RECOMMENDATION_SERVICE_QUERY_PARAMETER]: CATEGORY_ALL
+        [RECOMMENDATION_CATEGORY_QUERY_PARAMETER]: CATEGORY.ALL,
+        [RECOMMENDATION_SERVICE_QUERY_PARAMETER]: CATEGORY.ALL
       })}`
     });
 
@@ -70,7 +65,7 @@ const RecommendationsCard = ({
         <Grid item xs={12} lg={4}>
           <InfoCard
             title={
-              <RecommendationLink category={CATEGORY_COST} service={ALL_SERVICES} dataTestId="block_recommendations_cost_link">
+              <RecommendationLink category={CATEGORY.COST} service={ALL_SERVICES} dataTestId="block_recommendations_cost_link">
                 <FormattedMessage id="cost" />
               </RecommendationLink>
             }
@@ -87,7 +82,7 @@ const RecommendationsCard = ({
           <InfoCard
             title={
               <RecommendationLink
-                category={CATEGORY_SECURITY}
+                category={CATEGORY.SECURITY}
                 service={ALL_SERVICES}
                 dataTestId="block_recommendations_security_link"
               >
@@ -107,7 +102,7 @@ const RecommendationsCard = ({
           <InfoCard
             title={
               <RecommendationLink
-                category={CATEGORY_CRITICAL}
+                category={CATEGORY.CRITICAL}
                 service={ALL_SERVICES}
                 dataTestId="block_recommendations_critical_link"
               >

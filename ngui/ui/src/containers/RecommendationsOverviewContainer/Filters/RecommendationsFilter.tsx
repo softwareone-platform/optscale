@@ -1,19 +1,13 @@
 import { FormControl, InputLabel, MenuItem, OutlinedInput, Select } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
-import {
-  CATEGORY_ALL,
-  CATEGORY_COST,
-  CATEGORY_SECURITY,
-  CATEGORY_CRITICAL,
-  CATEGORY_NON_EMPTY
-} from "../recommendations/BaseRecommendation";
+import { CATEGORY } from "../recommendations/BaseRecommendation";
 
 export const RECOMMENDATIONS_FILTERS = Object.freeze([
-  { messageId: "all", id: CATEGORY_ALL },
-  { messageId: "savings", id: CATEGORY_COST },
-  { messageId: "security", id: CATEGORY_SECURITY },
-  { messageId: "critical", id: CATEGORY_CRITICAL },
-  { messageId: "nonEmpty", id: CATEGORY_NON_EMPTY }
+  { messageId: "all", id: CATEGORY.ALL },
+  { messageId: "savings", id: CATEGORY.COST },
+  { messageId: "security", id: CATEGORY.SECURITY },
+  { messageId: "critical", id: CATEGORY.CRITICAL },
+  { messageId: "nonEmpty", id: CATEGORY.NON_EMPTY }
 ]);
 
 export const POSSIBLE_RECOMMENDATIONS_FILTERS = RECOMMENDATIONS_FILTERS.map(({ id }) => id);

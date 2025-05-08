@@ -2046,6 +2046,7 @@
   "services.network": "Network",
   "services.rds": "RDS",
   "services.s3": "S3",
+  "services.slb": "SLB",
   "set": "Set",
   "setPoolLimit": "Set pool limit",
   "setTo": "Set to",
