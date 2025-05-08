@@ -11,6 +11,7 @@ import Tooltip from "components/Tooltip";
 import { DOCS_HYSTAX_CLEANUP_SCRIPTS, EMAIL_SALES } from "urls";
 import { Menu } from "../RecommendationCard";
 import { useDownloadCleanupScripts, useDownloadItems, usePinItems, useSettingItems } from "./hooks";
+import { DOWNLOAD_FEATURE_ENABLED } from "utils/constants";
 
 const DownloadCleanupScripts = ({ recommendation }) => {
   const downloadCleanupScripts = useDownloadCleanupScripts(recommendation);
@@ -92,7 +93,7 @@ const Actions = ({
   return (
     <Box display="flex">
       {withCleanupScripts && hasItems && <DownloadCleanupScripts recommendation={recommendation} />}
-      {hasItems && (
+      {DOWNLOAD_FEATURE_ENABLED && hasItems && (
         <DownloadItems
           recommendation={recommendation}
           downloadLimit={downloadLimit}
