@@ -142,24 +142,28 @@ export class AuthRequest extends BaseRequest {
         return response;
     }
 
-    async setVerificationCode(email: string, code: string): Promise<APIResponse> {
-        const response = await this.request.post(this.verificationCodesEndpoint, {
-            headers: {
-                "Content-Type": "application/json",
-                Secret: process.env.CLUSTER_SECRET
-            },
-            data: {
-                email,
-                code
-            }
-        });
-        const payload = JSON.parse(await response.text());
-        if (response.status() !== 201) {
-            const reason = payload.error?.reason || "Unknown error";
-            throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
-        }
-        return response;
+async setVerificationCode(email: string, code: string): Promise<APIResponse> {
+    if (!process.env.CLUSTER_SECRET) {
+        throw new Error("CLUSTER_SECRET is not defined in the environment variables.");
     }
+
+    const response = await this.request.post(this.verificationCodesEndpoint, {
+        headers: {
+            "Content-Type": "application/json",
+            Secret: process.env.CLUSTER_SECRET
+        },
+        data: {
+            email,
+            code
+        }
+    });
+    const payload = JSON.parse(await response.text());
+    if (response.status() !== 201) {
+        const reason = payload.error?.reason || "Unknown error";
+        throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
+    }
+    return response;
+}
 
     /**
      * Deletes a user with the provided user ID.

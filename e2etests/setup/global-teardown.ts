@@ -1,9 +1,11 @@
-import { chromium, APIRequestContext } from "@playwright/test";
-import { AuthRequest } from "../api-requests/auth-request";
+import {chromium, APIRequestContext} from "@playwright/test";
+import {AuthRequest} from "../api-requests/auth-request";
 import * as fs from 'fs';
 import * as path from 'path';
 
 async function globalTeardown() {
+    //TODO: At the moment we are not using disposable users and organisations in the tests. When we are, we will delete
+    // via this teardown function.
 //     const cacheDir = path.resolve(__dirname, '../.cache');
 //     const authResponseFiles = fs.readdirSync(cacheDir).filter(file => file.startsWith('auth-response'));
 //
