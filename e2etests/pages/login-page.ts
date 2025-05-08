@@ -36,6 +36,7 @@ export class LoginPage extends BasePage {
         await this.emailInput.fill(email);
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
+        await this.waitForElementDetached(this.loginBtn);
     }
 
     /**
@@ -49,7 +50,7 @@ export class LoginPage extends BasePage {
         await this.emailInput.fill(email);
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
-        await this.loginBtn.waitFor({state: 'detached'});
+        await this.waitForElementDetached(this.loginBtn);
     }
 
     /**
@@ -61,6 +62,7 @@ export class LoginPage extends BasePage {
     async loginWithPreFilledEmail(password: string) {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
+        await this.waitForElementDetached(this.loginBtn);
     }
 
     /**

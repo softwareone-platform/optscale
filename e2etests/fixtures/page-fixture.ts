@@ -21,9 +21,9 @@ import {PoliciesCreatePage} from "../pages/policies-create-page";
 import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
 import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
-import {MailpitPage} from "../pages/mailpit-page";
 import {RegisterPage} from "../pages/register-page";
 import {PendingInvitationsPage} from "../pages/pending-invitations-page";
+import {EmailVerificationPage} from "../pages/email-verification-page";
 
 
 export const test = base.extend<{
@@ -31,6 +31,7 @@ export const test = base.extend<{
     anomaliesCreatePage: AnomaliesCreatePage;
     cloudAccountsPage: CloudAccountsPage;
     cloudAccountsConnectPage: CloudAccountsConnectPage;
+    emailVerificationPage: EmailVerificationPage;
     eventsPage: EventsPage;
     expensesPage: ExpensesPage;
     header: Header;
@@ -67,6 +68,10 @@ export const test = base.extend<{
     cloudAccountsConnectPage: async ({page}, use) => {
         const cloudAccountsConnectPage = new CloudAccountsConnectPage(page);
         await use(cloudAccountsConnectPage);
+    },
+    emailVerificationPage: async ({page}, use) => {
+        const emailVerificationPage = new EmailVerificationPage(page);
+        await use(emailVerificationPage);
     },
     eventsPage: async ({page}, use) => {
         const eventsPage = new EventsPage(page);
