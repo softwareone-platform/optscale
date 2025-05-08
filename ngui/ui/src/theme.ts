@@ -426,6 +426,15 @@ const getThemeConfig = (settings = {}) => {
           })
         }
       },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            "&.MuiPopover-paper .MuiCard-root": {
+              border: "none"
+            }
+          }
+        }
+      },
       MuiButton: {
         defaultProps: {
           size: "small",
