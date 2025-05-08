@@ -22,14 +22,14 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 
     test("[229865] Invite new user to organisation, user accepts @p1", async ({
-                                                                                   header,
-                                                                                   mainMenu,
-                                                                                   usersPage,
-                                                                                   usersInvitePage,
-                                                                                   registerPage,
-                                                                                   pendingInvitationsPage,
-                                                                                   emailVerificationPage
-                                                                               }) => {
+                                                                                  header,
+                                                                                  mainMenu,
+                                                                                  usersPage,
+                                                                                  usersInvitePage,
+                                                                                  registerPage,
+                                                                                  pendingInvitationsPage,
+                                                                                  emailVerificationPage
+                                                                              }) => {
         test.slow();
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
