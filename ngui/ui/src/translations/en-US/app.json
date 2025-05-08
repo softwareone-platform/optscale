@@ -1355,7 +1355,7 @@
   "next": "Next",
   "nextCheckTime": "Next check time",
   "nextExport": "Next export",
-  "nextVerificationCodeCanBeSentInXSeconds": "Verfication code can be sent again in <strong>{seconds}</strong> {seconds, plural,\n  =1 {second}\n other {seconds}\n}",
+  "nextVerificationCodeCanBeSentInXSeconds": "Verification code can be sent again in <strong>{seconds}</strong> {seconds, plural,\n  =1 {second}\n other {seconds}\n}",
   "no": "No",
   "noAbandonedImages": "No abandoned images",
   "noAbandonedInstances": "No abandoned instances",

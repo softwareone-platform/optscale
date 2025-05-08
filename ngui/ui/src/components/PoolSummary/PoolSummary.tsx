@@ -106,7 +106,13 @@ const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
               <Summary name={name} purpose={purpose} limit={limit} owner={owner} />
             </div>
             <div>
-              <Button messageId="edit" onClick={toggleIsEditMode} startIcon={<EditOutlinedIcon />} />
+              <Button
+                messageId="edit"
+                variant="contained"
+                color="primary"
+                onClick={toggleIsEditMode}
+                startIcon={<EditOutlinedIcon />}
+              />
             </div>
           </Stack>
         )}
