@@ -21,60 +21,14 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
     });
 
-    test("[229865] Invite new user to organisation, user accepts", async ({
-                                                                              header,
-                                                                              mainMenu,
-                                                                              usersPage,
-                                                                              usersInvitePage,
-                                                                              registerPage,
-                                                                              pendingInvitationsPage
-                                                                          }) => {
-        test.slow();
-        const requestContext = await request.newContext();
-        const authRequest = new AuthRequest(requestContext);
-
-        await test.step("Navigate to the invitation page", async () => {
-            await mainMenu.clickUserManagement();
-            await usersPage.clickInviteBtn();
-        });
-
-        await test.step("Invite a new user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail);
-            await usersInvitePage.userInvitedAlert.waitFor();
-            await usersInvitePage.userInvitedAlertCloseButton.click();
-        });
-
-        await test.step("Sign out Admin user", async () => {
-            await header.signOut();
-        });
-
-        await test.step("Sign up user", async () => {
-            await registerPage.navigateToRegistration(inviteLink);
-            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
-        });
-
-        await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(60000); // Wait for 1 minute for set verification code timeout
-            await authRequest.setVerificationCode(invitationEmail, verificationCode);
-        });
-
-        await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
-            await pendingInvitationsPage.acceptInviteFlow();
-        });
-
-        await test.step("Assert organization", async () => {
-            await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
-        });
-    });
-
-    test("[229866] Invite new user to organisation, but user declines", async ({
+    test("[229865] Invite new user to organisation, user accepts @p1", async ({
                                                                                    header,
                                                                                    mainMenu,
                                                                                    usersPage,
                                                                                    usersInvitePage,
                                                                                    registerPage,
-                                                                                   pendingInvitationsPage
+                                                                                   pendingInvitationsPage,
+                                                                                   emailVerificationPage
                                                                                }) => {
         test.slow();
         const requestContext = await request.newContext();
@@ -101,30 +55,35 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
 
         await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await emailVerificationPage.waitForVerificationCodeResetTimeout();
             await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
-        await test.step("Verify and decline invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
-            await pendingInvitationsPage.declineInviteFlow();
+        await test.step("Verify and accept invitation from email", async () => {
+            await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
+            await emailVerificationPage.proceedToFinOps();
+            await pendingInvitationsPage.acceptInviteFlow();
         });
 
-        await test.step("Assert no pending invitations message", async () => {
-            await expect(pendingInvitationsPage.noPendingInvitationsMessage).toBeVisible();
+        await test.step("Assert organization", async () => {
+            if (process.env.BASE_URL === process.env.STAGING) {
+                await expect(header.organizationSelect).toContainText("Marketplace Platform");
+            } else {
+                await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
+            }
         });
     });
 
-    test("[229867] Invite new user to organisation, who has previously declined @slow", async ({
-                                                                                                        header,
-                                                                                                        loginPage,
-                                                                                                        mainMenu,
-                                                                                                        usersPage,
-                                                                                                        usersInvitePage,
-                                                                                                        registerPage,
-                                                                                                        pendingInvitationsPage
-                                                                                                    }) => {
-        test.slow();
+    test("[229866] Invite new user to organisation, but user declines", async ({
+                                                                                   header,
+                                                                                   mainMenu,
+                                                                                   usersPage,
+                                                                                   usersInvitePage,
+                                                                                   registerPage,
+                                                                                   pendingInvitationsPage,
+                                                                                   emailVerificationPage
+                                                                               }) => {
+        test.setTimeout(120000);
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
 
@@ -149,12 +108,63 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
 
         await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await emailVerificationPage.waitForVerificationCodeResetTimeout();
             await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
         await test.step("Verify and decline invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
+            await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
+            await emailVerificationPage.proceedToFinOps();
+            await pendingInvitationsPage.declineInviteFlow();
+        });
+
+        await test.step("Assert no pending invitations message", async () => {
+            await expect(pendingInvitationsPage.noPendingInvitationsMessage).toBeVisible();
+        });
+    });
+
+    test("[229867] Invite new user to organisation, who has previously declined @slow", async ({
+                                                                                                   header,
+                                                                                                   loginPage,
+                                                                                                   mainMenu,
+                                                                                                   usersPage,
+                                                                                                   usersInvitePage,
+                                                                                                   registerPage,
+                                                                                                   pendingInvitationsPage,
+                                                                                                   emailVerificationPage
+                                                                                               }) => {
+        test.setTimeout(120000);
+        const requestContext = await request.newContext();
+        const authRequest = new AuthRequest(requestContext);
+
+        await test.step("Navigate to the invitation page", async () => {
+            await mainMenu.clickUserManagement();
+            await usersPage.clickInviteBtn();
+        });
+
+        await test.step("Invite a new user to the organisation", async () => {
+            await usersInvitePage.inviteUser(invitationEmail);
+            await usersInvitePage.userInvitedAlert.waitFor();
+            await usersInvitePage.userInvitedAlertCloseButton.click();
+        });
+
+        await test.step("Sign out Admin user", async () => {
+            await header.signOut();
+        });
+
+        await test.step("Sign up user", async () => {
+            await registerPage.navigateToRegistration(inviteLink);
+            await registerPage.registerUser('Test User', process.env.DEFAULT_USER_PASSWORD);
+        });
+
+        await test.step("Set verification code", async () => {
+            await emailVerificationPage.waitForVerificationCodeResetTimeout();
+            await authRequest.setVerificationCode(invitationEmail, verificationCode);
+        });
+
+        await test.step("Verify and decline invitation from email", async () => {
+            await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
+            await emailVerificationPage.proceedToFinOps();
             await pendingInvitationsPage.declineInviteFlow();
         });
 
@@ -195,9 +205,12 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
         });
 
         await test.step("Assert organization", async () => {
-            await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
+            if (process.env.BASE_URL === process.env.STAGING) {
+                await expect(header.organizationSelect).toContainText("Marketplace Platform");
+            } else {
+                await expect(header.organizationSelect).toContainText("SoftwareOne (Test Env");
+            }
         });
-
     });
 });
 
@@ -219,7 +232,8 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
                                                                             usersInvitePage,
                                                                             registerPage,
                                                                             settingsPage,
-                                                                            pendingInvitationsPage
+                                                                            pendingInvitationsPage,
+                                                                            emailVerificationPage
                                                                         }) => {
         test.setTimeout(120000);
         const requestContext = await request.newContext();
@@ -246,12 +260,13 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         });
 
         await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await emailVerificationPage.waitForVerificationCodeResetTimeout();
             await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
         await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
+            await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
+            await emailVerificationPage.proceedToFinOps();
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
@@ -274,7 +289,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         });
 
         await test.step("Invite a existing user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'SoftwareOne (Test Environment)');
+            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'Marketplace (Dev)');
             await usersInvitePage.userInvitedAlert.waitFor();
             await usersInvitePage.userInvitedAlertCloseButton.click();
         });
@@ -290,7 +305,7 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL(true);
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Engineer at SoftwareOne (Test Environment)')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Engineer at Marketplace (Dev)')).toBeVisible();
         });
     });
 });
@@ -314,9 +329,10 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
                                                                            usersInvitePage,
                                                                            registerPage,
                                                                            settingsPage,
-                                                                           pendingInvitationsPage
+                                                                           pendingInvitationsPage,
+                                                                           emailVerificationPage
                                                                        }) => {
-        test.slow();
+        test.setTimeout(120000);
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
 
@@ -341,12 +357,13 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         });
 
         await test.step("Set verification code", async () => {
-            await header.page.waitForTimeout(61000); // Wait for 1 minute for set verification code timeout
+            await emailVerificationPage.waitForVerificationCodeResetTimeout();
             await authRequest.setVerificationCode(invitationEmail, verificationCode);
         });
 
         await test.step("Verify and accept invitation from email", async () => {
-            await pendingInvitationsPage.page.goto(emailVerificationLink);
+            await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
+            await emailVerificationPage.proceedToFinOps();
             await pendingInvitationsPage.acceptInviteFlow();
         });
 
@@ -363,7 +380,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         });
 
         await test.step("Invite a existing user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail, 'Organization manager');
+            await usersInvitePage.inviteUser(invitationEmail, 'Manager', 'Marketplace (Dev)');
             await usersInvitePage.userInvitedAlert.waitFor();
             await usersInvitePage.userInvitedAlertCloseButton.click();
         });
@@ -379,7 +396,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL(true);
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Manager of SoftwareOne (Test Environment) organization')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Manager at Marketplace (Dev) pool')).toBeVisible();
         });
     });
 });

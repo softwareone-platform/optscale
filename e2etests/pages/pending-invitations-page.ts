@@ -6,8 +6,6 @@ import {BasePage} from "./base-page";
  * Extends the BasePage class.
  */
 export class PendingInvitationsPage extends BasePage {
-    readonly confirmBtn: Locator;
-    readonly proceedToFinOpsBtn: Locator;
     readonly acceptBtn: Locator;
     readonly declineBtn: Locator;
     readonly noPendingInvitationsMessage: Locator;
@@ -18,8 +16,6 @@ export class PendingInvitationsPage extends BasePage {
      */
     constructor(page: Page) {
         super(page, '/pending_invitations');
-        this.confirmBtn = this.page.getByRole('button', {name: 'Confirm'});
-        this.proceedToFinOpsBtn = this.page.getByRole('button', {name: 'Proceed to FinOps for Cloud'});
         this.acceptBtn = this.page.getByRole('button', {name: 'Accept'});
         this.declineBtn = this.page.getByRole('button', {name: 'Decline'});
         this.noPendingInvitationsMessage = this.main.getByRole('heading', {name: 'No invitations pending'});
@@ -30,8 +26,7 @@ export class PendingInvitationsPage extends BasePage {
      * @returns {Promise<void>}
      */
     async acceptInviteFlow() {
-        await this.confirmBtn.click();
-        await this.proceedToFinOpsBtn.click();
+
         await this.acceptBtn.click();
     }
 
@@ -40,8 +35,6 @@ export class PendingInvitationsPage extends BasePage {
      * @returns {Promise<void>}
      */
     async declineInviteFlow() {
-        await this.confirmBtn.click();
-        await this.proceedToFinOpsBtn.click();
         await this.declineBtn.click();
     }
 
