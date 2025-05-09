@@ -63,8 +63,9 @@ const RecommendationsPage = ({ isMock }) => {
         dataTestId: "btn_force_check",
         icon: <CachedOutlinedIcon />,
         messageId: "forceCheck",
+        variant: "contained",
         type: "button",
-        color: "primary",
+        color: "secondary",
         disabled: isRestricted || !isForceCheckAvailable,
         action: forceCheck,
         tooltip: {

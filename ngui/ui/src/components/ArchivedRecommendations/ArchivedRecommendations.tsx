@@ -13,7 +13,7 @@ import ArchivedRecommendationsDetailsContainer from "containers/ArchivedRecommen
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { RECOMMENDATIONS } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { DATE_RANGE_TYPE } from "utils/constants";
+import { DATE_RANGE_TYPE, DOWNLOAD_FEATURE_ENABLED } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
@@ -80,7 +80,8 @@ const ArchivedRecommendations = ({
         type: "button",
         action: onDownload,
         isLoading: isDownloading,
-        dataTestId: "btn_download"
+        dataTestId: "btn_download",
+        show: DOWNLOAD_FEATURE_ENABLED
       }
     ]
   };
