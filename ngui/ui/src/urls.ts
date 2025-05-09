@@ -559,28 +559,28 @@ export const FINOPS_HOWTOS = "https://finopsinpractice.org/blog-posts-list-for-o
 export const JIRA_MARKETPLACE = "https://marketplace.atlassian.com/apps/1227110/hystax-optscale-for-jira";
 
 // Hystax documentation urls
-export const DOCS_HYSTAX_OPTSCALE = "https://docs.platform.softwareone.com/extensions/finops-for-cloud/";
+export const DOCS_HYSTAX_OPTSCALE = "https://docs.finops.softwareone.com/";
 
 const docUrl = (path: string) => `${DOCS_HYSTAX_OPTSCALE}${path}` as const;
 const dataSourceConnectionDocUrl = (docPath: string) => docUrl(`e2e_guides/${docPath}`);
 
-export const DOCS_HYSTAX_CONNECT_AWS_ROOT = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured`;
-export const DOCS_HYSTAX_CONNECT_AWS_LINKED = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-linked`;
-export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
-export const DOCS_HYSTAX_CONNECT_AZURE_TENANT = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
-export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
-export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_CONNECT_AWS_ROOT = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured`;
+export const DOCS_HYSTAX_CONNECT_AWS_LINKED = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-linked`;
+export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_AZURE_TENANT = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/google-cloud-platform`;
 export const DOCS_HYSTAX_RESOURCE_CONSTRAINTS = `${DOCS_HYSTAX_OPTSCALE}insights/resources/resources-constraint-policies`;
-export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}recommendations/clean-up-scripts-based-on-recommendations`;
-export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/migrate-from-cur-to-data-exports-cur-2.0`;
+export const DOCS_HYSTAX_CLEANUP_SCRIPTS = `${DOCS_HYSTAX_OPTSCALE}insights/recommendations/clean-up-scripts-based-on-recommendations`;
+export const DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/migrate-from-cur-to-data-exports-cur-2.0`;
 export const DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#discover-resources`;
 export const DOCS_MARKETPLACE_PENDING_INVITATIONS = `https://docs.finops.softwareone.com/#first-time-login`;
 
 // Not in use
-export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#automatic-billing-data-import-in-aws`;
-export const DOCS_HYSTAX_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}data-sources/amazon-web-services/aws-linked#discover-resources`;
-export const DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT = `${DOCS_HYSTAX_OPTSCALE}data-sources/microsoft-azure`;
-export const DOCS_HYSTAX_CONNECT_GCP_CLOUD = `${DOCS_HYSTAX_OPTSCALE}data-sources/google-cloud-platform`;
+export const DOCS_HYSTAX_AUTO_BILLING_AWS = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured#automatic-billing-data-import-in-aws`;
+export const DOCS_HYSTAX_DISCOVER_RESOURCES = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-linked#discover-resources`;
+export const DOCS_HYSTAX_CONNECT_AZURE_ACCOUNT = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/microsoft-azure`;
+export const DOCS_HYSTAX_CONNECT_GCP_CLOUD = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/google-cloud-platform`;
 export const DOCS_HYSTAX_CONNECT_KUBERNETES = dataSourceConnectionDocUrl("e2e_kubernetes.html#kubernetes");
 export const DOCS_HYSTAX_CONNECTING_A_KUBERNETES_CLUSTER_TO_OPTSCALE = `${DOCS_HYSTAX_OPTSCALE}e2e_guides/e2e_kubernetes.html#connecting-a-kubernetes-cluster-to-optscale`;
 
@@ -592,8 +592,9 @@ export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = dataSourceConnectionDocUrl("e2e
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =
   "https://github.com/hystax/helm-charts/tree/main/charts/kube-cost-metrics-collector";
-export const GITHUB_HYSTAX_OPTSCALE_REPO = "https://github.com/hystax/optscale";
-export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS = "https://github.com/hystax/optscale_tools/tree/main/extract_linked_reports";
+export const GITHUB_HYSTAX_OPTSCALE_REPO = "https://github.com/softwareone-platform/optscale";
+export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS =
+  "https://github.com/softwareone-platform/optscale_tools/tree/main/extract_linked_reports";
 export const PYPI_OPTSCALE_ARCEE = "https://pypi.org/project/optscale-arcee";
 
 // Nebius documentation
