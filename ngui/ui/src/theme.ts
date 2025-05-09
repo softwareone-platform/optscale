@@ -426,6 +426,15 @@ const getThemeConfig = (settings = {}) => {
           })
         }
       },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            "&.MuiPopover-paper .MuiCard-root": {
+              border: "none"
+            }
+          }
+        }
+      },
       MuiButton: {
         defaultProps: {
           size: "small",
@@ -710,7 +719,10 @@ const getThemeConfig = (settings = {}) => {
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            color: "black"
+            color: "black",
+            ".MuiFormControl-root:has(.Mui-readOnly) &.Mui-focused": {
+              color: MPT_GRAY_4
+            }
           }
         },
         defaultProps: {
