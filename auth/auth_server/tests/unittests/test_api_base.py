@@ -44,6 +44,8 @@ class TestAuthBase(tornado.testing.AsyncHTTPTestCase):
               return_value=secret).start()
         patch('optscale_client.config_client.client.Client.zoho_params',
               return_value={}).start()
+        patch('optscale_client.config_client.client.Client.'
+              'password_strength_settings', return_value={}).start()
         patch('optscale_client.config_client.client.'
               'Client.disable_email_verification',
               return_value=None).start()
