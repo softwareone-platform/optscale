@@ -56,6 +56,21 @@ export default defineConfig({
       name: "chrome",
       use: {
         channel: "chrome",
+        viewport: {width: 1920, height: 1080},
+        launchOptions: {
+          args: [
+            '--disable-gpu',
+            '--disable-font-subpixel-positioning',
+            '--disable-lcd-text',
+            '--font-render-hinting=none',
+            '--disable-accelerated-2d-canvas',
+          ],
+        },
+        contextOptions: {
+          deviceScaleFactor: 1,
+          reducedMotion: 'reduce',
+          ignoreHTTPSErrors: true,
+        },
       },
       dependencies: ["setup"],
     },
