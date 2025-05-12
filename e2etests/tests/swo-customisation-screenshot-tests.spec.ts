@@ -158,11 +158,13 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
         });
 
         await test.step('Verify Pools page content', async () => {
+            await poolsPage.heading.hover();
             await expect(poolsPage.main).toHaveScreenshot('Pools-landing-screenshot.png');
         });
 
         await test.step('Verify Pools page with expanded requiring attention', async () => {
             await poolsPage.clickExpandRequiringAttentionBtn();
+            await poolsPage.heading.hover();
             await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
         });
     });
