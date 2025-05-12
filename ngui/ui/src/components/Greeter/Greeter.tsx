@@ -20,7 +20,7 @@ import IntegrationsGallery from "components/IntegrationsGallery";
 import Logo from "components/Logo";
 import SubTitle from "components/SubTitle";
 import TopAlertWrapper from "components/TopAlertWrapper";
-import { ALERT_TYPES } from "components/TopAlertWrapper/TopAlertWrapper";
+import { ALERT_TYPES } from "components/TopAlertWrapper/constants";
 import { useIsDownMediaQuery, useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { HYSTAX, LIVE_DEMO, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { tag as tagHotjar } from "utils/hotjar";
