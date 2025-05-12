@@ -1,0 +1,1 @@
+from tools.optscale_password.optscale_password import PasswordValidator

@@ -540,3 +540,9 @@ class Client(etcd.Client):
         Get settings for bi scheduler and exporter
         """
         return self.read_branch('/bi_settings')
+
+    def password_strength_settings(self):
+        """
+        Get password strength settings
+        """
+        return self.read_branch('/password_strength_settings')

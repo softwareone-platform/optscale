@@ -205,3 +205,6 @@ class Err(enum.Enum):
     OA0073 = [
         "Email not verified"
     ]
+    OA0074 = [
+        "Validation error: %s",
+    ]
