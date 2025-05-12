@@ -19,6 +19,7 @@ from sqlalchemy import and_, true
 
 from tools.cloud_adapter.model import ResourceTypes
 from tools.optscale_exceptions.common_exc import InternalServerError
+from tools.optscale_password.optscale_password import PasswordValidator
 from rest_api.rest_api_server.controllers.base import (
     BaseController, MongoMixin, BaseProfilingTokenController, ClickHouseMixin)
 from rest_api.rest_api_server.controllers.base_async import (
@@ -255,6 +256,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             'power_schedule_id': ObjectGroups.PowerSchedules.value,
         }
         self._multiplier = None
+        self._password_generator = None
         self._run_factors = defaultdict(lambda: (1, 1, 1))
         self._duplication_module_res_info_map = defaultdict(dict)
         self._origin_res_duplication_info = defaultdict(dict)
@@ -368,12 +370,29 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
                 OrganizationConstraintTypes.EXPIRING_BUDGET.value,
                 OrganizationConstraintTypes.RECURRING_BUDGET.value}
 
-    @staticmethod
-    def _get_basic_params():
+    def _get_password_settings(self):
+        settings = {}
+        try:
+            settings = self._config.password_strength_settings()
+        except etcd.EtcdKeyNotFound:
+            pass
+        return settings
+
+    @property
+    def password_generator(self):
+        if not self._password_generator:
+            passw_generator = PasswordValidator()
+            settings = self._get_password_settings()
+            passw_generator.change_settings(**settings)
+            self._password_generator = passw_generator
+        return self._password_generator
+
+    def _get_basic_params(self):
         org = DEMO_ORG_TEMPLATE
         name = DEMO_USER_NAME
-        passwd = str(uuid.uuid4().hex)
-        email = EMAIL_TEMPLATE % passwd
+        unique_id = str(uuid.uuid4().hex)
+        passwd = unique_id + self.password_generator.generate()
+        email = EMAIL_TEMPLATE % unique_id
         return org, name, email, passwd
 
     @staticmethod
@@ -1205,12 +1224,11 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             })
         return pool_relations
 
-    @staticmethod
-    def _get_auth_user_params(auth_user_data):
+    def _get_auth_user_params(self, auth_user_data):
         email_head = auth_user_data['user_email'].split('@')[0]
         email = EMAIL_TEMPLATE % '%s.%s' % (email_head, str(uuid.uuid4().hex))
         name = auth_user_data['user_display_name']
-        password = str(uuid.uuid4().hex)
+        password = self.password_generator.generate()
         return email, name, password
 
     def _bind_auth_users(self, organization_id, ignore_list, auth_users_data):

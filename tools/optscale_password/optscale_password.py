@@ -1,4 +1,5 @@
 import re
+import random
 import string
 
 
@@ -47,3 +48,20 @@ class PasswordValidator:
             raise ValueError(
                 f"Password must contain at least {self.min_special_chars} "
                 f"special char{'s'[:self.min_special_chars ^ 1]}")
+
+    def generate(self):
+        spec_chars = string.punctuation.replace('\\', '')
+        param_str_examples = [
+            (self.min_lowercase, string.ascii_lowercase),
+            (self.min_uppercase, string.ascii_uppercase),
+            (self.min_digits, string.digits),
+            (self.min_special_chars, spec_chars),
+        ]
+        result = ''
+        for data in param_str_examples:
+            param, str_examples = data
+            for _ in range(0, param):
+                result = result + random.choice(str_examples)
+        for _ in range(len(result), self.min_length):
+            result = result + 'x'
+        return result
