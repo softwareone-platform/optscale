@@ -1308,6 +1308,7 @@
   "mlTasksDescription": "A list of profiled tasks, including their status, goals, expenses, and output metrics from the most recent run. Add any new ML/AI or regular task that you wish to profile.",
   "mlai": "ML/AI",
   "mlops": "MLOps",
+  "mlopsFunctionalityRemovalAnnouncement": "All MLOps-related functionality in OptScale will be disabled and removed soon. Please contact {email} if you need help with transition of your existing MLOps data to our new MLOps platform.",
   "model": "Model",
   "modelVersions": "Model versions",
   "models": "Models",

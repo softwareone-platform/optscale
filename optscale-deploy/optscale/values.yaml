@@ -1067,3 +1067,11 @@ bi_settings:
   exporter_run_period: 86400 #in sec 24h
   encryption_key: 5t3X3PkQqF5edqW9_c8znow7k7GraZOpBLHhF1kFFvE=
   task_wait_timeout: 259200 #in sec 3d
+
+# settings for password strength policy
+password_strength_settings:
+  min_length:
+  min_lowercase:
+  min_uppercase:
+  min_digits:
+  min_special_chars:

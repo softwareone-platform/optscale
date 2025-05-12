@@ -247,4 +247,10 @@ etcd:
     filename: {{ .Values.failed_imports_dataset_generator.filename }}
     aws_access_key_id: {{ .Values.failed_imports_dataset_generator.aws_access_key_id }}
     aws_secret_access_key: {{ .Values.failed_imports_dataset_generator.aws_secret_access_key }}
+  password_strength_settings:
+    min_length: {{ .Values.password_strength_settings.min_length }}
+    min_lowercase: {{ .Values.password_strength_settings.min_lowercase }}
+    min_uppercase: {{ .Values.password_strength_settings.min_uppercase }}
+    min_digits: {{ .Values.password_strength_settings.min_digits }}
+    min_special_chars: {{ .Values.password_strength_settings.min_special_chars }}
 {{- end }}
