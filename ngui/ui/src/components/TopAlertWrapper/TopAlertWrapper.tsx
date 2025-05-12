@@ -1,22 +1,18 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
+import MailTo from "components/MailTo";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 // import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useRootData } from "hooks/useRootData";
+import { EMAIL_SUPPORT, GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
+import { ALERT_TYPES, IS_EXISTING_USER } from "./constants";
 import { useAllAlertsSelector } from "./selectors";
 import TopAlert from "./TopAlert";
-
-export const ALERT_TYPES = Object.freeze({
-  DATA_SOURCES_ARE_PROCESSING: 2,
-  DATA_SOURCES_PROCEEDED: 3,
-  OPEN_SOURCE_ANNOUNCEMENT: 4,
-  INACTIVE_ORGANIZATION: 5
-});
-
-export const IS_EXISTING_USER = "isExistingUser";
+import type { AlertType, StoredAlert, TopAlertWrapperProps } from "./types";
 
 const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) => ![ENVIRONMENT, AZURE_TENANT].includes(type));
 
@@ -45,7 +41,7 @@ const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) =>
 //   );
 // };
 
-const TopAlertWrapper = ({ blacklistIds = [] }) => {
+const TopAlertWrapper = ({ blacklistIds = [] }: TopAlertWrapperProps) => {
   const dispatch = useDispatch();
 
   const { organizationId, disabled: isOrganizationDisabled } = useOrganizationInfo();
@@ -65,7 +61,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
   const hasDataSourceInProcessing = eligibleDataSources.some(({ last_import_at: lastImportAt }) => lastImportAt === 0);
 
   const updateOrganizationTopAlert = useCallback(
-    (alert) => {
+    (alert: StoredAlert) => {
       dispatch(updateOrganizationTopAlertActionCreator(organizationId, alert));
     },
     [dispatch, organizationId]
@@ -87,7 +83,7 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       ({ id, triggered }) => id === ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING && triggered
     );
 
-    const isTriggered = (alertId) => {
+    const isTriggered = (alertId: AlertType) => {
       const { triggered = false } = storedAlerts.find(({ id }) => id === alertId) || {};
       return triggered;
     };
@@ -168,6 +164,24 @@ const TopAlertWrapper = ({ blacklistIds = [] }) => {
       //     updateOrganizationTopAlert({ id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT, closed: true });
       //   },
       //   dataTestId: "top_alert_open_source_announcement"
+      // },
+      // {
+      //   id: ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT,
+      //   condition: userId && organizationId,
+      //   type: "info",
+      //   triggered: isTriggered(ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT),
+      //   getContent: () => (
+      //     <FormattedMessage
+      //       id="mlopsFunctionalityRemovalAnnouncement"
+      //       values={{
+      //         email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} color="white" />
+      //       }}
+      //     />
+      //   ),
+      //   onClose: () => {
+      //     updateOrganizationTopAlert({ id: ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT, closed: true });
+      //   },
+      //   dataTestId: "top_alert_mlops_removal_announcement"
       // }
     ];
   }, [storedAlerts, organizationId, isOrganizationDisabled, hasDataSourceInProcessing, updateOrganizationTopAlert]);
