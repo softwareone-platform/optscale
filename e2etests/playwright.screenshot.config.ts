@@ -1,4 +1,4 @@
-import {defineConfig, devices} from '@playwright/test';
+import {defineConfig} from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -11,7 +11,7 @@ export default defineConfig({
   globalSetup: "./setup/global-setup.ts",
   globalTeardown: "./setup/global-teardown.ts",
   testDir: '../e2etests',
-  testIgnore: ['**/screenshots/**'],
+  testMatch: /swo-customisation-screenshot-tests\.spec\.ts/,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -21,13 +21,19 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 3,
   /* Individual test timeout,test.slow() annotation triples this value for decorated tests*/
-  timeout: 45000,
+  timeout: 30000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["list"],
     ["json", {outputFile: "results.json"}],
-    ["html", {open: "never"}],
+    ["html", {open: "on-failure"}],
   ],
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      stylePath: './tests/screenshots/styles/pre-screenshot-styles.css'
+    },
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 10000,
@@ -45,42 +51,29 @@ export default defineConfig({
   },
 
   projects: [
-    // Setup project
-    {name: "setup", testMatch: /.*\.setup\.ts/},
+    {
+      name: "setup",
+      testMatch: /auth-live-demo\.setup\.ts/
+    },
     {
       name: "chrome",
       use: {
         channel: "chrome",
         viewport: {width: 1920, height: 1080},
-      },
-      dependencies: ["setup"],
-    },
-    {
-      name: "firefox",
-      use: {
-        browserName: "firefox",
-      },
-      dependencies: ["setup"],
-    },
-    {
-      name: "Microsoft Edge",
-      use: {
-        channel: "msedge",
-      },
-      dependencies: ["setup"],
-    },
-    // {
-    //   name: "Mobile Safari",
-    //   use: {
-    //     ...devices["iPad Mini"],
-    //     viewport: {width: 744, height: 1024},
-    //   },
-    //   dependencies: ["setup"],
-    // },
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
+        launchOptions: {
+          args: [
+            '--disable-gpu',
+            '--disable-font-subpixel-positioning',
+            '--disable-lcd-text',
+            '--font-render-hinting=none',
+            '--disable-accelerated-2d-canvas',
+          ],
+        },
+        contextOptions: {
+          deviceScaleFactor: 1,
+          reducedMotion: 'reduce',
+          ignoreHTTPSErrors: true,
+        },
       },
       dependencies: ["setup"],
     },
