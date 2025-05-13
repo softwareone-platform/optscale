@@ -907,6 +907,17 @@ run_observer:
   startingDeadlineSeconds: 100
   schedule: "*/30 * * * *"
 
+deactivatorg:
+  name: deactivatorg
+  image:
+    repository: deactivatorg
+    tag: *tag
+    pullPolicy: Never
+  startingDeadlineSeconds: 100
+  schedule: "0 2 * * *"
+  enable: true
+  days_limit: 30
+
 # list of databases to create (if not exist) during DC initialization
 databases:
   - auth-db

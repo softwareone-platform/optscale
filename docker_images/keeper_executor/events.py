@@ -569,3 +569,15 @@ class Events(enum.Enum):
         ['object_name', 'object_id'],
         "INFO"
     ]
+    N0161 = [
+        'Organization {object_name} ({object_id}) disabled. '
+        'Data processing has been suspended.',
+        ['object_name', 'object_id'],
+        "INFO"
+    ]
+    N0162 = [
+        'Organization {object_name} ({object_id}) enabled. '
+        'Data processing will continue soon.',
+        ['object_name', 'object_id'],
+        "INFO"
+    ]

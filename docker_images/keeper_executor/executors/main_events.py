@@ -68,6 +68,8 @@ class MainEventExecutor(BaseEventExecutor):
             'calendar_observer_warning': Events.N0119,
             'technical_audit_submit': Events.N0120,
             'env_power_mngmt': Events.N0122,
+            'organization_disabled': Events.N0161,
+            'organization_enabled': Events.N0162,
         }
 
     def _execute(self, event, task):
