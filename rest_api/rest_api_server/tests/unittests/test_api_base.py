@@ -582,12 +582,6 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         query = ' '.join(list(filter(
             lambda x: x != '', query.replace('\n', ' ').split(' '))))
 
-        def remove_header(csv_bytes: bytes) -> bytes:
-            csv_str = csv_bytes.decode('utf-8')
-            lines = csv_str.splitlines()
-            data_lines = lines[1:]  # remove header
-            return '\n'.join(data_lines).encode('utf-8')
-
         def get_csv(path):
             return f"file('{path}/{name}.csv', 'CSV', '{structure}')"
         ch_expenses_map = {
@@ -672,8 +666,7 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                 data = external_table.data
                 file_path = f'{tmp_dir}/{name}.csv'
                 with open(file_path, 'wb') as csvfile:
-                    dat = remove_header(data)
-                    csvfile.write(dat)
+                    csvfile.write(data)
                 if f'JOIN {name}' in query:
                     query = query.replace(
                         f"JOIN {name}",
