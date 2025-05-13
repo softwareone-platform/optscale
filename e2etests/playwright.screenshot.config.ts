@@ -11,7 +11,7 @@ export default defineConfig({
   globalSetup: "./setup/global-setup.ts",
   globalTeardown: "./setup/global-teardown.ts",
   testDir: '../e2etests',
-  testIgnore: ['**/screenshots/**'],
+  testMatch: /swo-customisation-screenshot-tests\.spec\.ts/,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -26,8 +26,14 @@ export default defineConfig({
   reporter: [
     ["list"],
     ["json", {outputFile: "results.json"}],
-    ["html", {open: "never"}],
+    ["html", {open: "on-failure"}],
   ],
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      stylePath: './tests/screenshots/styles/pre-screenshot-styles.css'
+    },
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 10000,
@@ -45,46 +51,32 @@ export default defineConfig({
   },
 
   projects: [
-    {name: "setup", testMatch: /.*\.setup\.ts/},
+    {
+      name: "setup",
+      testMatch: /auth-live-demo\.setup\.ts/
+    },
     {
       name: "chrome",
       use: {
         channel: "chrome",
         viewport: {width: 1920, height: 1080},
+        launchOptions: {
+          args: [
+            '--disable-gpu',
+            '--disable-font-subpixel-positioning',
+            '--disable-lcd-text',
+            '--font-render-hinting=none',
+            '--disable-accelerated-2d-canvas',
+          ],
+        },
+        contextOptions: {
+          deviceScaleFactor: 1,
+          reducedMotion: 'reduce',
+          ignoreHTTPSErrors: true,
+        },
       },
       dependencies: ["setup"],
     },
-    // {
-    //   name: 'firefox',
-    //   use: {
-    //     browserName: "firefox",
-    //   },
-    //   dependencies: ["setup"],
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
 
   /* Run your local dev server before starting the tests */
