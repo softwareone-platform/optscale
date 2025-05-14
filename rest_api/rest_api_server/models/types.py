@@ -14,7 +14,8 @@ from rest_api.rest_api_server.models.enums import (
     ThresholdBasedTypes, ConstraintTypes, PoolPurposes,
     InviteAssignmentScopeTypes, CostModelTypes, WebhookObjectTypes,
     WebhookActionTypes, ConstraintLimitStates, OrganizationConstraintTypes,
-    BIOrganizationStatuses, BITypes, GeminiStatuses, PowerScheduleActions)
+    BIOrganizationStatuses, BITypes, GeminiStatuses, PowerScheduleActions,
+    OrganizationDisableTypes)
 from rest_api.rest_api_server.utils import (
     is_email_format, is_uuid, is_valid_meta, MAX_32_INT,
     get_encryption_key, gen_id, MAX_64_INT,
@@ -510,3 +511,7 @@ class GeminiStatus(BaseType):
 
 class PowerScheduleAction(BaseType):
     impl = Enum(PowerScheduleActions)
+
+
+class OrganizationDisableType(BaseType):
+    impl = Enum(OrganizationDisableTypes)

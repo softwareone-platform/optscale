@@ -56,6 +56,7 @@ AWS_CUR_PREFIX_MAP = {
     'resource_tags': (False, []),
     'cost_category': (False, []),
 }
+EDP_DISCOUNTS = ['discount/EdpDiscount', 'discount/PrivateRateDiscount']
 
 
 class AWSReportImporter(CSVBaseReportImporter):
@@ -79,6 +80,11 @@ class AWSReportImporter(CSVBaseReportImporter):
         }
         self.import_start_ts = int(opttime.utcnow().timestamp())
         self.current_billing_period = None
+
+    @cached_property
+    def strip_edp(self):
+        result = self.config_cl.get("/force_aws_edp_strip").value
+        return result if result == "True" else False
 
     @cached_property
     def use_edp_discount(self):
@@ -441,7 +447,11 @@ class AWSReportImporter(CSVBaseReportImporter):
                 row['cost'] = float(row['lineItem/BlendedCost']) if row[
                     'lineItem/BlendedCost'] else 0
                 if self.use_edp_discount:
-                    row['cost'] += float(row.get('discount/EdpDiscount') or 0)
+                    for field in EDP_DISCOUNTS:
+                        row['cost'] += float(row.get(field) or 0)
+                elif self.strip_edp:
+                    for field in EDP_DISCOUNTS:
+                        row.pop(field, None)
                 if self._is_flavor_usage(row):
                     row['box_usage'] = True
                 for k, v in row.copy().items():
@@ -500,9 +510,11 @@ class AWSReportImporter(CSVBaseReportImporter):
                             value)
                     elif field_name == 'lineItem/BlendedCost':
                         chunk[expense_num]['cost'] = float(value) if value else 0
-                    elif (self.use_edp_discount and
-                          field_name == 'discount/EdpDiscount' and value):
-                        chunk[expense_num]['cost'] += float(value)
+                    elif field_name in EDP_DISCOUNTS:
+                        if self.use_edp_discount:
+                            chunk[expense_num]['cost'] += float(value or 0)
+                        elif self.strip_edp:
+                            continue
                     elif field_name == 'lineItem/UsageType':
                         if value and 'BoxUsage' in value:
                             chunk[expense_num]['box_usage'] = True

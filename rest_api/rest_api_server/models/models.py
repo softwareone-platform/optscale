@@ -35,7 +35,7 @@ from rest_api.rest_api_server.models.types import (
     MediumNullableString, MediumString, MediumLargeNullableString,
     ConstraintLimitState, OrganizationConstraintType, ConstraintDefinition,
     RunResult, BIOrganizationStatus, BIType, Float, GeminiStatus,
-    HMTimeString, TimezoneString, PowerScheduleAction)
+    HMTimeString, TimezoneString, PowerScheduleAction, OrganizationDisableType)
 
 
 class PermissionKeys(Enum):
@@ -164,8 +164,8 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
                       info=ColumnPermissions.full, default='USD')
     cleaned_at = Column(NullableInt('cleaned_at'), default=0, nullable=False,
                         info=ColumnPermissions.update_only)
-    disabled = Column(NullableBool('disabled'), nullable=False,
-                      default=False, info=ColumnPermissions.update_only)
+    disabled = Column(OrganizationDisableType('disabled'), nullable=True,
+                      info=ColumnPermissions.update_only)
 
     @validates('id')
     def _validate_id(self, key, id):
@@ -190,6 +190,11 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
     @validates('disabled')
     def _validate_disabled(self, key, name):
         return self.get_validator(key, name)
+
+    def to_dict(self):
+        result = super().to_dict()
+        result['disabled'] = True if result['disabled'] else False
+        return result
 
 
 class Pool(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
