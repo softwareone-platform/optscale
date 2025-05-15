@@ -1,0 +1,6 @@
+# Ignore everything in screenshots
+*
+
+# Allow linux folder and its contents
+!linux/
+!linux/**

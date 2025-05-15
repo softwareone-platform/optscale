@@ -1,4 +1,6 @@
 import {defineConfig} from '@playwright/test';
+import os from 'os';
+const platform = os.platform();
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -10,6 +12,7 @@ dotenv.config({path: path.resolve(__dirname, '.env.local')});
 export default defineConfig({
   testDir: './/',
   testMatch: /swo-screenshot-tests\.spec\.ts/,
+  snapshotPathTemplate: `./tests/screenshots/snapshots/${platform}/{arg}{ext}`,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
