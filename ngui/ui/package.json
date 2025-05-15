@@ -79,7 +79,7 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "scripts": {
-    "start": "vite",
+    "start": "vite --host",
     "start:ci": "pnpm install --frozen-lockfile --ignore-scripts && pnpm start",
     "build": "vite build",
     "preview": "vite preview",
