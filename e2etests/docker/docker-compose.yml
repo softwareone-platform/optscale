@@ -4,9 +4,9 @@ services:
     ports:
       - "9323:9323"
     volumes:
+      - ../playwright.screenshot.config.ts:/app/playwright.screenshot.config.ts
       - ../tests:/app/tests
       - ../tests/screenshots:/app/tests/screenshots
-      - ../playwright.screenshot.config.ts:/app/playwright.screenshot.config.ts
       - ../playwright-report:/app/playwright-report
       - ../api-requests:/app/api-requests
       - ../.env.local:/app/.env.local
