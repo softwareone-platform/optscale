@@ -1,0 +1,26 @@
+services:
+  screenshot:
+    image: playwright-screenshot-tests
+    ports:
+      - "9323:9323"
+    volumes:
+      - ../tests:/app/tests
+      - ../tests/screenshots:/app/tests/screenshots
+      - ../playwright.screenshot.config.ts:/app/playwright.screenshot.config.ts
+      - ../playwright-report:/app/playwright-report
+      - ../api-requests:/app/api-requests
+      - ../.env.local:/app/.env.local
+      - ../package.json:/app/package.json
+      - ../fixtures:/app/fixtures
+      - ../.cache:/app/.cache
+      - ../pages:/app/pages
+      - ../setup:/app/setup
+      - ../test-data:/app/test-data
+      - ../utils:/app/utils
+    environment:
+      - CI=${CI}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    stdin_open: true
+    tty: true
+    command: npm run playwright:screenshot

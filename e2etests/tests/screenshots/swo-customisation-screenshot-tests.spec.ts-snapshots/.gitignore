@@ -1,0 +1,7 @@
+# Ignore all PNG files
+*.png
+*.jpg
+*.jpeg
+
+# But do NOT ignore files ending with -linux.png
+!*linux.png
