@@ -8,25 +8,17 @@ dotenv.config({path: path.resolve(__dirname, '.env.local')});
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  globalSetup: "./setup/global-setup.ts",
-  globalTeardown: "./setup/global-teardown.ts",
-  testDir: '../e2etests',
+  testDir: './/',
   testMatch: /swo-customisation-screenshot-tests\.spec\.ts/,
-  /* Run tests in files in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 3,
-  /* Individual test timeout,test.slow() annotation triples this value for decorated tests*/
+  workers: process.env.CI ? 1 : 4,
   timeout: 30000,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["list"],
     ["json", {outputFile: "results.json"}],
-    ["html", {open: "on-failure"}],
+    ["html", {open: "never"}],
   ],
   expect: {
     toHaveScreenshot: {
@@ -56,9 +48,9 @@ export default defineConfig({
       testMatch: /auth-live-demo\.setup\.ts/
     },
     {
-      name: "chrome",
+      name: "chromium",
       use: {
-        channel: "chrome",
+        channel: "chromium",
         viewport: {width: 1920, height: 1080},
         launchOptions: {
           args: [
