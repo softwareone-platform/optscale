@@ -14,7 +14,7 @@ import {
   RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
 import { CLEAN_EXPENSES_BREAKDOWN_TYPES } from "utils/constants";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 
 const Resources = () => {
   const [searchParams] = useSearchParams();
@@ -48,7 +48,7 @@ const Resources = () => {
         [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: breakdownBy
       };
 
-      const toSearchParams = formQueryString({
+      const toSearchParams = stringifySearchParams({
         ...restParams,
         ...perspectiveSearchParams,
         [RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME]: perspective

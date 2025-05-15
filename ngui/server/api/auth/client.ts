@@ -4,6 +4,7 @@ import {
   MutationUpdateUserArgs,
   OrganizationAllowedActionsRequestParams,
 } from "../../graphql/resolvers/auth.generated.js";
+import { getParams } from "../../utils/getParams.js";
 
 class AuthClient extends BaseClient {
   override baseURL = `${process.env.AUTH_ENDPOINT || this.endpoint}/auth/v2/`;
@@ -11,8 +12,13 @@ class AuthClient extends BaseClient {
   async getOrganizationAllowedActions(
     requestParams: OrganizationAllowedActionsRequestParams
   ) {
-    const path = `allowed_actions?organization=${requestParams.organization}`;
-    const actions = await this.get(path);
+    const path = `allowed_actions`;
+
+    const actions = await this.get(path, {
+      params: getParams({
+        organization: requestParams.organization,
+      }),
+    });
 
     return actions.allowed_actions;
   }

@@ -5,7 +5,7 @@ import OrganizationOptions from "components/OrganizationOptions";
 import { useInitialMount } from "hooks/useInitialMount";
 import OrganizationOptionsService from "services/OrganizationOptionsService";
 import { isError } from "utils/api";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const OPTION = "option";
 
@@ -14,11 +14,11 @@ const OrganizationOptionsContainer = () => {
   const { isInitialMount, setIsInitialMount } = useInitialMount();
   const [requestedOption, setRequestedOption] = useState();
 
-  const { [OPTION]: optionQueryParam } = getQueryParams();
+  const { [OPTION]: optionQueryParam } = getSearchParams();
   const [expandedOption, setExpandedOption] = useState(optionQueryParam);
 
   useEffect(() => {
-    updateQueryParams({ [OPTION]: expandedOption });
+    updateSearchParams({ [OPTION]: expandedOption });
   }, [expandedOption]);
 
   const { useGet, useGetOption, useUpdateOption } = OrganizationOptionsService();

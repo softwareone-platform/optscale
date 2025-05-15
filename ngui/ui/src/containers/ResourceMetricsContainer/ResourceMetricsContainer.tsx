@@ -18,7 +18,7 @@ import {
   millisecondsToSeconds,
   performDateTimeFunction
 } from "utils/datetime";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 
 const ResourceMetricsContainer = ({ resourceId, lastSeen, firstSeen }) => {
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ const ResourceMetricsContainer = ({ resourceId, lastSeen, firstSeen }) => {
   const { shouldInvoke, isLoading } = useApiState(GET_RESOURCE_METRICS, { ...requestParams, resourceId });
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       startDate: requestParams.startDate,
       endDate: requestParams.endDate
     });

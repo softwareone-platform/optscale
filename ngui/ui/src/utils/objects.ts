@@ -11,31 +11,6 @@ export const idx = (keys: string[], object: Record<string, unknown>, defaultValu
 
 export const isEmpty = (object: Record<string, unknown>) => Object.keys(object).length === 0 && object.constructor === Object;
 
-export const filterEmpty = (
-  sourceObject: Record<string, unknown>,
-  options: {
-    allowEmptyString?: boolean;
-  } = {}
-): Record<string, unknown> => {
-  const { allowEmptyString = false } = options;
-
-  return Object.keys(sourceObject)
-    .filter((key) => {
-      if (sourceObject[key] === "" && allowEmptyString) {
-        return true;
-      }
-
-      return sourceObject[key] || typeof sourceObject[key] === "boolean";
-    })
-    .reduce(
-      (targetObject, key) => ({
-        ...targetObject,
-        [key]: sourceObject[key]
-      }),
-      {}
-    );
-};
-
 export const removeKey = <T extends Record<string, unknown>, K extends keyof T>(object: T, key: K) => {
   const { [key]: removedKey, ...obj } = object;
   return obj;

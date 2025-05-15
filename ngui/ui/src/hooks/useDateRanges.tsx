@@ -11,7 +11,7 @@ import {
   startOfDay,
   subDays
 } from "utils/datetime";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const allRange = (isUtc) => ({
   type: "all",
@@ -27,7 +27,7 @@ const allRange = (isUtc) => ({
     endDate: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.period === "all";
   },
   init() {
@@ -53,7 +53,7 @@ const oneDayRange = (isUtc) => ({
     endDate: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.period === "1day";
   },
   init() {
@@ -83,7 +83,7 @@ const oneWeekRange = (isUtc) => ({
     endDate: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.period === "1week";
   },
   init() {
@@ -113,7 +113,7 @@ const twoWeeksRange = (isUtc) => ({
     endDate: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.period === "2weeks";
   },
   init() {
@@ -143,7 +143,7 @@ const oneMonthRange = (isUtc) => ({
     endDate: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.period === "1month";
   },
   init() {
@@ -175,11 +175,11 @@ const customRange = (isUtc) => ({
     period: undefined
   }),
   isDefaultByQueryParams: () => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     return queryParams.startDate && queryParams.endDate;
   },
   init() {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
     const numberStartDate = parseInt(queryParams.startDate, 10);
     const numberEndDate = parseInt(queryParams.endDate, 10);
 
@@ -216,7 +216,7 @@ const useDateRanges = (ranges) => {
   });
 
   useEffect(() => {
-    updateQueryParams(selectedRange.searchParams);
+    updateSearchParams(selectedRange.searchParams);
   }, [selectedRange]);
 
   return {

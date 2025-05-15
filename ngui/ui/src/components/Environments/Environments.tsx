@@ -17,7 +17,7 @@ import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { ENVIRONMENTS_STATUS_FILTERS, SCOPE_TYPES } from "utils/constants";
 import { millisecondsToSeconds } from "utils/datetime";
 import { SPACING_1, SPACING_2, SPACING_4 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 // TODO: maybe move into separate component and use it in ExpensesBreakdownBreakdownByButtonsGroup as well
 const ButtonsGroupWithLabel = ({ labelId, buttons, activeButtonIndex, isMobile }) => (
@@ -96,7 +96,7 @@ const Environments = ({
     [ENVIRONMENTS_STATUS_QUERY_PARAMETER]: filterByStatusQuery,
     [ENVIRONMENTS_ACCESS_QUERY_PARAMETER]: accessGrantedQuery,
     [ENVIRONMENTS_VIEW_QUERY_PARAMETER]: view
-  } = getQueryParams();
+  } = getSearchParams();
 
   const [showAccessGranted, setShowAccessGranted] = useState(() => accessGrantedQuery ?? true);
 
@@ -111,7 +111,7 @@ const Environments = ({
   );
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [ENVIRONMENTS_STATUS_QUERY_PARAMETER]: activeStatusFilter,
       [ENVIRONMENTS_ACCESS_QUERY_PARAMETER]: showAccessGranted,
       [ENVIRONMENTS_VIEW_QUERY_PARAMETER]: activeViewFilter

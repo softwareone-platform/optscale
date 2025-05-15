@@ -1,14 +1,14 @@
 import { useApiData } from "hooks/useApiData";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { DATE_RANGE_TYPE, FILTER_BY } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 export const useExpensesData = (label) => {
   const {
     apiData: { expenses = {} }
   } = useApiData(label);
 
-  const queryParams = getQueryParams();
+  const queryParams = getSearchParams();
 
   const { [FILTER_BY]: filterBy } = queryParams;
 

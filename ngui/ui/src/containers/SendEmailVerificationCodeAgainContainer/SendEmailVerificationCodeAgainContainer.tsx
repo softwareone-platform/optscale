@@ -2,16 +2,15 @@ import SendVerificationCodeAgainMessage from "components/SendVerificationCodeAga
 import VerifyEmailService from "services/VerifyEmailService";
 import { OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const SendEmailVerificationCodeAgainContainer = () => {
-  const { email } = getQueryParams() as { email: string };
-
   const { useSendEmailVerificationCode } = VerifyEmailService();
 
   const { onSend, isLoading } = useSendEmailVerificationCode();
 
-  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { email, [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
+    email: string;
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
 

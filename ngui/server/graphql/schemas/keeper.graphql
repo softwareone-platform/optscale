@@ -25,12 +25,12 @@ enum EventLevel {
 input EventsRequestParams {
   limit: Int = 80
   level: [EventLevel!]
-  timeStart: Int
-  timeEnd: Int
-  lastId: String
-  includeRead: Boolean = true
-  readOnGet: Boolean = true
-  descriptionLike: String
+  time_start: Int
+  time_end: Int
+  last_id: String
+  include_read: Boolean = true
+  read_on_get: Boolean = true
+  description_like: String
 }
 
 type Query {

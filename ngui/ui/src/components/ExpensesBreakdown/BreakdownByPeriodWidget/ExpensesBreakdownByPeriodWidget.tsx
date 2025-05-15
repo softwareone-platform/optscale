@@ -7,7 +7,7 @@ import { DynamicTextPdf } from "components/PDFAble";
 import QuestionMark from "components/QuestionMark";
 import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES, PDF_ELEMENTS } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { changePeriodType } from "./actionCreator";
 import { EXPENSES_BREAKDOWN_PERIOD_TYPE } from "./reducer";
 
@@ -37,7 +37,7 @@ const breakdownLinearSelectorItems = [
 // todo: unify with resources selector
 const BreakdownLinearSelector = ({ value, items, onChange }) => {
   useEffect(() => {
-    updateQueryParams({ [PERIOD_TYPE_QUERY_PARAMETER_NAME]: value.name });
+    updateSearchParams({ [PERIOD_TYPE_QUERY_PARAMETER_NAME]: value.name });
   }, [value.name]);
 
   return <LinearSelector value={value} onChange={onChange} items={items} />;
@@ -46,7 +46,7 @@ const BreakdownLinearSelector = ({ value, items, onChange }) => {
 const ExpensesBreakdownByPeriodWidget = ({ render }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
-  const { [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodTypeQueryParameter } = getQueryParams();
+  const { [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodTypeQueryParameter } = getSearchParams();
 
   const periodTypeState = useSelector((state) => state[EXPENSES_BREAKDOWN_PERIOD_TYPE]);
 
@@ -63,7 +63,7 @@ const ExpensesBreakdownByPeriodWidget = ({ render }) => {
   });
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodType.value
     });
     dispatch(changePeriodType(periodType.value));

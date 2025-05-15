@@ -26,7 +26,7 @@ import { HYSTAX, LIVE_DEMO, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "url
 import { tag as tagHotjar } from "utils/hotjar";
 import { SPACING_2, SPACING_6, SPACING_1 } from "utils/layouts";
 import { isEven } from "utils/math";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { buildQueryParameters } from "utils/strings";
 import useStyles from "./Greeter.styles";
 
@@ -97,7 +97,7 @@ const LiveDemoButton = () => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams();
+    const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams();
 
     const url = buildQueryParameters(LIVE_DEMO, [
       capability ? `${OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME}=${capability}` : ""

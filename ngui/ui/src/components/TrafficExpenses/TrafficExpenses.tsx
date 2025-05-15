@@ -29,7 +29,7 @@ import {
 } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { REGION_EXPENSES_HEIGHT } from "utils/maps";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import ShowLessThanValueSwitch from "./ShowLessThanValueSwitch";
 
 const getCloudSelectorButtons = (totalCosts, onDataSourceChange) =>
@@ -81,7 +81,7 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
 
   const { traffic_expenses: trafficExpenses = [], total_cost: totalCost = 0, total_usage: totalUsage = 0 } = expenses;
 
-  const { [DATA_SOURCE_PARAM]: dataSourceParam } = getQueryParams();
+  const { [DATA_SOURCE_PARAM]: dataSourceParam } = getSearchParams();
 
   const [selectedCloudType, setSelectedCloudType] = useState(dataSourceParam);
 
@@ -95,7 +95,7 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
     if (!isLoading && !selectedCloudType) {
       const defaultDataSource = sortedTotalCosts?.[0]?.[0];
       setSelectedCloudType(defaultDataSource);
-      updateQueryParams({ [DATA_SOURCE_PARAM]: defaultDataSource });
+      updateSearchParams({ [DATA_SOURCE_PARAM]: defaultDataSource });
     }
   }, [isLoading, selectedCloudType, sortedTotalCosts]);
 
@@ -110,7 +110,7 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
   const onDataSourceChange = useCallback(
     (newDataSource) => {
       setSelectedCloudType(newDataSource);
-      updateQueryParams({ [DATA_SOURCE_PARAM]: newDataSource });
+      updateSearchParams({ [DATA_SOURCE_PARAM]: newDataSource });
       onFilterClear();
     },
     [setSelectedCloudType, onFilterClear]

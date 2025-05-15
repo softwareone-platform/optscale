@@ -66,7 +66,7 @@ import {
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 import useStyles from "./ConnectCloudAccountForm.styles";
 import { ConnectionInputs, DataSourceNameField } from "./FormElements";
@@ -476,7 +476,7 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
   })[connectionType];
 
 const getConnectionTypeFromQueryParams = () => {
-  const { type: connectionTypeQueryParameter } = getQueryParams();
+  const { type: connectionTypeQueryParameter } = getSearchParams();
 
   if (Object.values(CONNECTION_TYPES).includes(connectionTypeQueryParameter as ConnectionType)) {
     return connectionTypeQueryParameter as ConnectionType;

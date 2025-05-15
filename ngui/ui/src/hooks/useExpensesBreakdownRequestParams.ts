@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 
 export const useExpensesBreakdownRequestParams = ({ filterBy, startDateTimestamp, endDateTimestamp }) => {
   const [requestParams, setRequestParams] = useState({
@@ -13,7 +13,7 @@ export const useExpensesBreakdownRequestParams = ({ filterBy, startDateTimestamp
   }, [filterBy]);
 
   useEffect(() => {
-    updateQueryParams(requestParams);
+    updateSearchParams(requestParams);
   }, [requestParams]);
 
   const applyFilter = ({ startDate: msStartDate, endDate: msEndDate }) => {

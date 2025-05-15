@@ -13,7 +13,7 @@ import SendVerificationCodeContainer from "containers/SendVerificationCodeContai
 import { INITIALIZE, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import macaroon from "utils/macaroons";
-import { formQueryString, getQueryParams, updateQueryParams } from "utils/network";
+import { stringifySearchParams, getSearchParams, updateSearchParams } from "utils/network";
 
 const SEND_VERIFICATION_CODE = 0;
 const CONFIRM_VERIFICATION_CODE = 1;
@@ -25,7 +25,7 @@ const PasswordRecovery = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(() => {
-    const { email } = getQueryParams() as { email: string };
+    const { email } = getSearchParams() as { email: string };
 
     if (email) {
       return CONFIRM_VERIFICATION_CODE;
@@ -50,7 +50,7 @@ const PasswordRecovery = () => {
     [SEND_VERIFICATION_CODE]: (
       <SendVerificationCodeContainer
         onSuccess={(email) => {
-          updateQueryParams({
+          updateSearchParams({
             email
           });
           setStep(CONFIRM_VERIFICATION_CODE);
@@ -90,12 +90,12 @@ const PasswordRecovery = () => {
                 const caveats = macaroon.processCaveats(macaroon.deserialize(verificationCodeToken.token).getCaveats());
                 dispatch(initialize({ ...verificationCodeToken, caveats }));
 
-                const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+                const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
                   [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
                 };
 
                 navigate(
-                  `${INITIALIZE}?${formQueryString({
+                  `${INITIALIZE}?${stringifySearchParams({
                     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
                   })}`
                 );

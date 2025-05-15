@@ -11,7 +11,7 @@ import { CREATE_ORGANIZATION, UPDATE_OPTSCALE_CAPABILITY } from "graphql/api/res
 import { useSignOut } from "hooks/useSignOut";
 import { EMAIL_SUPPORT, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 import { Title } from "../../common";
 
@@ -69,7 +69,7 @@ const SetupOrganization = ({ userEmail, refetchOrganizations, isLoading }: Setup
         }
       });
 
-      const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+      const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
         [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: ObjectValues<typeof OPTSCALE_CAPABILITY>;
       };
 

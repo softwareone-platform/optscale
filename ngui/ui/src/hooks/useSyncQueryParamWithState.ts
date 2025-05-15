@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 type SyncQueryParamWithStateProps<T, P extends boolean = false> = {
   queryParamName: string;
@@ -20,7 +20,7 @@ export const useSyncQueryParamWithState = <T, P extends boolean = false>({
   parameterIsArray = false as P
 }: SyncQueryParamWithStateProps<T, P>): ReturnType<T, P> => {
   const [query, setQuery] = useState(() => {
-    const params = getQueryParams(true);
+    const params = getSearchParams();
     const queryValue = params[queryParamName] as T;
 
     if (queryValue === undefined) {
@@ -39,7 +39,7 @@ export const useSyncQueryParamWithState = <T, P extends boolean = false>({
   });
 
   useEffect(() => {
-    updateQueryParams({ [queryParamName]: query });
+    updateSearchParams({ [queryParamName]: query });
   }, [query, queryParamName]);
 
   return [query, setQuery] as ReturnType<T, P>;

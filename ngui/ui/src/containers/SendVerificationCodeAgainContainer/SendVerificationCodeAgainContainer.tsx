@@ -2,16 +2,15 @@ import SendVerificationCodeAgainMessage from "components/SendVerificationCodeAga
 import ResetPasswordServices from "services/ResetPasswordServices";
 import { OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const SendVerificationCodeAgainContainer = () => {
-  const { email } = getQueryParams() as { email: string };
-
   const { useSendVerificationCode } = ResetPasswordServices();
 
   const { onSend, isLoading } = useSendVerificationCode();
 
-  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { email, [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
+    email: string;
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
 

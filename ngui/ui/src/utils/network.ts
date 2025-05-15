@@ -1,12 +1,25 @@
 import queryString from "query-string";
 import { dispatchSearchParamsChangeEvent } from "./events";
-import { filterEmpty, removeKey } from "./objects";
+import { isEmpty as isEmptyObject, removeKey } from "./objects";
 
-// TODO: make network utils reactive
+type SearchParams = Record<
+  string,
+  string | number | boolean | null | undefined | Array<string | number | boolean | null | undefined>
+>;
 
-// TODO: Make «parseBooleans» part of the «options»
-export const getQueryParams = (parseBooleans = true, options = {}) =>
-  queryString.parse(window.location.search, { parseBooleans, ...options });
+const parseSearchParams = (query: string, options = {}): SearchParams =>
+  queryString.parse(query, { parseBooleans: true, parseNumbers: true, ...options });
+
+export const stringifySearchParams = (params: SearchParams) =>
+  queryString.stringify(params, {
+    skipEmptyString: true,
+    skipNull: true,
+    strict: false,
+    sort: false
+  });
+
+export const getSearchParams = (options = {}) =>
+  parseSearchParams(window.location.search, { parseBooleans: true, parseNumbers: true, ...options });
 
 export const getSearch = () => window.location.search;
 
@@ -14,49 +27,26 @@ export const getFullPath = () => `${window.location.pathname}${window.location.s
 
 export const getPathname = () => window.location.pathname;
 
-export const setQueryParams = (stringURL) => {
-  dispatchSearchParamsChangeEvent(queryString.parse(stringURL, { parseBooleans: true }));
-  window.history.replaceState(null, null, stringURL);
+const setSearchParams = (searchParams: string) => {
+  const parsedParams = parseSearchParams(searchParams);
+  dispatchSearchParamsChangeEvent(parsedParams);
+  window.history.replaceState(null, null, `?${searchParams}`);
 };
 
-export const getStringUrl = (objectUrl, ifEmpty = null, options = {}) => {
-  const { allowEmptyString = false } = options;
+export const updateSearchParams = (params: SearchParams) => {
+  const currentSearchParams = getSearchParams();
+  const newSearchParams = { ...currentSearchParams, ...params };
 
-  const cleanObject = filterEmpty(objectUrl, { allowEmptyString });
-  if (Object.keys(cleanObject).length === 0) {
-    return ifEmpty ?? getPathname();
-  }
-  return `?${queryString.stringify(cleanObject)}`;
+  setSearchParams(stringifySearchParams(newSearchParams));
 };
 
-export const updateQueryParams = (paramsObject, options = {}) => {
-  const { allowEmptyString } = options;
-
-  const queryParams = getQueryParams();
-  const newQueryParams = { ...queryParams, ...paramsObject };
-  setQueryParams(getStringUrl(newQueryParams, null, { allowEmptyString }));
+export const removeSearchParam = (key: string) => {
+  const currentSearchParams = getSearchParams();
+  const newSearchParams = removeKey(currentSearchParams, key);
+  setSearchParams(stringifySearchParams(newSearchParams));
 };
 
-export const removeQueryParam = (key) => {
-  const queryParams = getQueryParams();
-  const newQueryParams = removeKey(queryParams, key);
-  setQueryParams(getStringUrl(newQueryParams));
+export const buildFullPath = (path: string, params?: SearchParams) => {
+  const searchParams = params && !isEmptyObject(params) ? stringifySearchParams(params) : "";
+  return searchParams ? `${path}?${searchParams}` : path;
 };
-
-/**
- *
- * @param {Object} params - object that describes parameters name and value
- *
- * @returns {string} string that represents query parameters
- *
- * @example
- * const params = {
- *  name: "Sally",
- *  surname: "Wong",
- *  age: 27
- * }
- * const queryString = formQueryString(params)
- * // queryString = "age=27&name=Sally&surname=Wong"
- *
- */
-export const formQueryString = (params: Record<string, unknown>) => queryString.stringify(params);

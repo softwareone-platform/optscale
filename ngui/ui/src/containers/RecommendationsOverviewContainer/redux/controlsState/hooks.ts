@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRootData } from "hooks/useRootData";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { RECOMMENDATIONS_CONTROLS_STATE } from "./reducer";
 
 export const useControlState = ({ redux: { stateAccessor, actionCreator }, queryParamName, defaultValue, possibleStates }) => {
@@ -12,7 +12,7 @@ export const useControlState = ({ redux: { stateAccessor, actionCreator }, query
   } = useRootData(RECOMMENDATIONS_CONTROLS_STATE);
 
   const [stateValue, setStateValue] = useState(() => {
-    const { [queryParamName]: queryValue } = getQueryParams();
+    const { [queryParamName]: queryValue } = getSearchParams();
 
     if (queryValue) {
       return possibleStates.includes(queryValue) ? queryValue : defaultValue;
@@ -26,7 +26,7 @@ export const useControlState = ({ redux: { stateAccessor, actionCreator }, query
   });
 
   useEffect(() => {
-    updateQueryParams({ [queryParamName]: stateValue });
+    updateSearchParams({ [queryParamName]: stateValue });
   }, [queryParamName, stateValue]);
 
   useEffect(() => {

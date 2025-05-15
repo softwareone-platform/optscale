@@ -3,7 +3,7 @@ import { useTheme } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
 import MlTaskRun from "components/MlTaskRun";
 import MlTasksService from "services/MlTasksService";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const PublicMlRunContainer = () => {
   const theme = useTheme();
@@ -12,7 +12,7 @@ const PublicMlRunContainer = () => {
 
   const { runId } = useParams();
 
-  const { organizationId, token: arceeToken } = getQueryParams() as {
+  const { organizationId, token: arceeToken } = getSearchParams() as {
     organizationId: string;
     token: string;
   };

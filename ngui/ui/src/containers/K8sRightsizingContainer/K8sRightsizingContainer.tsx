@@ -6,7 +6,7 @@ import RelativeDateTimePicker, { k8sRightsizingRelativeDates } from "components/
 import { useShouldRenderConnectCloudAccountMock } from "hooks/useShouldRenderConnectCloudAccountMock";
 import K8sRightsizingService from "services/K8sRightsizingService";
 import { KUBERNETES_CNR } from "utils/constants";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const actionBarDefinition = {
   title: {
@@ -21,7 +21,7 @@ const K8sRightsizingContainer = () => {
   const { useGet } = K8sRightsizingService();
   const shouldRenderConnectCloudAccountMock = useShouldRenderConnectCloudAccountMock(KUBERNETES_CNR);
 
-  const { [RELATIVE_PERIOD_QUERY_PARAMETER_NAME]: relativePeriodQueryParameter } = getQueryParams();
+  const { [RELATIVE_PERIOD_QUERY_PARAMETER_NAME]: relativePeriodQueryParameter } = getSearchParams();
 
   const [requestParams, setRequestParams] = useState(() => {
     const defaultRequestParams =
@@ -36,7 +36,7 @@ const K8sRightsizingContainer = () => {
   });
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [RELATIVE_PERIOD_QUERY_PARAMETER_NAME]: requestParams.id
     });
   }, [requestParams.id]);

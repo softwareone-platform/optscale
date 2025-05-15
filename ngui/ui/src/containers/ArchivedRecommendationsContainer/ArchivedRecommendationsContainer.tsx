@@ -5,7 +5,7 @@ import { NEBIUS_RECOMMENDATION_TYPES } from "hooks/useOptscaleRecommendations";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import ArchivedRecommendationService from "services/ArchivedRecommendationService";
 import { DATE_RANGE_TYPE } from "utils/constants";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 
 const ArchivedRecommendationsContainer = () => {
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
@@ -23,7 +23,7 @@ const ArchivedRecommendationsContainer = () => {
   const [breakdownDateRange, setBreakdownDateRange] = useState(dateRange);
 
   useEffect(() => {
-    updateQueryParams(dateRange);
+    updateSearchParams(dateRange);
   }, [dateRange]);
 
   const { isLoading: isChartLoading, data: { breakdown: archivedRecommendationsChartBreakdown = {} } = {} } =

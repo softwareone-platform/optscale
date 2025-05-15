@@ -2,7 +2,7 @@ import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
 import { getResourceUrl } from "urls";
 import { RESOURCE_PAGE_TABS, TAB_QUERY_PARAM_NAME } from "utils/constants";
-import { getQueryParams, formQueryString } from "utils/network";
+import { getSearchParams, stringifySearchParams } from "utils/network";
 
 const getResourceUrlQueryParameters = (tabName, params) => {
   const tabQueryParameter = {
@@ -10,11 +10,11 @@ const getResourceUrlQueryParameters = (tabName, params) => {
   };
 
   if (tabName === RESOURCE_PAGE_TABS.EXPENSES) {
-    const { startDate, endDate } = getQueryParams();
-    return formQueryString({ ...tabQueryParameter, ...params, startDate, endDate });
+    const { startDate, endDate } = getSearchParams();
+    return stringifySearchParams({ ...tabQueryParameter, ...params, startDate, endDate });
   }
 
-  return formQueryString({ ...tabQueryParameter, ...params });
+  return stringifySearchParams({ ...tabQueryParameter, ...params });
 };
 
 const ResourceLink = ({ resourceId, tabName, children, params, dataTestId }) => {

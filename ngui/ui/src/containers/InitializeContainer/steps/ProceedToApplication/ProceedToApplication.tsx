@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useGetToken } from "hooks/useGetToken";
 import { NEXT_QUERY_PARAMETER_NAME, HOME, USER_EMAIL_QUERY_PARAMETER_NAME, SHOW_POLICY_QUERY_PARAM } from "urls";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { Loading } from "../../common";
 
 const getRedirectionPath = (scopeUserEmail: string) => {
@@ -9,7 +9,7 @@ const getRedirectionPath = (scopeUserEmail: string) => {
     [NEXT_QUERY_PARAMETER_NAME]: next = HOME,
     [USER_EMAIL_QUERY_PARAMETER_NAME]: userEmailQueryParameter,
     [SHOW_POLICY_QUERY_PARAM]: showPolicyQueryParameter = false
-  } = getQueryParams() as {
+  } = getSearchParams() as {
     [NEXT_QUERY_PARAMETER_NAME]: string;
     [USER_EMAIL_QUERY_PARAMETER_NAME]: string;
     [SHOW_POLICY_QUERY_PARAM]: string;

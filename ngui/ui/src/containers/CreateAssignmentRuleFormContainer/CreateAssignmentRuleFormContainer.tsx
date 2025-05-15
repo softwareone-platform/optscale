@@ -27,7 +27,7 @@ import {
   RESOURCE_TYPE_IS,
   REGION_IS
 } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { parseJSON } from "utils/strings";
 
 const PageActionBar = ({ isFormDataLoading }) => {
@@ -60,7 +60,9 @@ const PageActionBar = ({ isFormDataLoading }) => {
 };
 
 const getDefaultConditionsFromQueryParams = (conditionsQueryParam) => {
-  const conditions = conditionsQueryParam
+  const conditionsQueryParamArray = Array.isArray(conditionsQueryParam) ? conditionsQueryParam : [conditionsQueryParam];
+
+  const conditions = conditionsQueryParamArray
     .map((condition) => {
       const parsedCondition = parseJSON(condition, undefined);
       if (parsedCondition) {
@@ -128,9 +130,7 @@ const CreateAssignmentRuleFormContainer = () => {
 
   const [isFormDataLoading, setIsFormDataLoading] = useState(false);
 
-  const { [ASSIGNMENT_RULE_CONDITIONS_QUERY_PARAMETER]: conditionsQueryParam } = getQueryParams(true, {
-    arrayFormat: "bracket"
-  });
+  const { [ASSIGNMENT_RULE_CONDITIONS_QUERY_PARAMETER]: conditionsQueryParam } = getSearchParams();
 
   const [defaultValues, setDefaultValues] = useState({
     name: "",

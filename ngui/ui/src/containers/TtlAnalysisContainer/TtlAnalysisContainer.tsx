@@ -14,7 +14,7 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useRootData } from "hooks/useRootData";
 import { isError, isTtlExpired } from "utils/api";
 import { TTL_MODES, TTL_ANALYSIS_QUERY_PARAMETERS, TTL_ANALYSIS_TOP_SECTION_TYPES, DATE_RANGE_TYPE } from "utils/constants";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const { PREDEFINED_TTL, CUSTOM_TTL } = TTL_MODES;
 
@@ -25,7 +25,7 @@ const getTtlPolicyLimit = (pool) => pool?.policies?.find((p) => p.type === "ttl"
 const isTtlQueryParameterValueValid = (value) => Number.isInteger(value) && value >= 1;
 
 const getDefaultCustomTtlValue = (ttlLimit) => {
-  const ttlQueryParameter = Number(getQueryParams().ttl);
+  const ttlQueryParameter = Number(getSearchParams().ttl);
   return String(isTtlQueryParameterValueValid(ttlQueryParameter) ? ttlQueryParameter : ttlLimit);
 };
 
@@ -89,7 +89,7 @@ const TtlAnalysisContainer = ({ pathPoolId }) => {
     const updateDefaultValues = () => {
       const shouldUsePoolQueryParameter = !isPoolIdPredefined;
       const { [TTL_ANALYSIS_QUERY_PARAMETERS.POOL_ID]: poolIdQueryParams, [TTL_ANALYSIS_QUERY_PARAMETERS.TTL]: ttl } =
-        getQueryParams();
+        getSearchParams();
       const ttlValue = Number(ttl);
 
       if (poolIdQueryParams && shouldUsePoolQueryParameter) {
@@ -121,7 +121,7 @@ const TtlAnalysisContainer = ({ pathPoolId }) => {
 
     const validatePool = () => {
       const shouldUsePoolQueryParameter = !isPoolIdPredefined;
-      const { [TTL_ANALYSIS_QUERY_PARAMETERS.POOL_ID]: poolIdQueryParams } = getQueryParams();
+      const { [TTL_ANALYSIS_QUERY_PARAMETERS.POOL_ID]: poolIdQueryParams } = getSearchParams();
 
       if (poolIdQueryParams && shouldUsePoolQueryParameter) {
         const queryParamPool = findPool(poolIdQueryParams, allPools);
@@ -153,7 +153,7 @@ const TtlAnalysisContainer = ({ pathPoolId }) => {
     }
     const startDate = startDateTimestamp;
     const endDate = endDateTimestamp;
-    updateQueryParams({
+    updateSearchParams({
       [TTL_ANALYSIS_QUERY_PARAMETERS.POOL_ID]: pathPoolId ? undefined : id,
       [TTL_ANALYSIS_QUERY_PARAMETERS.TTL]: ttlMode === TTL_MODES.CUSTOM_TTL ? ttl : undefined,
       startDate,
