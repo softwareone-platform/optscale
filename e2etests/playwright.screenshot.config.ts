@@ -9,7 +9,7 @@ dotenv.config({path: path.resolve(__dirname, '.env.local')});
  */
 export default defineConfig({
   testDir: './/',
-  testMatch: /swo-customisation-screenshot-tests\.spec\.ts/,
+  testMatch: /swo-screenshot-tests\.spec\.ts/,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
