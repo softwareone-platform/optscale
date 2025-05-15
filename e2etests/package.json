@@ -14,8 +14,9 @@
     "playwright:single-worker": "npx playwright test --workers=1",
     "playwright:screenshot": "npx playwright test tests/screenshots/swo-screenshot-tests.spec.ts --config=playwright.screenshot.config.ts",
     "playwright:screenshots:update": "npm run playwright:screenshot -- --update-snapshots",
-    "screenshot": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot",
-    "screenshot:update": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot npm run playwright:screenshot -- --update-snapshots"
+    "docker:build": "docker build -t playwright-screenshot-tests ./docker",
+    "docker:test": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot",
+    "docker:update": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot npm run playwright:screenshot -- --update-snapshots"
   },
   "keywords": [],
   "author": "",
