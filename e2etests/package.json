@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "description": "E2E tests for optScale instance used by SWO",
   "main": "index.js",
-"scripts": {
-  "playwright:show-report": "npx playwright show-report",
-  "playwright:debug": "npx playwright test --debug --workers=1",
-  "playwright:test": "npx playwright test",
-  "playwright:codegen": "npx playwright codegen cloudspend.velasuci.com",
-  "playwright:headed": "npx playwright test --headed --workers=1",
-  "playwright:ui": "npx playwright test --ui",
-  "playwright:trace": "npx playwright test --trace",
-  "playwright:single-worker": "npx playwright test --workers=1",
-  "playwright:screenshot": "npx playwright test tests/screenshots/swo-customisation-screenshot-tests.spec.ts --config=playwright.screenshot.config.ts",
-  "playwright:screenshots:update": "npm run playwright:screenshot -- --update-snapshots"
-},
+  "scripts": {
+    "playwright:show-report": "npx playwright show-report",
+    "playwright:debug": "npx playwright test --debug --workers=1",
+    "playwright:test": "npx playwright test",
+    "playwright:codegen": "npx playwright codegen cloudspend.velasuci.com",
+    "playwright:headed": "npx playwright test --headed --workers=1",
+    "playwright:ui": "npx playwright test --ui",
+    "playwright:trace": "npx playwright test --trace",
+    "playwright:single-worker": "npx playwright test --workers=1",
+    "playwright:screenshot": "npx playwright test tests/screenshots/swo-customisation-screenshot-tests.spec.ts --config=playwright.screenshot.config.ts",
+    "playwright:screenshots:update": "npm run playwright:screenshot -- --update-snapshots"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -24,6 +24,6 @@
     "uuid": "^11.0.5"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.5.0"
   }
 }
