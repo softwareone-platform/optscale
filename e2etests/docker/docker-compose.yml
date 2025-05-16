@@ -19,6 +19,7 @@ services:
       - ../utils:/app/utils
     environment:
       - CI=${CI}
+      - DOCKER_ENV=true
     extra_hosts:
       - "host.docker.internal:host-gateway"
     stdin_open: true
