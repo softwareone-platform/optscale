@@ -881,7 +881,7 @@ jobs:
         run: bash -x docker_images/run_test.sh webhook_executor
 
   pr_notification:
-    needs: 
+    needs:
       - arcee_tests
       - auth_tests
       - bi_exporter_tests
@@ -945,7 +945,7 @@ jobs:
         uses: softwareone-platform/notify-pr-teams-action@v4
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          bot_image_url: https://raw.githubusercontent.com/softwareone-platform/ffc-finops-operations/main/.github/workflows/assets/turing_team_pr_bot.png
+          bot_image_url: https://raw.githubusercontent.com/softwareone-platform/optscale/main/.github/workflows/assets/turing_team_pr_bot.png
           repo: ${{ github.repository }}
           pr_url: ${{ github.event.pull_request.html_url }}
           pr_title: ${{ github.event.pull_request.title }}
