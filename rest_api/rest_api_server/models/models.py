@@ -35,7 +35,9 @@ from rest_api.rest_api_server.models.types import (
     MediumNullableString, MediumString, MediumLargeNullableString,
     ConstraintLimitState, OrganizationConstraintType, ConstraintDefinition,
     RunResult, BIOrganizationStatus, BIType, Float, GeminiStatus,
-    HMTimeString, TimezoneString, PowerScheduleAction, OrganizationDisableType)
+    HMTimeString, TimezoneString, PowerScheduleAction, OrganizationDisableType,
+    NullableMediumJSON, NullableMediumText
+)
 
 
 class PermissionKeys(Enum):
@@ -1623,7 +1625,7 @@ class OrganizationGemini(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
                     nullable=False, info=ColumnPermissions.update_only)
     filters = Column(NullableText("filters"), nullable=True,
                      info=ColumnPermissions.create_only, default="{}")
-    stats = Column(NullableText("stats"), nullable=True,
+    stats = Column(NullableMediumText("stats"), nullable=True,
                    info=ColumnPermissions.full, default="{}")
 
     @hybrid_property
@@ -1728,7 +1730,7 @@ class Layout(Base, BaseMixin, ValidatorMixin):
                 info=ColumnPermissions.create_only)
     name = Column(NotWhiteSpaceString('name'), nullable=False,
                   info=ColumnPermissions.full)
-    data = Column(NullableJSON('data'), nullable=False, default='{}',
+    data = Column(NullableMediumJSON('data'), nullable=False, default='{}',
                   info=ColumnPermissions.full)
     type = Column(NotWhiteSpaceString('type'), nullable=False,
                   info=ColumnPermissions.create_only)
