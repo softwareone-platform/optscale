@@ -16,7 +16,7 @@ import { getEditMlTaskUrl } from "urls";
 import { ML_TASK_DETAILS_TAB_NAME, OPTSCALE_CAPABILITY } from "utils/constants";
 import { getTimeDistance } from "utils/datetime";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
 const LastRunExecutorSummary = ({ isLoading, lastRunExecutor }) => {
@@ -89,7 +89,7 @@ const SummaryInfo = ({
           titleIconButton={{
             icon: <SettingsIcon fontSize="small" />,
             onClick: () => {
-              const { [ML_TASK_DETAILS_TAB_NAME]: mlTaskDetailsTabName } = getQueryParams();
+              const { [ML_TASK_DETAILS_TAB_NAME]: mlTaskDetailsTabName } = getSearchParams();
               navigate(
                 getEditMlTaskUrl(taskId, {
                   tab: "metrics",

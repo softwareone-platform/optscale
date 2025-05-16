@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { DATE_RANGE_TYPE, DATE_RANGE_FILTERS } from "utils/constants";
-import { removeQueryParam, getQueryParams } from "utils/network";
+import { removeSearchParam, getSearchParams } from "utils/network";
 import { useReactiveDefaultDateRange } from "./useReactiveDefaultDateRange";
 
 const useDateRange = ({ lastSeen, firstSeen, syntheticDateFilter }) => {
@@ -13,11 +13,11 @@ const useDateRange = ({ lastSeen, firstSeen, syntheticDateFilter }) => {
 };
 
 const useSyntheticDateFilter = () => {
-  const { syntheticDateFilter } = getQueryParams();
+  const { syntheticDateFilter } = getSearchParams();
 
   useEffect(() => {
     if (syntheticDateFilter) {
-      removeQueryParam("syntheticDateFilter");
+      removeSearchParam("syntheticDateFilter");
     }
   }, [syntheticDateFilter]);
 

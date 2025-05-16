@@ -622,6 +622,7 @@ export type OptscaleCapabilityParams = {
 export type Organization = {
   __typename?: 'Organization';
   currency: Scalars['String']['output'];
+  disabled: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   is_demo: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
@@ -1385,6 +1386,7 @@ export type OptscaleCapabilityResolvers<ContextType = any, ParentType extends Re
 
 export type OrganizationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  disabled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   is_demo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

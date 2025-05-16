@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { areSearchParamsEqual } from "api/utils";
 import { addSearchParamsChangeListener, removeSearchParamsChangeListener } from "utils/events";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 export const useReactiveSearchParams = (queryParamsToListen = []) => {
   const [searchParams, setSearchParams] = useState(() => {
-    const allParams = getQueryParams();
+    const allParams = getSearchParams();
 
     return Object.fromEntries(queryParamsToListen.map((paramName) => [paramName, allParams[paramName]]));
   });

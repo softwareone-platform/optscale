@@ -3,14 +3,14 @@ import { Stack } from "@mui/material";
 import { ML_RUNS_FILTERS_NAMES } from "components/Filters/constants";
 import { GOALS_BE_FILTER, GOALS_FILTER, GOAL_STATUS, STATUS_BE_FILTER } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import RunsFilter from "./RunsFilter";
 import RunsTable from "./RunsTable";
 
 const Runs = ({ runs, isLoading = false }) => {
   const [appliedFilters, setAppliesFilters] = useState(() => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
 
     return ML_RUNS_FILTERS_NAMES.reduce(
       (params, queryKey) => ({
@@ -45,7 +45,7 @@ const Runs = ({ runs, isLoading = false }) => {
   };
 
   useEffect(() => {
-    updateQueryParams(appliedFilters);
+    updateSearchParams(appliedFilters);
   }, [appliedFilters]);
 
   const onFilterChange = (newFilters) => setAppliesFilters(newFilters);

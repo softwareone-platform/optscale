@@ -6,10 +6,10 @@ import { FormValues } from "components/forms/LiveDemoForm/types";
 import Logo from "components/Logo";
 import GenerateLiveDemoContainer from "containers/GenerateLiveDemoContainer";
 import { SPACING_4 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const LiveDemo = () => {
-  const { emailbypass } = getQueryParams(true);
+  const { emailbypass } = getSearchParams();
 
   const [demoParameters, setDemoParameters] = useState<FormValues | null>(null);
 

@@ -13,7 +13,7 @@ import {
 } from "graphql/api/restapi/queries";
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
-import { getQueryParams, removeQueryParam } from "utils/network";
+import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
   render: (props: {
@@ -42,13 +42,13 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     data: getOrganizationsData
   } = useQuery(GET_ORGANIZATIONS, {
     onCompleted: (data) => {
-      const { organizationId } = getQueryParams() as { organizationId: string };
+      const { organizationId } = getSearchParams() as { organizationId: string };
 
       if (data.organizations.find((org) => org.id === organizationId)) {
         updateScope({
           newScopeId: organizationId
         });
-        removeQueryParam("organizationId");
+        removeSearchParam("organizationId");
       }
     }
   });

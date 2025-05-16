@@ -28,7 +28,7 @@ import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_4 } from "utils/layouts";
 import macaroon from "utils/macaroons";
-import { formQueryString, getQueryParams } from "utils/network";
+import { stringifySearchParams, getSearchParams } from "utils/network";
 
 const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
@@ -36,7 +36,7 @@ const AuthorizationContainer = () => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
 
-  const { invited: queryInvited } = getQueryParams();
+  const { invited: queryInvited } = getSearchParams();
 
   const { isDemo } = useOrganizationInfo();
 
@@ -63,7 +63,7 @@ const AuthorizationContainer = () => {
       dispatch(initialize({ ...data.token, caveats }));
     } catch (error) {
       if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
-        navigate(`${EMAIL_VERIFICATION}?${formQueryString({ email })}`);
+        navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
       }
     }
   };
@@ -78,7 +78,7 @@ const AuthorizationContainer = () => {
       return dispatch(initialize({ ...data.user, caveats }));
     }
 
-    const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+    const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
     };
 
@@ -89,7 +89,7 @@ const AuthorizationContainer = () => {
     });
 
     return navigate(
-      `${EMAIL_VERIFICATION}?${formQueryString({
+      `${EMAIL_VERIFICATION}?${stringifySearchParams({
         email,
         [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
       })}`
@@ -141,14 +141,14 @@ const AuthorizationContainer = () => {
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
       [SHOW_POLICY_QUERY_PARAM]: showPolicy
-    } = getQueryParams() as {
+    } = getSearchParams() as {
       [NEXT_QUERY_PARAMETER_NAME]: string;
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
       [USER_EMAIL_QUERY_PARAMETER_NAME]: string;
       [SHOW_POLICY_QUERY_PARAM]: boolean | string;
     };
 
-    return `${INITIALIZE}?${formQueryString({
+    return `${INITIALIZE}?${stringifySearchParams({
       [NEXT_QUERY_PARAMETER_NAME]: next,
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,

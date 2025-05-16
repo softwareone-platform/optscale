@@ -13,7 +13,7 @@ import { HOME, NEXT_QUERY_PARAMETER_NAME, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NA
 import { isError } from "utils/api";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
 import macaroon from "utils/macaroons";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 
 type GenerateLiveDemoContainerProps = {
@@ -39,7 +39,7 @@ const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }: GenerateLiv
   const [updateOptscaleCapabilityMutation] = useMutation(UPDATE_OPTSCALE_CAPABILITY);
 
   const redirectToOptscale = useCallback(() => {
-    const { [NEXT_QUERY_PARAMETER_NAME]: next } = getQueryParams() as {
+    const { [NEXT_QUERY_PARAMETER_NAME]: next } = getSearchParams() as {
       [NEXT_QUERY_PARAMETER_NAME]: string;
     };
     navigate(next || HOME);
@@ -88,7 +88,7 @@ const GenerateLiveDemoContainer = ({ email, subscribeToNewsletter }: GenerateLiv
         .then(() => {
           const organizationId = getState()?.[RESTAPI]?.[GET_LIVE_DEMO].organization_id;
 
-          const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+          const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
             [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: ObjectValues<typeof OPTSCALE_CAPABILITY>;
           };
 

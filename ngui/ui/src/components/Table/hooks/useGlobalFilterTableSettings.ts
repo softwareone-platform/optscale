@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 import { getFilteredRowModel } from "@tanstack/react-table";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { getSearchQueryKey } from "utils/tables";
 import { globalFilterFn } from "../utils";
 
 const addSearchToQueryParams = (searchKey, searchText) => {
-  updateQueryParams({ [searchKey]: searchText });
+  updateSearchParams({ [searchKey]: searchText });
 };
 
 const getInitialSearchValue = (key) => {
-  const { [key]: search = "" } = getQueryParams();
+  const { [key]: search = "" } = getSearchParams();
   return search;
 };
 

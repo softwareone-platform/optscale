@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 export const useAccordionsState = (queryParameterName) => {
-  const { [queryParameterName]: queryParamAccordionName = "" } = getQueryParams();
+  const { [queryParameterName]: queryParamAccordionName = "" } = getSearchParams();
 
   const [expanded, setExpanded] = useState(queryParamAccordionName);
 
@@ -11,7 +11,7 @@ export const useAccordionsState = (queryParameterName) => {
   const toggleAccordionState = (accordionName) => {
     const isAccordionExpanded = isExpanded(accordionName);
 
-    updateQueryParams({
+    updateSearchParams({
       [queryParameterName]: isAccordionExpanded ? "" : accordionName
     });
 

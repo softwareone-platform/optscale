@@ -1,4 +1,3 @@
-import qs from "qs";
 import BaseClient from "../baseClient.js";
 import {
   DataSourceRequestParams,
@@ -18,7 +17,10 @@ import {
   QueryExpensesDailyBreakdownArgs,
   QueryOrganizationLimitHitsArgs,
   QueryEmployeeEmailsArgs,
+  QueryRelevantFlavorsArgs,
+  QueryCleanExpensesArgs,
 } from "../../graphql/resolvers/restapi.generated.js";
+import { getParams } from "../../utils/getParams.js";
 
 class RestApiClient extends BaseClient {
   override baseURL = `${
@@ -32,16 +34,21 @@ class RestApiClient extends BaseClient {
   }
 
   async getCurrentEmployee(organizationId: string) {
-    const path = `organizations/${organizationId}/employees?current_only=true`;
-    const currentEmployee = await this.get(path);
+    const path = `organizations/${organizationId}/employees`;
+
+    const currentEmployee = await this.get(path, {
+      params: getParams({ current_only: true }),
+    });
 
     return currentEmployee.employees[0];
   }
 
   async getDataSources(organizationId: string) {
-    const path = `organizations/${organizationId}/cloud_accounts?details=true`;
+    const path = `organizations/${organizationId}/cloud_accounts`;
 
-    const dataSources = await this.get(path);
+    const dataSources = await this.get(path, {
+      params: getParams({ details: true }),
+    });
 
     return dataSources.cloud_accounts;
   }
@@ -50,9 +57,13 @@ class RestApiClient extends BaseClient {
     dataSourceId: string,
     requestParams: DataSourceRequestParams
   ) {
-    const path = `cloud_accounts/${dataSourceId}?details=${requestParams.details}`;
+    const path = `cloud_accounts/${dataSourceId}`;
 
-    const dataSource = await this.get(path);
+    const dataSource = await this.get(path, {
+      params: getParams({
+        details: requestParams.details,
+      }),
+    });
 
     return dataSource;
   }
@@ -312,18 +323,9 @@ class RestApiClient extends BaseClient {
   ) {
     const path = `organizations/${organizationId}/resources_count`;
 
-    const stringParams = Object.fromEntries(
-      Object.entries(params).map(([key, value]) => [
-        key,
-        Array.isArray(value) ? value.map(String) : String(value),
-      ])
-    );
-
-    const urlSearchParams = new URLSearchParams(stringParams);
-
-    const resourceCountBreakdown = await this.get(
-      `${path}?${urlSearchParams.toString()}`
-    );
+    const resourceCountBreakdown = await this.get(path, {
+      params: getParams(params),
+    });
 
     return resourceCountBreakdown;
   }
@@ -334,18 +336,9 @@ class RestApiClient extends BaseClient {
   ) {
     const path = `organizations/${organizationId}/breakdown_expenses`;
 
-    const stringParams = Object.fromEntries(
-      Object.entries(params).map(([key, value]) => [
-        key,
-        Array.isArray(value) ? value.map(String) : String(value),
-      ])
-    );
-
-    const urlSearchParams = new URLSearchParams(stringParams);
-
-    const dailyExpensesBreakdown = await this.get(
-      `${path}?${urlSearchParams.toString()}`
-    );
+    const dailyExpensesBreakdown = await this.get(path, {
+      params: getParams(params),
+    });
 
     return dailyExpensesBreakdown;
   }
@@ -354,44 +347,39 @@ class RestApiClient extends BaseClient {
     organizationId: QueryOrganizationLimitHitsArgs["organizationId"],
     constraintId: QueryOrganizationLimitHitsArgs["constraintId"]
   ) {
-    const path = `organizations/${organizationId}/organization_limit_hits?constraint_id=${constraintId}`;
+    const path = `organizations/${organizationId}/organization_limit_hits`;
 
-    const organizationLimitHits = await this.get(path);
+    const organizationLimitHits = await this.get(path, {
+      params: getParams({
+        constraint_id: constraintId,
+      }),
+    });
 
     return organizationLimitHits.organization_limit_hits;
   }
 
-  async getRelevantFlavors(organizationId, requestParams) {
-    // Rewrite with utility function
-    const getParams = (params: Record<string, string | string[]>) => {
-      const urlParams = new URLSearchParams();
-      Object.entries(params).forEach(([key, value]) => {
-        if (Array.isArray(value) && value.length > 0) {
-          value.forEach((datum) => {
-            urlParams.append(key, datum);
-          });
-        } else {
-          urlParams.append(key, value.toString());
-        }
-      });
-      return urlParams.toString();
-    };
+  async getRelevantFlavors(
+    organizationId: QueryRelevantFlavorsArgs["organizationId"],
+    requestParams: QueryRelevantFlavorsArgs["requestParams"]
+  ) {
+    const path = `organizations/${organizationId}/relevant_flavors`;
 
-    const path = `organizations/${organizationId}/relevant_flavors?${getParams(
-      requestParams
-    )}`;
-
-    const flavors = await this.get(path);
+    const flavors = await this.get(path, {
+      params: getParams(requestParams),
+    });
 
     return flavors;
   }
 
-  async getCleanExpenses(organizationId, params) {
-    const queryString = qs.stringify(params, { arrayFormat: "repeat" });
+  async getCleanExpenses(
+    organizationId: QueryCleanExpensesArgs["organizationId"],
+    params: QueryCleanExpensesArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/clean_expenses`;
 
-    const path = `organizations/${organizationId}/clean_expenses?${queryString}`;
-
-    const cleanExpenses = await this.get(path);
+    const cleanExpenses = await this.get(path, {
+      params: getParams(params),
+    });
 
     return cleanExpenses;
   }

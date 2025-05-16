@@ -4,7 +4,7 @@ import EmployeesService from "services/EmployeesService";
 import MlTasksService from "services/MlTasksService";
 import { getMlTaskDetailsUrl } from "urls";
 import { ML_TASK_DETAILS_TAB_NAME } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const MlEditTaskFormContainer = ({ task }) => {
   const { taskId } = useParams();
@@ -17,7 +17,7 @@ const MlEditTaskFormContainer = ({ task }) => {
   const { isLoading: isGetEmployeesLoading, employees } = useGetEmployees();
 
   const redirectToTaskDetails = () => {
-    const { [ML_TASK_DETAILS_TAB_NAME]: taskDetailsTab } = getQueryParams();
+    const { [ML_TASK_DETAILS_TAB_NAME]: taskDetailsTab } = getSearchParams();
 
     return navigate(`${getMlTaskDetailsUrl(taskId)}?${ML_TASK_DETAILS_TAB_NAME}=${taskDetailsTab}`);
   };

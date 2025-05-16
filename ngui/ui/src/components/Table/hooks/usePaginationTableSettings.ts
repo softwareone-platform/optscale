@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { getPaginationRowModel } from "@tanstack/react-table";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { getPaginationQueryKey } from "utils/tables";
 
 const getPageQueryParamValue = (key) => {
-  const { [key]: page = 1 } = getQueryParams();
+  const { [key]: page = 1 } = getSearchParams();
 
   const pageNumber = Number(page);
 
@@ -55,7 +55,7 @@ export const usePaginationTableSettings = ({ pageSize, rowsCount, queryParamPref
         getPaginationRowModel: getPaginationRowModel(),
         onPaginationChange: handleChange(pagination, (newPaginationState) => {
           if (enablePaginationQueryParam) {
-            updateQueryParams({ [queryKeyForPage]: newPaginationState.pageIndex + 1 });
+            updateSearchParams({ [queryKeyForPage]: newPaginationState.pageIndex + 1 });
           }
           setPagination(newPaginationState);
         })

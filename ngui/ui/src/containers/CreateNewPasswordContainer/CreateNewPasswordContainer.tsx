@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import CreateNewPasswordForm from "components/forms/CreateNewPasswordForm";
 import ResetPasswordServices from "services/ResetPasswordServices";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 type CreateNewPasswordContainerProps = {
   verificationCodeToken: {
@@ -15,7 +15,7 @@ type CreateNewPasswordContainerProps = {
 };
 
 const CreateNewPasswordContainer = ({ verificationCodeToken, onSuccess }: CreateNewPasswordContainerProps) => {
-  const { email } = getQueryParams() as { email: string };
+  const { email } = getSearchParams() as { email: string };
 
   const { useUpdateUserPassword, useGetNewToken } = ResetPasswordServices();
 

@@ -2,7 +2,7 @@ import { API } from "api/reducer";
 import { reset } from "reducers/route";
 import { USER_EMAIL_QUERY_PARAMETER_NAME } from "urls";
 import requestManager from "utils/requestManager";
-import { updateQueryParams } from "./network";
+import { updateSearchParams } from "./network";
 
 /**
  *
@@ -63,7 +63,7 @@ export const reformatBreakdown = (breakdown) =>
 export const signOut = (dispatch, payload = {}) => {
   const { userEmail } = payload;
 
-  updateQueryParams({
+  updateSearchParams({
     [USER_EMAIL_QUERY_PARAMETER_NAME]: userEmail
   });
 

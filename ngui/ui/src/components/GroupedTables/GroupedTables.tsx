@@ -4,7 +4,7 @@ import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import CleanExpensesTable from "components/CleanExpensesTable";
 import FormattedMoney from "components/FormattedMoney";
-import { getQueryParams, removeQueryParam, updateQueryParams } from "utils/network";
+import { getSearchParams, removeSearchParam, updateSearchParams } from "utils/network";
 
 const GROUP_VALUE_QUERY_PARAM_NAME = "groupValue";
 
@@ -46,7 +46,7 @@ const GroupedTables = ({
     const getDefaultExpandedState = () => Object.fromEntries(groupedResources.map(([groupValue]) => [groupValue, false]));
     const defaultExpandedState = getDefaultExpandedState();
 
-    const { [GROUP_VALUE_QUERY_PARAM_NAME]: groupValueQueryParam = "" } = getQueryParams();
+    const { [GROUP_VALUE_QUERY_PARAM_NAME]: groupValueQueryParam = "" } = getSearchParams();
 
     const validateGroupValueQueryParam = () => {
       const accordionValues = Object.keys(defaultExpandedState);
@@ -64,7 +64,7 @@ const GroupedTables = ({
 
     // cleans up groupValue before running the effects next time
     // usage: remove groupValue when we group by another value
-    return () => removeQueryParam(GROUP_VALUE_QUERY_PARAM_NAME);
+    return () => removeSearchParam(GROUP_VALUE_QUERY_PARAM_NAME);
   }, [groupedResources]);
 
   const renderCleanExpensesTable = (expenses, { assignmentRuleCreationQueryParameters }) => (
@@ -88,12 +88,12 @@ const GroupedTables = ({
             toggleExpanded(groupValue, expandedAccordionState);
             // override query param on open
             if (expandedAccordionState) {
-              updateQueryParams({
+              updateSearchParams({
                 [GROUP_VALUE_QUERY_PARAM_NAME]: groupValue
               });
             } else {
               // remove query param on close
-              removeQueryParam(GROUP_VALUE_QUERY_PARAM_NAME);
+              removeSearchParam(GROUP_VALUE_QUERY_PARAM_NAME);
             }
             if (typeof onAccordionChange === "function") {
               onAccordionChange();

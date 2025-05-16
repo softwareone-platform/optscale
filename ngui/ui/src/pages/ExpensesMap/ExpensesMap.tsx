@@ -13,7 +13,7 @@ import RegionExpensesContainer from "containers/RegionExpensesContainer";
 import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { DATE_RANGE_TYPE, EXPENSES_MAP_TYPES } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 
 const actionBarDefinition = {
   title: {
@@ -48,7 +48,7 @@ const ExpensesMap = () => {
   const [startDateTimestamp, endDateTimestamp] = useReactiveDefaultDateRange(DATE_RANGE_TYPE.EXPENSES);
 
   const applyDates = ({ startDate, endDate }) => {
-    updateQueryParams({
+    updateSearchParams({
       startDate,
       endDate
     });

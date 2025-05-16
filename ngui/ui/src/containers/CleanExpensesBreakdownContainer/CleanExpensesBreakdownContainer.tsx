@@ -13,7 +13,7 @@ import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import CleanExpensesService, { mapCleanExpensesRequestParamsToApiParams } from "services/CleanExpensesService";
 import { getLength, isEmpty } from "utils/arrays";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 
 const shouldRenderLimitWarning = (limit, expenses) => getLength(expenses) === limit;
 
@@ -45,7 +45,7 @@ const CleanExpensesBreakdownContainer = ({ requestParams }) => {
     const params = { ...requestParams, format };
 
     fetchAndDownload({
-      url: `${REST_API_URL}/organizations/${organizationId}/clean_expenses?${formQueryString(
+      url: `${REST_API_URL}/organizations/${organizationId}/clean_expenses?${stringifySearchParams(
         mapCleanExpensesRequestParamsToApiParams(params)
       )}`,
       fallbackFilename: `resources_list.${format}`

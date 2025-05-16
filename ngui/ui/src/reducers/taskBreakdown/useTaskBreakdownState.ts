@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getIntersection, isEmpty as isEmptyArray } from "utils/arrays";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { setTaskOverviewBreakdown } from "./actionCreator";
 import { TASK_BREAKDOWN, STORE_ACCESSORS } from "./reducer";
 
@@ -21,7 +21,7 @@ export const useTaskBreakdownState = ({
   });
 
   const [selectedBreakdowns, setSelectedBreakdowns] = useState(() => {
-    const { [queryParamName]: breakdownByQueryParameter } = getQueryParams();
+    const { [queryParamName]: breakdownByQueryParameter } = getSearchParams();
 
     const getBreakdowns = () => {
       if (breakdownByQueryParameter) {
@@ -59,7 +59,7 @@ export const useTaskBreakdownState = ({
   }, [taskId, dispatch, selectedBreakdowns]);
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [queryParamName]: selectedBreakdowns
     });
   }, [queryParamName, selectedBreakdowns]);

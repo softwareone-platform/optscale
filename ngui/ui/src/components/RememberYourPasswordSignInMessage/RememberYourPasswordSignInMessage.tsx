@@ -3,11 +3,11 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import { LOGIN, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { buildQueryParameters } from "utils/strings";
 
 const RememberYourPasswordSignInMessage = () => {
-  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
 

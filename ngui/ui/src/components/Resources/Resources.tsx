@@ -32,13 +32,13 @@ import {
 } from "urls";
 import { BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 
 const BreakdownLinearSelector = ({ value, onChange }) => {
   useEffect(() => {
-    updateQueryParams({ [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: value.name });
+    updateSearchParams({ [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: value.name });
   }, [value.name]);
 
   return (
@@ -152,7 +152,7 @@ const Resources = ({
         type: "button",
         action: () => {
           const getBreakdownData = () => {
-            const searchParams = getQueryParams();
+            const searchParams = getSearchParams();
 
             if (activeBreakdown.name === CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES) {
               return {

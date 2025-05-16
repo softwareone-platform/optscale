@@ -20,7 +20,7 @@ import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useRefetchApis } from "hooks/useRefetchApis";
 import { getEditMlTaskUrl, ML_TASKS } from "urls";
 import { ML_TASK_DETAILS_TAB_NAME } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const TaskActionBar = ({ isLoading, isDataReady, name, taskKey, taskId }) => {
   const openSideModal = useOpenSideModal();
@@ -64,7 +64,7 @@ const TaskActionBar = ({ isLoading, isDataReady, name, taskKey, taskId }) => {
       icon: <SettingsIcon fontSize="small" />,
       messageId: "configure",
       action: () => {
-        const { [ML_TASK_DETAILS_TAB_NAME]: tab } = getQueryParams();
+        const { [ML_TASK_DETAILS_TAB_NAME]: tab } = getSearchParams();
         navigate(
           getEditMlTaskUrl(taskId, {
             [ML_TASK_DETAILS_TAB_NAME]: tab

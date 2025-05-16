@@ -8,7 +8,7 @@ import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isEmpty } from "utils/arrays";
 import { NEBIUS } from "utils/constants";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 
 const CloudCostComparisonContainer = () => {
   const { organizationId } = useOrganizationInfo();
@@ -52,7 +52,7 @@ const CloudCostComparisonContainer = () => {
   return (
     <CloudCostComparison
       onFiltersApply={(newParams: FormValues) => {
-        updateQueryParams(newParams);
+        updateSearchParams(newParams);
         getRelevantFlavors({
           variables: {
             organizationId: organizationId,

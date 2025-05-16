@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { intl } from "translations/react-intl-config";
 import { RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY, RESOURCES_EXPENSES_DAILY_BREAKDOWN_BY_VALUES } from "utils/constants";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 import { useReactiveSearchParams } from "./useReactiveSearchParams";
 
 const getBreakdownDefinition = (value: string, messageId: string) => ({
@@ -50,14 +50,14 @@ export const useBreakdownBy = ({ queryParamName }: { queryParamName: string }) =
 
   useEffect(() => {
     if (!searchParams[queryParamName]) {
-      updateQueryParams({
+      updateSearchParams({
         [queryParamName]: serviceNameBreakdown.value
       });
     }
   }, [queryParamName, searchParams]);
 
   const onBreakdownByChange = (newBreakdownByValue: string) => {
-    updateQueryParams({
+    updateSearchParams({
       [queryParamName]: newBreakdownByValue
     });
   };

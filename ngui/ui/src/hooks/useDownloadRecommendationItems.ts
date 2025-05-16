@@ -1,6 +1,6 @@
 import { RESTAPI } from "api";
 import { getApiUrl } from "api/utils";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 import { useFetchAndDownload } from "./useFetchAndDownload";
 import { useOrganizationInfo } from "./useOrganizationInfo";
 
@@ -12,7 +12,7 @@ export const useDownloadRecommendationItems = ({ limit, type, status, dataSource
   return {
     download: (format) => {
       const apiPath = `${getApiUrl(RESTAPI)}/organizations/${organizationId}/optimization_data`;
-      const queryParameters = formQueryString({
+      const queryParameters = stringifySearchParams({
         type,
         status,
         format,

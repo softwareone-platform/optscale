@@ -17,7 +17,7 @@ import {
   secondsToMilliseconds,
   subYears
 } from "utils/datetime";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 export type Pagination = {
   pageCount: number;
@@ -76,12 +76,12 @@ const START_DATE_QUERY_PARAM_NAME = "startDate";
 const END_DATE_QUERY_PARAM_NAME = "endDate";
 
 const getDefaultSearchValue = () => {
-  const { [SEARCH_QUERY_PARAM_NAME]: search = "" } = getQueryParams();
+  const { [SEARCH_QUERY_PARAM_NAME]: search = "" } = getSearchParams();
   return String(search);
 };
 
 const getDefaultPageIndexValue = () => {
-  const { [PAGE_QUERY_PARAM_NAME]: page } = getQueryParams();
+  const { [PAGE_QUERY_PARAM_NAME]: page } = getSearchParams();
 
   const numberPage = Number(page);
 
@@ -89,7 +89,7 @@ const getDefaultPageIndexValue = () => {
 };
 
 const getRangeQueryParams = (minRange: number, maxRange: number) => {
-  const { [START_DATE_QUERY_PARAM_NAME]: startDate, [END_DATE_QUERY_PARAM_NAME]: endDate } = getQueryParams();
+  const { [START_DATE_QUERY_PARAM_NAME]: startDate, [END_DATE_QUERY_PARAM_NAME]: endDate } = getSearchParams();
 
   const startNumber = Number(startDate);
   const endNumber = Number(endDate);
@@ -134,7 +134,7 @@ const MlArtifactsContainer = ({
   };
 
   const [appliedFilters, setAppliedFilters] = useState<Record<string, string | string[] | undefined>>(() => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
 
     return ML_ARTIFACTS_FILTERS_NAMES.reduce(
       (params, queryKey) => ({
@@ -178,7 +178,7 @@ const MlArtifactsContainer = ({
   };
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [SEARCH_QUERY_PARAM_NAME]: searchValue,
       [PAGE_QUERY_PARAM_NAME]: pageIndex + 1,
       [START_DATE_QUERY_PARAM_NAME]: debouncedRange[0],

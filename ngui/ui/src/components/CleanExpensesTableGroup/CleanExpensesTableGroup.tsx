@@ -20,7 +20,7 @@ import {
   CLEAN_EXPENSES_GROUP_TYPES_LIST
 } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getPaginationQueryKey, getSearchQueryKey } from "utils/tables";
 import { TOTAL_EXPENSES, COUNT } from "./constant";
@@ -209,7 +209,7 @@ const CleanExpensesTableGroup = ({
             }
             label={<FormattedMessage id="groupBy" />}
             onChange={({ name: groupType, value: groupBy }) => {
-              updateQueryParams({
+              updateSearchParams({
                 [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                 [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                 [GROUP_TYPE_PARAM_NAME]: groupType,
@@ -221,7 +221,7 @@ const CleanExpensesTableGroup = ({
               });
             }}
             onClear={() => {
-              updateQueryParams({
+              updateSearchParams({
                 [GROUP_TYPE_PARAM_NAME]: undefined,
                 [GROUP_BY_PARAM_NAME]: undefined,
                 [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
@@ -271,7 +271,7 @@ const CleanExpensesTableGroup = ({
             startDateTimestamp={startDateTimestamp}
             endDateTimestamp={endDateTimestamp}
             onAccordionChange={() => {
-              updateQueryParams({
+              updateSearchParams({
                 [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                 [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
               });

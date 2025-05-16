@@ -23,7 +23,7 @@ import {
   BREAKDOWN_LINEAR_SELECTOR_ITEMS,
   CLEAN_EXPENSES_BREAKDOWN_TYPES
 } from "utils/constants";
-import { getQueryParams, removeQueryParam, updateQueryParams } from "utils/network";
+import { getSearchParams, removeSearchParam, updateSearchParams } from "utils/network";
 
 const ResourcesContainer = () => {
   const navigate = useNavigate();
@@ -89,7 +89,7 @@ const ResourcesContainer = () => {
       ].some((fn) => fn());
 
       if (someParamHasChanged) {
-        removeQueryParam(RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME);
+        removeSearchParam(RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME);
       }
     }
   }, [
@@ -106,7 +106,7 @@ const ResourcesContainer = () => {
   const { useGet: useGetFilters } = AvailableFiltersService();
 
   const requestParams = useMemo(() => {
-    const queryParams = getQueryParams();
+    const queryParams = getSearchParams();
 
     return {
       limit: Number(queryParams.limit || EXPENSES_LIMIT_FILTER_DEFAULT_VALUE),
@@ -150,23 +150,23 @@ const ResourcesContainer = () => {
   const { isLoading: isFilterValuesLoading, filters: filterValues } = useGetFilters(requestParams.dateRange);
 
   const onApply = (dateRange) => {
-    updateQueryParams(dateRange);
+    updateSearchParams(dateRange);
   };
 
   const onFilterAdd = (newFilter) => {
-    updateQueryParams(newFilter);
+    updateSearchParams(newFilter);
   };
 
   const onFilterDelete = (filterName, filterValue) => {
     const currentValue = filtersQueryParams[filterName];
 
-    updateQueryParams({
+    updateSearchParams({
       [filterName]: Array.isArray(currentValue) ? currentValue.filter((val) => val !== filterValue) : undefined
     });
   };
 
   const onFiltersDelete = () => {
-    updateQueryParams(Object.fromEntries(Object.keys(filtersQueryParams).map((filterName) => [filterName, undefined])));
+    updateSearchParams(Object.fromEntries(Object.keys(filtersQueryParams).map((filterName) => [filterName, undefined])));
   };
 
   const onPerspectiveApply = (perspectiveName) => {
@@ -194,7 +194,7 @@ const ResourcesContainer = () => {
       perspectives={validPerspectives}
       onPerspectiveApply={onPerspectiveApply}
       onBreakdownChange={({ name }) => {
-        updateQueryParams({
+        updateSearchParams({
           [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: name
         });
       }}

@@ -4,7 +4,7 @@ import { FormattedMessage } from "react-intl";
 import TabsWrapper from "components/TabsWrapper";
 import { STATUS } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import MlTasksService from "services/MlTasksService";
-import { removeQueryParam } from "utils/network";
+import { removeSearchParam } from "utils/network";
 import Details from "./Details";
 import RecommendationDetailsService from "./RecommendationDetailsService";
 import SelectedCloudAccounts from "./SelectedCloudAccounts";
@@ -59,7 +59,7 @@ const RecommendationDetails = ({
 }) => {
   useEffect(
     () => () => {
-      removeQueryParam(QUERY_TAB_NAME);
+      removeSearchParam(QUERY_TAB_NAME);
     },
     []
   );

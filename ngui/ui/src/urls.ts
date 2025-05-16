@@ -11,7 +11,7 @@ import {
   CONNECTION_TYPES
 } from "utils/constants";
 import { getLast30DaysRange, getCurrentMonthRange } from "utils/datetime";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 
 import { buildQueryParameters, concatenateUrl, hasSymbolAtTheEnd, isString } from "utils/strings";
 
@@ -230,7 +230,7 @@ export const getResourcesExpensesUrl = ({
   organizationId,
   ...restFilters
 }) => {
-  const query = formQueryString({
+  const query = stringifySearchParams({
     [START_DATE_FILTER]: sStartDate,
     [END_DATE_FILTER]: sEndDate,
     [RESOURCES_PERSPECTIVE_PARAMETER_NAME]: perspective,
@@ -309,7 +309,7 @@ export const RI_SP_QUERY_PARAMETERS = Object.freeze({
 });
 
 export const getRiSpCoverageUrl = ({ secondsStartDate, secondsEndDate, dataSourceId } = {}) => {
-  const query = formQueryString({
+  const query = stringifySearchParams({
     [RI_SP_QUERY_PARAMETERS.START_DATE]: secondsStartDate,
     [RI_SP_QUERY_PARAMETERS.END_DATE]: secondsEndDate,
     [RI_SP_QUERY_PARAMETERS.DATA_SOURCE_ID]: dataSourceId

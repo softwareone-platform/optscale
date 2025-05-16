@@ -11,7 +11,7 @@ import {
   USER_EMAIL_QUERY_PARAMETER_NAME
 } from "urls";
 import mainMenu from "utils/menus";
-import { formQueryString, getPathname, getQueryParams } from "utils/network";
+import { stringifySearchParams, getPathname, getSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { routes } from "utils/routes";
 
@@ -21,7 +21,7 @@ const RouteContent = ({ component, layout, context }) => (
 
 const LoginNavigation = () => {
   const currentPathName = getPathname();
-  const currentQueryParams = getQueryParams();
+  const currentQueryParams = getSearchParams();
 
   const {
     [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
@@ -37,7 +37,7 @@ const LoginNavigation = () => {
   if (currentPathName !== INITIALIZE) {
     url.searchParams.append(
       NEXT_QUERY_PARAMETER_NAME,
-      `${currentPathName}${isEmptyObject(restQueryParams) ? "" : `?${formQueryString(restQueryParams)}`}`
+      `${currentPathName}${isEmptyObject(restQueryParams) ? "" : `?${stringifySearchParams(restQueryParams)}`}`
     );
   }
 
