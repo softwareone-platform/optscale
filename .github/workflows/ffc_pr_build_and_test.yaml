@@ -1,0 +1,961 @@
+name: Build and Test All FinOps for Cloud Components
+permissions: read-all
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  determine_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      arcee_changed: ${{ steps.check_arcee.outputs.changed }}
+      auth_changed: ${{ steps.check_auth.outputs.changed }}
+      bi_exporter_changed: ${{ steps.check_bi_exporter.outputs.changed }}
+      bi_scheduler_changed: ${{ steps.check_bi_scheduler.outputs.changed }}
+      booking_observer_changed: ${{ steps.check_booking_observer.outputs.changed }}
+      bulldozer_changed: ${{ steps.check_bulldozer.outputs.changed }}
+      bumischeduler_changed: ${{ steps.check_bumischeduler.outputs.changed }}
+      bumiworker_changed: ${{ steps.check_bumiworker.outputs.changed }}
+      calendar_observer_changed: ${{ steps.check_calendar_observer.outputs.changed }}
+      configurator_changed: ${{ steps.check_configurator.outputs.changed }}
+      demo_org_cleanup_changed: ${{ steps.check_demo_org_cleanup.outputs.changed }}
+      diproxy_changed: ${{ steps.check_diproxy.outputs.changed }}
+      diworker_changed: ${{ steps.check_diworker.outputs.changed }}
+      error_pages_changed: ${{ steps.check_error_pages.outputs.changed }}
+      failed_imports_dataset_generator_changed: ${{ steps.check_failed_imports_dataset_generator.outputs.changed }}
+      gemini_scheduler_changed: ${{ steps.check_gemini_scheduler.outputs.changed }}
+      gemini_worker_changed: ${{ steps.check_gemini_worker.outputs.changed }}
+      herald_executor_changed: ${{ steps.check_herald_executor.outputs.changed }}
+      herald_changed: ${{ steps.check_herald.outputs.changed }}
+      influxdb_changed: ${{ steps.check_influxdb.outputs.changed }}
+      insider_changed: ${{ steps.check_insider.outputs.changed }}
+      katara_service_changed: ${{ steps.check_katara_service.outputs.changed }}
+      katara_worker_changed: ${{ steps.check_katara_worker.outputs.changed }}
+      keeper_executor_changed: ${{ steps.check_keeper_executor.outputs.changed }}
+      keeper_changed: ${{ steps.check_keeper.outputs.changed }}
+      layout_cleaner_changed: ${{ steps.check_layout_cleaner.outputs.changed }}
+      live_demo_generator_changed: ${{ steps.check_live_demo_generator.outputs.changed }}
+      metroculus_changed: ${{ steps.check_metroculus.outputs.changed }}
+      ngui_changed: ${{ steps.check_ngui.outputs.changed }}
+      organization_violations_changed: ${{ steps.check_organization_violations.outputs.changed }}
+      power_schedule_changed: ${{ steps.check_power_schedule.outputs.changed }}
+      resource_discovery_changed: ${{ steps.check_resource_discovery.outputs.changed }}
+      resource_observer_changed: ${{ steps.check_resource_observer.outputs.changed }}
+      resource_violations_changed: ${{ steps.check_resource_violations.outputs.changed }}
+      rest_api_changed: ${{ steps.check_rest_api.outputs.changed }}
+      risp_changed: ${{ steps.check_risp.outputs.changed }}
+      run_observer_changed: ${{ steps.check_run_observer.outputs.changed }}
+      trapper_changed: ${{ steps.check_trapper.outputs.changed }}
+      users_dataset_generator_changed: ${{ steps.check_users_dataset_generator.outputs.changed }}
+      webhook_executor_changed: ${{ steps.check_webhook_executor.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}
+
+      - name: Check if 'arcee/**' changed
+        id: check_arcee
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^arcee/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'auth/**' changed
+        id: check_auth
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^auth/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'bi_exporter/**' changed
+        id: check_bi_exporter
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^bi_exporter/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/bi_scheduler/**' changed
+        id: check_bi_scheduler
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/bi_scheduler/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/booking_observer/**' changed
+        id: check_booking_observer
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/booking_observer/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'bulldozer/**' changed
+        id: check_bulldozer
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^bulldozer/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'bumischeduler/**' changed
+        id: check_bumischeduler
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^bumischeduler/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'bumiworker/**' changed
+        id: check_bumiworker
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^bumiworker/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/calendar_observer/**' changed
+        id: check_calendar_observer
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/calendar_observer/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/cleaninfluxdb/**' changed
+        id: check_cleaninfluxdb
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/cleaninfluxdb/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/configurator/**' changed
+        id: check_configurator
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/configurator/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/demo_org_cleanup/**' changed
+        id: check_demo_org_cleanup
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/demo_org_cleanup/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'diproxy/**' changed
+        id: check_diproxy
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^diproxy/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'diworker/**' changed
+        id: check_diworker
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^diworker/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/error_pages/**' changed
+        id: check_error_pages
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/error_pages/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'failed_imports_dataset_generator/**' changed
+        id: check_failed_imports_dataset_generator
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^failed_imports_dataset_generator/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'gemini/gemini_scheduler/**' changed
+        id: check_gemini_scheduler
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^gemini/gemini_scheduler/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'gemini/gemini_worker/**' changed
+        id: check_gemini_worker
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^gemini/gemini_worker/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/herald_executor/**' changed
+        id: check_herald_executor
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/herald_executor/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'herald/**' changed
+        id: check_herald
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^herald/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/influxdb/**' changed
+        id: check_influxdb
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/influxdb/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'insider/**' changed
+        id: check_insider
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^insider/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'katara/katara_service/**' changed
+        id: check_katara_service
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^katara/katara_service/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'katara/katara_worker/**' changed
+        id: check_katara_worker
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^katara/katara_worker/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/keeper_executor/**' changed
+        id: check_keeper_executor
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/keeper_executor/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'keeper/**' changed
+        id: check_keeper
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^keeper/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/layout_cleaner/**' changed
+        id: check_layout_cleaner
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/layout_cleaner/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/live_demo_generator/**' changed
+        id: check_live_demo_generator
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/live_demo_generator/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'metroculus/**' changed
+        id: check_metroculus
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^metroculus/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'ngui/**' changed
+        id: check_ngui
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^ngui/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/organization_violations/**' changed
+        id: check_organization_violations
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/organization_violations/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/power_schedule/**' changed
+        id: check_power_schedule
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/power_schedule/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/resource_discovery/**' changed
+        id: check_resource_discovery
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/resource_discovery/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/resource_observer/**' changed
+        id: check_resource_observer
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/resource_observer/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/resource_violations/**' changed
+        id: check_resource_violations
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/resource_violations/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'rest_api/**' changed
+        id: check_rest_api
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^rest_api/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'risp/**' changed
+        id: check_risp
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^risp/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/run_observer/**' changed
+        id: check_run_observer
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/run_observer/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'trapper/**' changed
+        id: check_trapper
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^trapper/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/users_dataset_generator/**' changed
+        id: check_users_dataset_generator
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/users_dataset_generator/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'docker_images/webhook_executor/**' changed
+        id: check_webhook_executor
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/webhook_executor/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  arcee_tests:
+    if: needs.determine_changes.outputs.arcee_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh arcee build
+      - name: Build test image and run tests
+        run: bash -x arcee/run_test.sh
+  auth_tests:
+    if: needs.determine_changes.outputs.auth_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh auth build
+      - name: Build test image and run tests
+        run: bash -x auth/run_test.sh
+  bi_exporter_tests:
+    if: needs.determine_changes.outputs.bi_exporter_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh bi_exporter build
+      - name: Build test image and run tests
+        run: bash -x bi_exporter/run_test.sh
+  bi_scheduler_tests:
+    if: needs.determine_changes.outputs.bi_scheduler_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh bi_scheduler build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh bi_scheduler
+      - name: Build test image and run unit tests
+        run: bash -x docker_images/bi_scheduler/run_test.sh
+  booking_observer_tests:
+    if: needs.determine_changes.outputs.booking_observer_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh booking_observer build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh booking_observer
+  bulldozer_tests:
+    if: needs.determine_changes.outputs.bulldozer_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh bulldozer build
+      - name: Build test image and run tests
+        run: bash -x bulldozer/run_test.sh
+  bumischeduler_tests:
+    if: needs.determine_changes.outputs.bumischeduler_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh bumischeduler build
+      - name: Build test image and run tests
+        run: bash -x bumischeduler/run_test.sh
+  bumiworker_tests:
+    if: needs.determine_changes.outputs.bumiworker_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh bumiworker build
+      - name: Build test image and run tests
+        run: bash -x bumiworker/run_test.sh
+  calendar_observer_tests:
+    if: needs.determine_changes.outputs.calendar_observer_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh calendar_observer build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh calendar_observer
+  cleanmongodb_tests:
+    if: needs.determine_changes.outputs.cleanmongodb_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh cleanmongodb build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh cleanmongodb *.py
+  configurator_tests:
+    if: needs.determine_changes.outputs.configurator_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh configurator build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh configurator
+  demo_org_cleanup_tests:
+    if: needs.determine_changes.outputs.demo_org_cleanup_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build image
+        run: bash -x build.sh demo_org_cleanup build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh demo_org_cleanup
+  diproxy_tests:
+    if: needs.determine_changes.outputs.diproxy_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh diproxy build
+      - name: Build test image and run tests
+        run: bash -x diproxy/run_test.sh
+  diworker_tests:
+    if: needs.determine_changes.outputs.diworker_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh diworker build
+      - name: Build test image and run tests
+        run: bash -x diworker/run_test.sh
+  error_pages_tests:
+    if: needs.determine_changes.outputs.error_pages_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh error_pages build
+  failed_imports_dataset_generator_tests:
+    if:
+      needs.determine_changes.outputs.failed_imports_dataset_generator_changed ==
+      'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh failed_imports_dataset_generator build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh failed_imports_dataset_generator
+  gemini_scheduler_tests:
+    if: needs.determine_changes.outputs.gemini_scheduler_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh gemini_scheduler build
+      - name: Build test image and run tests
+        run: bash -x gemini/gemini_scheduler/run_test.sh
+  gemini_worker_tests:
+    if: needs.determine_changes.outputs.gemini_worker_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh gemini_worker build
+      - name: Build test image and run tests
+        run: bash -x gemini/gemini_worker/run_test.sh
+  herald_executor_tests:
+    if: needs.determine_changes.outputs.herald_executor_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh herald_executor build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh herald_executor
+  herald_tests:
+    if: needs.determine_changes.outputs.herald_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh herald build
+      - name: Build test image and run tests
+        run: bash -x herald/run_test.sh
+  influxdb_tests:
+    if: needs.determine_changes.outputs.influxdb_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh influxdb build
+  insider_tests:
+    if: needs.determine_changes.outputs.insider_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh insider build
+      - name: Build test image and run tests
+        run: bash -x insider/run_test.sh
+  katara_service_tests:
+    if: needs.determine_changes.outputs.katara_service_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh katara_service build
+      - name: Build test image and run tests
+        run: bash -x katara/katara_service/run_test.sh
+  katara_worker_tests:
+    if: needs.determine_changes.outputs.katara_worker_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh katara_worker build
+      - name: Build test image and run tests
+        run: bash -x katara/katara_worker/run_test.sh
+  keeper_executor_tests:
+    if: needs.determine_changes.outputs.keeper_executor_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh keeper_executor build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh keeper_executor
+  keeper_tests:
+    if: needs.determine_changes.outputs.keeper_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh keeper build
+      - name: Build test image and run tests
+        run: bash -x keeper/run_test.sh
+  layout_cleaner_tests:
+    if: needs.determine_changes.outputs.layout_cleaner_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh layout_cleaner build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh layout_cleaner
+  live_demo_generator_tests:
+    if: needs.determine_changes.outputs.live_demo_generator_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh live_demo_generator build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh live_demo_generator
+  metroculus_tests:
+    if: needs.determine_changes.outputs.metroculus_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh metroculus build
+      - name: Build test image and run tests
+        run: bash -x metroculus/run_test.sh
+  ngui_tests:
+    if: needs.determine_changes.outputs.ngui_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh ngui build
+      - name: Build test image and run tests
+        run: bash -x ngui/run_test.sh
+  organization_violations_tests:
+    if: needs.determine_changes.outputs.organization_violations_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh organization_violations build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh organization_violations
+  power_schedule_tests:
+    if: needs.determine_changes.outputs.power_schedule_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh power_schedule build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh power_schedule
+      - name: Build test image and run unit tests
+        run: bash -x docker_images/power_schedule/run_test.sh
+  resource_discovery_tests:
+    if: needs.determine_changes.outputs.resource_discovery_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh resource_discovery build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh resource_discovery
+  resource_observer_tests:
+    if: needs.determine_changes.outputs.resource_observer_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh resource_observer build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh resource_observer
+  resource_violations_tests:
+    if: needs.determine_changes.outputs.resource_violations_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh resource_violations build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh resource_violations
+  rest_api_tests:
+    if: needs.determine_changes.outputs.rest_api_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh rest_api build
+      - name: Build test image and run tests
+        run: bash -x rest_api/run_test.sh
+  risp_tests:
+    if: needs.determine_changes.outputs.risp_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh risp build
+      - name: Build test image and run tests
+        run: bash -x risp/run_test.sh
+  run_observer_tests:
+    if: needs.determine_changes.outputs.run_observer_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh run_observer build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh run_observer
+  trapper_tests:
+    if: needs.determine_changes.outputs.trapper_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh trapper build
+      - name: Build test image and run tests
+        run: bash -x trapper/run_test.sh
+  users_dataset_generator_tests:
+    if: needs.determine_changes.outputs.users_dataset_generator_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh users_dataset_generator build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh users_dataset_generator
+  webhook_executor_tests:
+    if: needs.determine_changes.outputs.webhook_executor_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh webhook_executor build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh webhook_executor
+
+  pr_notification:
+    needs: 
+      - arcee_tests
+      - auth_tests
+      - bi_exporter_tests
+      - bi_scheduler_tests
+      - booking_observer_tests
+      - bulldozer_tests
+      - bumischeduler_tests
+      - bumiworker_tests
+      - calendar_observer_tests
+      - cleanmongodb_tests
+      - configurator_tests
+      - demo_org_cleanup_tests
+      - diproxy_tests
+      - diworker_tests
+      - error_pages_tests
+      - failed_imports_dataset_generator_tests
+      - gemini_scheduler_tests
+      - gemini_worker_tests
+      - herald_executor_tests
+      - herald_tests
+      - influxdb_tests
+      - insider_tests
+      - katara_service_tests
+      - katara_worker_tests
+      - keeper_executor_tests
+      - keeper_tests
+      - layout_cleaner_tests
+      - live_demo_generator_tests
+      - metroculus_tests
+      - ngui_tests
+      - organization_violations_tests
+      - power_schedule_tests
+      - resource_discovery_tests
+      - resource_observer_tests
+      - resource_violations_tests
+      - rest_api_tests
+      - risp_tests
+      - run_observer_tests
+      - trapper_tests
+      - users_dataset_generator_tests
+      - webhook_executor_tests
+    runs-on: ubuntu-latest
+    if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Compute added/removed lines for notification
+        if: ${{ github.event_name == 'pull_request' }}
+        id: diff
+        run: |
+          PR_DATA=$(gh pr view "${{ github.event.pull_request.number }}" --json additions,deletions -q '.')
+          ADDITIONS=$(echo "$PR_DATA" | jq '.additions')
+          DELETIONS=$(echo "$PR_DATA" | jq '.deletions')
+          echo "additions=$ADDITIONS" >> $GITHUB_OUTPUT
+          echo "deletions=$DELETIONS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Notify Microsoft Teams
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: softwareone-platform/notify-pr-teams-action@v4
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          bot_image_url: https://raw.githubusercontent.com/softwareone-platform/ffc-finops-operations/main/.github/workflows/assets/turing_team_pr_bot.png
+          repo: ${{ github.repository }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_author: ${{ github.event.pull_request.user.login }}
+          head_ref: ${{ github.event.pull_request.head.ref }}
+          base_ref: ${{ github.event.pull_request.base.ref }}
+          commits: ${{ github.event.pull_request.commits }}
+          changed_files: ${{ github.event.pull_request.changed_files }}
+          additions: ${{ steps.diff.outputs.additions }}
+          deletions: ${{ steps.diff.outputs.deletions }}
+          pr_number: ${{ github.event.pull_request.number }}
+          pr_status: ${{ github.event.pull_request.state }}
+          is_merged: ${{ github.event.pull_request.merged }}
