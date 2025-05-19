@@ -1,11 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { areSearchParamsEqual } from "api/utils";
-import { RESOURCE_FILTERS_NAMES } from "components/Filters/constants";
 import Resources from "components/Resources";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
+import { RANGE_DATES } from "containers/RangePickerFormContainer/reducer";
 import { useOrganizationPerspectives } from "hooks/coreData/useOrganizationPerspectives";
-import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { useReactiveSearchParams } from "hooks/useReactiveSearchParams";
+import { useRootData } from "hooks/useRootData";
 import AvailableFiltersService from "services/AvailableFiltersService";
 import {
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
@@ -16,17 +16,67 @@ import {
   RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
   RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
-import { getLength } from "utils/arrays";
 import {
   DATE_RANGE_TYPE,
   EXPENSES_LIMIT_FILTER_DEFAULT_VALUE,
-  BREAKDOWN_LINEAR_SELECTOR_ITEMS,
-  CLEAN_EXPENSES_BREAKDOWN_TYPES
+  CLEAN_EXPENSES_BREAKDOWN_TYPES,
+  CLEAN_EXPENSES_BREAKDOWN_TYPES_LIST
 } from "utils/constants";
+import { getCurrentMonthRange } from "utils/datetime";
 import { getSearchParams, removeSearchParam, updateSearchParams } from "utils/network";
+
+const useDateRange = () => {
+  const { rootData: storageRangeDates = {} } = useRootData(RANGE_DATES, (result = {}) => result[DATE_RANGE_TYPE.RESOURCES]);
+
+  const [dateRange, setDateRange] = useState(() => {
+    const allSearchParams = getSearchParams();
+    const { startOfMonth: defaultStartDate, today: defaultEndDate } = getCurrentMonthRange(true);
+
+    const getStartDate = () => {
+      if (allSearchParams.startDate) {
+        return allSearchParams.startDate;
+      }
+
+      if (storageRangeDates.startDate) {
+        return storageRangeDates.startDate;
+      }
+
+      return defaultStartDate;
+    };
+
+    const getEndDate = () => {
+      if (allSearchParams.endDate) {
+        return allSearchParams.endDate;
+      }
+
+      if (storageRangeDates.endDate) {
+        return storageRangeDates.endDate;
+      }
+
+      return defaultEndDate;
+    };
+
+    return {
+      startDate: Number(getStartDate()),
+      endDate: Number(getEndDate())
+    };
+  });
+
+  return [dateRange, setDateRange] as const;
+};
 
 const ResourcesContainer = () => {
   const navigate = useNavigate();
+
+  const [appliedFilters, setAppliedFilters] = useState(() =>
+    Object.fromEntries(
+      Object.values(FILTER_CONFIGS).map((filterConfig) => {
+        const { getValuesFromSearchParams } = filterConfig;
+
+        return [filterConfig.id, getValuesFromSearchParams()];
+      })
+    )
+  );
 
   const { [RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME]: perspectiveNameSearchParameter } = useReactiveSearchParams(
     useMemo(() => [RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME], [])
@@ -34,13 +84,7 @@ const ResourcesContainer = () => {
 
   const { validPerspectives } = useOrganizationPerspectives();
 
-  const filtersQueryParams = useReactiveSearchParams(RESOURCE_FILTERS_NAMES);
-
-  const [startDateTimestamp, endDateTimestamp] = useReactiveDefaultDateRange(DATE_RANGE_TYPE.RESOURCES);
-
-  const { [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: breakdownQueryParameter } = useReactiveSearchParams(
-    useMemo(() => [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME], [])
-  );
+  const [dateRange, setDateRange] = useDateRange();
 
   const groupByParameters = useReactiveSearchParams([GROUP_BY_PARAM_NAME, GROUP_TYPE_PARAM_NAME]);
 
@@ -51,15 +95,21 @@ const ResourcesContainer = () => {
   const { [DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME]: dailyResourceCountBreakdownByParameter } =
     useReactiveSearchParams(useMemo(() => [DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME], []));
 
+  const [breakdownByState, setBreakdownByState] = useState(() => {
+    const { [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: breakdownBy } = getSearchParams();
+
+    if (CLEAN_EXPENSES_BREAKDOWN_TYPES_LIST.includes(breakdownBy)) {
+      return breakdownBy;
+    }
+
+    return CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES;
+  });
+
   useEffect(() => {
     const selectedPerspective = validPerspectives[perspectiveNameSearchParameter];
 
     if (selectedPerspective) {
-      const { filters, breakdownBy, breakdownData } = selectedPerspective;
-
-      const filterParamsHasChanged = () => !areSearchParamsEqual(filtersQueryParams, filters.appliedFilters);
-
-      const breakdownParamHasChanged = () => breakdownBy !== breakdownQueryParameter;
+      const { breakdownBy, breakdownData } = selectedPerspective;
 
       const categorizeByHasChanged = () => {
         if (breakdownBy === CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES) {
@@ -81,42 +131,50 @@ const ResourcesContainer = () => {
         return false;
       };
 
-      const someParamHasChanged = [
-        filterParamsHasChanged,
-        breakdownParamHasChanged,
-        categorizeByHasChanged,
-        groupByHasChanged
-      ].some((fn) => fn());
+      const someParamHasChanged = [categorizeByHasChanged, groupByHasChanged].some((fn) => fn());
 
       if (someParamHasChanged) {
         removeSearchParam(RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME);
       }
     }
   }, [
-    filtersQueryParams,
-    perspectiveNameSearchParameter,
-    validPerspectives,
-    breakdownQueryParameter,
     dailyExpensesBreakdownByParameter,
+    dailyResourceCountBreakdownByParameter,
     groupByParameters.groupBy,
     groupByParameters.groupType,
-    dailyResourceCountBreakdownByParameter
+    perspectiveNameSearchParameter,
+    validPerspectives
   ]);
+
+  const selectedPerspective = validPerspectives[perspectiveNameSearchParameter];
 
   const { useGet: useGetFilters } = AvailableFiltersService();
 
   const requestParams = useMemo(() => {
     const queryParams = getSearchParams();
 
+    const apiFilterParams = Object.entries(appliedFilters).reduce((acc, [key, value]) => {
+      const config = FILTER_CONFIGS[key];
+
+      if (!config) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        ...config.transformers.toApi(value)
+      };
+    }, {});
+
     return {
       limit: Number(queryParams.limit || EXPENSES_LIMIT_FILTER_DEFAULT_VALUE),
       dateRange: {
-        startDate: startDateTimestamp,
-        endDate: endDateTimestamp
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate
       },
-      filters: { ...filtersQueryParams }
+      filters: apiFilterParams
     };
-  }, [filtersQueryParams, startDateTimestamp, endDateTimestamp]);
+  }, [dateRange, appliedFilters]);
 
   const flatRequestParams = useMemo(
     () => ({
@@ -127,46 +185,14 @@ const ResourcesContainer = () => {
     [requestParams]
   );
 
-  const getBreakdownDefinition = (breakdownName) => {
-    const breakdown = BREAKDOWN_LINEAR_SELECTOR_ITEMS.find(({ name }) => name === breakdownName);
-
-    if (breakdown) {
-      return {
-        name: breakdown.name,
-        value: breakdown.value
-      };
-    }
-
-    const { name, value } = getLength(BREAKDOWN_LINEAR_SELECTOR_ITEMS) > 0 ? BREAKDOWN_LINEAR_SELECTOR_ITEMS[0] : {};
-
-    return {
-      name,
-      value
-    };
-  };
-
-  const activeBreakdown = getBreakdownDefinition(breakdownQueryParameter);
+  useEffect(() => {
+    updateSearchParams(requestParams.dateRange);
+  }, [requestParams.dateRange]);
 
   const { isLoading: isFilterValuesLoading, filters: filterValues } = useGetFilters(requestParams.dateRange);
 
-  const onApply = (dateRange) => {
-    updateSearchParams(dateRange);
-  };
-
-  const onFilterAdd = (newFilter) => {
-    updateSearchParams(newFilter);
-  };
-
-  const onFilterDelete = (filterName, filterValue) => {
-    const currentValue = filtersQueryParams[filterName];
-
-    updateSearchParams({
-      [filterName]: Array.isArray(currentValue) ? currentValue.filter((val) => val !== filterValue) : undefined
-    });
-  };
-
-  const onFiltersDelete = () => {
-    updateSearchParams(Object.fromEntries(Object.keys(filtersQueryParams).map((filterName) => [filterName, undefined])));
+  const onApplyDateRange = (dateRange) => {
+    setDateRange(dateRange);
   };
 
   const onPerspectiveApply = (perspectiveName) => {
@@ -179,24 +205,46 @@ const ResourcesContainer = () => {
 
   return (
     <Resources
-      startDateTimestamp={startDateTimestamp}
-      endDateTimestamp={endDateTimestamp}
-      filters={requestParams.filters}
+      startDateTimestamp={dateRange.startDate}
+      endDateTimestamp={dateRange.endDate}
       filterValues={filterValues}
-      onApply={onApply}
-      onFilterAdd={onFilterAdd}
-      onFilterDelete={onFilterDelete}
-      onFiltersDelete={onFiltersDelete}
+      onApply={onApplyDateRange}
       requestParams={flatRequestParams}
       isFilterValuesLoading={isFilterValuesLoading}
-      activeBreakdown={activeBreakdown}
+      activeBreakdown={breakdownByState}
+      onBreakdownChange={(breakdownBy) => {
+        if (selectedPerspective) {
+          removeSearchParam(RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME);
+        }
+
+        setBreakdownByState(breakdownBy);
+      }}
       selectedPerspectiveName={perspectiveNameSearchParameter}
       perspectives={validPerspectives}
       onPerspectiveApply={onPerspectiveApply}
-      onBreakdownChange={({ name }) => {
-        updateSearchParams({
-          [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: name
-        });
+      appliedFilters={appliedFilters}
+      onAppliedFiltersChange={(newFilters) => {
+        if (selectedPerspective) {
+          removeSearchParam(RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME);
+        }
+
+        const queryParamsToUpdate = Object.entries(newFilters).reduce((acc, [key, value]) => {
+          const filterConfig = FILTER_CONFIGS[key];
+          if (filterConfig) {
+            return {
+              ...acc,
+              ...filterConfig.transformers.toApi(value)
+            };
+          }
+          return acc;
+        }, {});
+
+        updateSearchParams(queryParamsToUpdate);
+
+        setAppliedFilters((prev) => ({
+          ...prev,
+          ...newFilters
+        }));
       }}
     />
   );

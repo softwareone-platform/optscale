@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { TAGS_RELATED_FILTERS } from "components/Filters/constants";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { ANOMALY_TYPES, EXPIRING_BUDGET_POLICY, QUOTA_POLICY, RECURRING_BUDGET_POLICY, TAGGING_POLICY } from "utils/constants";
 import { CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES } from "./constants";
 import {
@@ -23,7 +24,13 @@ import {
 const CreateOrganizationConstraintForm = ({ onSubmit, types, navigateAway }) => {
   const methods = useForm({
     defaultValues: {
-      [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS]: {},
+      [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS]: Object.fromEntries(
+        Object.values(FILTER_CONFIGS).map((filterConfig) => {
+          const { getDefaultValue } = filterConfig;
+
+          return [filterConfig.id, getDefaultValue()];
+        })
+      ),
       [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.EVALUATION_PERIOD]: "",
       [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.NAME]: "",
       [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.THRESHOLD]: "",

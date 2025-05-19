@@ -1,9 +1,8 @@
 import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
-import SubTitle from "components/SubTitle";
+import ResourcesPerspectiveFilters from "components/ResourcesPerspectiveFilters";
 import { breakdowns } from "hooks/useBreakdownBy";
-import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SPACING_1 } from "utils/layouts";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
@@ -30,7 +29,12 @@ const getBreakdownStateValueRenderer = (name) =>
     groupBy: getGroupByRenderData
   })[name] ?? (() => null);
 
-const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}, filters = [] }) => (
+const ResourcesPerspectiveValuesDescription = ({
+  breakdownBy,
+  breakdownData = {},
+  perspectiveFilterValues = {},
+  perspectiveAppliedFilters = {}
+}) => (
   <Stack spacing={SPACING_1}>
     <KeyValueLabel keyMessageId="breakdownBy" value={<FormattedMessage id={breakdownBy} />} />
     {Object.entries(breakdownData)
@@ -43,20 +47,10 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       .map(({ controlName, renderValue }) => (
         <KeyValueLabel key={controlName} keyMessageId={controlName} value={renderValue()} />
       ))}
-    <div>
-      {isEmptyArray(filters) ? (
-        <KeyValueLabel keyMessageId="filters" value="-" />
-      ) : (
-        <>
-          <SubTitle>
-            <FormattedMessage id="filters" />
-          </SubTitle>
-          {filters.map(({ name, displayedName, displayedValue }) => (
-            <KeyValueLabel key={name} keyText={displayedName} value={displayedValue} />
-          ))}
-        </>
-      )}
-    </div>
+    <ResourcesPerspectiveFilters
+      perspectiveFilterValues={perspectiveFilterValues}
+      perspectiveAppliedFilters={perspectiveAppliedFilters}
+    />
   </Stack>
 );
 

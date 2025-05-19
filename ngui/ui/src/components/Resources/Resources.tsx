@@ -1,17 +1,15 @@
-import { useEffect } from "react";
 import AddchartOutlinedIcon from "@mui/icons-material/AddchartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import Grid from "@mui/material/Grid";
+import { Box, Stack } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
 import CopyText from "components/CopyText";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
-import ExpensesFilters from "components/ExpensesFilters";
-import LinearSelector from "components/LinearSelector";
 import PageContentWrapper from "components/PageContentWrapper";
 import { ApplyResourcePerspectiveModal, CreateResourcePerspectiveModal } from "components/SideModalManager/SideModals";
+import TabsWrapper from "components/TabsWrapper";
 import Tooltip from "components/Tooltip";
 import TypographyLoader from "components/TypographyLoader";
 import CleanExpensesBreakdownContainer from "containers/CleanExpensesBreakdownContainer";
@@ -21,7 +19,6 @@ import ResourceCountBreakdownContainer from "containers/ResourceCountBreakdownCo
 import TagsBreakdownContainer from "containers/TagsBreakdownContainer";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { useResourceFilters } from "hooks/useResourceFilters";
 import {
   CLUSTER_TYPES,
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
@@ -30,26 +27,12 @@ import {
   RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
   RESOURCES_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
-import { BREAKDOWN_LINEAR_SELECTOR_ITEMS, CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
+import { CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { getSearchParams, updateSearchParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { sliceByLimitWithEllipsis } from "utils/strings";
-
-const BreakdownLinearSelector = ({ value, onChange }) => {
-  useEffect(() => {
-    updateSearchParams({ [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: value.name });
-  }, [value.name]);
-
-  return (
-    <LinearSelector
-      value={value}
-      label={<FormattedMessage id="breakdownBy" />}
-      onChange={onChange}
-      items={BREAKDOWN_LINEAR_SELECTOR_ITEMS}
-    />
-  );
-};
+import Filters from "./Filters";
 
 const MAX_PERSPECTIVE_NAME_LENGTH = 60;
 
@@ -92,30 +75,23 @@ const SelectedPerspectiveTitle = ({ perspectiveName }) => {
 const Resources = ({
   startDateTimestamp,
   endDateTimestamp,
-  filters,
   filterValues,
   onApply,
-  onFilterAdd,
-  onFilterDelete,
-  onFiltersDelete,
   requestParams,
   activeBreakdown,
   selectedPerspectiveName,
   perspectives,
-  onBreakdownChange,
   onPerspectiveApply,
-  isFilterValuesLoading = false
+  appliedFilters,
+  onAppliedFiltersChange,
+  isFilterValuesLoading = false,
+  onBreakdownChange
 }) => {
   const openSideModal = useOpenSideModal();
 
   const intl = useIntl();
 
   const isPerspectiveSelected = selectedPerspectiveName !== undefined;
-
-  const resourceFilters = useResourceFilters(filterValues, filters);
-
-  const items = resourceFilters.getFilterSelectors();
-  const appliedValues = resourceFilters.getAppliedValues();
 
   const actionBarDefinition = {
     title: {
@@ -154,7 +130,7 @@ const Resources = ({
           const getBreakdownData = () => {
             const searchParams = getSearchParams();
 
-            if (activeBreakdown.name === CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES) {
+            if (activeBreakdown === CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES) {
               return {
                 breakdownBy: searchParams[DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME],
                 groupBy: {
@@ -163,7 +139,7 @@ const Resources = ({
                 }
               };
             }
-            if (activeBreakdown.name === CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT) {
+            if (activeBreakdown === CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT) {
               return {
                 breakdownBy: searchParams[DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME]
               };
@@ -172,9 +148,10 @@ const Resources = ({
           };
 
           openSideModal(CreateResourcePerspectiveModal, {
-            filters: resourceFilters,
-            breakdownBy: activeBreakdown.name,
-            breakdownData: getBreakdownData()
+            breakdownBy: activeBreakdown,
+            breakdownData: getBreakdownData(),
+            filterValues,
+            appliedFilters
           });
         },
         requiredActions: ["EDIT_PARTNER"],
@@ -197,21 +174,31 @@ const Resources = ({
 
   const renderTagsBreakdown = () => <TagsBreakdownContainer requestParams={requestParams} />;
 
-  const renderContent = {
-    [CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES]: renderExpensesBreakdown,
-    [CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT]: renderResourcesCountBreakdown,
-    [CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS]: renderTagsBreakdown
-  }[activeBreakdown.name];
+  const tabs = [
+    {
+      title: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+      dataTestId: "tab_expenses",
+      node: renderExpensesBreakdown()
+    },
+    {
+      title: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+      dataTestId: "tab_counts",
+      node: renderResourcesCountBreakdown()
+    },
+    {
+      title: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+      dataTestId: "tab_tags",
+      node: renderTagsBreakdown()
+    }
+  ];
 
   return (
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Grid direction="row" container spacing={SPACING_2} justifyContent="space-between">
-          <Grid item>
+        <Stack spacing={SPACING_2}>
+          <Box display="flex" justifyContent="space-between">
             <ExpensesSummaryContainer requestParams={requestParams} />
-          </Grid>
-          <Grid item>
             <RangePickerFormContainer
               onApply={(dateRange) => onApply(dateRange)}
               initialStartDateValue={startDateTimestamp}
@@ -219,27 +206,29 @@ const Resources = ({
               rangeType={DATE_RANGE_TYPE.RESOURCES}
               definedRanges={getBasicRangesSet()}
             />
-          </Grid>
-          <Grid xs={12} item>
+          </Box>
+          <Box>
             {isFilterValuesLoading ? (
               <TypographyLoader linesCount={1} />
             ) : (
-              <ExpensesFilters
-                items={items}
-                appliedValues={appliedValues}
-                onFilterDelete={onFilterDelete}
-                onFiltersDelete={onFiltersDelete}
-                onFilterAdd={onFilterAdd}
-              />
+              <Filters filters={filterValues} appliedFilters={appliedFilters} onAppliedFiltersChange={onAppliedFiltersChange} />
             )}
-          </Grid>
-          <Grid xs={12} item>
-            <BreakdownLinearSelector value={activeBreakdown} onChange={onBreakdownChange} />
-          </Grid>
-          <Grid xs={12} item>
-            {typeof renderContent === "function" ? renderContent() : null}
-          </Grid>
-        </Grid>
+          </Box>
+          <Box>
+            <TabsWrapper
+              tabsProps={{
+                tabs,
+                activeTab: activeBreakdown,
+                handleChange: (event, value) => {
+                  onBreakdownChange(value);
+                },
+                queryTabName: RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
+                defaultTab: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+                name: "resource-breakdowns"
+              }}
+            />
+          </Box>
+        </Stack>
       </PageContentWrapper>
     </>
   );

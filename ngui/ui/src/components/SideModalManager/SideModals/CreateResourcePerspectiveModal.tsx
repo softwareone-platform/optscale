@@ -15,11 +15,12 @@ class CreateResourcePerspectiveModal extends BaseSideModal {
   get content() {
     return (
       <CreateResourcePerspectiveContainer
-        filters={this.payload?.filters}
         breakdownBy={this.payload?.breakdownBy}
         breakdownData={this.payload?.breakdownData}
         onSuccess={this.closeSideModal}
         onCancel={this.closeSideModal}
+        filterValues={this.payload?.filterValues}
+        appliedFilters={this.payload?.appliedFilters}
       />
     );
   }

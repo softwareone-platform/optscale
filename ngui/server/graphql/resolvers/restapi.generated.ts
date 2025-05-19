@@ -194,18 +194,22 @@ export type BreakdownParams = {
 };
 
 export type CleanExpensesParams = {
-  active?: InputMaybe<Scalars['Boolean']['input']>;
+  active?: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   cloud_account_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  constraint_violated?: InputMaybe<Scalars['Boolean']['input']>;
+  constraint_violated?: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   end_date: Scalars['Int']['input'];
+  first_seen_gte?: InputMaybe<Scalars['Int']['input']>;
+  first_seen_lte?: InputMaybe<Scalars['Int']['input']>;
   format?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   k8s_namespace?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   k8s_node?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   k8s_service?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  last_seen_gte?: InputMaybe<Scalars['Int']['input']>;
+  last_seen_lte?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   owner_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   pool_id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  recommendations?: InputMaybe<Scalars['Boolean']['input']>;
+  recommendations?: InputMaybe<Array<InputMaybe<Scalars['Boolean']['input']>>>;
   region?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   resource_type?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   service_name?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;

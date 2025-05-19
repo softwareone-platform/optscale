@@ -4,8 +4,6 @@ import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import Button from "components/Button";
 import Chip from "components/Chip";
-import Filters from "components/Filters";
-import { RESOURCE_FILTERS } from "components/Filters/constants";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import ResourcesPerspectiveValuesDescription from "components/ResourcesPerspectiveValuesDescription";
 import Tooltip from "components/Tooltip";
@@ -20,17 +18,12 @@ const PerspectiveDescription = ({ perspective }) => {
     filters: { filterValues, appliedFilters }
   } = perspective;
 
-  const filters = new Filters({
-    filters: RESOURCE_FILTERS,
-    filterValues,
-    appliedFilters
-  });
-
   return (
     <ResourcesPerspectiveValuesDescription
       breakdownBy={breakdownBy}
       breakdownData={breakdownData}
-      filters={filters.getAppliedValues()}
+      perspectiveFilterValues={filterValues}
+      perspectiveAppliedFilters={appliedFilters}
     />
   );
 };

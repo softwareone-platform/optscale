@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import ResourcesPerspectiveValuesDescription from "components/ResourcesPerspectiveValuesDescription";
 import { FormButtons, NameAutocompleteField, PayloadField, PerspectiveOverrideWarning } from "./FormElements";
 import { getDefaultValues } from "./utils";
@@ -7,16 +8,46 @@ const CreateResourcePerspectiveForm = ({
   onSubmit,
   breakdownBy,
   breakdownData,
-  filters,
   perspectiveNames,
   isLoading = false,
-  onCancel
+  onCancel,
+  filterValues,
+  appliedFilters
 }) => {
+  const perspectiveAppliedFilters = Object.values(FILTER_CONFIGS).reduce((acc, filterConfig) => {
+    const key = filterConfig.id;
+
+    return {
+      ...acc,
+      ...filterConfig.transformers.toApi(appliedFilters[key])
+    };
+  }, {});
+
+  const perspectiveFilterValues = Object.values(FILTER_CONFIGS).reduce((acc, filterConfig) => {
+    const key = filterConfig.id;
+
+    if (filterConfig.type === "range") {
+      return acc;
+    }
+
+    if (filterConfig.type === "selection") {
+      return {
+        ...acc,
+        [filterConfig.apiName]: filterConfig.transformers.filterFilterValuesByAppliedFilters(
+          filterValues[filterConfig.apiName] ?? [],
+          appliedFilters[key].values
+        )
+      };
+    }
+
+    return acc;
+  }, {});
+
   const methods = useForm({
     defaultValues: getDefaultValues({
       filters: {
-        filterValues: filters.getFilterValuesForAppliedFilters(),
-        appliedFilters: filters.getAppliedFilters()
+        filterValues: perspectiveFilterValues,
+        appliedFilters: perspectiveAppliedFilters
       },
       breakdownBy,
       breakdownData
@@ -32,7 +63,8 @@ const CreateResourcePerspectiveForm = ({
         <ResourcesPerspectiveValuesDescription
           breakdownBy={breakdownBy}
           breakdownData={breakdownData}
-          filters={filters.getAppliedValues()}
+          perspectiveFilterValues={perspectiveFilterValues}
+          perspectiveAppliedFilters={perspectiveAppliedFilters}
         />
         <PayloadField />
         <PerspectiveOverrideWarning perspectiveNames={perspectiveNames} />
