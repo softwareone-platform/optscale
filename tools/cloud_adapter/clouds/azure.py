@@ -1392,13 +1392,15 @@ class Azure(CloudBase):
                     code = error.get('code', '')
                     if code == 'ServerTimeout':
                         raise MetricsServerTimeoutException(error)
-                    elif code == 'ResourceNotFound':
+                    elif (code == 'ResourceNotFound'
+                          or code == 'ResourceGroupNotFound'):
                         continue
                     else:
                         raise MetricsNotFoundException(error)
                 elif ('value' not in response['content'] and
                       response['content']['code'] == 'BadRequest'):
-                    raise MetricsNotFoundException(response['content']['message'])
+                    raise MetricsNotFoundException(
+                        response['content']['message'])
 
                 for metric in response['content']['value']:
                     metric_name = metric['name']['value']

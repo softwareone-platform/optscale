@@ -514,6 +514,9 @@ class RISPWorker(ConsumerMixin):
                 # spot Fargate tasks can't be covered by RI/SP
                 continue
             if cost is None:
+                if 'metal' in expense.get('product/instanceType', ''):
+                    # skip instances on dedicated hosts
+                    continue
                 raise Exception('Unsupported expense for resource %s, '
                                 'cloud account: %s, date: %s' % (
                                     expense['resource_id'],

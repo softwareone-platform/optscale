@@ -4,7 +4,8 @@ import pytz
 from cryptography.fernet import Fernet
 from sqlalchemy import (Integer, String, TypeDecorator, TEXT, LargeBinary,
                         Boolean, Enum, BigInteger, Float as FloatAlchemy)
-
+from sqlalchemy.types import Text
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from tools.cloud_adapter.model import ResourceTypes
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from rest_api.rest_api_server.exceptions import Err
@@ -217,6 +218,13 @@ class NullableJSON(JSON):
         return value
 
 
+class NullableMediumJSON(NullableJSON):
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'mysql':
+            return dialect.type_descriptor(MEDIUMTEXT())
+        return dialect.type_descriptor(Text())
+
+
 class NullableMetadata(NullableJSON):
     def __init__(self, key='meta', **kwargs):
         super().__init__(key, **kwargs)
@@ -275,6 +283,13 @@ class NullableText(TypeDecorator):
             if not isinstance(value, str):
                 raise WrongArgumentsException(Err.OE0214, [self.key])
         return value
+
+
+class NullableMediumText(NullableText):
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'mysql':
+            return dialect.type_descriptor(MEDIUMTEXT())
+        return dialect.type_descriptor(Text())
 
 
 class BaseText(NullableText):
