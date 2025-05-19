@@ -22,7 +22,7 @@ const getBaseURL = (): string => {
 
 
 export default defineConfig({
-  testDir: './/',
+  testDir: './',
   testMatch: /swo-screenshot-tests\.spec\.ts/,
   snapshotPathTemplate: `./tests/screenshots/snapshots/${os.platform()}/{arg}{ext}`,
   fullyParallel: true,
