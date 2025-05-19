@@ -59,6 +59,54 @@ class TestAvailableFiltersApi(TestApiBase):
             Pool.deleted_at == 0).all()
         return list(pools)
 
+    def test_available_filters_value(self):
+        resource = {
+            'cloud_resource_id': self.gen_id(),
+            'name': 'name',
+            'resource_type': 'Instance',
+            'employee_id': self.employee1['id'],
+            'pool_id': self.org['pool_id'],
+            'last_seen': self.start_ts,
+            'first_seen': self.end_ts,
+            'region': 'eu-central-1',
+            'meta': {},
+        }
+        _, res = self.cloud_resource_create(self.cloud_acc1['id'], resource)
+        self.resources_collection.update_one(
+            filter={'_id': res['id']},
+            update={'$set': {
+                '_first_seen_dt': datetime.fromtimestamp(self.start_ts),
+                '_last_seen_dt': datetime.fromtimestamp(self.end_ts),
+                'constraint_violated': True,
+                'active': True}})
+        filters = {
+            'cloud_account_id': self.cloud_acc1['id'],
+        }
+        max_timestamp = int(datetime.max.replace(
+            tzinfo=timezone.utc).timestamp()) - 1
+        code, response = self.client.available_filters_get(
+            self.org_id, 0, max_timestamp, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['filter_values']['active'], [True])
+
+        filters = {
+            'cloud_account_id': self.cloud_acc1['id'],
+            'constraint_violated': [False],
+        }
+        code, response = self.client.available_filters_get(
+            self.org_id, 0, max_timestamp, filters)
+        self.assertEqual(code, 200)
+        self.assertFalse('active' in response['filter_values'])
+
+        filters = {
+            'cloud_account_id': self.cloud_acc1['id'],
+            'constraint_violated': [False, True],
+        }
+        code, response = self.client.available_filters_get(
+            self.org_id, 0, max_timestamp, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['filter_values']['active'], [True])
+
     def test_available_filters_unexpected_filters(self):
         self.end_ts = int(datetime(2020, 4, 2, 23, 59).timestamp())
         filters = {

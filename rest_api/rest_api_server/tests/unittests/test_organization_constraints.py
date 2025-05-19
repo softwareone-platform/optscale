@@ -169,6 +169,10 @@ class TestOrganizationConstraints(TestApiBase):
             resource_type=resource_type, service_name=service_name,
             tags={tag_key: 'tag_val'})
         self._make_resources_active([resource['id']])
+        _, resource2 = self.create_cloud_resource(
+            self.cloud_acc['id'], name='name_2', region=region,
+            resource_type=resource_type, service_name=service_name,
+            tags={tag_key: 'tag_val'})
 
         params = self.valid_constraint_params.copy()
         params['filters'] = {
@@ -177,7 +181,7 @@ class TestOrganizationConstraints(TestApiBase):
             'resource_type': ['%s:regular' % resource_type],
             'cloud_account_id': [self.cloud_acc['id']],
             'tag': [tag_key],
-            'active': True
+            'active': [True, False]
         }
 
         code, resp = self.client.organization_constraint_create(
@@ -197,11 +201,36 @@ class TestOrganizationConstraints(TestApiBase):
         params['filters']['resource_type'] = [{
             'name': resource_type,
             'type': 'regular'}]
-        params['filters']['active'] = [True]
-        for p in ['id', 'created_at', 'deleted_at', 'last_run', 'last_run_result']:
+        params['filters']['active'] = [True, False]
+        for p in ['id', 'created_at', 'deleted_at', 'last_run',
+                  'last_run_result']:
             resp.pop(p, None)
         self.assertEqual(code, 201)
         self.assertDictEqual(resp, params)
+
+    def test_create_active_false(self):
+        _, resource = self.create_cloud_resource(self.cloud_acc['id'])
+        params = self.valid_constraint_params.copy()
+        params['filters'] = {
+            'active': [False]
+        }
+        code, resp = self.client.organization_constraint_create(
+            self.org_id, params)
+        self.assertEqual(code, 201)
+        for k, v in params.items():
+            self.assertEqual(v, resp[k])
+
+    def test_create_filters_first_last_seen(self):
+        _, resource = self.create_cloud_resource(self.cloud_acc['id'])
+        self._make_resources_active([resource['id']])
+        params = self.valid_constraint_params.copy()
+        params['filters'] = {
+            'first_seen_gte': 10
+        }
+        code, resp = self.client.organization_constraint_create(
+            self.org_id, params)
+        self.assertEqual(code, 201)
+        self.assertDictEqual(resp['filters'], params['filters'])
 
     def test_create_wrong_filters_format(self):
         filters_map = {
@@ -210,7 +239,7 @@ class TestOrganizationConstraints(TestApiBase):
             'service_name': ('AWS svc', 'OE0385'),
             'resource_type': (True, 'OE0385'),
             'tag': (1, 'OE0385'),
-            'active': ([True], 'OE0226'),
+            'active': (True, 'OE0385'),
         }
 
         params = self.valid_constraint_params.copy()

@@ -117,17 +117,26 @@ class ResourcesCountAsyncHandler(BreakdownExpensesBaseAsyncHandler):
             in: query
             description: Active
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: recommendations
             in: query
             description: Recommendations
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: constraint_violated
             in: query
             description: constraint_violated
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: created_by_kind (for kubernetes only)
             in: query
             description: created_by_kind
