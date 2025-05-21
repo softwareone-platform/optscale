@@ -982,23 +982,28 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         # since current clickhouse-connect doesn't support totals
         totals_query = """
             SELECT
-                SUM(cost * sign) AS total_cost
-            FROM expenses
-            WHERE cloud_account_id IN cloud_account_ids
-                AND resource_id IN resource_ids
-                AND date >= %(start_date)s
-                AND date <= %(end_date)s
-                AND sign > 0
-        """
-        if limit:
-            query += 'LIMIT %(limit)s'
+                NULL AS cloud_account_id,
+                NULL AS resource_id,
+                total_cost
+            FROM (
+                SELECT
+                    SUM(cost * sign) AS total_cost,
+                    SUM(sign) AS total_sign
+                FROM expenses
+                WHERE cloud_account_id IN cloud_account_ids
+                  AND resource_id IN resource_ids
+                  AND date >= %(start_date)s
+                  AND date <= %(end_date)s
+            ) AS totals
+            WHERE total_sign > 0
+             """
         totals_result = self.execute_clickhouse(
             query=totals_query,
             parameters=params,
             external_data=ExternalDataConverter()(external_tables),
         )
         try:
-            total = totals_result[0][0]
+            total = totals_result[0][2]
         except IndexError:
             total = 0
         return [{
