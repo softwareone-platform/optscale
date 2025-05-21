@@ -1,10 +1,10 @@
-import datetime
 import json
 import os
 import boto3
 from boto3.session import Config as BotoConfig
+from kombu import Connection as QConnection, Exchange
 from kombu.log import get_logger
-
+from kombu.pools import producers
 
 from katara.katara_worker.consts import TaskState
 from katara.katara_worker.reports_generators.base import (
@@ -21,7 +21,7 @@ from tools.optscale_time import utcnow_timestamp
 
 LOG = get_logger(__name__)
 
-
+ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 MAX_RETRIES = 10
 MAX_UPDATE_THRESHOLD = 60 * 60
 BUCKET_NAME = 'katara-reports'
@@ -115,6 +115,8 @@ class Base(object):
             task_class = Continue
         else:
             task_class = SetFailed
+            self.body['error'] = str(ex)
+            self.body['last_step'] = self.step()
         task_class(body=self.body, message=self.message,
                    config_cl=self.config_cl,
                    on_continue_cb=self.on_continue_cb,
@@ -200,6 +202,7 @@ class GetScopes(CheckTimeoutThreshold):
         org_id = recipient['scope_id']
         _, org = self.rest_cl.organization_get(org_id)
         if org.get('disabled'):
+            self.body['disabled'] = True
             raise KataraError(f"Organization {org_id} disabled")
         _, org_pool = self.rest_cl.pool_get(org['pool_id'], children=True)
         scope_ids = [recipient['scope_id']]
@@ -393,7 +396,40 @@ class PutToHerald(SetCompleted):
 
 
 class SetFailed(Base):
+    def publish_activities_task(self, organization_id):
+        params = self.config_cl.read_branch('/rabbit')
+        queue_conn = QConnection(
+            f'amqp://{params["user"]}:{params["pass"]}@'
+            f'{params["host"]}:{params["port"]}')
+        task_exchange = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
+        with producers[queue_conn].acquire(block=True) as producer:
+            task = {
+                'organization_id': organization_id,
+                'object_id': self.body['task_id'],
+                'object_type': 'katara_task',
+                'meta': {
+                    'error': self.body.get('error') or '',
+                    'last_step': self.body.get('last_step'),
+                },
+                'action': 'katara_task_failed',
+            }
+            producer.publish(
+                task,
+                serializer='json',
+                exchange=task_exchange,
+                declare=[task_exchange],
+                routing_key='katara.task_failed',
+                retry=True
+            )
+
     def execute(self):
+        _, task = self.katara_cl.task_get(
+            self.body['task_id'], expanded=True)
+        schedule = task.get('schedule') or {}
+        org_id = schedule.get('recipient').get('scope_id')
+        _, org = self.rest_cl.organization_get(org_id)
         self.katara_cl.task_update(
             self.body['task_id'], state=TaskState.ERROR)
+        if not self.body.get('disabled'):
+            self.publish_activities_task(org['id'])
         self.message.ack()

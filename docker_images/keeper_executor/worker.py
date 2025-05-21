@@ -27,7 +27,8 @@ ROUTING_KEYS = [
     'alert.action.added', 'alert.action.removed', 'rule.#', 'environment.#',
     'task.*', 'metric.*', 'run.*', 'platform.*', 'leaderboard_template.*',
     'leaderboard.*', 'dataset.*', 'model.*', 'model_version.*', 'artifact.*',
-    'runset_template.*', 'runset.*', 'runner.*', 'power_schedule.*'
+    'runset_template.*', 'runset.*', 'runner.*', 'power_schedule.*',
+    'katara.task_failed'
 ]
 TASK_QUEUE = Queue(QUEUE_NAME, TASK_EXCHANGE, bindings=[
     binding(TASK_EXCHANGE, routing_key=routing_key)
