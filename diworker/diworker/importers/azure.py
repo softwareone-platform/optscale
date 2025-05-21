@@ -153,6 +153,8 @@ class AzureImporterBase(BaseReportImporter):
         elif usage_kind == 'modern':
             u['cost'] = float(u['cost_in_billing_currency'])
             u['resource_id'] = u['instance_name'].lower()
+            if not u['instance_name']:
+                u['resource_id'] = u['product']
             if 'additional_info' in u:
                 u['additional_properties'] = u.pop('additional_info')
             u['meter_details'] = {
@@ -222,12 +224,18 @@ class AzureImporterBase(BaseReportImporter):
         u['cloud_account_id'] = self.cloud_acc_id
         u['report_identity'] = self.report_identity
 
-    def _get_resource_type_and_name(self, instance_id):
+    def _get_resource_type_and_name(self, expense):
+        instance_id = expense.get('resource_id', '')
         if instance_id:
-            r_type = instance_id.split('/')[-2]
-            r_name = instance_id.split('/')[-1]
-            if not r_name:
-                r_name = '/'.join([instance_id.split("/")[-3], r_type])
+            parts = instance_id.split('/')
+            if len(parts) > 1:
+                r_type = parts[-2]
+                r_name = parts[-1]
+                if not r_name:
+                    r_name = '/'.join([parts[-3], r_type])
+            else:
+                r_name = instance_id
+                r_type = expense.get('charge_type')
             return self.resource_type_map_lowered.get(
                 r_type.lower(), r_type), r_name
         else:
@@ -245,8 +253,7 @@ class AzureImporterBase(BaseReportImporter):
                         'service entry')
 
     def get_resource_info_from_expenses(self, expenses):
-        r_type, r_name = self._get_resource_type_and_name(
-            expenses[-1].get('resource_id'))
+        r_type, r_name = self._get_resource_type_and_name(expenses[-1])
 
         usage_kind = expenses[-1].get('kind')
         if usage_kind == 'raw':
