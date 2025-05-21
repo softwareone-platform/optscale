@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
-import MailTo from "components/MailTo";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 // import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { useRootData } from "hooks/useRootData";
-import { EMAIL_SUPPORT, GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
-import { ALERT_TYPES, IS_EXISTING_USER } from "./constants";
+import { ALERT_TYPES } from "./constants";
 import { useAllAlertsSelector } from "./selectors";
 import TopAlert from "./TopAlert";
 import type { AlertType, StoredAlert, TopAlertWrapperProps } from "./types";
