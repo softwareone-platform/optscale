@@ -287,10 +287,11 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
                   'get_user_id',
                   return_value=auth_user_id).start()
         patch(
-            'rest_api.rest_api_server.controllers.assignment.AssignmentController._authorize_action_for_pool',
+            'rest_api.rest_api_server.controllers.assignment.'
+            'AssignmentController._authorize_action_for_pool',
             return_value=True).start()
-        patch('rest_api.rest_api_server.controllers.report_import.ReportImportBaseController.'
-              'publish_task').start()
+        patch('rest_api.rest_api_server.controllers.report_import.'
+              'ReportImportBaseController.publish_task').start()
         code, cloud_acc = self.client.cloud_account_create(
             organization_id, config)
         if code == 201 and update_discovery_info:

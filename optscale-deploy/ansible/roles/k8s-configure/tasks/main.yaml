@@ -53,9 +53,9 @@
   run_once: true
 
 - name: Add Helm repos
-  shell: helm repo add {{ item }}
-  with_items:
-    - bitnami https://charts.bitnami.com/bitnami
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
 
 - name: Update Helm repos
   shell: helm repo update

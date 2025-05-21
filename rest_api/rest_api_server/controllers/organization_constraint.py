@@ -101,9 +101,11 @@ class FilterDetailsController(AvailableFiltersController):
                 if filter_value and isinstance(filter_value, list):
                     raise WrongArgumentsException(
                         Err.OE0504, [filter_key, filter_value])
+        bool_fields = ['active', 'constraint_violated', 'recommendations']
         # check that all filters exists in unique_values_map
         for field, values in filters.items():
-            if field in ['start_date', 'end_date']:
+            if field in ['start_date', 'end_date', 'first_seen_lte',
+                         'first_seen_gte', 'last_seen_lte', 'last_seen_gte']:
                 continue
             uniq_values = uniq_values_map.get(field, {})
             if field == 'resource_type':
@@ -122,13 +124,20 @@ class FilterDetailsController(AvailableFiltersController):
                     result_u_values[key] = v
             elif not isinstance(uniq_values, dict):
                 result_u_values = {x: x for x in uniq_values}
+            elif field in bool_fields and not uniq_values:
+                result_u_values = {False: False}
             else:
                 result_u_values = uniq_values
-            for filter_value in values:
-                if filter_value not in result_u_values.keys():
-                    raise WrongArgumentsException(Err.OE0504,
-                                                  [field, filter_value])
-                filter_values[field].append(result_u_values[filter_value])
+            if field in bool_fields and any(x in filters[field]
+                                            for x in result_u_values):
+                filter_values[field] = filters[field]
+                continue
+            else:
+                for filter_value in values:
+                    if filter_value not in result_u_values.keys():
+                        raise WrongArgumentsException(Err.OE0504,
+                                                      [field, filter_value])
+                    filter_values[field].append(result_u_values[filter_value])
         return filter_values
 
     def _generate_base_filter(self, organization_id, start_date, end_date):
@@ -198,21 +207,25 @@ class FilterDetailsController(AvailableFiltersController):
         for bool_field in ['active', 'constraint_violated']:
             bool_value = data_filters.get(bool_field)
             if bool_value is not None:
-                value = True if bool_value else {'$ne': True}
-                subquery.append({bool_field: value})
+                bool_cond = {'$or': []}
+                for value in bool_value:
+                    value = {'$ne': True} if value is False else value
+                    bool_cond['$or'].append({bool_field: value})
+                subquery.append(bool_cond)
 
         recommend_filter = data_filters.get('recommendations')
         if recommend_filter is not None:
             last_run = self.get_last_run_ts_by_org_id(organization_id)
-            if recommend_filter:
-                subquery.append({
-                    'recommendations.run_timestamp': {'$gte': last_run}
-                })
-            else:
-                subquery.append({'$or': [
-                    {'recommendations': None},
-                    {'recommendations.run_timestamp': {'$lt': last_run}}
-                ]})
+            for value in recommend_filter:
+                if value is True:
+                    subquery.append({
+                        'recommendations.run_timestamp': {'$gte': last_run}
+                    })
+                else:
+                    subquery.append({'$or': [
+                        {'recommendations': None},
+                        {'recommendations.run_timestamp': {'$lt': last_run}}
+                    ]})
 
         if subquery:
             query['$and'].append({'$or': subquery})
@@ -275,6 +288,8 @@ class OrganizationConstraintController(ConstraintBaseController,
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.str_filters.clear()
+        self.list_filters.extend(self.bool_filters)
+        self.bool_filters.clear()
 
     def _get_model_type(self):
         return OrganizationConstraint
@@ -397,9 +412,9 @@ class OrganizationConstraintController(ConstraintBaseController,
             for k, v in JOINED_ENTITY_MAP.items():
                 if filter_details.pop(k, None):
                     filter_key = v[0]
-                    for v in filters.get(filter_key):
+                    for value in filters.get(filter_key):
                         filter_details[filter_key].append(
-                            None if v == nil_value else v)
+                            None if value == nil_value else value)
         return filter_details
 
     def _extend_filters(self, organization_id, filters):
@@ -437,12 +452,14 @@ class OrganizationConstraintController(ConstraintBaseController,
         organization_id = kwargs.get(self.get_relation_field())
         organization = self.get_entity(organization_id)
         self._check_input(organization_id, organization, **kwargs)
-
         now = opttime.utcnow_timestamp()
+        input_filters = kwargs.get('filters', {})
         filled_filters = self._fill_filters(
-            organization_id, now, kwargs.get('filters', {}))
+            organization_id, now, input_filters)
+        for in_filter, value in input_filters.items():
+            if in_filter in self.int_filters and in_filter not in filled_filters:
+                filled_filters[in_filter] = value
         kwargs['filters'] = filled_filters
-
         result = super(ConstraintBaseController, self).create(**kwargs)
         extended_filters = self._extend_filters(
             organization_id, filled_filters)

@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom";
 import CreateOrganizationConstraintForm from "components/CreateOrganizationConstraintForm";
 import { CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES } from "components/CreateOrganizationConstraintForm/constants";
 import { TYPE_CORRELATION, TYPE_PROHIBITED, TYPE_REQUIRED } from "components/CreateOrganizationConstraintForm/FormElements";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { mapAvailableFilterKeys } from "services/AvailableFiltersService";
 import OrganizationConstraintsService from "services/OrganizationConstraintsService";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 import {
-  ACTIVE_FILTER,
-  RECOMMENDATIONS_FILTER,
-  CONSTRAINT_VIOLATED_FILTER,
   EMPTY_UUID,
   EXPENSE_ANOMALY,
   EXPIRING_BUDGET_POLICY,
@@ -17,20 +16,6 @@ import {
   TAGGING_POLICY
 } from "utils/constants";
 import { millisecondsToSeconds } from "utils/datetime";
-
-// This is temporary. The following filters must be send as plain values without putting them into an array. Will be changed.
-const PLAIN_FILTERS = [ACTIVE_FILTER, CONSTRAINT_VIOLATED_FILTER, RECOMMENDATIONS_FILTER];
-
-const transformFilterValuesToObject = (filters) =>
-  Object.fromEntries(
-    Object.entries(filters).map(([key, value]) => {
-      const arrayOrPlainValue = PLAIN_FILTERS.includes(key) ? value : [value];
-      const arrayValue = Array.isArray(value) ? value : arrayOrPlainValue;
-
-      return [key, arrayValue];
-    })
-  );
-
 const getTaggingConditions = (formData) => {
   const tagsStrategyType = formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.TAGS_BAR];
   const prohibitedTag = formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.PROHIBITED_TAG];
@@ -96,16 +81,38 @@ const CreateOrganizationConstraintFormContainer = ({ navigateAwayLink, types }) 
       types={types}
       navigateAway={navigateAway}
       onSubmit={(formData) => {
+        const getFilters = () => {
+          const formFilters = Object.fromEntries(
+            Object.entries(formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS]).flatMap(([key, value]) => {
+              const filterConfig = FILTER_CONFIGS[key];
+
+              const apiValues = filterConfig.transformers.toApi(value);
+
+              return Object.entries(apiValues).filter(([, value]) => {
+                // API throws an error if we pass empty array so we need to filter them out
+                if (Array.isArray(value)) {
+                  return !isEmptyArray(value);
+                }
+                return value !== undefined;
+              });
+            })
+          );
+
+          return mapAvailableFilterKeys(formFilters);
+        };
+
         const type = formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.TYPE];
         const params = {
           name: formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.NAME],
           type,
           definition: getDefinition(type, formData),
-          filters: mapAvailableFilterKeys(
-            transformFilterValuesToObject(formData[CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS])
-          )
+          filters: getFilters()
         };
-        create({ params, onSuccess: navigateAway });
+
+        create({
+          params,
+          onSuccess: navigateAway
+        });
       }}
     />
   );

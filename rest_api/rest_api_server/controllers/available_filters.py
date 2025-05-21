@@ -175,7 +175,7 @@ class AvailableFiltersController(CleanExpenseController):
         filters['owner'] = filters.pop('owner_id', [])
         for field in ['active', 'recommendations', 'constraint_violated']:
             value = filters.pop(field, None)
-            filters[field] = [] if value is None else [value]
+            filters[field] = [] if value is None else value
         for k in filters:
             if isinstance(filters[k], list):
                 filters[k] = [x if x != get_nil_uuid() else None

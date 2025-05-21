@@ -32,7 +32,7 @@ export const CATEGORIES = Object.freeze({
 
 export const SUPPORTED_CATEGORIES = Object.freeze(Object.keys(CATEGORIES));
 
-export const TAGS_RELATED_FILTERS = [TAG_BE_FILTER, WITHOUT_TAG_BE_FILTER];
+export const TAGS_RELATED_FILTERS = [TAG_BE_FILTER, WITHOUT_TAG_BE_FILTER] as const;
 
 export const RESOURCE_FILTERS = [
   DataSourceFilter,

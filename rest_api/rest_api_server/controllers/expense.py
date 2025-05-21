@@ -1242,21 +1242,27 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         for bool_field in ['active', 'constraint_violated']:
             bool_value = data_filters.get(bool_field)
             if bool_value is not None:
-                value = True if bool_value else {'$ne': True}
-                query['$and'].append({bool_field: value})
+                bool_cond = {'$or': []}
+                for value in bool_value:
+                    value = {'$ne': True} if value is False else value
+                    bool_cond['$or'].append({bool_field: value})
+                query['$and'].append(bool_cond)
 
         recommend_filter = data_filters.get('recommendations')
         if recommend_filter is not None:
             last_run = self.get_last_run_ts_by_org_id(organization_id)
-            if recommend_filter:
-                query['$and'].append({
-                    'recommendations.run_timestamp': {'$gte': last_run}
-                })
-            else:
-                query['$and'].append({'$or': [
-                    {'recommendations': None},
-                    {'recommendations.run_timestamp': {'$lt': last_run}}
-                ]})
+            recommend_cond = {'$or': []}
+            for value in recommend_filter:
+                if value is True:
+                    recommend_cond['$or'].append({
+                        'recommendations.run_timestamp': {'$gte': last_run}
+                    })
+                else:
+                    recommend_cond['$or'].append({'$or': [
+                        {'recommendations': None},
+                        {'recommendations.run_timestamp': {'$lt': last_run}}
+                    ]})
+            query['$and'].append(recommend_cond)
         return query
 
     def get_resources_data(self, organization_id, query_filters, data_filters,
@@ -1546,15 +1552,17 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
 
     @staticmethod
     def _is_cluster_excluded_by_sub_res(sub_resource, filters, last_run):
-        input_rec_filter = filters.get('recommendations')
-        input_active_filter = filters.get('active')
+        input_rec_filter = filters.get('recommendations', [])
+        input_active_filter = filters.get('active', [])
+        rec_ts = sub_resource.get('recommendations', {}).get(
+            'run_timestamp', 0)
         # exclude the whole cluster if recommendation or active is
         # False and at least 1 sub-resource doesn't suit these
         # filters
-        if (input_rec_filter is False and sub_resource.get(
-                'recommendations', {}).get(
-            'run_timestamp', 0) >= last_run) or (
-                input_active_filter is False and sub_resource.get('active')):
+        if (False in input_rec_filter and True not in input_rec_filter and
+            rec_ts >= last_run) or (False in input_active_filter and
+                                    True not in input_active_filter and
+                                    sub_resource.get('active')):
             return True
 
     def _extract_unique_values_from_resources(
@@ -1898,7 +1906,8 @@ class SummaryExpenseController(CleanExpenseController):
         cluster_resource_ids = {}
         cluster_savings_map = {}
         for x in data:
-            if recommendation is False and x['run_timestamp']:
+            if (False in recommendation and True not in recommendation
+                    and x['run_timestamp']):
                 continue
             cluster_resource_ids[x['_id']] = x['resource_ids']
             cluster_savings_map[x['_id']] = x['total_saving']
@@ -1914,8 +1923,8 @@ class SummaryExpenseController(CleanExpenseController):
         self._process_traffic_filters(
             query_filters['cloud_account_id'], data_filters)
         last_run_ts = self.get_last_run_ts_by_org_id(organization_id)
-        active = params.get('active')
-        recommendation = params.get('recommendations')
+        active = params.get('active', [])
+        recommendation = params.get('recommendations', [])
         filter_cond = self.generate_filters_pipeline(
             organization_id, self.start_date, self.end_date,
             query_filters, data_filters)
@@ -1973,10 +1982,12 @@ class SummaryExpenseController(CleanExpenseController):
                 # clustered resources
                 if cluster_id in excl_clusters:
                     continue
-                if recommendation is False and res_group['run_timestamp']:
+                if (False in recommendation and True not in recommendation
+                        and res_group['run_timestamp']):
                     excl_clusters.add(cluster_id)
                     continue
-                if active is False and cluster_id not in all_resource_ids:
+                if (False in active and True not in active and
+                        cluster_id not in all_resource_ids):
                     # cluster for this clustered resource is active
                     continue
                 if 'cloud_account_id' not in filters:

@@ -24,7 +24,11 @@ import {
   K8S_SERVICE_FILTER,
   NETWORK_TRAFFIC_FROM_FILTER,
   NETWORK_TRAFFIC_TO_FILTER,
-  EMPTY_UUID
+  EMPTY_UUID,
+  FIRST_SEEN_FROM_FILTER,
+  FIRST_SEEN_TO_FILTER,
+  LAST_SEEN_FROM_FILTER,
+  LAST_SEEN_TO_FILTER
 } from "utils/constants";
 
 export const mapAvailableFilterKeys = (params) => ({
@@ -43,7 +47,11 @@ export const mapAvailableFilterKeys = (params) => ({
   k8s_namespace: params[K8S_NAMESPACE_FILTER],
   k8s_service: params[K8S_SERVICE_FILTER],
   traffic_from: params[NETWORK_TRAFFIC_FROM_FILTER],
-  traffic_to: params[NETWORK_TRAFFIC_TO_FILTER]
+  traffic_to: params[NETWORK_TRAFFIC_TO_FILTER],
+  first_seen_gte: params[FIRST_SEEN_FROM_FILTER],
+  first_seen_lte: params[FIRST_SEEN_TO_FILTER],
+  last_seen_gte: params[LAST_SEEN_FROM_FILTER],
+  last_seen_lte: params[LAST_SEEN_TO_FILTER]
 });
 
 export const mapFiltersToApiParams = (filters) => {

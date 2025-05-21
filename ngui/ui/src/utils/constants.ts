@@ -290,6 +290,11 @@ export const WITHOUT_TAG_FILTER = "withoutTag";
 
 export const ANY_NETWORK_TRAFFIC_LOCATION = "ANY";
 
+export const FIRST_SEEN_FROM_FILTER = "firstSeenFrom";
+export const FIRST_SEEN_TO_FILTER = "firstSeenTo";
+export const LAST_SEEN_FROM_FILTER = "lastSeenFrom";
+export const LAST_SEEN_TO_FILTER = "lastSeenTo";
+
 // Optimizations
 export const RECOMMENDATIONS_LIMIT_FILTER = 100;
 

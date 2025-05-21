@@ -569,9 +569,9 @@ input CleanExpensesParams {
   start_date: Int!
   end_date: Int!
   limit: Int
-  active: Boolean
-  constraint_violated: Boolean
-  recommendations: Boolean
+  active: [Boolean]
+  constraint_violated: [Boolean]
+  recommendations: [Boolean]
   cloud_account_id: [String]
   format: [String]
   k8s_namespace: [String]
@@ -586,6 +586,10 @@ input CleanExpensesParams {
   without_tag: [String]
   traffic_from: [String]
   traffic_to: [String]
+  first_seen_gte: Int
+  first_seen_lte: Int
+  last_seen_gte: Int
+  last_seen_lte: Int
 }
 
 type Query {

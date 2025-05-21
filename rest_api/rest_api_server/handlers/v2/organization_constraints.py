@@ -161,15 +161,24 @@ class OrganizationConstraintsAsyncCollectionHandler(BaseAsyncCollectionHandler,
                             active:
                                 description: Active
                                 required: false
-                                type: boolean
+                                type: array
+                                collectionFormat: multi
+                                items:
+                                    type: boolean
                             recommendations:
                                 description: Recommendations
                                 required: false
-                                type: boolean
+                                type: array
+                                collectionFormat: multi
+                                items:
+                                    type: boolean
                             constraint_violated:
                                 description: constraint_violated
                                 required: false
-                                type: boolean
+                                type: array
+                                collectionFormat: multi
+                                items:
+                                    type: boolean
                             created_by_kind:
                                 description: created_by_kind  (for kubernetes only)
                                 required: false
