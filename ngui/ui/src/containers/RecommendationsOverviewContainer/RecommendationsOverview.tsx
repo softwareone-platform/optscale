@@ -4,15 +4,42 @@ import { Box } from "@mui/system";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import SearchInput from "components/SearchInput";
 import { SPACING_2 } from "utils/layouts";
+import { TODO } from "utils/types";
 import Cards from "./Cards";
 import { RecommendationsFilter, ServicesFilter, VIEW_CARDS, VIEW_TABLE, View } from "./Filters";
-import { ACTIVE } from "./recommendations/BaseRecommendation";
+import BaseRecommendation, { STATUS } from "./recommendations/BaseRecommendation";
 import useStyles from "./RecommendationsOverview.styles";
 import RecommendationsTable from "./RecommendationsTable";
 import Summary from "./Summary";
 import { categoryFilter, serviceFilter, searchFilter, appliedDataSourcesFilter } from "./utils";
 
-const sortRecommendation = (recommendationA, recommendationB) => {
+type RecommendationsOverviewProps = {
+  isDataReady: boolean;
+  recommendationClasses: { [key: string]: new (status: string, data: TODO) => BaseRecommendation };
+  recommendationsData: TODO;
+  onRecommendationClick: (id: string) => void;
+  riSpExpensesSummary: { computeExpensesCoveredWithCommitments: number; totalCostWithOffer: number; totalSaving: number };
+  isRiSpExpensesSummaryLoading: boolean;
+  setSearch: (search: string) => void;
+  search: string;
+  setCategory: (category: string) => void;
+  category: string;
+  setService: (service: string) => void;
+  service: string;
+  setView: (view: string) => void;
+  view: string;
+  downloadLimit: number;
+  isDownloadAvailable: boolean;
+  isGetIsDownloadAvailableLoading: boolean;
+  selectedDataSourceIds: string[];
+  selectedDataSourceTypes: string[];
+  lastCompleted: number;
+  totalSaving: number;
+  nextRun: number;
+  lastRun: number;
+};
+
+const sortRecommendation = (recommendationA: BaseRecommendation, recommendationB: BaseRecommendation) => {
   const aHasSavings = recommendationA.hasSaving;
   const bHasSavings = recommendationB.hasSaving;
 
@@ -56,12 +83,12 @@ const RecommendationsOverview = ({
   totalSaving,
   nextRun,
   lastRun
-}) => {
+}: RecommendationsOverviewProps) => {
   const { classes } = useStyles();
   const checkDone = lastCompleted !== 0;
 
   const recommendations = Object.values(recommendationClasses)
-    .map((RecommendationClass) => new RecommendationClass(ACTIVE, recommendationsData))
+    .map((RecommendationClass) => new RecommendationClass(STATUS.ACTIVE, recommendationsData))
     .filter(categoryFilter(category))
     .filter(serviceFilter(service))
     .filter(searchFilter(search))

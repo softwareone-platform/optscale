@@ -149,13 +149,13 @@ export const addEntityIconToTooltipKey = (text, details, entityName) => {
 const getTickValues = ({ range, minValue, maxValue, ticksCount }) =>
   scaleLinear().rangeRound(range).domain([minValue, maxValue]).ticks(ticksCount);
 
-export const getScale = (tickValues) => (tickValues.length === 1 ? 0 : tickValues[1] - tickValues[0]);
+export const getValueStep = (tickValues) => (tickValues.length === 1 ? 0 : tickValues[1] - tickValues[0]);
 
-const getTicks = ({ minValue, maxValue, range, ticksCount, minMaxTicksEqualToMinMaxValues = false }) => {
+const getTicks = ({ minValue, maxValue, range, ticksCount, allocateAdditionalTickAboveMaxValue = true }) => {
   // «getTickValues» returns array with 1 element if «minValue» === «maxValue»
   const tickValues = getTickValues({ range, minValue, maxValue, ticksCount });
 
-  if (minMaxTicksEqualToMinMaxValues) {
+  if (!allocateAdditionalTickAboveMaxValue) {
     return {
       tickValues,
       gridValues: tickValues,
@@ -164,25 +164,25 @@ const getTicks = ({ minValue, maxValue, range, ticksCount, minMaxTicksEqualToMin
     };
   }
 
-  const scale = getScale(tickValues);
+  const step = getValueStep(tickValues);
 
-  const newMaxValue = maxValue === 0 ? maxValue : maxValue + scale;
-  const newMinValue = minValue === 0 ? minValue : minValue - scale;
+  const newMaxValue = maxValue === 0 ? maxValue : maxValue + step;
+  const newMinValue = minValue === 0 ? minValue : minValue - step;
 
   const newTickValues = getTickValues({ range, minValue: newMinValue, maxValue: newMaxValue, ticksCount });
-  const newScale = getScale(newTickValues);
+  const newStep = getValueStep(newTickValues);
 
   let maxTick = Math.max(...newTickValues);
   let minTick = Math.min(...newTickValues);
 
   if (maxTick !== 0 && maxTick <= maxValue) {
-    newTickValues.push(maxTick + newScale);
-    maxTick += newScale;
+    newTickValues.push(maxTick + newStep);
+    maxTick += newStep;
   }
 
   if (minTick !== 0 && minTick >= minValue) {
-    newTickValues.push(minTick - newScale);
-    minTick -= newScale;
+    newTickValues.push(minTick - newStep);
+    minTick -= newStep;
   }
 
   // TODO - why do we need the same value assigned to different variables ?
@@ -194,15 +194,16 @@ const getTicks = ({ minValue, maxValue, range, ticksCount, minMaxTicksEqualToMin
   };
 };
 
-export const getBarTicks = ({ height, layout, ticksCount, maxValue, minValue = 0, minMaxTicksEqualToMinMaxValues }) => {
-  const range = layout === "vertical" ? [height, minValue] : [minValue, height];
-  return getTicks({ minValue, maxValue, range, ticksCount, minMaxTicksEqualToMinMaxValues });
+export const getBarTicks = ({ size, ticksCount, maxValue, minValue = 0, allocateAdditionalTickAboveMaxValue }) => {
+  const range = [0, size];
+
+  return getTicks({ minValue, maxValue, range, ticksCount, allocateAdditionalTickAboveMaxValue });
 };
 
-export const getLineYTicks = ({ yMin, yMax, height, ticksCount, minMaxTicksEqualToMinMaxValues }) => {
+export const getLineYTicks = ({ yMin, yMax, height, ticksCount, allocateAdditionalTickAboveMaxValue }) => {
   const range = [height, 0];
 
-  return getTicks({ minValue: yMin, maxValue: yMax, range, ticksCount, minMaxTicksEqualToMinMaxValues });
+  return getTicks({ minValue: yMin, maxValue: yMax, range, ticksCount, allocateAdditionalTickAboveMaxValue });
 };
 
 /**
@@ -410,31 +411,50 @@ export const calculateTickValues = (xValues) => {
   );
 };
 
-const getBottomAxisFontSettings = (font) => ({
+const getAxisFontSettings = (font) => ({
   // We usually work with 'rem' for font sizes, but pixels are used for calculations, so here we convert rem to px
   fontSize: font.fontSize.toString().includes("rem") ? remToPx(parseFloat(font.fontSize)) : parseInt(font.fontSize, 10),
   fontFamily: font.fontFamily
 });
 
-export const getBarChartBottomTickValues = ({ data, indexBy, padding, font, innerWidth }) => {
-  const domain = data.map((el) => el[indexBy]);
+export const getVerticalBarChartBottomTickValues = ({ domain, tickValues, padding, font, innerWidth, format }) => {
   const range = [0, innerWidth];
 
   const scale = scaleBand().range(range).domain(domain).padding(padding);
 
-  const fontSettings = getBottomAxisFontSettings(font);
+  const fontSettings = getAxisFontSettings(font);
 
   return calculateTickValues(
-    domain.map((xValue) => ({
+    tickValues.map((xValue) => ({
       value: xValue,
-      width: getTickLabelWidth(xValue, getFontString(fontSettings.fontSize, fontSettings.fontFamily, "px")),
+      width: getTickLabelWidth(
+        typeof format === "function" ? format(xValue) : xValue,
+        getFontString(fontSettings.fontSize, fontSettings.fontFamily, "px")
+      ),
       coordinate: scale(xValue)
     }))
   );
 };
 
+export const getHorizontalBarChartBottomTickValues = ({ tickValues, domain, font, innerWidth, format }) => {
+  const scale = scaleLinear().rangeRound([0, innerWidth]).domain(domain).clamp(false);
+
+  const fontSettings = getAxisFontSettings(font);
+
+  return calculateTickValues(
+    tickValues.map((xValue) => ({
+      value: xValue,
+      width: getTickLabelWidth(
+        typeof format === "function" ? format(xValue) : xValue,
+        getFontString(fontSettings.fontSize, fontSettings.fontFamily, "px")
+      ),
+      coordinate: Math.round(scale(xValue))
+    }))
+  );
+};
+
 export const getLineChartBottomTickValues = ({ x, scale, font, formatString }) => {
-  const fontSettings = getBottomAxisFontSettings(font);
+  const fontSettings = getAxisFontSettings(font);
 
   return calculateTickValues(
     x.all.map((xValue) => {
@@ -449,28 +469,22 @@ export const getLineChartBottomTickValues = ({ x, scale, font, formatString }) =
   );
 };
 
-/**
- * Calculate width of the occupied space
- *
- * @param { number } wrapperWidth - Width of the container
- * @param { Object } margin - Margin settings (left, right, top, bottom)
- * @param { string } [layout=vertical] - Chart layout (vertical/horizontal)
- *
- * @description
- * Get width of the occupied space:
- *
- * vertical layout: wrapperWidth - (leftMargin + rightMargin)
- *
- * horizontal layout: wrapperWidth - (topMargin + bottomMargin)
- *
- * @returns Width of the the occupied space
- */
-export const getChartWidth = (wrapperWidth, margin, layout = "vertical") => {
+export const getInnerWidth = (wrapperWidth, margin) => {
   if (wrapperWidth === 0) {
     return 0;
   }
-  const { left = 0, right = 0, top = 0, bottom = 0 } = margin;
-  return layout === "vertical" ? wrapperWidth - (left + right) : wrapperWidth - (top + bottom);
+  const { left = 0, right = 0 } = margin;
+
+  return wrapperWidth - (left + right);
+};
+
+export const getInnerHeight = (wrapperHeight, margin) => {
+  if (wrapperHeight === 0) {
+    return 0;
+  }
+  const { top = 0, bottom = 0 } = margin;
+
+  return wrapperHeight - (top + bottom);
 };
 
 export const getLineValues = (lineData) => lineData.map(({ y }) => y);

@@ -24,7 +24,9 @@ import {
   InstanceTypeField,
   MaximumParallelRunsField,
   RegionField,
-  SpotInstanceFields
+  SpotInstanceFields,
+  ImageField,
+  VirtualEnvironmentPathField
 } from "./FormElements";
 import { FormValues } from "./types";
 import { getDefaultValues, getHyperparameterFieldName } from "./utils";
@@ -33,6 +35,8 @@ const TASK_FIELD_NAME = FIELD_NAMES.TASK;
 const DATA_SOURCE_FIELD_NAME = FIELD_NAMES.DATA_SOURCE;
 const REGION_FIELD_NAME = FIELD_NAMES.REGION;
 const INSTANCE_TYPE_FIELD_NAME = FIELD_NAMES.INSTANCE_TYPE;
+const IMAGE_FIELD_NAME = FIELD_NAMES.IMAGE;
+const VIRTUAL_ENVIRONMENT_PATH_FIELD_NAME = FIELD_NAMES.VIRTUAL_ENVIRONMENT_PATH;
 const COMMAND_TO_EXECUTE_FIELD_NAME = FIELD_NAMES.CODE_TO_EXECUTE;
 const HYPERPARAMETERS_FIELD_NAME = FIELD_NAMES.HYPERPARAMETERS;
 const ABORT_CONDITION_MAX_BUDGET_CHECKBOX_FIELD_NAME = FIELD_NAMES.MAX_BUDGET_CHECKBOX;
@@ -67,7 +71,9 @@ const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, in
     commands: latestRunsetCodeToExecute,
     destroy_conditions: latestRunsetAbortConditions = {},
     instance_size: { type: latestRunsetInstanceType },
-    spot_settings: spotSettings
+    image: latestRunsetImage = "",
+    venv: latestRunsetVirtualEnvironmentPath = "",
+    spot_settings: spotSettings = {}
   } = latestRunset;
 
   const isKnownTask = () => tasks.find((task) => task.id === latestRunsetTaskId);
@@ -82,8 +88,10 @@ const FillFromLastRun = ({ latestRunset, hyperparameters, dataSources, tasks, in
         setValue(DATA_SOURCE_FIELD_NAME, isKnownDataSource() ? latestRunsetDataSourceId : "");
         setValue(REGION_FIELD_NAME, isKnownRegion() ? latestRunsetRegionName : "");
         setValue(INSTANCE_TYPE_FIELD_NAME, isKnownInstanceType() ? latestRunsetInstanceType : "");
+        setValue(IMAGE_FIELD_NAME, latestRunsetImage);
+        setValue(VIRTUAL_ENVIRONMENT_PATH_FIELD_NAME, latestRunsetVirtualEnvironmentPath);
 
-        if (spotSettings) {
+        if (!isEmptyObject(spotSettings)) {
           setValue(SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME, true);
           setValue(SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME, spotSettings.tries ?? "");
           setValue(SPOT_INSTANCES_MAX_PRICE_FIELD_NAME, spotSettings.spot_price ?? "");
@@ -207,16 +215,16 @@ const MlRunsetConfigurationForm = ({ runsetTemplate = {}, latestRunset = {}, onS
             tags,
             hyperparameters: formData[HYPERPARAMETERS_FIELD_NAME],
             destroy_conditions: getDestroyConditions(),
-            ...(formData[SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME]
+            image: formData[IMAGE_FIELD_NAME],
+            venv: formData[VIRTUAL_ENVIRONMENT_PATH_FIELD_NAME],
+            spot_settings: formData[SPOT_INSTANCES_USE_SPOT_INSTANCES_CHECKBOX_FIELD_NAME]
               ? {
-                  spot_settings: {
-                    tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]),
-                    spot_price: formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME]
-                      ? Number(formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME])
-                      : undefined
-                  }
+                  tries: Number(formData[SPOT_INSTANCES_MAX_ATTEMPTS_FIELD_NAME]),
+                  spot_price: formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME]
+                    ? Number(formData[SPOT_INSTANCES_MAX_PRICE_FIELD_NAME])
+                    : undefined
                 }
-              : {})
+              : {}
           };
 
           onSubmit(data);
@@ -257,6 +265,8 @@ const MlRunsetConfigurationForm = ({ runsetTemplate = {}, latestRunset = {}, onS
         <DataSourceField dataSources={runsetDataSources} isLoading={isGetRunsetTemplateLoading} />
         <RegionField regions={regions} isLoading={isGetRunsetTemplateLoading} />
         <InstanceTypeField instanceTypes={instanceTypes} isLoading={isGetRunsetTemplateLoading} />
+        <ImageField isLoading={isGetRunsetTemplateLoading} />
+        <VirtualEnvironmentPathField isLoading={isGetRunsetTemplateLoading} />
         <SpotInstanceFields />
         <MaximumParallelRunsField />
         <FormControl fullWidth>

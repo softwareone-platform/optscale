@@ -15,8 +15,8 @@ import ExpensesBreakdownPeriodTypeReducer, {
 } from "components/ExpensesBreakdown/BreakdownByPeriodWidget/reducer";
 import CollapsedMenuItemsReducer, { COLLAPSED_MENU_ITEMS } from "components/MenuGroupWrapper/reducer";
 import PoolsTableReducer, { EXPANDED_POOL_ROWS } from "components/PoolsTable/reducer";
+import { IS_EXISTING_USER } from "components/TopAlertWrapper/constants";
 import TopAlertReducer, { ALERTS } from "components/TopAlertWrapper/reducer";
-import { IS_EXISTING_USER } from "components/TopAlertWrapper/TopAlertWrapper";
 import { reducer as TourReducer, TOURS } from "components/Tour";
 import InitializeReducer, { INITIAL } from "containers/InitializeContainer/redux";
 import ScopeIdReducer, { SCOPE_ID } from "containers/OrganizationSelectorContainer/reducer";

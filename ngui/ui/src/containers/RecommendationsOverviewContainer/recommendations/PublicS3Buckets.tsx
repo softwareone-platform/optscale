@@ -4,7 +4,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { AWS_S3, GCP_CLOUD_STORAGE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, resource, resourceLocation } from "utils/columns";
 import { AWS_CNR, GCP_CNR, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -62,7 +62,7 @@ class PublicS3Buckets extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
-  categories = [CATEGORY_SECURITY];
+  categories = [CATEGORY.SECURITY];
 
   withExclusions = true;
 

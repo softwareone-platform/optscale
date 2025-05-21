@@ -210,7 +210,7 @@ class Infra:
         try:
             LOG.info("Cleaning up runner %s", str(self.seed))
             subprocess.check_output(
-                [self.exe_path, "destroy", "--auto-approve"],
+                [self.exe_path, "destroy", "--auto-approve", "-no-color"],
                 cwd=path).decode('UTF-8')
         except Exception:
             pass
@@ -235,6 +235,7 @@ class Infra:
             region,
             flavor,
             user_data,
+            venv,
             image=None,
             key=None,
             tags=None,
@@ -249,6 +250,7 @@ class Infra:
             region,
             flavor,
             user_data,
+            venv,
             key,
             tags,
             open_ingress,
@@ -306,7 +308,7 @@ class Infra:
             self.copy_artifacts(path)
             self.make_vars(path)
             plan = subprocess.check_output(
-                [self.exe_path, "destroy", "--auto-approve"],
+                [self.exe_path, "destroy", "--auto-approve", "-no-color"],
                 cwd=path).decode('UTF-8')
             LOG.info(plan)
             # by design do not remove states for s3

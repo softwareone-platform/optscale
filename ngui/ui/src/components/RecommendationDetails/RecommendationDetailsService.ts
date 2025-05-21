@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { RESTAPI, getResourceAllowedActions, updateResourceVisibility } from "api";
 import { getOptimizationDetails } from "api/restapi/actionCreators";
 import { GET_OPTIMIZATION_DETAILS } from "api/restapi/actionTypes";
-import { ACTIVE } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
+import { STATUS } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { useAllRecommendations } from "hooks/useAllRecommendations";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
@@ -55,7 +55,7 @@ const usePatchResource = (recommendationType, status) => {
     dispatch(
       updateResourceVisibility(resourceId, {
         recommendation: recommendationType,
-        action: status === ACTIVE ? RESOURCE_VISIBILITY_ACTIONS.DISMISS : RESOURCE_VISIBILITY_ACTIONS.ACTIVATE
+        action: status === STATUS.ACTIVE ? RESOURCE_VISIBILITY_ACTIONS.DISMISS : RESOURCE_VISIBILITY_ACTIONS.ACTIVATE
       })
     );
 };

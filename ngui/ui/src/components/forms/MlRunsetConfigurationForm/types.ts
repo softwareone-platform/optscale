@@ -5,6 +5,8 @@ export type FormValues = {
   [FIELD_NAMES.DATA_SOURCE]: string;
   [FIELD_NAMES.REGION]: string;
   [FIELD_NAMES.INSTANCE_TYPE]: string;
+  [FIELD_NAMES.IMAGE]: string;
+  [FIELD_NAMES.VIRTUAL_ENVIRONMENT_PATH]: string;
   [FIELD_NAMES.HYPERPARAMETERS]: Record<string, string>;
   [FIELD_NAMES.CODE_TO_EXECUTE]: string;
   [FIELD_NAMES.MAX_BUDGET_CHECKBOX]: boolean;

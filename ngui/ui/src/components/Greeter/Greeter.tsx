@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
 import Logo from "components/Logo";
 import TopAlertWrapper from "components/TopAlertWrapper";
-import { ALERT_TYPES } from "components/TopAlertWrapper/TopAlertWrapper";
+import { ALERT_TYPES } from "components/TopAlertWrapper/constants";
 // import { useIsDownMediaQuery, useIsUpMediaQuery } from "hooks/useMediaQueries";
 // import { HYSTAX, LIVE_DEMO, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 // import { tag as tagHotjar } from "utils/hotjar";

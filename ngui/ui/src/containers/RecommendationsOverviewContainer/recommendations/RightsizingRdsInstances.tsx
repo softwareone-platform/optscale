@@ -8,7 +8,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_RDS, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, recommendedRightsizingSize, resource, resourceLocation, rightsizingSize } from "utils/columns";
 import { ALIBABA_CNR, FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const RightsizingCpuUsageCell = ({ currentUsage, projectedUsage }) => (
   <Stack spacing={1}>
@@ -68,7 +68,7 @@ class RightsizingRdsInstances extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, NEBIUS];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   emptyMessageId = "noRightsizingRdsInstances";
 

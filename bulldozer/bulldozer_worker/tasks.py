@@ -10,6 +10,7 @@ LOG = logging.getLogger(__name__)
 MAX_RETRIES = 20
 
 ARCEE_WAIT_TIMEOUT_SEC = 10 * 60
+DEFAULT_RUNNER_VENV = "/tmp/optscale-venv"
 
 
 class ArceeWaitException(Exception):
@@ -410,6 +411,9 @@ class StartInfra(Continue):
         open_ingress = runner.get("open_ingress", False)
         _, runset = self.bulldozer_cl.runset_get(runner["runset_id"])
         image = runset.get("image")
+        venv = runset.get("venv")
+        if not venv:
+            venv = DEFAULT_RUNNER_VENV
         spot_settings = runset.get("spot_settings")
         spot_price = None
         if spot_settings:
@@ -455,6 +459,7 @@ class StartInfra(Continue):
             region_id,
             instance_type,
             user_data,
+            venv,
             image=image,  # if None using default image
             key=None,
             tags=tags,

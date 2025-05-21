@@ -11,8 +11,9 @@ import SummaryList from "components/SummaryList";
 import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ML_RUNSET_ABORT_CONDITION_TYPES, OPTSCALE_CAPABILITY } from "utils/constants";
+import { isEmpty as isEmptyObject } from "utils/objects";
 
-const InputParameters = ({ runset, isLoading }) => {
+const InputParameters = ({ runset, isLoading = false }) => {
   const isFinOpsEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const { isDemo } = useOrganizationInfo();
@@ -25,7 +26,9 @@ const InputParameters = ({ runset, isLoading }) => {
     hyperparameters = {},
     destroy_conditions: abortConditions = {},
     commands,
-    spot_settings: spotSettings
+    image,
+    venv: virtualEnvironmentPath,
+    spot_settings: spotSettings = {}
   } = runset;
 
   return (
@@ -63,7 +66,21 @@ const InputParameters = ({ runset, isLoading }) => {
                 value={maximumParallelRuns}
                 dataTestIds={{ key: "p_maximum_parallel_runs_key", value: "p_maximum_parallel_runs_value" }}
               />
-              {spotSettings && (
+              {image && (
+                <KeyValueLabel
+                  keyMessageId="image"
+                  value={image}
+                  dataTestIds={{ key: "p_image_key", value: "p_image_value" }}
+                />
+              )}
+              {virtualEnvironmentPath && (
+                <KeyValueLabel
+                  keyMessageId="virtualEnvironmentPath"
+                  value={virtualEnvironmentPath}
+                  dataTestIds={{ key: "p_virtual_environment_path_key", value: "p_virtual_environment_path_value" }}
+                />
+              )}
+              {!isEmptyObject(spotSettings) && (
                 <>
                   <KeyValueLabel
                     keyMessageId="spotInstances"

@@ -7,6 +7,7 @@ from unittest.mock import patch, PropertyMock
 import optscale_client.rest_api_client
 
 from tools.optscale_exceptions.common_exc import InternalServerError
+from tools.optscale_password.optscale_password import PasswordValidator
 import optscale_client.rest_api_client.client
 import optscale_client.rest_api_client.client_v2
 from rest_api.rest_api_server.exceptions import Err
@@ -1863,8 +1864,12 @@ class TestLiveDemosApi(TestApiBase):
               'create_auth_user', return_value=self.user).start()
         patch('rest_api.rest_api_server.controllers.base.BaseController.'
               'get_user_info', return_value=self.user).start()
-        patch('rest_api.rest_api_server.controllers.live_demo.LiveDemoController.'
-              '_get_demo_multiplier', return_value=self.multiplier).start()
+        patch('rest_api.rest_api_server.controllers.live_demo.'
+              'LiveDemoController._get_demo_multiplier',
+              return_value=self.multiplier).start()
+        patch('rest_api.rest_api_server.controllers.live_demo.'
+              'LiveDemoController._get_password_settings',
+              return_value={}).start()
         patch('rest_api.rest_api_server.controllers.live_demo.LiveDemoController.'
               '_insert_clickhouse').start()
         patch('rest_api.rest_api_server.controllers.base.'
@@ -2010,6 +2015,28 @@ class TestLiveDemosApi(TestApiBase):
 
     def get_pregenerated_live_demos(self):
         return list(self.mongo_client.restapi.live_demos.find({}))
+
+    def test_demo_user(self):
+        settings = {
+            'min_length': 15,
+            'min_lowercase': 1,
+            'min_uppercase': 2,
+            'min_digits': 3,
+            'min_special_chars': 4
+        }
+        patch('rest_api.rest_api_server.controllers.live_demo.'
+              'LiveDemoController._get_password_settings',
+              return_value=settings).start()
+        patch('rest_api.rest_api_server.controllers.live_demo.'
+              'LiveDemoController.load_preset',
+              return_value=deepcopy(self.preset)).start()
+        patch('rest_api.rest_api_server.controllers.live_demo.'
+              'LiveDemoController._insert_clickhouse').start()
+        code, response = self.client.live_demo_create()
+        self.assertEqual(code, 201)
+        validator = PasswordValidator()
+        validator.change_settings(**settings)
+        validator.validate(response['password'])
 
     def test_live_demo_create(self):
         with patch('rest_api.rest_api_server.controllers.live_demo.LiveDemoController'
