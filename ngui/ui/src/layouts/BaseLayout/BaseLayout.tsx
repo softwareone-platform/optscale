@@ -7,6 +7,7 @@ import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
+import preloaderLogo from "assets/logo/swo-logo-animated.gif";
 import CollapsableMenuDrawer from "components/CollapsableMenuDrawer";
 import DocsPanel from "components/DocsPanel";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -139,7 +140,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
             return (
               <PageContentWrapper>
                 <div className={classes.preloaderOverlay}>
-                  <img src="https://swo-assets.azureedge.net/client-portal/app-loading.gif" alt="Loading page" />
+                  <img src={preloaderLogo} alt="Loading page" />
                 </div>
               </PageContentWrapper>
             );
