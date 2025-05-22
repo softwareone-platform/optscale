@@ -1,4 +1,4 @@
-import {defineConfig} from '@playwright/test';
+import {defineConfig, devices} from '@playwright/test';
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -20,7 +20,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 3,
   /* Individual test timeout,test.slow() annotation triples this value for decorated tests*/
-  timeout: 30000,
+  timeout: 45000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["list"],
@@ -50,46 +50,44 @@ export default defineConfig({
   },
 
   projects: [
+    // Setup project
     {name: "setup", testMatch: /.*\.setup\.ts/},
     {
       name: "chrome",
       use: {
         channel: "chrome",
-        viewport: {width: 1920, height: 1080},
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "firefox",
+      use: {
+        browserName: "firefox",
+      },
+      dependencies: ["setup"],
+    },
+    {
+      name: "Microsoft Edge",
+      use: {
+        channel: "msedge",
       },
       dependencies: ["setup"],
     },
     // {
-    //   name: 'firefox',
+    //   name: "Mobile Safari",
     //   use: {
-    //     browserName: "firefox",
+    //     ...devices["iPad Mini"],
+    //     viewport: {width: 744, height: 1024},
     //   },
     //   dependencies: ["setup"],
     // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    {
+      name: "webkit",
+      use: {
+        ...devices["Desktop Safari"],
+      },
+      dependencies: ["setup"],
+    },
   ],
 
   /* Run your local dev server before starting the tests */
