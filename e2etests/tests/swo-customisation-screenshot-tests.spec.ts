@@ -18,7 +18,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test("[229889] Verify Header and Main Menu", async ({homePage, header, mainMenu}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await homePage.navigateToURL(true);
         await test.step('Verify header', async () => {
             await homePage.screenshotUpdateDelay();
@@ -32,7 +32,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229890] Verify Homepage matches screenshots', async ({homePage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await homePage.setupApiInterceptions();
             await homePage.navigateToURL(true);
@@ -49,7 +49,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229891] Verify Recommendations page matches screenshots', async ({recommendationsPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await recommendationsPage.setupApiInterceptions();
             await recommendationsPage.navigateToURL(true);
@@ -73,7 +73,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229892] Verify Resources page matches screenshots', async ({resourcesPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await resourcesPage.setupApiInterceptions();
             await resourcesPage.page.goto('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true')
@@ -118,7 +118,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
                                                                                  resourcesPage,
                                                                                  resourceDetailsPage
                                                                              }) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await resourcesPage.setupApiInterceptions();
             await resourceDetailsPage.setupApiInterceptions();
@@ -171,7 +171,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229894] Verify Pools page matches screenshots', async ({poolsPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await poolsPage.setupApiInterceptions();
         });
@@ -195,7 +195,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
 
     test('[229895] Verify Expenses page matches screenshots', async ({expensesPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await expensesPage.setupApiInterceptions();
         });
@@ -230,7 +230,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
 
     test('[229896] Verify Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await expensesPage.setupApiInterceptions();
         });
@@ -269,7 +269,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     });
 
     test('[229897] Verify Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await anomaliesPage.setupApiInterceptions();
         });
@@ -294,7 +294,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229898] Verify Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await policiesPage.setupApiInterceptions();
         });
@@ -322,7 +322,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
                                                                                  taggingPoliciesPage,
                                                                                  taggingPoliciesCreatePage
                                                                              }) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await taggingPoliciesPage.setupApiInterceptions();
         });
@@ -347,7 +347,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229900] Verify Users page matches screenshots', async ({usersPage, usersInvitePage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await usersPage.setupApiInterceptions();
         });
@@ -373,7 +373,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
                                                                               cloudAccountsPage,
                                                                               cloudAccountsConnectPage
                                                                           }) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await cloudAccountsPage.setupApiInterceptions();
         });
@@ -420,7 +420,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
     })
 
     test('[229902] Verify Events page matches screenshots', async ({eventsPage}) => {
-        if(process.env.SCEENSHOT_UPDATE_DELAY) test.slow();
+        if(process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
         await test.step('Set up test data', async () => {
             await eventsPage.setupApiInterceptions();
         });
