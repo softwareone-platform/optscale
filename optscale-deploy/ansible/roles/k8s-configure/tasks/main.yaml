@@ -156,5 +156,9 @@
   become: yes
   when: cloud_init_hosts.stat.exists
 
+- name: Import metrics-server tasks
+  import_tasks: metrics-server.yaml
+  when: install_metrics_server | bool
+
 - name: Reset SSH connection
   meta: reset_connection
