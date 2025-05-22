@@ -26,7 +26,6 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
         });
 
         await test.step('Verify Main Menu', async () => {
-            await homePage.waitForAllCanvases();
             await homePage.screenshotUpdateDelay();
             await expect(mainMenu.menu).toHaveScreenshot('MainMenu-screenshot.png');
         });
@@ -39,6 +38,7 @@ test.describe('MPT-7367 screenshot tests @swo_customisation @ui', () => {
             await homePage.navigateToURL(true);
         });
         await test.step('Verify Home Page content', async () => {
+            await homePage.waitForAllCanvases();
             await homePage.screenshotUpdateDelay();
             await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
             await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
