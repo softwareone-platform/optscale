@@ -30,9 +30,6 @@ export default defineConfig(({ mode }) => {
     return trimmed.split(",").map((host) => host.trim());
   }
 
-  console.log(parseViteHost(VITE_HOST))
-  console.log(parseAllowedHosts(VITE_ALLOWED_HOSTS))
-
   return {
     build: {
       outDir: "build",
