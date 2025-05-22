@@ -11,6 +11,7 @@ export default defineConfig({
   globalSetup: "./setup/global-setup.ts",
   globalTeardown: "./setup/global-teardown.ts",
   testDir: '../e2etests',
+  testIgnore: ['**/screenshots/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,12 +28,6 @@ export default defineConfig({
     ["json", {outputFile: "results.json"}],
     ["html", {open: "never"}],
   ],
-  expect: {
-    toHaveScreenshot: {
-      animations: "disabled",
-      stylePath: './fixtures/pre-screenshot-styles.css'
-    },
-  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 10000,
@@ -56,6 +51,7 @@ export default defineConfig({
       name: "chrome",
       use: {
         channel: "chrome",
+        viewport: {width: 1920, height: 1080},
       },
       dependencies: ["setup"],
     },

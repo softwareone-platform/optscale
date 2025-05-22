@@ -18,7 +18,12 @@
     "playwright:trace": "npx playwright test --trace --project chrome",
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome",
     "playwright:update-screenshots": "cross-env SCREENSHOT_UPDATE_DELAY=true npx playwright test --grep @swo_customisation --update-snapshots",
-    "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation"
+    "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation",
+    "playwright:screenshots:update": "npm run playwright:screenshot -- --update-snapshots",
+    "playwright:screenshot": "npx playwright test tests/screenshots/swo-screenshot-tests.spec.ts --config=playwright.screenshot.config.ts",
+    "docker:build": "docker build -t playwright-screenshot-tests ./docker",
+    "docker:test": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot",
+    "docker:update": "docker compose -f docker/docker-compose.yml run --remove-orphans screenshot npm run playwright:screenshot -- --update-snapshots"
   },
   "keywords": [],
   "author": "",
