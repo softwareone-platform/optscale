@@ -2,7 +2,7 @@ import InactiveUsersModal from "components/SideModalManager/SideModals/recommend
 import { AWS_IAM, GCP_IAM, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, lastUsed, name, userLocation } from "utils/columns";
 import { AWS_CNR, GCP_CNR, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   name({
@@ -38,7 +38,7 @@ class InactiveUsers extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
-  categories = [CATEGORY_SECURITY];
+  categories = [CATEGORY.SECURITY];
 
   hasSettings = true;
 

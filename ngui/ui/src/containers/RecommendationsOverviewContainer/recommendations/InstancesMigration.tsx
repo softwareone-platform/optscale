@@ -8,7 +8,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS } from "hooks/useRecommendationServices";
 import { detectedAt, size, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -56,7 +56,7 @@ class InstancesMigration extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   withExclusions = true;
 

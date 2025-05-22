@@ -2,7 +2,7 @@ import RecommendationListItemResourceLabel from "components/RecommendationListIt
 import { ALIBABA_ECS, AWS_EC2, AWS_RDS, AZURE_COMPUTE } from "hooks/useRecommendationServices";
 import { detectedAt, resourceLocation, resource, savings, text } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, METADATA_FIELDS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({ headerDataTestId: "lbl_igu_resource" }),
@@ -32,7 +32,7 @@ class InstancesGenerationUpgrade extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   withExclusions = true;
 

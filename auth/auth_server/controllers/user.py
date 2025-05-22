@@ -15,6 +15,7 @@ from auth.auth_server.utils import (
     check_string_attribute, check_bool_attribute, is_hystax_email,
     is_demo_email)
 from tools.optscale_time import utcnow
+from tools.optscale_password import PasswordValidator
 from tools.optscale_exceptions.common_exc import (
     WrongArgumentsException, ForbiddenException, NotFoundException,
     ConflictException)
@@ -110,12 +111,19 @@ class UserController(BaseController):
         check_string_attribute('display_name', display_name)
         self._check_password(password)
 
-    @staticmethod
-    def _check_password(password):
-        if not isinstance(password, str):
-            raise WrongArgumentsException(Err.OA0033, ['password'])
-        if len(password) < 4:
-            raise WrongArgumentsException(Err.OA0041, [])
+    def _check_password(self, password):
+        pass_validator = PasswordValidator()
+        try:
+            settings = self._config.password_strength_settings()
+            pass_validator.change_settings(
+                **settings
+            )
+        except etcd.EtcdKeyNotFound:
+            pass
+        try:
+            pass_validator.validate(password)
+        except ValueError as ex:
+            raise WrongArgumentsException(Err.OA0074, [str(ex)])
 
     def get_user_by_email(self, email):
         return self.session.query(User).filter(

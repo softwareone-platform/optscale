@@ -132,6 +132,10 @@ class AlibabaReportImporter(BaseReportImporter):
         billing_item['start_date'] = current_day
         billing_item['end_date'] = current_day + timedelta(days=1)
         billing_item['resource_id'] = billing_item['InstanceID']
+        if (billing_item.get('ProductName') == 'Server Load Balancer'
+                and ';' in billing_item['resource_id']):
+            billing_item['resource_id'] = billing_item['resource_id'].split(
+                ';')[0]
         chunk.append(billing_item)
         if len(chunk) >= CHUNK_SIZE:
             self._flush_raw_chunk(chunk)
@@ -237,6 +241,7 @@ class AlibabaReportImporter(BaseReportImporter):
         product_code = expense['ProductCode']
         billing_item = expense.get('BillingItem')
         billing_item_code = expense.get('BillingItemCode')
+        product_name = expense.get('ProductName')
         product_detail = expense['ProductDetail']
         if 'RDD' in expense['resource_id']:
             return 'Round Down Discount'
@@ -257,6 +262,8 @@ class AlibabaReportImporter(BaseReportImporter):
             return 'IP Address'
         elif product_detail == 'sls_intl':
             return 'Log Storage'
+        elif product_name == 'Server Load Balancer':
+            return 'Load Balancer'
         else:
             return product_detail
 

@@ -1,30 +1,23 @@
 import { ALL_SERVICES } from "hooks/useRecommendationServices";
 import { intl } from "translations/react-intl-config";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import {
-  CATEGORY_ALL,
-  CATEGORY_COST,
-  CATEGORY_SECURITY,
-  CATEGORY_CRITICAL,
-  CATEGORY_NON_EMPTY,
-  RECOMMENDATION_COLOR
-} from "./recommendations/BaseRecommendation";
+import { CATEGORY, RECOMMENDATION_COLOR } from "./recommendations/BaseRecommendation";
 
 export const categoryFilter = (category) => (recommendation) => {
-  if (category === CATEGORY_ALL) {
+  if (category === CATEGORY.ALL) {
     return true;
   }
 
   // two definitional categories
-  if ([CATEGORY_COST, CATEGORY_SECURITY].includes(category)) {
+  if ([CATEGORY.COST, CATEGORY.SECURITY].includes(category)) {
     return recommendation.categories.includes(category);
   }
 
-  if (category === CATEGORY_CRITICAL) {
+  if (category === CATEGORY.CRITICAL) {
     return recommendation.color === RECOMMENDATION_COLOR.ERROR;
   }
 
-  if (category === CATEGORY_NON_EMPTY) {
+  if (category === CATEGORY.NON_EMPTY) {
     return recommendation.count !== 0;
   }
 

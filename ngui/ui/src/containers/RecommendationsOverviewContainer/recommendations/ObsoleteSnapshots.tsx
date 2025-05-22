@@ -4,7 +4,7 @@ import ObsoleteSnapshotsModal from "components/SideModalManager/SideModals/recom
 import { AWS_EC2, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { AWS_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -45,7 +45,7 @@ class ObsoleteSnapshots extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR, NEBIUS, GCP_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   emptyMessageId = "noObsoleteSnapshots";
 

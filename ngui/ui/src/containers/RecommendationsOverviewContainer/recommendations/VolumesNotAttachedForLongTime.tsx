@@ -8,7 +8,7 @@ import { ALIBABA_EBS, AWS_EC2_EBS, AZURE_COMPUTE, GCP_COMPUTE_ENGINE, NEBIUS_SER
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import { EN_FULL_FORMAT, unixTimestampToDateTime } from "utils/datetime";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -70,7 +70,7 @@ class VolumesNotAttachedForLongTime extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   emptyMessageId = "noDetachedVolumes";
 

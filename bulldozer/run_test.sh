@@ -19,6 +19,13 @@ do
         bash -c "pylint --rcfile=bulldozer/.pylintrc --fail-under=9 --fail-on=E,F ./bulldozer"
     echo "<<<Pylint tests"
 
+    if [[ "${SERVICE}" == "bulldozer_api" ]]; then
+        echo "Unit tests>>>"
+        docker run -i --rm ${TEST_IMAGE}:${BUILD_TAG} \
+            bash -c "pytest ./bulldozer/bulldozer_api/tests/"
+        echo "<<Unit tests"
+    fi
+
     docker rmi ${TEST_IMAGE}:${BUILD_TAG}
     echo "<<<Finished testing ${SERVICE}"
 done

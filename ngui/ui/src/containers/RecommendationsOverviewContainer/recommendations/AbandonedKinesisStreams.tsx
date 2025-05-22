@@ -6,7 +6,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { AWS_KINESIS } from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -62,7 +62,7 @@ class AbandonedKinesisStreams extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 

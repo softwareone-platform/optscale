@@ -161,10 +161,15 @@ class ResourcesSaver:
     def save_bulk_resources(self, resources):
         payload = []
         resources = self.process_resource_obj(resources)
+        cloud_acc_id = None
         for rss in resources:
             obj, cloud_acc_id = self.build_payload(rss)
             payload.append(obj)
         if payload:
+            LOG.info('Creating %s resources for cloud account %s', len(payload),
+                     cloud_acc_id)
+            LOG.debug('Payload build for cloud account %s resources: %s',
+                      cloud_acc_id, [x['cloud_resource_id'] for x in payload])
             _, response = self.rest_cl.cloud_resource_create_bulk(
                 cloud_acc_id, {'resources': payload},
                 behavior='update_existing', return_resources=True)
@@ -221,7 +226,8 @@ class DiscoveryWorker(ConsumerMixin):
         return self._res_saving
 
     def set_discover_settings(self):
-        discover_size, timeout, writing_timeout, _ = self.config_cl.resource_discovery_params()
+        (discover_size, timeout, writing_timeout,
+         _, _) = self.config_cl.resource_discovery_params()
         self.discover_size = discover_size if (
             discover_size) else DEFAULT_DISCOVER_SIZE
         self.timeout = timeout
@@ -329,6 +335,8 @@ class DiscoveryWorker(ConsumerMixin):
                     res, gen = f.result()
                     if isinstance(res, Exception):
                         if self.is_404(res):
+                            LOG.debug("Got 404 exception: %s, skipping it",
+                                      str(res))
                             continue
                         LOG.error("Exception: %s %s", str(res),
                                   traceback.print_tb(res.__traceback__))
@@ -402,15 +410,15 @@ class DiscoveryWorker(ConsumerMixin):
 
 if __name__ == '__main__':
     urllib3.disable_warnings(category=urllib3.exceptions.InsecureRequestWarning)
-    debug = os.environ.get('DEBUG', False)
-    log_level = 'INFO' if not debug else 'DEBUG'
-    setup_logging(loglevel=log_level, loggers=[''])
 
     config_cl = ConfigClient(
         host=os.environ.get('HX_ETCD_HOST'),
         port=int(os.environ.get('HX_ETCD_PORT')),
     )
     config_cl.wait_configured()
+    params = config_cl.resource_discovery_params()
+    log_level = 'INFO' if not params[-1] else 'DEBUG'
+    setup_logging(loglevel=log_level, loggers=[''])
     conn_str = 'amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit'))
     with Connection(conn_str) as conn:

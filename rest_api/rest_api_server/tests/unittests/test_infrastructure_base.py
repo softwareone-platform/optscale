@@ -109,6 +109,7 @@ class TestInfrastructureBase(TestApiBase):
             'image': 'ami-0123456',
             'name_prefix': 'test_prefix',
             'commands': 'echo hello world',
+            'venv': '/usr/bin/myvenv',
             'tags': {
                 'template': 'test'
             },
@@ -361,7 +362,8 @@ class BulldozerMock:
     def runset_create(self, template_id, task_id, cloud_account_id,
                       region_id, instance_type, name_prefix, owner_id,
                       hyperparameters, tags, destroy_conditions, commands,
-                      open_ingress=False, spot_settings=None, image=None):
+                      open_ingress=False, spot_settings=None, image=None,
+                      venv=None):
         now = utcnow_timestamp()
         b = {
             "template_id": template_id,
@@ -378,6 +380,7 @@ class BulldozerMock:
             '_id': str(uuid.uuid4()),
             'token': self.token,
             'commands': commands,
+            'venv': venv,
             'created_at': now - 120,
             'started_at': now - 100,
             'destroyed_at': now,

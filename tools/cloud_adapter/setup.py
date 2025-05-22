@@ -14,6 +14,10 @@ requirements = [
     'aliyun-python-sdk-cms==7.0.22',
     'aliyun-python-sdk-rds==2.5.11',
     'aliyun-python-sdk-vpc==3.0.14',
+    'aliyun-python-sdk-alb==1.0.22',
+    'aliyun-python-sdk-gwlb==1.0.2',
+    'aliyun-python-sdk-nlb==1.0.12',
+    'aliyun-python-sdk-slb==3.3.22',
 
     # Azure
     'azure-mgmt-resource==2.1.0',

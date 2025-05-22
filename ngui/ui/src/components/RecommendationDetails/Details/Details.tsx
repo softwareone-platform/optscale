@@ -13,7 +13,7 @@ import PageContentDescription from "components/PageContentDescription/PageConten
 import ExcludePoolsFromRecommendationModal from "components/SideModalManager/SideModals/ExcludePoolsFromRecommendationModal";
 import Table from "components/Table";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { ACTIVE, DISMISSED } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
+import { STATUS } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useAllRecommendations } from "hooks/useAllRecommendations";
 import { useApiState } from "hooks/useApiState";
@@ -177,9 +177,9 @@ const Details = ({ type, limit, status, data, dataSourceIds = [], withDownload }
   }
 
   // TODO: Make this a computed class property
-  if (recommendation.dismissable && (status === ACTIVE || status === DISMISSED)) {
+  if (recommendation.dismissable && (status === STATUS.ACTIVE || status === STATUS.DISMISSED)) {
     const setting =
-      status === ACTIVE
+      status === STATUS.ACTIVE
         ? {
             icon: <VisibilityOffOutlinedIcon />,
             tooltipMessageId: "dismissRecommendation",
@@ -221,7 +221,7 @@ const Details = ({ type, limit, status, data, dataSourceIds = [], withDownload }
 
   return (
     <>
-      {status === ACTIVE && (
+      {status === STATUS.ACTIVE && (
         <PageContentDescription
           position="top"
           alertProps={{

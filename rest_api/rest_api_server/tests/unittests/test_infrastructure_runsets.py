@@ -142,8 +142,8 @@ class TestRunsetsApi(TestInfrastructureBase):
         valid_runset['spot_settings'] = {}
         code, res = self.client.runset_create(
             self.organization_id, self.template_id, valid_runset)
-        self.assertEqual(code, 400)
-        self.assertEqual(res.get('error', {}).get('error_code'), 'OE0216')
+        self.assertEqual(code, 201)
+        self.assertEqual(res.get('spot_settings'), {})
         valid_runset = self.valid_runset.copy()
         valid_runset['spot_settings']['tries'] = 0
         code, res = self.client.runset_create(
@@ -178,7 +178,7 @@ class TestRunsetsApi(TestInfrastructureBase):
                 self.assertEqual(
                     res.get('destroy_conditions', {}).get('max_budget'),
                     self.valid_template['budget'])
-            elif k in ['spot_settings', 'open_ingress', 'image']:
+            elif k in ['spot_settings', 'open_ingress', 'image', 'venv']:
                 # params above are optional and set based on bulldozer logic
                 self.assertEqual(code, 201)
             else:

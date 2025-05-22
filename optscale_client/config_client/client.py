@@ -463,7 +463,7 @@ class Client(etcd.Client):
         try:
             params = self.read_branch('/resource_discovery_settings')
         except etcd.EtcdKeyNotFound:
-            return None, None, None, OBSERVE_TIMEOUT
+            return None, None, None, OBSERVE_TIMEOUT, None
         try:
             discover_size = int(params['discover_size'])
         except (KeyError, ValueError):
@@ -480,7 +480,8 @@ class Client(etcd.Client):
             observe_timeout = int(params['observe_timeout'])
         except (KeyError, ValueError):
             observe_timeout = OBSERVE_TIMEOUT
-        return discover_size, timeout, writing_timeout, observe_timeout
+        debug = params['debug'] == 'True'
+        return discover_size, timeout, writing_timeout, observe_timeout, debug
 
     def domains_blacklist(self, blacklist_key='registration'):
         """
@@ -539,3 +540,9 @@ class Client(etcd.Client):
         Get settings for bi scheduler and exporter
         """
         return self.read_branch('/bi_settings')
+
+    def password_strength_settings(self):
+        """
+        Get password strength settings
+        """
+        return self.read_branch('/password_strength_settings')

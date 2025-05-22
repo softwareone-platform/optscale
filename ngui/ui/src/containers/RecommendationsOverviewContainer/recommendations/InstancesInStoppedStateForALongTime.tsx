@@ -7,7 +7,7 @@ import { ALIBABA_ECS, AZURE_COMPUTE } from "hooks/useRecommendationServices";
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { EN_FULL_FORMAT, unixTimestampToDateTime } from "utils/datetime";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -70,7 +70,7 @@ class InstancesInStoppedStateForALongTime extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AZURE_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   withExclusions = true;
 

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import TabsWrapper from "components/TabsWrapper";
-import { ACTIVE, DISMISSED, EXCLUDED } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
+import { STATUS } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import MlTasksService from "services/MlTasksService";
 import { removeQueryParam } from "utils/network";
 import Details from "./Details";
@@ -64,14 +64,16 @@ const RecommendationDetails = ({
     []
   );
 
-  const tabs = [ACTIVE, dismissable ? DISMISSED : false, withExclusions ? EXCLUDED : false].filter(Boolean).map((name) => ({
-    title: name,
-    node: mlTaskId ? (
-      <MlRecommendationsContainer type={type} limit={limit} status={name} taskId={mlTaskId} />
-    ) : (
-      <RecommendationsContainer type={type} dataSourceIds={dataSourceIds} limit={limit} status={name} />
-    )
-  }));
+  const tabs = [STATUS.ACTIVE, dismissable ? STATUS.DISMISSED : false, withExclusions ? STATUS.EXCLUDED : false]
+    .filter(Boolean)
+    .map((name) => ({
+      title: name,
+      node: mlTaskId ? (
+        <MlRecommendationsContainer type={type} limit={limit} status={name} taskId={mlTaskId} />
+      ) : (
+        <RecommendationsContainer type={type} dataSourceIds={dataSourceIds} limit={limit} status={name} />
+      )
+    }));
 
   return (
     <>
@@ -85,7 +87,7 @@ const RecommendationDetails = ({
         tabsProps={{
           queryTabName: QUERY_TAB_NAME,
           tabs,
-          defaultTab: ACTIVE,
+          defaultTab: STATUS.ACTIVE,
           name: "recommendations-data"
         }}
       />

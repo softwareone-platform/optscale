@@ -469,7 +469,7 @@ class MetricsProcessor(object):
                             resource_ids_map, resource_map, r_type, adapter,
                             region, start_date, end_date):
         common_metrics_map = {
-            'Instance': ('acs_ecs_dashboard', [
+            'Instance': [('acs_ecs_dashboard', [
                 # Hypervisor metric, not recommended by Alibaba
                 ('cpu', ['CPUUtilization']),
                 # Agent metric, if exists, will overwrite previous metric
@@ -479,8 +479,8 @@ class MetricsProcessor(object):
                 ('disk_write_io', ['DiskWriteIOPS']),
                 ('network_in_io', ['InternetInRate', 'IntranetInRate']),
                 ('network_out_io', ['InternetOutRate', 'IntranetOutRate'])
-            ]),
-            'RDS Instance': ('acs_rds_dashboard', [
+            ])],
+            'RDS Instance': [('acs_rds_dashboard', [
                 ('cpu', ['CpuUsage']),
                 ('cpu', ['cpu_usage']),
                 ('ram', ['MemoryUsage']),
@@ -492,44 +492,85 @@ class MetricsProcessor(object):
                 ('disk_io', ['SQLServer_IOPS', 'MySQL_IOPS']),
                 ('disk_io_usage', ['IOPSUsage']),
                 ('disk_io_usage', ['iops_usage']),
-            ])
+            ])],
+            'Load Balancer': [
+                ('acs_alb', [
+                    ('bytes_sent', ['LoadBalancerInBits',
+                                    'LoadBalancerOutBits']),
+                    ('requests', ['LoadBalancerQPS'])
+                ]),
+                ('acs_gwlb', [
+                    ('bytes_sent', ['TrafficRX', 'TrafficTX']),
+                    ('packets_sent', ['PacketRX', 'PacketTX']),
+                ]),
+                ('acs_nlb', [
+                    ('bytes_sent', ['InstanceTrafficRX', 'InstanceTrafficTX']),
+                    ('packets_sent', ['InstancePacketRX', 'InstancePacketTX']),
+                ]),
+                ('acs_slb_dashboard', [
+                    ('bytes_sent', ['InstanceTrafficRX', 'InstanceTrafficTX']),
+                    ('packets_sent', ['InstancePacketRX', 'InstancePacketTX']),
+                ]),
+            ]
         }
-        namespace, metrics_list = common_metrics_map[r_type]
+        data = common_metrics_map[r_type]
         metrics_map = {}
         result = []
-        for name, cloud_metric_names in metrics_list:
-            sum_map = {}
-            for cloud_metric_name in cloud_metric_names:
-                response = adapter.get_metric(
-                    namespace, cloud_metric_name, cloud_resource_ids, region,
-                    METRIC_INTERVAL, start_date, end_date)
-                instance_items = {}
-                for item in response:
-                    instance_items.setdefault(
-                        item['instanceId'], []).append(item)
-                for cloud_resource_id, metrics in instance_items.items():
-                    for metric in metrics:
-                        value = metric.get('Average')
-                        if value is None:
-                            continue
-                        if name in ['network_in_io', 'network_out_io']:
-                            # change bit/s to byte/s
-                            value = value / 8
-                        timestamp = metric['timestamp'] / 1000
-                        m = sum_map.get((cloud_resource_id, timestamp))
-                        if not m:
-                            sum_map[(cloud_resource_id, timestamp)] = {
-                                'cloud_account_id': cloud_account_id,
-                                'resource_id': resource_ids_map[
-                                    cloud_resource_id],
-                                'date': datetime.fromtimestamp(timestamp),
-                                'metric': name,
-                                'value': value
-                            }
+        for metric in data:
+            namespace, metrics_list = metric
+            for name, cloud_metric_names in metrics_list:
+                sum_map = {}
+                metric_interval = METRIC_INTERVAL
+                for cloud_metric_name in cloud_metric_names:
+                    if cloud_metric_name in ['bytes_sent', 'packets_sent',
+                                             'requests']:
+                        metric_interval = 60
+                    response = adapter.get_metric(
+                        namespace, cloud_metric_name, cloud_resource_ids,
+                        region, metric_interval, start_date, end_date)
+                    instance_items = {}
+                    for item in response:
+                        if 'loadBalancerId' in item:
+                            instance_id = item['loadBalancerId']
                         else:
-                            sum_map[(cloud_resource_id, timestamp)][
-                                'value'] += value
-            metrics_map.setdefault(name, {}).update(sum_map)
+                            instance_id = item['instanceId']
+                        instance_items.setdefault(
+                            instance_id, []).append(item)
+                    for cloud_resource_id, metrics in instance_items.items():
+                        resource_id = resource_ids_map.get(cloud_resource_id)
+                        if not resource_id:
+                            continue
+                        for metr in metrics:
+                            if 'Average' in metr:
+                                value = metr.get('Average')
+                            else:
+                                value = metr.get('Value')
+                            if value is None:
+                                continue
+                            if name in ['network_in_io', 'network_out_io']:
+                                # change bit/s to byte/s
+                                value = value / 8
+                            if name in ['requests', 'packets_sent']:
+                                # calculate total per minute
+                                value = value * metric_interval
+                            if name == 'bytes_sent':
+                                # change bit/s to byte/s and calculate total
+                                # per minute
+                                value = value * metric_interval / 8
+                            timestamp = metr['timestamp'] / 1000
+                            m = sum_map.get((cloud_resource_id, timestamp))
+                            if not m:
+                                sum_map[(cloud_resource_id, timestamp)] = {
+                                    'cloud_account_id': cloud_account_id,
+                                    'resource_id': resource_id,
+                                    'date': datetime.fromtimestamp(timestamp),
+                                    'metric': name,
+                                    'value': value
+                                }
+                            else:
+                                sum_map[(cloud_resource_id, timestamp)][
+                                    'value'] += value
+                metrics_map.setdefault(name, {}).update(sum_map)
         for points in metrics_map.values():
             result.extend(points.values())
         return result

@@ -1,22 +1,43 @@
 import FormattedMoney from "components/FormattedMoney";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { ObjectValues, TODO } from "utils/types";
 
-export const ACTIVE = "active";
-export const DISMISSED = "dismissed";
-export const EXCLUDED = "excluded";
+export const STATUS = {
+  ACTIVE: "active",
+  DISMISSED: "dismissed",
+  EXCLUDED: "excluded"
+} as const;
 
-export const CATEGORY_ALL = "all";
-export const CATEGORY_COST = "cost";
-export const CATEGORY_SECURITY = "security";
-export const CATEGORY_CRITICAL = "critical";
-export const CATEGORY_NON_EMPTY = "nonEmpty";
+export const CATEGORY = {
+  ALL: "all",
+  COST: "cost",
+  SECURITY: "security",
+  CRITICAL: "critical",
+  NON_EMPTY: "nonEmpty"
+} as const;
+
+export const STATUS_CATEGORY = {
+  OPTIMIZATION: "optimizations",
+  DISMISSED_OPTIMIZATION: "dismissed_optimizations",
+  EXCLUDED_OPTIMIZATION: "excluded_optimizations"
+} as const;
+
+const statusToCategoryMap: Record<Status, StatusCategory> = {
+  [STATUS.ACTIVE]: STATUS_CATEGORY.OPTIMIZATION,
+  [STATUS.DISMISSED]: STATUS_CATEGORY.DISMISSED_OPTIMIZATION,
+  [STATUS.EXCLUDED]: STATUS_CATEGORY.EXCLUDED_OPTIMIZATION
+};
 
 export const RECOMMENDATION_COLOR = Object.freeze({
   SUCCESS: "success",
   WARNING: "warning",
   ERROR: "error"
 });
+
+type Status = ObjectValues<typeof STATUS>;
+type Category = ObjectValues<typeof CATEGORY>;
+type StatusCategory = ObjectValues<typeof STATUS_CATEGORY>;
 
 class BaseRecommendation {
   // todo: make type/name/title static
@@ -26,32 +47,32 @@ class BaseRecommendation {
 
   title = "optimizationNameTitle";
 
-  categories = [CATEGORY_COST];
+  categories: Category[] = [CATEGORY.COST];
 
-  constructor(status, apiResponse) {
+  apiResponse: TODO;
+  status: Status;
+  statusCategory: string;
+
+  constructor(status: Status, apiResponse: TODO) {
     this.initialize(status, apiResponse);
   }
 
-  initialize(status, apiResponse = {}) {
+  initialize(status: Status, apiResponse: TODO = {}) {
     this.apiResponse = apiResponse;
     this.status = status;
-    this.statusCategory = {
-      [ACTIVE]: "optimizations",
-      [DISMISSED]: "dismissed_optimizations",
-      [EXCLUDED]: "excluded_optimizations"
-    }[status];
+    this.statusCategory = statusToCategoryMap[status];
   }
 
   get isActive() {
-    return this.status === ACTIVE;
+    return this.status === STATUS.ACTIVE;
   }
 
   get isDismissed() {
-    return this.status === DISMISSED;
+    return this.status === STATUS.DISMISSED;
   }
 
   get isExcluded() {
-    return this.status === EXCLUDED;
+    return this.status === STATUS.EXCLUDED;
   }
 
   get recommendation() {
@@ -116,7 +137,7 @@ class BaseRecommendation {
     return !isEmptyArray(this.items);
   }
 
-  hasCategory(category) {
+  hasCategory(category: Category) {
     return this.categories.includes(category);
   }
 
@@ -149,9 +170,9 @@ class BaseRecommendation {
 
   emptyMessageId = "noItems";
 
-  services = [];
+  services: string[] = [];
 
-  appliedDataSources = [];
+  appliedDataSources: string[] = [];
 
   sampleValues = {};
 

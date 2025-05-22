@@ -261,8 +261,9 @@ class TestUser(TestAuthBase):
         code, response = self.client.user_update(user['id'],
                                                  password=new_password)
         self.assertEqual(code, 400)
-        self.assertEqual(response['error']['reason'],
-                         'Password should be at least 4 characters')
+        self.assertEqual(
+            response['error']['reason'],
+            'Validation error: Password must be at least 4 characters long')
 
     @patch(RES_INFO_URL)
     @patch(HIERARCHY_URL)
@@ -432,8 +433,9 @@ class TestUser(TestAuthBase):
         """
         code, response = self._create_user(password='123')
         self.assertEqual(code, 400)
-        self.assertEqual(response['error']['reason'],
-                         'Password should be at least 4 characters')
+        self.assertEqual(
+            response['error']['reason'],
+            'Validation error: Password must be at least 4 characters long')
 
     def test_edit_not_existent_user(self):
         user_id = str(uuid.uuid4())
@@ -590,8 +592,9 @@ class TestUser(TestAuthBase):
         _, user = self._create_user(email='email@email.com')
         code, user = self.client.user_update(user['id'], password='123')
         self.assertEqual(code, 400)
-        self.assertEqual(user['error']['reason'],
-                         'Password should be at least 4 characters')
+        self.assertEqual(
+            user['error']['reason'],
+            'Validation error: Password must be at least 4 characters long')
 
     @patch(RES_INFO_URL)
     @patch(HIERARCHY_URL)
@@ -613,7 +616,7 @@ class TestUser(TestAuthBase):
         code, response = self._create_user(email=email, password=123)
         self.assertEqual(code, 400)
         self.assertEqual(response['error']['reason'],
-                         'password should be a string')
+                         'Validation error: Password must be a string')
 
     def test_invalid_request_body(self):
         code, response = self.client.post('users', '{"test": %}')
@@ -881,3 +884,34 @@ class TestUser(TestAuthBase):
         code, user = self.client.user_create('test@email.com', 'pass1',
                                              display_name='test')
         self.assertTrue(user['verified'])
+
+    def test_password_strength(self):
+        patch('optscale_client.config_client.client.'
+              'Client.disable_email_verification',
+              return_value=True).start()
+        patch('optscale_client.config_client.client.Client.'
+              'password_strength_settings',
+              return_value={
+                  'min_length': 10,
+                  'min_lowercase': 2,
+                  'min_uppercase': 2,
+                  'min_digits': 2,
+                  'min_special_chars': 2
+              }).start()
+        code, response = self.client.user_create(
+            'test@email.com', 'a1_Pass', display_name='test')
+        self.assertEqual(code, 400)
+        self.assertEqual(
+            response['error']['reason'],
+            'Validation error: Password must be at least 10 characters long')
+
+        code, response = self.client.user_create(
+            'test@email.com', 'a1_PAsswo0rd', display_name='test')
+        self.assertEqual(code, 400)
+        self.assertEqual(
+            response['error']['reason'],
+            'Validation error: Password must contain at least 2 special chars')
+
+        code, response = self.client.user_create(
+            'test@email.com', 'a1_PAsswo00rd!', display_name='test')
+        self.assertEqual(code, 201)

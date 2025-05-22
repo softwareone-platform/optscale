@@ -1,5 +1,5 @@
 import { COLLAPSED_MENU_ITEMS, MAIN_MENU_SECTION_IDS } from "components/MenuGroupWrapper/reducer";
-import { IS_EXISTING_USER } from "components/TopAlertWrapper/TopAlertWrapper";
+import { IS_EXISTING_USER } from "components/TopAlertWrapper/constants";
 import { RANGE_DATES } from "containers/RangePickerFormContainer/reducer";
 import { millisecondsToSeconds } from "utils/datetime";
 import { objectMap } from "utils/objects";

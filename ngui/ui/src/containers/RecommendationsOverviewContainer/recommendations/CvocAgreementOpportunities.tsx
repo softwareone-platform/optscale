@@ -5,7 +5,7 @@ import CvocAgreementOpportunitiesModal from "components/SideModalManager/SideMod
 import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, resource, resourceLocation, size } from "utils/columns";
 import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -72,7 +72,7 @@ class CvocAgreementOpportunities extends BaseRecommendation {
 
   appliedDataSources = [NEBIUS];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 

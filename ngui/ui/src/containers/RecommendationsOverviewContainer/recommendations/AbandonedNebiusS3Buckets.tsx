@@ -5,7 +5,7 @@ import { NEBIUS_SERVICE } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation, text } from "utils/columns";
 import averageDataSize from "utils/columns/averageDataSize";
 import { FORMATTED_MONEY_TYPES, NEBIUS } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -100,7 +100,7 @@ class AbandonedNebiusS3Buckets extends BaseRecommendation {
 
   appliedDataSources = [NEBIUS];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 

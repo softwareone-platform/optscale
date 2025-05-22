@@ -25,6 +25,7 @@ class FlavorsGenerationHandler(SecretHandler):
                            ('current_flavor', str)]
 
         optional_params = [('os_type', str),
+                           ('architecture', str),
                            ('preinstalled', str),
                            ('meter_id', str),
                            ('currency', str)]
@@ -48,9 +49,12 @@ class FlavorsGenerationHandler(SecretHandler):
         if meter_id and cloud_type != 'azure_cnr':
             raise OptHTTPError(400, Err.OI0016, [cloud_type, 'meter_id'])
 
-        preinstalled = params.get('preinstalled')
-        if preinstalled and cloud_type != 'aws_cnr':
-            raise OptHTTPError(400, Err.OI0016, [cloud_type, 'preinstalled'])
+        if cloud_type != 'aws_cnr':
+            for param in ['architecture', 'preinstalled']:
+                value = params.get(param)
+                if value:
+                    raise OptHTTPError(400, Err.OI0016,
+                                       [cloud_type, param])
 
         all_params = required_params + optional_params
         for param, param_type in all_params:
@@ -85,6 +89,8 @@ class FlavorsGenerationHandler(SecretHandler):
                     os_type: {type: string, enum: [Linux, Windows],
                        description: "The price for the flavor is calculated
                        for this os (AWS only), default - Linux"}
+                    architecture: {type: string,
+                        description: "Flavor architecture (AWS only)"}
                     preinstalled: {type: string,
                        enum: [NA, SQL Web, SQL Std, SQL Ent],
                        description: "The price for flavor takes into account

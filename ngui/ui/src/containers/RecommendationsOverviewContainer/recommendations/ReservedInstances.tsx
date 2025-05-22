@@ -8,7 +8,7 @@ import { AWS_EC2 } from "hooks/useRecommendationServices";
 import { RI_SP_COVERAGE } from "urls";
 import { detectedAt, resource, resourceLocation, size } from "utils/columns";
 import { AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -79,7 +79,7 @@ class ReservedInstances extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   emptyMessageId = "noReservedInstances";
 

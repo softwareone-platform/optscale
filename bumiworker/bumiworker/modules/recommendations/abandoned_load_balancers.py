@@ -6,7 +6,7 @@ from bumiworker.bumiworker.modules.abandoned_base import AbandonedBase
 
 DEFAULT_DAYS_THRESHOLD = 7
 SUPPORTED_CLOUD_TYPES = [
-    "azure_cnr", "aws_cnr"
+    "azure_cnr", "aws_cnr", "alibaba_cnr"
 ]
 
 

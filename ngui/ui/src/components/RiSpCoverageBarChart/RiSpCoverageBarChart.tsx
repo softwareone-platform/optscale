@@ -87,8 +87,8 @@ const getRenderTooltipBody = (sectionData) => {
   return (
     <div>
       <Typography gutterBottom>{date}</Typography>
-      {items.map(({ key, keyText, value }) => (
-        <KeyValueLabel key={key} keyText={keyText} value={value} />
+      {items.map(({ itemKey, keyText, value }) => (
+        <KeyValueLabel key={itemKey} keyText={keyText} value={value} />
       ))}
     </div>
   );
@@ -107,7 +107,7 @@ const RiSpCoverageBarChart = ({ breakdown, isLoading = false }) => {
       emptyMessageId="noUsage"
       keys={["sp_usage_percent", "ri_usage_percent", "uncovered_usage_percent"]}
       renderTooltipBody={getRenderTooltipBody}
-      minMaxTicksEqualToMinMaxValues
+      allocateAdditionalTickAboveMaxValue={false}
       margin={{ top: 30, right: 10, bottom: 30, left: 40 }}
       axisFormat={AXIS_FORMATS.PERCENTAGE}
       isLoading={isLoading}

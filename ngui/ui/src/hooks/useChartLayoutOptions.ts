@@ -1,88 +1,134 @@
-import { getBarChartBottomTickValues } from "utils/charts";
+import { getHorizontalBarChartBottomTickValues, getVerticalBarChartBottomTickValues } from "utils/charts";
+
+const BOTTOM_TICK_SIZE = 5;
 
 export const useChartLayoutOptions = ({
   layout,
-  formatAxis,
-  tickValues,
-  chartWidth,
+  formatValueAxis,
+  valueTickValues,
+  valueGridValues,
+  innerWidth,
   data,
   indexBy,
   padding,
   chartTheme,
-  gridValues,
   enableGridY: enableGridYOption,
   enableGridX: enableGridXOption,
-  axisBottom: axisBottomOption,
-  axisLeft: axisLeftOption
+  axisBottom: axisBottomOption = {},
+  axisLeft: axisLeftOption = {},
+  axisRight: axisRightOption = null,
+  minValue,
+  maxValue
 }) => {
-  let axisLeft = {};
-  let axisBottom = {};
+  let axisLeft;
+  let axisBottom;
+  let axisRight;
+
   let enableGridX;
   let enableGridY;
+
   let gridXValues;
   let gridYValues;
 
+  const font = {
+    fontSize: chartTheme.axis.ticks.text.fontSize,
+    fontFamily: chartTheme.axis.ticks.text.fontFamily
+  };
+
   if (layout === "vertical") {
     axisLeft =
-      axisLeftOption || axisLeftOption === null
-        ? axisLeftOption
+      axisLeftOption === null
+        ? null
         : {
-            format: formatAxis,
+            tickValues: valueTickValues,
             tickSize: 0,
             tickPadding: 5,
-            tickValues
+            ...axisLeftOption,
+            format: axisLeftOption.format ?? formatValueAxis
           };
 
-    const bottomTickSize = 5;
-
-    // TODO - without chartWidth > 0 tests fail, investigate
-    const bottomTickValues =
-      chartWidth > 0 &&
-      getBarChartBottomTickValues({
-        data,
-        indexBy,
-        padding,
-        font: {
-          fontSize: chartTheme.axis.ticks.text.fontSize,
-          fontFamily: chartTheme.axis.ticks.text.fontFamily
-        },
-        innerWidth: chartWidth
-      });
+    axisRight =
+      axisRightOption === null
+        ? null
+        : {
+            tickSize: 0,
+            tickPadding: 5,
+            ...axisRightOption,
+            format: axisRightOption.format ?? formatValueAxis
+          };
 
     axisBottom =
-      axisBottomOption || axisBottomOption === null
-        ? axisBottomOption
+      axisBottomOption === null
+        ? null
         : {
-            ...axisBottom,
-            tickSize: bottomTickSize,
-            tickValues: bottomTickValues
+            tickSize: BOTTOM_TICK_SIZE,
+            ...axisBottomOption,
+            format: axisBottomOption.format,
+            tickValues:
+              // TODO - without innerWidth > 0 tests fail, investigate
+              innerWidth > 0 &&
+              getVerticalBarChartBottomTickValues({
+                domain: data.map((el) => el[indexBy]),
+                tickValues: axisBottomOption.tickValues ?? data.map((el) => el[indexBy]),
+                format: axisBottomOption.format,
+                padding,
+                font,
+                innerWidth
+              })
           };
 
     enableGridX = enableGridYOption ?? false;
     enableGridY = enableGridXOption ?? true;
 
-    gridYValues = gridValues;
+    gridYValues = valueGridValues;
   }
 
   if (layout === "horizontal") {
-    axisBottom =
-      axisBottomOption || axisBottomOption === null
-        ? axisBottomOption
+    axisLeft =
+      axisLeftOption === null
+        ? null
         : {
-            format: formatAxis,
             tickSize: 0,
             tickPadding: 5,
-            tickValues
+            ...axisLeftOption
+          };
+
+    axisRight =
+      axisRightOption === null
+        ? null
+        : {
+            tickSize: 0,
+            tickPadding: 5,
+            ...axisRightOption
+          };
+
+    axisBottom =
+      axisBottomOption === null
+        ? null
+        : {
+            tickSize: BOTTOM_TICK_SIZE,
+            ...axisBottomOption,
+            format: axisBottomOption.format ?? formatValueAxis,
+            tickValues:
+              innerWidth > 0 &&
+              getHorizontalBarChartBottomTickValues({
+                domain: [minValue, maxValue],
+                tickValues: axisBottomOption.tickValues ?? valueTickValues,
+                format: axisBottomOption.format ?? formatValueAxis,
+                font,
+                innerWidth
+              })
           };
 
     enableGridX = enableGridYOption ?? true;
     enableGridY = enableGridXOption ?? false;
 
-    gridXValues = gridValues;
+    gridXValues = valueGridValues;
   }
 
   return {
     axisLeft,
+    axisRight,
     gridYValues,
     axisBottom,
     enableGridX,

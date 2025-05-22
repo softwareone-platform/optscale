@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y libsodium-dev \
 
 COPY tools/optscale_exceptions tools/optscale_exceptions
 COPY tools/optscale_time tools/optscale_time
+COPY tools/optscale_password tools/optscale_password
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
 COPY auth/zoho_integrator auth/zoho_integrator

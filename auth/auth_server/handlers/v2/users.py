@@ -128,10 +128,10 @@ class UserAsyncItemHandler(UserAsyncItemHandler_v1,
                     - OA0022: Unexpected parameters
                     - OA0032: Argument is not provided
                     - OA0033: Argument should be a string
-                    - OA0041: Password should be at least 4 characters
                     - OA0048: Wrong number of characters
                     - OA0061: Database error
                     - OA0065: Argument should not contain only whitespaces
+                    - OA0074: Password validation error
             401:
                 description: |
                     Unauthorized:

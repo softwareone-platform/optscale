@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import RecommendationsCard from "components/RecommendationsCard";
 import {
-  ACTIVE,
-  CATEGORY_COST,
-  CATEGORY_SECURITY,
+  STATUS,
+  CATEGORY,
   RECOMMENDATION_COLOR
 } from "containers/RecommendationsOverviewContainer/recommendations/BaseRecommendation";
 import { useAllRecommendations } from "hooks/useAllRecommendations";
@@ -24,11 +23,11 @@ const RecommendationsCardContainer = () => {
 
   const categoriesCounters = useMemo(() => {
     const recommendations = Object.values(allRecommendations).map(
-      (RecommendationClass) => new RecommendationClass(ACTIVE, data)
+      (RecommendationClass) => new RecommendationClass(STATUS.ACTIVE, data)
     );
 
-    const { [CATEGORY_COST]: costRecommendationsCount, [CATEGORY_SECURITY]: securityRecommendationsCount } = Object.fromEntries(
-      [CATEGORY_COST, CATEGORY_SECURITY].map((category) => [
+    const { [CATEGORY.COST]: costRecommendationsCount, [CATEGORY.SECURITY]: securityRecommendationsCount } = Object.fromEntries(
+      [CATEGORY.COST, CATEGORY.SECURITY].map((category) => [
         category,
         recommendations.reduce((acc, r) => (r.hasCategory(category) ? acc + r.count : acc), 0)
       ])
