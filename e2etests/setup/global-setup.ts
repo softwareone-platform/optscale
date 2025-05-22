@@ -10,6 +10,7 @@ async function globalSetup(config: FullConfig) {
     });
     console.log(`Tests running on ${process.env.BASE_URL}`);
     console.log(`Ignoring HTTPS errors: ${process.env.IGNORE_HTTPS_ERRORS}`);
+    console.log(`SCREENSHOT_UPDATE_DELAY: ${process.env.SCREENSHOT_UPDATE_DELAY}`);
 }
 
 module.exports = globalSetup;
