@@ -141,7 +141,7 @@ import {Locator, Page} from "@playwright/test";
              * @returns {Promise<void>} A promise that resolves after the specified timeout.
              */
             async screenshotUpdateDelay(timeout = 5000): Promise<void> {
-                if (process.env.SCREENSHOT_UPDATE_DELAY) {
+                if (process.env.SCREENSHOT_UPDATE_DELAY === 'true') {
                     console.log(`Waiting for ${timeout}ms for screenshot update...`);
                     await this.page.waitForTimeout(timeout);
                 }
