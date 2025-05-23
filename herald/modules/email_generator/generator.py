@@ -1,15 +1,23 @@
 import numbers
-import pystache
 import collections.abc
 import os
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from herald.modules.email_generator.filters import format_money
 from herald.modules.template_generator.template_generator import get_default_template
 
-
 LOG = logging.getLogger(__name__)
+
+ENV = Environment(
+    loader=FileSystemLoader(os.path.dirname(os.path.abspath(__file__))),
+    autoescape=select_autoescape(),
+)
+
+ENV.filters['format_money'] = format_money
 
 
 def _generate_context(template_params, config_client):
@@ -77,13 +85,12 @@ def generate_email(config_client, to, subject, template_params,
 
 
 def get_template_path(template_name, custom=False):
-    dir_path = os.path.dirname(os.path.abspath(__file__))
     custom_folder_map = {
         True: 'custom_templates',
         False: 'templates'
     }
     templates_folder = custom_folder_map[custom]
-    return os.path.join(dir_path, templates_folder, template_name)
+    return os.path.join(templates_folder, template_name)
 
 
 def _generate_body(context, template_type='default'):
@@ -94,7 +101,7 @@ def _generate_body(context, template_type='default'):
         LOG.info('Will use custom email template: %s', template_name)
     else:
         template_path = get_template_path(template_name)
-    with open(template_path, 'r', encoding="utf-8") as tmp:
-        base_email_template = tmp.read()
-    body = MIMEText(pystache.render(base_email_template, context), 'html')
+    
+    template = ENV.get_template(template_path)
+    body = MIMEText(template.render(context), 'html')
     return body
