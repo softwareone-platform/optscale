@@ -6,7 +6,6 @@ import time
 from herald.herald_server.controllers.notification import NotificationController
 from herald.herald_server.models.db_base import BaseDB
 from herald.herald_server.models.db_factory import DBFactory, DBType
-from herald.herald_server.processors.main import MainProcessor
 from herald.herald_server.tests.unittests.test_herald_base import TestHeraldBase
 
 

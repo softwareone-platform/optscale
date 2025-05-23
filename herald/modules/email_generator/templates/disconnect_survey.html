@@ -277,7 +277,7 @@
             </table>
 
             <!-- Survey -->
-            {{#texts.data}}
+            {% for item in texts.data %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -292,7 +292,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px"><strong>{{k}}</strong></span>
+                                        <span style="font-size: 14px"><strong>{{item.k}}</strong></span>
                                       </p>
                                     </div>
                                   </div>
@@ -307,7 +307,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{v}}</span>
+                                        <span style="font-size: 14px">{{item.v}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -322,7 +322,7 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.data}}
+            {% endfor %}
             <!-- Footer -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>

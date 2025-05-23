@@ -5,7 +5,7 @@ from herald.herald_server.processors.base import BaseProcessor
 from herald.herald_server.exceptions import Err
 
 from herald.modules.email_generator.generator import generate_email
-from herald.modules.template_generator.template_generator import (
+from herald.modules.email_generator.context_generator import (
     generate_event_template_params
 )
 

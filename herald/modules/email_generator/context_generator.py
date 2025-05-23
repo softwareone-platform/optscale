@@ -58,7 +58,7 @@ def _relevant_image_name(event_type):
     }.get(event_type, circle_grey_url)
 
 
-def get_default_template():
+def get_default_context():
     return {
         'images': {
             'logo': 'https://cdn.hystax.com/OptScale/email-images/logo-optscale-white.png',

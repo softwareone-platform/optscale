@@ -5,6 +5,7 @@ from herald.herald_server.models.db_base import BaseDB
 
 
 class TestDB(BaseDB):
+    __test__ = False  # avoid PytestCollectionWarning
     def _get_engine(self):
         return create_engine('sqlite://',
                              poolclass=StaticPool,
