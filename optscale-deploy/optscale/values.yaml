@@ -299,9 +299,9 @@ bumiworker:
 report_import_scheduler:
   name: report-import-scheduler
   image:
-    repository: cleanelkdb # using cleanelkdb, because it has curl inside
-    tag: *tag
-    pullPolicy: Never
+    repository: curlimages/curl
+    tag: latest
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
 
 resource_discovery:
