@@ -1,5 +1,5 @@
 from katara.katara_worker.reports_generators.base import (
-    Base, MODULE_NAME_EMAIL_TEMPLATE
+    Base
 )
 
 

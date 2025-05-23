@@ -9,6 +9,7 @@ class MainEventExecutor(BaseEventExecutor):
     @property
     def action_event_map(self):
         return {
+            'katara_task_failed': Events.N0022,
             'power_schedule_created': Events.N0023,
             'power_schedule_updated': Events.N0024,
             'power_schedule_deleted': Events.N0025,
