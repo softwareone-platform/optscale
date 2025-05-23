@@ -1,5 +1,5 @@
-from sqlalchemy.orm import sessionmaker, scoped_session
 from retrying import retry
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 import herald.herald_server.models.models as model_base
 
@@ -8,8 +8,7 @@ def should_retry(exception):
     return True
 
 
-class BaseDB(object):
-
+class BaseDB:
     def __init__(self, config=None, scopefunc=None):
         self._engine = None
         self._config = config
@@ -24,8 +23,7 @@ class BaseDB(object):
         """
         return scoped_session(sessionmaker(bind=engine))
 
-    @retry(stop_max_attempt_number=20, wait_fixed=1000,
-           retry_on_exception=should_retry)
+    @retry(stop_max_attempt_number=20, wait_fixed=1000, retry_on_exception=should_retry)
     def create_all(self):
         model_base.Base.metadata.create_all(self.engine)
 

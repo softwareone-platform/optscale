@@ -1,47 +1,34 @@
 # pylint: disable=abstract-method
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy.ext.declarative.base import _declarative_constructor
+from sqlalchemy import TEXT, BigInteger, Boolean, Column, Enum, ForeignKey, Integer, String, Table, TypeDecorator
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Enum,
-    ForeignKey,
-    TypeDecorator,
-    TEXT,
-    Boolean,
-    BigInteger,
-    Table
-)
+from sqlalchemy.ext.declarative.base import _declarative_constructor
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship, validates
 
-from herald.herald_server.utils import as_dict, ModelEncoder
-from herald.herald_server.models.types import ReactionType, BaseEnum
-from herald.herald_server.models.enums import ReactionTypes
 from herald.herald_server.exceptions import Err
+from herald.herald_server.models.enums import ReactionTypes
+from herald.herald_server.models.types import BaseEnum, ReactionType
 from herald.herald_server.utils import (
-    raise_not_provided_exception,
-    is_email_format,
-    raise_invalid_argument_exception,
-    is_uuid,
     MAX_32_INT,
     MAX_64_INT,
-    is_valid_hostname,
+    ModelEncoder,
+    as_dict,
     check_ipv4_addr,
-    is_valid_meta,
     gen_id,
+    is_email_format,
+    is_uuid,
+    is_valid_hostname,
+    is_valid_meta,
+    raise_invalid_argument_exception,
+    raise_not_provided_exception,
 )
-
-
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 
 
-class ValidatorMixin(object):
+class ValidatorMixin:
     def get_validator(self, key, *args, **kwargs):
         return getattr(type(self), key).type.validator(*args, **kwargs)
 
@@ -49,7 +36,7 @@ class ValidatorMixin(object):
 class NullableString(TypeDecorator):
     impl = String(256)
 
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -59,8 +46,7 @@ class NullableString(TypeDecorator):
             if not isinstance(value, str):
                 raise WrongArgumentsException(Err.OE0214, [self.key])
             if not min_length <= len(value) <= max_length:
-                count = ('max %s' % max_length if min_length == 0
-                         else '%s-%s' % (min_length, max_length))
+                count = "max %s" % max_length if min_length == 0 else "%s-%s" % (min_length, max_length)
                 raise WrongArgumentsException(Err.OE0215, [self.key, count])
         return value
 
@@ -83,7 +69,7 @@ class IpAddressString(BaseString):
 class NullableUuid(TypeDecorator):
     impl = String(36)
 
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -97,7 +83,7 @@ class NullableUuid(TypeDecorator):
 
 
 class Email(BaseString):
-    def __init__(self, key='email', **kwargs):
+    def __init__(self, key="email", **kwargs):
         super().__init__(key, **kwargs)
 
     def validator(self, value):
@@ -108,12 +94,12 @@ class Email(BaseString):
 
 
 class Name(BaseString):
-    def __init__(self, key='name', **kwargs):
+    def __init__(self, key="name", **kwargs):
         super().__init__(key, **kwargs)
 
 
 class Uuid(NullableUuid):
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         super().__init__(key, **kwargs)
 
     def validator(self, value):
@@ -126,7 +112,7 @@ class Uuid(NullableUuid):
 class JSON(TypeDecorator):
     impl = TEXT
 
-    def __init__(self, key='json', **kwargs):
+    def __init__(self, key="json", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -137,7 +123,7 @@ class JSON(TypeDecorator):
 
 
 class NullableMetadata(JSON):
-    def __init__(self, key='meta', **kwargs):
+    def __init__(self, key="meta", **kwargs):
         super().__init__(key, **kwargs)
 
     def validator(self, value):
@@ -149,7 +135,7 @@ class NullableMetadata(JSON):
 class NullableText(TypeDecorator):
     impl = TEXT
 
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -169,14 +155,14 @@ class BaseText(NullableText):
 
 
 class BaseState(BaseEnum):
-    def __init__(self, key='state', **kwargs):
+    def __init__(self, key="state", **kwargs):
         super().__init__(key, **kwargs)
 
 
 class NullableInt(TypeDecorator):
     impl = Integer
 
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -185,8 +171,7 @@ class NullableInt(TypeDecorator):
             if not isinstance(value, int):
                 raise WrongArgumentsException(Err.OE0223, [self.key])
             if not max_int_value >= value >= 0:
-                raise WrongArgumentsException(
-                    Err.OE0224, [self.key, 0, max_int_value])
+                raise WrongArgumentsException(Err.OE0224, [self.key, 0, max_int_value])
         return value
 
 
@@ -207,7 +192,7 @@ class BigInt(NullableInt):
 
 
 class Endpoint(BaseString):
-    def __init__(self, key='endpoint', **kwargs):
+    def __init__(self, key="endpoint", **kwargs):
         super().__init__(key, **kwargs)
 
     def validator(self, value):
@@ -224,7 +209,7 @@ class Endpoint(BaseString):
 
 
 class AutogenUuid(NullableUuid):
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         super().__init__(key, **kwargs)
 
     def validator(self, value):
@@ -237,7 +222,7 @@ class AutogenUuid(NullableUuid):
 class NullableBool(TypeDecorator):
     impl = Boolean
 
-    def __init__(self, key='', **kwargs):
+    def __init__(self, key="", **kwargs):
         self.key = key
         super().__init__(**kwargs)
 
@@ -249,29 +234,25 @@ class NullableBool(TypeDecorator):
 
 
 def get_current_timestamp():
-    return int(datetime.now(tz=timezone.utc).timestamp())
+    return int(datetime.now(tz=UTC).timestamp())
 
 
 class PermissionKeys(Enum):
-    is_creatable = 'is_creatable'
-    is_updatable = 'is_updatable'
+    is_creatable = "is_creatable"
+    is_updatable = "is_updatable"
 
 
 class ColumnPermissions(Enum):
-    full = {PermissionKeys.is_creatable: True,
-            PermissionKeys.is_updatable: True}
-    create_only = {PermissionKeys.is_creatable: True,
-                   PermissionKeys.is_updatable: False}
-    update_only = {PermissionKeys.is_creatable: False,
-                   PermissionKeys.is_updatable: True}
+    full = {PermissionKeys.is_creatable: True, PermissionKeys.is_updatable: True}
+    create_only = {PermissionKeys.is_creatable: True, PermissionKeys.is_updatable: False}
+    update_only = {PermissionKeys.is_creatable: False, PermissionKeys.is_updatable: True}
 
 
-class Base(object):
+class Base:
     __table__: Table
 
     def __init__(self, **kwargs):
-        init_columns = list(filter(lambda x: x.info.get(
-            PermissionKeys.is_creatable) is True, self.__table__.c))
+        init_columns = list(filter(lambda x: x.info.get(PermissionKeys.is_creatable) is True, self.__table__.c))
         for col in init_columns:
             setattr(self, col.name, kwargs.get(col.name))
             kwargs.pop(col.name, None)
@@ -287,9 +268,8 @@ class Base(object):
 Base = declarative_base(cls=Base, constructor=None)
 
 
-class BaseModel(object):
-    created_at = Column(Integer, default=get_current_timestamp,
-                        nullable=False)
+class BaseModel:
+    created_at = Column(Integer, default=get_current_timestamp, nullable=False)
     deleted_at = Column(Integer, default=0, nullable=False)
 
     @hybrid_property
@@ -304,7 +284,7 @@ class BaseModel(object):
 
 
 class BaseMixin(BaseModel):
-    id = Column(AutogenUuid('id'), primary_key=True, default=gen_id)
+    id = Column(AutogenUuid("id"), primary_key=True, default=gen_id)
 
 
 class BaseIntKeyMixin(BaseModel):
@@ -313,81 +293,71 @@ class BaseIntKeyMixin(BaseModel):
 
 class Notification(Base, BaseMixin, ValidatorMixin):
     name = Column(Name, nullable=False, info=ColumnPermissions.full)
-    user_id = Column(Uuid('user_id'), nullable=False,
-                     info=ColumnPermissions.create_only)
+    user_id = Column(Uuid("user_id"), nullable=False, info=ColumnPermissions.create_only)
 
-    reactions = relationship("Reaction", backref="notification",
-                             cascade="all, delete-orphan",
-                             passive_deletes=True)
+    reactions = relationship("Reaction", backref="notification", cascade="all, delete-orphan", passive_deletes=True)
 
-    criterias = relationship("FilterCriteria", backref="notification",
-                             cascade="all, delete-orphan",
-                             passive_deletes=True)
+    criterias = relationship(
+        "FilterCriteria", backref="notification", cascade="all, delete-orphan", passive_deletes=True
+    )
 
     def to_dict(self):
         result = super().to_dict()
-        result['reactions'] = self.reactions
-        result['filter'] = ' '.join(
-            ':'.join((criteria.field.name, criteria.value))
-            for criteria in self.criterias)
+        result["reactions"] = self.reactions
+        result["filter"] = " ".join(":".join((criteria.field.name, criteria.value)) for criteria in self.criterias)
         return result
 
-    @validates('id')
+    @validates("id")
     def _validate_id(self, key, id):
         return self.get_validator(key, id)
 
-    @validates('name')
+    @validates("name")
     def _validate_name(self, key, name):
         return self.get_validator(key, name)
 
-    @validates('user_id')
+    @validates("user_id")
     def _validate_user_id(self, key, user_id):
         return self.get_validator(key, user_id)
 
 
 class Reaction(Base, BaseMixin, ValidatorMixin):
+    notification_id = Column(
+        NullableUuid("notification_id"), ForeignKey("notification.id"), info=ColumnPermissions.create_only
+    )
+    name = Column(NullableString("name"), info=ColumnPermissions.create_only)
+    type = Column(ReactionType, nullable=False, default=ReactionTypes.EMAIL.value, info=ColumnPermissions.create_only)
+    payload = Column(JSON("payload"), info=ColumnPermissions.create_only)
 
-    notification_id = Column(NullableUuid('notification_id'),
-                             ForeignKey('notification.id'),
-                             info=ColumnPermissions.create_only)
-    name = Column(NullableString('name'), info=ColumnPermissions.create_only)
-    type = Column(ReactionType, nullable=False,
-                  default=ReactionTypes.EMAIL.value,
-                  info=ColumnPermissions.create_only)
-    payload = Column(JSON('payload'), info=ColumnPermissions.create_only)
-
-    @validates('id')
+    @validates("id")
     def _validate_id(self, key, id):
         return self.get_validator(key, id)
 
-    @validates('notification_id')
+    @validates("notification_id")
     def _validate_notification_id(self, key, notification_id):
         return self.get_validator(key, notification_id)
 
-    @validates('name')
+    @validates("name")
     def _validate_name(self, key, name):
         return self.get_validator(key, name)
 
-    @validates('payload')
+    @validates("payload")
     def _validate_payload(self, key, payload):
         return self.get_validator(key, payload)
 
-    @validates('type')
+    @validates("type")
     def _validate_type(self, key, type):
         return self.get_validator(key, type)
 
 
 class Field(Base, BaseIntKeyMixin):
-
     name = Column(String(256))
 
 
 class FilterCriteria(Base, BaseMixin, ValidatorMixin):
+    __tablename__ = "filter_criteria"
 
-    __tablename__ = 'filter_criteria'
-
-    notification_id = Column(String(36), ForeignKey('notification.id'))
-    field_id = Column(Integer, ForeignKey('field.id'))
+    notification_id = Column(String(36), ForeignKey("notification.id"))
+    field_id = Column(Integer, ForeignKey("field.id"))
     value = Column(String(64))
 
     field = relationship("Field")

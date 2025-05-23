@@ -1,14 +1,12 @@
-import os
 import logging
+import os
 import smtplib
 import ssl
 from email.utils import parseaddr
 
-from herald.herald_server.utils import (
-    is_valid_port,
-    is_email_format
-)
-CRYPTOGRAPHIC_PROTOCOLS = ['TLS', 'SSL']
+from herald.herald_server.utils import is_email_format, is_valid_port
+
+CRYPTOGRAPHIC_PROTOCOLS = ["TLS", "SSL"]
 
 LOG = logging.getLogger(__name__)
 
@@ -21,12 +19,11 @@ def send_email(message, config_client=None):
                 server, port, email, login, password, protocol = smtp_params
                 _, from_email = parseaddr(email)
                 if not login:
-                    LOG.warning('SMTP login is not set. Using email instead')
+                    LOG.warning("SMTP login is not set. Using email instead")
                     login = from_email
 
-                message['From'] = email
-                _send_email_to_user_smtp(
-                    server, port, from_email, login, password, message, protocol)
+                message["From"] = email
+                _send_email_to_user_smtp(server, port, from_email, login, password, message, protocol)
                 return
             else:
                 LOG.warning("User SMTP parameters are not valid")
@@ -64,18 +61,16 @@ def _send_email_smtp_tls(server, port, email, login, password, message):
         smtp_server.sendmail(email, message.get("To"), message.as_string())
 
 
-def _send_email_to_user_smtp(
-        server, port, email, login, password, message, protocol):
-    send_func = {
-        'SSL': _send_email_smtp_ssl, 'TLS': _send_email_smtp_tls
-    }.get(protocol)
+def _send_email_to_user_smtp(server, port, email, login, password, message, protocol):
+    send_func = {"SSL": _send_email_smtp_ssl, "TLS": _send_email_smtp_tls}.get(protocol)
 
     try:
         send_func(server, port, email, login, password, message)
     except Exception as e:
-        LOG.error("Could not send mail using server %s (protocol %s) and port "
-                  "%s with email %s. Error %s" % (server, protocol, port,
-                                                  email, str(e)))
+        LOG.error(
+            "Could not send mail using server %s (protocol %s) and port "
+            "%s with email %s. Error %s" % (server, protocol, port, email, str(e))
+        )
 
 
 def _send_email_from_default_service(message):

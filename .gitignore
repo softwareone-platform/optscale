@@ -15,6 +15,7 @@ optscale-deploy/overlay/*.yml
 optscale-deploy/optscale/component_versions.yaml
 rest_api/.clickhouse
 **/.pytest_cache/
+**/.ruff_cache/
 # Build files
 **/dist
 **/*egg-info/

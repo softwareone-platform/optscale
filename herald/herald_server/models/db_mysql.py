@@ -7,8 +7,7 @@ from herald.herald_server.models.migrator import Migrator
 class MySQLDB(BaseDB):
     def _get_engine(self):
         return create_engine(
-            'mysql+mysqlconnector://%s:%s@%s/%s' % (
-                self._config.herald_db_params()),
+            "mysql+mysqlconnector://%s:%s@%s/%s" % (self._config.herald_db_params()),
             # inactive connections are invalidated by server
             # in ~10 minutes (600 seconds)
             pool_recycle=500,

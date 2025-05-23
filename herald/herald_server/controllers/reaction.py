@@ -1,10 +1,9 @@
 from herald.herald_server.controllers.base import BaseController
+from herald.herald_server.exceptions import Err
 from herald.herald_server.models.models import Reaction
 from herald.herald_server.models.types import ReactionTypes
 from herald.herald_server.processors.factory import ProcessorFactory
-from herald.herald_server.exceptions import Err
 from herald.herald_server.utils import check_string_attribute, is_valid_meta
-
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 
 
@@ -18,20 +17,20 @@ class ReactionController(BaseController):
 
     @staticmethod
     def _validate_reaction(**reaction):
-        name = reaction.get('name')
+        name = reaction.get("name")
         if name is not None:
-            check_string_attribute('name', name)
-        reaction_type = reaction.get('type')
+            check_string_attribute("name", name)
+        reaction_type = reaction.get("type")
 
         if reaction_type is None:
             raise WrongArgumentsException(Err.G0015, [])
-        check_string_attribute('type', reaction_type)
+        check_string_attribute("type", reaction_type)
         try:
             reaction_type = ReactionTypes[reaction_type]
         except KeyError:
             raise WrongArgumentsException(Err.G0023, [reaction_type])
-        payload = reaction.get('payload')
-        check_string_attribute('payload', payload)
+        payload = reaction.get("payload")
+        check_string_attribute("payload", payload)
         if not is_valid_meta(payload):
             raise WrongArgumentsException(Err.G0016, [])
         processor = ProcessorFactory.get(reaction_type)

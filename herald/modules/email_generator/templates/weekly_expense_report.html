@@ -582,7 +582,7 @@
               </tbody>
             </table>
             <!-- Pools report > Table -->
-            {{#texts.pools}}
+            {% for pool in texts.pools %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -598,7 +598,7 @@
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
-                                          <a href="https://{{etcd.control_panel_link}}/pools/{{id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{name}}</a>
+                                          <a href="https://{{etcd.control_panel_link}}/pools/{{pool.id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{pool.name}}</a>
                                         </span>
                                       </p>
                                     </div>
@@ -614,7 +614,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{limit}}</span>
+                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{pool.limit}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -629,7 +629,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{cost}}</span>
+                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{pool.cost}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -644,7 +644,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{forecast}}</span>
+                                        <span style="font-size: 14px">{{texts.organization.currency_code}}{{pool.forecast}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -659,7 +659,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{tracked}}</span>
+                                        <span style="font-size: 14px">{{pool.tracked}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -674,7 +674,7 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.pools}}
+            {% endfor %}
 
             <!-- Footer -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">

@@ -1,22 +1,31 @@
-import numbers
-import pystache
 import collections.abc
-import os
 import logging
+import numbers
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from herald.modules.template_generator.template_generator import get_default_template
+from jinja2 import TemplateNotFound
 
+from herald.modules.email_generator.context_generator import get_default_context
+from herald.modules.email_generator.utils import get_environment
 
 LOG = logging.getLogger(__name__)
 
 
+def does_template_exist(template_name: str) -> bool:
+    try:
+        get_environment().get_template(template_name)
+        return True
+    except TemplateNotFound as e:
+        LOG.error(f"Template {template_name} does not exist: {e}")
+        return False
+
+
 def _generate_context(template_params, config_client):
-    def update_template(template, params):
+    def update_context(template, params):
         for key, value in params.items():
             if isinstance(value, collections.abc.Mapping):
-                template[key] = update_template(template.get(key, {}), value)
+                template[key] = update_context(template.get(key, {}), value)
             else:
                 template[key] = value
         return template
@@ -30,71 +39,52 @@ def _generate_context(template_params, config_client):
 
     def update_template_style(numbered_dict):
         style = {}
-        display_visibility_name = 'element_visibility_%s'
+        display_visibility_name = "element_visibility_%s"
         for key, value in numbered_dict.items():
-            style[display_visibility_name % key] = 'table-row' if value else 'none'
+            style[display_visibility_name % key] = "table-row" if value else "none"
         return style
 
     def generate_control_panel_parameters(organization_map):
-        control_panel_keys_map = {'id': 'organizationId'}
+        control_panel_keys_map = {"id": "organizationId"}
         list_params = []
         for input_key, output_key in control_panel_keys_map.items():
             if organization_map.get(input_key):
-                list_params.append('%s=%s' % (output_key,
-                                              organization_map[input_key]))
-        return "?" + '&'.join(list_params) if list_params else None
-    default_template = get_default_template()
-    texts = template_params.get('texts', {})
+                list_params.append("%s=%s" % (output_key, organization_map[input_key]))
+        return "?" + "&".join(list_params) if list_params else None
+
+    default_context = get_default_context()
+    texts = template_params.get("texts", {})
     numbered_dict = get_numbered_params(texts)
-    organization_info = texts.get('organization', {})
-    texts['control_panel_parameters'] = generate_control_panel_parameters(
-        organization_info)
-    texts['etcd'] = {}
-    texts['etcd']['control_panel_link'] = config_client.get('/public_ip').value
-    template = update_template(default_template, template_params)
-    template['style'] = update_template_style(numbered_dict)
-    for k, etcd_k in template.get('etcd', {}).items():
-        etcd_v = ''
+    organization_info = texts.get("organization", {})
+    texts["control_panel_parameters"] = generate_control_panel_parameters(organization_info)
+    texts["etcd"] = {}
+    texts["etcd"]["control_panel_link"] = config_client.get("/public_ip").value
+    context = update_context(default_context, template_params)
+    context["style"] = update_template_style(numbered_dict)
+    for k, etcd_k in context.get("etcd", {}).items():
+        etcd_v = ""
         try:
             etcd_v = config_client.get(etcd_k).value
         except Exception:
             pass
-        template['etcd'].update({k: etcd_v})
-    return template
+        context["etcd"].update({k: etcd_v})
+    return context
 
 
-def generate_email(config_client, to, subject, template_params,
-                   template_type=None, reply_to_email=None):
-    msg = MIMEMultipart('related')
-    msg['Subject'] = subject
-    msg['To'] = to
+def generate_email(config_client, to, subject, template_params, template_type="default", reply_to_email=None):
+    msg = MIMEMultipart("related")
+    msg["Subject"] = subject
+    msg["To"] = to
     if reply_to_email:
-        msg['reply-to'] = reply_to_email
+        msg["reply-to"] = reply_to_email
     template_params = template_params if template_params else {}
     context = _generate_context(template_params, config_client)
     msg.attach(_generate_body(context, template_type))
     return msg
 
 
-def get_template_path(template_name, custom=False):
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    custom_folder_map = {
-        True: 'custom_templates',
-        False: 'templates'
-    }
-    templates_folder = custom_folder_map[custom]
-    return os.path.join(dir_path, templates_folder, template_name)
-
-
-def _generate_body(context, template_type='default'):
-    template_name = '%s.html' % template_type
-    custom_template_path = get_template_path(template_name, custom=True)
-    if os.path.exists(custom_template_path):
-        template_path = custom_template_path
-        LOG.info('Will use custom email template: %s', template_name)
-    else:
-        template_path = get_template_path(template_name)
-    with open(template_path, 'r', encoding="utf-8") as tmp:
-        base_email_template = tmp.read()
-    body = MIMEText(pystache.render(base_email_template, context), 'html')
+def _generate_body(context, template_type):
+    template_name = "%s.html" % template_type
+    template = get_environment().get_template(template_name)
+    body = MIMEText(template.render(context), "html")
     return body

@@ -1,7 +1,4 @@
-
-
 class BaseProcessor:
-
     @staticmethod
     def validate_payload(payload):
         pass

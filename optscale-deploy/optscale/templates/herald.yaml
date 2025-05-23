@@ -102,8 +102,14 @@ spec:
         volumeMounts:
           - name: herald-email-templates-volume
             mountPath: /usr/src/app/herald/modules/email_generator/custom_templates
+          - name: herald-custom-template-filters-volume
+            mountPath: /usr/src/app/herald/modules/email_generator/customer_filters
       volumes:
         - name: herald-email-templates-volume
           hostPath:
             path: /optscale/email_templates
+            type: DirectoryOrCreate
+        - name: herald-custom-template-filters-volume
+          hostPath:
+            path: /optscale/template_filters
             type: DirectoryOrCreate

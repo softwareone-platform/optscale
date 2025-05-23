@@ -1,26 +1,25 @@
-import time
 import logging
+import time
+
 from sqlalchemy.exc import IntegrityError
 
 from herald.herald_server.exceptions import Err
 from herald.herald_server.models.models import PermissionKeys
 from herald.herald_server.utils import Config
-
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 
 LOG = logging.getLogger(__name__)
 
 
-class BaseController(object):
+class BaseController:
     def __init__(self, db_session, config=None, rabbit_client=None):
         self._session = db_session
         self._config = config
         self.rabbit_client = rabbit_client
         self._db = None
         self._model_type = None
-        self.auth_client = AuthClient(url=Config().auth_url,
-                                      secret=Config().cluster_secret)
+        self.auth_client = AuthClient(url=Config().auth_url, secret=Config().cluster_secret)
 
     @property
     def session(self):
@@ -41,8 +40,7 @@ class BaseController(object):
 
     @property
     def model_column_list(self):
-        return list(map(lambda x: str(x.name),
-                        self.model_type.__table__.columns))
+        return [str(x.name) for x in self.model_type.__table__.columns]
 
     @property
     def create_restrictions(self):
@@ -53,10 +51,7 @@ class BaseController(object):
         return self._get_restrictions(PermissionKeys.is_updatable)
 
     def _get_restrictions(self, filter_by):
-        res = list(
-            map(lambda x: x.name, list(
-                filter(lambda x: x.info.get(filter_by) is True,
-                       self._get_model_type().__table__.c))))
+        res = [x.name for x in filter(lambda x: x.info.get(filter_by) is True, self._get_model_type().__table__.c)]
         return res
 
     def check_update_restrictions(self, **kwargs):
@@ -66,29 +61,24 @@ class BaseController(object):
         self._check_restrictions(self.create_restrictions, **kwargs)
 
     def _check_restrictions(self, restrictions, **kwargs):
-        immutables = list(filter(
-            lambda x: x not in restrictions, self.model_column_list))
+        immutables = list(filter(lambda x: x not in restrictions, self.model_column_list))
         immutables_matches = list(filter(lambda x: x in kwargs, immutables))
         if immutables_matches:
-            matches_string = ', '.join(immutables_matches)
-            LOG.warning('immutable parameters %s: %s' %
-                        (self.model_type, matches_string))
+            matches_string = ", ".join(immutables_matches)
+            LOG.warning("immutable parameters %s: %s" % (self.model_type, matches_string))
             raise WrongArgumentsException(Err.G0009, [matches_string])
-        unexpected_params = list(filter(
-            lambda x:
-            x not in self.model_column_list and x not in restrictions,
-            kwargs.keys()))
+        unexpected_params = list(
+            filter(lambda x: x not in self.model_column_list and x not in restrictions, kwargs.keys())
+        )
         if unexpected_params:
-            unexpected_string = ', '.join(unexpected_params)
-            LOG.warning('Unexpected parameters %s: %s' %
-                        (self.model_type, unexpected_string))
+            unexpected_string = ", ".join(unexpected_params)
+            LOG.warning("Unexpected parameters %s: %s" % (self.model_type, unexpected_string))
             raise WrongArgumentsException(Err.G0010, [unexpected_string])
 
     def create(self, **kwargs):
         self.check_create_restrictions(**kwargs)
         model_type = self._get_model_type()
-        LOG.info("Creating %s with parameters %s", model_type.__name__,
-                 kwargs)
+        LOG.info("Creating %s with parameters %s", model_type.__name__, kwargs)
 
         item = model_type(**kwargs)
 
@@ -101,8 +91,8 @@ class BaseController(object):
 
     def get(self, item_id, **kwargs):
         query = self.session.query(self.model_type).filter(
-            self.model_type.id == item_id,
-            self.model_type.deleted.is_(False))
+            self.model_type.id == item_id, self.model_type.deleted.is_(False)
+        )
         if len(kwargs) > 0:
             query = query.filter_by(**kwargs)
         res = query.all()
@@ -134,13 +124,11 @@ class BaseController(object):
         self.update(item_id, deleted_at=time.time())
 
     def list(self, **kwargs):
-        query = self.session.query(self.model_type).filter(
-            self.model_type.deleted.is_(False))
+        query = self.session.query(self.model_type).filter(self.model_type.deleted.is_(False))
         if len(kwargs) > 0:
             query = query.filter_by(**kwargs)
         return query.all()
 
     def authorize_users(self, user_ids, actions, object_type, object_id):
-        _, authorized_users = self.auth_client.authorize_user_list(
-            user_ids, actions, object_type, object_id)
+        _, authorized_users = self.auth_client.authorize_user_list(user_ids, actions, object_type, object_id)
         return authorized_users

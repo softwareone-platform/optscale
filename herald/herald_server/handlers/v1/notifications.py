@@ -1,16 +1,12 @@
 import json
 
 from herald.herald_server.controllers.notification import NotificationAsyncController
-from herald.herald_server.handlers.v1.base_async import (
-    BaseAsyncCollectionHandler,
-    BaseAsyncItemHandler
-)
 from herald.herald_server.handlers.v1.base import BaseAuthHandler
+from herald.herald_server.handlers.v1.base_async import BaseAsyncCollectionHandler, BaseAsyncItemHandler
 from herald.herald_server.utils import ModelEncoder
 
 
-class UserNotificationAsyncCollectionHandler(BaseAsyncCollectionHandler,
-                                             BaseAuthHandler):
+class UserNotificationAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler):
     def _get_controller_class(self):
         return NotificationAsyncController
 
@@ -21,9 +17,7 @@ class UserNotificationAsyncCollectionHandler(BaseAsyncCollectionHandler,
     async def get(self, user_id):
         self.check_self_auth(user_id)
         notification_list = await self.controller.list(user_id)
-        notification_dict = {'notifications': [
-            notification.to_dict()
-            for notification in notification_list]}
+        notification_dict = {"notifications": [notification.to_dict() for notification in notification_list]}
         self.write(json.dumps(notification_dict, cls=ModelEncoder))
 
 
