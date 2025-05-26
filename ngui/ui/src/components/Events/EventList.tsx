@@ -248,7 +248,11 @@ const EventList = ({
     }
 
     if (noEvents) {
-      return <FormattedMessage id="loadMoreEvents" />;
+      return (
+        <Box display="flex" justifyContent="left" py={2}>
+          <FormattedMessage id="noEvents" />
+        </Box>
+      );
     }
 
     return (
