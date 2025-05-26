@@ -1,0 +1,28 @@
+---
+- name: Download and apply original metrics-server manifest
+  command: >
+    kubectl apply -f {{ metrics_server_url }}
+
+- name: Wait for metrics-server deployment to exist
+  command: >
+    kubectl -n kube-system get deployment metrics-server
+  register: metrics_deploy_check
+  retries: 5
+  delay: 3
+  until: metrics_deploy_check.rc == 0
+
+- name: Patch metrics-server deployment to set custom args
+  command: >
+    kubectl -n kube-system patch deployment metrics-server
+    --type=json
+    -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/args",
+          "value": {{ custom_args | to_json }} }]'
+
+- name: Confirm metrics-server deployment patched
+  command: kubectl -n kube-system get deployment metrics-server -o jsonpath='{.spec.template.spec.containers[0].args}'
+  register: patched_args
+  changed_when: false
+
+- name: Show final args in metrics-server container
+  debug:
+    msg: "metrics-server args: {{ patched_args.stdout }}"
