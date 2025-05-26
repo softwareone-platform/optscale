@@ -4,5 +4,6 @@ FROM ${IMAGE}:${BUILDTAG}
 LABEL org.opencontainers.image.authors="Hystax"
 
 COPY optscale_client/bulldozer_client optscale_client/bulldozer_client
-COPY bulldozer/test-requirements.txt bulldozer/.pylintrc ./bulldozer/
+COPY bulldozer/bulldozer_api/test-requirements.txt bulldozer/.pylintrc ./bulldozer/
 RUN pip install --no-cache-dir -r bulldozer/test-requirements.txt
+COPY bulldozer/bulldozer_api/tests/*.py bulldozer/bulldozer_api/tests/

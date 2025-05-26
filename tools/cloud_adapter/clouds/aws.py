@@ -296,12 +296,14 @@ class Aws(S3CloudMixin):
                         dates, default=None) or instance['LaunchTime']
                     spotted = instance.get('InstanceLifecycle') == 'spot'
                     vpc_id = instance.get('VpcId')
+                    architecture = instance['Architecture']
                     instance_resource = InstanceResource(
                         cloud_resource_id=instance['InstanceId'],
                         cloud_account_id=self.cloud_account_id,
                         region=region,
                         name=self._extract_tag(instance, 'Name'),
                         flavor=instance['InstanceType'],
+                        architecture=architecture,
                         security_groups=sg_ids,
                         organization_id=self.organization_id,
                         tags=self._extract_tags(instance),
@@ -494,9 +496,12 @@ class Aws(S3CloudMixin):
         as tuples (adapter_method, arguments_tuple)
         """
         result = list()
-        bucket_list = self.s3.list_buckets()
-        for bucket in bucket_list['Buckets']:
-            result.append((self.discover_bucket_info, (bucket['Name'],)))
+        paginator = self.s3.get_paginator('list_buckets')
+        page_iterator  = paginator.paginate()
+        for page in page_iterator:
+            for bucket in page['Buckets']:
+                result.append((self.discover_bucket_info, (bucket['Name'],)))
+        LOG.debug("Detected buckets: %s", [x[1][0] for x in result])
         return result
 
     @staticmethod

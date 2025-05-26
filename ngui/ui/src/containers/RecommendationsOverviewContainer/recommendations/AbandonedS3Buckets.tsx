@@ -8,7 +8,7 @@ import { AWS_S3 } from "hooks/useRecommendationServices";
 import { detectedAt, poolOwner, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import averageDataSize from "utils/columns/averageDataSize";
 import { AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -77,7 +77,7 @@ class AbandonedS3Buckets extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   hasSettings = true;
 

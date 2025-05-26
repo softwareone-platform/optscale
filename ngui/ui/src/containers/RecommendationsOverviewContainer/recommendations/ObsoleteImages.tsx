@@ -9,7 +9,7 @@ import { ALIBABA_ECS, AWS_EC2 } from "hooks/useRecommendationServices";
 import { detectedAt, firstSeenOn, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { unixTimestampToDateTime } from "utils/datetime";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -74,7 +74,7 @@ class ObsoleteImages extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   get descriptionMessageValues() {
     const { days_threshold: daysThreshold } = this.options;

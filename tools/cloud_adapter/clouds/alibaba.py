@@ -1,3 +1,4 @@
+import enum
 import json
 import logging
 from datetime import datetime, timezone
@@ -36,6 +37,22 @@ from aliyunsdkecs.request.v20140526 import (
     StartInstancesRequest,
     StopInstancesRequest
 )
+from aliyunsdkalb.request.v20200616 import (
+    DescribeRegionsRequest as ALBRegionRequest,
+    ListLoadBalancersRequest as ALBListRequest
+)
+from aliyunsdkgwlb.request.v20240415 import (
+    DescribeRegionsRequest as GWLBRegionRequest,
+    ListLoadBalancersRequest as GWLBListRequest
+)
+from aliyunsdknlb.request.v20220430 import (
+    DescribeRegionsRequest as NLBRegionRequest,
+    ListLoadBalancersRequest as NLBListRequest
+)
+from aliyunsdkslb.request.v20140515 import (
+    DescribeRegionsRequest as CLBRegionRequest,
+    DescribeLoadBalancersRequest
+)
 from aliyunsdkvpc.request.v20160428 import DescribeEipAddressesRequest
 from aliyunsdkram.request.v20150501 import (
     ListPoliciesForUserRequest,
@@ -70,6 +87,7 @@ from tools.cloud_adapter.model import (
     SnapshotResource,
     RdsInstanceResource,
     IpAddressResource,
+    LoadBalancerResource,
 )
 from tools.cloud_adapter.utils import CloudParameter, gbs_to_bytes
 
@@ -103,6 +121,13 @@ def handle_discovery_client_exc(discovery_func, *args, **kwargs):
         LOG.warning("Error connecting to region %s: %s",
                     kwargs.get('region_id'), exc.message)
         return []
+
+
+class LoadBalancerRequestTypes(enum.Enum):
+    alb = ALBListRequest.ListLoadBalancersRequest
+    gwlb = GWLBListRequest.ListLoadBalancersRequest
+    nlb = NLBListRequest.ListLoadBalancersRequest
+    clb = DescribeLoadBalancersRequest.DescribeLoadBalancersRequest
 
 
 class Alibaba(CloudBase):
@@ -141,6 +166,10 @@ class Alibaba(CloudBase):
         IpAddressResource: (
             'https://vpc.console.aliyun.com/eip/{region_id}/eips/{id}'
         ),
+        LoadBalancerResource: (
+            'https://slb.console.aliyun.com/{lb_type}/{region_id}/'
+            '{lb_type}s/{id}'
+        ),
     }
 
     def __init__(self, cloud_config, *args, **kwargs):
@@ -156,6 +185,7 @@ class Alibaba(CloudBase):
             SnapshotChainResource: self.snapshot_chain_discovery_calls,
             RdsInstanceResource: self.rds_instance_discovery_calls,
             IpAddressResource: self.ip_address_discovery_calls,
+            LoadBalancerResource: self.load_balancer_discovery_calls,
         }
 
     @property
@@ -285,6 +315,14 @@ class Alibaba(CloudBase):
     def _list_rds_region_details(self):
         request = DescribeRdsRegionsRequest.DescribeRegionsRequest()
         regions = self._send_request(request)['Regions']['RDSRegion']
+        return self._exclude_closed_regions(regions)
+
+    def _list_lb_region_details(self, region_request):
+        request = region_request.DescribeRegionsRequest()
+        request.set_AcceptLanguage('en-US')
+        regions = self._send_request(request)['Regions']
+        if isinstance(regions, dict):
+            regions = regions['Region']
         return self._exclude_closed_regions(regions)
 
     def _find_region(self, id_or_name):
@@ -611,6 +649,44 @@ class Alibaba(CloudBase):
             )
             yield image_resource
 
+    def _discover_region_lbs(self, region_details, lb_type):
+        request = getattr(LoadBalancerRequestTypes, lb_type).value
+        request = request()
+        if lb_type != LoadBalancerRequestTypes.clb.name:
+            response = handle_discovery_client_exc(
+                self._send_marker_paged_request,
+                request, paged_item='LoadBalancers',
+                region_id=region_details['RegionId'])
+        else:
+            request.set_PageSize(100)
+            response = handle_discovery_client_exc(
+                self._send_marker_paged_request,
+                request, paged_item='LoadBalancer',
+                nested_item='LoadBalancers',
+                region_id=region_details['RegionId'])
+        for lb in response:
+            if 'Tags' in lb and isinstance(lb['Tags'], dict):
+                tags = self._extract_tags(lb)
+            else:
+                tags = {x['Key']: x['Value'] for x in lb.get('Tags', [])}
+            link = self._CLOUD_CONSOLE_LINKS[LoadBalancerResource].format(
+                id=lb['LoadBalancerId'], region_id=region_details['RegionId'],
+                lb_type=lb_type if lb_type != 'clb' else 'slb')
+            category = lb.get(
+                'LoadBalancerType') if lb_type != 'clb' else 'Classic'
+            lb_resource = LoadBalancerResource(
+                cloud_resource_id=lb['LoadBalancerId'],
+                cloud_account_id=self.cloud_account_id,
+                cloud_console_link=link,
+                region=region_details['LocalName'],
+                name=lb.get('LoadBalancerName'),
+                tags=tags,
+                vpc_id=lb['VpcId'] if lb['VpcId'] else None,
+                category=category,
+                security_groups=lb.get('SecurityGroupIds', []),
+            )
+            yield lb_resource
+
     def _check_user_policy(self, user_name):
         try:
             policies_request = (
@@ -680,6 +756,24 @@ class Alibaba(CloudBase):
     def image_discovery_calls(self):
         return [(self._discover_region_images, (r,))
                 for r in self._list_region_details()]
+
+    def load_balancer_discovery_calls(self):
+        result = []
+        region_requests = {
+            LoadBalancerRequestTypes.alb.name: ALBRegionRequest,
+            LoadBalancerRequestTypes.clb.name: CLBRegionRequest,
+            LoadBalancerRequestTypes.gwlb.name: GWLBRegionRequest,
+            LoadBalancerRequestTypes.nlb.name: NLBRegionRequest
+        }
+        for lb_type in LoadBalancerRequestTypes.__members__:
+            if lb_type in region_requests:
+                regions = self._list_lb_region_details(
+                    region_requests[lb_type])
+            else:
+                regions = self._list_region_details()
+            for r in regions:
+                result.append((self._discover_region_lbs, (r, lb_type)))
+        return result
 
     def snapshot_discovery_calls(self):
         # There is no per-snapshot billing import yet, so let's skip discover

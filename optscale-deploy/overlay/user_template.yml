@@ -116,3 +116,11 @@ public_ip:
 
 # Email verification is disabled by default. Set the flag to `False` to enable it
 disable_email_verification: True
+
+# settings for password strength policy
+password_strength_settings:
+  min_length:
+  min_lowercase:
+  min_uppercase:
+  min_digits:
+  min_special_chars:

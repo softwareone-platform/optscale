@@ -11,7 +11,9 @@ from collections import defaultdict, OrderedDict
 from datetime import datetime, timedelta, timezone
 from functools import cached_property
 
-from diworker.diworker.importers.base import CSVBaseReportImporter
+from diworker.diworker.importers.base import (
+    CSVBaseReportImporter, CSV_REWRITE_DAYS
+)
 import tools.optscale_time as opttime
 import pyarrow.parquet as pq
 
@@ -175,9 +177,22 @@ class AWSReportImporter(CSVBaseReportImporter):
             '_rec_n'
         ]
 
+    @staticmethod
+    def _is_first_import_in_month(last_import_dt: datetime):
+        now = opttime.utcnow()
+        if (last_import_dt.month + 1 == now.month and
+                last_import_dt.year == now.year) or (
+                    now.month == 1 and last_import_dt.year + 1 == now.year):
+            return True
+
     def get_current_reports(self, reports_groups, last_import_modified_at):
         current_reports = defaultdict(list)
         reports_count = 0
+        # during first report in the current month download all reports
+        # from the previous month to do full reimport
+        if self._is_first_import_in_month(last_import_modified_at):
+            last_import_modified_at = opttime.startmonth(
+                last_import_modified_at)
         for date, reports in reports_groups.items():
             for report in reports:
                 if report.get('LastModified', -1) > last_import_modified_at:
@@ -187,6 +202,18 @@ class AWSReportImporter(CSVBaseReportImporter):
                     break
         LOG.info('Selected %s reports', reports_count)
         return current_reports
+
+    @cached_property
+    def min_date_import_threshold(self) -> datetime:
+        last_import_dt = datetime.fromtimestamp(
+            self.cloud_acc.get('last_import_modified_at', 0), tz=timezone.utc)
+        last_import_dt = last_import_dt.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        if self._is_first_import_in_month(last_import_dt):
+            # import full previous month on the first import in month
+            return last_import_dt.replace(day=1)
+        return last_import_dt - timedelta(days=CSV_REWRITE_DAYS)
 
     def get_raw_upsert_filters(self, expense):
         filters = super().get_raw_upsert_filters(expense)
@@ -604,7 +631,7 @@ class AWSReportImporter(CSVBaseReportImporter):
                     preinstalled = e['product/preInstalledSw']
                     meta_dict['preinstalled'] = preinstalled
             elif resource_type == 'Load Balancer':
-                name = self.short_resource_id(e['lineItem/ResourceId'])
+                name = self.short_resource_id(e['resource_id'])
             elif resource_type == 'Savings Plan':
                 if not payment_option and 'savingsPlan/PaymentOption' in e:
                     payment_option = e['savingsPlan/PaymentOption']

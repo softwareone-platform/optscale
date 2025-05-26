@@ -2,7 +2,7 @@ import InactiveConsoleUsersModal from "components/SideModalManager/SideModals/re
 import { AWS_IAM } from "hooks/useRecommendationServices";
 import { detectedAt, lastUsed, name, userLocation } from "utils/columns";
 import { AWS_CNR } from "utils/constants";
-import BaseRecommendation, { CATEGORY_SECURITY } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   name({
@@ -38,7 +38,7 @@ class InactiveConsoleUsers extends BaseRecommendation {
 
   appliedDataSources = [AWS_CNR];
 
-  categories = [CATEGORY_SECURITY];
+  categories = [CATEGORY.SECURITY];
 
   hasSettings = true;
 

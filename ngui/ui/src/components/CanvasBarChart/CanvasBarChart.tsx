@@ -12,7 +12,7 @@ import { useChartLayoutOptions } from "hooks/useChartLayoutOptions";
 import { useChartTheme } from "hooks/useChartTheme";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { isEmpty as isEmptyArray } from "utils/arrays";
-import { getBarTicks, TICK_COUNT, getMaxAndMinBandValues, getChartWidth, AXIS_FORMATS } from "utils/charts";
+import { getBarTicks, TICK_COUNT, getMaxAndMinBandValues, getInnerWidth, AXIS_FORMATS, getInnerHeight } from "utils/charts";
 import {
   DEFAULT_BAR_CHART_MARGIN,
   DEFAULT_BAR_CHART_HEIGHT,
@@ -193,6 +193,9 @@ const useClickableBarHover = ({ refs, margin, isClickable, selectedBar, wrapperD
   ]);
 };
 
+const BORDER_COLOR_PROP = { from: "color", modifiers: [["darker", 1.3]] };
+const LABEL_TEXT_COLOR_PROP = { from: "color" };
+
 const CanvasBarChart = ({
   data,
   keys,
@@ -219,7 +222,8 @@ const CanvasBarChart = ({
   labelTextColor,
   axisBottom: axisBottomProperty,
   axisLeft: axisLeftProperty,
-  minMaxTicksEqualToMinMaxValues,
+  axisRight: axisRightProperty,
+  allocateAdditionalTickAboveMaxValue,
   enableTotals,
   valueFormat,
   thresholdMarker,
@@ -253,52 +257,56 @@ const CanvasBarChart = ({
 
   const { maxBandValue, minBandValue } = getMaxAndMinBandValues(data, keys);
 
-  const getMaxValue = () => Math.max(...[maxBandValue, thresholdMarker?.value].filter(Boolean));
+  const innerWidth = getInnerWidth(wrapperWidth, margin);
+  const innerHeight = getInnerHeight(wrapperHeight, margin);
 
-  const { tickValues, gridValues, maxValue, minValue } = getBarTicks({
-    height: wrapperHeight,
-    layout,
+  const getMaxValue = () => Math.max(...[maxBandValue, thresholdMarker?.value].filter(Boolean));
+  const {
+    tickValues: valueTickValues, // ticks on Y axis for vertical layout and X axis for horizontal layout
+    gridValues: valueGridValues,
+    maxValue,
+    minValue
+  } = getBarTicks({
+    size: layout === "vertical" ? innerWidth : innerHeight,
     ticksCount: TICK_COUNT,
     maxValue: getMaxValue(),
     minValue: minBandValue,
-    minMaxTicksEqualToMinMaxValues
+    allocateAdditionalTickAboveMaxValue
   });
-
-  const chartWidth = getChartWidth(wrapperWidth, margin, layout);
 
   const formatter = useMoneyFormatter();
 
-  const formatAxis = (format) =>
+  const formatValueAxis = (format) =>
     ({
       [AXIS_FORMATS.MONEY]: (value) => formatter(FORMATTED_MONEY_TYPES.TINY_COMPACT, value, { format: currency }),
       [AXIS_FORMATS.RAW]: (value) => value,
       [AXIS_FORMATS.PERCENTAGE]: (value) => `${value * 100}%`
     })[format];
 
-  const { axisLeft, axisBottom, enableGridX, enableGridY, gridXValues, gridYValues } = useChartLayoutOptions({
+  const { axisLeft, axisRight, axisBottom, enableGridX, enableGridY, gridXValues, gridYValues } = useChartLayoutOptions({
     layout,
-    formatAxis: formatAxis(axisFormat),
-    tickValues,
-    chartWidth,
+    formatValueAxis: typeof axisFormat === "function" ? axisFormat : formatValueAxis(axisFormat),
+    valueTickValues,
+    valueGridValues,
+    innerWidth,
     data,
     indexBy,
     padding,
     chartTheme,
-    gridValues,
     enableGridY: enableGridYProperty,
     enableGridX: enableGridXProperty,
     axisBottom: axisBottomProperty,
-    axisLeft: axisLeftProperty
+    axisLeft: axisLeftProperty,
+    axisRight: axisRightProperty,
+    minValue,
+    maxValue
   });
 
-  const borderColorProp = { from: "color", modifiers: [["darker", 1.3]] };
-  const labelTextColorProp = { from: "color" };
-
   const getBarSettings = (bar) => {
-    const getBarBorderColor = getInheritedColorGenerator(borderColorProp, chartTheme);
+    const getBarBorderColor = getInheritedColorGenerator(BORDER_COLOR_PROP, chartTheme);
     const barBorderColor = getBarBorderColor(bar);
 
-    const getBarLabelColor = getInheritedColorGenerator(labelTextColorProp, chartTheme);
+    const getBarLabelColor = getInheritedColorGenerator(LABEL_TEXT_COLOR_PROP, chartTheme);
     const barLabelColor = getBarLabelColor(bar);
 
     const getSelectionColors = () => (selectedBar === getBarName(bar.data) ? bar.color : lighten(bar.color, 0.8));
@@ -358,7 +366,7 @@ const CanvasBarChart = ({
         innerPadding={innerPadding}
         colors={colors}
         borderWidth={borderWidth}
-        borderColor={borderColorProp}
+        borderColor={BORDER_COLOR_PROP}
         layout={layout}
         enableGridX={enableGridX}
         enableGridY={enableGridY}
@@ -368,6 +376,7 @@ const CanvasBarChart = ({
         minValue={minValue}
         axisLeft={axisLeft}
         axisBottom={axisBottom}
+        axisRight={axisRight}
         enableLabel={enableLabel}
         label={label}
         animate={false}

@@ -13,7 +13,7 @@ import {
 import { detectedAt, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, FORMATTED_MONEY_TYPES, GCP_CNR, NEBIUS } from "utils/constants";
 import { EN_FULL_FORMAT, unixTimestampToDateTime } from "utils/datetime";
-import BaseRecommendation, { CATEGORY_COST } from "./BaseRecommendation";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
 
 const columns = [
   resource({
@@ -73,7 +73,7 @@ class ObsoleteIps extends BaseRecommendation {
 
   appliedDataSources = [ALIBABA_CNR, AWS_CNR, AZURE_CNR, NEBIUS, GCP_CNR];
 
-  categories = [CATEGORY_COST];
+  categories = [CATEGORY.COST];
 
   emptyMessageId = "noObsoleteIps";
 
