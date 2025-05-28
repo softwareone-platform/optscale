@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from "react-hook-form";
+import FormContentDescription from "components/FormContentDescription";
 import ResourcesPerspectiveValuesDescription from "components/ResourcesPerspectiveValuesDescription";
 import { FormButtons, NameAutocompleteField, PayloadField, PerspectiveOverrideWarning } from "./FormElements";
 import { getDefaultValues } from "./utils";
@@ -29,6 +30,14 @@ const CreateResourcePerspectiveForm = ({
     <FormProvider {...methods}>
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <NameAutocompleteField perspectiveNames={perspectiveNames} />
+        <FormContentDescription
+          alertProps={{
+            messageId: "savePerspectiveDescription",
+            messageValues: {
+              strong: (chunks) => <strong>{chunks}</strong>
+            }
+          }}
+        />
         <ResourcesPerspectiveValuesDescription
           breakdownBy={breakdownBy}
           breakdownData={breakdownData}
