@@ -12,6 +12,7 @@ import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import { useIsAllowed } from "hooks/useAllowedActions";
 import { useFormatIntervalTimeAgo } from "hooks/useFormatIntervalTimeAgo";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
@@ -152,6 +153,10 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
     [employees, organizationName, intl]
   );
 
+  const allowedActions = useIsAllowed({
+    requiredActions: ["EDIT_PARTNER"]
+  });
+
   const columns = useMemo(
     () => [
       {
@@ -191,6 +196,7 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
         id: "actions",
         enableSorting: false,
         enableHiding: false,
+        hidden: allowedActions === false,
         cell: ({ row: { original: { name: employeeName, id: employeeId } = {}, index } }) => (
           <TableCellActions
             items={[
@@ -209,7 +215,7 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
         )
       }
     ],
-    [organizationName, openSideModal, data]
+    [allowedActions, organizationName, openSideModal, data]
   );
   // MPT_TODO: disabled to meet BDR requirements
   //   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
