@@ -1980,6 +1980,7 @@
   "saveAsNewDashboard": "Save as new dashboard",
   "saveDashboard": "Save dashboard",
   "savePerspectiveTitle": "Save perspective",
+  "savePerspectiveDescription": "You are saving your current Resource view including <strong>breakdown by</strong> category and <strong>filters</strong>. If you need to update it please cancel and refine your selections.",
   "saveThisDashboard": "Save this dashboard",
   "savedWithCommitmentsForTheLast30Days": "Saved with commitments for the last 30 days",
   "savingWithSixMonthsReservationOffer": "Saving with 6 months reservation offer",
