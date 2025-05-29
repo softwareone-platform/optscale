@@ -18,7 +18,12 @@
     "playwright:trace": "npx playwright test --trace --project chrome",
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome",
     "playwright:update-screenshots": "cross-env SCREENSHOT_UPDATE_DELAY=true npx playwright test --grep @swo_customisation --update-snapshots",
-    "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation"
+    "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation",
+    "playwright:regression": "npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
+    "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
+    "docker:build": "docker build -t playwright-screenshot-tests regression-tests",
+    "docker:test": "docker compose -f regression-tests/docker-compose.yml run --remove-orphans screenshot",
+    "docker:update": "docker compose -f regression-tests/docker-compose.yml run --remove-orphans screenshot npm run playwright:regression -- --update-snapshots"
   },
   "keywords": [],
   "author": "",

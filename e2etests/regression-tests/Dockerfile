@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/playwright:v1.52.0
+
+WORKDIR /app
+
+RUN npm install @playwright/test@1.52.0
+RUN npm install dotenv@16.4.7
+
+# ✅ This line installs all supported browsers in a platform-safe way
+RUN npx playwright install
+
+CMD ["npx", "playwright"]
