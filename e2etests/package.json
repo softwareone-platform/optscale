@@ -21,9 +21,8 @@
     "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation",
     "playwright:regression": "npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
     "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
-    "docker:build": "docker build -t playwright-screenshot-tests regression-tests",
-    "docker:test": "docker compose -f regression-tests/docker-compose.yml run --remove-orphans screenshot",
-    "docker:update": "docker compose -f regression-tests/docker-compose.yml run --remove-orphans screenshot npm run playwright:regression -- --update-snapshots"
+    "docker:test": "./run_pw.sh",
+    "docker:update": "./run_pw.sh -u"
   },
   "keywords": [],
   "author": "",
