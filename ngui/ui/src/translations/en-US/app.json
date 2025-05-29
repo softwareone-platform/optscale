@@ -784,6 +784,8 @@
   "expiringBudget": "Expiring budget",
   "expiringBudgetColumnName": "Budget ⟶ Actual expenses",
   "expiringBudgetPolicyDescription": "Total expenses from <strong>{startDate}</strong> must not exceed <strong>{budget}</strong>.",
+  "exportChart": "Export chart",
+  "exportChartError": "Failed to download the chart",
   "exportName": "Export name",
   "exportNameDescription": "Name of the Cost Management export. Can be found in the Azure portal under the corresponding export settings.",
   "exportPathPrefix": "Export path prefix",
