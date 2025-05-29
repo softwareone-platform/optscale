@@ -1,4 +1,22 @@
 ---
+- name: Check port 6443
+  shell: nc -zvw3 "{{ ansible_host }}" 6443
+  ignore_errors: yes
+  register: port_res
+
+- name: Check port result message
+  debug:
+    msg: >
+      {% if 'Connection refused' in port_res.stderr %}
+      OK
+      {% elif 'succeeded' in port_res.stderr %}
+      Port is already in use! Use kubeadmin reset and restart the playbook
+      {% elif 'No route to host' in port_res.stderr or 'timed out' in port_res.stderr %}
+      Port is closed, check security group and firewall
+      {% else %}
+      Unexpected nc result: {{ port_res.stderr }}
+      {% endif %}
+
 - name: Initialize kubernetes master
   shell: kubeadm init --config {{ kubeadm_conf_path }} --upload-certs > {{ kubeadm_init_log }}
   become: yes
