@@ -8,8 +8,15 @@ jobs:
   notify-teams:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Review Comments Count
+        id: comments
+        run: |
+          COMMENTS_COUNT=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/${{ github.event.review.id }}/comments" | jq 'length')
+          echo "count=$COMMENTS_COUNT" >> $GITHUB_OUTPUT
+
       - name: Notify Teams
-        uses: softwareone-platform/notify-pr-reviews-teams-action@v1
+        uses: softwareone-platform/notify-pr-reviews-teams-action@v2
         with:
           webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           bot_image_url: https://raw.githubusercontent.com/softwareone-platform/optscale/main/.github/workflows/assets/turing_team_pr_bot.png
@@ -19,7 +26,7 @@ jobs:
           reviewer: ${{ github.event.review.user.login }}
           review_state: ${{ github.event.review.state }}
           global_comment: ${{ github.event.review.body || 'No comment provided' }}
-          comments_count: ${{ github.event.review.comments || 0 }}
+          comments_count: ${{ steps.comments.outputs.count }}
           head_ref: ${{ github.event.pull_request.head.ref }}
           base_ref: ${{ github.event.pull_request.base.ref }}
           event: ${{ github.event.action }}
