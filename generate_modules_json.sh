@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
 # List of components to exclude
 EXCLUDE_LIST=("etcd" "mongo" "mariadb" "redis" "filebeat" "grafana" "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui" "slacker")
 
