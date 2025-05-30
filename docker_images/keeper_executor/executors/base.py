@@ -1,7 +1,4 @@
-import hashlib
 import logging
-import requests
-from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.report_client.client_v2 import Client as ReportClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
@@ -11,7 +8,6 @@ LOG = logging.getLogger(__name__)
 class BaseEventExecutor:
     def __init__(self, config_client):
         self.config_cl = config_client
-        self._auth_cl = None
         self._report_cl = None
         self._rest_cl = None
 
@@ -21,15 +17,6 @@ class BaseEventExecutor:
 
     def routing_keys(self):
         return list(self.action_event_map.keys())
-
-    @property
-    def auth_cl(self):
-        if not self._auth_cl:
-            self._auth_cl = AuthClient(
-                url=self.config_cl.auth_url(),
-                secret=self.config_cl.cluster_secret()
-            )
-        return self._auth_cl
 
     @property
     def rest_cl(self):
@@ -48,32 +35,6 @@ class BaseEventExecutor:
                 secret=self.config_cl.cluster_secret()
             )
         return self._report_cl
-
-    def get_user_id(self, token):
-        user_digest = hashlib.md5(token.encode('utf-8')).hexdigest()
-        _, token_meta = self.auth_cl.token_meta_get([user_digest])
-        return token_meta.get(user_digest, {}).get('user_id')
-
-    def _get_user(self, token):
-        user_id = self.get_user_id(token)
-        if user_id is None:
-            return {}
-        self.auth_cl.token = token
-        _, user = self.auth_cl.user_get(user_id)
-        return user
-
-    def _get_user_info(self, token):
-        if not token:
-            return None, None, None
-        user_info = {}
-        try:
-            user_info = self._get_user(token)
-        except requests.exceptions.HTTPError as ex:
-            LOG.exception("Service call error: %s", str(ex))
-        user_id = user_info.get('id', None)
-        user_display_name = user_info.get('display_name', None)
-        user_email = user_info.get('email', None)
-        return user_id, user_display_name, user_email
 
     @staticmethod
     def get_localized(localized_code: str, param_list: list, params: dict):

@@ -103,6 +103,7 @@ const ExpensesDailyBreakdownByBarChart = ({
       isLoading={isLoading}
       axisFormat={AXIS_FORMATS.MONEY}
       withLegend={showLegend}
+      showActions
       legendLabel={(legendItem, ctx: CanvasRenderingContext2D, { maxWidth }) => {
         const details = {
           id: legendItem.id,

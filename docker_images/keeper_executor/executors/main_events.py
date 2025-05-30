@@ -85,8 +85,9 @@ class MainEventExecutor(BaseEventExecutor):
                  'organization %s' % (action, object_id, object_type,
                                       organization_id))
         meta = task.get('meta') or {}
-        token = meta.get('token')
-        user_id, user_display_name, user_email = self._get_user_info(token)
+        user_id = meta.get('user_id')
+        user_display_name = meta.get('user_display_name')
+        user_email = meta.get('user_email')
         description_tmp, param_list, level = event.value
         params = {
             param: task.get(param) or meta.get(param) for param in param_list

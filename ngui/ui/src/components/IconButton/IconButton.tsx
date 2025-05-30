@@ -1,11 +1,22 @@
-import { forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
-import MuiIconButton from "@mui/material/IconButton";
+import MuiIconButton, { type IconButtonProps as MuiIconButtonProps } from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
-import { NavLink } from "react-router-dom";
+import { NavLink, type To } from "react-router-dom";
 import Tooltip from "components/Tooltip";
 import useStyles from "./IconButton.styles";
+
+type IconButtonProps = MuiIconButtonProps & {
+  dataTestId: string;
+  dataProductTourId?: string;
+  icon: ReactNode;
+  isLoading?: boolean;
+  tooltip?: { placement?: string; messageId?: string; value?: string; show?: boolean };
+  customClass?: string;
+  href?: string;
+  link?: To;
+};
 
 const IconButton = forwardRef(
   (
@@ -25,7 +36,7 @@ const IconButton = forwardRef(
       edge = false,
       tooltip = {},
       ...rest
-    },
+    }: IconButtonProps,
     ref
   ) => {
     const { classes } = useStyles();

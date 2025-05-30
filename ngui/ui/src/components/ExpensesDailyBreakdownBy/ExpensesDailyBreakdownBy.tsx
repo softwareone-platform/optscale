@@ -11,7 +11,35 @@ import { SPACING_1 } from "utils/layouts";
 import BreakdownBy from "./BreakdownBy";
 import ExpensesDailyBreakdownByBarChart from "./ExpensesDailyBreakdownByBarChart";
 
-const ExpensesDailyBreakdownBy = ({ counts, breakdown, breakdownByValue, onBreakdownByChange, isLoading = false }) => {
+type Breakdown = {
+  id: string;
+  cost: number;
+};
+
+type Breakdowns = {
+  [key: number]: Breakdown[];
+};
+
+type Count = {
+  total: number;
+  previous_total: number;
+};
+
+type ExpensesDailyBreakdownByProps = {
+  counts: { [key: string]: Count };
+  breakdown: Breakdowns;
+  breakdownByValue: string;
+  onBreakdownByChange: () => void;
+  isLoading: boolean;
+};
+
+const ExpensesDailyBreakdownBy = ({
+  counts,
+  breakdown,
+  breakdownByValue,
+  onBreakdownByChange,
+  isLoading = false
+}: ExpensesDailyBreakdownByProps) => {
   const [split, setSplit] = useSyncQueryParamWithState({
     queryParamName: DAILY_EXPENSES_SPLIT_PARAMETER_NAME,
     possibleStates: SPLITS,
