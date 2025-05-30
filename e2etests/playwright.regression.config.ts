@@ -6,19 +6,8 @@ import path from 'path';
 // Load .env.local
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
-// Detect if running in Docker
-const isDocker = process.env.DOCKER_ENV === 'true';
+const baseURL = process.env.BASE_URL || 'http://0.0.0.0:4000';
 
-// Determine baseURL
-const getBaseURL = (): string => {
-  const originalURL = process.env.BASE_URL || 'http://localhost:3000';
-
-  if (isDocker && originalURL.startsWith('http://localhost')) {
-    return originalURL.replace('localhost', 'host.docker.internal');
-  }
-
-  return originalURL;
-};
 
 export default defineConfig({
   testDir: './',
@@ -41,9 +30,8 @@ export default defineConfig({
       stylePath: './regression-tests/utils/disable-antialiasing/pre-screenshot-styles.css'
     },
   },
-
   use: {
-    baseURL: getBaseURL(),
+    baseURL: baseURL,
     actionTimeout: 10000,
     testIdAttribute: 'data-test-id',
     headless: true,

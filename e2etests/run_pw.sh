@@ -7,6 +7,7 @@ BASE_URL="http://0.0.0.0:4000"
 RUN_APP=false
 KEEP_RUNNING=false
 API_ENDPOINT=""
+CI_MODE=
 
 # Help message
 show_help() {
@@ -19,6 +20,7 @@ show_help() {
     echo "  -U, --url URL           Base URL for the application (default: http://0.0.0.0:4000)"
     echo "  -a, --run-application   Run the application in ngui folder"
     echo "  -k, --keep-running      Keep the application running after tests complete"
+    echo "  -i, --ci                Set CI=true environment variable"
     echo "  -h, --help              Show this help message"
     exit 0
 }
@@ -64,6 +66,10 @@ while [[ $# -gt 0 ]]; do
             KEEP_RUNNING=true
             shift
             ;;
+        -i|--ci)
+            CI_MODE=true
+            shift
+            ;;
         -h|--help)
             show_help
             ;;
@@ -96,10 +102,16 @@ run_tests() {
         TEST_ARGS="$TEST_ARGS --update-snapshots"
     fi
     
+    # Build environment variables
+    ENV_ARGS="-e BASE_URL=$BASE_URL"
+    if [ "$CI_MODE" = true ]; then
+        ENV_ARGS="$ENV_ARGS -e CI=true"
+    fi
+    
     # Run the tests
     docker run --rm \
         --network host \
-        -e BASE_URL=$BASE_URL \
+        $ENV_ARGS \
         -v $(pwd):/app \
         -v /app/node_modules \
         -w /app \
@@ -133,16 +145,23 @@ run_application() {
         docker rm ngui-container
     fi
     
-    # Start the application using Dockerfile
-    docker build -t ngui-app -f ../ngui/Dockerfile ../.
-    docker run -d --name ngui-container -p 4000:4000 \
-        -e PROXY_URL=$API_ENDPOINT \
+    # Build environment variables
+    ENV_ARGS="-e PROXY_URL=$API_ENDPOINT \
         -e KEEPER_ENDPOINT=$API_ENDPOINT \
         -e SLACKER_ENDPOINT=$API_ENDPOINT \
         -e RESTAPI_ENDPOINT=$API_ENDPOINT \
         -e AUTH_ENDPOINT=$API_ENDPOINT \
         -e BUILD_MODE=production \
-        -e UI_BUILD_PATH=/usr/src/app/ui \
+        -e UI_BUILD_PATH=/usr/src/app/ui"
+    
+    if [ "$CI_MODE" = true ]; then
+        ENV_ARGS="$ENV_ARGS -e CI=true"
+    fi
+    
+    # Start the application using Dockerfile
+    docker build -t ngui-app -f ../ngui/Dockerfile ../.
+    docker run -d --name ngui-container -p 4000:4000 \
+        $ENV_ARGS \
         ngui-app
     
     # Wait for container to be running with timeout
