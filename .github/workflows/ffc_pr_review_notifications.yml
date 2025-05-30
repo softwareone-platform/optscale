@@ -1,0 +1,26 @@
+name: PR Review Notification
+
+on:
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+
+jobs:
+  notify-teams:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Teams
+        uses: softwareone-platform/notify-pr-reviews-teams-action@v1
+        with:
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          bot_image_url: https://raw.githubusercontent.com/softwareone-platform/optscale/main/.github/workflows/assets/turing_team_pr_bot.png
+          repo: ${{ github.repository }}
+          pr_number: ${{ github.event.pull_request.number }}
+          pr_title: ${{ github.event.pull_request.title }}
+          reviewer: ${{ github.event.review.user.login }}
+          review_state: ${{ github.event.review.state }}
+          global_comment: ${{ github.event.review.body || 'No comment provided' }}
+          comments_count: ${{ github.event.review.comments || 0 }}
+          head_ref: ${{ github.event.pull_request.head.ref }}
+          base_ref: ${{ github.event.pull_request.base.ref }}
+          event: ${{ github.event.action }}
+          pr_url: ${{ github.event.pull_request.html_url }} 
