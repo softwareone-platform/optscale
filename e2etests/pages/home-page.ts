@@ -1,5 +1,7 @@
 import {
   AllowedActionsResponse,
+  DataSourcesResponse,
+  OptimizationsResponse,
   OrganizationCleanExpansesResponseGraphQL,
   OrganizationConstraintsResponse,
   OrganizationExpensesPoolsResponse,
@@ -82,6 +84,17 @@ export class HomePage extends BasePage {
         urlPattern: `/api$`,
         mockResponse: OrganizationCleanExpansesResponseGraphQL,
         graphQlOperationName: 'CleanExpenses'
+      },
+      {
+        page: this.page,
+        urlPattern: `/api$`,
+        mockResponse: DataSourcesResponse,
+        graphQlOperationName: 'DataSources'
+      },
+      {
+        page: this.page,
+        urlPattern: `/v2/organizations/[^/]+/optimizations`,
+        mockResponse: OptimizationsResponse
       },
       {
         page: this.page,
