@@ -66,7 +66,9 @@ class TrafficProcessingWorker(ConsumerMixin):
         try:
             self._process_task(body)
         except Exception as exc:
-            LOG.exception('Traffic processing task failed: %s', str(exc))
+            LOG.exception('Traffic processing task failed '
+                          'for cloud account %s: %s',
+                          body.get('cloud_account_id'), str(exc))
         message.ack()
 
     def heartbeat(self):
