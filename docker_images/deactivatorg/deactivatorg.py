@@ -42,6 +42,7 @@ def _get_organization_employees_map(mydb):
                 FROM employee
                 WHERE deleted_at = 0
             ) AS empl_t ON org_t.id = empl_t.organization_id
+        WHERE empl_t.auth_user_id IS NOT NULL
     """
     query_result = mydb.execute(query)
     result = defaultdict(list)
@@ -51,6 +52,8 @@ def _get_organization_employees_map(mydb):
 
 
 def _check_recent_tokens(auth, user_ids, days_limit):
+    if not user_ids:
+        return []
     user_ids_str = "', '".join(user_ids)
     inactive_period = datetime.now(
         tz=timezone.utc) - timedelta(days=days_limit)
