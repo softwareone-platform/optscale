@@ -161,6 +161,9 @@ class BaseTrafficExpenseProcessor:
                     'type': 1,
                     'from': k[2],
                     'to': k[3],
+                    'cost': 0,
+                    'usage': 0,
+                    'sign': 1
                 }
                 collapse_expense = collapse_expenses.get(k)
                 if collapse_expense:
@@ -190,7 +193,8 @@ class BaseTrafficExpenseProcessor:
 class AwsTrafficExpenseProcessor(BaseTrafficExpenseProcessor):
     TRAFFIC_IDENTIFIER = {
         'product/servicecode': 'AWSDataTransfer',
-        'pricing/term': 'OnDemand'
+        'pricing/term': 'OnDemand',
+        'lineItem/LineItemType': {'$ne': 'Credit'}
     }
     TRAFFIC_FIELDS = [
         'product/fromRegionCode', 'product/fromLocation',
