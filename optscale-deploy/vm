@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# requirements:
+# - vagrant:      brew install vagrant
+# - qemu:         brew install qemu
+# - vagrant-qemu: vagrant plugin install vagrant-qemu
+
+usage_str="usage: $0 [x86|arm] <command> [<args>...]"
+
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
+if [[ $# -lt 1 ]]; then
+    echo "Error: Invalid number of arguments."
+    echo "$usage_str"
+    exit 1
+fi
+
+if [[ "$1" == "x86" || "$1" == "arm" ]]; then
+    if [[ $# -lt 2 ]]; then
+        echo "Error: Invalid number of arguments, missing command."
+        echo "$usage_str"
+        exit 1
+    fi
+    vm_arch="$1"
+    shift
+else
+    host_os_arch=$(uname -m)
+    
+    if [[ "$host_os_arch" == "x86_64" || "$host_os_arch" == "amd64" ]]; then
+        vm_arch="x86"
+    elif [[ "$host_os_arch" == "aarch64" || "$host_os_arch" == "arm64" ]]; then
+        vm_arch="arm"
+    else
+        echo "Error: Unsupported host architecture: $host_os_arch, you need to specify the VM architecture explicitly (x86 or arm)."
+        echo "$usage_str"
+        exit 1
+    fi
+
+    echo "VM architecture not provided, using the same as host: $vm_arch"
+fi
+
+command="$1"
+shift
+command_args="$@"
+
+if [[ "$vm_arch" == "x86" ]]; then
+    vm_name="ubuntu-2404-x86-64"
+elif [[ "$vm_arch" == "arm" ]]; then
+    vm_name="ubuntu-2404-arm-64"
+else
+    echo "Error: Invalid VM architecture: $vm_arch, expected 'x86' or 'arm'."
+    echo "$usage_str"
+    exit 1
+fi
+
+inventory_file="$SCRIPT_DIR/ansible/inventories/vm-$vm_arch.yaml"
+
+function _venv_run {
+    # shellcheck disable=2145
+    exec "$SCRIPT_DIR/.venv/bin/$@"
+}
+
+function vm_info {
+    vm_state=$(vagrant status $vm_name --machine-readable | grep ',state,' | cut -d ',' -f '4' )
+    vm_qemu_id=$(cat ".vagrant/machines/$vm_name/qemu/id" 2> /dev/null)
+    vm_vagrant_id=$(cat ".vagrant/machines/$vm_name/qemu/index_uuid" 2> /dev/null)
+    vm_qemu_pid=$(cat ".vagrant/machines/$vm_name/qemu/$vm_qemu_id/qemu.pid" 2> /dev/null)
+
+    if [[ -n "$vm_qemu_pid" ]]; then
+        vm_qemu_accelerator=$(ps -eo command \
+                              | grep "qemu-system-.*" \
+                              | grep -v "grep" \
+                              | sed 's/.*\-accel \([^ ]*\).*/\1/')
+    fi
+    
+    echo "Name:             ${vm_name}"
+    echo "State:            ${vm_state}"
+    echo "QEMU Machine ID:  ${vm_qemu_id:-N/A}"
+    echo "Vagrant ID:       ${vm_vagrant_id:-N/A}"
+    echo "QEMU Process ID:  ${vm_qemu_pid:-N/A}"
+    echo "QEMU Accelerator: ${vm_qemu_accelerator:-N/A}"
+}
+
+function vm_start {
+    vagrant up $vm_name
+}
+
+function vm_stop {
+    vagrant halt $vm_name
+    
+    # After the vagrant halt often the VM is still running in the background. Thank you Vagrant >:(
+    while ps -eo command | grep "qemu-system-.*$vm_name" | grep -vq "grep"; do
+        echo "$(date +%X) - Waiting until VM has stopped"
+        sleep 1
+    done
+}
+
+function vm_destroy {
+    vm_stop
+    vagrant destroy --force --graceful $vm_name
+}
+
+function vm_ssh {
+    # Some terminals (such as Kitty) have set $TERM to a value which is not always recognised on remote
+    # machines by default. `ssh` uses the host's $TERM and passes it to the shell session, so if the
+    # remote doesn't recognise it, the $TERM functionality is not applied properly, e.g. color output.
+    # In these cases we can just set it to 'xterm-256color' which is widely recognised and provides similar,
+    # albeit more limitted, color support
+
+    if [[ "$TERM" == "xterm-kitty" ]]; then
+        TERM="xterm-256color" vagrant ssh $vm_name -c "/bin/bash"
+    else
+        vagrant vagrant ssh $vm_name -c "/bin/bash"
+    fi
+}
+
+function vm_run_ansible_playbook {
+    local playbook="$1"
+    
+    if [[ -f "$playbook" ]]; then
+        playbook_path="$playbook"
+    elif [[ -f "$SCRIPT_DIR/ansible/$playbook" ]]; then
+        playbook_path="$SCRIPT_DIR/ansible/$playbook"
+    elif [[ -f "$SCRIPT_DIR/ansible/$playbook.yaml" ]]; then
+        playbook_path="$SCRIPT_DIR/ansible/$playbook.yaml"
+    else
+        available_playbooks=$(find "$SCRIPT_DIR/ansible" -name "*.yaml" -maxdepth 1 -exec basename {} .yaml ';' | sort)
+        
+        echo "Error: playbook '$playbook' not found."
+        echo "Available playbooks:"
+        echo "$available_playbooks"
+        exit 1
+    fi
+    
+    _venv_run ansible-playbook --inventory-file "$inventory_file" "$playbook_path"
+}
+
+function vm_run_ansible_role {
+    local role="$1"
+    
+    if [[ -d "$role" ]]; then
+        role_path="$role"
+    elif [[ -d "$SCRIPT_DIR/ansible/roles/$role" ]]; then
+        role_path="$SCRIPT_DIR/ansible/roles/$role"
+    else
+        available_roles=$(find "$SCRIPT_DIR/ansible/roles" -mindepth 1 -maxdepth 1 -type d -exec basename {} ';' | sort)
+        
+        echo "Error: role '$role' not found."
+        echo "Available roles:"
+        echo "$available_roles"
+        exit 1
+    fi
+    
+    _venv_run ansible \
+        --inventory-file "$inventory_file" \
+        --module-name include_role \
+        --args "name=$role_path"
+}
+
+if [[ "$command" == "info" ]]; then
+    vm_info
+elif [[ "$command" == "up" ]]; then
+    vm_start
+elif [[ "$command" == "down" ]]; then
+    vm_stop
+elif [[ "$command" == "destroy" ]]; then
+    vm_destroy
+elif [[ "$command" == "restart" ]]; then
+    vm_stop
+    vm_start
+elif [[ "$command" == "reset" ]]; then
+    vm_destroy
+    vm_start
+elif [[ "$command" == "ssh" ]]; then
+    vm_ssh
+elif [[ "$command" == "playbook" ]]; then
+    vm_run_ansible_playbook "$command_args"
+elif [[ "$command" == "role" ]]; then
+    vm_run_ansible_role "$command_args"
+else
+    echo "Error: Invalid command: $command"
+    echo "$usage_str"
+    exit 1
+fi
