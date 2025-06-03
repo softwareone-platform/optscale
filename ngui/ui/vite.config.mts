@@ -6,7 +6,16 @@ export default defineConfig(({ mode }) => {
   // https://vitejs.dev/guide/api-javascript.html#loadenv
   const env = loadEnv(mode, process.cwd());
 
-  const { VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT } = env;
+  const { VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS } = env;
+
+  const parsedAllowedHosts = (() => {
+    const value = VITE_ALLOWED_HOSTS?.trim().toLowerCase();
+
+    if (!value || value === "false") return false;
+    if (value === "true") return true;
+
+    return VITE_ALLOWED_HOSTS.split(",").map((host) => host.trim());
+  })();
 
   return {
     build: {
@@ -21,6 +30,8 @@ export default defineConfig(({ mode }) => {
     server: {
       open: true,
       port: Number(VITE_PORT) || 3000,
+      host: (VITE_HOST?.toLowerCase() === "true") || false,
+      allowedHosts: parsedAllowedHosts,
       proxy: {
         "/api": {
           target: VITE_PROXY,
