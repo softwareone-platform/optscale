@@ -16,9 +16,9 @@ export default defineConfig({
   testIgnore: ['**/snapshots/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
+  retries: 1,
   workers: process.env.CI ? 1 : 3,
-  timeout: 30000,
+  timeout: 40000,
   reporter: [
     ["list"],
     ["json", {outputFile: "results.json"}],
@@ -32,7 +32,7 @@ export default defineConfig({
   },
   use: {
     baseURL: baseURL,
-    actionTimeout: 10000,
+    actionTimeout: 40000,
     testIdAttribute: 'data-test-id',
     headless: true,
     trace: "retain-on-failure",

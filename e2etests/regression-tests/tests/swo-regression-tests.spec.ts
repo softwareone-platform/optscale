@@ -1,6 +1,6 @@
 import {test} from "../../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {setLocalforageRoot} from "../../utils/localforage-auth";
+import {setLocalforageRoot} from "../../utils/localforge-auth/localforage-service";
 import {EStorageState} from "../../utils/enums";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 
