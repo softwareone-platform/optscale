@@ -9,8 +9,6 @@ The available tabs allow you to fine-tune settings for seamless collaboration an
 
 -   Invitations: Observe the invitation details, including the organization name and roles.
 
--   Capabilities: Get the list of features available for FinOps and MLOps options.
-
 -   SSH Key: View the list of available SSH keys, and quickly add a new one.
 
 -   Email Notifications: Select the categories to receive email notifications.
@@ -20,8 +18,6 @@ The available tabs allow you to fine-tune settings for seamless collaboration an
 -   Manage Organization: Edit the organization name, change the currency (if no data sources are connected), or delete the organization.
 
 -   Accept Invitations: Accept or decline invitations sent by the managers of other organizations.
-   
--   Control Capabilities: Select FinOps, MLOps, or both to tailor your settings based on financial operations, machine learning processes, or a combination of both.
 
 -   Add SSH Key: View the list of available SSH keys and quickly add a new one.
 
