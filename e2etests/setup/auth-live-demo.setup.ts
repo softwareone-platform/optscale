@@ -1,6 +1,6 @@
 import { EStorageState } from "../utils/enums";
 import { test as setup } from "../fixtures/api-fixture";
-import {getLocalforageRoot, injectLocalforage} from "../utils/localforage-auth";
+import {getLocalforageRoot, injectLocalforage} from "../utils/localforge-auth/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";
 
 setup('Login as live demo user', async ({ page }) => {
