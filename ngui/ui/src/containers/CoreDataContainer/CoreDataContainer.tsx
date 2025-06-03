@@ -7,7 +7,6 @@ import {
   GET_CURRENT_EMPLOYEE,
   GET_INVITATIONS,
   GET_ORGANIZATION_FEATURES,
-  GET_OPTSCALE_CAPABILITY,
   GET_ORGANIZATION_THEME_SETTINGS,
   GET_ORGANIZATION_PERSPECTIVES
 } from "graphql/api/restapi/queries";
@@ -26,7 +25,6 @@ type CoreDataContainerProps = {
       getDataSourcesLoading: boolean;
       getInvitationsLoading: boolean;
       getOrganizationFeaturesLoading: boolean;
-      getOptscaleCapabilityLoading: boolean;
       getOrganizationThemeSettingsLoading: boolean;
       getOrganizationPerspectivesLoading: boolean;
     };
@@ -94,13 +92,6 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     skip: skipRequest
   });
 
-  const { loading: getOptscaleCapabilityLoading, error: getOptscaleCapabilityError } = useQuery(GET_OPTSCALE_CAPABILITY, {
-    skip: skipRequest,
-    variables: {
-      organizationId
-    }
-  });
-
   const { loading: getOrganizationThemeSettingsLoading, error: getOrganizationThemeSettingsError } = useQuery(
     GET_ORGANIZATION_THEME_SETTINGS,
     {
@@ -128,7 +119,6 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     getDataSourcesError ||
     getInvitationsError ||
     getOrganizationFeaturesError ||
-    getOptscaleCapabilityError ||
     getOrganizationThemeSettingsError ||
     getOrganizationPerspectivesError;
 
@@ -142,7 +132,6 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       getDataSourcesLoading,
       getInvitationsLoading,
       getOrganizationFeaturesLoading,
-      getOptscaleCapabilityLoading,
       getOrganizationThemeSettingsLoading,
       getOrganizationPerspectivesLoading
     }

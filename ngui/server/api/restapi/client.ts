@@ -11,7 +11,6 @@ import {
   MutationUpdateOrganizationPerspectivesArgs,
   QueryOrganizationPerspectivesArgs,
   QueryOrganizationFeaturesArgs,
-  MutationUpdateOptscaleCapabilityArgs,
   QueryOrganizationConstraintArgs,
   QueryResourceCountBreakdownArgs,
   QueryExpensesDailyBreakdownArgs,
@@ -200,33 +199,6 @@ class RestApiClient extends BaseClient {
     const parsedFeatures = JSON.parse(features.value);
 
     return parsedFeatures;
-  }
-
-  async getOptscaleCapability(organizationId: string) {
-    const path = `organizations/${organizationId}/options/optscale_mode`;
-    const capability = await this.get(path);
-
-    const parsedCapability = JSON.parse(capability.value);
-
-    return parsedCapability.value;
-  }
-
-  async updateOptscaleCapability(
-    organizationId: MutationUpdateOptscaleCapabilityArgs["organizationId"],
-    value: MutationUpdateOptscaleCapabilityArgs["value"]
-  ) {
-    const path = `organizations/${organizationId}/options/optscale_mode`;
-    const capability = await this.patch(path, {
-      body: {
-        value: JSON.stringify({
-          value,
-        }),
-      },
-    });
-
-    const parsedCapability = JSON.parse(capability.value);
-
-    return parsedCapability.value;
   }
 
   async getOrganizationThemeSettings(organizationId: string) {
