@@ -1,5 +1,4 @@
 import {Locator, Page} from "@playwright/test";
-
         /**
          * Abstract class representing the base structure for all pages.
          * This class provides common functionality for interacting with web pages in Playwright tests.
@@ -19,14 +18,13 @@ import {Locator, Page} from "@playwright/test";
                 this.url = url;
                 this.main = this.page.locator('main');
             }
-        
+
             /**
              * Navigates to the URL of the page.
-             * @param {boolean} [waitForPageLoad=false] - Whether to wait for the page to fully load.
              * @returns {Promise<void>} A promise that resolves when the navigation is complete.
              */
-            async navigateToURL(waitForPageLoad = false): Promise<void> {
-                await this.page.goto(this.url, {waitUntil: waitForPageLoad ? "networkidle" : "domcontentloaded"});
+            async navigateToURL(customUrl: string = null): Promise<void> {
+                await this.page.goto( customUrl ? customUrl : this.url, {waitUntil: "load"});
             }
 
             /**
@@ -36,7 +34,7 @@ import {Locator, Page} from "@playwright/test";
              * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
              * @returns {Promise<void>} A promise that resolves when the option is selected.
              */
-            async selectFromComboBox(comboBox: Locator, option: string, closeList = false): Promise<void> {
+            async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
                 await comboBox.click();
                 await this.page.getByRole('option', {name: option, exact: true}).click();
                 if (closeList) await this.page.locator('body').click();
@@ -140,7 +138,7 @@ import {Locator, Page} from "@playwright/test";
              * @param {number} [timeout=5000] - The delay duration in milliseconds.
              * @returns {Promise<void>} A promise that resolves after the specified timeout.
              */
-            async screenshotUpdateDelay(timeout = 5000): Promise<void> {
+            async screenshotUpdateDelay(timeout: number = 5000): Promise<void> {
                 if (process.env.SCREENSHOT_UPDATE_DELAY === 'true') {
                     console.log(`Waiting for ${timeout}ms for screenshot update...`);
                     await this.page.waitForTimeout(timeout);
