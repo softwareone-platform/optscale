@@ -477,574 +477,2488 @@ export const OrganizationCleanExpansesResponseGraphQL = {
     }
 }
 
-export const OrganizationCleanExpansesResponse = {
-    "start_date": 1737500400,
-    "end_date": 1740092399,
-    "total_count": 787,
-    "total_cost": 5862.251871638754,
-    "clean_expenses": [
-        {
-            "cloud_account_id": "c5f20653-e520-488f-9cef-b61dadec2997",
-            "cloud_resource_id": "Analysis (europe-west3) europe-west3 97d170e1550eee4afc0af065b78cda302a97674c",
-            "applied_rules": [
+export const OptimizationsResponse = {
+    "total_saving": 4444.667051653359,
+    "optimizations": {
+        "abandoned_images": {
+            "count": 14,
+            "saving": 25.729114285714285,
+            "options": {
+                "days_threshold": 7,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
                 {
-                    "id": "4c12edbe-9491-40e5-a209-85ba7fff3914",
-                    "name": "Rule for GCP dev_1680758361",
-                    "pool_id": "3a248797-84f6-46b8-b6b9-9aa612105d1e"
+                    "cloud_resource_id": "1650965314046403263",
+                    "resource_name": "sunflower-lily-va-mgr-gcp-4-1-202407040959-release-4-1",
+                    "resource_id": "e4db47ba-1975-4b7d-9ab6-371def64de81",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_account_name": "GCP dev",
+                    "cloud_type": "gcp_cnr",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "saving": 2.8511400000000013,
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "d9ee26f7-b0dc-4eae-9124-bf957a63cb38",
+                        "name": "GCP dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "first_seen": 1736755200,
+                    "detected_at": 1742257236
+                },
+                {
+                    "cloud_resource_id": "9029293420080526037",
+                    "resource_name": "sunflower-lily-va-mgr-gcp",
+                    "resource_id": "270bab44-7d08-43e7-b707-b7c5c90b2ff8",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_account_name": "GCP dev",
+                    "cloud_type": "gcp_cnr",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "saving": 2.6997942857142867,
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "d9ee26f7-b0dc-4eae-9124-bf957a63cb38",
+                        "name": "GCP dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "first_seen": 1736755200,
+                    "detected_at": 1742257236
+                },
+                {
+                    "cloud_resource_id": "5077241363834787172",
+                    "resource_name": "sunflower-lily-va-dr-gcp-4-0-2215-release-4-0-en",
+                    "resource_id": "f557bcb3-ee53-4972-90bf-f36b17b9149d",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_account_name": "GCP dev",
+                    "cloud_type": "gcp_cnr",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "saving": 2.6910342857142857,
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "d9ee26f7-b0dc-4eae-9124-bf957a63cb38",
+                        "name": "GCP dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "first_seen": 1736755200,
+                    "detected_at": 1742257236
                 }
             ],
-            "employee_id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-            "first_seen": 1672531200,
-            "pool_id": "c08db139-aeae-47ac-a490-3bb865fadfbe",
-            "region": "europe-west3",
-            "resource_type": "BigQuery",
-            "service_name": "BigQuery",
-            "tags": {},
-            "last_expense": {
-                "date": 1726617600,
-                "cost": 5.377481
-            },
-            "total_cost": 1136.071894,
-            "_first_seen_date": "2023-01-01T00:00:00",
-            "_last_seen_date": "2025-02-19T00:00:00",
-            "created_at": 1694064368,
-            "last_seen": 1739941200,
-            "deleted_at": 0,
-            "id": "3e1b0bff-1e7b-4016-bc07-3b83b9185f89",
-            "meta": {
-                "cloud_console_link": null
-            },
-            "is_environment": false,
-            "saving": 0,
-            "cost": 666.666666,
-            "cloud_account_name": "GCP dev",
-            "cloud_account_type": "gcp_cnr",
-            "owner": {
-                "id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-                "name": "Edwin Gagnon"
-            },
-            "pool": {
-                "id": "c08db139-aeae-47ac-a490-3bb865fadfbe",
-                "name": "GCP dev",
-                "purpose": "budget"
-            },
-            "resource_id": "3e1b0bff-1e7b-4016-bc07-3b83b9185f89",
-            "resource_name": "Analysis (europe-west3) europe-west3",
-            "active": false,
-            "shareable": false,
-            "constraint_violated": false
+            "cloud_accounts": [
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                }
+            ],
+            "limit": 3
         },
-        {
-            "cloud_account_id": "1998447c-36bb-48d8-9c84-ce5ff8843671",
-            "cloud_resource_id": "sunflower-eu-fra",
-            "applied_rules": [
+        "abandoned_instances": {
+            "count": 26,
+            "saving": 709.457257307143,
+            "options": {
+                "days_threshold": 7,
+                "cpu_percent_threshold": 5,
+                "network_bps_threshold": 1000,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
                 {
-                    "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
-                    "name": "Rule for AWS HQ_1686203940",
-                    "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                    "resource_id": "390872bb-7f32-40ba-8cf6-b25dd80cb550",
+                    "resource_name": "aqa-eu-underutilized-instance",
+                    "cloud_resource_id": "i-gw8bwy1fbwc2spcyqhdy",
+                    "region": "Germany (Frankfurt)",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "e6162256-edd1-432d-9f0c-057deba8c9c3",
+                        "name": "Ali dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 77.76,
+                    "detected_at": 1746452792
+                },
+                {
+                    "resource_id": "42c6043b-e18f-4b56-9e18-5da954f2a182",
+                    "resource_name": "orchidAiWebsite",
+                    "cloud_resource_id": "i-0e44a71a514e20aa5",
+                    "region": "us-west-2",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "991016ed-3075-4849-9a80-632ad2fbaf32",
+                        "name": "AWS Marketing",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 56.66078037257143,
+                    "detected_at": 1748075680
+                },
+                {
+                    "resource_id": "4a9e8f07-3b3d-4b51-985c-91a22908c654",
+                    "resource_name": "orchidAiWebsite-x1",
+                    "cloud_resource_id": "i-0e44a71a514e20aa5-x1",
+                    "region": "us-west-2",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "991016ed-3075-4849-9a80-632ad2fbaf32",
+                        "name": "AWS Marketing",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 56.66078037257143,
+                    "detected_at": 1748075680
                 }
             ],
-            "employee_id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-            "first_seen": 1677628800,
-            "pool_id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-            "region": "us-west-2",
-            "resource_type": "Bucket",
-            "service_name": "AmazonS3",
-            "tags": {
-                "aws:createdBy": "IAMUser:AIDAIWGUBPAVMAWKKOLBA:s3-user"
-            },
-            "last_expense": {
-                "date": 1726531200,
-                "cost": 0.0188347846
-            },
-            "total_cost": 1004.5952778746001,
-            "meta": {
-                "cloud_console_link": "https://console.aws.amazon.com/s3/buckets/sunflower-eu-fra?region=eu-central-1&tab=objects",
-                "is_public_policy": false,
-                "is_public_acls": true
-            },
-            "_last_seen_date": "2025-02-26T00:00:00",
-            "_first_seen_date": "2023-03-01T00:00:00",
-            "active": true,
-            "constraint_violated": true,
-            "created_at": 1699509577,
-            "last_seen": 1740541881,
-            "deleted_at": 0,
-            "id": "17557535-09d9-4948-ace5-1c747972c318",
-            "is_environment": false,
-            "saving": 0,
-            "cost": 431.29569787440005,
-            "cloud_account_name": "AWS HQ",
-            "cloud_account_type": "aws_cnr",
-            "owner": {
-                "id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-                "name": "Demo User"
-            },
-            "pool": {
-                "id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-                "name": "AWS HQ",
-                "purpose": "budget"
-            },
-            "resource_id": "17557535-09d9-4948-ace5-1c747972c318",
-            "resource_name": "sunflower-eu-fra",
-            "shareable": false,
-            "traffic_expenses": [
+            "cloud_accounts": [
                 {
-                    "from": "us-west-2",
-                    "to": "ap-northeast-1",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
                 },
                 {
-                    "from": "us-west-2",
-                    "to": "ap-northeast-3",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
                 },
                 {
-                    "from": "us-west-2",
-                    "to": "eu-west-3",
-                    "usage": 1.5648e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "us-west-1",
-                    "usage": 1.5648e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "eu-west-1",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "us-east-2",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "ap-southeast-2",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "External",
-                    "usage": 1943.4743056578,
-                    "cost": 167.6547845046
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "sa-east-1",
-                    "usage": 1.5648e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "ap-northeast-2",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "us-west-2",
-                    "usage": 2.3281884735999996,
-                    "cost": 0.046563769399999996
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "eu-west-2",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "us-east-1",
-                    "usage": 0.24232603200000002,
-                    "cost": 0.0048465211999999995
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "ap-southeast-1",
-                    "usage": 0.014765501200000001,
-                    "cost": 0.00029530999999999996
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "ca-central-1",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "ap-south-1",
-                    "usage": 1.3040000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-west-2",
-                    "to": "eu-north-1",
-                    "usage": 99.12526590759998,
-                    "cost": 1.9825053181999999
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
                 }
-            ]
+            ],
+            "limit": 3
         },
-        {
-            "cloud_account_id": "1998447c-36bb-48d8-9c84-ce5ff8843671",
-            "cloud_resource_id": "75f200eb-1176-44b5-be56-01e9b6386a9a",
-            "_first_seen_date": "2024-04-18T00:00:00",
-            "_last_seen_date": "2025-03-04T00:00:00",
-            "applied_rules": [
+        "abandoned_kinesis_streams": {
+            "count": 1,
+            "saving": 25.919999999999995,
+            "options": {
+                "days_threshold": 7,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
                 {
-                    "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
-                    "name": "Rule for AWS HQ_1686203940",
-                    "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                    "cloud_resource_id": "OMtest",
+                    "resource_name": null,
+                    "resource_id": "3dea3735-41d6-43eb-a7f4-5ff5c82251ef",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "d950d14c-645a-4372-a3da-1c034c8ff028",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "shardhours_capacity": 1,
+                    "shardhours_price": 0.018000000000000002,
+                    "saving": 25.919999999999995,
+                    "detected_at": 1733499641
                 }
             ],
-            "employee_id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-            "first_seen": 1713398400,
-            "meta": {
-                "payment_option": "No Upfront",
-                "offering_type": "ComputeSavingsPlans",
-                "purchase_term": "1yr",
-                "applied_region": "Any",
-                "start": 1726746194,
-                "end": 1758282193,
-                "cloud_console_link": null
-            },
-            "pool_id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-            "region": "global",
-            "resource_type": "Savings Plan",
-            "service_name": "AmazonEC2",
-            "tags": {},
-            "last_expense": {
-                "date": 1727654400,
-                "cost": 3.6
-            },
-            "total_cost": 431.99999999999994,
-            "created_at": 1726837237,
-            "last_seen": 1741046400,
-            "deleted_at": 0,
-            "id": "e26f009f-ff82-4fc7-9417-1c8d920ffb2d",
-            "is_environment": false,
-            "saving": 0,
-            "cost": 201.60000000000002,
-            "cloud_account_name": "AWS HQ",
-            "cloud_account_type": "aws_cnr",
-            "owner": {
-                "id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-                "name": "Demo User"
-            },
-            "pool": {
-                "id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-                "name": "AWS HQ",
-                "purpose": "budget"
-            },
-            "resource_id": "e26f009f-ff82-4fc7-9417-1c8d920ffb2d",
-            "resource_name": null,
-            "active": false,
-            "shareable": false,
-            "constraint_violated": false
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
         },
-        {
-            "cloud_account_id": "c5f20653-e520-488f-9cef-b61dadec2997",
-            "cloud_resource_id": "Static Ip Charge us-central1 97d170e1550eee4afc0af065b78cda302a97674c",
-            "applied_rules": [
+        "abandoned_load_balancers": {
+            "count": 1,
+            "saving": 32.04762284392897,
+            "options": {
+                "days_threshold": 7,
+                "bytes_sent_threshold": 0,
+                "packets_sent_threshold": 0,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
                 {
-                    "id": "4c12edbe-9491-40e5-a209-85ba7fff3914",
-                    "name": "Rule for GCP dev_1680758361",
-                    "pool_id": "3a248797-84f6-46b8-b6b9-9aa612105d1e"
+                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.network/loadbalancers/aqa-abandoned-load-balancer",
+                    "resource_name": "aqa-abandoned-load-balancer",
+                    "resource_id": "602491ee-ded4-43e8-9547-01055bd40945",
+                    "cloud_account_id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "cloud_account_name": "Azure QA",
+                    "cloud_type": "azure_cnr",
+                    "saving": 32.04762284392897,
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "9c7651f7-142a-4b41-9889-6ac3aa454525",
+                        "name": "Azure QA",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "detected_at": 1748268528
                 }
             ],
-            "employee_id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-            "first_seen": 1678431600,
-            "pool_id": "c08db139-aeae-47ac-a490-3bb865fadfbe",
-            "region": "us-central1",
-            "resource_type": "Compute Engine",
-            "service_name": "Compute Engine",
-            "tags": {},
-            "last_expense": {
-                "date": 1726617600,
-                "cost": 0.281786
-            },
-            "total_cost": 323.327002,
-            "_first_seen_date": "2023-03-10T00:00:00",
-            "_last_seen_date": "2025-02-19T00:00:00",
-            "created_at": 1694064368,
-            "last_seen": 1739934000,
-            "deleted_at": 0,
-            "id": "bd864c28-8b3e-41b4-a714-48cd538c9304",
-            "meta": {
-                "cloud_console_link": null
-            },
-            "is_environment": false,
-            "saving": 0,
-            "cost": 150.06365000000002,
-            "cloud_account_name": "GCP dev",
-            "cloud_account_type": "gcp_cnr",
-            "owner": {
-                "id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-                "name": "Edwin Gagnon"
-            },
-            "pool": {
-                "id": "c08db139-aeae-47ac-a490-3bb865fadfbe",
-                "name": "GCP dev",
-                "purpose": "budget"
-            },
-            "resource_id": "bd864c28-8b3e-41b4-a714-48cd538c9304",
-            "resource_name": "Static Ip Charge us-central1",
-            "active": false,
-            "shareable": false,
-            "constraint_violated": false
+            "cloud_accounts": [
+                {
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
+                }
+            ],
+            "limit": 3
         },
-        {
-            "cloud_account_id": "48335043-03c5-4178-a215-ca51e759ec87",
-            "cloud_resource_id": "i-0e464cfbf9650bd21",
-            "applied_rules": [
+        "cvos_opportunities": {
+            "count": 0,
+            "saving": 0,
+            "options": {
+                "days_threshold": 90,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [],
+            "cloud_accounts": []
+        },
+        "inactive_console_users": {
+            "count": 3,
+            "options": {
+                "days_threshold": 91,
+                "skip_cloud_accounts": []
+            },
+            "items": [
                 {
-                    "id": "6cceb6b7-53af-4b28-b824-dfe145e247c7",
-                    "name": "Rule for AWS Marketing_1686203897",
-                    "pool_id": "31595720-ccc1-47b1-9366-e7f9774533b0"
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "user_name": "sf-linked",
+                    "user_id": "AIDA4YBYU3OIIQXT6HSYY",
+                    "last_used": 1727693669,
+                    "detected_at": 1740916782
+                },
+                {
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "user_name": "aqa-user",
+                    "user_id": "AIDAIKFDVXZELQ5NVB2EQ",
+                    "last_used": 1652869334,
+                    "detected_at": 1691561191
+                },
+                {
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "user_name": "pk-full",
+                    "user_id": "AIDAIPPYCHRYQONGDLRJS",
+                    "last_used": 1629370721,
+                    "detected_at": 1691561191
                 }
             ],
-            "employee_id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-            "first_seen": 1677628800,
-            "meta": {
-                "os": "Linux",
-                "preinstalled": "NA",
-                "flavor": "t2.large",
-                "cloud_console_link": "https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#InstanceDetails:instanceId=i-0e464cfbf9650bd21",
-                "stopped_allocated": false,
-                "last_seen_not_stopped": 1726662074,
-                "spotted": false,
-                "security_groups": [
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "inactive_users": {
+            "count": 61,
+            "options": {
+                "days_threshold": 91,
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_type": "gcp_cnr",
+                    "cloud_account_name": "GCP dev",
+                    "user_name": "sf-sunflower",
+                    "user_id": "103420622376694204097",
+                    "last_used": 0,
+                    "detected_at": 1745746869
+                },
+                {
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "user_name": "yr-admin-console",
+                    "user_id": "AIDAI7XVSPHIAPBZ4MY6U",
+                    "last_used": 1730551260,
+                    "detected_at": 1743772265
+                },
+                {
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "user_name": "mk-full",
+                    "user_id": "AIDAQUWY5LJ4ZOHQ32TBF",
+                    "last_used": 1729158992,
+                    "detected_at": 1742387255
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "insecure_security_groups": {
+            "count": 36,
+            "options": {
+                "excluded_pools": {},
+                "insecure_ports": [
                     {
-                        "GroupName": "websites",
-                        "GroupId": "sg-0d99e8ecd70254ebe"
+                        "protocol": "tcp",
+                        "port": 22
+                    },
+                    {
+                        "protocol": "tcp",
+                        "port": 3389
+                    },
+                    {
+                        "protocol": "tcp",
+                        "port": 1080
                     }
                 ],
-                "image_id": "ami-0896ae01b544f65a8",
-                "vpc_id": "vpc-f9b9c481"
+                "skip_cloud_accounts": []
             },
-            "pool_id": "135a9cf3-d7e6-4753-8d07-f7241d15ef8b",
-            "region": "us-west-2",
-            "resource_type": "Instance",
-            "service_name": "AmazonEC2",
-            "tags": {
-                "aws:createdBy": "IAMUser:AIDA4YBYU3OICYSASYZ2E:jgelbero"
-            },
-            "last_expense": {
-                "date": 1726531200,
-                "cost": 0.2790732092
-            },
-            "total_cost": 263.3072788166,
-            "cloud_created_at": 1607339156,
-            "has_metrics": true,
-            "_last_seen_date": "2025-02-26T00:00:00",
-            "_first_seen_date": "2023-03-01T00:00:00",
-            "active": true,
-            "created_at": 1699509584,
-            "last_seen": 1740541881,
-            "deleted_at": 0,
-            "id": "95f51e0c-cb02-4a43-976a-91ef96aa80a2",
-            "is_environment": false,
-            "saving": 205.78443460166187,
-            "cost": 120.511563878,
-            "cloud_account_name": "AWS Marketing",
-            "cloud_account_type": "aws_cnr",
-            "owner": {
-                "id": "6d9549a1-328f-4b7e-9668-afae2eaf3ed2",
-                "name": "Edwin Gagnon"
-            },
-            "pool": {
-                "id": "135a9cf3-d7e6-4753-8d07-f7241d15ef8b",
-                "name": "AWS Marketing",
-                "purpose": "budget"
-            },
-            "resource_id": "95f51e0c-cb02-4a43-976a-91ef96aa80a2",
-            "resource_name": "finops-practice",
-            "shareable": false,
-            "constraint_violated": false,
-            "traffic_expenses": [
+            "items": [
                 {
-                    "from": "us-west-2",
-                    "to": "us-west-2",
-                    "usage": 0.0027681026,
-                    "cost": 2.768e-05
+                    "cloud_resource_id": "i-089bfd8dd506b8f34",
+                    "resource_name": "sf-instance-for-power-schedule",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "resource_id": null,
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "security_group_name": "orchid_ml_instances",
+                    "security_group_id": "sg-0b9a441aca22c0856",
+                    "region": "eu-north-1",
+                    "is_excluded": false,
+                    "insecure_ports": [
+                        {
+                            "port": 22,
+                            "protocol": "tcp"
+                        },
+                        {
+                            "port": "*",
+                            "protocol": "*"
+                        }
+                    ],
+                    "detected_at": 1747740589
                 },
                 {
-                    "from": "us-west-2",
-                    "to": "External",
-                    "usage": 4.759253809800001,
-                    "cost": 0.4283328264
+                    "cloud_resource_id": "i-081ab9de8dc20914c",
+                    "resource_name": "tm-arcee",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "resource_id": null,
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "security_group_name": "tmTest",
+                    "security_group_id": "sg-0940ce3304d7870e4",
+                    "region": "us-east-1",
+                    "is_excluded": false,
+                    "insecure_ports": [
+                        {
+                            "port": 22,
+                            "protocol": "tcp"
+                        }
+                    ],
+                    "detected_at": 1747328207
                 },
                 {
-                    "from": "us-west-2",
-                    "to": "eu-west-1",
-                    "usage": 0.00016853419999999998,
-                    "cost": 3.3716e-06
-                }
-            ]
-        },
-        {
-            "cloud_account_id": "1998447c-36bb-48d8-9c84-ce5ff8843671",
-            "cloud_resource_id": "sunflower-infra-backup",
-            "applied_rules": [
-                {
-                    "id": "7299520a-2864-474e-8e40-fc998e2dd2ab",
-                    "name": "Rule for AWS HQ_1686203940",
-                    "pool_id": "7ca74dce-f519-4564-9696-1e31242bdfad"
+                    "cloud_resource_id": "i-0436ee72bb653bf8a",
+                    "resource_name": "aqa_us_instance_for_migration",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "resource_id": "16b60f14-5140-4e3e-9650-ea1354c503f2",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "security_group_name": "launch-wizard-2",
+                    "security_group_id": "sg-01e701998068ab9e3",
+                    "region": "us-west-1",
+                    "is_excluded": false,
+                    "insecure_ports": [
+                        {
+                            "port": 22,
+                            "protocol": "tcp"
+                        }
+                    ],
+                    "detected_at": 1745833439
                 }
             ],
-            "employee_id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-            "first_seen": 1683072000,
-            "pool_id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-            "region": "us-east-2",
-            "resource_type": "Bucket",
-            "service_name": "AmazonS3",
-            "tags": {
-                "aws:createdBy": "IAMUser:AIDAQUWY5LJ43W43UDRWX:ds-temp-admin"
-            },
-            "last_expense": {
-                "date": 1726531200,
-                "cost": 0.0013536803
-            },
-            "total_cost": 252.64608343400005,
-            "meta": {
-                "cloud_console_link": "https://console.aws.amazon.com/s3/buckets/sunflower-infra-backup?region=us-east-2&tab=objects",
-                "is_public_policy": false,
-                "is_public_acls": false
-            },
-            "_last_seen_date": "2025-02-26T00:00:00",
-            "_first_seen_date": "2023-05-03T00:00:00",
-            "active": true,
-            "created_at": 1699509581,
-            "last_seen": 1740541881,
-            "deleted_at": 0,
-            "id": "18291a2d-6721-48f9-9a9b-e92b8a8ecf33",
-            "is_environment": false,
-            "saving": 0,
-            "cost": 114.4432149662,
-            "cloud_account_name": "AWS HQ",
-            "cloud_account_type": "aws_cnr",
-            "owner": {
-                "id": "36212cb1-0f4c-4c3e-8479-487df1b4ce58",
-                "name": "Demo User"
-            },
-            "pool": {
-                "id": "8f78318e-e5d3-4fa2-9e38-2fe7f9c7aa21",
-                "name": "AWS HQ",
-                "purpose": "budget"
-            },
-            "resource_id": "18291a2d-6721-48f9-9a9b-e92b8a8ecf33",
-            "resource_name": "sunflower-infra-backup",
-            "shareable": false,
-            "constraint_violated": false,
-            "traffic_expenses": [
+            "cloud_accounts": [
                 {
-                    "from": "us-east-2",
-                    "to": "us-east-1",
-                    "usage": 1.5312e-06,
-                    "cost": 1.56e-08
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
                 },
                 {
-                    "from": "us-east-2",
-                    "to": "External",
-                    "usage": 0.11712339279999998,
-                    "cost": 0.010541115600000001
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
                 },
                 {
-                    "from": "us-east-2",
-                    "to": "eu-west-2",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
                 },
                 {
-                    "from": "us-east-2",
-                    "to": "us-west-1",
-                    "usage": 1.5312e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-southeast-1",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-south-1",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-northeast-1",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-northeast-3",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "eu-west-1",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "eu-north-1",
-                    "usage": 1.5312e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "eu-west-3",
-                    "usage": 1.5312e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-southeast-2",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ca-central-1",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "us-west-2",
-                    "usage": 1.5312e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "sa-east-1",
-                    "usage": 1.5312e-06,
-                    "cost": 3.12e-08
-                },
-                {
-                    "from": "us-east-2",
-                    "to": "ap-northeast-2",
-                    "usage": 1.2760000000000001e-06,
-                    "cost": 2.6e-08
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
                 }
-            ]
+            ],
+            "limit": 3
+        },
+        "instance_generation_upgrade": {
+            "count": 1,
+            "saving": 12.6144,
+            "options": {
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "i-gw8csaxjubfrl7s2e1ip",
+                    "resource_name": "aqa-instance-generation-upgrade",
+                    "resource_id": "b8075054-7bc3-417b-a598-4e52f5327acf",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "region": "Germany (Frankfurt)",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "e6162256-edd1-432d-9f0c-057deba8c9c3",
+                        "name": "Ali dev",
+                        "purpose": "budget"
+                    },
+                    "saving": 12.6144,
+                    "recommended_flavor": "ecs.t6-c1m1.large",
+                    "is_excluded": false,
+                    "flavor": "ecs.t5-c1m1.large",
+                    "detected_at": 1730595055
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "instance_migration": {
+            "count": 2,
+            "saving": 3.168000000000001,
+            "options": {
+                "excluded_pools": {
+                    "f6fafb13-747b-4cb3-bee6-0cb91bc56fbb": true
+                },
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "saving": 1.7279999999999998,
+                    "flavor": "t3.micro",
+                    "current_region": "us-west-2",
+                    "recommended_region": "eu-north-1",
+                    "cloud_resource_id": "i-0c84e6b7499a93600",
+                    "resource_name": "wg-frankfurt",
+                    "resource_id": "04e73864-3466-49ea-aa2b-684390a4212d",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "is_excluded": false,
+                    "detected_at": 1744215836
+                },
+                {
+                    "saving": 1.4400000000000013,
+                    "flavor": "ecs.t6-c1m1.large",
+                    "current_region": "Germany (Frankfurt)",
+                    "recommended_region": "UK (London)",
+                    "cloud_resource_id": "i-gw88picys2t778uzra24",
+                    "resource_name": "aqa-instance-migration",
+                    "resource_id": "3a513d0d-d326-4618-87f4-16444a7e7131",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "is_excluded": false,
+                    "detected_at": 1735609490
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "instance_subscription": {
+            "count": 4,
+            "saving": 57.84533333333334,
+            "options": {
+                "days_threshold": 90,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "monthly_saving": 20.080000000000005,
+                    "annually_monthly_saving": 28.73166666666667,
+                    "saving": 28.73166666666667,
+                    "invoice_discount": 0.0,
+                    "flavor": "ecs.n4.large",
+                    "region": "Germany (Frankfurt)",
+                    "cloud_resource_id": "i-gw8bwy1fbwc2spcyqhdy",
+                    "resource_name": "aqa-eu-underutilized-instance",
+                    "resource_id": "390872bb-7f32-40ba-8cf6-b25dd80cb550",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "is_excluded": false,
+                    "detected_at": 1691393267
+                },
+                {
+                    "monthly_saving": 10.654399999999995,
+                    "annually_monthly_saving": 15.484399999999997,
+                    "saving": 15.484399999999997,
+                    "invoice_discount": 0.07,
+                    "flavor": "ecs.t5-c1m1.large",
+                    "region": "Germany (Frankfurt)",
+                    "cloud_resource_id": "i-gw8csaxjubfrl7s2e1ip",
+                    "resource_name": "aqa-instance-generation-upgrade",
+                    "resource_id": "b8075054-7bc3-417b-a598-4e52f5327acf",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "is_excluded": false,
+                    "detected_at": 1736301809
+                },
+                {
+                    "monthly_saving": 6.343200000000003,
+                    "annually_monthly_saving": 9.609866666666672,
+                    "saving": 9.609866666666672,
+                    "invoice_discount": 0.06999999999999999,
+                    "flavor": "ecs.t6-c1m1.large",
+                    "region": "Germany (Frankfurt)",
+                    "cloud_resource_id": "i-gw88picys2t778uzra24",
+                    "resource_name": "aqa-instance-migration",
+                    "resource_id": "3a513d0d-d326-4618-87f4-16444a7e7131",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "is_excluded": false,
+                    "detected_at": 1736215289
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "instances_for_shutdown": {
+            "count": 12,
+            "saving": 354.32370477102626,
+            "options": {
+                "days_threshold": 15,
+                "cpu_percent_threshold": 6,
+                "network_bps_threshold": 1001,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "resource_id": "390872bb-7f32-40ba-8cf6-b25dd80cb550",
+                    "resource_name": "aqa-eu-underutilized-instance",
+                    "cloud_resource_id": "i-gw8bwy1fbwc2spcyqhdy",
+                    "region": "Germany (Frankfurt)",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "e6162256-edd1-432d-9f0c-057deba8c9c3",
+                        "name": "Ali dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "inactivity_periods": [
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 0
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 23
+                            }
+                        }
+                    ],
+                    "saving": 77.75999999999999,
+                    "detected_at": 1691393267
+                },
+                {
+                    "resource_id": "3314fb57-6226-4fea-aa77-b9381f659768",
+                    "resource_name": "sunflowerRuWebsite",
+                    "cloud_resource_id": "i-02b64bf06fa8263e1",
+                    "region": "us-west-2",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "991016ed-3075-4849-9a80-632ad2fbaf32",
+                        "name": "AWS Marketing",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "inactivity_periods": [
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 1
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 3
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 16
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 16
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 19
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 21
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 23
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 2
+                            },
+                            "end": {
+                                "day_of_week": 1,
+                                "hour": 4
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 15
+                            },
+                            "end": {
+                                "day_of_week": 1,
+                                "hour": 15
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 1
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 2,
+                                "hour": 22
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 22
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 3,
+                                "hour": 0
+                            },
+                            "end": {
+                                "day_of_week": 3,
+                                "hour": 5
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 3,
+                                "hour": 14
+                            },
+                            "end": {
+                                "day_of_week": 3,
+                                "hour": 14
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 3
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 3
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 22
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 22
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 1
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 2
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 4
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 4
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 7
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 7
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 16
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 21
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 0
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 4
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 4
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 6
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 6
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 8
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 8
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 10
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 10
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 13
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 14
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 19
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 19
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 23
+                            }
+                        }
+                    ],
+                    "saving": 50.78219586460714,
+                    "detected_at": 1691562991
+                },
+                {
+                    "resource_id": "42c6043b-e18f-4b56-9e18-5da954f2a182",
+                    "resource_name": "orchidAiWebsite",
+                    "cloud_resource_id": "i-0e44a71a514e20aa5",
+                    "region": "us-west-2",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS Marketing",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "991016ed-3075-4849-9a80-632ad2fbaf32",
+                        "name": "AWS Marketing",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "inactivity_periods": [
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 0
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 9
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 12
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 19
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 0,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 0,
+                                "hour": 23
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 2
+                            },
+                            "end": {
+                                "day_of_week": 1,
+                                "hour": 9
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 11
+                            },
+                            "end": {
+                                "day_of_week": 1,
+                                "hour": 11
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 13
+                            },
+                            "end": {
+                                "day_of_week": 1,
+                                "hour": 15
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 1,
+                                "hour": 19
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 5
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 2,
+                                "hour": 7
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 10
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 2,
+                                "hour": 12
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 18
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 2,
+                                "hour": 20
+                            },
+                            "end": {
+                                "day_of_week": 2,
+                                "hour": 21
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 2,
+                                "hour": 23
+                            },
+                            "end": {
+                                "day_of_week": 3,
+                                "hour": 8
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 3,
+                                "hour": 10
+                            },
+                            "end": {
+                                "day_of_week": 3,
+                                "hour": 21
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 0
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 6
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 8
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 8
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 10
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 13
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 15
+                            },
+                            "end": {
+                                "day_of_week": 4,
+                                "hour": 19
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 4,
+                                "hour": 21
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 1
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 3
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 14
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 16
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 17
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 19
+                            },
+                            "end": {
+                                "day_of_week": 5,
+                                "hour": 20
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 5,
+                                "hour": 22
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 5
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 9
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 9
+                            }
+                        },
+                        {
+                            "start": {
+                                "day_of_week": 6,
+                                "hour": 11
+                            },
+                            "end": {
+                                "day_of_week": 6,
+                                "hour": 23
+                            }
+                        }
+                    ],
+                    "saving": 47.71739592685,
+                    "detected_at": 1724031758
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "instances_in_stopped_state_for_a_long_time": {
+            "count": 2,
+            "saving": 42.76290293421905,
+            "options": {
+                "days_threshold": 2,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.compute/virtualmachines/aqa-stopped-not-deallocated",
+                    "resource_name": "aqa-stopped-not-deallocated",
+                    "resource_id": "c4b19b52-f712-4628-8b0f-27f0e80e9634",
+                    "cloud_account_id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "cloud_type": "azure_cnr",
+                    "cloud_account_name": "Azure QA",
+                    "cost_in_stopped_state": 465.5137535271979,
+                    "saving": 33.58380293421905,
+                    "region": "Germany West Central",
+                    "is_excluded": false,
+                    "last_seen_active": 0,
+                    "detected_at": 1708778088
+                },
+                {
+                    "cloud_resource_id": "i-gw852sv7ve9um1l6d0mf",
+                    "resource_name": "aqa-stopped-not-deallocated-1",
+                    "resource_id": "5095ebdb-4d4c-4287-bdb9-32ab19e548c6",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "cost_in_stopped_state": 18.821979087802767,
+                    "saving": 9.179099999999998,
+                    "region": "Germany (Frankfurt)",
+                    "is_excluded": false,
+                    "last_seen_active": 0,
+                    "detected_at": 1737936467
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "nebius_migration": {
+            "count": 0,
+            "saving": 0,
+            "options": {
+                "days_threshold": 30,
+                "skip_cloud_accounts": []
+            },
+            "items": [],
+            "cloud_accounts": []
+        },
+        "obsolete_images": {
+            "count": 129,
+            "saving": 249.6074958780286,
+            "options": {
+                "days_threshold": 7,
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "ami-06f4e737af7d45d1b",
+                    "resource_name": "sunflower_lily_VA_DR_AWS_3_9_2066-release_3_9",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "last_used": 0,
+                    "saving": 5.263734373,
+                    "snapshots": [
+                        {
+                            "cloud_resource_id": "snap-0b14b0f5690db4384",
+                            "resource_id": "b9d90863-9887-4354-a97f-6ce9aecbb375",
+                            "cost": 2.6318671865
+                        }
+                    ],
+                    "first_seen": 1667909174,
+                    "detected_at": 1714378729
+                },
+                {
+                    "cloud_resource_id": "ami-04c8e04f79cc9f5ac",
+                    "resource_name": "sunflower_lily_VA_DR_AWS_4_1_202407040959-release_4_1_en",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "me-central-1",
+                    "last_used": 0,
+                    "saving": 5.1409960916,
+                    "snapshots": [
+                        {
+                            "cloud_resource_id": "snap-017e5e174ce9d3b3a",
+                            "resource_id": "52acdfbf-d973-412a-a2c0-ea37612e7716",
+                            "cost": 2.5704980458
+                        }
+                    ],
+                    "first_seen": 1726655551,
+                    "detected_at": 1727270249
+                },
+                {
+                    "cloud_resource_id": "ami-03c0d4d9fd012643f",
+                    "resource_name": "sunflower_lily_VA_MGR_AWS_4_1_202401241136-release_4_1_en",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "me-central-1",
+                    "last_used": 0,
+                    "saving": 5.0726757806,
+                    "snapshots": [
+                        {
+                            "cloud_resource_id": "snap-0ad9c7fe4a98f3c65",
+                            "resource_id": "cc24ac9f-5c87-45e6-b291-0b862d21dd6e",
+                            "cost": 2.5363378903
+                        }
+                    ],
+                    "first_seen": 1722336484,
+                    "detected_at": 1722941999
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "obsolete_ips": {
+            "count": 23,
+            "saving": 158.0875175070528,
+            "options": {
+                "days_threshold": 7,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "3898766375811007470",
+                    "resource_name": "aqa-gcp-ip-address",
+                    "resource_id": "d165a42f-2426-4d6f-bba4-084f24ca2bb4",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_type": "gcp_cnr",
+                    "cloud_account_name": "GCP dev",
+                    "cost_not_active_ip": 27.70687714140177,
+                    "saving": 13.88343870967742,
+                    "region": "us-central1",
+                    "is_excluded": false,
+                    "folder_id": null,
+                    "zone_id": null,
+                    "last_seen_active": 0,
+                    "detected_at": 1737971909
+                },
+                {
+                    "cloud_resource_id": "417727921023910526",
+                    "resource_name": "issueip",
+                    "resource_id": "aae15ccc-1d0e-4d8e-bb61-19df1135f779",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_type": "gcp_cnr",
+                    "cloud_account_name": "GCP dev",
+                    "cost_not_active_ip": 2.9097620000000006,
+                    "saving": 13.429670769230773,
+                    "region": "us-central1",
+                    "is_excluded": false,
+                    "folder_id": null,
+                    "zone_id": null,
+                    "last_seen_active": 1747214476,
+                    "detected_at": 1747827090
+                },
+                {
+                    "cloud_resource_id": "eip-gw80wgx89t7t7p3x2ah7y",
+                    "resource_name": "aqa-obsolete-ip",
+                    "resource_id": "d9c0cae7-75d8-412f-8880-3bd18c73dbce",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "cost_not_active_ip": 24.054999316513538,
+                    "saving": 8.4375,
+                    "region": "Germany (Frankfurt)",
+                    "is_excluded": false,
+                    "folder_id": null,
+                    "zone_id": null,
+                    "last_seen_active": 1733911282,
+                    "detected_at": 1734516816
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                },
+                {
+                    "id": "17fb8e94-99e4-408a-899f-b579ea480383",
+                    "name": "Dev environment",
+                    "type": "azure_cnr"
+                },
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "obsolete_snapshot_chains": {
+            "count": 3,
+            "saving": 1.8632038200000003,
+            "options": {
+                "days_threshold": 3,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "sl-gw84m857olspqve95jb9",
+                    "resource_name": null,
+                    "resource_id": "a8ae069f-673e-4dbd-b6e5-a8024646502b",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "saving": 1.5232010800000002,
+                    "region": "Germany (Frankfurt)",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": [
+                        {
+                            "cloud_resource_id": "s-gw8f5fd047rk6z0mpkx8",
+                            "name": "sunflower_lily_VA_DR_Alibaba_3_9_om20221228-feature_cloud7_en",
+                            "cloud_console_link": "https://ecs.console.aliyun.com/#/snapshot/region/eu-central-1?snapshotIds=s-gw8f5fd047rk6z0mpkx8"
+                        }
+                    ],
+                    "first_seen": 1745452800,
+                    "last_seen": 1748044800,
+                    "detected_at": 1726382012
+                },
+                {
+                    "cloud_resource_id": "sl-gw8d2sicdq9oq331hb05",
+                    "resource_name": null,
+                    "resource_id": null,
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "saving": 0.18018431999999995,
+                    "region": "Germany (Frankfurt)",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": [
+                        {
+                            "cloud_resource_id": "s-gw85a66uwrbpu8ef27r4",
+                            "name": "ds-test",
+                            "cloud_console_link": "https://ecs.console.aliyun.com/#/snapshot/region/eu-central-1?snapshotIds=s-gw85a66uwrbpu8ef27r4"
+                        }
+                    ],
+                    "first_seen": 1745452800,
+                    "last_seen": 1748044800,
+                    "detected_at": 1726382012
+                },
+                {
+                    "cloud_resource_id": "sl-gw8563b8gddmynuojvwy",
+                    "resource_name": null,
+                    "resource_id": null,
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "saving": 0.15981842000000002,
+                    "region": "Germany (Frankfurt)",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": [
+                        {
+                            "cloud_resource_id": "s-gw8bhucwvgg0y050fe8z",
+                            "name": "SFChainLastUsedtesting",
+                            "cloud_console_link": "https://ecs.console.aliyun.com/#/snapshot/region/eu-central-1?snapshotIds=s-gw8bhucwvgg0y050fe8z"
+                        }
+                    ],
+                    "first_seen": 1745452800,
+                    "last_seen": 1748044800,
+                    "detected_at": 1726382012
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "obsolete_snapshots": {
+            "count": 95,
+            "saving": 220.69851429129528,
+            "options": {
+                "days_threshold": 1,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "snap-07609592440ab5da4",
+                    "resource_name": "tulipVPN_1662485894.331822",
+                    "resource_id": "9be5050f-20ae-4a36-b31b-963c70be605f",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "saving": 13.5578773116,
+                    "region": "us-west-2",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": null,
+                    "first_seen": 1745625600,
+                    "last_seen": 1748217600,
+                    "detected_at": 1742809365
+                },
+                {
+                    "cloud_resource_id": "snap-035cab587ba161af9",
+                    "resource_name": null,
+                    "resource_id": "7f2eb8f4-6700-4533-be5c-8515b7d140b9",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "saving": 9.884792628000001,
+                    "region": "ap-southeast-3",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": null,
+                    "first_seen": 1745625600,
+                    "last_seen": 1748217600,
+                    "detected_at": 1726760735
+                },
+                {
+                    "cloud_resource_id": "snap-0754bb4b2af2e62aa",
+                    "resource_name": null,
+                    "resource_id": "096cbab8-7e7f-49a2-b30c-63660e09d4c5",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "saving": 4.885684248,
+                    "region": "us-east-2",
+                    "folder_id": null,
+                    "last_used": 0,
+                    "is_excluded": false,
+                    "child_snapshots": null,
+                    "first_seen": 1745625600,
+                    "last_seen": 1748217600,
+                    "detected_at": 1742809365
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "reserved_instances": {
+            "count": 9,
+            "saving": 556.892,
+            "options": {
+                "days_threshold": 90,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "saving": 372.2213333333334,
+                    "average_saving": 127.08000000000004,
+                    "flavor": "r4.2xlarge",
+                    "region": "us-west-2",
+                    "cloud_resource_id": "i-01737496f6856ac0f",
+                    "resource_name": "sunflower Live Cloud Migration",
+                    "resource_id": "24e460a7-8c01-4769-b051-d8fbed2fe13f",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "is_excluded": false,
+                    "detected_at": 1748226880,
+                    "cloud_account_name": "AWS HQ"
+                },
+                {
+                    "saving": 74.78266666666664,
+                    "average_saving": 5.183999999999983,
+                    "flavor": "t3.xlarge",
+                    "region": "us-west-2",
+                    "cloud_resource_id": "i-082b1a163698b8ede",
+                    "resource_name": "sunflowerWebSite",
+                    "resource_id": "68f9991f-8f00-454a-9c1c-30e4177a21d7",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "is_excluded": false,
+                    "detected_at": 1696815308,
+                    "cloud_account_name": "AWS Marketing"
+                },
+                {
+                    "saving": 29.465333333333334,
+                    "average_saving": 3.5279999999999987,
+                    "flavor": "t2.large",
+                    "region": "us-west-2",
+                    "cloud_resource_id": "i-0e464cfbf9650bd21",
+                    "resource_name": "finops-practice",
+                    "resource_id": "f1da1db8-b50b-402b-a78d-0b3c05cac07a",
+                    "cloud_account_id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "cloud_type": "aws_cnr",
+                    "is_excluded": false,
+                    "detected_at": 1691562991,
+                    "cloud_account_name": "AWS Marketing"
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "rightsizing_instances": {
+            "count": 20,
+            "saving": 3801.26,
+            "options": {
+                "days_threshold": 3,
+                "metric": {
+                    "type": "avg",
+                    "limit": 80
+                },
+                "excluded_flavor_regex": "",
+                "excluded_pools": {
+                    "3a248797-84f6-46b8-b6b9-9aa612105d1e": true,
+                    "9ef6f469-434d-4937-80b0-6eea3085deb6": true
+                },
+                "recommended_flavor_cpu_min": 1,
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "i-01737496f6856ac0f",
+                    "resource_name": "sunflower Live Cloud Migration",
+                    "resource_id": "24e460a7-8c01-4769-b051-d8fbed2fe13f",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "flavor": "r4.2xlarge",
+                    "recommended_flavor": "r4.large",
+                    "saving": 760.32,
+                    "saving_percent": 82.47,
+                    "current_cost": 460.94,
+                    "recommended_flavor_cost": 126.72,
+                    "cpu": 8,
+                    "recommended_flavor_cpu": 2,
+                    "recommended_flavor_ram": 15616,
+                    "cpu_usage": 10.96,
+                    "is_excluded": false,
+                    "cpu_peak": 19.17,
+                    "cpu_quantile_50": 6.81,
+                    "cpu_quantile_99": 19.07,
+                    "project_cpu_avg": 43.85,
+                    "project_cpu_peak": 76.67,
+                    "projected_cpu_qtl_50": 27.24,
+                    "projected_cpu_qtl_99": 76.28,
+                    "detected_at": 1748226880
+                },
+                {
+                    "cloud_resource_id": "i-01737496f6856ac0f-x1",
+                    "resource_name": "sunflower Live Cloud Migration-x1",
+                    "resource_id": "32bb960a-9b06-4796-81f0-8a2cafebf101",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "flavor": "r4.2xlarge",
+                    "recommended_flavor": "r4.large",
+                    "saving": 760.32,
+                    "saving_percent": 82.47,
+                    "current_cost": 460.94,
+                    "recommended_flavor_cost": 126.72,
+                    "cpu": 8,
+                    "recommended_flavor_cpu": 2,
+                    "recommended_flavor_ram": 15616,
+                    "cpu_usage": 10.96,
+                    "is_excluded": false,
+                    "cpu_peak": 19.17,
+                    "cpu_quantile_50": 6.81,
+                    "cpu_quantile_99": 19.07,
+                    "project_cpu_avg": 43.85,
+                    "project_cpu_peak": 76.67,
+                    "projected_cpu_qtl_50": 27.24,
+                    "projected_cpu_qtl_99": 76.28,
+                    "detected_at": 1748226880
+                },
+                {
+                    "cloud_resource_id": "i-01737496f6856ac0f-x2",
+                    "resource_name": "sunflower Live Cloud Migration-x2",
+                    "resource_id": "ecbec86e-7565-4f1b-bb13-a31bc4ca9704",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "flavor": "r4.2xlarge",
+                    "recommended_flavor": "r4.large",
+                    "saving": 760.32,
+                    "saving_percent": 82.47,
+                    "current_cost": 460.94,
+                    "recommended_flavor_cost": 126.72,
+                    "cpu": 8,
+                    "recommended_flavor_cpu": 2,
+                    "recommended_flavor_ram": 15616,
+                    "cpu_usage": 10.96,
+                    "is_excluded": false,
+                    "cpu_peak": 19.17,
+                    "cpu_quantile_50": 6.81,
+                    "cpu_quantile_99": 19.07,
+                    "project_cpu_avg": 43.85,
+                    "project_cpu_peak": 76.67,
+                    "projected_cpu_qtl_50": 27.24,
+                    "projected_cpu_qtl_99": 76.28,
+                    "detected_at": 1748226880
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "e9256ba2-6eb9-4d48-869d-1cd5c7e2422e",
+                    "name": "AWS Marketing",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "rightsizing_rds": {
+            "count": 0,
+            "saving": 0,
+            "options": {
+                "days_threshold": 9,
+                "metric": {
+                    "type": "avg",
+                    "limit": 81
+                },
+                "excluded_flavor_regex": "",
+                "excluded_pools": {},
+                "recommended_flavor_cpu_min": 1,
+                "skip_cloud_accounts": []
+            },
+            "items": [],
+            "cloud_accounts": []
+        },
+        "s3_abandoned_buckets": {
+            "count": 74,
+            "saving": 40.34025134057145,
+            "options": {
+                "days_threshold": 7,
+                "data_size_threshold": 1024,
+                "tier_1_request_quantity_threshold": 100,
+                "tier_2_request_quantity_threshold": 2000,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "kmiller-1",
+                    "resource_name": "kmiller-1",
+                    "resource_id": "ad7ea3db-407b-4928-9e7d-bc9e20bfc378",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-west-2",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "d950d14c-645a-4372-a3da-1c034c8ff028",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 2.9460577482857144,
+                    "tier_1_request_quantity": 0,
+                    "tier_2_request_quantity": 0,
+                    "avg_data_size": 2.4689536585142853,
+                    "detected_at": 1743198805
+                },
+                {
+                    "cloud_resource_id": "sunflower-ap-south-1",
+                    "resource_name": "sunflower-ap-south-1",
+                    "resource_id": "7f5b0b7b-6b90-4b51-baf6-bc4f4d1ad0bc",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "ap-south-1",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "d950d14c-645a-4372-a3da-1c034c8ff028",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 2.938155747428571,
+                    "tier_1_request_quantity": 0,
+                    "tier_2_request_quantity": 0,
+                    "avg_data_size": 5.128492295314286,
+                    "detected_at": 1691562991
+                },
+                {
+                    "cloud_resource_id": "sunflower-us-east-1",
+                    "resource_name": "sunflower-us-east-1",
+                    "resource_id": "c9d45a5c-79fa-4820-b003-bdc1b76eb04d",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-east-1",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "d950d14c-645a-4372-a3da-1c034c8ff028",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "saving": 2.1480455631428574,
+                    "tier_1_request_quantity": 0,
+                    "tier_2_request_quantity": 0,
+                    "avg_data_size": 5.279090965942857,
+                    "detected_at": 1701820780
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "s3_abandoned_buckets_nebius": {
+            "count": 0,
+            "saving": 0,
+            "options": {
+                "days_threshold": 7,
+                "data_size_threshold": 1024,
+                "get_request_quantity_threshold": 100,
+                "post_request_quantity_threshold": 100,
+                "put_request_quantity_threshold": 100,
+                "head_request_quantity_threshold": 100,
+                "options_request_quantity_threshold": 100,
+                "delete_request_quantity_threshold": 100,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [],
+            "cloud_accounts": []
+        },
+        "s3_public_buckets": {
+            "count": 4,
+            "options": {
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "sunflower-lily-share",
+                    "resource_name": "sunflower-lily-share",
+                    "resource_id": "b2e25cfc-bb8b-451f-ba12-855cdc412806",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_type": "gcp_cnr",
+                    "cloud_account_name": "GCP dev",
+                    "region": "europe",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "d9ee26f7-b0dc-4eae-9124-bf957a63cb38",
+                        "name": "GCP dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "is_public_policy": true,
+                    "is_public_acls": false,
+                    "detected_at": 1740019195
+                },
+                {
+                    "cloud_resource_id": "nk-bucket",
+                    "resource_name": "nk-bucket",
+                    "resource_id": "fea83054-d7a8-4875-8484-8228f83d6170",
+                    "cloud_account_id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "cloud_type": "gcp_cnr",
+                    "cloud_account_name": "GCP dev",
+                    "region": "us-east1",
+                    "owner": {
+                        "id": "9a427506-b058-4c34-9ff6-3d3b7aa37116",
+                        "name": "Cody Walsh"
+                    },
+                    "pool": {
+                        "id": "d9ee26f7-b0dc-4eae-9124-bf957a63cb38",
+                        "name": "GCP dev",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "is_public_policy": true,
+                    "is_public_acls": true,
+                    "detected_at": 1740019195
+                },
+                {
+                    "cloud_resource_id": "sunflower-static-files",
+                    "resource_name": "sunflower-static-files",
+                    "resource_id": "03f7354e-77b8-4641-87ed-be60c7137517",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "region": "us-east-1",
+                    "owner": {
+                        "id": "1659e0ab-49bc-48ba-a048-213c6995b63b",
+                        "name": "Robert Fisher"
+                    },
+                    "pool": {
+                        "id": "d950d14c-645a-4372-a3da-1c034c8ff028",
+                        "name": "AWS HQ",
+                        "purpose": "budget"
+                    },
+                    "is_excluded": false,
+                    "is_public_policy": true,
+                    "is_public_acls": false,
+                    "detected_at": 1721219239
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "short_living_instances": {
+            "count": 16,
+            "saving": 1.7753347543679996,
+            "options": {
+                "days_threshold": 3,
+                "excluded_pools": {},
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "i-gw81zty986rutiw2zxox",
+                    "cloud_resource_hash": null,
+                    "resource_name": "acruaubu24",
+                    "resource_id": "0820eb56-0d50-435d-be71-cc4705d70e65",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "total_cost": 0.763972,
+                    "saving": 1.08859968,
+                    "region": "Germany (Frankfurt)",
+                    "is_excluded": false,
+                    "first_seen": 1748217600,
+                    "last_seen": 0,
+                    "detected_at": 1748311728
+                },
+                {
+                    "cloud_resource_id": "i-0a97dfb75931f16cf",
+                    "cloud_resource_hash": null,
+                    "resource_name": "DS sunflower Backup and Disaster Recovery",
+                    "resource_id": null,
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "total_cost": 0.22295366449999998,
+                    "saving": 0.293322809664,
+                    "region": "eu-north-1",
+                    "is_excluded": false,
+                    "first_seen": 1748246400,
+                    "last_seen": 1748264400,
+                    "detected_at": 1748311728
+                },
+                {
+                    "cloud_resource_id": "i-0b9dfbc06b42119fa",
+                    "cloud_resource_hash": null,
+                    "resource_name": "AWS_cloud_agent",
+                    "resource_id": null,
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "total_cost": 0.129603163,
+                    "saving": 0.18662399999999998,
+                    "region": "eu-north-1",
+                    "is_excluded": false,
+                    "first_seen": 1748250000,
+                    "last_seen": 1748264400,
+                    "detected_at": 1748311728
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "550420c3-17ac-461f-a41a-1336f9dcd19a",
+                    "name": "Azure QA",
+                    "type": "azure_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                },
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                }
+            ],
+            "limit": 3
+        },
+        "volumes_not_attached_for_a_long_time": {
+            "count": 29,
+            "saving": 119.27439858667758,
+            "options": {
+                "days_threshold": 10,
+                "excluded_pools": {
+                    "bbf504b7-a1a4-483a-bc6a-a27c6bdcc0dc": true,
+                    "cd7714e5-9bdd-4408-b380-1fc2bec648a9": true,
+                    "54704172-af6c-4c91-bf78-5e59ad3ace11": true,
+                    "cbefe6bf-5515-4f26-9a6d-75b2259ba158": true,
+                    "f6fafb13-747b-4cb3-bee6-0cb91bc56fbb": true
+                },
+                "skip_cloud_accounts": []
+            },
+            "items": [
+                {
+                    "cloud_resource_id": "vol-0adec22ebb1a3b533",
+                    "resource_name": "dm-aplika",
+                    "resource_id": "3aa85058-ae6f-4582-9217-0898a24538f4",
+                    "cloud_account_id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "cloud_type": "aws_cnr",
+                    "cloud_account_name": "AWS HQ",
+                    "cost_in_detached_state": 297.48386703266226,
+                    "saving": 23.33283787741935,
+                    "region": "ap-southeast-3",
+                    "zone_id": null,
+                    "is_excluded": false,
+                    "last_seen_in_attached_state": 0,
+                    "detected_at": 1747382636
+                },
+                {
+                    "cloud_resource_id": "d-gw85ktwfb2pdaf3gtpwt",
+                    "resource_name": "ds-test-win_0",
+                    "resource_id": "5e410bc0-b17c-4105-8c09-35934f11e559",
+                    "cloud_account_id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "cloud_type": "alibaba_cnr",
+                    "cloud_account_name": "Ali dev",
+                    "cost_in_detached_state": 80.177341953727,
+                    "saving": 14.167679999999997,
+                    "region": "Germany (Frankfurt)",
+                    "zone_id": null,
+                    "is_excluded": false,
+                    "last_seen_in_attached_state": 1719583056,
+                    "detected_at": 1720448850
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/7a26946b-0d60-4c01-adce-b6269d527407/resourcegroups/sunflower_env/providers/microsoft.compute/disks/volume_from_snapshot_ubae4gee7luydbjgjbjvk5",
+                    "resource_name": "volume_from_snapshot_uBae4geE7LUYDbjgjbjVK5",
+                    "resource_id": "312e341f-29cd-465a-bf4b-b57a3eb8fc45",
+                    "cloud_account_id": "17fb8e94-99e4-408a-899f-b579ea480383",
+                    "cloud_type": "azure_cnr",
+                    "cloud_account_name": "Dev environment",
+                    "cost_in_detached_state": 88.30318525401465,
+                    "saving": 11.623759865119322,
+                    "region": "West US 2",
+                    "zone_id": null,
+                    "is_excluded": false,
+                    "last_seen_in_attached_state": 1708839769,
+                    "detected_at": 1745476337
+                }
+            ],
+            "cloud_accounts": [
+                {
+                    "id": "abb922ca-fa59-4065-906a-455e83531cbf",
+                    "name": "GCP dev",
+                    "type": "gcp_cnr"
+                },
+                {
+                    "id": "17fb8e94-99e4-408a-899f-b579ea480383",
+                    "name": "Dev environment",
+                    "type": "azure_cnr"
+                },
+                {
+                    "id": "e3cf0532-14b0-486c-8abb-0b52844d3e75",
+                    "name": "Ali dev",
+                    "type": "alibaba_cnr"
+                },
+                {
+                    "id": "c2d18496-de69-4057-8dba-834e310569d5",
+                    "name": "AWS HQ",
+                    "type": "aws_cnr"
+                }
+            ],
+            "limit": 3
         }
-    ],
-    "limit": 6
+    },
+    "dismissed_optimizations": {
+        "obsolete_snapshot_chains": {
+            "count": 1,
+            "saving": 0.21403905999999998
+        },
+        "s3_abandoned_buckets": {
+            "count": 1,
+            "saving": 129.62824519885714
+        }
+    },
+    "excluded_optimizations": {
+        "instance_migration": {
+            "count": 1,
+            "saving": 12.671999999999997
+        },
+        "rightsizing_instances": {
+            "count": 10,
+            "saving": 1090.9799999999998
+        },
+        "volumes_not_attached_for_a_long_time": {
+            "count": 3,
+            "saving": 8.825440969085598
+        }
+    },
+    "deleted_at": 0,
+    "id": "60e09ebc-fa6c-4424-b9eb-b2623b564d6f",
+    "created_at": 1686114618,
+    "organization_id": "2f22f9b5-bc76-4561-b3a2-17b50e677771",
+    "last_run": 1748311728,
+    "next_run": 1748322528,
+    "last_completed": 1748311728
+}
+
+export const DataSourcesResponse = {
+    "data": {
+    "dataSources": [
+        {
+            "account_id": "d7bb5f64-3a7f-4c58-88c7-eaf491993329",
+            "id": "8678aa61-a787-4a4f-b5e9-3c6333d6dc09",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": "SDK.HttpError HTTPConnectionPool(host='ecs-cn-hangzhou.aliyuncs.com', port=80): Max retries exceeded with url: /?AcceptLanguage=en-US&Version=2014-05-26&Action=DescribeRegions&Format=JSON&RegionId=ap-southeast-1&Timestamp=2025-04-01T10%3A03%3A24Z&SignatureMethod=HMAC-SHA1&SignatureType=&SignatureVersion=1.0&SignatureNonce=69530ddee8efde5a4927ce3be182744d&AccessKeyId=LTAI5tPvouGqUjC8ZUK5Yvg4&Signature=c4Y5WZH5H6MkvFkdejuI9ysPQ9I%3D (Caused by NewConnectionError('<aliyunsdkcore.vendored.requests.packages.urllib3.connection.HTTPConnection object at 0x74d8d8912600>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution'))",
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "SDK.HttpError HTTPConnectionPool(host='business.ap-southeast-1.aliyuncs.com', port=80): Max retries exceeded with url: /?BillingCycle=2025-04&BillingDate=2025-04-17&Granularity=DAILY&IsBillingItem=True&MaxResults=300&Version=2017-12-14&Action=DescribeInst",
+            "name": "Ali dev",
+            "parent_id": null,
+            "type": "alibaba_cnr",
+            "details": {
+                "cost": 497.03033364000095,
+                "resources": 81,
+                "forecast": 587.18,
+                "last_month_cost": 512.6927983600004,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "access_key_id": null,
+                "__typename": "AlibabaConfig"
+            },
+            "__typename": "AlibabaDataSource"
+        },
+        {
+            "account_id": "f6fe6a10-c5f9-4189-a401-2ff38a77243a",
+            "id": "88e024c5-bc45-4c8d-b492-8ec906ab40a3",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": "mongo-0.mongo-discovery.default.svc.cluster.local:27017: [Errno 113] No route to host (configured timeouts: connectTimeoutMS: 20000.0ms)",
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "Could not connect to the endpoint URL: \"https://s3.amazonaws.com/aqa-bill-bucket?location\"",
+            "name": "AWS HQ",
+            "parent_id": null,
+            "type": "aws_cnr",
+            "details": {
+                "cost": 2084.630070591305,
+                "resources": 287,
+                "forecast": 2453.42,
+                "last_month_cost": 2045.776739624282,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "access_key_id": null,
+                "linked": null,
+                "use_edp_discount": null,
+                "cur_version": null,
+                "bucket_name": null,
+                "bucket_prefix": null,
+                "config_scheme": null,
+                "region_name": null,
+                "report_name": null,
+                "__typename": "AwsConfig"
+            },
+            "__typename": "AwsDataSource"
+        },
+        {
+            "account_id": "4e6f8199-6501-4bf6-a425-16fd106abff5",
+            "id": "0c006bc9-f671-4435-a766-b3534964b2ea",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": "Could not reach any servers in [('mongo-0.mongo-discovery.default.svc.cluster.local', 27017)]. Replica set is configured with internal hostnames or IPs?, Timeout: 30s, Topology Description: <TopologyDescription id: 67932d2c8c34efcd18696c10, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('mongo-0.mongo-discovery.default.svc.cluster.local', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('mongo-0.mongo-discovery.default.svc.cluster.local:27017: [Errno 111] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>",
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "500 Server Error: Internal Server Error for url: http://restapi:80/restapi/v2/organizations/51afcca1-ac6d-4da2-8040-fc76fa078d64/process_alerts",
+            "name": "AWS Marketing",
+            "parent_id": null,
+            "type": "aws_cnr",
+            "details": {
+                "cost": 801.5091248752036,
+                "resources": 41,
+                "forecast": 954.77,
+                "last_month_cost": 915.0647779478037,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "access_key_id": null,
+                "linked": null,
+                "use_edp_discount": null,
+                "cur_version": null,
+                "bucket_name": null,
+                "bucket_prefix": null,
+                "config_scheme": null,
+                "region_name": null,
+                "report_name": null,
+                "__typename": "AwsConfig"
+            },
+            "__typename": "AwsDataSource"
+        },
+        {
+            "account_id": "b7960205-f135-4c3e-b217-e2fbb019dfab",
+            "id": "43c84d3e-83dc-47bb-abe3-9bafa004604d",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": "Failed to find metric configuration for provider: microsoft.network, resource Type: loadbalancers, metric: ByteCount, Valid metrics: ",
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "Authentication failed: <urllib3.connection.HTTPSConnection object at 0x720d1c0e5ca0>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution",
+            "name": "Azure QA",
+            "parent_id": null,
+            "type": "azure_cnr",
+            "details": {
+                "cost": 300.1414669857082,
+                "resources": 30,
+                "forecast": 353.78,
+                "last_month_cost": 300.5565481961623,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "client_id": null,
+                "expense_import_scheme": null,
+                "subscription_id": null,
+                "tenant": null,
+                "export_name": null,
+                "container": null,
+                "directory": null,
+                "__typename": "AzureSubscriptionConfig"
+            },
+            "__typename": "AzureSubscriptionDataSource"
+        },
+        {
+            "account_id": "9016ca37-64a8-45de-b887-a12442fd3f56",
+            "id": "d68c950c-775d-4f0a-93f0-b2df8ff49097",
+            "last_getting_metric_attempt_at": 1748336563,
+            "last_getting_metric_attempt_error": "mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67932d888c34efcd18696c12, topology_type: Unknown, servers: [<ServerDescription ('mongo', 80) server_type: Unknown, rtt: None, error=NetworkTimeout('mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>",
+            "last_getting_metrics_at": 1748336563,
+            "last_import_at": 1748336563,
+            "last_import_attempt_at": 1748336563,
+            "last_import_attempt_error": ", AdalError: Get Token request returned http error: 504",
+            "name": "Dev environment",
+            "parent_id": null,
+            "type": "azure_cnr",
+            "details": {
+                "cost": 763.8545297350851,
+                "resources": 80,
+                "forecast": 911.14,
+                "last_month_cost": 885.7426392159613,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "client_id": null,
+                "expense_import_scheme": null,
+                "subscription_id": null,
+                "tenant": null,
+                "export_name": null,
+                "container": null,
+                "directory": null,
+                "__typename": "AzureSubscriptionConfig"
+            },
+            "__typename": "AzureSubscriptionDataSource"
+        },
+        {
+            "account_id": "50750086-adb0-4288-a96e-6fab33364be6",
+            "id": "a89d10a5-8dfa-4a58-8fdb-8c8be23cb52a",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": null,
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "500 Server Error: Internal Server Error for url: http://restapi:80/restapi/v2/organizations/51afcca1-ac6d-4da2-8040-fc76fa078d64/process_alerts",
+            "name": "Environment",
+            "parent_id": null,
+            "type": "environment",
+            "details": {
+                "cost": 54.28800000000007,
+                "resources": 4,
+                "forecast": 64.73,
+                "last_month_cost": 62.6400000000001,
+                "__typename": "DataSourceDetails"
+            },
+            "__typename": "EnvironmentDataSource"
+        },
+        {
+            "account_id": "32b241ab-5d7c-41f7-a728-1de2cf25198d",
+            "id": "503a3db7-4d1a-4d82-8f44-1d80e4470b2d",
+            "last_getting_metric_attempt_at": 1748336562,
+            "last_getting_metric_attempt_error": "Deadline of 120.0s exceeded while calling target function, last exception: 504 Deadline Exceeded",
+            "last_getting_metrics_at": 1748336562,
+            "last_import_at": 1748336562,
+            "last_import_attempt_at": 1748336562,
+            "last_import_attempt_error": "Deadline of 120.0s exceeded while calling target function, last exception: HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x72",
+            "name": "GCP dev",
+            "parent_id": null,
+            "type": "gcp_cnr",
+            "details": {
+                "cost": 777.2643959999996,
+                "resources": 95,
+                "forecast": 730.63,
+                "last_month_cost": 737.8693180000006,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "billing_data": null,
+                "__typename": "GcpConfig"
+            },
+            "__typename": "GcpDataSource"
+        },
+        {
+            "account_id": "7384e716-8d78-4612-b62b-ad17ff79a626",
+            "id": "e25a0bfe-8fcd-480b-8ddf-75c467db13be",
+            "last_getting_metric_attempt_at": 1748336563,
+            "last_getting_metric_attempt_error": "mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 678e2e46b6cc33f658afa584, topology_type: Unknown, servers: [<ServerDescription ('mongo', 80) server_type: Unknown, rtt: None, error=NetworkTimeout('mongo:80: timed out (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>",
+            "last_getting_metrics_at": 1748336563,
+            "last_import_at": 1748336563,
+            "last_import_attempt_at": 1748336563,
+            "last_import_attempt_error": "500 Server Error: Internal Server Error for url: http://restapi:80/restapi/v2/organizations/51afcca1-ac6d-4da2-8040-fc76fa078d64/process_alerts",
+            "name": "K8s dev",
+            "parent_id": null,
+            "type": "kubernetes_cnr",
+            "details": {
+                "cost": 327.53587891211646,
+                "resources": 127,
+                "forecast": 389.22,
+                "last_month_cost": 363.3117246728428,
+                "__typename": "DataSourceDetails"
+            },
+            "config": {
+                "cost_model": {
+                    "cpu_hourly_cost": 0.006,
+                    "memory_hourly_cost": 0.004,
+                    "__typename": "K8CostModelConfig"
+                },
+                "user": "optscale",
+                "__typename": "K8sConfig"
+            },
+            "__typename": "K8sDataSource"
+        }
+    ]
+}
 }
 
 export const OrganizationConstraintsResponse = {
@@ -1220,7 +3134,7 @@ export const OrganizationConstraintsResponse = {
             "deleted_at": 0,
             "id": "8c43d5a2-d1e6-45a5-86aa-d0fbef5d4598",
             "created_at": 1694069189,
-            "name": "Buckets count in us-east-222",
+            "name": "Buckets count in us-east-(e2e)",
             "organization_id": "df58ec86-8e73-4f9b-95e7-67cb6b9db52f",
             "type": "resource_quota",
             "definition": {

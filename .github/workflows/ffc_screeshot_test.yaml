@@ -1,0 +1,103 @@
+name: FFC Screenshot Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      gitref:
+        description: 'Git reference to run tests against (tag or branch)'
+        required: true
+        type: string
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.gitref }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Playwright tests
+        id: playwright
+        continue-on-error: true
+        run: |
+          cd e2etests
+          chmod +x run_pw.sh
+          # Run tests with both HTML and JSON reporters
+          ./run_pw.sh ${{ env.FFC_TEST_API_ENDPOINT }} -a -i || true
+          
+          # Parse the JSON results
+          TEST_RESULTS=$(cat results.json)
+          
+          # Extract test counts using jq
+          PASSED=$(echo "$TEST_RESULTS" | jq '.stats.expected')
+          FAILED=$(echo "$TEST_RESULTS" | jq '.stats.unexpected')
+          FLAKY=$(echo "$TEST_RESULTS" | jq '.stats.flaky')
+          
+          # Set outputs
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "flaky=$FLAKY" >> $GITHUB_OUTPUT
+
+        env:
+          DOCKER_BUILDKIT: 1
+          FFC_TEST_API_ENDPOINT: ${{ secrets.FFC_TEST_API_ENDPOINT }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2etests/playwright-report/
+          retention-days: 30
+
+      - name: Upload test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: e2etests/test-results/**/*.png
+          retention-days: 30
+
+      - name: Upload json results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: json-results
+          path: e2etests/results.json
+          retention-days: 30
+
+      - name: Upload test videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos
+          path: e2etests/test-results/**/*.webm
+          retention-days: 30
+
+      - name: Notify Teams about Test Results
+        if: always()
+        uses: softwareone-platform/notify-tests-teams-action@v1
+        with:
+          webhook_url: ${{ secrets.TEAMS_TEST_TESTS_NOTIFICATIONS_WEBHOOK_URL }}
+          bot_image_url: 'https://raw.githubusercontent.com/softwareone-platform/optscale/main/.github/workflows/assets/turing_team_pr_bot.png'
+          repo: ${{ github.repository }}
+          suite_name: 'FFC Screenshot Tests'
+          gitref: ${{ github.event.inputs.gitref }}
+          os: ${{ runner.os }}
+          browser: 'chromium'
+          passed: ${{ steps.playwright.outputs.passed }}
+          failed: ${{ steps.playwright.outputs.failed }}
+          flaky: ${{ steps.playwright.outputs.flaky }}
+          gh_action_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Check if tests failed
+        if: always()
+        run: |
+          if [ "${{ steps.playwright.outputs.failed }}" -gt 0 ]; then
+            echo "Tests failed"
+            exit 1
+          fi

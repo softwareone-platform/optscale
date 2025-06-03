@@ -21,6 +21,8 @@ export default defineConfig(({ mode }) => {
     server: {
       open: true,
       port: Number(VITE_PORT) || 3000,
+      host: true,
+      allowedHosts: ['host.docker.internal'],
       proxy: {
         "/api": {
           target: VITE_PROXY,
