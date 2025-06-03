@@ -27,7 +27,7 @@ jobs:
           cd e2etests
           chmod +x run_pw.sh
           # Run tests with both HTML and JSON reporters
-          ./run_pw.sh ${{ env.FFC_TEST_API_ENDPOINT }} -a -i || true
+          ./run_pw.sh -a ${{ env.FFC_TEST_API_ENDPOINT }} -i || true
           
           # Parse the JSON results
           TEST_RESULTS=$(cat results.json)
