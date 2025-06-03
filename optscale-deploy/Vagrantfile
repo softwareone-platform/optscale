@@ -1,0 +1,118 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+unless Vagrant.has_plugin?("vagrant-qemu")
+  raise Vagrant::Errors::VagrantError.new, "vagrant-qemu plugin is missing. Please install it using 'vagrant plugin install vagrant-qemu'"
+end
+
+def cpu_emulated?(guest_cpu_arch)
+  host_cpu_arch = `uname -m`.strip
+
+  arch_aliases = [
+    ["arm64", "aarch64", "aarch64_be", "armv8b", "armv8l"],
+    ["x86_64", "amd64"],
+  ]
+
+  arch_aliases.each do |aliases|
+    if aliases.include?(host_cpu_arch)
+      return !aliases.include?(guest_cpu_arch)
+    end
+  end
+
+  raise RuntimeError, "Unknown host CPU architecture: #{host_cpu_arch}"
+end
+
+def setup_common_qemu_config!(qemu, guest_cpu_arch)
+  qemu.arch = guest_cpu_arch
+  qemu.memory = "4G"
+  qemu.net_device = "virtio-net-pci"
+  qemu.disk_resize = "30G"
+
+  # default to OS install, but also support homebrew
+  qemu.qemu_dir = if Dir.exist?("/usr/share/qemu") then "/usr/share/qemu" else "#{ENV["HOMEBREW_PREFIX"]}/share/qemu" end
+
+  if cpu_emulated?(guest_cpu_arch)
+    qemu.cpu = 'max'
+    accelerator = 'tcg,thread=multi,tb-size=512'
+  else
+    qemu.cpu = 'host'
+
+    if Vagrant::Util::Platform.linux?
+      accelerator = 'kvm'
+    elsif Vagrant::Util::Platform.darwin?
+      accelerator = 'hvf'
+    else
+      raise RuntimeError, "Unsupported platform: #{Vagrant::Util::Platform.platform}"
+    end
+  end
+
+  qemu.extra_qemu_args = ['-accel', accelerator]
+end
+
+def define_opts(guest_cpu_arch)
+  {
+    primary: !cpu_emulated?(guest_cpu_arch),
+    autostart: !cpu_emulated?(guest_cpu_arch),
+  }
+end
+
+Vagrant.configure(2) do |config|
+  config.vm.synced_folder "..", "/home/vagrant/optscale", type: "rsync",
+    rsync__exclude: [
+      "*/.venv/",
+      "optscale-deploy/.vagrant/",
+    ]
+    
+  config.vm.define "ubuntu-2404-x86-64", define_opts("x86_64") do |x86_64_config|
+    x86_64_config.vm.box = "cloud-image/ubuntu-24.04"
+    x86_64_config.vm.box_architecture = "amd64"
+    x86_64_config.vm.hostname = "ubuntu-2404-x86-64"
+
+    x86_64_config.vm.network "forwarded_port", guest: 80, host: 8080
+    x86_64_config.vm.network "forwarded_port", guest: 443, host: 8443
+    
+    x86_64_config.vagrant.plugins = "vagrant-qemu"
+    x86_64_config.vm.provider "qemu" do |qemu|
+      setup_common_qemu_config!(qemu, "x86_64")
+
+      qemu.machine = "q35"
+      qemu.smp = "cpus=2,sockets=1,cores=2,threads=1"
+      qemu.ssh_port = "50222"
+    end
+  end
+  
+  config.vm.define "ubuntu-2404-arm-64", define_opts("arm64") do |arm64_config|
+    # arm64_config.vm.box = "perk/ubuntu-2404-arm64"
+    # arm64_config.vm.box = "bento/ubuntu-24.04"
+    arm64_config.vm.box = "cloud-image/ubuntu-24.04"
+    arm64_config.vm.box_architecture = "arm64"
+    arm64_config.vm.hostname = "ubuntu-2404-arm-64"
+    
+    arm64_config.vm.network "forwarded_port", guest: 80, host: 8081
+    arm64_config.vm.network "forwarded_port", guest: 443, host: 8444
+
+    arm64_config.vagrant.plugins = "vagrant-qemu"
+    arm64_config.vm.provider "qemu" do |qemu|
+      setup_common_qemu_config!(qemu, "aarch64")
+
+      qemu.machine = "virt,gic-version=3"
+      qemu.ssh_port = "50223"
+    end
+  end
+end
+    
+# # TODO: investigate config.vm.provision "ansible" and other options
+# provision_script = <<-SCRIPT
+#   cd ~/optscale/optscale-deploy
+#   sudo apt update
+#   sudo apt install -y python3-venv
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   pip install -r requirements.txt
+#   private_ip_addr=$(hostname -I | awk '{print $1}')
+#   ansible-playbook -e "ansible_ssh_user=vagrant" -e "ansible_connection=local" -i "$private_ip_addr," ansible/k8s-master.yaml
+#   source ~/.profile
+#   ./build.sh --use-nerdctl
+# SCRIPT
+#
+# arm64_config.vm.provision "shell", inline: provision_script
