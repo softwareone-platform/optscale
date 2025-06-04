@@ -7,6 +7,14 @@ on:
         description: 'Git reference to run tests against (tag or branch)'
         required: true
         type: string
+      environment:
+        description: 'Environment to run tests against'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - staging
 
 jobs:
   run-tests:
@@ -20,6 +28,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set FFC_API_ENDPOINT AND FFC_WEBHOOK_URL based on environment
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == staging ]]; then
+            echo "Run tests against STAGING environment"
+            echo "FFC_API_ENDPOINT=${{ secrets.FFC_STAGING_API_ENDPOINT }}" >> $GITHUB_ENV
+            echo "FFC_WEBHOOK_URL=${{ secrets.TEAMS_STAGING_TESTS_NOTIFICATIONS_WEBHOOK_URL }}" >> $GITHUB_ENV
+          else
+            echo "Run tests against TEST environment"
+            echo "FFC_API_ENDPOINT=${{ secrets.FFC_TEST_API_ENDPOINT }}" >> $GITHUB_ENV
+            echo "FFC_WEBHOOK_URL=${{ secrets.TEAMS_TEST_TESTS_NOTIFICATIONS_WEBHOOK_URL }}" >> $GITHUB_ENV
+          fi
+
       - name: Run Playwright tests
         id: playwright
         continue-on-error: true
@@ -27,7 +47,7 @@ jobs:
           cd e2etests
           chmod +x run_pw.sh
           # Run tests with both HTML and JSON reporters
-          ./run_pw.sh -a ${{ env.FFC_TEST_API_ENDPOINT }} -i || true
+          ./run_pw.sh -a $FFC_API_ENDPOINT -i || true
           
           # Parse the JSON results
           TEST_RESULTS=$(cat results.json)
@@ -44,8 +64,6 @@ jobs:
 
         env:
           DOCKER_BUILDKIT: 1
-          FFC_TEST_API_ENDPOINT: ${{ secrets.FFC_TEST_API_ENDPOINT }}
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -82,7 +100,7 @@ jobs:
         if: always()
         uses: softwareone-platform/notify-tests-teams-action@v1
         with:
-          webhook_url: ${{ secrets.TEAMS_TEST_TESTS_NOTIFICATIONS_WEBHOOK_URL }}
+          webhook_url: ${{ env.FFC_WEBHOOK_URL }}
           bot_image_url: 'https://raw.githubusercontent.com/softwareone-platform/optscale/main/.github/workflows/assets/turing_team_pr_bot.png'
           repo: ${{ github.repository }}
           suite_name: 'FFC Screenshot Tests'
