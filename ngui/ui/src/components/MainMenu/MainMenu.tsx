@@ -4,21 +4,14 @@ import CapabilityWrapper from "components/CapabilityWrapper";
 import MenuGroupWrapper from "components/MenuGroupWrapper";
 import MenuItem from "components/MenuItem";
 import { PRODUCT_TOUR, useProductTour, PRODUCT_TOUR_IDS } from "components/Tour";
-import { useGetOptscaleCapability } from "hooks/coreData/useGetOptscaleCapability";
 
-const SimpleItem = ({ menuItem, optscaleCapability }) => (
+const SimpleItem = ({ menuItem }) => (
   <CapabilityWrapper capability={menuItem.capability}>
     <MenuItem
       className={menuItem.className}
       dataProductTourId={menuItem.dataProductTourId}
       link={menuItem.route.link}
-      messageId={
-        typeof menuItem.messageId === "function"
-          ? menuItem.messageId({
-              capability: optscaleCapability
-            })
-          : menuItem.messageId
-      }
+      messageId={menuItem.messageId}
       isRootPath={menuItem.isRootPath}
       isActive={menuItem.isActive}
       icon={menuItem.icon}
@@ -47,8 +40,6 @@ const MainMenu = ({ menu }) => {
     menuDrawer.scrollTop -= windowHeight / 2 - elementTop;
   }, [productTourStepId, isProductTourOpen]);
 
-  const { optscaleCapability } = useGetOptscaleCapability();
-
   return (
     <>
       <List component="nav" sx={{ padding: 0 }}>
@@ -56,7 +47,7 @@ const MainMenu = ({ menu }) => {
           <CapabilityWrapper key={id} capability={capability}>
             <MenuGroupWrapper id={id} menuSectionTitle={menuSectionTitle} keepExpanded={isProductTourOpen}>
               {items.map((item) => (
-                <SimpleItem key={item.route.link} menuItem={item} optscaleCapability={optscaleCapability} />
+                <SimpleItem key={item.route.link} menuItem={item} />
               ))}
             </MenuGroupWrapper>
           </CapabilityWrapper>

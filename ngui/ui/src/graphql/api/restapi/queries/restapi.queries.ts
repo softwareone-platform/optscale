@@ -279,24 +279,6 @@ const GET_ORGANIZATION_FEATURES = gql`
   }
 `;
 
-const GET_OPTSCALE_CAPABILITY = gql`
-  query OptscaleCapability($organizationId: ID!) {
-    optscaleCapability(organizationId: $organizationId) {
-      finops
-      mlops
-    }
-  }
-`;
-
-const UPDATE_OPTSCALE_CAPABILITY = gql`
-  mutation UpdateOptscaleCapability($organizationId: ID!, $value: OptscaleCapabilityParams) {
-    updateOptscaleCapability(organizationId: $organizationId, value: $value) {
-      finops
-      mlops
-    }
-  }
-`;
-
 const GET_ORGANIZATION_THEME_SETTINGS = gql`
   query OrganizationThemeSettings($organizationId: ID!) {
     organizationThemeSettings(organizationId: $organizationId)
@@ -467,8 +449,6 @@ export {
   UPDATE_INVITATION,
   GET_CURRENT_EMPLOYEE,
   GET_ORGANIZATION_FEATURES,
-  GET_OPTSCALE_CAPABILITY,
-  UPDATE_OPTSCALE_CAPABILITY,
   GET_ORGANIZATION_THEME_SETTINGS,
   GET_EMPLOYEE_EMAILS,
   UPDATE_EMPLOYEE_EMAILS,

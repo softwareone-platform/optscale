@@ -20,7 +20,6 @@ const StepContainer = () => {
   });
 
   const getOrganizationsLoading = getOrganizationsNetworkStatus === NetworkStatus.loading;
-  const getOrganizationsRefetching = getOrganizationsNetworkStatus === NetworkStatus.refetch;
 
   if (getOrganizationsLoading) {
     return <Loading />;
@@ -33,15 +32,7 @@ const StepContainer = () => {
   const hasOrganizations = !isEmptyArray(organizations?.organizations ?? []);
 
   if (!hasOrganizations) {
-    return (
-      <SetupOrganization
-        userEmail={userEmail}
-        refetchOrganizations={refetchOrganizations}
-        isLoading={{
-          getOrganizationsLoading: getOrganizationsRefetching
-        }}
-      />
-    );
+    return <SetupOrganization userEmail={userEmail} refetchOrganizations={refetchOrganizations} />;
   }
 
   return <ProceedToApplication />;

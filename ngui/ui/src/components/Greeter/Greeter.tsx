@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 import anomalyDetectionToAvoidBudgetOverruns from "assets/welcome/anomaly-detection-to-avoid-budget-overruns.svg";
 import cloudResourceUsageCostTransparency from "assets/welcome/cloud-resource-usage-cost-transparency.svg";
 import finopsCloudCostOptimization from "assets/welcome/finops-cloud-cost-optimization.svg";
-import mlAiProfilingOptimization from "assets/welcome/ml-ai-profiling-optimization.svg";
-import optimalPerformanceInfrastructureCostForMlAiTasks from "assets/welcome/optimal-performance-infrastructure-cost-for-ml-ai-tasks.svg";
-import runsetsToRunExperimentsInParallel from "assets/welcome/runsets-to-run-experiments-in-parallel.svg";
+import finopsReadinessMaturityAssessment from "assets/welcome/finops-readiness-maturity-assessment.svg";
+import geoNetworkTrafficCostMap from "assets/welcome/geo-network-traffic-cost-map.svg";
+import itEnvironmentManagement from "assets/welcome/it-environment-management.svg";
 import Button from "components/Button";
 import CustomersGallery from "components/CustomersGallery";
 import IconLabel from "components/IconLabel";
@@ -73,9 +73,9 @@ const ImagesWithCaptions = () => {
         { caption: "optscale.welcome.caption1", src: finopsCloudCostOptimization },
         { caption: "optscale.welcome.caption2", src: cloudResourceUsageCostTransparency },
         { caption: "optscale.welcome.caption3", src: anomalyDetectionToAvoidBudgetOverruns },
-        { caption: "optscale.welcome.caption4", src: mlAiProfilingOptimization },
-        { caption: "optscale.welcome.caption5", src: optimalPerformanceInfrastructureCostForMlAiTasks },
-        { caption: "optscale.welcome.caption6", src: runsetsToRunExperimentsInParallel }
+        { caption: "optscale.welcome.caption4", src: finopsReadinessMaturityAssessment },
+        { caption: "optscale.welcome.caption5", src: itEnvironmentManagement },
+        { caption: "optscale.welcome.caption6", src: geoNetworkTrafficCostMap }
       ].map(({ caption, src }, index) => (
         <Grid item lg={4} md={4} sm={6} key={caption} className={classes.imageWithCaptionWrapper}>
           <img

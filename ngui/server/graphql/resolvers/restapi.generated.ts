@@ -499,7 +499,6 @@ export type Mutation = {
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
   updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   updateInvitation?: Maybe<Scalars['String']['output']>;
-  updateOptscaleCapability?: Maybe<OptscaleCapability>;
   updateOrganization?: Maybe<Organization>;
   updateOrganizationPerspectives?: Maybe<Scalars['JSONObject']['output']>;
   updateOrganizationThemeSettings?: Maybe<Scalars['JSONObject']['output']>;
@@ -548,12 +547,6 @@ export type MutationUpdateEmployeeEmailsArgs = {
 export type MutationUpdateInvitationArgs = {
   action: Scalars['String']['input'];
   invitationId: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateOptscaleCapabilityArgs = {
-  organizationId: Scalars['ID']['input'];
-  value?: InputMaybe<OptscaleCapabilityParams>;
 };
 
 
@@ -612,17 +605,6 @@ export type NebiusDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
-export type OptscaleCapability = {
-  __typename?: 'OptscaleCapability';
-  finops?: Maybe<Scalars['Boolean']['output']>;
-  mlops?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type OptscaleCapabilityParams = {
-  finops?: InputMaybe<Scalars['Boolean']['input']>;
-  mlops?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
 export type Organization = {
   __typename?: 'Organization';
   currency: Scalars['String']['output'];
@@ -677,7 +659,6 @@ export type Query = {
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
-  optscaleCapability?: Maybe<OptscaleCapability>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
   organizationFeatures?: Maybe<Scalars['JSONObject']['output']>;
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
@@ -719,11 +700,6 @@ export type QueryEmployeeEmailsArgs = {
 export type QueryExpensesDailyBreakdownArgs = {
   organizationId: Scalars['ID']['input'];
   params?: InputMaybe<BreakdownParams>;
-};
-
-
-export type QueryOptscaleCapabilityArgs = {
-  organizationId: Scalars['ID']['input'];
 };
 
 
@@ -940,8 +916,6 @@ export type ResolversTypes = {
   NebiusConfig: ResolverTypeWrapper<NebiusConfig>;
   NebiusConfigInput: NebiusConfigInput;
   NebiusDataSource: ResolverTypeWrapper<NebiusDataSource>;
-  OptscaleCapability: ResolverTypeWrapper<OptscaleCapability>;
-  OptscaleCapabilityParams: OptscaleCapabilityParams;
   Organization: ResolverTypeWrapper<Organization>;
   OrganizationConstraint: ResolverTypeWrapper<OrganizationConstraint>;
   OrganizationConstraintType: OrganizationConstraintType;
@@ -1009,8 +983,6 @@ export type ResolversParentTypes = {
   NebiusConfig: NebiusConfig;
   NebiusConfigInput: NebiusConfigInput;
   NebiusDataSource: NebiusDataSource;
-  OptscaleCapability: OptscaleCapability;
-  OptscaleCapabilityParams: OptscaleCapabilityParams;
   Organization: Organization;
   OrganizationConstraint: OrganizationConstraint;
   OrganizationLimitHit: OrganizationLimitHit;
@@ -1349,7 +1321,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateEmployeeEmail?: Resolver<Maybe<ResolversTypes['EmployeeEmail']>, ParentType, ContextType, RequireFields<MutationUpdateEmployeeEmailArgs, 'employeeId' | 'params'>>;
   updateEmployeeEmails?: Resolver<Maybe<Array<Maybe<ResolversTypes['EmployeeEmail']>>>, ParentType, ContextType, RequireFields<MutationUpdateEmployeeEmailsArgs, 'employeeId' | 'params'>>;
   updateInvitation?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationUpdateInvitationArgs, 'action' | 'invitationId'>>;
-  updateOptscaleCapability?: Resolver<Maybe<ResolversTypes['OptscaleCapability']>, ParentType, ContextType, RequireFields<MutationUpdateOptscaleCapabilityArgs, 'organizationId'>>;
   updateOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationArgs, 'organizationId' | 'params'>>;
   updateOrganizationPerspectives?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationPerspectivesArgs, 'organizationId' | 'value'>>;
   updateOrganizationThemeSettings?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationThemeSettingsArgs, 'organizationId' | 'value'>>;
@@ -1379,12 +1350,6 @@ export type NebiusDataSourceResolvers<ContextType = any, ParentType extends Reso
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes['DataSourceType'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type OptscaleCapabilityResolvers<ContextType = any, ParentType extends ResolversParentTypes['OptscaleCapability'] = ResolversParentTypes['OptscaleCapability']> = {
-  finops?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  mlops?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1432,7 +1397,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   employeeEmails?: Resolver<Maybe<Array<Maybe<ResolversTypes['EmployeeEmail']>>>, ParentType, ContextType, RequireFields<QueryEmployeeEmailsArgs, 'employeeId'>>;
   expensesDailyBreakdown?: Resolver<Maybe<ResolversTypes['ExpensesDailyBreakdown']>, ParentType, ContextType, RequireFields<QueryExpensesDailyBreakdownArgs, 'organizationId'>>;
   invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Invitation']>>>, ParentType, ContextType>;
-  optscaleCapability?: Resolver<Maybe<ResolversTypes['OptscaleCapability']>, ParentType, ContextType, RequireFields<QueryOptscaleCapabilityArgs, 'organizationId'>>;
   organizationConstraint?: Resolver<Maybe<ResolversTypes['OrganizationConstraint']>, ParentType, ContextType, RequireFields<QueryOrganizationConstraintArgs, 'constraintId'>>;
   organizationFeatures?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryOrganizationFeaturesArgs, 'organizationId'>>;
   organizationLimitHits?: Resolver<Maybe<Array<ResolversTypes['OrganizationLimitHit']>>, ParentType, ContextType, RequireFields<QueryOrganizationLimitHitsArgs, 'constraintId' | 'organizationId'>>;
@@ -1488,7 +1452,6 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   NebiusConfig?: NebiusConfigResolvers<ContextType>;
   NebiusDataSource?: NebiusDataSourceResolvers<ContextType>;
-  OptscaleCapability?: OptscaleCapabilityResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
   OrganizationConstraint?: OrganizationConstraintResolvers<ContextType>;
   OrganizationLimitHit?: OrganizationLimitHitResolvers<ContextType>;

@@ -1,99 +1,55 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
-import CapabilityField from "components/CapabilityField";
 import MailTo from "components/MailTo";
-import SubmitButtonLoader from "components/SubmitButtonLoader";
-import { CREATE_ORGANIZATION, UPDATE_OPTSCALE_CAPABILITY } from "graphql/api/restapi/queries/restapi.queries";
+import { CREATE_ORGANIZATION } from "graphql/api/restapi/queries/restapi.queries";
 import { useSignOut } from "hooks/useSignOut";
-import { EMAIL_SUPPORT, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
-import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getSearchParams } from "utils/network";
-import { ObjectValues } from "utils/types";
+import { EMAIL_SUPPORT } from "urls";
 import { Title } from "../../common";
-
-const FIELD_NAMES = Object.freeze({
-  CAPABILITY: "capability",
-  CAPABILITY_ML: "mlops",
-  CAPABILITY_FIN: "finops"
-});
-
-type FormValues = {
-  [FIELD_NAMES.CAPABILITY]: {
-    [FIELD_NAMES.CAPABILITY_ML]: boolean;
-    [FIELD_NAMES.CAPABILITY_FIN]: boolean;
-  };
-};
-
-const getDefaultValues = (): FormValues => ({
-  [FIELD_NAMES.CAPABILITY]: {
-    [FIELD_NAMES.CAPABILITY_ML]: true,
-    [FIELD_NAMES.CAPABILITY_FIN]: true
-  }
-});
 
 type SetupOrganizationProps = {
   userEmail: string;
   refetchOrganizations: () => void;
-  isLoading: {
-    getOrganizationsLoading: boolean;
-  };
 };
 
 const getOrganizationName = (userEmail: string) => `${userEmail}'s Organization`;
 
-const SetupOrganization = ({ userEmail, refetchOrganizations, isLoading }: SetupOrganizationProps) => {
+const SetupOrganization = ({ userEmail, refetchOrganizations }: SetupOrganizationProps) => {
   const signOut = useSignOut();
 
-  const [createOrganization, { loading: createOrganizationLoading, error: createOrganizationError }] =
-    useMutation(CREATE_ORGANIZATION);
-  const [organization, setOrganization] = useState(null);
+  const [createOrganization, { error: createOrganizationError }] = useMutation(CREATE_ORGANIZATION);
 
-  const [updateOptscaleCapabilityMutation, { loading: updateOptscaleCapabilityLoading, error: updateOptscaleCapabilityError }] =
-    useMutation(UPDATE_OPTSCALE_CAPABILITY);
+  const setupOrganization = useCallback(async () => {
+    const { data } = await createOrganization({
+      variables: {
+        organizationName: getOrganizationName(userEmail)
+      }
+    });
 
-  const methods = useForm<FormValues>({
-    defaultValues: getDefaultValues()
-  });
+    const organization = data?.createOrganization;
 
-  const { handleSubmit } = methods;
+    if (!organization?.id) {
+      throw new Error("Organization creation failed: no ID returned");
+    }
+
+    await refetchOrganizations();
+  }, [userEmail, createOrganization, refetchOrganizations]);
 
   useEffect(() => {
     const initialize = async () => {
-      const { data } = await createOrganization({
-        variables: {
-          organizationName: getOrganizationName(userEmail)
-        }
-      });
-
-      const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
-        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: ObjectValues<typeof OPTSCALE_CAPABILITY>;
-      };
-
-      if (Object.values(OPTSCALE_CAPABILITY).includes(capability)) {
-        await updateOptscaleCapabilityMutation({
-          variables: {
-            organizationId: data.createOrganization.id,
-            value: {
-              ...Object.fromEntries(Object.values(OPTSCALE_CAPABILITY).map((capability) => [capability, false])),
-              [capability]: true
-            }
-          }
-        });
-
-        await refetchOrganizations();
-      } else {
-        setOrganization(data.createOrganization);
+      try {
+        await setupOrganization();
+      } catch (err) {
+        console.error("Error while setup organization: ", err);
       }
     };
 
     initialize();
-  }, [createOrganization, refetchOrganizations, updateOptscaleCapabilityMutation, userEmail]);
+  }, [setupOrganization]);
 
-  if (createOrganizationError || updateOptscaleCapabilityError) {
+  if (createOrganizationError) {
     return (
       <>
         <Box>
@@ -114,52 +70,12 @@ const SetupOrganization = ({ userEmail, refetchOrganizations, isLoading }: Setup
     );
   }
 
-  if (!organization) {
-    return (
-      <>
-        <Title dataTestId="p_creating_organization" messageId="creatingOrganization" />
-        <Box height={60}>
-          <CircularProgress data-test-id="svg_loading" />
-        </Box>
-      </>
-    );
-  }
-
-  const onSubmit = async (formData: FormValues) => {
-    await updateOptscaleCapabilityMutation({
-      variables: {
-        organizationId: organization.id,
-        value: formData[FIELD_NAMES.CAPABILITY]
-      }
-    });
-
-    await refetchOrganizations();
-  };
-
   return (
     <>
-      <Title dataTestId="p_setup_title" messageId="whichOptscaleCapabilitiesAreYouLookingFor" />
-      <FormProvider {...methods}>
-        <form noValidate onSubmit={handleSubmit(onSubmit)}>
-          <Box display="flex" flexDirection="column" alignItems="center" px={4}>
-            <CapabilityField
-              fieldNames={{
-                capability: FIELD_NAMES.CAPABILITY,
-                capabilityMl: FIELD_NAMES.CAPABILITY_ML,
-                capabilityFin: FIELD_NAMES.CAPABILITY_FIN
-              }}
-            />
-            <Typography align="center" variant="body1" sx={{ my: 3 }}>
-              <FormattedMessage id="youCanChangeCapabilityInSettings" />
-            </Typography>
-            <SubmitButtonLoader
-              messageId="next"
-              size="medium"
-              isLoading={isLoading.getOrganizationsLoading || createOrganizationLoading || updateOptscaleCapabilityLoading}
-            />
-          </Box>
-        </form>
-      </FormProvider>
+      <Title dataTestId="p_creating_organization" messageId="creatingOrganization" />
+      <Box height={60}>
+        <CircularProgress data-test-id="svg_loading" />
+      </Box>
     </>
   );
 };

@@ -3,12 +3,11 @@ import { Box } from "@mui/material";
 import { render as renderGithubButton } from "github-buttons";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useDispatch } from "react-redux";
-import MailTo from "components/MailTo";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useRootData } from "hooks/useRootData";
-import { EMAIL_SUPPORT, GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
+import { GITHUB_HYSTAX_OPTSCALE_REPO } from "urls";
 import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
@@ -163,24 +162,6 @@ const TopAlertWrapper = ({ blacklistIds = [] }: TopAlertWrapperProps) => {
           updateOrganizationTopAlert({ id: ALERT_TYPES.OPEN_SOURCE_ANNOUNCEMENT, closed: true });
         },
         dataTestId: "top_alert_open_source_announcement"
-      },
-      {
-        id: ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT,
-        condition: userId && organizationId,
-        type: "info",
-        triggered: isTriggered(ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT),
-        getContent: () => (
-          <FormattedMessage
-            id="mlopsFunctionalityRemovalAnnouncement"
-            values={{
-              email: <MailTo email={EMAIL_SUPPORT} text={EMAIL_SUPPORT} color="white" />
-            }}
-          />
-        ),
-        onClose: () => {
-          updateOrganizationTopAlert({ id: ALERT_TYPES.MLOPS_REMOVAL_ANNOUNCEMENT, closed: true });
-        },
-        dataTestId: "top_alert_mlops_removal_announcement"
       }
     ];
   }, [

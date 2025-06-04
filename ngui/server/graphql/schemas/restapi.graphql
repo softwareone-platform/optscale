@@ -550,16 +550,6 @@ type Invitation {
   invite_assignments: [InvitationAssignment!]
 }
 
-type OptscaleCapability {
-  finops: Boolean
-  mlops: Boolean
-}
-
-input OptscaleCapabilityParams {
-  finops: Boolean
-  mlops: Boolean
-}
-
 input UpdateOrganizationInput {
   name: String
   currency: String
@@ -603,7 +593,6 @@ type Query {
   employeeEmails(employeeId: ID!): [EmployeeEmail]
   invitations: [Invitation]
   organizationFeatures(organizationId: ID!): JSONObject
-  optscaleCapability(organizationId: ID!): OptscaleCapability
   organizationThemeSettings(organizationId: ID!): JSONObject
   organizationPerspectives(organizationId: ID!): JSONObject
   organizationConstraint(constraintId: ID!): OrganizationConstraint
@@ -648,10 +637,6 @@ type Mutation {
   ): Organization
   deleteOrganization(organizationId: ID!): String
   updateInvitation(invitationId: String!, action: String!): String
-  updateOptscaleCapability(
-    organizationId: ID!
-    value: OptscaleCapabilityParams
-  ): OptscaleCapability
   updateOrganizationThemeSettings(
     organizationId: ID!
     value: JSONObject!

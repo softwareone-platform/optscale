@@ -1,19 +1,21 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CreateOrganizationForm from "components/forms/CreateOrganizationForm";
 import { FormValues } from "components/forms/CreateOrganizationForm/types";
-import { CREATE_ORGANIZATION, GET_ORGANIZATIONS, UPDATE_OPTSCALE_CAPABILITY } from "graphql/api/restapi/queries";
+import { CREATE_ORGANIZATION, GET_ORGANIZATIONS } from "graphql/api/restapi/queries";
 
-const CreateOrganizationContainer = ({ onSuccess, closeSideModal }) => {
+type CreateOrganizationContainerProps = {
+  onSuccess: (id: string) => void;
+  closeSideModal: () => void;
+};
+
+const CreateOrganizationContainer = ({ onSuccess, closeSideModal }: CreateOrganizationContainerProps) => {
   const [createOrganization, { loading: createOrganizationLoading }] = useMutation(CREATE_ORGANIZATION);
 
   const [getOrganizations, { loading: isOrganizationsLoading }] = useLazyQuery(GET_ORGANIZATIONS, {
     fetchPolicy: "network-only"
   });
 
-  const [updateOptscaleCapabilityMutation, { loading: updateOptscaleCapabilityLoading }] =
-    useMutation(UPDATE_OPTSCALE_CAPABILITY);
-
-  const isLoading = createOrganizationLoading || isOrganizationsLoading || updateOptscaleCapabilityLoading;
+  const isLoading = createOrganizationLoading || isOrganizationsLoading;
 
   const onSubmit = async (formData: FormValues) => {
     const {
@@ -23,13 +25,6 @@ const CreateOrganizationContainer = ({ onSuccess, closeSideModal }) => {
     } = await createOrganization({
       variables: {
         organizationName: formData.name
-      }
-    });
-
-    await updateOptscaleCapabilityMutation({
-      variables: {
-        organizationId,
-        value: formData.capability
       }
     });
 

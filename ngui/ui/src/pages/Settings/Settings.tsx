@@ -2,7 +2,6 @@ import ActionBar from "components/ActionBar";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
-import CapabilityContainer from "containers/CapabilityContainer";
 import InvitationsContainer from "containers/InvitationsContainer";
 import SshSettingsContainer from "containers/SshSettingsContainer";
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
@@ -18,7 +17,6 @@ const actionBarDefinition = {
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
   INVITATIONS: "invitations",
-  CAPABILITIES: "capabilities",
   SSH: "sshKeys",
   EMAIL_NOTIFICATIONS: "emailNotifications"
 });
@@ -36,11 +34,6 @@ const Settings = () => {
       title: SETTINGS_TABS.INVITATIONS,
       dataTestId: `tab_${SETTINGS_TABS.INVITATIONS}`,
       node: <InvitationsContainer />
-    },
-    {
-      title: SETTINGS_TABS.CAPABILITIES,
-      dataTestId: `tab_${SETTINGS_TABS.CAPABILITIES}`,
-      node: <CapabilityContainer />
     },
     ...(isFinOpsCapabilityEnabled
       ? [
