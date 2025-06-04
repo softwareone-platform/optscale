@@ -8,14 +8,30 @@ export default defineConfig(({ mode }) => {
 
   const { VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS } = env;
 
-  const parsedAllowedHosts = (() => {
-    const value = VITE_ALLOWED_HOSTS?.trim().toLowerCase();
+  function parseViteHost(value?: string): string | boolean {
+    const trimmed = value?.trim();
+    if (!trimmed) return false;
 
-    if (!value || value === "false") return false;
-    if (value === "true") return true;
+    const lower = trimmed.toLowerCase();
+    if (lower === "true") return true;
+    if (lower === "false") return false;
 
-    return VITE_ALLOWED_HOSTS.split(",").map((host) => host.trim());
-  })();
+    return trimmed;
+  }
+
+  function parseAllowedHosts(value?: string): true | string[] | undefined {
+    const trimmed = value?.trim();
+    if (!trimmed) return undefined;
+
+    const lower =  trimmed.toLowerCase();
+    if (lower === "true") return true;
+    if (lower === "false") return undefined;
+
+    return trimmed.split(",").map((host) => host.trim());
+  }
+
+  console.log(parseViteHost(VITE_HOST))
+  console.log(parseAllowedHosts(VITE_ALLOWED_HOSTS))
 
   return {
     build: {
@@ -30,8 +46,8 @@ export default defineConfig(({ mode }) => {
     server: {
       open: true,
       port: Number(VITE_PORT) || 3000,
-      host: (VITE_HOST?.toLowerCase() === "true") || false,
-      allowedHosts: parsedAllowedHosts,
+      host: parseViteHost(VITE_HOST),
+      allowedHosts: parseAllowedHosts(VITE_ALLOWED_HOSTS),
       proxy: {
         "/api": {
           target: VITE_PROXY,
