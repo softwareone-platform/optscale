@@ -314,7 +314,9 @@ class AzureImporterBase(BaseReportImporter):
             start = last_expense.get('start_date').replace(day=1).strftime(
                 '%Y-%m-%d')
             r_name = '{0} ({1}) {2}'.format(
-                last_expense.get('plan_name'), last_expense.get('part_number'),
+                last_expense.get('plan_name') or last_expense.get(
+                    'meter_details', {}).get('meter_name', ''),
+                last_expense.get('part_number'),
                 start)
 
         info = {
