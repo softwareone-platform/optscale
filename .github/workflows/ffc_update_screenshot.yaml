@@ -1,0 +1,79 @@
+name: Update Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      gitref:
+        description: 'Git reference to update screenshots against (tag or branch)'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to determine API endpoint'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - staging
+
+jobs:
+  update-screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.gitref }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set FFC_API_ENDPOINT AND FFC_WEBHOOK_URL based on environment
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" == staging ]]; then
+            echo "Run tests against STAGING environment"
+            echo "FFC_API_ENDPOINT=${{ secrets.FFC_STAGING_API_ENDPOINT }}" >> $GITHUB_ENV
+          else
+            echo "Run tests against TEST environment"
+            echo "FFC_API_ENDPOINT=${{ secrets.FFC_TEST_API_ENDPOINT }}" >> $GITHUB_ENV
+          fi
+
+      - name: Run screenshot update
+        run: |
+          cd e2etests
+          chmod +x run_pw.sh
+          ./run_pw.sh -a $FFC_API_ENDPOINT -i -u
+        env:
+          DOCKER_BUILDKIT: 1
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git diff --quiet && git diff --staged --quiet || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Create branch and commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git checkout -b update-screenshots-${{ github.run_id }}
+          git commit -m "Update screenshots [skip ci]"
+          git push origin update-screenshots-${{ github.run_id }}
+
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request
+        if: steps.git-check.outputs.changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --head "update-screenshots-${{ github.run_id }}" \
+            --base "${{ github.event.inputs.gitref }}" \
+            --title "Update screenshots ${{ steps.current_date.outputs.date }}" \
+            --body "This PR contains updated screenshots from the latest test run."
