@@ -1,21 +1,20 @@
-import os
-import logging
 import argparse
+import logging
+import os
 import tarfile
+
 import tornado.ioloop
-import pydevd_pycharm
 from etcd import Lock as EtcdLock
 from tornado.web import RedirectHandler
 
 import optscale_client.config_client.client
-
 import rest_api.rest_api_server.handlers.v1 as h_v1
 import rest_api.rest_api_server.handlers.v2 as h_v2
 from rest_api.rest_api_server.constants import urls_v2
 from rest_api.rest_api_server.handlers.v1.base import DefaultHandler
-from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
-from rest_api.rest_api_server.handlers.v1.swagger import SwaggerStaticFileHandler
-
+from rest_api.rest_api_server.handlers.v1.swagger import \
+    SwaggerStaticFileHandler
+from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 
 DEFAULT_PORT = 8999
 DEFAULT_ETCD_HOST = 'etcd'
@@ -594,6 +593,11 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
 
 def main():
     if os.environ.get('PYCHARM_DEBUG_HOST'):
+        # NOTE: Intentionally importing it here as the module applies logic
+        #       on import time which breaks the built-in python debugger (pdb) 
+        
+        import pydevd_pycharm
+  
         pydevd_pycharm.settrace(
             host=os.environ['PYCHARM_DEBUG_HOST'],
             port=int(os.environ.get('PYCHARM_DEBUG_PORT', 3000)),

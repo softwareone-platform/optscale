@@ -1,30 +1,41 @@
 import hashlib
 import logging
 import threading
-import tools.optscale_time as opttime
+from typing import Callable, Sequence, override
+
+import requests
 from clickhouse_driver import Client as ClickHouseClient
-from kombu import Connection as QConnection, Exchange
+from kombu import Connection as QConnection
+from kombu import Exchange
 from kombu.pools import producers
 from pymongo import MongoClient
-import requests
 from retrying import retry
-from sqlalchemy.exc import IntegrityError, ResourceClosedError
 from sqlalchemy import and_, exists
+from sqlalchemy.exc import IntegrityError, ResourceClosedError
+from sqlalchemy.orm import Query
 
-from optscale_client.auth_client.client_v2 import Client as AuthClient
-from tools.optscale_exceptions.common_exc import (
-    WrongArgumentsException, FailedDependency, ConflictException,
-    UnauthorizedException, NotFoundException)
-from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.models import (
-    PermissionKeys, Checklist, CloudAccount, Organization, ProfilingToken)
-from rest_api.rest_api_server.utils import (
-    Config, encoded_tags, encoded_map, RetriableException,
-    should_retry, SupportedFiltersMixin, check_list_attribute,
-    check_regex_attribute, check_bool_attribute, check_int_attribute, get_nil_uuid)
-
+import tools.optscale_time as opttime
 from optscale_client.arcee_client.client import Client as ArceeClient
+from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.bulldozer_client.client import Client as BulldozerClient
+from rest_api.rest_api_server.exceptions import Err
+from rest_api.rest_api_server.models.models import (Base, Checklist,
+                                                    CloudAccount, Organization,
+                                                    PermissionKeys,
+                                                    ProfilingToken)
+from rest_api.rest_api_server.utils import (Config, RetriableException,
+                                            SupportedFiltersMixin,
+                                            check_bool_attribute,
+                                            check_int_attribute,
+                                            check_list_attribute,
+                                            check_regex_attribute, encoded_map,
+                                            encoded_tags, get_nil_uuid,
+                                            should_retry)
+from tools.optscale_exceptions.common_exc import (ConflictException,
+                                                  FailedDependency,
+                                                  NotFoundException,
+                                                  UnauthorizedException,
+                                                  WrongArgumentsException)
 
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 LOG = logging.getLogger(__name__)
@@ -293,7 +304,6 @@ class OrganizationValidatorMixin:
             Organization.deleted.is_(False)
         ).one_or_none()
         return organization
-
 
 class BaseController:
 
@@ -737,3 +747,67 @@ class BaseProfilingTokenController(BaseController, OrganizationValidatorMixin):
     def _delete_arcee_token(self, profiling_token):
         arcee = self.get_arcee_client(profiling_token)
         arcee.token_delete(profiling_token)
+
+
+class PaginatedMixin:
+    DEFAULT_PAGINATION_BATCH_SIZE = 20
+
+    def list_paginated[M: Base](
+        self,
+        query: Query | None = None,
+        limit: int = 0,
+        offset: int = 0,
+        *,
+        python_filters: list[Callable[[M], bool]] | None = None,
+    ) -> tuple[Sequence[M], int]:
+        if not query:
+            query = self.session.query(self.model_type)
+        
+        query = query.order_by(self.model_type.created_at)
+
+        if not python_filters:
+            # If there are no python filters to be applied we can rely on the database
+            # to do the pagination -- not only it's simpler but it's way more effecient
+            
+            total_count = query.count()
+            
+            if limit:
+                query = query.limit(limit)
+
+            if offset:
+                query = query.offset(offset)
+
+            return query.all(), total_count
+
+        # Otherwise we're querying the database in batches with all the database filters
+        # already applied (which should be enough to reduce the number of items to a
+        # reasonable amount) and then applying the python filters to the results. We need to
+        # apply these filters for every record, not only the ones in the requested page because:
+        #
+        # 1. The total amount of records will be affected by these filters and the client will
+        #    likely rely on this number being accurate for displaying the number of pages for example.
+        # 2. If a user requests 10 items in a page but the filters exclude the first 3, we need to
+        #    continue iterating through the results until we have 10 items to return (or there are no
+        #    more items left in the query result).
+
+        query_results = (
+            item for item in query.yield_per(limit or self.DEFAULT_PAGINATION_BATCH_SIZE)
+            if all(f(item) for f in python_filters)
+        )
+
+        total_count = 0
+        page_objects = []
+        
+        for i, obj in enumerate(query_results):
+            total_count += 1
+            
+            if offset and (i < offset):
+                continue
+            
+            if limit and (len(page_objects) >= limit):
+                continue
+            
+            page_objects.append(obj)
+
+        return page_objects, total_count
+        

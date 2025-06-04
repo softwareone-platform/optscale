@@ -1,33 +1,39 @@
 import logging
 
 import requests
-from sqlalchemy import and_, true, false
+from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from sqlalchemy import and_, false, true
 from sqlalchemy.exc import IntegrityError
-from rest_api.rest_api_server.controllers.base import (
-    BaseController, ClickHouseMixin)
-from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
-from rest_api.rest_api_server.controllers.employee import EmployeeController
-from rest_api.rest_api_server.controllers.organization_bi import OrganizationBIController
-from rest_api.rest_api_server.controllers.organization_gemini import OrganizationGeminiController
-from rest_api.rest_api_server.controllers.organization_constraint import OrganizationConstraintController
-from rest_api.rest_api_server.controllers.pool import PoolController
-from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import (
-    RolePurposes, OrganizationConstraintTypes)
-from rest_api.rest_api_server.models.models import (
-    CloudAccount, CloudTypes, Organization, Pool, ShareableBooking,
-    ProfilingToken)
-
-from tools.optscale_exceptions.common_exc import (
-    FailedDependency, NotFoundException, UnauthorizedException,
-    WrongArgumentsException)
-from rest_api.rest_api_server.utils import Config
 
 from optscale_client.arcee_client.client import Client as ArceeClient
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 from optscale_client.bulldozer_client.client import Client as BulldozerClient
 from optscale_client.katara_client.client import Client as KataraClient
-from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from rest_api.rest_api_server.controllers.base import (BaseController,
+                                                       ClickHouseMixin,
+                                                       PaginatedMixin)
+from rest_api.rest_api_server.controllers.base_async import \
+    BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.employee import EmployeeController
+from rest_api.rest_api_server.controllers.organization_bi import \
+    OrganizationBIController
+from rest_api.rest_api_server.controllers.organization_constraint import \
+    OrganizationConstraintController
+from rest_api.rest_api_server.controllers.organization_gemini import \
+    OrganizationGeminiController
+from rest_api.rest_api_server.controllers.pool import PoolController
+from rest_api.rest_api_server.exceptions import Err
+from rest_api.rest_api_server.models.enums import (OrganizationConstraintTypes,
+                                                   RolePurposes)
+from rest_api.rest_api_server.models.models import (CloudAccount, CloudTypes,
+                                                    Organization, Pool,
+                                                    ProfilingToken,
+                                                    ShareableBooking)
+from rest_api.rest_api_server.utils import Config
+from tools.optscale_exceptions.common_exc import (FailedDependency,
+                                                  NotFoundException,
+                                                  UnauthorizedException,
+                                                  WrongArgumentsException)
 
 LOG = logging.getLogger(__name__)
 
@@ -54,7 +60,7 @@ DEFAULT_CONSTRAINT_SETTINGS = {
 }
 
 
-class OrganizationController(BaseController, ClickHouseMixin):
+class OrganizationController(BaseController, ClickHouseMixin, PaginatedMixin):
 
     def __init__(self, db_session, config=None, token=None, engine=None):
         super().__init__(db_session, config, token, engine)
@@ -231,14 +237,6 @@ class OrganizationController(BaseController, ClickHouseMixin):
             self.create_report_subscriptions(organization.id)
         return organization
 
-    def _apply_limit_offset(self, query, limit=0, offset=0):
-        query = query.order_by(self.model_type.created_at)
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
-        return query
-
     def root_organizations_list(self, token, limit=0, offset=0):
         assignments = self._get_assignments_by_token(token)
         resource_ids = list(map(
@@ -249,9 +247,7 @@ class OrganizationController(BaseController, ClickHouseMixin):
                 self.model_type.id.in_(resource_ids)
             )
         )
-        total_count = query.count()
-        query = self._apply_limit_offset(query, limit, offset)
-        return query.all(), total_count
+        return self.list_paginated(query, limit, offset)
 
     def get_org_list(self, is_demo=False, with_shareable_bookings=False,
                      with_connected_accounts=False, limit=0, offset=0,
@@ -279,10 +275,7 @@ class OrganizationController(BaseController, ClickHouseMixin):
                     CloudAccount.deleted.is_(False)
                 )
             )
-        total_count = organizations_query.count()
-        organizations_query = self._apply_limit_offset(organizations_query,
-                                                       limit, offset)
-        return organizations_query.all(), total_count
+        return self.list_paginated(organizations_query, limit, offset)
 
     @staticmethod
     def _get_assignments_by_token(token):
