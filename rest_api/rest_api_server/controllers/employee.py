@@ -1,38 +1,41 @@
 import logging
 import re
-import requests
 from datetime import datetime, timezone
-from optscale_client.config_client.client import etcd
-from sqlalchemy import exists, and_, or_, func
-from sqlalchemy.exc import IntegrityError
-from tools.optscale_exceptions.common_exc import (
-    NotFoundException, ConflictException, ForbiddenException,
-    UnauthorizedException, WrongArgumentsException)
 
-from rest_api.rest_api_server.controllers.base import (
-    BaseController, MongoMixin)
-from rest_api.rest_api_server.controllers.base_async import (
-    BaseAsyncControllerWrapper)
+import requests
+from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from sqlalchemy import and_, exists, func, or_
+from sqlalchemy.exc import IntegrityError
+
+from optscale_client.auth_client.client_v2 import Client as AuthClient
+from optscale_client.config_client.client import etcd
+from optscale_client.herald_client.client_v2 import Client as HeraldClient
+from rest_api.rest_api_server.controllers.base import (BaseController,
+                                                       MongoMixin)
+from rest_api.rest_api_server.controllers.base_async import \
+    BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.employee_email import \
+    EmployeeEmailController
 from rest_api.rest_api_server.controllers.expense import (
     CloudFilteredEmployeeFormattedExpenseController,
     PoolFilteredEmployeeFormattedExpenseController)
-from rest_api.rest_api_server.controllers.organization_constraint import (
-    OrganizationConstraintController)
-from rest_api.rest_api_server.controllers.profiling.base import (
-    BaseProfilingController)
-from rest_api.rest_api_server.controllers.employee_email import (
-    EmployeeEmailController)
+from rest_api.rest_api_server.controllers.organization_constraint import \
+    OrganizationConstraintController
+from rest_api.rest_api_server.controllers.profiling.base import \
+    BaseProfilingController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import (
-    AuthenticationType, PoolPurposes, RolePurposes)
-from rest_api.rest_api_server.models.models import (
-    AssignmentRequest, Employee, EmployeeEmail, Layout, Organization, Pool,
-    Rule, ShareableBooking)
+from rest_api.rest_api_server.models.enums import (AuthenticationType,
+                                                   PoolPurposes, RolePurposes)
+from rest_api.rest_api_server.models.models import (AssignmentRequest,
+                                                    Employee, EmployeeEmail,
+                                                    Layout, Organization, Pool,
+                                                    Rule, ShareableBooking)
 from rest_api.rest_api_server.utils import Config
-
-from optscale_client.auth_client.client_v2 import Client as AuthClient
-from optscale_client.herald_client.client_v2 import Client as HeraldClient
-from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from tools.optscale_exceptions.common_exc import (ConflictException,
+                                                  ForbiddenException,
+                                                  NotFoundException,
+                                                  UnauthorizedException,
+                                                  WrongArgumentsException)
 
 LOG = logging.getLogger(__name__)
 
@@ -174,6 +177,7 @@ class EmployeeController(BaseController, MongoMixin):
         if org is None:
             raise NotFoundException(
                 Err.OE0002, [Organization.__name__, organization_id])
+        # TODO: Paginate
         return super().list(organization_id=org.id, **kwargs)
 
     def list(self, organization_id, last_login=False, **kwargs):

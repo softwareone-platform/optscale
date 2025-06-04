@@ -2,49 +2,38 @@ import argparse
 import logging
 import os
 
-import pydevd_pycharm
 import tornado.ioloop
 import tornado.web
 from etcd import Lock as EtcdLock
 
+import optscale_client.config_client.client
 from jira_bus.jira_bus_server.constants import backend_urls
-from jira_bus.jira_bus_server.handlers.v2.app_descriptor import AppDescriptorHandler
+from jira_bus.jira_bus_server.handlers.v2.app_descriptor import \
+    AppDescriptorHandler
 from jira_bus.jira_bus_server.handlers.v2.app_hook import (
-    AppHookIssueUpdatedHandler,
-    AppHookIssueDeletedHandler,
-)
-from jira_bus.jira_bus_server.handlers.v2.app_lifecycle import (
-    AppLifecycleInstalledHandler,
-)
+    AppHookIssueDeletedHandler, AppHookIssueUpdatedHandler)
+from jira_bus.jira_bus_server.handlers.v2.app_lifecycle import \
+    AppLifecycleInstalledHandler
+from jira_bus.jira_bus_server.handlers.v2.authorize import AuthorizeHandler
 from jira_bus.jira_bus_server.handlers.v2.base import DefaultHandler
 from jira_bus.jira_bus_server.handlers.v2.issue_attachment import (
-    IssueAttachmentCollectionHandler,
-    IssueAttachmentItemHandler,
-)
+    IssueAttachmentCollectionHandler, IssueAttachmentItemHandler)
 from jira_bus.jira_bus_server.handlers.v2.issue_info import IssueInfoHandler
-from jira_bus.jira_bus_server.handlers.v2.authorize import AuthorizeHandler
-from jira_bus.jira_bus_server.handlers.v2.organization_assignment import (
-    OrganizationAssignmentHandler,
-)
-from jira_bus.jira_bus_server.handlers.v2.organization import (
-    OrganizationCollectionHandler,
-)
-from jira_bus.jira_bus_server.handlers.v2.organization_status import (
-    OrganizationStatusHandler,
-)
+from jira_bus.jira_bus_server.handlers.v2.organization import \
+    OrganizationCollectionHandler
+from jira_bus.jira_bus_server.handlers.v2.organization_assignment import \
+    OrganizationAssignmentHandler
+from jira_bus.jira_bus_server.handlers.v2.organization_status import \
+    OrganizationStatusHandler
 from jira_bus.jira_bus_server.handlers.v2.shareable_book import (
-    ShareableBookCollectionHandler,
-    ShareableBookItemHandler,
-)
-from jira_bus.jira_bus_server.handlers.v2.shareable_resource import (
-    ShareableResourceHandler,
-)
-from jira_bus.jira_bus_server.handlers.v2.swagger import SwaggerStaticFileHandler
-from jira_bus.jira_bus_server.handlers.v2.user_assignment import UserAssignmentHandler
-from jira_bus.jira_bus_server.models.db_factory import DBType, DBFactory
-
-import optscale_client.config_client.client
-
+    ShareableBookCollectionHandler, ShareableBookItemHandler)
+from jira_bus.jira_bus_server.handlers.v2.shareable_resource import \
+    ShareableResourceHandler
+from jira_bus.jira_bus_server.handlers.v2.swagger import \
+    SwaggerStaticFileHandler
+from jira_bus.jira_bus_server.handlers.v2.user_assignment import \
+    UserAssignmentHandler
+from jira_bus.jira_bus_server.models.db_factory import DBFactory, DBType
 
 DEFAULT_PORT = 8977
 DEFAULT_ETCD_HOST = "etcd"
@@ -144,6 +133,11 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
 
 def main():
     if os.environ.get("PYCHARM_DEBUG_HOST"):
+        # NOTE: Intentionally importing it here as the module applies logic
+        #       on import time which breaks the built-in python debugger (pdb) 
+        
+        import pydevd_pycharm
+        
         pydevd_pycharm.settrace(
             host=os.environ["PYCHARM_DEBUG_HOST"],
             port=int(os.environ.get("PYCHARM_DEBUG_PORT", 3000)),

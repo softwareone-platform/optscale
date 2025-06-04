@@ -1,62 +1,74 @@
 import logging
 import re
-import tools.optscale_time as opttime
-from datetime import timedelta
 from calendar import monthrange
+from datetime import timedelta
+from typing import Callable, Sequence
 
-from optscale_client.herald_client.client_v2 import Client as HeraldClient
-
+from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 from sqlalchemy import Enum, true
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Query
 from sqlalchemy.sql import and_, exists, or_
-from tools.cloud_adapter.exceptions import (
-    InvalidParameterException, ReportConfigurationException,
-    CloudSettingNotSupported, BucketNameValidationError,
-    BucketPrefixValidationError, ReportNameValidationError,
-    CloudConnectionError, S3ConnectionError)
-from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 
-from tools.optscale_exceptions.common_exc import (
-    WrongArgumentsException, NotFoundException, ForbiddenException,
-    ConflictException, TimeoutException, FailedDependency)
-from rest_api.rest_api_server.controllers.cloud_resource import CloudResourceController
+import tools.optscale_time as opttime
+from optscale_client.herald_client.client_v2 import Client as HeraldClient
+from rest_api.rest_api_server.controllers.base import (BaseController,
+                                                       ClickHouseMixin,
+                                                       PaginatedMixin)
+from rest_api.rest_api_server.controllers.base_async import \
+    BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.cloud_resource import \
+    CloudResourceController
 from rest_api.rest_api_server.controllers.cost_model import (
     CloudBasedCostModelController, SkuBasedCostModelController)
-from rest_api.rest_api_server.controllers.base import ClickHouseMixin
-from rest_api.rest_api_server.controllers.discovery_info import DiscoveryInfoController
+from rest_api.rest_api_server.controllers.discovery_info import \
+    DiscoveryInfoController
 from rest_api.rest_api_server.controllers.employee import EmployeeController
 from rest_api.rest_api_server.controllers.expense import (
-    ExpenseController,
-    ServiceFilteredCloudFormattedExpenseController,
+    EmployeeFilteredCloudFormattedExpenseController, ExpenseController,
+    K8sServiceFilteredCloudFormattedExpenseController,
+    NamespaceFilteredCloudFormattedExpenseController,
+    NodeFilteredCloudFormattedExpenseController,
+    PoolFilteredCloudFormattedExpenseController,
     RegionFilteredCloudFormattedExpenseController,
     ResourceTypeFilteredCloudFormattedExpenseController,
-    EmployeeFilteredCloudFormattedExpenseController,
-    PoolFilteredCloudFormattedExpenseController,
-    NodeFilteredCloudFormattedExpenseController,
-    NamespaceFilteredCloudFormattedExpenseController,
-    K8sServiceFilteredCloudFormattedExpenseController
-)
-from rest_api.rest_api_server.controllers.organization import OrganizationController
-from rest_api.rest_api_server.controllers.organization_constraint import OrganizationConstraintController
+    ServiceFilteredCloudFormattedExpenseController)
+from rest_api.rest_api_server.controllers.organization import \
+    OrganizationController
+from rest_api.rest_api_server.controllers.organization_constraint import \
+    OrganizationConstraintController
 from rest_api.rest_api_server.controllers.pool import PoolController
 from rest_api.rest_api_server.controllers.report_import import (
-    ExpensesRecalculationScheduleController,
-    ReportImportBaseController
-)
+    ExpensesRecalculationScheduleController, ReportImportBaseController)
 from rest_api.rest_api_server.controllers.rule import RuleController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.models import (
-    CloudAccount, DiscoveryInfo, Organization, Pool)
 from rest_api.rest_api_server.models.enums import CloudTypes, ConditionTypes
-from rest_api.rest_api_server.controllers.base import BaseController
-from rest_api.rest_api_server.controllers.base_async import (
-    BaseAsyncControllerWrapper)
-from rest_api.rest_api_server.utils import (
-    check_bool_attribute, check_dict_attribute, check_float_attribute,
-    check_int_attribute, check_string, check_string_attribute,
-    raise_invalid_argument_exception, raise_not_provided_exception,
-    encode_config, decode_config)
-from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
+from rest_api.rest_api_server.models.models import (Base, CloudAccount,
+                                                    DiscoveryInfo,
+                                                    Organization, Pool)
+from rest_api.rest_api_server.utils import (check_bool_attribute,
+                                            check_dict_attribute,
+                                            check_float_attribute,
+                                            check_int_attribute, check_string,
+                                            check_string_attribute,
+                                            decode_config, encode_config,
+                                            raise_invalid_argument_exception,
+                                            raise_not_provided_exception)
+from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.cloud_adapter.exceptions import (BucketNameValidationError,
+                                            BucketPrefixValidationError,
+                                            CloudConnectionError,
+                                            CloudSettingNotSupported,
+                                            InvalidParameterException,
+                                            ReportConfigurationException,
+                                            ReportNameValidationError,
+                                            S3ConnectionError)
+from tools.optscale_exceptions.common_exc import (ConflictException,
+                                                  FailedDependency,
+                                                  ForbiddenException,
+                                                  NotFoundException,
+                                                  TimeoutException,
+                                                  WrongArgumentsException)
 
 LOG = logging.getLogger(__name__)
 
@@ -64,7 +76,7 @@ LOG = logging.getLogger(__name__)
 NOTIFY_FIELDS = ["name", "config"]
 
 
-class CloudAccountController(BaseController, ClickHouseMixin):
+class CloudAccountController(BaseController, ClickHouseMixin, PaginatedMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._employee_ctrl = None
@@ -684,14 +696,6 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         return CloudAccountController._get_cloud_expenses(
             expense_ctrl, start, end, cloud_acc_ids)
 
-    def _apply_limit_offset(self, query, limit=0, offset=0):
-        query = query.order_by(self.model_type.created_at)
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
-        return query
-
     def list(self, details=False, secure=True, only_linked=None, type=None,
              limit=0, offset=0, **kwargs):
         organization_id = kwargs.get('organization_id')
@@ -711,18 +715,13 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         if len(kwargs) > 0:
             query = query.filter_by(**kwargs)
 
-        total_count = query.count()
-        query = self._apply_limit_offset(query, limit, offset)
-
-        cloud_accounts = query.all()
+        python_filters = []
 
         if only_linked:
-            linked_accounts = []
-            for ca in cloud_accounts:
-                if ca.decoded_config.get('linked'):
-                    linked_accounts.append(ca)
-            cloud_accounts = linked_accounts
+            python_filters.append(lambda ca: ca.decoded_config.get('linked', False))
 
+        cloud_accounts, total_count = self.list_paginated(query, limit, offset, python_filters=python_filters)
+        
         if not details:
             return list(map(lambda x: x.to_dict(secure), cloud_accounts)), total_count
 

@@ -1,23 +1,26 @@
-import datetime
 import copy
+import datetime
 import uuid
-import tools.optscale_time as opttime
 from copy import deepcopy
+from unittest.mock import ANY, call, patch
 
 from freezegun import freeze_time
 from sqlalchemy import and_
-from unittest.mock import patch, ANY, call
-from rest_api.rest_api_server.models.models import (
-    CloudAccount, DiscoveryInfo, OrganizationLimitHit, Organization)
+
+import tools.optscale_time as opttime
+from rest_api.rest_api_server.controllers.cloud_account import \
+    CloudAccountController
 from rest_api.rest_api_server.models.db_base import BaseDB
-from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
-from rest_api.rest_api_server.utils import decode_config
-from rest_api.rest_api_server.controllers.cloud_account import (
-    CloudAccountController)
-from tools.cloud_adapter.exceptions import ReportConfigurationException
-from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 from rest_api.rest_api_server.models.enums import CloudTypes
+from rest_api.rest_api_server.models.models import (CloudAccount,
+                                                    DiscoveryInfo,
+                                                    Organization,
+                                                    OrganizationLimitHit)
+from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
+from rest_api.rest_api_server.utils import decode_config
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from tools.cloud_adapter.exceptions import ReportConfigurationException
 
 
 class TestCloudAccountApi(TestApiBase):
@@ -1131,18 +1134,22 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 201)
         _, cloud_acc_list = self.client.cloud_account_list(self.org_id)
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 1)
+        self.assertEqual(cloud_acc_list['total_count'], 1)
 
         _, cloud_acc_list = self.client.cloud_account_list(
             self.org_id, type='aws_cnr')
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 1)
+        self.assertEqual(cloud_acc_list['total_count'], 1)
 
         _, cloud_acc_list = self.client.cloud_account_list(
             self.org_id, type='azure_cnr')
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 0)
+        self.assertEqual(cloud_acc_list['total_count'], 0)
 
         _, cloud_acc_list = self.client.cloud_account_list(
             self.org_id, type='gcp_cnr')
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 0)
+        self.assertEqual(cloud_acc_list['total_count'], 0)
 
         cloud_acc2_dict = deepcopy(self.valid_aws_cloud_acc)
         cloud_acc2_dict['name'] = 'manual import cloud_acc'
@@ -1152,6 +1159,7 @@ class TestCloudAccountApi(TestApiBase):
         _, cloud_acc_list = self.client.cloud_account_list(
             self.org_id, type='aws_cnr')
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 2)
+        self.assertEqual(cloud_acc_list['total_count'], 2)
 
         cloud_acc3_dict = deepcopy(self.valid_aws_cloud_acc)
         cloud_acc3_dict['config']['linked'] = True
@@ -1163,6 +1171,80 @@ class TestCloudAccountApi(TestApiBase):
             self.org_id, type='aws_cnr', only_linked=True)
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 1)
         self.assertEqual(cloud_acc_list['cloud_accounts'][0]['id'], cloud_acc['id'])
+        self.assertEqual(cloud_acc_list["total_count"], 1)
+        
+    def test_list_only_linked_with_pagination(self):
+        # Create a bunch of accounts with different types, all mixed in a different order 
+        # to test that the pagination takes into account the filters both for the returned
+        # page items and the total count
+        
+        cloud_accounts_to_create = [
+            ("regular", 10),
+            ("linked", 5),
+            ("regular", 4),
+            ("linked", 2),
+            ("regular", 2),
+        ]
+
+        regular_cloud_accounts = []
+        linked_cloud_accounts = []
+        
+        cloud_account_index = 0
+        
+        for account_type, accounts_to_create in cloud_accounts_to_create:
+            for _ in range(accounts_to_create):
+                cloud_account_index += 1
+                
+                cloud_account_dict = deepcopy(self.valid_aws_cloud_acc)
+                
+                if account_type == "regular":
+                    cloud_account_dict['name'] = f'cloud account #{cloud_account_index}: regular'
+                elif account_type == "linked":
+                    cloud_account_dict['name'] = f'cloud account #{cloud_account_index}: linked'
+                    cloud_account_dict['config']['linked'] = True
+                else:
+                    raise ValueError(f"Unknown account type: {account_type}")
+                
+                code, cloud_acc = self.create_cloud_account(self.org_id, cloud_account_dict)
+                self.assertEqual(code, 201)
+
+                if account_type == "regular":
+                    regular_cloud_accounts.append(cloud_acc)
+                elif account_type == "linked":
+                    linked_cloud_accounts.append(cloud_acc)
+                else:
+                    raise ValueError(f"Unknown account type: {account_type}")
+
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 23)
+        self.assertEqual(cloud_acc_list['total_count'], 23)
+
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, only_linked=True)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 7)
+        self.assertTrue(all(acc['config'].get('linked', False) for acc in cloud_acc_list['cloud_accounts']))
+        self.assertEqual(cloud_acc_list['total_count'], 7)
+        
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, limit=5)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 5)
+        self.assertEqual(cloud_acc_list['total_count'], 23)
+        
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, limit=12)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 12)
+        self.assertEqual(cloud_acc_list['total_count'], 23)
+        
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, limit=3, offset=2, only_linked=True)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 3)
+        self.assertTrue(all(acc['config'].get('linked', False) for acc in cloud_acc_list['cloud_accounts']))
+        self.assertEqual(cloud_acc_list['total_count'], 7)
+        
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, offset=2, only_linked=True)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 5)
+        self.assertTrue(all(acc['config'].get('linked', False) for acc in cloud_acc_list['cloud_accounts']))
+        self.assertEqual(cloud_acc_list['total_count'], 7)
+        
+        _, cloud_acc_list = self.client.cloud_account_list(self.org_id, limit=22, offset=10)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 13)
+        self.assertEqual(cloud_acc_list['total_count'], 23)
 
     def test_list_invalid_filters(self):
         for bad_value in [1, 'str']:
