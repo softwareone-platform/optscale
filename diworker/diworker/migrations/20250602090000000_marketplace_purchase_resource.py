@@ -46,11 +46,17 @@ class Migration(BaseMigration):
                 "charge_type": "Purchase",
                 "publisher_type": "Marketplace"
             }, {"resource_id": 1, "plan_name": 1, "part_number": 1,
-                "start_date": 1})
-            resource_data = {x["resource_id"]: (
-                x["plan_name"], x["part_number"],
-                x["start_date"].replace(day=1).strftime("%Y-%m-%d"))
-                for x in raw_exp}
+                "start_date": 1, "meter_details": 1})
+            resource_data = {}
+            for res in raw_exp:
+                if "plan_name" in res:
+                    part = res["plan_name"]
+                else:
+                    part = res["meter_details"].get("meter_name", "")
+                resource_data[res["resource_id"]] = (
+                    part, res.get("part_number", ""),
+                    res["start_date"].replace(day=1).strftime("%Y-%m-%d")
+                )
             resources = self.db.resources.find({
                 "cloud_account_id": cloud_acc_id,
                 "cloud_resource_id": {"$in": list(resource_data)}
