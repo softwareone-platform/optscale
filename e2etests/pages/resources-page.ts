@@ -46,7 +46,7 @@ import {BasePage} from "./base-page";
          * @param {Page} page - The Playwright page object.
          */
         constructor(page: Page) {
-            super(page, '/resources');
+            super(page, '/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
             this.heading = this.main.getByTestId('lbl_resources');
             this.perspectivesBtn = this.main.getByRole('button', {name: 'Perspectives'});
             this.savePerspectiveBtn = this.main.getByRole('button', {name: 'Save perspective'});
