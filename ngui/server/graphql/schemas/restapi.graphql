@@ -309,6 +309,7 @@ input AwsRootConfigInput {
   bucket_prefix: String
   config_scheme: String
   report_name: String
+  region_name: String
 }
 
 input AwsLinkedConfigInput {

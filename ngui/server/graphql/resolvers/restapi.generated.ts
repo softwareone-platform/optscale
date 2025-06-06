@@ -86,6 +86,7 @@ export type AwsRootConfigInput = {
   bucket_prefix?: InputMaybe<Scalars['String']['input']>;
   config_scheme?: InputMaybe<Scalars['String']['input']>;
   cur_version?: InputMaybe<Scalars['Int']['input']>;
+  region_name?: InputMaybe<Scalars['String']['input']>;
   report_name?: InputMaybe<Scalars['String']['input']>;
   secret_access_key: Scalars['String']['input'];
   use_edp_discount?: InputMaybe<Scalars['Boolean']['input']>;

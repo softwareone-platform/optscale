@@ -7,7 +7,8 @@ import { DEFAULT_MAX_INPUT_LENGTH } from "utils/constants";
 export const FIELD_NAMES = Object.freeze({
   BUCKET_NAME: "bucketName",
   EXPORT_NAME: "exportName",
-  BUCKET_PREFIX: "bucketPrefix"
+  BUCKET_PREFIX: "bucketPrefix",
+  REGION_NAME: "regionName"
 });
 
 const DEFAULT_PATH_PREFIX = "reports";
@@ -88,6 +89,25 @@ const AwsRootBillingBucket = () => {
             message: intl.formatMessage(
               { id: "maxLength" },
               { inputName: intl.formatMessage({ id: "exportPathPrefix" }), max: DEFAULT_MAX_INPUT_LENGTH }
+            )
+          }
+        })}
+      />
+      <Input
+        dataTestId="input_region_name"
+        key={FIELD_NAMES.REGION_NAME}
+        error={!!errors[FIELD_NAMES.REGION_NAME]}
+        helperText={errors[FIELD_NAMES.REGION_NAME] && errors[FIELD_NAMES.REGION_NAME].message}
+        InputProps={{
+          endAdornment: <QuestionMark messageId="exportRegionNameTooltip" dataTestId="qmark_region_name" />
+        }}
+        label={<FormattedMessage id="exportRegionName" />}
+        {...register(FIELD_NAMES.REGION_NAME, {
+          maxLength: {
+            value: DEFAULT_MAX_INPUT_LENGTH,
+            message: intl.formatMessage(
+              { id: "maxLength" },
+              { inputName: intl.formatMessage({ id: "exportRegionName" }), max: DEFAULT_MAX_INPUT_LENGTH }
             )
           }
         })}

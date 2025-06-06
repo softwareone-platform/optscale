@@ -153,6 +153,7 @@ const getAwsParameters = (formData) => {
           bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
           bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
           report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+          region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
           config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
         };
   return {
