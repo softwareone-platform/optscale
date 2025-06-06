@@ -14,6 +14,7 @@ from botocore.config import Config as CoreConfig
 from botocore.exceptions import (ClientError,
                                  WaiterError,
                                  EndpointConnectionError,
+                                 InvalidRegionError,
                                  ParamValidationError,
                                  ConnectTimeoutError,
                                  ReadTimeoutError,
@@ -105,6 +106,7 @@ class Aws(S3CloudMixin):
         CloudParameter(name='bucket_prefix', type=str, required=False),
         CloudParameter(name='report_name', type=str, required=False),
         CloudParameter(name='linked', type=bool, required=False),
+        CloudParameter(name='region_name', type=str, required=False),
 
         # Service parameters
         CloudParameter(name='cur_version', type=int, required=False),
@@ -198,7 +200,7 @@ class Aws(S3CloudMixin):
     def validate_credentials(self, org_id=None):
         try:
             result = self._retry(self.sts.get_caller_identity)
-        except ClientError as ex:
+        except (ClientError, InvalidRegionError) as ex:
             raise InvalidParameterException(str(ex))
         except (ReadTimeoutError, ConnectTimeoutError) as ex:
             raise CloudConnectionError(str(ex))
@@ -451,8 +453,8 @@ class Aws(S3CloudMixin):
                     break
         return is_public_policy, is_public_acls
 
-    def discover_bucket_info(self, bucket_name):
-        region_info = self.s3.get_bucket_location(Bucket=bucket_name)
+    @staticmethod
+    def get_region_from_location(region_info):
         if not region_info['LocationConstraint']:
             # LocationConstraint will be None if bucket is located in us-east-1
             region = 'us-east-1'
@@ -461,6 +463,11 @@ class Aws(S3CloudMixin):
             region = 'eu-west-1'
         else:
             region = region_info['LocationConstraint']
+        return region
+
+    def discover_bucket_info(self, bucket_name):
+        region_info = self.s3.get_bucket_location(Bucket=bucket_name)
+        region = self.get_region_from_location(region_info)
 
         # get_bucket_tagging fails for eu-south-1 if region is not set
         # explicitly, so we find region first and initialize client for
@@ -773,13 +780,13 @@ class Aws(S3CloudMixin):
     def get_bucket_region(self, bucket_name):
         try:
             bucket_location = self.s3.get_bucket_location(Bucket=bucket_name)
-            location_constraint = bucket_location.get('LocationConstraint')
-            return 'us-east-1' if location_constraint is None else location_constraint
+            return self.get_region_from_location(bucket_location)
         except self.s3.exceptions.NoSuchBucket:
             raise BucketNotFoundException(
                 'Bucket {} not found'.format(bucket_name))
         except ParamValidationError:
-            raise BucketNameValidationError('Bucket name "{}" has incorrect format'.format(bucket_name))
+            raise BucketNameValidationError(
+                'Bucket name "{}" has incorrect format'.format(bucket_name))
 
     @staticmethod
     def get_report_definition(report_name, bucket_name, prefix,
@@ -865,12 +872,20 @@ class Aws(S3CloudMixin):
                     'Bucket {} already exists'.format(bucket_name))
 
         def create_bucket(bucket_name):
+            location = self.config.get('region_name',
+                                      self.DEFAULT_S3_REGION_NAME)
+            if location == 'us-east-1':
+                # us-east-1 location is not supported, bucket is created in
+                # us-east-1 by default
+                return self.s3.create_bucket(
+                    Bucket=bucket_name,
+                    ACL='private'
+                )
             return self.s3.create_bucket(
                 Bucket=bucket_name,
                 ACL='private',
                 CreateBucketConfiguration={
-                    'LocationConstraint': self.config.get('region_name',
-                                                          self.DEFAULT_S3_REGION_NAME)
+                    'LocationConstraint': location
                 })
 
         actions = [
