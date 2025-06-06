@@ -26,9 +26,9 @@ const CreateOrganizationConstraintForm = ({ onSubmit, types, navigateAway }) => 
     defaultValues: {
       [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.FILTERS]: Object.fromEntries(
         Object.values(FILTER_CONFIGS).map((filterConfig) => {
-          const { getDefaultValue } = filterConfig;
+          const { id, getDefaultValue } = filterConfig;
 
-          return [filterConfig.id, getDefaultValue()];
+          return [id, getDefaultValue()];
         })
       ),
       [CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.EVALUATION_PERIOD]: "",

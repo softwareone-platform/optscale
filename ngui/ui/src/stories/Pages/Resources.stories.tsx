@@ -4,6 +4,8 @@ import { GET_RESOURCE_COUNT_BREAKDOWN } from "api/restapi/actionTypes";
 import Resources from "components/Resources";
 import { data } from "components/Resources/ResourcesMocked";
 import { millisecondsToSeconds, addDays } from "utils/datetime";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
+import { CLEAN_EXPENSES_BREAKDOWN_TYPES } from "utils/constants";
 
 export default {
   component: Resources
@@ -43,29 +45,45 @@ export const basic = () => (
     <Resources
       startDateTimestamp={firstDateRangePoint}
       endDateTimestamp={lastDateRangePoint}
-      filters={data.filters}
       filterValues={data.filterValues}
       onApply={() => console.log("onApply")}
-      onFilterAdd={() => console.log("onFilterAdd")}
-      onFiltersDelete={() => console.log("onFiltersDelete")}
-      onFilterDelete={() => console.log("onFilterDelete")}
       requestParams={data.requestParams}
+      activeBreakdown={CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES}
+      selectedPerspectiveName={undefined}
+      perspectives={{}}
+      onPerspectiveApply={() => console.log("onPerspectiveApply")}
+      appliedFilters={Object.fromEntries(
+        Object.values(FILTER_CONFIGS).map((filterConfig) => {
+          const { id, getDefaultValue } = filterConfig;
+          return [id, getDefaultValue()];
+        })
+      )}
+      onAppliedFiltersChange={() => console.log("onAppliedFiltersChange")}
+      isFilterValuesLoading={false}
+      onBreakdownChange={() => console.log("onBreakdownChange")}
     />
   </Provider>
 );
 
 export const isLoading = () => (
   <Resources
+    isFilterValuesLoading
     startDateTimestamp={firstDateRangePoint}
     endDateTimestamp={lastDateRangePoint}
-    filters={{}}
-    requestParams={{
-      startDate: firstDateRangePoint,
-      endDate: lastDateRangePoint
-    }}
+    filterValues={data.filterValues}
     onApply={() => console.log("onApply")}
-    onFilterAdd={() => console.log("onFilterAdd")}
-    onFilterDelete={() => console.log("onFilterDelete")}
-    onFiltersDelete={() => console.log("onFiltersDelete")}
+    requestParams={data.requestParams}
+    activeBreakdown={CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES}
+    selectedPerspectiveName={undefined}
+    perspectives={{}}
+    onPerspectiveApply={() => console.log("onPerspectiveApply")}
+    appliedFilters={Object.fromEntries(
+      Object.values(FILTER_CONFIGS).map((filterConfig) => {
+        const { id, getDefaultValue } = filterConfig;
+        return [id, getDefaultValue()];
+      })
+    )}
+    onAppliedFiltersChange={() => console.log("onAppliedFiltersChange")}
+    onBreakdownChange={() => console.log("onBreakdownChange")}
   />
 );
