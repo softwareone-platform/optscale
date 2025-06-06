@@ -775,6 +775,8 @@
   "exportNameDescription": "Name of the Cost Management export. Can be found in the Azure portal under the corresponding export settings.",
   "exportPathPrefix": "Export path prefix",
   "exportPathPrefixTooltip": "Export path prefix in Amazon S3 bucket that you want to prepend to the name of your report files.",
+  "exportRegionName": "Export region name",
+  "exportRegionNameTooltip": "AWS region name of the Amazon S3 bucket where new Data Export will be stored",
   "exportS3BucketName": "Export Amazon S3 bucket name",
   "exportS3BucketNameTooltip": "Amazon S3 bucket where new Data Export will be stored.",
   "exportType": "Export type",

@@ -10,6 +10,8 @@ type AwsPropertiesProps = {
     bucket_prefix: string;
     linked: boolean;
     report_name: string;
+    config_scheme?: string;
+    region_name?: string;
     cur_version?: 1 | 2;
     use_edp_discount?: boolean;
   };
@@ -19,11 +21,12 @@ const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
   const {
     access_key_id: accessKeyId,
     bucket_name: bucketName,
-    bucket_prefix: buckerPrefix,
+    bucket_prefix: bucketPrefix,
     linked,
     cur_version: curVersion,
     report_name: reportName,
-    use_edp_discount: useEdpDiscount
+    use_edp_discount: useEdpDiscount,
+    region_name: regionName
   } = config;
 
   return (
@@ -75,9 +78,16 @@ const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
           />
           <KeyValueLabel
             keyMessageId="exportPathPrefix"
-            value={buckerPrefix}
+            value={bucketPrefix}
             dataTestIds={{ key: "p_bucket_prefix_key", value: "p_bucket_prefix_value" }}
           />
+          {!!regionName && (
+            <KeyValueLabel
+              keyMessageId="exportRegionName"
+              value={regionName}
+              dataTestIds={{ key: "p_region_name_key", value: "p_region_name_value" }}
+            />
+          )}
         </>
       )}
     </>

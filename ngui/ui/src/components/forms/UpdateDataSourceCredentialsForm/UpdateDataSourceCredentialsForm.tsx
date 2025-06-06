@@ -258,6 +258,7 @@ const getConfig = (type, config) => {
                 [AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
                 [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME]: config.bucket_name,
                 [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME]: config.report_name,
+                [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME]: config.region_name,
                 [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]: config.bucket_prefix
               },
         parseFormDataToApiParams: (formData) => ({
@@ -278,6 +279,7 @@ const getConfig = (type, config) => {
                         cur_version: Number(formData[AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
                         bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
                         report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+                        region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
                         bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]
                       }
                     : {
@@ -288,6 +290,7 @@ const getConfig = (type, config) => {
                         cur_version: config.cur_version ?? undefined,
                         bucket_name: config.bucket_name,
                         report_name: config.report_name,
+                        region_name: config.region_name,
                         bucket_prefix: config.bucket_prefix
                       })
                 })
