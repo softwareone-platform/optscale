@@ -2,8 +2,9 @@ import { RefObject, useState } from "react";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import { saveAs } from "file-saver";
 import { FormattedMessage } from "react-intl";
-import IconButton from "components/IconButton";
+import ButtonLoader from "components/ButtonLoader";
 import SnackbarAlert from "components/SnackbarAlert";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 import { format } from "utils/datetime";
 import { createPng } from "utils/exportChart";
 
@@ -15,9 +16,9 @@ type FileNameConfig = {
   withTime?: boolean;
 };
 
-type ChartActionsProps = {
-  chartRef: RefObject<HTMLCanvasElement | null>;
-  marginTop: number;
+type ChartExportProps = {
+  chartWrapperRef: RefObject<HTMLElement | null>;
+  isLoading: boolean;
 };
 
 const defaultConfig: FileNameConfig = {
@@ -36,19 +37,19 @@ const generateFileName = ({ title, fileFormat, withTime }: FileNameConfig): stri
   return fileName + `.${fileFormat}`;
 };
 
-const ChartActions = ({ chartRef, marginTop }: ChartActionsProps) => {
+const ChartExport = ({ chartWrapperRef, isLoading }: ChartExportProps) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const handlerDownloadPng = async () => {
-    const canvas = chartRef.current;
+    const canvases = Array.from(chartWrapperRef.current?.querySelectorAll("canvas") ?? []);
 
-    if (!canvas) {
+    if (isEmptyArray(canvases)) {
       setShowAlert(true);
       return;
     }
 
     const fileName = generateFileName(defaultConfig);
-    const png = await createPng(canvas);
+    const png = await createPng(canvases);
 
     if (png) {
       saveAs(png, fileName);
@@ -58,17 +59,20 @@ const ChartActions = ({ chartRef, marginTop }: ChartActionsProps) => {
   };
 
   return (
-    <div style={{ marginTop }}>
-      <IconButton
-        dataTestId="btn_export_chart"
-        color="primary"
-        tooltip={{
-          messageId: "exportChart",
-          show: true
-        }}
-        icon={<DownloadOutlinedIcon />}
-        onClick={handlerDownloadPng}
-      />
+    <div>
+      <div>
+        <ButtonLoader
+          uppercase
+          dataTestId="btn_export_chart"
+          variant="outlined"
+          color="primary"
+          isLoading={isLoading}
+          messageId="exportChart"
+          size="small"
+          startIcon={<DownloadOutlinedIcon fontSize="small" />}
+          onClick={handlerDownloadPng}
+        />
+      </div>
       <SnackbarAlert
         body={<FormattedMessage id="exportChartError" />}
         openState={showAlert}
@@ -80,4 +84,4 @@ const ChartActions = ({ chartRef, marginTop }: ChartActionsProps) => {
   );
 };
 
-export default ChartActions;
+export default ChartExport;

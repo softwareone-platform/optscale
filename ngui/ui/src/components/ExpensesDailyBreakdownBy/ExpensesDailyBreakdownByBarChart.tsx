@@ -54,6 +54,7 @@ const getChartDataAndKeys = ({ breakdown, counts, split = EXPENSES_SPLIT_PERIODS
 };
 
 const ExpensesDailyBreakdownByBarChart = ({
+  chartWrapperRef,
   breakdown,
   breakdownBy,
   counts,
@@ -79,6 +80,7 @@ const ExpensesDailyBreakdownByBarChart = ({
   return (
     <CanvasBarChart
       dataTestId={dataTestId}
+      wrapperRef={chartWrapperRef}
       indexBy="date"
       keys={keys}
       data={data}
@@ -103,7 +105,6 @@ const ExpensesDailyBreakdownByBarChart = ({
       isLoading={isLoading}
       axisFormat={AXIS_FORMATS.MONEY}
       withLegend={showLegend}
-      showActions
       legendLabel={(legendItem, ctx: CanvasRenderingContext2D, { maxWidth }) => {
         const details = {
           id: legendItem.id,

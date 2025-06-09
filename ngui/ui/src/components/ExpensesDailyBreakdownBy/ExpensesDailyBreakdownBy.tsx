@@ -1,5 +1,7 @@
+import { RefObject, useRef } from "react";
 import { Box, Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
+import ChartExport from "components/ChartExport";
 import ChartLegendToggle from "components/ChartLegendToggle/ChartLegendToggle";
 import Selector, { Item, ItemContent } from "components/Selector";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
@@ -40,6 +42,8 @@ const ExpensesDailyBreakdownBy = ({
   onBreakdownByChange,
   isLoading = false
 }: ExpensesDailyBreakdownByProps) => {
+  const chartWrapperRef: RefObject<HTMLElement | null> = useRef(null);
+
   const [split, setSplit] = useSyncQueryParamWithState({
     queryParamName: DAILY_EXPENSES_SPLIT_PARAMETER_NAME,
     possibleStates: SPLITS,
@@ -54,22 +58,26 @@ const ExpensesDailyBreakdownBy = ({
 
   return (
     <Stack spacing={SPACING_1}>
-      <Box display="flex" gap={1}>
-        <BreakdownBy value={breakdownByValue} onChange={onBreakdownByChange} />
-        <Selector id="expenses-split-selector" labelMessageId="expenses" value={split} onChange={setSplit}>
-          {SPLITS.map((splitValue) => (
-            <Item key={splitValue} value={splitValue}>
-              <ItemContent>
-                <FormattedMessage id={splitValue} />
-              </ItemContent>
-            </Item>
-          ))}
-        </Selector>
-        <ChartLegendToggle checked={withLegend} onChange={setWithLegend} />
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box display="flex" gap={1}>
+          <BreakdownBy value={breakdownByValue} onChange={onBreakdownByChange} />
+          <Selector id="expenses-split-selector" labelMessageId="expenses" value={split} onChange={setSplit}>
+            {SPLITS.map((splitValue) => (
+              <Item key={splitValue} value={splitValue}>
+                <ItemContent>
+                  <FormattedMessage id={splitValue} />
+                </ItemContent>
+              </Item>
+            ))}
+          </Selector>
+          <ChartLegendToggle checked={withLegend} onChange={setWithLegend} />
+        </Box>
+        <ChartExport chartWrapperRef={chartWrapperRef} isLoading={isLoading} />
       </Box>
       <Box>
         <ExpensesDailyBreakdownByBarChart
           dataTestId="expenses_breakdown_chart"
+          chartWrapperRef={chartWrapperRef}
           breakdown={breakdown}
           breakdownBy={breakdownByValue}
           showLegend={withLegend}
