@@ -22,14 +22,14 @@ from rest_api.rest_api_server.models.enums import (
     AssignmentRequestStatuses, ThresholdBasedTypes, ThresholdTypes,
     ConstraintTypes, PoolPurposes, ConstraintLimitStates,
     OrganizationConstraintTypes, BIOrganizationStatuses, BITypes,
-    GeminiStatuses)
+    GeminiStatuses, RuleOperators)
 from rest_api.rest_api_server.models.types import (
     Email, Name, Uuid, NullableUuid, NullableMetadata, Int,
     NullableString, AutogenUuid, NullableBool, NullableText, NullableInt,
     BaseString, BigInt, CloudType, RolePurpose,
     ImportState, AssignmentRequestStatus,
     ThresholdBasedType, ThresholdType, NotWhiteSpaceString,
-    ConditionType, ConstraintType, PoolPurpose, BaseText,
+    ConditionType, RuleOperator, ConstraintType, PoolPurpose, BaseText,
     InviteAssignmentScopeType, NullableJSON, CachedResourceType, NullableFloat,
     CostModelType, WebhookObjectType, WebhookActionType,
     MediumNullableString, MediumString, MediumLargeNullableString,
@@ -798,6 +798,8 @@ class Rule(Base, CreatedMixin, ImmutableMixin):
                       info=ColumnPermissions.full)
     owner = relationship("Employee", foreign_keys=[owner_id])
     conditions = relationship("Condition")
+    operator = Column(RuleOperator('operator'), nullable=False,
+                      info=ColumnPermissions.full)
 
     __table_args__ = (
         UniqueConstraint("name", "deleted_at", "organization_id",
@@ -808,6 +810,7 @@ class Rule(Base, CreatedMixin, ImmutableMixin):
 
     def to_dict(self, raw=False):
         rule_dict = super().to_dict()
+        rule_dict["operator"] = rule_dict["operator"].value
         if not raw:
             keys_to_delete = ['deleted_at']
             for key in keys_to_delete:
