@@ -1,5 +1,4 @@
 import { alpha } from "@mui/material/styles";
-
 import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()((theme) => ({

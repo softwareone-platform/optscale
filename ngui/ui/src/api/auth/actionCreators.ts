@@ -14,7 +14,6 @@ import {
   UPDATE_USER,
   SET_TOKEN
 } from "./actionTypes";
-
 import { onSuccessSignIn } from "./handlers";
 
 export const API_URL = getApiUrl("auth");

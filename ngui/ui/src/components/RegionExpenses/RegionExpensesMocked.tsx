@@ -1,5 +1,4 @@
 import { getStartOfTodayInUTCinSeconds, getEndOfTodayInUTCinSeconds } from "utils/datetime";
-
 import RegionExpenses from "./RegionExpenses";
 
 const RegionExpensesMocked = () => (

@@ -1,4 +1,4 @@
-import { useRef, useEffect, RefObject } from "react";
+import { useRef, useEffect } from "react";
 import { Skeleton, Typography } from "@mui/material";
 import { useTheme as useMuiTheme } from "@mui/material/styles";
 import { lighten } from "@mui/system";
@@ -6,7 +6,6 @@ import { ResponsiveBarCanvas } from "@nivo/bar";
 import { getInheritedColorGenerator } from "@nivo/colors";
 import { ResponsiveWrapper } from "@nivo/core";
 import { FormattedMessage } from "react-intl";
-import ChartActions from "components/ChartActions";
 import { useMoneyFormatter } from "components/FormattedMoney";
 import { useBarChartColors } from "hooks/useChartColors";
 import { useChartLayoutOptions } from "hooks/useChartLayoutOptions";
@@ -228,12 +227,11 @@ const CanvasBarChart = ({
   enableTotals,
   valueFormat,
   thresholdMarker,
-  showActions,
   withLegend,
   legendLabel
 }) => {
   const wrapperRef = useRef();
-  const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
+  const canvasRef = useRef();
   const barsRef = useRef();
 
   const { currency } = useOrganizationInfo();
@@ -341,7 +339,6 @@ const CanvasBarChart = ({
   return (
     <div ref={wrapperRef} style={{ height: "100%", display: "flex" }} data-test-id={dataTestId}>
       {pdfId ? <CanvasBarChartPdf pdfId={pdfId} renderData={() => ({ canvasRef })} /> : null}
-      {showActions && <ChartActions marginTop={margin.top} chartRef={canvasRef} />}
       <ResponsiveBarCanvas
         data={data}
         keys={keys}
@@ -423,6 +420,7 @@ const CanvasBarChart = ({
 
 const ResponsiveCanvasBarChart = ({
   data,
+  wrapperRef,
   keys = [],
   style = {},
   isLoading = false,
@@ -430,7 +428,6 @@ const ResponsiveCanvasBarChart = ({
   palette,
   dataTestId,
   withLegend = false,
-  showActions = false,
   ...rest
 }) => {
   const muiTheme = useMuiTheme();
@@ -450,6 +447,7 @@ const ResponsiveCanvasBarChart = ({
       style={{
         height: muiTheme.spacing(height)
       }}
+      ref={wrapperRef}
     >
       <ResponsiveWrapper>
         {({ width: wrapperWidth, height: wrapperHeight }) => {
@@ -486,7 +484,6 @@ const ResponsiveCanvasBarChart = ({
               keys={keys}
               palette={palette || muiTheme.palette.chart}
               withLegend={withLegend}
-              showActions={showActions}
               {...rest}
             />
           );

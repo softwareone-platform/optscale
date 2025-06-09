@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { deleteBooking } from "api";

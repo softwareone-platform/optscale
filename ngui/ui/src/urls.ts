@@ -12,7 +12,6 @@ import {
 } from "utils/constants";
 import { getLast30DaysRange, getCurrentMonthRange } from "utils/datetime";
 import { stringifySearchParams } from "utils/network";
-
 import { buildQueryParameters, concatenateUrl, hasSymbolAtTheEnd, isString } from "utils/strings";
 
 const CREATE = "create";

@@ -5,7 +5,6 @@ import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import Button from "components/Button";
 import SubTitle from "components/SubTitle";
-
 import useStyles from "./AlertDialog.styles";
 
 const AlertDialog = ({ show, header, message, buttonMessageId, onClose, dataTestIds = {} }) => {
