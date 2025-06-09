@@ -964,6 +964,10 @@ class Aws(S3CloudMixin):
             self.config['region_name'] = region
         except BucketNotFoundException:
             is_bucket_missing = True
+        except ReportConfigurationException as exc:
+            exc_str = str(exc) + (". Please try to set correct region name "
+                                  "and check permissions for user and bucket")
+            raise ReportConfigurationException(exc_str)
 
         if is_bucket_missing:
             self.create_bucket_for_report(bucket_name)
