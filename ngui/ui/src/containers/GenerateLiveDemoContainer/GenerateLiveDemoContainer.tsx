@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
-
 import { Box, Stack } from "@mui/system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import { getLiveDemo, createLiveDemo } from "api";
 import { GET_LIVE_DEMO, CREATE_LIVE_DEMO } from "api/restapi/actionTypes";
 import GenerateLiveDemo from "components/GenerateLiveDemo/GenerateLiveDemo";

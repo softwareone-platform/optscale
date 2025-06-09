@@ -52,7 +52,6 @@ import {
   subHours,
   differenceInMinutes
 } from "date-fns";
-
 import { enUS } from "date-fns/locale";
 import { objectMap } from "./objects";
 import { capitalize } from "./strings";
