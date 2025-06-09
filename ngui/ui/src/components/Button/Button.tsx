@@ -1,12 +1,48 @@
-import { forwardRef } from "react";
-import MuiButton from "@mui/material/Button";
+import { forwardRef, ReactNode } from "react";
+import { TooltipProps as MuiTooltipProps } from "@mui/material";
+import MuiButton, { ButtonProps as MuiButtonProps } from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
-import { NavLink } from "react-router-dom";
+import { NavLink, NavLinkProps } from "react-router-dom";
 import Tooltip from "components/Tooltip";
+import { ExclusiveUnion } from "utils/types";
 import useStyles from "./Button.styles";
 
-const Button = forwardRef(
+type TooltipTitle = ExclusiveUnion<{
+  value: ReactNode;
+  messageId: string;
+  body: ReactNode;
+}>;
+
+type TooltipProps = {
+  show: boolean;
+  placement?: MuiTooltipProps["placement"];
+} & TooltipTitle;
+
+type NavProps = ExclusiveUnion<{
+  link?: NavLinkProps["to"];
+  href?: string;
+}>;
+
+type ButtonText = ExclusiveUnion<{
+  text: string;
+  messageId: string;
+  pepega: string;
+}>;
+
+type ButtonProps = MuiButtonProps &
+  ButtonText &
+  NavProps & {
+    dataTestId?: string;
+    dataProductTourId?: string;
+    customClass?: string;
+    dashedBorder?: boolean;
+    uppercase?: boolean;
+    download?: boolean | string;
+    tooltip?: TooltipProps;
+  };
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       dataTestId,
@@ -25,14 +61,20 @@ const Button = forwardRef(
       disabled = false,
       color = "info",
       type = "button",
-      tooltip = {},
+      tooltip,
       ...rest
-    },
+    }: ButtonProps,
     ref
   ) => {
     const { classes, cx } = useStyles();
 
-    const { show: showTooltip = false, value = "", messageId: tooltipMessageId = "", body, placement = "bottom" } = tooltip;
+    const {
+      show: showTooltip = false,
+      value = "",
+      messageId: tooltipMessageId = "",
+      body,
+      placement = "bottom"
+    } = tooltip || {};
 
     const buttonClasses = cx(
       classes.button,
