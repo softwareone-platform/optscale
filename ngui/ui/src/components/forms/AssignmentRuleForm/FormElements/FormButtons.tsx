@@ -4,8 +4,9 @@ import ButtonLoader from "components/ButtonLoader";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
+import { FormButtonsProps } from "../types";
 
-const FormButtons = ({ isLoading = false, isEdit, onCancel }) => {
+const FormButtons = ({ isLoading = false, isEdit, onCancel }: FormButtonsProps) => {
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { isLoading: isGetPoolOwnerLoading } = useApiState(GET_POOL_OWNERS);

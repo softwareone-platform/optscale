@@ -1,11 +1,20 @@
 import { useEffect } from "react";
+import { FormControl } from "@mui/material";
 import Box from "@mui/material/Box";
 import FormLabel from "@mui/material/FormLabel";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import QuestionMark from "components/QuestionMark";
-import { ActiveCheckboxField, ConditionsFieldArray, FormButtons, NameField, OwnerSelector, PoolSelector } from "./FormElements";
-import { FormValues } from "./types";
+import {
+  ActiveCheckboxField,
+  ConditionsFieldArray,
+  ConjunctionTypeField,
+  FormButtons,
+  NameField,
+  OwnerSelector,
+  PoolSelector
+} from "./FormElements";
+import { AssignmentRuleFormProps, FormValues } from "./types";
 import { FIELD_NAMES } from "./utils";
 
 const AssignmentRuleForm = ({
@@ -20,7 +29,7 @@ const AssignmentRuleForm = ({
   poolOwners,
   defaultValues,
   isLoadingProps = {}
-}) => {
+}: AssignmentRuleFormProps) => {
   const methods = useForm<FormValues>({
     // We need to pass defaultValues to useForm in order to reset the Controller components' value.
     // (defaultValues.poolId, defaultValues.ownerId are marked as required in the propTypes definition)
@@ -101,12 +110,26 @@ const AssignmentRuleForm = ({
       >
         <ActiveCheckboxField isLoading={isLoadingProps.isActiveCheckboxLoading} />
         <NameField isLoading={isLoadingProps.isNameInputLoading} />
-        <Box display="flex" alignItems="center">
-          <FormLabel data-test-id="lbl_conditions" required component="p">
+        <FormControl
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "row"
+          }}
+        >
+          <FormLabel data-test-id="lbl_conditions" required component="div">
             <FormattedMessage id="conditions" />
           </FormLabel>
-          <QuestionMark dataTestId="conditions_help" messageId="assignmentRuleConditionsDescription" fontSize="small" />
-        </Box>
+          <ConjunctionTypeField isLoading={isLoadingProps.isConjunctionTypeLoading} />
+          <Box display="flex" alignItems="center">
+            <QuestionMark
+              dataTestId="conditions_help"
+              messageId="assignmentRuleConditionsDescription"
+              fontSize="small"
+              withLeftMargin={false}
+            />
+          </Box>
+        </FormControl>
         <ConditionsFieldArray
           isLoading={isLoadingProps.isConditionsFieldLoading}
           cloudAccounts={cloudAccounts}

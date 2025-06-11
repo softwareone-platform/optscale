@@ -25,7 +25,8 @@ import {
   CLOUD_IS,
   TAG_VALUE_STARTS_WITH,
   RESOURCE_TYPE_IS,
-  REGION_IS
+  REGION_IS,
+  ASSIGNMENT_RULE_OPERATORS
 } from "utils/constants";
 import { getSearchParams } from "utils/network";
 import { parseJSON } from "utils/strings";
@@ -135,6 +136,7 @@ const CreateAssignmentRuleFormContainer = () => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     active: true,
+    operator: ASSIGNMENT_RULE_OPERATORS.AND,
     conditions: conditionsQueryParam ? getDefaultConditionsFromQueryParams(conditionsQueryParam) : DEFAULT_CONDITIONS,
     poolId: "",
     ownerId: ""
@@ -222,6 +224,7 @@ const CreateAssignmentRuleFormContainer = () => {
               isActiveCheckboxLoading: false,
               isNameInputLoading: false,
               isConditionsFieldLoading: isAvailableFiltersLoading,
+              isConjunctionTypeLoading: isFormDataLoading,
               isPoolSelectorLoading: isFormDataLoading,
               isOwnerSelectorLoading: isFormDataLoading,
               isSubmitButtonLoading: isFormDataLoading || isCreateAssignmentRuleLoading

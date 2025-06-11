@@ -16,7 +16,14 @@ import { useAssignmentRulesAvailableFilters } from "hooks/useAssignmentRulesAvai
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ASSIGNMENT_RULES, POOLS } from "urls";
 import { isError } from "utils/api";
-import { TAG_IS, CLOUD_IS, TAG_VALUE_STARTS_WITH, RESOURCE_TYPE_IS, REGION_IS } from "utils/constants";
+import {
+  TAG_IS,
+  CLOUD_IS,
+  TAG_VALUE_STARTS_WITH,
+  RESOURCE_TYPE_IS,
+  REGION_IS,
+  ASSIGNMENT_RULE_OPERATORS
+} from "utils/constants";
 
 const getConditions = (conditions = []) =>
   conditions.map((condition) => {
@@ -74,6 +81,7 @@ const EditAssignmentRuleFormContainer = ({ assignmentRuleId }) => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     active: false,
+    operator: ASSIGNMENT_RULE_OPERATORS.AND,
     conditions: [],
     poolId: "",
     ownerId: ""
@@ -117,6 +125,7 @@ const EditAssignmentRuleFormContainer = ({ assignmentRuleId }) => {
               active = false,
               conditions = [],
               pool_id: assignmentRulePoolId = "",
+              operator = ASSIGNMENT_RULE_OPERATORS.AND,
               owner_id: ownerId = ""
             } = {}
           } = getState()?.[RESTAPI]?.[GET_ASSIGNMENT_RULE] ?? {};
@@ -131,6 +140,7 @@ const EditAssignmentRuleFormContainer = ({ assignmentRuleId }) => {
                   ...currentDefaultValues,
                   name,
                   active,
+                  operator,
                   conditions: getConditions(conditions),
                   // BE returns 'null' if pool/owner is missing
                   poolId: assignmentRulePoolId ?? "",
@@ -202,6 +212,7 @@ const EditAssignmentRuleFormContainer = ({ assignmentRuleId }) => {
               isActiveCheckboxLoading: isFormDataLoading,
               isNameInputLoading: isFormDataLoading,
               isConditionsFieldLoading: isFormDataLoading || isAvailableFiltersLoading,
+              isConjunctionTypeLoading: isFormDataLoading,
               isPoolSelectorLoading: isFormDataLoading,
               isOwnerSelectorLoading: isFormDataLoading,
               isSubmitButtonLoading: isFormDataLoading || isUpdateAssignmentRuleLoading

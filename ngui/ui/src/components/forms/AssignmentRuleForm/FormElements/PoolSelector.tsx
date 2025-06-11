@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { Selector } from "components/forms/common/fields";
 import { ItemContentWithPoolIcon } from "components/Selector";
+import { PoolSelectorProps } from "../types";
 import { FIELD_NAMES } from "../utils";
 
 const PoolSelector = ({
@@ -8,8 +9,8 @@ const PoolSelector = ({
   ownerSelectorName = FIELD_NAMES.OWNER_ID,
   pools,
   onPoolChange,
-  isLoading
-}) => {
+  isLoading = false
+}: PoolSelectorProps) => {
   const { setValue, getValues } = useFormContext();
 
   return (
@@ -26,7 +27,7 @@ const PoolSelector = ({
       labelMessageId="targetPool"
       onChange={(id) => {
         onPoolChange(id, (owners) => {
-          const { default_owner_id: defaultOwnerId } = pools.find((pool) => pool.id === id);
+          const defaultOwnerId = pools.find((pool) => pool.id === id)?.default_owner_id;
 
           const currentlySelectedOwner = getValues(ownerSelectorName);
 
