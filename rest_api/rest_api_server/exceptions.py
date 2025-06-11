@@ -1040,3 +1040,8 @@ class Err(enum.Enum):
         ['time'],
         ['12:34']
     ]
+    OE0563 = [
+        "Invalid operator type: %s",
+        ["operator"],
+        ["test"]
+    ]

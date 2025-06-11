@@ -65,6 +65,12 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                         required: False
                         default: 1
                         example: 5
+                    operator:
+                        type: string
+                        enum: [and, or]
+                        description: Operator applied to rule conditions
+                        required: False
+                        default: and
                     conditions:
                         type: array
                         items:
@@ -98,6 +104,7 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                         organization_id: 08704f0b-9226-452f-8834-47978d4409a6
                         creator_id: a201ff8c-691b-4d51-8885-cbccdec05027
                         creator_name: John Doe
+                        operator: and
                         conditions:
                         - type: name_starts_with
                           meta_info: QA_
@@ -120,6 +127,7 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                     - OE0428: "pool_id" or "owner_id" should be provided
                     - OE0430: Unsupported condition type
                     - OE0456: Duplicate path parameters in the request body
+                    - OE0563: Invalid operator type
             401:
                 description: |
                     Unauthorized:
@@ -207,6 +215,7 @@ class RuleAsyncCollectionHandler(BaseAsyncCollectionHandler, BaseAuthHandler,
                                     pool_id: 4f83731b-d3bc-46fd-891e-856a65bbb387
                                     pool_name: futureOps.com
                                     pool_purpose: pool
+                                    operator: and
                                     conditions:
                                     - type: name_starts_with
                                       meta_info: QA_
@@ -295,6 +304,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                         pool_id: 4f83731b-d3bc-46fd-891e-856a65bbb387
                         pool_purpose: pool
                         pool_name: futureOps.com
+                        operator: and
                         conditions:
                         - type: name_starts_with
                           meta_info: QA_
@@ -370,6 +380,12 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                         description: "Rule priority"
                         required: False
                         example: 5
+                    operator:
+                        type: string
+                        enum: [and, or]
+                        description: Operator applied to rule conditions
+                        required: False
+                        example: and
                     conditions:
                         type: array
                         required: False
@@ -405,6 +421,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                         pool_id: 4f83731b-d3bc-46fd-891e-856a65bbb387
                         pool_purpose: pool
                         pool_name: futureOps.com
+                        operator: and
                         conditions:
                         - type: name_starts_with
                           meta_info: QA_
@@ -425,6 +442,7 @@ class RuleAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                     - OE0344: Argument should be a dict
                     - OE0428: "pool_id" or "owner_id" should be provided
                     - OE0430: Unsupported condition type
+                    - OE0563: Invalid operator type
             401:
                 description: |
                     Unauthorized:
@@ -552,6 +570,7 @@ class RulePriorityAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler):
                                     pool_id: 4f83731b-d3bc-46fd-891e-856a65bbb387
                                     pool_name: futureOps.com
                                     pool_purpose: pool
+                                    operator: and
                                     conditions:
                                     - type: name_starts_with
                                       meta_info: QA_

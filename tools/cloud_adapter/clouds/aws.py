@@ -198,9 +198,13 @@ class Aws(S3CloudMixin):
         return groups_by_id
 
     def validate_credentials(self, org_id=None):
+        region_name = self.config.get("region_name")
+        if region_name and region_name not in self._get_coordinates_map():
+            raise InvalidParameterException(f"Invalid region: {region_name}")
         try:
             result = self._retry(self.sts.get_caller_identity)
-        except (ClientError, InvalidRegionError) as ex:
+        except (ClientError, InvalidRegionError,
+                EndpointConnectionError) as ex:
             raise InvalidParameterException(str(ex))
         except (ReadTimeoutError, ConnectTimeoutError) as ex:
             raise CloudConnectionError(str(ex))
@@ -960,6 +964,10 @@ class Aws(S3CloudMixin):
             self.config['region_name'] = region
         except BucketNotFoundException:
             is_bucket_missing = True
+        except ReportConfigurationException as exc:
+            exc_str = str(exc) + (". Please try to set correct region name "
+                                  "and check permissions for user and bucket")
+            raise ReportConfigurationException(exc_str)
 
         if is_bucket_missing:
             self.create_bucket_for_report(bucket_name)

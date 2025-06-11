@@ -74,6 +74,16 @@ class ConditionTypes(enum.Enum):
         return [cls.TAG_IS.value, cls.TAG_VALUE_STARTS_WITH.value]
 
 
+class RuleOperators(str, enum.Enum):
+    OR = 'or'
+    AND = 'and'
+
+    @classmethod
+    # pylint: disable=E1101
+    def values(cls):
+        return [item.value for item in cls]
+
+
 class CostModelTypes(enum.Enum):
     CLOUD_ACCOUNT = 'cloud_account'
     RESOURCE = 'resource'

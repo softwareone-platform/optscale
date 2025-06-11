@@ -16,7 +16,7 @@ from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerW
 from rest_api.rest_api_server.controllers.pool import PoolController
 from rest_api.rest_api_server.controllers.employee import EmployeeController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import ConditionTypes
+from rest_api.rest_api_server.models.enums import ConditionTypes, RuleOperators
 from rest_api.rest_api_server.models.models import (Rule, Condition, Employee,
                                                     CloudAccount)
 from rest_api.rest_api_server.utils import (
@@ -69,7 +69,7 @@ class RuleController(BaseController, PriorityMixin):
     @staticmethod
     def _validate_parameters(**params):
         allowed_parameters = ['name', 'pool_id', 'owner_id', 'conditions',
-                              'active', 'priority']
+                              'active', 'priority', 'operator']
         for param in allowed_parameters:
             value = params.get(param)
             if value is not None:
@@ -79,6 +79,9 @@ class RuleController(BaseController, PriorityMixin):
                     check_bool_attribute(param, value)
                 elif param == 'priority':
                     check_int_attribute(param, value, min_length=1)
+                elif param == 'operator':
+                    if value not in RuleOperators.values():
+                        raise WrongArgumentsException(Err.OE0563, [value])
                 else:
                     check_string_attribute(param, value)
         unexpected_params = [
@@ -134,12 +137,14 @@ class RuleController(BaseController, PriorityMixin):
         if same_name_rules:
             raise ConflictException(Err.OE0149, [Rule.__name__, name])
 
-    def _prepare_rule_data(self, employee, organization_id, is_deprioritized=False, **kwargs):
+    def _prepare_rule_data(self, employee, organization_id,
+                           is_deprioritized=False, **kwargs):
         name = kwargs.get('name')
         if not name:
             raise_not_provided_exception('name')
         self._check_name_already_exist(name, organization_id)
         active = kwargs.get('active', True)
+        operator = kwargs.get('operator', RuleOperators.AND.value)
         owner = None
         owner_id = kwargs.get('owner_id')
         if owner_id is None:
@@ -169,6 +174,7 @@ class RuleController(BaseController, PriorityMixin):
             name=name, creator_id=employee.id,
             organization_id=organization_id,
             active=active,
+            operator=operator,
             priority=default_priority,
             pool_id=pool_id, owner_id=owner_id
         )
@@ -354,6 +360,10 @@ class RuleController(BaseController, PriorityMixin):
             if value is None:
                 raise_not_provided_exception('active')
             original.active = value
+        if 'operator' in kwargs:
+            value = kwargs.get('operator')
+            if value is not None:
+                original.operator = RuleOperators(value)
         if 'owner_id' in kwargs:
             new_owner_id = kwargs.get('owner_id')
             if new_owner_id is None:
