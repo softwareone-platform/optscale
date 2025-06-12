@@ -15,6 +15,8 @@ import { GeminisResponse,
         readonly dataSourcesSelect: Locator;
         readonly possibleMonthlySavingsDiv: Locator;
         readonly possibleMonthlySavingsValue: Locator;
+        readonly savedWithCommitmentsValue: Locator;
+        readonly computeExpensesWithCommitmentsValue: Locator;
         readonly lastCheckTimeValue: Locator;
         readonly nextCheckTimeValue: Locator;
         readonly s3DuplicatesBtn: Locator;
@@ -26,6 +28,19 @@ import { GeminisResponse,
         readonly searchInput: Locator;
         readonly firstCard: Locator;
         readonly table: Locator;
+        readonly underutilizedInstancesCardSavingsValue: Locator;
+        readonly obsoleteIPsCardSavingsValue: Locator;
+        readonly notAttachedVolumesCardSavingsValue: Locator;
+        readonly abandonedLoadBalancersCardSavingsValue: Locator;
+        readonly instancesWithSpotPreemptibleOpportunitiesCardSavingsValue: Locator;
+        readonly underutilzedRDSInstancesCardSavingsValue: Locator;
+        readonly reservedInstancesOpportunitiesCardSavingsValue: Locator;
+        readonly obsoleteSnapshotsCardSavingsValue: Locator;
+        readonly obsoleteSnapshotChainsCardSavingsValue: Locator;
+        readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
+        readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
+        readonly notDeallocatedInstancesCardSavingsValue: Locator;
+
 
         /**
          * Initializes a new instance of the RecommendationsPage class.
@@ -39,6 +54,8 @@ import { GeminisResponse,
             this.dataSourcesSelect = this.main.locator('//div[@id="select-data-source"]');
             this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
             this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
+            this.savedWithCommitmentsValue = this.main.getByTestId('p_ri_sp_expenses');
+            this.computeExpensesWithCommitmentsValue = this.main.locator('//div[.="Compute expenses covered with commitments"]/../div/div');
             this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
             this.nextCheckTimeValue = this.main.locator('//span[.="Next check time"]/../following-sibling::div');
             this.s3DuplicatesBtn = this.main.getByTestId('btn_s3_duplicates');
@@ -50,6 +67,18 @@ import { GeminisResponse,
             this.searchInput = this.main.getByPlaceholder('Search');
             this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
             this.table = this.main.locator('table');
+            this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../div[2]/div[1]');
+            this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete IPs"]/../../../div[2]/div[1]');
+            this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not attached Volumes"]/../../../div[2]/div[1]');
+            this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Load Balancers"]/../../../div[2]/div[1]');
+            this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Spot (Preemptible) opportunities"]/../../../div[2]/div[1]');
+            this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized RDS Instances"]/../../../div[2]/div[1]');
+            this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Reserved instances opportunities"]/../../../div[2]/div[1]');
+            this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshots"]/../../../div[2]/div[1]');
+            this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshot chains"]/../../../div[2]/div[1]');
+            this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
+            this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with migration opportunities"]/../../../div[2]/div[1]');
+            this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not deallocated Instances"]/../../../div[2]/div[1]');
         }
 
         /**
@@ -114,4 +143,81 @@ import { GeminisResponse,
         async clickTableButton() {
             await this.tableBtn.click();
         }
+
+        async getPossibleMonthlySavingsValue(): Promise<number> {
+            let value = await this.possibleMonthlySavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getSavedWithCommitmentsValue(): Promise<number> {
+            let value = await this.savedWithCommitmentsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getSavedExpensesWithCommitmentsPercentageValue(): Promise<string> {
+            return await this.computeExpensesWithCommitmentsValue.textContent();
+        }
+
+        async getUnderutilizedInstancesCardSavingsValue(): Promise<number> {
+            let value = await this.underutilizedInstancesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getObsoleteIPsCardSavingsValue(): Promise<number> {
+            let value = await this.obsoleteIPsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getNotAttachedVolumesCardSavingsValue(): Promise<number> {
+            let value = await this.notAttachedVolumesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getAbandonedLoadBalancersCardSavingsValue(): Promise<number> {
+            let value = await this.abandonedLoadBalancersCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getInstancesWithSpotPreemptibleOpportunitiesCardSavingsValue(): Promise<number> {
+            let value = await this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getUnderutilzedRDSInstancesCardSavingsValue(): Promise<number> {
+            let value = await this.underutilzedRDSInstancesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getReservedInstancesOpportunitiesCardSavingsValue(): Promise<number> {
+            let value = await this.reservedInstancesOpportunitiesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getObsoleteSnapshotsCardSavingsValue(): Promise<number> {
+            let value = await this.obsoleteSnapshotsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getObsoleteSnapshotChainsCardSavingsValue(): Promise<number> {
+            let value = await this.obsoleteSnapshotChainsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getInstancesWithSubscriptionOpportunitiesCardSavingsValue(): Promise<number> {
+            let value = await this.instancesWithSubscriptionOpportunitiesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getInstancesWithMigrationOpportunitiesCardSavingsValue(): Promise<number> {
+            let value = await this.instancesWithMigrationOpportunitiesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getNotDeallocatedInstancesCardSavingsValue(): Promise<number> {
+            let value = await this.notDeallocatedInstancesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+        
+
+
     }

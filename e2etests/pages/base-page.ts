@@ -144,4 +144,53 @@ import {Locator, Page} from "@playwright/test";
                     await this.page.waitForTimeout(timeout);
                 }
             }
+
+            parseCurrencyValue(input: string): number {
+                if (!input) return NaN;
+
+                // Lowercase for uniformity and trim whitespace
+                const value = input.trim().toLowerCase();
+
+                // Match number part and optional multiplier (e.g. 'k', 'm')
+                const match = value.match(/([-\d.,]+)\s*([km])?/i);
+                if (!match) return NaN;
+
+                let numberPart = match[1];
+                const multiplierSuffix = match[2];
+
+                // Determine decimal separator strategy
+                const commaCount = (numberPart.match(/,/g) || []).length;
+                const dotCount = (numberPart.match(/\./g) || []).length;
+
+                if (commaCount > 0 && dotCount > 0) {
+                    // Mixed separators – assume last is decimal separator
+                    if (numberPart.lastIndexOf(',') > numberPart.lastIndexOf('.')) {
+                        numberPart = numberPart.replace(/\./g, '').replace(',', '.');
+                    } else {
+                        numberPart = numberPart.replace(/,/g, '');
+                    }
+                } else if (commaCount > 0) {
+                    // Could be thousands or decimal separator
+                    const parts = numberPart.split(',');
+                    if (parts.length === 2 && parts[1].length <= 2) {
+                        numberPart = numberPart.replace(',', '.');
+                    } else {
+                        numberPart = numberPart.replace(/,/g, '');
+                    }
+                } else {
+                    // Assume dot is decimal or nothing to clean
+                    numberPart = numberPart.replace(/,/g, '');
+                }
+
+                let result = parseFloat(numberPart);
+                if (isNaN(result)) return NaN;
+
+                // Apply multiplier if present
+                switch (multiplierSuffix) {
+                    case 'k': result *= 1_000; break;
+                    case 'm': result *= 1_000_000; break;
+                }
+
+                return result;
+            }
         }

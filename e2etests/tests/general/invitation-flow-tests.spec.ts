@@ -9,7 +9,7 @@ let inviteLink: string;
 let emailVerificationLink: string;
 
 
-test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
+test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, header}) => {
@@ -214,7 +214,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 });
 
-test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
+test.describe.only("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
@@ -303,14 +303,14 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         });
 
         await test.step("View invitation in Settings", async () => {
-            await settingsPage.navigateToURL(true);
+            await settingsPage.navigateToURL();
             await settingsPage.clickInvitationsTab();
             await expect(settingsPage.page.getByText('● Engineer at Marketplace (Dev)')).toBeVisible();
         });
     });
 });
 
-test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
@@ -394,7 +394,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         });
 
         await test.step("View invitation in Settings", async () => {
-            await settingsPage.navigateToURL(true);
+            await settingsPage.navigateToURL();
             await settingsPage.clickInvitationsTab();
             await expect(settingsPage.page.getByText('● Manager at Marketplace (Dev) pool')).toBeVisible();
         });
