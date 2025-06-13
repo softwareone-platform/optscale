@@ -15,12 +15,13 @@ const RadioGroupField = ({
   fullWidth = false,
   required = false,
   error = false,
-  helperText
+  helperText,
+  margin
 }) => {
   const { classes, cx } = useStyles();
 
   return (
-    <FormControl fullWidth={fullWidth}>
+    <FormControl fullWidth={fullWidth} margin={margin}>
       {labelMessageId && (
         <StyledFormLabel required={required}>
           <FormattedMessage id={labelMessageId} />

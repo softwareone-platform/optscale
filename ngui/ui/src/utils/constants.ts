@@ -141,6 +141,11 @@ export const TAG_VALUE_STARTS_WITH = "tag_value_starts_with";
 export const RESOURCE_TYPE_IS = "resource_type_is";
 export const REGION_IS = "region_is";
 
+export const ASSIGNMENT_RULE_OPERATORS = Object.freeze({
+  AND: "and",
+  OR: "or"
+});
+
 export const COMPLEX_TAG_CONDITION_TYPES = Object.freeze({
   [TAG_IS]: "tagIs",
   [TAG_VALUE_STARTS_WITH]: "tagValueStartsWith"

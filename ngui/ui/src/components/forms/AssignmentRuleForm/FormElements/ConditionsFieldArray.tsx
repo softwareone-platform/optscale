@@ -32,6 +32,7 @@ import {
 import { SPACING_1 } from "utils/layouts";
 import { idx } from "utils/objects";
 import { notOnlyWhiteSpaces } from "utils/validation";
+import { ConditionsFieldArrayProps } from "../types";
 import { FIELD_NAMES } from "../utils";
 
 const { FIELD_NAME, TYPE, META_INFO } = FIELD_NAMES.CONDITIONS_FIELD_ARRAY;
@@ -260,7 +261,13 @@ const RegionIsAutocompleteField = ({ regions, name, count }) => {
   );
 };
 
-const ConditionsFieldArray = ({ name = FIELD_NAME, isLoading = false, cloudAccounts, resourceTypes, regions }) => {
+const ConditionsFieldArray = ({
+  name = FIELD_NAME,
+  isLoading = false,
+  cloudAccounts,
+  resourceTypes,
+  regions
+}: ConditionsFieldArrayProps) => {
   const { classes, cx } = useStyles();
 
   const { control, watch } = useFormContext();
