@@ -10,7 +10,7 @@ dotenv.config({path: path.resolve(__dirname, '.env.local')});
 export default defineConfig({
   globalSetup: "./setup/global-setup.ts",
   globalTeardown: "./setup/global-teardown.ts",
-  testDir: '../e2etests',
+  testDir: '../e2etests/tests/general',
   testIgnore: ['**/screenshots/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -52,7 +52,7 @@ export default defineConfig({
       use: {
         channel: "chrome",
       },
-      dependencies: ["setup"],
+      // dependencies: ["setup"],
     },
     // {
     //   name: "firefox",

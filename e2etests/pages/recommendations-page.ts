@@ -28,7 +28,10 @@ import { GeminisResponse,
         readonly searchInput: Locator;
         readonly firstCard: Locator;
         readonly table: Locator;
+        readonly recommendationsModal: Locator;
+        readonly modalColumn7: Locator;
         readonly underutilizedInstancesCardSavingsValue: Locator;
+        readonly underutilizedInstancesSeeAllBtn: Locator;
         readonly obsoleteIPsCardSavingsValue: Locator;
         readonly notAttachedVolumesCardSavingsValue: Locator;
         readonly abandonedLoadBalancersCardSavingsValue: Locator;
@@ -40,6 +43,14 @@ import { GeminisResponse,
         readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
         readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
         readonly notDeallocatedInstancesCardSavingsValue: Locator;
+        readonly instancesEligibleForGenerationUpgradeCardSavingsValue: Locator;
+        readonly instancesForShutdownCardSavingsValue: Locator;
+        readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
+        readonly abandonedKinesisStreamsCardSavingsValue: Locator;
+        readonly abandonedInstancesCardSavingsValue: Locator;
+        readonly publicS3BucketsCardSavingsValue: Locator;
+        readonly obsoleteImagesCardSavingsValue: Locator;
+        readonly abandonedImagesCardSavingsValue: Locator;
 
 
         /**
@@ -67,7 +78,11 @@ import { GeminisResponse,
             this.searchInput = this.main.getByPlaceholder('Search');
             this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
             this.table = this.main.locator('table');
+            this.recommendationsModal =this.page.getByTestId('smodal_recommendation');
+            this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
+
             this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../div[2]/div[1]');
+            this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../../..//button[contains(text(), "See all")]');
             this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete IPs"]/../../../div[2]/div[1]');
             this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not attached Volumes"]/../../../div[2]/div[1]');
             this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Load Balancers"]/../../../div[2]/div[1]');
@@ -79,6 +94,14 @@ import { GeminisResponse,
             this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
             this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with migration opportunities"]/../../../div[2]/div[1]');
             this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not deallocated Instances"]/../../../div[2]/div[1]');
+            this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances eligible for generation upgrade"]/../../../div[2]/div[1]');
+            this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances for shutdown"]/../../../div[2]/div[1]');
+            this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
+            this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Kinesis Streams"]/../../../div[2]/div[1]');
+            this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned instances"]/../../../div[2]/div[1]');
+            this.publicS3BucketsCardSavingsValue = this.main.locator('//h3[normalize-space()="Public S3 buckets"]/../../../div[2]/div[1]');
+            this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete images"]/../../../div[2]/div[1]');
+            this.abandonedImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned images"]/../../../div[2]/div[1]');
         }
 
         /**
@@ -145,12 +168,12 @@ import { GeminisResponse,
         }
 
         async getPossibleMonthlySavingsValue(): Promise<number> {
-            let value = await this.possibleMonthlySavingsValue.textContent();
+            const value = await this.possibleMonthlySavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getSavedWithCommitmentsValue(): Promise<number> {
-            let value = await this.savedWithCommitmentsValue.textContent();
+            const value = await this.savedWithCommitmentsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
@@ -159,65 +182,130 @@ import { GeminisResponse,
         }
 
         async getUnderutilizedInstancesCardSavingsValue(): Promise<number> {
-            let value = await this.underutilizedInstancesCardSavingsValue.textContent();
+            const value = await this.underutilizedInstancesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getObsoleteIPsCardSavingsValue(): Promise<number> {
-            let value = await this.obsoleteIPsCardSavingsValue.textContent();
+            const value = await this.obsoleteIPsCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getNotAttachedVolumesCardSavingsValue(): Promise<number> {
-            let value = await this.notAttachedVolumesCardSavingsValue.textContent();
+            const value = await this.notAttachedVolumesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getAbandonedLoadBalancersCardSavingsValue(): Promise<number> {
-            let value = await this.abandonedLoadBalancersCardSavingsValue.textContent();
+            const value = await this.abandonedLoadBalancersCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getInstancesWithSpotPreemptibleOpportunitiesCardSavingsValue(): Promise<number> {
-            let value = await this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue.textContent();
+            const value = await this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getUnderutilzedRDSInstancesCardSavingsValue(): Promise<number> {
-            let value = await this.underutilzedRDSInstancesCardSavingsValue.textContent();
+            const value = await this.underutilzedRDSInstancesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getReservedInstancesOpportunitiesCardSavingsValue(): Promise<number> {
-            let value = await this.reservedInstancesOpportunitiesCardSavingsValue.textContent();
+            const value = await this.reservedInstancesOpportunitiesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getObsoleteSnapshotsCardSavingsValue(): Promise<number> {
-            let value = await this.obsoleteSnapshotsCardSavingsValue.textContent();
+            const value = await this.obsoleteSnapshotsCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getObsoleteSnapshotChainsCardSavingsValue(): Promise<number> {
-            let value = await this.obsoleteSnapshotChainsCardSavingsValue.textContent();
+            const value = await this.obsoleteSnapshotChainsCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getInstancesWithSubscriptionOpportunitiesCardSavingsValue(): Promise<number> {
-            let value = await this.instancesWithSubscriptionOpportunitiesCardSavingsValue.textContent();
+            const value = await this.instancesWithSubscriptionOpportunitiesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getInstancesWithMigrationOpportunitiesCardSavingsValue(): Promise<number> {
-            let value = await this.instancesWithMigrationOpportunitiesCardSavingsValue.textContent();
+            const value = await this.instancesWithMigrationOpportunitiesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
 
         async getNotDeallocatedInstancesCardSavingsValue(): Promise<number> {
-            let value = await this.notDeallocatedInstancesCardSavingsValue.textContent();
+            const value = await this.notDeallocatedInstancesCardSavingsValue.textContent();
             return this.parseCurrencyValue(value);
         }
-        
 
+        async getInstancesEligibleForGenerationUpgradeCardSavingsValue(): Promise<number> {
+            const value = await this.instancesEligibleForGenerationUpgradeCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getInstancesForShutdownCardSavingsValue(): Promise<number> {
+            const value = await this.instancesForShutdownCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getAbandonedAmazonS3BucketsCardSavingsValue(): Promise<number> {
+            const value = await this.abandonedAmazonS3BucketsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getAbandonedKinesisStreamsCardSavingsValue(): Promise<number> {
+            const value = await this.abandonedKinesisStreamsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getAbandonedInstancesCardSavingsValue(): Promise<number> {
+            const value = await this.abandonedInstancesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getPublicS3BucketsCardSavingsValue(): Promise<number> {
+            const value = await this.publicS3BucketsCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getObsoleteImagesCardSavingsValue(): Promise<number> {
+            const value = await this.obsoleteImagesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async getAbandonedImagesCardSavingsValue(): Promise<number> {
+            const value = await this.abandonedImagesCardSavingsValue.textContent();
+            return this.parseCurrencyValue(value);
+        }
+
+        async calculateTotalSavingsFromCards(): Promise<number> {
+        let totalSavings = 0;
+            totalSavings += await this.getUnderutilizedInstancesCardSavingsValue();
+            totalSavings += await this.getObsoleteIPsCardSavingsValue();
+            totalSavings += await this.getNotAttachedVolumesCardSavingsValue();
+            totalSavings += await this.getAbandonedLoadBalancersCardSavingsValue();
+            totalSavings += await this.getInstancesWithSpotPreemptibleOpportunitiesCardSavingsValue();
+            totalSavings += await this.getUnderutilzedRDSInstancesCardSavingsValue();
+            totalSavings += await this.getReservedInstancesOpportunitiesCardSavingsValue();
+            totalSavings += await this.getObsoleteSnapshotsCardSavingsValue();
+            totalSavings += await this.getObsoleteSnapshotChainsCardSavingsValue();
+            totalSavings += await this.getInstancesWithSubscriptionOpportunitiesCardSavingsValue();
+            totalSavings += await this.getInstancesWithMigrationOpportunitiesCardSavingsValue();
+            totalSavings += await this.getNotDeallocatedInstancesCardSavingsValue();
+            totalSavings += await this.getInstancesEligibleForGenerationUpgradeCardSavingsValue();
+            totalSavings += await this.getInstancesForShutdownCardSavingsValue();
+            totalSavings += await this.getAbandonedAmazonS3BucketsCardSavingsValue();
+            totalSavings += await this.getAbandonedKinesisStreamsCardSavingsValue();
+            totalSavings += await this.getAbandonedInstancesCardSavingsValue();
+            totalSavings += await this.getPublicS3BucketsCardSavingsValue();
+            totalSavings += await this.getObsoleteImagesCardSavingsValue();
+            totalSavings += await this.getAbandonedImagesCardSavingsValue();
+
+            console.log(`Total savings from cards: ${totalSavings}`);
+            return totalSavings;
+        }
 
     }

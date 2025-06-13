@@ -9,7 +9,7 @@ let inviteLink: string;
 let emailVerificationLink: string;
 
 
-test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
+test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, header}) => {
@@ -214,7 +214,7 @@ test.describe.only("MPT-8230 Invitation Flow Tests for new users @invitation-flo
     });
 });
 
-test.describe.only("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
+test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
         invitationEmail = generateRandomEmail();
@@ -310,7 +310,7 @@ test.describe.only("MPT-8229 Validate invitations in the settings @invitation-fl
     });
 });
 
-test.describe.only("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
+test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
 
 
     test.beforeEach('Login admin user', async ({loginPage, context, header}) => {

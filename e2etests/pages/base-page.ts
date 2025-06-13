@@ -145,52 +145,79 @@ import {Locator, Page} from "@playwright/test";
                 }
             }
 
-            parseCurrencyValue(input: string): number {
-                if (!input) return NaN;
+/**
+                 * Parses a currency value from a string and converts it into a numeric value.
+                 * Handles various formats, including those with multipliers (e.g., 'k' for thousand, 'm' for million),
+                 * and different decimal/thousands separators.
+                 *
+                 * @param {string} input - The input string containing the currency value.
+                 * @returns {number} The parsed numeric value, or NaN if the input is invalid.
+                 */
+                parseCurrencyValue(input: string): number {
+                    if (!input) return NaN;
 
-                // Lowercase for uniformity and trim whitespace
-                const value = input.trim().toLowerCase();
+                    // Lowercase for uniformity and trim whitespace
+                    const value = input.trim().toLowerCase();
 
-                // Match number part and optional multiplier (e.g. 'k', 'm')
-                const match = value.match(/([-\d.,]+)\s*([km])?/i);
-                if (!match) return NaN;
+                    // Match number part and optional multiplier (e.g. 'k', 'm')
+                    const match = value.match(/([-\d.,]+)\s*([km])?/i);
+                    if (!match) return NaN;
 
-                let numberPart = match[1];
-                const multiplierSuffix = match[2];
+                    let numberPart = match[1];
+                    const multiplierSuffix = match[2];
 
-                // Determine decimal separator strategy
-                const commaCount = (numberPart.match(/,/g) || []).length;
-                const dotCount = (numberPart.match(/\./g) || []).length;
+                    // Determine decimal separator strategy
+                    const commaCount = (numberPart.match(/,/g) || []).length;
+                    const dotCount = (numberPart.match(/\./g) || []).length;
 
-                if (commaCount > 0 && dotCount > 0) {
-                    // Mixed separators – assume last is decimal separator
-                    if (numberPart.lastIndexOf(',') > numberPart.lastIndexOf('.')) {
-                        numberPart = numberPart.replace(/\./g, '').replace(',', '.');
+                    if (commaCount > 0 && dotCount > 0) {
+                        // Mixed separators – assume last is decimal separator
+                        if (numberPart.lastIndexOf(',') > numberPart.lastIndexOf('.')) {
+                            numberPart = numberPart.replace(/\./g, '').replace(',', '.');
+                        } else {
+                            numberPart = numberPart.replace(/,/g, '');
+                        }
+                    } else if (commaCount > 0) {
+                        // Could be thousands or decimal separator
+                        const parts = numberPart.split(',');
+                        if (parts.length === 2 && parts[1].length <= 2) {
+                            numberPart = numberPart.replace(',', '.');
+                        } else {
+                            numberPart = numberPart.replace(/,/g, '');
+                        }
                     } else {
+                        // Assume dot is decimal or nothing to clean
                         numberPart = numberPart.replace(/,/g, '');
                     }
-                } else if (commaCount > 0) {
-                    // Could be thousands or decimal separator
-                    const parts = numberPart.split(',');
-                    if (parts.length === 2 && parts[1].length <= 2) {
-                        numberPart = numberPart.replace(',', '.');
-                    } else {
-                        numberPart = numberPart.replace(/,/g, '');
+
+                    let result = parseFloat(numberPart);
+                    if (isNaN(result)) return NaN;
+
+                    // Apply multiplier if present
+                    switch (multiplierSuffix) {
+                        case 'k': result *= 1_000; break;
+                        case 'm': result *= 1_000_000; break;
                     }
-                } else {
-                    // Assume dot is decimal or nothing to clean
-                    numberPart = numberPart.replace(/,/g, '');
+
+                    return result;
                 }
 
-                let result = parseFloat(numberPart);
-                if (isNaN(result)) return NaN;
+                /**
+                 * Sums up all currency values in a column represented by a locator.
+                 * Extracts the numeric values from the text content of the elements and calculates the total.
+                 *
+                 * @param {Locator} locator - The Playwright locator for the column elements.
+                 * @returns {Promise<number>} The sum of all currency values in the column.
+                 */
+                async sumCurrencyColumn(locator: Locator): Promise<number> {
+                    const texts = await locator.allTextContents();
+                    if (texts.length === 0) return 0;
 
-                // Apply multiplier if present
-                switch (multiplierSuffix) {
-                    case 'k': result *= 1_000; break;
-                    case 'm': result *= 1_000_000; break;
+                    const values = texts.map(text => {
+                        const currencyOnly = text.split('(')[0].trim(); // removes e.g. "$457.92 (75%)" → "$457.92"
+                        return this.parseCurrencyValue(currencyOnly);
+                    });
+
+                    return values.reduce((sum, value) => sum + value, 0);
                 }
-
-                return result;
-            }
         }
