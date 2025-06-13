@@ -1,12 +1,22 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
+import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
+import {EStorageState} from "../utils/enums";
 
 test.describe.only("Recommendations page tests", () => {
-    test.beforeEach(async ({loginPage, recommendationsPage}) => {
+    if (process.env.USE_LIVE_DEMO === 'true') {
+        test.use({storageState: EStorageState.liveDemoUser});
+    }
+
+    test.beforeEach(async ({loginPage, recommendationsPage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            const email = process.env.DEFAULT_USER_EMAIL;
-            const password = process.env.DEFAULT_USER_PASSWORD;
-            await loginPage.login(email, password);
+            if (process.env.USE_LIVE_DEMO !== 'true') {
+                const email = process.env.DEFAULT_USER_EMAIL;
+                const password = process.env.DEFAULT_USER_PASSWORD;
+                await loginPage.login(email, password);
+            } else {
+                await restoreUserSessionInLocalForage(page);
+            }
             await recommendationsPage.navigateToURL();
         });
     });
@@ -32,7 +42,6 @@ test.describe.only("Recommendations page tests", () => {
 
         expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
     })
-
 
 
 });

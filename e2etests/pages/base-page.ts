@@ -218,6 +218,9 @@ import {Locator, Page} from "@playwright/test";
                         return this.parseCurrencyValue(currencyOnly);
                     });
 
-                    return values.reduce((sum, value) => sum + value, 0);
+                    const sum = values.reduce((total, val) => total + val, 0);
+
+                    // Return number rounded to 2 decimal places
+                    return parseFloat(sum.toFixed(2));
                 }
         }

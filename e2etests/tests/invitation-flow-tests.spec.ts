@@ -1,7 +1,7 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../fixtures/page-fixture";
 import {expect, request} from "@playwright/test";
-import {generateRandomEmail} from "../../utils/random-data";
-import {AuthRequest} from "../../api-requests/auth-request";
+import {generateRandomEmail} from "../utils/random-data";
+import {AuthRequest} from "../api-requests/auth-request";
 
 const verificationCode = "123456";
 let invitationEmail: string;
