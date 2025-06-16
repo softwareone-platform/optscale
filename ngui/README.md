@@ -94,9 +94,9 @@ pnpm start
 
 Actual versions:
 
-- nodejs: 20.10.0
-- npm: 10.2.3
-- pnpm: 8.11.0
+- nodejs: 22.16.0
+- npm: 10.9.2
+- pnpm: 10.12.1
 
 Source: https://nodejs.org/en/download/releases/
 
