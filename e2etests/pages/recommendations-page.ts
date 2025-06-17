@@ -5,6 +5,7 @@ import {
 import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import {test} from "../fixtures/page-fixture";
 
 /**
  * Represents the Recommendations Page.
@@ -34,6 +35,7 @@ export class RecommendationsPage extends BasePage {
     readonly recommendationsModalCloseBtn: Locator;
     readonly modalColumn5: Locator;
     readonly modalColumn7: Locator;
+    readonly modalNextPageBtn: Locator;
     readonly underutilizedInstancesCardSavingsValue: Locator;
     readonly underutilizedInstancesSeeAllBtn: Locator;
     readonly underutilizedInstancesTableSavingsValue: Locator;
@@ -50,13 +52,17 @@ export class RecommendationsPage extends BasePage {
     readonly notDeallocatedInstancesCardSavingsValue: Locator;
     readonly instancesEligibleForGenerationUpgradeCardSavingsValue: Locator;
     readonly instancesForShutdownCardSavingsValue: Locator;
+    readonly instancesForShutdownTableSavingsValue: Locator;
+    readonly instancesForShutdownSeeAllBtn: Locator;
     readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
     readonly abandonedKinesisStreamsCardSavingsValue: Locator;
     readonly abandonedInstancesCardSavingsValue: Locator;
     readonly abandonedInstancesTableSavingsValue: Locator;
     readonly abandonedInstancesSeeAllBtn: Locator;
-    readonly publicS3BucketsCardSavingsValue: Locator;
+    readonly publicS3BucketsCardCountValue: Locator;
     readonly obsoleteImagesCardSavingsValue: Locator;
+    readonly obsoleteImagesTableSavingsValue: Locator;
+    readonly obsoleteImagesSeeAllBtn: Locator;
     readonly abandonedImagesCardSavingsValue: Locator;
 
 
@@ -87,6 +93,7 @@ export class RecommendationsPage extends BasePage {
         this.table = this.main.locator('table');
         this.recommendationsModal = this.page.getByTestId('smodal_recommendation');
         this.recommendationsModalCloseBtn = this.recommendationsModal.getByTestId('btn_close');
+        this.modalNextPageBtn = this.recommendationsModal.getByTestId('btn_pagination_next');
         this.modalColumn5 = this.recommendationsModal.locator('//tr/td[5]');
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
 
@@ -106,13 +113,17 @@ export class RecommendationsPage extends BasePage {
         this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not deallocated Instances"]/../../../div[2]/div[1]');
         this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances eligible for generation upgrade"]/../../../div[2]/div[1]');
         this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances for shutdown"]/../../../div[2]/div[1]');
+        this.instancesForShutdownTableSavingsValue = this.table.locator('//td[.="Instances for shutdown"]/following-sibling::td[3]');
+        this.instancesForShutdownSeeAllBtn = this.main.locator('//h3[normalize-space()="Instances for shutdown"]/../../../../..//button[contains(text(), "See all")]');
         this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
         this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Kinesis Streams"]/../../../div[2]/div[1]');
         this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned instances"]/../../../div[2]/div[1]');
         this.abandonedInstancesTableSavingsValue = this.table.locator('//td[.="Abandoned instances"]/following-sibling::td[3]');
         this.abandonedInstancesSeeAllBtn = this.main.locator('//h3[normalize-space()="Abandoned instances"]/../../../../..//button[contains(text(), "See all")]');
-        this.publicS3BucketsCardSavingsValue = this.main.locator('//h3[normalize-space()="Public S3 buckets"]/../../../div[2]/div[1]');
+        this.publicS3BucketsCardCountValue = this.main.locator('//h3[normalize-space()="Public S3 buckets"]/../../../div[2]/div[1]');
         this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete images"]/../../../div[2]/div[1]');
+        this.obsoleteImagesTableSavingsValue = this.table.locator('//td[.="Obsolete images"]/following-sibling::td[3]');
+        this.obsoleteImagesSeeAllBtn = this.main.locator('//h3[normalize-space()="Obsolete images"]/../../../../..//button[contains(text(), "See all")]');
         this.abandonedImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned images"]/../../../div[2]/div[1]');
     }
 
@@ -373,6 +384,11 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    async getInstancesForShutdownTableSavingsValue(): Promise<number> {
+        const value = await this.instancesForShutdownTableSavingsValue.textContent();
+        return this.parseCurrencyValue(value);
+    }
+
     /**
      * Retrieves the savings value for abandoned Amazon S3 buckets from the page.
      * Parses the text content of the savings value element into a numeric value.
@@ -412,14 +428,13 @@ export class RecommendationsPage extends BasePage {
     }
 
     /**
-     * Retrieves the savings value for public S3 buckets from the page.
-     * Parses the text content of the savings value element into a numeric value.
+     * Retrieves the count value of public S3 buckets from the page.
+     * Extracts the text content of the corresponding element.
      *
-     * @returns {Promise<number>} The parsed savings value for public S3 buckets.
+     * @returns {Promise<string>} The count value of public S3 buckets as a string.
      */
-    async getPublicS3BucketsCardSavingsValue(): Promise<number> {
-        const value = await this.publicS3BucketsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
+    async getPublicS3BucketsCardCountValue(): Promise<string> {
+        return await this.publicS3BucketsCardCountValue.textContent();
     }
 
     /**
@@ -430,6 +445,11 @@ export class RecommendationsPage extends BasePage {
      */
     async getObsoleteImagesCardSavingsValue(): Promise<number> {
         const value = await this.obsoleteImagesCardSavingsValue.textContent();
+        return this.parseCurrencyValue(value);
+    }
+
+    async getObsoleteImagesTableSavingsValue(): Promise<number> {
+        const value = await this.obsoleteImagesTableSavingsValue.textContent();
         return this.parseCurrencyValue(value);
     }
 
@@ -469,27 +489,39 @@ export class RecommendationsPage extends BasePage {
             this.getAbandonedAmazonS3BucketsCardSavingsValue,
             this.getAbandonedKinesisStreamsCardSavingsValue,
             this.getAbandonedInstancesCardSavingsValue,
-            this.getPublicS3BucketsCardSavingsValue,
             this.getObsoleteImagesCardSavingsValue,
             this.getAbandonedImagesCardSavingsValue,
         ];
 
-const totalSavings = await Promise.all(cardSavingsMethods.map(method => method.call(this)))
-            .then(values => values.reduce((sum, value) => sum + value, 0))
-            .then(total => parseFloat(total.toFixed(2)));
+        let total = 0;
 
-        console.log(`Total savings from cards: ${totalSavings}`);
-        return totalSavings;
+        for (const method of cardSavingsMethods) {
+            const methodName = method.name || 'unknownMethod';
+            const value = await method.call(this);
+            console.log(`${methodName}: ${value}`);
+            total += value;
+        }
+
+        const roundedTotal = parseFloat(total.toFixed(2));
+        console.log(`Total savings from cards: ${roundedTotal}`);
+        return roundedTotal;
     }
 
     async getItemisedSavingsFromModal(seeAllLocator: Locator, columnLocator: Locator): Promise<number> {
         await seeAllLocator.click();
         await this.recommendationsModal.waitFor();
         await columnLocator.last().waitFor();
-        const itemisedSavings = await this.sumCurrencyColumn(columnLocator);
+        const itemisedSavings = await this.sumCurrencyColumn(columnLocator, this.modalNextPageBtn);
         await this.recommendationsModalCloseBtn.click();
         console.log(`Itemised Savings: ${itemisedSavings}`);
         return itemisedSavings;
     }
 
+    async skipTestIfMoreThan100Items(seeAllLocator: Locator): Promise<void> {
+        const seeAllText = await seeAllLocator.textContent();
+        const match = seeAllText?.match(/See all (\d+) items/i);
+        const itemCount = match ? parseInt(match[1], 10) : 0;
+
+        test.skip(itemCount > 100, `Skipping: only 100 items can be loaded in modal (found ${itemCount})`);
+    }
 }

@@ -216,18 +216,40 @@ export abstract class BasePage {
      * @param {Locator} columnLocator - The Playwright locator for the column elements.
      * @returns {Promise<number>} The sum of all currency values in the column.
      */
-    async sumCurrencyColumn(columnLocator: Locator): Promise<number> {
-        const texts = await columnLocator.allTextContents();
-        if (texts.length === 0) return 0;
+    async sumCurrencyColumn(
+        columnLocator: Locator,
+        modalNextPageBtn: Locator
+    ): Promise<number> {
+        let totalSum = 0;
 
-        const values = texts.map(text => {
-            const currencyOnly = text.split('(')[0].trim(); // removes e.g. "$457.92 (75%)" → "$457.92"
-            return this.parseCurrencyValue(currencyOnly);
-        });
+        while (true) {
+            // Wait for table to settle (you may want a better wait depending on your UI)
+            await columnLocator.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
 
-        const sum = values.reduce((total, val) => total + val, 0);
+            const texts = await columnLocator.allTextContents();
 
-        // Return number rounded to 2 decimal places
-        return parseFloat(sum.toFixed(2));
+            const values = texts.map(text => {
+                const currencyOnly = text.split('(')[0].trim();
+                return this.parseCurrencyValue(currencyOnly);
+            });
+
+            totalSum += values.reduce((sum, val) => sum + val, 0);
+
+            // Check pagination: is the "next page" button both visible and enabled?
+            const isVisible = await modalNextPageBtn.isVisible();
+            if (!isVisible) break;
+
+            const isEnabled = await modalNextPageBtn.isEnabled();
+            if (!isEnabled) break;
+
+            // Go to next page
+            await modalNextPageBtn.click();
+
+            // Optional: wait for pagination to update (adjust selector as needed)
+            await modalNextPageBtn.page().waitForTimeout(300); // or smarter: wait for a specific table cell to change
+        }
+
+        // Round result to 2 decimal places
+        return parseFloat(totalSum.toFixed(2));
     }
 }
