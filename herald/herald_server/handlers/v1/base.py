@@ -1,39 +1,39 @@
 import functools
 import hashlib
 import json
-from json.decoder import JSONDecodeError
 import logging
-import traceback
 import time
-import requests
+import traceback
+from json.decoder import JSONDecodeError
 
+import requests
 import tornado.web
 from tornado.ioloop import IOLoop
 
 from herald.herald_server.exceptions import Err
 from herald.herald_server.models.db_base import BaseDB
-from herald.herald_server.utils import ModelEncoder, Config, tp_executor
-
+from herald.herald_server.utils import Config, ModelEncoder, tp_executor
 from optscale_client.auth_client.client_v2 import Client as AuthClient
-from tools.optscale_exceptions.http_exc import OptHTTPError
 from tools.optscale_exceptions.common_exc import UnauthorizedException
-
+from tools.optscale_exceptions.http_exc import OptHTTPError
 
 LOG = logging.getLogger(__name__)
 
 
 class DefaultHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
-        self.set_header('Content-Type', 'application/json')
+        self.set_header("Content-Type", "application/json")
         self.set_status(404)
-        self.finish(json.dumps({
-            'error': {
-                'status_code': 404,
-                'error_code': 'G0029',
-                'reason': self._reason,
-                'params': [],
-            }
-        }))
+        self.finish(
+            json.dumps({
+                "error": {
+                    "status_code": 404,
+                    "error_code": "G0029",
+                    "reason": self._reason,
+                    "params": [],
+                }
+            })
+        )
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -47,8 +47,7 @@ class BaseHandler(tornado.web.RequestHandler):
         self.io_loop = IOLoop.current()
 
     def raise405(self):
-        raise OptHTTPError(
-            405, Err.G0008, [self.request.method])
+        raise OptHTTPError(405, Err.G0008, [self.request.method])
 
     def get(self, *args, **kwargs):
         self.raise405()
@@ -82,9 +81,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def prepare(self):
         self.set_content_type()
 
-    def set_content_type(self,
-                         content_type='application/json; charset="utf-8"'):
-        self.set_header('Content-Type', content_type)
+    def set_content_type(self, content_type='application/json; charset="utf-8"'):
+        self.set_header("Content-Type", content_type)
 
     def on_finish(self):
         self.session().close()
@@ -92,21 +90,20 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def controller(self):
         if not self._controller:
-            self._controller = self._get_controller_class()(
-                self.session(), self._config, self.rabbit_client)
+            self._controller = self._get_controller_class()(self.session(), self._config, self.rabbit_client)
         return self._controller
 
     def _get_controller_class(self):
         raise NotImplementedError
 
     def write_error(self, status_code, **kwargs):
-        exc = kwargs.get('exc_info')[1]
+        exc = kwargs.get("exc_info")[1]
         res = {
-            'error': {
-                'status_code': status_code,
-                'error_code': getattr(exc, 'error_code', 'U0%s' % status_code),
-                'reason': self._reason,
-                'params': getattr(exc, 'params', []),
+            "error": {
+                "status_code": status_code,
+                "error_code": getattr(exc, "error_code", "U0%s" % status_code),
+                "reason": self._reason,
+                "params": getattr(exc, "params", []),
             }
         }
         self.set_content_type('application/json; charset="utf-8"')
@@ -114,46 +111,42 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def _request_body(self):
         try:
-            return json.loads(self.request.body.decode('utf-8'))
+            return json.loads(self.request.body.decode("utf-8"))
         except JSONDecodeError:
-            raise OptHTTPError(
-                400, Err.G0007, [])
+            raise OptHTTPError(400, Err.G0007, [])
 
     def log_exception(self, typ, value, tb):
         if isinstance(value, tornado.web.HTTPError):
             if value.log_message:
                 format = "%d %s: " + value.log_message
-                args = ([value.status_code, self._request_summary()] +
-                        list(value.args))
+                args = [value.status_code, self._request_summary()] + list(value.args)
                 LOG.warning(format, *args)
         else:
             out_list = traceback.format_exception(typ, value, tb)
 
-            LOG.error("Uncaught exception %s\\n%r\\n %s",
-                      self._request_summary(), self.request,
-                      repr(''.join(out_list)))
+            LOG.error(
+                "Uncaught exception %s\\n%r\\n %s", self._request_summary(), self.request, repr("".join(out_list))
+            )
 
 
 class BaseAuthHandler(BaseHandler):
-
     def initialize(self, engine, config, rabbit_client):
         super().initialize(engine, config, rabbit_client)
         self.cluster_secret = config.cluster_secret()
 
     @property
     def token(self):
-        auth_header = self.request.headers.get('Authorization')
+        auth_header = self.request.headers.get("Authorization")
         if not auth_header:
             return None
         return auth_header[7:]
 
     @property
     def secret(self):
-        return self.request.headers.get('Secret')
+        return self.request.headers.get("Secret")
 
     def get_awaitable(self, meth, *args, **kwargs):
-        return self.io_loop.run_in_executor(
-            self.executor, functools.partial(meth, *args, **kwargs))
+        return self.io_loop.run_in_executor(self.executor, functools.partial(meth, *args, **kwargs))
 
     async def check_permissions(self, action, type, resource_id):
         await self.get_awaitable(self._check_permissions, action, type, resource_id)
@@ -161,10 +154,10 @@ class BaseAuthHandler(BaseHandler):
     def _check_permissions(self, action, type, resource_id):
         client = AuthClient(url=Config().auth_url)
         client.token = self.token
-        LOG.info('Given Auth token is %s:' % self.token)
+        LOG.info("Given Auth token is %s:" % self.token)
         try:
             code, response = client.authorize(action, type, resource_id)
-            LOG.info('Auth code %s, response: %s', code, response)
+            LOG.info("Auth code %s, response: %s", code, response)
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 403:
                 raise OptHTTPError(403, Err.G0003, [])
@@ -207,15 +200,14 @@ class BaseAuthHandler(BaseHandler):
         return token_meta_dict
 
     def get_meta_by_token(self, token):
-        user_digest = list(map(
-            lambda x: hashlib.md5(x.encode('utf-8')).hexdigest(), [token]))[0]
+        user_digest = hashlib.md5(token.encode("utf-8")).hexdigest()
         token_meta = self.get_token_meta([user_digest]).get(user_digest, {})
         return token_meta
 
     def check_self_auth(self, user_id):
         token_meta = self.get_meta_by_token(self.token)
-        token_valid_until = token_meta.get('valid_until', 0)
-        token_user_id = token_meta.get('user_id', '')
+        token_valid_until = token_meta.get("valid_until", 0)
+        token_user_id = token_meta.get("user_id", "")
         token_expired = token_valid_until < time.time()
         if token_expired or token_user_id != user_id:
             raise OptHTTPError(403, Err.G0003, [])

@@ -1,4 +1,4 @@
-FROM python:3.12.3-slim
+FROM python:3.12-slim
 LABEL org.opencontainers.image.authors="Hystax"
 
 WORKDIR /usr/src/app/
@@ -27,8 +27,9 @@ COPY herald/herald_server/models ./models
 COPY herald/herald_server/worker ./worker
 COPY herald/herald_server/*.py herald/run.py ./
 COPY herald/herald_server/alembic.template .
-COPY herald/modules ../modules
+COPY herald/modules/email_generator ../modules/email_generator
+COPY herald/modules/email_sender ../modules/email_sender
 
-ENV PYTHONPATH /usr/src/app/
+ENV PYTHONPATH=/usr/src/app/
 CMD ["python", "-u", "run.py"]
 EXPOSE 8906

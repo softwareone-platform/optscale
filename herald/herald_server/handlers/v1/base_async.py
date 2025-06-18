@@ -2,20 +2,13 @@ import logging
 
 from herald.herald_server.exceptions import Err
 from herald.herald_server.handlers.v1.base import BaseHandler
-
+from tools.optscale_exceptions.common_exc import ConflictException, NotFoundException, WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
-from tools.optscale_exceptions.common_exc import (
-    WrongArgumentsException,
-    NotFoundException,
-    ConflictException
-)
-
 
 LOG = logging.getLogger(__name__)
 
 
 class BaseAsyncCollectionHandler(BaseHandler):
-
     def _validate_params(self, **kwargs):
         pass
 
@@ -36,7 +29,6 @@ class BaseAsyncCollectionHandler(BaseHandler):
 
 
 class BaseAsyncItemHandler(BaseHandler):
-
     def _validate_params(self, item, **kwargs):
         pass
 

@@ -1,0 +1,6 @@
+[
+    {
+        "name": "test_custom_filter",
+        "entrypoint": "testfilters.make_uppercase"
+    }
+]

@@ -1,14 +1,14 @@
 import functools
 import logging
+
 from tornado.ioloop import IOLoop
 
 from herald.herald_server.utils import tp_executor
 
-
 LOG = logging.getLogger(__name__)
 
 
-class BaseAsyncControllerWrapper(object):
+class BaseAsyncControllerWrapper:
     """
     Used to wrap sync controller methods to return futures
     """
@@ -24,8 +24,7 @@ class BaseAsyncControllerWrapper(object):
     @property
     def controller(self):
         if not self._controller:
-            self._controller = self._get_controller_class()(
-                self.session, self._config, self.rabbit_client)
+            self._controller = self._get_controller_class()(self.session, self._config, self.rabbit_client)
         return self._controller
 
     def _get_controller_class(self):
@@ -36,7 +35,7 @@ class BaseAsyncControllerWrapper(object):
         return self.io_loop.run_in_executor(self.executor, functools.partial(method, *args, **kwargs))
 
     def __getattr__(self, name):
-
         def _missing(*args, **kwargs):
             return self.get_awaitable(name, *args, **kwargs)
+
         return _missing

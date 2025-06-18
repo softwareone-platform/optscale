@@ -6,15 +6,10 @@ TEST_IMAGE=herald_tests:${BUILD_TAG}
 
 docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f herald/Dockerfile_tests .
 
-echo "Pycodestyle tests>>>"
+echo "Linting>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "pycodestyle --max-line-length=120 herald"
-echo "<<<Pycodestyle tests"
-
-echo "Pylint tests>>>"
-docker run -i --rm ${TEST_IMAGE} \
-    bash -c "pylint --rcfile=herald/.pylintrc --fail-under=8 --fail-on=E,F ./herald"
-echo "<<<Pylint tests"
+    bash -c "ruff format --config pyproject.toml --check --diff herald/ && ruff check --config pyproject.toml herald/"
+echo "<<<Linting"
 
 echo "Alembic down revision tests>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
@@ -22,8 +17,7 @@ docker run -i --rm ${TEST_IMAGE} bash -c \
 echo "<<Alembic down revision tests"
 
 echo "Unit tests>>>"
-docker run -i --rm ${TEST_IMAGE} \
-    bash -c "python3 -m unittest discover ./herald/herald_server/tests"
+docker run -i --rm ${TEST_IMAGE} pytest
 echo "<<Unit tests"
 
 docker rmi ${TEST_IMAGE}
