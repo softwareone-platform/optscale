@@ -22,8 +22,10 @@ export class RecommendationsPage extends BasePage {
     readonly computeExpensesWithCommitmentsValue: Locator;
     readonly lastCheckTimeValue: Locator;
     readonly nextCheckTimeValue: Locator;
-    readonly s3DuplicatesBtn: Locator;
+    readonly s3DuplicatesCard: Locator;
+    readonly s3DuplicatesCaption: Locator;
     readonly s3DuplicatesValue: Locator;
+    readonly s3DuplicatesPossibleMonthlySavingsValue: Locator;
     readonly categoriesSelect: Locator;
     readonly applicableServices: Locator;
     readonly cardsBtn: Locator;
@@ -34,6 +36,7 @@ export class RecommendationsPage extends BasePage {
     readonly recommendationsModal: Locator;
     readonly recommendationsModalCloseBtn: Locator;
     readonly modalColumn5: Locator;
+    readonly modalColumn6: Locator;
     readonly modalColumn7: Locator;
     readonly modalNextPageBtn: Locator;
     readonly underutilizedInstancesCardSavingsValue: Locator;
@@ -46,6 +49,8 @@ export class RecommendationsPage extends BasePage {
     readonly underutilzedRDSInstancesCardSavingsValue: Locator;
     readonly reservedInstancesOpportunitiesCardSavingsValue: Locator;
     readonly obsoleteSnapshotsCardSavingsValue: Locator;
+    readonly obsoleteSnapshotsTableSavingsValue: Locator;
+    readonly obsoleteSnapshotsSeeAllBtn: Locator;
     readonly obsoleteSnapshotChainsCardSavingsValue: Locator;
     readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
     readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
@@ -82,8 +87,10 @@ export class RecommendationsPage extends BasePage {
         this.computeExpensesWithCommitmentsValue = this.main.locator('//div[.="Compute expenses covered with commitments"]/../div/div');
         this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
         this.nextCheckTimeValue = this.main.locator('//span[.="Next check time"]/../following-sibling::div');
-        this.s3DuplicatesBtn = this.main.getByTestId('btn_s3_duplicates');
-        this.s3DuplicatesValue = this.main.getByTestId('p_s3_duplicates_value');
+        this.s3DuplicatesCard = this.main.getByTestId('card_s3_duplicates');
+        this.s3DuplicatesCaption = this.s3DuplicatesCard.locator('//span[@data-test-id="p_s3_duplicates"]');
+        this.s3DuplicatesValue = this.s3DuplicatesCard.getByTestId('p_s3_duplicates_value');
+        this.s3DuplicatesPossibleMonthlySavingsValue = this.s3DuplicatesCard.locator('//div[.="Possible monthly savings"]/following-sibling::div');
         this.categoriesSelect = this.main.locator('//label[.="Categories"]/../div');
         this.applicableServices = this.main.locator('//label[.="Applicable services"]/../div')
         this.cardsBtn = this.main.getByRole('button', {name: 'Cards'});
@@ -95,6 +102,7 @@ export class RecommendationsPage extends BasePage {
         this.recommendationsModalCloseBtn = this.recommendationsModal.getByTestId('btn_close');
         this.modalNextPageBtn = this.recommendationsModal.getByTestId('btn_pagination_next');
         this.modalColumn5 = this.recommendationsModal.locator('//tr/td[5]');
+        this.modalColumn6 = this.recommendationsModal.locator('//tr/td[6]');
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
 
         this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../div[2]/div[1]');
@@ -107,6 +115,8 @@ export class RecommendationsPage extends BasePage {
         this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized RDS Instances"]/../../../div[2]/div[1]');
         this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Reserved instances opportunities"]/../../../div[2]/div[1]');
         this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshots"]/../../../div[2]/div[1]');
+        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshots"]/following-sibling::td[3]');
+        this.obsoleteSnapshotsSeeAllBtn = this.main.locator('//h3[normalize-space()="Obsolete snapshots"]/../../../../..//button[contains(text(), "See all")]');
         this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshot chains"]/../../../div[2]/div[1]');
         this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
         this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with migration opportunities"]/../../../div[2]/div[1]');
@@ -205,6 +215,14 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    async getS3DuplicateFinderPossibleMonthlySavingsValue(): Promise<number> {
+        const value = await this.s3DuplicatesPossibleMonthlySavingsValue.textContent();
+        return this.parseCurrencyValue(value);
+    }
+
+    async clickS3DuplicatesCard() {
+        await this.s3DuplicatesCard.click();
+    }
     /**
      * Retrieves the saved amount with commitments value from the page.
      * Parses the text content of the saved value element into a numeric value.
@@ -315,6 +333,11 @@ export class RecommendationsPage extends BasePage {
      */
     async getObsoleteSnapshotsCardSavingsValue(): Promise<number> {
         const value = await this.obsoleteSnapshotsCardSavingsValue.textContent();
+        return this.parseCurrencyValue(value);
+    }
+
+    async getObsoleteSnapshotsTableSavingsValue(): Promise<number> {
+        const value = await this.obsoleteSnapshotsTableSavingsValue.textContent();
         return this.parseCurrencyValue(value);
     }
 

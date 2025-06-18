@@ -24,6 +24,7 @@ import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
 import {RegisterPage} from "../pages/register-page";
 import {PendingInvitationsPage} from "../pages/pending-invitations-page";
 import {EmailVerificationPage} from "../pages/email-verification-page";
+import {S3DuplicateFinderPage} from "../pages/s3-duplicate-finder-page";
 
 
 export const test = base.extend<{
@@ -47,6 +48,7 @@ export const test = base.extend<{
     registerPage: RegisterPage;
     resourcesPage: ResourcesPage;
     resourceDetailsPage: ResourceDetailsPage;
+    s3DuplicateFinder: S3DuplicateFinderPage;
     settingsPage: SettingsPage;
     taggingPoliciesPage: TaggingPoliciesPage;
     taggingPoliciesCreatePage: TaggingPoliciesCreatePage;
@@ -132,6 +134,10 @@ export const test = base.extend<{
     resourceDetailsPage: async ({page}, use) => {
         const resourceDetailsPage = new ResourceDetailsPage(page);
         await use(resourceDetailsPage);
+    },
+    s3DuplicateFinder: async ({page}, use) => {
+        const s3DuplicateFinderPage = new S3DuplicateFinderPage(page);
+        await use(s3DuplicateFinderPage);
     },
     settingsPage: async ({page}, use) => {
         const settingsPage = new SettingsPage(page);
