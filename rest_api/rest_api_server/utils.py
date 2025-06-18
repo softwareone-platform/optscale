@@ -90,14 +90,6 @@ class Config(object):
         return self.client.clickhouse_params()
 
     @property
-    def arcee_url(self):
-        return self.client.arcee_url()
-
-    @property
-    def bulldozer_url(self):
-        return self.client.bulldozer_url()
-
-    @property
     def insider_url(self):
         return self.client.insider_url()
 

@@ -141,23 +141,8 @@ class UrlsV2(Urls):
                                             r"archived_recommendations_details",
         'archived_recommendations_count': r"%s/organizations/(?P<organization_id>[^/]+)/"
                                             r"archived_recommendations_count",
-        'k8s_rightsizing': r"%s/organizations/(?P<organization_id>[^/]+)/k8s_rightsizing",
-        'tasks_collection': r"%s/organizations/(?P<organization_id>[^/]+)/tasks",
-        'tasks': r"%s/organizations/(?P<organization_id>[^/]+)/tasks/(?P<task_id>[^/]+)",
-        'task_optimizations':
-            r"%s/organizations/(?P<organization_id>[^/]+)/tasks/(?P<task_id>[^/]+)/optimizations",
         'profiling_token_collection': r"%s/organizations/(?P<organization_id>[^/]+)/profiling_token",
-        'profiling_token': r"%s/organizations/(?P<organization_id>[^/]+)/profiling_token/(?P<id>[^/]+)",
-        'metrics_collection': r"%s/organizations/(?P<organization_id>[^/]+)/metrics",
-        'metrics': r"%s/organizations/(?P<organization_id>[^/]+)/metrics/(?P<id>[^/]+)",
-        'profiling_executors':
-            r"%s/organizations/(?P<organization_id>[^/]+)/executors",
-        'executors_breakdown':
-            r"%s/organizations/(?P<organization_id>[^/]+)/executors_breakdown",
-        'task_runs':
-            r"%s/organizations/(?P<organization_id>[^/]+)/tasks/(?P<task_id>[^/]+)/runs",
-        'runs': r"%s/organizations/(?P<organization_id>[^/]+)/runs/(?P<id>[^/]+)",
-        'runs_breakdown': r"%s/organizations/(?P<organization_id>[^/]+)/runs/(?P<id>[^/]+)/breakdown",
+        'k8s_rightsizing': r"%s/organizations/(?P<organization_id>[^/]+)/k8s_rightsizing",
         'risp_processing_tasks_collection':
             r"%s/cloud_accounts/(?P<cloud_account_id>[^/]+)/risp_processing_tasks",
         'risp_processing_tasks': r"%s/risp_processing_tasks/(?P<id>[^/]+)",
@@ -165,13 +150,6 @@ class UrlsV2(Urls):
         'templates_collection': r"%s/organizations/(?P<organization_id>[^/]+)/templates",
         'templates': r"%s/organizations/(?P<organization_id>[^/]+)/templates/(?P<template_id>[^/]+)",
         'templates_overview': r"%s/organizations/(?P<organization_id>[^/]+)/templates_overview",
-        'runsets_collection':
-            r"%s/organizations/(?P<organization_id>[^/]+)/templates/(?P<template_id>[^/]+)/runsets",
-        'runsets': r"%s/organizations/(?P<organization_id>[^/]+)/runsets/(?P<runset_id>[^/]+)",
-        'runners_collection':
-            r"%s/organizations/(?P<organization_id>[^/]+)/runsets/(?P<runset_id>[^/]+)/runners",
-        'runset_runs_collection':
-            r"%s/organizations/(?P<organization_id>[^/]+)/runsets/(?P<runset_id>[^/]+)/runs",
         'org_bi_collection': r"%s/organizations/(?P<organization_id>["r"^/]+)/bi",
         'bi_collection': r"%s/bi",
         'bi': r"%s/bi/(?P<organization_bi_id>["r"^/]+)",
@@ -187,19 +165,6 @@ class UrlsV2(Urls):
             r"%s/power_schedules/(?P<power_schedule_id>["r"^/]+)",
         'power_schedules_actions':
             r"%s/power_schedules/(?P<power_schedule_id>["r"^/]+)/actions",
-        'leaderboard_templates': r"%s/organizations/(?P<organization_id>[^/]+)/tasks/"
-                                 r"(?P<task_id>[^/]+)/leaderboard_template",
-        'datasets_collection': r"%s/organizations/(?P<organization_id>[^/]+)/datasets",
-        'datasets': r"%s/organizations/(?P<organization_id>[^/]+)/datasets/(?P<dataset_id>[^/]+)",
-        'labels_collection': r"%s/organizations/(?P<organization_id>[^/]+)/labels",
-        'leaderboard': r"%s/organizations/(?P<organization_id>[^/]+)/leaderboards/"
-                       r"(?P<leaderboard_id>[^/]+)",
-        'leaderboard_collection': r"%s/organizations/(?P<organization_id>[^/]+)/leaderboard_templates/"
-                                  r"(?P<leaderboard_template_id>[^/]+)/leaderboards",
-        'leaderboard_generate': r"%s/organizations/(?P<organization_id>[^/]+)/leaderboards/"
-                                r"(?P<leaderboard_id>[^/]+)/generate",
-        'runs_bulk': r"%s/organizations/(?P<organization_id>[^/]+)/tasks/"
-                     r"(?P<task_id>[^/]+)/runs/bulk",
         'layouts_collection':
             r"%s/organizations/(?P<organization_id>[^/]+)/layouts",
         'layouts': r"%s/organizations/(?P<organization_id>[^/]+)/"
@@ -208,26 +173,9 @@ class UrlsV2(Urls):
         'sp_breakdown': r"%s/organizations/(?P<organization_id>["r"^/]+)/sp_breakdown",
         'offer_breakdown': r"%s/organizations/(?P<organization_id>["r"^/]+)/offer_breakdown",
         'ri_group_breakdown': r"%s/organizations/(?P<organization_id>["r"^/]+)/ri_group_breakdown",
-        'models_collection':
-            r"%s/organizations/(?P<organization_id>[^/]+)/models",
-        'models':
-            r"%s/organizations/(?P<organization_id>[^/]+)/"
-            r"models/(?P<model_id>[^/]+)",
-        'models_versions':
-            r"%s/organizations/(?P<organization_id>[^/]+)/"
-            r"runs/(?P<run_id>[^/]+)/models/(?P<model_id>[^/]+)/version",
-        'models_versions_by_task':
-            r"%s/organizations/(?P<organization_id>[^/]+)/"
-            r"tasks/(?P<task_id>[^/]+)/model_versions",
-        'artifacts_collection':
-            r"%s/organizations/(?P<organization_id>[^/]+)/artifacts",
-        'artifacts':
-            r"%s/organizations/(?P<organization_id>[^/]+)/"
-            r"artifacts/(?P<artifact_id>[^/]+)",
         'tags_collection': r"%s/organizations/(?P<organization_id>[^/]+)/"
                            r"tasks/(?P<task_id>[^/]+)/tags",
         'restore_password': r"%s/restore_password",
-        'profiling_token_info': r"%s/profiling_tokens/(?P<profiling_token>[^/]+)",
         'verify_email': r"%s/verify_email",
         'employee_emails_collection':
             r"%s/employees/(?P<employee_id>[^/]+)/emails",

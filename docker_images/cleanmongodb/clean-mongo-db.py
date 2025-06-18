@@ -44,29 +44,8 @@ class CleanMongoDB(object):
             self.mongo_client.restapi.checklists: ROWS_LIMIT,
             self.mongo_client.restapi.webhook_observer: ROWS_LIMIT,
             self.mongo_client.restapi.webhook_logs: ROWS_LIMIT,
-            # linked to run_id
-            self.mongo_client.arcee.console: ROWS_LIMIT,
-            self.mongo_client.arcee.log: ROWS_LIMIT,
-            self.mongo_client.arcee.milestone: ROWS_LIMIT,
-            self.mongo_client.arcee.proc_data: ROWS_LIMIT,
-            self.mongo_client.arcee.stage: ROWS_LIMIT,
-            self.mongo_client.arcee.model_version: ROWS_LIMIT,
-            self.mongo_client.arcee.artifact: ROWS_LIMIT,
-            # linked to task_id
-            self.mongo_client.arcee.run: ROWS_LIMIT,
             # linked to organization_id
             self.mongo_client.keeper.event: ROWS_LIMIT,
-            # linked to profiling_token.token
-            self.mongo_client.arcee.task: ROWS_LIMIT,
-            self.mongo_client.arcee.dataset: ROWS_LIMIT,
-            self.mongo_client.arcee.metric: ROWS_LIMIT,
-            self.mongo_client.arcee.leaderboard_template: ROWS_LIMIT,
-            self.mongo_client.arcee.leaderboard: ROWS_LIMIT,
-            self.mongo_client.arcee.model: ROWS_LIMIT,
-            # linked to profiling_token.infrastructure_token
-            self.mongo_client.bulldozer.template: ROWS_LIMIT,
-            self.mongo_client.bulldozer.runset: ROWS_LIMIT,
-            self.mongo_client.bulldozer.runner: ROWS_LIMIT,
         }
 
     @property
@@ -143,7 +122,7 @@ class CleanMongoDB(object):
         result = None
         session = self.get_session()
         stmt = """
-            SELECT organization.id, p_token.token, p_token.infrastructure_token
+            SELECT organization.id
             FROM organization
             LEFT JOIN profiling_token as p_token
             ON organization.id = p_token.organization_id
@@ -192,60 +171,6 @@ class CleanMongoDB(object):
             collection.delete_many({'_id': {'$in': chunk}})
         remainder_rows = rows_limit - len(row_ids)
         return remainder_rows
-
-    def _delete_runs(self, runs_ids_chunk):
-        run_collections = [self.mongo_client.arcee.console,
-                           self.mongo_client.arcee.log,
-                           self.mongo_client.arcee.milestone,
-                           self.mongo_client.arcee.stage,
-                           self.mongo_client.arcee.proc_data,
-                           self.mongo_client.arcee.model_version,
-                           self.mongo_client.arcee.artifact]
-        if all(self.limits.get(x) == 0 for x in run_collections):
-            # maximum number of entities related to runs have already
-            # been deleted
-            return False
-        for collection in run_collections:
-            filter_name = 'run_id'
-            if collection == self.mongo_client.arcee.log:
-                filter_name = 'run'
-            self.limits[collection] = self.delete_in_chunks(
-                collection, filter_name, runs_ids_chunk)
-        if all(self.limits.get(x) != 0 for x in run_collections):
-            # all entities related to runs chunk are cleaned up, runs
-            # can be deleted
-            self.limits[
-                self.mongo_client.arcee.run] = self.delete_in_chunks(
-                self.mongo_client.arcee.run, '_id', runs_ids_chunk)
-            return True
-        return False
-
-    def _delete_by_task(self, token):
-        all_tasks_deleted = False
-        rows_limit = self.limits.get(self.mongo_client.arcee.task)
-        tasks = list(self.mongo_client.arcee.task.find(
-            {'token': token}, ['_id']).limit(rows_limit))
-        are_runs_deleted = []
-        for i in range(0, len(tasks), CHUNK_SIZE):
-            tasks_chunk = [
-                row['_id'] for row in tasks[i:i + CHUNK_SIZE]]
-            runs_limit = self.limits.get(self.mongo_client.arcee.run)
-            runs = list(self.mongo_client.arcee.run.find(
-                {'task_id': {'$in': tasks_chunk}}, ['_id']
-            ).limit(runs_limit))
-            for j in range(0, len(runs), CHUNK_SIZE):
-                runs_chunk = [row['_id'] for row in runs[i:i + CHUNK_SIZE]]
-                are_runs_deleted.append(self._delete_runs(runs_chunk))
-            if all(are_runs_deleted):
-                self.limits[
-                    self.mongo_client.arcee.task] = self.delete_in_chunks(
-                    self.mongo_client.arcee.task, '_id', tasks_chunk)
-            else:
-                # can't delete more tasks as can't delete more runs
-                break
-        else:
-            all_tasks_deleted = True
-        return all_tasks_deleted
 
     def get_deleted_cloud_account(self):
         result = (None, None)
@@ -335,7 +260,7 @@ class CleanMongoDB(object):
             result[new_filename] = chunk[i:i+file_max_rows]
         return result
 
-    def _delete_by_organization(self, org_id, token, infra_token):
+    def _delete_by_organization(self, org_id):
         restapi_collections = [
             self.mongo_client.restapi.archived_recommendations,
             self.mongo_client.restapi.checklists,
@@ -347,15 +272,6 @@ class CleanMongoDB(object):
         keeper_collections = [
             self.mongo_client.keeper.event
         ]
-        # delete ml objects
-        arcee_collections = [self.mongo_client.arcee.dataset,
-                             self.mongo_client.arcee.metric,
-                             self.mongo_client.arcee.leaderboard_template,
-                             self.mongo_client.arcee.leaderboard,
-                             self.mongo_client.arcee.model]
-        bulldozer_collections = [self.mongo_client.bulldozer.template,
-                                 self.mongo_client.bulldozer.runset,
-                                 self.mongo_client.bulldozer.runner]
         LOG.info('Start processing objects for organization %s', org_id)
         for collection in keeper_collections:
             self.limits[collection] = self.delete_in_chunks(
@@ -363,41 +279,19 @@ class CleanMongoDB(object):
         for collection in restapi_collections:
             self.limits[collection] = self.delete_in_chunks(
                 collection, 'organization_id', org_id)
-
-        if not token:
-            self.update_cleaned_at(organization_id=org_id)
-            return
-        for collection in arcee_collections:
-            self.limits[collection] = self.delete_in_chunks(
-                collection, 'token', token)
-        for collection in bulldozer_collections:
-            self.limits[collection] = self.delete_in_chunks(
-                collection, 'token', infra_token)
-        tasks_deleted = self._delete_by_task(token)
-
-        if tasks_deleted and all(
-                limit > 0 for collection, limit in self.limits.items()
-                if collection in arcee_collections + bulldozer_collections):
+        if all(limit > 0 for collection, limit in self.limits.items()
+               if collection in restapi_collections + keeper_collections):
             self.update_cleaned_at(organization_id=org_id)
 
     def organization_limits(self):
-        collections = [self.mongo_client.arcee.task,
-                       self.mongo_client.arcee.dataset,
-                       self.mongo_client.arcee.metric,
-                       self.mongo_client.arcee.leaderboard_template,
-                       self.mongo_client.arcee.leaderboard,
-                       self.mongo_client.arcee.run,
-                       self.mongo_client.arcee.console,
-                       self.mongo_client.arcee.log,
-                       self.mongo_client.arcee.milestone,
-                       self.mongo_client.arcee.stage,
-                       self.mongo_client.arcee.proc_data,
-                       self.mongo_client.arcee.model,
-                       self.mongo_client.arcee.model_version,
-                       self.mongo_client.arcee.artifact,
-                       self.mongo_client.bulldozer.template,
-                       self.mongo_client.bulldozer.runset,
-                       self.mongo_client.bulldozer.runner]
+        collections = [
+            self.mongo_client.restapi.archived_recommendations,
+            self.mongo_client.restapi.checklists,
+            self.mongo_client.restapi.resources,
+            self.mongo_client.restapi.webhook_observer,
+            self.mongo_client.restapi.webhook_logs,
+            self.mongo_client.keeper.event
+        ]
         return [self.limits[x] for x in collections]
 
     def delete_by_organization(self):
@@ -405,8 +299,7 @@ class CleanMongoDB(object):
         if not info:
             return
         while info and all(limit > 0 for limit in self.organization_limits()):
-            org_id, token, infra_token = info
-            self._delete_by_organization(org_id, token, infra_token)
+            self._delete_by_organization(info[0])
             info = self.get_deleted_organization_info()
         LOG.info('Organizations objects processing is completed')
 

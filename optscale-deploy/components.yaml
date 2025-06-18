@@ -1,10 +1,7 @@
-arcee:
 auth:
 bi_exporter:
 bi_scheduler:
 booking_observer:
-bulldozer_api:
-bulldozer_worker:
 bumischeduler:
 bumiworker:
 calendar_observer:
