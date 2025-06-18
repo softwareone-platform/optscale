@@ -215,14 +215,27 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    /**
+     * Retrieves the possible monthly savings value for S3 Duplicate Finder.
+     * Parses the text content of the savings value element into a numeric value.
+     *
+     * @returns {Promise<number>} The parsed possible monthly savings value.
+     */
     async getS3DuplicateFinderPossibleMonthlySavingsValue(): Promise<number> {
         const value = await this.s3DuplicatesPossibleMonthlySavingsValue.textContent();
         return this.parseCurrencyValue(value);
     }
 
+    /**
+     * Clicks the S3 Duplicates card on the Recommendations page.
+     * This action navigates to the S3 Duplicate Finder section.
+     *
+     * @returns {Promise<void>}
+     */
     async clickS3DuplicatesCard() {
         await this.s3DuplicatesCard.click();
     }
+
     /**
      * Retrieves the saved amount with commitments value from the page.
      * Parses the text content of the saved value element into a numeric value.
@@ -255,10 +268,17 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    /**
+     * Retrieves the savings value for underutilized instances from the table.
+     * Parses the text content of the savings value element into a numeric value.
+     *
+     * @returns {Promise<number>} The parsed savings value for underutilized instances from the table.
+     */
     async getUnderUtilizedInstancesTableSavingsValue(): Promise<number> {
         const value = await this.underutilizedInstancesTableSavingsValue.textContent();
         return this.parseCurrencyValue(value);
     }
+
     /**
      * Retrieves the savings value for obsolete IPs from the page.
      * Parses the text content of the savings value element into a numeric value.
@@ -445,6 +465,12 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    /**
+     * Retrieves the savings value for abandoned instances from the table.
+     * Parses the text content of the savings value element into a numeric value.
+     *
+     * @returns {Promise<number>} The parsed savings value for abandoned instances from the table.
+     */
     async getAbandonedInstancesTableSavingsValue(): Promise<number> {
         const value = await this.abandonedInstancesTableSavingsValue.textContent();
         return this.parseCurrencyValue(value);
@@ -471,6 +497,12 @@ export class RecommendationsPage extends BasePage {
         return this.parseCurrencyValue(value);
     }
 
+    /**
+     * Retrieves the savings value for obsolete images from the table.
+     * Parses the text content of the savings value element into a numeric value.
+     *
+     * @returns {Promise<number>} The parsed savings value for obsolete images from the table.
+     */
     async getObsoleteImagesTableSavingsValue(): Promise<number> {
         const value = await this.obsoleteImagesTableSavingsValue.textContent();
         return this.parseCurrencyValue(value);
@@ -530,6 +562,15 @@ export class RecommendationsPage extends BasePage {
         return roundedTotal;
     }
 
+    /**
+     * Retrieves the itemized savings from a modal.
+     * Clicks the "See All" button to open the modal, waits for the modal and the last column element to load,
+     * sums the currency values in the specified column, and closes the modal.
+     *
+     * @param {Locator} seeAllLocator - The locator for the "See All" button.
+     * @param {Locator} columnLocator - The locator for the column containing the currency values.
+     * @returns {Promise<number>} The total itemized savings calculated from the modal.
+     */
     async getItemisedSavingsFromModal(seeAllLocator: Locator, columnLocator: Locator): Promise<number> {
         await seeAllLocator.click();
         await this.recommendationsModal.waitFor();
@@ -540,6 +581,13 @@ export class RecommendationsPage extends BasePage {
         return itemisedSavings;
     }
 
+    /**
+     * Skips the test if the number of items in the modal exceeds 100.
+     * Extracts the item count from the "See All" button text and skips the test if the count is greater than 100.
+     *
+     * @param {Locator} seeAllLocator - The locator for the "See All" button.
+     * @returns {Promise<void>}
+     */
     async skipTestIfMoreThan100Items(seeAllLocator: Locator): Promise<void> {
         const seeAllText = await seeAllLocator.textContent();
         const match = seeAllText?.match(/See all (\d+) items/i);

@@ -146,12 +146,13 @@ export abstract class BasePage {
         }
     }
 
+
     /**
-     * Parses a currency value from a string and converts it into a numeric value.
-     * Handles various formats, including those with multipliers (e.g., 'k' for thousand, 'm' for million),
-     * and different decimal/thousands separators.
+     * Parses a currency value from a string input and converts it into a numeric value.
+     * Handles various formats, including optional multipliers (e.g., 'k' for thousand, 'm' for million),
+     * and different decimal separator strategies (comma or dot).
      *
-     * @param {string} input - The input string containing the currency value.
+     * @param {string} input - The string input representing the currency value.
      * @returns {number} The parsed numeric value, or NaN if the input is invalid.
      */
     parseCurrencyValue(input: string): number {
@@ -209,12 +210,15 @@ export abstract class BasePage {
         return result;
     }
 
+
     /**
-     * Sums up all currency values in a column represented by a locator.
-     * Extracts the numeric values from the text content of the elements and calculates the total.
+     * Sums the currency values from a column across multiple pages in a modal.
+     * Iterates through all pages of the modal, extracts and parses currency values from the specified column,
+     * and calculates the total sum. Handles pagination by checking the visibility and enabled state of the "next page" button.
      *
-     * @param {Locator} columnLocator - The Playwright locator for the column elements.
-     * @returns {Promise<number>} The sum of all currency values in the column.
+     * @param {Locator} columnLocator - The locator for the column containing the currency values.
+     * @param {Locator} modalNextPageBtn - The locator for the "next page" button in the modal.
+     * @returns {Promise<number>} The total sum of the currency values across all pages, rounded to two decimal places.
      */
     async sumCurrencyColumn(
         columnLocator: Locator,
@@ -223,33 +227,37 @@ export abstract class BasePage {
         let totalSum = 0;
 
         while (true) {
-            // Wait for table to settle (you may want a better wait depending on your UI)
-            await columnLocator.first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+            // Wait for the first element in the column to be visible
+            await columnLocator.first().waitFor({state: 'visible', timeout: 5000}).catch(() => {
+            });
 
+            // Extract text content from all cells in the column
             const texts = await columnLocator.allTextContents();
 
+            // Parse the currency values from the text content
             const values = texts.map(text => {
                 const currencyOnly = text.split('(')[0].trim();
                 return this.parseCurrencyValue(currencyOnly);
             });
 
+            // Add the parsed values to the total sum
             totalSum += values.reduce((sum, val) => sum + val, 0);
 
-            // Check pagination: is the "next page" button both visible and enabled?
+            // Check if the "next page" button is visible and enabled
             const isVisible = await modalNextPageBtn.isVisible();
             if (!isVisible) break;
 
             const isEnabled = await modalNextPageBtn.isEnabled();
             if (!isEnabled) break;
 
-            // Go to next page
+            // Navigate to the next page
             await modalNextPageBtn.click();
 
-            // Optional: wait for pagination to update (adjust selector as needed)
-            await modalNextPageBtn.page().waitForTimeout(300); // or smarter: wait for a specific table cell to change
+            // Optional: wait for pagination to update
+            await modalNextPageBtn.page().waitForTimeout(300);
         }
 
-        // Round result to 2 decimal places
+        // Return the total sum rounded to two decimal places
         return parseFloat(totalSum.toFixed(2));
     }
 }
