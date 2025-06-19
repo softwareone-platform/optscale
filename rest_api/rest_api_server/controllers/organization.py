@@ -23,9 +23,7 @@ from tools.optscale_exceptions.common_exc import (
     WrongArgumentsException)
 from rest_api.rest_api_server.utils import Config, check_bool_attribute
 
-from optscale_client.arcee_client.client import Client as ArceeClient
 from optscale_client.auth_client.client_v2 import Client as AuthClient
-from optscale_client.bulldozer_client.client import Client as BulldozerClient
 from optscale_client.katara_client.client import Client as KataraClient
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 
@@ -58,8 +56,6 @@ class OrganizationController(BaseController, ClickHouseMixin):
 
     def __init__(self, db_session, config=None, token=None, engine=None):
         super().__init__(db_session, config, token, engine)
-        self._arcee_client = None
-        self._bulldozer_client = None
         self._katara_client = None
 
     @property
@@ -68,20 +64,6 @@ class OrganizationController(BaseController, ClickHouseMixin):
             self._katara_client = KataraClient(
                 url=Config().katara_url, secret=Config().cluster_secret)
         return self._katara_client
-
-    @property
-    def arcee_client(self):
-        if not self._arcee_client:
-            self._arcee_client = ArceeClient(
-                url=Config().arcee_url, secret=Config().cluster_secret)
-        return self._arcee_client
-
-    @property
-    def bulldozer_client(self):
-        if not self._bulldozer_client:
-            self._bulldozer_client = BulldozerClient(
-                url=Config().bulldozer_url, secret=Config().cluster_secret)
-        return self._bulldozer_client
 
     def _get_model_type(self):
         return Organization
@@ -166,26 +148,9 @@ class OrganizationController(BaseController, ClickHouseMixin):
         if query.update({self.model_type.disabled: disabled_value}):
             self.session.commit()
             disabled = False if not disabled_value else True
-            self._set_tokens_disabled(organization_id, disabled)
             action = 'organization_%s' % ('disabled' if disabled else 'enabled')
             self._publish_organization_activity(organization, action)
         return organization
-
-    def _set_tokens_disabled(self, organization_id, disabled):
-        tokens = self.session.query(ProfilingToken).filter(
-            ProfilingToken.organization_id == organization_id,
-            ProfilingToken.deleted_at == 0
-        ).all()
-        for token in tokens:
-            try:
-                self.arcee_client.token_update(
-                    token.token, disabled)
-                self.bulldozer_client.token_update(
-                    token.infrastructure_token, disabled)
-            except Exception as ex:
-                LOG.warning("Can't update profiling token %s: %s",
-                            token.token, str(ex))
-                pass
 
     def get_pools(self, org_id):
         pools = self.session.query(

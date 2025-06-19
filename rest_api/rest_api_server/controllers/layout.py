@@ -17,6 +17,10 @@ class LayoutsController(BaseProfilingController):
     def _get_model_type(self):
         return Layout
 
+    def get_profiling_token(self, organization_id):
+        profiling_token = self.get_or_create_profiling_token(organization_id)
+        return profiling_token.token
+
     def create(self, user_id, organization_id, **kwargs):
         emp_ctrl = EmployeeController(self.session, self._config)
         employee = emp_ctrl.get_employee_by_user_and_organization(

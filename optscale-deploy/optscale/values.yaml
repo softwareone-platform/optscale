@@ -573,45 +573,6 @@ booking_observer:
   startingDeadlineSeconds: 100
   schedule: "*/1 * * * *"
 
-arcee:
-  name: &arcee_name arcee
-  replicaCount: 1
-  image:
-    id:
-    repository: arcee
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: *arcee_name
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8891
-
-bulldozer_api:
-  name: &bulldozer_api_name bulldozer-api
-  replicaCount: 1
-  image:
-    id:
-    repository: bulldozer_api
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: *bulldozer_api_name
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8896
-
-bulldozer_worker:
-  name: bulldozerworker
-  replicaCount: 1
-  config:
-    arcee_wait_timeout: 600 # arcee hb wait timeout for runners in seconds
-  image:
-    id:
-    repository: bulldozer_worker
-    tag: *tag
-    pullPolicy: Never
-
 jira_bus:
   name: &jira_bus_name jira-bus
   replicaCount: 1
@@ -897,15 +858,6 @@ layout_cleaner:
     pullPolicy: Never
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
-
-run_observer:
-  name: run-observer
-  image:
-    repository: run_observer
-    tag: *tag
-    pullPolicy: Never
-  startingDeadlineSeconds: 100
-  schedule: "*/30 * * * *"
 
 deactivatorg:
   name: deactivatorg

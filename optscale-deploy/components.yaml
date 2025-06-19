@@ -1,10 +1,7 @@
-arcee:
 auth:
 bi_exporter:
 bi_scheduler:
 booking_observer:
-bulldozer_api:
-bulldozer_worker:
 bumischeduler:
 bumiworker:
 calendar_observer:
@@ -53,7 +50,6 @@ resource_violations:
 rest_api:
 risp_scheduler:
 risp_worker:
-run_observer:
 slacker:
 slacker_executor:
 trapper_scheduler:

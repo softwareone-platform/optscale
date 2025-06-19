@@ -36,8 +36,6 @@ etcd:
   optscale_error_emails:
     recipient: {{ .Values.optscale_error_emails.recipient }}
     enabled: {{ .Values.optscale_error_emails.enabled }}
-  bulldozer_worker:
-    arcee_wait_timeout: {{ .Values.bulldozer_worker.config.arcee_wait_timeout }}
   google_calendar_service:
     enabled: {{ .Values.google_calendar_service.enabled }}
     access_key:
@@ -103,12 +101,6 @@ etcd:
   jirabus:
     host: {{ .Values.jira_bus.service.name }}
     port: {{ .Values.jira_bus.service.externalPort }}
-  arcee:
-    host: {{ .Values.arcee.service.name }}
-    port: {{ .Values.arcee.service.externalPort }}
-  bulldozer_api:
-    host: {{ .Values.bulldozer_api.service.name }}
-    port: {{ .Values.bulldozer_api.service.externalPort }}
   metroculus:
     host: {{ .Values.metroculus_api.service.name }}
     port: {{ .Values.metroculus_api.service.externalPort }}

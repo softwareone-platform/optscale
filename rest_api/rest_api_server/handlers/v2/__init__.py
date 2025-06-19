@@ -67,10 +67,8 @@ import rest_api.rest_api_server.handlers.v2.traffic_expenses
 import rest_api.rest_api_server.handlers.v2.archived_recommendations
 import rest_api.rest_api_server.handlers.v2.k8s_rightsizing
 import rest_api.rest_api_server.handlers.v2.risp_processing_tasks
-import rest_api.rest_api_server.handlers.v2.profiling
 import rest_api.rest_api_server.handlers.v2.sp_breakdowns
 import rest_api.rest_api_server.handlers.v2.ri_breakdowns
-import rest_api.rest_api_server.handlers.v2.infrastructure
 import rest_api.rest_api_server.handlers.v2.organization_bis
 import rest_api.rest_api_server.handlers.v2.relevant_flavors
 import rest_api.rest_api_server.handlers.v2.organization_geminis

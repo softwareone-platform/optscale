@@ -105,19 +105,5 @@ spec:
               number: {{ .Values.diproxy.service.externalPort }}
         path: /storage
         pathType: Prefix
-      - backend:
-          service:
-            name: {{ .Values.arcee.service.name }}
-            port:
-              number: {{ .Values.arcee.service.externalPort }}
-        path: /arcee
-        pathType: Prefix
-      - backend:
-          service:
-            name: {{ .Values.bulldozer_api.service.name }}
-            port:
-              number: {{ .Values.bulldozer_api.service.externalPort }}
-        path: /bulldozer
-        pathType: Prefix
   tls:
   - secretName: defaultcert

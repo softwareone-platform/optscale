@@ -18,8 +18,6 @@ from rest_api.rest_api_server.controllers.expense import (
     PoolFilteredEmployeeFormattedExpenseController)
 from rest_api.rest_api_server.controllers.organization_constraint import (
     OrganizationConstraintController)
-from rest_api.rest_api_server.controllers.profiling.base import (
-    BaseProfilingController)
 from rest_api.rest_api_server.controllers.employee_email import (
     EmployeeEmailController)
 from rest_api.rest_api_server.exceptions import Err
@@ -298,17 +296,6 @@ class EmployeeController(BaseController, MongoMixin):
         return self.session.query(Layout).filter(
             Layout.owner_id == owner_id).all()
 
-    def _reassign_tasks_to_new_owner(self, organization_id, old_owner_id,
-                                     new_owner_id):
-        profiling_ctrl = BaseProfilingController(
-            self.session, self._config, self.token)
-        profiling_token = profiling_ctrl.get_profiling_token(organization_id)
-        tasks = profiling_ctrl.list_tasks(profiling_token)
-        for task in tasks:
-            if task['owner_id'] == old_owner_id:
-                profiling_ctrl.update_task(profiling_token, task['id'],
-                                           owner_id=new_owner_id)
-
     def _reassign_resources_to_new_owner(self, new_owner_id, employee, scopes):
         owned_pools = {pool_id: pool for pool_id, pool in scopes.items()
                        if pool.get('default_owner_id') == employee.id}
@@ -401,8 +388,6 @@ class EmployeeController(BaseController, MongoMixin):
             if new_owner_id:
                 self._reassign_resources_to_new_owner(
                     new_owner_id, employee, scopes)
-                self._reassign_tasks_to_new_owner(
-                    employee.organization_id, employee.id, new_owner_id)
 
         for assignment in assignments:
             if scopes.get(assignment['assignment_resource']):
