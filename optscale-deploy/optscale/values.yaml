@@ -573,20 +573,6 @@ booking_observer:
   startingDeadlineSeconds: 100
   schedule: "*/1 * * * *"
 
-arcee:
-  name: &arcee_name arcee
-  replicaCount: 1
-  image:
-    id:
-    repository: arcee
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: *arcee_name
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8891
-
 jira_bus:
   name: &jira_bus_name jira-bus
   replicaCount: 1
@@ -872,15 +858,6 @@ layout_cleaner:
     pullPolicy: Never
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
-
-run_observer:
-  name: run-observer
-  image:
-    repository: run_observer
-    tag: *tag
-    pullPolicy: Never
-  startingDeadlineSeconds: 100
-  schedule: "*/30 * * * *"
 
 deactivatorg:
   name: deactivatorg
