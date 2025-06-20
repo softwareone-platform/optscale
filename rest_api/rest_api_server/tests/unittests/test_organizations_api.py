@@ -755,10 +755,15 @@ class TestOrganizationApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertTrue(organization_dict['disabled'])
 
-        code, organization_dict = self.client.organization_update(
+        code, resp = self.client.organization_update(
+            organization_id, {'disabled': True, 'disable_type': 'soft'})
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OE0568')
+
+        code, resp = self.client.organization_update(
             organization_id, {'disabled': False, 'disable_type': 'soft'})
-        self.assertEqual(code, 200)
-        self.assertTrue(organization_dict['disabled'])
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, 'OE0568')
 
         code, organization_dict = self.client.organization_update(
             organization_id, {'disabled': False, 'disable_type': 'hard'})

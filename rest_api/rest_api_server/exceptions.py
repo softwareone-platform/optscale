@@ -1045,3 +1045,8 @@ class Err(enum.Enum):
         ["operator"],
         ["test"]
     ]
+    OE0568 = [
+        "Disable type can't be changed for hard disabled organization",
+        [],
+        []
+    ]

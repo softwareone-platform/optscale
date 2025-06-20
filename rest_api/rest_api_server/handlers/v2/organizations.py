@@ -358,6 +358,7 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                         name: test company
                         is_demo: False
                         currency: USD
+                        disabled: soft
             400: {description: "Wrong arguments: \n\n
                 - OE0212: Unexpected parameters \n\n
                 - OE0211: Immutable parameters \n\n
@@ -367,7 +368,8 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                 - OE0215: Wrong argument's length \n\n
                 - OE0217: Invalid query parameter \n\n
                 - OE0536: Invalid currency \n\n
-                - OE0561: Cannot use disabled without secret"}
+                - OE0561: Cannot use disabled without secret \n\n
+                - OE0568: Disable type can't be changed for hard disabled organization"}
             404: {description: "Not found: \n\n
                 - OE0002: Organization not found"}
             403:
