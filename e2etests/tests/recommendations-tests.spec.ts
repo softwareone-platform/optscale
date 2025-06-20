@@ -3,7 +3,7 @@ import {expect} from "@playwright/test";
 import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
 import {EStorageState} from "../utils/enums";
 
-test.describe.only("Recommendations page tests", () => {
+test.describe("Recommendations page tests", () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
         test.use({storageState: EStorageState.liveDemoUser});
     }
@@ -78,14 +78,14 @@ test.describe.only("Recommendations page tests", () => {
         let itemisedSavings: number;
 
         await test.step('Get Underutilized Instances card possible savings', async () => {
-            cardSavings = await recommendationsPage.getUnderutilizedInstancesCardSavingsValue();
+            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesCardSavingsValue);
             console.log(`Card Savings: ${cardSavings}`);
         });
         if (cardSavings === 0) {
             await test.step('When card possible savings is "0" assert that the table also matches', async () => {
                 await expect(recommendationsPage.underutilizedInstancesSeeAllBtn).not.toBeVisible();
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getUnderUtilizedInstancesTableSavingsValue()).toBe(0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesTableSavingsValue)).toBe(0);
             });
         } else {
             await test.step('Get item count and skip of greater than 100', async () => {
@@ -98,7 +98,7 @@ test.describe.only("Recommendations page tests", () => {
                 expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
 
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getUnderUtilizedInstancesTableSavingsValue()).toBe(itemisedSavings);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesTableSavingsValue)).toBe(itemisedSavings);
             });
         }
     })
@@ -108,14 +108,14 @@ test.describe.only("Recommendations page tests", () => {
         let itemisedSavings: number;
 
         await test.step('Get Abandoned Instances card possible savings', async () => {
-            cardSavings = await recommendationsPage.getAbandonedInstancesCardSavingsValue();
+            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesCardSavingsValue);
             console.log(`Card Savings: ${cardSavings}`);
         });
         if (cardSavings === 0) {
             await test.step('When card possible savings is "0" assert that the table also matches', async () => {
                 await expect(recommendationsPage.abandonedInstancesSeeAllBtn).not.toBeVisible();
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getAbandonedInstancesTableSavingsValue()).toBe(0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesTableSavingsValue)).toBe(0);
             });
         } else {
             await test.step('Get item count and skip if greater than 100', async () => {
@@ -128,7 +128,7 @@ test.describe.only("Recommendations page tests", () => {
                 expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
 
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getAbandonedInstancesTableSavingsValue()).toBeCloseTo(itemisedSavings, 0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
             });
         }
     });
@@ -138,14 +138,14 @@ test.describe.only("Recommendations page tests", () => {
         let itemisedSavings: number;
 
         await test.step('Get Instances for Shutdown card possible savings', async () => {
-            cardSavings = await recommendationsPage.getInstancesForShutdownCardSavingsValue();
+            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownCardSavingsValue);
             console.log(`Card Savings: ${cardSavings}`);
         });
         if (cardSavings === 0) {
             await test.step('When card possible savings is "0" assert that the table also matches', async () => {
                 await expect(recommendationsPage.instancesForShutdownSeeAllBtn).not.toBeVisible();
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getInstancesForShutdownTableSavingsValue()).toBe(0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownTableSavingsValue)).toBe(0);
             });
         } else {
             await test.step('Get item count and skip if greater than 100', async () => {
@@ -158,7 +158,7 @@ test.describe.only("Recommendations page tests", () => {
                 expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
 
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getInstancesForShutdownTableSavingsValue()).toBeCloseTo(itemisedSavings, 0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
             });
         }
     });
@@ -168,14 +168,14 @@ test.describe.only("Recommendations page tests", () => {
         let itemisedSavings: number;
 
         await test.step('Get Obsolete Images card possible savings', async () => {
-            cardSavings = await recommendationsPage.getObsoleteImagesCardSavingsValue();
+            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesCardSavingsValue);
             console.log(`Card Savings: ${cardSavings}`);
         });
         if (cardSavings === 0) {
             await test.step('When card possible savings is "0" assert that the table also matches', async () => {
                 await expect(recommendationsPage.obsoleteImagesSeeAllBtn).not.toBeVisible();
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getObsoleteImagesTableSavingsValue()).toBe(0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesTableSavingsValue)).toBe(0);
             });
         } else {
             await test.step('Get item count and skip if greater than 100', async () => {
@@ -188,7 +188,7 @@ test.describe.only("Recommendations page tests", () => {
                 expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
 
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getObsoleteImagesTableSavingsValue()).toBeCloseTo(itemisedSavings, 0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
             });
         }
     });
@@ -198,14 +198,14 @@ test.describe.only("Recommendations page tests", () => {
         let itemisedSavings: number;
 
         await test.step('Get Obsolete Snapshots card possible savings', async () => {
-            cardSavings = await recommendationsPage.getObsoleteSnapshotsCardSavingsValue();
+            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsCardSavingsValue);
             console.log(`Card Savings: ${cardSavings}`);
         });
         if (cardSavings === 0) {
             await test.step('When card possible savings is "0" assert that the table also matches', async () => {
                 await expect(recommendationsPage.obsoleteSnapshotsSeeAllBtn).not.toBeVisible();
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getObsoleteSnapshotsTableSavingsValue()).toBe(0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsTableSavingsValue)).toBe(0);
             });
         } else {
             await test.step('Get item count and skip if greater than 100', async () => {
@@ -218,7 +218,7 @@ test.describe.only("Recommendations page tests", () => {
                 expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
 
                 await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getObsoleteSnapshotsTableSavingsValue()).toBeCloseTo(itemisedSavings, 0);
+                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
             });
         }
     });

@@ -38,37 +38,70 @@ export class RecommendationsPage extends BasePage {
     readonly modalColumn5: Locator;
     readonly modalColumn6: Locator;
     readonly modalColumn7: Locator;
+    readonly modalColumn8: Locator;
     readonly modalNextPageBtn: Locator;
+
+    readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
+    readonly abandonedAmazonS3BucketsSeeAllBtn: Locator;
+    readonly abandonedAmazonS3BucketsTableSavingsValue: Locator;
+    readonly abandonedImagesCardSavingsValue: Locator;
+    readonly abandonedImagesSeeAllBtn: Locator;
+    readonly abandonedImagesTableSavingsValue: Locator;
+    readonly abandonedInstancesCardSavingsValue: Locator;
+    readonly abandonedInstancesSeeAllBtn: Locator;
+    readonly abandonedInstancesTableSavingsValue: Locator;
+    readonly abandonedKinesisStreamsCardSavingsValue: Locator;
+    readonly abandonedKinesisStreamsSeeAllBtn: Locator;
+    readonly abandonedKinesisStreamsTableSavingsValue: Locator;
+    readonly abandonedLoadBalancersCardSavingsValue: Locator;
+    readonly abandonedLoadBalancersSeeAllBtn: Locator;
+    readonly abandonedLoadBalancersTableSavingsValue: Locator;
+    readonly instancesEligibleForGenerationUpgradeCardSavingsValue: Locator;
+    readonly instancesEligibleForGenerationUpgradeSeeAllBtn: Locator;
+    readonly instancesEligibleForGenerationUpgradeTableSavingsValue: Locator;
+    readonly instancesForShutdownCardSavingsValue: Locator;
+    readonly instancesForShutdownSeeAllBtn: Locator;
+    readonly instancesForShutdownTableSavingsValue: Locator;
+    readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
+    readonly instancesWithMigrationOpportunitiesSeeAllBtn: Locator;
+    readonly instancesWithMigrationOpportunitiesTableSavingsValue: Locator;
+    readonly instancesWithSpotPreemptibleOpportunitiesCardSavingsValue: Locator;
+    readonly instancesWithSpotPreemptibleOpportunitiesSeeAllBtn: Locator;
+    readonly instancesWithSpotPreemptibleOpportunitiesTableSavingsValue: Locator;
+    readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
+    readonly instancesWithSubscriptionOpportunitiesSeeAllBtn: Locator;
+    readonly instancesWithSubscriptionOpportunitiesTableSavingsValue: Locator;
+    readonly notAttachedVolumesCardSavingsValue: Locator;
+    readonly notAttachedVolumesSeeAllBtn: Locator;
+    readonly notAttachedVolumesTableSavingsValue: Locator;
+    readonly notDeallocatedInstancesCardSavingsValue: Locator;
+    readonly notDeallocatedInstancesSeeAllBtn: Locator;
+    readonly notDeallocatedInstancesTableSavingsValue: Locator;
+    readonly obsoleteImagesCardSavingsValue: Locator;
+    readonly obsoleteImagesSeeAllBtn: Locator;
+    readonly obsoleteImagesTableSavingsValue: Locator;
+    readonly obsoleteIPsCardSavingsValue: Locator;
+    readonly obsoleteIPsSeeAllBtn: Locator;
+    readonly obsoleteIPsTableSavingsValue: Locator;
+    readonly obsoleteSnapshotChainsCardSavingsValue: Locator;
+    readonly obsoleteSnapshotChainsSeeAllBtn: Locator;
+    readonly obsoleteSnapshotChainsTableSavingsValue: Locator;
+    readonly obsoleteSnapshotsCardSavingsValue: Locator;
+    readonly obsoleteSnapshotsSeeAllBtn: Locator;
+    readonly obsoleteSnapshotsTableSavingsValue: Locator;
+
+    readonly reservedInstancesOpportunitiesCardSavingsValue: Locator;
+    readonly reservedInstancesOpportunitiesSeeAllBtn: Locator;
+    readonly reservedInstancesOpportunitiesTableSavingsValue: Locator;
+
     readonly underutilizedInstancesCardSavingsValue: Locator;
     readonly underutilizedInstancesSeeAllBtn: Locator;
     readonly underutilizedInstancesTableSavingsValue: Locator;
-    readonly obsoleteIPsCardSavingsValue: Locator;
-    readonly notAttachedVolumesCardSavingsValue: Locator;
-    readonly abandonedLoadBalancersCardSavingsValue: Locator;
-    readonly instancesWithSpotPreemptibleOpportunitiesCardSavingsValue: Locator;
     readonly underutilzedRDSInstancesCardSavingsValue: Locator;
-    readonly reservedInstancesOpportunitiesCardSavingsValue: Locator;
-    readonly obsoleteSnapshotsCardSavingsValue: Locator;
-    readonly obsoleteSnapshotsTableSavingsValue: Locator;
-    readonly obsoleteSnapshotsSeeAllBtn: Locator;
-    readonly obsoleteSnapshotChainsCardSavingsValue: Locator;
-    readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
-    readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
-    readonly notDeallocatedInstancesCardSavingsValue: Locator;
-    readonly instancesEligibleForGenerationUpgradeCardSavingsValue: Locator;
-    readonly instancesForShutdownCardSavingsValue: Locator;
-    readonly instancesForShutdownTableSavingsValue: Locator;
-    readonly instancesForShutdownSeeAllBtn: Locator;
-    readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
-    readonly abandonedKinesisStreamsCardSavingsValue: Locator;
-    readonly abandonedInstancesCardSavingsValue: Locator;
-    readonly abandonedInstancesTableSavingsValue: Locator;
-    readonly abandonedInstancesSeeAllBtn: Locator;
+    readonly underutilzedRDSInstancesSeeAllBtn: Locator;
+    readonly underutilzedRDSInstancesTableSavingsValue: Locator;
+
     readonly publicS3BucketsCardCountValue: Locator;
-    readonly obsoleteImagesCardSavingsValue: Locator;
-    readonly obsoleteImagesTableSavingsValue: Locator;
-    readonly obsoleteImagesSeeAllBtn: Locator;
-    readonly abandonedImagesCardSavingsValue: Locator;
 
 
     /**
@@ -104,37 +137,68 @@ export class RecommendationsPage extends BasePage {
         this.modalColumn5 = this.recommendationsModal.locator('//tr/td[5]');
         this.modalColumn6 = this.recommendationsModal.locator('//tr/td[6]');
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
+        this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
 
-        this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../div[2]/div[1]');
-        this.underutilizedInstancesTableSavingsValue = this.table.locator('//td[.="Underutilized instances"]/following-sibling::td[3]');
-        this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[normalize-space()="Underutilized instances"]/../../../../..//button[contains(text(), "See all")]');
-        this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete IPs"]/../../../div[2]/div[1]');
-        this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not attached Volumes"]/../../../div[2]/div[1]');
-        this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Load Balancers"]/../../../div[2]/div[1]');
-        this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Spot (Preemptible) opportunities"]/../../../div[2]/div[1]');
-        this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Underutilized RDS Instances"]/../../../div[2]/div[1]');
-        this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Reserved instances opportunities"]/../../../div[2]/div[1]');
-        this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshots"]/../../../div[2]/div[1]');
-        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshots"]/following-sibling::td[3]');
-        this.obsoleteSnapshotsSeeAllBtn = this.main.locator('//h3[normalize-space()="Obsolete snapshots"]/../../../../..//button[contains(text(), "See all")]');
-        this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete snapshot chains"]/../../../div[2]/div[1]');
-        this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
-        this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances with migration opportunities"]/../../../div[2]/div[1]');
-        this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Not deallocated Instances"]/../../../div[2]/div[1]');
-        this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances eligible for generation upgrade"]/../../../div[2]/div[1]');
-        this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[normalize-space()="Instances for shutdown"]/../../../div[2]/div[1]');
-        this.instancesForShutdownTableSavingsValue = this.table.locator('//td[.="Instances for shutdown"]/following-sibling::td[3]');
-        this.instancesForShutdownSeeAllBtn = this.main.locator('//h3[normalize-space()="Instances for shutdown"]/../../../../..//button[contains(text(), "See all")]');
-        this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
-        this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned Kinesis Streams"]/../../../div[2]/div[1]');
-        this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned instances"]/../../../div[2]/div[1]');
+        this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
+        this.abandonedAmazonS3BucketsSeeAllBtn = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//td[.="Abandoned Amazon S3 buckets"]/following-sibling::td[3]');
+        this.abandonedImagesCardSavingsValue = this.main.locator('//h3[.="Abandoned images"]/../../../div[2]/div[1]');
+        this.abandonedImagesSeeAllBtn = this.main.locator('//h3[.="Abandoned images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.abandonedImagesTableSavingsValue = this.table.locator('//td[.="Abandoned images"]/following-sibling::td[3]');
+        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//td[.="Abandoned images"]/following-sibling::td[3]');
+        this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[.="Abandoned instances"]/../../../div[2]/div[1]');
+        this.abandonedInstancesSeeAllBtn = this.main.locator('//h3[.="Abandoned instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.abandonedInstancesTableSavingsValue = this.table.locator('//td[.="Abandoned instances"]/following-sibling::td[3]');
-        this.abandonedInstancesSeeAllBtn = this.main.locator('//h3[normalize-space()="Abandoned instances"]/../../../../..//button[contains(text(), "See all")]');
-        this.publicS3BucketsCardCountValue = this.main.locator('//h3[normalize-space()="Public S3 buckets"]/../../../div[2]/div[1]');
-        this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Obsolete images"]/../../../div[2]/div[1]');
+        this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/../../../div[2]/div[1]');
+        this.abandonedKinesisStreamsSeeAllBtn = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.abandonedKinesisStreamsTableSavingsValue = this.table.locator('//td[.="Abandoned Kinesis Streams"]/following-sibling::td[3]');
+        this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[.="Abandoned Load Balancers"]/../../../div[2]/div[1]');
+        this.abandonedLoadBalancersSeeAllBtn = this.main.locator('//h3[.="Abandoned Load Balancers"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.abandonedLoadBalancersTableSavingsValue = this.table.locator('//td[.="Abandoned Load Balancers"]/following-sibling::td[3]');
+        this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/../../../div[2]/div[1]');
+        this.instancesEligibleForGenerationUpgradeSeeAllBtn = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.instancesEligibleForGenerationUpgradeTableSavingsValue = this.table.locator('//td[.="Instances eligible for generation upgrade"]/following-sibling::td[3]');
+        this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[.="Instances for shutdown"]/../../../div[2]/div[1]');
+        this.instancesForShutdownSeeAllBtn = this.main.locator('//h3[.="Instances for shutdown"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.instancesForShutdownTableSavingsValue = this.table.locator('//td[.="Instances for shutdown"]/following-sibling::td[3]');
+        this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with migration opportunities"]/../../../div[2]/div[1]');
+        this.instancesWithMigrationOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with migration opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.instancesWithMigrationOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with migration opportunities"]/following-sibling::td[3]');
+        this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/../../../div[2]/div[1]');
+        this.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with Spot (Preemptible) opportunities"]/following-sibling::td[3]');
+        this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
+        this.instancesWithSubscriptionOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Subscription opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.instancesWithSubscriptionOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with Subscription opportunities"]/following-sibling::td[3]');
+        this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[.="Not attached Volumes"]/../../../div[2]/div[1]');
+        this.notAttachedVolumesSeeAllBtn = this.main.locator('//h3[.="Not attached Volumes"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.notAttachedVolumesTableSavingsValue = this.table.locator('//td[.="Not attached Volumes"]/following-sibling::td[3]');
+        this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[.="Not deallocated Instances"]/../../../div[2]/div[1]');
+        this.notDeallocatedInstancesSeeAllBtn = this.main.locator('//h3[.="Not deallocated Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.notDeallocatedInstancesTableSavingsValue = this.table.locator('//td[.="Not deallocated Instances"]/following-sibling::td[3]');
+        this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[.="Obsolete images"]/../../../div[2]/div[1]');
+        this.obsoleteImagesSeeAllBtn = this.main.locator('//h3[.="Obsolete images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.obsoleteImagesTableSavingsValue = this.table.locator('//td[.="Obsolete images"]/following-sibling::td[3]');
-        this.obsoleteImagesSeeAllBtn = this.main.locator('//h3[normalize-space()="Obsolete images"]/../../../../..//button[contains(text(), "See all")]');
-        this.abandonedImagesCardSavingsValue = this.main.locator('//h3[normalize-space()="Abandoned images"]/../../../div[2]/div[1]');
+        this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[.="Obsolete IPs"]/../../../div[2]/div[1]');
+        this.obsoleteIPsSeeAllBtn = this.main.locator('//h3[.="Obsolete IPs"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.obsoleteIPsTableSavingsValue = this.table.locator('//td[.="Obsolete IPs"]/following-sibling::td[3]');
+        this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshot chains"]/../../../div[2]/div[1]');
+        this.obsoleteSnapshotChainsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshot chains"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.obsoleteSnapshotChainsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshot chains"]/following-sibling::td[3]');
+        this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshots"]/../../../div[2]/div[1]');
+        this.obsoleteSnapshotsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshots"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshots"]/following-sibling::td[3]');
+        this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Reserved instances opportunities"]/../../../div[2]/div[1]');
+        this.reservedInstancesOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Reserved instances opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.reservedInstancesOpportunitiesTableSavingsValue = this.table.locator('//td[.="Reserved instances opportunities"]/following-sibling::td[3]');
+        this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized instances"]/../../../div[2]/div[1]');
+        this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.underutilizedInstancesTableSavingsValue = this.table.locator('//td[.="Underutilized instances"]/following-sibling::td[3]');
+        this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/../../../div[2]/div[1]');
+        this.underutilzedRDSInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.underutilzedRDSInstancesTableSavingsValue = this.table.locator('//td[.="Underutilized RDS Instances"]/following-sibling::td[3]');
+
+        this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/../../../div[2]/div[1]');
     }
 
     /**
@@ -258,222 +322,14 @@ export class RecommendationsPage extends BasePage {
     }
 
     /**
-     * Retrieves the savings value for underutilized instances from the page.
-     * Parses the text content of the savings value element into a numeric value.
+     * Retrieves a card or table savings value given its locator.
      *
-     * @returns {Promise<number>} The parsed savings value for underutilized instances.
+     * @param {Locator} cardSavingsLocator - The locator for the card's savings value.
+     * @returns {Promise<number>} The parsed savings value.
      */
-    async getUnderutilizedInstancesCardSavingsValue(): Promise<number> {
-        const value = await this.underutilizedInstancesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for underutilized instances from the table.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for underutilized instances from the table.
-     */
-    async getUnderUtilizedInstancesTableSavingsValue(): Promise<number> {
-        const value = await this.underutilizedInstancesTableSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for obsolete IPs from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for obsolete IPs.
-     */
-    async getObsoleteIPsCardSavingsValue(): Promise<number> {
-        const value = await this.obsoleteIPsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for not attached volumes from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for not attached volumes.
-     */
-    async getNotAttachedVolumesCardSavingsValue(): Promise<number> {
-        const value = await this.notAttachedVolumesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned load balancers from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned load balancers.
-     */
-    async getAbandonedLoadBalancersCardSavingsValue(): Promise<number> {
-        const value = await this.abandonedLoadBalancersCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for instances with spot preemptible opportunities from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for instances with spot preemptible opportunities.
-     */
-    async getInstancesWithSpotPreemptibleOpportunitiesCardSavingsValue(): Promise<number> {
-        const value = await this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for underutilized RDS instances from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for underutilized RDS instances.
-     */
-    async getUnderutilzedRDSInstancesCardSavingsValue(): Promise<number> {
-        const value = await this.underutilzedRDSInstancesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for reserved instances opportunities from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for reserved instances opportunities.
-     */
-    async getReservedInstancesOpportunitiesCardSavingsValue(): Promise<number> {
-        const value = await this.reservedInstancesOpportunitiesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for obsolete snapshots from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for obsolete snapshots.
-     */
-    async getObsoleteSnapshotsCardSavingsValue(): Promise<number> {
-        const value = await this.obsoleteSnapshotsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    async getObsoleteSnapshotsTableSavingsValue(): Promise<number> {
-        const value = await this.obsoleteSnapshotsTableSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for obsolete snapshot chains from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for obsolete snapshot chains.
-     */
-    async getObsoleteSnapshotChainsCardSavingsValue(): Promise<number> {
-        const value = await this.obsoleteSnapshotChainsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for instances with subscription opportunities from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for instances with subscription opportunities.
-     */
-    async getInstancesWithSubscriptionOpportunitiesCardSavingsValue(): Promise<number> {
-        const value = await this.instancesWithSubscriptionOpportunitiesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for instances with migration opportunities from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for instances with migration opportunities.
-     */
-    async getInstancesWithMigrationOpportunitiesCardSavingsValue(): Promise<number> {
-        const value = await this.instancesWithMigrationOpportunitiesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for not deallocated instances from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for not deallocated instances.
-     */
-    async getNotDeallocatedInstancesCardSavingsValue(): Promise<number> {
-        const value = await this.notDeallocatedInstancesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for instances eligible for generation upgrade from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for instances eligible for generation upgrade.
-     */
-    async getInstancesEligibleForGenerationUpgradeCardSavingsValue(): Promise<number> {
-        const value = await this.instancesEligibleForGenerationUpgradeCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for instances for shutdown from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for instances for shutdown.
-     */
-    async getInstancesForShutdownCardSavingsValue(): Promise<number> {
-        const value = await this.instancesForShutdownCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    async getInstancesForShutdownTableSavingsValue(): Promise<number> {
-        const value = await this.instancesForShutdownTableSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned Amazon S3 buckets from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned Amazon S3 buckets.
-     */
-    async getAbandonedAmazonS3BucketsCardSavingsValue(): Promise<number> {
-        const value = await this.abandonedAmazonS3BucketsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned Kinesis streams from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned Kinesis streams.
-     */
-    async getAbandonedKinesisStreamsCardSavingsValue(): Promise<number> {
-        const value = await this.abandonedKinesisStreamsCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned instances from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned instances.
-     */
-    async getAbandonedInstancesCardSavingsValue(): Promise<number> {
-        const value = await this.abandonedInstancesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned instances from the table.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned instances from the table.
-     */
-    async getAbandonedInstancesTableSavingsValue(): Promise<number> {
-        const value = await this.abandonedInstancesTableSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
+    async getSavingsValue(cardSavingsLocator: Locator): Promise<number> {
+        const text = await cardSavingsLocator.textContent();
+        return this.parseCurrencyValue(text);
     }
 
     /**
@@ -486,38 +342,6 @@ export class RecommendationsPage extends BasePage {
         return await this.publicS3BucketsCardCountValue.textContent();
     }
 
-    /**
-     * Retrieves the savings value for obsolete images from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for obsolete images.
-     */
-    async getObsoleteImagesCardSavingsValue(): Promise<number> {
-        const value = await this.obsoleteImagesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for obsolete images from the table.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for obsolete images from the table.
-     */
-    async getObsoleteImagesTableSavingsValue(): Promise<number> {
-        const value = await this.obsoleteImagesTableSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
-
-    /**
-     * Retrieves the savings value for abandoned images from the page.
-     * Parses the text content of the savings value element into a numeric value.
-     *
-     * @returns {Promise<number>} The parsed savings value for abandoned images.
-     */
-    async getAbandonedImagesCardSavingsValue(): Promise<number> {
-        const value = await this.abandonedImagesCardSavingsValue.textContent();
-        return this.parseCurrencyValue(value);
-    }
 
     /**
      * Calculates the total savings from all cards on the page.
@@ -526,34 +350,45 @@ export class RecommendationsPage extends BasePage {
      * @returns {Promise<number>} The total savings value from all cards.
      */
     async calculateTotalSavingsFromCards(): Promise<number> {
-        const cardSavingsMethods = [
-            this.getUnderutilizedInstancesCardSavingsValue,
-            this.getObsoleteIPsCardSavingsValue,
-            this.getNotAttachedVolumesCardSavingsValue,
-            this.getAbandonedLoadBalancersCardSavingsValue,
-            this.getInstancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
-            this.getUnderutilzedRDSInstancesCardSavingsValue,
-            this.getReservedInstancesOpportunitiesCardSavingsValue,
-            this.getObsoleteSnapshotsCardSavingsValue,
-            this.getObsoleteSnapshotChainsCardSavingsValue,
-            this.getInstancesWithSubscriptionOpportunitiesCardSavingsValue,
-            this.getInstancesWithMigrationOpportunitiesCardSavingsValue,
-            this.getNotDeallocatedInstancesCardSavingsValue,
-            this.getInstancesEligibleForGenerationUpgradeCardSavingsValue,
-            this.getInstancesForShutdownCardSavingsValue,
-            this.getAbandonedAmazonS3BucketsCardSavingsValue,
-            this.getAbandonedKinesisStreamsCardSavingsValue,
-            this.getAbandonedInstancesCardSavingsValue,
-            this.getObsoleteImagesCardSavingsValue,
-            this.getAbandonedImagesCardSavingsValue,
+        const cardData = [
+            {label: 'Abandoned Amazon S3 Buckets', locator: this.abandonedAmazonS3BucketsCardSavingsValue},
+            {label: 'Abandoned Images', locator: this.abandonedImagesCardSavingsValue},
+            {label: 'Abandoned Instances', locator: this.abandonedInstancesCardSavingsValue},
+            {label: 'Abandoned Kinesis Streams', locator: this.abandonedKinesisStreamsCardSavingsValue},
+            {label: 'Abandoned Load Balancers', locator: this.abandonedLoadBalancersCardSavingsValue},
+            {
+                label: 'Instances Eligible for Generation Upgrade',
+                locator: this.instancesEligibleForGenerationUpgradeCardSavingsValue
+            },
+            {label: 'Instances for Shutdown', locator: this.instancesForShutdownCardSavingsValue},
+            {
+                label: 'Instances with Migration Opportunities',
+                locator: this.instancesWithMigrationOpportunitiesCardSavingsValue
+            },
+            {
+                label: 'Instances with Spot/Preemptible Opportunities',
+                locator: this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue
+            },
+            {
+                label: 'Instances with Subscription Opportunities',
+                locator: this.instancesWithSubscriptionOpportunitiesCardSavingsValue
+            },
+            {label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue},
+            {label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue},
+            {label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue},
+            {label: 'Obsolete IPs', locator: this.obsoleteIPsCardSavingsValue},
+            {label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue},
+            {label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue},
+            {label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue},
+            {label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue},
+            {label: 'Underutilized RDS Instances', locator: this.underutilzedRDSInstancesCardSavingsValue},
         ];
 
         let total = 0;
 
-        for (const method of cardSavingsMethods) {
-            const methodName = method.name || 'unknownMethod';
-            const value = await method.call(this);
-            console.log(`${methodName}: ${value}`);
+        for (const {label, locator} of cardData) {
+            const value = await this.getSavingsValue(locator);
+            console.log(`${label}: ${value}`);
             total += value;
         }
 
@@ -564,10 +399,10 @@ export class RecommendationsPage extends BasePage {
 
     /**
      * Retrieves the itemized savings from a modal.
-     * Clicks the "See All" button to open the modal, waits for the modal and the last column element to load,
+     * Clicks the "See" button to open the modal, waits for the modal and the last column element to load,
      * sums the currency values in the specified column, and closes the modal.
      *
-     * @param {Locator} seeAllLocator - The locator for the "See All" button.
+     * @param {Locator} seeAllLocator - The locator for the "See" button.
      * @param {Locator} columnLocator - The locator for the column containing the currency values.
      * @returns {Promise<number>} The total itemized savings calculated from the modal.
      */
@@ -581,18 +416,27 @@ export class RecommendationsPage extends BasePage {
         return itemisedSavings;
     }
 
-    /**
-     * Skips the test if the number of items in the modal exceeds 100.
-     * Extracts the item count from the "See All" button text and skips the test if the count is greater than 100.
-     *
-     * @param {Locator} seeAllLocator - The locator for the "See All" button.
-     * @returns {Promise<void>}
-     */
-    async skipTestIfMoreThan100Items(seeAllLocator: Locator): Promise<void> {
-        const seeAllText = await seeAllLocator.textContent();
-        const match = seeAllText?.match(/See all (\d+) items/i);
-        const itemCount = match ? parseInt(match[1], 10) : 0;
 
-        test.skip(itemCount > 100, `Skipping: only 100 items can be loaded in modal (found ${itemCount})`);
+    async skipTestIfMoreThan100Items(seeAllBtn: Locator) {
+        const text = (await seeAllBtn.textContent())!.trim().toLowerCase();
+
+        if (text === 'see item') {
+            console.log("Single item detected — proceeding with test.");
+            return;
+        }
+
+        const match = text.match(/see all (\d+) items?/);
+        if (match) {
+            const itemCount = parseInt(match[1], 10);
+            if (itemCount > 100) {
+                console.warn(`Test skipped: modal limit exceeded (${itemCount} items > 100)`);
+                test.skip();
+            } else {
+                console.log(`Item count within supported range (${itemCount}) — proceeding.`);
+            }
+        } else {
+            console.warn(`Unexpected See All button text format: "${text}". Proceeding cautiously.`);
+        }
     }
+
 }
