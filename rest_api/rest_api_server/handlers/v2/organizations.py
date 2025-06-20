@@ -358,7 +358,7 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                         name: test company
                         is_demo: False
                         currency: USD
-                        disabled: soft
+                        disabled: True
             400: {description: "Wrong arguments: \n\n
                 - OE0212: Unexpected parameters \n\n
                 - OE0211: Immutable parameters \n\n
