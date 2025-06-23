@@ -86,7 +86,7 @@ NVMe SSD is recommended.
 _The current installation process should work also on Ubuntu 22.04_
 
 #### Updating old installation
-please follow [this document](docs/update_to_24.04.md) to upgrade your existing installation on Ubuntu 20.04.
+please follow [this document](documentation/update_to_24.04.md) to upgrade your existing installation on Ubuntu 20.04.
 
 
 #### Installing required packages
