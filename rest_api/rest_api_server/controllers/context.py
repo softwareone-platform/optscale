@@ -200,7 +200,7 @@ class ContextController(MongoMixin):
         disabled_ids = []
         for org_id in ids:
             org = organization_ctrl.set_organization_disabled(
-                org_id, False, 'soft')
+                org_id, False, 'soft', context=True)
             if org.disabled:
                 disabled_ids.append(org_id)
         return disabled_ids

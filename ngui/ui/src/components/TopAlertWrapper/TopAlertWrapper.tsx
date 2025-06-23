@@ -45,7 +45,7 @@ const GitHubInlineButton = ({ children, ariaLabelMessageId, href, dataIcon }) =>
 const TopAlertWrapper = ({ blacklistIds = [] }: TopAlertWrapperProps) => {
   const dispatch = useDispatch();
 
-  const { organizationId, disabled: isOrganizationDisabled } = useOrganizationInfo();
+  const { organizationId, isInactive: isOrganizationDisabled } = useOrganizationInfo();
 
   const { userId } = useGetToken();
 

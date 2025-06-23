@@ -116,12 +116,17 @@ class OrganizationController(BaseController, ClickHouseMixin):
         return organization
 
     def set_organization_disabled(self, organization_id, disabled: bool,
-                                  disable_type: str):
+                                  disable_type: str, context: bool = False):
         organization = self.get(organization_id)
         try:
             disable_type = OrganizationDisableTypes(disable_type)
         except ValueError:
             raise WrongArgumentsException(Err.OE0217, ['disable_type'])
+        if (organization.disabled == OrganizationDisableTypes.HARD and
+                disable_type == OrganizationDisableTypes.SOFT):
+            if not context:
+                raise WrongArgumentsException(Err.OE0568, [])
+            return organization
         disabled_value = disable_type if disabled else None
 
         # exclude if value already set

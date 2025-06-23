@@ -352,17 +352,20 @@ class InsecureSecurityGroups(ModuleBase):
                     cidr_blocks += rule['cidrBlocks'].get('v6CidrBlocks', [])
                     if not any(filter(lambda x: x in INSECURE_CIDRS, cidr_blocks)):
                         continue
-                    from_port = int(rule['ports'].get('fromPort', 0))
-                    to_port = int(rule['ports'].get('toPort', 0))
-                    for port_info in insecure_ports:
-                        insecure_port = port_info['port']
-                        insecure_protocol = port_info['protocol'].upper()
-                        if ((from_port <= insecure_port <= to_port or
-                                insecure_port == from_port or
-                                insecure_port == to_port) and
-                                protocol in [insecure_protocol, 'ANY']):
-                            found_insecure_ports.add((insecure_port, protocol))
-
+                    if 'ports' in rule:
+                        from_port = int(rule['ports'].get('fromPort', 0))
+                        to_port = int(rule['ports'].get('toPort', 0))
+                        for port_info in insecure_ports:
+                            insecure_port = port_info['port']
+                            insecure_protocol = port_info['protocol'].upper()
+                            if ((from_port <= insecure_port <= to_port or
+                                    insecure_port == from_port or
+                                    insecure_port == to_port) and
+                                    protocol in [insecure_protocol, 'ANY']):
+                                found_insecure_ports.add((insecure_port,
+                                                          protocol))
+                    else:
+                        found_insecure_ports.add(('*', protocol))
                 if found_insecure_ports:
                     insecure_ports_js = [{
                         'port': port,
