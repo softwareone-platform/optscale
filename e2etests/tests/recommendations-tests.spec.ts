@@ -2,8 +2,9 @@ import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
 import {EStorageState} from "../utils/enums";
+import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
 
-test.describe("Recommendations page tests", () => {
+test.describe.only("Recommendations page tests", () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
         test.use({storageState: EStorageState.liveDemoUser});
     }
@@ -73,153 +74,103 @@ test.describe("Recommendations page tests", () => {
         });
     });
 
-    test("Verify Underutilized instances card and table savings totals match the sum of itemised items", async ({recommendationsPage}) => {
-        let cardSavings: number;
-        let itemisedSavings: number;
+    test("Verify all expected cards are present", async ({ recommendationsPage }) => {
+        const expectedCardHeadings = [
+            "Abandoned Amazon S3 buckets",
+            "Abandoned images",
+            "Abandoned instances",
+            "Abandoned Kinesis Streams",
+            "Abandoned Load Balancers",
+            "IAM users with unused console access",
+            "Inactive IAM users",
+            "Instances eligible for generation upgrade",
+            "Instances for shutdown",
+            "Instances with insecure Security Groups settings",
+            "Instances with migration opportunities",
+            "Instances with Spot (Preemptible) opportunities",
+            "Instances with Subscription opportunities",
+            "Not attached Volumes",
+            "Not deallocated Instances",
+            "Obsolete images",
+            "Obsolete IPs",
+            "Obsolete snapshot chains",
+            "Obsolete snapshots",
+            "Public S3 buckets",
+            "Reserved instances opportunities",
+            "Underutilized instances",
+            "Underutilized RDS Instances"
+        ];
 
-        await test.step('Get Underutilized Instances card possible savings', async () => {
-            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesCardSavingsValue);
-            console.log(`Card Savings: ${cardSavings}`);
-        });
-        if (cardSavings === 0) {
-            await test.step('When card possible savings is "0" assert that the table also matches', async () => {
-                await expect(recommendationsPage.underutilizedInstancesSeeAllBtn).not.toBeVisible();
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesTableSavingsValue)).toBe(0);
-            });
-        } else {
-            await test.step('Get item count and skip of greater than 100', async () => {
-                await recommendationsPage.skipTestIfMoreThan100Items(recommendationsPage.underutilizedInstancesSeeAllBtn)
-            });
-            await test.step('Get itemised savings from modal', async () => {
-                itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(recommendationsPage.underutilizedInstancesSeeAllBtn, recommendationsPage.modalColumn7);
-            });
-            await test.step('Compare itemised savings with card possible savings and table', async () => {
-                expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
+        await recommendationsPage.allCardHeadings.last().waitFor();
 
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.underutilizedInstancesTableSavingsValue)).toBe(itemisedSavings);
-            });
-        }
-    })
+        const count = await recommendationsPage.allCardHeadings.count();
+        console.log("Number of <h3> headings found:", count);
 
-    test("Verify Abandoned instances card and table savings totals match the sum of itemised items", async ({recommendationsPage}) => {
-        let cardSavings: number;
-        let itemisedSavings: number;
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
 
-        await test.step('Get Abandoned Instances card possible savings', async () => {
-            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesCardSavingsValue);
-            console.log(`Card Savings: ${cardSavings}`);
-        });
-        if (cardSavings === 0) {
-            await test.step('When card possible savings is "0" assert that the table also matches', async () => {
-                await expect(recommendationsPage.abandonedInstancesSeeAllBtn).not.toBeVisible();
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesTableSavingsValue)).toBe(0);
-            });
-        } else {
-            await test.step('Get item count and skip if greater than 100', async () => {
-                await recommendationsPage.skipTestIfMoreThan100Items(recommendationsPage.abandonedInstancesSeeAllBtn);
-            });
-            await test.step('Get itemised savings from modal', async () => {
-                itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(recommendationsPage.abandonedInstancesSeeAllBtn, recommendationsPage.modalColumn5);
-            });
-            await test.step('Compare itemised savings with card possible savings and table', async () => {
-                expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
+        const expectedSorted = [...expectedCardHeadings].sort();
+        const actualSorted = actualHeadings.map(t => t.trim()).sort();
 
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.abandonedInstancesTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
-            });
-        }
+        expect(actualSorted).toEqual(expectedSorted);
     });
 
-    test("Verify Instances for Shutdown card and table savings totals match the sum of itemised items", async ({recommendationsPage}) => {
-        let cardSavings: number;
-        let itemisedSavings: number;
+    const cardEntries = [
+        'Abandoned Amazon S3 Buckets',
+        'Abandoned Images',
+        'Abandoned Instances',
+        'Abandoned Kinesis Streams',
+        'Abandoned Load Balancers',
+        'Instances Eligible for Generation Upgrade',
+        'Instances for Shutdown',
+        'Instances with Migration Opportunities',
+        'Instances with Spot Preemptible Opportunities',
+        'Instances with Subscription Opportunities',
+        'Not Attached Volumes',
+        'Not Deallocated Instances',
+        'Obsolete Images',
+        'Obsolete IPs',
+        'Obsolete Snapshot Chains',
+        'Obsolete Snapshots',
+        'Reserved Instances Opportunities',
+        'Under Utilized Instances',
+        'Under Utilized RDS Instances'
+    ];
 
-        await test.step('Get Instances for Shutdown card possible savings', async () => {
-            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownCardSavingsValue);
-            console.log(`Card Savings: ${cardSavings}`);
+    for (const cardName of cardEntries) {
+        test(`${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({ page, loginPage, recommendationsPage }) => {
+
+            // Find this card’s full metadata at runtime
+            const allCardData = getCardSavingsData(recommendationsPage);
+            const card = allCardData.find(c => c.name === cardName);
+            if (!card) throw new Error(`Card data not found for: ${cardName}`);
+
+            const { cardLocator, seeAllBtn, tableLocator, modalColumnLocator } = card;
+
+            const cardSavings = await recommendationsPage.getSavingsValue(cardLocator);
+            console.log(`${cardName} Card Savings: ${cardSavings}`);
+
+            if (cardSavings === 0) {
+                await test.step('Card savings is 0, check table and see-all button', async () => {
+                    await expect(seeAllBtn).not.toBeVisible();
+                    await recommendationsPage.clickTableButton();
+                    expect(await recommendationsPage.getSavingsValue(tableLocator)).toBe(0);
+                });
+            } else {
+                await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
+
+                const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
+
+                await test.step('Compare modal itemised total and card savings', async () => {
+                    expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
+                });
+
+                await test.step('Compare modal and table savings', async () => {
+                    await recommendationsPage.clickTableButton();
+                    const tableSavings = await recommendationsPage.getSavingsValue(tableLocator);
+                    expect(tableSavings).toBeCloseTo(itemisedSavings, 0);
+                });
+            }
         });
-        if (cardSavings === 0) {
-            await test.step('When card possible savings is "0" assert that the table also matches', async () => {
-                await expect(recommendationsPage.instancesForShutdownSeeAllBtn).not.toBeVisible();
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownTableSavingsValue)).toBe(0);
-            });
-        } else {
-            await test.step('Get item count and skip if greater than 100', async () => {
-                await recommendationsPage.skipTestIfMoreThan100Items(recommendationsPage.instancesForShutdownSeeAllBtn);
-            });
-            await test.step('Get itemised savings from modal', async () => {
-                itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(recommendationsPage.instancesForShutdownSeeAllBtn, recommendationsPage.modalColumn5);
-            });
-            await test.step('Compare itemised savings with card possible savings and table', async () => {
-                expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
-
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.instancesForShutdownTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
-            });
-        }
-    });
-
-    test("Verify Obsolete images card and table savings totals match the sum of itemised items", async ({recommendationsPage}) => {
-        let cardSavings: number;
-        let itemisedSavings: number;
-
-        await test.step('Get Obsolete Images card possible savings', async () => {
-            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesCardSavingsValue);
-            console.log(`Card Savings: ${cardSavings}`);
-        });
-        if (cardSavings === 0) {
-            await test.step('When card possible savings is "0" assert that the table also matches', async () => {
-                await expect(recommendationsPage.obsoleteImagesSeeAllBtn).not.toBeVisible();
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesTableSavingsValue)).toBe(0);
-            });
-        } else {
-            await test.step('Get item count and skip if greater than 100', async () => {
-                await recommendationsPage.skipTestIfMoreThan100Items(recommendationsPage.obsoleteImagesSeeAllBtn);
-            });
-            await test.step('Get itemised savings from modal', async () => {
-                itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(recommendationsPage.obsoleteImagesSeeAllBtn, recommendationsPage.modalColumn7);
-            });
-            await test.step('Compare itemised savings with card possible savings and table', async () => {
-                expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
-
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteImagesTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
-            });
-        }
-    });
-
-    test("Verify Obsolete snapshots card and table savings totals match the sum of itemised items", async ({recommendationsPage}) => {
-        let cardSavings: number;
-        let itemisedSavings: number;
-
-        await test.step('Get Obsolete Snapshots card possible savings', async () => {
-            cardSavings = await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsCardSavingsValue);
-            console.log(`Card Savings: ${cardSavings}`);
-        });
-        if (cardSavings === 0) {
-            await test.step('When card possible savings is "0" assert that the table also matches', async () => {
-                await expect(recommendationsPage.obsoleteSnapshotsSeeAllBtn).not.toBeVisible();
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsTableSavingsValue)).toBe(0);
-            });
-        } else {
-            await test.step('Get item count and skip if greater than 100', async () => {
-                await recommendationsPage.skipTestIfMoreThan100Items(recommendationsPage.obsoleteSnapshotsSeeAllBtn);
-            });
-            await test.step('Get itemised savings from modal', async () => {
-                itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(recommendationsPage.obsoleteSnapshotsSeeAllBtn, recommendationsPage.modalColumn6);
-            });
-            await test.step('Compare itemised savings with card possible savings and table', async () => {
-                expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
-
-                await recommendationsPage.clickTableButton();
-                expect(await recommendationsPage.getSavingsValue(recommendationsPage.obsoleteSnapshotsTableSavingsValue)).toBeCloseTo(itemisedSavings, 0);
-            });
-        }
-    });
+    }
 })

@@ -1,7 +1,7 @@
 import {RecommendationsPage} from "../pages/recommendations-page";
 import {Locator} from "@playwright/test";
 
-export type CardData = {
+export type CardSavingsData = {
     name: string;
     cardLocator: Locator;
     seeAllBtn: Locator;
@@ -9,7 +9,7 @@ export type CardData = {
     modalColumnLocator: Locator;
 };
 
-export const getCardData = (recommendationsPage: RecommendationsPage): CardData[] => [
+export const getCardSavingsData = (recommendationsPage: RecommendationsPage): CardSavingsData[] => [
     {
         name: 'Abandoned Amazon S3 Buckets',
         cardLocator: recommendationsPage.abandonedAmazonS3BucketsCardSavingsValue,

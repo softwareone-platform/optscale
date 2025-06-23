@@ -31,6 +31,7 @@ export class RecommendationsPage extends BasePage {
     readonly cardsBtn: Locator;
     readonly tableBtn: Locator;
     readonly searchInput: Locator;
+    readonly cardDiv: Locator;
     readonly firstCard: Locator;
     readonly table: Locator;
     readonly recommendationsModal: Locator;
@@ -41,6 +42,7 @@ export class RecommendationsPage extends BasePage {
     readonly modalColumn8: Locator;
     readonly modalNextPageBtn: Locator;
 
+    readonly allCardHeadings: Locator;
     readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
     readonly abandonedAmazonS3BucketsSeeAllBtn: Locator;
     readonly abandonedAmazonS3BucketsTableSavingsValue: Locator;
@@ -129,8 +131,9 @@ export class RecommendationsPage extends BasePage {
         this.cardsBtn = this.main.getByRole('button', {name: 'Cards'});
         this.tableBtn = this.main.getByRole('button', {name: 'Table'});
         this.searchInput = this.main.getByPlaceholder('Search');
-        this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
-        this.table = this.main.locator('table');
+        this.cardDiv = this.main.locator('//div[@class="MuiStack-root mui-1ov46kg"]/div[3]');
+
+        //Side modal locators
         this.recommendationsModal = this.page.getByTestId('smodal_recommendation');
         this.recommendationsModalCloseBtn = this.recommendationsModal.getByTestId('btn_close');
         this.modalNextPageBtn = this.recommendationsModal.getByTestId('btn_pagination_next');
@@ -139,6 +142,11 @@ export class RecommendationsPage extends BasePage {
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
         this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
 
+        // Card and table locators
+
+        this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
+        this.allCardHeadings = this.cardDiv.locator('//h3');
+        this.table = this.main.locator('table');
         this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
         this.abandonedAmazonS3BucketsSeeAllBtn = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//td[.="Abandoned Amazon S3 buckets"]/following-sibling::td[3]');
@@ -417,26 +425,38 @@ export class RecommendationsPage extends BasePage {
     }
 
 
+    /**
+     * Skips the test if the number of items in the modal exceeds 100.
+     *
+     * This method checks the text content of the "See All" button to determine the number of items.
+     * If the button indicates a single item, the test proceeds normally.
+     * If the button indicates multiple items, it parses the item count from the text.
+     * If the item count exceeds 100, the test is skipped with a warning.
+     *
+     * @param {Locator} seeAllBtn - The locator for the "See All" button.
+     * @returns {Promise<void>} Resolves when the check is complete or the test is skipped.
+     */
     async skipTestIfMoreThan100Items(seeAllBtn: Locator) {
+        // Retrieve the text content of the "See All" button and normalize it.
         const text = (await seeAllBtn.textContent())!.trim().toLowerCase();
 
+        // If the button indicates a single item, log a message and proceed with the test.
         if (text === 'see item') {
             console.log("Single item detected — proceeding with test.");
             return;
         }
 
+        // Match the text to extract the item count if it indicates multiple items.
         const match = text.match(/see all (\d+) items?/);
         if (match) {
-            const itemCount = parseInt(match[1], 10);
+            const itemCount = parseInt(match[1], 10); // Parse the item count as an integer.
+
+            // If the item count exceeds 100, log a warning and skip the test.
             if (itemCount > 100) {
                 console.warn(`Test skipped: modal limit exceeded (${itemCount} items > 100)`);
                 test.skip();
-            } else {
-                console.log(`Item count within supported range (${itemCount}) — proceeding.`);
             }
-        } else {
-            console.warn(`Unexpected See All button text format: "${text}". Proceeding cautiously.`);
         }
     }
-
 }
+
