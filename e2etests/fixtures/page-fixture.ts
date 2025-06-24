@@ -25,6 +25,7 @@ import {RegisterPage} from "../pages/register-page";
 import {PendingInvitationsPage} from "../pages/pending-invitations-page";
 import {EmailVerificationPage} from "../pages/email-verification-page";
 import {S3DuplicateFinderPage} from "../pages/s3-duplicate-finder-page";
+import {RiSpCoveragePage} from "../pages/ri-sp-coverage-page";
 
 
 export const test = base.extend<{
@@ -48,6 +49,7 @@ export const test = base.extend<{
     registerPage: RegisterPage;
     resourcesPage: ResourcesPage;
     resourceDetailsPage: ResourceDetailsPage;
+    riSpCoveragePage: RiSpCoveragePage;
     s3DuplicateFinder: S3DuplicateFinderPage;
     settingsPage: SettingsPage;
     taggingPoliciesPage: TaggingPoliciesPage;
@@ -134,6 +136,10 @@ export const test = base.extend<{
     resourceDetailsPage: async ({page}, use) => {
         const resourceDetailsPage = new ResourceDetailsPage(page);
         await use(resourceDetailsPage);
+    },
+    riSpCoveragePage: async ({page}, use) => {
+        const riSpCoveragePage = new RiSpCoveragePage(page);
+        await use(riSpCoveragePage);
     },
     s3DuplicateFinder: async ({page}, use) => {
         const s3DuplicateFinderPage = new S3DuplicateFinderPage(page);

@@ -8,6 +8,7 @@ export abstract class BasePage {
     readonly page: Page; // The Playwright page object representing the current page.
     readonly url: string; // The URL of the page.
     readonly main: Locator; // Locator for the main element of the page.
+    readonly pageLoaderSpinner: Locator; // Locator for the page loader spinner, if applicable.
 
     /**
      * Initializes a new instance of the BasePage class.
@@ -18,6 +19,7 @@ export abstract class BasePage {
         this.page = page;
         this.url = url;
         this.main = this.page.locator('main');
+        this.pageLoaderSpinner = this.main.locator('[role="progressbar"]');
     }
 
     /**
@@ -29,16 +31,25 @@ export abstract class BasePage {
     }
 
     /**
-     * Selects an option from a combo box.
+     * Selects an option from a combo box if it is not already selected.
      * @param {Locator} comboBox - The locator for the combo box element.
      * @param {string} option - The option to select from the combo box.
      * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
      * @returns {Promise<void>} A promise that resolves when the option is selected.
      */
     async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
+        const currentValue = (await comboBox.locator('div').textContent())?.trim();
+
+        if (currentValue === option) {
+            console.log(`Option "${option}" is already selected. Skipping selection.`);
+            return;
+        }
+
         await comboBox.click();
-        await this.page.getByRole('option', {name: option, exact: true}).click();
-        if (closeList) await this.page.locator('body').click();
+        await this.page.getByRole('option', { name: option, exact: true }).click();
+        if (closeList) {
+            await this.page.locator('body').click();
+        }
     }
 
     /**
@@ -259,5 +270,17 @@ export abstract class BasePage {
 
         // Return the total sum rounded to two decimal places
         return parseFloat(totalSum.toFixed(2));
+    }
+
+    async waitForPageLoaderToDisappear(timeout = 10000): Promise<void> {
+        const count = await this.pageLoaderSpinner.count();
+        if (count > 0) {
+            try {
+                console.log("Waiting for page loader spinner to disappear...");
+                await this.pageLoaderSpinner.waitFor({ state: 'hidden', timeout: timeout });
+            } catch {
+                console.warn("Page loader spinner did not disappear within the timeout.");
+            }
+        }
     }
 }

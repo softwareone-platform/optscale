@@ -18,12 +18,14 @@ test.describe.only("Recommendations page tests", () => {
                 await restoreUserSessionInLocalForage(page);
             }
             await recommendationsPage.navigateToURL();
+            await recommendationsPage.waitForPageLoaderToDisappear();
         });
     });
 
     test("Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
         let possibleMonthlySavings: number;
         let cardTotalSavings: number;
+        await recommendationsPage.selectCategory('All');
 
         await test.step('Get possible monthly savings', async () => {
             possibleMonthlySavings = await recommendationsPage.getPossibleMonthlySavingsValue();
@@ -39,6 +41,11 @@ test.describe.only("Recommendations page tests", () => {
             expect(cardTotalSavings).toBeCloseTo(possibleMonthlySavings, 0);
         });
     });
+
+    test('Verify that the RI/SP link works correctly', async ({ recommendationsPage, riSpCoveragePage }) => {
+        await recommendationsPage.clickRI_SPCard();
+        await expect(riSpCoveragePage.heading).toBeVisible();
+    })
 
     // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
     // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
@@ -74,7 +81,7 @@ test.describe.only("Recommendations page tests", () => {
         });
     });
 
-    test("Verify all expected cards are present", async ({ recommendationsPage }) => {
+    test("Verify all expected cards are present when All category selected", async ({ recommendationsPage }) => {
         const expectedCardHeadings = [
             "Abandoned Amazon S3 buckets",
             "Abandoned images",
@@ -101,6 +108,55 @@ test.describe.only("Recommendations page tests", () => {
             "Underutilized RDS Instances"
         ];
 
+        await recommendationsPage.selectCategory('All');
+        await recommendationsPage.allCardHeadings.last().waitFor();
+
+
+        const count = await recommendationsPage.allCardHeadings.count();
+        console.log("Number of <h3> headings found:", count);
+
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+
+        const expectedSorted = [...expectedCardHeadings].sort();
+        const actualSorted = actualHeadings.map(t => t.trim()).sort();
+
+        expect.soft(actualSorted).toEqual(expectedSorted);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(count);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    });
+
+    test("Verify all expected cards are present when Savings category selected", async ({ recommendationsPage }) => {
+        const expectedCardHeadings = [
+            "Abandoned Amazon S3 buckets",
+            "Abandoned images",
+            "Abandoned instances",
+            "Abandoned Kinesis Streams",
+            "Abandoned Load Balancers",
+            "Instances eligible for generation upgrade",
+            "Instances for shutdown",
+            "Instances with migration opportunities",
+            "Instances with Spot (Preemptible) opportunities",
+            "Instances with Subscription opportunities",
+            "Not attached Volumes",
+            "Not deallocated Instances",
+            "Obsolete images",
+            "Obsolete IPs",
+            "Obsolete snapshot chains",
+            "Obsolete snapshots",
+            "Reserved instances opportunities",
+            "Underutilized instances",
+            "Underutilized RDS Instances"
+        ];
+
+        await recommendationsPage.selectCategory('Savings');
         await recommendationsPage.allCardHeadings.last().waitFor();
 
         const count = await recommendationsPage.allCardHeadings.count();
@@ -113,6 +169,127 @@ test.describe.only("Recommendations page tests", () => {
         const actualSorted = actualHeadings.map(t => t.trim()).sort();
 
         expect(actualSorted).toEqual(expectedSorted);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(count);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    });
+
+    test("Verify all expected cards are present when Security category selected", async ({ recommendationsPage }) => {
+        const expectedCardHeadings = [
+            "IAM users with unused console access",
+            "Inactive IAM users",
+            "Instances with insecure Security Groups settings",
+            "Public S3 buckets"
+        ];
+
+        await recommendationsPage.selectCategory('Security');
+        await recommendationsPage.allCardHeadings.last().waitFor();
+
+        const count = await recommendationsPage.allCardHeadings.count();
+        console.log("Number of <h3> headings found:", count);
+
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+
+        const expectedSorted = [...expectedCardHeadings].sort();
+        const actualSorted = actualHeadings.map(t => t.trim()).sort();
+
+        expect(actualSorted).toEqual(expectedSorted);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(count);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    });
+
+    test('Verify all cards display critical icon when Critical category selected', async ({ recommendationsPage }) => {
+        await recommendationsPage.selectCategory('Critical');
+        await recommendationsPage.allCardHeadings.last().waitFor();
+        const count = await recommendationsPage.allCardHeadings.count();
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+        console.log("Number of <h3> headings found:", count);
+        const criticalIconCount = await recommendationsPage.allCriticalIcon.count();
+        console.log("Number of critical icons found:", criticalIconCount);
+        expect(criticalIconCount).toBe(count);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+        const allStatuses = await recommendationsPage.statusColumn.allTextContents();
+        for (const status of allStatuses) {
+            expect(status.trim()).toBe("Critical");
+        }
+    });
+
+    test('Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({ recommendationsPage }) => {
+        await recommendationsPage.selectCategory('Non-empty');
+        await recommendationsPage.allCardHeadings.last().waitFor();
+        const count = await recommendationsPage.allCardHeadings.count();
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+        console.log("Number of <h3> headings found:", count);
+
+        const seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
+        console.log("Number of See Item buttons found:", seeAllBtnCount);
+        expect(seeAllBtnCount).toBe(count);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    });
+
+    test('Verify filtering by data source works correctly', async ({ recommendationsPage }) => {
+       await recommendationsPage.selectCategory('All');
+       await recommendationsPage.selectApplicableService('RDS');
+
+        const count = await recommendationsPage.allCardHeadings.count();
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+        console.log("Number of <h3> headings found:", count);
+
+       await recommendationsPage.cardRDS_Icon.nth(count -1).waitFor();
+       const rdsCount = await recommendationsPage.cardRDS_Icon.count();
+       console.log(`Number of RDS cards found: ${rdsCount}`);
+       expect(rdsCount).toBe(count);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(rdsCount - 1).waitFor();
+        expect (await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+
+        const cells = await recommendationsPage.applicableServicesColumn.all();
+        for (const cell of cells) {
+            const icon = cell.locator('//span[.="RDS"]');
+            await expect(icon).toBeVisible();
+        }
     });
 
     const cardEntries = [
@@ -138,7 +315,7 @@ test.describe.only("Recommendations page tests", () => {
     ];
 
     for (const cardName of cardEntries) {
-        test(`${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({ page, loginPage, recommendationsPage }) => {
+        test(`${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({recommendationsPage }) => {
 
             // Find this card’s full metadata at runtime
             const allCardData = getCardSavingsData(recommendationsPage);
@@ -146,6 +323,9 @@ test.describe.only("Recommendations page tests", () => {
             if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
             const { cardLocator, seeAllBtn, tableLocator, modalColumnLocator } = card;
+            await recommendationsPage.page.waitForLoadState('domcontentloaded');
+            await recommendationsPage.waitForPageLoaderToDisappear();
+            await recommendationsPage.selectCategory('All');
 
             const cardSavings = await recommendationsPage.getSavingsValue(cardLocator);
             console.log(`${cardName} Card Savings: ${cardSavings}`);
@@ -167,7 +347,9 @@ test.describe.only("Recommendations page tests", () => {
 
                 await test.step('Compare modal and table savings', async () => {
                     await recommendationsPage.clickTableButton();
+                    await recommendationsPage.waitForPageLoaderToDisappear();
                     const tableSavings = await recommendationsPage.getSavingsValue(tableLocator);
+                    console.log(`${cardName} Table Savings: ${tableSavings}`);
                     expect(tableSavings).toBeCloseTo(itemisedSavings, 0);
                 });
             }

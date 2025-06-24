@@ -19,6 +19,7 @@ export class RecommendationsPage extends BasePage {
     readonly possibleMonthlySavingsDiv: Locator;
     readonly possibleMonthlySavingsValue: Locator;
     readonly savedWithCommitmentsValue: Locator;
+    readonly ri_spCard: Locator;
     readonly computeExpensesWithCommitmentsValue: Locator;
     readonly lastCheckTimeValue: Locator;
     readonly nextCheckTimeValue: Locator;
@@ -33,7 +34,19 @@ export class RecommendationsPage extends BasePage {
     readonly searchInput: Locator;
     readonly cardDiv: Locator;
     readonly firstCard: Locator;
-    readonly table: Locator;
+
+    readonly cardRDS_Icon: Locator;
+    readonly tableRDS_Icon: Locator;
+    // readonly computeSpan: Locator;
+    readonly cardAWS_IAM_Icon: Locator;
+    // readonly ec2Span: Locator;
+    // readonly ec2_ebsSpan: Locator;
+    // readonly ec2_vpcSpan: Locator;
+    // readonly kinesisSpan: Locator;
+    // readonly s3Span: Locator;
+    readonly cardGoogleIAM_Icon: Locator;
+
+
     readonly recommendationsModal: Locator;
     readonly recommendationsModalCloseBtn: Locator;
     readonly modalColumn5: Locator;
@@ -42,7 +55,14 @@ export class RecommendationsPage extends BasePage {
     readonly modalColumn8: Locator;
     readonly modalNextPageBtn: Locator;
 
+    readonly table: Locator;
+    readonly possibleSavingsColumn: Locator;
+    readonly applicableServicesColumn: Locator;
     readonly allCardHeadings: Locator;
+    readonly allCriticalIcon: Locator;
+    readonly allSeeAllBtns: Locator;
+    readonly allNameTableButtons: Locator;
+    readonly statusColumn: Locator;
     readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
     readonly abandonedAmazonS3BucketsSeeAllBtn: Locator;
     readonly abandonedAmazonS3BucketsTableSavingsValue: Locator;
@@ -118,6 +138,7 @@ export class RecommendationsPage extends BasePage {
         this.dataSourcesSelect = this.main.locator('//div[@id="select-data-source"]');
         this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
         this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
+        this.ri_spCard = this.main.getByTestId('card_ri_sp_expenses');
         this.savedWithCommitmentsValue = this.main.getByTestId('p_ri_sp_expenses');
         this.computeExpensesWithCommitmentsValue = this.main.locator('//div[.="Compute expenses covered with commitments"]/../div/div');
         this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
@@ -132,8 +153,16 @@ export class RecommendationsPage extends BasePage {
         this.tableBtn = this.main.getByRole('button', {name: 'Table'});
         this.searchInput = this.main.getByPlaceholder('Search');
         this.cardDiv = this.main.locator('//div[@class="MuiStack-root mui-1ov46kg"]/div[3]');
+        this.table = this.main.locator('table');
 
-        //Side modal locators
+        // Data source icons
+        this.cardRDS_Icon = this.cardDiv.locator('//span[.="RDS"]');
+        this.cardGoogleIAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#fbbc05"]   /ancestor::*[1]   /following-sibling::span[normalize-space(.)="IAM"]');
+        this.cardAWS_IAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
+        this.tableRDS_Icon = this.table.locator('//td[5]//span[.="RDS"]');
+
+
+        // Side modal locators
         this.recommendationsModal = this.page.getByTestId('smodal_recommendation');
         this.recommendationsModalCloseBtn = this.recommendationsModal.getByTestId('btn_close');
         this.modalNextPageBtn = this.recommendationsModal.getByTestId('btn_pagination_next');
@@ -144,69 +173,73 @@ export class RecommendationsPage extends BasePage {
 
         // Card and table locators
 
-        this.firstCard = this.main.locator('//div[contains(@class, "MuiCard-root")]').first();
+        this.firstCard = this.cardDiv.locator('//div[contains(@class, "MuiCard-root")]').first();
         this.allCardHeadings = this.cardDiv.locator('//h3');
-        this.table = this.main.locator('table');
-        this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/../../../div[2]/div[1]');
+        this.possibleSavingsColumn = this.table.locator('//td[4]');
+        this.statusColumn = this.table.locator('//td[2]');
+        this.applicableServicesColumn = this.table.locator('//td[5]');
+        this.allCriticalIcon = this.cardDiv.locator('//div[contains(@class, "MuiCard-root") ]//*[@data-testid="CancelIcon"]');
+        this.allSeeAllBtns = this.cardDiv.locator('//div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.allNameTableButtons = this.table.locator('//td[1]//button');
+        this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedAmazonS3BucketsSeeAllBtn = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//td[.="Abandoned Amazon S3 buckets"]/following-sibling::td[3]');
-        this.abandonedImagesCardSavingsValue = this.main.locator('//h3[.="Abandoned images"]/../../../div[2]/div[1]');
+        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Amazon S3 buckets")]/ancestor::td/following-sibling::td[3]');
+        this.abandonedImagesCardSavingsValue = this.main.locator('//h3[.="Abandoned images"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedImagesSeeAllBtn = this.main.locator('//h3[.="Abandoned images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedImagesTableSavingsValue = this.table.locator('//td[.="Abandoned images"]/following-sibling::td[3]');
-        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//td[.="Abandoned images"]/following-sibling::td[3]');
-        this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[.="Abandoned instances"]/../../../div[2]/div[1]');
+        this.abandonedImagesTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned images")]/ancestor::td/following-sibling::td[3]');
+        this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[.="Abandoned instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedInstancesSeeAllBtn = this.main.locator('//h3[.="Abandoned instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedInstancesTableSavingsValue = this.table.locator('//td[.="Abandoned instances"]/following-sibling::td[3]');
-        this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/../../../div[2]/div[1]');
+        this.abandonedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned instances")]/ancestor::td/following-sibling::td[3]');
+        this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedKinesisStreamsSeeAllBtn = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedKinesisStreamsTableSavingsValue = this.table.locator('//td[.="Abandoned Kinesis Streams"]/following-sibling::td[3]');
-        this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[.="Abandoned Load Balancers"]/../../../div[2]/div[1]');
+        this.abandonedKinesisStreamsTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Kinesis Streams")]/ancestor::td/following-sibling::td[3]');
+        this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[.="Abandoned Load Balancers"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedLoadBalancersSeeAllBtn = this.main.locator('//h3[.="Abandoned Load Balancers"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedLoadBalancersTableSavingsValue = this.table.locator('//td[.="Abandoned Load Balancers"]/following-sibling::td[3]');
-        this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/../../../div[2]/div[1]');
+        this.abandonedLoadBalancersTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Load Balancers")]/ancestor::td/following-sibling::td[3]');
+        this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.instancesEligibleForGenerationUpgradeSeeAllBtn = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesEligibleForGenerationUpgradeTableSavingsValue = this.table.locator('//td[.="Instances eligible for generation upgrade"]/following-sibling::td[3]');
-        this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[.="Instances for shutdown"]/../../../div[2]/div[1]');
+        this.instancesEligibleForGenerationUpgradeTableSavingsValue = this.table.locator('//button[contains(text(), "Instances eligible for generation upgrade")]/ancestor::td/following-sibling::td[3]');
+        this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[.="Instances for shutdown"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.instancesForShutdownSeeAllBtn = this.main.locator('//h3[.="Instances for shutdown"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesForShutdownTableSavingsValue = this.table.locator('//td[.="Instances for shutdown"]/following-sibling::td[3]');
-        this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with migration opportunities"]/../../../div[2]/div[1]');
+        this.instancesForShutdownTableSavingsValue = this.table.locator('//button[contains(text(), "Instances for shutdown")]/ancestor::td/following-sibling::td[3]');
+        this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with migration opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.instancesWithMigrationOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with migration opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithMigrationOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with migration opportunities"]/following-sibling::td[3]');
-        this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/../../../div[2]/div[1]');
+        this.instancesWithMigrationOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with migration opportunities")]/ancestor::td/following-sibling::td[3]');
+        this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with Spot (Preemptible) opportunities"]/following-sibling::td[3]');
-        this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Subscription opportunities"]/../../../div[2]/div[1]');
+        this.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with Spot (Preemptible) opportunities")]/ancestor::td/following-sibling::td[3]');
+        this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Subscription opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.instancesWithSubscriptionOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Subscription opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithSubscriptionOpportunitiesTableSavingsValue = this.table.locator('//td[.="Instances with Subscription opportunities"]/following-sibling::td[3]');
-        this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[.="Not attached Volumes"]/../../../div[2]/div[1]');
+        this.instancesWithSubscriptionOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with Subscription opportunities")]/ancestor::td/following-sibling::td[3]');
+        this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[.="Not attached Volumes"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.notAttachedVolumesSeeAllBtn = this.main.locator('//h3[.="Not attached Volumes"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.notAttachedVolumesTableSavingsValue = this.table.locator('//td[.="Not attached Volumes"]/following-sibling::td[3]');
-        this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[.="Not deallocated Instances"]/../../../div[2]/div[1]');
+        this.notAttachedVolumesTableSavingsValue = this.table.locator('//button[contains(text(), "Not attached Volumes")]/ancestor::td/following-sibling::td[3]');
+        this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[.="Not deallocated Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.notDeallocatedInstancesSeeAllBtn = this.main.locator('//h3[.="Not deallocated Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.notDeallocatedInstancesTableSavingsValue = this.table.locator('//td[.="Not deallocated Instances"]/following-sibling::td[3]');
-        this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[.="Obsolete images"]/../../../div[2]/div[1]');
+        this.notDeallocatedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Not deallocated Instances")]/ancestor::td/following-sibling::td[3]');
+        this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[.="Obsolete images"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.obsoleteImagesSeeAllBtn = this.main.locator('//h3[.="Obsolete images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteImagesTableSavingsValue = this.table.locator('//td[.="Obsolete images"]/following-sibling::td[3]');
-        this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[.="Obsolete IPs"]/../../../div[2]/div[1]');
+        this.obsoleteImagesTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete images")]/ancestor::td/following-sibling::td[3]');
+        this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[.="Obsolete IPs"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.obsoleteIPsSeeAllBtn = this.main.locator('//h3[.="Obsolete IPs"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteIPsTableSavingsValue = this.table.locator('//td[.="Obsolete IPs"]/following-sibling::td[3]');
-        this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshot chains"]/../../../div[2]/div[1]');
+        this.obsoleteIPsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete IPs")]/ancestor::td/following-sibling::td[3]');
+        this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshot chains"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.obsoleteSnapshotChainsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshot chains"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteSnapshotChainsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshot chains"]/following-sibling::td[3]');
-        this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshots"]/../../../div[2]/div[1]');
+        this.obsoleteSnapshotChainsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete snapshot chains")]/ancestor::td/following-sibling::td[3]');
+        this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshots"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.obsoleteSnapshotsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshots"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//td[.="Obsolete snapshots"]/following-sibling::td[3]');
-        this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Reserved instances opportunities"]/../../../div[2]/div[1]');
+        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete snapshots")]/ancestor::td/following-sibling::td[3]');
+        this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Reserved instances opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.reservedInstancesOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Reserved instances opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.reservedInstancesOpportunitiesTableSavingsValue = this.table.locator('//td[.="Reserved instances opportunities"]/following-sibling::td[3]');
-        this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized instances"]/../../../div[2]/div[1]');
+        this.reservedInstancesOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Reserved instances opportunities")]/ancestor::td/following-sibling::td[3]');
+        this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.underutilizedInstancesTableSavingsValue = this.table.locator('//td[.="Underutilized instances"]/following-sibling::td[3]');
-        this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/../../../div[2]/div[1]');
+        this.underutilizedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized instances")]/ancestor::td/following-sibling::td[3]');
+        this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.underutilzedRDSInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.underutilzedRDSInstancesTableSavingsValue = this.table.locator('//td[.="Underutilized RDS Instances"]/following-sibling::td[3]');
+        this.underutilzedRDSInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized RDS Instances")]/ancestor::td/following-sibling::td[3]');
 
-        this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/../../../div[2]/div[1]');
+        this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
     }
 
     /**
@@ -241,11 +274,25 @@ export class RecommendationsPage extends BasePage {
     }
 
     /**
+     * Clicks the RI/SP card on the Recommendations page.
+     *
+     * This method interacts with the `ri_spCard` locator to simulate a user clicking
+     * on the RI/SP card element. The action is typically used to navigate to a specific
+     * section or trigger functionality associated with the RI/SP card.
+     *
+     * @returns {Promise<void>} Resolves when the click action is complete.
+     */
+    async clickRI_SPCard() {
+        await this.ri_spCard.click();
+    }
+
+    /**
      * Selects a category from the categories combo box.
      * @param {string} category - The category to select.
      * @returns {Promise<void>}
      */
     async selectCategory(category: string) {
+        await this.categoriesSelect.waitFor();
         await this.selectFromComboBox(this.categoriesSelect, category);
     }
 
@@ -255,7 +302,9 @@ export class RecommendationsPage extends BasePage {
      * @returns {Promise<void>}
      */
     async selectApplicableService(service: string) {
+        await this.applicableServices.waitFor();
         await this.selectFromComboBox(this.applicableServices, service);
+        await this.page.waitForTimeout(200);
     }
 
     /**
@@ -332,11 +381,12 @@ export class RecommendationsPage extends BasePage {
     /**
      * Retrieves a card or table savings value given its locator.
      *
-     * @param {Locator} cardSavingsLocator - The locator for the card's savings value.
+     * @param {Locator} savingsLocator - The locator for the card's savings value.
      * @returns {Promise<number>} The parsed savings value.
      */
-    async getSavingsValue(cardSavingsLocator: Locator): Promise<number> {
-        const text = await cardSavingsLocator.textContent();
+    async getSavingsValue(savingsLocator: Locator): Promise<number> {
+        await savingsLocator.scrollIntoViewIfNeeded();
+        const text = await savingsLocator.textContent();
         return this.parseCurrencyValue(text);
     }
 
@@ -420,6 +470,7 @@ export class RecommendationsPage extends BasePage {
         await columnLocator.last().waitFor();
         const itemisedSavings = await this.sumCurrencyColumn(columnLocator, this.modalNextPageBtn);
         await this.recommendationsModalCloseBtn.click();
+        await this.page.waitForLoadState('networkidle');
         console.log(`Itemised Savings: ${itemisedSavings}`);
         return itemisedSavings;
     }
