@@ -173,6 +173,7 @@ etcd:
     user: {{ .Values.clickhouse.db.user }}
     password: {{ .Values.clickhouse.db.password }}
     db: {{ .Values.clickhouse.db.name }}
+    secure: {{ .Values.clickhouse.db.secure }}
   cleanmongodb:
     chunk_size: {{ .Values.cleanmongodb.chunk_size }}
     rows_limit: {{ .Values.cleanmongodb.rows_limit }}

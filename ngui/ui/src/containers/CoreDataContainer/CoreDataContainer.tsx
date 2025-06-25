@@ -13,6 +13,7 @@ import {
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { getSearchParams, removeSearchParam } from "utils/network";
+import { PENDING_INVITATIONS } from "urls";
 
 type CoreDataContainerProps = {
   render: (props: {
@@ -47,6 +48,13 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
           newScopeId: organizationId
         });
         removeSearchParam("organizationId");
+      }
+
+      if (data.organizations.length === 0) {
+        updateScope({
+          newScopeId: "none",
+          redirectTo: PENDING_INVITATIONS
+        });
       }
     }
   });

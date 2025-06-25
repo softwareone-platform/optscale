@@ -61,21 +61,9 @@ const CloudAccountsOverviewMocked = () => (
           forecast: 5226.19,
           cost: 2512.18
         },
-        name: "K8s cluster",
+        name: "AWS dev",
         id: "528e7e01-cf63-4041-980a-fd92a50da65d",
-        type: "kubernetes_cnr"
-      },
-      {
-        config: {},
-        details: {
-          resources: 125,
-          last_month_cost: 0,
-          forecast: 203.6,
-          cost: 203.59941599999996
-        },
-        name: "Ali dev",
-        id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        type: "alibaba_cnr"
+        type: "aws_cnr"
       }
     ]}
   />

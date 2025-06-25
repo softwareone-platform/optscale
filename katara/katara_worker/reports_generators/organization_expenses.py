@@ -55,7 +55,7 @@ class OrganizationExpenses(Base):
         return {
             'email': [self.report_data['user_email']],
             'template_type': self.get_template_type(__file__),
-            'subject': 'OptScale weekly expense report',
+            'subject': 'FinOps for Cloud weekly expense report',
             'template_params': {
                 'texts': {
                     'pools': pools,

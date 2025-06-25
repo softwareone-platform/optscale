@@ -21,7 +21,7 @@ import { useDownloadCleanupScript } from "hooks/useDownloadCleanupScript";
 import { useDownloadRecommendationItems } from "hooks/useDownloadRecommendationItems";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { DOCS_HYSTAX_CLEANUP_SCRIPTS } from "urls";
-import { DOWNLOAD_FILE_FORMATS, SCOPE_TYPES } from "utils/constants";
+import { DOWNLOAD_FEATURE_ENABLED, DOWNLOAD_FILE_FORMATS, SCOPE_TYPES } from "utils/constants";
 import { isEmpty } from "utils/objects";
 import RecommendationDetailsService from "../RecommendationDetailsService";
 
@@ -49,7 +49,7 @@ const useActionBarItems = ({ downloadLimit, recommendation, dataSourceIds, withD
       dataTestId: "download",
       isLoading: isDownloadLoading,
       disabled: !hasItems,
-      show: withDownload,
+      show: DOWNLOAD_FEATURE_ENABLED && withDownload,
       menu: {
         items: [
           {

@@ -14,7 +14,6 @@ import IconButton from "components/IconButton";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import PageContentWrapper from "components/PageContentWrapper";
 import { DeleteOrganizationConstraintModal } from "components/SideModalManager/SideModals";
-import SubTitle from "components/SubTitle";
 import EditOrganizationConstraintNameFormContainer from "containers/EditOrganizationConstraintNameFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
@@ -29,9 +28,10 @@ import {
   TAGGING_POLICY_TYPES
 } from "utils/constants";
 import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
-import { SPACING_1 } from "utils/layouts";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import { MPT_SPACING_2, SPACING_2 } from "../../utils/layouts";
 import SlicedText from "../SlicedText";
 import BreakdownChart from "./BreakdownChart";
 import TaggingPolicyDescriptionShort from "./TaggingPolicyDescriptionShort";
@@ -51,6 +51,7 @@ const ConstraintName = ({ id, name }) => {
     <Box display="flex" alignItems="center">
       <KeyValueLabel
         keyMessageId="name"
+        isBoldKeyLabel
         value={<SlicedText limit={80} text={name} />}
         sx={{
           marginRight: 1
@@ -95,6 +96,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {!TAGGING_POLICY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="type"
+          isBoldKeyLabel
           value={<FormattedMessage id={ANOMALY_TYPES[type] || QUOTAS_AND_BUDGETS_TYPES[type]} />}
           gutterBottom
         />
@@ -102,6 +104,7 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {ANOMALY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="evaluationPeriod"
+          isBoldKeyLabel
           value={<FormattedMessage id="xDays" values={{ x: evaluationPeriod }} />}
           gutterBottom
         />
@@ -109,28 +112,40 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
       {ANOMALY_TYPES[type] && (
         <KeyValueLabel
           keyMessageId="threshold"
+          isBoldKeyLabel
           value={<FormattedNumber value={threshold / 100} format="percentage" />}
           gutterBottom
         />
       )}
       {type === QUOTA_POLICY && (
-        <KeyValueLabel keyMessageId="quotaPolicyMaxValue" value={<FormattedNumber value={maxValue} />} gutterBottom />
+        <KeyValueLabel
+          keyMessageId="quotaPolicyMaxValue"
+          isBoldKeyLabel
+          value={<FormattedNumber value={maxValue} />}
+          gutterBottom
+        />
       )}
       {type === RECURRING_BUDGET_POLICY && (
         <KeyValueLabel
           keyMessageId="recurringBudgetPolicyMonthlyBudget"
+          isBoldKeyLabel
           value={<FormattedMoney value={monthlyBudget} />}
           gutterBottom
         />
       )}
       {(type === EXPIRING_BUDGET_POLICY || type === TAGGING_POLICY) && (
-        <KeyValueLabel keyMessageId="startDate" value={format(secondsToMilliseconds(startDate), EN_FULL_FORMAT)} gutterBottom />
+        <KeyValueLabel
+          keyMessageId="startDate"
+          isBoldKeyLabel
+          value={format(secondsToMilliseconds(startDate), EN_FULL_FORMAT)}
+          gutterBottom
+        />
       )}
       {type === EXPIRING_BUDGET_POLICY && (
-        <KeyValueLabel keyMessageId="budget" value={<FormattedMoney value={totalBudget} />} gutterBottom />
+        <KeyValueLabel keyMessageId="budget" isBoldKeyLabel value={<FormattedMoney value={totalBudget} />} gutterBottom />
       )}
       {type === TAGGING_POLICY && (
-        <Typography>
+        <Typography component="div" sx={{ marginTop: MPT_SPACING_2 }}>
           <TaggingPolicyDescriptionShort conditions={conditions} />
         </Typography>
       )}
@@ -140,9 +155,9 @@ const ConstraintProperties = ({ id, name, type, definition = {} }) => {
 
 const FiltersSection = ({ filters = {}, isLoading = false }) => (
   <>
-    <SubTitle>
-      <FormattedMessage id="filters" />
-    </SubTitle>
+    <Typography variant="subtitle1" component="div" sx={{ marginTop: MPT_SPACING_2 }}>
+      <LabelColon messageId="filters" />
+    </Typography>
     {isLoading ? <Skeleton height={80} /> : <AnomaliesFilters filters={filters} showAll />}
   </>
 );
@@ -175,6 +190,7 @@ const OrganizationConstraint = ({
         icon: <ListAltOutlinedIcon fontSize="small" />,
         messageId: "showResources",
         type: "button",
+        color: "primary",
         isLoading: isGetConstraintLoading,
         dataTestId: "btn_show_resources",
         action: () => {
@@ -186,6 +202,7 @@ const OrganizationConstraint = ({
         key: "delete",
         icon: <DeleteOutlinedIcon fontSize="small" />,
         messageId: "delete",
+        color: "error",
         type: "button",
         isLoading: isGetConstraintLoading,
         show: isAllowed,
@@ -209,23 +226,29 @@ const OrganizationConstraint = ({
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_1}>
-          <div>
-            {isGetConstraintLoading ? (
-              <Skeleton width="100%">
-                <ConstraintProperties />
-              </Skeleton>
-            ) : (
-              <ConstraintProperties id={id} name={name} type={type} definition={definition} />
-            )}
-          </div>
-          <div>{renderFiltersSection()}</div>
-          {anomalyId && <BreakdownChart constraint={constraint} isGetConstraintLoading={isGetConstraintLoading} />}
-          <DetectedConstraintsHistory
-            constraint={constraint}
-            limitHits={limitHits}
-            isLoading={isGetConstraintLoading || isGetLimitHitsLoading}
-          />
+        <Stack width={"100%"} spacing={SPACING_2}>
+          <Box className={"MTPBoxShadow"}>
+            <div>
+              {isGetConstraintLoading ? (
+                <Skeleton width="100%">
+                  <ConstraintProperties />
+                </Skeleton>
+              ) : (
+                <ConstraintProperties id={id} name={name} type={type} definition={definition} />
+              )}
+            </div>
+            <div>{renderFiltersSection()}</div>
+          </Box>
+          {limitHits.length > 0 && (
+            <Box className={"MTPBoxShadow"}>
+              {anomalyId && <BreakdownChart constraint={constraint} isGetConstraintLoading={isGetConstraintLoading} />}
+              <DetectedConstraintsHistory
+                constraint={constraint}
+                limitHits={limitHits}
+                isLoading={isGetConstraintLoading || isGetLimitHitsLoading}
+              />
+            </Box>
+          )}
         </Stack>
       </PageContentWrapper>
     </>

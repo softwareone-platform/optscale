@@ -4,10 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
-import GoogleAuthButton from "components/GoogleAuthButton";
 import Greeter from "components/Greeter";
-import MicrosoftSignInButton from "components/MicrosoftSignInButton";
-import OAuthSignIn from "components/OAuthSignIn";
 import Redirector from "components/Redirector";
 import { initialize } from "containers/InitializeContainer/redux";
 import { CREATE_TOKEN, CREATE_USER, SIGN_IN } from "graphql/api/auth/queries";
@@ -54,7 +51,7 @@ const AuthorizationContainer = () => {
 
   const [createUser, { loading: registerLoading }] = useMutation(CREATE_USER);
 
-  const [signIn, { loading: signInLoading }] = useMutation(SIGN_IN);
+  const [, { loading: signInLoading }] = useMutation(SIGN_IN);
 
   const handleLogin = async ({ email, password }) => {
     try {
@@ -96,17 +93,17 @@ const AuthorizationContainer = () => {
     );
   };
 
-  const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
-    const { data } = await signIn({
-      variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
-    });
+  // const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
+  //   const { data } = await signIn({
+  //     variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
+  //   });
 
-    const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
-    if (caveats.register) {
-      trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
-    }
-    dispatch(initialize({ ...data.signIn, caveats }));
-  };
+  //   const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
+  //   if (caveats.register) {
+  //     trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
+  //   }
+  //   dispatch(initialize({ ...data.signIn, caveats }));
+  // };
 
   const isInvited = queryInvited !== undefined;
 
@@ -162,7 +159,7 @@ const AuthorizationContainer = () => {
         content={
           <Stack spacing={SPACING_4}>
             <div>{createForm()}</div>
-            <div>
+            {/* <div>
               <OAuthSignIn
                 googleButton={
                   <GoogleAuthButton
@@ -179,7 +176,7 @@ const AuthorizationContainer = () => {
                   />
                 }
               />
-            </div>
+            </div> */}
           </Stack>
         }
       />

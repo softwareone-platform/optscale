@@ -6,6 +6,7 @@ import LaunchOutlinedIcon from "@mui/icons-material/LaunchOutlined";
 import MediationOutlinedIcon from "@mui/icons-material/MediationOutlined";
 import { Link } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -31,7 +32,7 @@ import { RESOURCES, getCreateResourceAssignmentRuleUrl } from "urls";
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { isEmpty as isEmptyArray, getSumByObjectKey } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, RESOURCE_PAGE_TABS } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
+import { SPACING_2, MPT_SPACING_3 } from "utils/layouts";
 import { getCloudResourceIdentifier, getResourceDisplayedName } from "utils/resources";
 
 const {
@@ -156,6 +157,7 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
         key: "goToCloudConsole",
         icon: <LaunchOutlinedIcon fontSize="small" />,
         messageId: "goToCloudConsole",
+        color: "primary",
         type: "button",
         href: cloudConsoleLink,
         show: !!cloudConsoleLink,
@@ -166,6 +168,7 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
         key: "envPropertiesCollectorLink",
         icon: <MediationOutlinedIcon />,
         messageId: "cicdIntegration",
+        color: "primary",
         type: "button",
         action: () => openSideModal(CiCdIntegrationModal, { envPropertiesCollectorLink }),
         show: !!envPropertiesCollectorLink,
@@ -176,6 +179,7 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
         key: "assignmentRule",
         icon: <AssignmentLateOutlinedIcon fontSize="small" />,
         messageId: "addAssignmentRuleShort",
+        color: "primary",
         type: "button",
         action: () => navigate(getCreateResourceAssignmentRuleUrl(id)),
         dataTestId: "btn_add_rule",
@@ -186,6 +190,7 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
         key: "unmarkEnvironment",
         icon: <DnsOutlinedIcon fontSize="small" />,
         messageId: "unmarkEnvironment",
+        color: "primary",
         type: "button",
         action: () => openSideModal(UnmarkEnvironmentModal, { name, id }),
         dataTestId: "btn_unmark_environment",
@@ -410,19 +415,22 @@ const Resource = ({ resource, isGetResourceLoading, patchResource, isLoadingPatc
       <PageContentWrapper>
         <Grid container spacing={SPACING_2}>
           <Grid container item xs={12}>
-            <SummaryGrid summaryData={getSummaryData} />
+            <SummaryGrid summaryData={getSummaryData} summaryStyle="customBox" />
           </Grid>
-          <Grid item xs={12}>
-            <TabsWrapper
-              isLoading={isGetResourceLoading || isLoadingPatch}
-              tabsProps={{
-                tabs,
-                defaultTab: DETAILS_TAB,
-                activeTab,
-                handleChange,
-                name: "resources-details"
-              }}
-            />
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+            <Box>
+              <TabsWrapper
+                headerSx={{ margin: `-${MPT_SPACING_3} -${MPT_SPACING_3} 0`, padding: `0 ${MPT_SPACING_3}` }}
+                isLoading={isGetResourceLoading || isLoadingPatch}
+                tabsProps={{
+                  tabs,
+                  defaultTab: DETAILS_TAB,
+                  activeTab,
+                  handleChange,
+                  name: "resources-details"
+                }}
+              />
+            </Box>
           </Grid>
         </Grid>
       </PageContentWrapper>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Link } from "@mui/material";
+import { Box, Grid, Link } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
@@ -189,11 +189,9 @@ const CreateAssignmentRuleFormContainer = () => {
     <>
       <PageActionBar isFormDataLoading={isFormDataLoading} pools={pools} />
       <PageContentWrapper>
-        <Box
-          sx={{
-            width: { md: "50%" }
-          }}
-        >
+        <Box className={"MTPBoxShadow"}>
+          <Grid container spacing={SPACING_1}>
+            <Grid item xs={12} sm={12} lg={6}>
           <AssignmentRuleForm
             onSubmit={(params) => {
               dispatch((_, getState) => {
@@ -230,6 +228,8 @@ const CreateAssignmentRuleFormContainer = () => {
               isSubmitButtonLoading: isFormDataLoading || isCreateAssignmentRuleLoading
             }}
           />
+            </Grid>
+          </Grid>
         </Box>
       </PageContentWrapper>
     </>
