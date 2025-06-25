@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import base64
 import logging
 import math
 import re
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
+
 from pymongo import UpdateOne
 
 from diworker.diworker.utils import bytes_to_gb
@@ -30,7 +32,7 @@ class PriceCollectionException(Exception):
 class Node:
     def __init__(self, name, cpu=None, memory=None, region=None, flavor=None,
                  os_type=None, provider_id=None, hourly_price=None,
-                 cost_model=None, **kwargs):
+                 cost_model=None, custom_price=False, **kwargs):
         self.name = name
         self.region = region
         self.flavor = flavor
@@ -40,6 +42,7 @@ class Node:
         self.memory = memory
         self.cost_model = cost_model
         self.hourly_price = hourly_price
+        self.custom_price = custom_price
 
     @property
     def provider(self):
@@ -78,10 +81,11 @@ class Node:
 
 class NodesProvider:
     def __init__(self, cloud_account_id, cloud_adapter, insider_client,
-                 default_cost_model):
+                 rest_cl, default_cost_model):
         self.cloud_account_id = cloud_account_id
         self._cloud_adapter = cloud_adapter
         self._insider_client = insider_client
+        self._rest_cl = rest_cl
         self.default_cost_model = default_cost_model
         self._nodes = {}
 
@@ -104,6 +108,12 @@ class NodesProvider:
         return {
             k: float(price['price']) / len(price_options) for k in price_options
         }
+
+    @staticmethod
+    def _set_node_local(node):
+        node.flavor = None
+        node.provider_id = None
+        return node
 
     def load_data(self, period, dt):
         node_metrics = defaultdict(dict)
@@ -152,19 +162,22 @@ class NodesProvider:
             node_metrics[metric['node']].update({'provider_id': provider_id})
 
         prices_cache = {}
+        config = self.cloud_acc.get('config')
+        custom_price = config.get("custom_price")
+
         for name, metric in node_metrics.items():
             if 'name' not in metric:
                 metric['name'] = name
             node = Node(**metric, cost_model=self.default_cost_model,
-                        hourly_price=self.default_hourly_price)
-            if node.is_cloud_deployed:
+                        hourly_price=self.default_hourly_price,
+                        custom_price=custom_price)
+            if node.is_cloud_deployed and not custom_price:
                 key = (node.provider, node.flavor, node.region, node.os_type)
                 prices = prices_cache.get(key)
                 if list(filter(lambda x: not x, key)):
-                    node.flavor = None
-                    node.provider_id = None
-                    self._nodes[name] = node
                     LOG.info('Changed cloud node %s to local' % node)
+                    node = self._set_node_local(node)
+                    self._nodes[name] = node
                     continue
                 if not prices:
                     _, res = self._insider_client.get_flavor_prices(
@@ -173,17 +186,51 @@ class NodesProvider:
                     )
                     prices = res.get('prices', [])
                     prices_cache[key] = prices
-                if not prices:
-                    raise PriceCollectionException('Failed to find node %s price' % node)
-                node.cost_model = self._price_to_cost_model(prices[0])
-                node.hourly_price = float(prices[0]['price'])
-                LOG.info('Detected cloud node %s. '
-                         'Flavor based cost model will be used', node)
-            else:
-                node.flavor = None
+                if not prices and node.custom_price is None:
+                    # prices not found, set custom prices flag
+                    custom_price = True
+                    node.custom_price = True
+                    node = self._set_node_local(node)
+                    LOG.info('Detected cloud node %s, '
+                             'but cannot find cost model. '
+                             'Default cost model will be used', node)
+                elif not prices:
+                    # cloud prices required, but not found
+                    raise PriceCollectionException(
+                        f'Price for node {node} not found. We recommend '
+                        f'switching to default cost model')
+                else:
+                    custom_price = False
+                    node.cost_model = self._price_to_cost_model(prices[0])
+                    node.hourly_price = float(prices[0]['price'])
+                    LOG.info('Detected cloud node %s. '
+                             'Flavor based cost model will be used', node)
+            elif not node.is_cloud_deployed:
+                if custom_price is False:
+                    raise PriceCollectionException(
+                        f"Node {node} is not detected as cloud deployed. "
+                        f"Update cloud account to use default cost model")
+                node = self._set_node_local(node)
+                custom_price = True
                 LOG.info('Detected local node %s. '
                          'Default cost model will be used', node)
             self._nodes[name] = node
+        self.set_custom_price(custom_price)
+
+    def set_custom_price(self, custom_price):
+        config = self.cloud_acc.get('config')
+        if config.get("custom_price") != custom_price:
+            credentials = str(base64.b64decode(
+                config.pop("credentials"))).split(':')
+            config.update({'custom_price': custom_price,
+                           'password': credentials[-1]})
+            self._rest_cl.cloud_account_update(
+                self.cloud_account_id, {'config': config})
+
+    @property
+    def cloud_acc(self):
+        _, cloud = self._rest_cl.cloud_account_get(self.cloud_account_id)
+        return cloud
 
     def get(self, name):
         node = self._nodes.get(name)
@@ -239,6 +286,7 @@ class KubernetesReportImporter(BaseReportImporter):
                 cloud_account_id=self.cloud_acc_id,
                 cloud_adapter=self.cloud_adapter,
                 insider_client=self.insider_client,
+                rest_cl=self.rest_cl,
                 default_cost_model=ca_cost_model)
         return self._nodes_provider
 
@@ -573,7 +621,7 @@ class KubernetesReportImporter(BaseReportImporter):
             nodes = []
             for ca_node in res.get('nodes', []):
                 node = Node(**ca_node)
-                if not node.is_cloud_deployed:
+                if not node.is_cloud_deployed or node.custom_price:
                     node.cost_model = self.nodes_provider.default_cost_model
                     node.hourly_price = self.nodes_provider.default_hourly_price
                 nodes.append(node.as_dict())

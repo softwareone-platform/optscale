@@ -26,6 +26,7 @@ class Kubernetes(CloudBase):
         CloudParameter(name='password', type=str, required=True),
         CloudParameter(name='credentials', type=str, required=False,
                        protected=True, readonly=True),
+        CloudParameter(name='custom_price', type=bool, required=False),
     ]
 
     SUPPORTS_REPORT_UPLOAD = False
@@ -152,7 +153,10 @@ class Kubernetes(CloudBase):
         password = config.get('password')
         credentials = base64.b64encode(
             f'{user}:{password}'.encode()).decode()
-        return {'credentials': credentials, 'user': user}
+        result = {'credentials': credentials, 'user': user}
+        if 'custom_price' in config:
+            result['custom_price'] = config['custom_price']
+        return result
 
     def validate_credentials(self, org_id=None):
         return {'account_id': str(uuid.uuid4()), 'warnings': []}
