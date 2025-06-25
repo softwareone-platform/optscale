@@ -10,12 +10,10 @@ jobs:
   determine_changes:
     runs-on: ubuntu-latest
     outputs:
-      arcee_changed: ${{ steps.check_arcee.outputs.changed }}
       auth_changed: ${{ steps.check_auth.outputs.changed }}
       bi_exporter_changed: ${{ steps.check_bi_exporter.outputs.changed }}
       bi_scheduler_changed: ${{ steps.check_bi_scheduler.outputs.changed }}
       booking_observer_changed: ${{ steps.check_booking_observer.outputs.changed }}
-      bulldozer_changed: ${{ steps.check_bulldozer.outputs.changed }}
       bumischeduler_changed: ${{ steps.check_bumischeduler.outputs.changed }}
       bumiworker_changed: ${{ steps.check_bumiworker.outputs.changed }}
       calendar_observer_changed: ${{ steps.check_calendar_observer.outputs.changed }}
@@ -59,14 +57,6 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
 
-      - name: Check if 'arcee/**' changed
-        id: check_arcee
-        run: |
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^arcee/'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
       - name: Check if 'auth/**' changed
         id: check_auth
         run: |
@@ -95,14 +85,6 @@ jobs:
         id: check_booking_observer
         run: |
           if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/booking_observer/'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Check if 'bulldozer/**' changed
-        id: check_bulldozer
-        run: |
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^bulldozer/'; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -388,18 +370,6 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-  arcee_tests:
-    if: needs.determine_changes.outputs.arcee_changed == 'true'
-    needs: determine_changes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Build image
-        run: bash -x build.sh arcee build
-      - name: Build test image and run tests
-        run: bash -x arcee/run_test.sh
   auth_tests:
     if: needs.determine_changes.outputs.auth_changed == 'true'
     needs: determine_changes
@@ -450,18 +420,6 @@ jobs:
         run: bash -x build.sh booking_observer build
       - name: Build test image and run tests
         run: bash -x docker_images/run_test.sh booking_observer
-  bulldozer_tests:
-    if: needs.determine_changes.outputs.bulldozer_changed == 'true'
-    needs: determine_changes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Build image
-        run: bash -x build.sh bulldozer build
-      - name: Build test image and run tests
-        run: bash -x bulldozer/run_test.sh
   bumischeduler_tests:
     if: needs.determine_changes.outputs.bumischeduler_changed == 'true'
     needs: determine_changes
@@ -882,12 +840,10 @@ jobs:
 
   pr_notification:
     needs:
-      - arcee_tests
       - auth_tests
       - bi_exporter_tests
       - bi_scheduler_tests
       - booking_observer_tests
-      - bulldozer_tests
       - bumischeduler_tests
       - bumiworker_tests
       - calendar_observer_tests
