@@ -12,8 +12,8 @@ import {
 } from "graphql/api/restapi/queries";
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
-import { getSearchParams, removeSearchParam } from "utils/network";
 import { PENDING_INVITATIONS } from "urls";
+import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
   render: (props: {

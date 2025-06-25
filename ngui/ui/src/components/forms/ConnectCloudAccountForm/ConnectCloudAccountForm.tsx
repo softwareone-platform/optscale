@@ -26,7 +26,6 @@ import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRe
 import AwsLogoIcon from "icons/AwsLogoIcon";
 import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
-
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,

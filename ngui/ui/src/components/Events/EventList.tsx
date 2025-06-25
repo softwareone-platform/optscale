@@ -22,7 +22,7 @@ import { isEmpty } from "utils/arrays";
 import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
 import { EN_FULL_FORMAT, formatUTC } from "utils/datetime";
 import { SPACING_1, SPACING_2, SPACING_3 } from "utils/layouts";
-import { getQueryParams, updateQueryParams, removeQueryParam } from "utils/network";
+import { getSearchParams, updateSearchParams, removeSearchParam } from "utils/network";
 
 const Loader = () => (
   <Box width="100%" textAlign="center" pt={2}>
@@ -31,7 +31,7 @@ const Loader = () => (
 );
 
 const Picker = ({ onApply }) => {
-  const filterParams = getQueryParams();
+  const filterParams = getSearchParams();
 
   return (
     <RangePickerForm
@@ -126,14 +126,14 @@ const EventList = ({
   };
 
   const [expanded, setExpanded] = useState("");
-  const queryParams = getQueryParams();
+  const SearchParams = getSearchParams();
 
   const handleAccordion = (eventId) => (_, isExpanded) => {
     setExpanded(isExpanded ? eventId : "");
     if (isExpanded) {
-      updateQueryParams({ event: eventId });
+      updateSearchParams({ event: eventId });
     } else {
-      removeQueryParam("event");
+      removeSearchParam("event");
     }
   };
 
@@ -142,10 +142,10 @@ const EventList = ({
   useEffect(() => {
     if (isInitialMount) {
       setIsInitialMount(false);
-    } else if (queryParams.event) {
-      setExpanded(queryParams.event);
+    } else if (SearchParams.event) {
+      setExpanded(SearchParams.event);
     }
-  }, [setExpanded, queryParams, isInitialMount, setIsInitialMount]);
+  }, [setExpanded, SearchParams, isInitialMount, setIsInitialMount]);
 
   const eventTableColumns = useMemo(
     () => [

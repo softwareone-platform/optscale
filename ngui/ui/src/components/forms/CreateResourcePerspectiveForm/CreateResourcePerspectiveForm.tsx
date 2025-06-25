@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import FormContentDescription from "components/FormContentDescription";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import ResourcesPerspectiveValuesDescription from "components/ResourcesPerspectiveValuesDescription";
 import { FormButtons, NameAutocompleteField, PayloadField, PerspectiveOverrideWarning } from "./FormElements";
 import { getDefaultValues } from "./utils";

@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 /* MPT_TODO: added arrow  */
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-
 import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
 import { Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";

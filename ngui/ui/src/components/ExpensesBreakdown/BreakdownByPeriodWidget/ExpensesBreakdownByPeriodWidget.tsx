@@ -4,14 +4,13 @@ import Box from "@mui/material/Box";
 import { useIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import QuestionMark from "components/QuestionMark";
+import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import DividerHorizontal from "../../../shared/components/DividerHorizontal/DividerHorizontal";
 import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../../shared/components/ResponsiveStack/ResponsiveStack";
 import { MPT_SPACING_3 } from "../../../utils/layouts";
 import ButtonGroup from "../../ButtonGroup";
-import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES, PDF_ELEMENTS } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
-import { getSearchParams, updateSearchParams } from "utils/network";
 import { changePeriodType } from "./actionCreator";
 import { EXPENSES_BREAKDOWN_PERIOD_TYPE } from "./reducer";
 

@@ -6,7 +6,6 @@ import { GET_EVENTS } from "graphql/api/keeper/queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { getLastElement } from "utils/arrays";
 import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
-import { scrolledToBottom } from "utils/layouts";
 import { getSearchParams, updateSearchParams } from "utils/network";
 
 type FilterParams = {

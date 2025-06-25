@@ -211,7 +211,7 @@ const CleanExpensesTableGroup = ({
               }
               label={<LabelColon messageId={"groupBy"} noWrap />}
               onChange={({ name: groupType, value: groupBy }) => {
-              updateSearchParams({
+                updateSearchParams({
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                   [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                   [GROUP_TYPE_PARAM_NAME]: groupType,
@@ -223,7 +223,7 @@ const CleanExpensesTableGroup = ({
                 });
               }}
               onClear={() => {
-              updateSearchParams({
+                updateSearchParams({
                   [GROUP_TYPE_PARAM_NAME]: undefined,
                   [GROUP_BY_PARAM_NAME]: undefined,
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
@@ -283,7 +283,7 @@ const CleanExpensesTableGroup = ({
               startDateTimestamp={startDateTimestamp}
               endDateTimestamp={endDateTimestamp}
               onAccordionChange={() => {
-              updateSearchParams({
+                updateSearchParams({
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
                   [getSearchQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined
                 });
