@@ -38,10 +38,10 @@ jobs:
           issue_type: "Story"
           summary: "__SYNC_UPSTREAM__ Sync OptScale integration -> main"
           description: "This task involves syncing the upstream branch with the main branch and creating a PR."
-          fix_version: "v4"
+          fix_version: "v${{ vars.CURRENT_RELEASE }}"
           component: "Extension FinOps"
           assignee: ${{ secrets.JIRA_ASSIGNEE }}
-          epic: "MPT-3562"
+          epic: ${{ vars.OPTSCALE_EPIC_ID }}
 
       - name: Set up Git
         run: |
@@ -66,13 +66,18 @@ jobs:
             exit 0
           fi
 
-      - name: Create new branch from latest tag
+      - name: Create new branch from latest tag for main
         run: |
           git checkout -b sync-${{ steps.latest_tag.outputs.LATEST_TAG }} ${{ steps.latest_tag.outputs.LATEST_TAG }}
           git push origin sync-${{ steps.latest_tag.outputs.LATEST_TAG }}
 
-      - name: Check if PR exists
-        id: check_pr
+      - name: Create new branch from latest tag for release
+        run: |
+          git checkout -b bp-sync-${{ steps.latest_tag.outputs.LATEST_TAG }} ${{ steps.latest_tag.outputs.LATEST_TAG }}
+          git push origin bp-sync-${{ steps.latest_tag.outputs.LATEST_TAG }}
+
+      - name: Check if PR exists for main
+        id: check_pr_main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -83,22 +88,51 @@ jobs:
               --json title \
               --jq 'length')
           if ((prs > 0)); then
-              echo "pr_exists=true" >> "$GITHUB_OUTPUT"
+              echo "pr_main_exists=true" >> "$GITHUB_OUTPUT"
               echo "::notice::Pull Request exist."
           fi
           
+      - name: Check if PR exists for release
+        id: check_pr_bp
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          prs=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'bp-sync-${{ steps.latest_tag.outputs.LATEST_TAG }}' \
+              --base 'release/${{ vars.CURRENT_RELEASE }}' \
+              --json title \
+              --jq 'length')
+          if ((prs > 0)); then
+              echo "pr_bp_exists=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request exist."
+          fi
 
       - name: Get current date
         id: current_date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
-      - name: Create Pull Request
+      - name: Create Pull Request for Main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check_pr_main.outputs.pr_main_exists == true
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
               --head 'sync-${{ steps.latest_tag.outputs.LATEST_TAG }}' \
               --base 'main' \
               --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/${{ steps.latest_tag.outputs.LATEST_TAG }} -> main ${{ steps.current_date.outputs.date }}' \
-              --body "This PR syncs the latest changes from upstream."
+              --body "This PR syncs the latest changes from upstream to main."
+
+
+      - name: Create Pull Request Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check_pr_bp.outputs.pr_bp_exists == true
+        run: |
+          gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'bp-sync-${{ steps.latest_tag.outputs.LATEST_TAG }}' \
+              --base 'release/${{ vars.CURRENT_RELEASE }}' \
+              --title '${{ steps.check_jira_ticket.outputs.issue }}${{ steps.create_jira_ticket.outputs.issue }} Sync upstream/${{ steps.latest_tag.outputs.LATEST_TAG }} -> main ${{ steps.current_date.outputs.date }}' \
+              --body "This PR syncs the latest changes from upstream to release branch."
