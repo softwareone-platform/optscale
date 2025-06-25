@@ -9,7 +9,7 @@ setup('Login as live demo user', async ({ page }) => {
     return;
   }
   await setup.step('Navigate to Live Demo', async () => {
-    await page.goto('/live-demo', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.goto('/live-demo', { waitUntil: 'load', timeout: 20000 });
   });
 
   await setup.step('Fill User Email and Proceed', async () => {

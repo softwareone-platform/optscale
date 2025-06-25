@@ -157,7 +157,7 @@ export class RecommendationsPage extends BasePage {
 
         // Data source icons
         this.cardRDS_Icon = this.cardDiv.locator('//span[.="RDS"]');
-        this.cardGoogleIAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#fbbc05"]   /ancestor::*[1]   /following-sibling::span[normalize-space(.)="IAM"]');
+        this.cardGoogleIAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
         this.cardAWS_IAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
         this.tableRDS_Icon = this.table.locator('//td[5]//span[.="RDS"]');
 
@@ -172,7 +172,6 @@ export class RecommendationsPage extends BasePage {
         this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
 
         // Card and table locators
-
         this.firstCard = this.cardDiv.locator('//div[contains(@class, "MuiCard-root")]').first();
         this.allCardHeadings = this.cardDiv.locator('//h3');
         this.possibleSavingsColumn = this.table.locator('//td[4]');
@@ -269,7 +268,7 @@ export class RecommendationsPage extends BasePage {
      * @param {string} dataSource - The data source to select.
      * @returns {Promise<void>}
      */
-    async selectDataSource(dataSource: string) {
+    async selectDataSource(dataSource: string): Promise<void> {
         await this.selectFromComboBox(this.dataSourcesSelect, dataSource, true);
     }
 
@@ -282,7 +281,9 @@ export class RecommendationsPage extends BasePage {
      *
      * @returns {Promise<void>} Resolves when the click action is complete.
      */
-    async clickRI_SPCard() {
+    async clickRI_SPCard(): Promise<void> {
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(2000);
         await this.ri_spCard.click();
     }
 
@@ -291,7 +292,7 @@ export class RecommendationsPage extends BasePage {
      * @param {string} category - The category to select.
      * @returns {Promise<void>}
      */
-    async selectCategory(category: string) {
+    async selectCategory(category: string): Promise<void> {
         await this.categoriesSelect.waitFor();
         await this.selectFromComboBox(this.categoriesSelect, category);
     }
@@ -301,9 +302,10 @@ export class RecommendationsPage extends BasePage {
      * @param {string} service - The service to select.
      * @returns {Promise<void>}
      */
-    async selectApplicableService(service: string) {
+    async selectApplicableService(service: string): Promise<void> {
         await this.applicableServices.waitFor();
         await this.selectFromComboBox(this.applicableServices, service);
+        await this.page.waitForLoadState();
         await this.page.waitForTimeout(200);
     }
 
@@ -311,7 +313,7 @@ export class RecommendationsPage extends BasePage {
      * Clicks the Cards button if it is not already active.
      * @returns {Promise<void>}
      */
-    async clickCardsButtonIfNotActive() {
+    async clickCardsButtonIfNotActive(): Promise<void> {
         if (!await this.evaluateActiveButton(this.cardsBtn)) {
             await this.cardsBtn.click();
         }
@@ -321,7 +323,7 @@ export class RecommendationsPage extends BasePage {
      * Clicks the Table button.
      * @returns {Promise<void>}
      */
-    async clickTableButton() {
+    async clickTableButton(): Promise<void> {
         await this.tableBtn.click();
     }
 
@@ -353,7 +355,7 @@ export class RecommendationsPage extends BasePage {
      *
      * @returns {Promise<void>}
      */
-    async clickS3DuplicatesCard() {
+    async clickS3DuplicatesCard(): Promise<void> {
         await this.s3DuplicatesCard.click();
     }
 
@@ -379,14 +381,14 @@ export class RecommendationsPage extends BasePage {
     }
 
     /**
-     * Retrieves a card or table savings value given its locator.
+     * Retrieves a currency value given its locator.
      *
-     * @param {Locator} savingsLocator - The locator for the card's savings value.
-     * @returns {Promise<number>} The parsed savings value.
+     * @param {Locator} currencyLocator - The locator for an element with a currency value.
+     * @returns {Promise<number>} The parsed currency value.
      */
-    async getSavingsValue(savingsLocator: Locator): Promise<number> {
-        await savingsLocator.scrollIntoViewIfNeeded();
-        const text = await savingsLocator.textContent();
+    async getCurrencyValue(currencyLocator: Locator): Promise<number> {
+        await currencyLocator.scrollIntoViewIfNeeded();
+        const text = await currencyLocator.textContent();
         return this.parseCurrencyValue(text);
     }
 
@@ -399,7 +401,6 @@ export class RecommendationsPage extends BasePage {
     async getPublicS3BucketsCardCountValue(): Promise<string> {
         return await this.publicS3BucketsCardCountValue.textContent();
     }
-
 
     /**
      * Calculates the total savings from all cards on the page.
@@ -445,7 +446,7 @@ export class RecommendationsPage extends BasePage {
         let total = 0;
 
         for (const {label, locator} of cardData) {
-            const value = await this.getSavingsValue(locator);
+            const value = await this.getCurrencyValue(locator);
             console.log(`${label}: ${value}`);
             total += value;
         }
@@ -453,6 +454,22 @@ export class RecommendationsPage extends BasePage {
         const roundedTotal = parseFloat(total.toFixed(2));
         console.log(`Total savings from cards: ${roundedTotal}`);
         return roundedTotal;
+    }
+
+    /**
+     * Searches for an item by name.
+     *
+     * This method fills the search input field with the provided name,
+     * simulates pressing the 'Enter' key, and waits for the page to load.
+     * It is typically used to filter or locate items on the page based on their name.
+     *
+     * @param {string} name - The name of the item to search for.
+     * @returns {Promise<void>} Resolves when the search operation is complete.
+     */
+    async searchByName(name: string): Promise<void> {
+        await this.searchInput.fill(name);
+        await this.searchInput.press('Enter');
+        await this.page.waitForLoadState();
     }
 
     /**
@@ -475,9 +492,9 @@ export class RecommendationsPage extends BasePage {
         return itemisedSavings;
     }
 
-
     /**
-     * Skips the test if the number of items in the modal exceeds 100.
+     * Skips the test if the number of items in the modal exceeds 100, due to the limited pagination
+     * implemented so far.
      *
      * This method checks the text content of the "See All" button to determine the number of items.
      * If the button indicates a single item, the test proceeds normally.
@@ -487,7 +504,7 @@ export class RecommendationsPage extends BasePage {
      * @param {Locator} seeAllBtn - The locator for the "See All" button.
      * @returns {Promise<void>} Resolves when the check is complete or the test is skipped.
      */
-    async skipTestIfMoreThan100Items(seeAllBtn: Locator) {
+    async skipTestIfMoreThan100Items(seeAllBtn: Locator): Promise<void> {
         // Retrieve the text content of the "See All" button and normalize it.
         const text = (await seeAllBtn.textContent())!.trim().toLowerCase();
 

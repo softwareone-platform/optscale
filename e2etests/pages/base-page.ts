@@ -46,7 +46,7 @@ export abstract class BasePage {
         }
 
         await comboBox.click();
-        await this.page.getByRole('option', { name: option, exact: true }).click();
+        await this.page.getByRole('option', {name: option, exact: true}).click();
         if (closeList) {
             await this.page.locator('body').click();
         }
@@ -157,7 +157,6 @@ export abstract class BasePage {
         }
     }
 
-
     /**
      * Parses a currency value from a string input and converts it into a numeric value.
      * Handles various formats, including optional multipliers (e.g., 'k' for thousand, 'm' for million),
@@ -221,7 +220,6 @@ export abstract class BasePage {
         return result;
     }
 
-
     /**
      * Sums the currency values from a column across multiple pages in a modal.
      * Iterates through all pages of the modal, extracts and parses currency values from the specified column,
@@ -272,14 +270,23 @@ export abstract class BasePage {
         return parseFloat(totalSum.toFixed(2));
     }
 
-    async waitForPageLoaderToDisappear(timeout = 10000): Promise<void> {
-        const count = await this.pageLoaderSpinner.count();
-        if (count > 0) {
+    /**
+     * Waits for the page loader spinner to disappear.
+     *
+     * This method checks if the page loader spinner is present on the page and waits for it to become hidden.
+     * It is useful for ensuring that the page has fully loaded before proceeding with further actions.
+     *
+     * @param {number} [timeout=10000] - The maximum time to wait for the spinner to disappear, in milliseconds.
+     * @returns {Promise<void>} A promise that resolves when the spinner is no longer visible or rejects if the timeout is exceeded.
+     */
+    async waitForPageLoaderToDisappear(timeout: number = 10000): Promise<void> {
+        const count = await this.pageLoaderSpinner.count(); // Check the number of spinner elements present.
+        if (count > 0) { // If spinner elements are found, proceed to wait for their disappearance.
             try {
                 console.log("Waiting for page loader spinner to disappear...");
-                await this.pageLoaderSpinner.waitFor({ state: 'hidden', timeout: timeout });
+                await this.pageLoaderSpinner.waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
             } catch {
-                console.warn("Page loader spinner did not disappear within the timeout.");
+                console.warn("Page loader spinner did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
             }
         }
     }
