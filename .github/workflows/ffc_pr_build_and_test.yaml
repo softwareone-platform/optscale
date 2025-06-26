@@ -337,14 +337,6 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-      - name: Check if 'docker_images/run_observer/**' changed
-        id: check_run_observer
-        run: |
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/run_observer/'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
       - name: Check if 'trapper/**' changed
         id: check_trapper
         run: |
@@ -789,18 +781,6 @@ jobs:
         run: bash -x build.sh risp build
       - name: Build test image and run tests
         run: bash -x risp/run_test.sh
-  run_observer_tests:
-    if: needs.determine_changes.outputs.run_observer_changed == 'true'
-    needs: determine_changes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Build image
-        run: bash -x build.sh run_observer build
-      - name: Build test image and run tests
-        run: bash -x docker_images/run_test.sh run_observer
   trapper_tests:
     if: needs.determine_changes.outputs.trapper_changed == 'true'
     needs: determine_changes
@@ -875,7 +855,6 @@ jobs:
       - resource_violations_tests
       - rest_api_tests
       - risp_tests
-      - run_observer_tests
       - trapper_tests
       - users_dataset_generator_tests
       - webhook_executor_tests
