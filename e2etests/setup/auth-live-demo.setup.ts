@@ -4,8 +4,12 @@ import {getLocalforageRoot, injectLocalforage} from "../utils/localforge-auth/lo
 import {safeWriteJsonFile} from "../utils/file";
 
 setup('Login as live demo user', async ({ page }) => {
+  if( process.env.USE_LIVE_DEMO !== 'true') {
+    console.log('Skipping live demo setup as USE_LIVE_DEMO is not set to true');
+    return;
+  }
   await setup.step('Navigate to Live Demo', async () => {
-    await page.goto('/live-demo', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.goto('/live-demo', { waitUntil: 'load', timeout: 20000 });
   });
 
   await setup.step('Fill User Email and Proceed', async () => {

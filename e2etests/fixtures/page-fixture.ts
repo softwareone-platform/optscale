@@ -1,31 +1,71 @@
 import {test as base} from '@playwright/test';
-import {LoginPage} from '../pages/login-page';
+import {AnomaliesCreatePage} from "../pages/anomalies-create-page";
+import {AnomaliesPage} from "../pages/anomalies-page";
+import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
+import {CloudAccountsPage} from "../pages/cloud-accounts-page";
+import {EmailVerificationPage} from "../pages/email-verification-page";
+import {EventsPage} from "../pages/events-page";
+import {ExpensesPage} from "../pages/expenses-page";
 import {Header} from '../pages/header';
 import {HomePage} from '../pages/home-page';
+import {LoginPage} from '../pages/login-page';
 import {MainMenu} from '../pages/main-menu';
-import {RecommendationsPage} from "../pages/recommendations-page";
-import {ResourcesPage} from '../pages/resources-page';
-import {PoolsPage} from "../pages/pools-page";
-import {ExpensesPage} from "../pages/expenses-page";
-import {AnomaliesPage} from "../pages/anomalies-page";
-import {PoliciesPage} from "../pages/policies-page";
-import {TaggingPoliciesPage} from "../pages/tagging-policies-page";
-import {UsersPage} from "../pages/users-page";
-import {CloudAccountsPage} from "../pages/cloud-accounts-page";
-import {EventsPage} from "../pages/events-page";
-import {SettingsPage} from "../pages/settings-page";
-import {PerspectivesPage} from "../pages/perspectives-page";
-import {ResourceDetailsPage} from "../pages/resource-details-page";
-import {AnomaliesCreatePage} from "../pages/anomalies-create-page";
-import {PoliciesCreatePage} from "../pages/policies-create-page";
-import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
-import {UsersInvitePage} from "../pages/users-invite-page";
-import {CloudAccountsConnectPage} from "../pages/cloud-accounts-connect page";
-import {RegisterPage} from "../pages/register-page";
 import {PendingInvitationsPage} from "../pages/pending-invitations-page";
-import {EmailVerificationPage} from "../pages/email-verification-page";
+import {PerspectivesPage} from "../pages/perspectives-page";
+import {PoliciesCreatePage} from "../pages/policies-create-page";
+import {PoliciesPage} from "../pages/policies-page";
+import {PoolsPage} from "../pages/pools-page";
+import {RecommendationsPage} from "../pages/recommendations-page";
+import {RegisterPage} from "../pages/register-page";
+import {ResourceDetailsPage} from "../pages/resource-details-page";
+import {ResourcesPage} from '../pages/resources-page';
+import {RiSpCoveragePage} from "../pages/ri-sp-coverage-page";
+import {S3DuplicateFinderPage} from "../pages/s3-duplicate-finder-page";
+import {SettingsPage} from "../pages/settings-page";
+import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
+import {TaggingPoliciesPage} from "../pages/tagging-policies-page";
+import {UsersInvitePage} from "../pages/users-invite-page";
+import {UsersPage} from "../pages/users-page";
 
 
+/**
+ * Extends the base Playwright test fixture with additional page objects.
+ *
+ * This configuration adds custom fixtures for various pages in the application,
+ * allowing tests to access and interact with specific page objects directly.
+ * Each fixture initializes the corresponding page object and makes it available
+ * for use within the test context.
+ *
+ * @type {import('@playwright/test').TestType<{
+ *   anomaliesPage: AnomaliesPage;
+ *   anomaliesCreatePage: AnomaliesCreatePage;
+ *   cloudAccountsPage: CloudAccountsPage;
+ *   cloudAccountsConnectPage: CloudAccountsConnectPage;
+ *   emailVerificationPage: EmailVerificationPage;
+ *   eventsPage: EventsPage;
+ *   expensesPage: ExpensesPage;
+ *   header: Header;
+ *   homePage: HomePage;
+ *   loginPage: LoginPage;
+ *   mainMenu: MainMenu;
+ *   pendingInvitationsPage: PendingInvitationsPage;
+ *   perspectivesPage: PerspectivesPage;
+ *   policiesPage: PoliciesPage;
+ *   policiesCreatePage: PoliciesCreatePage;
+ *   poolsPage: PoolsPage;
+ *   recommendationsPage: RecommendationsPage;
+ *   registerPage: RegisterPage;
+ *   resourcesPage: ResourcesPage;
+ *   resourceDetailsPage: ResourceDetailsPage;
+ *   riSpCoveragePage: RiSpCoveragePage;
+ *   s3DuplicateFinder: S3DuplicateFinderPage;
+ *   settingsPage: SettingsPage;
+ *   taggingPoliciesPage: TaggingPoliciesPage;
+ *   taggingPoliciesCreatePage: TaggingPoliciesCreatePage;
+ *   usersPage: UsersPage;
+ *   usersInvitePage: UsersInvitePage;
+ * }>}.
+ */
 export const test = base.extend<{
     anomaliesPage: AnomaliesPage;
     anomaliesCreatePage: AnomaliesCreatePage;
@@ -47,6 +87,8 @@ export const test = base.extend<{
     registerPage: RegisterPage;
     resourcesPage: ResourcesPage;
     resourceDetailsPage: ResourceDetailsPage;
+    riSpCoveragePage: RiSpCoveragePage;
+    s3DuplicateFinder: S3DuplicateFinderPage;
     settingsPage: SettingsPage;
     taggingPoliciesPage: TaggingPoliciesPage;
     taggingPoliciesCreatePage: TaggingPoliciesCreatePage;
@@ -132,6 +174,14 @@ export const test = base.extend<{
     resourceDetailsPage: async ({page}, use) => {
         const resourceDetailsPage = new ResourceDetailsPage(page);
         await use(resourceDetailsPage);
+    },
+    riSpCoveragePage: async ({page}, use) => {
+        const riSpCoveragePage = new RiSpCoveragePage(page);
+        await use(riSpCoveragePage);
+    },
+    s3DuplicateFinder: async ({page}, use) => {
+        const s3DuplicateFinderPage = new S3DuplicateFinderPage(page);
+        await use(s3DuplicateFinderPage);
     },
     settingsPage: async ({page}, use) => {
         const settingsPage = new SettingsPage(page);

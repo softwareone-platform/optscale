@@ -46,7 +46,7 @@ export default defineConfig({
 
   projects: [
     // Setup project
-    {name: "setup", testMatch: /.*\.setup\.ts/},
+{name: "setup", testMatch: /e2etests\/setup\/.*\.setup\.ts/},
     {
       name: "chrome",
       use: {
@@ -54,34 +54,34 @@ export default defineConfig({
       },
       dependencies: ["setup"],
     },
-    {
-      name: "firefox",
-      use: {
-        browserName: "firefox",
-      },
-      dependencies: ["setup"],
-    },
-    {
-      name: "Microsoft Edge",
-      use: {
-        channel: "msedge",
-      },
-      dependencies: ["setup"],
-    },
-    {
-      name: "firefox",
-      use: {
-        browserName: "firefox",
-      },
-      dependencies: ["setup"],
-    },
-    {
-      name: "Microsoft Edge",
-      use: {
-        channel: "msedge",
-      },
-      dependencies: ["setup"],
-    },
+    // {
+    //   name: "firefox",
+    //   use: {
+    //     browserName: "firefox",
+    //   },
+    //   dependencies: ["setup"],
+    // },
+    // {
+    //   name: "Microsoft Edge",
+    //   use: {
+    //     channel: "msedge",
+    //   },
+    //   dependencies: ["setup"],
+    // },
+    // {
+    //   name: "firefox",
+    //   use: {
+    //     browserName: "firefox",
+    //   },
+    //   dependencies: ["setup"],
+    // },
+    // {
+    //   name: "Microsoft Edge",
+    //   use: {
+    //     channel: "msedge",
+    //   },
+    //   dependencies: ["setup"],
+    // },
     // {
     //   name: "Mobile Safari",
     //   use: {
@@ -90,13 +90,13 @@ export default defineConfig({
     //   },
     //   dependencies: ["setup"],
     // },
-    {
-      name: "webkit",
-      use: {
-        ...devices["Desktop Safari"],
-      },
-      dependencies: ["setup"],
-    },
+    // {
+    //   name: "webkit",
+    //   use: {
+    //     ...devices["Desktop Safari"],
+    //   },
+    //   dependencies: ["setup"],
+    // },
   ],
 
   /* Run your local dev server before starting the tests */

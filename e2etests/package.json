@@ -12,7 +12,7 @@
     "playwright:test_edge": "npx playwright test --project \"Microsoft Edge\"",
     "playwright:test_chromium": "npx playwright test --project chromium",
     "playwright:test_webkit": "npx playwright test --project webkit",
-    "playwright:codegen": "npx playwright codegen --project chrome",
+    "playwright:codegen": "npx playwright codegen %BASE_URL%",
     "playwright:headed": "npx playwright test --headed --workers=1 --project chrome",
     "playwright:ui": "npx playwright test --ui --project chrome",
     "playwright:trace": "npx playwright test --trace --project chrome",
