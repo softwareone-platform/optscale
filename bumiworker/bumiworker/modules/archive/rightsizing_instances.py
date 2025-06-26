@@ -21,7 +21,9 @@ class RightsizingInstances(RightsizingArchiveBase,
 
     def set_additional_reasons(self, cloud_resource_map, cloud_account,
                                cloud_resource_id_instance_map,
-                               optimizations_dict, days_threshold, result):
+                               optimizations_dict, days_threshold,
+                               recommended_cpu_min, optimization_metric,
+                               result):
         cloud_resource_id_info_map = self._get_instances_info(
             list(cloud_resource_map.values()), cloud_account['id'],
             cloud_account['type'])
@@ -75,7 +77,17 @@ class RightsizingInstances(RightsizingArchiveBase,
                         'metric not found')
                     result.append(optimization)
                     continue
+                curr_recommended_cpu = self.get_recommended_cpu(
+                    current_flavor.get('cpu', 0), metric, optimization_metric,
+                    recommended_cpu_min)
                 recommended_cpu = optimization['recommended_flavor_cpu']
+                if not curr_recommended_cpu or min(
+                        curr_recommended_cpu) > recommended_cpu:
+                    self._set_reason_properties(
+                        optimization, ArchiveReason.FAILED_DEPENDENCY,
+                        'metrics increased')
+                    result.append(optimization)
+                    continue
                 if not cpu_flavor_map.get(recommended_cpu):
                     flavor_params['cpu'] = recommended_cpu
                     recommended_flavor = self._find_flavor(

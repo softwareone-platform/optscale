@@ -663,12 +663,16 @@ class RightsizingArchiveBase(ArchiveBase, RightsizingBase):
 
     def set_additional_reasons(self, cloud_resource_map, cloud_account,
                                cloud_resource_id_instance_map,
-                               optimizations_dict, days_threshold, result):
+                               optimizations_dict, days_threshold,
+                               recommended_cpu_min, optimization_metric,
+                               result):
         pass
 
     def _get(self, previous_options, optimizations, cloud_accounts_map,
              **kwargs):
         days_threshold = previous_options['days_threshold']
+        recommended_cpu_min = previous_options['recommended_flavor_cpu_min']
+        optimization_metric = previous_options['metric']
 
         cloud_acc_instances_map = defaultdict(dict)
         min_dt = utcnow() - timedelta(days=days_threshold)
@@ -725,5 +729,6 @@ class RightsizingArchiveBase(ArchiveBase, RightsizingBase):
             self.set_additional_reasons(cloud_resource_map, cloud_account,
                                         cloud_resource_id_instance_map,
                                         optimizations_dict, days_threshold,
-                                        result)
+                                        recommended_cpu_min,
+                                        optimization_metric, result)
         return result
