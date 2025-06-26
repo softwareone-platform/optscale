@@ -11,7 +11,7 @@ import { initialize } from "containers/InitializeContainer/redux";
 import { INITIALIZE, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME, SHOW_POLICY_QUERY_PARAM } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import macaroon from "utils/macaroons";
-import { formQueryString, getQueryParams } from "utils/network";
+import { stringifySearchParams, getSearchParams } from "utils/network";
 
 const CONFIRM_VERIFICATION_CODE = 0;
 const EMAIL_VERIFICATION_SUCCESS = 1;
@@ -51,13 +51,13 @@ const EmailVerification = () => {
               component="button"
               onClick={() => {
                 const caveats = macaroon.processCaveats(macaroon.deserialize(verificationCodeToken.token).getCaveats());
-                const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+                const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
                   [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
                 };
 
                 dispatch(initialize({ ...verificationCodeToken, caveats }));
                 navigate(
-                  `${INITIALIZE}?${formQueryString({
+                  `${INITIALIZE}?${stringifySearchParams({
                     [SHOW_POLICY_QUERY_PARAM]: true,
                     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
                   })}`

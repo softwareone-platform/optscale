@@ -1,13 +1,13 @@
 import uuid
+import hashlib
 from unittest.mock import patch
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
 from rest_api.rest_api_server.models.models import Layout
-from rest_api.rest_api_server.tests.unittests.test_profiling_base import (
-    TestProfilingBase)
+from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
 
 
-class TestLayouts(TestProfilingBase):
+class TestLayouts(TestApiBase):
     def setUp(self, version="v2"):
         super().setUp(version)
         patch('rest_api.rest_api_server.handlers.v1.base.'
@@ -40,6 +40,10 @@ class TestLayouts(TestProfilingBase):
             'shared': True,
             'entity_id': str(uuid.uuid4())
         }
+
+    @staticmethod
+    def get_md5_token_hash(profiling_token):
+        return hashlib.md5(profiling_token.encode('utf-8')).hexdigest()
 
     def create_layout(self, type_='type_', name='name', owner_id=None,
                       shared=False, data='{}', entity_id=None):
@@ -191,8 +195,7 @@ class TestLayouts(TestProfilingBase):
 
         code, res = self.client.layouts_list(
             self.org_id, layout_type='ml_run_charts_dashboard',
-            token=self.get_md5_token_hash(
-                self.get_profiling_token(self.org_id)),
+            token=self.get_md5_token_hash(self.profiling_token),
             include_shared=False)
         self.assertEqual(code, 200)
         self.assertEqual(len(res['layouts']), 0)

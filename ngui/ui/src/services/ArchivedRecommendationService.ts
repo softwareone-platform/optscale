@@ -9,7 +9,7 @@ import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOWNLOAD_FILE_FORMATS } from "utils/constants";
 import { formatUTC } from "utils/datetime";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 
 const useGetArchivedOptimizationsCount = (params) => {
   const dispatch = useDispatch();
@@ -52,7 +52,7 @@ const useDownloadArchivedOptimizations = () => {
 
   const onDownload = (params: { startDate: number; endDate: number }) =>
     fetchAndDownload({
-      url: `${getApiUrl(RESTAPI)}/organizations/${organizationId}/archived_recommendations_details?${formQueryString({
+      url: `${getApiUrl(RESTAPI)}/organizations/${organizationId}/archived_recommendations_details?${stringifySearchParams({
         start_date: params.startDate,
         end_date: params.endDate
       })}`,

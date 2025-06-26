@@ -15,9 +15,7 @@ COPY optscale_client/auth_client optscale_client/auth_client
 COPY optscale_client/herald_client optscale_client/herald_client
 COPY optscale_client/katara_client optscale_client/katara_client
 COPY optscale_client/metroculus_client optscale_client/metroculus_client
-COPY optscale_client/arcee_client optscale_client/arcee_client
 COPY optscale_client/insider_client optscale_client/insider_client
-COPY optscale_client/bulldozer_client optscale_client/bulldozer_client
 
 COPY rest_api/live_demo.tar.xz rest_api/live_demo.tar.xz
 COPY rest_api/google_calendar_client rest_api/google_calendar_client

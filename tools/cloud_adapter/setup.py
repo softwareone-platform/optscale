@@ -32,6 +32,7 @@ requirements = [
     "msrest==0.6.6",
     "urllib3==1.26.20",
     "azure-identity==1.16.1",
+    "oauthlib==3.2.2",
 
     # Gcp
     'google-cloud-iam==2.16.1',

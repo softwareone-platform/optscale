@@ -895,60 +895,20 @@ class Err(enum.Enum):
         ["cloud_account_type"],
         ["invalid"]
     ]
-    OE0534 = [
-        "%s with key \"%s\" already exists",
-        ['Object', 'key'],
-        ['Task', 'test_key']
-    ]
-    OE0535 = [
-        "Metric with key \"%s\" is already exist",
-        ['Metric key'],
-        ['test_key']
-    ]
     OE0536 = [
         "Currency %s is not supported",
         ["currency"],
         ["BRL"]
-    ]
-    OE0537 = [
-        "Template %s can't be deleted because of existing runsets",
-        ['template_id'],
-        ["a3706242-47a9-4e55-b7ab-b9f58fa9ec31"]
-    ]
-    OE0538 = [
-        "Runset %s should be one of %s",
-        ['param', "comma separated value"],
-        ['Runset instance_type should be one of m5, m1']
-    ]
-    OE0539 = [
-        "Runset %s should be %s",
-        ["param", "value"],
-        ['Runset name_prefix should be "test_"']
-    ]
-    OE0540 = [
-        "Unfilled or undefined hyperparameters %s",
-        ["param"],
-        ['Unfilled or undefined hyperparameters MODEL_URL, LEARNING_RATE']
     ]
     OE0541 = [
         '%s should be less than %s',
         ['param', 'value'],
         ['budget should be less than 1234']
     ]
-    OE0542 = [
-        'Instance types %s are unsupported on regions %s',
-        ['comma separaated instance types', 'comma separated regions'],
-        ['m2, t5', 'us-east-1, eu-central-1']
-    ]
     OE0543 = [
         "Unauthorized: %s",
         ['reason'],
         ['Token not found']
-    ]
-    OE0544 = [
-        "Runset %s state transition %s is not allowed",
-        ['runset_id', 'state'],
-        ["a3706242-47a9-4e55-b7ab-b9f58fa9ec31", '3']
     ]
     OE0545 = [
         "Action %s is not supported",
@@ -970,11 +930,6 @@ class Err(enum.Enum):
         [],
         []
     ]
-    OE0549 = [
-        "Leaderboard template already exists for task %s",
-        ["task_id"],
-        ["a3706242-47a9-4e55-b7ab-b9f58fa9ec31"]
-    ]
     OE0550 = [
         "Parameter %s should be time string in format HH:MM",
         ['param'],
@@ -994,26 +949,6 @@ class Err(enum.Enum):
         "%s should be a timezone name",
         ['param'],
         ['timezone']
-    ]
-    OE0554 = [
-        "Metric with id \"%s\" used in leaderboard(s)",
-        ['Metric id'],
-        []
-    ]
-    OE0555 = [
-        "Dataset with id \"%s\" used in leaderboard(s)",
-        ['Dataset id'],
-        []
-    ]
-    OE0556 = [
-        "Metric is used in task leaderboard(s)",
-        [],
-        []
-    ]
-    OE0557 = [
-        "Model version already exists",
-        [],
-        []
     ]
     OE0558 = [
         "Environment with name %s and resource type %s already exists",
@@ -1039,4 +974,9 @@ class Err(enum.Enum):
         "Duplicated triggers for time \"%s\"",
         ['time'],
         ['12:34']
+    ]
+    OE0563 = [
+        "Invalid operator type: %s",
+        ["operator"],
+        ["test"]
     ]

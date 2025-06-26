@@ -13,7 +13,6 @@ from optscale_client.config_client.client import Client as ConfigClient
 from docker_images.keeper_executor.executors.main_events import (
     MainEventExecutor
 )
-from docker_images.keeper_executor.executors.ml_events import MlEventsExecutor
 
 LOG = get_logger(__name__)
 
@@ -27,7 +26,8 @@ ROUTING_KEYS = [
     'alert.action.added', 'alert.action.removed', 'rule.#', 'environment.#',
     'task.*', 'metric.*', 'run.*', 'platform.*', 'leaderboard_template.*',
     'leaderboard.*', 'dataset.*', 'model.*', 'model_version.*', 'artifact.*',
-    'runset_template.*', 'runset.*', 'runner.*', 'power_schedule.*'
+    'runset_template.*', 'runset.*', 'runner.*', 'power_schedule.*',
+    'katara.task_failed'
 ]
 TASK_QUEUE = Queue(QUEUE_NAME, TASK_EXCHANGE, bindings=[
     binding(TASK_EXCHANGE, routing_key=routing_key)
@@ -47,16 +47,12 @@ class KeeperExecutorWorker(ConsumerMixin):
                          callbacks=[self.process_task], prefetch_count=10)]
 
     @staticmethod
-    def get_executor_class(task):
-        if 'profiling_token' in task or 'infrastructure_token' in task:
-            executor_class = MlEventsExecutor
-        else:
-            executor_class = MainEventExecutor
-        return executor_class
+    def get_executor_class():
+        return MainEventExecutor
 
     def process_task(self, body, message):
         try:
-            executor = self.get_executor_class(body)
+            executor = self.get_executor_class()
             executor(self.config_cl).execute(body)
         except Exception as exc:
             LOG.exception('Processing task failed: %s', str(exc))

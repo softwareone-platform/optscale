@@ -3,14 +3,14 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import { LOGIN, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
-import { formQueryString, getQueryParams } from "utils/network";
+import { stringifySearchParams, getSearchParams } from "utils/network";
 
 const AlreadyHaveAnAccountSignInMessage = () => {
-  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
 
-  const to = `${LOGIN}?${formQueryString({
+  const to = `${LOGIN}?${stringifySearchParams({
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
   })}`;
 

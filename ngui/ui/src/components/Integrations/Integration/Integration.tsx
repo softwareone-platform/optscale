@@ -6,11 +6,11 @@ import Backdrop from "components/Backdrop";
 import TextBlock from "components/TextBlock";
 import WrapperCard from "components/WrapperCard";
 import { INTEGRATION_QUERY_PARAM } from "urls";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import useStyles from "./Integration.styles";
 
 const Integration = ({ title, button, blocks, withBackdrop = false, backdropMessage = {}, id }) => {
-  const { [INTEGRATION_QUERY_PARAM]: active } = getQueryParams();
+  const { [INTEGRATION_QUERY_PARAM]: active } = getSearchParams();
   const raised = id === active;
   const { classes } = useStyles();
 

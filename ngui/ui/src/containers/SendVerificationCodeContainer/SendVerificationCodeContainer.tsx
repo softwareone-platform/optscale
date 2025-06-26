@@ -4,7 +4,7 @@ import SendVerificationCodeForm from "components/forms/SendVerificationCodeForm"
 import ResetPasswordServices from "services/ResetPasswordServices";
 import { OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 type SendVerificationCodeContainerProps = {
   onSuccess: (email: string) => void;
@@ -15,7 +15,7 @@ const SendVerificationCodeContainer = ({ onSuccess }: SendVerificationCodeContai
 
   const { onSend, isLoading } = useSendVerificationCode();
 
-  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
 

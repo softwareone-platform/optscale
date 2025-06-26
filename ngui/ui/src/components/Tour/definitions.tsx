@@ -1,5 +1,4 @@
 import { FormattedMessage } from "react-intl";
-
 import {
   ENVIRONMENT_TOUR_IDS_BY_DYNAMIC_FIELDS,
   ENVIRONMENT_SOFTWARE_FIELD,

@@ -3,46 +3,39 @@ from unittest.mock import patch
 
 import tornado.testing
 
-from herald.herald_server.models.db_base import BaseDB
-from herald.herald_server.models.models import Field
-from herald.herald_server.server import make_app
-from herald.herald_server.models.db_factory import DBType, DBFactory
-
 import optscale_client.herald_client.client
 import optscale_client.herald_client.client_v2
+from herald.herald_server.models.db_base import BaseDB
+from herald.herald_server.models.db_factory import DBFactory, DBType
+from herald.herald_server.models.models import Field
+from herald.herald_server.server import make_app
 
 
 class TestHeraldBase(tornado.testing.AsyncHTTPTestCase):
     def get_rabbit_params(self):
-        return 'root', 'pass', 'localhost', 27017
+        return "root", "pass", "localhost", 27017
 
     def get_app(self):
-        return make_app(DBType.Test, '127.0.0.1', 80)
+        return make_app(DBType.Test, "127.0.0.1", 80)
 
-    @patch('optscale_client.config_client.client.Client')
-    @patch('herald.herald_server.controllers.message_consumer.Consumer')
+    @patch("optscale_client.config_client.client.Client")
+    @patch("herald.herald_server.controllers.message_consumer.Consumer")
     def setUp(self, p_consumer, p_config):
         secret = str(uuid.uuid4())
-        patch(
-            'herald.herald_server.controllers.base.Config').start()
-        patch(
-            'herald.herald_server.controllers.message_consumer.Consumer').start()
+        patch("herald.herald_server.controllers.base.Config").start()
+        patch("herald.herald_server.controllers.message_consumer.Consumer").start()
         p_config.return_value.cluster_secret.return_value = secret
         p_config.return_value.rabbit_params.return_value = self.get_rabbit_params()
-        p_config.return_value.events_queue.return_value = (
-            'root', 'pass', 'localhost', 27017)
+        p_config.return_value.events_queue.return_value = ("root", "pass", "localhost", 27017)
         p_consumer.return_value.publish_message.return_value = {}
         super().setUp()
 
-        http_provider = optscale_client.herald_client.client.FetchMethodHttpProvider(
-            self.fetch, rethrow=False)
-        http_provider.token = 'token'
+        http_provider = optscale_client.herald_client.client.FetchMethodHttpProvider(self.fetch, rethrow=False)
+        http_provider.token = "token"
         http_provider.secret = secret
 
-        self.client = optscale_client.herald_client.client.Client(
-            http_provider=http_provider)
-        self.client_v2 = optscale_client.herald_client.client_v2.Client(
-            http_provider=http_provider)
+        self.client = optscale_client.herald_client.client.Client(http_provider=http_provider)
+        self.client_v2 = optscale_client.herald_client.client_v2.Client(http_provider=http_provider)
         self._init_base_db_data()
 
     def _init_base_db_data(self):
@@ -50,7 +43,7 @@ class TestHeraldBase(tornado.testing.AsyncHTTPTestCase):
         engine = db.engine
         session = BaseDB.session(engine)()
 
-        fields = 'object_type', 'object_id', 'class', 'level', 'ack'
+        fields = "object_type", "object_id", "class", "level", "ack"
 
         for field in fields:
             session.add(Field(name=field))

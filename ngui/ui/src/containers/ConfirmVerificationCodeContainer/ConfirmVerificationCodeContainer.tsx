@@ -3,14 +3,14 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ConfirmVerificationCodeForm from "components/forms/ConfirmVerificationCodeForm/ConfirmVerificationCodeForm";
 import ResetPasswordServices from "services/ResetPasswordServices";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 type ConfirmVerificationCodeContainerProps = {
   onSuccess: (args: { user_id: string; user_email: string; token: string }) => void;
 };
 
 const ConfirmVerificationCodeContainer = ({ onSuccess }: ConfirmVerificationCodeContainerProps) => {
-  const { email } = getQueryParams() as { email: string };
+  const { email } = getSearchParams() as { email: string };
 
   const { useGetVerificationCodeToken } = ResetPasswordServices();
 

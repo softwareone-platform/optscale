@@ -299,9 +299,9 @@ bumiworker:
 report_import_scheduler:
   name: report-import-scheduler
   image:
-    repository: cleanelkdb # using cleanelkdb, because it has curl inside
-    tag: *tag
-    pullPolicy: Never
+    repository: curlimages/curl
+    tag: latest
+    pullPolicy: IfNotPresent
   startingDeadlineSeconds: 100
 
 resource_discovery:
@@ -480,8 +480,6 @@ clickhouse:
     name: default
     user: default
     password: secure-password-1-clk
-    port: 9000
-    secure:
   image:
     id:
     pullPolicy: IfNotPresent
@@ -574,45 +572,6 @@ booking_observer:
     pullPolicy: Never
   startingDeadlineSeconds: 100
   schedule: "*/1 * * * *"
-
-arcee:
-  name: &arcee_name arcee
-  replicaCount: 1
-  image:
-    id:
-    repository: arcee
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: *arcee_name
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8891
-
-bulldozer_api:
-  name: &bulldozer_api_name bulldozer-api
-  replicaCount: 1
-  image:
-    id:
-    repository: bulldozer_api
-    tag: *tag
-    pullPolicy: Never
-  service:
-    name: *bulldozer_api_name
-    type: ClusterIP
-    externalPort: 80
-    internalPort: 8896
-
-bulldozer_worker:
-  name: bulldozerworker
-  replicaCount: 1
-  config:
-    arcee_wait_timeout: 600 # arcee hb wait timeout for runners in seconds
-  image:
-    id:
-    repository: bulldozer_worker
-    tag: *tag
-    pullPolicy: Never
 
 jira_bus:
   name: &jira_bus_name jira-bus
@@ -900,14 +859,16 @@ layout_cleaner:
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
 
-run_observer:
-  name: run-observer
+deactivatorg:
+  name: deactivatorg
   image:
-    repository: run_observer
+    repository: deactivatorg
     tag: *tag
     pullPolicy: Never
   startingDeadlineSeconds: 100
-  schedule: "*/30 * * * *"
+  schedule: "0 2 * * *"
+  enable: true
+  days_limit: 30
 
 # list of databases to create (if not exist) during DC initialization
 databases:
@@ -1063,6 +1024,7 @@ resource_discovery_settings:
 encryption_salt:
 encryption_salt_auth:
 disable_email_verification:
+force_aws_edp_strip:
 
 # settings for bi_scheduler
 bi_settings:

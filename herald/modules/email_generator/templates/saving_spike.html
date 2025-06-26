@@ -260,7 +260,9 @@
 								</td>
 							</tr>
 						</tbody>
-					</table>{{#texts.recommendations}}<table class="row row-7" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5;">
+					</table>
+					{% for recommendation in texts.recommendations %}
+					<table class="row row-7" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5;">
 						<tbody>
 							<tr>
 								<td>
@@ -273,7 +275,7 @@
 															<td class="pad" style="padding-left:20px;padding-right:10px;padding-top:5px;">
 																<div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
 																	<div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5;">
-																		<p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px;"><span style="font-size:14px;">{{module}}</span></p>
+																		<p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px;"><span style="font-size:14px;">{{recommendation.module}}</span></p>
 																	</div>
 																</div>
 															</td>
@@ -286,7 +288,7 @@
 															<td class="pad" style="padding-left:10px;padding-right:20px;padding-top:5px;">
 																<div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
 																	<div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5;">
-																		<p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px;"><span style="font-size:14px;">{{texts.organization.currency_code}}{{saving}}</span></p>
+																		<p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px;"><span style="font-size:14px;">{{texts.organization.currency_code}}{{recommendation.saving}}</span></p>
 																	</div>
 																</div>
 															</td>
@@ -299,7 +301,9 @@
 								</td>
 							</tr>
 						</tbody>
-					</table>{{/texts.recommendations}}<table class="row row-8" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5;">
+					</table>
+					{% endfor %}
+					<table class="row row-8" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5;">
 						<tbody>
 							<tr>
 								<td>

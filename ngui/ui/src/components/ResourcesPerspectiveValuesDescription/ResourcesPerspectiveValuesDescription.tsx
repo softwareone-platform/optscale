@@ -1,10 +1,9 @@
-import { Box, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import ResourcesPerspectiveFilters from "components/ResourcesPerspectiveFilters";
 import { breakdowns } from "hooks/useBreakdownBy";
-import { isEmpty as isEmptyArray } from "utils/arrays";
-import { MPT_SPACING_1, MPT_SPACING_2, SPACING_2 } from "utils/layouts";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import { SPACING_1 } from "utils/layouts";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
   controlName: "categorizeBy",
@@ -30,9 +29,14 @@ const getBreakdownStateValueRenderer = (name) =>
     groupBy: getGroupByRenderData
   })[name] ?? (() => null);
 
-const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}, filters = [] }) => (
-  <Stack spacing={SPACING_2} paddingTop={MPT_SPACING_2}>
-    <KeyValueLabel keyMessageId="breakdownBy" isBoldKeyLabel value={<FormattedMessage id={breakdownBy} />} />
+const ResourcesPerspectiveValuesDescription = ({
+  breakdownBy,
+  breakdownData = {},
+  perspectiveFilterValues = {},
+  perspectiveAppliedFilters = {}
+}) => (
+  <Stack spacing={SPACING_1}>
+    <KeyValueLabel keyMessageId="breakdownBy" value={<FormattedMessage id={breakdownBy} />} />
     {Object.entries(breakdownData)
       .map(([name, value]) => {
         const renderer = getBreakdownStateValueRenderer(name);
@@ -41,28 +45,12 @@ const ResourcesPerspectiveValuesDescription = ({ breakdownBy, breakdownData = {}
       })
       .filter(Boolean)
       .map(({ controlName, renderValue }) => (
-        <KeyValueLabel key={controlName} isBoldKeyLabel keyMessageId={controlName} value={renderValue()} />
+        <KeyValueLabel key={controlName} keyMessageId={controlName} value={renderValue()} />
       ))}
-    <Box sx={{ paddingTop: MPT_SPACING_2 }}>
-      {isEmptyArray(filters) ? (
-        <KeyValueLabel keyMessageId="filters" isBoldKeyLabel value="None" />
-      ) : (
-        <>
-          <Box sx={{ marginBottom: MPT_SPACING_1 }}>
-            <LabelColon messageId={"filters"} />
-          </Box>
-          {filters.map(({ name, displayedName, displayedValue }) => (
-            <KeyValueLabel
-              key={name}
-              sx={{ marginBottom: MPT_SPACING_1 }}
-              isBoldKeyLabel
-              keyText={displayedName}
-              value={displayedValue}
-            />
-          ))}
-        </>
-      )}
-    </Box>
+    <ResourcesPerspectiveFilters
+      perspectiveFilterValues={perspectiveFilterValues}
+      perspectiveAppliedFilters={perspectiveAppliedFilters}
+    />
   </Stack>
 );
 

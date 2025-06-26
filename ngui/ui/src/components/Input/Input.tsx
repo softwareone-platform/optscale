@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 import TextField from "@mui/material/TextField";
-
 import useStyles from "./Input.styles";
 
 // TODO - pass inputProps and InputLabelProps correctly not to override the defaults,

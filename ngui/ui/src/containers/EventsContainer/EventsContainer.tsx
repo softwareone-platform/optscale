@@ -6,7 +6,7 @@ import { GET_EVENTS } from "graphql/api/keeper/queries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { getLastElement } from "utils/arrays";
 import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 type FilterParams = {
   level: keyof typeof EVENT_LEVEL;
@@ -19,7 +19,11 @@ type FilterParams = {
 
 type FilterNames = keyof FilterParams;
 
-type RequestParams = Pick<FilterParams, Exclude<keyof FilterParams, "level" | "includeDebugEvents">> & {
+type RequestParams = {
+  time_start?: number;
+  time_end?: number;
+  description_like?: string;
+  last_id?: string;
   level: Exclude<FilterParams["level"], typeof EVENT_LEVEL.ALL>[];
   limit?: number;
 };
@@ -38,7 +42,7 @@ const getQueryParamFilters = () => {
     timeEnd,
     descriptionLike = "",
     includeDebugEvents = false
-  } = getQueryParams() as Partial<FilterParams>;
+  } = getSearchParams() as Partial<FilterParams>;
 
   return {
     level,
@@ -86,10 +90,10 @@ const EventsContainer = () => {
       return {
         organizationId,
         requestParams: {
-          timeStart: params.timeStart,
-          timeEnd: params.timeEnd,
-          lastId: params.lastId,
-          descriptionLike: params.descriptionLike,
+          time_start: params.timeStart,
+          time_end: params.timeEnd,
+          last_id: params.lastId,
+          description_like: params.descriptionLike,
           limit: EVENTS_LIMIT,
           level: getLevelParameter()
         }
@@ -201,7 +205,7 @@ const EventsContainer = () => {
     const areFiltersDifferent = (Object.keys(filterParams) as FilterNames[]).some((key) => filterParams[key] !== filters[key]);
 
     if (areFiltersDifferent) {
-      updateQueryParams(filterParams);
+      updateSearchParams(filterParams);
 
       setFilters((currentRequestParams) => ({
         ...currentRequestParams,

@@ -85,7 +85,8 @@ class TestRulesApiBase(TestApiBase):
 
     @staticmethod
     def _prepare_rule_body(name, pool_id=None, owner_id=None,
-                           conditions=None, active=None, priority=None):
+                           conditions=None, active=None, priority=None,
+                           operator=None):
         body = {'name': name,
                 'conditions': conditions}
         if pool_id:
@@ -96,11 +97,13 @@ class TestRulesApiBase(TestApiBase):
             body.update({'active': active})
         if priority is not None:
             body.update({'priority': priority})
+        if operator is not None:
+            body.update({'operator': operator})
         return body
 
     def _create_rule(self, name, org_id=None, pool_id="", owner_id="",
                      conditions=None, active=None, priority=None,
-                     set_allowed=True):
+                     set_allowed=True, operator='and'):
         if not org_id:
             org_id = self.org_id
         if not conditions:
@@ -120,6 +123,7 @@ class TestRulesApiBase(TestApiBase):
             owner_id=owner_id,
             conditions=conditions,
             active=active,
+            operator=operator,
             priority=priority,
         )
         code, rule = self.client.rules_create(org_id, rule_body)
@@ -206,6 +210,40 @@ class TestRuleApi(TestRulesApiBase):
                 {"type": "region_is", "meta_info": None}
             ]
         self._create_rule('Test rule', conditions=conditions)
+
+    @patch(AUTHORIZE_ACTION_METHOD)
+    def test_create_rule_invalid_operator(self, p_authorize):
+        p_authorize.return_value = True
+        conditions = [
+                {"type": "region_is", "meta_info": None}
+            ]
+        rule_body = self._prepare_rule_body(
+            name='test',
+            pool_id=self.org_pool_id,
+            owner_id=self.employee['id'],
+            conditions=conditions,
+            operator='test'
+        )
+        code, resp = self.client.rules_create(self.org_id, rule_body)
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, "OE0563")
+
+    @patch(AUTHORIZE_ACTION_METHOD)
+    def test_create_rule_operator_not_provided(self, p_authorize):
+        p_authorize.return_value = True
+        conditions = [
+                {"type": "region_is", "meta_info": None}
+            ]
+        rule_body = self._prepare_rule_body(
+            name='test',
+            pool_id=self.org_pool_id,
+            owner_id=self.employee['id'],
+            conditions=conditions,
+            operator=None
+        )
+        code, rule = self.client.rules_create(self.org_id, rule_body)
+        self.assertEqual(code, 201)
+        self.assertEqual(rule['operator'], 'and')
 
     @patch(AUTHORIZE_ACTION_METHOD)
     def test_create_rule_with_priority(self, p_authorize):
@@ -940,6 +978,22 @@ class TestRuleApi(TestRulesApiBase):
         self.verify_error_code(resp, "OE0216")
 
     @patch(AUTHORIZE_ACTION_METHOD)
+    def test_update_rule_invalid_operator(self, p_authorize):
+        p_authorize.return_value = True
+        rule = self._create_rule('test rule')
+        code, resp = self.client.rule_update(rule['id'], {'operator': 'test'})
+        self.assertEqual(code, 400)
+        self.verify_error_code(resp, "OE0563")
+
+    @patch(AUTHORIZE_ACTION_METHOD)
+    def test_update_rule_operator(self, p_authorize):
+        p_authorize.return_value = True
+        rule = self._create_rule('test rule')
+        code, resp = self.client.rule_update(rule['id'], {'operator': 'or'})
+        self.assertEqual(code, 200)
+        self.assertEqual(resp['operator'], 'or')
+
+    @patch(AUTHORIZE_ACTION_METHOD)
     def test_update_invalid_target_pair(self, p_authorize):
         """
         Test update rule without owner and pool specified
@@ -1191,6 +1245,45 @@ class TestApplyRuleApi(TestRulesApiBase):
                 'employee_id': self.employee2['id']
             },
             'starts_contains_new_ends': {
+                'pool_id': self.org_pool_id,
+                'employee_id': self.employee['id']
+            }
+        }
+        self._verify_assignments(resources, expected_map)
+
+    @patch(AUTHORIZE_ACTION_METHOD)
+    @patch(RULE_APPLY_CONDITION_CLOUD_IS)
+    def test_apply_rules_or_operator(self, p_rule_apply, p_authorize):
+        p_authorize.return_value = True
+        p_rule_apply.return_value = False
+        conditions = [
+            {"type": "name_starts_with", "meta_info": "starts_match_"},
+            {"type": "name_ends_with", "meta_info": "_ends_match"},
+        ]
+        self._create_rule(
+            'test_rule',
+            conditions=conditions,
+            pool_id=self.sub_pools_ids[0],
+            owner_id=self.employee2['id'],
+            operator='or')
+        resources = self._create_resources([
+            # resource matches 1 condition
+            'starts_match_resource',
+            # resource matches all conditions
+            'starts_match_resource_ends_match',
+            # resource not matches conditions
+            'not_match_resource'
+        ])
+        expected_map = {
+            'starts_match_resource': {
+                'pool_id': self.sub_pools_ids[0],
+                'employee_id': self.employee2['id']
+            },
+            'starts_match_resource_ends_match': {
+                'pool_id': self.sub_pools_ids[0],
+                'employee_id': self.employee2['id']
+            },
+            'not_match_resource': {
                 'pool_id': self.org_pool_id,
                 'employee_id': self.employee['id']
             }

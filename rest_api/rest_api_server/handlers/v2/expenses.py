@@ -595,7 +595,8 @@ class FilteredExpensesBaseAsyncHandler(SupportedFiltersMixin,
                         raise OptHTTPError.from_opt_exception(400, exc)
         for filter_name in self.bool_filters:
             if filter_name in request_arguments:
-                args[filter_name] = self.get_arg(filter_name, bool, default=None)
+                args[filter_name] = self.get_arg(filter_name, bool,
+                                                 default=None, repeated=True)
         for filter_name in self.int_filters:
             args[filter_name] = self.get_arg(filter_name, int, default=None)
             if args[filter_name] is not None:
@@ -849,17 +850,26 @@ class CleanExpenseAsyncHandler(FilteredExpensesBaseAsyncHandler):
             in: query
             description: Active
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: recommendations
             in: query
             description: Recommendations
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: constraint_violated
             in: query
             description: constraint_violated
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: created_by_kind (for kubernetes only)
             in: query
             description: created_by_kind
@@ -1733,17 +1743,26 @@ class SummaryExpenseAsyncHandler(CleanExpenseAsyncHandler):
             in: query
             description: Active
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: recommendations
             in: query
             description: Recommendations
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: constraint_violated
             in: query
             description: constraint_violated
             required: false
-            type: boolean
+            type: array
+            collectionFormat: multi
+            items:
+                type: boolean
         -   name: created_by_kind (for kubernetes only)
             in: query
             description: created_by_kind

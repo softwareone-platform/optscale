@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { useRootData } from "./useRootData";
 
 export const useShowDailyBreakdown = ({ reduxKey, queryParamName, actionCreator }) => {
   const dispatch = useDispatch();
 
-  const { [queryParamName]: queryParam } = getQueryParams();
+  const { [queryParamName]: queryParam } = getSearchParams();
 
   const { rootData: showDailyBreakdownState } = useRootData(reduxKey);
 
@@ -19,7 +19,7 @@ export const useShowDailyBreakdown = ({ reduxKey, queryParamName, actionCreator 
   };
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [queryParamName]: showDailyBreakdown
     });
     dispatch(actionCreator(showDailyBreakdown));

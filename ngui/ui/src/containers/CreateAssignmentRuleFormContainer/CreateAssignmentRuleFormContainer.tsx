@@ -25,10 +25,11 @@ import {
   CLOUD_IS,
   TAG_VALUE_STARTS_WITH,
   RESOURCE_TYPE_IS,
-  REGION_IS
+  REGION_IS,
+  ASSIGNMENT_RULE_OPERATORS
 } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { parseJSON } from "utils/strings";
 
 const PageActionBar = ({ isFormDataLoading }) => {
@@ -61,7 +62,9 @@ const PageActionBar = ({ isFormDataLoading }) => {
 };
 
 const getDefaultConditionsFromQueryParams = (conditionsQueryParam) => {
-  const conditions = conditionsQueryParam
+  const conditionsQueryParamArray = Array.isArray(conditionsQueryParam) ? conditionsQueryParam : [conditionsQueryParam];
+
+  const conditions = conditionsQueryParamArray
     .map((condition) => {
       const parsedCondition = parseJSON(condition, undefined);
       if (parsedCondition) {
@@ -129,13 +132,12 @@ const CreateAssignmentRuleFormContainer = () => {
 
   const [isFormDataLoading, setIsFormDataLoading] = useState(false);
 
-  const { [ASSIGNMENT_RULE_CONDITIONS_QUERY_PARAMETER]: conditionsQueryParam } = getQueryParams(true, {
-    arrayFormat: "bracket"
-  });
+  const { [ASSIGNMENT_RULE_CONDITIONS_QUERY_PARAMETER]: conditionsQueryParam } = getSearchParams();
 
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     active: true,
+    operator: ASSIGNMENT_RULE_OPERATORS.AND,
     conditions: conditionsQueryParam ? getDefaultConditionsFromQueryParams(conditionsQueryParam) : DEFAULT_CONDITIONS,
     poolId: "",
     ownerId: ""
@@ -221,6 +223,7 @@ const CreateAssignmentRuleFormContainer = () => {
                   isActiveCheckboxLoading: false,
                   isNameInputLoading: false,
                   isConditionsFieldLoading: isAvailableFiltersLoading,
+                  isConjunctionTypeLoading: isFormDataLoading,
                   isPoolSelectorLoading: isFormDataLoading,
                   isOwnerSelectorLoading: isFormDataLoading,
                   isSubmitButtonLoading: isFormDataLoading || isCreateAssignmentRuleLoading

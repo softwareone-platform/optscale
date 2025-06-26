@@ -141,6 +141,11 @@ export const TAG_VALUE_STARTS_WITH = "tag_value_starts_with";
 export const RESOURCE_TYPE_IS = "resource_type_is";
 export const REGION_IS = "region_is";
 
+export const ASSIGNMENT_RULE_OPERATORS = Object.freeze({
+  AND: "and",
+  OR: "or"
+});
+
 export const COMPLEX_TAG_CONDITION_TYPES = Object.freeze({
   [TAG_IS]: "tagIs",
   [TAG_VALUE_STARTS_WITH]: "tagValueStartsWith"
@@ -289,6 +294,11 @@ export const WITHOUT_TAG_BE_FILTER = "without_tag";
 export const WITHOUT_TAG_FILTER = "withoutTag";
 
 export const ANY_NETWORK_TRAFFIC_LOCATION = "ANY";
+
+export const FIRST_SEEN_FROM_FILTER = "firstSeenFrom";
+export const FIRST_SEEN_TO_FILTER = "firstSeenTo";
+export const LAST_SEEN_FROM_FILTER = "lastSeenFrom";
+export const LAST_SEEN_TO_FILTER = "lastSeenTo";
 
 // Optimizations
 export const RECOMMENDATIONS_LIMIT_FILTER = 100;

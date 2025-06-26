@@ -6,7 +6,7 @@ import TabContent from "components/TabContent";
 import TabsComponent from "components/Tabs";
 import TabsLoader from "components/TabsLoader";
 import { TAB_QUERY_PARAM_NAME } from "utils/constants";
-import { getQueryParams, removeQueryParam, updateQueryParams } from "utils/network";
+import { getSearchParams, removeSearchParam, updateSearchParams } from "utils/network";
 
 // TODO: Investigate how to make a component manageable
 const getActiveTab = (activeTabState, externalActiveTab, tabs) => {
@@ -83,14 +83,14 @@ const Tabs = ({ tabsProps, headerAdornment, headerSx }) => {
   } = tabsProps;
 
   const tabName = queryTabName || TAB_QUERY_PARAM_NAME;
-  const { [tabName]: tab = defaultTab } = getQueryParams();
+  const { [tabName]: tab = defaultTab } = getSearchParams();
   const [currentQueryTab, setCurrentQueryTab] = useState(tab);
   const [activeTabState, setActiveTab] = useState(tab);
 
   useEffect(() => {
     if (shouldhaveQueryParam) {
       const newTab = externalActiveTab || activeTabState;
-      updateQueryParams({ [tabName]: newTab });
+      updateSearchParams({ [tabName]: newTab });
     }
     setCurrentQueryTab(externalActiveTab || activeTabState);
   }, [activeTabState, tabName, externalActiveTab, shouldhaveQueryParam]);
@@ -104,7 +104,7 @@ const Tabs = ({ tabsProps, headerAdornment, headerSx }) => {
   const handleChange = (event, value) => {
     setActiveTab(value);
     // Query parameters to remove on tab change
-    queryParamsOnChangeBlacklist.forEach((param) => removeQueryParam(param));
+    queryParamsOnChangeBlacklist.forEach((param) => removeSearchParam(param));
   };
 
   const activeTab = getActiveTab(activeTabState, externalActiveTab, tabs);

@@ -54,6 +54,7 @@ const getChartDataAndKeys = ({ breakdown, counts, split = EXPENSES_SPLIT_PERIODS
 };
 
 const ExpensesDailyBreakdownByBarChart = ({
+  chartWrapperRef,
   breakdown,
   breakdownBy,
   counts,
@@ -79,6 +80,7 @@ const ExpensesDailyBreakdownByBarChart = ({
   return (
     <CanvasBarChart
       dataTestId={dataTestId}
+      wrapperRef={chartWrapperRef}
       indexBy="date"
       keys={keys}
       data={data}

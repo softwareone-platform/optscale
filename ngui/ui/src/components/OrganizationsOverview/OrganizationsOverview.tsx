@@ -8,7 +8,7 @@ import PageContentWrapper from "components/PageContentWrapper";
 import { HOME } from "urls";
 import { ORGANIZATIONS_OVERVIEW_FILTERS } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const actionBarDefinition = {
   title: {
@@ -28,14 +28,14 @@ const actionBarDefinition = {
 };
 
 const OrganizationsOverview = ({ data, isLoading = false }) => {
-  const { filterBy } = getQueryParams();
+  const { filterBy } = getSearchParams();
 
   const [activeFilter, setActiveFilter] = useState(
     Object.values(ORGANIZATIONS_OVERVIEW_FILTERS).includes(filterBy) ? filterBy : ORGANIZATIONS_OVERVIEW_FILTERS.ALL
   );
 
   useEffect(() => {
-    updateQueryParams({ filterBy: activeFilter });
+    updateSearchParams({ filterBy: activeFilter });
   }, [activeFilter]);
 
   const updatedData = useMemo(

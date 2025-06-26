@@ -18,6 +18,36 @@ Check herald logs in [kibana](https://hystax.com/documentation/optscale/private_
 You may use `send_templates.py` script for debugging.
 
 
+## How load custom template filters for using them in templates
+
+1. add you Python module with your Jinja2 filter functions into the folder `/optscale/template_filters` like:
+
+```python file=myfilters.py
+def my_filter_fn(value: str | None) -> str:
+    ...
+```
+
+2. Create a file called `filters_registry.json` and put it into `/optscale/template_filters` like in the following example:
+
+```json file=filters_registry.json
+[
+    {
+        "name": "my_custom_filter",
+        "entrypoint": "myfilters.my_filter_fn"
+    }
+]
+```
+
+3. Use in your templates
+
+```html
+<html><title>{{ myvalue | my_custom_filter }}</title></html>
+```
+!!! You can only rely on Python standard library to implements your filters !!!
+
+See [optscale](https://github.com/hystax/optscale/tree/integration/herald/modules/tests/email_generator/test_data) for a complete example.
+
+
 ## How to use send_templates.py?
 
 `send_templates.py` is a [script](https://github.com/hystax/optscale/tree/integration/herald/send_templates.py) in `optscale` repo that uses already running cluster for sending emails to certain users.

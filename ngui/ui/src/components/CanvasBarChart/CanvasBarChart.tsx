@@ -337,7 +337,7 @@ const CanvasBarChart = ({
   });
 
   return (
-    <div ref={wrapperRef} style={{ height: "100%" }} data-test-id={dataTestId}>
+    <div ref={wrapperRef} style={{ height: "100%", display: "flex" }} data-test-id={dataTestId}>
       {pdfId ? <CanvasBarChartPdf pdfId={pdfId} renderData={() => ({ canvasRef })} /> : null}
       <ResponsiveBarCanvas
         data={data}
@@ -420,6 +420,7 @@ const CanvasBarChart = ({
 
 const ResponsiveCanvasBarChart = ({
   data,
+  wrapperRef,
   keys = [],
   style = {},
   isLoading = false,
@@ -446,6 +447,7 @@ const ResponsiveCanvasBarChart = ({
       style={{
         height: muiTheme.spacing(height)
       }}
+      ref={wrapperRef}
     >
       <ResponsiveWrapper>
         {({ width: wrapperWidth, height: wrapperHeight }) => {

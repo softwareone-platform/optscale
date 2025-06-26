@@ -26,9 +26,6 @@ from rest_api.rest_api_server.utils import (
     should_retry, SupportedFiltersMixin, check_list_attribute,
     check_regex_attribute, check_bool_attribute, check_int_attribute, get_nil_uuid)
 
-from optscale_client.arcee_client.client import Client as ArceeClient
-from optscale_client.bulldozer_client.client import Client as BulldozerClient
-
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 LOG = logging.getLogger(__name__)
 PRIORITY_RETRIES = dict(
@@ -661,36 +658,6 @@ class BaseHierarchicalController(BaseController):
 class BaseProfilingTokenController(BaseController, OrganizationValidatorMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._arcee_client = None
-        self._bulldozer_client = None
-
-    @staticmethod
-    def get_secret():
-        return Config().cluster_secret
-
-    @property
-    def arcee_client(self):
-        if not self._arcee_client:
-            self._arcee_client = ArceeClient(
-                url=Config().arcee_url)
-            self._arcee_client.secret = self.get_secret()
-        return self._arcee_client
-
-    def get_arcee_client(self, token=None):
-        self.arcee_client.token = token
-        return self.arcee_client
-
-    @property
-    def bulldozer_client(self):
-        if not self._bulldozer_client:
-            self._bulldozer_client = BulldozerClient(
-                url=Config().bulldozer_url)
-            self._bulldozer_client.secret = self.get_secret()
-        return self._bulldozer_client
-
-    def get_bulldozer_client(self, token=None):
-        self.bulldozer_client.token = token
-        return self.bulldozer_client
 
     def _get(self, organization_id):
         return self.session.query(ProfilingToken).filter(
@@ -709,33 +676,4 @@ class BaseProfilingTokenController(BaseController, OrganizationValidatorMixin):
             except IntegrityError:
                 self.session.rollback()
                 item = self._get(organization_id)
-            try:
-                self._create_arcee_token(item.token)
-            except Exception:
-                self.session.delete(item)
-                self.session.commit()
-                raise
-            try:
-                self._create_bulldozer_token(item.infrastructure_token)
-            except Exception:
-                self._delete_arcee_token(item.token)
-                self.session.delete(item)
-                self.session.commit()
-                raise
         return item
-
-    def _create_bulldozer_token(self, infrastructure_token):
-        bulldozer = self.get_bulldozer_client()
-        bulldozer.token_create(infrastructure_token)
-
-    def _delete_bulldozer_token(self, infrastructure_token):
-        bulldozer = self.get_arcee_client(infrastructure_token)
-        bulldozer.token_delete(infrastructure_token)
-
-    def _create_arcee_token(self, profiling_token):
-        arcee = self.get_arcee_client()
-        arcee.token_create(profiling_token)
-
-    def _delete_arcee_token(self, profiling_token):
-        arcee = self.get_arcee_client(profiling_token)
-        arcee.token_delete(profiling_token)

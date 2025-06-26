@@ -12,8 +12,10 @@ from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerW
 from rest_api.rest_api_server.controllers.employee import EmployeeController
 from rest_api.rest_api_server.controllers.pool import PoolController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.models.enums import ConditionTypes
-from rest_api.rest_api_server.models.models import Pool, CloudAccount, Rule, Employee
+from rest_api.rest_api_server.models.enums import ConditionTypes, RuleOperators
+from rest_api.rest_api_server.models.models import (
+    Pool, CloudAccount, Rule, Employee
+)
 from rest_api.rest_api_server.utils import encoded_tags
 
 
@@ -42,9 +44,12 @@ class RuleWrapper:
 
     def match(self, res_info):
         for condition in self.converted_conditions:
-            if not condition.match(res_info):
+            cond_match = condition.match(res_info)
+            if not cond_match and self.rule.operator == RuleOperators.AND:
                 return False
-        return True
+            elif cond_match and self.rule.operator == RuleOperators.OR:
+                return True
+        return True if self.rule.operator == RuleOperators.AND else False
 
 
 class BaseCondition:

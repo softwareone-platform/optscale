@@ -5,7 +5,7 @@ import { useIntl } from "react-intl";
 import { useDispatch, useSelector } from "react-redux";
 import QuestionMark from "components/QuestionMark";
 import { EXPENSES_SPLIT_PERIODS, LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import DividerHorizontal from "../../../shared/components/DividerHorizontal/DividerHorizontal";
 import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../../shared/components/ResponsiveStack/ResponsiveStack";
@@ -43,15 +43,16 @@ const breakdownLinearSelectorItems = [
   }
 ];
 
+// todo: unify with resources selector
 const BreakdownLinearSelector = ({ value, items, onChange }) => {
-  const initQueryBreakdownParameter = getQueryParams()[PERIOD_TYPE_QUERY_PARAMETER_NAME] || null;
+  const initQueryBreakdownParameter = getSearchParams()[PERIOD_TYPE_QUERY_PARAMETER_NAME] || null;
   const [position, setPosition] = useState(() => {
     const initialIndex = items.findIndex((item) => item.id === initQueryBreakdownParameter);
     return initialIndex >= 0 ? initialIndex : 0;
   });
 
   useEffect(() => {
-    updateQueryParams({ [PERIOD_TYPE_QUERY_PARAMETER_NAME]: value.name });
+    updateSearchParams({ [PERIOD_TYPE_QUERY_PARAMETER_NAME]: value.name });
   }, [value.name]);
 
   const handleButtonClick = (newValue) => {
@@ -65,7 +66,7 @@ const BreakdownLinearSelector = ({ value, items, onChange }) => {
 const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
-  const { [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodTypeQueryParameter } = getQueryParams();
+  const { [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodTypeQueryParameter } = getSearchParams();
 
   const periodTypeState = useSelector((state) => state[EXPENSES_BREAKDOWN_PERIOD_TYPE]);
 
@@ -82,7 +83,7 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   });
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       [PERIOD_TYPE_QUERY_PARAMETER_NAME]: periodType.value
     });
     dispatch(changePeriodType(periodType.value));
@@ -113,17 +114,18 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
       </ResponsiveStack>
       <Box marginTop={MPT_SPACING_3}>{render(periodType.value)}</Box>
       {/* MPT_TODO: disabled to math BDR requirement */}
-      {/* <DynamicTextPdf */}
-      {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle} */}
-      {/*  renderData={() => ({ */}
-      {/*    text: { */}
-      {/*      [EXPENSES_SPLIT_PERIODS.DAILY]: "dailyExpenses", */}
-      {/*      [EXPENSES_SPLIT_PERIODS.WEEKLY]: "weeklyExpenses", */}
-      {/*      [EXPENSES_SPLIT_PERIODS.MONTHLY]: "monthlyExpenses" */}
-      {/*    }[periodType.value], */}
-      {/*    elementType: PDF_ELEMENTS.basics.H2 */}
-      {/*  })} */}
-      {/* /> */}
+      {/*<DynamicTextPdf*/}
+      {/*  pdfId={PDF_ELEMENTS.costExplorer.periodWidgetTitle}*/}
+      {/*  renderData={() => ({*/}
+      {/*    text: {*/}
+      {/*      [EXPENSES_SPLIT_PERIODS.DAILY]: "dailyExpenses",*/}
+      {/*      [EXPENSES_SPLIT_PERIODS.WEEKLY]: "weeklyExpenses",*/}
+      {/*      [EXPENSES_SPLIT_PERIODS.MONTHLY]: "monthlyExpenses"*/}
+      {/*    }[periodType.value],*/}
+      {/*    elementType: PDF_ELEMENTS.basics.H2*/}
+      {/*  })}*/}
+      {/*/>*/}
+      {/*{render(periodType.value)}*/}
     </>
   );
 };

@@ -18,7 +18,6 @@ export const SETTINGS_TABS = Object.freeze({
   INVITATIONS: "invitations"
   // MTP_TODO: disabled to meet BDR requirements
   // CAPABILITIES: "capabilities",
-  // MODE: "mode",
   // SSH: "sshKeys"
 });
 

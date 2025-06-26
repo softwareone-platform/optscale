@@ -3,6 +3,7 @@ export const FIELD_NAMES = Object.freeze({
   POOL_ID: "poolId",
   OWNER_ID: "ownerId",
   ACTIVE: "active",
+  OPERATOR: "operator",
   CONDITIONS_FIELD_ARRAY: Object.freeze({
     FIELD_NAME: "conditions",
     META_INFO: "meta_info",

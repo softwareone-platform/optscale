@@ -4,7 +4,6 @@ import { FormattedMessage } from "react-intl";
 import IntervalTimeAgo from "components/IntervalTimeAgo";
 import PowerScheduleValidityPeriod from "components/PowerScheduleValidityPeriod";
 import QuestionMark from "components/QuestionMark";
-
 import SummaryGrid from "components/SummaryGrid";
 import { SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 

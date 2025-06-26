@@ -253,11 +253,12 @@ class AzureImporterBase(BaseReportImporter):
                         'service entry')
 
     def get_resource_info_from_expenses(self, expenses):
-        r_type, r_name = self._get_resource_type_and_name(expenses[-1])
+        last_expense = expenses[-1]
+        r_type, r_name = self._get_resource_type_and_name(last_expense)
 
-        usage_kind = expenses[-1].get('kind')
+        usage_kind = last_expense.get('kind')
         if usage_kind == 'raw':
-            instance_data = json.loads(expenses[-1]['instance_data'])[
+            instance_data = json.loads(last_expense['instance_data'])[
                 'Microsoft.Resources']
             region_id = instance_data.get('location')
             region = self.cloud_adapter.location_map.get(region_id)
@@ -292,8 +293,8 @@ class AzureImporterBase(BaseReportImporter):
                     if region not in regions_map.values():
                         LOG.warning('Unable to find regions %s in map',
                                     region_set)
-            tags = self.extract_tags(expenses[-1].get('tags', {}))
-            service = expenses[-1].get('consumed_service')
+            tags = self.extract_tags(last_expense.get('tags', {}))
+            service = last_expense.get('consumed_service')
 
         first_seen = opttime.utcnow()
         last_seen = opttime.utcfromtimestamp(0).replace()
@@ -306,6 +307,18 @@ class AzureImporterBase(BaseReportImporter):
                 last_seen = end_date
         if last_seen < first_seen:
             last_seen = first_seen
+
+        if (last_expense.get('charge_type') == 'Purchase' and last_expense.get(
+                'publisher_type') == 'Marketplace'):
+            r_type = 'Marketplace Purchase'
+            start = last_expense.get('start_date').replace(day=1).strftime(
+                '%Y-%m-%d')
+            r_name = '{0} ({1}) {2}'.format(
+                last_expense.get('plan_name') or last_expense.get(
+                    'meter_details', {}).get('meter_name', ''),
+                last_expense.get('part_number'),
+                start)
+
         info = {
             'name': r_name,
             'type': r_type,

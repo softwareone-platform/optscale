@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-import requests
 import urllib3
 from kombu import Connection, Exchange, Queue
 from kombu.log import get_logger

@@ -3,7 +3,6 @@ import enum
 import json
 import logging
 import os
-import random
 import uuid
 import tools.optscale_time as opttime
 from collections import defaultdict
@@ -105,25 +104,7 @@ class ObjectGroups(enum.Enum):
     OrganizationLimitHit = 'organization_limit_hit'
     RiSpUsages = 'ri_sp_usage'
     UncoveredUsages = 'uncovered_usage'
-    Metrics = 'metrics'
-    Tasks = 'tasks'
-    Templates = 'templates'
-    Runsets = 'runsets'
-    Datasets = 'datasets'
-    Runs = 'runs'
-    Runners = 'runners'
-    Platforms = 'platforms'
-    Logs = 'logs'
-    Milestones = 'milestones'
-    Stages = 'stages'
-    ProcData = 'proc_data'
-    Consoles = 'consoles'
-    LeaderboardTemplates = 'leaderboard_templates'
-    Leaderboards = 'leaderboards'
     OrganizationGeminis = 'organization_geminis'
-    Models = 'models'
-    ModelVersions = 'model_versions'
-    Artifacts = 'artifacts'
 
     @classmethod
     def rest_objects(cls):
@@ -167,24 +148,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
                 self.build_archived_recommendations,
             ObjectGroups.RiSpUsages: self.build_ri_sp_usage,
             ObjectGroups.UncoveredUsages: self.build_uncovered_usage,
-            ObjectGroups.Metrics: self.build_metric,
-            ObjectGroups.Tasks: self.build_task,
-            ObjectGroups.Runs: self.build_run,
-            ObjectGroups.Platforms: self.build_platform,
-            ObjectGroups.Logs: self.build_log,
-            ObjectGroups.Milestones: self.build_milestone,
-            ObjectGroups.Stages: self.build_stage,
-            ObjectGroups.ProcData: self.build_proc_data,
-            ObjectGroups.Models: self.build_model,
-            ObjectGroups.ModelVersions: self.build_model_version,
-            ObjectGroups.Artifacts: self.build_artifact,
-            ObjectGroups.Templates: self.build_template,
-            ObjectGroups.Runsets: self.build_runset,
-            ObjectGroups.Runners: self.build_runner,
-            ObjectGroups.Datasets: self.build_dataset,
-            ObjectGroups.Consoles: self.build_console,
-            ObjectGroups.LeaderboardTemplates: self.build_leaderboard_template,
-            ObjectGroups.Leaderboards: self.build_leaderboard,
             ObjectGroups.OrganizationGeminis: self.build_organization_gemini,
             ObjectGroups.PowerSchedules: self.build_power_schedule,
             ObjectGroups.PowerScheduleTriggers: self.build_power_schedule_trigger,
@@ -195,26 +158,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             ObjectGroups.Optimizations: self.checklists_collection,
             ObjectGroups.ArchivedRecommendations:
                 self.archived_recommendations_collection,
-            ObjectGroups.Tasks: self.tasks_collection,
-            ObjectGroups.Runs: self.runs_collection,
-            ObjectGroups.Metrics: self.metrics_collection,
-            ObjectGroups.Platforms: self.platforms_collection,
-            ObjectGroups.Logs: self.logs_collection,
-            ObjectGroups.Milestones: self.milestones_collection,
-            ObjectGroups.Stages: self.stages_collection,
-            ObjectGroups.ProcData: self.proc_data_collection,
-            ObjectGroups.Models: self.model_collection,
-            ObjectGroups.ModelVersions: self.model_version_collection,
-            ObjectGroups.Templates: self.templates_collection,
-            ObjectGroups.Runsets: self.runsets_collection,
-            ObjectGroups.Runners: self.runners_collection,
-            ObjectGroups.Datasets: self.datasets_collection,
-            ObjectGroups.Consoles: self.consoles_collection,
-            ObjectGroups.LeaderboardTemplates:
-                self.leaderboard_templates_collection,
-            ObjectGroups.Leaderboards:
-                self.leaderboards_collection,
-            ObjectGroups.Artifacts: self.artifact_collection,
         }
         self._clickhouse_table_map = {
             ObjectGroups.AverageMetrics: 'average_metrics',
@@ -239,19 +182,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             'acquired_by_id': ObjectGroups.Employees.value,
             'constraint_id': ObjectGroups.OrganizationConstraint.value,
             'offer_id': ObjectGroups.Resources.value,
-            'metrics': ObjectGroups.Metrics.value,
-            'task_id': ObjectGroups.Tasks.value,
-            'task_ids': ObjectGroups.Tasks.value,
-            'run_id': ObjectGroups.Runs.value,
-            'model_id': ObjectGroups.Models.value,
-            'template_id': ObjectGroups.Templates.value,
-            'runset_id': ObjectGroups.Runsets.value,
-            'leaderboard_template_id': ObjectGroups.LeaderboardTemplates.value,
-            'dataset_id': ObjectGroups.Datasets.value,
-            'dataset_ids': ObjectGroups.Datasets.value,
-            'primary_metric': ObjectGroups.Metrics.value,
-            'other_metrics': ObjectGroups.Metrics.value,
-            'filters': ObjectGroups.Metrics.value,
             'power_schedule': ObjectGroups.PowerSchedules.value,
             'power_schedule_id': ObjectGroups.PowerSchedules.value,
         }
@@ -272,78 +202,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             ObjectGroups.AverageMetrics: self.duplicate_res_id_depended
         }
         self._org_constraint_type_map = {}
-
-    @property
-    def tasks_collection(self):
-        return self.mongo_client.arcee.task
-
-    @property
-    def runs_collection(self):
-        return self.mongo_client.arcee.run
-
-    @property
-    def metrics_collection(self):
-        return self.mongo_client.arcee.metric
-
-    @property
-    def platforms_collection(self):
-        return self.mongo_client.arcee.platform
-
-    @property
-    def logs_collection(self):
-        return self.mongo_client.arcee.log
-
-    @property
-    def milestones_collection(self):
-        return self.mongo_client.arcee.milestone
-
-    @property
-    def stages_collection(self):
-        return self.mongo_client.arcee.stage
-
-    @property
-    def proc_data_collection(self):
-        return self.mongo_client.arcee.proc_data
-
-    @property
-    def model_collection(self):
-        return self.mongo_client.arcee.model
-
-    @property
-    def model_version_collection(self):
-        return self.mongo_client.arcee.model_version
-
-    @property
-    def artifact_collection(self):
-        return self.mongo_client.arcee.artifact
-
-    @property
-    def templates_collection(self):
-        return self.mongo_client.bulldozer.template
-
-    @property
-    def runsets_collection(self):
-        return self.mongo_client.bulldozer.runset
-
-    @property
-    def runners_collection(self):
-        return self.mongo_client.bulldozer.runner
-
-    @property
-    def datasets_collection(self):
-        return self.mongo_client.arcee.dataset
-
-    @property
-    def consoles_collection(self):
-        return self.mongo_client.arcee.console
-
-    @property
-    def leaderboard_templates_collection(self):
-        return self.mongo_client.arcee.leaderboard_template
-
-    @property
-    def leaderboards_collection(self):
-        return self.mongo_client.arcee.leaderboard
 
     def _get_demo_multiplier(self):
         try:
@@ -969,203 +827,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
         obj['cost'] = multipliered_cost
         return obj
 
-    def build_metric(self, obj, objects_group, profiling_token, **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        return obj
-
-    def build_task(self, obj, objects_group, profiling_token, **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(['owner_id', 'metrics'], obj)
-        return obj
-
-    def build_dataset(self, obj, now, objects_group, profiling_token, **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        obj['deleted_at'] = 0
-        obj = self.offsets_to_timestamps([
-            'created_at',
-            'timespan_from',
-            'timespan_to',
-        ], now, obj)
-        for param in ['timespan_from', 'timespan_to']:
-            if param not in obj:
-                obj[param] = None
-        return obj
-
-    def build_console(self, obj, objects_group, **kwargs):
-        obj['_id'] = gen_id()
-        obj = self.refresh_relations(['run_id'], obj)
-        return obj
-
-    def build_leaderboard_template(
-            self, obj, now, objects_group, profiling_token, **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(
-            ['task_id', 'primary_metric', 'other_metrics', 'filters'], obj)
-        obj = self.offsets_to_timestamps(['created_at'], now, obj)
-        return obj
-
-    def build_leaderboard(self, obj, now, profiling_token, **kwargs):
-        obj['_id'] = gen_id()
-        obj['token'] = profiling_token
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(['leaderboard_template_id', 'dataset_ids',
-                                      'primary_metric', 'other_metrics',
-                                      'filters'], obj)
-        obj = self.offsets_to_timestamps(['created_at'], now, obj)
-        return obj
-
-    def build_run(self, obj, objects_group, now, **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        if obj.get('runset_id'):
-            obj = self.refresh_relations(['runset_id'], obj)
-        if obj.get('dataset_id'):
-            obj = self.refresh_relations(['dataset_id'], obj)
-        obj = self.refresh_relations(['task_id'], obj)
-        obj = self.offsets_to_timestamps(['start', 'finish'], now, obj)
-        duration = obj['finish'] - obj['start']
-        if duration < MIN_RUN_DURATION:
-            new_duration = random.randint(MIN_RUN_DURATION, MAX_RUN_DURATION)
-            new_start = obj['finish'] - new_duration
-            self._run_factors[new_id] = (obj['start'], obj['finish'],
-                                         new_start)
-            obj['start'] = obj['finish'] - new_duration
-        return obj
-
-    def build_platform(self, obj, **kwargs):
-        obj['_id'] = gen_id()
-        obj['account_id'] = gen_id()
-        return obj
-
-    def build_log(self, obj, now, **kwargs):
-        obj['_id'] = gen_id()
-        obj = self.refresh_relations(['run_id'], obj)
-        obj = self.offsets_to_timestamps(['timestamp'], now, obj)
-        # move timestamp according to moved run's start
-        start, finish, new_start = self._run_factors[obj['run_id']]
-        obj['timestamp'] = round(
-            finish - (finish - obj['timestamp']) * (finish - new_start) / (
-                    finish - start))
-        return obj
-
-    def build_milestone(self, obj, now, **kwargs):
-        obj['_id'] = gen_id()
-        obj = self.refresh_relations(['run_id'], obj)
-        obj = self.offsets_to_timestamps(['timestamp'], now, obj)
-        # move timestamp according to moved run's start
-        start, finish, new_start = self._run_factors[obj['run_id']]
-        obj['timestamp'] = round(
-            finish - (finish - obj['timestamp']) * (finish - new_start) / (
-                    finish - start))
-        return obj
-
-    def build_stage(self, obj, now, **kwargs):
-        obj['_id'] = gen_id()
-        obj = self.refresh_relations(['run_id'], obj)
-        obj = self.offsets_to_timestamps(['timestamp'], now, obj)
-        # move timestamp according to moved run's start
-        start, finish, new_start = self._run_factors[obj['run_id']]
-        obj['timestamp'] = round(
-            finish - (finish - obj['timestamp']) * (finish - new_start) / (
-                    finish - start))
-        return obj
-
-    def build_proc_data(self, obj, now, **kwargs):
-        obj['_id'] = gen_id()
-        obj = self.refresh_relations(['run_id'], obj)
-        obj = self.offsets_to_timestamps(['timestamp'], now, obj)
-        # move timestamp according to moved run's start
-        start, finish, new_start = self._run_factors[obj['run_id']]
-        obj['timestamp'] = round(
-            finish - (finish - obj['timestamp']) * (finish - new_start) / (
-                    finish - start))
-        return obj
-
-    def build_model(
-            self, obj, objects_group, now, profiling_token, **kwargs
-    ):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        obj = self.offsets_to_timestamps(['created_at'], now, obj)
-        return obj
-
-    def build_model_version(
-            self, obj, objects_group, now, profiling_token, **kwargs
-    ):
-        new_id = gen_id()
-        obj['_id'] = new_id
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(
-            ['model_id', 'run_id'], obj)
-        obj = self.offsets_to_timestamps(['created_at'], now, obj)
-        return obj
-
-    def build_artifact(self, obj, objects_group, now, profiling_token,
-                       **kwargs):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = profiling_token
-        obj = self.offsets_to_timestamps(
-            ['created_at', '_created_at_dt'], now, obj)
-        obj = self.refresh_relations(['run_id'], obj)
-        return obj
-
-    def build_template(
-            self, obj, objects_group, now, infrastructure_token, **kwargs
-    ):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = infrastructure_token
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(
-            ['task_ids', 'cloud_account_ids'], obj)
-        obj = self.offsets_to_timestamps(['created_at'], now, obj)
-        return obj
-
-    def build_runset(
-            self, obj, objects_group, now, infrastructure_token, **kwargs
-    ):
-        new_id = gen_id()
-        self._recovery_map[objects_group.value][obj['_id']] = new_id
-        obj['_id'] = new_id
-        obj['token'] = infrastructure_token
-        obj['deleted_at'] = 0
-        obj = self.refresh_relations(
-            ['template_id', 'task_id', 'cloud_account_id', 'owner_id'],
-            obj)
-        obj = self.offsets_to_timestamps(
-            ['created_at', 'started_at', 'destroyed_at'], now, obj)
-        return obj
-
-    def build_runner(self, obj, now, infrastructure_token, **kwargs):
-        obj['_id'] = gen_id()
-        obj['token'] = infrastructure_token
-        obj = self.refresh_relations(
-            ['runset_id', 'cloud_account_id', 'task_id', 'run_id'],
-            obj)
-        obj = self.offsets_to_timestamps(
-            ['created_at', 'started_at', 'destroyed_at'], now, obj)
-        return obj
-
     def _multiply_organization_gemini_stats(self, stats: dict) -> dict:
         for k, v in stats.items():
             if isinstance(v, (int, float)):
@@ -1287,23 +948,6 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
             self._recovery_map[ObjectGroups.AuthUsers.value][
                 employee_data.get('auth_user_id', None)] = employee_data['id']
 
-    def _insert_platforms(self, data: list[dict]) -> list[str]:
-        # platforms are matched by instance_id over the code so related
-        # collection shouldn't have duplicate records. Insert only if missing
-        if not data:
-            return []
-        update_operations = []
-        for obj in data:
-            update_operations.append(UpdateOne(
-                filter={
-                    'instance_id': obj['instance_id']
-                },
-                update={'$setOnInsert': obj},
-                upsert=True,
-            ))
-        res = self.platforms_collection.bulk_write(update_operations)
-        return list(res.upserted_ids.values())
-
     def fill_organization(
             self, organization: Organization, token: ProfilingToken,
             src_replace_employee, dest_replace_employee, preset
@@ -1332,10 +976,7 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
                     for i in range(0, len(res), BULK_SIZE):
                         bulk = res[i:i + BULK_SIZE]
                         # generalize on new conditions
-                        if group == ObjectGroups.Platforms:
-                            obj_ids = self._insert_platforms(bulk)
-                        else:
-                            obj_ids = dest.insert_many(bulk).inserted_ids
+                        obj_ids = dest.insert_many(bulk).inserted_ids
                         insertions_map[group].extend(obj_ids)
                 elif res and group in self._clickhouse_table_map:
                     table = self._clickhouse_table_map.get(group)

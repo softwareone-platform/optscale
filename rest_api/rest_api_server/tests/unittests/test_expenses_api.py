@@ -2900,7 +2900,7 @@ class TestExpensesApi(TestApiBase):
             self.assertIsNotNone(clean_expense['resource_id'])
             self.assertEqual(clean_expense['active'], active)
 
-        filters = {'active': True}
+        filters = {'active': [True]}
         code, clean_response = self.client.clean_expenses_get(
             self.org_id, time, time + 1, filters)
         self.assertEqual(code, 200)
@@ -2920,7 +2920,7 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(summary_response['total_cost'], 450)
         self.assertEqual(summary_response['total_count'], 1)
 
-        filters = {'active': False}
+        filters = {'active': [False]}
         code, clean_response = self.client.clean_expenses_get(
             self.org_id, time, time + 1, filters)
         self.assertEqual(code, 200)
@@ -2939,6 +2939,20 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertEqual(summary_response['total_cost'], 70)
         self.assertEqual(summary_response['total_count'], 1)
+
+        filters = {'active': [True, False]}
+        code, clean_response = self.client.clean_expenses_get(
+            self.org_id, time, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(clean_response['total_cost'], 520)
+        self.assertEqual(len(clean_response['clean_expenses']), 2)
+        self.assertEqual(clean_response['total_count'], 2)
+
+        code, summary_response = self.client.summary_expenses_get(
+            self.org_id, time, time + 1, filters)
+        self.assertEqual(code, 200)
+        self.assertEqual(summary_response['total_cost'], 520)
+        self.assertEqual(summary_response['total_count'], 2)
 
     def test_summary_clean_expenses_filter_by_tag(self):
         day_in_month = datetime(2020, 1, 14)
@@ -3661,7 +3675,7 @@ class TestExpensesApi(TestApiBase):
             self.assertEqual(code, 200)
             self.assertEqual(response['total_saving'], 65)
 
-        body = {'recommendations': True}
+        body = {'recommendations': [True]}
         code, response = self.client.clean_expenses_get(
             self.org_id, self.start_ts - 100, int(dt.timestamp()) + 100, body)
         self.assertEqual(code, 200)
@@ -3676,7 +3690,7 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertEqual(response['total_saving'], 65)
 
-        body = {'recommendations': False}
+        body = {'recommendations': [False]}
         code, response = self.client.clean_expenses_get(
             self.org_id, self.start_ts - 100, int(dt.timestamp()) + 100, body)
         self.assertEqual(code, 200)
@@ -3697,6 +3711,21 @@ class TestExpensesApi(TestApiBase):
         self.assertEqual(code, 200)
         self.assertEqual(response['total_count'], 3)
         self.assertEqual(response['total_saving'], 0)
+
+        body = {'recommendations': [True, False]}
+        code, response = self.client.clean_expenses_get(
+            self.org_id, self.start_ts - 100, int(dt.timestamp()) + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(len(response['clean_expenses']), 4)
+        self.assertEqual(response['total_count'], 4)
+        self.assertEqual(response['total_cost'], 550)
+
+        code, response = self.client.summary_expenses_get(
+            self.org_id, self.start_ts - 100, int(dt.timestamp()) + 100, body)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['total_saving'], 65)
+        self.assertEqual(response['total_count'], 4)
+        self.assertEqual(response['total_cost'], 550)
 
     def test_clean_expenses_total_neg(self):
         day_in_month = datetime(2020, 1, 14)
@@ -4411,7 +4440,7 @@ class TestExpensesApi(TestApiBase):
 
         body = {
             'resource_type': '%s:cluster' % cluster_type['name'],
-            'recommendations': False
+            'recommendations': [False]
         }
         code, response = self.client.clean_expenses_get(
             self.org_id, time - 100, time + 100, body)

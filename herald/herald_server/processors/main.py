@@ -1,16 +1,15 @@
-from datetime import datetime, timezone
 import json
 import logging
 import os
+from datetime import UTC, datetime
+
+import boto3
+from boto3.session import Config as BotoConfig
 
 from herald.herald_server.controllers.notification import NotificationController
 from herald.herald_server.models.db_base import BaseDB
 from herald.herald_server.models.enums import ReactionTypes
 from herald.herald_server.processors.factory import ProcessorFactory
-
-import boto3
-from boto3.session import Config as BotoConfig
-
 
 LOG = logging.getLogger(__name__)
 
@@ -34,14 +33,13 @@ class MainProcessor:
     @property
     def s3_client(self):
         if self._s3_client is None:
-            s3_params = self._config.read_branch('/minio')
+            s3_params = self._config.read_branch("/minio")
             self._s3_client = boto3.client(
-                's3',
-                endpoint_url='http://{}:{}'.format(
-                    s3_params['host'], s3_params['port']),
-                aws_access_key_id=s3_params['access'],
-                aws_secret_access_key=s3_params['secret'],
-                config=BotoConfig(s3={'addressing_style': 'path'})
+                "s3",
+                endpoint_url="http://{}:{}".format(s3_params["host"], s3_params["port"]),
+                aws_access_key_id=s3_params["access"],
+                aws_secret_access_key=s3_params["secret"],
+                config=BotoConfig(s3={"addressing_style": "path"}),
             )
         return self._s3_client
 
@@ -59,22 +57,21 @@ class MainProcessor:
         return reaction_dict
 
     def process_event(self, event):
-        LOG.info('processing new event %s', event)
+        LOG.info("processing new event %s", event)
         matching_reactions = self._matching_reactions(event)
 
         for reaction_type, reactions in matching_reactions.items():
-            LOG.info('found %d matching reactions of type %s',
-                     len(reactions), reaction_type)
+            LOG.info("found %d matching reactions of type %s", len(reactions), reaction_type)
             if not reactions:
                 continue
             processor = ProcessorFactory.get(reaction_type)
             tasks = processor.create_tasks(event, reactions, self._config)
             for task in tasks:
-                task['retries'] = TASK_RETRY_COUNT
+                task["retries"] = TASK_RETRY_COUNT
                 self.task_producer.publish_message(task)
 
     def perform_reaction(self, task):
-        task_type = task.get('reaction_type')
+        task_type = task.get("reaction_type")
         LOG.info("processing task type %s", task_type)
         task_type = ReactionTypes[task_type]
         processor = ProcessorFactory.get(task_type)
@@ -85,18 +82,18 @@ class MainProcessor:
         LOG.info("processing new email task %s" % email_task)
         processor_email = ProcessorFactory.get(ReactionTypes.EMAIL)
         processor_email.process_email_task(email_task, self._config)
-        template_type = email_task.get('template_type')
+        template_type = email_task.get("template_type")
         LOG.info("task %s processed successfully", template_type)
 
     def download_and_perform_email(self, task, cleanup_on_fail=True):
-        bucket, filename = task['download_url'].split('/')
-        report_path = 'task_%s' % int(datetime.now(tz=timezone.utc).timestamp())
-        LOG.info('loading %s from %s', bucket, filename)
+        bucket, filename = task["download_url"].split("/")
+        report_path = "task_%s" % int(datetime.now(tz=UTC).timestamp())
+        LOG.info("loading %s from %s", bucket, filename)
         task_complete = False
         try:
-            with open(report_path, 'wb') as f_report:
+            with open(report_path, "wb") as f_report:
                 self.s3_client.download_fileobj(bucket, filename, f_report)
-            with open(report_path, 'r') as f_in:
+            with open(report_path) as f_in:
                 res = json.load(f_in)
                 self.perform_email(res)
                 task_complete = True
@@ -109,24 +106,23 @@ class MainProcessor:
     def process_task(self, task, ack_callback):
         try:
             task = json.loads(task.decode("utf-8"))
-            if 'reaction_type' in task:
+            if "reaction_type" in task:
                 self.perform_reaction(task)
-            elif 'template_type' in task:
+            elif "template_type" in task:
                 self.perform_email(task)
-            elif 'download_url' in task:
-                self.download_and_perform_email(
-                    task, task.get('retries', 1) <= 1)
+            elif "download_url" in task:
+                self.download_and_perform_email(task, task.get("retries", 1) <= 1)
             else:
                 self.process_event(task)
         except Exception:
             LOG.exception("failed to process task %s", task)
-            retries_left = task.get('retries', 1) - 1
+            retries_left = task.get("retries", 1) - 1
             if retries_left > 0:
-                LOG.info('%d retry attempts left', retries_left)
-                task['retries'] = retries_left
+                LOG.info("%d retry attempts left", retries_left)
+                task["retries"] = retries_left
                 self.task_producer.publish_delayed_message(task)
             else:
-                LOG.info('no retry attempts left, dropping task %s', task)
+                LOG.info("no retry attempts left, dropping task %s", task)
         finally:
             self.close_session()
         ack_callback()

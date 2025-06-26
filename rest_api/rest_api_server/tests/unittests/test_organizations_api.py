@@ -741,3 +741,26 @@ class TestOrganizationApi(TestApiBase):
         self.assertEqual(len(p_send_email.call_args_list), 1)
         self.assertEqual(p_send_email.call_args_list[0][0][0][0],
                          email.upper())
+
+    def test_disable_types_organization(self):
+        organization_id = self.organization['id']
+
+        code, organization_dict = self.client.organization_update(
+            organization_id, {'disabled': True, 'disable_type': 'soft'})
+        self.assertEqual(code, 200)
+        self.assertTrue(organization_dict['disabled'])
+
+        code, organization_dict = self.client.organization_update(
+            organization_id, {'disabled': True, 'disable_type': 'hard'})
+        self.assertEqual(code, 200)
+        self.assertTrue(organization_dict['disabled'])
+
+        code, organization_dict = self.client.organization_update(
+            organization_id, {'disabled': False, 'disable_type': 'soft'})
+        self.assertEqual(code, 200)
+        self.assertTrue(organization_dict['disabled'])
+
+        code, organization_dict = self.client.organization_update(
+            organization_id, {'disabled': False, 'disable_type': 'hard'})
+        self.assertEqual(code, 200)
+        self.assertFalse(organization_dict['disabled'])

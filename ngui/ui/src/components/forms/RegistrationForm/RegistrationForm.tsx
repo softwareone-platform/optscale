@@ -6,7 +6,7 @@ import { FormattedMessage } from "react-intl";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import ButtonLoader from "components/ButtonLoader";
 import { HYSTAX_PRIVACY_POLICY, LOGIN } from "urls";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { ConfirmPassword, EmailField, FullNameField, PasswordField } from "./FormElements";
 import useStyles from "./RegistrationForm.styles";
 import { FormValues, RegistrationFormProps } from "./types";
@@ -15,7 +15,7 @@ import { getDefaultValues } from "./utils";
 const RegistrationForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: RegistrationFormProps) => {
   const { classes } = useStyles();
 
-  const { email = "" } = getQueryParams() as { email?: string };
+  const { email = "" } = getSearchParams() as { email?: string };
 
   const methods = useForm<FormValues>({
     defaultValues: getDefaultValues({

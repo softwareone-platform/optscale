@@ -1,23 +1,55 @@
 import ExpandableList from "components/ExpandableList";
-import Filters from "components/Filters";
-import { RESOURCE_FILTERS } from "components/Filters/constants";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
+import { isEmpty as isEmptyArray } from "utils/arrays";
+
+const MAX_ROWS = 5;
 
 const AnomaliesFilters = ({ filters, showAll = false }) => {
-  const filtersInstance = new Filters({
-    filters: RESOURCE_FILTERS,
-    filterValues: filters
-  });
+  const filterItems = Object.values(FILTER_CONFIGS).flatMap((config) => {
+    if (config.type === "selection") {
+      const appliedFilters = filters[config.apiName] ?? [];
 
-  const appliedItems = filtersInstance.getFilterValuesAsAppliedItems();
+      if (isEmptyArray(appliedFilters)) {
+        return [];
+      }
+
+      return appliedFilters.map((appliedFilter) => {
+        const value = config.transformers.getValue(appliedFilter);
+
+        return {
+          key: `${config.id}-${value}`,
+          filterName: config.label,
+          filterValue: config.renderPerspectiveItem(value, appliedFilters)
+        };
+      });
+    }
+
+    if (config.type === "range") {
+      const from = filters[config.fromApiName];
+      const to = filters[config.toApiName];
+
+      if (!from && !to) {
+        return [];
+      }
+
+      return [
+        {
+          key: `${config.id}-${from}-${to}`,
+          filterName: config.label,
+          filterValue: config.renderPerspectiveItem({ from, to })
+        }
+      ];
+    }
+
+    return [];
+  });
 
   return (
     <ExpandableList
-      items={appliedItems}
-      render={({ name, value, displayedValue, displayedName }) => (
-        <KeyValueLabel isBoldKeyLabel key={`${name}-${value}`} keyText={displayedName} value={displayedValue} />
-      )}
-      maxRows={showAll ? appliedItems.length : 5}
+      items={filterItems}
+      render={({ key, filterName, filterValue }) => <KeyValueLabel key={key} keyText={filterName} value={filterValue} />}
+      maxRows={showAll ? filters.length : MAX_ROWS}
     />
   );
 };

@@ -22,7 +22,7 @@ import {
   OWNER_ID_FILTER,
   EMPTY_UUID
 } from "utils/constants";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
 const PageActionBar = () => {
@@ -125,7 +125,7 @@ const getFilterValues = ({ tasks }) => {
 };
 
 const getRequestParams = () => {
-  const queryParams = getQueryParams();
+  const queryParams = getSearchParams();
 
   const getFiltersRequestParams = () =>
     ML_TASKS_FILTERS_NAMES.reduce(
@@ -142,7 +142,7 @@ const MlTasks = ({ tasks, isLoading }) => {
   const [selectedFilters, setSelectedFilters] = useState(() => getRequestParams());
 
   useEffect(() => {
-    updateQueryParams(selectedFilters);
+    updateSearchParams(selectedFilters);
   }, [selectedFilters]);
 
   const filteredData = useMemo(() => {

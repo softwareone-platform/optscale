@@ -36,7 +36,6 @@
     "graphql": "^16.10.0",
     "graphql-scalars": "^1.24.0",
     "http-proxy-middleware": "^2.0.9",
-    "qs": "^6.14.0",
     "typescript": "^5.7.2"
   },
   "devDependencies": {

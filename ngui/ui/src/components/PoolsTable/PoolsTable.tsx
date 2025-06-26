@@ -13,7 +13,7 @@ import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useRootData } from "hooks/useRootData";
 import { EDIT_POOL_TAB_QUERY } from "urls";
 import { text } from "utils/columns";
-import { updateQueryParams } from "utils/network";
+import { updateSearchParams } from "utils/network";
 import { setExpandedRows } from "./actionCreators";
 import { expenses, poolActions, poolForecast, poolLimit, poolName } from "./columns";
 import useExpandRequiresAttention from "./hooks/useExpandRequiresAttention";
@@ -32,7 +32,7 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
   const openEditModal = useCallback(
     (tab, poolId) => {
       const info = [rootPool, ...rootPoolChildren].find(({ id }) => id === poolId);
-      updateQueryParams({ [EDIT_POOL_TAB_QUERY]: tab });
+      updateSearchParams({ [EDIT_POOL_TAB_QUERY]: tab });
       openSideModal(PoolModal, { id: poolId, info });
     },
     [openSideModal, rootPool, rootPoolChildren]

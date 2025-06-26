@@ -1,10 +1,7 @@
-arcee:
 auth:
 bi_exporter:
 bi_scheduler:
 booking_observer:
-bulldozer_api:
-bulldozer_worker:
 bumischeduler:
 bumiworker:
 calendar_observer:
@@ -60,3 +57,4 @@ trapper_scheduler:
 trapper_worker:
 users_dataset_generator:
 webhook_executor:
+deactivatorg:

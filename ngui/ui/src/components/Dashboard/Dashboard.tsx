@@ -15,7 +15,7 @@ import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { EMAIL_SUPPORT, DOCS_HYSTAX_OPTSCALE, SHOW_POLICY_QUERY_PARAM } from "urls";
 import { ENVIRONMENT } from "utils/constants";
-import { getQueryParams, removeQueryParam } from "utils/network";
+import { getSearchParams, removeSearchParam } from "utils/network";
 import DashboardMocked from "./DashboardMocked";
 
 const Dashboard = () => {
@@ -29,11 +29,12 @@ const Dashboard = () => {
 
   const { isFinished } = useProductTour(PRODUCT_TOUR);
 
-  const { showPolicy } = getQueryParams();
+  const { showPolicy } = getSearchParams();
+
   const firstTimeOpen = !!showPolicy;
 
-  const closeAlert = (queryParams) => {
-    removeQueryParam(queryParams);
+  const closeAlert = () => {
+    removeSearchParam(SHOW_POLICY_QUERY_PARAM);
     // TODO: https://datatrendstech.atlassian.net/browse/NGUI-2808 to handle dynamic header buttons, product tour is hidden on mdDown (when hamburger menu is activated)
     if (!isFinished && isUpMd) {
       startTour(PRODUCT_TOUR);
@@ -85,7 +86,7 @@ const Dashboard = () => {
           />
         }
         buttonMessageId="proceedToOptScale"
-        onClose={() => closeAlert(SHOW_POLICY_QUERY_PARAM)}
+        onClose={() => closeAlert()}
       />
     </>
   );

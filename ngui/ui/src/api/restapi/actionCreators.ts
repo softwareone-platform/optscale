@@ -881,6 +881,7 @@ export const createAssignmentRule = (organizationId, params = {}) =>
       active: params.active,
       pool_id: params.poolId,
       owner_id: params.ownerId,
+      operator: params.operator,
       conditions: params.conditions
     }
   });
@@ -894,6 +895,7 @@ export const updateAssignmentRule = (assignmentRuleId, params = {}) =>
     params: {
       active: params.active,
       name: params.name,
+      operator: params.operator,
       conditions: params.conditions,
       pool_id: params.poolId,
       owner_id: params.ownerId

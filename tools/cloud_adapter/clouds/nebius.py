@@ -450,7 +450,7 @@ class Nebius(S3CloudMixin):
         headers = {'Authorization': f'Bearer {self.token}'}
         response = requests.get(list_url, headers=headers)
         buckets = json.loads(response.content.decode())
-        for bucket in buckets['buckets']:
+        for bucket in buckets.get('buckets', []):
             name = bucket['name']
             is_public_policy, is_public_acls = False, False
             detail_url = base_url + f'/{name}?view=VIEW_FULL'

@@ -26,7 +26,6 @@ import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRe
 import AwsLogoIcon from "icons/AwsLogoIcon";
 import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
-
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,
@@ -51,7 +50,7 @@ import {
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 import useStyles from "./ConnectCloudAccountForm.styles";
 import { ConnectionInputs, DataSourceNameField } from "./FormElements";
@@ -138,6 +137,7 @@ const getAwsParameters = (formData) => {
           bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
           bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
           report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+          region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
           config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
         };
   return {
@@ -461,7 +461,7 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
   })[connectionType];
 
 const getConnectionTypeFromQueryParams = () => {
-  const { type: connectionTypeQueryParameter } = getQueryParams();
+  const { type: connectionTypeQueryParameter } = getSearchParams();
 
   if (Object.values(CONNECTION_TYPES).includes(connectionTypeQueryParameter as ConnectionType)) {
     return connectionTypeQueryParameter as ConnectionType;

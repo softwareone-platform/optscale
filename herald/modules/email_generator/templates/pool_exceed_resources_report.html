@@ -170,7 +170,7 @@
             </table>
 
             <!-- Pool limits forecasted to exceed -->
-            {{#texts.exceeded_pool_forecasts_count}}
+            {% if texts.exceeded_pool_forecasts_count > 0 %}
             <!-- Pool limits forecasted to exceed > Title -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -203,7 +203,7 @@
                 </tr>
               </tbody>
             </table>
-            {{#texts.exceeded_pool_forecasts}}
+            {% for exceeded in texts.exceeded_pool_forecasts %}
             <!-- Pool limits forecasted to exceed > Pool description -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -220,17 +220,17 @@
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
-                                          Pool: <strong><a href="https://{{etcd.control_panel_link}}/pools/{{pool_id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{pool_name}}</a></strong>
+                                          Pool: <strong><a href="https://{{etcd.control_panel_link}}/pools/{{exceeded.pool_id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{exceeded.pool_name}}</a></strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Pool limit: <strong>{{texts.organization.currency_code}}{{limit}}</strong></span>
+                                        <span style="font-size: 14px">Pool limit: <strong>{{texts.organization.currency_code}}{{exceeded.limit}}</strong></span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Expenses up-to-date (this month): <strong>{{texts.organization.currency_code}}{{total_expenses}}</strong></span>
+                                        <span style="font-size: 14px">Expenses up-to-date (this month): <strong>{{texts.organization.currency_code}}{{exceeded.total_expenses}}</strong></span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Expenses forecast: <strong>{{texts.organization.currency_code}}{{forecast}}</strong></span>
+                                        <span style="font-size: 14px">Expenses forecast: <strong>{{texts.organization.currency_code}}{{exceeded.forecast}}</strong></span>
                                       </p>
                                     </div>
                                   </div>
@@ -329,7 +329,7 @@
               </tbody>
             </table>
             <!-- Pool limits forecasted to exceed > Resource table -->
-            {{#resources}}
+            {% for resource in exceeded.resources %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -345,7 +345,7 @@
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 13px">
-                                          <a href="https://{{etcd.control_panel_link}}/resources/{{resource_id}}{{texts.control_panel_parameters}}&tab=expenses" target="_blank" rel="noopener">{{cloud_resource_id}}</a>
+                                          <a href="https://{{etcd.control_panel_link}}/resources/{{resource.resource_id}}{{texts.control_panel_parameters}}&tab=expenses" target="_blank" rel="noopener">{{resource.cloud_resource_id}}</a>
                                         </span>
                                       </p>
                                     </div>
@@ -361,7 +361,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{name}}</span>
+                                        <span style="font-size: 14px">{{resource.name}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -376,7 +376,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{type}}</span>
+                                        <span style="font-size: 14px">{{resource.type}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -391,7 +391,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{cloud_account_name}}</span>
+                                        <span style="font-size: 14px">{{resource.cloud_account_name}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -406,10 +406,12 @@
                 </tr>
               </tbody>
             </table>
-            {{/resources}} {{/texts.exceeded_pool_forecasts}} {{/texts.exceeded_pool_forecasts_count}}
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
 
             <!-- Pool limits exceeded -->
-            {{#texts.exceeded_pools_count}}
+            {% if texts.exceeded_pools_count > 0 %}
             <!-- Pool limits exceeded > Title -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -442,7 +444,7 @@
                 </tr>
               </tbody>
             </table>
-            {{#texts.exceeded_pools}}
+            {% for exceeded_pool in texts.exceeded_pools %}
             <!-- Pool limits exceeded > Pool description -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -459,17 +461,17 @@
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
-                                          Pool: <strong><a href="https://{{etcd.control_panel_link}}/pools/{{pool_id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{pool_name}}</a></strong>
+                                          Pool: <strong><a href="https://{{etcd.control_panel_link}}/pools/{{exceeded_pool.pool_id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener">{{pool_name}}</a></strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Pool limit: <strong>{{texts.organization.currency_code}}{{limit}}</strong></span>
+                                        <span style="font-size: 14px">Pool limit: <strong>{{texts.organization.currency_code}}{{exceeded_pool.limit}}</strong></span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Expenses up-to-date (this month): <strong>{{texts.organization.currency_code}}{{total_expenses}}</strong></span>
+                                        <span style="font-size: 14px">Expenses up-to-date (this month): <strong>{{texts.organization.currency_code}}{{exceeded_pool.total_expenses}}</strong></span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">Expenses forecast: <strong>{{texts.organization.currency_code}}{{forecast}}</strong></span>
+                                        <span style="font-size: 14px">Expenses forecast: <strong>{{texts.organization.currency_code}}{{exceeded_pool.forecast}}</strong></span>
                                       </p>
                                     </div>
                                   </div>
@@ -568,7 +570,7 @@
               </tbody>
             </table>
             <!-- Pool limits exceeded > Resource table -->
-            {{#resources}}
+            {% for resource in exceeded_pool.resources %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -584,7 +586,7 @@
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 13px">
-                                          <a href="https://{{etcd.control_panel_link}}/resources/{{resource_id}}{{texts.control_panel_parameters}}&tab=expenses" target="_blank" rel="noopener">{{cloud_resource_id}}</a>
+                                          <a href="https://{{etcd.control_panel_link}}/resources/{{resource.resource_id}}{{texts.control_panel_parameters}}&tab=expenses" target="_blank" rel="noopener">{{resource.cloud_resource_id}}</a>
                                         </span>
                                       </p>
                                     </div>
@@ -600,7 +602,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{name}}</span>
+                                        <span style="font-size: 14px">{{resource.name}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -615,7 +617,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{type}}</span>
+                                        <span style="font-size: 14px">{{resource.type}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -630,7 +632,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{cloud_account_name}}</span>
+                                        <span style="font-size: 14px">{{resource.cloud_account_name}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -645,7 +647,9 @@
                 </tr>
               </tbody>
             </table>
-            {{/resources}} {{/texts.exceeded_pools}} {{/texts.exceeded_pools_count}}
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
 
             <!-- Footer -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">

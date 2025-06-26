@@ -1,4 +1,6 @@
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { RESOURCES, RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME } from "urls";
+import { isEmpty as isEmptyArray } from "utils/arrays";
 import {
   CLEAN_EXPENSES_BREAKDOWN_TYPES,
   END_DATE_FILTER,
@@ -10,7 +12,8 @@ import {
   START_DATE_FILTER,
   TAGGING_POLICY
 } from "utils/constants";
-import { getFilters } from "./getFilters";
+import { stringifySearchParams } from "utils/network";
+import { getFilterValues } from "./getFilterValues";
 
 const constraintTypeToResourcesBreakdownMap = {
   [EXPENSE_ANOMALY]: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
@@ -32,9 +35,36 @@ const getResourcesBreakdown = (
 ) => constraintTypeToResourcesBreakdownMap[type];
 
 const getFiltersParams = (constraint) => {
-  const filtersInstance = getFilters(constraint);
+  const filterValues = getFilterValues(constraint);
 
-  return filtersInstance.toQueryParametersString();
+  const filterKeyValuePairs = Object.values(FILTER_CONFIGS).flatMap((config) => {
+    if (config.type === "selection") {
+      const appliedFilters = filterValues[config.apiName] ?? [];
+
+      if (isEmptyArray(appliedFilters)) {
+        return [];
+      }
+
+      return [[config.id, appliedFilters.map((appliedFilter) => config.transformers.getValue(appliedFilter))]];
+    }
+
+    if (config.type === "range") {
+      const from = filterValues[config.fromApiName];
+      const to = filterValues[config.toApiName];
+
+      if (!from && !to) {
+        return [];
+      }
+
+      return [
+        [config.fromName, from],
+        [config.toName, to]
+      ];
+    }
+    return [];
+  });
+
+  return stringifySearchParams(Object.fromEntries(filterKeyValuePairs));
 };
 
 const getBreakdownParameter = (constraint) =>

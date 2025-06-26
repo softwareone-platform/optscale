@@ -132,7 +132,6 @@ export default [
         "warn",
         {
           groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
-
           pathGroups: [
             {
               pattern: "react",
@@ -140,13 +139,12 @@ export default [
               position: "before"
             }
           ],
-
           pathGroupsExcludedImportTypes: ["react"],
-
           alphabetize: {
             order: "asc",
             caseInsensitive: true
-          }
+          },
+          "newlines-between": "never"
         }
       ],
       "import/no-extraneous-dependencies": "off",

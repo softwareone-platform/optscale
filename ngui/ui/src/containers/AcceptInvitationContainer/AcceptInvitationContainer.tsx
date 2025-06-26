@@ -12,12 +12,12 @@ import { useInitialMount } from "hooks/useInitialMount";
 import { useLastResult } from "hooks/useLastResult";
 import { useShouldRenderLoader } from "hooks/useShouldRenderLoader";
 import { getHomeUrl } from "urls";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 const AcceptInvitationContainer = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { inviteId } = getQueryParams();
+  const { inviteId } = getSearchParams();
 
   const { apiData: { invitation = {} } = {} } = useApiData(GET_INVITATION);
   const { lastResult: { status } = {} } = useLastResult(GET_INVITATION);

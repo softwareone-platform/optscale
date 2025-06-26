@@ -9,14 +9,14 @@ import { useResourceDetailsDefaultDateRange } from "hooks/useResourceDetailsDefa
 import { RESOURCE_PAGE_EXPENSES_TABS, DATE_RANGE_FILTERS, DATE_RANGE_TYPE } from "utils/constants";
 import { millisecondsToSeconds, performDateTimeFunction, startOfDay, endOfDay, secondsToMilliseconds } from "utils/datetime";
 import { SPACING_2 } from "utils/layouts";
-import { getQueryParams, updateQueryParams } from "utils/network";
+import { getSearchParams, updateSearchParams } from "utils/network";
 
 const useActiveExpensesMode = ({ modes, defaultMode }) => {
-  const { expensesMode } = getQueryParams();
+  const { expensesMode } = getSearchParams();
   const [activeExpensesMode, setActiveExpensesMode] = useState(modes.includes(expensesMode) ? expensesMode : defaultMode);
 
   useEffect(() => {
-    updateQueryParams({ expensesMode: activeExpensesMode });
+    updateSearchParams({ expensesMode: activeExpensesMode });
   }, [activeExpensesMode]);
 
   return [activeExpensesMode, setActiveExpensesMode];
@@ -73,7 +73,7 @@ const ResourceExpenses = ({ resourceId, firstSeen, lastSeen, hasNetworkTrafficEx
   });
 
   useEffect(() => {
-    updateQueryParams({
+    updateSearchParams({
       startDate: requestParams.startDate,
       endDate: requestParams.endDate
     });

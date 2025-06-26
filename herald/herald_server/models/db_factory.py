@@ -1,11 +1,10 @@
-from enum import Enum
 import logging
+from enum import Enum
 
-from herald.herald_server.models.db_test import TestDB
-from herald.herald_server.models.db_mysql import MySQLDB
 from herald.herald_server.exceptions import Err
 from herald.herald_server.models.db_base import BaseDB
-
+from herald.herald_server.models.db_mysql import MySQLDB
+from herald.herald_server.models.db_test import TestDB
 from tools.optscale_exceptions.common_exc import InvalidModelTypeException
 
 
@@ -17,19 +16,16 @@ class DBType(Enum):
 LOG = logging.getLogger(__name__)
 
 
-class DBFactory(object):
+class DBFactory:
     _db: BaseDB
-    DBS = {
-        DBType.Test: TestDB,
-        DBType.MySQL: MySQLDB
-    }
+    DBS = {DBType.Test: TestDB, DBType.MySQL: MySQLDB}
     _instances = {}
 
     @staticmethod
     def _get_db(db_type, config):
         db_class = DBFactory.DBS.get(db_type)
         if not db_class:
-            LOG.error('Nonexistent model type specified: %s', db_type)
+            LOG.error("Nonexistent model type specified: %s", db_type)
             raise InvalidModelTypeException(Err.G0024, [db_type])
         else:
             return db_class(config)

@@ -3,7 +3,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useIntl } from "react-intl";
 import { Link } from "react-router-dom";
-import { getPathname, getQueryParams } from "utils/network";
+import { getPathname, getSearchParams } from "utils/network";
 import useStyles from "./MenuItem.styles";
 
 const MenuItem = ({
@@ -26,7 +26,7 @@ const MenuItem = ({
   const onLinkClick = (e) => {
     const pathname = getPathname();
 
-    const isRootPath = typeof isRootPathFn === "function" ? isRootPathFn(pathname, getQueryParams()) : pathname === link;
+    const isRootPath = typeof isRootPathFn === "function" ? isRootPathFn(pathname, getSearchParams()) : pathname === link;
 
     if (isRootPath) {
       e.preventDefault();
@@ -36,7 +36,7 @@ const MenuItem = ({
   };
 
   const currentPath = getPathname();
-  const currentQueryParams = getQueryParams();
+  const currentQueryParams = getSearchParams();
 
   // TODO - we need to be able to pass values to formatted messages
   const renderItem = (

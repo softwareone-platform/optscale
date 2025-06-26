@@ -9,12 +9,14 @@ import {
   getResourcesExpensesUrl,
   GROUP_BY_PARAM_NAME,
   GROUP_TYPE_PARAM_NAME,
+  isPoolIdWithSubPools,
   RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
   RESOURCES_PERSPECTIVE_PARAMETER_NAME,
   RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
 import { CLEAN_EXPENSES_BREAKDOWN_TYPES } from "utils/constants";
-import { formQueryString } from "utils/network";
+import { millisecondsToSeconds } from "utils/datetime";
+import { stringifySearchParams } from "utils/network";
 
 const Resources = () => {
   const [searchParams] = useSearchParams();
@@ -31,8 +33,41 @@ const Resources = () => {
     if (selectedPerspective) {
       const { filters: perspectiveFilters, breakdownBy, breakdownData } = validPerspectives[perspective];
 
+      const { poolId, firstSeen, lastSeen, ...restFilters } = perspectiveFilters.appliedFilters;
+
+      const getPoolFilters = () => {
+        if (poolId.every((pool) => isPoolIdWithSubPools(pool))) {
+          return {
+            poolId
+          };
+        }
+
+        return {
+          poolId: poolId.map((pool) => {
+            if (isPoolIdWithSubPools(pool)) {
+              return pool.slice(0, -1);
+            }
+
+            return pool;
+          })
+        };
+      };
+
       const perspectiveSearchParams = {
-        ...perspectiveFilters.appliedFilters,
+        ...(poolId ? getPoolFilters() : {}),
+        ...(firstSeen
+          ? {
+              firstSeenFrom: firstSeen.from ? millisecondsToSeconds(firstSeen.from) : undefined,
+              firstSeenTo: firstSeen.to ? millisecondsToSeconds(firstSeen.to) : undefined
+            }
+          : {}),
+        ...(lastSeen
+          ? {
+              lastSeenFrom: lastSeen.from ? millisecondsToSeconds(lastSeen.from) : undefined,
+              lastSeenTo: lastSeen.to ? millisecondsToSeconds(lastSeen.to) : undefined
+            }
+          : {}),
+        ...restFilters,
         ...(breakdownBy === CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES
           ? {
               [DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME]: breakdownData.breakdownBy,
@@ -48,7 +83,7 @@ const Resources = () => {
         [RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME]: breakdownBy
       };
 
-      const toSearchParams = formQueryString({
+      const toSearchParams = stringifySearchParams({
         ...restParams,
         ...perspectiveSearchParams,
         [RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME]: perspective

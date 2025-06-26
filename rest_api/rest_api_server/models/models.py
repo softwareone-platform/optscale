@@ -22,20 +22,22 @@ from rest_api.rest_api_server.models.enums import (
     AssignmentRequestStatuses, ThresholdBasedTypes, ThresholdTypes,
     ConstraintTypes, PoolPurposes, ConstraintLimitStates,
     OrganizationConstraintTypes, BIOrganizationStatuses, BITypes,
-    GeminiStatuses)
+    GeminiStatuses, RuleOperators)
 from rest_api.rest_api_server.models.types import (
     Email, Name, Uuid, NullableUuid, NullableMetadata, Int,
     NullableString, AutogenUuid, NullableBool, NullableText, NullableInt,
     BaseString, BigInt, CloudType, RolePurpose,
     ImportState, AssignmentRequestStatus,
     ThresholdBasedType, ThresholdType, NotWhiteSpaceString,
-    ConditionType, ConstraintType, PoolPurpose, BaseText,
+    ConditionType, RuleOperator, ConstraintType, PoolPurpose, BaseText,
     InviteAssignmentScopeType, NullableJSON, CachedResourceType, NullableFloat,
     CostModelType, WebhookObjectType, WebhookActionType,
     MediumNullableString, MediumString, MediumLargeNullableString,
     ConstraintLimitState, OrganizationConstraintType, ConstraintDefinition,
     RunResult, BIOrganizationStatus, BIType, Float, GeminiStatus,
-    HMTimeString, TimezoneString, PowerScheduleAction)
+    HMTimeString, TimezoneString, PowerScheduleAction, OrganizationDisableType,
+    NullableMediumJSON, NullableMediumText
+)
 
 
 class PermissionKeys(Enum):
@@ -164,8 +166,8 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
                       info=ColumnPermissions.full, default='USD')
     cleaned_at = Column(NullableInt('cleaned_at'), default=0, nullable=False,
                         info=ColumnPermissions.update_only)
-    disabled = Column(NullableBool('disabled'), nullable=False,
-                      default=False, info=ColumnPermissions.update_only)
+    disabled = Column(OrganizationDisableType('disabled'), nullable=True,
+                      info=ColumnPermissions.update_only)
 
     @validates('id')
     def _validate_id(self, key, id):
@@ -190,6 +192,11 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
     @validates('disabled')
     def _validate_disabled(self, key, name):
         return self.get_validator(key, name)
+
+    def to_dict(self):
+        result = super().to_dict()
+        result['disabled'] = True if result['disabled'] else False
+        return result
 
 
 class Pool(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
@@ -791,6 +798,8 @@ class Rule(Base, CreatedMixin, ImmutableMixin):
                       info=ColumnPermissions.full)
     owner = relationship("Employee", foreign_keys=[owner_id])
     conditions = relationship("Condition")
+    operator = Column(RuleOperator('operator'), nullable=False,
+                      info=ColumnPermissions.full)
 
     __table_args__ = (
         UniqueConstraint("name", "deleted_at", "organization_id",
@@ -801,6 +810,7 @@ class Rule(Base, CreatedMixin, ImmutableMixin):
 
     def to_dict(self, raw=False):
         rule_dict = super().to_dict()
+        rule_dict["operator"] = rule_dict["operator"].value
         if not raw:
             keys_to_delete = ['deleted_at']
             for key in keys_to_delete:
@@ -1618,7 +1628,7 @@ class OrganizationGemini(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
                     nullable=False, info=ColumnPermissions.update_only)
     filters = Column(NullableText("filters"), nullable=True,
                      info=ColumnPermissions.create_only, default="{}")
-    stats = Column(NullableText("stats"), nullable=True,
+    stats = Column(NullableMediumText("stats"), nullable=True,
                    info=ColumnPermissions.full, default="{}")
 
     @hybrid_property
@@ -1723,7 +1733,7 @@ class Layout(Base, BaseMixin, ValidatorMixin):
                 info=ColumnPermissions.create_only)
     name = Column(NotWhiteSpaceString('name'), nullable=False,
                   info=ColumnPermissions.full)
-    data = Column(NullableJSON('data'), nullable=False, default='{}',
+    data = Column(NullableMediumJSON('data'), nullable=False, default='{}',
                   info=ColumnPermissions.full)
     type = Column(NotWhiteSpaceString('type'), nullable=False,
                   info=ColumnPermissions.create_only)

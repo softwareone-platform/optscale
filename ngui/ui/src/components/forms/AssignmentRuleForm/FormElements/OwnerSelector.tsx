@@ -4,6 +4,7 @@ import { GET_POOL_OWNERS } from "api/restapi/actionTypes";
 import { Selector } from "components/forms/common/fields";
 import { ItemContent } from "components/Selector";
 import { useApiState } from "hooks/useApiState";
+import { OwnerSelectorProps } from "../types";
 import { FIELD_NAMES } from "../utils";
 
 const LABEL_ID = "owner";
@@ -14,7 +15,7 @@ const OwnerSelector = ({
   poolOwners,
   pools,
   isFormDataLoading = false
-}) => {
+}: OwnerSelectorProps) => {
   const { watch } = useFormContext();
   const intl = useIntl();
 

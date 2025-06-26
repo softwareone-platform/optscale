@@ -1,4 +1,4 @@
-import { RESOURCE_FILTERS } from "components/Filters/constants";
+import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import {
   CLEAN_EXPENSES_BREAKDOWN_TYPES,
   CLEAN_EXPENSES_BREAKDOWN_TYPES_LIST,
@@ -56,35 +56,30 @@ const filtersSchema = {
   properties: {
     [FILTER_VALUES_PROPERTY]: {
       type: "object",
-      properties: Object.fromEntries(
-        RESOURCE_FILTERS.map((filter) => [
-          filter.apiName,
-          {
-            type: "array",
-            items: filter.filterItemSchema
-          }
-        ])
+      additionalProperties: false,
+      properties: Object.values(FILTER_CONFIGS).reduce(
+        (properties, filter) => ({
+          ...properties,
+          ...(filter.schema.filterValues ?? {})
+        }),
+        {}
       )
     },
     [APPLIED_FILTERS_PROPERTY]: {
       type: "object",
-      properties: Object.fromEntries(
-        RESOURCE_FILTERS.map((filter) => [
-          filter.filterName,
-          {
-            type: "array",
-            items: filter.appliedFilterSchema
-          }
-        ])
+      additionalProperties: false,
+      properties: Object.values(FILTER_CONFIGS).reduce(
+        (properties, filter) => ({
+          ...properties,
+          ...(filter.schema.appliedFilter ?? {})
+        }),
+        {}
       )
     }
   },
-  allOf: RESOURCE_FILTERS.map(({ apiName, filterName }) => ({
-    apiName,
-    filterName
-  }))
+  allOf: Object.values(FILTER_CONFIGS)
     .map((filter) => {
-      const { apiName, filterName } = filter;
+      const { id, apiName } = filter;
 
       return [
         {
@@ -107,9 +102,9 @@ const filtersSchema = {
             properties: {
               [APPLIED_FILTERS_PROPERTY]: {
                 type: "object",
-                required: [filterName],
+                required: [id],
                 properties: {
-                  [filterName]: {
+                  [id]: {
                     type: "array"
                   }
                 }
@@ -123,9 +118,9 @@ const filtersSchema = {
             properties: {
               [APPLIED_FILTERS_PROPERTY]: {
                 type: "object",
-                required: [filterName],
+                required: [id],
                 properties: {
-                  [filterName]: {
+                  [id]: {
                     type: "array"
                   }
                 }

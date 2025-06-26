@@ -1,12 +1,12 @@
 import { FormProvider, useForm } from "react-hook-form";
 import RememberYourPasswordSignInMessage from "components/RememberYourPasswordSignInMessage";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { FIELD_NAMES } from "./constants";
 import { ConfirmPasswordField, EmailField, FormButtons, NewPasswordField } from "./FormElements";
 import { FormValues, CreateNewPasswordFormProps } from "./types";
 
 const CreateNewPasswordForm = ({ onSubmit, isLoading = false }: CreateNewPasswordFormProps) => {
-  const { email } = getQueryParams() as { email: string };
+  const { email } = getSearchParams() as { email: string };
 
   const methods = useForm<FormValues>({
     defaultValues: {

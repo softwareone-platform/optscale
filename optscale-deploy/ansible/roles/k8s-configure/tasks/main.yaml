@@ -53,9 +53,10 @@
   run_once: true
 
 - name: Add Helm repos
-  shell: helm repo add {{ item }}
-  with_items:
-    - bitnami https://charts.bitnami.com/bitnami
+  kubernetes.core.helm_repository:
+    name: bitnami
+    repo_url: https://raw.githubusercontent.com/bitnami/charts/refs/heads/archive-full-index/bitnami/
+    force_update: true
 
 - name: Update Helm repos
   shell: helm repo update
@@ -155,6 +156,10 @@
     state: present
   become: yes
   when: cloud_init_hosts.stat.exists
+
+- name: Import metrics-server tasks
+  import_tasks: metrics-server.yaml
+  when: install_metrics_server | bool
 
 - name: Reset SSH connection
   meta: reset_connection

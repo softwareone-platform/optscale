@@ -4,7 +4,14 @@ import { GET_ORGANIZATION_PERSPECTIVES, UPDATE_ORGANIZATION_PERSPECTIVES } from 
 import { useOrganizationPerspectives } from "hooks/coreData/useOrganizationPerspectives";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 
-const CreateResourcePerspectiveContainer = ({ filters, breakdownBy, breakdownData, onSuccess, onCancel }) => {
+const CreateResourcePerspectiveContainer = ({
+  breakdownBy,
+  breakdownData,
+  onSuccess,
+  onCancel,
+  filterValues,
+  appliedFilters
+}) => {
   const { organizationId } = useOrganizationInfo();
 
   const { allPerspectives } = useOrganizationPerspectives();
@@ -38,9 +45,10 @@ const CreateResourcePerspectiveContainer = ({ filters, breakdownBy, breakdownDat
       isLoading={loading}
       breakdownBy={breakdownBy}
       breakdownData={breakdownData}
-      filters={filters}
       perspectiveNames={Object.keys(allPerspectives)}
       onCancel={onCancel}
+      filterValues={filterValues}
+      appliedFilters={appliedFilters}
     />
   );
 };

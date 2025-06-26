@@ -10,7 +10,7 @@ import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useSelectedSizes, useSelectionActions } from "reducers/cloudCostComparisonSelectedSizes/hooks";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { ALIBABA_CNR, AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { cpu as cpuColumn, ram as ramColumn, flavors as flavorsColumn } from "./columns";
 
 const CompareButton = () => {
@@ -46,7 +46,7 @@ const ClearSelectionButton = () => {
 };
 
 const CloudCostComparisonTable = ({ relevantSizes, errors }) => {
-  const { cloudProvider } = getQueryParams();
+  const { cloudProvider } = getSearchParams();
 
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
 

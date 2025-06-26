@@ -9,7 +9,7 @@ import { SETTINGS_TABS } from "pages/Settings/Settings";
 import UserService from "services/UserService";
 import { HOME, REGISTER, getSettingsUrl } from "urls";
 import { SPACING_6 } from "utils/layouts";
-import { getQueryParams, getStringUrl } from "utils/network";
+import { stringifySearchParams, getSearchParams } from "utils/network";
 
 const InvitedContainer = () => {
   const signOut = useSignOut();
@@ -22,13 +22,13 @@ const InvitedContainer = () => {
   const { isDataReady, user } = useGet(userId);
 
   const { email: currentEmail = "" } = user;
-  const { email: invitationEmail } = getQueryParams();
+  const { email: invitationEmail } = getSearchParams();
 
   const generateInvitedRedirectUrl = () => {
     // /invited for unauthorized
     if (!token) {
-      const updatedQuery = getStringUrl({ ...getQueryParams(), invited: true });
-      return `${REGISTER}${updatedQuery}`;
+      const updateQuery = stringifySearchParams({ ...getSearchParams(), invited: true });
+      return `${REGISTER}?${updateQuery}`;
     }
 
     // /invited for authorized with same email

@@ -8,7 +8,7 @@ import MlLeaderboardsService from "services/MlLeaderboardsService";
 import MlTasksService from "services/MlTasksService";
 import { getMlTaskDetailsUrl } from "urls";
 import { ML_TASK_DETAILS_TAB_NAME } from "utils/constants";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { isEmpty as isEmptyObject } from "utils/objects";
 
 const MlEditTaskLeaderboardTemplateContainer = ({ leaderboardTemplate, task }) => {
@@ -49,7 +49,7 @@ const MlEditTaskLeaderboardTemplateContainer = ({ leaderboardTemplate, task }) =
   );
 
   const redirectToTaskDetails = () => {
-    const { [ML_TASK_DETAILS_TAB_NAME]: taskDetailsTab } = getQueryParams();
+    const { [ML_TASK_DETAILS_TAB_NAME]: taskDetailsTab } = getSearchParams();
 
     return navigate(`${getMlTaskDetailsUrl(taskId)}?${ML_TASK_DETAILS_TAB_NAME}=${taskDetailsTab}`);
   };

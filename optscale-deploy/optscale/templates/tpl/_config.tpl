@@ -36,8 +36,6 @@ etcd:
   optscale_error_emails:
     recipient: {{ .Values.optscale_error_emails.recipient }}
     enabled: {{ .Values.optscale_error_emails.enabled }}
-  bulldozer_worker:
-    arcee_wait_timeout: {{ .Values.bulldozer_worker.config.arcee_wait_timeout }}
   google_calendar_service:
     enabled: {{ .Values.google_calendar_service.enabled }}
     access_key:
@@ -103,12 +101,6 @@ etcd:
   jirabus:
     host: {{ .Values.jira_bus.service.name }}
     port: {{ .Values.jira_bus.service.externalPort }}
-  arcee:
-    host: {{ .Values.arcee.service.name }}
-    port: {{ .Values.arcee.service.externalPort }}
-  bulldozer_api:
-    host: {{ .Values.bulldozer_api.service.name }}
-    port: {{ .Values.bulldozer_api.service.externalPort }}
   metroculus:
     host: {{ .Values.metroculus_api.service.name }}
     port: {{ .Values.metroculus_api.service.externalPort }}
@@ -188,6 +180,7 @@ etcd:
     archive_enable: {{ .Values.cleanmongodb.archive_enable }}
     file_max_rows: {{ .Values.cleanmongodb.file_max_rows }}
   disable_email_verification: {{ .Values.disable_email_verification }}
+  force_aws_edp_strip: {{ .Values.force_aws_edp_strip }}
   encryption_salt: {{ .Values.encryption_salt }}
   encryption_salt_auth: {{ .Values.encryption_salt_auth }}
 {{ if .Values.zohocrm.regapp }}
@@ -248,6 +241,9 @@ etcd:
     filename: {{ .Values.failed_imports_dataset_generator.filename }}
     aws_access_key_id: {{ .Values.failed_imports_dataset_generator.aws_access_key_id }}
     aws_secret_access_key: {{ .Values.failed_imports_dataset_generator.aws_secret_access_key }}
+  deactivatorg:
+    enable: {{ .Values.deactivatorg.enable }}
+    days_limit: {{ .Values.deactivatorg.days_limit }}
   password_strength_settings:
     min_length: {{ .Values.password_strength_settings.min_length }}
     min_lowercase: {{ .Values.password_strength_settings.min_lowercase }}

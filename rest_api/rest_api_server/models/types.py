@@ -4,7 +4,8 @@ import pytz
 from cryptography.fernet import Fernet
 from sqlalchemy import (Integer, String, TypeDecorator, TEXT, LargeBinary,
                         Boolean, Enum, BigInteger, Float as FloatAlchemy)
-
+from sqlalchemy.types import Text
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from tools.cloud_adapter.model import ResourceTypes
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from rest_api.rest_api_server.exceptions import Err
@@ -14,7 +15,8 @@ from rest_api.rest_api_server.models.enums import (
     ThresholdBasedTypes, ConstraintTypes, PoolPurposes,
     InviteAssignmentScopeTypes, CostModelTypes, WebhookObjectTypes,
     WebhookActionTypes, ConstraintLimitStates, OrganizationConstraintTypes,
-    BIOrganizationStatuses, BITypes, GeminiStatuses, PowerScheduleActions)
+    BIOrganizationStatuses, BITypes, GeminiStatuses, PowerScheduleActions,
+    OrganizationDisableTypes, RuleOperators)
 from rest_api.rest_api_server.utils import (
     is_email_format, is_uuid, is_valid_meta, MAX_32_INT,
     get_encryption_key, gen_id, MAX_64_INT,
@@ -216,6 +218,13 @@ class NullableJSON(JSON):
         return value
 
 
+class NullableMediumJSON(NullableJSON):
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'mysql':
+            return dialect.type_descriptor(MEDIUMTEXT())
+        return dialect.type_descriptor(Text())
+
+
 class NullableMetadata(NullableJSON):
     def __init__(self, key='meta', **kwargs):
         super().__init__(key, **kwargs)
@@ -274,6 +283,13 @@ class NullableText(TypeDecorator):
             if not isinstance(value, str):
                 raise WrongArgumentsException(Err.OE0214, [self.key])
         return value
+
+
+class NullableMediumText(NullableText):
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'mysql':
+            return dialect.type_descriptor(MEDIUMTEXT())
+        return dialect.type_descriptor(Text())
 
 
 class BaseText(NullableText):
@@ -347,6 +363,10 @@ class AssignmentRequestStatus(BaseType):
 
 class ConditionType(BaseType):
     impl = Enum(ConditionTypes)
+
+
+class RuleOperator(BaseType):
+    impl = Enum(RuleOperators)
 
 
 class CostModelType(BaseType):
@@ -510,3 +530,7 @@ class GeminiStatus(BaseType):
 
 class PowerScheduleAction(BaseType):
     impl = Enum(PowerScheduleActions)
+
+
+class OrganizationDisableType(BaseType):
+    impl = Enum(OrganizationDisableTypes)

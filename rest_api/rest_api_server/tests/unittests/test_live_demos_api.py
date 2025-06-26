@@ -1872,29 +1872,6 @@ class TestLiveDemosApi(TestApiBase):
               return_value={}).start()
         patch('rest_api.rest_api_server.controllers.live_demo.LiveDemoController.'
               '_insert_clickhouse').start()
-        patch('rest_api.rest_api_server.controllers.base.'
-              'BaseProfilingTokenController.arcee_client',
-              new_callable=PropertyMock).start()
-        patch('rest_api.rest_api_server.controllers.base.'
-              'BaseProfilingTokenController.bulldozer_client',
-              new_callable=PropertyMock).start()
-        self.metric_collection = self.mongo_client.arcee.metric
-        self.task_collection = self.mongo_client.arcee.task
-        self.run_collection = self.mongo_client.arcee.run
-        self.console_collection = self.mongo_client.arcee.console
-        self.dataset_collection = self.mongo_client.arcee.dataset
-        self.lb_template_collection = self.mongo_client.arcee.leaderboard_template
-        self.leaderboard_collection = self.mongo_client.arcee.leaderboard
-        self.stage_collection = self.mongo_client.arcee.stage
-        self.milestone_collection = self.mongo_client.arcee.milestone
-        self.proc_data_collection = self.mongo_client.arcee.proc_data
-        self.log_collection = self.mongo_client.arcee.log
-        self.model_collection = self.mongo_client.arcee.model
-        self.model_version_collection = self.mongo_client.arcee.model_version
-        self.artifact_collection = self.mongo_client.arcee.artifact
-        self.template_collection = self.mongo_client.bulldozer.template
-        self.runner_collection = self.mongo_client.bulldozer.runner
-        self.runset_collection = self.mongo_client.bulldozer.runset
 
     def check_db(self, check_empty=True):
         session = self.init_db_session()
@@ -1914,15 +1891,7 @@ class TestLiveDemosApi(TestApiBase):
     def check_mongo(self, check_empty=True):
         for collection in [
             self.raw_expenses, self.resources_collection,
-            self.checklists_collection, self.metric_collection,
-            self.task_collection, self.run_collection,
-            self.console_collection, self.dataset_collection,
-            self.lb_template_collection, self.leaderboard_collection,
-            self.stage_collection, self.milestone_collection,
-            self.log_collection, self.proc_data_collection,
-            self.model_collection, self.model_version_collection,
-            self.artifact_collection, self.template_collection,
-            self.runner_collection, self.runset_collection
+            self.checklists_collection
         ]:
             cnt = len(list(collection.find()))
             if check_empty:
@@ -2060,10 +2029,6 @@ class TestLiveDemosApi(TestApiBase):
                         self.assertIn('start', resource.get('meta', {}))
                         self.assertIn('end', resource.get('meta', {}))
                         self.assertIn('instance_type', resource.get('meta', {}))
-                datasets = list(self.dataset_collection.find())
-                for dataset in datasets:
-                    self.assertIn('timespan_from', dataset)
-                    self.assertIn('timespan_to', dataset)
 
     def test_live_demo_org_constraint_create(self):
         with patch('rest_api.rest_api_server.controllers.live_demo.LiveDemoController'

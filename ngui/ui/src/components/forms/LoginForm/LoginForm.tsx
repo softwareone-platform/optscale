@@ -5,13 +5,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import { PASSWORD_RECOVERY, OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME } from "urls";
-import { formQueryString, getQueryParams } from "utils/network";
+import { stringifySearchParams, getSearchParams } from "utils/network";
 import { EmailField, FormButtons, PasswordField } from "./FormElements";
 import { FormValues, LoginFormProps } from "./types";
 import { getDefaultValues } from "./utils";
 
 const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: LoginFormProps) => {
-  const { email = "", [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getQueryParams() as {
+  const { email = "", [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
     email?: string;
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
   };
@@ -26,7 +26,7 @@ const LoginForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = 
 
   // const search = getSearch();
 
-  const passwordRecoveryUrl = `${PASSWORD_RECOVERY}?${formQueryString({
+  const passwordRecoveryUrl = `${PASSWORD_RECOVERY}?${stringifySearchParams({
     [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
   })}`;
 

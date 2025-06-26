@@ -8,7 +8,7 @@ import { S3_DUPLICATE_FINDER, getRiSpCoverageUrl } from "urls";
 import { isEmpty as isEmptyArray } from "utils/arrays";
 import { SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 import { getCurrentUTCTimeInSec, getLast30DaysRange, getTimeDistance } from "utils/datetime";
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 
 type RiSpExpensesSummaryType = {
   totalCostWithOffer: number;
@@ -97,7 +97,7 @@ const getRiSpExpensesCardDefinition = ({
       show: true,
       onClick: () => {
         const { startDate, endDate } = getLast30DaysRange();
-        const { dataSourceId } = getQueryParams();
+        const { dataSourceId } = getSearchParams();
 
         const url = getRiSpCoverageUrl({
           secondsStartDate: startDate,

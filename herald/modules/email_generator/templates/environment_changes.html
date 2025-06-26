@@ -139,7 +139,8 @@
             </table>
 
             <!-- Booking status change -->
-            {{#texts.environment_status_changed}}
+            {% if texts.environment_status_changed %}
+            {% set changed_environment = texts.environment_status_changed.changed_environment %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -170,10 +171,11 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.environment_status_changed}}
+            {% endif %}
 
             <!-- Property change -->
-            {{#texts.environment_prop_changed}}
+            {% if texts.environment_prop_changed %}
+            {% set changed_environment = texts.environment_prop_changed.changed_environment %}
             <!-- Property change > Description -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -269,7 +271,8 @@
               </tbody>
             </table>
             <!-- Property change > Table -->
-            {{#changed_environment.property_info}}
+            {% if changed_environment.property_info %}
+            {% set property_info = changed_environment.property_info %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -283,7 +286,7 @@
                                 <td class="pad" style="padding-left: 20px; padding-right: 10px; padding-top: 5px">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{name}}</span></p>
+                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{property_info.name}}</span></p>
                                     </div>
                                   </div>
                                 </td>
@@ -296,7 +299,7 @@
                                 <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{previous_value}}</span></p>
+                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{property_info.previous_value}}</span></p>
                                     </div>
                                   </div>
                                 </td>
@@ -309,7 +312,7 @@
                                 <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{new_value}}</span></p>
+                                      <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px"><span style="font-size: 14px">{{property_info.new_value}}</span></p>
                                     </div>
                                   </div>
                                 </td>
@@ -323,10 +326,12 @@
                 </tr>
               </tbody>
             </table>
-            {{/changed_environment.property_info}} {{/texts.environment_prop_changed}}
+            {% endif %}
+            {% endif %}
 
             <!-- Activity state change -->
-            {{#texts.environment_state_changed}}
+            {% if texts.environment_state_changed %}
+            {% set changed_environment = texts.environment_state_changed.changed_environment %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -360,7 +365,7 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.environment_state_changed}}
+            {% endif %}
 
             <!-- Environment Info > Table title -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
@@ -478,7 +483,8 @@
               </tbody>
             </table>
             <!-- Environment Info > Table -->
-            {{#texts.environments_infos}}
+            {% if texts.environments_infos %}
+            {% set info = texts.environments_infos %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -495,12 +501,12 @@
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           <strong>
-                                            <a href="https://{{etcd.control_panel_link}}/resources/{{resource_id}}{{texts.control_panel_parameters}}&tab=details" target="_blank" rel="noopener">{{resource_name}}</a>
+                                            <a href="https://{{etcd.control_panel_link}}/resources/{{info.resource_id}}{{texts.control_panel_parameters}}&tab=details" target="_blank" rel="noopener">{{info.resource_name}}</a>
                                           </strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{resource_type}}</span>
+                                        <span style="font-size: 14px">{{info.resource_type}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -515,7 +521,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{pool}}</span>
+                                        <span style="font-size: 14px">{{info.pool}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -529,36 +535,35 @@
                                 <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                      {{#status}}
+                                      {% set status_info = info.status %}
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{Status}}</span>
+                                        <span style="font-size: 14px">{{status_info.Status}}</span>
                                       </p>
-                                      {{#details}}
+                                      {% set details = status.details %}
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           User:
-                                          <strong>{{User}}</strong>
+                                          <strong>{{details.User}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Since:
-                                          <strong>{{Since}}</strong>
+                                          <strong>{{details.Since}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Until:
-                                          <strong>{{Until}}</strong>
+                                          <strong>{{details.Until}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Available in:
-                                          <strong>{{Remained}}</strong>
+                                          <strong>{{details.Remained}}</strong>
                                         </span>
                                       </p>
-                                      {{/details}} {{/status}}
                                     </div>
                                   </div>
                                 </td>
@@ -571,38 +576,39 @@
                                 <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                      {{#upcoming_bookings}} {{#details}}
+                                      {% for booking in  upcoming_bookings %}
+                                      {% set details = booking.details %}
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           User:
-                                          <strong>{{User}}</strong>
+                                          <strong>{{details.User}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Since:
-                                          <strong>{{Since}}</strong>
+                                          <strong>{{details.Since}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Until:
-                                          <strong>{{Until}}</strong>
+                                          <strong>{{details.Until}}</strong>
                                         </span>
                                       </p>
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
                                           Duration:
-                                          <strong>{{Duration}}</strong>
+                                          <strong>{{details.Duration}}</strong>
                                         </span>
                                       </p>
-                                      {{/details}} {{#status_info}}
+                                      {% set status_info = booking.status_info %}
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
                                         <span style="font-size: 14px">
-                                          <strong>{{Status}}</strong>
+                                          <strong>{{status_info.Status}}</strong>
                                         </span>
                                       </p>
-                                      {{/status_info}} {{/upcoming_bookings}}
+                                      {% endfor %}
                                     </div>
                                   </div>
                                 </td>
@@ -616,10 +622,10 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.environments_infos}}
+            {% endif %}
 
             <!-- Environment properties -->
-            {{#texts.environments_infos.contains_envs}}
+            {% if exts.environments_infos.contains_envs %}
             <!-- Environment properties > Table title -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
@@ -702,7 +708,7 @@
               </tbody>
             </table>
             <!-- Environment properties > Table content -->
-            {{#texts.environments_infos.env_properties}}
+            {% for env_prop in texts.environments_infos.env_properties %}
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -717,7 +723,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{env_key}}</span>
+                                        <span style="font-size: 14px">{{env_prop.env_key}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -732,7 +738,7 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
-                                        <span style="font-size: 14px">{{env_value}}</span>
+                                        <span style="font-size: 14px">{{env_prop.env_value}}</span>
                                       </p>
                                     </div>
                                   </div>
@@ -747,7 +753,8 @@
                 </tr>
               </tbody>
             </table>
-            {{/texts.environments_infos.env_properties}} {{/texts.environments_infos.contains_envs}}
+            {% endfor %}
+            {% endif %}
 
             <!-- Go to OptScale button -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">

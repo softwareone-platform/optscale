@@ -1,9 +1,9 @@
-import { getQueryParams } from "utils/network";
+import { getSearchParams } from "utils/network";
 import { FIELD_NAMES, MAX_RAM, MIN_RAM, MAX_CPU, MIN_CPU, REGIONS } from "./constants";
 import { FormValues } from "./types";
 
 export const getDefaultValues = ({ currency }: { currency: string }): FormValues => {
-  const queryParams = getQueryParams();
+  const queryParams = getSearchParams();
 
   const getCloudTypeValue = () => {
     const value = queryParams[FIELD_NAMES.CLOUD_PROVIDER];

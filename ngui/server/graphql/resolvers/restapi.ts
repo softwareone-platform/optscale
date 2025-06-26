@@ -65,9 +65,6 @@ const resolvers: Resolvers = {
     organizationFeatures: async (_, { organizationId }, { dataSources }) => {
       return dataSources.restapi.getOrganizationFeatures(organizationId);
     },
-    optscaleCapability: async (_, { organizationId }, { dataSources }) => {
-      return dataSources.restapi.getOptscaleCapability(organizationId);
-    },
     organizationThemeSettings: async (
       _,
       { organizationId },
@@ -168,16 +165,6 @@ const resolvers: Resolvers = {
     },
     updateInvitation: async (_, { invitationId, action }, { dataSources }) => {
       return dataSources.restapi.updateInvitation(invitationId, action);
-    },
-    updateOptscaleCapability: async (
-      _,
-      { organizationId, value },
-      { dataSources }
-    ) => {
-      return dataSources.restapi.updateOptscaleCapability(
-        organizationId,
-        value
-      );
     },
     updateOrganizationThemeSettings: async (
       _,

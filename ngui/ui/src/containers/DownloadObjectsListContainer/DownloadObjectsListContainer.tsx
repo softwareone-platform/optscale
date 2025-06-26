@@ -4,7 +4,7 @@ import ButtonLoader from "components/ButtonLoader";
 import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOWNLOAD_FILE_FORMATS } from "utils/constants";
-import { formQueryString } from "utils/network";
+import { stringifySearchParams } from "utils/network";
 
 const DownloadObjectsListContainer = ({ fromBucketName, toBucketName, checkId }) => {
   const { isDemo } = useOrganizationInfo();
@@ -12,7 +12,7 @@ const DownloadObjectsListContainer = ({ fromBucketName, toBucketName, checkId })
   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
 
   const downloadObjectsList = () => {
-    const url = `${REST_API_URL}/geminis/${checkId}/data?${formQueryString({
+    const url = `${REST_API_URL}/geminis/${checkId}/data?${stringifySearchParams({
       bucket: [fromBucketName, toBucketName]
     })}`;
 

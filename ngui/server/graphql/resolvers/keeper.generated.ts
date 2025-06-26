@@ -41,14 +41,14 @@ export enum EventLevel {
 }
 
 export type EventsRequestParams = {
-  descriptionLike?: InputMaybe<Scalars['String']['input']>;
-  includeRead?: InputMaybe<Scalars['Boolean']['input']>;
-  lastId?: InputMaybe<Scalars['String']['input']>;
+  description_like?: InputMaybe<Scalars['String']['input']>;
+  include_read?: InputMaybe<Scalars['Boolean']['input']>;
+  last_id?: InputMaybe<Scalars['String']['input']>;
   level?: InputMaybe<Array<EventLevel>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
-  readOnGet?: InputMaybe<Scalars['Boolean']['input']>;
-  timeEnd?: InputMaybe<Scalars['Int']['input']>;
-  timeStart?: InputMaybe<Scalars['Int']['input']>;
+  read_on_get?: InputMaybe<Scalars['Boolean']['input']>;
+  time_end?: InputMaybe<Scalars['Int']['input']>;
+  time_start?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Query = {

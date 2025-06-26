@@ -1,5 +1,5 @@
 # -------- Setup --------
-ARG IMAGE=node:20.10.0-alpine3.18
+ARG IMAGE=node:22.16.0-alpine3.21
 
 FROM $IMAGE as builder
 
@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 
 ENV NODE_ENV production
 
-RUN npm install -g pnpm@8.11.0
+RUN npm install -g pnpm@10.12.1
 
 # -------- UI --------
 WORKDIR /usr/src/app/ui
