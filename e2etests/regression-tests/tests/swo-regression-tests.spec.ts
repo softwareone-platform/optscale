@@ -266,6 +266,14 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
     });
   });
 
+  test("Expenses Map page matches screenshots", async ({expansesMapPage}) => {
+    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
+    await expansesMapPage.setupApiInterceptions();
+    await expansesMapPage.navigateToURL();
+    await expansesMapPage.heading.hover();
+    await expect(expansesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png');
+  })
+
   test('Expenses page breakdowns matches screenshots', async ({expensesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {

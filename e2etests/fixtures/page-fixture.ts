@@ -26,6 +26,7 @@ import {TaggingPoliciesCreatePage} from "../pages/tagging-policies-create-page";
 import {TaggingPoliciesPage} from "../pages/tagging-policies-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
 import {UsersPage} from "../pages/users-page";
+import {ExpensesMapPage} from "../pages/expenses-map-page";
 
 
 /**
@@ -74,6 +75,7 @@ export const test = base.extend<{
     emailVerificationPage: EmailVerificationPage;
     eventsPage: EventsPage;
     expensesPage: ExpensesPage;
+    expansesMapPage: ExpensesMapPage;
     header: Header;
     homePage: HomePage;
     loginPage: LoginPage;
@@ -122,6 +124,10 @@ export const test = base.extend<{
     expensesPage: async ({page}, use) => {
         const expensesPage = new ExpensesPage(page);
         await use(expensesPage);
+    },
+    expansesMapPage: async ({page}, use) => {
+        const expensesMapPage = new ExpensesMapPage(page);
+        await use(expensesMapPage);
     },
     header: async ({page}, use) => {
         const header = new Header(page);
@@ -204,5 +210,3 @@ export const test = base.extend<{
         await use(usersInvitePage);
     },
 });
-
-
