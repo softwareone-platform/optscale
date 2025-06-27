@@ -94,6 +94,7 @@
     "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'",
     "translate:fix": "prettier --write 'src/translations/**/*.json'",
     "translate:sort": "node src/translations/sortTranslations.ts",
+    "translate:test": "vitest run src/translations/translationSorting.test.ts",
     "check": "pnpm lint:check && pnpm prettier:check",
     "fix": "pnpm lint:fix && pnpm prettier:fix",
     "fix:all": "pnpm fix && pnpm translate:sort && pnpm translate:fix",
