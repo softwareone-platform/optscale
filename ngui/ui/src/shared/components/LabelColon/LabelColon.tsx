@@ -11,7 +11,13 @@ interface ILabelProps {
 }
 
 const LabelColon: React.FC<ILabelProps> = ({ messageId, suffix = ":", variant = EVariantOptions.LABEL, noWrap = false }) => (
-  <Typography variant={variant as TypographyProps["variant"]} component="div" noWrap={noWrap} marginBottom={0}>
+  <Typography
+    variant={variant as TypographyProps["variant"]}
+    component="div"
+    noWrap={noWrap}
+    marginBottom={0}
+    style={{ overflow: "visible" }}
+  >
     <FormattedMessage id={messageId} />
     {suffix}
   </Typography>
