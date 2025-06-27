@@ -374,12 +374,14 @@ const getConfig = (type, config) => {
       return {
         getDefaultFormValues: () => ({
           [KUBERNETES_CREDENTIALS_FIELD_NAMES.USER]: config.user,
-          [KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD]: ""
+          [KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD]: "",
+          [KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL]: !config.custom_price
         }),
         parseFormDataToApiParams: (formData) => ({
           config: {
             password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
-            user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined
+            user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
+            custom_price: !formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL]
           }
         })
       };

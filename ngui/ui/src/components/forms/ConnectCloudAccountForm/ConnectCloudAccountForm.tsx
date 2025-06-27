@@ -214,6 +214,7 @@ const getKubernetesParameters = (formData) => ({
   config: {
     password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
     user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
+    custom_price: !formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL],
     cost_model: {}
   }
 });

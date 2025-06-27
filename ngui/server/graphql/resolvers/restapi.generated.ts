@@ -464,11 +464,13 @@ export type K8CostModelConfig = {
 export type K8sConfig = {
   __typename?: 'K8sConfig';
   cost_model?: Maybe<K8CostModelConfig>;
+  custom_price?: Maybe<Scalars['Boolean']['output']>;
   user?: Maybe<Scalars['String']['output']>;
 };
 
 export type K8sConfigInput = {
   cost_model?: InputMaybe<Scalars['JSONObject']['input']>;
+  custom_price?: InputMaybe<Scalars['Boolean']['input']>;
   password: Scalars['String']['input'];
   user: Scalars['String']['input'];
 };
@@ -1292,6 +1294,7 @@ export type K8CostModelConfigResolvers<ContextType = any, ParentType extends Res
 
 export type K8sConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['K8sConfig'] = ResolversParentTypes['K8sConfig']> = {
   cost_model?: Resolver<Maybe<ResolversTypes['K8CostModelConfig']>, ParentType, ContextType>;
+  custom_price?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
