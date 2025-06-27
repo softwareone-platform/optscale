@@ -4,7 +4,7 @@ import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localfor
 import {EStorageState} from "../utils/enums";
 import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
 
-test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
+test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
         test.use({storageState: EStorageState.liveDemoUser});
     }
@@ -22,7 +22,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         });
     });
 
-    test("Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
+    test("[230511] Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
         let possibleMonthlySavings: number;
         let cardTotalSavings: number;
         await recommendationsPage.selectCategory('All');
@@ -42,14 +42,14 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         });
     });
 
-    test('Verify that the RI/SP link works correctly', async ({recommendationsPage, riSpCoveragePage}) => {
+    test('[230512] Verify that the RI/SP link works correctly', async ({recommendationsPage, riSpCoveragePage}) => {
         await recommendationsPage.clickRI_SPCard();
         await expect(riSpCoveragePage.heading).toBeVisible();
     })
 
     // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
     // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
-    test("Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page", async ({
+    test("[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page", async ({
                                                                                                              recommendationsPage,
                                                                                                              s3DuplicateFinder
                                                                                                          }) => {
@@ -70,7 +70,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
             });
             return;
         }
-        await test.step('Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
+        await test.step('[230513] Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
             const possibleMonthlySavings = await recommendationsPage.getS3DuplicateFinderPossibleMonthlySavingsValue();
             await recommendationsPage.clickS3DuplicatesCard();
             const s3DuplicateFinderPageSavings = await s3DuplicateFinder.getSavingsFromTable();
@@ -81,7 +81,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         });
     });
 
-    test('Verify Search functionality works correctly', async ({recommendationsPage}) => {
+    test('[230514] Verify Search functionality works correctly', async ({recommendationsPage}) => {
         await recommendationsPage.selectCategory('All');
         await recommendationsPage.searchByName('Public');
 
@@ -99,7 +99,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         await recommendationsPage.allCardHeadings.last().waitFor();
     });
 
-    test("Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
+    test(" [230515] Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
             "Abandoned Amazon S3 buckets",
             "Abandoned images",
@@ -150,7 +150,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test("Verify all expected cards are present when Savings category selected", async ({recommendationsPage}) => {
+    test("[230518] Verify all expected cards are present when Savings category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
             "Abandoned Amazon S3 buckets",
             "Abandoned images",
@@ -197,7 +197,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test("Verify all expected cards are present when Security category selected", async ({recommendationsPage}) => {
+    test("[230519] Verify all expected cards are present when Security category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
             "IAM users with unused console access",
             "Inactive IAM users",
@@ -229,7 +229,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test('Verify all cards display critical icon when Critical category selected', async ({recommendationsPage}) => {
+    test('[230520] Verify all cards display critical icon when Critical category selected', async ({recommendationsPage}) => {
         await recommendationsPage.selectCategory('Critical');
         await recommendationsPage.allCardHeadings.last().waitFor();
         const count = await recommendationsPage.allCardHeadings.count();
@@ -255,7 +255,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         }
     });
 
-    test('Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({recommendationsPage}) => {
+    test('[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({recommendationsPage}) => {
         await recommendationsPage.selectCategory('Non-empty');
         await recommendationsPage.allCardHeadings.last().waitFor();
         const count = await recommendationsPage.allCardHeadings.count();
@@ -278,7 +278,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test('Verify filtering by data source works correctly', async ({recommendationsPage}) => {
+    test('[230523] Verify filtering by data source works correctly', async ({recommendationsPage}) => {
         await recommendationsPage.selectCategory('All');
         await recommendationsPage.selectApplicableService('RDS');
 
@@ -333,7 +333,7 @@ test.describe.only("Recommendations page tests", {tag: ["@ui", "@recommendations
     ];
 
     for (const cardName of cardEntries) {
-        test(`${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({recommendationsPage}) => {
+        test(`[230524] ${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({recommendationsPage}) => {
 
             // Find this card’s full metadata at runtime
             const allCardData = getCardSavingsData(recommendationsPage);

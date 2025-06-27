@@ -38,7 +38,7 @@ export abstract class BasePage {
      * @returns {Promise<void>} A promise that resolves when the option is selected.
      */
     async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
-        const currentValue = (await comboBox.locator('div').textContent())?.trim();
+        const currentValue = (await comboBox.locator('xpath=/div[1]').textContent())?.trim();
 
         if (currentValue === option) {
             console.log(`Option "${option}" is already selected. Skipping selection.`);
