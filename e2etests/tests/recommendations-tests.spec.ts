@@ -4,7 +4,7 @@ import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localfor
 import {EStorageState} from "../utils/enums";
 import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
 
-test.describe.only("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
+test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
         test.use({storageState: EStorageState.liveDemoUser});
     }
