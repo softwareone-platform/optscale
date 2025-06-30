@@ -9,14 +9,18 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
 LOG = logging.getLogger(__name__)
 
+DEFAULT_DEMO_ORG_LIFETIME = 168
+
 
 def main(config_cl):
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False)
     rest_cl.secret = config_cl.cluster_secret()
 
+    params = config_cl.read_branch('/demo_org_cleanup')
+
     _, response = rest_cl.organization_list({'is_demo': True})
     old_org_ts = int((datetime.now(tz=timezone.utc) - timedelta(
-        days=7)).timestamp())
+        hours=params.get("demo_org_lifetime", DEFAULT_DEMO_ORG_LIFETIME))).timestamp())
     for org in response['organizations']:
         if org['created_at'] > old_org_ts:
             continue
