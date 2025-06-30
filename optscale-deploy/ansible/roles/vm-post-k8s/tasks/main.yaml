@@ -1,0 +1,82 @@
+# TODO: integrate the following workflow:
+# rebuild only one image and re-deploy it to an already running cluster
+# roughly that would require:
+#   * ./build.sh --use-nerdctl <image_name> local
+#   * ./runkube.py [--with-elk] --update-only --no-pull -- {{ k8s_deployment_name }} local
+  
+---
+
+# TODO: Build them one by one, so that the progress is shown when runnign the playbook
+# TODO: Don't rebuild them if they have been already built
+#   use the following command to get the built images: nerdctl image ls --format '{{ .Repository }}'
+
+# TODO: if this command fails, it will fail silently and continue after which is fucked up
+#       to test this -- remove the environment section
+- name: build the container images (this will take awhile, be patient :))
+  command: "{{ optscale_dir }}/build.sh --use-nerdctl"
+  args:
+    chdir: "{{ optscale_dir }}"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
+
+- name: install the system packages to run the deployment  
+  apt:
+    name:
+      - python3-pip
+      - sshpass
+      - git
+      - python3-virtualenv
+      - python3
+      - python3-venv
+      - python3-dev
+    state: present
+    update_cache: yes
+  become: true
+
+- name: install the python dependancies for Optscale-deploy
+  pip:
+    requirements: "{{ optscale_deploy_dir }}/requirements.txt"
+    virtualenv: "{{ optscale_deploy_dir }}/.venv"
+
+# TODO: do this in a better way, see https://stackoverflow.com/questions/32994002/is-there-a-yaml-editing-module-for-ansible
+- name: change the cluster secret to a new random UUID
+  command:
+    argv:
+      - sed
+      - "s/^  cluster:.*$/  cluster: {{ new_cluster_secret }}/"
+      - -i
+      - "{{ user_template_overlay }}"
+
+# TODO: Add optional --with-elk flag
+- name: run the k8s cluster setup script
+  command:
+    argv:
+      - "{{ optscale_deploy_dir }}/.venv/bin/python"
+      - runkube.py
+      - --no-pull
+      - -o
+      - "{{ user_template_overlay }}"
+      - --
+      - "{{ k8s_deployment_name }}"
+      - local
+  args:
+    chdir: "{{ optscale_deploy_dir }}"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
+
+- name: get the Kubernetes cluster IP address
+  command:
+    argv:
+      - kubectl
+      - get
+      - services
+      - --no-headers
+      - --field-selector
+      - metadata.name=ngingress-nginx-ingress-controller
+      - -o
+      - custom-columns=ClusterIP:.spec.clusterIP
+  register: k8s_cluster_ip_result
+
+- name: print the Kubernetes cluster IP address
+  debug:
+    msg: "The k8s cluster has been deployed successfully and can be accessed at {{ k8s_cluster_ip_result.stdout }}"
