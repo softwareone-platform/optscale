@@ -3,7 +3,7 @@ import {EStorageState} from "../utils/enums";
 import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
 import {expect} from "@playwright/test";
 
-test.describe("[MPT-11020] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
+test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
         test.use({storageState: EStorageState.liveDemoUser});
     }
