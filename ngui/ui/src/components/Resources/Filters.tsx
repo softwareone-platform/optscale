@@ -11,7 +11,7 @@ import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { endOfDay, moveDateFromUTC, startOfDay } from "utils/datetime";
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
-import {MPT_SPACING_1} from "../../utils/layouts";
+import { MPT_SPACING_1 } from "../../utils/layouts";
 
 const getSelectionFilterProps = ({ config, onChange, appliedFilters, data }) => ({
   items: config.transformers.getItems(data),

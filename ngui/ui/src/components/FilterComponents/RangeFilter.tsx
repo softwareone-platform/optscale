@@ -31,7 +31,7 @@ type SelectionStateButtonProps = {
 const formatDate = (date: number) => format(date, EN_FORMAT);
 
 const SelectionStateButton = ({ appliedRange, label, selectionLabel, onClick, id, icon }: SelectionStateButtonProps) => {
-  const {classes} = useStyles();
+  const { classes } = useStyles();
   return (
     <Button
       aria-describedby={id}
