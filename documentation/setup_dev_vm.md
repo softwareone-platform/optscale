@@ -1,3 +1,5 @@
+<!-- TODO: Add more documentation and explanation, especially about the x86 and arm modes -->
+
 # Set up a virtual machine for development / testing of deployment
 
 ## Install Prerequisites
@@ -6,38 +8,30 @@
 ```sh
 brew install vagrant
 ```
-2. [Install `VirtualBox`](https://www.virtualbox.org/wiki/Downloads). On MacOS:
+2. Install `QEMU`. On MacOS:
 ```sh
-brew install virtualbox
+brew install qemu
 ```
-3. _If you're using MacOS on Apple Silicon_ [you may need to unset the following Virtualbox global setting](https://developer.hashicorp.com/vagrant/tutorials/get-started/setup-project#prerequisites):
+3. Install the `QEMU` plugin for `Vagrant`:
 ```sh
-VBoxManage setextradata global "VBoxInternal/Devices/pcbios/0/Config/DebugLevel"
+vagrant plugin install vagrant-qemu
 ```
 
 ## Set up the Virtual Machine
 
-Start the VM:
+Use the `vm` script in `optscale-deploy` to manage the VM. There are currently two VMs ready for use:
+`arm` and `x86`. Use whichever matches your machine's OS but the other one should also work via
+emulation (note that it will be _significantly slower_ though).
+
+To start the VM (and create if it doesn't already exist):
 
 ```sh
-vagrant up
+./vm arm start
 ```
 
 ## Deploy Optscale to the VM
 
-### Install the deployment's dependencies
 
 ```sh
-cd optscale-deploy
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-### Run the deployment
-
-Run the ansible deployment:
-
-```sh
-ansible-playbook --inventory-file ansible/inventory-vm.yaml ansible/k8s-master.yaml
+./vm arm playbook ansible/vm.yaml
 ```
