@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# TODO: Add support for VM snapshots
+
 set -euo pipefail
 
 # requirements:
@@ -42,7 +45,6 @@ fi
 
 command="$1"
 shift
-command_args="$@"
 
 if [[ "$vm_arch" == "x86" ]]; then
     vm_name="ubuntu-2404-x86-64"
@@ -63,19 +65,25 @@ function _venv_run {
 
 function vm_info {
     vm_state=$(vagrant status $vm_name --machine-readable | grep ',state,' | cut -d ',' -f '4' )
-    vm_qemu_id=$(cat ".vagrant/machines/$vm_name/qemu/id" 2> /dev/null)
-    vm_vagrant_id=$(cat ".vagrant/machines/$vm_name/qemu/index_uuid" 2> /dev/null)
-    vm_qemu_pid=$(cat ".vagrant/machines/$vm_name/qemu/$vm_qemu_id/qemu.pid" 2> /dev/null)
+    vm_qemu_id=$(cat ".vagrant/machines/$vm_name/qemu/id" 2> /dev/null || echo "")
+    vm_vagrant_id=$(cat ".vagrant/machines/$vm_name/qemu/index_uuid" 2> /dev/null || echo "")
 
-    if [[ -n "$vm_qemu_pid" ]]; then
-        vm_qemu_accelerator=$(ps -eo command \
-                              | grep "qemu-system-.*" \
-                              | grep -v "grep" \
-                              | sed 's/.*\-accel \([^ ]*\).*/\1/')
-    fi
+    # shellcheck disable=2009
+    vm_process_info=$(ps -eo pid,command \
+                      | grep "qemu-system-.*$vm_name" \
+                      | grep -v "grep" \
+                      || echo "")
+
+    
+    vm_qemu_pid=$(echo "$vm_process_info" | cut -d ' ' -f '1' || echo "")
+
+    # shellcheck disable=2001
+    vm_qemu_accelerator=$(echo "$vm_process_info" \
+                          | sed 's/.*\-accel \([^ ]*\).*/\1/' \
+                          || echo "")
     
     echo "Name:             ${vm_name}"
-    echo "State:            ${vm_state}"
+    echo "State:            ${vm_state:-unknown}"
     echo "QEMU Machine ID:  ${vm_qemu_id:-N/A}"
     echo "Vagrant ID:       ${vm_vagrant_id:-N/A}"
     echo "QEMU Process ID:  ${vm_qemu_pid:-N/A}"
@@ -89,7 +97,10 @@ function vm_start {
 function vm_stop {
     vagrant halt $vm_name
     
-    # After the vagrant halt often the VM is still running in the background. Thank you Vagrant >:(
+    # After the vagrant halt often the VM is still running in the background
+    # It should stop automatically eventually but if we don't wait for it and run another
+    # command on the same VM, it will lead to an error which is hard to debug. Thank you, Vagrant >:(
+    # shellcheck disable=2009
     while ps -eo command | grep "qemu-system-.*$vm_name" | grep -vq "grep"; do
         echo "$(date +%X) - Waiting until VM has stopped"
         sleep 1
@@ -98,7 +109,7 @@ function vm_stop {
 
 function vm_destroy {
     vm_stop
-    vagrant destroy --force --graceful $vm_name
+    vagrant destroy --force $vm_name
 }
 
 function vm_ssh {
@@ -117,8 +128,9 @@ function vm_ssh {
 
 function vm_run_ansible_playbook {
     local playbook="$1"
+    shift
     
-    if [[ -f "$playbook" ]]; then
+    if [[ -f "$playbook" && ("${playbook##*.}" == "yaml" || "${playbook##*.}" == "yml") ]]; then
         playbook_path="$playbook"
     elif [[ -f "$SCRIPT_DIR/ansible/$playbook" ]]; then
         playbook_path="$SCRIPT_DIR/ansible/$playbook"
@@ -133,11 +145,13 @@ function vm_run_ansible_playbook {
         exit 1
     fi
     
-    _venv_run ansible-playbook --inventory-file "$inventory_file" "$playbook_path"
+    # shellcheck disable=2068
+    _venv_run ansible-playbook --inventory-file "$inventory_file" "$playbook_path" $@
 }
 
 function vm_run_ansible_role {
     local role="$1"
+    shift
     
     if [[ -d "$role" ]]; then
         role_path="$role"
@@ -152,17 +166,19 @@ function vm_run_ansible_role {
         exit 1
     fi
     
-    _venv_run ansible \
+    # shellcheck disable=2068
+    _venv_run ansible all \
         --inventory-file "$inventory_file" \
         --module-name include_role \
-        --args "name=$role_path"
+        --args "name=$role_path" \
+        $@
 }
 
 if [[ "$command" == "info" ]]; then
     vm_info
-elif [[ "$command" == "up" ]]; then
+elif [[ "$command" == "jtart" || "$command" == "up" ]]; then
     vm_start
-elif [[ "$command" == "down" ]]; then
+elif [[ "$command" == "stop" || "$command" == "down" ]]; then
     vm_stop
 elif [[ "$command" == "destroy" ]]; then
     vm_destroy
@@ -175,9 +191,11 @@ elif [[ "$command" == "reset" ]]; then
 elif [[ "$command" == "ssh" ]]; then
     vm_ssh
 elif [[ "$command" == "playbook" ]]; then
-    vm_run_ansible_playbook "$command_args"
+    # shellcheck disable=2068
+    vm_run_ansible_playbook $@
 elif [[ "$command" == "role" ]]; then
-    vm_run_ansible_role "$command_args"
+    # shellcheck disable=2068
+    vm_run_ansible_role $@
 else
     echo "Error: Invalid command: $command"
     echo "$usage_str"
