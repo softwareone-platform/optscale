@@ -51,6 +51,9 @@ resource_violations:
 rest_api:
 risp_scheduler:
 risp_worker:
+# TODO: investigate this ghost image (use git history to see the deleted template in ./optscale/templates which caused an error in
+# deployment)
+# run_observer:
 slacker:
 slacker_executor:
 trapper_scheduler:
