@@ -13,7 +13,8 @@ demo_org_cleanup:
 diproxy:
 diworker:
 elk:
-error_pages:
+# TODO: re-enable me once i get this fucking thing working
+# error_pages:
 etcd:
 failed_imports_dataset_generator:
 filebeat:
