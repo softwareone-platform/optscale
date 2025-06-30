@@ -262,6 +262,7 @@ type K8CostModelConfig {
 type K8sConfig {
   cost_model: K8CostModelConfig
   user: String
+  custom_price: Boolean
 }
 
 type K8sDataSource implements DataSourceInterface {
@@ -371,6 +372,7 @@ input K8sConfigInput {
   password: String!
   user: String!
   cost_model: JSONObject
+  custom_price: Boolean
 }
 
 input DatabricksConfigInput {
