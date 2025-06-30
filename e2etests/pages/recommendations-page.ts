@@ -526,5 +526,46 @@ export class RecommendationsPage extends BasePage {
             }
         }
     }
+
+    /**
+     * Calculates the total sum of items from all "See All" buttons on the page.
+     * This method iterates through each "See All" button, evaluates its text content,
+     * and adds the corresponding item count to the total sum. If the button text is "see item",
+     * it adds 1 to the total sum. If the text matches the pattern "see all (\d+) items?",
+     * it extracts the numeric value and adds it to the total sum.
+     *
+     * @returns {Promise<number>} The total sum of items calculated from all "See All" buttons.
+     */
+    async getTotalSumOfItemsFromSeeItemsButtons(): Promise<number> {
+        let totalSum = 0;
+
+        await this.page.waitForLoadState('load');
+        await this.allSeeAllBtns.last().waitFor();
+
+        // Iterate over each "See All" button to calculate the total sum of items.
+        for (let i = 0; i < await this.allSeeAllBtns.count(); i++) {
+            const seeAllButton = this.allSeeAllBtns.nth(i);
+            const text = await seeAllButton.textContent();
+
+            // Ensure text is not null and normalize it.
+            if (text) {
+                const normalizedText = text.trim().toLowerCase();
+
+                // If the button text indicates a single item, add one to the total sum.
+                if (normalizedText === 'see item') {
+                    totalSum += 1;
+                    continue;
+                }
+
+                // Extract the number of items from the button text and add to the total sum.
+                const match = normalizedText.match(/see all (\d+) items?/);
+                if (match) {
+                    const itemCount = parseInt(match[1], 10);
+                    totalSum += itemCount;
+                }
+            }
+        }
+        return totalSum;
+    }
 }
 
