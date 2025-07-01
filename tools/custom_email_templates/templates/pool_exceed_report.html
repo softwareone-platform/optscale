@@ -1,18 +1,9 @@
-<!--section: organization-->
-<table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
-       role="presentation"
-       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
-    <tr>
-        <td class="pad" style="padding-bottom: 22px; ">
-            <div class="txtTinyMce-wrapper"
-                 style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.3">
-                <p style="margin: 0; font-size: 24px; text-align: left">{{texts.organization.name}}</p>
-                <p style="margin: 0; font-size: 16px; text-align: left">{{texts.organization.id}}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-<!-- /section: organization-->
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
 
 <table class="row row-3" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
@@ -75,7 +66,7 @@
                                              style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                             <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
                                                 Estimated monthly expenses
-                                                <strong>{{texts.organization.currency_code}}{{texts.total_forecast}}</strong>
+                                                <strong>{{texts.total_forecast|format_money(currency=texts.organization.currency_code)}}</strong>
                                             </p>
                                         </div>
                                     </div>
@@ -163,7 +154,7 @@
                             <tr>
                                 <td class="pad"
                                     style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 0px solid #333f53; border-left: 0px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
-                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                    <p style="font-size:16px; text-align: right; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
                                         <strong>Limit</strong>
                                     </p>
                                 </td>
@@ -178,7 +169,7 @@
                             <tr>
                                 <td class="pad"
                                     style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 0px solid #333f53; border-left: 0px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
-                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                    <p style="font-size:16px; margin: 0;  text-align: right; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
                                         <strong>Expenses up-to-date</strong>
                                     </p>
 
@@ -194,7 +185,7 @@
                             <tr>
                                 <td class="pad"
                                     style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; vertical-align: top; border-top: 0px; border-right: 0px;">
-                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                    <p style="font-size:16px; margin: 0; text-align: right; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
                                         <strong>Forecast expenses</strong>
                                     </p>
                                 </td>
@@ -210,7 +201,7 @@
 </table>
 
 <!-- Table content -->
-{{#texts.exceeded}}
+{% for exceeded in texts.exceeded %}
 <table class="row row-7" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -230,8 +221,8 @@
                                 <td class="pad"
                                     style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; ">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #000000;">
-                                        <a href="https://{{etcd.control_panel_link}}/pool-expenses/{{id}}{{texts.control_panel_parameters}}&filterBy=pool"
-                                           target="_blank" rel="noopener">{{pool_name}}</a>
+                                        <a href="https://{{etcd.control_panel_link}}/pool-expenses/{{exceeded.id}}{{texts.control_panel_parameters}}&filterBy=pool"
+                                           target="_blank" rel="noopener">{{exceeded.pool_name}}</a>
                                     </p>
                                 </td>
                             </tr>
@@ -244,9 +235,9 @@
                                style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
                             <tr>
                                 <td class="pad"
-                                    style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; ">
+                                    style="padding-right: 16px; padding-top: 15px; padding-bottom: 15px; text-align: right;">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #000000;">
-                                        {{texts.organization.currency_code}}{{limit}}
+                                        {{exceeded.limit|format_money(currency=texts.organization.currency_code)}}
                                     </p>
                                 </td>
                             </tr>
@@ -259,9 +250,9 @@
                                style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
                             <tr>
                                 <td class="pad"
-                                    style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 0px solid #e3e3e3;">
-                                    <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #000000;">
-                                        {{texts.organization.currency_code}}{{total_expenses}}
+                                    style="padding-right: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 0px solid #e3e3e3;">
+                                    <p style="margin: 0; text-align: right; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #000000;">
+                                        {{exceeded.total_expenses|format_money(currency=texts.organization.currency_code)}}
                                     </p>
                                 </td>
                             </tr>
@@ -274,9 +265,9 @@
                                style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
                             <tr>
                                 <td class="pad"
-                                    style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 0px solid #e3e3e3;">
+                                    style="padding-right: 16px; text-align: right; padding-top: 15px; padding-bottom: 15px; border-bottom: 0px solid #e3e3e3;">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #000000;">
-                                        {{texts.organization.currency_code}}{{forecast}}
+                                        {{exceeded.forecast|format_money(currency=texts.organization.currency_code)}}
                                     </p>
                                 </td>
                             </tr>
@@ -289,4 +280,5 @@
     </tr>
     </tbody>
 </table>
-{{/texts.exceeded}}
+{% endfor %}
+{% endblock %}
