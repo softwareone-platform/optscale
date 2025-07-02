@@ -7,6 +7,13 @@
 #   * ./runkube.py [--with-elk] --update-only --no-pull -- {{ k8s_deployment_name }} local
   
 ---
+# TODO: This is a hack, there must be a better solution
+- name: change the /optscale/influxdb permissions
+  file:
+    path: /optscale/influxdb
+    state: directory
+    mode: '1777'
+
 - name: install the system packages to run the deployment  
   apt:
     name:
