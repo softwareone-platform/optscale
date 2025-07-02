@@ -24,7 +24,6 @@ grafana:
 grafana_nginx:
 herald:
 herald_executor:
-# TODO: Add arm support to influxdb
 influxdb:
 insider_api:
 insider_scheduler:

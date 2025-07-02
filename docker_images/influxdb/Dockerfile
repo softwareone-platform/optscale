@@ -1,3 +1,3 @@
-FROM influxdb:1.3.1
+FROM influxdb:1.11
 
 COPY docker_images/influxdb/influxdb.conf /etc/influxdb/
