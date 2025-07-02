@@ -226,7 +226,6 @@ ngui:
     ganalytics_id:
     hotjar_id:
 
-# TODO: Add arm support to minio
 minio:
   name: &minio_name minio
   replicaCount: 1
