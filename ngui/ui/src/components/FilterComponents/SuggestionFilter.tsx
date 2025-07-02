@@ -4,6 +4,7 @@ import { Box, Button, Popover, Typography, Checkbox, FormControlLabel, FormGroup
 import Divider from "@mui/material/Divider";
 import { FormattedMessage } from "react-intl";
 import { isEmpty as isEmptyArray, isLastItem } from "utils/arrays";
+import useStyles from "./FilterComponents.styles";
 
 export type FilterItem = {
   value: string;
@@ -24,12 +25,21 @@ type SuggestionStateButtonProps = {
   label: ReactNode;
 };
 
-const SuggestionStateButton = ({ onClick, id, label }: SuggestionStateButtonProps) => (
-  <Button aria-describedby={id} variant="outlined" onClick={onClick} color="primary" startIcon={<LightbulbOutlinedIcon />}>
-    {label}
-  </Button>
-);
-
+const SuggestionStateButton = ({ onClick, id, label }: SuggestionStateButtonProps) => {
+  const { classes } = useStyles();
+  return (
+    <Button
+      aria-describedby={id}
+      variant="outlined"
+      onClick={onClick}
+      color="primary"
+      className={classes.selectButton}
+      startIcon={<LightbulbOutlinedIcon />}
+    >
+      {label}
+    </Button>
+  );
+};
 type SuggestionFilterProps = {
   suggestionGroups: SuggestionGroup[];
   label: ReactNode;
@@ -171,7 +181,17 @@ const SuggestionFilter = ({ suggestionGroups, label, onApplySuggestion, appliedF
               </Typography>
             )}
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, px: 2, py: 1, borderTop: 1, borderColor: "divider" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1,
+              px: 2,
+              py: 1,
+              borderTop: 1,
+              borderColor: "divider"
+            }}
+          >
             <Button onClick={handleCancel} variant="outlined">
               <FormattedMessage id="cancel" />
             </Button>
