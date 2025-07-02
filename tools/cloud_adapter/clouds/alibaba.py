@@ -39,15 +39,18 @@ from aliyunsdkecs.request.v20140526 import (
 )
 from aliyunsdkalb.request.v20200616 import (
     DescribeRegionsRequest as ALBRegionRequest,
-    ListLoadBalancersRequest as ALBListRequest
+    ListLoadBalancersRequest as ALBListRequest,
+    GetLoadBalancerAttributeRequest as ALBGetAttributeRequest,
 )
 from aliyunsdkgwlb.request.v20240415 import (
     DescribeRegionsRequest as GWLBRegionRequest,
-    ListLoadBalancersRequest as GWLBListRequest
+    ListLoadBalancersRequest as GWLBListRequest,
+    GetLoadBalancerAttributeRequest as GWLBGetAttributeRequest,
 )
 from aliyunsdknlb.request.v20220430 import (
     DescribeRegionsRequest as NLBRegionRequest,
-    ListLoadBalancersRequest as NLBListRequest
+    ListLoadBalancersRequest as NLBListRequest,
+    GetLoadBalancerAttributeRequest as NLBGetAttributeRequest,
 )
 from aliyunsdkslb.request.v20140515 import (
     DescribeRegionsRequest as CLBRegionRequest,
@@ -58,6 +61,10 @@ from aliyunsdkram.request.v20150501 import (
     ListPoliciesForUserRequest,
 )
 from aliyunsdkrds.endpoint import endpoint_data
+from aliyunsdkecs.request.v20140526 import (
+    DescribeSecurityGroupsRequest,
+    DescribeSecurityGroupAttributeRequest as DescribeSGAttrRequest
+)
 from aliyunsdkrds.request.v20140815 import (
     DescribeAvailableClassesRequest,
     DescribeDBInstancesRequest,
@@ -124,10 +131,13 @@ def handle_discovery_client_exc(discovery_func, *args, **kwargs):
 
 
 class LoadBalancerRequestTypes(enum.Enum):
-    alb = ALBListRequest.ListLoadBalancersRequest
-    gwlb = GWLBListRequest.ListLoadBalancersRequest
-    nlb = NLBListRequest.ListLoadBalancersRequest
-    clb = DescribeLoadBalancersRequest.DescribeLoadBalancersRequest
+    alb = (ALBListRequest.ListLoadBalancersRequest,
+           ALBGetAttributeRequest.GetLoadBalancerAttributeRequest)
+    gwlb = (GWLBListRequest.ListLoadBalancersRequest,
+            GWLBGetAttributeRequest.GetLoadBalancerAttributeRequest)
+    nlb = (NLBListRequest.ListLoadBalancersRequest,
+           NLBGetAttributeRequest.GetLoadBalancerAttributeRequest)
+    clb = (DescribeLoadBalancersRequest.DescribeLoadBalancersRequest, None)
 
 
 class Alibaba(CloudBase):
@@ -650,32 +660,41 @@ class Alibaba(CloudBase):
             yield image_resource
 
     def _discover_region_lbs(self, region_details, lb_type):
-        request = getattr(LoadBalancerRequestTypes, lb_type).value
-        request = request()
+        list_req, attr_request = getattr(LoadBalancerRequestTypes, lb_type).value
+        list_req = list_req()
         if lb_type != LoadBalancerRequestTypes.clb.name:
             response = handle_discovery_client_exc(
                 self._send_marker_paged_request,
-                request, paged_item='LoadBalancers',
+                list_req, paged_item='LoadBalancers',
                 region_id=region_details['RegionId'])
         else:
-            request.set_PageSize(100)
+            list_req.set_PageSize(100)
             response = handle_discovery_client_exc(
                 self._send_marker_paged_request,
-                request, paged_item='LoadBalancer',
+                list_req, paged_item='LoadBalancer',
                 nested_item='LoadBalancers',
                 region_id=region_details['RegionId'])
+        security_groups = []
         for lb in response:
+            lb_id = lb['LoadBalancerId']
+            if attr_request:
+                attr_request = attr_request()
+                attr_request.set_LoadBalancerId(lb_id)
+                attrs = handle_discovery_client_exc(
+                    self._send_request, attr_request,
+                    region_id=region_details['RegionId'])
+                security_groups = attrs.get('SecurityGroupIds', [])
             if 'Tags' in lb and isinstance(lb['Tags'], dict):
                 tags = self._extract_tags(lb)
             else:
                 tags = {x['Key']: x['Value'] for x in lb.get('Tags', [])}
             link = self._CLOUD_CONSOLE_LINKS[LoadBalancerResource].format(
-                id=lb['LoadBalancerId'], region_id=region_details['RegionId'],
+                id=lb_id, region_id=region_details['RegionId'],
                 lb_type=lb_type if lb_type != 'clb' else 'slb')
             category = lb.get(
                 'LoadBalancerType') if lb_type != 'clb' else 'Classic'
             lb_resource = LoadBalancerResource(
-                cloud_resource_id=lb['LoadBalancerId'],
+                cloud_resource_id=lb_id,
                 cloud_account_id=self.cloud_account_id,
                 cloud_console_link=link,
                 region=region_details['LocalName'],
@@ -683,7 +702,7 @@ class Alibaba(CloudBase):
                 tags=tags,
                 vpc_id=lb['VpcId'] if lb['VpcId'] else None,
                 category=category,
-                security_groups=lb.get('SecurityGroupIds', []),
+                security_groups=security_groups,
             )
             yield lb_resource
 
@@ -786,6 +805,19 @@ class Alibaba(CloudBase):
     def pod_discovery_calls(self):
         # Alibaba Cloud is not Kubernetes, there are no pods to discover
         return []
+
+    def discover_security_groups(self, region):
+        request = DescribeSecurityGroupsRequest.DescribeSecurityGroupsRequest()
+        return handle_discovery_client_exc(
+            self._send_paged_request, request,
+            paged_item='SecurityGroup',
+            region_id=region)
+
+    def describe_security_group(self, sg_id, region):
+        request = DescribeSGAttrRequest.DescribeSecurityGroupAttributeRequest()
+        request.set_SecurityGroupId(sg_id)
+        response = self._send_request(request, region)
+        return response
 
     def configure_report(self):
         now = datetime.now(tz=timezone.utc).replace(tzinfo=None)

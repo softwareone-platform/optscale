@@ -4,7 +4,8 @@ from collections import defaultdict
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase
 from bumiworker.bumiworker.modules.recommendations.insecure_security_groups import (
-    InsecureSecurityGroups as InsecureSecurityGroupsRecommendation
+    InsecureSecurityGroups as InsecureSecurityGroupsRecommendation,
+    SUPPORTED_RESOURCE_TYPES
 )
 
 
@@ -45,11 +46,12 @@ class InsecureSecurityGroups(ArchiveBase,
                 optimization)
             opt_instances_ids.add(optimization['resource_id'])
 
-        _, active_instances = self.rest_client.cloud_resources_discover(
-            self.organization_id, 'instance')
-
-        active_instances_map = {x['cloud_resource_id']: x
-                                for x in active_instances['data']}
+        active_resources_map = {}
+        for resource_type in SUPPORTED_RESOURCE_TYPES:
+            _, active_resources = self.rest_client.cloud_resources_discover(
+                self.organization_id, resource_type)
+            active_resources_map.update(
+                {x['cloud_resource_id']: x for x in active_resources['data']})
 
         result = []
         for cloud_account_id, optimizations_ in account_optimizations_map.items():
@@ -61,9 +63,9 @@ class InsecureSecurityGroups(ArchiveBase,
                 continue
 
             opt_instances = [
-                active_instances_map[x['cloud_resource_id']]
+                active_resources_map[x['cloud_resource_id']]
                 for x in optimizations_
-                if (x['cloud_resource_id'] in active_instances_map
+                if (x['cloud_resource_id'] in active_resources_map
                     and x['cloud_account_id'] == cloud_account_id)
             ]
             cloud_config = cloud_accounts_map[cloud_account_id]
@@ -83,7 +85,7 @@ class InsecureSecurityGroups(ArchiveBase,
                     'cloud_resource_id']].append(security_group_info)
             for optimization in optimizations_:
                 inst_cloud_res_id = optimization['cloud_resource_id']
-                if inst_cloud_res_id not in active_instances_map:
+                if inst_cloud_res_id not in active_resources_map:
                     self._set_reason_properties(
                         optimization, ArchiveReason.RESOURCE_DELETED)
                     result.append(optimization)
@@ -93,7 +95,7 @@ class InsecureSecurityGroups(ArchiveBase,
                 opt_sg_id = optimization['security_group_id']
                 curr_insecure_sg = [x for x in curr_sgs_list
                                     if x['security_group_id'] == opt_sg_id]
-                instance = active_instances_map[inst_cloud_res_id]
+                instance = active_resources_map[inst_cloud_res_id]
                 if not curr_insecure_sg and not self._is_in_instance_sgs(
                         instance, opt_sg_id, cloud_config['type']):
                     # security group is detached from instance
