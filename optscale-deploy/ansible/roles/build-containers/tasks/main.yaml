@@ -1,0 +1,22 @@
+# TODO: I think there is some duplication with the optscale playbook / role, e.g. ansible/roles/optscale-post/tasks/script_runner.yaml
+
+# TODO: integrate the following workflow:
+# rebuild only one image and re-deploy it to an already running cluster
+# roughly that would require:
+#   * ./build.sh --use-nerdctl <image_name> local
+#   * ./runkube.py [--with-elk] --update-only --no-pull -- {{ k8s_deployment_name }} local
+  
+---
+# TODO: Build them one by one, so that the progress is shown when runnign the playbook
+
+# TODO: Don't rebuild them if they have been already built
+#   use the following command to get the built images: nerdctl image ls --format '{{ .Repository }}'
+
+# TODO: if this command fails, it will fail silently and continue after which is fucked up
+#       to test this -- remove the environment section
+- name: build the container images (this will take awhile, be patient :))
+  command: "{{ optscale_dir }}/build.sh --use-nerdctl"
+  args:
+    chdir: "{{ optscale_dir }}"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
