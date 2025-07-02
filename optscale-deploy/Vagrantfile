@@ -47,7 +47,7 @@ def define_vm(config, name:, arch:, base_box:, ports:)
     vm_config.vagrant.plugins = "vagrant-qemu"
     
     vm_config.vm.provider "qemu" do |qemu|
-      qemu.memory = "4G"
+      qemu.memory = "6G"
       qemu.net_device = "virtio-net-pci"
       qemu.disk_resize = "64G"
 
@@ -85,6 +85,7 @@ def define_vm(config, name:, arch:, base_box:, ports:)
       elsif ARM_64_ARCHITECTURES.include?(arch)
         qemu.arch = "aarch64"
         qemu.machine = "virt,gic-version=3"
+        qemu.smp = "cores=4,threads=1"
       else
         raise RuntimeError, "Unsupported architecture: #{arch}"
       end
