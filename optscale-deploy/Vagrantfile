@@ -24,7 +24,7 @@ def setup_common_qemu_config!(qemu, guest_cpu_arch)
   qemu.arch = guest_cpu_arch
   qemu.memory = "4G"
   qemu.net_device = "virtio-net-pci"
-  qemu.disk_resize = "30G"
+  qemu.disk_resize = "64G"
 
   # default to OS install, but also support homebrew
   qemu.qemu_dir = if Dir.exist?("/usr/share/qemu") then "/usr/share/qemu" else "#{ENV["HOMEBREW_PREFIX"]}/share/qemu" end
@@ -146,7 +146,7 @@ def define_vm(config, name, arch, base_box, ports)
     vm_config.vm.provider "qemu" do |qemu|
       qemu.memory = "4G"
       qemu.net_device = "virtio-net-pci"
-      qemu.disk_resize = "30G"
+      qemu.disk_resize = "64G"
 
       # default to OS install, but also support homebrew
       if Dir.exist?("/usr/share/qemu") 

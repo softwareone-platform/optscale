@@ -108,6 +108,7 @@ function vm_stop {
 }
 
 function vm_destroy {
+    # TODO: When running destroy, we can disable graceful shutdown as it's not necessary and it can take a long time
     vm_stop
     vagrant destroy --force $vm_name
 }
@@ -176,7 +177,7 @@ function vm_run_ansible_role {
 
 if [[ "$command" == "info" ]]; then
     vm_info
-elif [[ "$command" == "jtart" || "$command" == "up" ]]; then
+elif [[ "$command" == "start" || "$command" == "up" ]]; then
     vm_start
 elif [[ "$command" == "stop" || "$command" == "down" ]]; then
     vm_stop
