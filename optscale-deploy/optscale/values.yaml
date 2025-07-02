@@ -232,6 +232,7 @@ ngui:
     on_initialize_organization_setup_mode:
     finops_in_practice_portal_overview:
 
+# TODO: Add arm support to minio
 minio:
   name: &minio_name minio
   replicaCount: 1
