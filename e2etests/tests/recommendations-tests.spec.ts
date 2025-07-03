@@ -93,7 +93,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-test.only('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
+test('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
 
                 await test.step('Verify applicable services combo box options shows expected items', async () => {
                     await recommendationsPage.applicableServices.click();

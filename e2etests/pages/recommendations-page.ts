@@ -76,8 +76,6 @@ export class RecommendationsPage extends BasePage {
     readonly gcpComputeEngine_Icon: Locator;
     readonly gcpCloudStorage_Icon: Locator;
 
-    readonly tableRDS_Icon: Locator;
-
     readonly recommendationsModal: Locator;
     readonly recommendationsModalCloseBtn: Locator;
     readonly modalColumn5: Locator;
@@ -206,31 +204,50 @@ export class RecommendationsPage extends BasePage {
         this.table = this.main.locator('table');
 
 
-
         // Data source icons
-        this.aliBabaECS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="ECS"]');
-        this.aliBabaECS_VPC_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="ECS::VPC"]');
-        this.aliBabaEBS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EBS"]');
-        this.aliBabaRDS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="RDS"]');
-        this.aliBabaSLB_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="SLB"]');
+        const brandConfigs = {
+            aliBaba: {color: '#f16a21'},
+            aws: {color: '#252f3e'},
+            azure: {className: 'a'},
+            gcp: {color: '#fbbc05'}
+        };
 
-        this.aws_IAM_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
-        this.aws_EC2_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2"]');
-        this.aws_EC2_EBS_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2::EBS"]');
-        this.aws_EC2_VPC_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2:VPC"]');
-        this.aws_RDS_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="RDS"]');
-        this.aws_Kinesis_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Kinesis"]');
-        this.aws_S3_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="S3"]');
+        const iconLocators = [
+            // AliBaba
+            {prop: 'aliBabaECS_Icon', label: 'ECS', brand: 'aliBaba'},
+            {prop: 'aliBabaECS_VPC_Icon', label: 'ECS::VPC', brand: 'aliBaba'},
+            {prop: 'aliBabaEBS_Icon', label: 'EBS', brand: 'aliBaba'},
+            {prop: 'aliBabaRDS_Icon', label: 'RDS', brand: 'aliBaba'},
+            {prop: 'aliBabaSLB_Icon', label: 'SLB', brand: 'aliBaba'},
+            // AWS
+            {prop: 'aws_IAM_Icon', label: 'IAM', brand: 'aws'},
+            {prop: 'aws_EC2_Icon', label: 'EC2', brand: 'aws'},
+            {prop: 'aws_EC2_EBS_Icon', label: 'EC2::EBS', brand: 'aws'},
+            {prop: 'aws_EC2_VPC_Icon', label: 'EC2:VPC', brand: 'aws'},
+            {prop: 'aws_RDS_Icon', label: 'RDS', brand: 'aws'},
+            {prop: 'aws_Kinesis_Icon', label: 'Kinesis', brand: 'aws'},
+            {prop: 'aws_S3_Icon', label: 'S3', brand: 'aws'},
+            // Azure
+            {prop: 'azureCompute_Icon', label: 'Compute', brand: 'azure'},
+            {prop: 'azureNetwork_Icon', label: 'Network', brand: 'azure'},
+            // GCP
+            {prop: 'gcpComputeEngine_Icon', label: 'Compute Engine', brand: 'gcp'},
+            {prop: 'gcpIAM_Icon', label: 'IAM', brand: 'gcp'},
+            {prop: 'gcpCloudStorage_Icon', label: 'Cloud Storage', brand: 'gcp'},
+        ];
 
-        this.azureCompute_Icon = this.page.locator('//*[local-name()="path" and contains(@class, "a")]/ancestor::*[name()="svg"]/following-sibling::span[normalize-space(.)="Compute"]');
-        this.azureNetwork_Icon = this.page.locator('//*[local-name()="path" and contains(@class, "a")]/ancestor::*[name()="svg"]/following-sibling::span[normalize-space(.)="Network"]');
-
-        this.gcpComputeEngine_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Compute Engine"]');
-        this.gcpIAM_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
-        this.gcpCloudStorage_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Cloud Storage"]');
-
-        this.tableRDS_Icon = this.table.locator('//td[5]//span[.="RDS"]');
-
+        for (const icon of iconLocators) {
+            const config = brandConfigs[icon.brand];
+            if (config.color) {
+                (this as any)[icon.prop] = this.page.locator(
+                    `//*[local-name()="path" and @fill="${config.color}"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="${icon.label}"]`
+                );
+            } else if (config.className) {
+                (this as any)[icon.prop] = this.page.locator(
+                    `//*[local-name()="path" and contains(@class, "${config.className}")]/ancestor::*[name()="svg"]/following-sibling::span[normalize-space(.)="${icon.label}"]`
+                );
+            }
+        }
 
         // Side modal locators
         this.recommendationsModal = this.page.getByTestId('smodal_recommendation');
@@ -250,64 +267,37 @@ export class RecommendationsPage extends BasePage {
         this.allCriticalIcon = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//*[@data-testid="CancelIcon"]');
         this.allSeeAllBtns = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.allNameTableButtons = this.table.locator('//td[1]//button');
-        this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.abandonedAmazonS3BucketsSeeAllBtn = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedAmazonS3BucketsTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Amazon S3 buckets")]/ancestor::td/following-sibling::td[3]');
-        this.abandonedImagesCardSavingsValue = this.main.locator('//h3[.="Abandoned images"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.abandonedImagesSeeAllBtn = this.main.locator('//h3[.="Abandoned images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedImagesTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned images")]/ancestor::td/following-sibling::td[3]');
-        this.abandonedInstancesCardSavingsValue = this.main.locator('//h3[.="Abandoned instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.abandonedInstancesSeeAllBtn = this.main.locator('//h3[.="Abandoned instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned instances")]/ancestor::td/following-sibling::td[3]');
-        this.abandonedKinesisStreamsCardSavingsValue = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.abandonedKinesisStreamsSeeAllBtn = this.main.locator('//h3[.="Abandoned Kinesis Streams"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedKinesisStreamsTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Kinesis Streams")]/ancestor::td/following-sibling::td[3]');
-        this.abandonedLoadBalancersCardSavingsValue = this.main.locator('//h3[.="Abandoned Load Balancers"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.abandonedLoadBalancersSeeAllBtn = this.main.locator('//h3[.="Abandoned Load Balancers"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.abandonedLoadBalancersTableSavingsValue = this.table.locator('//button[contains(text(), "Abandoned Load Balancers")]/ancestor::td/following-sibling::td[3]');
-        this.instancesEligibleForGenerationUpgradeCardSavingsValue = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.instancesEligibleForGenerationUpgradeSeeAllBtn = this.main.locator('//h3[.="Instances eligible for generation upgrade"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesEligibleForGenerationUpgradeTableSavingsValue = this.table.locator('//button[contains(text(), "Instances eligible for generation upgrade")]/ancestor::td/following-sibling::td[3]');
-        this.instancesForShutdownCardSavingsValue = this.main.locator('//h3[.="Instances for shutdown"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.instancesForShutdownSeeAllBtn = this.main.locator('//h3[.="Instances for shutdown"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesForShutdownTableSavingsValue = this.table.locator('//button[contains(text(), "Instances for shutdown")]/ancestor::td/following-sibling::td[3]');
-        this.instancesWithMigrationOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with migration opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.instancesWithMigrationOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with migration opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithMigrationOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with migration opportunities")]/ancestor::td/following-sibling::td[3]');
-        this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Spot (Preemptible) opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with Spot (Preemptible) opportunities")]/ancestor::td/following-sibling::td[3]');
-        this.instancesWithSubscriptionOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Instances with Subscription opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.instancesWithSubscriptionOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Instances with Subscription opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.instancesWithSubscriptionOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Instances with Subscription opportunities")]/ancestor::td/following-sibling::td[3]');
-        this.notAttachedVolumesCardSavingsValue = this.main.locator('//h3[.="Not attached Volumes"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.notAttachedVolumesSeeAllBtn = this.main.locator('//h3[.="Not attached Volumes"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.notAttachedVolumesTableSavingsValue = this.table.locator('//button[contains(text(), "Not attached Volumes")]/ancestor::td/following-sibling::td[3]');
-        this.notDeallocatedInstancesCardSavingsValue = this.main.locator('//h3[.="Not deallocated Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.notDeallocatedInstancesSeeAllBtn = this.main.locator('//h3[.="Not deallocated Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.notDeallocatedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Not deallocated Instances")]/ancestor::td/following-sibling::td[3]');
-        this.obsoleteImagesCardSavingsValue = this.main.locator('//h3[.="Obsolete images"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.obsoleteImagesSeeAllBtn = this.main.locator('//h3[.="Obsolete images"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteImagesTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete images")]/ancestor::td/following-sibling::td[3]');
-        this.obsoleteIPsCardSavingsValue = this.main.locator('//h3[.="Obsolete IPs"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.obsoleteIPsSeeAllBtn = this.main.locator('//h3[.="Obsolete IPs"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteIPsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete IPs")]/ancestor::td/following-sibling::td[3]');
-        this.obsoleteSnapshotChainsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshot chains"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.obsoleteSnapshotChainsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshot chains"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteSnapshotChainsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete snapshot chains")]/ancestor::td/following-sibling::td[3]');
-        this.obsoleteSnapshotsCardSavingsValue = this.main.locator('//h3[.="Obsolete snapshots"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.obsoleteSnapshotsSeeAllBtn = this.main.locator('//h3[.="Obsolete snapshots"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.obsoleteSnapshotsTableSavingsValue = this.table.locator('//button[contains(text(), "Obsolete snapshots")]/ancestor::td/following-sibling::td[3]');
-        this.reservedInstancesOpportunitiesCardSavingsValue = this.main.locator('//h3[.="Reserved instances opportunities"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.reservedInstancesOpportunitiesSeeAllBtn = this.main.locator('//h3[.="Reserved instances opportunities"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.reservedInstancesOpportunitiesTableSavingsValue = this.table.locator('//button[contains(text(), "Reserved instances opportunities")]/ancestor::td/following-sibling::td[3]');
-        this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.underutilizedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized instances")]/ancestor::td/following-sibling::td[3]');
-        this.underutilizedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.underutilizedRDSInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.underutilizedRDSInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized RDS Instances")]/ancestor::td/following-sibling::td[3]');
+        // In the constructor, after super(page, '/recommendations');
+        const cardLocators = {
+            abandonedAmazonS3Buckets: 'Abandoned Amazon S3 buckets',
+            abandonedImages: 'Abandoned images',
+            abandonedInstances: 'Abandoned instances',
+            abandonedKinesisStreams: 'Abandoned Kinesis Streams',
+            abandonedLoadBalancers: 'Abandoned Load Balancers',
+            instancesEligibleForGenerationUpgrade: 'Instances eligible for generation upgrade',
+            instancesForShutdown: 'Instances for shutdown',
+            instancesWithMigrationOpportunities: 'Instances with migration opportunities',
+            instancesWithSpotPreemptibleOpportunities: 'Instances with Spot (Preemptible) opportunities',
+            instancesWithSubscriptionOpportunities: 'Instances with Subscription opportunities',
+            notAttachedVolumes: 'Not attached Volumes',
+            notDeallocatedInstances: 'Not deallocated Instances',
+            obsoleteImages: 'Obsolete images',
+            obsoleteIPs: 'Obsolete IPs',
+            obsoleteSnapshotChains: 'Obsolete snapshot chains',
+            obsoleteSnapshots: 'Obsolete snapshots',
+            reservedInstancesOpportunities: 'Reserved instances opportunities',
+            underutilizedInstances: 'Underutilized instances',
+            underutilizedRDSInstances: 'Underutilized RDS Instances'
+        };
 
+        for (const [key, label] of Object.entries(cardLocators)) {
+            // Card savings value
+            (this as any)[`${key}CardSavingsValue`] = this.cardsGrid.locator(`//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`);
+            // See all button
+            (this as any)[`${key}SeeAllBtn`] = this.cardsGrid.locator(`//h3[.="${label}"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]`);
+            // Table savings value
+            (this as any)[`${key}TableSavingsValue`] = this.table.locator(`//button[contains(text(), "${label}")]/ancestor::td/following-sibling::td[3]`);
+        }
         this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
     }
 
