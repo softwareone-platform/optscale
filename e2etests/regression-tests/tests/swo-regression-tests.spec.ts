@@ -77,8 +77,6 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
       await roundElementDimensions(recommendationsPage.possibleMonthlySavingsDiv);
       await roundElementDimensions(recommendationsPage.firstCard);
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
-      await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
-      await expect(recommendationsPage.firstCard).toHaveScreenshot('Recommendations-cards-first-card-screenshot.png');
     });
 
     await test.step('Page view table', async () => {
@@ -336,7 +334,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
 
     await test.step('Create anomaly page', async () => {
       await anomaliesPage.clickAddBtn();
-      await anomaliesCreatePage.withoutTagFilter.waitFor();
+      await anomaliesPage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
       await anomaliesPage.screenshotUpdateDelay();
       await roundElementDimensions(anomaliesCreatePage.main);
       await expect(anomaliesCreatePage.main).toHaveScreenshot('Anomalies-create-screenshot.png');
@@ -363,7 +361,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
     await test.step('Create policy page', async () => {
       await policiesPage.clickAddBtn();
       await policiesCreatePage.heading.hover();
-      await policiesCreatePage.withoutTagFilter.waitFor();
+      await policiesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
       await policiesPage.screenshotUpdateDelay();
       await roundElementDimensions(policiesCreatePage.main);
       await expect(policiesCreatePage.main).toHaveScreenshot('Policies-create-screenshot.png');
@@ -392,7 +390,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
 
     await test.step('Create tagging policy page', async () => {
       await taggingPoliciesPage.clickAddBtn();
-      await taggingPoliciesCreatePage.k8ServiceFilter.waitFor();
+      await taggingPoliciesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
       await taggingPoliciesCreatePage.heading.hover();
       await taggingPoliciesPage.screenshotUpdateDelay();
       await roundElementDimensions(taggingPoliciesCreatePage.main);

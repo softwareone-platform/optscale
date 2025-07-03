@@ -53,9 +53,9 @@ import {BasePage} from "./base-page";
             this.configureClusterTypesBtn = this.main.getByRole('button', {name: 'Configure cluster types'});
             this.totalExpensesValue = this.main.getByTestId('p_expenses_value');
             this.resourceCountValue = this.main.getByTestId('p_count_value');
-            this.expensesBtn = this.main.getByTestId('breakdown_ls_item_expenses');
-            this.resourceCountBtn = this.main.getByTestId('breakdown_ls_item_resource_count');
-            this.tagsBtn = this.main.getByTestId('breakdown_ls_item_tags');
+            this.expensesBtn = this.main.getByTestId('tab_expenses');
+            this.resourceCountBtn = this.main.getByTestId('tab_counts');
+            this.tagsBtn = this.main.getByTestId('tab_tags');
             this.selectedDateText = this.main.getByTestId('text_selected_dates');
             this.selectDateBtn = this.main.getByTestId('btn_select_date');
             this.previousMonthSelect = this.main.getByTestId('selector_previous_month');
@@ -100,9 +100,7 @@ import {BasePage} from "./base-page";
          * @returns {Promise<void>}
          */
         async clickCardsExpensesIfNotActive(): Promise<void> {
-            if (!await this.evaluateActiveButton(this.expensesBtn)) {
                 await this.expensesBtn.click();
-            }
         }
 
         /**

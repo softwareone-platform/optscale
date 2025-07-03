@@ -33,6 +33,7 @@ const SuggestionStateButton = ({ onClick, id, label }: SuggestionStateButtonProp
       variant="outlined"
       onClick={onClick}
       color="primary"
+      data-testid="btn_suggestion_filter"
       className={classes.selectButton}
       startIcon={<LightbulbOutlinedIcon />}
     >
