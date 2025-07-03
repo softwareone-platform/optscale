@@ -50,9 +50,9 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
     // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
     // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
     test("[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page", async ({
-                                                                                                             recommendationsPage,
-                                                                                                             s3DuplicateFinder
-                                                                                                         }) => {
+                                                                                                                      recommendationsPage,
+                                                                                                                      s3DuplicateFinder
+                                                                                                                  }) => {
         let captionText: string;
         await test.step('Determine whether duplicate check run is completed', async () => {
             captionText = await recommendationsPage.s3DuplicatesCaption.textContent();
@@ -93,73 +93,102 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-test('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
+    test('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
 
-                await test.step('Verify applicable services combo box options shows expected items', async () => {
-                    await recommendationsPage.applicableServices.click();
-                    const expectedVisibleServices = [
-                        recommendationsPage.liAwsIAM,
-                        recommendationsPage.liAwsEC2,
-                        recommendationsPage.liAwsEC2EBS,
-                        recommendationsPage.liAwsEC2VPC,
-                        recommendationsPage.liAwsRDS,
-                        recommendationsPage.liAwsS3,
-                        recommendationsPage.liAwsKinesis,
-                        recommendationsPage.liAzureCompute,
-                        recommendationsPage.liAzureNetwork,
-                        recommendationsPage.liGcpIAM,
-                        recommendationsPage.liGcpCloudStorage
-                    ];
-                    const expectedHiddenServices = [
-                        recommendationsPage.liAliBabaECS,
-                        recommendationsPage.liAliBabaVPC,
-                        recommendationsPage.liAliBabaEBS,
-                        recommendationsPage.liAliBabaSLB
-                    ];
+        await test.step('Verify applicable services combo box options shows expected items', async () => {
+            await recommendationsPage.applicableServices.click();
+            const expectedVisibleServices = [
+                recommendationsPage.liAwsIAM,
+                recommendationsPage.liAwsEC2,
+                recommendationsPage.liAwsEC2EBS,
+                recommendationsPage.liAwsEC2VPC,
+                recommendationsPage.liAwsRDS,
+                recommendationsPage.liAwsS3,
+                recommendationsPage.liAwsKinesis,
+                recommendationsPage.liAzureCompute,
+                recommendationsPage.liAzureNetwork,
+                recommendationsPage.liGcpIAM,
+                recommendationsPage.liGcpCloudStorage
+            ];
+            const expectedHiddenServices = [
+                recommendationsPage.liAliBabaECS,
+                recommendationsPage.liAliBabaVPC,
+                recommendationsPage.liAliBabaEBS,
+                recommendationsPage.liAliBabaSLB
+            ];
 
-                    for (const service of expectedVisibleServices) {
-                        await expect(service).toBeVisible();
-                    }
-                    for (const service of expectedHiddenServices) {
-                        await expect(service).not.toBeVisible();
-                    }
-                });
+            for (const service of expectedVisibleServices) {
+                await expect(service).toBeVisible();
+            }
+            for (const service of expectedHiddenServices) {
+                await expect(service).not.toBeVisible();
+            }
+        });
 
-                await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
-                    await recommendationsPage.liAll.click();
-                    await recommendationsPage.allCardHeadings.last().waitFor();
-                    const aliBabaIcons = [
-                        recommendationsPage.aliBabaEBS_Icon,
-                        recommendationsPage.aliBabaECS_Icon,
-                        recommendationsPage.aliBabaSLB_Icon,
-                        recommendationsPage.aliBabaECS_VPC_Icon,
-                        recommendationsPage.aliBabaRDS_Icon
-                    ];
+        await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
+            await recommendationsPage.liAll.click();
+            await recommendationsPage.allCardHeadings.last().waitFor();
+            const aliBabaIcons = [
+                recommendationsPage.aliBabaEBS_Icon,
+                recommendationsPage.aliBabaECS_Icon,
+                recommendationsPage.aliBabaSLB_Icon,
+                recommendationsPage.aliBabaECS_VPC_Icon,
+                recommendationsPage.aliBabaRDS_Icon
+            ];
 
-                    for (const icon of aliBabaIcons) {
-                        await expect(icon).not.toBeVisible();
-                    }
-                });
+            for (const icon of aliBabaIcons) {
+                await expect(icon).not.toBeVisible();
+            }
+        });
 
-                await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
-                    await recommendationsPage.clickTableButton();
-                    await recommendationsPage.allNameTableButtons.last().waitFor();
-                    const cells = await recommendationsPage.applicableServicesColumn.all();
+        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+            await recommendationsPage.clickTableButton();
+            await recommendationsPage.allNameTableButtons.last().waitFor();
+            const cells = await recommendationsPage.applicableServicesColumn.all();
 
-                    for (const cell of cells) {
-                        const aliBabaIcons = [
-                            recommendationsPage.aliBabaEBS_Icon,
-                            recommendationsPage.aliBabaECS_Icon,
-                            recommendationsPage.aliBabaSLB_Icon,
-                            recommendationsPage.aliBabaECS_VPC_Icon,
-                            recommendationsPage.aliBabaRDS_Icon
-                        ];
-                        for (const icon of aliBabaIcons) {
-                            await expect(cell.locator(icon)).not.toBeVisible();
-                        }
-                    }
-                });
-            });
+            for (const cell of cells) {
+                const aliBabaIcons = [
+                    recommendationsPage.aliBabaEBS_Icon,
+                    recommendationsPage.aliBabaECS_Icon,
+                    recommendationsPage.aliBabaSLB_Icon,
+                    recommendationsPage.aliBabaECS_VPC_Icon,
+                    recommendationsPage.aliBabaRDS_Icon
+                ];
+                for (const icon of aliBabaIcons) {
+                    await expect(cell.locator(icon)).not.toBeVisible();
+                }
+            }
+        });
+    });
+
+    const verifyCardsAndTable = async (
+        recommendationsPage: any,
+        category: string,
+        expectedCardHeadings: string[]
+    ) => {
+        await recommendationsPage.selectCategory(category);
+        await recommendationsPage.allCardHeadings.last().waitFor();
+
+        const count = await recommendationsPage.allCardHeadings.count();
+        console.log(`Number of <h3> headings found for ${category}:`, count);
+
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+
+        const expectedSorted = [...expectedCardHeadings].sort();
+        const actualSorted = actualHeadings.map((t: string) => t.trim()).sort();
+
+        expect(actualSorted).toEqual(expectedSorted);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
+        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    };
 
     test(" [230515] Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
@@ -187,29 +216,7 @@ test('Verify only the correct applicable services are displayed', async ({recomm
             "Underutilized instances",
             "Underutilized RDS Instances"
         ];
-
-        await recommendationsPage.selectCategory('All');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect.soft(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'All', expectedCardHeadings);
     });
 
     test("[230518] Verify all expected cards are present when Savings category selected", async ({recommendationsPage}) => {
@@ -234,29 +241,7 @@ test('Verify only the correct applicable services are displayed', async ({recomm
             "Underutilized instances",
             "Underutilized RDS Instances"
         ];
-
-        await recommendationsPage.selectCategory('Savings');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'Savings', expectedCardHeadings);
     });
 
     test("[230519] Verify all expected cards are present when Security category selected", async ({recommendationsPage}) => {
@@ -266,29 +251,7 @@ test('Verify only the correct applicable services are displayed', async ({recomm
             "Instances with insecure Security Groups settings",
             "Public S3 buckets"
         ];
-
-        await recommendationsPage.selectCategory('Security');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
     });
 
     test('[230520] Verify all cards display critical icon when Critical category selected', async ({recommendationsPage}) => {
@@ -307,8 +270,8 @@ test('Verify only the correct applicable services are displayed', async ({recomm
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
         const allStatuses = await recommendationsPage.statusColumn.allTextContents();
@@ -334,8 +297,8 @@ test('Verify only the correct applicable services are displayed', async ({recomm
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
@@ -361,8 +324,8 @@ test('Verify only the correct applicable services are displayed', async ({recomm
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
 
