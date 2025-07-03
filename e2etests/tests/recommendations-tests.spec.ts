@@ -93,11 +93,73 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-    // TODO Unable to complete test for unsupported data sources as unable to access the Optscale site to create locators for Alibaba, etc.
-    test.fixme('Verify unsupported data sources are not displayed', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-    });
+test.only('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
+
+                await test.step('Verify applicable services combo box options shows expected items', async () => {
+                    await recommendationsPage.applicableServices.click();
+                    const expectedVisibleServices = [
+                        recommendationsPage.liAwsIAM,
+                        recommendationsPage.liAwsEC2,
+                        recommendationsPage.liAwsEC2EBS,
+                        recommendationsPage.liAwsEC2VPC,
+                        recommendationsPage.liAwsRDS,
+                        recommendationsPage.liAwsS3,
+                        recommendationsPage.liAwsKinesis,
+                        recommendationsPage.liAzureCompute,
+                        recommendationsPage.liAzureNetwork,
+                        recommendationsPage.liGcpIAM,
+                        recommendationsPage.liGcpCloudStorage
+                    ];
+                    const expectedHiddenServices = [
+                        recommendationsPage.liAliBabaECS,
+                        recommendationsPage.liAliBabaVPC,
+                        recommendationsPage.liAliBabaEBS,
+                        recommendationsPage.liAliBabaSLB
+                    ];
+
+                    for (const service of expectedVisibleServices) {
+                        await expect(service).toBeVisible();
+                    }
+                    for (const service of expectedHiddenServices) {
+                        await expect(service).not.toBeVisible();
+                    }
+                });
+
+                await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
+                    await recommendationsPage.liAll.click();
+                    await recommendationsPage.allCardHeadings.last().waitFor();
+                    const aliBabaIcons = [
+                        recommendationsPage.aliBabaEBS_Icon,
+                        recommendationsPage.aliBabaECS_Icon,
+                        recommendationsPage.aliBabaSLB_Icon,
+                        recommendationsPage.aliBabaECS_VPC_Icon,
+                        recommendationsPage.aliBabaRDS_Icon
+                    ];
+
+                    for (const icon of aliBabaIcons) {
+                        await expect(icon).not.toBeVisible();
+                    }
+                });
+
+                await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+                    await recommendationsPage.clickTableButton();
+                    await recommendationsPage.allNameTableButtons.last().waitFor();
+                    const cells = await recommendationsPage.applicableServicesColumn.all();
+
+                    for (const cell of cells) {
+                        const aliBabaIcons = [
+                            recommendationsPage.aliBabaEBS_Icon,
+                            recommendationsPage.aliBabaECS_Icon,
+                            recommendationsPage.aliBabaSLB_Icon,
+                            recommendationsPage.aliBabaECS_VPC_Icon,
+                            recommendationsPage.aliBabaRDS_Icon
+                        ];
+                        for (const icon of aliBabaIcons) {
+                            await expect(cell.locator(icon)).not.toBeVisible();
+                        }
+                    }
+                });
+            });
 
     test(" [230515] Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
@@ -278,7 +340,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test('[230523] Verify filtering by data source works correctly', async ({recommendationsPage}) => {
+    test('[230523] Verify filtering by applicable service works correctly', async ({recommendationsPage}) => {
         await recommendationsPage.selectCategory('All');
         await recommendationsPage.selectApplicableService('RDS');
 
@@ -288,8 +350,9 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         console.log("Actual heading texts:", actualHeadings);
         console.log("Number of <h3> headings found:", count);
 
-        await recommendationsPage.cardRDS_Icon.nth(count - 1).waitFor();
-        const rdsCount = await recommendationsPage.cardRDS_Icon.count();
+        const awsRDSIconsInGrid = recommendationsPage.cardsGrid.locator(recommendationsPage.aws_RDS_Icon);
+        await awsRDSIconsInGrid.nth(count - 1).waitFor();
+        const rdsCount = await awsRDSIconsInGrid.count();
         console.log(`Number of RDS cards found: ${rdsCount}`);
         expect(rdsCount).toBe(count);
 
@@ -305,7 +368,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
 
         const cells = await recommendationsPage.applicableServicesColumn.all();
         for (const cell of cells) {
-            const icon = cell.locator('//span[.="RDS"]');
+            const icon = cell.locator(recommendationsPage.aws_RDS_Icon);
             await expect(icon).toBeVisible();
         }
     });

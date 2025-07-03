@@ -30,6 +30,20 @@ export abstract class BasePage {
         await this.page.goto(customUrl ? customUrl : this.url, {waitUntil: "load"});
     }
 
+  /**
+     * Retrieves a locator for an element based on a test ID attribute.
+     * This method searches for elements with either `data-test-id` or `data-testid` attributes
+     * matching the provided test ID value.
+     *
+     * @param {string} testId - The test ID value to search for.
+     * @param {Locator | Page} [root=this.page] - The root element or page to perform the search within.
+     * Defaults to the current Playwright page.
+     * @returns {Locator} A Playwright locator for the matching element(s).
+     */
+    getByAnyTestId(testId: string, root: Locator | Page = this.page): Locator {
+        return root.locator(`[data-test-id="${testId}"], [data-testid="${testId}"]`);
+    }
+
     /**
      * Selects an option from a combo box if it is not already selected.
      * @param {Locator} comboBox - The locator for the combo box element.
@@ -37,20 +51,13 @@ export abstract class BasePage {
      * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
      * @returns {Promise<void>} A promise that resolves when the option is selected.
      */
-    async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
-        const currentValue = await this.selectedComboBoxOption(comboBox);
-
-        if (currentValue === option) {
-            console.log(`Option "${option}" is already selected. Skipping selection.`);
-            return;
+async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
+            if (await this.selectedComboBoxOption(comboBox) !== option) {
+                await comboBox.click();
+                await this.page.getByRole('option', {name: option, exact: true}).click();
+                if (closeList) await this.page.locator('body').click();
+            }
         }
-
-        await comboBox.click();
-        await this.page.getByRole('option', {name: option, exact: true}).click();
-        if (closeList) {
-            await this.page.locator('body').click();
-        }
-    }
 
     /**
      * Retrieves the currently selected option from a combo box.
@@ -85,40 +92,29 @@ export abstract class BasePage {
      * This method is useful to ensure that a canvas has finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.
      */
-    async waitForCanvas(): Promise<void> {
-        await this.page.waitForFunction(() => {
-            const canvases = document.querySelectorAll('canvas');
-            if (!canvases.length) return false;
-
-            return Array.from(canvases).some(canvas => {
-                const ctx = canvas.getContext('2d', {willReadFrequently: true});
-                if (!ctx) return false;
-
-                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                return data.some(pixel => pixel !== 0);
-            });
+async waitForCanvas(): Promise<void> {
+    await this.page.waitForFunction(() => {
+        const canvases = document.querySelectorAll('canvas');
+        return Array.from(canvases).some(canvas => {
+            const ctx = canvas.getContext('2d', {willReadFrequently: true});
+            return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
         });
-    }
+    });
+}
 
     /**
      * Waits for all canvas elements on the page to have non-zero pixel data.
      * This method ensures that all canvases have finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.
      */
-    async waitForAllCanvases(): Promise<void> {
-        await this.page.waitForFunction(() => {
-            const canvases = document.querySelectorAll('canvas');
-            if (!canvases.length) return false;
-
-            return Array.from(canvases).every(canvas => {
-                const ctx = canvas.getContext('2d', {willReadFrequently: true});
-                if (!ctx) return false;
-
-                const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                return data.some(pixel => pixel !== 0);
-            });
-        });
-    }
+async waitForAllCanvases(): Promise<void> {
+                    await this.page.waitForFunction(() => {
+                        return Array.from(document.querySelectorAll('canvas')).every(canvas => {
+                            const ctx = canvas.getContext('2d', {willReadFrequently: true});
+                            return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+                        });
+                    });
+                }
 
     /**
      * Waits for the text content of an element to include the expected text.

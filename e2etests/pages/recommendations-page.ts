@@ -28,24 +28,55 @@ export class RecommendationsPage extends BasePage {
     readonly s3DuplicatesValue: Locator;
     readonly s3DuplicatesPossibleMonthlySavingsValue: Locator;
     readonly categoriesSelect: Locator;
+
+    // Combo box locators for applicable services
     readonly applicableServices: Locator;
+    readonly liAll: Locator;
+    readonly liAliBabaECS: Locator;
+    readonly liAliBabaVPC: Locator;
+    readonly liAliBabaEBS: Locator;
+    readonly liAliBabaSLB: Locator;
+    readonly liAwsIAM: Locator;
+    readonly liAwsEC2: Locator;
+    readonly liAwsEC2EBS: Locator;
+    readonly liAwsEC2VPC: Locator;
+    readonly liAwsRDS: Locator;
+    readonly liAwsKinesis: Locator;
+    readonly liAwsS3: Locator;
+    readonly liAzureCompute: Locator;
+    readonly liAzureNetwork: Locator;
+    readonly liGcpComputeEngine: Locator;
+    readonly liGcpIAM: Locator;
+    readonly liGcpCloudStorage: Locator;
+
     readonly cardsBtn: Locator;
     readonly tableBtn: Locator;
     readonly searchInput: Locator;
-    readonly cardDiv: Locator;
+    readonly cardsGrid: Locator;
     readonly firstCard: Locator;
 
-    readonly cardRDS_Icon: Locator;
-    readonly tableRDS_Icon: Locator;
-    // readonly computeSpan: Locator;
-    readonly cardAWS_IAM_Icon: Locator;
-    // readonly ec2Span: Locator;
-    // readonly ec2_ebsSpan: Locator;
-    // readonly ec2_vpcSpan: Locator;
-    // readonly kinesisSpan: Locator;
-    // readonly s3Span: Locator;
-    readonly cardGoogleIAM_Icon: Locator;
+    readonly aliBabaECS_Icon: Locator;
+    readonly aliBabaECS_VPC_Icon: Locator;
+    readonly aliBabaEBS_Icon: Locator;
+    readonly aliBabaRDS_Icon: Locator;
+    readonly aliBabaSLB_Icon: Locator;
 
+    readonly aws_IAM_Icon: Locator;
+    readonly aws_EC2_Icon: Locator;
+    readonly aws_EC2_EBS_Icon: Locator;
+    readonly aws_EC2_VPC_Icon: Locator;
+    readonly aws_RDS_Icon: Locator;
+    readonly aws_Kinesis_Icon: Locator;
+    readonly aws_S3_Icon: Locator;
+
+    readonly azureCompute_Icon: Locator;
+    readonly azureNetwork_Icon: Locator;
+
+    readonly gcpIAM_Icon: Locator;
+    readonly gcpComputeEngine_Icon: Locator;
+    readonly gcpCloudStorage_Icon: Locator;
+
+    readonly tableRDS_Icon: Locator;
 
     readonly recommendationsModal: Locator;
     readonly recommendationsModalCloseBtn: Locator;
@@ -119,9 +150,9 @@ export class RecommendationsPage extends BasePage {
     readonly underutilizedInstancesCardSavingsValue: Locator;
     readonly underutilizedInstancesSeeAllBtn: Locator;
     readonly underutilizedInstancesTableSavingsValue: Locator;
-    readonly underutilzedRDSInstancesCardSavingsValue: Locator;
-    readonly underutilzedRDSInstancesSeeAllBtn: Locator;
-    readonly underutilzedRDSInstancesTableSavingsValue: Locator;
+    readonly underutilizedRDSInstancesCardSavingsValue: Locator;
+    readonly underutilizedRDSInstancesSeeAllBtn: Locator;
+    readonly underutilizedRDSInstancesTableSavingsValue: Locator;
 
     readonly publicS3BucketsCardCountValue: Locator;
 
@@ -148,17 +179,56 @@ export class RecommendationsPage extends BasePage {
         this.s3DuplicatesValue = this.s3DuplicatesCard.getByTestId('p_s3_duplicates_value');
         this.s3DuplicatesPossibleMonthlySavingsValue = this.s3DuplicatesCard.locator('//div[.="Possible monthly savings"]/following-sibling::div');
         this.categoriesSelect = this.main.locator('//label[.="Categories"]/../div');
-        this.applicableServices = this.main.locator('//label[.="Applicable services"]/../div')
+
+        this.applicableServices = this.main.locator('//label[.="Applicable services"]/../div');
+        this.liAll = this.page.locator('[data-value="all"]');
+        this.liAliBabaECS = this.page.locator('[data-value="alibabaEcs"]');
+        this.liAliBabaVPC = this.page.locator('[data-value="alibabaEcsVpc"]');
+        this.liAliBabaEBS = this.page.locator('[data-value="alibabaEbs"]');
+        this.liAliBabaSLB = this.page.locator('[data-value="alibabaSlb"]');
+        this.liAwsIAM = this.page.locator('[data-value="awsIam"]');
+        this.liAwsEC2 = this.page.locator('[data-value="awsEc2"]');
+        this.liAwsEC2EBS = this.page.locator('[data-value="awsEc2Ebs"]');
+        this.liAwsEC2VPC = this.page.locator('[data-value="awsEc2Vpc"]');
+        this.liAwsRDS = this.page.locator('[data-value="awsRds"]');
+        this.liAwsKinesis = this.page.locator('[data-value="awsKinesis"]');
+        this.liAwsS3 = this.page.locator('[data-value="awsS3"]');
+        this.liAzureCompute = this.page.locator('[data-value="azureCompute"]');
+        this.liAzureNetwork = this.page.locator('[data-value="azureNetwork"]');
+        this.liGcpComputeEngine = this.page.locator('[data-value="gcpComputeEngine"]');
+        this.liGcpIAM = this.page.locator('[data-value="gcpAim"]');
+        this.liGcpCloudStorage = this.page.locator('[data-value="gcpCloudStorage"]');
+
         this.cardsBtn = this.main.getByRole('button', {name: 'Cards'});
         this.tableBtn = this.main.getByRole('button', {name: 'Table'});
         this.searchInput = this.main.getByPlaceholder('Search');
-        this.cardDiv = this.main.locator('//div[@class="MuiStack-root mui-1ov46kg"]/div[3]');
+        this.cardsGrid = this.main.locator('//div[contains(@class, "cardsGrid MuiBox-root")]');
         this.table = this.main.locator('table');
 
+
+
         // Data source icons
-        this.cardRDS_Icon = this.cardDiv.locator('//span[.="RDS"]');
-        this.cardGoogleIAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
-        this.cardAWS_IAM_Icon = this.cardDiv.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
+        this.aliBabaECS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="ECS"]');
+        this.aliBabaECS_VPC_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="ECS::VPC"]');
+        this.aliBabaEBS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EBS"]');
+        this.aliBabaRDS_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="RDS"]');
+        this.aliBabaSLB_Icon = this.page.locator('//*[local-name()="path" and @fill="#f16a21"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="SLB"]');
+
+        this.aws_IAM_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
+        this.aws_EC2_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2"]');
+        this.aws_EC2_EBS_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2::EBS"]');
+        this.aws_EC2_VPC_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="EC2:VPC"]');
+        this.aws_RDS_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="RDS"]');
+        this.aws_Kinesis_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Kinesis"]');
+        this.aws_S3_Icon = this.page.locator('//*[local-name()="path" and @fill="#252f3e"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="S3"]');
+
+        this.azureCompute_Icon = this.page.locator('//*[local-name()="path" and contains(@class, "a")]/ancestor::*[name()="svg"]/following-sibling::span[normalize-space(.)="Compute"]');
+        this.azureNetwork_Icon = this.page.locator('//*[local-name()="path" and contains(@class, "a")]/ancestor::*[name()="svg"]/following-sibling::span[normalize-space(.)="Network"]');
+
+        this.gcpComputeEngine_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Compute Engine"]');
+        this.gcpIAM_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="IAM"]');
+        this.gcpCloudStorage_Icon = this.page.locator('//*[local-name()="path" and @fill="#fbbc05"]/ancestor::*[1]/following-sibling::span[normalize-space(.)="Cloud Storage"]');
+
         this.tableRDS_Icon = this.table.locator('//td[5]//span[.="RDS"]');
 
 
@@ -172,13 +242,13 @@ export class RecommendationsPage extends BasePage {
         this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
 
         // Card and table locators
-        this.firstCard = this.cardDiv.locator('//div[contains(@class, "MuiCard-root")]').first();
-        this.allCardHeadings = this.cardDiv.locator('//h3');
+        this.firstCard = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]').first();
+        this.allCardHeadings = this.cardsGrid.locator('//h3');
         this.possibleSavingsColumn = this.table.locator('//td[4]');
         this.statusColumn = this.table.locator('//td[2]');
         this.applicableServicesColumn = this.table.locator('//td[5]');
-        this.allCriticalIcon = this.cardDiv.locator('//div[contains(@class, "MuiCard-root") ]//*[@data-testid="CancelIcon"]');
-        this.allSeeAllBtns = this.cardDiv.locator('//div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.allCriticalIcon = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//*[@data-testid="CancelIcon"]');
+        this.allSeeAllBtns = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.allNameTableButtons = this.table.locator('//td[1]//button');
         this.abandonedAmazonS3BucketsCardSavingsValue = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.abandonedAmazonS3BucketsSeeAllBtn = this.main.locator('//h3[.="Abandoned Amazon S3 buckets"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
@@ -234,9 +304,9 @@ export class RecommendationsPage extends BasePage {
         this.underutilizedInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
         this.underutilizedInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.underutilizedInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized instances")]/ancestor::td/following-sibling::td[3]');
-        this.underutilzedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-        this.underutilzedRDSInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
-        this.underutilzedRDSInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized RDS Instances")]/ancestor::td/following-sibling::td[3]');
+        this.underutilizedRDSInstancesCardSavingsValue = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
+        this.underutilizedRDSInstancesSeeAllBtn = this.main.locator('//h3[.="Underutilized RDS Instances"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
+        this.underutilizedRDSInstancesTableSavingsValue = this.table.locator('//button[contains(text(), "Underutilized RDS Instances")]/ancestor::td/following-sibling::td[3]');
 
         this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
     }
@@ -440,7 +510,7 @@ export class RecommendationsPage extends BasePage {
             {label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue},
             {label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue},
             {label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue},
-            {label: 'Underutilized RDS Instances', locator: this.underutilzedRDSInstancesCardSavingsValue},
+            {label: 'Underutilized RDS Instances', locator: this.underutilizedRDSInstancesCardSavingsValue},
         ];
 
         let total = 0;

@@ -9,11 +9,10 @@ let inviteLink: string;
 let emailVerificationLink: string;
 
 
-test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui", () => {
-
+test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitation-flow", "@ui", "@slow"]}, () => {
+    test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment does not support invitation flow tests");
 
     test.beforeEach('Login admin user', async ({loginPage, header}) => {
-
         invitationEmail = generateRandomEmail();
         inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
         emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
@@ -214,15 +213,8 @@ test.describe("MPT-8230 Invitation Flow Tests for new users @invitation-flow @ui
     });
 });
 
-test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @ui", () => {
-
-    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
-        invitationEmail = generateRandomEmail();
-        inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
-        emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
-
-        await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-    });
+test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitation-flow", "@ui", "@slow"]},  () => {
+    test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment does not support invitation flow tests");
 
     test("[229868] Invitation is visible in Settings Tab @slow", async ({
                                                                             loginPage,
@@ -238,6 +230,14 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
         test.setTimeout(120000);
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
+
+        await test.step('Login as Admin user', async () => {
+            invitationEmail = generateRandomEmail();
+            inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
+            emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
+
+            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        });
 
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
@@ -310,16 +310,8 @@ test.describe("MPT-8229 Validate invitations in the settings @invitation-flow @u
     });
 });
 
-test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-flow @ui", () => {
-
-
-    test.beforeEach('Login admin user', async ({loginPage, context, header}) => {
-        invitationEmail = generateRandomEmail();
-        inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
-        emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
-
-        await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-    });
+test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@invitation-flow", "@ui", "@slow"]}, () => {
+    test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment does not support invitation flow tests");
 
     test("[229869] Invite existing user with a new role @slow", async ({
                                                                            header,
@@ -335,6 +327,14 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user @invitation-f
         test.setTimeout(120000);
         const requestContext = await request.newContext();
         const authRequest = new AuthRequest(requestContext);
+
+        await test.step('Login as Admin user', async () => {
+            invitationEmail = generateRandomEmail();
+            inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
+            emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
+
+            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+        });
 
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
