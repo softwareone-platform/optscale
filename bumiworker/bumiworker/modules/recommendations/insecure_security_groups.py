@@ -1,11 +1,10 @@
-from collections import OrderedDict
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
 import logging
 
-
-from bumiworker.bumiworker.modules.base import ModuleBase
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
+from bumiworker.bumiworker.modules.base import ModuleBase
+
 
 LOG = logging.getLogger(__name__)
 
@@ -15,10 +14,10 @@ DEFAULT_INSECURE_PORTS = [
         'protocol': 'tcp'
     } for port in [22, 3389]
 ]
-
 INSECURE_CIDRS = ['0.0.0.0/0', '::/0', '*', '0::0/0']
 MIN_PORT_VALUE = 0
 MAX_PORT_VALUE = 65535
+SUPPORTED_RESOURCE_TYPES = ['instance', 'load_balancer']
 
 
 class InsecureSecurityGroups(ModuleBase):
@@ -60,6 +59,7 @@ class InsecureSecurityGroups(ModuleBase):
 
     def get_cloud_func_map(self):
         return {
+            'alibaba_cnr': self._get_alibaba_insecure,
             'aws_cnr': self._get_aws_insecure,
             'azure_cnr': self._get_azure_insecure,
             'nebius': self._get_nebius_insecure,
@@ -71,9 +71,32 @@ class InsecureSecurityGroups(ModuleBase):
          skip_cloud_accounts) = self.get_options_values()
         cloud_acc_map = self.get_cloud_accounts(
             skip_cloud_accounts=skip_cloud_accounts)
-        _, response = self.rest_client.cloud_resources_discover(
-            self.organization_id, 'instance')
-        resources = response['data']
+
+        def prepare_resources(response, resources_list):
+            for resource in response:
+                security_groups = resource.get('meta', {}).get(
+                    'security_groups')
+                if security_groups:
+                    resources_list.append({
+                        'cloud_account_id': resource['cloud_account_id'],
+                        'cloud_resource_id': resource['cloud_resource_id'],
+                        'resource_id': resource['resource_id'],
+                        'pool_id': resource['pool_id'],
+                        'name': resource['name'],
+                        'region': resource['region'],
+                        'meta': {
+                            'security_groups': security_groups,
+                            'vpc_id': resource.get('meta', {}).get('vpc_id'),
+                        },
+                    })
+            return resources_list
+
+        resources = []
+        for resource_type in SUPPORTED_RESOURCE_TYPES:
+            _, response = self.rest_client.cloud_resources_discover(
+                self.organization_id, resource_type)
+            resources = prepare_resources(response['data'], resources)
+
         result = []
         for config in list(cloud_acc_map.values()):
             config.update(config.get('config', {}))
@@ -298,6 +321,70 @@ class InsecureSecurityGroups(ModuleBase):
                 })
         return result
 
+    def _get_alibaba_insecure(self, config, resources, excluded_pools,
+                              insecure_ports):
+        result = []
+        alibaba = CloudAdapter.get_adapter(config)
+        region_name_id = {
+            region['name']: region_id
+            for region_id, region in alibaba.get_regions_coordinates().items()
+        }
+        for resource in resources:
+            res_sgs = resource['meta']['security_groups']
+            for res_sg in res_sgs:
+                found_insecure_ports = set()
+                region = region_name_id.get(resource['region'])
+                if not region:
+                    continue
+                rules = alibaba.describe_security_group(
+                    res_sg, region)
+                for permission in rules['Permissions']['Permission']:
+                    if permission['Direction'] != 'ingress':
+                        continue
+                    if permission['Policy'] != 'Accept':
+                        continue
+                    if permission['SourceCidrIp'] not in INSECURE_CIDRS:
+                        continue
+                    port_ranges = permission['PortRange'].split('/')
+                    from_port = int(port_ranges[0])
+                    to_port = int(port_ranges[1])
+                    for insecure_port in insecure_ports:
+                        insecure_port_protocol = insecure_port.get('protocol')
+                        protocol = permission['IpProtocol'].lower()
+                        if protocol not in [insecure_port_protocol, 'all']:
+                            continue
+                        insecure_port_value = insecure_port.get('port')
+                        if from_port == -1 and to_port == -1:
+                            found_insecure_ports.add(('*', protocol))
+                            continue
+                        if from_port <= insecure_port_value <= to_port:
+                            found_insecure_ports.add(
+                                (insecure_port_value, insecure_port_protocol))
+                if found_insecure_ports:
+                    resource_insecure_ports = []
+                    for data in found_insecure_ports:
+                        resource_insecure_ports.append({
+                            "port": data[0],
+                            "protocol": self._format_protocol(data[1])
+                        })
+                    result.append({
+                        'cloud_resource_id': resource.get(
+                            'cloud_resource_id'),
+                        'resource_name': resource.get('name'),
+                        'cloud_account_id': config.get('id'),
+                        'resource_id': resource.get('resource_id'),
+                        'cloud_type': config.get('type'),
+                        'cloud_account_name': config.get('name'),
+                        'security_group_name': rules.get(
+                            'SecurityGroupName'),
+                        'security_group_id': res_sg,
+                        'region': resource.get('region'),
+                        'is_excluded': resource.get(
+                            'pool_id') in excluded_pools,
+                        'insecure_ports': resource_insecure_ports,
+                    })
+        return result
+
     def _get_nebius_insecure(self, config, resources, excluded_pools,
                              insecure_ports):
         supported_protocols = ['TCP', 'UDP', 'ANY']
@@ -489,4 +576,4 @@ def main(organization_id, config_client, created_at, **kwargs):
 
 
 def get_module_email_name():
-    return 'Instances with insecure Security Groups settings'
+    return 'Resources with insecure Security Groups settings'

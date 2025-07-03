@@ -647,24 +647,39 @@ class GcpAddress(tools.cloud_adapter.model.IpAddressResource, GcpResource):
     def _get_console_link(self):
         return "https://console.cloud.google.com/networking/addresses/list"
 
-    def _new_labels_request(self, key, value):
+    def _new_labels_request(self, key, value, region=True):
         labels = self._cloud_object.labels
         labels[key] = value
-        labels_request = compute.RegionSetLabelsRequest(
+        request_map = {
+            True: compute.RegionSetLabelsRequest,
+            False: compute.GlobalSetLabelsRequest
+        }
+        labels_request = request_map[region](
             label_fingerprint=self._cloud_object.label_fingerprint,
             labels=labels,
         )
         return labels_request
 
+
     def _set_tag(self, key, value):
-        labels_request = self._new_labels_request(key, value)
-        self._cloud_adapter.compute_addresses_client.set_labels(
-            project=self._cloud_adapter.project_id,
-            resource=self._cloud_object.name,
-            region=self._last_path_element(self._cloud_object.region),
-            region_set_labels_request_resource=labels_request,
-            **DEFAULT_KWARGS,
-        )
+        region = self._last_path_element(self._cloud_object.region)
+        labels_request = self._new_labels_request(key, value,
+                                                  region=bool(region))
+        if region:
+            self._cloud_adapter.compute_addresses_client.set_labels(
+                project=self._cloud_adapter.project_id,
+                resource=self._cloud_object.name,
+                region=region,
+                region_set_labels_request_resource=labels_request,
+                **DEFAULT_KWARGS,
+            )
+        else:
+            self._cloud_adapter.compute_global_addresses_client.set_labels(
+                project=self._cloud_adapter.project_id,
+                resource=self._cloud_object.name,
+                global_set_labels_request_resource=labels_request,
+                **DEFAULT_KWARGS,
+            )
 
     def post_discover(self):
         # Need to explicitly specify which parent's implementation to use
