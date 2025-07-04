@@ -1,21 +1,17 @@
+# etcd is a distroless image starting from v3.5, meaning we don't have access to a shell or package manager.
+# this is why we use multi-stage builds to build and copy the binary into the final image.
+# ref: https://github.com/GoogleContainerTools/distroless?tab=readme-ov-file#docker
 
-# TODO: Find a way to combine both (maybe via multi-stage builds?) Simplest is seperate Dockerfiles but they will get out of sync
-# ref: https://docs.docker.com/build/building/multi-platform/#cross-compiling-a-go-application
+FROM golang:1.18 AS build-etcd-walker
 
-# FROM quay.io/coreos/etcd:v3.2.13
-# RUN apk update
-# # https://github.com/Yelp/dumb-init/issues/73#issuecomment-240439732
-# RUN apk add ca-certificates wget && update-ca-certificates
-# RUN apk --no-cache add curl
-# RUN wget $(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/nexusriot/etcd-walker/releases/tags/0.0.11 | grep -Eo 'https://(.*linux_x64_static)') -O /bin/etcd-walker
-# RUN chmod +x /bin/etcd-walker
+RUN git clone https://github.com/nexusriot/etcd-walker/ /tmp/etcd-walker-src
 
-FROM quay.io/coreos/etcd:v3.2.13-arm64
-RUN apt update
-# https://github.com/Yelp/dumb-init/issues/73#issuecomment-240439732
-RUN apt install -y ca-certificates wget && update-ca-certificates
-RUN apt install -y curl
-# TODO: fix bellow, it's not using arm version of binary, need to compile it from source
-RUN wget $(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/nexusriot/etcd-walker/releases/tags/0.0.11 | grep -Eo 'https://(.*linux_x64_static)') -O /bin/etcd-walker
-ENV ETCD_UNSUPPORTED_ARCH=arm64
+WORKDIR /tmp/etcd-walker-src
+RUN git checkout 0.0.11
+RUN go build -ldflags "-linkmode external -extldflags -static" -o etcd-walker cmd/etcd-walker/main.go
+
+RUN mv etcd-walker /bin/etcd-walker
 RUN chmod +x /bin/etcd-walker
+
+FROM quay.io/coreos/etcd:v3.6.1
+COPY --from=build-etcd-walker /bin/etcd-walker /bin/etcd-walker
