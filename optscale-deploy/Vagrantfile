@@ -47,7 +47,7 @@ def define_vm(config, name:, arch:, base_box:, ports:)
     vm_config.vagrant.plugins = "vagrant-qemu"
     
     vm_config.vm.provider "qemu" do |qemu|
-      qemu.memory = "6G"
+      qemu.memory = "8G"
       qemu.net_device = "virtio-net-pci"
       qemu.disk_resize = "64G"
 
