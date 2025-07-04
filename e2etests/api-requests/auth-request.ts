@@ -142,28 +142,38 @@ export class AuthRequest extends BaseRequest {
         return response;
     }
 
-async setVerificationCode(email: string, code: string): Promise<APIResponse> {
-    if (!process.env.CLUSTER_SECRET) {
-        throw new Error("CLUSTER_SECRET is not defined in the environment variables.");
-    }
-
-    const response = await this.request.post(this.verificationCodesEndpoint, {
-        headers: {
-            "Content-Type": "application/json",
-            Secret: process.env.CLUSTER_SECRET
-        },
-        data: {
-            email,
-            code
+    /**
+     * Sets a verification code for a user.
+     * This method sends a POST request to the verification codes endpoint with the provided email and code.
+     * It validates the presence of the `CLUSTER_SECRET` environment variable and handles errors if the request fails.
+     *
+     * @param {string} email - The email address of the user.
+     * @param {string} code - The verification code to be set for the user.
+     * @returns {Promise<APIResponse>} A promise that resolves to the API response.
+     * @throws Will throw an error if the `CLUSTER_SECRET` is not defined or if the request fails.
+     */
+    async setVerificationCode(email: string, code: string): Promise<APIResponse> {
+        if (!process.env.CLUSTER_SECRET) {
+            throw new Error("CLUSTER_SECRET is not defined in the environment variables.");
         }
-    });
-    const payload = JSON.parse(await response.text());
-    if (response.status() !== 201) {
-        const reason = payload.error?.reason || "Unknown error";
-        throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
+
+        const response = await this.request.post(this.verificationCodesEndpoint, {
+            headers: {
+                "Content-Type": "application/json",
+                Secret: process.env.CLUSTER_SECRET
+            },
+            data: {
+                email,
+                code
+            }
+        });
+        const payload = JSON.parse(await response.text());
+        if (response.status() !== 201) {
+            const reason = payload.error?.reason || "Unknown error";
+            throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
+        }
+        return response;
     }
-    return response;
-}
 
     /**
      * Deletes a user with the provided user ID.

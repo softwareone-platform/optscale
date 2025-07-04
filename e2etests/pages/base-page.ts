@@ -38,7 +38,7 @@ export abstract class BasePage {
      * @returns {Promise<void>} A promise that resolves when the option is selected.
      */
     async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
-        const currentValue = (await comboBox.locator('div').textContent())?.trim();
+        const currentValue = await this.selectedComboBoxOption(comboBox);
 
         if (currentValue === option) {
             console.log(`Option "${option}" is already selected. Skipping selection.`);
@@ -50,6 +50,18 @@ export abstract class BasePage {
         if (closeList) {
             await this.page.locator('body').click();
         }
+    }
+
+    /**
+     * Retrieves the currently selected option from a combo box.
+     * This method locates the text content of the selected option within the combo box
+     * and trims any leading or trailing whitespace.
+     *
+     * @param {Locator} comboBox - The locator for the combo box element.
+     * @returns {Promise<string>} A promise that resolves to the trimmed text content of the selected option.
+     */
+    async selectedComboBoxOption(comboBox: Locator): Promise<string> {
+        return (await comboBox.locator('xpath=/div[1]').textContent())?.trim();
     }
 
     /**

@@ -26,7 +26,7 @@ type SuggestionStateButtonProps = {
 };
 
 const SuggestionStateButton = ({ onClick, id, label }: SuggestionStateButtonProps) => {
-  const { classes } = useStyles();
+  const {classes} = useStyles();
   return (
     <Button
       aria-describedby={id}
@@ -35,7 +35,7 @@ const SuggestionStateButton = ({ onClick, id, label }: SuggestionStateButtonProp
       color="primary"
       data-testid="btn_suggestion_filter"
       className={classes.selectButton}
-      startIcon={<LightbulbOutlinedIcon />}
+      startIcon={<LightbulbOutlinedIcon/>}
     >
       {label}
     </Button>
