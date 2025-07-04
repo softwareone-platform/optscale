@@ -1,21 +1,13 @@
-<!--section: organization-->
-<table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
-       role="presentation"
-       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
-    <tr>
-        <td class="pad" style="padding-bottom: 22px; ">
-            <div class="txtTinyMce-wrapper"
-                 style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.3">
-                <p style="margin: 0; font-size: 24px; text-align: left">{{texts.organization.name}}</p>
-                <p style="margin: 0; font-size: 16px; text-align: left">{{texts.organization.id}}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-<!-- /section: organization-->
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
 
 <!-- Booking status change -->
-{{#texts.environment_status_changed}}
+{% if texts.environment_status_changed %}
+{% set changed_environment = texts.environment_status_changed.changed_environment %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -56,10 +48,11 @@
     </tr>
     </tbody>
 </table>
-{{/texts.environment_status_changed}}
+{% endif %}
 
 <!-- Property change -->
-{{#texts.environment_prop_changed}}
+{% if texts.environment_prop_changed %}
+{% set changed_environment = texts.environment_prop_changed.changed_environment %}
 <!-- Property change > Description -->
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
@@ -163,7 +156,8 @@
     </tbody>
 </table>
 <!-- Property change > Table -->
-{{#changed_environment.property_info}}
+{% if changed_environment.property_info %}
+{% set property_info = changed_environment.property_info %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -183,7 +177,7 @@
                                 <td class="pad"
                                     style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{name}}
+                                        {{property_info.name}}
                                     </p>
                                 </td>
                             </tr>
@@ -198,7 +192,7 @@
                                 <td class="pad"
                                     style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{previous_value}}
+                                        {{property_info.previous_value}}
                                     </p>
                                 </td>
                             </tr>
@@ -213,7 +207,7 @@
                                 <td class="pad"
                                     style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{new_value}}
+                                        {{property_info.new_value}}
                                     </p>
                                 </td>
                             </tr>
@@ -226,10 +220,12 @@
     </tr>
     </tbody>
 </table>
-{{/changed_environment.property_info}} {{/texts.environment_prop_changed}}
+{% endif %}
+{% endif %}
 
 <!-- Activity state change -->
-{{#texts.environment_state_changed}}
+{% if texts.environment_state_changed %}
+{% set changed_environment = texts.environment_state_changed.changed_environment %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -269,7 +265,7 @@
     </tr>
     </tbody>
 </table>
-{{/texts.environment_state_changed}}
+{% endif %}
 
 <!-- Environment Info > Table title -->
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
@@ -385,7 +381,8 @@
     </tbody>
 </table>
 <!-- Environment Info > Table -->
-{{#texts.environments_infos}}
+{% if texts.environments_infos %}
+{% set info = texts.environments_infos %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -404,11 +401,11 @@
                             <tr>
                                 <td class="pad">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #434952;">
-                                        <a href="https://{{etcd.control_panel_link}}/resources/{{resource_id}}{{texts.control_panel_parameters}}&tab=details"
-                                           target="_blank" rel="noopener">{{resource_name}}</a>
+                                        <a href="https://{{etcd.control_panel_link}}/resources/{{info.resource_id}}{{texts.control_panel_parameters}}&tab=details"
+                                           target="_blank" rel="noopener">{{info.resource_name}}</a>
                                     </p>
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{resource_type}}
+                                        {{info.resource_type}}
                                     </p>
                                 </td>
                             </tr>
@@ -423,7 +420,7 @@
                                 <td class="pad"
                                     style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{pool}}
+                                        {{info.pool}}
                                     </p>
                                 </td>
                             </tr>
@@ -439,29 +436,28 @@
                                     <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                         <div class="txtTinyMce-wrapper"
                                              style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                                            {{#status}}
+                                            {% set status_info = info.status %}
                                             <p style="padding-left: 10px; padding-right: 10px; font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                                {{Status}}
+                                                {{status_info.Status}}
                                             </p>
-                                            {{#details}}
+                                            {% set details = status.details %}
                                             <p style="padding-top: 10px; padding-bottom: 10px; font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;  mso-line-height-alt: 18px; color: #434952;">
                                         <span style="font-size: 14px">
                                           User:
-                                          <strong>{{User}}</strong>
+                                          <strong>{{details.User}}</strong>
                                         </span>
                                             </p>
                                             <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                                 Since:
-                                                <strong>{{Since}}</strong>
+                                                <strong>{{details.Since}}</strong>
                                             </p>
                                             <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                                 Until:
-                                                <strong>{{Until}}</strong>
+                                                <strong>{{details.Until}}</strong>
                                             </p>
                                             <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
-                                                Available in: <strong>{{Remained}}</strong>
+                                                Available in: <strong>{{details.Remained}}</strong>
                                             </p>
-                                            {{/details}} {{/status}}
                                         </div>
                                     </div>
                                 </td>
@@ -476,29 +472,30 @@
                             <tr>
                                 <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
-                                        {{#upcoming_bookings}} {{#details}}
+                                      {% for booking in  upcoming_bookings %}
+                                      {% set details = booking.details %}
                                     <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                         User:
-                                        <strong>{{User}}</strong>
+                                        <strong>{{details.User}}</strong>
 
                                     </p>
                                     <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                         Since:
-                                        <strong>{{Since}}</strong>
+                                        <strong>{{details.Since}}</strong>
                                     </p>
                                     <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                         Until:
-                                        <strong>{{Until}}</strong>
+                                        <strong>{{details.Until}}</strong>
                                     </p>
                                     <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
                                         Duration:
-                                        <strong>{{Duration}}</strong>
+                                        <strong>{{details.Duration}}</strong>
                                     </p>
-                                    {{/details}} {{#status_info}}
+                                    {% set status_info = booking.status_info %}
                                     <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
-                                        <strong>{{Status}}</strong>
+                                        <strong>{{status_info.Status}}</strong>
                                     </p>
-                                    {{/status_info}} {{/upcoming_bookings}}
+                                    {% endfor %}
                                 </td>
                             </tr>
                         </table>
@@ -510,10 +507,10 @@
     </tr>
     </tbody>
 </table>
-{{/texts.environments_infos}}
+{% endif %}
 
 <!-- Environment properties -->
-{{#texts.environments_infos.contains_envs}}
+{% if exts.environments_infos.contains_envs %}
 <!-- Environment properties > Table title -->
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
@@ -596,7 +593,7 @@
     </tbody>
 </table>
 <!-- Environment properties > Table content -->
-{{#texts.environments_infos.env_properties}}
+{% for env_prop in texts.environments_infos.env_properties %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
     <tbody>
@@ -615,7 +612,7 @@
                             <tr>
                                 <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #000000;">
-                                        {{env_key}}
+                                        {{env_prop.env_key}}
                                     </p>
                                 </td>
                             </tr>
@@ -629,7 +626,7 @@
                             <tr>
                                 <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
                                     <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #000000;">
-                                        {{env_value}}
+                                        {{env_prop.env_value}}
                                     </p>
                                 </td>
                             </tr>
@@ -642,65 +639,11 @@
     </tr>
     </tbody>
 </table>
-{{/texts.environments_infos.env_properties}} {{/texts.environments_infos.contains_envs}}
+{% endfor %}
+{% endif %}
 
-<!-- section: goto -->
-<table class="row row-6" align="left" width="100%" border="0" cellpadding="0" cellspacing="0"
-       role="presentation"
-       style="mso-table-lspace:0;mso-table-rspace:0;background-color:#FFFFFF">
-    <tbody>
-    <tr>
-        <td>
-            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0"
-                   role="presentation"
-                   style="mso-table-lspace:0;mso-table-rspace:0;background-color:#fff;color:#000; "
-                   width="100%">
-                <tbody>
-                <tr>
-                    <td class="column column-1" width="100%"
-                        style="mso-table-lspace:0;mso-table-rspace:0;font-weight:400;text-align:left;vertical-align:top;padding-top:5px;padding-bottom:5px;border-top:0;border-right:0;border-bottom:0;border-left:0">
-                        <table class="button_block block-1" width="100%" border="0" cellpadding="10" cellspacing="0"
-                               role="presentation" style="mso-table-lspace:0;mso-table-rspace:0">
-                            <tr>
-                                <td class="pad" style="padding-left: 0;">
-                                    <div class="alignment" align="left" style="padding-top: 5px;">
-                                        <!--[if mso]>
-                                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml"
-                                                     xmlns:w="urn:schemas-microsoft-com:office:word"
-                                                     href="https://{{etcd.control_panel_link}}/environments/{{texts.control_panel_parameters}}"
-                                                     style="height:42px;width:149px;v-text-anchor:middle;"
-                                                     arcsize="10%" stroke="false" fillcolor="#472AFF">
-                                            <w:anchorlock/>
-                                            <v:textbox inset="0px,0px,0px,0px">
-                                                <center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px">
-                                        <![endif]-->
-                                        <a href="{https://{{etcd.control_panel_link}}/environments/{{texts.control_panel_parameters}}"
-                                           target="_blank" rel="noopener"
-                                           style="text-decoration: none; display: inline-block; color: #ffffff; background-color: #472AFF; border-radius: 8px; width: auto; border-top: 0px solid #472AFF; font-weight: 200; border-right: 0px solid #472AFF; border-bottom: 0px solid #472AFF; border-left: 0px solid #472AFF; text-align: left; mso-border-alt: none; word-break: keep-all">
-                                                <span style="padding-left: 14px; padding-right: 14px; padding-top: 10px; padding-bottom: 10px; font-size: 15px; display: inline-block; letter-spacing: normal; font-family: Arial, 'Trebuchet MS', Tahoma, sans-serif;">
-                                                    Go to FinOps for Cloud
-                                                </span>
-                                        </a>
-                                        <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
-                                        <p style="margin: 0; font-size: 14px;  padding-top: 25px; color: #434952; font-family: Arial, 'Trebuchet MS', Tahoma, sans-serif;">
-                                            If the button above doesn’t work for you, copy and paste this link into your
-                                            browser:
-                                        </p>
-                                        <a href="https://{{etcd.control_panel_link}}/environments/{{texts.control_panel_parameters}}"
-                                           target="_blank" rel="noopener"
-                                           style="text-decoration: none; display: inline-block; color: #472AFF; font-family: Arial, 'Trebuchet MS', Tahoma, sans-serif; text-align: left; mso-border-alt: none; word-break: keep-all">
-                                            <span style="font-size: 14px; display: inline-block; letter-spacing: normal">https://{{etcd.control_panel_link}}/environments/{{texts.control_panel_parameters}}</span>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<!-- /section: goto -->
+{% set gotoLink = 'https://' + etcd.control_panel_link + '/environments/' + texts.control_panel_parameters %}
+{% include 'partials/goto_button.html' %}
+
+
+{% endblock %}

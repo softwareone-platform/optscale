@@ -1,18 +1,9 @@
-<!--section: organization-->
-<table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
-       role="presentation"
-       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
-    <tr>
-        <td class="pad" style="padding-bottom: 22px; ">
-            <div class="txtTinyMce-wrapper"
-                 style="font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
-                <p style="margin: 0; font-size: 24px; text-align: left">{{texts.top_text}}</p>
-                <p style="margin: 0; font-size: 14px; text-align: left">{{texts.customer_name}}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-<!-- /section: organization-->
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.top_text %}
+{% set id = texts.customer_name %}
+{% include 'partials/organization_block.html' %}
 
 <table align="left" cellpadding="0" cellspacing="0" width="100%">
     <tr>
@@ -32,4 +23,4 @@
         </td>
     </tr>
 </table>
-
+{% endblock %}
