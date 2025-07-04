@@ -91,13 +91,13 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [AWS_CNR]: "aws",
   [AZURE_CNR]: "azureSubscription",
   [AZURE_TENANT]: "azureTenant",
-  // [DATABRICKS]: "databricks",
-  // [ALIBABA_CNR]: "alibabaCloud",
+  [DATABRICKS]: "databricks",
+  [ALIBABA_CNR]: "alibabaCloud",
   [GCP_CNR]: "gcpProject",
   [GCP_TENANT]: "gcpTenant",
-  [ENVIRONMENT]: "environment"
-  // [NEBIUS]: "nebius",
-  // [KUBERNETES_CNR]: "kubernetes"
+  [ENVIRONMENT]: "environment",
+  [NEBIUS]: "nebius",
+  [KUBERNETES_CNR]: "kubernetes"
 });
 
 // Expenses

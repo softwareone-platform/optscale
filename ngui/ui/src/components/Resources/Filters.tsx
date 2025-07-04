@@ -210,12 +210,12 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
           appliedSecondaryFilters.length === FILTER_GROUPS.secondary.length ? null : (
             <Badge
               badgeContent={showMoreFilters ? null : FILTER_GROUPS.secondary.length - appliedSecondaryFilters.length}
-              color="primary"
+              color="info"
             >
               <Button
                 variant="text"
                 sx={{ textTransform: "none" }}
-                color="primary"
+                color="info"
                 endIcon={showMoreFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 onClick={toggleShowMoreFilters}
               >

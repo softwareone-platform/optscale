@@ -66,7 +66,7 @@ const SelectionStateButton = ({ appliedItems, onClick, id, label, icon, selectio
       variant={appliedItems.length > 0 ? "contained" : "outlined"}
       onClick={onClick}
       color="primary"
-      className={classes.selectButton}
+      className={`${classes.selectButton} ${appliedItems.length > 0 ? classes.hasSelection : ""}`}
       startIcon={icon}
     >
       {label} ({selectionLabel()})

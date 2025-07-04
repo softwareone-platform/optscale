@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_1 } from "utils/layouts";
+import { MPT_BRAND_PRIMARY, SPACING_1 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   markerBase: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles()((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    color: theme.palette.text.primary,
+    color: MPT_BRAND_PRIMARY,
     backgroundColor: theme.palette.common.white,
     overflow: "hidden",
     fontWeight: "bold",
@@ -56,7 +56,7 @@ const useStyles = makeStyles()((theme) => ({
   tooltipItem: {
     "&:not(:last-child)": {
       borderBottom: "1px solid",
-      borderBottomColor: theme.palette.divider,
+      borderBottomColor: MPT_BRAND_PRIMARY,
       paddingBottom: theme.spacing(SPACING_1),
       marginBottom: theme.spacing(SPACING_1)
     }

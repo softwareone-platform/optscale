@@ -22,7 +22,7 @@ export abstract class BaseCreatePage extends BasePage {
     readonly k8sNamespaceFilter: Locator;
     readonly k8ServiceFilter: Locator;
     readonly tagFilter: Locator;
-    readonly withoutTagFilter: Locator;
+    readonly suggestionsFilter: any;
     readonly saveBtn: Locator;
     readonly cancelBtn: Locator;
 
@@ -49,7 +49,6 @@ export abstract class BaseCreatePage extends BasePage {
         this.k8sNamespaceFilter = this.main.getByTestId('selector_k8sNamespace');
         this.k8ServiceFilter = this.main.getByTestId('selector_k8sService');
         this.tagFilter = this.main.getByTestId('selector_tag');
-        this.withoutTagFilter = this.main.getByTestId('selector_withoutTag');
         this.saveBtn = this.main.getByTestId('btn_create');
         this.cancelBtn = this.main.getByTestId('btn_cancel');
     }

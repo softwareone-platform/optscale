@@ -27,7 +27,8 @@ import {
   MPT_ALERTS_DANGER_3,
   MPT_GRADIENT,
   MPT_BRAND_TYPE,
-  MPT_ALERTS_SUCCESS_3
+  MPT_ALERTS_SUCCESS_3,
+  MPT_GRAY_1
 } from "./utils/layouts";
 
 declare module "@mui/material/Typography" {
@@ -183,7 +184,7 @@ const applyGoogleMapPaletteSettings = (basicColorsPalette) => [
     elementType: "geometry",
     stylers: [
       {
-        color: "#ffffff"
+        color: MPT_GRAY_1
       }
     ]
   },
@@ -207,7 +208,7 @@ const applyGoogleMapPaletteSettings = (basicColorsPalette) => [
     elementType: "labels.text.stroke",
     stylers: [
       {
-        visibility: "off"
+        color: MPT_BRAND_WHITE // White stroke for contrast
       }
     ]
   },
@@ -245,19 +246,20 @@ const applyGoogleMapPaletteSettings = (basicColorsPalette) => [
     ]
   },
   {
-    featureType: "poi",
-    elementType: "labels.text",
+    featureType: "road",
+    elementType: "geometry",
     stylers: [
       {
-        visibility: "off"
+        color: MPT_GRAY_2
       }
     ]
   },
   {
     featureType: "road",
+    elementType: "labels.text.fill",
     stylers: [
       {
-        visibility: "off"
+        color: MPT_GRAY_4
       }
     ]
   },
@@ -274,7 +276,7 @@ const applyGoogleMapPaletteSettings = (basicColorsPalette) => [
     elementType: "geometry",
     stylers: [
       {
-        color: "#DEE1E5"
+        color: "#DCE3FF"
       }
     ]
   },

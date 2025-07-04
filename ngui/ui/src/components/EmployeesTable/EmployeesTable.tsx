@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { Typography } from "@mui/material";
@@ -19,7 +20,9 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import JiraIcon from "icons/JiraIcon";
 import SlackIcon from "icons/SlackIcon";
 import { EMPLOYEES_INVITE } from "urls";
-import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES } from "utils/constants";
+import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES, DOWNLOAD_FILE_FORMATS } from "utils/constants";
+import { REST_API_URL } from "../../api";
+import { useFetchAndDownload } from "../../hooks/useFetchAndDownload";
 import { MPT_GRAY_4 } from "../../utils/layouts";
 
 const EmployeeCell = ({ rowId, rowOriginal }) => {
@@ -134,7 +137,7 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
   const openSideModal = useOpenSideModal();
   const intl = useIntl();
 
-  const { name: organizationName } = useOrganizationInfo();
+  const { name: organizationName, organizationId } = useOrganizationInfo();
 
   const data = useMemo(
     () =>
@@ -217,15 +220,14 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
     ],
     [allowedActions, organizationName, openSideModal, data]
   );
-  // MPT_TODO: disabled to meet BDR requirements
-  //   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
-  // const downloadEmployees = (format) => {
-  //   fetchAndDownload({
-  //     url: `${REST_API_URL}/organizations/${organizationId}/employees?format=${format}`,
-  //     fallbackFilename: `employees.${format}`,
-  //     format
-  //   });
-  // };
+  const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
+  const downloadEmployees = (format) => {
+    fetchAndDownload({
+      url: `${REST_API_URL}/organizations/${organizationId}/employees?format=${format}`,
+      fallbackFilename: `employees.${format}`,
+      format
+    });
+  };
 
   return isLoading ? (
     <TableLoader columnsCounter={columns.length} showHeader />
@@ -253,7 +255,7 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
                 variant: "contained",
                 dataTestId: "btn_invite",
                 requiredActions: ["MANAGE_INVITES"]
-              }
+              },
               // MPT_TODO: disabled to meet BDR requirements
               // {
               //   key: "slack",
@@ -271,30 +273,30 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
               //   type: "button",
               //   dataTestId: "btn_jira"
               // },
-              // {
-              //   key: "download",
-              //   startIcon: <CloudDownloadOutlinedIcon />,
-              //   messageId: "download",
-              //   type: "dropdown",
-              //   isLoading: isFileDownloading,
-              //   menu: {
-              //     items: [
-              //       {
-              //         key: "xlsx",
-              //         messageId: "xlsxFile",
-              //         action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.XLSX),
-              //         dataTestId: "btn_download_xlsx"
-              //       },
-              //       {
-              //         key: "json",
-              //         messageId: "jsonFile",
-              //         action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.JSON),
-              //         dataTestId: "btn_download_json"
-              //       }
-              //     ]
-              //   },
-              //   dataTestId: "btn_download"
-              // }
+              {
+                key: "download",
+                startIcon: <CloudDownloadOutlinedIcon />,
+                messageId: "download",
+                type: "dropdown",
+                isLoading: isFileDownloading,
+                menu: {
+                  items: [
+                    {
+                      key: "xlsx",
+                      messageId: "xlsxFile",
+                      action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.XLSX),
+                      dataTestId: "btn_download_xlsx"
+                    },
+                    {
+                      key: "json",
+                      messageId: "jsonFile",
+                      action: () => downloadEmployees(DOWNLOAD_FILE_FORMATS.JSON),
+                      dataTestId: "btn_download_json"
+                    }
+                  ]
+                },
+                dataTestId: "btn_download"
+              }
             ]
           }
         }}

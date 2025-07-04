@@ -80,7 +80,7 @@ const CreateOrganizationConstraintForm = ({ onSubmit, types, navigateAway }) => 
           {(typeSelected === EXPIRING_BUDGET_POLICY || typeSelected === TAGGING_POLICY) && <StartDatePicker />}
         </Box>
         <DividerHorizontal verticalSpacing={MPT_SPACING_3} noHorizontalSpacing />
-        <Box sx={{ width: { md: "50%" } }}>
+        <Box sx={{ width: { md: "50%", marginBottom: MPT_SPACING_3 } }}>
           {typeSelected === QUOTA_POLICY && <MaxValueInput />}
           {typeSelected === TAGGING_POLICY && <TagsInputs />}
         </Box>

@@ -162,6 +162,6 @@ export class CreateAnomalyPage extends BaseCreatePage {
      * @returns {Promise<void>}
      */
     async selectWithoutTag(withoutTag: string) {
-        await this.selectFromComboBox(this.withoutTagFilter, withoutTag);
+        await this.selectFromComboBox(this.suggestionsFilter, withoutTag);
     }
 }
