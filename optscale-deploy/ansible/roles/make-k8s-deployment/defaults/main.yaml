@@ -1,0 +1,6 @@
+---
+k8s_deployment_name: optscale
+optscale_dir: "{{ ansible_env.HOME }}/optscale"
+optscale_deploy_dir: "{{ optscale_dir }}/optscale-deploy"
+user_template_overlay: "{{ optscale_deploy_dir }}/overlay/user_template.yml"
+new_cluster_secret: "{{ ansible_date_time.iso8601_micro | random | to_uuid }}"

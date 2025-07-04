@@ -13,7 +13,8 @@ demo_org_cleanup:
 diproxy:
 diworker:
 elk:
-error_pages:
+# TODO: re-enable me once i get this fucking thing working
+# error_pages:
 etcd:
 failed_imports_dataset_generator:
 filebeat:
@@ -50,7 +51,9 @@ resource_violations:
 rest_api:
 risp_scheduler:
 risp_worker:
-run_observer:
+# TODO: investigate this ghost image (use git history to see the deleted template in ./optscale/templates which caused an error in
+# deployment)
+# run_observer:
 slacker:
 slacker_executor:
 trapper_scheduler:
