@@ -338,15 +338,19 @@ class AzureImporterBase(BaseReportImporter):
 class AzureApiImporter(AzureImporterBase):
 
     def detect_period_start(self):
-        # When choosing period_start for Azure, prioritize last expense date
-        # over date of the last import run. That is because for Azure the latest
-        # expenses are not available immediately, and we need to load these
-        # expenses again on the next run.
-        last_import_at = self.get_last_import_date(self.cloud_acc_id)
-        if last_import_at:
-            self.period_start = last_import_at.replace(
-                hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
-        else:
+        ca_last_import_at = self.cloud_acc.get('last_import_at')
+        if (ca_last_import_at and opttime.utcfromtimestamp(
+                ca_last_import_at).month == opttime.utcnow().month):
+            # When choosing period_start for Azure, prioritize last expense
+            # date over date of the last import run. That is because for Azure
+            # the latest expenses are not available immediately and we need to
+            # load these expenses again on the next run.
+            last_exp_date = self.get_last_import_date(self.cloud_acc_id)
+            if last_exp_date:
+                self.period_start = last_exp_date.replace(
+                    hour=0, minute=0, second=0, microsecond=0) - timedelta(
+                    days=1)
+        if not self.period_start:
             super().detect_period_start()
 
     @retry_backoff(AzureConsumptionException,
