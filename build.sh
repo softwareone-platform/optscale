@@ -13,16 +13,12 @@ INPUT_TAG=""
 USE_NERDCTL=false
 BUILD_TOOL="docker"
 
-# TODO: I think $ARCH should also be taken into account when tagging, pushing, pulling and retagging images
-ARCH="$(uname -m)"
-
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -r) REGISTRY="$2"; shift ;;
         -u) LOGIN="$2"; shift ;;
         -p) PASSWORD="$2"; shift ;;
-        --arch) ARCH="$2"; shift ;;
         --use-nerdctl) USE_NERDCTL=true ;;
         *)
             # Check if COMPONENT is empty
@@ -55,15 +51,6 @@ use_registry() {
 # TODO: I think the build tag / input tag is set differently when running `./build.sh --use-nerdctl` and `./build.sh --use-nerdctl <image>`
 #       also the position of --use-nerdctl (if present at all) may be a factor
 BUILD_TAG=${INPUT_TAG:-'local'}
-if [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
-  BUILD_ARCH="amd64"
-elif [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
-  BUILD_ARCH="arm64"
-else
-  echo "Unsupported architecture: ${ARCH}"
-  exit 1
-fi
-
 FIND_CMD="find . -mindepth 2 -maxdepth 3 -print | grep Dockerfile | grep -vE '(test|.j2)'"
 FIND_CMD="${FIND_CMD} | grep $COMPONENT/"
 
@@ -115,8 +102,8 @@ do
     if [ "$?" -eq 0 ]; then
       echo "component $COMPONENT re-tagged $COMMIT_ID -> $BUILD_TAG"
     else
-      echo "Building image for ${COMPONENT}, build tag: ${BUILD_TAG}, target architecture: ${BUILD_ARCH}"
-      $BUILD_TOOL build --build-arg ARCH=${BUILD_ARCH} -t ${COMPONENT}:${BUILD_TAG} -f ${DOCKERFILE} .
+      echo "Building image for ${COMPONENT}, build tag: ${BUILD_TAG}"
+      $BUILD_TOOL build -t ${COMPONENT}:${BUILD_TAG} -f ${DOCKERFILE} .
     fi
 
     if use_registry; then
