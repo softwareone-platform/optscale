@@ -154,7 +154,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             }
         });
 
-        await test.step('[230599] Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
             await recommendationsPage.clickTableButton();
             await recommendationsPage.allNameTableButtons.last().waitFor();
             const cells = await recommendationsPage.applicableServicesColumn.all();
