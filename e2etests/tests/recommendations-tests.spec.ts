@@ -20,12 +20,13 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();
         });
+        await recommendationsPage.selectDataSource('All');
+        await recommendationsPage.selectCategory('All');
     });
 
     test("[230511] Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
         let possibleMonthlySavings: number;
         let cardTotalSavings: number;
-        await recommendationsPage.selectCategory('All');
 
         await test.step('Get possible monthly savings', async () => {
             possibleMonthlySavings = await recommendationsPage.getPossibleMonthlySavingsValue();
@@ -40,6 +41,19 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             console.log('Card Total Savings:', cardTotalSavings);
             expect(cardTotalSavings).toBeCloseTo(possibleMonthlySavings, 0);
         });
+    });
+
+    test('[230597] Verify Data Source selection works correctly', async ({recommendationsPage}) => {
+        const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'CPA (Development and Test)';
+
+        await recommendationsPage.selectDataSource(dataSource);
+        await recommendationsPage.clickFirstSeeAllButton();
+
+        const cells = await recommendationsPage.modalColumn2.all();
+        for (const cell of cells) {
+            const link = process.env.USE_LIVE_DEMO === 'true' ? cell.locator(recommendationsPage.azureQALink) : cell.locator(recommendationsPage.cpaDevelopmentAndTestLink);
+            await expect(link).toBeVisible();
+        }
     });
 
     test('[230512] Verify that the RI/SP link works correctly', async ({recommendationsPage, riSpCoveragePage}) => {
@@ -70,7 +84,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             });
             return;
         }
-        await test.step('[230513] Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
+        await test.step('Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
             const possibleMonthlySavings = await recommendationsPage.getS3DuplicateFinderPossibleMonthlySavingsValue();
             await recommendationsPage.clickS3DuplicatesCard();
             const s3DuplicateFinderPageSavings = await s3DuplicateFinder.getSavingsFromTable();
@@ -82,18 +96,17 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
     });
 
     test('[230514] Verify Search functionality works correctly', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
         await recommendationsPage.searchByName('Public');
 
         await recommendationsPage.allCardHeadings.last().waitFor();
         const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
         expect(count).toBe(1);
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-    test('Verify only the correct applicable services are displayed', async ({recommendationsPage}) => {
+    test('[230598] Verify only the correct applicable services are displayed for SWO Customisation', async ({recommendationsPage}) => {
 
         await test.step('Verify applicable services combo box options shows expected items', async () => {
             await recommendationsPage.applicableServices.click();
@@ -141,7 +154,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             }
         });
 
-        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+        await test.step('[230599] Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
             await recommendationsPage.clickTableButton();
             await recommendationsPage.allNameTableButtons.last().waitFor();
             const cells = await recommendationsPage.applicableServicesColumn.all();
@@ -170,7 +183,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await recommendationsPage.allCardHeadings.last().waitFor();
 
         const count = await recommendationsPage.allCardHeadings.count();
-        console.log(`Number of <h3> headings found for ${category}:`, count);
+        console.log(`Number of card headings found for ${category}:`, count);
 
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         console.log("Actual heading texts:", actualHeadings);
@@ -260,7 +273,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         const count = await recommendationsPage.allCardHeadings.count();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
         const criticalIconCount = await recommendationsPage.allCriticalIcon.count();
         console.log("Number of critical icons found:", criticalIconCount);
         expect(criticalIconCount).toBe(count);
@@ -286,7 +299,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         const count = await recommendationsPage.allCardHeadings.count();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
         const seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
         console.log("Number of See Item buttons found:", seeAllBtnCount);
@@ -304,14 +317,13 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
     });
 
     test('[230523] Verify filtering by applicable service works correctly', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
         await recommendationsPage.selectApplicableService('RDS');
 
         await recommendationsPage.allCardHeadings.last().waitFor();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         const count = await recommendationsPage.allCardHeadings.count();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
         const awsRDSIconsInGrid = recommendationsPage.cardsGrid.locator(recommendationsPage.aws_RDS_Icon);
         await awsRDSIconsInGrid.nth(count - 1).waitFor();
@@ -367,9 +379,6 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
             const {cardLocator, seeAllBtn, tableLocator, modalColumnLocator} = card;
-            await recommendationsPage.waitForPageLoaderToDisappear();
-            await recommendationsPage.selectCategory('All');
-
             const cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
             console.log(`${cardName} Card Possible Savings: ${cardSavings}`);
 

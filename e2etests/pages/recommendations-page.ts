@@ -78,11 +78,14 @@ export class RecommendationsPage extends BasePage {
 
     readonly recommendationsModal: Locator;
     readonly recommendationsModalCloseBtn: Locator;
+    readonly modalColumn2: Locator;
     readonly modalColumn5: Locator;
     readonly modalColumn6: Locator;
     readonly modalColumn7: Locator;
     readonly modalColumn8: Locator;
     readonly modalNextPageBtn: Locator;
+    readonly cpaDevelopmentAndTestLink: Locator;
+    readonly azureQALink: Locator;
 
     readonly table: Locator;
     readonly possibleSavingsColumn: Locator;
@@ -164,7 +167,7 @@ export class RecommendationsPage extends BasePage {
         this.heading = this.main.getByTestId('lbl_recommendations');
         this.archiveBtn = this.main.getByTestId('btn_archive');
         this.forceCheckBtn = this.main.getByTestId('btn_force_check');
-        this.dataSourcesSelect = this.main.locator('//div[@id="select-data-source"]');
+        this.dataSourcesSelect = this.main.locator('//label[.="Data sources"]/../div');
         this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
         this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
         this.ri_spCard = this.main.getByTestId('card_ri_sp_expenses');
@@ -253,10 +256,14 @@ export class RecommendationsPage extends BasePage {
         this.recommendationsModal = this.page.getByTestId('smodal_recommendation');
         this.recommendationsModalCloseBtn = this.recommendationsModal.getByTestId('btn_close');
         this.modalNextPageBtn = this.recommendationsModal.getByTestId('btn_pagination_next');
+        this.modalColumn2 = this.recommendationsModal.locator('//tr/td[2]');
         this.modalColumn5 = this.recommendationsModal.locator('//tr/td[5]');
         this.modalColumn6 = this.recommendationsModal.locator('//tr/td[6]');
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
         this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
+        this.cpaDevelopmentAndTestLink = this.page.getByRole("link" , {name: "CPA (Development and Test)"});
+        this.azureQALink = this.page.getByRole("link", {name: "Azure QA"});
+
 
         // Card and table locators
         this.firstCard = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]').first();
@@ -267,8 +274,8 @@ export class RecommendationsPage extends BasePage {
         this.allCriticalIcon = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//*[@data-testid="CancelIcon"]');
         this.allSeeAllBtns = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]');
         this.allNameTableButtons = this.table.locator('//td[1]//button');
-        // In the constructor, after super(page, '/recommendations');
-        const cardLocators = {
+
+        const locators = {
             abandonedAmazonS3Buckets: 'Abandoned Amazon S3 buckets',
             abandonedImages: 'Abandoned images',
             abandonedInstances: 'Abandoned instances',
@@ -290,7 +297,7 @@ export class RecommendationsPage extends BasePage {
             underutilizedRDSInstances: 'Underutilized RDS Instances'
         };
 
-        for (const [key, label] of Object.entries(cardLocators)) {
+        for (const [key, label] of Object.entries(locators)) {
             // Card savings value
             (this as any)[`${key}CardSavingsValue`] = this.cardsGrid.locator(`//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`);
             // See all button
@@ -531,6 +538,21 @@ export class RecommendationsPage extends BasePage {
         await this.searchInput.press('Enter');
         await this.page.waitForLoadState();
     }
+
+/**
+         * Clicks the first "See All" button on the page.
+         *
+         * This method interacts with the first button in the `allSeeAllBtns` locator,
+         * simulates a click action, and waits for the page to load completely.
+         * It is typically used to open a modal or navigate to a detailed view
+         * associated with the first "See All" button.
+         *
+         * @returns {Promise<void>} Resolves when the click action and page load are complete.
+         */
+        async clickFirstSeeAllButton(): Promise<void> {
+            await this.allSeeAllBtns.first().click();
+            await this.page.waitForLoadState('load');
+        }
 
     /**
      * Retrieves the itemized savings from a modal.

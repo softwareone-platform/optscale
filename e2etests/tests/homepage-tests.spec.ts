@@ -43,6 +43,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
         expect(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
     });
 
+    // Test failing due to bug MPT-11558 The home page recommendations block not returning the real Critical item count
     test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({homePage, recommendationsPage}) => {
         const homePageValue = await homePage.getRecommendationsCriticalValue();
         await homePage.recommendationsCriticalLink.click();
