@@ -95,7 +95,8 @@ function vm_start {
 }
 
 function vm_stop {
-    vagrant halt $vm_name
+    # shellcheck disable=2068
+    vagrant halt $vm_name $@
     
     # After the vagrant halt often the VM is still running in the background
     # It should stop automatically eventually but if we don't wait for it and run another
@@ -108,8 +109,7 @@ function vm_stop {
 }
 
 function vm_destroy {
-    # TODO: When running destroy, we can disable graceful shutdown as it's not necessary and it can take a long time
-    vm_stop
+    vm_stop --force
     vagrant destroy --force $vm_name
 }
 
@@ -180,7 +180,8 @@ if [[ "$command" == "info" ]]; then
 elif [[ "$command" == "start" || "$command" == "up" ]]; then
     vm_start
 elif [[ "$command" == "stop" || "$command" == "down" ]]; then
-    vm_stop
+    # shellcheck disable=2068
+    vm_stop $@
 elif [[ "$command" == "destroy" ]]; then
     vm_destroy
 elif [[ "$command" == "restart" ]]; then
