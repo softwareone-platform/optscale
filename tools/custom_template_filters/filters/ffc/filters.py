@@ -1,10 +1,10 @@
 def format_money(
     value: int | float | str,
-    currency: str = "€",
+    currency: str = "$",
     decimal_sep: str = ".",
     thousands_sep: str = ",",
     decimal_digits: int = 2,
-    currency_position: str = "end"  # 'start' or 'end'
+    currency_position: str = "start"  # 'start' or 'end'
 ) -> str:
     try:
         number = float(value)

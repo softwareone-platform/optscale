@@ -1,18 +1,9 @@
-<!--section: organization-->
-<table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
-       role="presentation"
-       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
-    <tr>
-        <td class="pad" style="padding-bottom: 22px; ">
-            <div class="txtTinyMce-wrapper"
-                 style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.3">
-                <p style="margin: 0; font-size: 24px; text-align: left">{{texts.organization.name}}</p>
-                <p style="margin: 0; font-size: 16px; text-align: left">{{texts.organization.id}}</p>
-            </div>
-        </td>
-    </tr>
-</table>
-<!-- /section: organization-->
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
 
 <!-- Summary -->
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
@@ -155,7 +146,7 @@
 </table>
 
 <!-- Survey -->
-{{#texts.data}}
+{% for item in texts.data %}
 <table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
     <tbody>
@@ -175,7 +166,7 @@
                                 <td class="pad"
                                     style="padding-left: 0px; padding-right: 10px; ; padding-top: 15px; padding-bottom: 15px">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{k}}
+                                        {{item.k}}
                                     </p>
                                 </td>
                             </tr>
@@ -190,7 +181,7 @@
                                 <td class="pad"
                                     style="padding-left: 10px; padding-right: 10px; padding-top: 15px; padding-bottom: 15px;">
                                     <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
-                                        {{v}}
+                                        {{item.v}}
                                     </p>
                                 </td>
                             </tr>
@@ -203,4 +194,5 @@
     </tr>
     </tbody>
 </table>
-{{/texts.data}}
+{% endfor %}
+{% endblock %}
