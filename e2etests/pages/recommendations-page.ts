@@ -261,7 +261,7 @@ export class RecommendationsPage extends BasePage {
         this.modalColumn6 = this.recommendationsModal.locator('//tr/td[6]');
         this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
         this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
-        this.cpaDevelopmentAndTestLink = this.page.getByRole("link" , {name: "CPA (Development and Test)"});
+        this.cpaDevelopmentAndTestLink = this.page.getByRole("link", {name: "CPA (Development and Test)"});
         this.azureQALink = this.page.getByRole("link", {name: "Azure QA"});
 
 
@@ -539,20 +539,20 @@ export class RecommendationsPage extends BasePage {
         await this.page.waitForLoadState();
     }
 
-/**
-         * Clicks the first "See All" button on the page.
-         *
-         * This method interacts with the first button in the `allSeeAllBtns` locator,
-         * simulates a click action, and waits for the page to load completely.
-         * It is typically used to open a modal or navigate to a detailed view
-         * associated with the first "See All" button.
-         *
-         * @returns {Promise<void>} Resolves when the click action and page load are complete.
-         */
-        async clickFirstSeeAllButton(): Promise<void> {
-            await this.allSeeAllBtns.first().click();
-            await this.page.waitForLoadState('load');
-        }
+    /**
+     * Clicks the first "See All" button on the page.
+     *
+     * This method interacts with the first button in the `allSeeAllBtns` locator,
+     * simulates a click action, and waits for the page to load completely.
+     * It is typically used to open a modal or navigate to a detailed view
+     * associated with the first "See All" button.
+     *
+     * @returns {Promise<void>} Resolves when the click action and page load are complete.
+     */
+    async clickFirstSeeAllButton(): Promise<void> {
+        await this.allSeeAllBtns.first().click();
+        await this.page.waitForLoadState();
+    }
 
     /**
      * Retrieves the itemized savings from a modal.
@@ -569,7 +569,7 @@ export class RecommendationsPage extends BasePage {
         await columnLocator.last().waitFor();
         const itemisedSavings = await this.sumCurrencyColumn(columnLocator, this.modalNextPageBtn);
         await this.recommendationsModalCloseBtn.click();
-        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState();
         console.log(`Itemised Savings: ${itemisedSavings}`);
         return itemisedSavings;
     }
@@ -590,9 +590,8 @@ export class RecommendationsPage extends BasePage {
         // Retrieve the text content of the "See All" button and normalize it.
         const text = (await seeAllBtn.textContent())!.trim().toLowerCase();
 
-        // If the button indicates a single item, log a message and proceed with the test.
+        // If the button indicates a single item, proceed with the test.
         if (text === 'see item') {
-            console.log("Single item detected — proceeding with test.");
             return;
         }
 
