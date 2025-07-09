@@ -7,6 +7,7 @@ import { OPTSCALE_CAPABILITY } from "utils/constants";
 import anomalies from "./anomaliesMenuItem";
 import dataSources from "./dataSourcesMenuItem";
 import events from "./eventsMenuItem";
+import expensesMapMenuItem from "./expensesMapMenuItem";
 import expenses from "./expensesMenuItem";
 import home from "./homeMenuItem";
 import pools from "./poolsMenuItem";
@@ -25,7 +26,7 @@ export default [
   {
     id: MAIN_MENU_SECTION_IDS.FINOPS,
     menuSectionTitle: <MainMenuSectionTitle messageId="finops" icon={LeaderboardIcon} />,
-    items: [expenses], // MPT_TODO: Disabled items: expensesMap, finOpsPortal
+    items: [expenses, expensesMapMenuItem], // MPT_TODO: Disabled items: expensesMap, finOpsPortal
     capability: OPTSCALE_CAPABILITY.FINOPS
   },
   //  MPT_TODO: disabled to meet BDR requirements
