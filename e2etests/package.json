@@ -6,7 +6,7 @@
   "scripts": {
     "playwright:show-report": "npx playwright show-report",
     "playwright:debug": "npx playwright test --debug --workers=1",
-    "playwright:test": "npx playwright test",
+    "playwright:test": "npx playwright test --grep @ui",
     "playwright:test_chrome": "npx playwright test --project chrome",
     "playwright:test_firefox": "npx playwright test --project firefox",
     "playwright:test_edge": "npx playwright test --project \"Microsoft Edge\"",

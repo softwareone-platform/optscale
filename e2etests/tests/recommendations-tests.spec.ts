@@ -20,12 +20,13 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();
         });
+        await recommendationsPage.selectDataSource('All');
+        await recommendationsPage.selectCategory('All');
     });
 
     test("[230511] Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
         let possibleMonthlySavings: number;
         let cardTotalSavings: number;
-        await recommendationsPage.selectCategory('All');
 
         await test.step('Get possible monthly savings', async () => {
             possibleMonthlySavings = await recommendationsPage.getPossibleMonthlySavingsValue();
@@ -42,6 +43,19 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         });
     });
 
+    test('[230597] Verify Data Source selection works correctly', async ({recommendationsPage}) => {
+        const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'CPA (Development and Test)';
+
+        await recommendationsPage.selectDataSource(dataSource);
+        await recommendationsPage.clickFirstSeeAllButton();
+
+        const cells = await recommendationsPage.modalColumn2.all();
+        for (const cell of cells) {
+            const link = process.env.USE_LIVE_DEMO === 'true' ? cell.locator(recommendationsPage.azureQALink) : cell.locator(recommendationsPage.cpaDevelopmentAndTestLink);
+            await expect(link).toBeVisible();
+        }
+    });
+
     test('[230512] Verify that the RI/SP link works correctly', async ({recommendationsPage, riSpCoveragePage}) => {
         await recommendationsPage.clickRI_SPCard();
         await expect(riSpCoveragePage.heading).toBeVisible();
@@ -50,9 +64,9 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
     // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
     // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
     test("[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page", async ({
-                                                                                                             recommendationsPage,
-                                                                                                             s3DuplicateFinder
-                                                                                                         }) => {
+                                                                                                                      recommendationsPage,
+                                                                                                                      s3DuplicateFinder
+                                                                                                                  }) => {
         let captionText: string;
         await test.step('Determine whether duplicate check run is completed', async () => {
             captionText = await recommendationsPage.s3DuplicatesCaption.textContent();
@@ -70,7 +84,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             });
             return;
         }
-        await test.step('[230513] Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
+        await test.step('Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
             const possibleMonthlySavings = await recommendationsPage.getS3DuplicateFinderPossibleMonthlySavingsValue();
             await recommendationsPage.clickS3DuplicatesCard();
             const s3DuplicateFinderPageSavings = await s3DuplicateFinder.getSavingsFromTable();
@@ -82,22 +96,112 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
     });
 
     test('[230514] Verify Search functionality works correctly', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
         await recommendationsPage.searchByName('Public');
 
         await recommendationsPage.allCardHeadings.last().waitFor();
         const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
         expect(count).toBe(1);
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-    // TODO Unable to complete test for unsupported data sources as unable to access the Optscale site to create locators for Alibaba, etc.
-    test.fixme('Verify unsupported data sources are not displayed', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
-        await recommendationsPage.allCardHeadings.last().waitFor();
+    test('[230598] Verify only the correct applicable services are displayed for SWO Customisation', async ({recommendationsPage}) => {
+
+        await test.step('Verify applicable services combo box options shows expected items', async () => {
+            await recommendationsPage.applicableServices.click();
+            const expectedVisibleServices = [
+                recommendationsPage.liAwsIAM,
+                recommendationsPage.liAwsEC2,
+                recommendationsPage.liAwsEC2EBS,
+                recommendationsPage.liAwsEC2VPC,
+                recommendationsPage.liAwsRDS,
+                recommendationsPage.liAwsS3,
+                recommendationsPage.liAwsKinesis,
+                recommendationsPage.liAzureCompute,
+                recommendationsPage.liAzureNetwork,
+                recommendationsPage.liGcpIAM,
+                recommendationsPage.liGcpCloudStorage
+            ];
+            const expectedHiddenServices = [
+                recommendationsPage.liAliBabaECS,
+                recommendationsPage.liAliBabaVPC,
+                recommendationsPage.liAliBabaEBS,
+                recommendationsPage.liAliBabaSLB
+            ];
+
+            for (const service of expectedVisibleServices) {
+                await expect(service).toBeVisible();
+            }
+            for (const service of expectedHiddenServices) {
+                await expect(service).not.toBeVisible();
+            }
+        });
+
+        await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
+            await recommendationsPage.liAll.click();
+            await recommendationsPage.allCardHeadings.last().waitFor();
+            const aliBabaIcons = [
+                recommendationsPage.aliBabaEBS_Icon,
+                recommendationsPage.aliBabaECS_Icon,
+                recommendationsPage.aliBabaSLB_Icon,
+                recommendationsPage.aliBabaECS_VPC_Icon,
+                recommendationsPage.aliBabaRDS_Icon
+            ];
+
+            for (const icon of aliBabaIcons) {
+                await expect(icon).not.toBeVisible();
+            }
+        });
+
+        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+            await recommendationsPage.clickTableButton();
+            await recommendationsPage.allNameTableButtons.last().waitFor();
+            const cells = await recommendationsPage.applicableServicesColumn.all();
+
+            for (const cell of cells) {
+                const aliBabaIcons = [
+                    recommendationsPage.aliBabaEBS_Icon,
+                    recommendationsPage.aliBabaECS_Icon,
+                    recommendationsPage.aliBabaSLB_Icon,
+                    recommendationsPage.aliBabaECS_VPC_Icon,
+                    recommendationsPage.aliBabaRDS_Icon
+                ];
+                for (const icon of aliBabaIcons) {
+                    await expect(cell.locator(icon)).not.toBeVisible();
+                }
+            }
+        });
     });
+
+    const verifyCardsAndTable = async (
+        recommendationsPage: any,
+        category: string,
+        expectedCardHeadings: string[]
+    ) => {
+        await recommendationsPage.selectCategory(category);
+        await recommendationsPage.allCardHeadings.last().waitFor();
+
+        const count = await recommendationsPage.allCardHeadings.count();
+        console.log(`Number of card headings found for ${category}:`, count);
+
+        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        console.log("Actual heading texts:", actualHeadings);
+
+        const expectedSorted = [...expectedCardHeadings].sort();
+        const actualSorted = actualHeadings.map((t: string) => t.trim()).sort();
+
+        expect(actualSorted).toEqual(expectedSorted);
+
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
+        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+    };
 
     test(" [230515] Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
         const expectedCardHeadings = [
@@ -125,29 +229,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             "Underutilized instances",
             "Underutilized RDS Instances"
         ];
-
-        await recommendationsPage.selectCategory('All');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect.soft(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'All', expectedCardHeadings);
     });
 
     test("[230518] Verify all expected cards are present when Savings category selected", async ({recommendationsPage}) => {
@@ -172,29 +254,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             "Underutilized instances",
             "Underutilized RDS Instances"
         ];
-
-        await recommendationsPage.selectCategory('Savings');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'Savings', expectedCardHeadings);
     });
 
     test("[230519] Verify all expected cards are present when Security category selected", async ({recommendationsPage}) => {
@@ -204,29 +264,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             "Instances with insecure Security Groups settings",
             "Public S3 buckets"
         ];
-
-        await recommendationsPage.selectCategory('Security');
-        await recommendationsPage.allCardHeadings.last().waitFor();
-
-        const count = await recommendationsPage.allCardHeadings.count();
-        console.log("Number of <h3> headings found:", count);
-
-        const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-        console.log("Actual heading texts:", actualHeadings);
-
-        const expectedSorted = [...expectedCardHeadings].sort();
-        const actualSorted = actualHeadings.map(t => t.trim()).sort();
-
-        expect(actualSorted).toEqual(expectedSorted);
-
-        await recommendationsPage.clickTableButton();
-        await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-        expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
-        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
-
-        expect(buttonNamesSorted).toEqual(expectedSorted);
+        await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
     });
 
     test('[230520] Verify all cards display critical icon when Critical category selected', async ({recommendationsPage}) => {
@@ -235,7 +273,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         const count = await recommendationsPage.allCardHeadings.count();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
         const criticalIconCount = await recommendationsPage.allCriticalIcon.count();
         console.log("Number of critical icons found:", criticalIconCount);
         expect(criticalIconCount).toBe(count);
@@ -245,8 +283,8 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
         const allStatuses = await recommendationsPage.statusColumn.allTextContents();
@@ -261,7 +299,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         const count = await recommendationsPage.allCardHeadings.count();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
         const seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
         console.log("Number of See Item buttons found:", seeAllBtnCount);
@@ -272,24 +310,24 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
     });
 
-    test('[230523] Verify filtering by data source works correctly', async ({recommendationsPage}) => {
-        await recommendationsPage.selectCategory('All');
+    test('[230523] Verify filtering by applicable service works correctly', async ({recommendationsPage}) => {
         await recommendationsPage.selectApplicableService('RDS');
 
         await recommendationsPage.allCardHeadings.last().waitFor();
         const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
         const count = await recommendationsPage.allCardHeadings.count();
         console.log("Actual heading texts:", actualHeadings);
-        console.log("Number of <h3> headings found:", count);
+        console.log("Number of card headings found:", count);
 
-        await recommendationsPage.cardRDS_Icon.nth(count - 1).waitFor();
-        const rdsCount = await recommendationsPage.cardRDS_Icon.count();
+        const awsRDSIconsInGrid = recommendationsPage.cardsGrid.locator(recommendationsPage.aws_RDS_Icon);
+        await awsRDSIconsInGrid.nth(count - 1).waitFor();
+        const rdsCount = await awsRDSIconsInGrid.count();
         console.log(`Number of RDS cards found: ${rdsCount}`);
         expect(rdsCount).toBe(count);
 
@@ -298,14 +336,14 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         expect(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
         const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
-        const expectedSorted = actualHeadings.map(t => t.trim()).sort();
-        const buttonNamesSorted = buttonNames.map(t => t.trim()).sort();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
         expect(buttonNamesSorted).toEqual(expectedSorted);
 
         const cells = await recommendationsPage.applicableServicesColumn.all();
         for (const cell of cells) {
-            const icon = cell.locator('//span[.="RDS"]');
+            const icon = cell.locator(recommendationsPage.aws_RDS_Icon);
             await expect(icon).toBeVisible();
         }
     });
@@ -341,9 +379,6 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
             const {cardLocator, seeAllBtn, tableLocator, modalColumnLocator} = card;
-            await recommendationsPage.waitForPageLoaderToDisappear();
-            await recommendationsPage.selectCategory('All');
-
             const cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
             console.log(`${cardName} Card Possible Savings: ${cardSavings}`);
 

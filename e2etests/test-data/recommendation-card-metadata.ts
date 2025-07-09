@@ -138,9 +138,9 @@ export const getCardSavingsData = (recommendationsPage: RecommendationsPage): Ca
     },
     {
         name: 'Under Utilized RDS Instances',
-        cardLocator: recommendationsPage.underutilzedRDSInstancesCardSavingsValue,
-        seeAllBtn: recommendationsPage.underutilzedRDSInstancesSeeAllBtn,
-        tableLocator: recommendationsPage.underutilzedRDSInstancesTableSavingsValue,
+        cardLocator: recommendationsPage.underutilizedRDSInstancesCardSavingsValue,
+        seeAllBtn: recommendationsPage.underutilizedRDSInstancesSeeAllBtn,
+        tableLocator: recommendationsPage.underutilizedRDSInstancesTableSavingsValue,
         modalColumnLocator: recommendationsPage.modalColumn6
     }
 ];
