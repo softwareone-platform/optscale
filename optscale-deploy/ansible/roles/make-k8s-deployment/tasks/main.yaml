@@ -1,11 +1,3 @@
-# TODO: I think there is some duplication with the optscale playbook / role, e.g. ansible/roles/optscale-post/tasks/script_runner.yaml
-
-# TODO: integrate the following workflow:
-# rebuild only one image and re-deploy it to an already running cluster
-# roughly that would require:
-#   * ./build.sh --use-nerdctl <image_name> local
-#   * ./runkube.py [--with-elk] --update-only --no-pull -- {{ k8s_deployment_name }} local
-  
 ---
 # TODO: This is a hack, there must be a better solution
 - name: change the /optscale/influxdb permissions
@@ -13,6 +5,14 @@
     path: /optscale/influxdb
     state: directory
     mode: '1777'
+# TODO: Fix this hack again, without it we get this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
+# before that /optscale/thanos-storegateway had 755 permissions with root being the owner. an update in thanos / minio images caused this
+- name: change the thanos config permissions
+  file:
+    path: /optscale/thanos-storegateway
+    state: directory
+    mode: '1777'
+
 
 - name: install the system packages to run the deployment  
   apt:
@@ -33,7 +33,6 @@
     requirements: "{{ optscale_deploy_dir }}/requirements.txt"
     virtualenv: "{{ optscale_deploy_dir }}/.venv"
 
-# TODO: do this in a better way, see https://stackoverflow.com/questions/32994002/is-there-a-yaml-editing-module-for-ansible
 - name: change the cluster secret to a new random UUID
   command:
     argv:
@@ -42,7 +41,6 @@
       - -i
       - "{{ user_template_overlay }}"
 
-# TODO: Add optional --with-elk flag
 - name: run the k8s cluster setup script
   command:
     argv:
