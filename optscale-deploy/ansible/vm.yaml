@@ -1,7 +1,0 @@
----
-- import_playbook: k8s-master.yaml
-
-- hosts: all
-  roles:
-    - build-containers
-    - make-k8s-deployment

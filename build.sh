@@ -48,8 +48,6 @@ use_registry() {
   fi
 }
 
-# TODO: I think the build tag / input tag is set differently when running `./build.sh --use-nerdctl` and `./build.sh --use-nerdctl <image>`
-#       also the position of --use-nerdctl (if present at all) may be a factor
 BUILD_TAG=${INPUT_TAG:-'local'}
 FIND_CMD="find . -mindepth 2 -maxdepth 3 -print | grep Dockerfile | grep -vE '(test|.j2)'"
 FIND_CMD="${FIND_CMD} | grep $COMPONENT/"

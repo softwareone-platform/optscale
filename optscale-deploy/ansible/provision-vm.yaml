@@ -1,0 +1,100 @@
+---
+- import_playbook: k8s-master.yaml
+
+- hosts: all
+  gather_facts: yes
+  vars:
+    k8s_deployment_name: optscale
+    optscale_dir: "{{ ansible_env.HOME }}/optscale"
+    optscale_deploy_dir: "{{ optscale_dir }}/optscale-deploy"
+    user_template_overlay: "{{ optscale_deploy_dir }}/overlay/user_template.yml"
+    new_cluster_secret: "{{ ansible_date_time.iso8601_micro | random | to_uuid }}"
+
+  tasks:
+    - name: get the container images that need to be rebuilt
+      command:
+        argv:
+          - find
+          - "{{ optscale_dir }}"
+          - -mindepth
+          - 2
+          - -maxdepth
+          - 3
+          - -name
+          - Dockerfile
+          - -exec
+          - sh
+          - -c
+          - echo $(basename $(dirname $0))
+          - {}
+          - ;
+      register: containers_to_build
+
+    # Building the containers one by one instead of just using `./build.sh --use-nerdctl` to display the progress
+    # when running the playbook. Also in case of failure it will be clear exactly which item failed
+    - name: build the container images (this will take awhile, be patient :))
+      command: "{{ optscale_dir }}/build.sh --use-nerdctl {{ item }} local"
+      args:
+        chdir: "{{ optscale_dir }}"
+      environment:
+        PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
+      loop: "{{ containers_to_build.stdout_lines }}"
+      
+    # TODO: Fix this hack, without it we get this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
+    # before that /optscale/thanos-storegateway had 755 permissions with root being the owner. an update in thanos / minio images caused this
+    - name: change the thanos config permissions
+      file:
+        path: /optscale/thanos-storegateway
+        state: directory
+        mode: '1777'
+
+    # TODO: another hack to be fixed caused by a similar problem with influxdb
+    - name: change the /optscale/influxdb permissions
+      file:
+        path: /optscale/influxdb
+        state: directory
+        mode: '1777'
+        
+    - name: install the system packages to run the deployment  
+      apt:
+        name:
+          - python3-pip
+          - sshpass
+          - git
+          - python3-virtualenv
+          - python3
+          - python3-venv
+          - python3-dev
+        state: present
+        update_cache: yes
+      become: true
+
+    - name: install the python dependancies for Optscale-deploy
+      pip:
+        requirements: "{{ optscale_deploy_dir }}/requirements.txt"
+        virtualenv: "{{ optscale_deploy_dir }}/.venv"
+
+    - name: change the cluster secret to a new random UUID
+      command:
+        argv:
+          - sed
+          - "s/^  cluster:.*$/  cluster: {{ new_cluster_secret }}/"
+          - -i
+          - "{{ user_template_overlay }}"
+
+    - name: run the k8s cluster setup script
+      command:
+        argv:
+          - "{{ optscale_deploy_dir }}/.venv/bin/python"
+          - runkube.py
+          - --no-pull
+          - -o
+          - "{{ user_template_overlay }}"
+          - --
+          - "{{ k8s_deployment_name }}"
+          - local
+      args:
+        chdir: "{{ optscale_deploy_dir }}"
+      environment:
+        PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
+    
