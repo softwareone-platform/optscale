@@ -39,8 +39,6 @@ def define_vm(config, name:, arch:, base_box:, ports:)
     
     vm_config.vm.hostname = name
 
-    # TODO: investigate private_network as it may be more appropriate
-    vm_config.vm.network "public_network"
     vm_config.vm.network "forwarded_port", guest: 80, host: ports[:http]
     vm_config.vm.network "forwarded_port", guest: 443, host: ports[:https]
     

@@ -13,5 +13,6 @@ RUN go build -ldflags "-linkmode external -extldflags -static" -o etcd-walker cm
 RUN mv etcd-walker /bin/etcd-walker
 RUN chmod +x /bin/etcd-walker
 
-FROM quay.io/coreos/etcd:v3.6.1
+# NOTE: v3.6+ require significant changes as they removed support for the V2 API, see https://etcd.io/docs/v3.6/upgrades/upgrade_3_6/
+FROM quay.io/coreos/etcd:v3.5.21
 COPY --from=build-etcd-walker /bin/etcd-walker /bin/etcd-walker
