@@ -60,12 +60,12 @@ spec:
         env:
         - name: IMAGE_ID
           value: {{ $config.image.id }}
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           valueFrom:
             secretKeyRef:
               name: "{{ $config.name }}-secret"
               key: access
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: "{{ $config.name }}-secret"
@@ -80,6 +80,10 @@ spec:
         - name: minio-persistent-storage
           mountPath: /data
           readOnly: false
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "/usr/bin/mc mb data/thanos"]
 {{ include "ready_probe" $config | indent 8 }}
       volumes:
       - name: minio-persistent-storage
