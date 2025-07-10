@@ -67,7 +67,7 @@ There is also an ansible playbook specifically built to allow a single command p
 Machine: `optscale-deploy/ansible/provision-vm.yaml`. It will do everything -- from installing dependancies, setting up the
 cluster, building all the containers and creating a new Kubernetes deployment using `runkube.py`.
 
-> [!HINT]
+> [!NOTE]
 > There is nothing VM-specific this playbook does, it largely simply follows the instructions on the `README.md` page
 > but it's more automated, so that it can all be done in a single command
 
