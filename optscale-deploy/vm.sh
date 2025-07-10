@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO: Add support for VM snapshots
-
 set -euo pipefail
 
 # requirements:
