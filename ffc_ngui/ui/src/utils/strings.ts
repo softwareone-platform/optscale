@@ -1,0 +1,85 @@
+export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
+export const notWhitespaceRegex = /\S/;
+
+/**
+ * any amount of spaces (>=0) + , or ; or whitespace + any amout of spaces (>=0)
+ */
+const emailsListSeparatorRegex = /\s*(?:,|;|\s)\s*/;
+
+export const splitInvites = (emails) => emails.split(emailsListSeparatorRegex).filter(Boolean);
+
+export const isString = (s) => typeof s === "string" || s instanceof String;
+
+export const getInitials = (str: string) =>
+  str
+    .split(" ")
+    .map((subStr) => subStr.charAt(0).toUpperCase())
+    .join("");
+
+export const isEllipsisActive = (node) =>
+  node ? node.offsetHeight < node.scrollHeight || node.offsetWidth < node.scrollWidth : false;
+
+export const getSubstring = (substring, regex, modifier = "g") => {
+  const re = new RegExp(regex, modifier);
+  return substring.match(re);
+};
+
+export const getHash = (s) => {
+  let h;
+  for (let i = 0; i < s.length; i += 1) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return h;
+};
+
+export const capitalize = <T extends string>(s: T): Capitalize<T> =>
+  (isString(s) ? s.charAt(0).toUpperCase() + s.slice(1) : "") as Capitalize<T>;
+
+export const concatenate = (array, pre, separator) => {
+  const string = array.join(separator);
+  return `${pre}${string}`;
+};
+
+export const concatenateUrl = (array, pre = "/", separator = "/") => concatenate(array, pre, separator);
+
+export const sliceByLimitWithEllipsis = (str = "", limit: number) => (str.length <= limit ? str : `${str.slice(0, limit)}...`);
+export const sliceFromEndByLimitWithEllipsis = (str = "", limit: number) =>
+  str.length <= limit ? str : `...${str.slice(-limit)}`;
+
+export const isValidEmail = (email) => emailRegex.test(email);
+
+/**
+ * Formats inputs to "[size][format] [family]" string
+ * @param {number} size - font size
+ * @param {string} family - font family
+ * @param {string} [format=rem] - px/rem
+ *
+ * @returns {string} Formatted string
+ */
+export const getFontString = (size, family, format = "rem") => `${size}${format} ${family}`;
+
+export const isWhitespaceString = (string) => /^\s+$/.test(string);
+
+export const splitAndTrim = (rawString, separator = ",") => rawString?.split(separator).map((s) => s.trim()) || [];
+
+export const buildQueryParameters = (base: string, parameters: Array<`${string}=${string}` | "">) =>
+  `${base}${concatenateUrl(
+    parameters.filter((el) => el !== ""),
+    "?",
+    "&"
+  )}`;
+
+export const parseJSON = (jsonString, fallback = {}) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch {
+    return fallback;
+  }
+};
+
+export const booleanStringToBoolean = (string) =>
+  ({
+    true: true,
+    false: false
+  })[string.toLowerCase()] ?? string;
+
+export const hasSymbolAtTheEnd = (variable, symbol) => (isString(variable) ? variable.slice(-1) === symbol : false);
