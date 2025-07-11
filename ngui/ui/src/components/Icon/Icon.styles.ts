@@ -2,9 +2,7 @@ import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()((theme) => ({
   icon: {
-    verticalAlign: "middle",
-    width: "0.6em",
-    height: "0.6em"
+    verticalAlign: "middle"
   },
   info: {
     color: theme.palette.info.main

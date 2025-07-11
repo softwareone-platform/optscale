@@ -89,7 +89,13 @@ const Resources = () => {
         [RESOURCES_SELECTED_PERSPECTIVE_PARAMETER_NAME]: perspective
       });
 
-      return <Navigate to={getResourcesExpensesUrl({ computedParams: toSearchParams })} />;
+      return (
+        <Navigate
+          to={getResourcesExpensesUrl({
+            computedParams: toSearchParams
+          })}
+        />
+      );
     }
   }
 

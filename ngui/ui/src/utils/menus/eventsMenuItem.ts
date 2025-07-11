@@ -1,4 +1,4 @@
-// import EventOutlined from "@mui/icons-material/EventOutlined";
+import EventOutlined from "@mui/icons-material/EventOutlined";
 import events from "utils/routes/eventsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,8 +9,7 @@ class EventsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_events";
 
-  // MPT_TODO: disabled to match MPT figma designs
-  // icon = EventOutlined;
+  icon = EventOutlined;
 }
 
 export default new EventsMenuItem();

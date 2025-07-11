@@ -1,10 +1,11 @@
 import { FormattedMessage } from "react-intl";
-import { PasswordInput, TextInput } from "components/forms/common/fields";
+import { Checkbox, PasswordInput, TextInput } from "components/forms/common/fields";
 import QuestionMark from "components/QuestionMark";
 
 export const FIELD_NAMES = Object.freeze({
   PASSWORD: "password",
-  USER: "user"
+  USER: "user",
+  USE_FLAVOR_BASED_COST_MODEL: "flavor_based_cost_model"
 });
 
 const KubernetesCredentials = () => (
@@ -27,6 +28,12 @@ const KubernetesCredentials = () => (
       }}
       label={<FormattedMessage id="password" />}
       autoComplete="one-time-code"
+    />
+    <Checkbox
+      name={FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL}
+      label={<FormattedMessage id="useK8sFlavorBasedCostModel" />}
+      defaultValue={false}
+      adornment={<QuestionMark tooltipText={<FormattedMessage id="useK8sFlavorBasedCostModelDescription" />} />}
     />
   </>
 );

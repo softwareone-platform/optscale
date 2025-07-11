@@ -32,6 +32,14 @@ ngui/*/storybook
 **/yarn-debug.log*
 **/yarn-error.log*
 
+# finops_for_cloud
+finops_for_cloud/server/.env
+finops_for_cloud/ui/.env
+finops_for_cloud/*/node_modules
+finops_for_cloud/*/build/
+finops_for_cloud/*/dist/
+finops_for_cloud/*/storybook
+
 # MPT_TODO: prevent accidental package-lock commits
 ngui/server/package-lock.json
 ngui/ui/package-lock.json

@@ -49,8 +49,6 @@ const renderItems =
         return (
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
-            isBoldKeyLabel
-            variant="property"
             key={displayedKey}
             keyText={displayedKey}
             value={<CopyText textToCopy={textToCopy}>{value}</CopyText>}
@@ -65,8 +63,6 @@ const renderItems =
         return (
           <KeyValueLabel
             dataTestIds={{ key: `lbl_tags_key_${dataTestIdIndex}`, value: `lbl_tags_value_${dataTestIdIndex}` }}
-            isBoldKeyLabel
-            variant="property"
             keyText={key}
             value={<CopyText textToCopy={textToCopy}>{cutValue}</CopyText>}
           />

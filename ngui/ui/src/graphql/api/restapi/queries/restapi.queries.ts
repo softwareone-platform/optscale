@@ -100,6 +100,7 @@ const K8sDataSourceConfigFragment = gql`
         cpu_hourly_cost
         memory_hourly_cost
       }
+      custom_price
       user
     }
   }

@@ -5,25 +5,24 @@ import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { FormattedMessage, useIntl } from "react-intl";
+import { REST_API_URL } from "api";
 import CaptionedCell from "components/CaptionedCell";
 import Icon from "components/Icon";
+import { JIRA } from "components/Integrations/Jira/Jira";
 import PoolLabel from "components/PoolLabel";
-import { DeleteEmployeeModal } from "components/SideModalManager/SideModals";
+import { DeleteEmployeeModal, SlackIntegrationModal } from "components/SideModalManager/SideModals";
 import Table from "components/Table";
 import TableCellActions from "components/TableCellActions";
 import TableLoader from "components/TableLoader";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { useIsAllowed } from "hooks/useAllowedActions";
+import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useFormatIntervalTimeAgo } from "hooks/useFormatIntervalTimeAgo";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import JiraIcon from "icons/JiraIcon";
 import SlackIcon from "icons/SlackIcon";
-import { EMPLOYEES_INVITE } from "urls";
+import { EMPLOYEES_INVITE, getIntegrationsUrl } from "urls";
 import { ROLE_PURPOSES, MEMBER, ORGANIZATION_ROLE_PURPOSES, SCOPE_TYPES, DOWNLOAD_FILE_FORMATS } from "utils/constants";
-import { REST_API_URL } from "../../api";
-import { useFetchAndDownload } from "../../hooks/useFetchAndDownload";
-import { MPT_GRAY_4 } from "../../utils/layouts";
 
 const EmployeeCell = ({ rowId, rowOriginal }) => {
   const {
@@ -39,7 +38,7 @@ const EmployeeCell = ({ rowId, rowOriginal }) => {
   const intl = useIntl();
 
   const caption = [
-    { caption: <span style={{ color: MPT_GRAY_4 }}>{employeeId}</span>, key: "employeeId" },
+    { caption: employeeId, key: "employeeId" },
     lastLogin !== undefined && {
       caption: `${intl.formatMessage({ id: "lastLogin" })}: ${
         lastLogin === 0 ? intl.formatMessage({ id: "never" }).toLocaleLowerCase() : formatTimeAgo(lastLogin, 1)
@@ -74,7 +73,7 @@ const EmployeeCell = ({ rowId, rowOriginal }) => {
   return (
     <CaptionedCell caption={caption} enableTextCopy>
       <>
-        <strong>{employeeName}</strong>
+        {employeeName}
         {icons}
       </>
     </CaptionedCell>
@@ -143,22 +142,10 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
     () =>
       employees.map((el) => ({
         ...el,
-        assignmentsStringified: renderRoles(
-          {
-            assignments: el.assignments,
-            organizationName,
-            id: el.id
-          },
-          true,
-          intl
-        ).join(" ")
+        assignmentsStringified: renderRoles({ assignments: el.assignments, organizationName, id: el.id }, true, intl).join(" ")
       })),
     [employees, organizationName, intl]
   );
-
-  const allowedActions = useIsAllowed({
-    requiredActions: ["EDIT_PARTNER"]
-  });
 
   const columns = useMemo(
     () => [
@@ -199,7 +186,6 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
         id: "actions",
         enableSorting: false,
         enableHiding: false,
-        hidden: allowedActions === false,
         cell: ({ row: { original: { name: employeeName, id: employeeId } = {}, index } }) => (
           <TableCellActions
             items={[
@@ -218,8 +204,9 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
         )
       }
     ],
-    [allowedActions, organizationName, openSideModal, data]
+    [organizationName, openSideModal, data]
   );
+
   const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
   const downloadEmployees = (format) => {
     fetchAndDownload({
@@ -251,28 +238,27 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
                 messageId: "invite",
                 link: EMPLOYEES_INVITE,
                 type: "button",
-                color: "primary",
+                color: "success",
                 variant: "contained",
                 dataTestId: "btn_invite",
                 requiredActions: ["MANAGE_INVITES"]
               },
-              // MPT_TODO: disabled to meet BDR requirements
-              // {
-              //   key: "slack",
-              //   icon: <SlackIcon />,
-              //   messageId: "slack",
-              //   action: () => openSideModal(SlackIntegrationModal),
-              //   type: "button",
-              //   dataTestId: "btn_slack"
-              // },
-              // {
-              //   key: "jira",
-              //   icon: <JiraIcon />,
-              //   messageId: "jira",
-              //   link: getIntegrationsUrl(JIRA),
-              //   type: "button",
-              //   dataTestId: "btn_jira"
-              // },
+              {
+                key: "slack",
+                icon: <SlackIcon />,
+                messageId: "slack",
+                action: () => openSideModal(SlackIntegrationModal),
+                type: "button",
+                dataTestId: "btn_slack"
+              },
+              {
+                key: "jira",
+                icon: <JiraIcon />,
+                messageId: "jira",
+                link: getIntegrationsUrl(JIRA),
+                type: "button",
+                dataTestId: "btn_jira"
+              },
               {
                 key: "download",
                 startIcon: <CloudDownloadOutlinedIcon />,

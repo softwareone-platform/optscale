@@ -7,7 +7,7 @@ import FormattedMoney from "components/FormattedMoney";
 import ProgressBar from "components/ProgressBar";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { QUOTA_POLICY, FORMATTED_MONEY_TYPES } from "utils/constants";
-import { getPoolColorStatus, MPT_SPACING_1 } from "utils/layouts";
+import { getPoolColorStatus } from "utils/layouts";
 import {
   hasStatusInformation,
   isAnomalyConstraint,
@@ -56,7 +56,7 @@ const ConstraintStatusCell = ({ constraint }) => {
             <CheckCircleIcon fontSize="small" color="success" />
           ) : (
             <>
-              <CancelIcon fontSize="small" color="error" style={{ marginRight: MPT_SPACING_1 }} />
+              <CancelIcon fontSize="small" color="error" />
               <FormattedMessage id="violationsRightNow" values={{ value: violations }} />
             </>
           )}

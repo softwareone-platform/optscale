@@ -34,7 +34,6 @@ const applyTypographySettings = (themeInput, settings) => {
 
   theme.typography.body1 = mergeIfSettingIsNotEmpty(theme.typography.body1, "body1");
   theme.typography.body2 = mergeIfSettingIsNotEmpty(theme.typography.body2, "body2");
-  theme.typography.label = mergeIfSettingIsNotEmpty(theme.typography.label, "label");
   theme.typography.subtitle1 = mergeIfSettingIsNotEmpty(theme.typography.subtitle1, "subtitle1");
   theme.typography.subtitle2 = mergeIfSettingIsNotEmpty(theme.typography.subtitle2, "subtitle2");
   theme.typography.h1 = mergeIfSettingIsNotEmpty(theme.typography.h1, "h1");
@@ -58,23 +57,17 @@ const generateResponsiveFontSizes = (themeInput) => {
   const upXsBreakpoint = getUpBreakpoint("xs");
   const upLgBreakpoint = getUpBreakpoint("lg");
   const upXlBreakpoint = getUpBreakpoint("xl");
-  theme.typography.label = {
-    fontWeight: "bold",
-    color: "black",
-    fontSize: "0.85rem"
-  };
+
   theme.typography.subtitle1 = {
     ...theme.typography.subtitle1,
-    fontWeight: "bold",
-    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
     [upLgBreakpoint]: {
-      fontSize: "1rem"
+      fontSize: "0.92rem"
     },
     [upXlBreakpoint]: {
-      fontSize: "1.12rem"
+      fontSize: "1rem"
     }
   };
 
@@ -93,7 +86,6 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body1 = {
     ...theme.typography.body1,
-    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.85rem"
     },
@@ -107,7 +99,6 @@ const generateResponsiveFontSizes = (themeInput) => {
 
   theme.typography.body2 = {
     ...theme.typography.body2,
-    color: "black",
     [upXsBreakpoint]: {
       fontSize: "0.75rem"
     },
