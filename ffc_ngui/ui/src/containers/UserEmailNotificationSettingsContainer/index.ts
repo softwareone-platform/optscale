@@ -1,0 +1,3 @@
+import UserEmailNotificationSettingsContainer from "./UserEmailNotificationSettingsContainer";
+
+export default UserEmailNotificationSettingsContainer;
