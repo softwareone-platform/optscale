@@ -323,6 +323,7 @@ demo_org_cleanup:
     pullPolicy: Never
   startingDeadlineSeconds: 100
   schedule: "0 0 * * *"
+  demo_org_lifetime_hrs:
 
 resource_observer:
   name: resource-observer

@@ -249,4 +249,6 @@ etcd:
     min_uppercase: {{ .Values.password_strength_settings.min_uppercase }}
     min_digits: {{ .Values.password_strength_settings.min_digits }}
     min_special_chars: {{ .Values.password_strength_settings.min_special_chars }}
+  demo_org_cleanup:
+    demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
 {{- end }}
