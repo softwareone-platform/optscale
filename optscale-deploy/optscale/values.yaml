@@ -930,6 +930,11 @@ skip_config_update: false
 ssl:
   # set to false to not force ssl redirect on k8s ingress
   force_redirect: true
+  certificate_name: defaultcert
+  cert_manager:
+    enabled: false
+    issuer_type: issuer
+    issuer:
 
 # list of overlays used by runkube to start Optscale (necessary to use proper defaults when adding new keys on update)
 overlay_list: ""

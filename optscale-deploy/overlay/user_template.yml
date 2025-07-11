@@ -112,7 +112,26 @@ grafana:
 # Public ip of OptScale VM used in external integrations like emails,
 # google calendar etc. Defaults to internal ip, change it if internal ip
 # is not accessible in your network
+#
+# Public ip must be set to the fully qualified domain name of your OptScale instance
+# if you want to use cert-manager to manage the SSL certificate lifecycle.
+#
+# eg:
+#  public_ip: optscale.example.com
+#
 public_ip:
+
+ssl:
+  # set to false to not force ssl redirect on k8s ingress
+  force_redirect: true
+  # set to the name of your k8s secret which store the certificate
+  certificate_name: defaultcert
+  cert_manager:
+    # enable the cert-manager integration
+    enabled: false
+    # specify the name and the type of the issuer (issuer, cluster-issuer)
+    issuer:
+    issuer_type: issuer
 
 # Email verification is disabled by default. Set the flag to `False` to enable it
 disable_email_verification: True

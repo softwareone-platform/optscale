@@ -10,10 +10,13 @@ metadata:
     nginx.ingress.kubernetes.io/client-body-buffer-size:  "512m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    {{ if .Values.ssl.force_redirect }}
+    {{- if .Values.ssl.force_redirect }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    {{ end }}
+    {{- end }}
+    {{- if .Values.ssl.cert_manager.enabled }}
+    cert-manager.io/{{ .Values.ssl.cert_manager.issuer_type }}: {{ .Values.ssl.cert_manager.issuer | quote }}
+    {{- end }}
   name: optscale
   namespace: default
 spec:
@@ -105,5 +108,12 @@ spec:
               number: {{ .Values.diproxy.service.externalPort }}
         path: /storage
         pathType: Prefix
+{{- if .Values.public_ip }}
+  host: {{ .Values.public_ip }}
+{{- end }}
   tls:
-  - secretName: defaultcert
+  - secretName: {{ .Values.ssl.certificate_name }}
+{{- if .Values.public_ip }}
+    hosts:
+    - {{ .Values.public_ip }}
+{{- end }}
