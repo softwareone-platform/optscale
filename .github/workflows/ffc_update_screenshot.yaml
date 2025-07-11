@@ -24,7 +24,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-        with:
           ref: ${{ github.event.inputs.gitref }}
 
       - name: Set up Docker Buildx
