@@ -3,6 +3,7 @@ import os
 import time
 
 import urllib3
+from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 from etcd import Lock as EtcdLock
 from kombu import Exchange, Queue, Connection as QConnection
@@ -38,6 +39,7 @@ task_queue = Queue(
 LOG = get_logger(__name__)
 ENVIRONMENT_CLOUD_TYPE = 'environment'
 HEARTBEAT_INTERVAL = 300
+DEFAULT_MAX_WORKERS = 10
 
 
 class DIWorker(ConsumerMixin):
@@ -48,11 +50,18 @@ class DIWorker(ConsumerMixin):
         self._mongo_cl = None
         self._clickhouse_cl = None
         self.report_import_id = None
+        self.running = True
         self.thread = Thread(target=self.heartbeat)
         self.thread.start()
+        self.executor = ThreadPoolExecutor(
+            max_workers=int(config_cl.read_branch('/diworker').get(
+                'max_report_imports_workers',
+                DEFAULT_MAX_WORKERS
+            ))
+        )
 
     def heartbeat(self):
-        while True:
+        while self.running:
             if self.report_import_id:
                 self.rest_cl.report_import_update(self.report_import_id, {})
             time.sleep(HEARTBEAT_INTERVAL)
@@ -113,25 +122,26 @@ class DIWorker(ConsumerMixin):
         )]
 
     def report_import(self, task):
-        self.report_import_id = task.get('report_import_id')
-        if not self.report_import_id:
+        report_import_id = task.get('report_import_id')
+        self.report_import_id = report_import_id
+        if not report_import_id:
             raise Exception('invalid task received: {}'.format(task))
 
-        _, import_dict = self.rest_cl.report_import_get(self.report_import_id)
+        _, import_dict = self.rest_cl.report_import_get(report_import_id)
         cloud_acc_id = import_dict.get('cloud_account_id')
         _, resp = self.rest_cl.report_import_list(cloud_acc_id, show_active=True)
         imports = list(filter(
-            lambda x: x['id'] != self.report_import_id, resp['report_imports']))
+            lambda x: x['id'] != report_import_id, resp['report_imports']))
         if imports:
             reason = 'Import cancelled due another import: %s' % imports[0]['id']
             self.rest_cl.report_import_update(
-                self.report_import_id, {'state': 'failed',
+                report_import_id, {'state': 'failed',
                                         'state_reason': reason})
             return
         is_recalculation = import_dict.get('is_recalculation', False)
         LOG.info('Starting processing for task: %s, purpose %s',
                  task, 'recalculation ' if is_recalculation else 'import')
-        self.rest_cl.report_import_update(self.report_import_id,
+        self.rest_cl.report_import_update(report_import_id,
                                           {'state': 'in_progress'})
 
         importer_params = {
@@ -153,9 +163,9 @@ class DIWorker(ConsumerMixin):
             _, org = self.rest_cl.organization_get(organization_id)
             if org.get('disabled'):
                 reason = ('Import cancelled due to disabled '
-                          'organization: %s') % self.report_import_id
+                          'organization: %s') % report_import_id
                 self.rest_cl.report_import_update(
-                    self.report_import_id, {'state': 'failed',
+                    report_import_id, {'state': 'failed',
                                             'state_reason': reason})
                 return
             start_last_import_ts = ca.get('last_import_at', 0)
@@ -166,7 +176,7 @@ class DIWorker(ConsumerMixin):
                 **importer_params)
             importer.import_report()
             self.rest_cl.report_import_update(
-                self.report_import_id, {'state': 'completed'})
+                report_import_id, {'state': 'completed'})
             if start_last_import_ts == 0 and cc_type != ENVIRONMENT_CLOUD_TYPE:
                 all_reports_finished = True
                 _, resp = self.rest_cl.cloud_account_list(organization_id)
@@ -186,7 +196,7 @@ class DIWorker(ConsumerMixin):
                 LOG.error('Mongo exception details: %s', exc.details)
             reason = str(exc)
             self.rest_cl.report_import_update(
-                self.report_import_id,
+                report_import_id,
                 {'state': 'failed', 'state_reason': reason}
             )
             now = int(time.time())
@@ -215,6 +225,9 @@ class DIWorker(ConsumerMixin):
             'organization.report_import.failed')
 
     def process_task(self, body, message):
+        self.executor.submit(self._process_task, body, message)
+
+    def _process_task(self, body, message):
         try:
             self.report_import(body)
         except Exception as exc:
@@ -245,4 +258,7 @@ if __name__ == '__main__':
             worker = DIWorker(conn, config_cl)
             worker.run()
         except KeyboardInterrupt:
-            print('bye bye')
+            worker.running = False
+            worker.executor.shutdown(wait=True)
+            worker.thread.join()
+            LOG.info("Shutdown worker")
