@@ -1,0 +1,3 @@
+import ConfirmEmailVerificationCodeContainer from "./ConfirmEmailVerificationCodeContainer";
+
+export default ConfirmEmailVerificationCodeContainer;

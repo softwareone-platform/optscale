@@ -1,0 +1,78 @@
+import FormattedMoney from "components/FormattedMoney";
+import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
+import ObsoleteSnapshotChainsModal from "components/SideModalManager/SideModals/recommendations/ObsoleteSnapshotChainsModal";
+import { ALIBABA_ECS } from "hooks/useRecommendationServices";
+import { detectedAt, firstSeenOn, lastSeenUsed, possibleMonthlySavings, resource, resourceLocation } from "utils/columns";
+import { ALIBABA_CNR, FORMATTED_MONEY_TYPES } from "utils/constants";
+import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
+
+const columns = [
+  resource({
+    headerDataTestId: "lbl_osch_resource"
+  }),
+  resourceLocation({
+    headerDataTestId: "lbl_osch_location"
+  }),
+  firstSeenOn({
+    headerDataTestId: "lbl_osch_first_seen"
+  }),
+  lastSeenUsed({
+    headerDataTestId: "lbl_osch_last_used",
+    headerHelperMessageId: "snapshotObsoleteLastUsedHelp"
+  }),
+  detectedAt({ headerDataTestId: "lbl_osch_detected_at" }),
+  possibleMonthlySavings({
+    headerDataTestId: "lbl_osch_possible_savings_per_month",
+    defaultSort: "desc"
+  })
+];
+
+class ObsoleteSnapshotChains extends BaseRecommendation {
+  type = "obsolete_snapshot_chains";
+
+  name = "obsoleteSnapshotChains";
+
+  title = "obsoleteSnapshotChainsTitle";
+
+  descriptionMessageId = "obsoleteSnapshotChainsDescription";
+
+  get descriptionMessageValues() {
+    const { days_threshold: daysThreshold } = this.options;
+    return { daysThreshold };
+  }
+
+  services = [ALIBABA_ECS];
+
+  appliedDataSources = [ALIBABA_CNR];
+
+  categories = [CATEGORY.COST];
+
+  emptyMessageId = "noObsoleteSnapshotChains";
+
+  withExclusions = true;
+
+  withCleanupScripts = true;
+
+  hasSettings = true;
+
+  settingsSidemodalClass = ObsoleteSnapshotChainsModal;
+
+  static resourceDescriptionMessageId = "obsoleteSnapshotChainsResourceRecommendation";
+
+  get previewItems() {
+    return this.items.map((item) => [
+      {
+        key: `${item.cloud_resource_id}-label`,
+        value: <RecommendationListItemResourceLabel item={item} />
+      },
+      {
+        key: `${item.cloud_resource_id}-saving`,
+        value: <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={item.saving} />
+      }
+    ]);
+  }
+
+  columns = columns;
+}
+
+export default ObsoleteSnapshotChains;
