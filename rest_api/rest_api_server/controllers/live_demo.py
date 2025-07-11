@@ -486,6 +486,11 @@ class LiveDemoController(BaseController, MongoMixin, ClickHouseMixin):
         obj['config'] = encode_config(config)
         obj['organization_id'] = organization_id
         obj['account_id'] = gen_id()
+        if obj.get('parent_id'):
+            parent_id = self._recovery_map[objects_group.value].get(
+                obj['parent_id'])
+            if parent_id:
+                obj['parent_id'] = parent_id
         obj = self.offsets_to_timestamps(['created_at'], now, obj)
         obj = self.set_now_ts(
             ['last_import_at', 'last_import_attempt_at',
