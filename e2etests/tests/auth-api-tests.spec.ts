@@ -6,6 +6,7 @@ import {generateRandomEmail} from "../utils/random-data";
 test.describe.skip("Auth API tests @api_tests", () => {
     const email = process.env.DEFAULT_USER_EMAIL;
     const password = process.env.DEFAULT_USER_PASSWORD;
+    const userId = process.env.DEFAULT_USER_ID;
 
     test("Set verification codes", async ({ authRequest }) => {
         const response = await authRequest.setVerificationCode(email, "123456");
@@ -27,7 +28,7 @@ test.describe.skip("Auth API tests @api_tests", () => {
             const createdAtDate = payload.created_at.substring(0, 10);
             expect(createdAtDate).toBe(currentDate);
             expect(payload.user_email).toBe(email);
-            expect(payload.user_id).not.toBeNull();
+            expect(payload.user_id).toBe(userId);
             expect(payload.token).not.toBeNull();
             expect(payload.digest).not.toBeNull();
             expect(payload.ip).not.toBeNull();
@@ -56,8 +57,8 @@ test.describe.skip("Auth API tests @api_tests", () => {
     })
 
     test("Get users with Cluster Secret", async ({ authRequest }) => {
-        const user_ID = process.env.DEFAULT_USER_ID;
-        const response = await authRequest.getUsersWithClusterSecret(user_ID);
+        const email = process.env.DEFAULT_USER_EMAIL.toLowerCase();
+        const response = await authRequest.getUsersWithClusterSecret(userId);
         const payload = JSON.parse(await response.text()) as UsersResponse;
 
         expect(response.status()).toBe(200);
@@ -65,8 +66,8 @@ test.describe.skip("Auth API tests @api_tests", () => {
         for(const user of payload.users) {
             expect(user.created_at).toBeGreaterThanOrEqual(1736339701);
             expect(user.deleted_at).toBe(0);
-            expect(user.id).toBe(user_ID);
-            expect(user.display_name).toBe('Test User');
+            expect(user.id).toBe(userId);
+            expect(user.display_name.toLowerCase()).toBe(email);
             expect(user.is_active).toBe(true);
             expect(user.type_id).toBe(1);
             expect(user.email).toBe(email);
@@ -90,8 +91,7 @@ test.describe.skip("Auth API tests @api_tests", () => {
     })
 
     test("Get users with bad cluster secret", async ({ authRequest }) => {
-        const user_ID = process.env.DEFAULT_USER_ID;
-        const response = await authRequest.getUsersWithBadClusterSecret(user_ID);
+        const response = await authRequest.getUsersWithBadClusterSecret(userId);
         expect(response.status()).toBe(403);
     })
 

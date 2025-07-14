@@ -16,9 +16,9 @@ export class AuthRequest extends BaseRequest {
     constructor(request: APIRequestContext) {
         super(request);
         this.request = request;
-        this.userEndpoint = "/auth/v2/users";
-        this.tokenEndpoint = "/auth/v2/tokens";
-        this.verificationCodesEndpoint = "/auth/v2/verification_codes";
+        this.userEndpoint = process.env.API_BASE_URL ? `${process.env.API_BASE_URL}/auth/v2/users` : "/auth/v2/users";
+        this.tokenEndpoint = process.env.API_BASE_URL ? `${process.env.API_BASE_URL}/auth/v2/tokens`: "/auth/v2/tokens";
+        this.verificationCodesEndpoint = process.env.API_BASE_URL ? `${process.env.API_BASE_URL}/auth/v2/verification_codes` : "/auth/v2/verification_codes";
     }
 
     /**

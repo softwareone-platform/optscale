@@ -8,7 +8,7 @@ export abstract class BasePage {
     readonly page: Page; // The Playwright page object representing the current page.
     readonly url: string; // The URL of the page.
     readonly main: Locator; // Locator for the main element of the page.
-    readonly pageLoaderSpinner: Locator; // Locator for the page loader spinner, if applicable.
+    readonly pageLoader: Locator; // Locator for the page loader spinner, if applicable.
 
     /**
      * Initializes a new instance of the BasePage class.
@@ -19,7 +19,7 @@ export abstract class BasePage {
         this.page = page;
         this.url = url;
         this.main = this.page.locator('main');
-        this.pageLoaderSpinner = this.main.locator('[role="progressbar"]');
+        this.pageLoader = this.main.locator('[role="progressbar"]');
     }
 
     /**
@@ -234,18 +234,18 @@ async waitForAllCanvases(): Promise<void> {
      * and calculates the total sum. Handles pagination by checking the visibility and enabled state of the "next page" button.
      *
      * @param {Locator} columnLocator - The locator for the column containing the currency values.
-     * @param {Locator} modalNextPageBtn - The locator for the "next page" button in the modal.
+     * @param {Locator} nextPageBtn - The locator for the "next page" button in the modal.
      * @returns {Promise<number>} The total sum of the currency values across all pages, rounded to two decimal places.
      */
-    async sumCurrencyColumn(
+    async sumModalCurrencyColumn(
         columnLocator: Locator,
-        modalNextPageBtn: Locator
+        nextPageBtn: Locator
     ): Promise<number> {
         let totalSum = 0;
 
         while (true) {
             // Wait for the first element in the column to be visible
-            await columnLocator.first().waitFor({state: 'visible', timeout: 5000}).catch(() => {
+            await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
             });
 
             // Extract text content from all cells in the column
@@ -261,23 +261,59 @@ async waitForAllCanvases(): Promise<void> {
             totalSum += values.reduce((sum, val) => sum + val, 0);
 
             // Check if the "next page" button is visible and enabled
-            const isVisible = await modalNextPageBtn.isVisible();
+            const isVisible = await nextPageBtn.isVisible();
             if (!isVisible) break;
 
-            const isEnabled = await modalNextPageBtn.isEnabled();
+            const isEnabled = await nextPageBtn.isEnabled();
             if (!isEnabled) break;
 
             // Navigate to the next page
-            await modalNextPageBtn.click();
-
-            // Optional: wait for pagination to update
-            await modalNextPageBtn.page().waitForTimeout(300);
+            await nextPageBtn.click();
+            await this.page.waitForLoadState();
         }
 
         // Return the total sum rounded to two decimal places
         return parseFloat(totalSum.toFixed(2));
     }
+    async sumTableCurrencyColumn(
+        columnLocator: Locator,
+        nextPageBtn: Locator
+    ): Promise<number> {
+        let totalSum = 0;
 
+        while (true) {
+            // Wait for the first element in the column to be visible
+            await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
+            });
+
+            console.log(`Page: ${await this.page.locator('//button[@aria-current="true"]').allTextContents()}`);
+            // Extract text content from all cells in the column
+            const texts = await columnLocator.allTextContents();
+
+            // Parse the currency values from the text content
+            const values = texts.map(text => {
+                const currencyOnly = text.trim();
+                return this.parseCurrencyValue(currencyOnly);
+            });
+
+            // Add the parsed values to the total sum
+            totalSum += values.reduce((sum, val) => sum + val, 0);
+
+            // Check if the "next page" button is visible and enabled
+            const isVisible = await nextPageBtn.isVisible();
+            if (!isVisible) break;
+
+            const isEnabled = await nextPageBtn.isEnabled();
+            if (!isEnabled) break;
+
+            // Navigate to the next page
+            await nextPageBtn.click();
+            await this.page.waitForLoadState();
+        }
+
+        // Return the total sum rounded to two decimal places
+        return parseFloat(totalSum.toFixed(2));
+    }
     /**
      * Waits for the page loader spinner to disappear.
      *
@@ -288,14 +324,18 @@ async waitForAllCanvases(): Promise<void> {
      * @returns {Promise<void>} A promise that resolves when the spinner is no longer visible or rejects if the timeout is exceeded.
      */
     async waitForPageLoaderToDisappear(timeout: number = 10000): Promise<void> {
-        const count = await this.pageLoaderSpinner.count(); // Check the number of spinner elements present.
-        if (count > 0) { // If spinner elements are found, proceed to wait for their disappearance.
+        try {
+            await this.pageLoader.first().waitFor({timeout: 1000});
+        }
+        catch (error) {
+            return; // Exit the method if the spinner is not present.
+        }
             try {
-                console.log("Waiting for page loader spinner to disappear...");
-                await this.pageLoaderSpinner.waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
+                console.log(`Waiting for page loader to disappear...`);
+                await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
             } catch {
-                console.warn("Page loader spinner did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
+                console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
             }
         }
     }
-}
+
