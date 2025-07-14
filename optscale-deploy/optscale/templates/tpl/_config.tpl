@@ -254,4 +254,6 @@ etcd:
     min_special_chars: {{ .Values.password_strength_settings.min_special_chars }}
   diworker:
     max_report_imports_workers: {{ .Value.import_reports.max_workers }}
+  demo_org_cleanup:
+    demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
 {{- end }}
