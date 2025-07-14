@@ -19,15 +19,41 @@ set up and use VMs -- `optscale-deploy/vm.sh`.
 
 ## Install Prerequisites
 
-1. Install `vagrant` using your system package manager. On MacOS:
+1. [Install `vagrant`](https://developer.hashicorp.com/vagrant/install) using your system package manager.
+<details><summary>On MacOS:</summary>
+  
 ```sh
-brew install vagrant
+brew tap hashicorp/tap
+brew install hashicorp/tap/hashicorp-vagrant
 ```
-2. Install `QEMU` using your system package manager. On MacOS:
+</details>
+
+<details><summary>On Ubuntu:</summary>
+
+```sh
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
+```
+</details>
+
+2. [Install `QEMU`](https://www.qemu.org/download/) using your system package manager.
+
+<details><summary>On MacOS:</summary>
+
 ```sh
 brew install qemu
 ```
-3. Install and enable the `QEMU` plugin for `Vagrant`:
+</details>
+
+<details><summary>On Ubuntu:</summary>
+
+```sh
+apt-get install qemu-system
+```
+</details>
+
+3. Install and enable the [`QEMU` plugin for `Vagrant`](https://github.com/ppggff/vagrant-qemu):
 ```sh
 vagrant plugin install vagrant-qemu
 ```
