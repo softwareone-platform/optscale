@@ -1427,29 +1427,6 @@ EMAIL_TEST_DATA = {
             },
         },
     },
-    "first_task_created": {
-        "email": ["azaza@ma.il"],
-        "subject": "OptScale task created notification",
-        "template_type": "first_task_created",
-        "template_params": {
-            "texts": {
-                "organization": {"id": "5d3d4501-0de8-40dc-a9ed-df2fb1396141", "name": "am2"},
-                "task": {"id": "d7092814-2b12-4e60-89c5-67919c9b17d6", "name": "my task"},
-            },
-        },
-    },
-    "first_run_started": {
-        "email": ["azaza@ma.il"],
-        "subject": "OptScale run started notification",
-        "template_type": "first_run_started",
-        "template_params": {
-            "texts": {
-                "organization": {"id": "5d3d4501-0de8-40dc-a9ed-df2fb1396141", "name": "am2"},
-                "task": {"id": "d7092814-2b12-4e60-89c5-67919c9b17d6", "name": "my task"},
-                "run": {"id": "6946211f-47ff-43a3-a9a3-3e5f57d52415", "name": "test run"},
-            },
-        },
-    },
     "verify_email": {
         "email": ["serviceuser@hystax.com"],
         "subject": "OptScale email verification",
