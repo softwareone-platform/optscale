@@ -26,22 +26,20 @@ const RecommendationsCardContainer = () => {
       (RecommendationClass) => new RecommendationClass(STATUS.ACTIVE, data)
     );
 
-    const { [CATEGORY.COST]: costRecommendationsCount, [CATEGORY.SECURITY]: securityRecommendationsCount } = Object.fromEntries(
-      [CATEGORY.COST, CATEGORY.SECURITY].map((category) => [
-        category,
-        recommendations.reduce((acc, r) => (r.hasCategory(category) ? acc + r.count : acc), 0)
-      ])
+    const calculateRecommendationCount = (filterFn) =>
+      recommendations.reduce((total, recommendation) => (filterFn(recommendation) ? total + recommendation.count : total), 0);
+
+    const countingCriteria = {
+      costRecommendationsCount: (recommendation) => recommendation.hasCategory(CATEGORY.COST),
+      securityRecommendationsCount: (recommendation) => recommendation.hasCategory(CATEGORY.SECURITY),
+      criticalRecommendationsCount: (recommendation) => recommendation.color === RECOMMENDATION_COLOR.ERROR
+    };
+
+    const counts = Object.fromEntries(
+      Object.entries(countingCriteria).map(([key, filterFn]) => [key, calculateRecommendationCount(filterFn)])
     );
 
-    const criticalRecommendationsCount = Object.values(allRecommendations)
-      .filter(({ color }) => color === RECOMMENDATION_COLOR.ERROR)
-      .reduce((acc, r) => acc + r.count, 0);
-
-    return {
-      costRecommendationsCount,
-      securityRecommendationsCount,
-      criticalRecommendationsCount
-    };
+    return counts;
   }, [allRecommendations, data]);
 
   const { costRecommendationsCount, securityRecommendationsCount, criticalRecommendationsCount } = categoriesCounters;
