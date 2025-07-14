@@ -388,8 +388,8 @@ const getConfig = (type, config) => {
     case GCP_CNR:
       return {
         getDefaultFormValues: () => ({
-          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET]: config.billing_data.dataset_name,
-          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]: config.billing_data.table_name,
+          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET]: config.billing_data?.dataset_name,
+          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]: config.billing_data?.table_name,
           [GCP_CREDENTIALS_FIELD_NAMES.CREDENTIALS]: ""
         }),
         parseFormDataToApiParams: async (formData) => {
