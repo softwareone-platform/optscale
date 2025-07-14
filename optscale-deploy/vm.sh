@@ -57,8 +57,25 @@ fi
 inventory_file="$SCRIPT_DIR/ansible/inventories/vm-$vm_arch.yaml"
 
 function _venv_run {
-    # shellcheck disable=2145
-    exec "$SCRIPT_DIR/.venv/bin/$@"
+    if [[ -n "${VIRTUAL_ENV:-}" ]]; then
+        # A virtual environment is activated, so we can just run the command in it
+        exec "$@"
+    elif type uv 2>&1 > /dev/null; then
+        # if uv is installed, just use it to run the command in the venv
+        # (it works even if the project isn't managed by uv)
+        uv run --directory "$SCRIPT_DIR" "$@"
+    else
+        # If no virtual environment is activated, we'll try to use the one in optscale-deploy/.venv (if exists)
+        default_venv_dir="$SCRIPT_DIR/.venv"
+        
+        if [[ ! -d "$default_venv_dir" ]]; then
+            echo "Error: no activated Virtual environment and '$default_venv_dir' doesn't exist."
+            echo "Please activate the Virtual environment or create it with 'python -m venv $default_venv_dir' and try again"
+            exit 1
+        fi
+        
+        exec "$default_venv_dir/bin/$@"
+    fi
 }
 
 function vm_info {
@@ -226,6 +243,8 @@ function vm_deploy_service {
 
     vagrant rsync "$vm_name"
     vm_ssh "cd optscale && ./build.sh --use-nerdctl $service_name local"
+    # NOTE: optscale/optscale-deploy/.venv will always exist on the VM (even if the hosts' venv is installed elsewhere)
+    #       since it was installed there during the provisioning process
     vm_ssh "cd optscale/optscale-deploy && .venv/bin/python runkube.py --no-pull -o 'overlay/user_template.yml' -- optscale local"
 }
 
