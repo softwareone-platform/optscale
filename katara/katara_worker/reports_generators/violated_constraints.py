@@ -35,8 +35,10 @@ class ViolatedConstraints(Base):
         return {
             'email': [self.report_data['user_email']],
             'template_type': self.get_template_type(__file__),
-            'subject':
-                'Action required: Hystax OptScale Resource Constraints Report',
+            'subject': (
+                f'Action required: {self.config_cl.company_name()} '
+                f'{self.config_cl.product_name()} Resource Constraints Report'
+            ),
             'template_params': {
                 'texts': {
                     'organization': {

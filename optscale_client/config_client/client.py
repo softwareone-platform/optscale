@@ -546,3 +546,15 @@ class Client(etcd.Client):
         Get password strength settings
         """
         return self.read_branch('/password_strength_settings')
+
+    def product_name(self):
+        """
+        Gets the product name (Optscale)
+        """
+        return self.get("/product_name").value
+
+    def company_name(self):
+        """
+        Gets the Company name (Hystax)
+        """
+        return self.get("/company_name").value

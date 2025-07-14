@@ -219,13 +219,11 @@ class HeraldExecutorWorker(ConsumerMixin):
                                         60: ('minute', 'minutes')})
             str_result = ''
             for divider, (one_value, many_values) in dividers_map.items():
-                str_result = str(0) + ' {}'.format(many_values)
+                str_result = f'0 {many_values}'
                 result = int((end_date - start_date) / divider)
                 if result == 0:
                     continue
-                str_result = str(result)
-                str_result += (' {}'.format(one_value)
-                               if result == 1 else ' {}'.format(many_values))
+                str_result = f'{result} {one_value if result == 1 else many_values}'
                 break
             return str_result
 
@@ -291,7 +289,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             {'env_key': env_prop_key, 'env_value': env_prop_value}
             for env_prop_key, env_prop_value in env_properties.items()
         ]
-        for user_id, user_info in all_user_info.items():
+        for _, user_info in all_user_info.items():
             template_params = {
                 'texts': {
                     'organization': self._get_organization_params(organization),
@@ -397,10 +395,9 @@ class HeraldExecutorWorker(ConsumerMixin):
                                       organization_id)
 
     def send_expenses_alert(self, email, alert, pool_name, organization):
-        threshold = "%s%s" % (CURRENCY_SYMBOLS_MAP.get(organization['currency'], '$'),
-                              alert['threshold'])
+        threshold = f"{CURRENCY_SYMBOLS_MAP.get(organization['currency'], '$')}{alert['threshold']}"
         if alert['threshold_type'] == 'percentage':
-            threshold = "%s%%" % alert['threshold']
+            threshold = f"{alert['threshold']}%"
         template_params = {
             'texts': {
                 'organization': self._get_organization_params(organization),
@@ -410,10 +407,11 @@ class HeraldExecutorWorker(ConsumerMixin):
             }
         }
         self.herald_cl.email_send(
-            [email], 'OptScale pool limit alert',
+            [email],
+            f'{self.config_cl.product_name()} pool limit alert',
             template_type=HeraldTemplates.POOL_ALERT.value,
             template_params=template_params)
-        LOG.info('sending email notification to user %s' % email)
+        LOG.info('sending email notification to user %s', email)
 
     def execute_expense_alert(self, pool_id, organization_id, meta):
         _, organization = self.rest_cl.organization_get(organization_id)
@@ -462,8 +460,10 @@ class HeraldExecutorWorker(ConsumerMixin):
         params = {
             'email': [user['email']],
             'template_type': HeraldTemplates.RESOURCE_OWNER_VIOLATION_ALERT.value,
-            'subject': 'Action required: Hystax OptScale Resource Constraint'
-                       ' Violation Alert',
+            'subject': (
+                f'Action required: {self.config_cl.company_name()} {self.config_cl.product_name()} '
+                'Resource Constraint Violation Alert'
+            ),
             'template_params': {
                 'texts': {
                     'organization': self._get_organization_params(organization),
@@ -485,8 +485,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             for i, v in enumerate(filter_val):
                 if isinstance(v, dict):
                     if filter_key == 'resource_type':
-                        filter_val[i] = '%s:%s' % (
-                            v['name'], v['type'] or REGULAR_IDENTITY)
+                        filter_val[i] = f'{v['name']}:{v['type'] or REGULAR_IDENTITY}'
                     else:
                         filter_val[i] = v['name']
         return filters
@@ -537,7 +536,8 @@ class HeraldExecutorWorker(ConsumerMixin):
             end_date = created.replace(hour=23, minute=59, second=59)
         else:
             raise Exception(
-                'Unsupported constraint type: %s' % constraint['type'])
+                f'Unsupported constraint type: {constraint['type']}'
+            )
         link_filters['startDate'] = int(start_date.timestamp())
         if end_date:
             link_filters['endDate'] = int(end_date.timestamp())
@@ -554,9 +554,7 @@ class HeraldExecutorWorker(ConsumerMixin):
             link_filters['availableSavings'] = link_filters['recommendations']
             link_filters.pop('recommendations')
         query = self.rest_cl.query_url(organizationId=organization['id'], **link_filters)
-        link = 'https://{0}/resources'.format(self.config_cl.public_ip())
-        link += query
-        return link
+        return f'https://{self.config_cl.public_ip()}/resources{query}'
 
     def _get_org_constraint_template_params(self, organization, constraint,
                                             constraint_data, hit_date,
@@ -601,15 +599,20 @@ class HeraldExecutorWorker(ConsumerMixin):
                                                  organization_id):
         code, organization = self.rest_cl.organization_get(organization_id)
         if not organization:
-            LOG.warning('Organization %s was not found, error code: %s' % (
-                organization_id, code))
+            LOG.warning(
+                'Organization %s was not found, error code: %s',
+                organization_id,
+                code,
+            )
             return
         code, constraint = self.rest_cl.organization_constraint_get(
             constraint_id)
         if not constraint:
             LOG.warning(
-                'Organization constraint %s was not found, error code: %s' % (
-                    constraint_id, code))
+                'Organization constraint %s was not found, error code: %s',
+                constraint_id,
+                code
+            )
             return
         c_filters = self._collapsed_filters(constraint['filters'])
         constraint_data = constraint.copy()
@@ -617,15 +620,18 @@ class HeraldExecutorWorker(ConsumerMixin):
             organization_id, constraint_id=constraint_id)
         if not hits.get('organization_limit_hits'):
             raise Exception(
-                'Limit hits for constraint %s were not found, '
-                'error code: %s' % (constraint_id, code))
+                f'Limit hits for constraint {constraint_id} were not found, '
+                f'error code: {code}'
+            )
         latest_hit = max(hits['organization_limit_hits'],
                          key=lambda x: x['created_at'])
         hit_date = utcfromtimestamp(
             latest_hit['created_at']).strftime('%m/%d/%Y %I:%M %p UTC')
         if constraint['type'] not in CONSTRAINT_TYPES:
-            raise Exception('Unknown organization constraint '
-                            'type: %s' % constraint['type'])
+            raise Exception(
+                'Unknown organization constraint '
+                f'type: {constraint['type']}'
+            )
         for constraint_type in CONSTRAINT_TYPES:
             constraint_data[constraint_type] = constraint_type == constraint['type']
         link = self._get_org_constraint_link(
@@ -637,7 +643,7 @@ class HeraldExecutorWorker(ConsumerMixin):
         template = CONSTRAINT_TYPE_TEMPLATE_MAP[constraint['type']]
         managers = self.get_owner_manager_infos(
             organization_id, email_template=template)
-        for user_id, user_info in managers.items():
+        for _, user_info in managers.items():
             params, subject = self._get_org_constraint_template_params(
                 organization, constraint, constraint_data, hit_date,
                 latest_hit, link, user_info)
@@ -649,15 +655,19 @@ class HeraldExecutorWorker(ConsumerMixin):
                                             module_count_list):
         code, organization = self.rest_cl.organization_get(organization_id)
         if not organization:
-            LOG.warning(f'Organization {organization_id} was not found, error '
-                        f'code: {code}')
+            LOG.warning(
+                'Organization %s was not found, error '
+                'code: %s',
+                organization_id,
+                code
+            )
             return
         for i, data_dict in enumerate(module_count_list):
             module_count_list[i] = data_dict
         managers = self.get_owner_manager_infos(
             organization_id,
             email_template=HeraldTemplates.NEW_SECURITY_RECOMMENDATION.value)
-        for user_id, user_info in managers.items():
+        for _, user_info in managers.items():
             template_params = {
                 'texts': {
                     'title': 'New security recommendation detected',
@@ -676,8 +686,12 @@ class HeraldExecutorWorker(ConsumerMixin):
     def execute_saving_spike(self, organization_id, meta):
         code, organization = self.rest_cl.organization_get(organization_id)
         if not organization:
-            LOG.warning(f'Organization {organization_id} was not found, error '
-                        f'code: {code}')
+            LOG.warning(
+                'Organization %s was not found, error '
+                'code: %s',
+                organization_id,
+                code
+            )
             return
         top3 = meta.get('top3')
         for i, opt in enumerate(top3):
@@ -686,7 +700,7 @@ class HeraldExecutorWorker(ConsumerMixin):
 
         managers = self.get_owner_manager_infos(
             organization_id, email_template=HeraldTemplates.SAVING_SPIKE.value)
-        for user_id, user_info in managers.items():
+        for _, user_info in managers.items():
             template_params = {
                 'texts': {
                     'title': 'Saving spike',
@@ -729,8 +743,7 @@ class HeraldExecutorWorker(ConsumerMixin):
     def _send_service_email(self, title, template_type, template_params):
         email = self._get_service_emails()
         if email:
-            public_ip = self.config_cl.public_ip()
-            subject = f'[{public_ip}] {title}'
+            subject = f'{self.config_cl.product_name()} {title}'
             self.herald_cl.email_send(
                 [email], subject, template_type=template_type,
                 template_params=template_params
@@ -739,8 +752,6 @@ class HeraldExecutorWorker(ConsumerMixin):
     def execute_report_import_failed(self, cloud_account_id, organization_id):
         _, organization = self.rest_cl.organization_get(organization_id)
         _, cloud_account = self.rest_cl.cloud_account_get(cloud_account_id)
-        title = "Report import failed"
-        subject = '[%s] %s' % (self.config_cl.public_ip(), title)
         template_params = {
             'texts': {
                 'organization': {
@@ -771,7 +782,8 @@ class HeraldExecutorWorker(ConsumerMixin):
         if employees_emails:
             for email in employees_emails:
                 self.herald_cl.email_send(
-                    [email], title,
+                    [email],
+                    f'{self.config_cl.product_name()} Report import failed',
                     template_type=HeraldTemplates.REPORT_IMPORT_FAILED.value,
                     template_params=template_params)
 
@@ -801,7 +813,7 @@ class HeraldExecutorWorker(ConsumerMixin):
         }
         if action_param_required.get(action) is None or any(
                 map(lambda x: x is None, action_param_required.get(action))):
-            raise Exception('Invalid task received: {}'.format(task))
+            raise Exception(f'Invalid task received: {task}')
 
         action_func_map = {
             'booking_acquire': self.execute_booking_acquire_release,
@@ -819,12 +831,17 @@ class HeraldExecutorWorker(ConsumerMixin):
             'report_import_passed': self.execute_report_imports_passed_for_org,
             'insider_prices_sslerror': self.execute_insider_prices,
         }
-        LOG.info('Started processing for object %s task type for %s '
-                 'for organization %s' % (object_id, action, organization_id))
+        LOG.info(
+            'Started processing for object %s task type for %s '
+            'for organization %s',
+            object_id,
+            action,
+            organization_id
+        )
         try:
             func = action_func_map[action]
         except KeyError:
-            LOG.warning('Unknown action type: %s. Skipping' % action)
+            LOG.warning('Unknown action type: %s. Skipping', action)
             return
         func(*action_param_required[action])
 

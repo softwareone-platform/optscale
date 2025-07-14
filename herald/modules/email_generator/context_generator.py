@@ -7,7 +7,10 @@ from datetime import UTC, datetime
 
 
 def generate_event_template_params(event, config_client):
-    subject = "Hystax OptScale Notification (%s) - %s" % (event.get("level"), event.get("evt_class"))
+    subject = (
+        f"{config_client.company_name()} {config_client.product_name()} Notification "
+        f"{event.get('level')} - {event.get('evt_class')}"
+    )
     template_params = {
         "images": {
             "level": _relevant_image_name(event.get("level")),

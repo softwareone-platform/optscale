@@ -77,8 +77,9 @@ class RegisterController(BaseController):
             url=self._config.herald_url(),
             secret=self._config.cluster_secret()
         ).email_send(
-            [user_info['email']], 'Thank you for registering at OptScale. '
-                                  'Please proceed with the setup',
+            [user_info['email']],
+            f'Thank you for registering at {self._config.product_name()}. '
+            'Please proceed with the setup',
             template_type="employee_greetings", template_params=template_params
         )
 
