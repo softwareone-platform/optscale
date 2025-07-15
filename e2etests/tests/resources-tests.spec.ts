@@ -1,8 +1,19 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+import {
+    BreakdownExpensesResponse,
+    SummaryExpensesResponse,
+    AvailableFiltersResponse
+} from "../test-data/resources-page-data";
+import {ResourcesPage} from "../pages/resources-page";
+import path from "path";
+import fs from "fs";
+import {comparePngImages} from "../utils/image-comparison";
 
-test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
+
+test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     let totalExpensesValue: number;
@@ -74,7 +85,7 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
         });
     })
 
-    test("[] Unfiltered Total expenses matches table itemised total", {tag: '@slow' }, async ({resourcesPage}) => {
+    test("[] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value from resources page', async () => {
@@ -92,7 +103,7 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
         });
     });
 
-    test("[] Filtered Total expenses matches table itemised total", {tag: '@slow' }, async ({resourcesPage}) => {
+    test("[] Filtered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
         let initialTotalExpensesValue: number;
 
@@ -130,7 +141,7 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
         });
     });
 
-    test("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow' }, async ({resourcesPage}) => {
+    test("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
@@ -151,3 +162,71 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
     });
 })
 
+async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void> {
+    const apiInterceptions: IInterceptorConfig[] = [
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
+            mockResponse: SummaryExpensesResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`,
+            mockResponse: BreakdownExpensesResponse
+        },
+        // {
+        //     page: this.page,
+        //     urlPattern: `/v2/organizations/[^/]+/clean_expenses`,
+        //     mockResponse: CleanExpensesResponse
+        // },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/available_filters`,
+            mockResponse: AvailableFiltersResponse
+        }
+        // {
+        //     page: this.page,
+        //     urlPattern: `/v2/organizations/[^/]+/resources_count`,
+        //     mockResponse: ResourcesCountResponse
+        // },
+        // {
+        //     page: this.page,
+        //     urlPattern: `/v2/organizations/[^/]+/breakdown_tags`,
+        //     mockResponse: BreakdownTagsResponse
+        // },
+    ];
+
+    await Promise.all(apiInterceptions.map(interceptApiRequest));
+}
+
+test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+    test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
+
+
+    test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
+        await test.step('Login admin user', async () => {
+            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
+            await setupApiInterceptions(resourcesPage);
+            await resourcesPage.navigateToURL();
+            await resourcesPage.waitForPageLoaderToDisappear();
+            await resourcesPage.waitForCanvas();
+            if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+        });
+
+    });
+
+    test('[] Verify chart export', async ({resourcesPage}) => {
+        const actualPath = 'tests/downloads/service-chart-export.png';
+        const expectedPath = 'tests/expected/expected-service-chart-export.png';
+        const diffPath = 'tests/downloads/diff-service-chart-export.png';
+
+        await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+
+        const match = await comparePngImages(expectedPath, actualPath, diffPath);
+        expect(match).toBe(true);
+
+    });
+
+
+})

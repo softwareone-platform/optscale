@@ -52,3 +52,4 @@ jira_ui/*/build/
 /e2etests/results.json
 /e2etests/.cache/
 /e2etests/.cache/*
+/e2etests/downloads/*

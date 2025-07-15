@@ -78,6 +78,8 @@ export class ResourcesPage extends BasePage {
     readonly showMoreFiltersBtn: Locator;
     readonly showLessFiltersBtn: Locator;
 
+    readonly exportChartBtn: Locator;
+
 
     /**
      * Initializes a new instance of the ResourcesPage class.
@@ -147,6 +149,8 @@ export class ResourcesPage extends BasePage {
         this.resetFiltersBtn = this.main.getByRole("button", {name: "Reset filters"});
         this.showMoreFiltersBtn = this.main.getByRole('button', {name: 'Show more'});
         this.showLessFiltersBtn = this.main.getByRole('button', {name: 'Show less'});
+
+        this.exportChartBtn = this.main.getByTestId('btn_export_chart');
 
         this.table = this.main.locator('table');
         this.tableColumn3 = this.table.locator('//td[3]');
@@ -306,5 +310,10 @@ export class ResourcesPage extends BasePage {
 
     async clickShowMoreFilters(): Promise<void> {
         await this.showMoreFiltersBtn.click();
+    }
+
+    async clickExportChartButton(): Promise<void> {
+        await this.exportChartBtn.click();
+        console.log('Exporting charts');
     }
 }

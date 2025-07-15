@@ -1,4 +1,6 @@
 import {Locator, Page} from "@playwright/test";
+import fs from "fs";
+import path from "path";
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -30,6 +32,7 @@ export abstract class BasePage {
      */
     async navigateToURL(customUrl: string = null): Promise<void> {
         await this.page.goto(customUrl ? customUrl : this.url, {waitUntil: "load"});
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
@@ -94,15 +97,15 @@ export abstract class BasePage {
      * This method is useful to ensure that a canvas has finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.
      */
-async waitForCanvas(timeout: number = 15000): Promise<void> {
-    await this.page.waitForFunction(() => {
-        const canvases = document.querySelectorAll('canvas');
-        return Array.from(canvases).some(canvas => {
-            const ctx = canvas.getContext('2d', {willReadFrequently: true});
-            return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-        });
-    }, null, { timeout });
-}
+    async waitForCanvas(timeout: number = 15000): Promise<void> {
+        await this.page.waitForFunction(() => {
+            const canvases = document.querySelectorAll('canvas');
+            return Array.from(canvases).some(canvas => {
+                const ctx = canvas.getContext('2d', {willReadFrequently: true});
+                return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+            });
+        }, null, {timeout});
+    }
 
     /**
      * Waits for all canvas elements on the page to have non-zero pixel data.
@@ -362,6 +365,41 @@ async waitForCanvas(timeout: number = 15000): Promise<void> {
             console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
         }
     }
+
+    /**
+     * Clicks a button to trigger a download, saves the file, and optionally asserts its existence.
+     *
+     * @param triggerButton - The locator that triggers the download.
+     * @param relativePath - Relative path to save the file (e.g., './downloads/file.png').
+     * @returns The full absolute path to the saved file.
+     */
+    async downloadFile(triggerButton: Locator, relativePath: string): Promise<string> {
+        const dir = path.dirname(relativePath);
+
+        // Ensure download folder exists
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, {recursive: true});
+        }
+
+        // Wait for download event and trigger it
+        const downloadPromise = this.page.waitForEvent('download');
+        await triggerButton.click();
+        const download = await downloadPromise;
+
+        // Save to specified location
+        await download.saveAs(relativePath);
+        const absPath = path.resolve(relativePath);
+
+        console.log('Saved download to:', absPath);
+
+        // Optional: You can add a check if you want it to throw on failure
+        if (!fs.existsSync(absPath)) {
+            throw new Error(`Download failed: ${absPath} does not exist`);
+        }
+
+        return absPath;
+    }
+
 }
 
 
