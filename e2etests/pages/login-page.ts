@@ -37,6 +37,7 @@ export class LoginPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
@@ -51,6 +52,7 @@ export class LoginPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
@@ -63,6 +65,7 @@ export class LoginPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
@@ -75,5 +78,6 @@ export class LoginPage extends BasePage {
         await this.emailInput.fill(email);
         await this.proceedToLiveDemoBtn.click();
         await this.nextBtn.click();
+        await this.waitForLoadingPageImgToDisappear();
     }
 }

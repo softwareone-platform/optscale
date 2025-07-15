@@ -30,7 +30,6 @@ export class ResourcesPage extends BasePage {
     readonly dateRangePopup: Locator;
     readonly last7DaysBtn: Locator;
     readonly applyDateBtn: Locator;
-    readonly filtersSelect: Locator;
     readonly categorizeBySelect: Locator;
     readonly expensesSelect: Locator;
     readonly poolBtn: Locator;
@@ -49,9 +48,35 @@ export class ResourcesPage extends BasePage {
     readonly tableExpensesValue: Locator;
     readonly navigateNextIcon: Locator;
     readonly tableColumn3: Locator;
+
+    readonly filtersBox: Locator;
+    readonly allFilterBoxButtons: Locator;
+    readonly filterPopover: Locator;
+    readonly suggestionsFilter: Locator;
+    readonly dataSourceFilter: Locator;
+    readonly poolFilter: Locator;
+    readonly ownerFilter: Locator;
+    readonly regionFilter: Locator;
+    readonly serviceFilter: Locator;
+    readonly resourceTypeFilter: Locator;
     readonly activityFilter: Locator;
+    readonly recommendationsFilter: Locator;
+    readonly constraintViolationsFilter: Locator;
+    readonly firstSeenFilter: Locator;
+    readonly lastSeenFilter: Locator;
+    readonly tagFilter: Locator;
+    readonly withoutTagFilter: Locator;
+    readonly paidNetworkTrafficFromFilter: Locator;
+    readonly paidNetworkTrafficToFilter: Locator;
+    readonly k8sNodeFilter: Locator;
+    readonly k8sServiceFilter: Locator;
+    readonly k8sNamespaceFilter: Locator;
+
+
     readonly billingOnlyOption: Locator;
     readonly filterApplyButton: Locator;
+    readonly showMoreFiltersBtn: Locator;
+    readonly showLessFiltersBtn: Locator;
 
 
     /**
@@ -68,9 +93,7 @@ export class ResourcesPage extends BasePage {
         this.resourceCountValue = this.main.getByTestId('p_count_value');
         this.possibleSavingsCard = this.main.getByTestId('card_possible_savings');
         this.possibleMonthlySavingsValue = this.possibleSavingsCard.getByTestId('p_savings_value');
-        this.expensesBtn = this.main.getByTestId('tab_expenses');
-        this.resourceCountBtn = this.main.getByTestId('tab_counts');
-        this.tagsBtn = this.main.getByTestId('tab_tags');
+
         this.selectedDateText = this.main.getByTestId('text_selected_dates');
         this.selectDateBtn = this.main.getByTestId('btn_select_date');
         this.dateRangePopup = this.page.getByTestId('window_date_range');
@@ -78,7 +101,11 @@ export class ResourcesPage extends BasePage {
         this.previousMonthSelect = this.dateRangePopup.getByTestId('selector_previous_month');
         this.previousYearSelect = this.dateRangePopup.getByTestId('selector_previous_year');
         this.applyDateBtn = this.dateRangePopup.getByTestId('btn_apply_date');
-        this.filtersSelect = this.main.getByTestId('selector_suggestedFilters');
+
+        this.expensesBtn = this.main.getByTestId('tab_expenses');
+        this.resourceCountBtn = this.main.getByTestId('tab_counts');
+        this.tagsBtn = this.main.getByTestId('tab_tags');
+
         this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
         this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
         this.poolBtn = this.main.getByTestId('ls_item_pool');
@@ -89,18 +116,45 @@ export class ResourcesPage extends BasePage {
         this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
         this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
         this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
+
+        this.filtersBox = this.main.locator('xpath=(//div[contains(@class, "MuiGrid-root")]//div[.="Filters:"])[1]/..');
+        this.allFilterBoxButtons = this.filtersBox.locator('button');
+        this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
+
+        this.suggestionsFilter = this.filtersBox.getByRole("button", {name: "Suggestions"});
+        this.dataSourceFilter = this.filtersBox.getByRole("button", {name: "Data source ("});
+        this.poolFilter = this.filtersBox.getByRole("button", {name: "Pool ("});
+        this.ownerFilter = this.filtersBox.getByRole("button", {name: "Owner ("});
+        this.regionFilter = this.filtersBox.getByRole("button", {name: "Region ("});
+        this.serviceFilter = this.filtersBox.getByRole("button", {name: /^Service \(/});
+        this.resourceTypeFilter = this.filtersBox.getByRole("button", {name: "Resource type ("});
+        this.activityFilter = this.filtersBox.getByRole("button", {name: "Activity ("});
+        this.recommendationsFilter = this.filtersBox.getByRole("button", {name: "Recommendations ("});
+        this.constraintViolationsFilter = this.filtersBox.getByRole("button", {name: "Constraint violations ("});
+        this.firstSeenFilter = this.filtersBox.getByRole("button", {name: "First seen ("});
+        this.lastSeenFilter = this.filtersBox.getByRole("button", {name: "Last seen ("});
+        this.tagFilter = this.filtersBox.getByRole("button", {name: /^Tag \(/});
+        this.withoutTagFilter = this.filtersBox.getByRole("button", {name: "Without tag ("});
+        this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole("button", {name: "Paid network traffic from ("});
+        this.paidNetworkTrafficToFilter = this.filtersBox.getByRole("button", {name: "Paid network traffic to ("});
+        this.k8sNodeFilter = this.filtersBox.getByRole("button", {name: "K8s node ("});
+        this.k8sServiceFilter = this.filtersBox.getByRole("button", {name: "K8s service ("});
+        this.k8sNamespaceFilter = this.filtersBox.getByRole('button', {name: 'K8s namespace ('});
+
+
+        this.billingOnlyOption = this.filterPopover.getByLabel('Billing only');
+        this.filterApplyButton = this.filterPopover.getByRole("button", {name: "Apply"});
+        this.resetFiltersBtn = this.main.getByRole("button", {name: "Reset filters"});
+        this.showMoreFiltersBtn = this.main.getByRole('button', {name: 'Show more'});
+        this.showLessFiltersBtn = this.main.getByRole('button', {name: 'Show less'});
+
+        this.table = this.main.locator('table');
+        this.tableColumn3 = this.table.locator('//td[3]');
+        this.tableExpensesValue = this.tableColumn3.locator('//a[1]');
         this.firstResourceItemInTable = this.main.locator(
             '[data-test-id="CleanExpensesTable"] [data-test-id="row_0"] a[data-test-id^="resource_name_"]'
         );
-        this.resetFiltersBtn = this.main.getByRole("button", {name: "Reset filters"});
-        this.table = this.main.locator('table');
-
         this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
-        this.tableColumn3 = this.table.locator('//td[3]')
-        this.tableExpensesValue = this.tableColumn3.locator('//a[1]');
-        this.activityFilter = this.main.getByRole("button", {name: "Activity"});
-        this.billingOnlyOption = this.page.getByLabel('Billing only');
-        this.filterApplyButton = this.page.getByRole("button", {name: "Apply"});
     }
 
     /**
@@ -212,18 +266,19 @@ export class ResourcesPage extends BasePage {
         await this.waitForCanvas();
     }
 
+
     /**
-     * Applies a filter to show only billing-related data on the Resources page.
-     * This method interacts with the activity filter, selects the "Billing only" option, and applies the filter.
+     * Applies the "Billing only" filter on the Resources page.
+     * This method clicks the activity filter, selects the "Billing only" option, and applies the filter.
      * It logs the action and waits for the canvas to update.
      *
      * @returns {Promise<void>} Resolves when the filter is applied and the canvas is updated.
      */
-    async filterByBillingOnly(): Promise<void> {
+    async clickActivityFilterBillingOnlyOptionAndApply(): Promise<void> {
         await this.activityFilter.click();
         await this.billingOnlyOption.click();
         await this.filterApplyButton.click();
-        console.log('Filtering by billing only');
+        console.log('Clicking by billing only');
         await this.waitForCanvas();
     }
 
@@ -247,5 +302,9 @@ export class ResourcesPage extends BasePage {
     async clickPossibleSavingsCard(): Promise<void> {
         await this.possibleSavingsCard.click();
         await this.page.waitForLoadState();
+    }
+
+    async clickShowMoreFilters(): Promise<void> {
+        await this.showMoreFiltersBtn.click();
     }
 }

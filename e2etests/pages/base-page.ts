@@ -8,6 +8,7 @@ export abstract class BasePage {
     readonly page: Page; // The Playwright page object representing the current page.
     readonly url: string; // The URL of the page.
     readonly main: Locator; // Locator for the main element of the page.
+    readonly loadingPageImg: Locator; // Locator for the loading page image, if applicable.
     readonly pageLoader: Locator; // Locator for the page loader spinner, if applicable.
 
     /**
@@ -19,6 +20,7 @@ export abstract class BasePage {
         this.page = page;
         this.url = url;
         this.main = this.page.locator('main');
+        this.loadingPageImg = this.page.getByRole('img', {name: 'Loading page'});
         this.pageLoader = this.main.locator('[role="progressbar"]');
     }
 
@@ -30,7 +32,7 @@ export abstract class BasePage {
         await this.page.goto(customUrl ? customUrl : this.url, {waitUntil: "load"});
     }
 
-  /**
+    /**
      * Retrieves a locator for an element based on a test ID attribute.
      * This method searches for elements with either `data-test-id` or `data-testid` attributes
      * matching the provided test ID value.
@@ -51,13 +53,13 @@ export abstract class BasePage {
      * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
      * @returns {Promise<void>} A promise that resolves when the option is selected.
      */
-async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
-            if (await this.selectedComboBoxOption(comboBox) !== option) {
-                await comboBox.click();
-                await this.page.getByRole('option', {name: option, exact: true}).click();
-                if (closeList) await this.page.locator('body').click();
-            }
+    async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
+        if (await this.selectedComboBoxOption(comboBox) !== option) {
+            await comboBox.click();
+            await this.page.getByRole('option', {name: option, exact: true}).click();
+            if (closeList) await this.page.locator('body').click();
         }
+    }
 
     /**
      * Retrieves the currently selected option from a combo box.
@@ -92,14 +94,14 @@ async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean =
      * This method is useful to ensure that a canvas has finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.
      */
-async waitForCanvas(): Promise<void> {
+async waitForCanvas(timeout: number = 15000): Promise<void> {
     await this.page.waitForFunction(() => {
         const canvases = document.querySelectorAll('canvas');
         return Array.from(canvases).some(canvas => {
             const ctx = canvas.getContext('2d', {willReadFrequently: true});
             return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
         });
-    });
+    }, null, { timeout });
 }
 
     /**
@@ -107,14 +109,14 @@ async waitForCanvas(): Promise<void> {
      * This method ensures that all canvases have finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.
      */
-async waitForAllCanvases(): Promise<void> {
-                    await this.page.waitForFunction(() => {
-                        return Array.from(document.querySelectorAll('canvas')).every(canvas => {
-                            const ctx = canvas.getContext('2d', {willReadFrequently: true});
-                            return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-                        });
-                    });
-                }
+    async waitForAllCanvases(): Promise<void> {
+        await this.page.waitForFunction(() => {
+            return Array.from(document.querySelectorAll('canvas')).every(canvas => {
+                const ctx = canvas.getContext('2d', {willReadFrequently: true});
+                return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+            });
+        });
+    }
 
     /**
      * Waits for the text content of an element to include the expected text.
@@ -275,6 +277,7 @@ async waitForAllCanvases(): Promise<void> {
         // Return the total sum rounded to two decimal places
         return parseFloat(totalSum.toFixed(2));
     }
+
     async sumTableCurrencyColumn(
         columnLocator: Locator,
         nextPageBtn: Locator
@@ -314,6 +317,29 @@ async waitForAllCanvases(): Promise<void> {
         // Return the total sum rounded to two decimal places
         return parseFloat(totalSum.toFixed(2));
     }
+
+    /**
+     * Waits for the loading page image to disappear.
+     * This method checks if the loading image is present and waits for it to become hidden.
+     * It logs the waiting process and handles cases where the image does not disappear within the timeout.
+     *
+     * @param {number} [timeout=10000] - The maximum time to wait for the loading image to disappear, in milliseconds.
+     * @returns {Promise<void>} A promise that resolves when the loading image is no longer visible or exits early if the image is not present.
+     */
+    async waitForLoadingPageImgToDisappear(timeout: number = 10000): Promise<void> {
+        try {
+            await this.loadingPageImg.first().waitFor({timeout: 1000}); // Check if the loading image is present.
+        } catch (error) {
+            return; // Exit the method if the loading image is not present.
+        }
+        try {
+            console.log(`Waiting for loading page image to disappear...`);
+            await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout}); // Wait for the loading image to become hidden.
+        } catch (error) {
+            console.warn("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
+        }
+    }
+
     /**
      * Waits for the page loader spinner to disappear.
      *
@@ -326,16 +352,18 @@ async waitForAllCanvases(): Promise<void> {
     async waitForPageLoaderToDisappear(timeout: number = 10000): Promise<void> {
         try {
             await this.pageLoader.first().waitFor({timeout: 1000});
-        }
-        catch (error) {
+        } catch (error) {
             return; // Exit the method if the spinner is not present.
         }
-            try {
-                console.log(`Waiting for page loader to disappear...`);
-                await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
-            } catch {
-                console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
-            }
+        try {
+            console.log(`Waiting for page loader to disappear...`);
+            await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
+        } catch {
+            console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
         }
     }
+}
+
+
+
 
