@@ -1,4 +1,4 @@
-FROM python:3.12.3-slim
+FROM python:3.12.11-slim
 LABEL org.opencontainers.image.authors="Hystax"
 
 ENV PYTHONUNBUFFERED 1
