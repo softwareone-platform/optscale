@@ -10,31 +10,43 @@ npm install -g pnpm
 
 ### Server
 
-To launch the server in development mode, follow these steps:
+#### Development Mode
 
-#### 1. Install Dependencies:
+To launch the server in development mode with automatic restart and code generation, follow these steps:
+
+##### 1. Install Dependencies:
 
 ```
 pnpm install
 ```
 
-#### 2. Define Environment Variables:
+##### 2. Define Environment Variables:
 
 See the Environment section below for more details.
 
-#### 3. Update GraphQL Schema Types (if needed):
-
-If you make changes to the GraphQL schema, update the types definition by running:
+##### 3. Run the Development Server:
 
 ```
-pnpm codegen
+pnpm dev
 ```
 
-#### 4. Run the Server:
+This starts nodemon, which will:
+
+- Build and start the development server
+- **Automatically restart** the server when you change:
+  - Any TypeScript files (`.ts`)
+  - GraphQL schemas (`.graphql`)
+  - Environment variables (`.env`)
+
+#### Production Mode
+
+For production builds or when you don't need file watching:
 
 ```
 pnpm start
 ```
+
+This compiles and starts the server once without watching for changes.
 
 ### Serving the UI from the Server
 
