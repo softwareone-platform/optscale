@@ -78,6 +78,7 @@ export class ResourcesPage extends BasePage {
     readonly showMoreFiltersBtn: Locator;
     readonly showLessFiltersBtn: Locator;
 
+    readonly showLegend: Locator;
     readonly exportChartBtn: Locator;
 
 
@@ -150,6 +151,7 @@ export class ResourcesPage extends BasePage {
         this.showMoreFiltersBtn = this.main.getByRole('button', {name: 'Show more'});
         this.showLessFiltersBtn = this.main.getByRole('button', {name: 'Show less'});
 
+        this.showLegend = this.main.getByLabel('Show legend');
         this.exportChartBtn = this.main.getByTestId('btn_export_chart');
 
         this.table = this.main.locator('table');
@@ -312,8 +314,15 @@ export class ResourcesPage extends BasePage {
         await this.showMoreFiltersBtn.click();
     }
 
-    async clickExportChartButton(): Promise<void> {
-        await this.exportChartBtn.click();
-        console.log('Exporting charts');
+    async clickShowLegend(): Promise<void> {
+        await this.showLegend.click();
+        console.log('Toggling legend visibility');
     }
+
+    async selectCategorizeBy(option: string): Promise<void> {
+        await this.selectFromComboBox(this.categorizeBySelect, option);
+        await this.waitForCanvas();
+    }
+
+
 }

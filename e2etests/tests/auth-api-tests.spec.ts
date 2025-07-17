@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import {AuthResponse, UsersResponse} from "../test-data/test-data-types";
 import {generateRandomEmail} from "../utils/random-data";
 
-test.describe.skip("Auth API tests @api_tests", () => {
+test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
     const email = process.env.DEFAULT_USER_EMAIL;
     const password = process.env.DEFAULT_USER_PASSWORD;
     const userId = process.env.DEFAULT_USER_ID;

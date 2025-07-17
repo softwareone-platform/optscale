@@ -8,8 +8,6 @@ import {
     AvailableFiltersResponse
 } from "../test-data/resources-page-data";
 import {ResourcesPage} from "../pages/resources-page";
-import path from "path";
-import fs from "fs";
 import {comparePngImages} from "../utils/image-comparison";
 
 
@@ -199,7 +197,7 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
     await Promise.all(apiInterceptions.map(interceptApiRequest));
 }
 
-test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
 
@@ -216,17 +214,48 @@ test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]
 
     });
 
-    test('[] Verify chart export', async ({resourcesPage}) => {
-        const actualPath = 'tests/downloads/service-chart-export.png';
-        const expectedPath = 'tests/expected/expected-service-chart-export.png';
-        const diffPath = 'tests/downloads/diff-service-chart-export.png';
+    test.only('[] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
+        let actualPath = 'tests/downloads/expenses-chart-export.png';
+        let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
+        let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
+        let match: boolean;
 
-        await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+        await test.step('Verify the default chart is Service Daily Expenses with legend displayed', async () => {
+            expect(await resourcesPage.selectedComboBoxOption(resourcesPage.categorizeBySelect)).toBe('Service');
+            expect(await resourcesPage.selectedComboBoxOption(resourcesPage.expensesSelect)).toBe('Daily');
+            await expect(resourcesPage.showLegend).toBeChecked();
+        });
 
-        const match = await comparePngImages(expectedPath, actualPath, diffPath);
-        expect(match).toBe(true);
+        await test.step('Download the chart with legend and compare with expected chart png', async () => {
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
 
+        actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
+        expectedPath = 'tests/expected/expected-expenses-chart-export-without-legend.png';
+        diffPath = 'tests/downloads/diff-expenses-chart-export-without-legend.png';
+
+        await test.step('Toggle Show Legend and verify the chart without legend', async () => {
+            await resourcesPage.clickShowLegend();
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
     });
+
+    // test.only('[] Verify default daily expenses chart export without legend', async ({resourcesPage}) => {
+    //     const actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
+    //     const expectedPath = 'tests/expected/expected-expenses-chart-export-without-legend.png';
+    //     const diffPath = 'tests/downloads/diff-expenses-chart-export-without-legend.png';
+    //
+    //     await resourcesPage.clickShowLegend();
+    //     await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+    //
+    //     const match = await comparePngImages(expectedPath, actualPath, diffPath);
+    //     expect(match).toBe(true);
+    // })
 
 
 })
