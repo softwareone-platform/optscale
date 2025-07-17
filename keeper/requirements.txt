@@ -1,7 +1,7 @@
-tornado==6.4.2
+tornado==6.5
 pymongo==4.6.3
 mongoengine==0.27.0
-requests==2.32.3
+requests==2.32.4
 apispec==6.3.1
 pyyaml==6.0.1
 # OptScale packages
