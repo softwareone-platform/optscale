@@ -8,8 +8,10 @@
     "install": "pnpm install --frozen-lockfile --ignore-scripts",
     "compile": "tsc",
     "serve": "node --env-file=.env ./dist/server.js",
-    "start": "pnpm compile && pnpm serve",
-    "codegen": "gql-gen --config codegen.ts"
+    "start": "pnpm build && pnpm serve",
+    "codegen": "gql-gen --config codegen.ts",
+    "build": "tsx ./scripts/build.ts",
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -40,7 +42,9 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/typescript": "^4.1.2",
-    "@graphql-codegen/typescript-resolvers": "^4.4.1"
+    "@graphql-codegen/typescript-resolvers": "^4.4.1",
+    "nodemon": "^3.1.10",
+    "tsx": "^4.20.3"
   },
   "pnpm": {
     "overrides": {

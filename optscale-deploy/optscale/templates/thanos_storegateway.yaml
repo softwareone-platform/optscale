@@ -80,7 +80,7 @@ spec:
 {{ include "wait_for_service" .Values.minio | indent 6 }}
       containers:
         - name: storegateway
-          image: "thanosio/thanos:v0.31.0"
+          image: "thanosio/thanos:v0.39.1"
           imagePullPolicy: "{{ $config.image.pullPolicy }}"
           command:
             - thanos
@@ -122,6 +122,10 @@ spec:
             - name: config
               mountPath: /var/thanos/config
               readOnly: true
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0
       volumes:
         - name: config
           secret:
