@@ -3,9 +3,15 @@ import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
 import {
-    BreakdownExpensesResponse,
+    BreakdownExpensesByServiceResponse,
     SummaryExpensesResponse,
-    AvailableFiltersResponse
+    AvailableFiltersResponse,
+    BreakdownExpensesByRegionResponse,
+    BreakdownExpensesByResourceTypeResponse,
+    BreakdownExpensesByDataSourceResponse,
+    BreakdownExpensesByOwnerResponse,
+    BreakdownExpensesByPoolResponse,
+    BreakdownExpensesByK8sNodeResponse
 } from "../test-data/resources-page-data";
 import {ResourcesPage} from "../pages/resources-page";
 import {comparePngImages} from "../utils/image-comparison";
@@ -169,8 +175,38 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
         },
         {
             page: resourcesPage.page,
-            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`,
-            mockResponse: BreakdownExpensesResponse
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
+            mockResponse: BreakdownExpensesByServiceResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
+            mockResponse: BreakdownExpensesByRegionResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
+            mockResponse: BreakdownExpensesByResourceTypeResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
+            mockResponse: BreakdownExpensesByDataSourceResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
+            mockResponse: BreakdownExpensesByOwnerResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
+            mockResponse: BreakdownExpensesByPoolResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
+            mockResponse: BreakdownExpensesByK8sNodeResponse
         },
         // {
         //     page: resourcesPage.page,
@@ -198,7 +234,7 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
     await Promise.all(apiInterceptions.map(interceptApiRequest));
 }
 
-test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
@@ -268,7 +304,7 @@ test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]
         });
     })
 
-    test('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
+    test.only('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/region-expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
