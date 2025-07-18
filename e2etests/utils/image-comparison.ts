@@ -19,22 +19,28 @@ export async function comparePngImages(
     const img1 = PNG.sync.read(fs.readFileSync(imgPath1));
     const img2 = PNG.sync.read(fs.readFileSync(imgPath2));
 
-    if (img1.width !== img2.width || img1.height !== img2.height) {
-        throw new Error(`Image dimensions do not match: ${imgPath1} vs ${imgPath2}`);
-    }
+    const width = Math.max(img1.width, img2.width);
+    const height = Math.max(img1.height, img2.height);
 
-    const diff = new PNG({ width: img1.width, height: img1.height });
+    // Pad images to same size if needed
+    const paddedImg1 = new PNG({ width, height });
+    const paddedImg2 = new PNG({ width, height });
+
+    PNG.bitblt(img1, paddedImg1, 0, 0, img1.width, img1.height, 0, 0);
+    PNG.bitblt(img2, paddedImg2, 0, 0, img2.width, img2.height, 0, 0);
+
+    const diff = new PNG({ width, height });
 
     const numDiffPixels = pixelmatch(
-        img1.data,
-        img2.data,
+        paddedImg1.data,
+        paddedImg2.data,
         diff.data,
-        img1.width,
-        img1.height,
-        { threshold: 0.1 }
+        width,
+        height,
+        { threshold: 0, diffMask: false }
     );
 
-    if (diffPath) {
+    if (diffPath && numDiffPixels > 0) {
         fs.writeFileSync(diffPath, PNG.sync.write(diff));
     }
 

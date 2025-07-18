@@ -173,17 +173,18 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
             mockResponse: BreakdownExpensesResponse
         },
         // {
-        //     page: this.page,
-        //     urlPattern: `/v2/organizations/[^/]+/clean_expenses`,
-        //     mockResponse: CleanExpensesResponse
+        //     page: resourcesPage.page,
+        //     urlPattern: `/api$`,
+        //     mockResponse: CleanExpensesResponse,
+        //     graphQlOperationName: 'CleanExpenses'
         // },
         {
             page: resourcesPage.page,
             urlPattern: `/v2/organizations/[^/]+/available_filters`,
             mockResponse: AvailableFiltersResponse
-        }
+        },
         // {
-        //     page: this.page,
+        //     page: resourcesPage.page,
         //     urlPattern: `/v2/organizations/[^/]+/resources_count`,
         //     mockResponse: ResourcesCountResponse
         // },
@@ -197,7 +198,7 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
     await Promise.all(apiInterceptions.map(interceptApiRequest));
 }
 
-test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe.only("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
@@ -237,7 +238,6 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         await test.step('Toggle Show Legend and verify the chart without legend', async () => {
             await resourcesPage.clickShowLegend();
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
-
             match = await comparePngImages(expectedPath, actualPath, diffPath);
             expect(match).toBe(true);
         });
@@ -256,9 +256,9 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             expect(match).toBe(true);
         });
 
-        actualPath = 'tests/downloads/monthly-expenses-chart-export-without-legend.png';
-        expectedPath = 'tests/expected/expected-monthly-expenses-chart-export-without-legend.png';
-        diffPath = 'tests/downloads/diff-monthly-expenses-chart-export-without-legend.png';
+        actualPath = 'tests/downloads/monthly-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-monthly-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-monthly-expenses-chart-export.png';
 
         await test.step('Change expenses to Monthly and verify the chart', async () => {
             await resourcesPage.selectExpenses('Monthly');
@@ -268,7 +268,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     })
 
-    test('[] Verify chart export with different categories', async ({resourcesPage}) => {
+    test('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/region-expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
@@ -278,7 +278,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('Region');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/resource-expenses-chart-export.png';
@@ -289,7 +289,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('Resource type');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/data-expenses-chart-export.png';
@@ -300,7 +300,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('Data source');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/owner-expenses-chart-export.png';
@@ -311,7 +311,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('Owner');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/pool-expenses-chart-export.png';
@@ -322,7 +322,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('Pool');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/k8node-expenses-chart-export.png';
@@ -333,7 +333,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('K8s node');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/k8sservice-expenses-chart-export.png';
@@ -344,7 +344,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('K8s service');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
 
         actualPath = 'tests/downloads/k8snamespace-expenses-chart-export.png';
@@ -355,7 +355,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.selectCategorizeBy('K8s namespace');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
-            expect(match).toBe(true);
+            expect.soft(match).toBe(true);
         });
     });
 

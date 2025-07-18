@@ -22,9 +22,9 @@ export class ResourcesPage extends BasePage {
     readonly resourceCountValue: Locator;
     readonly possibleSavingsCard: Locator;
     readonly possibleMonthlySavingsValue: Locator;
-    readonly expensesBtn: Locator;
-    readonly resourceCountBtn: Locator;
-    readonly tagsBtn: Locator;
+    readonly tabExpensesBtn: Locator;
+    readonly tabResourceCountBtn: Locator;
+    readonly tabTagsBtn: Locator;
     readonly selectedDateText: Locator;
     readonly selectDateBtn: Locator;
     readonly dateRangePopup: Locator;
@@ -32,9 +32,9 @@ export class ResourcesPage extends BasePage {
     readonly applyDateBtn: Locator;
     readonly categorizeBySelect: Locator;
     readonly expensesSelect: Locator;
-    readonly poolBtn: Locator;
-    readonly ownerBtn: Locator;
-    readonly tagSelect: Locator;
+    readonly groupByPoolBtn: Locator;
+    readonly groupByOwnerBtn: Locator;
+    readonly groupByTagSelect: Locator;
     readonly showWeekendsCheckbox: Locator;
     readonly searchInput: Locator;
     readonly previousMonthSelect: Locator;
@@ -72,7 +72,6 @@ export class ResourcesPage extends BasePage {
     readonly k8sServiceFilter: Locator;
     readonly k8sNamespaceFilter: Locator;
 
-
     readonly billingOnlyOption: Locator;
     readonly filterApplyButton: Locator;
     readonly showMoreFiltersBtn: Locator;
@@ -80,6 +79,9 @@ export class ResourcesPage extends BasePage {
 
     readonly showLegend: Locator;
     readonly exportChartBtn: Locator;
+    readonly groupedByValue: Locator;
+    readonly groupByPoolCloseBtn: Locator;
+    readonly groupByOwnerCloseBtn: Locator;
 
 
     /**
@@ -105,15 +107,13 @@ export class ResourcesPage extends BasePage {
         this.previousYearSelect = this.dateRangePopup.getByTestId('selector_previous_year');
         this.applyDateBtn = this.dateRangePopup.getByTestId('btn_apply_date');
 
-        this.expensesBtn = this.main.getByTestId('tab_expenses');
-        this.resourceCountBtn = this.main.getByTestId('tab_counts');
-        this.tagsBtn = this.main.getByTestId('tab_tags');
+        this.tabExpensesBtn = this.main.getByTestId('tab_expenses');
+        this.tabResourceCountBtn = this.main.getByTestId('tab_counts');
+        this.tabTagsBtn = this.main.getByTestId('tab_tags');
 
         this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
         this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
-        this.poolBtn = this.main.getByTestId('ls_item_pool');
-        this.ownerBtn = this.main.getByTestId('ls_item_owner');
-        this.tagSelect = this.main.getByTestId('selector_tag');
+
         this.showWeekendsCheckbox = this.main.getByLabel('Show weekends');
         this.searchInput = this.main.getByPlaceholder('Search');
         this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
@@ -144,7 +144,6 @@ export class ResourcesPage extends BasePage {
         this.k8sServiceFilter = this.filtersBox.getByRole("button", {name: "K8s service ("});
         this.k8sNamespaceFilter = this.filtersBox.getByRole('button', {name: 'K8s namespace ('});
 
-
         this.billingOnlyOption = this.filterPopover.getByLabel('Billing only');
         this.filterApplyButton = this.filterPopover.getByRole("button", {name: "Apply"});
         this.resetFiltersBtn = this.main.getByRole("button", {name: "Reset filters"});
@@ -153,6 +152,12 @@ export class ResourcesPage extends BasePage {
 
         this.showLegend = this.main.getByLabel('Show legend');
         this.exportChartBtn = this.main.getByTestId('btn_export_chart');
+        this.groupedByValue = this.main.getByTestId('ls_lbl_group').locator('xpath=/following-sibling::div/div/span');
+        this.groupByPoolBtn = this.main.getByTestId('selector_pool');
+        this.groupByPoolCloseBtn = this.main.getByTestId('btn_ls_item_pool_close');
+        this.groupByOwnerBtn = this.main.getByTestId('selector_owner');
+        this.groupByTagSelect = this.main.getByTestId('selector_tag');
+
 
         this.table = this.main.locator('table');
         this.tableColumn3 = this.table.locator('//td[3]');
@@ -206,11 +211,36 @@ export class ResourcesPage extends BasePage {
     }
 
     /**
-     * Clicks the Expenses button if it is not already active.
-     * @returns {Promise<void>}
+     * Clicks the "Expenses" tab on the Resources page.
+     * This method interacts with the `tabExpensesBtn` locator and waits for the canvas to update.
+     *
+     * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
      */
-    async clickCardsExpensesIfNotActive(): Promise<void> {
-        await this.expensesBtn.click();
+    async clickExpensesTab(): Promise<void> {
+        await this.tabExpensesBtn.click();
+        await this.waitForCanvas();
+    }
+
+    /**
+     * Clicks the "Resource Count" tab on the Resources page.
+     * This method interacts with the `tabResourceCountBtn` locator and waits for the canvas to update.
+     *
+     * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
+     */
+    async clickResourceCountTab(): Promise<void> {
+        await this.tabResourceCountBtn.click();
+        await this.waitForCanvas();
+    }
+
+    /**
+     * Clicks the "Tags" tab on the Resources page.
+     * This method interacts with the `tabTagsBtn` locator and waits for the canvas to update.
+     *
+     * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
+     */
+    async clickTagsTab(): Promise<void> {
+        await this.tabTagsBtn.click();
+        await this.waitForCanvas();
     }
 
     /**
@@ -221,7 +251,7 @@ export class ResourcesPage extends BasePage {
      * @param {string} endDay - The end day to select.
      * @returns {Promise<void>}
      */
-    async selectPreviousDateRange(month: string, year: string, startDay: string, endDay: string) {
+    async selectPreviousDateRange(month: string, year: string, startDay: string, endDay: string): Promise<void> {
         await this.selectDateBtn.click();
         await this.previousMonthSelect.click();
         await this.page.getByRole('option', {name: month}).click();
@@ -230,23 +260,21 @@ export class ResourcesPage extends BasePage {
         await this.page.getByRole('button', {name: startDay, exact: true}).first().click();
         await this.page.getByRole('button', {name: endDay}).first().click();
         await this.applyDateBtn.click();
-    }
-
-    async selectLast7DaysDateRange() {
-        await this.selectDateBtn.click();
-        await this.last7DaysBtn.click();
-        await this.applyDateBtn.click();
-        console.log('Selected last 7 days date range');
         await this.waitForCanvas();
     }
 
     /**
-     * Clicks a link to the details page.
-     * @param {Locator} link - The link to click.
-     * @returns {Promise<void>}
+     * Selects the "Last 7 Days" date range on the Resources page.
+     * This method interacts with the date range selector, clicks the "Last 7 Days" button,
+     * applies the selection, and waits for the canvas to update.
+     *
+     * @returns {Promise<void>} Resolves when the date range is selected and the canvas is updated.
      */
-    async clickLinkToDetails(link: Locator) {
-        await link.click();
+    async selectLast7DaysDateRange(): Promise<void> {
+        await this.selectDateBtn.click();
+        await this.last7DaysBtn.click();
+        await this.applyDateBtn.click();
+        await this.waitForCanvas();
     }
 
     /**
@@ -268,7 +296,6 @@ export class ResourcesPage extends BasePage {
      */
     async resetFilters(): Promise<void> {
         await this.resetFiltersBtn.click();
-        console.log('Resetting filters');
         await this.waitForCanvas();
     }
 
@@ -327,7 +354,6 @@ export class ResourcesPage extends BasePage {
      */
     async clickShowLegend(): Promise<void> {
         await this.showLegend.click();
-        console.log('Toggling legend visibility');
     }
 
     /**
@@ -354,6 +380,58 @@ export class ResourcesPage extends BasePage {
     async selectExpenses(option: string): Promise<void> {
         await this.selectFromComboBox(this.expensesSelect, option);
         await this.waitForCanvas();
+    }
+
+    /**
+     * Clicks the "Group by Pool" button on the Resources page.
+     * This method interacts with the `groupByPoolBtn` locator.
+     *
+     * @returns {Promise<void>} Resolves when the button is clicked.
+     */
+    async clickGroupByPool(): Promise<void> {
+        await this.groupByPoolBtn.click();
+    }
+
+    /**
+     * Closes the "Group by Pool" section on the Resources page.
+     * This method interacts with the `groupByPoolCloseBtn` locator.
+     *
+     * @returns {Promise<void>} Resolves when the section is closed.
+     */
+    async clickGroupByPoolClose(): Promise<void> {
+        await this.groupByPoolCloseBtn.click();
+    }
+
+    /**
+     * Clicks the "Group by Owner" button on the Resources page.
+     * This method interacts with the `groupByOwnerBtn` locator.
+     *
+     * @returns {Promise<void>} Resolves when the button is clicked.
+     */
+    async clickGroupByOwner(): Promise<void> {
+        await this.groupByOwnerBtn.click();
+    }
+
+    /**
+     * Closes the "Group by Owner" section on the Resources page.
+     * This method interacts with the `groupByOwnerCloseBtn` locator.
+     *
+     * @returns {Promise<void>} Resolves when the section is closed.
+     */
+    async clickGroupByOwnerClose(): Promise<void> {
+        await this.groupByOwnerCloseBtn.click();
+    }
+
+    /**
+     * Selects a tag from the "Group by Tag" dropdown on the Resources page.
+     * This method interacts with the `groupByTagSelect` locator and selects the specified tag.
+     *
+     * @param {string} tag - The tag to select from the dropdown.
+     * @returns {Promise<void>} Resolves when the tag is selected.
+     */
+    async selectGroupByTag(tag: string): Promise<void> {
+        await this.groupByTagSelect.click();
+        await this.page.getByRole('option', {name: tag}).click();
     }
 
 

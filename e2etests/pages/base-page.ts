@@ -336,7 +336,7 @@ export abstract class BasePage {
             return; // Exit the method if the loading image is not present.
         }
         try {
-            console.log(`Waiting for loading page image to disappear...`);
+            console.warn(`Waiting for loading page image to disappear...`);
             await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout}); // Wait for the loading image to become hidden.
         } catch (error) {
             console.warn("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
@@ -359,7 +359,7 @@ export abstract class BasePage {
             return; // Exit the method if the spinner is not present.
         }
         try {
-            console.log(`Waiting for page loader to disappear...`);
+            console.warn(`Waiting for page loader to disappear...`);
             await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
         } catch {
             console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
@@ -390,9 +390,6 @@ export abstract class BasePage {
         await download.saveAs(relativePath);
         const absPath = path.resolve(relativePath);
 
-        console.log('Saved download to:', absPath);
-
-        // Optional: You can add a check if you want it to throw on failure
         if (!fs.existsSync(absPath)) {
             throw new Error(`Download failed: ${absPath} does not exist`);
         }

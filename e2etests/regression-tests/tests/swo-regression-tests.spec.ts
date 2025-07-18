@@ -108,7 +108,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
     });
 
     await test.step('View type - breakdown by expenses', async () => {
-      await resourcesPage.clickCardsExpensesIfNotActive();
+      await resourcesPage.clickExpensesTab();
       await resourcesPage.heading.hover();
       await resourcesPage.expensesBreakdownChart.waitFor();
       await resourcesPage.waitForCanvas();
@@ -118,7 +118,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
     });
 
     await test.step('View type - breakdown by tags', async () => {
-      await resourcesPage.tagsBtn.click();
+      await resourcesPage.tabTagsBtn.click();
       await resourcesPage.heading.hover();
       await resourcesPage.tagsBreakdownChart.waitFor();
       await resourcesPage.waitForCanvas();
@@ -128,7 +128,7 @@ test.describe('FinOps UI Visual Regression @swo_regression', () => {
     });
 
     await test.step('View type - breakdown by resource count', async () => {
-      await resourcesPage.resourceCountBtn.click();
+      await resourcesPage.tabResourceCountBtn.click();
       await resourcesPage.heading.hover();
       await resourcesPage.resourceCountBreakdownChart.waitFor();
       await resourcesPage.waitForCanvas();
