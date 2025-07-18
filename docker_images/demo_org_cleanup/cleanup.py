@@ -18,9 +18,18 @@ def main(config_cl):
 
     params = config_cl.read_branch('/demo_org_cleanup')
 
+    raw_lifetime_hrs = params.get("demo_org_lifetime_hrs")
+
+    try:
+        lifetime_hrs = int(raw_lifetime_hrs)
+    except (TypeError, ValueError):
+        LOG.info("Using default demo_org_lifetime_hrs = %s (got: %r)",
+                 DEFAULT_DEMO_ORG_LIFETIME_HRS, raw_lifetime_hrs)
+        lifetime_hrs = DEFAULT_DEMO_ORG_LIFETIME_HRS
+
     _, response = rest_cl.organization_list({'is_demo': True})
     old_org_ts = int((datetime.now(tz=timezone.utc) - timedelta(
-        hours=params.get("demo_org_lifetime_hrs", DEFAULT_DEMO_ORG_LIFETIME_HRS))).timestamp())
+        hours=lifetime_hrs)).timestamp())
     for org in response['organizations']:
         if org['created_at'] > old_org_ts:
             continue
