@@ -200,7 +200,6 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
 test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
-
     test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
         await test.step('Login admin user', async () => {
             await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
@@ -211,10 +210,9 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
         });
-
     });
 
-    test.only('[] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
+    test('[] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
@@ -245,17 +243,121 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     });
 
-    // test.only('[] Verify default daily expenses chart export without legend', async ({resourcesPage}) => {
-    //     const actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
-    //     const expectedPath = 'tests/expected/expected-expenses-chart-export-without-legend.png';
-    //     const diffPath = 'tests/downloads/diff-expenses-chart-export-without-legend.png';
-    //
-    //     await resourcesPage.clickShowLegend();
-    //     await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
-    //
-    //     const match = await comparePngImages(expectedPath, actualPath, diffPath);
-    //     expect(match).toBe(true);
-    // })
+    test('[] Verify weekly and monthly expenses chart export', async ({resourcesPage}) => {
+        let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
+        let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
+        let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
+        let match: boolean;
+
+        await test.step('Change expenses to Weekly and verify the chart', async () => {
+            await resourcesPage.selectExpenses('Weekly');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/monthly-expenses-chart-export-without-legend.png';
+        expectedPath = 'tests/expected/expected-monthly-expenses-chart-export-without-legend.png';
+        diffPath = 'tests/downloads/diff-monthly-expenses-chart-export-without-legend.png';
+
+        await test.step('Change expenses to Monthly and verify the chart', async () => {
+            await resourcesPage.selectExpenses('Monthly');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+    })
+
+    test('[] Verify chart export with different categories', async ({resourcesPage}) => {
+        let actualPath = 'tests/downloads/region-expenses-chart-export.png';
+        let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
+        let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
+        let match: boolean;
+
+        await test.step('Change categorization to Resource Type and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('Region');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/resource-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-resource-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-resource-expenses-chart-export.png';
+
+        await test.step('Change categorization to Resource Type and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('Resource type');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/data-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-data-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-data-expenses-chart-export.png';
+
+        await test.step('Change categorization to Resource Type and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('Data source');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/owner-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-owner-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-owner-expenses-chart-export.png';
+
+        await test.step('Change categorization to Owner and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('Owner');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/pool-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-pool-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-pool-expenses-chart-export.png';
+
+        await test.step('Change categorization to Pool and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('Pool');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/k8node-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-k8node-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-k8node-expenses-chart-export.png';
+
+        await test.step('Change categorization to K8s node and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('K8s node');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/k8sservice-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-k8sservice-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-k8sservice-expenses-chart-export.png';
+
+        await test.step('Change categorization to K8s service and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('K8s service');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+
+        actualPath = 'tests/downloads/k8snamespace-expenses-chart-export.png';
+        expectedPath = 'tests/expected/expected-k8snamespace-expenses-chart-export.png';
+        diffPath = 'tests/downloads/diff-k8snamespace-expenses-chart-export.png';
+
+        await test.step('Change categorization to K8s namespace and verify the chart', async () => {
+            await resourcesPage.selectCategorizeBy('K8s namespace');
+            await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+            match = await comparePngImages(expectedPath, actualPath, diffPath);
+            expect(match).toBe(true);
+        });
+    });
 
 
 })
