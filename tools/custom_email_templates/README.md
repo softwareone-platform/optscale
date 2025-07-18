@@ -66,6 +66,10 @@ source venv/bin/activate
 
 # 3. Run the docker container
 docker run -v <project_path>/tools/custom_email_templates/templates/:/usr/src/app/herald/modules/email_generator/custom_templates custom_email_templates:local
+
+# 4. Generate templates
+python3 herald/render_samples.py <project_path>/email_templates/generated_emails
+ 
 ```
 ## Reusable Partials
 Reusable partials are available in the tools/custom_email_templates/templates/partials directory: 
