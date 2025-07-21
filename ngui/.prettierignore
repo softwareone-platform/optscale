@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+
+pnpm-lock.yaml
+
+# Temporary ignore for server folder
+apps/server

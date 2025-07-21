@@ -1,0 +1,6 @@
+packages:
+  - "ui"
+  - "server"
+syncInjectedDepsAfterScripts:
+  - build
+injectWorkspacePackages: true
