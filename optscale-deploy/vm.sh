@@ -2,25 +2,45 @@
 
 set -euo pipefail
 
-# requirements:
-# - vagrant:      brew install vagrant
-# - qemu:         brew install qemu
-# - vagrant-qemu: vagrant plugin install vagrant-qemu
+print_help() {
+    echo "usage: $0 [x86|arm] <command> [<args>...]"
+    echo
+    echo "available commands:
+        info             show vm status and info
+        optscale-info    show optscale cluster info and failing pods
+        start, up        start the vm
+        stop, down       stop the vm
+        destroy          destroy the vm
+        restart          stop and start the vm
+        reset            destroy and start the vm
+        ssh              ssh into the vm
+        playbook         run an ansible playbook (pass playbook name as arg)
+        role             run an ansible role (pass role name as arg)
+        deploy-service   deploy a service inside the vm (pass service name as arg)
+        --help, -h       show this help message
+    "
+    echo
+    echo "also see \`documentation/setup_dev_vm.md\` for more detailed guide on how to use this script"
+}
 
-usage_str="usage: $0 [x86|arm] <command> [<args>...]"
+# check if --help or -h is passed as any argument regardless of its position
+if [[ "$@" == *"--help"* || "$@" == *"-h"* ]]; then
+    print_help
+    exit 0
+fi
 
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 if [[ $# -lt 1 ]]; then
     echo "Error: Invalid number of arguments."
-    echo "$usage_str"
+    print_help
     exit 1
 fi
 
 if [[ "$1" == "x86" || "$1" == "arm" ]]; then
     if [[ $# -lt 2 ]]; then
         echo "Error: Invalid number of arguments, missing command."
-        echo "$usage_str"
+        print_help
         exit 1
     fi
     vm_arch="$1"
@@ -34,7 +54,7 @@ else
         vm_arch="arm"
     else
         echo "Error: Unsupported host architecture: $host_os_arch, you need to specify the VM architecture explicitly (x86 or arm)."
-        echo "$usage_str"
+        print_help
         exit 1
     fi
 
@@ -50,7 +70,7 @@ elif [[ "$vm_arch" == "arm" ]]; then
     vm_name="ubuntu-2404-arm-64"
 else
     echo "Error: Invalid VM architecture: $vm_arch, expected 'x86' or 'arm'."
-    echo "$usage_str"
+    print_help
     exit 1
 fi
 
@@ -278,6 +298,6 @@ elif [[ "$command" == "deploy-service" ]]; then
     vm_deploy_service $@
 else
     echo "Error: Invalid command: $command"
-    echo "$usage_str"
+    print_help
     exit 1
 fi
