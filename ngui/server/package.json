@@ -12,7 +12,7 @@
     "codegen": "gql-gen --config codegen.ts",
     "compile": "tsc",
     "build": "tsx ./scripts/build.ts",
-    "serve": "node --env-file=.env ./dist/server.js",
+    "serve": "tsx ./scripts/serve.ts",
     "start": "pnpm build && pnpm serve",
     "dev": "nodemon"
   },
@@ -41,6 +41,8 @@
     "http-proxy-middleware": "2.0.9"
   },
   "devDependencies": {
+    "dotenv": "17.2.0",
+    "dotenv-expand": "12.0.2",
     "nodemon": "3.1.10",
     "tsx": "4.20.3"
   }
