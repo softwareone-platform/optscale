@@ -366,6 +366,7 @@ export class ResourcesPage extends BasePage {
      */
     async selectCategorizeBy(option: string): Promise<void> {
         await this.selectFromComboBox(this.categorizeBySelect, option);
+        await this.page.waitForLoadState();
         await this.waitForCanvas();
     }
 

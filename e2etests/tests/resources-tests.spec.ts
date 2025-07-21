@@ -11,10 +11,11 @@ import {
     BreakdownExpensesByDataSourceResponse,
     BreakdownExpensesByOwnerResponse,
     BreakdownExpensesByPoolResponse,
-    BreakdownExpensesByK8sNodeResponse
+    BreakdownExpensesByK8sNodeResponse, BreakdownExpensesByK8sNamespaceResponse, BreakdownExpensesByK8sServiceResponse
 } from "../test-data/resources-page-data";
 import {ResourcesPage} from "../pages/resources-page";
 import {comparePngImages} from "../utils/image-comparison";
+import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
 
 
 test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
@@ -208,6 +209,16 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
             urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
             mockResponse: BreakdownExpensesByK8sNodeResponse
         },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
+            mockResponse: BreakdownExpensesByK8sNamespaceResponse
+        },
+        {
+            page: resourcesPage.page,
+            urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
+            mockResponse: BreakdownExpensesByK8sServiceResponse
+        },
         // {
         //     page: resourcesPage.page,
         //     urlPattern: `/api$`,
@@ -395,5 +406,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     });
 
-
+    test.afterAll(async () => {
+        await cleanUpDirectoryIfEnabled('tests/downloads');
+    });
 })
