@@ -5,7 +5,7 @@ import { intl } from "translations/react-intl-config";
 import { PRODUCTION as URL_PRODUCTION } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
 import UbuntuFilePath from "../assets/fonts/Ubuntu-Regular.ttf";
-import logo from "../assets/logo/logo_pdf.png";
+import logo from "../assets/logo/swo-pdf-logo.png";
 
 const defaultFileName = "optscale-report-%___time___%";
 let fileName = "";
@@ -109,7 +109,7 @@ const createFooter = (doc) => {
 
 // todo: I bet it wont work right after more pages added (image will appear on the last page)
 const createLogo = (doc) => {
-  const imageWidth = 100;
+  const imageWidth = 80;
   const imageX = doc.internal.pageSize.width - currentSettings.pageMarginLR - imageWidth;
   doc.addImage(logo, "PNG", imageX, 20, imageWidth, 30);
 };
