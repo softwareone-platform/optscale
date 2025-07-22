@@ -3,24 +3,25 @@
 set -euo pipefail
 
 print_help() {
-    echo "usage: $0 [x86|arm] <command> [<args>...]"
-    echo
-    echo "available commands:
-        info             show vm status and info
-        optscale-info    show optscale cluster info and failing pods
-        start, up        start the vm
-        stop, down       stop the vm
-        destroy          destroy the vm
-        restart          stop and start the vm
-        reset            destroy and start the vm
-        ssh              ssh into the vm
-        playbook         run an ansible playbook (pass playbook name as arg)
-        role             run an ansible role (pass role name as arg)
-        deploy-service   deploy a service inside the vm (pass service name as arg)
-        --help, -h       show this help message
-    "
-    echo
-    echo "also see \`documentation/setup_dev_vm.md\` for more detailed guide on how to use this script"
+    cat <<EOF
+usage: $0 [x86|arm] <command> [<args>...]
+
+Available commands:
+    info             show vm status and info
+    optscale-info    show optscale cluster info - frontend URL, cluster health etc.
+    start, up        start the vm
+    stop, down       stop the vm  (use --force to stop it immediately, potentially losing data)
+    destroy          destroy the vm
+    restart          stop and start the vm
+    reset            destroy and start the vm
+    ssh              ssh into the vm
+    playbook         run an ansible playbook (pass playbook name as arg)
+    role             run an ansible role (pass role name as arg)
+    deploy-service   deploy a service inside the vm (pass service name as arg)
+    --help, -h       show this help message
+
+see also \`documentation/setup_dev_vm.md\` for more detailed guide on how to use this script
+EOF
 }
 
 # check if --help or -h is passed as any argument regardless of its position
@@ -28,8 +29,6 @@ if [[ "$@" == *"--help"* || "$@" == *"-h"* ]]; then
     print_help
     exit 0
 fi
-
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 
 if [[ $# -lt 1 ]]; then
     echo "Error: Invalid number of arguments."
@@ -43,38 +42,39 @@ if [[ "$1" == "x86" || "$1" == "arm" ]]; then
         print_help
         exit 1
     fi
-    vm_arch="$1"
+    VM_ARCH="$1"
     shift
 else
     host_os_arch=$(uname -m)
     
     if [[ "$host_os_arch" == "x86_64" || "$host_os_arch" == "amd64" ]]; then
-        vm_arch="x86"
+        VM_ARCH="x86"
     elif [[ "$host_os_arch" == "aarch64" || "$host_os_arch" == "arm64" ]]; then
-        vm_arch="arm"
+        VM_ARCH="arm"
     else
         echo "Error: Unsupported host architecture: $host_os_arch, you need to specify the VM architecture explicitly (x86 or arm)."
         print_help
         exit 1
     fi
 
-    echo "VM architecture not provided, using the same as host: $vm_arch"
+    echo "VM architecture not provided, using the same as host: $VM_ARCH"
 fi
 
-command="$1"
+COMMAND="$1"
 shift
 
-if [[ "$vm_arch" == "x86" ]]; then
-    vm_name="ubuntu-2404-x86-64"
-elif [[ "$vm_arch" == "arm" ]]; then
-    vm_name="ubuntu-2404-arm-64"
+if [[ "$VM_ARCH" == "x86" ]]; then
+    VM_NAME="ubuntu-2404-x86-64"
+elif [[ "$VM_ARCH" == "arm" ]]; then
+    VM_NAME="ubuntu-2404-arm-64"
 else
-    echo "Error: Invalid VM architecture: $vm_arch, expected 'x86' or 'arm'."
+    echo "Error: Invalid VM architecture: $VM_ARCH, expected 'x86' or 'arm'."
     print_help
     exit 1
 fi
 
-inventory_file="$SCRIPT_DIR/ansible/inventories/vm-$vm_arch.yaml"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+INVENTORY_FILE="$SCRIPT_DIR/ansible/inventories/vm-$VM_ARCH.yaml"
 
 function _venv_run {
     if [[ -n "${VIRTUAL_ENV:-}" ]]; then
@@ -99,13 +99,13 @@ function _venv_run {
 }
 
 function vm_info {
-    vm_state=$(vagrant status $vm_name --machine-readable | grep ',state,' | cut -d ',' -f '4' )
-    vm_qemu_id=$(cat ".vagrant/machines/$vm_name/qemu/id" 2> /dev/null || echo "")
-    vm_vagrant_id=$(cat ".vagrant/machines/$vm_name/qemu/index_uuid" 2> /dev/null || echo "")
+    vm_state=$(vagrant status $VM_NAME --machine-readable | grep ',state,' | cut -d ',' -f '4' )
+    vm_qemu_id=$(cat ".vagrant/machines/$VM_NAME/qemu/id" 2> /dev/null || echo "")
+    vm_vagrant_id=$(cat ".vagrant/machines/$VM_NAME/qemu/index_uuid" 2> /dev/null || echo "")
 
     # shellcheck disable=2009
     vm_process_info=$(ps -eo pid,command \
-                      | grep "qemu-system-.*$vm_name" \
+                      | grep "qemu-system-.*$VM_NAME" \
                       | grep -v "grep" \
                       || echo "")
 
@@ -117,7 +117,7 @@ function vm_info {
                           | sed 's/.*\-accel \([^ ]*\).*/\1/' \
                           || echo "")
     
-    echo "Name:             ${vm_name}"
+    echo "Name:             ${VM_NAME}"
     echo "State:            ${vm_state:-unknown}"
     echo "QEMU Machine ID:  ${vm_qemu_id:-N/A}"
     echo "Vagrant ID:       ${vm_vagrant_id:-N/A}"
@@ -126,18 +126,18 @@ function vm_info {
 }
 
 function vm_start {
-    vagrant up $vm_name
+    vagrant up $VM_NAME
 }
 
 function vm_stop {
     # shellcheck disable=2068
-    vagrant halt $vm_name $@
+    vagrant halt $VM_NAME $@
 
     # if the --force flag is used, we can kill the vm process immediately as vagrant / qemu takes a while to stop the VM
     # even when --force is used
     if [[ "$@" == *"--force"* ]]; then
         vm_process_info=$(ps -eo pid,command \
-                        | grep "qemu-system-.*$vm_name" \
+                        | grep "qemu-system-.*$VM_NAME" \
                         | grep -v "grep" \
                         || echo "")
 
@@ -153,7 +153,7 @@ function vm_stop {
     # It should stop automatically eventually but if we don't wait for it and run another
     # command on the same VM, it will lead to an error which is hard to debug. Thank you, Vagrant >:(
     # shellcheck disable=2009
-    while ps -eo command | grep "qemu-system-.*$vm_name" | grep -vq "grep"; do
+    while ps -eo command | grep "qemu-system-.*$VM_NAME" | grep -vq "grep"; do
         echo "$(date +%X) - Waiting until VM has stopped"
         sleep 1
     done
@@ -161,7 +161,7 @@ function vm_stop {
 
 function vm_destroy {
     vm_stop --force
-    vagrant destroy --force $vm_name
+    vagrant destroy --force $VM_NAME
 }
 
 function vm_ssh {
@@ -174,9 +174,9 @@ function vm_ssh {
     cmd_to_run="${1:-/bin/bash}"
 
     if [[ "$TERM" == "xterm-kitty" ]]; then
-        TERM="xterm-256color" vagrant ssh $vm_name -c "$cmd_to_run"
+        TERM="xterm-256color" vagrant ssh $VM_NAME -c "$cmd_to_run"
     else
-        vagrant vagrant ssh $vm_name -c "$cmd_to_run"
+        vagrant vagrant ssh $VM_NAME -c "$cmd_to_run"
     fi
 }
 
@@ -200,7 +200,7 @@ function vm_run_ansible_playbook {
     fi
     
     # shellcheck disable=2068
-    _venv_run ansible-playbook --inventory-file "$inventory_file" "$playbook_path" $@
+    _venv_run ansible-playbook --inventory-file "$INVENTORY_FILE" "$playbook_path" $@
 }
 
 function vm_run_ansible_role {
@@ -222,7 +222,7 @@ function vm_run_ansible_role {
     
     # shellcheck disable=2068
     _venv_run ansible all \
-        --inventory-file "$inventory_file" \
+        --inventory-file "$INVENTORY_FILE" \
         --module-name include_role \
         --args "name=$role_path" \
         $@
@@ -233,7 +233,7 @@ function vm_show_optscale_info {
     cluster_ip_addr=$(vm_ssh "kubectl get services --no-headers --field-selector metadata.name=ngingress-nginx-ingress-controller -o custom-columns=ClusterIP:.spec.clusterIP")
     forwarded_https_port=$(cat "$SCRIPT_DIR/Vagrantfile" \
         | grep 'define_vm' -A 10 \
-        | grep "name.*$vm_name" -A 10 \
+        | grep "name.*$VM_NAME" -A 10 \
         | grep "https: \(\d\+\)" -m 1 -o \
         | awk '{print $2}'
     )
@@ -261,7 +261,7 @@ function vm_deploy_service {
         exit 1
     fi
 
-    vagrant rsync "$vm_name"
+    vagrant rsync "$VM_NAME"
     vm_ssh "cd optscale && ./build.sh --use-nerdctl $service_name local"
     # NOTE: optscale/optscale-deploy/.venv will always exist on the VM (even if the hosts' venv is installed elsewhere)
     #       since it was installed there during the provisioning process
@@ -269,35 +269,45 @@ function vm_deploy_service {
 }
 
 
-if [[ "$command" == "info" ]]; then
-    vm_info
-elif [[ "$command" == "start" || "$command" == "up" ]]; then
-    vm_start
-elif [[ "$command" == "stop" || "$command" == "down" ]]; then
-    # shellcheck disable=2068
-    vm_stop $@
-elif [[ "$command" == "destroy" ]]; then
-    vm_destroy
-elif [[ "$command" == "restart" ]]; then
-    vm_stop
-    vm_start
-elif [[ "$command" == "reset" ]]; then
-    vm_destroy
-    vm_start
-elif [[ "$command" == "ssh" ]]; then
-    vm_ssh $@
-elif [[ "$command" == "playbook" ]]; then
-    # shellcheck disable=2068
-    vm_run_ansible_playbook $@
-elif [[ "$command" == "role" ]]; then
-    # shellcheck disable=2068
-    vm_run_ansible_role $@
-elif [[ "$command" == "optscale-info" ]]; then
-    vm_show_optscale_info
-elif [[ "$command" == "deploy-service" ]]; then
-    vm_deploy_service $@
-else
-    echo "Error: Invalid command: $command"
-    print_help
-    exit 1
-fi
+case $COMMAND in
+    info)
+        vm_info
+        ;;
+    optscale-info)
+        vm_show_optscale_info
+        ;;
+    start|up)
+        vm_start
+        ;;
+    stop|down)
+        vm_stop "$@"
+        ;;
+    destroy)
+        vm_destroy
+        ;;
+    restart)
+        vm_stop
+        vm_start
+        ;;
+    reset)
+        vm_destroy
+        vm_start
+        ;;
+    ssh)
+        vm_ssh "$@"
+        ;;
+    playbook)
+        vm_run_ansible_playbook "$@"
+        ;;
+    role)
+        vm_run_ansible_role "$@"
+        ;;
+    deploy-service)
+        vm_deploy_service "$@"
+        ;;
+    *)
+        echo "Error: Invalid command: $COMMAND"
+        print_help
+        exit 1
+        ;;
+esac
