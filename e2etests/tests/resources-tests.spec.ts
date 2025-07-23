@@ -16,9 +16,10 @@ import {
 import {ResourcesPage} from "../pages/resources-page";
 import {comparePngImages} from "../utils/image-comparison";
 import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
+import {getExpectedDateRangeText} from "../utils/date-range-utils";
 
 
-test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     let totalExpensesValue: number;
@@ -146,11 +147,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
+    test.only("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
             await resourcesPage.selectLast7DaysDateRange();
+            await expect(resourcesPage.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
             totalExpensesValue = await resourcesPage.getTotalExpensesValue();
             console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
         });
@@ -165,6 +167,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             expectWithinDrift(totalExpensesValue, itemisedTotal, 0.001); // 0.1% tolerance
         });
     });
+
+
 })
 
 async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void> {
@@ -253,7 +257,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
-            await resourcesPage.navigateToURL();
+            await resourcesPage.navigateToURL('/resources');
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
@@ -315,7 +319,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     })
 
-    test.only('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
+    test('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/region-expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';

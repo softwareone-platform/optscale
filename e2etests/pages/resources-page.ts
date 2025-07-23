@@ -14,74 +14,86 @@ import {
  * Extends the BasePage class.
  */
 export class ResourcesPage extends BasePage {
-    readonly heading: Locator;
-    readonly perspectivesBtn: Locator;
-    readonly savePerspectiveBtn: Locator;
-    readonly configureClusterTypesBtn: Locator;
-    readonly totalExpensesValue: Locator;
-    readonly resourceCountValue: Locator;
-    readonly possibleSavingsCard: Locator;
-    readonly possibleMonthlySavingsValue: Locator;
-    readonly tabExpensesBtn: Locator;
-    readonly tabResourceCountBtn: Locator;
-    readonly tabTagsBtn: Locator;
-    readonly selectedDateText: Locator;
-    readonly selectDateBtn: Locator;
-    readonly dateRangePopup: Locator;
-    readonly last7DaysBtn: Locator;
-    readonly applyDateBtn: Locator;
-    readonly categorizeBySelect: Locator;
-    readonly expensesSelect: Locator;
-    readonly groupByPoolBtn: Locator;
-    readonly groupByOwnerBtn: Locator;
-    readonly groupByTagSelect: Locator;
-    readonly showWeekendsCheckbox: Locator;
-    readonly searchInput: Locator;
-    readonly previousMonthSelect: Locator;
-    readonly previousYearSelect: Locator;
-    readonly expensesBreakdownChart: Locator;
-    readonly resourceCountBreakdownChart: Locator;
-    readonly tagsBreakdownChart: Locator;
-    readonly firstResourceItemInTable: Locator;
-    readonly resetFiltersBtn: Locator;
-    readonly table: Locator;
-    readonly tableExpensesValue: Locator;
-    readonly navigateNextIcon: Locator;
-    readonly tableColumn3: Locator;
+// Header
+readonly heading: Locator;
+readonly perspectivesBtn: Locator;
+readonly savePerspectiveBtn: Locator;
+readonly configureClusterTypesBtn: Locator;
 
-    readonly filtersBox: Locator;
-    readonly allFilterBoxButtons: Locator;
-    readonly filterPopover: Locator;
-    readonly suggestionsFilter: Locator;
-    readonly dataSourceFilter: Locator;
-    readonly poolFilter: Locator;
-    readonly ownerFilter: Locator;
-    readonly regionFilter: Locator;
-    readonly serviceFilter: Locator;
-    readonly resourceTypeFilter: Locator;
-    readonly activityFilter: Locator;
-    readonly recommendationsFilter: Locator;
-    readonly constraintViolationsFilter: Locator;
-    readonly firstSeenFilter: Locator;
-    readonly lastSeenFilter: Locator;
-    readonly tagFilter: Locator;
-    readonly withoutTagFilter: Locator;
-    readonly paidNetworkTrafficFromFilter: Locator;
-    readonly paidNetworkTrafficToFilter: Locator;
-    readonly k8sNodeFilter: Locator;
-    readonly k8sServiceFilter: Locator;
-    readonly k8sNamespaceFilter: Locator;
+// Resources and savings values
+readonly totalExpensesValue: Locator;
+readonly resourceCountValue: Locator;
+readonly possibleSavingsCard: Locator;
+readonly possibleMonthlySavingsValue: Locator;
 
-    readonly billingOnlyOption: Locator;
-    readonly filterApplyButton: Locator;
-    readonly showMoreFiltersBtn: Locator;
-    readonly showLessFiltersBtn: Locator;
+// Date range selectors
+readonly selectedDateText: Locator;
+readonly selectDateBtn: Locator;
+readonly dateRangePopup: Locator;
+readonly last7DaysBtn: Locator;
+readonly previousMonthSelect: Locator;
+readonly previousYearSelect: Locator;
+readonly applyDateBtn: Locator;
 
-    readonly showLegend: Locator;
-    readonly exportChartBtn: Locator;
-    readonly groupedByValue: Locator;
-    readonly groupByPoolCloseBtn: Locator;
-    readonly groupByOwnerCloseBtn: Locator;
+// Filters
+readonly filtersBox: Locator;
+readonly allFilterBoxButtons: Locator;
+readonly filterPopover: Locator;
+readonly suggestionsFilter: Locator;
+readonly dataSourceFilter: Locator;
+readonly poolFilter: Locator;
+readonly ownerFilter: Locator;
+readonly regionFilter: Locator;
+readonly serviceFilter: Locator;
+readonly resourceTypeFilter: Locator;
+readonly activityFilter: Locator;
+readonly recommendationsFilter: Locator;
+readonly constraintViolationsFilter: Locator;
+readonly firstSeenFilter: Locator;
+readonly lastSeenFilter: Locator;
+readonly tagFilter: Locator;
+readonly withoutTagFilter: Locator;
+readonly paidNetworkTrafficFromFilter: Locator;
+readonly paidNetworkTrafficToFilter: Locator;
+readonly k8sNodeFilter: Locator;
+readonly k8sServiceFilter: Locator;
+readonly k8sNamespaceFilter: Locator;
+readonly billingOnlyOption: Locator;
+readonly filterApplyButton: Locator;
+readonly resetFiltersBtn: Locator;
+readonly showMoreFiltersBtn: Locator;
+readonly showLessFiltersBtn: Locator;
+
+// Tabs
+readonly tabExpensesBtn: Locator;
+readonly tabResourceCountBtn: Locator;
+readonly tabTagsBtn: Locator;
+
+// Charts
+readonly categorizeBySelect: Locator;
+readonly expensesSelect: Locator;
+readonly showWeekendsCheckbox: Locator;
+readonly searchInput: Locator;
+readonly expensesBreakdownChart: Locator;
+readonly resourceCountBreakdownChart: Locator;
+readonly tagsBreakdownChart: Locator;
+readonly showLegend: Locator;
+readonly exportChartBtn: Locator;
+
+// Table grouping
+readonly groupedByValue: Locator;
+readonly groupByPoolBtn: Locator;
+readonly groupByPoolCloseBtn: Locator;
+readonly groupByOwnerBtn: Locator;
+readonly groupByOwnerCloseBtn: Locator;
+readonly groupByTagSelect: Locator;
+
+// Table
+readonly table: Locator;
+readonly tableColumn3: Locator;
+readonly tableExpensesValue: Locator;
+readonly firstResourceItemInTable: Locator;
+readonly navigateNextIcon: Locator;
 
 
     /**
@@ -90,15 +102,20 @@ export class ResourcesPage extends BasePage {
      */
     constructor(page: Page) {
         super(page, '/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
+
+        // Header
         this.heading = this.main.getByTestId('lbl_resources');
         this.perspectivesBtn = this.main.getByRole('button', {name: 'Perspectives'});
         this.savePerspectiveBtn = this.main.getByRole('button', {name: 'Save perspective'});
         this.configureClusterTypesBtn = this.main.getByRole('button', {name: 'Configure cluster types'});
+
+        // Resources and savings values
         this.totalExpensesValue = this.main.getByTestId('p_expenses_value');
         this.resourceCountValue = this.main.getByTestId('p_count_value');
         this.possibleSavingsCard = this.main.getByTestId('card_possible_savings');
         this.possibleMonthlySavingsValue = this.possibleSavingsCard.getByTestId('p_savings_value');
 
+        // Date range selectors
         this.selectedDateText = this.main.getByTestId('text_selected_dates');
         this.selectDateBtn = this.main.getByTestId('btn_select_date');
         this.dateRangePopup = this.page.getByTestId('window_date_range');
@@ -107,19 +124,7 @@ export class ResourcesPage extends BasePage {
         this.previousYearSelect = this.dateRangePopup.getByTestId('selector_previous_year');
         this.applyDateBtn = this.dateRangePopup.getByTestId('btn_apply_date');
 
-        this.tabExpensesBtn = this.main.getByTestId('tab_expenses');
-        this.tabResourceCountBtn = this.main.getByTestId('tab_counts');
-        this.tabTagsBtn = this.main.getByTestId('tab_tags');
-
-        this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
-        this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
-
-        this.showWeekendsCheckbox = this.main.getByLabel('Show weekends');
-        this.searchInput = this.main.getByPlaceholder('Search');
-        this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
-        this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
-        this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
-
+        //Filters
         this.filtersBox = this.main.locator('xpath=(//div[contains(@class, "MuiGrid-root")]//div[.="Filters:"])[1]/..');
         this.allFilterBoxButtons = this.filtersBox.locator('button');
         this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
@@ -150,15 +155,32 @@ export class ResourcesPage extends BasePage {
         this.showMoreFiltersBtn = this.main.getByRole('button', {name: 'Show more'});
         this.showLessFiltersBtn = this.main.getByRole('button', {name: 'Show less'});
 
+        //tabs
+        this.tabExpensesBtn = this.main.getByTestId('tab_expenses');
+        this.tabResourceCountBtn = this.main.getByTestId('tab_counts');
+        this.tabTagsBtn = this.main.getByTestId('tab_tags');
+
+        // Charts
+        this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
+        this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
+
+        this.showWeekendsCheckbox = this.main.getByLabel('Show weekends');
+        this.searchInput = this.main.getByPlaceholder('Search');
+        this.expensesBreakdownChart = this.main.getByTestId('expenses_breakdown_chart');
+        this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
+        this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
+
         this.showLegend = this.main.getByLabel('Show legend');
         this.exportChartBtn = this.main.getByTestId('btn_export_chart');
+
+        //Table grouping
         this.groupedByValue = this.main.getByTestId('ls_lbl_group').locator('xpath=/following-sibling::div/div/span');
         this.groupByPoolBtn = this.main.getByTestId('selector_pool');
         this.groupByPoolCloseBtn = this.main.getByTestId('btn_ls_item_pool_close');
         this.groupByOwnerBtn = this.main.getByTestId('selector_owner');
         this.groupByTagSelect = this.main.getByTestId('selector_tag');
 
-
+        //Table
         this.table = this.main.locator('table');
         this.tableColumn3 = this.table.locator('//td[3]');
         this.tableExpensesValue = this.tableColumn3.locator('//a[1]');
