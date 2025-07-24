@@ -81,6 +81,7 @@ export class ResourcesPage extends BasePage {
     readonly exportChartBtn: Locator;
 
 // Table grouping
+    readonly simplePopover: Locator;
     readonly groupedByValue: Locator;
     readonly groupByPoolBtn: Locator;
     readonly groupByPoolCloseBtn: Locator;
@@ -112,6 +113,12 @@ export class ResourcesPage extends BasePage {
     readonly tableColumn3: Locator;
     readonly tableExpensesValue: Locator;
     readonly firstResourceItemInTable: Locator;
+    readonly firstPoolGroup: Locator;
+    readonly firstOwnerGroup: Locator;
+    readonly firstTagGroup: Locator;
+    readonly allTagGroups: Locator;
+    readonly allGroups: Locator;
+    readonly clearIcon: Locator;
     readonly navigateNextIcon: Locator;
 
 
@@ -193,6 +200,7 @@ export class ResourcesPage extends BasePage {
         this.exportChartBtn = this.main.getByTestId('btn_export_chart');
 
         //Table grouping
+        this.simplePopover = this.page.locator('[id="simple-popover"]');
         this.groupedByValue = this.main.getByTestId('ls_lbl_group').locator('xpath=/following-sibling::div/div/span');
         this.groupByPoolBtn = this.main.getByTestId('selector_pool');
         this.groupByPoolCloseBtn = this.main.getByTestId('btn_ls_item_pool_close');
@@ -225,6 +233,12 @@ export class ResourcesPage extends BasePage {
         this.firstResourceItemInTable = this.main.locator(
             '[data-test-id="CleanExpensesTable"] [data-test-id="row_0"] a[data-test-id^="resource_name_"]'
         );
+        this.firstPoolGroup = this.main.getByTestId('group_pool_0');
+        this.firstOwnerGroup = this.main.getByTestId('group_owner_0');
+        this.firstTagGroup = this.main.getByTestId('group_tag_0');
+        this.allTagGroups = this.main.locator('[data-test-id^="group_tag_"]');
+        this.allGroups = this.main.locator('[data-test-id^="group_"]');
+        this.clearIcon = this.getByAnyTestId('ClearIcon', this.main);
         this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
     }
 
@@ -482,16 +496,21 @@ export class ResourcesPage extends BasePage {
         await this.groupByOwnerCloseBtn.click();
     }
 
+
     /**
      * Selects a tag from the "Group by Tag" dropdown on the Resources page.
      * This method interacts with the `groupByTagSelect` locator and selects the specified tag.
      *
      * @param {string} tag - The tag to select from the dropdown.
      * @returns {Promise<void>} Resolves when the tag is selected.
+     * @throws {Error} Throws an error if the tag is not provided.
      */
     async selectGroupByTag(tag: string): Promise<void> {
+        if (!tag) {
+            throw new Error('Tag must be provided');
+        }
         await this.groupByTagSelect.click();
-        await this.page.getByRole('option', {name: tag}).click();
+        await this.simplePopover.getByText(tag, {exact: true}).click();
     }
 
     /**
@@ -543,4 +562,43 @@ export class ResourcesPage extends BasePage {
         }
     }
 
+    /**
+     * Groups resources on the Resources page based on the specified criteria.
+     * This method interacts with different group-by options (pool, owner, or tag)
+     * and performs the corresponding action.
+     *
+     * @param {string} groupBy - The grouping criteria. Valid options are: "pool", "owner", "tag".
+     * @param {string} [tag] - The tag to select when grouping by "tag". Optional.
+     * @returns {Promise<void>} Resolves when the grouping action is completed.
+     * @throws {Error} Throws an error if an unknown grouping option is provided.
+     */
+    async groupBy(groupBy: string, tag?: string): Promise<void> {
+        groupBy = groupBy.toLowerCase();
+        switch (groupBy) {
+            case 'pool':
+                await this.clickGroupByPool();
+                break;
+            case 'owner':
+                await this.clickGroupByOwner();
+                break;
+            case 'tag':
+                if (!tag) {
+                    throw new Error('Tag must be provided when grouping by tag');
+                }
+                await this.selectGroupByTag(tag);
+                break;
+            default:
+                throw new Error('Unknown group by option');
+        }
+    }
+
+    /**
+     * Clears the current grouping applied on the Resources page.
+     * This method interacts with the `clearIcon` locator to remove any active grouping.
+     *
+     * @returns {Promise<void>} Resolves when the grouping is cleared.
+     */
+    async clearGrouping(): Promise<void> {
+        await this.clearIcon.click();
+    }
 }

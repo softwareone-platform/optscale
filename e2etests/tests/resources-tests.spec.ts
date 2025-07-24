@@ -90,16 +90,15 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     })
 
-    test.only("[] Verify table column selection", async ({resourcesPage}) => {
+    test("[] Verify table column selection", async ({resourcesPage}) => {
         const defaultColumns = [
             resourcesPage.resourceTableHeading, resourcesPage.expensesTableHeading, resourcesPage.paidNetworkTrafficTableHeading,
             resourcesPage.metadataTableHeading, resourcesPage.poolOwnerTableHeading, resourcesPage.typeTableHeading, resourcesPage.tagsTableHeading
         ];
 
-        await resourcesPage.table.waitFor();
-        await resourcesPage.table.scrollIntoViewIfNeeded();
-
         await test.step('Verify default column selection is all', async () => {
+            await resourcesPage.table.waitFor();
+            await resourcesPage.table.scrollIntoViewIfNeeded();
             await expect(resourcesPage.columnsBtn).toHaveText('All');
 
             for (const column of defaultColumns) {
@@ -470,6 +469,41 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
             expect.soft(match).toBe(true);
+        });
+    });
+
+    test("[] Verify table grouping", async ({resourcesPage}) => {
+        await test.step('Verify default grouping is None', async () => {
+            await resourcesPage.table.waitFor();
+            await resourcesPage.table.scrollIntoViewIfNeeded();
+            await expect(resourcesPage.groupedByValue).toHaveText('None');
+        });
+
+        await test.step('Group by Pool and verify grouping', async () => {
+            await resourcesPage.groupBy('Pool');
+            await expect(resourcesPage.firstPoolGroup).toBeVisible();
+            await expect(resourcesPage.firstPoolGroup).toContainText('CPA (QA and Production)');
+        });
+
+        await test.step('Group by Owner and verify grouping', async () => {
+            await resourcesPage.groupBy('Owner');
+            await expect(resourcesPage.firstOwnerGroup).toBeVisible();
+            await expect(resourcesPage.firstOwnerGroup).toContainText('Francesco Faraone');
+        });
+
+        await test.step('Group by Tag and verify grouping', async () => {
+            await resourcesPage.groupBy('Tag', 'Environment');
+            await expect(resourcesPage.firstTagGroup).toBeVisible();
+            await expect.soft(resourcesPage.allTagGroups.first()).toContainText('Other');
+            await expect.soft(resourcesPage.allTagGroups.nth(1)).toContainText('Production');
+            await expect.soft(resourcesPage.allTagGroups.nth(2)).toContainText('QA');
+            await expect.soft(resourcesPage.allTagGroups.nth(3)).toContainText('PROD');
+        });
+
+        await test.step('Clear grouping and verify no grouping', async () => {
+            await resourcesPage.clearGrouping();
+            await expect(resourcesPage.groupedByValue).toHaveText('None');
+            await expect(resourcesPage.allGroups).not.toBeVisible();
         });
     });
 
