@@ -15,85 +15,104 @@ import {
  */
 export class ResourcesPage extends BasePage {
 // Header
-readonly heading: Locator;
-readonly perspectivesBtn: Locator;
-readonly savePerspectiveBtn: Locator;
-readonly configureClusterTypesBtn: Locator;
+    readonly heading: Locator;
+    readonly perspectivesBtn: Locator;
+    readonly savePerspectiveBtn: Locator;
+    readonly configureClusterTypesBtn: Locator;
 
 // Resources and savings values
-readonly totalExpensesValue: Locator;
-readonly resourceCountValue: Locator;
-readonly possibleSavingsCard: Locator;
-readonly possibleMonthlySavingsValue: Locator;
+    readonly totalExpensesValue: Locator;
+    readonly resourceCountValue: Locator;
+    readonly possibleSavingsCard: Locator;
+    readonly possibleMonthlySavingsValue: Locator;
 
 // Date range selectors
-readonly selectedDateText: Locator;
-readonly selectDateBtn: Locator;
-readonly dateRangePopup: Locator;
-readonly last7DaysBtn: Locator;
-readonly previousMonthSelect: Locator;
-readonly previousYearSelect: Locator;
-readonly applyDateBtn: Locator;
+    readonly selectedDateText: Locator;
+    readonly selectDateBtn: Locator;
+    readonly dateRangePopup: Locator;
+    readonly last7DaysBtn: Locator;
+    readonly previousMonthSelect: Locator;
+    readonly previousYearSelect: Locator;
+    readonly applyDateBtn: Locator;
 
 // Filters
-readonly filtersBox: Locator;
-readonly allFilterBoxButtons: Locator;
-readonly filterPopover: Locator;
-readonly suggestionsFilter: Locator;
-readonly dataSourceFilter: Locator;
-readonly poolFilter: Locator;
-readonly ownerFilter: Locator;
-readonly regionFilter: Locator;
-readonly serviceFilter: Locator;
-readonly resourceTypeFilter: Locator;
-readonly activityFilter: Locator;
-readonly recommendationsFilter: Locator;
-readonly constraintViolationsFilter: Locator;
-readonly firstSeenFilter: Locator;
-readonly lastSeenFilter: Locator;
-readonly tagFilter: Locator;
-readonly withoutTagFilter: Locator;
-readonly paidNetworkTrafficFromFilter: Locator;
-readonly paidNetworkTrafficToFilter: Locator;
-readonly k8sNodeFilter: Locator;
-readonly k8sServiceFilter: Locator;
-readonly k8sNamespaceFilter: Locator;
-readonly billingOnlyOption: Locator;
-readonly filterApplyButton: Locator;
-readonly resetFiltersBtn: Locator;
-readonly showMoreFiltersBtn: Locator;
-readonly showLessFiltersBtn: Locator;
+    readonly filtersBox: Locator;
+    readonly allFilterBoxButtons: Locator;
+    readonly filterPopover: Locator;
+    readonly suggestionsFilter: Locator;
+    readonly dataSourceFilter: Locator;
+    readonly poolFilter: Locator;
+    readonly ownerFilter: Locator;
+    readonly regionFilter: Locator;
+    readonly serviceFilter: Locator;
+    readonly resourceTypeFilter: Locator;
+    readonly activityFilter: Locator;
+    readonly recommendationsFilter: Locator;
+    readonly constraintViolationsFilter: Locator;
+    readonly firstSeenFilter: Locator;
+    readonly lastSeenFilter: Locator;
+    readonly tagFilter: Locator;
+    readonly withoutTagFilter: Locator;
+    readonly paidNetworkTrafficFromFilter: Locator;
+    readonly paidNetworkTrafficToFilter: Locator;
+    readonly k8sNodeFilter: Locator;
+    readonly k8sServiceFilter: Locator;
+    readonly k8sNamespaceFilter: Locator;
+    readonly billingOnlyOption: Locator;
+    readonly filterApplyButton: Locator;
+    readonly resetFiltersBtn: Locator;
+    readonly showMoreFiltersBtn: Locator;
+    readonly showLessFiltersBtn: Locator;
 
 // Tabs
-readonly tabExpensesBtn: Locator;
-readonly tabResourceCountBtn: Locator;
-readonly tabTagsBtn: Locator;
+    readonly tabExpensesBtn: Locator;
+    readonly tabResourceCountBtn: Locator;
+    readonly tabTagsBtn: Locator;
 
 // Charts
-readonly categorizeBySelect: Locator;
-readonly expensesSelect: Locator;
-readonly showWeekendsCheckbox: Locator;
-readonly searchInput: Locator;
-readonly expensesBreakdownChart: Locator;
-readonly resourceCountBreakdownChart: Locator;
-readonly tagsBreakdownChart: Locator;
-readonly showLegend: Locator;
-readonly exportChartBtn: Locator;
+    readonly categorizeBySelect: Locator;
+    readonly expensesSelect: Locator;
+    readonly showWeekendsCheckbox: Locator;
+    readonly searchInput: Locator;
+    readonly expensesBreakdownChart: Locator;
+    readonly resourceCountBreakdownChart: Locator;
+    readonly tagsBreakdownChart: Locator;
+    readonly showLegend: Locator;
+    readonly exportChartBtn: Locator;
 
 // Table grouping
-readonly groupedByValue: Locator;
-readonly groupByPoolBtn: Locator;
-readonly groupByPoolCloseBtn: Locator;
-readonly groupByOwnerBtn: Locator;
-readonly groupByOwnerCloseBtn: Locator;
-readonly groupByTagSelect: Locator;
+    readonly groupedByValue: Locator;
+    readonly groupByPoolBtn: Locator;
+    readonly groupByPoolCloseBtn: Locator;
+    readonly groupByOwnerBtn: Locator;
+    readonly groupByOwnerCloseBtn: Locator;
+    readonly groupByTagSelect: Locator;
+
+//Column selection
+    readonly columnsBtn: Locator;
+    readonly selectClearAllColumnsToggle: Locator;
+    readonly paidNetworkTrafficToggle: Locator;
+    readonly metadataToggle: Locator;
+    readonly poolOwnerToggle: Locator;
+    readonly typeToggle: Locator;
+    readonly locationToggle: Locator;
+    readonly tagsToggle: Locator;
 
 // Table
-readonly table: Locator;
-readonly tableColumn3: Locator;
-readonly tableExpensesValue: Locator;
-readonly firstResourceItemInTable: Locator;
-readonly navigateNextIcon: Locator;
+    readonly table: Locator;
+
+    readonly resourceTableHeading: Locator;
+    readonly expensesTableHeading: Locator;
+    readonly paidNetworkTrafficTableHeading: Locator;
+    readonly metadataTableHeading: Locator;
+    readonly poolOwnerTableHeading: Locator;
+    readonly typeTableHeading: Locator;
+    readonly locationTableHeading: Locator;
+    readonly tagsTableHeading: Locator;
+    readonly tableColumn3: Locator;
+    readonly tableExpensesValue: Locator;
+    readonly firstResourceItemInTable: Locator;
+    readonly navigateNextIcon: Locator;
 
 
     /**
@@ -180,8 +199,27 @@ readonly navigateNextIcon: Locator;
         this.groupByOwnerBtn = this.main.getByTestId('selector_owner');
         this.groupByTagSelect = this.main.getByTestId('selector_tag');
 
+
+        //Column selection
+        this.columnsBtn = this.main.getByTestId('btn_columns');
+        this.selectClearAllColumnsToggle = this.page.getByTestId('btn_select_clear_all');
+        this.paidNetworkTrafficToggle = this.page.getByTestId('btn_toggle_paid_network_traffic');
+        this.metadataToggle = this.page.getByTestId('btn_toggle_column_metadata');
+        this.poolOwnerToggle = this.page.getByTestId('btn_toggle_column_pool_owner');
+        this.typeToggle = this.page.getByTestId('btn_toggle_column_type');
+        this.locationToggle = this.page.getByTestId('btn_toggle_column_location');
+        this.tagsToggle = this.page.getByTestId('btn_toggle_column_tags');
+
         //Table
         this.table = this.main.locator('table');
+        this.resourceTableHeading = this.table.getByTestId('lbl_resource_name');
+        this.expensesTableHeading = this.table.getByTestId('lbl_expenses');
+        this.paidNetworkTrafficTableHeading = this.table.getByTestId('lbl_paid_network_traffic');
+        this.metadataTableHeading = this.table.getByTestId('lbl_metadata');
+        this.poolOwnerTableHeading = this.table.getByTestId('lbl_pool_owner');
+        this.typeTableHeading = this.table.getByTestId('lbl_type');
+        this.locationTableHeading = this.table.getByTestId('lbl_cloud');
+        this.tagsTableHeading = this.table.getByTestId('lbl_tags');
         this.tableColumn3 = this.table.locator('//td[3]');
         this.tableExpensesValue = this.tableColumn3.locator('//a[1]');
         this.firstResourceItemInTable = this.main.locator(
@@ -332,7 +370,6 @@ readonly navigateNextIcon: Locator;
         await this.activityFilter.click();
         await this.billingOnlyOption.click();
         await this.filterApplyButton.click();
-        console.log('Clicking by billing only');
         await this.waitForCanvas();
     }
 
@@ -457,5 +494,53 @@ readonly navigateNextIcon: Locator;
         await this.page.getByRole('option', {name: tag}).click();
     }
 
+    /**
+     * Clicks the "Columns" button on the Resources page.
+     * This method interacts with the `columnsBtn` locator.
+     *
+     * @returns {Promise<void>} Resolves when the button is clicked.
+     */
+    async clickColumnsButton(): Promise<void> {
+        await this.columnsBtn.click();
+    }
+
+    /**
+     * Toggles a specific column in the table on the Resources page.
+     * This method interacts with various column toggle locators based on the provided toggle name.
+     *
+     * @param {string} toggle - The name of the column toggle to interact with.
+     *                          Valid options are: "select clear all", "paid network traffic",
+     *                          "metadata", "pool owner", "type", "location", "tags".
+     * @returns {Promise<void>} Resolves when the specified column toggle is clicked.
+     * @throws {Error} Throws an error if an unknown toggle name is provided.
+     */
+    async clickColumnToggle(toggle: string): Promise<void> {
+        toggle = toggle.toLowerCase();
+        switch (toggle) {
+            case 'select clear all':
+                await this.selectClearAllColumnsToggle.click();
+                break;
+            case 'paid network traffic':
+                await this.paidNetworkTrafficToggle.click();
+                break;
+            case 'metadata':
+                await this.metadataToggle.click();
+                break;
+            case 'pool owner':
+                await this.poolOwnerToggle.click();
+                break;
+            case 'type':
+                await this.typeToggle.click();
+                break;
+            case 'location':
+                await this.locationToggle.click();
+                break;
+            case 'tags':
+                await this.tagsToggle.click();
+                break;
+            default:
+                throw new Error('Unknown toggle');
+        }
+    }
 
 }

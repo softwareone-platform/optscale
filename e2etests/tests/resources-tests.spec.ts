@@ -19,7 +19,7 @@ import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
 import {getExpectedDateRangeText} from "../utils/date-range-utils";
 
 
-test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     let totalExpensesValue: number;
@@ -85,11 +85,73 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
             ];
 
             for (const filter of expectedFilters) {
-                console.log(`Checking visibility of filter: ${filter}`);
                 await expect.soft(filter).toBeVisible();
             }
         });
     })
+
+    test.only("[] Verify table column selection", async ({resourcesPage}) => {
+        const defaultColumns = [
+            resourcesPage.resourceTableHeading, resourcesPage.expensesTableHeading, resourcesPage.paidNetworkTrafficTableHeading,
+            resourcesPage.metadataTableHeading, resourcesPage.poolOwnerTableHeading, resourcesPage.typeTableHeading, resourcesPage.tagsTableHeading
+        ];
+
+        await resourcesPage.table.waitFor();
+        await resourcesPage.table.scrollIntoViewIfNeeded();
+
+        await test.step('Verify default column selection is all', async () => {
+            await expect(resourcesPage.columnsBtn).toHaveText('All');
+
+            for (const column of defaultColumns) {
+                await expect.soft(column).toBeVisible();
+            }
+        });
+
+        await test.step('Clear all columns and verify only Resource and expenses columns are visible', async () => {
+            await resourcesPage.clickColumnsButton();
+            await resourcesPage.clickColumnToggle('select clear all');
+            await expect.soft(resourcesPage.resourceTableHeading && resourcesPage.expensesTableHeading).toBeVisible();
+            for (const column of defaultColumns) {
+                if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
+                    await expect.soft(column).not.toBeVisible();
+                }
+            }
+        });
+
+        await test.step('Select specific columns and verify visibility', async () => {
+            await resourcesPage.clickColumnToggle('paid network traffic');
+            await expect(resourcesPage.paidNetworkTrafficTableHeading).toBeVisible();
+
+            await resourcesPage.clickColumnToggle('metadata');
+            await expect(resourcesPage.metadataTableHeading).toBeVisible();
+
+            await resourcesPage.clickColumnToggle('pool owner');
+            await expect(resourcesPage.poolOwnerTableHeading).toBeVisible();
+
+            await resourcesPage.clickColumnToggle('type');
+            await expect(resourcesPage.typeTableHeading).toBeVisible();
+
+            await resourcesPage.clickColumnToggle('location');
+            await expect(resourcesPage.locationToggle).toBeVisible();
+
+            await resourcesPage.clickColumnToggle('tags');
+            await expect(resourcesPage.tagsTableHeading).toBeVisible();
+        });
+
+        await test.step('Verify select all toggle shows all columns', async () => {
+            await resourcesPage.clickColumnToggle('select clear all');
+            for (const column of defaultColumns) {
+                if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
+                    await expect.soft(column).not.toBeVisible();
+                }
+            }
+
+            await resourcesPage.clickColumnToggle('select clear all');
+            for (const column of defaultColumns) {
+                await expect.soft(column).toBeVisible();
+            }
+        });
+    });
 
     test("[] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
@@ -147,7 +209,7 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
         });
     });
 
-    test.only("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
@@ -158,6 +220,7 @@ test.describe.only("[] Resources page tests", {tag: ["@ui", "@resources"]}, () =
         });
 
         await test.step('Get itemised total from table for last 7 days', async () => {
+            await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
             itemisedTotal = await resourcesPage.sumTableCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
             console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
         });
