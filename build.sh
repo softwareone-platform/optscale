@@ -102,6 +102,12 @@ do
     else
       echo "Building image for ${COMPONENT}, build tag: ${BUILD_TAG}"
       $BUILD_TOOL build -t ${COMPONENT}:${BUILD_TAG} -f ${DOCKERFILE} .
+      
+      # If the build fails, exit with the same status code as the build command
+      build_status_code="$?"
+      if [ "$build_status_code" -gt 0 ]; then
+        exit $build_status_code
+      fi
     fi
 
     if use_registry; then
