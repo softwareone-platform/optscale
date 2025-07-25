@@ -35,11 +35,18 @@ class TestCloudAccountApi(TestApiBase):
         _, self.employee_2 = self.client.employee_create(
             self.org2['id'], {'name': 'employee_2',
                               'auth_user_id': self.auth_user_1})
+        self._aws_service_creds = {
+                  'access_key_id': 'AFX1882',
+                  'secret_access_key': 'xxx'
+        }
         patch('rest_api.rest_api_server.controllers.report_import.ReportImportBaseController.'
               'publish_task').start()
         patch('rest_api.rest_api_server.controllers.base.BaseController.'
               'get_user_id',
               return_value=self.auth_user_1).start()
+        patch('rest_api.rest_api_server.controllers.cloud_account.CloudAccountController.'
+              '_get_aws_service_creds',
+              return_value=self._aws_service_creds).start()
 
         self.valid_cloud_config = {
             'access_key_id': 'key',
@@ -155,6 +162,107 @@ class TestCloudAccountApi(TestApiBase):
                              cloud_acc['config'])
         self.p_configure_aws.assert_called_once_with()
         self.assertEqual(self.p_send_ca_email.call_count, 1)
+
+    def test_create_aws_cloud_acc_assume(self):
+        assume_role_account_id = '87629'
+        assume_role_name = 'va-test'
+        code, cloud_acc = self.create_cloud_account(self.org_id, {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': assume_role_account_id,
+                'assume_role_name': assume_role_name,
+                'config_scheme': 'create_report'
+            }
+        })
+        self.assertEqual(code, 201)
+        # check service creds account id in config
+        self.assertEqual(cloud_acc['config']['access_key_id'],
+                         self._aws_service_creds['access_key_id'])
+        # check assume parameters in config
+        self.assertEqual(cloud_acc['config']['assume_role_account_id'],
+                         assume_role_account_id)
+        self.assertEqual(cloud_acc['config']['assume_role_name'],
+                         assume_role_name)
+
+    @patch('rest_api.rest_api_server.controllers.cloud_account.'
+           'ExpensesRecalculationScheduleController.schedule')
+    def test_edit_aws_cloud_acc_assume(self, t_schedule):
+        config = {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'va-test',
+                'config_scheme': 'create_report'
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, config)
+        ca_id = cloud_acc["id"]
+        # check service creds account id in config
+        patch('tools.cloud_adapter.clouds.aws.Aws.validate_credentials',
+              return_value={'account_id': ca_id, 'warnings': []}).start()
+
+        ch_config = {
+            'config': {
+                'assume_role_account_id': '1337',
+            }
+        }
+        code, new_cloud_acc = self.client.cloud_account_update(ca_id, ch_config)
+        self.assertEqual(code, 400)
+        # updating assume cloud account id is restricted
+        self.assertEqual(new_cloud_acc['error']['error_code'], 'OE0211')
+        new_role_name = 'va-test2'
+        ch_config = {
+            'config': {
+                'assume_role_name': new_role_name,
+            }
+        }
+        code, new_cloud_acc = self.client.cloud_account_update(ca_id, ch_config)
+        self.assertEqual(code, 200)
+        self.assertEqual(new_cloud_acc['config']['assume_role_name'], new_role_name)
+        self.assertEqual(new_cloud_acc['config']['access_key_id'],
+                         self._aws_service_creds['access_key_id'])
+        self.assertEqual(new_cloud_acc['config']['assume_role_account_id'],
+                         config['config']['assume_role_account_id'])
+
+    def test_create_aws_cloud_acc_assume_not_allowed(self):
+        not_allowed = [
+            {'access_key_id': 'ffff'},
+            {'secret_access_key': 'xaddfa'}
+        ]
+        for i in not_allowed:
+            config = {
+                    'assume_role_account_id': '87629',
+                    'assume_role_name': 'va-test',
+                    'config_scheme': 'create_report',
+                }
+            config.update(i)
+            code, cloud_acc = self.create_cloud_account(self.org_id, {
+                'name': 'assume_cloud_acc',
+                'type': 'aws_cnr',
+                'config': config
+            })
+            self.assertEqual(code, 400)
+            self.assertEqual(cloud_acc['error']['error_code'], 'OE0571')
+
+    def test_create_aws_cloud_acc_assume_not_not_provided(self):
+        to_remove = ['assume_role_account_id', 'assume_role_name']
+        config = {
+            'assume_role_account_id': '87629',
+            'assume_role_name': 'va-test',
+            'config_scheme': 'create_report',
+        }
+        for i in to_remove:
+            new_config = config.copy()
+            new_config.pop(i)
+            code, cloud_acc = self.create_cloud_account(self.org_id, {
+                'name': 'assume_cloud_acc',
+                'type': 'aws_cnr',
+                'config': new_config
+            })
+            self.assertEqual(code, 400)
+            self.assertEqual(cloud_acc['error']['error_code'], 'OE0216')
 
     def test_pool_and_rule_for_created_cloud_acc(self):
         auth_user_id = self.gen_id()

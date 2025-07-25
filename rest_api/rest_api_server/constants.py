@@ -181,6 +181,7 @@ class UrlsV2(Urls):
             r"%s/employees/(?P<employee_id>[^/]+)/emails",
         'employee_emails_bulk':
             r"%s/employees/(?P<employee_id>[^/]+)/emails/bulk",
+        'cloud_policies': r"%s/organizations/(?P<organization_id>["r"^/]+)/cloud_policies",
     })
 
 
