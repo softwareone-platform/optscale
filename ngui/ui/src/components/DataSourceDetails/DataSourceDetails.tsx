@@ -24,8 +24,9 @@ import {
   K8sProperties,
   DatabricksProperties
 } from "./Properties";
+import type { DataSourceDetailsProps } from "./types";
 
-const DataSourceDetails = ({ id, accountId, parentId, type, config = {} }) => {
+const DataSourceDetails = ({ id, accountId, parentId, type, config = {} }: DataSourceDetailsProps) => {
   const Properties = {
     [AWS_CNR]: AwsProperties,
     [AZURE_CNR]: AzureProperties,

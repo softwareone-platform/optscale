@@ -71,6 +71,7 @@ export const CLOUD_PROVIDERS = Object.freeze({
 });
 
 export const CONNECTION_TYPES = Object.freeze({
+  AWS_ROLE: "awsRole",
   AWS_ROOT: "awsRoot",
   AWS_LINKED: "awsLinked",
   AZURE_SUBSCRIPTION: "azureSubscription",

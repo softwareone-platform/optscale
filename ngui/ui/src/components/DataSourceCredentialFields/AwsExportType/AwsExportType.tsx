@@ -6,7 +6,7 @@ export const FIELD_NAMES = Object.freeze({
   CUR_VERSION: "curVersion"
 });
 
-const AwsRootExportType = () => (
+const AwsExportType = () => (
   <RadioGroup
     name={FIELD_NAMES.CUR_VERSION}
     defaultValue={String(AWS_ROOT_CONNECT_CUR_VERSION.CUR_2)}
@@ -24,4 +24,4 @@ const AwsRootExportType = () => (
   />
 );
 
-export default AwsRootExportType;
+export default AwsExportType;

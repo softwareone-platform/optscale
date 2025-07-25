@@ -125,6 +125,9 @@ const resolvers: Resolvers = {
     cleanExpenses: async (_, { organizationId, params }, { dataSources }) => {
       return dataSources.restapi.getCleanExpenses(organizationId, params);
     },
+    cloudPolicies: async (_, { organizationId, params }, { dataSources }) => {
+      return dataSources.restapi.getCloudPolicies(organizationId, params);
+    },
   },
   Mutation: {
     createDataSource: async (

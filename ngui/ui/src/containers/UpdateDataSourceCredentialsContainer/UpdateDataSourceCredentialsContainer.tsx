@@ -14,15 +14,33 @@ import {
   KUBERNETES_CNR,
   NEBIUS
 } from "utils/constants";
+import type { Config, Params, UpdateDataSourceCredentialsContainerProps } from "./types";
 
-const UpdateDataSourceCredentialsContainer = ({ id, type, config, closeSideModal }) => {
+const UpdateDataSourceCredentialsContainer = ({
+  id,
+  type,
+  config,
+  closeSideModal
+}: UpdateDataSourceCredentialsContainerProps) => {
   const refetch = useRefetchApis();
 
   const [updateDataSource, { loading }] = useMutation(UPDATE_DATA_SOURCE);
 
-  const onSubmit = (dataSourceId, { config: newConfig }) => {
+  const getAwsConfigName = (config: Config) => {
+    if (config.linked) {
+      return "awsLinkedConfig";
+    }
+
+    if (config.assume_role_account_id && config.assume_role_name) {
+      return "awsAssumedRoleConfig";
+    }
+
+    return "awsRootConfig";
+  };
+
+  const onSubmit = (dataSourceId: string, { config: newConfig }: Params) => {
     const configName = {
-      [AWS_CNR]: newConfig.linked ? "awsLinkedConfig" : "awsRootConfig",
+      [AWS_CNR]: getAwsConfigName(newConfig),
       [AZURE_TENANT]: "azureTenantConfig",
       [AZURE_CNR]: "azureSubscriptionConfig",
       [GCP_CNR]: "gcpConfig",
