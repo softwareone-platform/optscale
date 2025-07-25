@@ -40,15 +40,15 @@
         PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
       loop: "{{ containers_to_build.stdout_lines }}"
       
-    # TODO: Fix this hack, without it we get this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
-    # before that /optscale/thanos-storegateway had 755 permissions with root being the owner. an update in thanos / minio images caused this
+    # HACK: Without this we're getting this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
+    # This started appearing after an update in the thanos and minio images
     - name: change the thanos config permissions
       file:
         path: /optscale/thanos-storegateway
         state: directory
         mode: '1777'
 
-    # TODO: another hack to be fixed caused by a similar problem with influxdb
+    # HACK: Similarly to above, an update in the influxdb image resulted in permission issues
     - name: change the /optscale/influxdb permissions
       file:
         path: /optscale/influxdb
