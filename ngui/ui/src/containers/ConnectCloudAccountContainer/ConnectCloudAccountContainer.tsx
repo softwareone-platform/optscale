@@ -18,6 +18,7 @@ import {
   KUBERNETES_CNR,
   NEBIUS
 } from "utils/constants";
+import type { Config, Params } from "./types";
 
 const ConnectCloudAccountContainer = () => {
   const { organizationId } = useOrganizationInfo();
@@ -30,9 +31,21 @@ const ConnectCloudAccountContainer = () => {
 
   const redirectToCloudsOverview = () => navigate(CLOUD_ACCOUNTS);
 
-  const onSubmit = (params) => {
+  const getAwsConfigName = (config: Config) => {
+    if (config.linked) {
+      return "awsLinkedConfig";
+    }
+
+    if (config.assume_role_account_id && config.assume_role_name) {
+      return "awsAssumedRoleConfig";
+    }
+
+    return "awsRootConfig";
+  };
+
+  const onSubmit = ({ name, config, type }: Params) => {
     const configName = {
-      [AWS_CNR]: params.config.linked ? "awsLinkedConfig" : "awsRootConfig",
+      [AWS_CNR]: getAwsConfigName(config),
       [AZURE_TENANT]: "azureTenantConfig",
       [AZURE_CNR]: "azureSubscriptionConfig",
       [GCP_CNR]: "gcpConfig",
@@ -41,17 +54,17 @@ const ConnectCloudAccountContainer = () => {
       [NEBIUS]: "nebiusConfig",
       [DATABRICKS]: "databricksConfig",
       [KUBERNETES_CNR]: "k8sConfig"
-    }[params.type];
+    }[type];
 
-    trackEvent({ category: GA_EVENT_CATEGORIES.DATA_SOURCE, action: "Try connect", label: params.type });
+    trackEvent({ category: GA_EVENT_CATEGORIES.DATA_SOURCE, action: "Try connect", label: type });
 
     createDataSource({
       variables: {
         organizationId,
         params: {
-          name: params.name,
-          type: params.type,
-          [configName]: params.config
+          name,
+          type,
+          [configName]: config
         }
       },
       refetchQueries: [GET_DATA_SOURCES]

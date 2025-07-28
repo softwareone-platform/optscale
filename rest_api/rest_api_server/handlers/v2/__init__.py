@@ -80,3 +80,4 @@ import rest_api.rest_api_server.handlers.v2.ri_group_breakdowns
 import rest_api.rest_api_server.handlers.v2.restore_passwords
 import rest_api.rest_api_server.handlers.v2.verify_emails
 import rest_api.rest_api_server.handlers.v2.employee_emails
+import rest_api.rest_api_server.handlers.v2.policy_gen

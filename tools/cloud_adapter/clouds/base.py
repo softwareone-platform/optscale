@@ -1,6 +1,7 @@
 import boto3
 import re
 import abc
+import logging
 from botocore.config import Config as CoreConfig
 from botocore.session import Session as CoreSession
 from tools.cloud_adapter.exceptions import (InvalidResourceTypeException,
@@ -11,6 +12,7 @@ DEFAULT_CLIENT_CONFIG = CoreConfig(
     connect_timeout=20, retries={'max_attempts': 3}
 )
 
+LOG = logging.getLogger(__name__)
 
 class CloudBase(abc.ABC):
     @abc.abstractmethod
@@ -66,6 +68,7 @@ class S3CloudMixin(CloudBase):
 
     def get_session(self, access_key_id=None, secret_access_key=None,
                     region_name=None):
+
         core_session = CoreSession()
         core_session.set_default_client_config(DEFAULT_CLIENT_CONFIG)
         if not access_key_id:

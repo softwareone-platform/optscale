@@ -13,7 +13,7 @@ export const FIELD_NAMES = Object.freeze({
 
 const DEFAULT_PATH_PREFIX = "reports";
 
-const AwsRootBillingBucket = () => {
+const AwsBillingBucket = () => {
   const intl = useIntl();
 
   const {
@@ -116,4 +116,4 @@ const AwsRootBillingBucket = () => {
   );
 };
 
-export default AwsRootBillingBucket;
+export default AwsBillingBucket;
