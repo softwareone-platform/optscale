@@ -1,11 +1,6 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {
-    expectWithinDrift,
-    validateBreakdownStructure,
-    validateCountsStructure,
-    validateTopLevelFields
-} from "../utils/custom-assertions";
+import {expectWithinDrift} from "../utils/custom-assertions";
 import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
 
 import {
@@ -35,6 +30,7 @@ import {
     ServiceNameResourceResponse,
     TagsResponse
 } from "../test-data/test-data-response-types";
+import {fetchBreakdownExpenses} from "../utils/api-helpers";
 
 
 test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
@@ -346,14 +342,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         let regionExpensesData: RegionExpensesResponse;
 
         await test.step('Load region expenses data', async () => {
-            const [regionResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=region') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('Region'),
-            ]);
-
-            regionExpensesData = await regionResponse.json();
+            regionExpensesData = await fetchBreakdownExpenses<RegionExpensesResponse>(
+                resourcesPage.page,
+                'region',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'Region'
+            );
         });
 
         await test.step('Validate region expenses data', async () => {
@@ -388,13 +382,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
 
         let resourceTypeExpensesData: ResourceTypeExpensesResponse;
         await test.step('Load resource type expenses data', async () => {
-            const [resourceTypeResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=resource_type') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('Resource type'),
-            ]);
-            resourceTypeExpensesData = await resourceTypeResponse.json();
+            resourceTypeExpensesData = await fetchBreakdownExpenses<ResourceTypeExpensesResponse>(
+                resourcesPage.page,
+                'resource_type',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'Resource type'
+            );
         });
 
         await test.step('Validate resource type expenses top-level data', async () => {
@@ -430,13 +423,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         let dataSourceExpensesData: DataSourceExpensesResponse;
 
         await test.step('Load data source expenses data', async () => {
-            const [dataSourceResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=cloud_account_id') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('Data source'),
-            ]);
-            dataSourceExpensesData = await dataSourceResponse.json();
+            dataSourceExpensesData = await fetchBreakdownExpenses<DataSourceExpensesResponse>(
+                resourcesPage.page,
+                'cloud_account_id',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'Data source'
+            );
         });
 
         await test.step('Validate data source expenses top-level fields', async () => {
@@ -478,13 +470,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         let ownerExpensesData: OwnerExpensesResponse;
 
         await test.step('Load owner expenses data', async () => {
-            const [ownerResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=employee_id') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('Owner'),
-            ]);
-            ownerExpensesData = await ownerResponse.json();
+            ownerExpensesData = await fetchBreakdownExpenses<OwnerExpensesResponse>(
+                resourcesPage.page,
+                'employee_id',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'Owner'
+            );
         });
 
         await test.step('Validate owner expenses top-level fields', async () => {
@@ -525,13 +516,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         let poolExpensesData: PoolExpensesResponse;
 
         await test.step('Load pool expenses data', async () => {
-            const [poolResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=pool_id') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('Pool'),
-            ]);
-            poolExpensesData = await poolResponse.json();
+            poolExpensesData = await fetchBreakdownExpenses<PoolExpensesResponse>(
+                resourcesPage.page,
+                'pool_id',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'Pool'
+            );
         });
 
         await test.step('Validate pool expenses top-level fields', async () => {
@@ -572,17 +562,16 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
 
         let k8sNodeExpensesData: K8sNodeExpensesResponse;
 
-        await test.step('Load Kubernetes Node expenses data', async () => {
-            const [k8sNodeResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=k8s_node') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('K8s node'),
-            ]);
-            k8sNodeExpensesData = await k8sNodeResponse.json();
+        await test.step('Load K8s node expenses data', async () => {
+            k8sNodeExpensesData = await fetchBreakdownExpenses<K8sNodeExpensesResponse>(
+                resourcesPage.page,
+                'k8s_node',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'K8s node'
+            );
         });
 
-        await test.step('Validate Kubernetes Node expenses top-level fields', async () => {
+        await test.step('Validate K8s Node expenses top-level fields', async () => {
             expect.soft(k8sNodeExpensesData.start_date).toBe(startDate);
             expect.soft(k8sNodeExpensesData.end_date).toBe(endDate);
             expect.soft(k8sNodeExpensesData.previous_range_start).not.toBeNull();
@@ -593,7 +582,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             expect.soft(k8sNodeExpensesData.breakdown).not.toBeNull();
         });
 
-        await test.step('Validate Kubernetes Node counts structure', async () => {
+        await test.step('Validate K8s Node counts structure', async () => {
             for (const summary of Object.values(k8sNodeExpensesData.counts)) {
                 expect.soft(typeof summary.total).toBe('number');
                 expect.soft(typeof summary.previous_total).toBe('number');
@@ -618,13 +607,12 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         let k8sNamespaceExpensesData: K8sNamespaceExpensesResponse;
 
         await test.step('Load K8s namespace expenses data', async () => {
-            const [namespaceResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=k8s_namespace') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('K8s namespace'),
-            ]);
-            k8sNamespaceExpensesData = await namespaceResponse.json();
+            k8sNamespaceExpensesData = await fetchBreakdownExpenses<K8sNamespaceExpensesResponse>(
+                resourcesPage.page,
+                'k8s_namespace',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'K8s namespace'
+            );
         });
 
         await test.step('Validate K8s namespace expenses top-level fields', async () => {
@@ -661,14 +649,13 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
 
         let k8sServiceExpensesData: K8sServiceExpensesResponse;
 
-        await test.step('Load Kubernetes service expenses data', async () => {
-            const [k8sServiceResponse] = await Promise.all([
-                resourcesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/breakdown_expenses?breakdown_by=k8s_service') && resp.status() === 200
-                ),
-                resourcesPage.selectCategorizeBy('K8s service'),
-            ]);
-            k8sServiceExpensesData = await k8sServiceResponse.json();
+        await test.step('Load K8s service expenses data', async () => {
+            k8sServiceExpensesData = await fetchBreakdownExpenses<K8sServiceExpensesResponse>(
+                resourcesPage.page,
+                'k8s_service',
+                resourcesPage.selectCategorizeBy.bind(resourcesPage),
+                'K8s service'
+            );
         });
 
         await test.step('Validate Kubernetes service expenses top-level fields', async () => {
