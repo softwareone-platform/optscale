@@ -9,6 +9,7 @@ import {expect} from "@playwright/test";
  *
  * @param {number} expected - The expected value.
  * @param {number} actual - The actual value to compare against the expected value.
+ * @param {number} percentageTolerance - The allowable percentage tolerance for drift (e.g., 0.05 for 5%).
  * @returns {void} This function does not return a value but throws an assertion error if the drift exceeds the tolerance.
  */
 export function expectWithinDrift(
