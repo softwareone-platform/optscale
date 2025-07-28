@@ -1,6 +1,6 @@
 import { test } from "../fixtures/api-fixture";
 import { expect } from "@playwright/test";
-import {AuthResponse, UsersResponse} from "../test-data/test-data-types";
+import {AuthResponse, UsersResponse} from "../test-data/test-data-response-types";
 import {generateRandomEmail} from "../utils/random-data";
 
 test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {

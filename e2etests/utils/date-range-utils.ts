@@ -59,9 +59,45 @@ export function getExpectedDateRangeText(
         date.toLocaleDateString('en-US', {
             month: 'short',
             day: '2-digit',
-            ...(yearsDiffer ? { year: 'numeric' } : {}),
+            ...(yearsDiffer ? {year: 'numeric'} : {}),
             timeZone: 'UTC',
         });
 
     return `${format(startDate)} - ${format(endDate)}`;
+}
+
+/**
+ * Calculates the Unix timestamp range for the last 7 days.
+ * This function determines the start and end timestamps (in seconds) for the last 7 days,
+ * with the end date being midnight (UTC) of the current day.
+ *
+ * @returns {{ startDate: number, endDate: number }} An object containing the start and end timestamps in seconds.
+ * - `startDate`: The Unix timestamp for the start of the range (00:00:00 UTC, 6 days before today).
+ * - `endDate`: The Unix timestamp for the end of the range (23:59:59 UTC, today).
+ */
+export function getLast7DaysUnixRange(): { startDate: number; endDate: number } {
+    const today = new Date();
+
+    // Midnight today (UTC)
+    const endUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
+
+    // 6 full days before today
+    const startUTC = new Date(endUTC);
+    startUTC.setUTCDate(endUTC.getUTCDate() - 6);
+    startUTC.setUTCHours(0, 0, 0, 0); // force 00:00:00
+
+    return {
+        startDate: Math.floor(startUTC.getTime() / 1000),  // e.g. 2025-07-19 00:00:00
+        endDate: Math.floor(endUTC.getTime() / 1000),      // e.g. 2025-07-25 23:59:59
+    };
+}
+
+/**
+ * Converts a Unix timestamp to a date string in the format `yyyy-mm-dd`.
+ *
+ * @param {number} unix - The Unix timestamp (in seconds) to convert.
+ * @returns {string} The formatted date string in `yyyy-mm-dd` format.
+ */
+export function unixToDateString(unix: number): string {
+    return new Date(unix * 1000).toISOString().split('T')[0]; // yyyy-mm-dd
 }

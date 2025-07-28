@@ -151,7 +151,7 @@ export class ResourcesPage extends BasePage {
         this.applyDateBtn = this.dateRangePopup.getByTestId('btn_apply_date');
 
         //Filters
-        this.filtersBox = this.main.locator('xpath=(//div[contains(@class, "MuiGrid-root")]//div[.="Filters:"])[1]/..');
+        this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
         this.allFilterBoxButtons = this.filtersBox.locator('button');
         this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
 
