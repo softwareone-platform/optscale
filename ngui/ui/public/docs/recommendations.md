@@ -1,6 +1,6 @@
 ### **Summary**
 
-A Recommendation page provides personalized advice. Get practical information about suggesting services and features available in OptScale. Find a brief description and other pertinent information in the cards to help you assess the situation quickly.
+The **Recommendations** page provides personalized advice. Get practical information about suggesting services and features available in OptScale. Find a brief description and other pertinent information in the cards to help you assess the situation quickly.
 
 ### **View**
 
