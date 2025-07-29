@@ -176,7 +176,7 @@ function vm_ssh {
     if [[ "$TERM" == "xterm-kitty" ]]; then
         TERM="xterm-256color" vagrant ssh $VM_NAME -c "$cmd_to_run"
     else
-        vagrant vagrant ssh $VM_NAME -c "$cmd_to_run"
+        vagrant ssh $VM_NAME -c "$cmd_to_run"
     fi
 }
 
