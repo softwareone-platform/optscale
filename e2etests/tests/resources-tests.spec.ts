@@ -49,7 +49,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test("[] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
+    test("[230776] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
         let resourcesSavings: number;
         let recommendationsSavings: number;
 
@@ -67,7 +67,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     })
 
-    test("[] All expected filters are displayed", async ({resourcesPage}) => {
+    test("[230778] All expected filters are displayed", async ({resourcesPage}) => {
         await test.step('Click Show more filters button', async () => {
             await resourcesPage.clickShowMoreFilters();
             await resourcesPage.showLessFiltersBtn.waitFor();
@@ -104,7 +104,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     })
 
-    test("[] Verify table column selection", async ({resourcesPage}) => {
+    test("[230779] Verify table column selection", async ({resourcesPage}) => {
         const defaultColumns = [
             resourcesPage.resourceTableHeading, resourcesPage.expensesTableHeading, resourcesPage.paidNetworkTrafficTableHeading,
             resourcesPage.metadataTableHeading, resourcesPage.poolOwnerTableHeading, resourcesPage.typeTableHeading, resourcesPage.tagsTableHeading
@@ -166,7 +166,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test("[] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230780] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value from resources page', async () => {
@@ -184,7 +184,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test("[] Filtered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230788] Filtered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
         let initialTotalExpensesValue: number;
 
@@ -222,7 +222,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test("[] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
@@ -244,11 +244,10 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test('Validate API default chart/table data for 7 days', async ({resourcesPage}) => {
+    test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage}) => {
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         let expensesData: ServiceNameExpensesResponse;
-
         await test.step('Load expenses data for the last 7 days', async () => {
             const [expensesResponse] = await Promise.all([
                 resourcesPage.page.waitForResponse((resp) =>
@@ -281,7 +280,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let resourceData: ServiceNameResourceResponse;
-
         await test.step('Load resources data from resources_count endpoint', async () => {
             const [resourceResponse] = await Promise.all([
                 resourcesPage.page.waitForResponse((resp) =>
@@ -308,7 +306,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let tagsData: TagsResponse;
-
         await test.step('Load tags data from breakdown_tags endpoint', async () => {
             const [tagResponse] = await Promise.all([
                 resourcesPage.page.waitForResponse((resp) =>
@@ -331,7 +328,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
     });
 
-    test.only('Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage}) => {
+    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage}) => {
         test.setTimeout(60000);
         const {startDate, endDate} = getLast7DaysUnixRange();
 
@@ -340,7 +337,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let regionExpensesData: RegionExpensesResponse;
-
         await test.step('Load region expenses data', async () => {
             regionExpensesData = await fetchBreakdownExpenses<RegionExpensesResponse>(
                 resourcesPage.page,
@@ -358,7 +354,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             expect.soft(regionExpensesData.previous_range_start).not.toBeNull();
             expect.soft(regionExpensesData.total).toBeGreaterThan(0);
         });
-
 
         await test.step('Validate that breakdown covers exactly 7 days', async () => {
             const breakdownDays = Object.keys(regionExpensesData.breakdown);
@@ -421,7 +416,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let dataSourceExpensesData: DataSourceExpensesResponse;
-
         await test.step('Load data source expenses data', async () => {
             dataSourceExpensesData = await fetchBreakdownExpenses<DataSourceExpensesResponse>(
                 resourcesPage.page,
@@ -468,7 +462,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let ownerExpensesData: OwnerExpensesResponse;
-
         await test.step('Load owner expenses data', async () => {
             ownerExpensesData = await fetchBreakdownExpenses<OwnerExpensesResponse>(
                 resourcesPage.page,
@@ -514,7 +507,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let poolExpensesData: PoolExpensesResponse;
-
         await test.step('Load pool expenses data', async () => {
             poolExpensesData = await fetchBreakdownExpenses<PoolExpensesResponse>(
                 resourcesPage.page,
@@ -561,7 +553,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let k8sNodeExpensesData: K8sNodeExpensesResponse;
-
         await test.step('Load K8s node expenses data', async () => {
             k8sNodeExpensesData = await fetchBreakdownExpenses<K8sNodeExpensesResponse>(
                 resourcesPage.page,
@@ -589,7 +580,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             }
         });
 
-        await test.step('Validate Kubernetes Node breakdown structure for each day', async () => {
+        await test.step('Validate K8s Node breakdown structure for each day', async () => {
             const breakdown = k8sNodeExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
@@ -605,7 +596,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let k8sNamespaceExpensesData: K8sNamespaceExpensesResponse;
-
         await test.step('Load K8s namespace expenses data', async () => {
             k8sNamespaceExpensesData = await fetchBreakdownExpenses<K8sNamespaceExpensesResponse>(
                 resourcesPage.page,
@@ -648,7 +638,6 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         let k8sServiceExpensesData: K8sServiceExpensesResponse;
-
         await test.step('Load K8s service expenses data', async () => {
             k8sServiceExpensesData = await fetchBreakdownExpenses<K8sServiceExpensesResponse>(
                 resourcesPage.page,
@@ -658,7 +647,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             );
         });
 
-        await test.step('Validate Kubernetes service expenses top-level fields', async () => {
+        await test.step('Validate K8s service expenses top-level fields', async () => {
             expect.soft(k8sServiceExpensesData.start_date).toBe(startDate);
             expect.soft(k8sServiceExpensesData.end_date).toBe(endDate);
             expect.soft(k8sServiceExpensesData.breakdown_by).toBe('k8s_service');
@@ -669,14 +658,14 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             expect.soft(k8sServiceExpensesData.breakdown).not.toBeNull();
         });
 
-        await test.step('Validate Kubernetes service counts structure', async () => {
+        await test.step('Validate K8s service counts structure', async () => {
             for (const summary of Object.values(k8sServiceExpensesData.counts)) {
                 expect.soft(typeof summary.total).toBe('number');
                 expect.soft(typeof summary.previous_total).toBe('number');
             }
         });
 
-        await test.step('Validate Kubernetes service breakdown structure for each day', async () => {
+        await test.step('Validate K8s service breakdown structure for each day', async () => {
             const breakdown = k8sServiceExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
@@ -786,7 +775,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     });
 
-    test('[] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
+    test('[230784] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
@@ -816,7 +805,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     });
 
-    test('[] Verify weekly and monthly expenses chart export', async ({resourcesPage}) => {
+    test('[230785] Verify weekly and monthly expenses chart export', async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
@@ -841,7 +830,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     })
 
-    test('[] Verify expenses chart export with different categories', async ({resourcesPage}) => {
+    test('[230786] Verify expenses chart export with different categories', async ({resourcesPage}) => {
         let actualPath = 'tests/downloads/region-expenses-chart-export.png';
         let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
         let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
@@ -932,7 +921,7 @@ test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, ()
         });
     });
 
-    test("[] Verify table grouping", async ({resourcesPage}) => {
+    test("[230787] Verify table grouping", async ({resourcesPage}) => {
         await test.step('Verify default grouping is None', async () => {
             await resourcesPage.table.waitFor();
             await resourcesPage.table.scrollIntoViewIfNeeded();
