@@ -1,14 +1,17 @@
 import { Box } from "@mui/material";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import { Highlight, themes } from "prism-react-renderer";
 import ReactMarkdown from "react-markdown";
-import { LightAsync as SyntaxHighlighter } from "react-syntax-highlighter";
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
+import { v4 as uuidv4 } from "uuid";
 import CopyText from "components/CopyText";
 import { MarkdownProps } from "./types";
+
+const THEME = themes.github;
+const PADDING = "0.5em";
 
 function reactMarkdownRemarkDirective() {
   return (tree) => {
@@ -92,35 +95,55 @@ const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
                 display: "flex",
                 alignItems: "flex-start",
                 justifyContent: "space-between",
-                backgroundColor: docco.hljs.background
+                backgroundColor: THEME.plain.backgroundColor
               })}
             >
               {pChildren}
               <CopyText
                 text={codeText}
                 sx={{
-                  padding: docco.hljs.padding
+                  padding: PADDING
                 }}
               />
             </Typography>
           );
         },
-        code: ({ inline, className, children: codeChildren, ...rest }) => {
+        code: ({ inline, className, children: codeChildren }) => {
           const match = /language-(\w+)/.exec(className || "");
 
+          // Block code
           if (!inline && match) {
             return (
-              <SyntaxHighlighter {...rest} PreTag="div" language={match[1]} style={docco}>
-                {String(codeChildren).replace(/\n$/, "")}
-              </SyntaxHighlighter>
+              <Highlight theme={THEME} code={String(codeChildren).replace(/\n$/, "")} language={match[1]}>
+                {({ style, tokens, getLineProps, getTokenProps }) => (
+                  <Box
+                    component="pre"
+                    style={{
+                      ...style,
+                      margin: 0,
+                      padding: PADDING,
+                      overflow: "auto"
+                    }}
+                  >
+                    {tokens.map((line) => (
+                      <div key={uuidv4()} {...getLineProps({ line })}>
+                        {line.map((token) => (
+                          <span key={uuidv4()} {...getTokenProps({ token })} />
+                        ))}
+                      </div>
+                    ))}
+                  </Box>
+                )}
+              </Highlight>
             );
           }
 
+          // Inline code
           return (
             <Typography
               component="code"
               sx={(theme) => ({
-                backgroundColor: docco.hljs.background,
+                backgroundColor: THEME.plain.backgroundColor,
                 px: theme.spacing(0.5),
                 py: theme.spacing(0.25),
                 borderRadius: theme.spacing(0.5)

@@ -22,6 +22,7 @@ import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
+import { intl } from "translations/react-intl-config";
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
@@ -77,7 +78,7 @@ const getAwsDescription = (config) => {
   if (config.assume_role_account_id && config.assume_role_name) {
     return (
       <Typography gutterBottom>
-        <FormattedMessage id="createAwsAssumedRoleDescription" />
+        <FormattedMessage id="createAwsAssumedRoleDescription" values={{ action: intl.formatMessage({ id: "save" }) }} />
       </Typography>
     );
   }
@@ -532,6 +533,8 @@ const UpdateDataSourceCredentialsForm = ({
 
   const { handleSubmit } = methods;
 
+  const isAssumedRole = Boolean(config?.assume_role_account_id && config?.assume_role_name);
+
   return (
     <FormProvider {...methods}>
       <form
@@ -542,7 +545,7 @@ const UpdateDataSourceCredentialsForm = ({
       >
         <Description type={type} config={config} />
         <CredentialInputs type={type} config={config} />
-        <UpdateCredentialsWarning type={type} />
+        {!isAssumedRole && <UpdateCredentialsWarning type={type} />}
         <FormButtonsWrapper>
           <ButtonLoader
             dataTestId="btn_update_data_source_credentials"

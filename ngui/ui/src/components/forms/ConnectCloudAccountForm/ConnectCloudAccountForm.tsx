@@ -35,6 +35,7 @@ import DatabricksLogoIcon from "icons/DatabricksLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
 import K8sLogoIcon from "icons/K8sLogoIcon";
 import NebiusLogoIcon from "icons/NebiusLogoIcon";
+import { intl } from "translations/react-intl-config";
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,
@@ -331,7 +332,8 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
     [CONNECTION_TYPES.AWS_ROLE]: renderConnectionTypeDescription([
       {
         key: "createAwsAssumedRoleDescription",
-        messageId: "createAwsAssumedRoleDescription"
+        messageId: "createAwsAssumedRoleDescription",
+        values: { action: intl.formatMessage({ id: "connect" }) }
       }
     ]),
     [CONNECTION_TYPES.AWS_ROOT]: renderConnectionTypeDescription([
