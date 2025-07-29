@@ -1,10 +1,10 @@
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import {ThemeResolver} from "./src/utils/theme-resolver";
+import {ThemeResolver} from "./src/utils/themeSupport/themeResolver";
+
 
 export default defineConfig(({ mode }) => {
-  // https://vitejs.dev/guide/api-javascript.html#loadenv
   const env = loadEnv(mode, process.cwd());
 
   const { VITE_APP_THEME, VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS } = env;
@@ -46,6 +46,11 @@ export default defineConfig(({ mode }) => {
       port: Number(VITE_PORT) || 3000,
       host: parseViteHost(VITE_HOST),
       allowedHosts: parseAllowedHosts(VITE_ALLOWED_HOSTS),
+      watch: {
+        usePolling: true,
+        // Add theme directories to watch
+        ignored: ['!**/src/themes/**']
+      },
       proxy: {
         "/api": {
           target: VITE_PROXY,
@@ -55,7 +60,8 @@ export default defineConfig(({ mode }) => {
             return p == '/api' ? p : p.replace(/^\/api/, "/");
           }
         }
-      }
+      },
+
     },
     preview: {
       open: true,
