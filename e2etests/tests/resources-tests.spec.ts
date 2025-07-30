@@ -364,10 +364,10 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         await test.step('Validate regional breakdown structure for each day', async () => {
-            for (const [timestamp, regions] of Object.entries(regionExpensesData.breakdown)) {
+            for (const [_timestamp, regions] of Object.entries(regionExpensesData.breakdown)) {
                 expect.soft(typeof regions).toBe('object');
 
-                for (const [region, entry] of Object.entries(regions)) {
+                for (const [_region, entry] of Object.entries(regions)) {
                     expect.soft(typeof entry.cost).toBe('number');
                     expect.soft(entry.cost).not.toBeNaN();
                     expect.soft(entry.cost).toBeGreaterThanOrEqual(0);
@@ -407,8 +407,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, typeMap] of Object.entries(breakdown)) {
-                for (const [resourceType, data] of Object.entries(typeMap)) {
+            for (const [_day, typeMap] of Object.entries(breakdown)) {
+                for (const [_resourceType, data] of Object.entries(typeMap)) {
                     expect.soft(data).toHaveProperty('cost');
                     expect.soft(typeof data.cost).toBe('number');
                 }
@@ -451,8 +451,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, sourceMap] of Object.entries(breakdown)) {
-                for (const [sourceId, item] of Object.entries(sourceMap)) {
+            for (const [_day, sourceMap] of Object.entries(breakdown)) {
+                for (const [_sourceId, item] of Object.entries(sourceMap)) {
                     expect.soft(typeof item.cost).toBe('number');
                     expect.soft(typeof item.id).toBe('string');
                     expect.soft(typeof item.name).toBe('string');
@@ -497,8 +497,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, ownerMap] of Object.entries(breakdown)) {
-                for (const [ownerId, item] of Object.entries(ownerMap)) {
+            for (const [_day, ownerMap] of Object.entries(breakdown)) {
+                for (const [_ownerId, item] of Object.entries(ownerMap)) {
                     expect.soft(typeof item.cost).toBe('number');
                     expect.soft(typeof item.id).toBe('string');
                     expect.soft(typeof item.name).toBe('string');
@@ -542,8 +542,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, poolMap] of Object.entries(breakdown)) {
-                for (const [poolId, item] of Object.entries(poolMap)) {
+            for (const [_day, poolMap] of Object.entries(breakdown)) {
+                for (const [_poolId, item] of Object.entries(poolMap)) {
                     expect.soft(typeof item.cost).toBe('number');
                     expect.soft(typeof item.id).toBe('string');
                     expect.soft(typeof item.name).toBe('string');
@@ -586,8 +586,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, nodeMap] of Object.entries(breakdown)) {
-                for (const [nodeKey, data] of Object.entries(nodeMap)) {
+            for (const [_day, nodeMap] of Object.entries(breakdown)) {
+                for (const [_nodeKey, data] of Object.entries(nodeMap)) {
                     expect.soft(data).toHaveProperty('cost');
                     expect.soft(typeof data.cost).toBe('number');
                     expect.soft(data.cost).toBeGreaterThanOrEqual(0);
@@ -617,7 +617,7 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
         });
 
         await test.step('Validate K8s namespace counts structure', async () => {
-            for (const [ns, summary] of Object.entries(k8sNamespaceExpensesData.counts)) {
+            for (const [_ns, summary] of Object.entries(k8sNamespaceExpensesData.counts)) {
                 expect.soft(typeof summary.total).toBe('number');
                 expect.soft(typeof summary.previous_total).toBe('number');
             }
@@ -629,8 +629,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, namespaceMap] of Object.entries(breakdown)) {
-                for (const [ns, item] of Object.entries(namespaceMap)) {
+            for (const [_day, namespaceMap] of Object.entries(breakdown)) {
+                for (const [_ns, item] of Object.entries(namespaceMap)) {
                     expect.soft(typeof item.cost).toBe('number');
                     expect.soft(item.cost).toBeGreaterThanOrEqual(0);
                 }
@@ -671,8 +671,8 @@ test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
             const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-            for (const [day, serviceMap] of Object.entries(breakdown)) {
-                for (const [serviceId, item] of Object.entries(serviceMap)) {
+            for (const [_day, serviceMap] of Object.entries(breakdown)) {
+                for (const [_serviceId, item] of Object.entries(serviceMap)) {
                     expect.soft(typeof item.cost).toBe('number');
                     expect.soft(item.cost).toBeGreaterThanOrEqual(0);
                 }
