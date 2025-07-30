@@ -21,6 +21,8 @@ databases:
 # /list/0000000022 = value
 etcd:
   public_ip: {{ .Values.public_ip }}
+  company_name: {{ .Values.company_name }}
+  product_name: {{ .Values.product_name }}
   encryption_key: {{ .Values.encryption_key }}
   release: {{ .Values.release }}
   katara_scheduler_timeout: {{ .Values.katara_scheduler_timeout }}
