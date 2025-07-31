@@ -31,6 +31,7 @@ export class ResourcesPage extends BasePage {
     readonly selectDateBtn: Locator;
     readonly dateRangePopup: Locator;
     readonly last7DaysBtn: Locator;
+    readonly last30DaysBtn: Locator;
     readonly previousMonthSelect: Locator;
     readonly previousYearSelect: Locator;
     readonly applyDateBtn: Locator;
@@ -146,6 +147,7 @@ export class ResourcesPage extends BasePage {
         this.selectDateBtn = this.main.getByTestId('btn_select_date');
         this.dateRangePopup = this.page.getByTestId('window_date_range');
         this.last7DaysBtn = this.getByAnyTestId('btn_last_7_days', this.dateRangePopup);
+        this.last30DaysBtn = this.getByAnyTestId('btn_last_30_days', this.dateRangePopup);
         this.previousMonthSelect = this.dateRangePopup.getByTestId('selector_previous_month');
         this.previousYearSelect = this.dateRangePopup.getByTestId('selector_previous_year');
         this.applyDateBtn = this.dateRangePopup.getByTestId('btn_apply_date');
@@ -347,6 +349,20 @@ export class ResourcesPage extends BasePage {
     async selectLast7DaysDateRange(): Promise<void> {
         await this.selectDateBtn.click();
         await this.last7DaysBtn.click();
+        await this.applyDateBtn.click();
+        await this.waitForCanvas();
+    }
+
+    /**
+     * Selects the "Last 30 Days" date range on the Resources page.
+     * This method interacts with the date range selector, clicks the "Last 30 Days" button,
+     * applies the selection, and waits for the canvas to update.
+     *
+     * @returns {Promise<void>} Resolves when the date range is selected and the canvas is updated.
+     */
+    async selectLast30DaysDateRange(): Promise<void> {
+        await this.selectDateBtn.click();
+        await this.last30DaysBtn.click();
         await this.applyDateBtn.click();
         await this.waitForCanvas();
     }

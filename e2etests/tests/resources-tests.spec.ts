@@ -17,7 +17,10 @@ import {
 import {ResourcesPage} from "../pages/resources-page";
 import {comparePngImages} from "../utils/image-comparison";
 import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
-import {getExpectedDateRangeText, getLast7DaysUnixRange, unixToDateString} from "../utils/date-range-utils";
+import {
+    getExpectedDateRangeText,
+    getLast7DaysUnixRange,
+} from "../utils/date-range-utils";
 import {
     DataSourceExpensesResponse,
     K8sNamespaceExpensesResponse,
@@ -33,7 +36,7 @@ import {
 import {fetchBreakdownExpenses} from "../utils/api-helpers";
 
 
-test.describe("[] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     let totalExpensesValue: number;
@@ -734,33 +737,17 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
             urlPattern: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
             mockResponse: BreakdownExpensesByK8sServiceResponse
         },
-        // {
-        //     page: resourcesPage.page,
-        //     urlPattern: `/api$`,
-        //     mockResponse: CleanExpensesResponse,
-        //     graphQlOperationName: 'CleanExpenses'
-        // },
         {
             page: resourcesPage.page,
             urlPattern: `/v2/organizations/[^/]+/available_filters`,
             mockResponse: AvailableFiltersResponse
-        },
-        // {
-        //     page: resourcesPage.page,
-        //     urlPattern: `/v2/organizations/[^/]+/resources_count`,
-        //     mockResponse: ResourcesCountResponse
-        // },
-        // {
-        //     page: this.page,
-        //     urlPattern: `/v2/organizations/[^/]+/breakdown_tags`,
-        //     mockResponse: BreakdownTagsResponse
-        // },
+        }
     ];
 
     await Promise.all(apiInterceptions.map(interceptApiRequest));
 }
 
-test.describe("[] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
     test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
