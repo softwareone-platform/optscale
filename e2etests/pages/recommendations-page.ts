@@ -567,7 +567,7 @@ export class RecommendationsPage extends BasePage {
         await seeAllLocator.click();
         await this.recommendationsModal.waitFor();
         await columnLocator.last().waitFor();
-        const itemisedSavings = await this.sumModalCurrencyColumn(columnLocator, this.modalNextPageBtn);
+        const itemisedSavings = await this.sumCurrencyColumn(columnLocator, this.modalNextPageBtn);
         await this.recommendationsModalCloseBtn.click();
         await this.page.waitForLoadState();
         console.log(`Itemised Savings: ${itemisedSavings}`);

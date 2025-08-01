@@ -21,9 +21,9 @@ export function expectWithinDrift(
     const allowedDrift = expected * percentageTolerance;
     const actualPercentageDrift = (drift / expected) * 100;
 
-    console.log(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
-    console.log(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
-    console.log(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
+    console.debug(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
+    console.debug(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
+    console.debug(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
 
     expect(drift).toBeLessThanOrEqual(allowedDrift);
 }

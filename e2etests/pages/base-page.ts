@@ -9,9 +9,9 @@ import path from "path";
 export abstract class BasePage {
     readonly page: Page; // The Playwright page object representing the current page.
     readonly url: string; // The URL of the page.
-    readonly main: Locator; // Locator for the main element of the page.
-    readonly loadingPageImg: Locator; // Locator for the loading page image, if applicable.
-    readonly pageLoader: Locator; // Locator for the page loader spinner, if applicable.
+    readonly main: Locator;
+    readonly loadingPageImg: Locator;
+    readonly pageLoader: Locator;
 
     /**
      * Initializes a new instance of the BasePage class.
@@ -247,22 +247,23 @@ export abstract class BasePage {
     }
 
     /**
-     * Sums the currency values from a column across multiple pages in a modal.
-     * Iterates through all pages of the modal, extracts and parses currency values from the specified column,
-     * and calculates the total sum. Handles pagination by checking the visibility and enabled state of the "next page" button.
+     * Calculates the sum of currency values in a column across multiple pages.
+     * This method iterates through all pages of a table, extracts currency values from a specified column,
+     * parses them into numeric values, and sums them up. It handles pagination by clicking the "next page" button
+     * until no more pages are available.
      *
-     * @param {Locator} columnLocator - The locator for the column containing the currency values.
-     * @param {Locator} nextPageBtn - The locator for the "next page" button in the modal.
-     * @returns {Promise<number>} The total sum of the currency values across all pages, rounded to two decimal places.
+     * @param {Locator} columnLocator - The Playwright locator for the column containing currency values.
+     * @param {Locator} nextPageBtn - The Playwright locator for the "next page" button.
+     * @returns {Promise<number>} A promise that resolves to the total sum of currency values, rounded to two decimal places.
      */
-    async sumModalCurrencyColumn(
+    async sumCurrencyColumn(
         columnLocator: Locator,
         nextPageBtn: Locator
     ): Promise<number> {
         let totalSum = 0;
 
         while (true) {
-            // Wait for the first element in the column to be visible
+            // Wait for the last element in the column to be visible
             await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
             });
 
@@ -271,8 +272,8 @@ export abstract class BasePage {
 
             // Parse the currency values from the text content
             const values = texts.map(text => {
-                const currencyOnly = text.split('(')[0].trim();
-                return this.parseCurrencyValue(currencyOnly);
+                const currencyOnly = text.split('(')[0].trim(); // Remove any text in parentheses
+                return this.parseCurrencyValue(currencyOnly); // Convert the currency string to a numeric value
             });
 
             // Add the parsed values to the total sum
@@ -287,47 +288,7 @@ export abstract class BasePage {
 
             // Navigate to the next page
             await nextPageBtn.click();
-            await this.page.waitForLoadState();
-        }
-
-        // Return the total sum rounded to two decimal places
-        return parseFloat(totalSum.toFixed(2));
-    }
-
-    async sumTableCurrencyColumn(
-        columnLocator: Locator,
-        nextPageBtn: Locator
-    ): Promise<number> {
-        let totalSum = 0;
-
-        while (true) {
-            // Wait for the first element in the column to be visible
-            await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
-            });
-
-            console.log(`Page: ${await this.page.locator('//button[@aria-current="true"]').allTextContents()}`);
-            // Extract text content from all cells in the column
-            const texts = await columnLocator.allTextContents();
-
-            // Parse the currency values from the text content
-            const values = texts.map(text => {
-                const currencyOnly = text.trim();
-                return this.parseCurrencyValue(currencyOnly);
-            });
-
-            // Add the parsed values to the total sum
-            totalSum += values.reduce((sum, val) => sum + val, 0);
-
-            // Check if the "next page" button is visible and enabled
-            const isVisible = await nextPageBtn.isVisible();
-            if (!isVisible) break;
-
-            const isEnabled = await nextPageBtn.isEnabled();
-            if (!isEnabled) break;
-
-            // Navigate to the next page
-            await nextPageBtn.click();
-            await this.page.waitForLoadState();
+            await this.waitForPageLoad();
         }
 
         // Return the total sum rounded to two decimal places
@@ -344,13 +305,13 @@ export abstract class BasePage {
      */
     async waitForLoadingPageImgToDisappear(timeout: number = 10000): Promise<void> {
         try {
-            await this.loadingPageImg.first().waitFor({timeout: 1000}); // Check if the loading image is present.
+            await this.loadingPageImg.first().waitFor({timeout: 1000});
         } catch (error) {
             return; // Exit the method if the loading image is not present.
         }
         try {
             console.warn(`Waiting for loading page image to disappear...`);
-            await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout}); // Wait for the loading image to become hidden.
+            await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
         } catch (error) {
             console.warn("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
         }

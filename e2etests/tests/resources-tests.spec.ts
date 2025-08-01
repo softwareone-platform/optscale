@@ -179,7 +179,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
         await test.step('get the sum of itemised expenses from table', async () => {
             await resourcesPage.table.waitFor();
-            itemisedTotal = await resourcesPage.sumTableCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+            itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
             console.log(`Itemised total: ${itemisedTotal}`);
         });
 
@@ -208,12 +208,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
 
         await test.step('Get itemised total from table after filtering', async () => {
-            itemisedTotal = await resourcesPage.sumTableCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+            itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
             console.log(`Itemised total: ${itemisedTotal}`);
         });
 
         await test.step('Compare filtered total expenses with itemised total', async () => {
-            // Allowable drift of 0.1% to account for rounding errors
+            // Allowable drift of 0.5% to account for rounding errors
             expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
         });
 
@@ -239,12 +239,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
         await test.step('Get itemised total from table for last 7 days', async () => {
             await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
-            itemisedTotal = await resourcesPage.sumTableCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+            itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
             console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
         });
 
         await test.step('Compare total expenses with itemised total for last 7 days', async () => {
-            // Allowable drift of 0.1% to account for rounding errors
+            // Allowable drift of 0.5% to account for rounding errors
             expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
         });
     });
