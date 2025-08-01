@@ -51,6 +51,7 @@ export class LoginPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
@@ -63,6 +64,7 @@ export class LoginPage extends BasePage {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
+        await this.waitForLoadingPageImgToDisappear();
     }
 
     /**
