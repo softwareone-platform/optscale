@@ -13,10 +13,10 @@
     "playwright:test_chromium": "npx playwright test --project chromium",
     "playwright:test_webkit": "npx playwright test --project webkit",
     "playwright:codegen": "npx playwright codegen %BASE_URL%",
-    "playwright:headed": "npx playwright test --headed --workers=1 --project chrome",
-    "playwright:ui": "npx playwright test --ui --project chrome",
-    "playwright:trace": "npx playwright test --trace --project chrome",
-    "playwright:single-worker": "npx playwright test --workers=1 --project chrome",
+    "playwright:headed": "npx playwright test --headed --workers=1 --project chrome --grep @ui",
+    "playwright:ui": "npx playwright test --project chrome --grep @ui",
+    "playwright:trace": "npx playwright test --trace --project chrome --grep @ui",
+    "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",
     "playwright:update-screenshots": "cross-env SCREENSHOT_UPDATE_DELAY=true npx playwright test --grep @swo_customisation --update-snapshots",
     "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation",
     "playwright:regression": "npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
@@ -30,7 +30,10 @@
   "devDependencies": {
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.5",
+    "@types/pngjs": "^6.0.5",
     "cross-env": "^7.0.3",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
     "uuid": "^11.0.5"
   },
   "dependencies": {

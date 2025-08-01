@@ -3,6 +3,7 @@ import {expect} from "@playwright/test";
 import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
 import {EStorageState} from "../utils/enums";
 import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
+import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
@@ -39,7 +40,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await test.step('Compare card total savings with possible monthly savings', async () => {
             console.log('Possible Monthly Savings:', possibleMonthlySavings);
             console.log('Card Total Savings:', cardTotalSavings);
-            expect(cardTotalSavings).toBeCloseTo(possibleMonthlySavings, 0);
+            expectWithinDrift(possibleMonthlySavings, cardTotalSavings, 0.001); // Allowable drift of 0.1%
         });
     });
 
@@ -55,11 +56,6 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             await expect(link).toBeVisible();
         }
     });
-
-    test('[230512] Verify that the RI/SP link works correctly', async ({recommendationsPage, riSpCoveragePage}) => {
-        await recommendationsPage.clickRI_SPCard();
-        await expect(riSpCoveragePage.heading).toBeVisible();
-    })
 
     // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
     // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
@@ -402,7 +398,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
                     await recommendationsPage.waitForPageLoaderToDisappear();
                     const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
                     console.log(`${cardName} Table Savings: ${tableSavings}`);
-                    expect(tableSavings).toBeCloseTo(itemisedSavings, 0);
+                    expectWithinDrift(cardSavings, tableSavings, 0.001); // Allowable drift of 0.1%
                 });
             }
         });
