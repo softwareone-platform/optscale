@@ -93,6 +93,19 @@ export abstract class BasePage {
     }
 
     /**
+     * Waits for the page to load completely.
+     * This method uses Playwright's `waitForLoadState` to ensure the page has reached the 'load' state.
+     * An optional timeout can be provided to override the default waiting time.
+     *
+     * @param {number} [timeout] - Optional timeout in milliseconds to wait for the page load state.
+     * @returns {Promise<void>} A promise that resolves when the page has fully loaded.
+     */
+    async waitForPageLoad(timeout?: number): Promise<void> {
+        const options = timeout ? {timeout} : undefined; // Set timeout options if provided.
+        await this.page.waitForLoadState('load', options); // Wait for the page to reach the 'load' state.
+    }
+
+    /**
      * Waits for at least one canvas element on the page to have non-zero pixel data.
      * This method is useful to ensure that a canvas has finished rendering before proceeding.
      * @returns {Promise<void>} A promise that resolves when the condition is met.

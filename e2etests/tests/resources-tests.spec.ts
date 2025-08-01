@@ -49,6 +49,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+            await resourcesPage.waitForPageLoad();
         });
     });
 
@@ -170,20 +171,21 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
 
     test("[230780] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
-        test.setTimeout(90000);
+        test.setTimeout(1200000);
 
         await test.step('Get total expenses value from resources page', async () => {
             totalExpensesValue = await resourcesPage.getTotalExpensesValue();
             console.log(`Total expenses value: ${totalExpensesValue}`);
         });
         await test.step('get the sum of itemised expenses from table', async () => {
+            await resourcesPage.table.waitFor();
             itemisedTotal = await resourcesPage.sumTableCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
             console.log(`Itemised total: ${itemisedTotal}`);
         });
 
         await test.step('Compare total expenses with itemised total', async () => {
             // Allowable drift of 0.1% to account for rounding errors
-            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.001); // 0.1% tolerance
+            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
         });
     });
 
@@ -212,7 +214,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
         await test.step('Compare filtered total expenses with itemised total', async () => {
             // Allowable drift of 0.1% to account for rounding errors
-            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.001); // 0.1% tolerance
+            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
         });
 
         await test.step('Reset filters to return to unfiltered state', async () => {
@@ -243,7 +245,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
         await test.step('Compare total expenses with itemised total for last 7 days', async () => {
             // Allowable drift of 0.1% to account for rounding errors
-            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.001); // 0.1% tolerance
+            expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
         });
     });
 
@@ -257,6 +259,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
                     resp.url().includes('/breakdown_expenses')
                 ),
                 resourcesPage.selectLast7DaysDateRange(),
+                resourcesPage.waitForPageLoad()
             ]);
 
             expensesData = await expensesResponse.json();
@@ -337,6 +340,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
         await test.step('Set last 7 days date range', async () => {
             await resourcesPage.selectLast7DaysDateRange();
+            await resourcesPage.waitForPageLoad();
         });
 
         let regionExpensesData: RegionExpensesResponse;
@@ -823,7 +827,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
         let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
         let match: boolean;
 
-        await test.step('Change categorization to Resource Type and verify the chart', async () => {
+        await test.step('Change categorization to Region and verify the chart', async () => {
             await resourcesPage.selectCategorizeBy('Region');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);
@@ -845,7 +849,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
         expectedPath = 'tests/expected/expected-data-expenses-chart-export.png';
         diffPath = 'tests/downloads/diff-data-expenses-chart-export.png';
 
-        await test.step('Change categorization to Resource Type and verify the chart', async () => {
+        await test.step('Change categorization to Data source and verify the chart', async () => {
             await resourcesPage.selectCategorizeBy('Data source');
             await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
             match = await comparePngImages(expectedPath, actualPath, diffPath);

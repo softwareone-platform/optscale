@@ -422,7 +422,7 @@ export class ResourcesPage extends BasePage {
      */
     async clickPossibleSavingsCard(): Promise<void> {
         await this.possibleSavingsCard.click();
-        await this.page.waitForLoadState();
+        await this.waitForPageLoad();
     }
 
     /**
@@ -455,7 +455,7 @@ export class ResourcesPage extends BasePage {
      */
     async selectCategorizeBy(option: string): Promise<void> {
         await this.selectFromComboBox(this.categorizeBySelect, option);
-        await this.page.waitForLoadState();
+        await this.waitForPageLoad();
         await this.waitForCanvas();
     }
 
@@ -511,7 +511,6 @@ export class ResourcesPage extends BasePage {
     async clickGroupByOwnerClose(): Promise<void> {
         await this.groupByOwnerCloseBtn.click();
     }
-
 
     /**
      * Selects a tag from the "Group by Tag" dropdown on the Resources page.
