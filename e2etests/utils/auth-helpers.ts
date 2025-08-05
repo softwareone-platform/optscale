@@ -1,7 +1,14 @@
 import fs from "fs";
 import path from "path";
 import {EUserRole} from "./enums";
-import {Page} from "@playwright/test";
+import {Page, APIRequestContext, request, APIResponse} from "@playwright/test";
+
+export interface LiveDemoAuthResponse {
+  organization_id: string;
+  email: string;
+  password: string;
+  created_at: number;
+}
 
 
 export function saveToken(token: string, role: EUserRole): void {
@@ -82,8 +89,42 @@ export function getValueFromAuthResponse(role: EUserRole, key: string): string {
     return authResponse[key];
 }
 
-// export const getToken = () => {
-//     const tokenFilePath = path.resolve('.cache/authToken.json');
-//     const tokenData = JSON.parse(fs.readFileSync(tokenFilePath, 'utf8'));
-//     return tokenData.token;
-// };
+export class LiveDemoService {
+  private static readonly token: string =
+    '2621d14dfa1a1a8f11c34ccf0781683c26b1d571d5ac404f142656421f64ec3c';
+
+  private static readonly baseURL: string = 'https://portal.finops.s1.today'; // <-- Replace with real domain
+
+  /**
+   * Creates a new APIRequestContext with the necessary headers.
+   */
+  private static async createContext(): Promise<APIRequestContext> {
+    return await request.newContext({
+      baseURL: this.baseURL,
+      extraHTTPHeaders: {
+        'X-LiveDemo-Token': this.token,
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  /**
+   * Sends a POST request to /restapi/v2/live_demo with given email and subscribe status.
+   * @param email - User's email address
+   * @param subscribe - Whether the user wants to subscribe
+   */
+  static async postLiveDemo(email: string, subscribe: boolean = false): Promise<LiveDemoAuthResponse> {
+    const context = await this.createContext();
+
+    const response = await context.post('/restapi/v2/live_demo', {
+      data: { email, subscribe },
+    });
+
+    if (!response.ok()) {
+      const errorText = await response.text();
+      throw new Error(`Live demo request failed: ${response.status()} - ${errorText}`);
+    }
+
+    return response.json();
+  }
+}
