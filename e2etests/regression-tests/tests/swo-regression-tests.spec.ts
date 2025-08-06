@@ -4,7 +4,7 @@ import {restoreUserSessionInLocalForage} from "../../utils/localforge-auth/local
 import {EStorageState} from "../../utils/enums";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 
-test.describe('FinOps UI Visual Regression @swo_regression', () => {
+test.describe('FFC @swo_regression', () => {
   test.use({storageState: EStorageState.liveDemoUser});
 
   test.beforeEach('Restore live-demo user session', async ({page}) => {

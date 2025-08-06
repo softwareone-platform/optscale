@@ -310,10 +310,9 @@ export abstract class BasePage {
             return; // Exit the method if the loading image is not present.
         }
         try {
-            console.warn(`Waiting for loading page image to disappear...`);
             await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
         } catch (error) {
-            console.warn("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
+            console.error("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
         }
     }
 
