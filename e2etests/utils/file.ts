@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { EStorageState } from "./enums";
+import { EStorageStatePath } from "./enums";
 
 export function safeWriteJsonFile(filePath: string, data: any) {
   const dir = path.dirname(filePath);
@@ -17,7 +17,7 @@ export function safeWriteJsonFile(filePath: string, data: any) {
   }
 }
 
-export function safeReadJsonFile<T = any>(filePath: EStorageState): T {
+export function safeReadJsonFile<T = any>(filePath: EStorageStatePath): T {
   if (!fs.existsSync(filePath)) {
     throw new Error(`❌ File does not exist: ${filePath}`);
   }

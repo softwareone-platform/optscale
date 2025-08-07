@@ -1,23 +1,25 @@
-import { EStorageState } from "../utils/enums";
+import { EStorageStatePath } from "../utils/enums";
 import { test as setup } from "../fixtures/api-fixture";
 import {getLocalforageRoot, injectLocalforage} from "../utils/localforge-auth/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";
 import {LiveDemoService} from "../utils/auth-helpers";
 
-
 setup('Login as live demo user', async ({ page }) => {
-  if( process.env.USE_LIVE_DEMO !== 'true') {
-    console.log('Skipping live demo setup as USE_LIVE_DEMO is not set to true');
-    return;
-  }
-
   let email: string;
   let password: string;
+  let storageStatePath = EStorageStatePath.defaultUser;
 
   await setup.step('Navigate to Live Demo', async () => {
-    const demoAuth = await LiveDemoService.postLiveDemo('example@mail.com', false);
-    email = demoAuth.email;
-    password = demoAuth.password;
+    if( LiveDemoService.shouldUseLiveDemo()) {
+      const demoAuth = await LiveDemoService.getDemoLoginCredentails('example@mail.com', false);
+      email = demoAuth.email;
+      password = demoAuth.password;
+      storageStatePath = EStorageStatePath.liveDemoUser;
+    } else {
+      email = process.env.DEFAULT_USER_EMAIL
+      password = process.env.DEFAULT_USER_PASSWORD;
+      storageStatePath = EStorageStatePath.defaultUser;
+    }
 
     await page.goto('/login', { waitUntil: 'load', timeout: 20000 });
   });
@@ -30,7 +32,6 @@ setup('Login as live demo user', async ({ page }) => {
     await page.waitForLoadState('networkidle');
 
     const authValue = await getLocalforageRoot(page);
-    const storageStatePath = EStorageState.liveDemoUser;
     const storageState = await page.context().storageState();
 
     const modifiedState = {

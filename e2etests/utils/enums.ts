@@ -1,4 +1,4 @@
-export enum EStorageState {
+export enum EStorageStatePath {
     defaultUser = ".cache/userStoredSession-default-user.json",
     liveDemoUser = ".cache/userStoredSession-live-demo-user.json",
     tempUser = ".cache/userStoredSession-temp-user.json"

@@ -19,9 +19,9 @@
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",
     "playwright:update-screenshots": "cross-env SCREENSHOT_UPDATE_DELAY=true npx playwright test --grep @swo_customisation --update-snapshots",
     "playwright:custom-screenshot": "npx playwright test --grep @swo_customisation",
-    "playwright:regression:ui": "npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
-    "playwright:regression": "npx playwright test --ui --grep @swo_regression --config=playwright.regression.config.ts",
-    "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
+    "playwright:regression:ui": " cross-env PLAYWRIGHT_REGRESSION=true npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
+    "playwright:regression": "cross-env PLAYWRIGHT_REGRESSION=true npx playwright test --ui --grep @swo_regression --config=playwright.regression.config.ts",
+    "playwright:regression:update": " cross-env PLAYWRIGHT_REGRESSION=true npm run playwright:regression -- --update-snapshots",
     "docker:test": "./run_pw.sh",
     "docker:update": "./run_pw.sh -u"
   },

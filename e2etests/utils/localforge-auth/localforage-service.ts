@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 import {safeReadJsonFile} from "../file";
-import {EStorageState} from "../enums";
+import {EStorageStatePath} from "../enums";
 import path from 'path';
 
 export async function injectLocalforage(page: Page) {
@@ -21,7 +21,7 @@ export async function getLocalforageRoot(page: Page) {
 }
 
 export async function restoreUserSessionInLocalForage(page: Page) {
-  const sessionData =  safeReadJsonFile(EStorageState.liveDemoUser);
+  const sessionData =  safeReadJsonFile(EStorageStatePath.liveDemoUser);
   await page.goto('/', {waitUntil: 'domcontentloaded'});
   await injectLocalforage(page);
   await page.evaluate((data) => {
