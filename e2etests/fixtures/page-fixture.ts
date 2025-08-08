@@ -27,13 +27,7 @@ import {TaggingPoliciesPage} from "../pages/tagging-policies-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
 import {UsersPage} from "../pages/users-page";
 import {ExpensesMapPage} from "../pages/expenses-map-page";
-import {EStorageStatePath} from "../utils/enums";
-
-const getDefaultUserStorageState = () => {
-    return process.env.USE_LIVE_DEMO === 'true'
-      ? EStorageStatePath.liveDemoUser
-      : EStorageStatePath.defaultUser;
-};
+import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
 
 /**
  * Extends the base Playwright test fixture with additional page objects.
@@ -104,7 +98,7 @@ export const test = base.extend<{
     usersInvitePage: UsersInvitePage;
 }>({
     storageState: async ({}, use) => {
-        await use(getDefaultUserStorageState());
+        await use(LiveDemoService.getDefaultUserStorageState());
     },
     anomaliesPage: async ({page}, use) => {
         const anomaliesPage = new AnomaliesPage(page);

@@ -1,6 +1,6 @@
 import {test} from "../../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/localforge-auth/localforage-service";
+import {restoreUserSessionInLocalForage} from "../../utils/auth-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 
 test.describe('FFC @swo_regression', () => {

@@ -10,7 +10,6 @@ CI_MODE=
 BASE_URL=""
 PORT=3000
 
-
 # Help message
 show_help() {
     echo "Usage: $0 [options]"
@@ -111,6 +110,8 @@ run_tests() {
     if [ "$CI_MODE" = true ]; then
         ENV_ARGS="$ENV_ARGS -e CI=true"
     fi
+
+    ENV_ARGS="$ENV_ARGS -e IS_REGRESSION_RUN=true"
 
     # Run the tests
     docker run --rm \

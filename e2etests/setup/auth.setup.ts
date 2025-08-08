@@ -1,8 +1,8 @@
 import { EStorageStatePath } from "../utils/enums";
 import { test as setup } from "../fixtures/api-fixture";
-import {getLocalforageRoot, injectLocalforage} from "../utils/localforge-auth/localforage-service";
+import {getLocalforageRoot, injectLocalforage} from "../utils/auth-storage/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";
-import {LiveDemoService} from "../utils/auth-helpers";
+import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
 
 setup('Login as live demo user', async ({ page }) => {
   let email: string;
@@ -11,7 +11,7 @@ setup('Login as live demo user', async ({ page }) => {
 
   await setup.step('Navigate to Live Demo', async () => {
     if( LiveDemoService.shouldUseLiveDemo()) {
-      const demoAuth = await LiveDemoService.getDemoLoginCredentails('example@mail.com', false);
+      const demoAuth = await LiveDemoService.getDemoLoginCredentials('example@mail.com', false);
       email = demoAuth.email;
       password = demoAuth.password;
       storageStatePath = EStorageStatePath.liveDemoUser;

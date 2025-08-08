@@ -1,5 +1,5 @@
 import {test} from "../fixtures/page-fixture";
-import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
+import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 import {expect} from "@playwright/test";
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
