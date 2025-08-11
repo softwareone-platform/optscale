@@ -213,7 +213,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
     });
 });
 
-test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitation-flow", "@ui", "@slow"]},  () => {
+test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitation-flow", "@ui", "@slow"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment does not support invitation flow tests");
 
     test("[229868] Invitation is visible in Settings Tab @slow", async ({
@@ -289,7 +289,7 @@ test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitati
         });
 
         await test.step("Invite a existing user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'Marketplace (Dev)');
+            await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'AWS SWO');
             await usersInvitePage.userInvitedAlert.waitFor();
             await usersInvitePage.userInvitedAlertCloseButton.click();
         });
@@ -300,12 +300,13 @@ test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitati
 
         await test.step("Login as new user", async () => {
             await loginPage.loginWithoutNavigation(invitationEmail, process.env.DEFAULT_USER_PASSWORD);
+            await loginPage.waitForPageLoaderToDisappear();
         });
 
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL();
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Engineer at Marketplace (Dev)')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Engineer at AWS SWO')).toBeVisible();
         });
     });
 });
@@ -334,6 +335,8 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
             emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
             await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await loginPage.waitForLoadingPageImgToDisappear();
+            await loginPage.waitForPageLoaderToDisappear();
         });
 
         await test.step("Navigate to the invitation page", async () => {
@@ -373,6 +376,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
 
         await test.step("Log back in as admin", async () => {
             await loginPage.loginWithoutNavigation(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await loginPage.waitForPageLoaderToDisappear();
         })
         await test.step("Navigate to the invitation page", async () => {
             await mainMenu.clickUserManagement();
@@ -380,7 +384,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
         });
 
         await test.step("Invite a existing user to the organisation", async () => {
-            await usersInvitePage.inviteUser(invitationEmail, 'Manager', 'Marketplace (Dev)');
+            await usersInvitePage.inviteUser(invitationEmail, 'Manager', 'AWS SWO');
             await usersInvitePage.userInvitedAlert.waitFor();
             await usersInvitePage.userInvitedAlertCloseButton.click();
         });
@@ -396,7 +400,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
         await test.step("View invitation in Settings", async () => {
             await settingsPage.navigateToURL();
             await settingsPage.clickInvitationsTab();
-            await expect(settingsPage.page.getByText('● Manager at Marketplace (Dev) pool')).toBeVisible();
+            await expect(settingsPage.page.getByText('● Manager at AWS SWO pool')).toBeVisible();
         });
     });
 });

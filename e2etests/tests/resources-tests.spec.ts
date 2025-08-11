@@ -50,10 +50,14 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
             await resourcesPage.waitForPageLoad();
+            await resourcesPage.firstResourceItemInTable.waitFor();
         });
     });
 
-    test("[230776] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
+    test("[230776] Possible savings matches those on recommendations page", async ({
+                                                                                       resourcesPage,
+                                                                                       recommendationsPage
+                                                                                   }) => {
         let resourcesSavings: number;
         let recommendationsSavings: number;
 
@@ -259,7 +263,6 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
                     resp.url().includes('/breakdown_expenses')
                 ),
                 resourcesPage.selectLast7DaysDateRange(),
-                resourcesPage.waitForPageLoad()
             ]);
 
             expensesData = await expensesResponse.json();
@@ -501,7 +504,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate owner breakdown structure for each day', async () => {
             const breakdown = ownerExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, ownerMap] of Object.entries(breakdown)) {
@@ -546,7 +549,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate pool breakdown structure for each day', async () => {
             const breakdown = poolExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, poolMap] of Object.entries(breakdown)) {
@@ -590,7 +593,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s Node breakdown structure for each day', async () => {
             const breakdown = k8sNodeExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, nodeMap] of Object.entries(breakdown)) {
@@ -675,7 +678,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s service breakdown structure for each day', async () => {
             const breakdown = k8sServiceExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, serviceMap] of Object.entries(breakdown)) {
