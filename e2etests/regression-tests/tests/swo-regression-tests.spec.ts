@@ -1,12 +1,9 @@
 import {test} from "../../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/localforge-auth/localforage-service";
-import {EStorageState} from "../../utils/enums";
+import {restoreUserSessionInLocalForage} from "../../utils/auth-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 
-test.describe('FinOps UI Visual Regression @swo_regression', () => {
-  test.use({storageState: EStorageState.liveDemoUser});
-
+test.describe('FFC @swo_regression', () => {
   test.beforeEach('Restore live-demo user session', async ({page}) => {
     await restoreUserSessionInLocalForage(page);
   })

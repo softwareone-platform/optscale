@@ -34,6 +34,7 @@ import {
     TagsResponse
 } from "../test-data/test-data-response-types";
 import {fetchBreakdownExpenses} from "../utils/api-helpers";
+import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 
 
 test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
@@ -42,9 +43,9 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     let totalExpensesValue: number;
     let itemisedTotal: number;
 
-    test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
+    test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
-            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await restoreUserSessionInLocalForage(page);
             await resourcesPage.navigateToURL();
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
@@ -54,10 +55,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230776] Possible savings matches those on recommendations page", async ({
-                                                                                       resourcesPage,
-                                                                                       recommendationsPage
-                                                                                   }) => {
+    test("[230776] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
         let resourcesSavings: number;
         let recommendationsSavings: number;
 
@@ -262,7 +260,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
                 resourcesPage.page.waitForResponse((resp) =>
                     resp.url().includes('/breakdown_expenses')
                 ),
-                resourcesPage.selectLast7DaysDateRange(),
+                resourcesPage.selectLast7DaysDateRange()
             ]);
 
             expensesData = await expensesResponse.json();
@@ -504,7 +502,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate owner breakdown structure for each day', async () => {
             const breakdown = ownerExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, ownerMap] of Object.entries(breakdown)) {
@@ -549,7 +547,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate pool breakdown structure for each day', async () => {
             const breakdown = poolExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, poolMap] of Object.entries(breakdown)) {
@@ -593,7 +591,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s Node breakdown structure for each day', async () => {
             const breakdown = k8sNodeExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, nodeMap] of Object.entries(breakdown)) {
@@ -678,7 +676,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s service breakdown structure for each day', async () => {
             const breakdown = k8sServiceExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, serviceMap] of Object.entries(breakdown)) {
@@ -757,9 +755,10 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
 test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
-    test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
+    test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
-            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await restoreUserSessionInLocalForage(page);
+            await resourcesPage.navigateToURL();
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');
