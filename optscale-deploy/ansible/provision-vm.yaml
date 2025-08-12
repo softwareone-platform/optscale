@@ -39,6 +39,7 @@
       environment:
         PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.HOME }}/bin:{{ ansible_env.PATH }}"
       loop: "{{ containers_to_build.stdout_lines }}"
+      when: item != 'elk'
       
     # HACK: Without this we're getting this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
     # This started appearing after an update in the thanos and minio images
