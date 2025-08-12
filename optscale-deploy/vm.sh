@@ -254,15 +254,17 @@ function vm_show_optscale_info {
 }
 
 function vm_deploy_service {
-    local service_name="$1"
+    vagrant rsync "$VM_NAME"
 
-    if [[ -z "$service_name" ]]; then
-        echo "Error: Service name is required."
+    if [[ $# -eq 1 ]]; then
+        service_name="$1"
+        vm_ssh "cd optscale && ./build.sh --use-nerdctl $service_name local"
+    elif [[ $# -gt 1 ]]; then
+        echo "Error: multiple services specified."
+        print_help
         exit 1
     fi
 
-    vagrant rsync "$VM_NAME"
-    vm_ssh "cd optscale && ./build.sh --use-nerdctl $service_name local"
     # NOTE: optscale/optscale-deploy/.venv will always exist on the VM (even if the hosts' venv is installed elsewhere)
     #       since it was installed there during the provisioning process
     vm_ssh "cd optscale/optscale-deploy && .venv/bin/python runkube.py --no-pull -o 'overlay/user_template.yml' -- optscale local"
