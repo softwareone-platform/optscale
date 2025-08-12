@@ -1,33 +1,46 @@
-// E2E_todo: disabled until api tests are completed
+import { EStorageStatePath } from "../utils/enums";
+import { test as setup } from "../fixtures/api-fixture";
+import {getLocalforageRoot, injectLocalforage} from "../utils/auth-storage/localforage-service";
+import {safeWriteJsonFile} from "../utils/file";
+import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
 
-// import {test as setup} from "../fixtures/api-fixture";
-// import {saveAuthResponseData, saveUserID} from "../utils/auth-helpers";
-// import {EUserRole} from "../utils/enums";
-// import {generateRandomEmail, generateRandomOrganizationName} from "../utils/random-data";
-// import {saveOrganizationId} from "../utils/organization-helpers";
-//
-// setup('Create user, organization and user auth token via API', async ({authRequest, restAPIRequest}) => {
-//   const email = generateRandomEmail();
-//   const password = process.env.DEFAULT_USER_PASSWORD;
-//   let userToken: string;
-//
-//   await setup.step('Create User', async () => {
-//     const user = await authRequest.createUser(email, password, 'Test User');
-//     const body = await user.json();
-//     const userID = body.id;
-//     userToken = body.token;
-//   });
-//
-//   await setup.step('Create Organization', async () => {
-//     const orgName = generateRandomOrganizationName();
-//     const organization = (await restAPIRequest.createOrganization(userToken, orgName));
-//     const orgID = JSON.parse(organization).id;
-//     saveOrganizationId(orgID);
-//   });
-//
-//   await setup.step('Login to save user data', async () => {
-//     const response = await authRequest.authorization(email, password);
-//     const body = await response.json();
-//     await saveAuthResponseData(body, EUserRole.tempUser);
-//   });
-// });
+setup('Login as live demo user', async ({ page }) => {
+  let email: string;
+  let password: string;
+  let storageStatePath = EStorageStatePath.defaultUser;
+
+  await setup.step('Navigate to Live Demo', async () => {
+    if( LiveDemoService.shouldUseLiveDemo()) {
+      const demoAuth = await LiveDemoService.getDemoLoginCredentials('example@mail.com', false);
+      email = demoAuth.email;
+      password = demoAuth.password;
+      storageStatePath = EStorageStatePath.liveDemoUser;
+    } else {
+      email = process.env.DEFAULT_USER_EMAIL
+      password = process.env.DEFAULT_USER_PASSWORD;
+      storageStatePath = EStorageStatePath.defaultUser;
+    }
+
+    await page.goto('/login', { waitUntil: 'load', timeout: 20000 });
+  });
+
+  await setup.step('Fill User Email and Proceed', async () => {
+    await injectLocalforage(page);
+    await page.getByTestId('input_email').fill(email);
+    await page.getByTestId('input_pass').fill(password);
+    await page.getByTestId('btn_login').click();
+    await page.waitForLoadState('networkidle');
+
+    const authValue = await getLocalforageRoot(page);
+    const storageState = await page.context().storageState();
+
+    const modifiedState = {
+      ...storageState,
+      localforageStoredSession: {
+        root: authValue,
+      },
+    };
+
+    safeWriteJsonFile(storageStatePath, modifiedState);
+  });
+});
