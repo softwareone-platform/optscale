@@ -41,14 +41,6 @@
       loop: "{{ containers_to_build.stdout_lines }}"
       when: item != 'elk'
       
-    # HACK: Without this we're getting this error: level=error err="mkdir /var/thanos/data/meta-syncer: permission denied
-    # This started appearing after an update in the thanos and minio images
-    - name: change the thanos config permissions
-      file:
-        path: /optscale/thanos-storegateway
-        state: directory
-        mode: '1777'
-        
     - name: install the system packages to run the deployment  
       apt:
         name:
