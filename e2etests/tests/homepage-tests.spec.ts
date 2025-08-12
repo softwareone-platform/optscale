@@ -18,25 +18,34 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
                 await homePage.navigateToURL();
             }
             await homePage.waitForPageLoaderToDisappear();
-            await homePage.waitForCanvas();
+            await homePage.waitForAllCanvases();
         });
     });
 
-    test('[230550] Compare possible savings on home page with those on recommendations page', async ({homePage, recommendationsPage}) => {
+    test('[230550] Compare possible savings on home page with those on recommendations page', async ({
+                                                                                                         homePage,
+                                                                                                         recommendationsPage
+                                                                                                     }) => {
         const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
         await homePage.recommendationsBtn.click();
         const recommendationsPageValue = await recommendationsPage.getPossibleMonthlySavingsValue();
-        expect (homePageValue).toBe(recommendationsPageValue);
+        expect(homePageValue).toBe(recommendationsPageValue);
     });
 
-    test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', async ({homePage, recommendationsPage}) => {
+    test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', async ({
+                                                                                                                                                      homePage,
+                                                                                                                                                      recommendationsPage
+                                                                                                                                                  }) => {
         const homePageValue = await homePage.getRecommendationsCostValue();
         await homePage.recommendationsCostLink.click();
         expect(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Savings');
         expect(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
     });
 
-    test('[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category', async ({homePage, recommendationsPage}) => {
+    test('[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category', async ({
+                                                                                                                                                                      homePage,
+                                                                                                                                                                      recommendationsPage
+                                                                                                                                                                  }) => {
         const homePageValue = await homePage.getRecommendationsSecurityValue();
         await homePage.recommendationsSecurityLink.click();
         expect(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Security');
@@ -44,10 +53,57 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
     });
 
     // Test failing due to bug MPT-11558 The home page recommendations block not returning the real Critical item count
-    test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({homePage, recommendationsPage}) => {
+    test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({
+                                                                                                                                                                      homePage,
+                                                                                                                                                                      recommendationsPage
+                                                                                                                                                                  }) => {
         const homePageValue = await homePage.getRecommendationsCriticalValue();
         await homePage.recommendationsCriticalLink.click();
         expect(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Critical');
         expect(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
     });
+})
+
+test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
+    if (process.env.USE_LIVE_DEMO === 'true') {
+        test.use({storageState: EStorageState.liveDemoUser});
+    }
+
+    test.beforeEach(async ({loginPage, homePage, page}) => {
+        await test.step('Login as FinOps user', async () => {
+            const isLiveDemo = process.env.USE_LIVE_DEMO === 'true';
+            if (!isLiveDemo) {
+                await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            } else {
+                await restoreUserSessionInLocalForage(page);
+                await homePage.navigateToURL();
+            }
+            await homePage.waitForPageLoaderToDisappear();
+            await homePage.waitForAllCanvases();
+        });
+    });
+
+    test('[] Verify Resource link works correctly', async ({homePage, resourcesPage}) => {
+        await homePage.clickTopResourcesBtn();
+        await expect(resourcesPage.heading).toBeVisible();
+    })
+
+    test('[] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
+                                                                                                                               homePage,
+                                                                                                                               resourceDetailsPage
+                                                                                                                           }) => {
+        const count = await homePage.topResourcesAllLinks.count();
+        expect(count).toBe(6);
+
+        const homepageResourceTitle = await homePage.getFirstResourceTitle();
+        const homePageResourceValue = await homePage.getFirstResourceValue();
+        await homePage.clickFirstTopResourceLink();
+
+        await expect(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+
+
+
+    });
+
+
 })

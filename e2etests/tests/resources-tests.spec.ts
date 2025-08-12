@@ -231,12 +231,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage, datePicker}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
-            await resourcesPage.selectLast7DaysDateRange();
-            await expect(resourcesPage.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
+            await datePicker.selectLast7DaysDateRange();
+            await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
             totalExpensesValue = await resourcesPage.getTotalExpensesValue();
             console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
         });
@@ -253,7 +253,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage}) => {
+    test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage, datePicker}) => {
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         let expensesData: ServiceNameExpensesResponse;
@@ -262,7 +262,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
                 resourcesPage.page.waitForResponse((resp) =>
                     resp.url().includes('/breakdown_expenses')
                 ),
-                resourcesPage.selectLast7DaysDateRange(),
+                datePicker.selectLast7DaysDateRange(),
             ]);
 
             expensesData = await expensesResponse.json();
@@ -337,12 +337,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage}) => {
+    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage, datePicker}) => {
         test.setTimeout(60000);
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         await test.step('Set last 7 days date range', async () => {
-            await resourcesPage.selectLast7DaysDateRange();
+            await datePicker.selectLast7DaysDateRange();
             await resourcesPage.waitForPageLoad();
         });
 

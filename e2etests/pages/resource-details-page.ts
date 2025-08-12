@@ -72,7 +72,7 @@ import {BasePage} from "./base-page";
              * @param {Locator} tab - The tab to check.
              * @returns {Promise<boolean>}
              */
-            async isTabSelected(tab: Locator) {
+            async isTabSelected(tab: Locator): Promise<boolean> {
                 return await tab.getAttribute('aria-selected') === 'true';
             }
 
@@ -80,7 +80,7 @@ import {BasePage} from "./base-page";
              * Clicks the Details tab.
              * @returns {Promise<void>}
              */
-            async clickDetailsTab() {
+            async clickDetailsTab(): Promise<void> {
                 await this.detailsTab.click();
             }
 
@@ -88,7 +88,7 @@ import {BasePage} from "./base-page";
              * Clicks the Constraints tab.
              * @returns {Promise<void>}
              */
-            async clickConstraintsTab() {
+            async clickConstraintsTab(): Promise<void> {
                 await this.constraintsTab.click();
             }
 
@@ -96,7 +96,7 @@ import {BasePage} from "./base-page";
              * Clicks the Expenses tab.
              * @returns {Promise<void>}
              */
-            async clickExpensesTab() {
+            async clickExpensesTab(): Promise<void> {
                 await this.expensesTab.click();
             }
 
@@ -104,7 +104,7 @@ import {BasePage} from "./base-page";
              * Clicks the Recommendations tab.
              * @returns {Promise<void>}
              */
-            async clickRecommendationsTab() {
+            async clickRecommendationsTab(): Promise<void> {
                 await this.recommendationsTab.click();
             }
 
@@ -112,7 +112,7 @@ import {BasePage} from "./base-page";
              * Clicks the Expenses Grouped button if it is not already active.
              * @returns {Promise<void>}
              */
-            async clickExpensesGroupedButtonIfNotActive() {
+            async clickExpensesGroupedButtonIfNotActive(): Promise<void> {
                 if (!await this.evaluateActiveButton(this.expensesGroupedButton)){
                     await this.expensesGroupedButton.click();
                 }
@@ -122,7 +122,7 @@ import {BasePage} from "./base-page";
              * Clicks the Expenses Detailed button.
              * @returns {Promise<void>}
              */
-            async clickExpensesDetailedButton() {
+            async clickExpensesDetailedButton(): Promise<void> {
                 await this.expensesDetailedButton.click();
             }
 

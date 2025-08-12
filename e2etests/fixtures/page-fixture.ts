@@ -27,6 +27,7 @@ import {TaggingPoliciesPage} from "../pages/tagging-policies-page";
 import {UsersInvitePage} from "../pages/users-invite-page";
 import {UsersPage} from "../pages/users-page";
 import {ExpensesMapPage} from "../pages/expenses-map-page";
+import {DatePickerPage} from "../pages/date-picker-page";
 
 
 /**
@@ -42,6 +43,7 @@ import {ExpensesMapPage} from "../pages/expenses-map-page";
  *   anomaliesCreatePage: AnomaliesCreatePage;
  *   cloudAccountsPage: CloudAccountsPage;
  *   cloudAccountsConnectPage: CloudAccountsConnectPage;
+ *   datePicker: DatePickerPage;
  *   emailVerificationPage: EmailVerificationPage;
  *   eventsPage: EventsPage;
  *   expensesPage: ExpensesPage;
@@ -72,6 +74,7 @@ export const test = base.extend<{
     anomaliesCreatePage: AnomaliesCreatePage;
     cloudAccountsPage: CloudAccountsPage;
     cloudAccountsConnectPage: CloudAccountsConnectPage;
+    datePicker: DatePickerPage;
     emailVerificationPage: EmailVerificationPage;
     eventsPage: EventsPage;
     expensesPage: ExpensesPage;
@@ -112,6 +115,10 @@ export const test = base.extend<{
     cloudAccountsConnectPage: async ({page}, use) => {
         const cloudAccountsConnectPage = new CloudAccountsConnectPage(page);
         await use(cloudAccountsConnectPage);
+    },
+    datePicker: async ({page}, use) => {
+        const datePicker = new DatePickerPage(page);
+        await use(datePicker);
     },
     emailVerificationPage: async ({page}, use) => {
         const emailVerificationPage = new EmailVerificationPage(page);
