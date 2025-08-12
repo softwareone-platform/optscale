@@ -47,13 +47,6 @@
         path: /optscale/thanos-storegateway
         state: directory
         mode: '1777'
-
-    # HACK: Similarly to above, an update in the influxdb image resulted in permission issues
-    - name: change the /optscale/influxdb permissions
-      file:
-        path: /optscale/influxdb
-        state: directory
-        mode: '1777'
         
     - name: install the system packages to run the deployment  
       apt:
