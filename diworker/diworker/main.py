@@ -4,7 +4,7 @@ import time
 
 import urllib3
 from concurrent.futures import ThreadPoolExecutor
-from threading import Thread
+from threading import Lock, Thread
 from etcd import Lock as EtcdLock
 from kombu import Exchange, Queue, Connection as QConnection
 from kombu.pools import producers
@@ -49,7 +49,8 @@ class DIWorker(ConsumerMixin):
         self._rest_cl = None
         self._mongo_cl = None
         self._clickhouse_cl = None
-        self.report_import_id = None
+        self.active_report_import_ids = set()
+        self.active_reports_lock = Lock()
         self.running = True
         self.thread = Thread(target=self.heartbeat)
         self.thread.start()
@@ -64,8 +65,13 @@ class DIWorker(ConsumerMixin):
 
     def heartbeat(self):
         while self.running:
-            if self.report_import_id:
-                self.rest_cl.report_import_update(self.report_import_id, {})
+            with self.active_reports_lock:
+                report_import_ids = list(self.active_report_import_ids)
+            for report_import_id in report_import_ids:
+                try:
+                    self.rest_cl.report_import_update(report_import_id, {})
+                except Exception as e:
+                    LOG.warning("Heartbeat update failed for %s: %s", report_import_id, e)
             time.sleep(HEARTBEAT_INTERVAL)
 
     @property
@@ -130,9 +136,11 @@ class DIWorker(ConsumerMixin):
 
     def report_import(self, task):
         report_import_id = task.get('report_import_id')
-        self.report_import_id = report_import_id
         if not report_import_id:
             raise Exception('invalid task received: {}'.format(task))
+
+        with self.active_reports_lock:
+            self.active_report_import_ids.add(report_import_id)
 
         _, import_dict = self.rest_cl.report_import_get(report_import_id)
         cloud_acc_id = import_dict.get('cloud_account_id')
@@ -239,7 +247,9 @@ class DIWorker(ConsumerMixin):
             self.report_import(body)
         except Exception as exc:
             LOG.exception('Data import failed: %s', str(exc))
-        self.report_import_id = None
+        finally:
+            with self.active_reports_lock:
+                self.active_report_import_ids.discard(body.get('report_import_id'))
         message.ack()
 
 
