@@ -27,6 +27,9 @@ import {BasePage} from "./base-page";
             readonly expensesGroupedButton: Locator;
             readonly expensesDetailedButton: Locator;
             readonly expensesPaidNetworkTrafficButton: Locator;
+            readonly table: Locator;
+            readonly tableColumn2: Locator;
+            readonly navigateNextIcon: Locator;
 
             /**
              * Initializes a new instance of the ResourceDetailsPage class.
@@ -49,6 +52,9 @@ import {BasePage} from "./base-page";
                 this.expensesDetailedButton = this.page.getByTestId('btn_detailed');
                 this.expensesPaidNetworkTrafficButton = this.page.getByTestId('btn_paid_network_traffic');
                 this.recommendationsTab = this.page.getByTestId('tab_recommendations');
+                this.table = this.main.locator('table');
+                this.tableColumn2 = this.table.locator('//td[2]')
+                this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
             }
 
             /**

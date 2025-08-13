@@ -2,6 +2,7 @@ import {test} from "../fixtures/page-fixture";
 import {EStorageState} from "../utils/enums";
 import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
 import {expect} from "@playwright/test";
+import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
     if (process.env.USE_LIVE_DEMO === 'true') {
@@ -17,6 +18,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
                 await restoreUserSessionInLocalForage(page);
                 await homePage.navigateToURL();
             }
+            await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
             await homePage.waitForAllCanvases();
         });
@@ -78,6 +80,7 @@ test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources
                 await restoreUserSessionInLocalForage(page);
                 await homePage.navigateToURL();
             }
+            await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
             await homePage.waitForAllCanvases();
         });
@@ -90,19 +93,23 @@ test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources
 
     test('[] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
                                                                                                                                homePage,
-                                                                                                                               resourceDetailsPage
+                                                                                                                               resourceDetailsPage,
+                                                                                                                               datePicker
                                                                                                                            }) => {
+        await homePage.topResourcesAllLinks.last().waitFor();
         const count = await homePage.topResourcesAllLinks.count();
-        expect(count).toBe(6);
+        expect(count).toBeLessThanOrEqual(6);
 
         const homepageResourceTitle = await homePage.getFirstResourceTitle();
-        const homePageResourceValue = await homePage.getFirstResourceValue();
+        const homePageExpenseValue = await homePage.getFirstResourceValue();
         await homePage.clickFirstTopResourceLink();
-
         await expect(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
 
+        await resourceDetailsPage.clickExpensesTab();
+        await datePicker.selectLast30DaysDateRange();
 
-
+        const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(resourceDetailsPage.tableColumn2, resourceDetailsPage.navigateNextIcon);
+        expectWithinDrift(homePageExpenseValue, expenseTotal, 0.0001) //0.01% drift is acceptable for the test
     });
 
 

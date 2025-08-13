@@ -27,6 +27,7 @@ export class HomePage extends BasePage {
     readonly topResourcesBtn: Locator;
     readonly topResourcesPerspectives: Locator;
     readonly topResourcesFirstLink: Locator;
+    readonly topResourceFirstValue: Locator;
     readonly topResourcesAllLinks: Locator;
 
     //Recommendations block elements
@@ -68,7 +69,8 @@ export class HomePage extends BasePage {
         this.topResourcesBlock = this.page.getByTestId('block_top_resources');
         this.topResourcesBtn = this.topResourcesBlock.getByTestId('btn_go_to_resources');
         this.topResourcesPerspectives = this.topResourcesBlock.getByText('Perspectives');
-        this.topResourcesFirstLink = this.topResourcesBlock.locator('//a)[1]');
+        this.topResourcesFirstLink = this.topResourcesBlock.locator('//a').first();
+        this.topResourceFirstValue = this.topResourcesBlock.getByText('$').first();
         this.topResourcesAllLinks = this.topResourcesBlock.locator('//a');
 
         //Recommendations block elements
@@ -232,13 +234,12 @@ export class HomePage extends BasePage {
     }
 
     async getFirstResourceTitle(): Promise<string> {
+        console.log((await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim());
         return (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
     }
 
     async getFirstResourceValue(): Promise<number> {
-        const value = await this.topResourcesFirstLink
-            .locator('xpath=/../following-sibling::span')
-            .textContent();
+        const value = await this.topResourceFirstValue.textContent();
         return this.parseCurrencyValue(value);
     }
 }
