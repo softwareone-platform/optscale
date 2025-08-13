@@ -1,23 +1,14 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../utils/localforge-auth/localforage-service";
-import {EStorageState} from "../utils/enums";
+import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
-    if (process.env.USE_LIVE_DEMO === 'true') {
-        test.use({storageState: EStorageState.liveDemoUser});
-    }
-
     test.beforeEach(async ({loginPage, recommendationsPage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            const isLiveDemo = process.env.USE_LIVE_DEMO === 'true';
-            if (!isLiveDemo) {
-                await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
-            } else {
-                await restoreUserSessionInLocalForage(page);
-            }
+            await restoreUserSessionInLocalForage(page);
+            await loginPage.navigateToURL();
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();
         });

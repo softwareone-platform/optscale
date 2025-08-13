@@ -1,7 +1,8 @@
 import {test} from "../fixtures/page-fixture";
-import {getValueFromAuthResponse} from "../utils/auth-helpers";
+import {getValueFromAuthResponse} from "../utils/auth-storage/auth-helpers";
 import {EUserRole} from "../utils/enums";
 import {expect} from "@playwright/test";
+import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 
 
 test.describe.skip("User Management tests", () => {
@@ -13,10 +14,10 @@ test.describe.skip("User Management tests", () => {
         userID = getValueFromAuthResponse(EUserRole.tempUser, 'user_id');
     });
 
-    test.beforeEach(async ({loginPage}) => {
+    test.beforeEach(async ({loginPage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            const password = process.env.DEFAULT_USER_PASSWORD;
-            await loginPage.login(email, password);
+            await restoreUserSessionInLocalForage(page);
+            await loginPage.navigateToURL();
         });
     });
 

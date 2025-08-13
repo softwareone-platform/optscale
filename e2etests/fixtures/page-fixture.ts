@@ -29,6 +29,7 @@ import {UsersPage} from "../pages/users-page";
 import {ExpensesMapPage} from "../pages/expenses-map-page";
 import {DatePickerPage} from "../pages/date-picker-page";
 
+import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
 
 /**
  * Extends the base Playwright test fixture with additional page objects.
@@ -100,6 +101,9 @@ export const test = base.extend<{
     usersPage: UsersPage;
     usersInvitePage: UsersInvitePage;
 }>({
+    storageState: async ({}, use) => {
+        await use(LiveDemoService.getDefaultUserStorageState());
+    },
     anomaliesPage: async ({page}, use) => {
         const anomaliesPage = new AnomaliesPage(page);
         await use(anomaliesPage);

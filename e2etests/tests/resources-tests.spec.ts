@@ -34,6 +34,7 @@ import {
     TagsResponse
 } from "../test-data/test-data-response-types";
 import {fetchBreakdownExpenses} from "../utils/api-helpers";
+import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 
 
 test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
@@ -42,9 +43,9 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     let totalExpensesValue: number;
     let itemisedTotal: number;
 
-    test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
+    test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
-            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await restoreUserSessionInLocalForage(page);
             await resourcesPage.navigateToURL();
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
@@ -54,10 +55,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230776] Possible savings matches those on recommendations page", async ({
-                                                                                       resourcesPage,
-                                                                                       recommendationsPage
-                                                                                   }) => {
+    test("[230776] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
         let resourcesSavings: number;
         let recommendationsSavings: number;
 
@@ -757,9 +755,10 @@ async function setupApiInterceptions(resourcesPage: ResourcesPage): Promise<void
 test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
     test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
-    test.beforeEach('Login admin user', async ({loginPage, resourcesPage}) => {
+    test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
-            await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+            await restoreUserSessionInLocalForage(page);
+            await resourcesPage.navigateToURL();
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');
