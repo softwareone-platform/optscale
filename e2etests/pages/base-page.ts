@@ -332,10 +332,9 @@ export abstract class BasePage {
             return; // Exit the method if the spinner is not present.
         }
         try {
-            console.warn(`Waiting for page loader to disappear...`);
             await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
         } catch {
-            console.warn("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
+            console.error("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
         }
     }
 

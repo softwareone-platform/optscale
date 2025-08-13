@@ -341,7 +341,6 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
         await test.step('Set last 7 days date range', async () => {
             await datePicker.selectLast7DaysDateRange();
-            await resourcesPage.waitForPageLoad();
         });
 
         let regionExpensesData: RegionExpensesResponse;
@@ -762,9 +761,11 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');
+            await resourcesPage.waitForLoadingPageImgToDisappear();
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+            await resourcesPage.firstResourceItemInTable.waitFor();
         });
     });
 
