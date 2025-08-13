@@ -234,7 +234,6 @@ export class HomePage extends BasePage {
     }
 
     async getFirstResourceTitle(): Promise<string> {
-        console.log((await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim());
         return (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
     }
 
