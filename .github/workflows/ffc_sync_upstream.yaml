@@ -36,32 +36,33 @@ jobs:
       - name: Check if branch for main exists
         id: check_branch_main
         run: |
-          if git ls-remote --heads origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep sync-${{ steps.latest_tag.outputs.LATEST_COMMIT }}; then
-            echo "Branch already exists. Skipping..."
-            echo "branch_main_exists=true" >> "$GITHUB_OUTPUT"
+          if git ls-remote --heads origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}; then
+            echo "Branch sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} already exists. Skipping..."
+            echo "branch_main_exists=yes" >> "$GITHUB_OUTPUT"
           fi
       - name: Check if branch for release exists
         id: check_branch_release
         run: |
-          if git ls-remote --heads origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep bp-sync-${{ steps.latest_tag.outputs.LATEST_COMMIT }}; then
-            echo "Branch already exists. Skipping..."
-            echo "branch_release_exists=true" >> "$GITHUB_OUTPUT"
+          if git ls-remote --heads origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}; then
+            echo "Branch bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} already exists. Skipping..."
+            echo "branch_release_exists=yes" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create new branch from latest tag for main
-        if: steps.check_branch_main.outputs.branch_main_exists == true
+        if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
         run: |
           git checkout -b sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
           git push origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
 
       - name: Create new branch from latest tag for release
-        if: steps.check_branch_release.outputs.branch_release_exists == true
+        if: steps.check_branch_release.outputs.branch_release_exists != 'yes'
         run: |
           git checkout -b bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
           git push origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
 
       - name: Check if PR exists for main
         id: check_pr_main
+        if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -72,12 +73,15 @@ jobs:
               --json title \
               --jq 'length')
           if ((prs > 0)); then
-              echo "pr_main_exists=true" >> "$GITHUB_OUTPUT"
+              echo "pr_main_exists=yes" >> "$GITHUB_OUTPUT"
               echo "::notice::Pull Request exist."
+          else
+              echo "pr_main_exists=no" >> "$GITHUB_OUTPUT"
           fi
           
       - name: Check if PR exists for release
         id: check_pr_bp
+        if: steps.check_branch_release.outputs.branch_release_exists != 'yes'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -88,8 +92,10 @@ jobs:
               --json title \
               --jq 'length')
           if ((prs > 0)); then
-              echo "pr_bp_exists=true" >> "$GITHUB_OUTPUT"
+              echo "pr_bp_exists=yes" >> "$GITHUB_OUTPUT"
               echo "::notice::Pull Request exist."
+          else
+              echo "pr_bp_exists=no" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Get current date
@@ -99,7 +105,7 @@ jobs:
       - name: Create Pull Request for Main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.check_pr_main.outputs.pr_main_exists == true
+        if: steps.check_pr_main.outputs.pr_main_exists == 'no'
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
@@ -112,7 +118,7 @@ jobs:
       - name: Create Pull Request Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.check_pr_bp.outputs.pr_bp_exists == true
+        if: steps.check_pr_bp.outputs.pr_bp_exists == 'no'
         run: |
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
