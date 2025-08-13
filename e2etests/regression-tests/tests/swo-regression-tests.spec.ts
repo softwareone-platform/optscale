@@ -5,7 +5,7 @@ import {roundElementDimensions} from "../utils/roundElementDimensions";
 
 test.describe('FFC @swo_regression', () => {
   test.beforeEach('Restore live-demo user session', async ({page}) => {
-    await restoreUserSessionInLocalForage(page);
+    await restoreUserSessionInLocalForage(page, true);
   })
 
   test("UI consistency of Header and Main Menu", async ({homePage, header, mainMenu}) => {
