@@ -1,0 +1,122 @@
+name: Sync Branch and Create PR
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday at 09:00 UTC
+  workflow_dispatch:  # Manual trigger option
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/hystax/optscale.git
+          git fetch upstream --tags
+
+      - name: Get latest commit SHA from upstream/integration
+        id: latest_commit
+        run: |
+          LATEST_COMMIT=$(git rev-parse --short=7 upstream/integration)
+          echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+
+      - name: Check if branch for main exists
+        id: check_branch_main
+        run: |
+          if git ls-remote --heads origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep sync-${{ steps.latest_tag.outputs.LATEST_COMMIT }}; then
+            echo "Branch already exists. Skipping..."
+            echo "branch_main_exists=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check if branch for release exists
+        id: check_branch_release
+        run: |
+          if git ls-remote --heads origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep bp-sync-${{ steps.latest_tag.outputs.LATEST_COMMIT }}; then
+            echo "Branch already exists. Skipping..."
+            echo "branch_release_exists=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create new branch from latest tag for main
+        if: steps.check_branch_main.outputs.branch_main_exists == true
+        run: |
+          git checkout -b sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+          git push origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+
+      - name: Create new branch from latest tag for release
+        if: steps.check_branch_release.outputs.branch_release_exists == true
+        run: |
+          git checkout -b bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+          git push origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+
+      - name: Check if PR exists for main
+        id: check_pr_main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          prs=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'main' \
+              --json title \
+              --jq 'length')
+          if ((prs > 0)); then
+              echo "pr_main_exists=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request exist."
+          fi
+          
+      - name: Check if PR exists for release
+        id: check_pr_bp
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          prs=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'release/${{ vars.CURRENT_RELEASE }}' \
+              --json title \
+              --jq 'length')
+          if ((prs > 0)); then
+              echo "pr_bp_exists=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request exist."
+          fi
+
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request for Main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check_pr_main.outputs.pr_main_exists == true
+        run: |
+          gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'main' \
+              --title 'Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> main ${{ steps.current_date.outputs.date }}' \
+              --body "This PR syncs the latest changes from upstream to main."
+
+
+      - name: Create Pull Request Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check_pr_bp.outputs.pr_bp_exists == true
+        run: |
+          gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'release/${{ vars.CURRENT_RELEASE }}' \
+              --title 'Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> release/${{ vars.CURRENT_RELEASE }} ${{ steps.current_date.outputs.date }}' \
+              --body "This PR syncs the latest changes from upstream to release branch."
