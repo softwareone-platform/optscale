@@ -43,3 +43,42 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
         expect(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
     });
 })
+
+test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
+
+    test.beforeEach(async ({homePage, page}) => {
+        await test.step('Login as FinOps user', async () => {
+            await restoreUserSessionInLocalForage(page);
+            await homePage.navigateToURL();
+            await homePage.waitForLoadingPageImgToDisappear();
+            await homePage.waitForPageLoaderToDisappear();
+            await homePage.waitForAllCanvases();
+        });
+    });
+
+    test('[] Verify Resource link works correctly', async ({homePage, resourcesPage}) => {
+        await homePage.clickTopResourcesBtn();
+        await expect(resourcesPage.heading).toBeVisible();
+    })
+
+    test('[] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
+                                                                                                                               homePage,
+                                                                                                                               resourceDetailsPage,
+                                                                                                                               datePicker
+                                                                                                                           }) => {
+        await homePage.topResourcesAllLinks.last().waitFor();
+        const count = await homePage.topResourcesAllLinks.count();
+        expect(count).toBeLessThanOrEqual(6);
+
+        const homepageResourceTitle = await homePage.getFirstResourceTitle();
+        const homePageExpenseValue = await homePage.getFirstResourceValue();
+        await homePage.clickFirstTopResourceLink();
+        await expect(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+
+        await resourceDetailsPage.clickExpensesTab();
+        await datePicker.selectLast30DaysDateRange();
+
+        const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(resourceDetailsPage.tableColumn2, resourceDetailsPage.navigateNextIcon);
+        expectWithinDrift(homePageExpenseValue, expenseTotal, 0.0001) //0.01% drift is acceptable for the test
+    });
+})
