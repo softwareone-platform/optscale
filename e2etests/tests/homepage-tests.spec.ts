@@ -44,7 +44,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
     });
 })
 
-test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
+test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
 
     test.beforeEach(async ({homePage, page}) => {
         await test.step('Login as FinOps user', async () => {
@@ -56,29 +56,45 @@ test.describe('[MPT-] Home Page Resource block tests', {tag: ["@ui", "@resources
         });
     });
 
-    test('[] Verify Resource link works correctly', async ({homePage, resourcesPage}) => {
-        await homePage.clickTopResourcesBtn();
-        await expect(resourcesPage.heading).toBeVisible();
+    test('[230838] Verify Resource link works correctly', async ({homePage, resourcesPage}) => {
+        await test.step('Click on Top Resources button', async () => {
+            await homePage.clickTopResourcesBtn();
+            await expect(resourcesPage.heading).toBeVisible();
+        });
     })
 
-    test('[] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
+    test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
                                                                                                                                homePage,
                                                                                                                                resourceDetailsPage,
                                                                                                                                datePicker
                                                                                                                            }) => {
-        await homePage.topResourcesAllLinks.last().waitFor();
-        const count = await homePage.topResourcesAllLinks.count();
-        expect(count).toBeLessThanOrEqual(6);
+        let homepageResourceTitle: string;
+        let homePageExpenseValue: number;
 
-        const homepageResourceTitle = await homePage.getFirstResourceTitle();
-        const homePageExpenseValue = await homePage.getFirstResourceValue();
-        await homePage.clickFirstTopResourceLink();
-        await expect(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+        await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources', async () => {
+            await homePage.topResourcesAllLinks.last().waitFor();
+            const count = await homePage.topResourcesAllLinks.count();
+            expect(count).toBeLessThanOrEqual(6);
+        });
 
-        await resourceDetailsPage.clickExpensesTab();
-        await datePicker.selectLast30DaysDateRange();
+        await test.step("Get first resource's homepage values", async () => {
+            homepageResourceTitle = await homePage.getFirstResourceTitle();
+            homePageExpenseValue = await homePage.getFirstResourceValue();
+        });
 
-        const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(resourceDetailsPage.tableColumn2, resourceDetailsPage.navigateNextIcon);
-        expectWithinDrift(homePageExpenseValue, expenseTotal, 0.0001) //0.01% drift is acceptable for the test
+        await test.step('Click on the first resource link and verify navigation', async () => {
+            await homePage.clickFirstTopResourceLink();
+            await expect(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+        });
+
+        await test.step('Click expenses tab and set date range to last 30 days', async () => {
+            await resourceDetailsPage.clickExpensesTab();
+            await datePicker.selectLast30DaysDateRange();
+        });
+
+        await test.step('Verify that the expenses column total matches the home page last 30 days expenses value', async () => {
+            const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(resourceDetailsPage.tableColumn2, resourceDetailsPage.navigateNextIcon);
+            expectWithinDrift(homePageExpenseValue, expenseTotal, 0.0001) //0.01% drift is acceptable for the test
+        });
     });
 })
