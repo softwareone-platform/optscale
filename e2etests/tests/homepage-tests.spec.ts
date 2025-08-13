@@ -86,8 +86,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
             await homePage.topResourcesAllLinks.last().waitFor();
             homepageResourceTitle = await homePage.getFirstResourceTitle();
             homePageExpenseValue = await homePage.getFirstResourceValue();
-            expect.soft(homepageResourceTitle).not.toBeNull();
-            expect.soft(homepageResourceTitle).not.toBe('');
+            expect.soft(homepageResourceTitle).toBeTruthy();
         });
 
         await test.step('Click on the first resource link and verify navigation', async () => {
@@ -114,8 +113,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 
             for (let i = 0; i < count; i++) {
                 const resourceName = (await homePage.topResourcesAllLinks.nth(i).textContent()).replace(/\.{3}\//g, '').trim();
-                expect.soft(resourceName).not.toBeNull();
-                expect.soft(resourceName).not.toBe('');
+                expect.soft(resourceName).toBeTruthy();
             }
         });
     })
