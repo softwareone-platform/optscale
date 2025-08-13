@@ -86,6 +86,8 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
             await homePage.topResourcesAllLinks.last().waitFor();
             homepageResourceTitle = await homePage.getFirstResourceTitle();
             homePageExpenseValue = await homePage.getFirstResourceValue();
+            expect.soft(homepageResourceTitle).not.toBeNull();
+            expect.soft(homepageResourceTitle).not.toBe('');
         });
 
         await test.step('Click on the first resource link and verify navigation', async () => {
