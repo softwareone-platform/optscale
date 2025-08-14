@@ -15,10 +15,11 @@ import {
   GCP_CREDENTIALS_FIELD_NAMES,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
   AWS_ROOT_CREDENTIALS_FIELD_NAMES,
-  AWS_ROOT_BILLING_BUCKET_FIELD_NAMES,
-  AWS_ROOT_EXPORT_TYPE_FIELD_NAMES,
+  AWS_BILLING_BUCKET_FIELD_NAMES,
+  AWS_EXPORT_TYPE_FIELD_NAMES,
   AWS_LINKED_CREDENTIALS_FIELD_NAMES,
-  AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
+  AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
+  AWS_ROLE_CREDENTIALS_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { useIsDataSourceConnectionTypeEnabled } from "hooks/useIsDataSourceConnectionTypeEnabled";
@@ -26,6 +27,7 @@ import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRe
 import AwsLogoIcon from "icons/AwsLogoIcon";
 import AzureLogoIcon from "icons/AzureLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
+import { intl } from "translations/react-intl-config";
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,
@@ -42,7 +44,6 @@ import {
   AZURE_CNR,
   AZURE_TENANT,
   AWS_ROOT_CONNECT_CONFIG_SCHEMES,
-  ALIBABA_CNR,
   GCP_CNR,
   GCP_TENANT,
   CONNECTION_TYPES,
@@ -61,16 +62,7 @@ type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
 
 type CloudProvider = ObjectValues<typeof CLOUD_PROVIDERS>;
 
-type CloudType =
-  | typeof AWS_CNR
-  | typeof AZURE_TENANT
-  | typeof AZURE_CNR
-  | typeof GCP_TENANT
-  | typeof GCP_CNR
-  | typeof ALIBABA_CNR;
-// | typeof NEBIUS
-// | typeof DATABRICKS
-// | typeof KUBERNETES_CNR;
+type CloudType = typeof AWS_CNR | typeof AZURE_TENANT | typeof AZURE_CNR | typeof GCP_TENANT | typeof GCP_CNR;
 
 type CloudProviderTypes = Record<
   CloudProvider,
@@ -87,6 +79,7 @@ type CloudProviderTypes = Record<
 
 const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
+    { connectionType: CONNECTION_TYPES.AWS_ROLE, messageId: "assumedRole", cloudType: AWS_CNR },
     { connectionType: CONNECTION_TYPES.AWS_ROOT, messageId: "root", cloudType: AWS_CNR },
     { connectionType: CONNECTION_TYPES.AWS_LINKED, messageId: "linked", cloudType: AWS_CNR }
   ],
@@ -98,7 +91,7 @@ const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
     { connectionType: CONNECTION_TYPES.GCP_TENANT, messageId: "tenant", cloudType: GCP_TENANT },
     { connectionType: CONNECTION_TYPES.GCP_PROJECT, messageId: "project", cloudType: GCP_CNR }
   ]
-  // [CLOUD_PROVIDERS.ALIBABA]: { connectionType: CONNECTION_TYPES.ALIBABA, cloudType: ALIBABA_CNR },
+  // [CLOUD_PROVIDERS.ALIBABA]: { connectionType: CONNECTION_TYPES.ALIBABA, cloudType: ALIBABA_CNR }
   // [CLOUD_PROVIDERS.NEBIUS]: { connectionType: CONNECTION_TYPES.NEBIUS, cloudType: NEBIUS },
   // [CLOUD_PROVIDERS.DATABRICKS]: { connectionType: CONNECTION_TYPES.DATABRICKS, cloudType: DATABRICKS },
   // [CLOUD_PROVIDERS.KUBERNETES]: { connectionType: CONNECTION_TYPES.KUBERNETES, cloudType: KUBERNETES_CNR }
@@ -127,17 +120,17 @@ const getCloudTypeFromConnectionType = (connectionType: ConnectionType): CloudTy
   return providerTypes.cloudType;
 };
 
-const getAwsParameters = (formData) => {
+const getAwsRootParameters = (formData) => {
   const getConfigSchemeParameters = () =>
     formData.isFindReport
       ? {
           config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.FIND_REPORT
         }
       : {
-          bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
-          bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
-          report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
-          region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
+          bucket_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
+          bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
+          report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+          region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
           config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
         };
   return {
@@ -146,8 +139,8 @@ const getAwsParameters = (formData) => {
     config: {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-      use_edp_discount: formData[AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
-      cur_version: Number(formData[AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
+      use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+      cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
       ...getConfigSchemeParameters()
     }
   };
@@ -162,6 +155,31 @@ const getAwsLinkedParameters = (formData) => ({
     linked: true
   }
 });
+
+const getAwsAssumedRoleParameters = (formData) => ({
+  name: formData[DATA_SOURCE_NAME_FIELD_NAME],
+  type: AWS_CNR,
+  config: {
+    assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
+    assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+    use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+    cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
+    bucket_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
+    bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
+    report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+    region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
+    config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY
+  }
+});
+
+const getAwsParametersByConnectionType = (connectionType: string) => {
+  const parameters = {
+    [CONNECTION_TYPES.AWS_LINKED]: getAwsLinkedParameters,
+    [CONNECTION_TYPES.AWS_ROLE]: getAwsAssumedRoleParameters
+  }[connectionType];
+
+  return parameters || getAwsRootParameters;
+};
 
 const getAzureTenantParameters = (formData) => ({
   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
@@ -198,6 +216,7 @@ const getAzureSubscriptionParameters = (formData) => ({
 //   config: {
 //     password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
 //     user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
+//     custom_price: !formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL],
 //     cost_model: {}
 //   }
 // });
@@ -284,6 +303,13 @@ const renderConnectionTypeDescription = (settings) =>
 
 const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
   ({
+    [CONNECTION_TYPES.AWS_ROLE]: renderConnectionTypeDescription([
+      {
+        key: "createAwsAssumedRoleDescription",
+        messageId: "createAwsAssumedRoleDescription",
+        values: { action: intl.formatMessage({ id: "connect" }) }
+      }
+    ]),
     [CONNECTION_TYPES.AWS_ROOT]: renderConnectionTypeDescription([
       {
         key: "createAwsRootDocumentationReference",
@@ -494,7 +520,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       return connectionTypeFromQueryParams;
     }
 
-    return CONNECTION_TYPES.AWS_ROOT;
+    return CONNECTION_TYPES.AWS_ROLE;
   });
 
   const selectedProvider = getCloudProviderFromConnectionType(connectionType);
@@ -511,7 +537,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       icon: AwsLogoIcon,
       messageId: "aws",
       dataTestId: "btn_aws_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AWS_ROOT)
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_ROLE)
     },
     {
       id: CLOUD_PROVIDERS.AZURE,
@@ -622,7 +648,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                     const cloudType = getCloudTypeFromConnectionType(connectionType);
 
                     const getParameters = {
-                      [AWS_CNR]: connectionType === CONNECTION_TYPES.AWS_LINKED ? getAwsLinkedParameters : getAwsParameters,
+                      [AWS_CNR]: getAwsParametersByConnectionType(connectionType),
                       [AZURE_TENANT]: getAzureTenantParameters,
                       [AZURE_CNR]: getAzureSubscriptionParameters,
                       [GCP_CNR]: getGoogleParameters,
