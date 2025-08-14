@@ -11,7 +11,7 @@ import Tooltip from "components/Tooltip";
 import EditOrganizationFormContainer from "containers/EditOrganizationFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_CAPABILITY, ORGANIZATION_EDIT_ALLOWED } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import OrganizationCurrency from "./OrganizationCurrency";
@@ -28,7 +28,6 @@ const MAX_ORGANIZATION_NAME_LENGTH = 64;
 
 const OrganizationId = ({ id }: OrganizationIdProps) => (
   <KeyValueLabel
-    isBoldKeyLabel
     keyMessageId="id"
     value={
       <CopyText
@@ -49,7 +48,7 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
   const enableEditMode = () => setIsEditMode(true);
   const disableEditMode = () => setIsEditMode(false);
 
-  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] }) && ORGANIZATION_EDIT_ALLOWED;
+  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
 
   if (isEditMode) {
     return <EditOrganizationFormContainer onCancel={disableEditMode} onSuccess={disableEditMode} />;
@@ -61,13 +60,11 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
     <Box display="flex" alignItems="center" gap={SPACING_1} width="50%">
       <KeyValueLabel
         keyMessageId="name"
-        isBoldKeyLabel
         value={
           <Tooltip title={isNameLong ? name : undefined} placement="top">
             <span>{isNameLong ? sliceByLimitWithEllipsis(name, MAX_ORGANIZATION_NAME_LENGTH) : name}</span>
           </Tooltip>
         }
-        sx={{ marginRight: 1 }}
       />
       {isEditAllowed && (
         <IconButton
@@ -95,13 +92,11 @@ const OrganizationInfoSetting = () => {
         <OrganizationName name={organizationName} />
       </Box>
       <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
-        {ORGANIZATION_EDIT_ALLOWED && (
-          <Box>
-            <Typography>
-              <FormattedMessage id="organizationCurrencyDescription" />
-            </Typography>
-          </Box>
-        )}
+        <Box>
+          <Typography>
+            <FormattedMessage id="organizationCurrencyDescription" />
+          </Typography>
+        </Box>
         <Box>
           <OrganizationCurrency currencyCode={currency} />
         </Box>

@@ -44,9 +44,23 @@ export type AlibabaDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type AwsAssumedRoleConfigInput = {
+  assume_role_account_id: Scalars['String']['input'];
+  assume_role_name: Scalars['String']['input'];
+  bucket_name?: InputMaybe<Scalars['String']['input']>;
+  bucket_prefix?: InputMaybe<Scalars['String']['input']>;
+  config_scheme?: InputMaybe<Scalars['String']['input']>;
+  cur_version?: InputMaybe<Scalars['Int']['input']>;
+  region_name?: InputMaybe<Scalars['String']['input']>;
+  report_name?: InputMaybe<Scalars['String']['input']>;
+  use_edp_discount?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type AwsConfig = {
   __typename?: 'AwsConfig';
   access_key_id?: Maybe<Scalars['String']['output']>;
+  assume_role_account_id?: Maybe<Scalars['String']['output']>;
+  assume_role_name?: Maybe<Scalars['String']['output']>;
   bucket_name?: Maybe<Scalars['String']['output']>;
   bucket_prefix?: Maybe<Scalars['String']['output']>;
   config_scheme?: Maybe<Scalars['String']['output']>;
@@ -221,8 +235,14 @@ export type CleanExpensesParams = {
   without_tag?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type CloudPoliciesParams = {
+  bucket_name: Scalars['String']['input'];
+  cloud_type: Scalars['String']['input'];
+};
+
 export type CreateDataSourceInput = {
   alibabaConfig?: InputMaybe<AlibabaConfigInput>;
+  awsAssumedRoleConfig?: InputMaybe<AwsAssumedRoleConfigInput>;
   awsLinkedConfig?: InputMaybe<AwsLinkedConfigInput>;
   awsRootConfig?: InputMaybe<AwsRootConfigInput>;
   azureSubscriptionConfig?: InputMaybe<AzureSubscriptionConfigInput>;
@@ -464,11 +484,13 @@ export type K8CostModelConfig = {
 export type K8sConfig = {
   __typename?: 'K8sConfig';
   cost_model?: Maybe<K8CostModelConfig>;
+  custom_price?: Maybe<Scalars['Boolean']['output']>;
   user?: Maybe<Scalars['String']['output']>;
 };
 
 export type K8sConfigInput = {
   cost_model?: InputMaybe<Scalars['JSONObject']['input']>;
+  custom_price?: InputMaybe<Scalars['Boolean']['input']>;
   password: Scalars['String']['input'];
   user: Scalars['String']['input'];
 };
@@ -654,6 +676,7 @@ export type OrganizationLimitHit = {
 export type Query = {
   __typename?: 'Query';
   cleanExpenses?: Maybe<Scalars['JSONObject']['output']>;
+  cloudPolicies?: Maybe<Scalars['JSONObject']['output']>;
   currentEmployee?: Maybe<Employee>;
   dataSource?: Maybe<DataSourceInterface>;
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
@@ -674,6 +697,12 @@ export type Query = {
 export type QueryCleanExpensesArgs = {
   organizationId: Scalars['ID']['input'];
   params?: InputMaybe<CleanExpensesParams>;
+};
+
+
+export type QueryCloudPoliciesArgs = {
+  organizationId: Scalars['ID']['input'];
+  params?: InputMaybe<CloudPoliciesParams>;
 };
 
 
@@ -755,6 +784,7 @@ export type ResourceCountBreakdown = {
 
 export type UpdateDataSourceInput = {
   alibabaConfig?: InputMaybe<AlibabaConfigInput>;
+  awsAssumedRoleConfig?: InputMaybe<AwsAssumedRoleConfigInput>;
   awsLinkedConfig?: InputMaybe<AwsLinkedConfigInput>;
   awsRootConfig?: InputMaybe<AwsRootConfigInput>;
   azureSubscriptionConfig?: InputMaybe<AzureSubscriptionConfigInput>;
@@ -867,6 +897,7 @@ export type ResolversTypes = {
   AlibabaConfig: ResolverTypeWrapper<AlibabaConfig>;
   AlibabaConfigInput: AlibabaConfigInput;
   AlibabaDataSource: ResolverTypeWrapper<AlibabaDataSource>;
+  AwsAssumedRoleConfigInput: AwsAssumedRoleConfigInput;
   AwsConfig: ResolverTypeWrapper<AwsConfig>;
   AwsDataSource: ResolverTypeWrapper<AwsDataSource>;
   AwsLinkedConfigInput: AwsLinkedConfigInput;
@@ -881,6 +912,7 @@ export type ResolversTypes = {
   BreakdownBy: BreakdownBy;
   BreakdownParams: BreakdownParams;
   CleanExpensesParams: CleanExpensesParams;
+  CloudPoliciesParams: CloudPoliciesParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: ResolverTypeWrapper<DataSourceDetails>;
   DataSourceDiscoveryInfos: ResolverTypeWrapper<DataSourceDiscoveryInfos>;
@@ -936,6 +968,7 @@ export type ResolversParentTypes = {
   AlibabaConfig: AlibabaConfig;
   AlibabaConfigInput: AlibabaConfigInput;
   AlibabaDataSource: AlibabaDataSource;
+  AwsAssumedRoleConfigInput: AwsAssumedRoleConfigInput;
   AwsConfig: AwsConfig;
   AwsDataSource: AwsDataSource;
   AwsLinkedConfigInput: AwsLinkedConfigInput;
@@ -949,6 +982,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   BreakdownParams: BreakdownParams;
   CleanExpensesParams: CleanExpensesParams;
+  CloudPoliciesParams: CloudPoliciesParams;
   CreateDataSourceInput: CreateDataSourceInput;
   DataSourceDetails: DataSourceDetails;
   DataSourceDiscoveryInfos: DataSourceDiscoveryInfos;
@@ -1020,6 +1054,8 @@ export type AlibabaDataSourceResolvers<ContextType = any, ParentType extends Res
 
 export type AwsConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['AwsConfig'] = ResolversParentTypes['AwsConfig']> = {
   access_key_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  assume_role_account_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  assume_role_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bucket_name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bucket_prefix?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   config_scheme?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1292,6 +1328,7 @@ export type K8CostModelConfigResolvers<ContextType = any, ParentType extends Res
 
 export type K8sConfigResolvers<ContextType = any, ParentType extends ResolversParentTypes['K8sConfig'] = ResolversParentTypes['K8sConfig']> = {
   cost_model?: Resolver<Maybe<ResolversTypes['K8CostModelConfig']>, ParentType, ContextType>;
+  custom_price?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1392,6 +1429,7 @@ export type OrganizationLimitHitResolvers<ContextType = any, ParentType extends 
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   cleanExpenses?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryCleanExpensesArgs, 'organizationId'>>;
+  cloudPolicies?: Resolver<Maybe<ResolversTypes['JSONObject']>, ParentType, ContextType, RequireFields<QueryCloudPoliciesArgs, 'organizationId'>>;
   currentEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, RequireFields<QueryCurrentEmployeeArgs, 'organizationId'>>;
   dataSource?: Resolver<Maybe<ResolversTypes['DataSourceInterface']>, ParentType, ContextType, RequireFields<QueryDataSourceArgs, 'dataSourceId'>>;
   dataSources?: Resolver<Maybe<Array<Maybe<ResolversTypes['DataSourceInterface']>>>, ParentType, ContextType, RequireFields<QueryDataSourcesArgs, 'organizationId'>>;

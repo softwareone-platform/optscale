@@ -122,7 +122,7 @@ const Summary = ({ data, isLoading = false }: SummaryProps) => {
     }
   ];
 
-  return <SummaryGrid summaryData={summaryDefinition} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={summaryDefinition} />;
 };
 
 export default Summary;

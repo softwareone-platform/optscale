@@ -1,6 +1,6 @@
 ### **Summary**
 
-The Anomaly Detection Policies page establishes a table for 
+The **Anomaly Detection Policies** page establishes a table for 
 identifying and responding to unusual patterns or deviations 
 from normal behavior. Use this page to create, view, or delete 
 policies. Define thresholds and criteria for detecting them, 
@@ -12,7 +12,7 @@ and ensure continuous monitoring and analysis to mitigate risks.
 
 - Status: Pay attention to the red areas of the graphs: they highlight the violation of threshold values. See the thresholds in the Description.
 
-- Email Notification: Once an anomaly has been detected, organization manager will be alerted via email.
+- Email Notification: Receive an alert when a policy violation is detected.
 
 ### **Actions**
 

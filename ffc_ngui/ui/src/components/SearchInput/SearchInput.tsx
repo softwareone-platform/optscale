@@ -4,7 +4,6 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { useIntl } from "react-intl";
 import IconButton from "components/IconButton";
 import Input from "components/Input";
-import { MPT_SPACING_1 } from "../../utils/layouts";
 import useStyles from "./SearchInput.styles";
 
 type SearchInputProps = {
@@ -67,10 +66,9 @@ const SearchInput = ({ onSearch, initialSearchText = "", dataTestIds = {}, sx = 
             }}
           />
         ),
-        endAdornment: (
+        endAdornment: currentText !== "" && (
           <IconButton
             dataTestId={deleteSearchButtonDataTestId}
-            sx={{ padding: MPT_SPACING_1, paddingRight: 0, opacity: currentText !== "" ? 1 : 0 }}
             icon={<CancelIcon className={classes.clearSearchIcon} />}
             onClick={() => {
               inputRef.current.focus();

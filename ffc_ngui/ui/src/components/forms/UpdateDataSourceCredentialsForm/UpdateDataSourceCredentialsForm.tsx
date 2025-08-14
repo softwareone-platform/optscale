@@ -13,14 +13,16 @@ import {
   KUBERNETES_CREDENTIALS_FIELD_NAMES,
   AWS_LINKED_CREDENTIALS_FIELD_NAMES,
   AWS_ROOT_CREDENTIALS_FIELD_NAMES,
-  AWS_ROOT_BILLING_BUCKET_FIELD_NAMES,
-  AWS_ROOT_EXPORT_TYPE_FIELD_NAMES,
-  AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES
+  AWS_BILLING_BUCKET_FIELD_NAMES,
+  AWS_EXPORT_TYPE_FIELD_NAMES,
+  AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
+  AWS_ROLE_CREDENTIALS_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
+import { intl } from "translations/react-intl-config";
 import {
   DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
@@ -48,67 +50,80 @@ import {
 import { readFileAsText } from "utils/files";
 import { CredentialInputs } from "./FormElements";
 import { AWS_POOL_UPDATE_DATA_EXPORT_PARAMETERS as AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS } from "./FormElements/CredentialInputs";
+import type { UpdateDataSourceCredentialsFormProps } from "./types";
+
+const getAwsDescription = (config) => {
+  if (config.linked) {
+    return (
+      <Typography gutterBottom>
+        <FormattedMessage
+          id="createAwsLinkedDocumentationReference3"
+          values={{
+            discoverResourcesLink: (chunks) => (
+              <Link
+                data-test-id="link_iam_user"
+                href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES}
+                target="_blank"
+                rel="noopener"
+              >
+                {chunks}
+              </Link>
+            )
+          }}
+        />
+      </Typography>
+    );
+  }
+
+  if (config.assume_role_account_id && config.assume_role_name) {
+    return (
+      <Typography gutterBottom>
+        <FormattedMessage id="createAwsAssumedRoleDescription" values={{ action: intl.formatMessage({ id: "save" }) }} />
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography gutterBottom component="div">
+      <div>
+        <FormattedMessage
+          id="createAwsRootDocumentationReference"
+          values={{
+            link: (chunks) => (
+              <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
+                {chunks}
+              </Link>
+            ),
+            strong: (chunks) => <strong>{chunks}</strong>
+          }}
+        />
+      </div>
+      <div>
+        <FormattedMessage
+          id="migrateToCur2.0"
+          values={{
+            link: (chunks) => (
+              <Link
+                data-test-id="link_guide"
+                href={DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0}
+                target="_blank"
+                rel="noopener"
+              >
+                {chunks}
+              </Link>
+            ),
+            strong: (chunks) => <strong>{chunks}</strong>
+          }}
+        />
+      </div>
+    </Typography>
+  );
+};
 
 const Description = ({ type, config }) => {
   switch (type) {
     case AWS_CNR:
-      return (
-        <>
-          {config.linked ? (
-            <Typography gutterBottom>
-              <FormattedMessage
-                id="createAwsLinkedDocumentationReference3"
-                values={{
-                  discoverResourcesLink: (chunks) => (
-                    <Link
-                      data-test-id="link_iam_user"
-                      href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES}
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      {chunks}
-                    </Link>
-                  )
-                }}
-              />
-            </Typography>
-          ) : (
-            <Typography gutterBottom component="div">
-              <div>
-                <FormattedMessage
-                  id="createAwsRootDocumentationReference"
-                  values={{
-                    link: (chunks) => (
-                      <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
-                        {chunks}
-                      </Link>
-                    ),
-                    strong: (chunks) => <strong>{chunks}</strong>
-                  }}
-                />
-              </div>
-              <div>
-                <FormattedMessage
-                  id="migrateToCur2.0"
-                  values={{
-                    link: (chunks) => (
-                      <Link
-                        data-test-id="link_guide"
-                        href={DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0}
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        {chunks}
-                      </Link>
-                    ),
-                    strong: (chunks) => <strong>{chunks}</strong>
-                  }}
-                />
-              </div>
-            </Typography>
-          )}
-        </>
-      );
+      return getAwsDescription(config);
     case AZURE_TENANT:
       return (
         <Typography gutterBottom>
@@ -242,61 +257,100 @@ const UpdateCredentialsWarning = ({ type }) => {
 
 const getConfig = (type, config) => {
   switch (type) {
-    case AWS_CNR:
-      return {
-        getDefaultFormValues: () =>
-          config.linked
-            ? {
-                [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
-                [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
-              }
-            : {
-                [AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
-                [AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
-                [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
-                [AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
-                [AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
-                [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME]: config.bucket_name,
-                [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME]: config.report_name,
-                [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME]: config.region_name,
-                [AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]: config.bucket_prefix
-              },
-        parseFormDataToApiParams: (formData) => ({
-          config: {
-            ...(config.linked
-              ? {
-                  access_key_id: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
-                  secret_access_key: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-                  linked: true
-                }
-              : {
-                  access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
-                  secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-                  config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
-                  use_edp_discount: formData[AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
-                  ...(formData[AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]
-                    ? {
-                        cur_version: Number(formData[AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
-                        bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
-                        report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
-                        region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
-                        bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]
-                      }
-                    : {
-                        /**
-                         * Data sources that were created before the introduction of the new data export parameters
-                         * may not have the cur_version field set, so we need to pass it as undefined to avoid sending it to the backend
-                         */
-                        cur_version: config.cur_version ?? undefined,
-                        bucket_name: config.bucket_name,
-                        report_name: config.report_name,
-                        region_name: config.region_name,
-                        bucket_prefix: config.bucket_prefix
-                      })
-                })
-          }
-        })
+    case AWS_CNR: {
+      const billingBucketFields = {
+        [AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME]: config.bucket_name,
+        [AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME]: config.report_name,
+        [AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME]: config.region_name,
+        [AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]: config.bucket_prefix
       };
+
+      return {
+        getDefaultFormValues: () => {
+          if (config.linked) {
+            return {
+              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
+              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
+            };
+          }
+
+          if (config.assume_role_account_id && config.assume_role_name) {
+            return {
+              [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: config.assume_role_account_id,
+              [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME]: config.assume_role_name,
+              [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
+              [AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
+              [AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
+              ...billingBucketFields
+            };
+          }
+
+          return {
+            [AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
+            [AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
+            [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
+            [AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
+            [AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
+            ...billingBucketFields
+          };
+        },
+        parseFormDataToApiParams: (formData) => {
+          if (config.linked) {
+            return {
+              config: {
+                access_key_id: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
+                secret_access_key: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
+                linked: true
+              }
+            };
+          }
+
+          if (config.assume_role_account_id && config.assume_role_name) {
+            return {
+              config: {
+                assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
+                assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+                config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
+                use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+                cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
+                bucket_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
+                report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+                region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
+                bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]
+              }
+            };
+          }
+
+          return {
+            config: {
+              access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
+              secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
+              config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
+              use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+              ...(formData[AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]
+                ? {
+                    cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
+                    bucket_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
+                    report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+                    region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
+                    bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX]
+                  }
+                : {
+                    /**
+                     * Data sources that were created before the introduction of the new data export parameters
+                     * may not have the cur_version field set, so we need to pass it as undefined to avoid sending it to the backend
+                     */
+                    cur_version: config.cur_version ?? undefined,
+                    bucket_name: config.bucket_name,
+                    report_name: config.report_name,
+                    region_name: config.region_name ?? undefined,
+                    bucket_prefix: config.bucket_prefix
+                  })
+            }
+          };
+        }
+      };
+    }
     case AZURE_TENANT:
       return {
         getDefaultFormValues: () => ({
@@ -374,20 +428,22 @@ const getConfig = (type, config) => {
       return {
         getDefaultFormValues: () => ({
           [KUBERNETES_CREDENTIALS_FIELD_NAMES.USER]: config.user,
-          [KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD]: ""
+          [KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD]: "",
+          [KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL]: !config.custom_price
         }),
         parseFormDataToApiParams: (formData) => ({
           config: {
             password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
-            user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined
+            user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
+            custom_price: !formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL]
           }
         })
       };
     case GCP_CNR:
       return {
         getDefaultFormValues: () => ({
-          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET]: config.billing_data.dataset_name,
-          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]: config.billing_data.table_name,
+          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET]: config.billing_data?.dataset_name,
+          [GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]: config.billing_data?.table_name,
           [GCP_CREDENTIALS_FIELD_NAMES.CREDENTIALS]: ""
         }),
         parseFormDataToApiParams: async (formData) => {
@@ -459,7 +515,14 @@ const getConfig = (type, config) => {
   }
 };
 
-const UpdateDataSourceCredentialsForm = ({ id, type, config, onSubmit, onCancel, isLoading = false }) => {
+const UpdateDataSourceCredentialsForm = ({
+  id,
+  type,
+  config,
+  onSubmit,
+  onCancel,
+  isLoading = false
+}: UpdateDataSourceCredentialsFormProps) => {
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config);
@@ -469,6 +532,8 @@ const UpdateDataSourceCredentialsForm = ({ id, type, config, onSubmit, onCancel,
   });
 
   const { handleSubmit } = methods;
+
+  const isAssumedRole = Boolean(config?.assume_role_account_id && config?.assume_role_name);
 
   return (
     <FormProvider {...methods}>
@@ -480,7 +545,7 @@ const UpdateDataSourceCredentialsForm = ({ id, type, config, onSubmit, onCancel,
       >
         <Description type={type} config={config} />
         <CredentialInputs type={type} config={config} />
-        <UpdateCredentialsWarning type={type} />
+        {!isAssumedRole && <UpdateCredentialsWarning type={type} />}
         <FormButtonsWrapper>
           <ButtonLoader
             dataTestId="btn_update_data_source_credentials"

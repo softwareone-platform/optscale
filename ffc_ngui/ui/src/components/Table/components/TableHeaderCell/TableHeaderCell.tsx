@@ -7,7 +7,7 @@ const Cell = ({ children, colSpan, rowSpan, style, onClick, className }) => (
   </TableCell>
 );
 
-const TableHeaderCell = ({ headerContext, stickyStyles = {}, getHeaderCellClassName, isSelectionColumn = false }) => {
+const TableHeaderCell = ({ headerContext, stickyStyles = {}, getHeaderCellClassName }) => {
   const { style: cellStyle = {}, headerStyle: headerCellStyle = {} } = headerContext.column.columnDef;
 
   const getCellContent = () => {
@@ -54,7 +54,7 @@ const TableHeaderCell = ({ headerContext, stickyStyles = {}, getHeaderCellClassN
       }}
       colSpan={headerContext.colSpan}
       rowSpan={headerContext.rowSpan}
-      className={`${isSelectionColumn ? "tableRowSelection" : ""} ${typeof getHeaderCellClassName === "function" ? getHeaderCellClassName(headerContext.getContext()) : ""}`.trim()}
+      className={typeof getHeaderCellClassName === "function" ? getHeaderCellClassName(headerContext.getContext()) : undefined}
     >
       {getCellContent()}
     </Cell>

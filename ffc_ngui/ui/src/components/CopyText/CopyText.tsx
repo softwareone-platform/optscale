@@ -57,21 +57,22 @@ const CopyText = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
-      <span>{children}</span>
+      {children && <span>{children}</span>}
       {dynamicCopyIcon && !isHovered ? null : (
         <Typography
           component="span"
           variant={variant}
           data-test-id={buttonDataTestId}
           className={cx(classes.copyWrapper)}
-          sx={
-            dynamicCopyIcon
+          sx={(theme) => ({
+            paddingLeft: children ? theme.spacing(0.5) : 0,
+            ...(dynamicCopyIcon
               ? {
                   position: "absolute",
                   left: "100%"
                 }
-              : undefined
-          }
+              : undefined)
+          })}
         >
           <CopyToClipboard
             text={text}

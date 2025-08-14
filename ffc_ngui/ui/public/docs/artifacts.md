@@ -1,6 +1,6 @@
 ### **Summary**
 
-Use Artifacts page to share specific artifacts with team members, 
+Use the **Artifacts** page to share specific artifacts with team members, 
 facilitating easier collaboration and ensuring consistency across the project.
 
 To log a specific artifact for your training code, include the artifact path 

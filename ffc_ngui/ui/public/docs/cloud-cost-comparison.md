@@ -1,6 +1,6 @@
 ### **Summary**
 
-Filter and compare the specifications and pricing of cloud provider sizes based on your needs.
+Use the **Cloud Cost Comparison** page to filter and compare the specifications and pricing of cloud provider sizes based on your needs.
 The data is retrieved from provider APIs and may not always be immediately updated due to possible delays.
 Depending on your filter selections, loading times may vary.
 
