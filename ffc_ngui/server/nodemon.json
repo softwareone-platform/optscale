@@ -1,0 +1,20 @@
+{
+  "exec": "pnpm start",
+  "watch": [
+    "**/*.ts",
+    "graphql/schemas/**/*.graphql",
+    "api/**/*.ts",
+    "graphql/resolvers/**/*.ts",
+    ".env"
+  ],
+  "ignore": [
+    "node_modules/",
+    "dist/",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "*.d.ts"
+  ],
+  "ext": "ts,graphql,env",
+  "delay": "500",
+  "verbose": true
+}

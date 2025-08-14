@@ -1,5 +1,4 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_BRAND_PRIMARY } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   icon: {
@@ -10,54 +9,38 @@ const useStyles = makeStyles()((theme) => ({
   },
   menuLink: {
     width: "100%",
-    display: "block",
+    display: "contents",
     color: "inherit",
-    textDecoration: "none",
-
-    "& .MuiListItemText-root": {
-      position: "relative"
-    },
-    "& .MuiListItemText-root:before": {
-      content: '""',
-      position: "absolute",
-      width: "0px",
-      transition: "all ease-in 0.2s ",
-      height: "100%",
-      borderRadius: "5px",
-      left: "-25px",
-      backgroundColor: MPT_BRAND_PRIMARY
-    }
+    textDecoration: "none"
   },
   activeLink: {
-    color: MPT_BRAND_PRIMARY,
-    "& .MuiListItemText-root:before": {
-      width: 10
-    },
+    color: theme.palette.secondary.contrastText,
     "& .MuiListItemSecondaryAction-root": {
       "& svg": {
-        color: "black"
+        color: theme.palette.secondary.contrastText
       },
       "& span": {
-        color: MPT_BRAND_PRIMARY
+        color: theme.palette.secondary.contrastText
       },
       "& .MuiIconButton-root": {
         "&:hover": {
           backgroundColor: theme.palette.secondary.light,
           "& svg": {
-            color: "black"
+            color: theme.palette.secondary.contrastText
           },
           "& span": {
-            color: "black"
+            color: theme.palette.secondary.contrastText
           }
         }
       }
     },
     "& .listItem": {
+      backgroundColor: theme.palette.action.selected,
       "& svg": {
-        color: "black"
+        color: theme.palette.secondary.contrastText
       },
       "& span": {
-        color: MPT_BRAND_PRIMARY
+        color: theme.palette.secondary.contrastText
       }
     }
   }

@@ -29,7 +29,6 @@ import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
 import { isEmpty as isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
 import { CELL_EMPTY_VALUE } from "utils/tables";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const buildDescription = ({ type, definition, formatter, rawString = false }) => {
   if (ANOMALY_TYPES[type]) {
@@ -163,7 +162,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
       {
         header: (
           <TextWithDataTestId dataTestId="lbl_filters">
-            <LabelColon messageId="filters" suffix={false} />
+            <FormattedMessage id="filters" />
           </TextWithDataTestId>
         ),
         accessorKey: "filtersString",
@@ -210,7 +209,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
               key: "add",
               icon: <AddOutlinedIcon fontSize="small" />,
               messageId: "add",
-              color: "primary",
+              color: "success",
               variant: "contained",
               type: "button",
               link: addButtonLink,

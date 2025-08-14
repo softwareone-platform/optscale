@@ -1,8 +1,8 @@
+import { FormattedMessage } from "react-intl";
 import Filters from "components/Filters";
 import { ML_RUNS_FILTERS } from "components/Filters/constants";
 import LinearSelector from "components/LinearSelector";
 import TypographyLoader from "components/TypographyLoader";
-import LabelColon from "../../../../../shared/components/LabelColon/LabelColon";
 
 const RunsFilter = ({ filterValues, appliedFilters, onChange: onChangeHandler, isLoading }) => {
   const mlRunsFilters = new Filters({
@@ -35,7 +35,7 @@ const RunsFilter = ({ filterValues, appliedFilters, onChange: onChangeHandler, i
     <TypographyLoader linesCount={1} />
   ) : (
     <LinearSelector
-      label={<LabelColon messageId="filters" />}
+      label={<FormattedMessage id="filters" />}
       value={mlRunsFilters.getAppliedValues()}
       items={mlRunsFilters.getFilterSelectors()}
       onClear={onFilterDelete}

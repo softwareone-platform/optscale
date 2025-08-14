@@ -43,7 +43,7 @@ const S3DuplicateFinderChecksTable = ({ geminis, isLoading }) => {
                 messageId: "runCheck",
                 type: "button",
                 variant: "contained",
-                color: "primary",
+                color: "success",
                 action: () => openSideModal(CreateS3DuplicateFinderCheckModal),
                 dataTestId: "btn_new_check",
                 requiredActions: ["EDIT_PARTNER"],

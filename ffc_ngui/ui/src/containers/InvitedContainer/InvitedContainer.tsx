@@ -32,7 +32,7 @@ const InvitedContainer = () => {
     }
 
     // /invited for authorized with same email
-    if (userId && typeof invitationEmail === "string" && currentEmail.toLowerCase() === invitationEmail.toLowerCase()) {
+    if (userId && currentEmail === invitationEmail) {
       return getSettingsUrl(SETTINGS_TABS.INVITATIONS);
     }
 

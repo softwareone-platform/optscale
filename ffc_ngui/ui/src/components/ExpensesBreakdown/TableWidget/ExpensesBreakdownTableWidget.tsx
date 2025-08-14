@@ -1,5 +1,4 @@
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ExpensesBreakdownTable from "components/ExpensesBreakdown/Table";
 import IconButton from "components/IconButton";
@@ -56,14 +55,12 @@ const ExpensesBreakdownTableWidget = ({
   endDateTimestamp
 }) => {
   const title = (
-    <Typography variant={"subtitle1"} display={"inline-block"}>
-      <FormattedMessage
-        id="summaryBy"
-        values={{
-          name: getTableWrapperCardTitleName(filterBy)
-        }}
-      />
-    </Typography>
+    <FormattedMessage
+      id="summaryBy"
+      values={{
+        name: getTableWrapperCardTitleName(filterBy)
+      }}
+    />
   );
 
   const tableOptions = {

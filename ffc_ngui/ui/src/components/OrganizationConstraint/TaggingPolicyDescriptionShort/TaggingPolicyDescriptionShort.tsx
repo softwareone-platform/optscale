@@ -1,32 +1,25 @@
+import { FormattedMessage } from "react-intl";
 import { EMPTY_UUID } from "utils/constants";
-import InlineSeverityAlert from "../../InlineSeverityAlert";
 
 const TaggingPolicyDescriptionShort = ({ conditions }) => {
   const strong = (chunks) => <strong>{chunks}</strong>;
   const { tag: prohibitedTag, without_tag: requiredTag } = conditions;
   if (prohibitedTag === EMPTY_UUID) {
-    return <InlineSeverityAlert messageId="taggingPolicy.anyTagsShort" />;
+    return <FormattedMessage id="taggingPolicy.anyTagsShort" />;
   }
 
   if (!prohibitedTag) {
-    return (
-      <InlineSeverityAlert messageId={"taggingPolicy.requiredTagDescriptionShort"} messageValues={{ requiredTag, strong }} />
-    );
+    return <FormattedMessage id="taggingPolicy.requiredTagDescriptionShort" values={{ requiredTag, strong }} />;
   }
 
   if (!requiredTag) {
-    return (
-      <InlineSeverityAlert
-        messageId={"taggingPolicy.prohibitedTagDescriptionShort"}
-        messageValues={{ prohibitedTag, strong }}
-      />
-    );
+    return <FormattedMessage id="taggingPolicy.prohibitedTagDescriptionShort" values={{ prohibitedTag, strong }} />;
   }
 
   return (
-    <InlineSeverityAlert
-      messageId={"taggingPolicy.tagsCorrelationDescriptionShort"}
-      messageValues={{ firstTag: prohibitedTag, secondTag: requiredTag, strong }}
+    <FormattedMessage
+      id="taggingPolicy.tagsCorrelationDescriptionShort"
+      values={{ firstTag: prohibitedTag, secondTag: requiredTag, strong }}
     />
   );
 };

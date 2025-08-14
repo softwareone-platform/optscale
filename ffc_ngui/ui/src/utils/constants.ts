@@ -71,16 +71,17 @@ export const CLOUD_PROVIDERS = Object.freeze({
 });
 
 export const CONNECTION_TYPES = Object.freeze({
+  AWS_ROLE: "awsRole",
   AWS_ROOT: "awsRoot",
   AWS_LINKED: "awsLinked",
   AZURE_SUBSCRIPTION: "azureSubscription",
   AZURE_TENANT: "azureTenant",
-  // ALIBABA: "alibaba",
+  ALIBABA: "alibaba",
   GCP_PROJECT: "gcpProject",
-  GCP_TENANT: "gcpTenant"
-  // NEBIUS: "nebius",
-  // DATABRICKS: "databricks",
-  // KUBERNETES: "kubernetes"
+  GCP_TENANT: "gcpTenant",
+  NEBIUS: "nebius",
+  DATABRICKS: "databricks",
+  KUBERNETES: "kubernetes"
 });
 
 export const CONNECTION_TYPE_SEARCH_PARAMETER = "type";
@@ -198,7 +199,7 @@ export const EVENT_LEVEL = Object.freeze({
   DEBUG: "DEBUG"
 });
 
-export const EVENTS_LIMIT = 40;
+export const EVENTS_LIMIT = 80;
 
 export const CLOUD_ACCOUNT_TYPES_LIST = Object.keys(CLOUD_ACCOUNT_TYPE);
 
@@ -838,30 +839,6 @@ export const BREAKDOWN_LINEAR_SELECTOR_ITEMS = [
   }
 ];
 
-export const BREAKDOWN_BUTTON_GROUP_ITEMS = [
-  {
-    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
-    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
-    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
-    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
-    dataTestId: "breakdown_ls_item_expenses"
-  },
-  {
-    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
-    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
-    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
-    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
-    dataTestId: "breakdown_ls_item_resource_count"
-  },
-  {
-    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
-    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
-    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
-    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
-    dataTestId: "breakdown_ls_item_tags"
-  }
-];
-
 export const ML_TASK_DETAILS_TABS = Object.freeze({
   OVERVIEW: "overview",
   RUNS: "runs",
@@ -1046,8 +1023,3 @@ export const POWER_SCHEDULE_ACTIONS = Object.freeze({
   POWER_ON: "power_on",
   POWER_OFF: "power_off"
 });
-
-export const ALLOW_ORGANIZATION_CREATION = false;
-export const ENABLE_PRODUCT_TOUR = false;
-export const ORGANIZATION_EDIT_ALLOWED = false;
-export const DOWNLOAD_FEATURE_ENABLED = false;

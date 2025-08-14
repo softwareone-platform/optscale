@@ -1,6 +1,6 @@
 ### Summary
 
-The User Management page in OptScale allows to view, manage, and control user access within the selected organization.
+The **User Management** page in OptScale allows to view, manage, and control user access within the selected organization.
 
 ### View
 
@@ -26,4 +26,4 @@ The User Management page in OptScale allows to view, manage, and control user ac
 
 -   Assign Multiple Roles: Assign multiple roles to balance flexibility with security.
 
--   Review User Roles: Regularly audit user roles to ensure they're still relevant to each person's responsibilities.
+-   Review User Roles: Audit user roles regularly to ensure they're still relevant to each person's responsibilities.

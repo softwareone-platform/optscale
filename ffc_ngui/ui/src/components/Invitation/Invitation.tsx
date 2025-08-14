@@ -1,11 +1,9 @@
 import { ReactNode } from "react";
-import ApartmentIcon from "@mui/icons-material/Apartment";
-import { Box, Chip, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import SubTitle from "components/SubTitle";
 import Tooltip from "components/Tooltip";
 import { ROLE_PURPOSES } from "utils/constants";
-import { MPT_SPACING_3, MPT_SPACING_6 } from "utils/layouts";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import { TODO } from "utils/types";
 
@@ -33,10 +31,6 @@ type InvitationProps = {
   invitesToOrganization: TODO[];
   invitesToPools: TODO[];
 };
-
-interface OrganizationProps {
-  name: string;
-}
 
 const MAX_ROLE_TARGET_LENGTH = 64;
 
@@ -69,34 +63,31 @@ const PermissionsList = ({ roleTargetMessageId, invites }: PermissionsListProps)
     );
   });
 
-const Organization = ({ name }: OrganizationProps) => {
-  const isNameLong = name.length > MAX_ROLE_TARGET_LENGTH;
-  const label = isNameLong ? sliceByLimitWithEllipsis(name, MAX_ROLE_TARGET_LENGTH) : name;
+const AcceptInvitationTitle = ({ ownerName, ownerEmail, organizationNameInvitedTo }: AcceptInvitationTitleProps) => {
+  const isNameLong = organizationNameInvitedTo.length > MAX_ROLE_TARGET_LENGTH;
 
   return (
-    <Box marginBottom={MPT_SPACING_3}>
-      <Tooltip title={isNameLong ? name : undefined}>
-        <Chip style={{ height: MPT_SPACING_6 }} variant="organization" icon={<ApartmentIcon />} label={label} />
-      </Tooltip>
-    </Box>
-  );
-};
-
-const AcceptInvitationTitle = ({ ownerName, ownerEmail, organizationNameInvitedTo }: AcceptInvitationTitleProps) => (
-  <Box>
-    <SubTitle paddingBottom={MPT_SPACING_3}>
+    <SubTitle>
       <FormattedMessage
         id="acceptInvitationTitle"
         values={{
           strong: (chunks) => <strong>{chunks}</strong>,
           ownerName,
-          ownerEmail
+          ownerEmail,
+          organization: (
+            <Tooltip title={isNameLong ? organizationNameInvitedTo : undefined}>
+              <span>
+                {isNameLong
+                  ? sliceByLimitWithEllipsis(organizationNameInvitedTo, MAX_ROLE_TARGET_LENGTH)
+                  : organizationNameInvitedTo}
+              </span>
+            </Tooltip>
+          )
         }}
       />
     </SubTitle>
-    <Organization name={organizationNameInvitedTo} />
-  </Box>
-);
+  );
+};
 
 const Invitation = ({ owner, organizationNameInvitedTo, invitesToOrganization, invitesToPools }: InvitationProps) => {
   const { name: ownerName, email: ownerEmail } = owner;
@@ -104,7 +95,7 @@ const Invitation = ({ owner, organizationNameInvitedTo, invitesToOrganization, i
   const shouldRenderTitle = ownerName && ownerEmail && organizationNameInvitedTo;
 
   return (
-    <div style={{ marginBottom: MPT_SPACING_3, textAlign: "center" }}>
+    <>
       {shouldRenderTitle && (
         <AcceptInvitationTitle
           ownerName={ownerName}
@@ -117,7 +108,7 @@ const Invitation = ({ owner, organizationNameInvitedTo, invitesToOrganization, i
       </Typography>
       <PermissionsList roleTargetMessageId="roleOfOrganization" invites={invitesToOrganization} />
       <PermissionsList roleTargetMessageId="roleAtPool" invites={invitesToPools} />
-    </div>
+    </>
   );
 };
 

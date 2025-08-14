@@ -1,4 +1,4 @@
-// import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
+import RestoreOutlinedIcon from "@mui/icons-material/RestoreOutlined";
 import archivedRecommendationsRoute from "utils/routes/archivedRecommendationsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,8 +9,7 @@ class RecommendationsArchiveMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_recommend_archive";
 
-  // MPT_TODO: disabled to match MPT figma designs
-  // icon = RestoreOutlinedIcon;
+  icon = RestoreOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

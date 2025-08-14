@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
-BUILD_TAG='build'
-TEST_IMAGE=ngui_tests:${BUILD_TAG}
+TEST_IMAGE=ngui_tests:source
 
-docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f ngui/Dockerfile_tests .
+WORKDIR=/usr/src/app
+UI_DIR=${WORKDIR}/ui
+
+docker build -t ${TEST_IMAGE} --target source -f ngui/Dockerfile .
 
 echo "Linter>>>"
-docker run -i --rm ${TEST_IMAGE} sh -c "cd /usr/src/app/ui && pnpm lint:check"
+docker run -i --rm ${TEST_IMAGE} sh -c "cd ${WORKDIR} && pnpm check"
 echo "<<<Linter"
 
-echo "Prettier>>>"
-docker run -i --rm ${TEST_IMAGE} sh -c "cd /usr/src/app/ui && pnpm prettier:check"
-echo "<<Prettier"
-
-# tests are currently disabled
+echo "Translations order test>>>"
+docker run -i --rm ${TEST_IMAGE} sh -c "cd ${UI_DIR} && pnpm run translate:test"
+echo "<<<Translations order test"
 
 docker rmi ${TEST_IMAGE}

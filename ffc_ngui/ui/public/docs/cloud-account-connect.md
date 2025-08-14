@@ -1,6 +1,6 @@
 ### Summary
 
-Register cost centers Alibaba, AWS, Azure, Databricks, GCP, or Kubernetes clusters. 
+Use the **Connect Data Source** page to register the Alibaba, AWS, Azure, Databricks, GCP cost centers, or Kubernetes clusters. 
 
 ### View
 

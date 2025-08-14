@@ -1,6 +1,6 @@
 ### **Summary**
 
-The Power Schedules page allows users to manage the automated power on/off schedules for resources. You can view details of each schedule, add new schedules, modify existing ones, and optimize resource usage to save costs. 
+The **Power Schedules** page allows users to manage the automated power on/off schedules for resources. You can view details of each schedule, add new schedules, modify existing ones, and optimize resource usage to save costs. 
 
 ### **View**
 
@@ -10,7 +10,7 @@ The Power Schedules page allows users to manage the automated power on/off sched
 
 ### **Actions**
 
--   Add a New Schedule: Easily create a new power schedule by clicking the green "Add" button. Specify the resources, power on/off times, and validity period.
+-   Add a New Schedule: Create a new power schedule by clicking the green "Add" button. Specify the resources, power on/off times, and validity period.
 
 -   Manage Schedules: Click on a table row to view detailed information about a schedule, including the associated resources and execution history.
 

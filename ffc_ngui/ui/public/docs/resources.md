@@ -1,6 +1,6 @@
 ### **Summary**
 
-Observe the expenses for all resources across all connected clouds within the organization for the selected period.
+Use the **Resources** page to observe the expenses for all resources across all connected clouds within the organization for the selected period.
 Organize and categorize resources based on your specific requirements.
 
 ### **View**
@@ -29,7 +29,7 @@ Organize and categorize resources based on your specific requirements.
 
 ### **Tips**
 
-- Track Expenses Consistently: Regularly monitor and record resource expenditures to keep an accurate overview of your budget.
+- Track Expenses Consistently: Monitor and record resource expenditures regularly to keep an accurate overview of your budget.
 
 - Prioritize Essential Resources: Evaluate the necessity of each resource and prioritize spending based on its importance and return on investment.
 

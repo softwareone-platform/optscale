@@ -82,7 +82,6 @@ const RangePickerForm = ({
         maxDate={maxDate}
         notSetMessageId={notSetMessageId}
         fullWidth={fullWidth}
-        hideLabel
       />
     </form>
   );
