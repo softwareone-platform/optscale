@@ -19,27 +19,32 @@ async function globalSetup(config: FullConfig) {
         override: true,
     });
 
+    const localHostURL = 'http://localhost:3000';
+
     // Log key environment variables for debugging purposes
     console.log(`Tests running on ${process.env.BASE_URL}`);
     console.log(`Ignoring HTTPS errors: ${process.env.IGNORE_HTTPS_ERRORS}`);
     console.log(`SCREENSHOT_UPDATE_DELAY: ${process.env.SCREENSHOT_UPDATE_DELAY}`);
     console.log(`USE_LIVE_DEMO: ${process.env.USE_LIVE_DEMO}`);
-    if(process.env.BASE_URL === undefined) console.error('BASE_URL is not set. This is required for the tests to run.');
-    if(process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD === undefined) console.warn('DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
-    if(process.env.DEFAULT_USER_ID === undefined) console.warn(`DEFAULT_USER_ID is not set. This may cause issues with some API tests`);
+    if(process.env.BASE_URL === undefined) console.error('***BASE_URL is not set. This is required for the tests to run.');
+    if(process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD === undefined) console.warn('***DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
+    if(process.env.DEFAULT_USER_ID === undefined) console.warn(`***DEFAULT_USER_ID is not set. This may cause issues with some API tests`);
     if (process.env.USE_LIVE_DEMO === `true`) {
         if (process.env.LIVE_DEMO_API === undefined) {
-            console.error(`LIVE_DEMO_API is required when USE_LIVE_DEMO is set to true`);
+            console.error(`***LIVE_DEMO_API is required when USE_LIVE_DEMO is set to true`);
         }
-        if (process.env.LIVE_DEMO_API !== process.env.BASE_URL) {
-            console.warn(`LIVE_DEMO_API is set to ${process.env.LIVE_DEMO_API} but BASE_URL is ${process.env.BASE_URL}. This may cause issues if they are not the same.`);
+        if(process.env.BASE_URL !== localHostURL) {
+            if (process.env.LIVE_DEMO_API !== process.env.BASE_URL) {
+                console.warn(`***LIVE_DEMO_API is set to ${process.env.LIVE_DEMO_API} but BASE_URL is ${process.env.BASE_URL}. This may cause issues if they are not the same.`);
+            }
         }
-        if (process.env.LIVE_DEMO_TOKEN === undefined) console.error(`LIVE_DEMO_TOKEN is not set. It is required when USE_LIVE_DEMO is true.`);
+        if (process.env.LIVE_DEMO_TOKEN === undefined) console.error(`***LIVE_DEMO_TOKEN is not set. It is required when USE_LIVE_DEMO is true.`);
     }
+    if (process.env.CLUSTER_SECRET === undefined) console.error(`***CLUSTER_SECRET is not set`);
+    if (process.env.BASE_URL === localHostURL && process.env.API_BASE_URL === undefined) console.error(`***API_BASE_URL is required when BASE_URL is set to localhost. It should match VITE_PROXY argument used to start the app.`);
 }
 
-if (process.env.CLUSTER_SECRET === undefined) console.warn(`CLUSTER_SECRET is not set`);
-if (process.env.BASE_URL === `http://localhost:3000` && process.env.API_BASE_URL === undefined) console.error(`API_BASE_URL is required when BASE_URL is set to localhost. It should match VITE-PROXY argument used to start the app.`);
+
 
 // Export the global setup function as a module
 module.exports = globalSetup;
