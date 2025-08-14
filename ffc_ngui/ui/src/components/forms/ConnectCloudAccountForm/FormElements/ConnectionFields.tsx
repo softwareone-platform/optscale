@@ -12,12 +12,16 @@ import {
   GcpCredentials,
   KubernetesCredentials,
   DatabricksCredentials,
-  AwsRootBillingBucket,
-  AwsRootExportType,
-  AwsRootUseAwsEdpDiscount,
-  GcpTenantCredentials
+  AwsBillingBucket,
+  AwsExportType,
+  AwsUseAwsEdpDiscount,
+  GcpTenantCredentials,
+  AwsAssumedRoleInputs,
+  AWS_ROLE_CREDENTIALS_FIELD_NAMES,
+  AWS_BILLING_BUCKET_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import { RadioGroup, Switch } from "components/forms/common/fields";
+import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "components/forms/ConnectCloudAccountForm/FormElements/DataSourceNameField";
 import {
   BillingReportBucketDescription,
   BillingReportBucketTitle,
@@ -45,8 +49,8 @@ const AwsRootInputs = () => (
       return (
         <>
           <AwsRootCredentials />
-          <AwsRootUseAwsEdpDiscount />
-          <AwsRootExportType />
+          <AwsUseAwsEdpDiscount />
+          <AwsExportType />
           <Switch
             name={AWS_ROOT_INPUTS_FIELD_NAMES.IS_FIND_REPORT}
             label={<FormattedMessage id="dataExportDetection" />}
@@ -86,7 +90,7 @@ const AwsRootInputs = () => (
                   }
                 />
               </Typography>
-              <AwsRootBillingBucket />
+              <AwsBillingBucket />
             </>
           )}
         </>
@@ -115,6 +119,19 @@ type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
 
 const ConnectionInputs = ({ connectionType }: { connectionType: ConnectionType }) => {
   switch (connectionType) {
+    case CONNECTION_TYPES.AWS_ROLE:
+      return (
+        <AwsAssumedRoleInputs
+          fieldsRequiredForRoleFetch={[
+            DATA_SOURCE_NAME_FIELD_NAME,
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID,
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME,
+            AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME,
+            AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX,
+            AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME
+          ]}
+        />
+      );
     case CONNECTION_TYPES.AWS_ROOT:
       return <AwsRootInputs />;
     case CONNECTION_TYPES.AWS_LINKED:

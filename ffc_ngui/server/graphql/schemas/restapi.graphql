@@ -53,6 +53,8 @@ interface DataSourceInterface {
 # AWS data source
 type AwsConfig {
   access_key_id: String
+  assume_role_account_id: String
+  assume_role_name: String
   linked: Boolean
   use_edp_discount: Boolean
   cur_version: Int
@@ -262,6 +264,7 @@ type K8CostModelConfig {
 type K8sConfig {
   cost_model: K8CostModelConfig
   user: String
+  custom_price: Boolean
 }
 
 type K8sDataSource implements DataSourceInterface {
@@ -318,6 +321,18 @@ input AwsLinkedConfigInput {
   linked: Boolean!
 }
 
+input AwsAssumedRoleConfigInput {
+  assume_role_account_id: String!
+  assume_role_name: String!
+  bucket_name: String
+  bucket_prefix: String
+  region_name: String
+  use_edp_discount: Boolean
+  cur_version: Int
+  config_scheme: String
+  report_name: String
+}
+
 input AzureSubscriptionConfigInput {
   client_id: String!
   secret: String!
@@ -371,6 +386,7 @@ input K8sConfigInput {
   password: String!
   user: String!
   cost_model: JSONObject
+  custom_price: Boolean
 }
 
 input DatabricksConfigInput {
@@ -384,6 +400,7 @@ input CreateDataSourceInput {
   type: String
   awsRootConfig: AwsRootConfigInput
   awsLinkedConfig: AwsLinkedConfigInput
+  awsAssumedRoleConfig: AwsAssumedRoleConfigInput
   azureSubscriptionConfig: AzureSubscriptionConfigInput
   azureTenantConfig: AzureTenantConfigInput
   gcpConfig: GcpConfigInput
@@ -400,6 +417,7 @@ input UpdateDataSourceInput {
   lastImportModifiedAt: Int
   awsRootConfig: AwsRootConfigInput
   awsLinkedConfig: AwsLinkedConfigInput
+  awsAssumedRoleConfig: AwsAssumedRoleConfigInput
   azureSubscriptionConfig: AzureSubscriptionConfigInput
   azureTenantConfig: AzureTenantConfigInput
   gcpConfig: GcpConfigInput
@@ -583,6 +601,11 @@ input CleanExpensesParams {
   last_seen_lte: Int
 }
 
+input CloudPoliciesParams {
+  bucket_name: String!
+  cloud_type: String!
+}
+
 type Query {
   organizations: [Organization]
   currentEmployee(organizationId: ID!): Employee
@@ -611,6 +634,7 @@ type Query {
   ): [OrganizationLimitHit!]
   relevantFlavors(organizationId: ID!, requestParams: JSONObject): JSONObject
   cleanExpenses(organizationId: ID!, params: CleanExpensesParams): JSONObject
+  cloudPolicies(organizationId: ID!, params: CloudPoliciesParams): JSONObject
 }
 
 type Mutation {
