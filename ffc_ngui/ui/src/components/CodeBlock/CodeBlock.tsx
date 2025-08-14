@@ -4,8 +4,8 @@ import useStyles from "./CodeBlock.styles";
 
 type CodeBlockProps = {
   text: string;
-  maxHeight: string;
-  height: string;
+  maxHeight?: string;
+  height?: string;
 };
 
 const CodeBlock = ({ text, maxHeight, height }: CodeBlockProps) => {

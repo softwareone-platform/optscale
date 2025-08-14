@@ -63,14 +63,15 @@ export const ENVIRONMENT = "environment";
 export const CLOUD_PROVIDERS = Object.freeze({
   AWS: "aws",
   AZURE: "azure",
-  GCP: "gcp",
-  ALIBABA: "alibaba",
-  NEBIUS: "nebius",
-  DATABRICKS: "databricks",
-  KUBERNETES: "kubernetes"
+  GCP: "gcp"
+  //ALIBABA: "alibaba",
+  //NEBIUS: "nebius",
+  //DATABRICKS: "databricks",
+  //KUBERNETES: "kubernetes"
 });
 
 export const CONNECTION_TYPES = Object.freeze({
+  AWS_ROLE: "awsRole",
   AWS_ROOT: "awsRoot",
   AWS_LINKED: "awsLinked",
   AZURE_SUBSCRIPTION: "azureSubscription",

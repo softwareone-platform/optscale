@@ -6,7 +6,7 @@ export const FIELD_NAMES = Object.freeze({
   USE_EDP_DISCOUNT: "useEdpDiscount"
 });
 
-const AwsRootUseAwsEdpDiscount = () => (
+const AwsUseAwsEdpDiscount = () => (
   <Checkbox
     name={FIELD_NAMES.USE_EDP_DISCOUNT}
     label={<FormattedMessage id="useAwsEdpDiscount" />}
@@ -15,4 +15,4 @@ const AwsRootUseAwsEdpDiscount = () => (
   />
 );
 
-export default AwsRootUseAwsEdpDiscount;
+export default AwsUseAwsEdpDiscount;
