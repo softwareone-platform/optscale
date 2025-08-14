@@ -25,7 +25,7 @@ async function globalSetup(config: FullConfig) {
     console.log(`SCREENSHOT_UPDATE_DELAY: ${process.env.SCREENSHOT_UPDATE_DELAY}`);
     console.log(`USE_LIVE_DEMO: ${process.env.USE_LIVE_DEMO}`);
     if(process.env.BASE_URL === undefined) console.error('BASE_URL is not set. This is required for the tests to run.');
-    if(process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD) console.warn('DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
+    if(process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD === undefined) console.warn('DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
     if(process.env.DEFAULT_USER_ID === undefined) console.warn(`DEFAULT_USER_ID is not set. This may cause issues with some API tests`);
     if (process.env.USE_LIVE_DEMO === `true`) {
         if (process.env.LIVE_DEMO_API === undefined) {
