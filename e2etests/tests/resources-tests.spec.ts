@@ -229,12 +229,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({resourcesPage, datePicker}) => {
         test.setTimeout(90000);
 
         await test.step('Get total expenses value for last 7 days', async () => {
-            await resourcesPage.selectLast7DaysDateRange();
-            await expect(resourcesPage.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
+            await datePicker.selectLast7DaysDateRange();
+            await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
             totalExpensesValue = await resourcesPage.getTotalExpensesValue();
             console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
         });
@@ -251,7 +251,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage}) => {
+    test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage, datePicker}) => {
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         let expensesData: ServiceNameExpensesResponse;
@@ -260,7 +260,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
                 resourcesPage.page.waitForResponse((resp) =>
                     resp.url().includes('/breakdown_expenses')
                 ),
-                resourcesPage.selectLast7DaysDateRange()
+                datePicker.selectLast7DaysDateRange(),
             ]);
 
             expensesData = await expensesResponse.json();
@@ -335,13 +335,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage}) => {
+    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage, datePicker}) => {
         test.setTimeout(60000);
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         await test.step('Set last 7 days date range', async () => {
-            await resourcesPage.selectLast7DaysDateRange();
-            await resourcesPage.waitForPageLoad();
+            await datePicker.selectLast7DaysDateRange();
         });
 
         let regionExpensesData: RegionExpensesResponse;
@@ -502,7 +501,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate owner breakdown structure for each day', async () => {
             const breakdown = ownerExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, ownerMap] of Object.entries(breakdown)) {
@@ -547,7 +546,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate pool breakdown structure for each day', async () => {
             const breakdown = poolExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, poolMap] of Object.entries(breakdown)) {
@@ -591,7 +590,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s Node breakdown structure for each day', async () => {
             const breakdown = k8sNodeExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, nodeMap] of Object.entries(breakdown)) {
@@ -676,7 +675,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         await test.step('Validate K8s service breakdown structure for each day', async () => {
             const breakdown = k8sServiceExpensesData.breakdown;
             const responseDates = Object.keys(breakdown).map(Number);
-            const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+            const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
             expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
             for (const [_day, serviceMap] of Object.entries(breakdown)) {
@@ -762,9 +761,11 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');
+            await resourcesPage.waitForLoadingPageImgToDisappear();
             await resourcesPage.waitForPageLoaderToDisappear();
             await resourcesPage.waitForCanvas();
             if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+            await resourcesPage.firstResourceItemInTable.waitFor();
         });
     });
 

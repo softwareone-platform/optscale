@@ -17,11 +17,20 @@ import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
  */
 export class HomePage extends BasePage {
     readonly connectDataSourceBanner: Locator;
+
+    //Organization expenses block elements
     readonly organizationExpensesBlock: Locator;
     readonly organizationExpensesBtn: Locator;
+
+    //Top resources block elements
     readonly topResourcesBlock: Locator;
     readonly topResourcesBtn: Locator;
     readonly topResourcesPerspectives: Locator;
+    readonly topResourcesFirstLink: Locator;
+    readonly topResourceFirstValue: Locator;
+    readonly topResourcesAllLinks: Locator;
+
+    //Recommendations block elements
     readonly recommendationsBlock: Locator;
     readonly recommendationsBtn: Locator;
     readonly recommendationsPossibleSavingsValue: Locator;
@@ -32,11 +41,16 @@ export class HomePage extends BasePage {
     readonly recommendationsSecurityValue: Locator;
     readonly recommendationsCriticalLink: Locator;
     readonly recommendationsCriticalValue: Locator;
+
+    //Policy violations block
     readonly policyViolationsBlock: Locator;
+
+    //Pools requiring attention block
     readonly poolsRequiringAttentionBlock: Locator;
     readonly poolsRequiringAttentionBtn: Locator;
     readonly poolsReqAttnExceededLimitBtn: Locator;
     readonly poolsReqAttnExceededForecastedOverspendBtn: Locator;
+
     readonly progressBar: Locator;
 
     /**
@@ -46,11 +60,20 @@ export class HomePage extends BasePage {
     constructor(page: Page) {
         super(page, '/');
         this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
+
+        ///Organization expenses block elements
         this.organizationExpensesBlock = this.page.getByTestId('block_org_expenses');
         this.organizationExpensesBtn = this.organizationExpensesBlock.getByTestId('btn_go_to_org_expenses');
+
+        //Top resources block elements
         this.topResourcesBlock = this.page.getByTestId('block_top_resources');
         this.topResourcesBtn = this.topResourcesBlock.getByTestId('btn_go_to_resources');
         this.topResourcesPerspectives = this.topResourcesBlock.getByText('Perspectives');
+        this.topResourcesFirstLink = this.topResourcesBlock.locator('//a').first();
+        this.topResourceFirstValue = this.topResourcesBlock.getByText('$').first();
+        this.topResourcesAllLinks = this.topResourcesBlock.locator('//a');
+
+        //Recommendations block elements
         this.recommendationsBlock = this.page.getByTestId('block_recommendations');
         this.recommendationsBtn = this.recommendationsBlock.getByTestId('btn_see_all_recommendations');
         this.recommendationsPossibleSavingsValue = this.recommendationsBlock.locator('//h6[1]');
@@ -61,11 +84,49 @@ export class HomePage extends BasePage {
         this.recommendationsSecurityValue = this.recommendationsBlock.getByTestId('block_recommendations_security_value');
         this.recommendationsCriticalLink = this.recommendationsBlock.getByTestId('block_recommendations_critical_link');
         this.recommendationsCriticalValue = this.recommendationsBlock.getByTestId('block_recommendations_critical_value');
+
+        //Policy violations block
         this.policyViolationsBlock = this.page.getByTestId('block_policies_violations');
+
+        //Pools requiring attention block
         this.poolsRequiringAttentionBlock = this.page.getByTestId('block_pools');
         this.poolsRequiringAttentionBtn = this.poolsRequiringAttentionBlock.getByTestId('btn_go_to_pools');
         this.poolsReqAttnExceededLimitBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_exceeded_limit');
         this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
+
+        this.progressBar = this.page.getByRole('progressbar');
+        this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
+
+        ///Organization expenses block elements
+        this.organizationExpensesBlock = this.page.getByTestId('block_org_expenses');
+        this.organizationExpensesBtn = this.organizationExpensesBlock.getByTestId('btn_go_to_org_expenses');
+
+        //Top resources block elements
+        this.topResourcesBlock = this.page.getByTestId('block_top_resources');
+        this.topResourcesBtn = this.topResourcesBlock.getByTestId('btn_go_to_resources');
+        this.topResourcesPerspectives = this.topResourcesBlock.getByText('Perspectives');
+
+        //Recommendations block elements
+        this.recommendationsBlock = this.page.getByTestId('block_recommendations');
+        this.recommendationsBtn = this.recommendationsBlock.getByTestId('btn_see_all_recommendations');
+        this.recommendationsPossibleSavingsValue = this.recommendationsBlock.locator('//h6[1]');
+        this.recommendationsHelpLink = this.recommendationsBlock.getByTestId('HelpOutlineIcon');
+        this.recommendationsCostLink = this.recommendationsBlock.getByTestId('block_recommendations_cost_link');
+        this.recommendationsCostValue = this.recommendationsBlock.getByTestId('block_recommendations_cost_value');
+        this.recommendationsSecurityLink = this.recommendationsBlock.getByTestId('block_recommendations_security_link');
+        this.recommendationsSecurityValue = this.recommendationsBlock.getByTestId('block_recommendations_security_value');
+        this.recommendationsCriticalLink = this.recommendationsBlock.getByTestId('block_recommendations_critical_link');
+        this.recommendationsCriticalValue = this.recommendationsBlock.getByTestId('block_recommendations_critical_value');
+
+        //Policy violations block
+        this.policyViolationsBlock = this.page.getByTestId('block_policies_violations');
+
+        //Pools requiring attention block
+        this.poolsRequiringAttentionBlock = this.page.getByTestId('block_pools');
+        this.poolsRequiringAttentionBtn = this.poolsRequiringAttentionBlock.getByTestId('btn_go_to_pools');
+        this.poolsReqAttnExceededLimitBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_exceeded_limit');
+        this.poolsReqAttnExceededForecastedOverspendBtn = this.poolsRequiringAttentionBlock.getByTestId('tab_forecasted_overspend');
+
         this.progressBar = this.page.getByRole('progressbar');
     }
 
@@ -162,5 +223,22 @@ export class HomePage extends BasePage {
     async getRecommendationsCriticalValue(): Promise<number> {
         const text = await this.recommendationsCriticalValue.textContent();
         return parseInt(text.trim(), 10);
+    }
+
+    async clickTopResourcesBtn(): Promise<void> {
+        await this.topResourcesBtn.click();
+    }
+
+    async clickFirstTopResourceLink(): Promise<void> {
+        await this.topResourcesFirstLink.click();
+    }
+
+    async getFirstResourceTitle(): Promise<string> {
+        return (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
+    }
+
+    async getFirstResourceValue(): Promise<number> {
+        const value = await this.topResourceFirstValue.textContent();
+        return this.parseCurrencyValue(value);
     }
 }
