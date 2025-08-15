@@ -1,4 +1,4 @@
-FROM quay.io/coreos/etcd:v3.2.13
+FROM gcr.io/etcd-development/etcd:v3.2.13
 RUN apk update
 # https://github.com/Yelp/dumb-init/issues/73#issuecomment-240439732
 RUN apk add ca-certificates wget && update-ca-certificates

@@ -7,13 +7,13 @@ Get a list of rules displayed in a tabular format. View the status of each rule 
 
 -   Details: Monitor to whom the resource is assigned, a summary of the conditions that trigger the rule, and the priority of each assignment rule.
 
--   Filter the table: the 'Search' feature to refine the data.
+-   Filter the table: Use the 'Search' feature to refine the data.
 
 ### **Actions**
 
 -   Permission limitations: Use the buttons and table to access available actions based on your permissions.
 
--   Add an Assignment Rule: Easily create a new rule by clicking the green "Add" button. Specify the name, conditions, and assign to fields.
+-   Add an Assignment Rule: Create a new rule by clicking the green "Add" button. Specify the name, conditions, and assign to fields.
 
 -   Update Priorities: Use the Actions column buttons to manage rules.
 

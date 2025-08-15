@@ -30,7 +30,7 @@ requirements = [
     "azure-mgmt-monitor==0.10.0",
     "azure-mgmt-commerce==1.0.1",
     "msrest==0.6.6",
-    "urllib3==1.26.20",
+    "urllib3==2.5.0",
     "azure-identity==1.16.1",
     "oauthlib==3.2.2",
 
@@ -47,7 +47,7 @@ requirements = [
     # Databricks
     'databricks-sdk==0.11.0',
 
-    "requests==2.32.3",
+    "requests==2.32.4",
     "retrying==1.3.3",
 ]
 

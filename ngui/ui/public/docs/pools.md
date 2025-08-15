@@ -1,6 +1,6 @@
 ### **Summary**
 
-View pools with limits or projected expenses that require your attention. Manage pools using the available features on this page.
+Use the **Pools** page to view pools with limits or projected expenses that require your attention. Manage pools using the available features on this page.
 
 ### **View**
 
@@ -24,4 +24,4 @@ View pools with limits or projected expenses that require your attention. Manage
 
 - Monitor Usage Regularly: Review the usage statistics of your pools to ensure they are within budget and not exceeding limits. 
 
-- Optimize Resource Allocation: Regularly analyze and adjust the resources within your pools to ensure optimal performance and cost-efficiency. 
+- Optimize Resource Allocation: Analyze and adjust the resources within your pools regularly to ensure optimal performance and cost-efficiency. 

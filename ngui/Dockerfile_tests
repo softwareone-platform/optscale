@@ -1,7 +1,0 @@
-ARG BUILDTAG=build
-FROM ngui:${BUILDTAG}
-
-WORKDIR "/usr/src/app/ui"
-USER root
-RUN npm install -g pnpm@10.12.1
-RUN pnpm install --frozen-lockfile --ignore-scripts

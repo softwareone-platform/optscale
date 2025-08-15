@@ -19,6 +19,7 @@ from botocore.exceptions import (ClientError,
                                  ConnectTimeoutError,
                                  ReadTimeoutError,
                                  SSLError)
+from botocore.session import Session as CoreSession
 from botocore.parsers import ResponseParserError
 from retrying import retry
 
@@ -108,12 +109,71 @@ class Aws(S3CloudMixin):
         CloudParameter(name='linked', type=bool, required=False),
         CloudParameter(name='region_name', type=str, required=False),
 
+        CloudParameter(name='assume_role_account_id', type=str,
+                       required=False),
+        CloudParameter(name='assume_role_name', type=str, required=False),
+        CloudParameter(name='assume_role_session_name', type=str,
+                       required=False),
+
         # Service parameters
         CloudParameter(name='cur_version', type=int, required=False),
         CloudParameter(name='use_edp_discount', type=bool, required=False)
     ]
     DEFAULT_S3_REGION_NAME = 'eu-central-1'
     SUPPORTS_REPORT_UPLOAD = True
+
+    def get_session(self, access_key=None, secret_key=None, region_name=None):
+        role_account_id = self.config.get('assume_role_account_id')
+        role_name = self.config.get('assume_role_name')
+        role_session_name = self.config.get('assume_role_session_name',
+                                            'opt-session')
+
+        def refresh_session():
+            nonlocal access_key, secret_key, region_name
+
+            if not access_key:
+                access_key = self.config.get('access_key_id')
+            if not secret_key:
+                secret_key = self.config.get('secret_access_key')
+            if not region_name:
+                region_name = self.config.get('region_name',
+                                              self.DEFAULT_S3_REGION_NAME)
+
+            base_session = boto3.Session(
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
+                region_name=region_name,
+            )
+
+            sts_client = base_session.client('sts', config=IAM_CLIENT_CONFIG)
+            response = sts_client.assume_role(
+                RoleArn=f'arn:aws:iam::{role_account_id}:role/{role_name}',
+                RoleSessionName=role_session_name,
+            )
+            creds = response['Credentials']
+            self._session = boto3.Session(
+                aws_access_key_id=creds['AccessKeyId'],
+                aws_secret_access_key=creds['SecretAccessKey'],
+                aws_session_token=creds['SessionToken'],
+                region_name=region_name,
+            )
+
+        if not (role_account_id and role_name):
+            return super().get_session(access_key, secret_key, region_name)
+
+        if not hasattr(self, '_session') or self._session is None:
+            refresh_session()
+
+        try:
+            self._session.client('sts').get_caller_identity()
+        except ClientError as exc:
+            err_code = exc.response['Error'].get('Code')
+            if err_code in ['ExpiredToken', 'InvalidToken']:
+                refresh_session()
+            else:
+                raise
+
+        return self._session
 
     def discovery_calls_map(self):
         return {

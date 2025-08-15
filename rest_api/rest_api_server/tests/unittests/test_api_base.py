@@ -46,6 +46,10 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         patch('optscale_client.config_client.client.Client.auth_url').start()
         patch('optscale_client.config_client.client.Client.restapi_url').start()
         patch('optscale_client.config_client.client.Client.public_ip').start()
+        patch(
+            'optscale_client.config_client.client.Client.product_name',
+            return_value='OptScale',
+        ).start()
         secret = self.gen_id()
         patch('optscale_client.config_client.client.Client.cluster_secret',
               return_value=secret).start()

@@ -985,3 +985,18 @@ class Err(enum.Enum):
         [],
         []
     ]
+    OE0569 = [
+        "Service credentials not found",
+        [],
+        []
+    ]
+    OE0570 = [
+        "Failed to get account id",
+        [],
+        []
+    ]
+    OE0571 = [
+        "Param %s is not allowed for assume role mode",
+        ["my_param"],
+        []
+    ]

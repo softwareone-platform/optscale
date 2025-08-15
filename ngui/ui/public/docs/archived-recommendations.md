@@ -1,6 +1,6 @@
 ### **Summary**
 
-An Archive page provides information about irrelevant or applied recommendations.
+The **Archive** page provides information about irrelevant or applied recommendations.
 
 ### **View**
  

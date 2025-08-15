@@ -1857,3 +1857,17 @@ class Client(Client_v1):
 
     def employee_emails_bulk(self, employee_id, params):
         return self.post(self.employee_emails_bulk_url(employee_id), params)
+
+    @staticmethod
+    def cloud_policy_url(org_id=None):
+        url = 'cloud_policies'
+        if org_id is not None:
+            url = '%s/%s' % (Client.organization_url(org_id), url)
+
+        return url
+
+    def cloud_policy_get(self, org_id, cloud_type, bucket_name):
+        return self.get(self.cloud_policy_url(org_id)+self.query_url(
+            cloud_type=cloud_type, bucket_name=bucket_name))
+
+

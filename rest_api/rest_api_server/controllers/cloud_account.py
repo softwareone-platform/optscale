@@ -1,4 +1,5 @@
 import logging
+import etcd
 import re
 import tools.optscale_time as opttime
 from datetime import timedelta
@@ -297,6 +298,14 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                 result.append(i)
         return result
 
+    def _get_aws_service_creds(self):
+        try:
+            service_creds = self._config.read_branch(
+                '/service_credentials/aws/')
+        except etcd.EtcdKeyNotFound:
+            raise FailedDependency(Err.OE0569, [])
+        return service_creds
+
     def create(self, **kwargs):
         org_id = kwargs.get('organization_id')
         self._check_organization(org_id)
@@ -312,6 +321,24 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         if root_config:
             config = root_config
             config.update(raw_config)
+        if cloud_acc_type in [CloudTypes.AWS_CNR.value]:
+            assume_role_account_id = config.get('assume_role_account_id')
+            assume_role_name = config.get('assume_role_name')
+            not_allowed = ["access_key_id", "secret_access_key"]
+            if assume_role_account_id or assume_role_name:
+                if not assume_role_name:
+                    raise_not_provided_exception('assume_role_name')
+                if not assume_role_account_id:
+                    raise_not_provided_exception('assume_role_account_id')
+                # assumed role -> get credentials from service account
+                for param in not_allowed:
+                    if config.get(param):
+                        raise WrongArgumentsException(Err.OE0571, [param])
+                service_creds = self._get_aws_service_creds()
+                config["access_key_id"] = service_creds.get(
+                    "access_key_id", "")
+                config["secret_access_key"] = service_creds.get(
+                    "secret_access_key", "")
         cost_model = config.pop('cost_model', {}) if config else {}
         organization = OrganizationController(
             self.session, self._config, self.token).get(org_id)
@@ -496,6 +523,24 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                  kwargs, bool(config))
         if cloud_acc_obj.parent_id and config:
             raise WrongArgumentsException(Err.OE0211, ['config'])
+        if cloud_acc_type in [CloudTypes.AWS_CNR.value]:
+            role_account_id = old_config.get('assume_role_account_id')
+            if role_account_id:
+                new_role_acc = config.get('assume_role_account_id')
+                if new_role_acc and (new_role_acc != role_account_id):
+                    raise WrongArgumentsException(Err.OE0211, [
+                        'assume_role_account_id'])
+                role = config.get('assume_role_name',
+                                  old_config.get('assume_role_name'))
+                if config:
+                    service_creds = self._get_aws_service_creds()
+                    config["access_key_id"] = service_creds.get(
+                        "access_key_id", "")
+                    config["secret_access_key"] = service_creds.get(
+                        "secret_access_key", "")
+                    config["assume_role_account_id"] = role_account_id
+                    config["assume_role_name"] = role
+
         organization = OrganizationController(
             self.session, self._config, self.token).get(
             cloud_acc_obj.organization_id)
