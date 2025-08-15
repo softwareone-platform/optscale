@@ -546,3 +546,15 @@ class Client(etcd.Client):
         Get password strength settings
         """
         return self.read_branch('/password_strength_settings')
+
+    def report_imports_setting(self):
+        """
+        Get settings for report imports
+        """
+        return self.read_branch('/restapi/report_imports')
+
+    def diworker_settings(self):
+        """
+        Get settings diworker
+        """
+        return self.read_branch('/diworker')
