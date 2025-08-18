@@ -11,14 +11,19 @@ export class PoolsPage extends BasePage {
     readonly heading: Locator;
     readonly configureAssignmentRulesBtn: Locator;
     readonly exceededLimitCard: Locator;
+    readonly exceededLimitValue: Locator;
     readonly exceededLimitCancelIcon: Locator;
+    readonly spentOverLimitValue: Locator;
     readonly organizationLimitValue: Locator;
     readonly expensesCard: Locator;
     readonly expensesThisMonthValue: Locator;
     readonly expensesThisMonthCancelIcon: Locator;
+    readonly expensesThisMonthCheckIcon: Locator;
     readonly forecastCard: Locator;
     readonly forecastThisMonthValue: Locator;
     readonly forecastThisMonthCancelIcon: Locator;
+    readonly forecastThisMonthCheckIcon: Locator;
+    readonly forecastThisMonthWarningIcon: Locator;
     readonly expandRequiringAttentionBtn: Locator;
     readonly columnSelectBtn: Locator;
     readonly columnBadge: Locator;
@@ -35,7 +40,10 @@ export class PoolsPage extends BasePage {
     readonly nameColumn: Locator;
     readonly column2: Locator;
     readonly column3: Locator;
+    readonly column3TextSpan: Locator;
+    readonly column3TextDiv: Locator;
     readonly column4: Locator;
+    readonly column4TextSpan: Locator;
     readonly actionsColumn: Locator;
     readonly expandMoreIcon: Locator;
     readonly subpoolNameColumn: Locator;
@@ -63,13 +71,19 @@ export class PoolsPage extends BasePage {
         this.heading = this.main.getByTestId('lbl_pool_name');
         this.configureAssignmentRulesBtn = this.main.getByTestId('btn_configure_assignment_rules');
         this.exceededLimitCard = this.getByAnyTestId('card_total_exp', this.main);
+        this.spentOverLimitValue = this.exceededLimitCard.locator('//div[.="Spent over limit"]/./following-sibling::div');
+        this.exceededLimitValue = this.exceededLimitCard.locator('//div[.="Exceeded limit"]/./following-sibling::div');
+        this.exceededLimitCancelIcon = this.getByAnyTestId('CancelIcon', this.exceededLimitCard);
         this.organizationLimitValue = this.main.locator('//div[.="Organization limit"]/./following-sibling::div');
         this.expensesCard = this.getByAnyTestId('card_expenses', this.main);
         this.expensesThisMonthValue = this.expensesCard.locator('//div[.="Expenses this month"]/./following-sibling::div');
         this.expensesThisMonthCancelIcon = this.getByAnyTestId('CancelIcon', this.expensesCard);
+        this.expensesThisMonthCheckIcon = this.getByAnyTestId('CheckCircleIcon', this.expensesCard);
         this.forecastCard = this.main.getByTestId('card_forecast');
         this.forecastThisMonthValue = this.forecastCard.locator('//div[.="Forecast this month"]/./following-sibling::div');
         this.forecastThisMonthCancelIcon = this.getByAnyTestId('CancelIcon', this.forecastCard);
+        this.forecastThisMonthCheckIcon = this.getByAnyTestId('CheckCircleIcon', this.forecastCard);
+        this.forecastThisMonthWarningIcon = this.getByAnyTestId('ErrorIcon', this.forecastCard);
         this.expandRequiringAttentionBtn = this.getByAnyTestId('expandRequiringAttention');
         this.columnSelectBtn = this.getByAnyTestId('ViewColumnIcon', this.main);
         this.columnBadge = this.main.locator('//span[contains(@class, "MuiBadge-badge")]');
@@ -85,10 +99,14 @@ export class PoolsPage extends BasePage {
         this.nameColumn = this.table.locator('//td').first();
         this.column2 = this.table.locator('//td[2]');
         this.column3 = this.table.locator('//td[3]');
+        this.column3TextSpan = this.column3.locator('xpath=/span');
+        this.column3TextDiv = this.column3.locator('xpath=/div/div');
         this.column4 = this.table.locator('//td[4]');
+        this.column4TextSpan = this.column4.locator('xpath=/span');
         this.actionsColumn = this.table.locator('//td').last();
 
-        this.subpoolNameColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[1]');
+
+        this.subpoolNameColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td').first();
         this.subpoolColumn2 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[2]');
         this.subpoolColumn3 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[3]');
         this.subpoolColumn4 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[4]');
@@ -121,6 +139,16 @@ export class PoolsPage extends BasePage {
         ];
 
         await Promise.all(apiInterceptions.map(interceptApiRequest));
+    }
+
+    async getSpentOverLimitValue(): Promise<number> {
+        const value = await this.spentOverLimitValue.textContent();
+        return this.parseCurrencyValue(value);
+    }
+
+    async getExceededLimitValue(): Promise<number> {
+        const value = await this.exceededLimitValue.textContent();
+        return parseInt(value);
     }
 
     async getOrganizationLimitValue(): Promise<number> {

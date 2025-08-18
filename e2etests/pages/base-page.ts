@@ -12,6 +12,7 @@ export abstract class BasePage {
     readonly main: Locator;
     readonly loadingPageImg: Locator;
     readonly pageLoader: Locator;
+    readonly tooltip: Locator;
 
     /**
      * Initializes a new instance of the BasePage class.
@@ -24,6 +25,7 @@ export abstract class BasePage {
         this.main = this.page.locator('main');
         this.loadingPageImg = this.page.getByRole('img', {name: 'Loading page'});
         this.pageLoader = this.main.locator('[role="progressbar"]');
+        this.tooltip = this.page.getByRole('tooltip');
     }
 
     /**
