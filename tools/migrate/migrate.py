@@ -62,8 +62,6 @@ class ConfigTemplate:
         
         LOG.debug('Executing command %s', full_cmd)
         myenv = os.environ.copy()
-        # TODO: I _think_ for herald and jira_bus it should be PROJECT_ROOT/herald/ and PROJECT_ROOT/jira_bus,
-        # respectively but need to test it more
         myenv['PYTHONPATH'] = str(PROJECT_ROOT)
 
         proc = subprocess.Popen(cmd_parts, stdout=subprocess.PIPE, env=myenv, cwd=self.path)
@@ -85,8 +83,6 @@ def save_config(args):
 
 def apply(args):
     template = ConfigTemplate(args.service_name)
-    # TODO: allow this to be run from another directory (needs to activate venv to run alembic) and I think we need to
-    # run it with the service's CWD as the paths in alembic.ini could be relative (second part is done now)
     cmd = ['alembic', '-c', (template.path / 'alembic.ini').resolve(), 'upgrade', 'head']
     template.execute(cmd)
 
