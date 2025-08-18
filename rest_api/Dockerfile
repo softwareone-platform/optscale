@@ -9,6 +9,7 @@ COPY tools/optscale_types tools/optscale_types
 COPY tools/optscale_time tools/optscale_time
 COPY tools/optscale_data tools/optscale_data
 COPY tools/optscale_password tools/optscale_password
+COPY tools/migrate tools/migrate
 
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/auth_client optscale_client/auth_client

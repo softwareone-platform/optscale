@@ -30,7 +30,10 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
         config_cl.wait_configured()
 
     db = DBFactory(db_type, config_cl).db
-    db.create_schema()
+
+    # migrations are already applied by a Helm hook
+    if not db.uses_migrations:
+        db.create_schema()
 
     rabbit_user, rabbit_pass, rabbit_host, rabbit_port = config_cl.rabbit_params()
     events_queue = config_cl.events_queue()

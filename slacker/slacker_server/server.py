@@ -99,13 +99,8 @@ def make_tornado_app(app, db, config_cl, wait=False):
     if wait:
         config_cl.wait_configured()
 
-    if wait:
-        # Use lock to avoid migration problems with several containers
-        # starting at the same time on cluster
-        LOG.info('Waiting for migration lock')
-        with EtcdLock(config_cl, 'slacker_migrations'):
-            db.create_schema()
-    else:
+    # migrations are already applied by a Helm hook
+    if not db.uses_migrations:
         db.create_schema()
 
     handler_kwargs = {
