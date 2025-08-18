@@ -5,6 +5,8 @@ from katara.katara_service.models.migrator import Migrator
 
 
 class MySQLDB(BaseDB):
+    uses_migrations = True
+
     def _get_engine(self):
         user, password, host, db = self._config.katara_db_params()
         return create_engine(

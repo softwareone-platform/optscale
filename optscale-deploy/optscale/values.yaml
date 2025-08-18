@@ -105,6 +105,8 @@ rest_api:
     type: ClusterIP
     externalPort: 80
     internalPort: 8999
+  db:
+    name: my-db
 
 auth:
   name: &auth_name auth
@@ -119,6 +121,8 @@ auth:
     type: ClusterIP
     externalPort: 80
     internalPort: 8905
+  db:
+    name: auth-db
   # filled from overlay
   google_oauth_client_id:
   google_oauth_client_secret:
@@ -168,6 +172,8 @@ herald:
     type: ClusterIP
     externalPort: 80
     internalPort: 8906
+  db:
+    name: herald
 
 elk:
   enabled: false
@@ -268,6 +274,8 @@ katara_service:
     type: ClusterIP
     externalPort: 80
     internalPort: 8935
+  db:
+    name: katara
 
 katara_worker:
   name: &katara_name kataraworker
@@ -457,6 +465,8 @@ slacker:
   slack_signing_secret:
   slack_client_id:
   slack_client_secret:
+  db:
+    name: slacker
 
 error_pages:
   name: &error_pages_name error-pages
@@ -587,6 +597,8 @@ jira_bus:
     type: ClusterIP
     externalPort: 80
     internalPort: 8977
+  db:
+    name: jira-bus
 
 jira_ui:
   name: &jira_ui_name jira-ui
@@ -888,6 +900,13 @@ migration_job:
     repository: *migration_job_name
     tag: *tag
     pullPolicy: Never
+  services:
+    - rest_api
+    - auth
+    - herald
+    - jira_bus
+    - katara_service
+    - slacker
 
 # filled from base overlay
 # we need it to fill agent config correctly

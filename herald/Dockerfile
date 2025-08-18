@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install \
 
 COPY herald/requirements.txt .
 COPY tools/optscale_exceptions tools/optscale_exceptions
+COPY tools/migrate tools/migrate
 COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/auth_client optscale_client/auth_client
 
