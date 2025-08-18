@@ -5,6 +5,8 @@ from jira_bus.jira_bus_server.models.migrator import Migrator
 
 
 class MySQLDB(BaseDB):
+    uses_migrations = True
+
     def _get_engine(self):
         return create_engine(
             "mysql+mysqlconnector://%s:%s@%s/%s" % self._config.jira_bus_db_params(),
