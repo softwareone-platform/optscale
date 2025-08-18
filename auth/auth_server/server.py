@@ -102,7 +102,11 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
     if wait:
         config_cl.wait_configured()
     db = DBFactory(db_type, config_cl).db
-    db.create_schema()
+    
+    # migrations are already applied by a Helm hook
+    if not db.uses_migrations:
+        db.create_schema()
+        
     handler_kwargs = {
         "engine": db.engine,
         "config": config_cl,

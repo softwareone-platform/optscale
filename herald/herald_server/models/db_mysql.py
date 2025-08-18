@@ -5,6 +5,8 @@ from herald.herald_server.models.migrator import Migrator
 
 
 class MySQLDB(BaseDB):
+    uses_migrations = True
+
     def _get_engine(self):
         return create_engine(
             "mysql+mysqlconnector://%s:%s@%s/%s" % (self._config.herald_db_params()),

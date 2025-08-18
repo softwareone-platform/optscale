@@ -8,6 +8,7 @@ def should_retry(_exception):
 
 
 class BaseDB(object):
+    uses_migrations = False
 
     def __init__(self, config=None, _scopefunc=None):
         self._engine = None
