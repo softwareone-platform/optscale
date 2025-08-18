@@ -8,6 +8,7 @@ COPY optscale_client/config_client optscale_client/config_client
 COPY optscale_client/auth_client optscale_client/auth_client
 COPY optscale_client/rest_api_client optscale_client/rest_api_client
 COPY tools/optscale_exceptions tools/optscale_exceptions
+COPY tools/migrate tools/migrate
 
 RUN pip install --no-cache-dir -r requirements.txt
 

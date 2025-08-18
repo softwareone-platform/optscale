@@ -2,16 +2,13 @@
 ---
 apiVersion: batch/v1
 kind: Job
-# TODO: make it generic, not only for resapi
 metadata:
-  name: {{ .Values.rest_api.service.name }}-migrations
+  name: migration-job
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ $config.name }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
-    app.kubernetes.io/version: {{ .Values.rest_api.image.tag }}
-    app.kubernetes.io/managed-by: {{ .Values.rest_api.service.name }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
@@ -20,19 +17,21 @@ spec:
   template:
     spec:
       containers:
-        - name: {{ .Values.rest_api.service.name }}-migrations
+        {{- range $config.services }}
+        {{- $service_config := get $.Values . }}
+        - name: {{ $service_config.service.name }}-migrations
           command: ["/bin/sh", "-c"]
           args:
             - >-
-                python rest_api/rest_api_server/migrate.py save-config
-                --host="{{ .Values.mariadb.service.name }}"
-                --username="{{ .Values.mariadb.credentials.username }}"
-                --password="{{ .Values.mariadb.credentials.password }}"
-                --dbname="my-db"
-                && cd rest_api/rest_api_server
-                && python migrate.py apply
-          image: "{{ .Values.rest_api.image.repository }}:{{ .Values.rest_api.image.tag }}"
-          imagePullPolicy: {{ .Values.rest_api.image.pullPolicy }}
+                python -m tools.migrate.migrate {{ $service_config.service.name }} save-config
+                --host="{{ $.Values.mariadb.service.name }}"
+                --username="{{ $.Values.mariadb.credentials.username }}"
+                --password="{{ $.Values.mariadb.credentials.password }}"
+                --dbname="{{ $service_config.db.name }}"
+                && python -m tools.migrate.migrate {{ $service_config.service.name }} apply
+          image: "{{ $service_config.image.repository }}:{{ $service_config.image.tag }}"
+          imagePullPolicy: {{ $service_config.image.pullPolicy }}
+          {{- end }}
       initContainers:
 {{- if .Values.elk.enabled }}
 {{ include "wait_for_elk" . | indent 6 }}

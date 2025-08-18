@@ -57,7 +57,10 @@ def get_handlers(handler_kwargs):
 
 
 def setup_api(db, config_cl):
-    db.create_schema()
+    # migrations are already applied by a Helm hook
+    if not db.uses_migrations:
+        db.create_schema()
+
     handler_kwargs = {
         "engine": db.engine,
         "config": config_cl,
