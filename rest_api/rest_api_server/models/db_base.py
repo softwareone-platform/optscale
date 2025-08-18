@@ -1,5 +1,6 @@
-from sqlalchemy.orm import sessionmaker, scoped_session
 from retrying import retry
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 import rest_api.rest_api_server.models.models as model_base
 
 DEFAULT_STOP_MAX_ATTEMPT_NUMBER = 300
@@ -15,6 +16,8 @@ def should_retry(exception):
 
 
 class BaseDB(object):
+    uses_migrations = False
+    
     def __init__(self, config=None):
         self._engine = None
         self._config = config
