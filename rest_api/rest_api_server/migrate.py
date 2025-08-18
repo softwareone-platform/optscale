@@ -1,9 +1,9 @@
+import argparse
+import configparser
 import logging
 import os
-import configparser
-import argparse
 import subprocess
-
+import sys
 
 LOG = logging.getLogger()
 LOG.addHandler(logging.StreamHandler())
@@ -40,39 +40,52 @@ def execute(cmd, path='../..'):
     myenv['PYTHONPATH'] = path
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=myenv)
     out, err = proc.communicate()
-    LOG.debug('Command: %s output: %s, retcode: %s', ''.join(cmd), out,
+    LOG.debug('Command: %s output: %s, retcode: %s', ' '.join(cmd), out,
               proc.returncode)
+    return proc
 
 
 def migrate(args):
     template = ConfigTemplate()
     template.save(args.host, args.username, args.password, args.dbname)
     cmd = ['alembic', 'revision', '--autogenerate', '-m', '"%s"' % args.name]
-    execute(cmd)
+    proc = execute(cmd)
+    sys.exit(proc.returncode)
 
+def save_config(args):
+    template = ConfigTemplate()
+    template.save(args.host, args.username, args.password, args.dbname)
 
 def apply(args):
     config = ConfigTemplate()
+    # TODO: allow this to be run from another directory
     cmd = ['alembic', '-c', os.path.join(config.path, 'alembic.ini'),
            'upgrade', 'head']
-    execute(cmd)
+    proc = execute(cmd)
+    sys.exit(proc.returncode)
 
 
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
+    save_config_parser = subparsers.add_parser('save-config')
     migrate_parser = subparsers.add_parser('migrate')
-    migrate_parser.add_argument('-H', '--host', help='Database host',
-                                required=True)
-    migrate_parser.add_argument('-u', '--username', help='Database username',
-                                required=True)
-    migrate_parser.add_argument('-p', '--password', help='Database password',
-                                required=True)
-    migrate_parser.add_argument('-d', '--dbname', help='Database name',
-                                required=True)
+
+    for subparser in (save_config_parser, migrate_parser):
+        subparser.add_argument('-H', '--host', help='Database host',
+                               required=True)
+        subparser.add_argument('-u', '--username', help='Database username',
+                               required=True)
+        subparser.add_argument('-p', '--password', help='Database password',
+                               required=True)
+        subparser.add_argument('-d', '--dbname', help='Database name',
+                               required=True)
+        
     migrate_parser.add_argument('-n', '--name', help='Migration name',
                                 required=True)
     migrate_parser.set_defaults(func=migrate)
+    save_config_parser.set_defaults(func=save_config)
+    
     apply_parser = subparsers.add_parser('apply')
     apply_parser.set_defaults(func=apply)
     args = parser.parse_args()

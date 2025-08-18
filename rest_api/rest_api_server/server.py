@@ -1,21 +1,21 @@
-import os
-import logging
 import argparse
+import logging
+import os
 import tarfile
-import tornado.ioloop
-import pydevd_pycharm
-from etcd import Lock as EtcdLock
-from tornado.web import RedirectHandler
 
 import optscale_client.config_client.client
+import pydevd_pycharm
+import tornado.ioloop
+from etcd import Lock as EtcdLock
+from tornado.web import RedirectHandler
 
 import rest_api.rest_api_server.handlers.v1 as h_v1
 import rest_api.rest_api_server.handlers.v2 as h_v2
 from rest_api.rest_api_server.constants import urls_v2
 from rest_api.rest_api_server.handlers.v1.base import DefaultHandler
-from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
-from rest_api.rest_api_server.handlers.v1.swagger import SwaggerStaticFileHandler
-
+from rest_api.rest_api_server.handlers.v1.swagger import \
+    SwaggerStaticFileHandler
+from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
 
 DEFAULT_PORT = 8999
 DEFAULT_ETCD_HOST = 'etcd'
@@ -468,13 +468,9 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
         config_cl.wait_configured()
 
     db = DBFactory(db_type, config_cl).db
-    if wait:
-        # Use lock to avoid migration problems with several restapis
-        # starting at the same time on cluster
-        LOG.info('Waiting for migration lock')
-        with EtcdLock(config_cl, 'restapi_migrations'):
-            db.create_schema()
-    else:
+
+    # migrations are already applied by a Helm hook job
+    if not db.uses_migrations:
         db.create_schema()
 
     handler_kwargs = {
