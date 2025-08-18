@@ -872,6 +872,7 @@ deactivatorg:
   days_limit: 30
 
 # list of databases to create (if not exist) during DC initialization
+  
 databases:
   - auth-db
   - my-db
@@ -881,8 +882,16 @@ databases:
   - slacker
   - jira-bus
 
+migration_job:
+  name: &migration_job_name migration_job
+  image:
+    repository: *migration_job_name
+    tag: *tag
+    pullPolicy: Never
+
 # filled from base overlay
 # we need it to fill agent config correctly
+  
 public_ip:
 company_name: Hystax
 product_name: OptScale

@@ -1770,6 +1770,11 @@ class EmployeeEmail(Base, ValidatorMixin, MutableMixin):
     enabled = Column(NullableBool('enabled'), nullable=False, default=True,
                      info=ColumnPermissions.full)
 
+    # TODO: remove me, only for testing migrations
+    description = Column(
+        MediumLargeNullableString('description'), nullable=True,
+        info=ColumnPermissions.full, default=None)
+
     __table_args__ = (
         UniqueConstraint("employee_id", "email_template", "deleted_at",
                          name="uc_employee_email_template"),)
