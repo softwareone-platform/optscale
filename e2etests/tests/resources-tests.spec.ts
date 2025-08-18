@@ -757,7 +757,6 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
             await restoreUserSessionInLocalForage(page);
-            await resourcesPage.navigateToURL();
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');

@@ -295,6 +295,23 @@ export abstract class BasePage {
         return parseFloat(totalSum.toFixed(2));
     }
 
+    async sumCurrencyColumnWithoutPagination(columnLocator: Locator): Promise<number> {
+        // Wait for the last element in the column to be visible
+        await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
+        });
+
+        // Extract text content from all cells in the column
+        const texts = await columnLocator.allTextContents();
+
+        // Parse the currency values from the text content
+        const values = texts.map(text => {
+            const currencyOnly = text.split('(')[0].trim(); // Remove any text in parentheses
+            return this.parseCurrencyValue(currencyOnly); // Convert the currency string to a numeric value
+        });
+
+        // Return the total sum rounded to two decimal places
+        return parseFloat(values.reduce((sum, val) => sum + val, 0).toFixed(2));
+    }
     /**
      * Waits for the loading page image to disappear.
      * This method checks if the loading image is present and waits for it to become hidden.
@@ -368,6 +385,14 @@ export abstract class BasePage {
 
         return absPath;
     }
+
+    async getColorFromElement(element: Locator): Promise<string> {
+        await element.waitFor();
+        return await element.evaluate((el) => {
+            return window.getComputedStyle(el).color;
+        });
+    }
+
 
 }
 
