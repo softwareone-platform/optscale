@@ -1,5 +1,5 @@
 import { forwardRef, ReactNode } from "react";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import { Box, ListItemIcon, Stack, Typography } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
@@ -39,7 +39,9 @@ const PerspectiveMenuItem = forwardRef<
   }
 >(({ name, onClick, ...rest }, ref) => (
   <MenuItem onClick={onClick} {...rest} ref={ref}>
-    <ListItemIcon>{/* <ExitToAppOutlinedIcon /> */}</ListItemIcon>
+    <ListItemIcon>
+      <ExitToAppOutlinedIcon />
+    </ListItemIcon>
     <ListItemText primary={name} />
   </MenuItem>
 ));
@@ -73,7 +75,6 @@ const TopResourcesView = ({ data }) => {
       cloud_account_id: cloudId,
       cloud_account_name: cloudName
     } = original;
-
     return (
       <Tooltip
         key={id}
@@ -135,7 +136,6 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading = false }) => {
   return (
     <WrapperCard
       needAlign
-      variant="shadow"
       title={
         <Box display="flex" alignItems="center">
           <Box mr={0.5}>
@@ -143,7 +143,7 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading = false }) => {
           </Box>
           <Box display="flex" mr={hasPerspectives ? 0.5 : 0}>
             <IconButton
-              icon={<ArrowForwardIosIcon />}
+              icon={<ExitToAppOutlinedIcon />}
               tooltip={{
                 show: true,
                 messageId: "goToResources"
@@ -180,7 +180,6 @@ const TopResourcesExpensesCard = ({ cleanExpenses, isLoading = false }) => {
                     return shouldSlice ? (
                       <Tooltip key={name} title={name}>
                         <PerspectiveMenuItem
-                          key={name}
                           name={sliceByLimitWithEllipsis(name, PERSPECTIVE_NAME_SLICE_THRESHOLD)}
                           onClick={onClick}
                         />

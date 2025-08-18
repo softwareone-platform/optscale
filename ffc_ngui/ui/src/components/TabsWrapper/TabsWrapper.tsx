@@ -113,7 +113,7 @@ const Tabs = ({ tabsProps, headerAdornment, headerSx }) => {
 
   return (
     <>
-      <Box sx={{ ...headerSx, borderBottom: 1, borderColor: "primary.gray2" }}>
+      <Box sx={{ ...headerSx, borderBottom: 1, borderColor: "divider" }}>
         <TabsComponent area-label={`${name}-tabs`} value={activeTab} onChange={externalHandleChange || handleChange}>
           {tabHeaders}
         </TabsComponent>

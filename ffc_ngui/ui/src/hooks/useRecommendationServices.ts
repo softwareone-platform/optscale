@@ -1,8 +1,8 @@
-import { AWS_CNR, AZURE_CNR, GCP_CNR } from "utils/constants";
+import { AWS_CNR, AZURE_CNR, ALIBABA_CNR, GCP_CNR, NEBIUS } from "utils/constants";
+import { useIsNebiusConnectionEnabled } from "./useIsNebiusConnectionEnabled";
 
 export const ALL_SERVICES = "all";
 
-// MPT_TODO: disabled to math BDR requirements
 export const ALIBABA_ECS = "alibabaEcs";
 export const ALIBABA_ECS_VPC = "alibabaEcsVpc";
 export const ALIBABA_EBS = "alibabaEbs";
@@ -24,32 +24,30 @@ export const GCP_COMPUTE_ENGINE = "gcpComputeEngine";
 export const GCP_IAM = "gcpAim";
 export const GCP_CLOUD_STORAGE = "gcpCloudStorage";
 
-// MPT_TODO: disabled to math BDR requirements
 export const NEBIUS_SERVICE = "nebius";
 
-// MPT_TODO: disabled to math BDR requirements
-// const ALIBABA_SERVICES = Object.freeze({
-//   [ALIBABA_ECS]: {
-//     type: ALIBABA_CNR,
-//     name: "services.ecs"
-//   },
-//   [ALIBABA_ECS_VPC]: {
-//     type: ALIBABA_CNR,
-//     name: "services.ecs::vpc"
-//   },
-//   [ALIBABA_EBS]: {
-//     type: ALIBABA_CNR,
-//     name: "services.ebs"
-//   },
-//   [ALIBABA_RDS]: {
-//     type: ALIBABA_CNR,
-//     name: "services.rds"
-//   },
-//   [ALIBABA_SLB]: {
-//     type: ALIBABA_CNR,
-//     name: "services.slb"
-//   }
-// });
+const ALIBABA_SERVICES = Object.freeze({
+  [ALIBABA_ECS]: {
+    type: ALIBABA_CNR,
+    name: "services.ecs"
+  },
+  [ALIBABA_ECS_VPC]: {
+    type: ALIBABA_CNR,
+    name: "services.ecs::vpc"
+  },
+  [ALIBABA_EBS]: {
+    type: ALIBABA_CNR,
+    name: "services.ebs"
+  },
+  [ALIBABA_RDS]: {
+    type: ALIBABA_CNR,
+    name: "services.rds"
+  },
+  [ALIBABA_SLB]: {
+    type: ALIBABA_CNR,
+    name: "services.slb"
+  }
+});
 
 const AWS_SERVICES = Object.freeze({
   [AWS_IAM]: {
@@ -108,22 +106,24 @@ const GCP_SERVICES = Object.freeze({
   }
 });
 
-// MPT_TODO: disabled to math BDR requirements
-// const NEBIUS_SERVICES = Object.freeze({
-//   [NEBIUS_SERVICE]: {
-//     type: NEBIUS,
-//     name: "services.nebius"
-//   }
-// });
-
-export const useRecommendationServices = () => ({
-  [ALL_SERVICES]: {
-    name: ALL_SERVICES
-  },
-  // MPT_TODO: disabled to math BDR requirements
-  // ...ALIBABA_SERVICES,
-  ...AZURE_SERVICES,
-  ...AWS_SERVICES,
-  ...GCP_SERVICES
-  // ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
+const NEBIUS_SERVICES = Object.freeze({
+  [NEBIUS_SERVICE]: {
+    type: NEBIUS,
+    name: "services.nebius"
+  }
 });
+
+export const useRecommendationServices = () => {
+  const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
+
+  return {
+    [ALL_SERVICES]: {
+      name: ALL_SERVICES
+    },
+    ...ALIBABA_SERVICES,
+    ...AWS_SERVICES,
+    ...AZURE_SERVICES,
+    ...GCP_SERVICES,
+    ...(isNebiusConnectionEnabled ? NEBIUS_SERVICES : {})
+  };
+};

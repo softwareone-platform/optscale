@@ -1,6 +1,6 @@
 ### **Summary**
 
-Get familiar with the concepts of FinOps. For more information, visit FinOps in Practice. Explore best practices for FinOps by clicking the "How-Tos" tab.
+Get familiar with the concepts of FinOps on **FinOps Portal**. For more information, visit FinOps in Practice. Explore best practices for FinOps by clicking the "How-Tos" tab.
 
 ### **View**
  
@@ -12,7 +12,7 @@ Get familiar with the concepts of FinOps. For more information, visit FinOps in 
 
 ### **Actions**
 
-- Navigate with Tabs: Easily access specific information by using tabs to switch between different sections, allowing for a more organized and focused view of related content.
+- Navigate with Tabs: Access specific information easily by using tabs to switch between different sections, allowing for a more organized and focused view of related content.
 
 ### **Tips**
 

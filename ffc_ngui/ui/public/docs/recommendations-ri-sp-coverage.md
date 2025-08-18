@@ -1,6 +1,6 @@
 ### **Summary**
 
-The RI/SP Coverage page gives you a visualization of your compute usage covered by RIs and SPs versus your uncovered usage. By analyzing this data, you can identify potential savings by increasing your RI/SP coverage where beneficial.
+The **RI/SP Coverage** page gives you a visualization of your compute usage covered by RIs and SPs versus your uncovered usage. By analyzing this data, you can identify potential savings by increasing your RI/SP coverage where beneficial.
 
 ### **View**
 

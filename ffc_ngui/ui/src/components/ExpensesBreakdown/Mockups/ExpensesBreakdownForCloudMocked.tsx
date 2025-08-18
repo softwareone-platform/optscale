@@ -39,8 +39,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 26.627527999999998
       }
     ],
@@ -77,8 +77,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 26.829112
       }
     ],
@@ -115,8 +115,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 26.825112
       }
     ],
@@ -153,8 +153,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 26.452244
       }
     ],
@@ -191,8 +191,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 2.201825
       }
     ],
@@ -229,8 +229,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 2.192313
       }
     ],
@@ -267,8 +267,8 @@ const ExpensesBreakdownForCloudMocked = () => {
       },
       {
         id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-        name: "Aws dev",
-        type: "aws_cnr",
+        name: "Ali dev",
+        type: "alibaba_cnr",
         expense: 3.367908
       }
     ]
@@ -312,8 +312,8 @@ const ExpensesBreakdownForCloudMocked = () => {
     },
     {
       id: "71ecf26d-ccae-4b0a-81dd-8f0ab56314c8",
-      name: "Aws dev",
-      type: "aws_cnr",
+      name: "Ali dev",
+      type: "alibaba_cnr",
       total: 56.07,
       previous_total: 0
     }

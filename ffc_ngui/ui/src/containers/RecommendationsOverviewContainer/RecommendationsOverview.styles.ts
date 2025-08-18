@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_SPACING_3, SPACING_1 } from "utils/layouts";
+import { SPACING_1 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   actionBar: {
@@ -15,8 +15,8 @@ const useStyles = makeStyles()((theme) => ({
   cardsGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
-    gap: MPT_SPACING_3,
-    marginTop: MPT_SPACING_3
+    gap: theme.spacing(SPACING_1),
+    marginTop: theme.spacing(SPACING_1)
   }
 }));
 
