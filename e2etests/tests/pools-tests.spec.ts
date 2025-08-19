@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 import {expect} from "@playwright/test";
-import {assertMultiplierCorrect, expectWithinDrift} from "../utils/custom-assertions";
+import {expectWithinDrift} from "../utils/custom-assertions";
 
 const neutralColor = 'rgb(0, 0, 0)'; // Default color for neutral state
 const warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
@@ -19,14 +19,69 @@ function calculateMultiplier(forecast: number, limit: number): number {
 }
 
 test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
-    test.describe.configure({mode: 'serial'}); // Ensure tests run in serial to avoid state conflicts
+    test.describe.configure({mode: 'default'}); // Test in this block are state dependent, so they can't run in parallel with other tests in this block
 
     test.beforeEach(async ({page, poolsPage}) => {
         await restoreUserSessionInLocalForage(page);
         await poolsPage.navigateToURL();
+        await poolsPage.expandMoreIcon.waitFor();
         await poolsPage.waitForPageLoaderToDisappear();
         if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();
-        await poolsPage.expandMoreIcon.waitFor();
+        await poolsPage.toggleExpandPool();
+        await poolsPage.removeAllSubPoolMonthlyLimits();
+        await poolsPage.toggleExpandPool();
+    });
+
+    test('[] Verify Pools page column selection', async ({poolsPage}) => {
+        const defaultColumns = [poolsPage.nameTableHeading, poolsPage.monthlyLimitTableHeading,
+            poolsPage.expensesThisMonthTableHeading, poolsPage.forecastThisMonthTableHeading,
+            poolsPage.ownerTableHeading, poolsPage.actionsTableHeading];
+
+        await test.step('Verify default columns are displayed', async () => {
+            for (const column of defaultColumns) {
+                await expect.soft(column).toBeVisible();
+            }
+        });
+
+        await test.step('Clear all columns and verify only Name and Actions columns are visible', async () => {
+            await poolsPage.clickColumnSelectButton();
+            await poolsPage.clickColumnToggle('clear all');
+            await expect.soft(poolsPage.nameTableHeading && poolsPage.actionsTableHeading).toBeVisible();
+            for (const column of defaultColumns) {
+                if (column !== poolsPage.nameTableHeading && column !== poolsPage.actionsTableHeading) {
+                    await expect.soft(column).not.toBeVisible();
+                }
+            }
+        });
+
+        await test.step('Select all columns and verify all columns are visible', async () => {
+            await poolsPage.clickColumnToggle('select all');
+            for (const column of defaultColumns) {
+                await expect.soft(column).toBeVisible();
+            }
+        });
+
+        await test.step('Select specific columns and verify only those columns are visible', async () => {
+            await poolsPage.clickColumnToggle('monthly limit');
+            await expect.soft(poolsPage.monthlyLimitTableHeading).not.toBeVisible();
+
+            await poolsPage.clickColumnToggle('expenses');
+            await expect.soft(poolsPage.expensesThisMonthTableHeading).not.toBeVisible();
+
+            await poolsPage.clickColumnToggle('forecast');
+            await expect.soft(poolsPage.forecastThisMonthTableHeading).not.toBeVisible();
+
+            await poolsPage.clickColumnToggle('owner');
+            await expect.soft(poolsPage.ownerTableHeading).not.toBeVisible();
+
+            await poolsPage.clickColumnToggle('monthly limit');
+            await poolsPage.clickColumnToggle('expenses');
+            await poolsPage.clickColumnToggle('forecast');
+            await poolsPage.clickColumnToggle('owner');
+            for (const column of defaultColumns) {
+                await expect.soft(column).toBeVisible();
+            }
+        });
     });
 
     test('[] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', async ({poolsPage}) => {
@@ -45,7 +100,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
         await test.step('Verify Organisation Limit matches the table', async () => {
             if (organizationLimitValue === 0) {
-                const limit = await poolsPage.column2.textContent();
+                const limit = await poolsPage.poolColumn2.textContent();
                 console.log('No organization limit set');
                 expect(limit).toBe('-');
             } else {
@@ -83,7 +138,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
         await test.step('Remove organisation limit if it is set.', async () => {
             if (await poolsPage.getOrganizationLimitValue() !== 0) {
-                await poolsPage.editMonthlyLimit(0);
+                await poolsPage.editPoolMonthlyLimit(0);
                 console.log('Removed organization limit');
             }
         });
@@ -95,9 +150,9 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(errorColor);
             await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
-            expect(await poolsPage.column2.textContent()).toBe('-');
-            expect(await poolsPage.getColorFromElement(poolsPage.column3)).toBe(neutralColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4)).toBe(neutralColor);
+            expect(await poolsPage.poolColumn2.textContent()).toBe('-');
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn3)).toBe(neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn4)).toBe(neutralColor);
         });
     });
 
@@ -111,7 +166,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
         expect(forecastThisMonth >= expensesThisMonth).toBe(true);
 
         await test.step('Set organization limit to an integer where the forecast is less than the 90% of the limit', async () => {
-            await poolsPage.editMonthlyLimit(organizationLimit);
+            await poolsPage.editPoolMonthlyLimit(organizationLimit);
             console.log(`Set organization limit to ${organizationLimit}`);
         });
 
@@ -122,7 +177,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(successColor);
             await expect(poolsPage.forecastThisMonthCheckIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
-            expect((await poolsPage.column2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
+            expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
             expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(successColor);
             expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(neutralColor);
         });
@@ -135,7 +190,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
         const organizationLimit = Math.ceil(forecastThisMonth / 0.91);
 
         await test.step('Set organization limit to an integer where the forecast is more than the 90% of the limit', async () => {
-            await poolsPage.editMonthlyLimit(organizationLimit);
+            await poolsPage.editPoolMonthlyLimit(organizationLimit);
             console.log(`Set organization limit to ${organizationLimit}`);
         });
 
@@ -146,7 +201,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(warningColor);
             await expect(poolsPage.forecastThisMonthWarningIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
-            expect((await poolsPage.column2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
+            expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
             expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(successColor);
             expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(neutralColor);
         });
@@ -161,7 +216,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
         const organizationLimit: number = Math.round(expensesThisMonth - 1);
 
         await test.step('Set organization limit to an integer below the current expenses this month', async () => {
-            await poolsPage.editMonthlyLimit(organizationLimit);
+            await poolsPage.editPoolMonthlyLimit(organizationLimit);
             console.log(`Set organization limit to ${organizationLimit}`);
         });
 
@@ -180,8 +235,95 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${errorColor};`);
             expect(await poolsPage.getColorFromElement(poolsPage.column3TextSpan)).toBe(errorColor);
             expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(warningColor);
-            const multiplier = extractMultiplier(await poolsPage.column4.textContent());
-            expect (multiplier).toBe(calculateMultiplier(forecastThisMonth, organizationLimit));
+            const multiplier = extractMultiplier(await poolsPage.poolColumn4.textContent());
+            expect(multiplier).toBe(calculateMultiplier(forecastThisMonth, organizationLimit));
+        });
+    });
+
+    test('[] Verify sub-pool monthly limit behaviour', async ({poolsPage}) => {
+        test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
+        test.setTimeout(45000);
+
+        await test.step('Remove organisation if set.', async () => {
+            if (await poolsPage.getOrganizationLimitValue() !== 0) {
+                await poolsPage.editPoolMonthlyLimit(0);
+                console.log('Removed organization limit');
+            }
+        });
+
+        await test.step('Set a sub-pool with a monthly limit without extending the pool limit - ', async () => {
+            await poolsPage.toggleExpandPool();
+            await poolsPage.editSubPoolMonthlyLimit(1000, false, 1, false);
+            await expect(poolsPage.sideModalMonthlyLimitWarningMessage).toBeVisible();
+            expect(await poolsPage.getColorFromElement(poolsPage.sideModalMonthlyLimitWarningMessage)).toBe(errorColor);
+            await poolsPage.clickSideModalCloseBtn();
+        });
+
+        await test.step('Set a sub-pool and extend the limit to the parent pool', async () => {
+            await poolsPage.editSubPoolMonthlyLimit(1000, true, 1, true);
+            expect(await poolsPage.getSubPoolMonthlyLimit(1)).toBe(1000);
+            expect(await poolsPage.getPoolLimitFromTable()).toBe(1000);
+        });
+
+        await test.step(('Set a second sub-pool and extend the limit to the parent pool'), async () => {
+            await poolsPage.editSubPoolMonthlyLimit(500, true, 2, true);
+            expect(await poolsPage.getSubPoolMonthlyLimit(2)).toBe(500);
+            expect(await poolsPage.getPoolLimitFromTable()).toBe(1500);
+        })
+
+        await test.step('Remove sub-pool monthly limits and verify that monthly limit is unchanged', async () => {
+            await poolsPage.editSubPoolMonthlyLimit(0, false, 1, true);
+            expect(await poolsPage.getSubPoolMonthlyLimit(1)).toBe(0);
+            await poolsPage.editSubPoolMonthlyLimit(0, false, 2, true);
+            expect(await poolsPage.getSubPoolMonthlyLimit(2)).toBe(0);
+            expect(await poolsPage.getPoolLimitFromTable()).toBe(1500);
+        });
+    });
+
+    test('[] Verify pool exceeded count and expand requiring attention', async ({poolsPage}) => {
+        test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
+
+        const expensesThisMonth = await poolsPage.getExpensesThisMonth();
+        const organizationLimit = Math.round(expensesThisMonth + 1);
+        let subPoolExpenses: number;
+        let subPoolLimit: number;
+        let subPoolForecast: number;
+
+        await test.step('Set organization limit to an integer above the current expenses this month', async () => {
+            await poolsPage.editPoolMonthlyLimit(organizationLimit);
+            console.log(`Set organization limit to ${organizationLimit}`);
+        });
+
+        await test.step('Assert that expand requiring attention does not expand when no sub-pools are exceeded', async () => {
+            await poolsPage.clickExpandRequiringAttentionBtn();
+            await expect(poolsPage.subPoolNameColumn.first()).not.toBeVisible();
+        })
+
+        await test.step('Assert no pools are exceeded when sub-pool limit set above sub-pool expenses', async () => {
+            await poolsPage.toggleExpandPool();
+            subPoolExpenses = await poolsPage.getSubPoolExpensesThisMonth(1);
+            subPoolLimit = Math.round(subPoolExpenses + 1);
+            await poolsPage.editSubPoolMonthlyLimit(subPoolLimit, false, 1, true);
+            await expect(poolsPage.exceededLimitCard).not.toBeVisible();
+        });
+
+        await test.step('Assert pool is exceeded when sub-pool limit set below sub-pool expenses', async () => {
+            subPoolLimit = Math.round(subPoolExpenses - 1);
+            await poolsPage.editSubPoolMonthlyLimit(subPoolLimit, true, 1, true);
+            expect(await poolsPage.getExceededLimitValue()).toBe(1);
+            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn3.first().locator('span'))).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn4.first().locator('span'))).toBe(warningColor);
+
+            const multiplier = extractMultiplier(await poolsPage.subPoolColumn4.first().textContent());
+            subPoolForecast = await poolsPage.getSubPoolForecastThisMonth(1);
+            expect(multiplier).toBe(calculateMultiplier(subPoolForecast, subPoolLimit));
+        });
+
+        await test.step('Assert that expand requiring attention does expand when sub-pools limits are exceeded', async () => {
+            await poolsPage.toggleExpandPool();
+            await expect(poolsPage.subPoolNameColumn.first()).not.toBeVisible();
+            await poolsPage.clickExpandRequiringAttentionBtn();
+            await expect(poolsPage.subPoolNameColumn.first()).toBeVisible();
         });
     });
 

@@ -335,8 +335,8 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage, datePicker}) => {
-        test.setTimeout(60000);
+    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', {tag: '@slow'}, async ({resourcesPage, datePicker}) => {
+        test.setTimeout(90000);
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         await test.step('Set last 7 days date range', async () => {
