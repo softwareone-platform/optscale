@@ -4,7 +4,7 @@ set -e
 BUILD_TAG='build'
 TEST_IMAGE=ngui_tests:${BUILD_TAG}
 
-docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f ngui/Dockerfile_tests .
+docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f ffc_ngui/Dockerfile_tests .
 
 echo "Linter>>>"
 docker run -i --rm ${TEST_IMAGE} sh -c "cd /usr/src/app/ui && pnpm lint:check"
