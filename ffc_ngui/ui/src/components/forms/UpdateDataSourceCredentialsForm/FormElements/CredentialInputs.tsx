@@ -15,11 +15,14 @@ import {
   KubernetesCredentials,
   AwsLinkedCredentials,
   AwsRootCredentials,
-  AwsRootBillingBucket,
-  AwsRootExportType,
-  AwsRootUseAwsEdpDiscount,
+  AwsBillingBucket,
+  AwsExportType,
+  AwsUseAwsEdpDiscount,
   GcpTenantCredentials,
-  GCP_TENANT_CREDENTIALS_FIELD_NAMES
+  GCP_TENANT_CREDENTIALS_FIELD_NAMES,
+  AwsAssumedRoleInputs,
+  AWS_ROLE_CREDENTIALS_FIELD_NAMES,
+  AWS_BILLING_BUCKET_FIELD_NAMES
 } from "components/DataSourceCredentialFields";
 import { Switch } from "components/forms/common/fields";
 import {
@@ -60,8 +63,8 @@ const CostAndUsageReport = () => {
       />
       {checked && (
         <>
-          <AwsRootExportType />
-          <AwsRootBillingBucket />
+          <AwsExportType />
+          <AwsBillingBucket />
         </>
       )}
     </>
@@ -69,17 +72,38 @@ const CostAndUsageReport = () => {
 };
 
 const CredentialInputs = ({ type, config }) => {
+  const getAwsInputs = (config) => {
+    if (config.linked) {
+      return <AwsLinkedCredentials />;
+    }
+
+    if (config.assume_role_account_id && config.assume_role_name) {
+      return (
+        <AwsAssumedRoleInputs
+          readOnlyFields={[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]}
+          fieldsRequiredForRoleFetch={[
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID,
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME,
+            AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME,
+            AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX,
+            AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME
+          ]}
+        />
+      );
+    }
+
+    return (
+      <>
+        <AwsRootCredentials />
+        <AwsUseAwsEdpDiscount />
+        <CostAndUsageReport />
+      </>
+    );
+  };
+
   switch (type) {
     case AWS_CNR:
-      return config.linked ? (
-        <AwsLinkedCredentials />
-      ) : (
-        <>
-          <AwsRootCredentials />
-          <AwsRootUseAwsEdpDiscount />
-          <CostAndUsageReport />
-        </>
-      );
+      return getAwsInputs(config);
     case AZURE_TENANT:
       return <AzureTenantCredentials readOnlyFields={[AZURE_TENANT_CREDENTIALS_FIELD_NAMES.TENANT]} />;
     case AZURE_CNR:

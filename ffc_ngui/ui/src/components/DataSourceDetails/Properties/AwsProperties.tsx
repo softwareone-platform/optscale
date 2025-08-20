@@ -1,11 +1,13 @@
 import { FormattedMessage } from "react-intl";
-import KeyValueLabel from "components/KeyValueLabel";
+import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { AWS_CNR, AWS_ROOT_CONNECT_CUR_VERSION, AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID } from "utils/constants";
 
 type AwsPropertiesProps = {
   accountId: string;
   config: {
     access_key_id: string;
+    assume_role_account_id: string;
+    assume_role_name: string;
     bucket_name: string;
     bucket_prefix: string;
     linked: boolean;
@@ -20,6 +22,8 @@ type AwsPropertiesProps = {
 const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
   const {
     access_key_id: accessKeyId,
+    assume_role_account_id: assumeRoleAccountId,
+    assume_role_name: assumeRoleName,
     bucket_name: bucketName,
     bucket_prefix: bucketPrefix,
     linked,
@@ -28,6 +32,20 @@ const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
     use_edp_discount: useEdpDiscount,
     region_name: regionName
   } = config;
+
+  const isAssumeRole = Boolean(assumeRoleAccountId && assumeRoleName);
+
+  const getAwsAccountTypeMessageId = () => {
+    if (linked) {
+      return "linked";
+    }
+
+    if (isAssumeRole) {
+      return "assumedRole";
+    }
+
+    return "root";
+  };
 
   return (
     <>
@@ -45,19 +63,30 @@ const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
         isBoldKeyLabel
         variant="property"
         keyMessageId="awsAccountType"
-        value={<FormattedMessage id={linked ? "linked" : "root"} />}
+        value={<FormattedMessage id={getAwsAccountTypeMessageId()} />}
         dataTestIds={{
           key: `p_${AWS_CNR}_key`,
           value: `p_${AWS_CNR}_value`
         }}
       />
-      <KeyValueLabel
-        isBoldKeyLabel
-        variant="property"
-        keyMessageId="awsAccessKeyId"
-        value={accessKeyId}
-        dataTestIds={{ key: "p_access_key_key", value: "p_access_key_value" }}
-      />
+      {isAssumeRole && (
+        <KeyValueLabel
+          isBoldKeyLabel
+          variant="property"
+          keyMessageId="awsRoleName"
+          value={assumeRoleName}
+          dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
+        />
+      )}
+      {!isAssumeRole && (
+        <KeyValueLabel
+          isBoldKeyLabel
+          variant="property"
+          keyMessageId="awsAccessKeyId"
+          value={accessKeyId}
+          dataTestIds={{ key: "p_access_key_key", value: "p_access_key_value" }}
+        />
+      )}
       {curVersion && Object.values(AWS_ROOT_CONNECT_CUR_VERSION).includes(curVersion) ? (
         <KeyValueLabel
           isBoldKeyLabel
