@@ -1,5 +1,5 @@
 ARG BUILDTAG=build
-FROM ngui:${BUILDTAG}
+FROM ffc_ngui:${BUILDTAG}
 
 WORKDIR "/usr/src/app/ui"
 USER root
