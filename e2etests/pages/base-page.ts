@@ -314,6 +314,7 @@ export abstract class BasePage {
         // Return the total sum rounded to two decimal places
         return parseFloat(values.reduce((sum, val) => sum + val, 0).toFixed(2));
     }
+
     /**
      * Waits for the loading page image to disappear.
      * This method checks if the loading image is present and waits for it to become hidden.
@@ -388,6 +389,14 @@ export abstract class BasePage {
         return absPath;
     }
 
+    /**
+     * Retrieves the computed color style of a given element.
+     * This method waits for the element to be available in the DOM and then evaluates its computed style
+     * to extract the `color` property.
+     *
+     * @param {Locator} element - The Playwright locator for the target element.
+     * @returns {Promise<string>} A promise that resolves to the computed color value of the element (e.g., "rgb(255, 0, 0)").
+     */
     async getColorFromElement(element: Locator): Promise<string> {
         await element.waitFor();
         return await element.evaluate((el) => {
@@ -395,7 +404,18 @@ export abstract class BasePage {
         });
     }
 
-
+    /**
+     * Attaches a listener to log browser console errors.
+     * This method listens for `console` events on the Playwright page and logs any messages
+     * of type `error` to the Node.js console with a custom prefix.
+     */
+    attachConsoleErrorLogger() {
+        this.page.on('console', msg => {
+            if (msg.type() === 'error') {
+                console.error(`[Browser Console Error] ${msg.text()}`);
+            }
+        });
+    }
 }
 
 

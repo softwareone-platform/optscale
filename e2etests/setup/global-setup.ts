@@ -10,10 +10,8 @@ import dotenv from "dotenv";
  * @param {FullConfig} config - The full configuration object provided by Playwright.
  */
 async function globalSetup(config: FullConfig) {
-    // Log an error if no configuration is provided
     if (!config) console.error("No config found");
 
-    // Load environment variables from the .env.local file, overriding existing variables
     dotenv.config({
         path: ".env.local",
         override: true,

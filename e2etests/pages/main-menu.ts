@@ -93,6 +93,12 @@ export class MainMenu extends BasePage {
         expect(currentUrl.startsWith(`${baseURL}${expectedUrl}`)).toBe(true);
     }
 
+    async clickHomeBtn() {
+        await this.homeBtn.click();
+        await this.waitForPageLoaderToDisappear();
+        await this.waitForAllCanvases();
+    }
+
     /**
      * Clicks the User Management button.
      * @returns {Promise<void>}
