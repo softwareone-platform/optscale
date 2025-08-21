@@ -17,6 +17,7 @@ export class EmailVerificationPage extends BasePage {
         this.proceedToFinOpsBtn = this.page.getByRole('button', {name: 'Proceed to FinOps for Cloud'});
     }
 
+    //TODO: Get url from gmail
     /**
      * Waits for the verification code reset timeout to complete.
      * This method ensures that the resend countdown is visible, waits for the resend button to become visible,

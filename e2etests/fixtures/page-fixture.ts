@@ -101,6 +101,15 @@ export const test = base.extend<{
     usersPage: UsersPage;
     usersInvitePage: UsersInvitePage;
 }>({
+    // Attach browser console error logging
+    page: async ({ page }, use) => {
+        page.on('console', msg => {
+            if (msg.type() === 'error') {
+                console.error(`[Browser Console Error] ${msg.text()}`);
+            }
+        });
+        await use(page);
+    },
     storageState: async ({}, use) => {
         await use(LiveDemoService.getDefaultUserStorageState());
     },
