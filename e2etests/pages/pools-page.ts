@@ -18,6 +18,7 @@ export class PoolsPage extends BasePage {
     readonly expensesCard: Locator;
     readonly expensesThisMonthValue: Locator;
     readonly expensesThisMonthCancelIcon: Locator;
+    readonly expensesThisMonthWarningIcon: Locator;
     readonly expensesThisMonthCheckIcon: Locator;
     readonly forecastCard: Locator;
     readonly forecastThisMonthValue: Locator;
@@ -90,6 +91,7 @@ export class PoolsPage extends BasePage {
         this.expensesCard = this.getByAnyTestId('card_expenses', this.main);
         this.expensesThisMonthValue = this.expensesCard.locator('//div[.="Expenses this month"]/./following-sibling::div');
         this.expensesThisMonthCancelIcon = this.getByAnyTestId('CancelIcon', this.expensesCard);
+        this.expensesThisMonthWarningIcon = this.getByAnyTestId('ErrorIcon', this.expensesCard);
         this.expensesThisMonthCheckIcon = this.getByAnyTestId('CheckCircleIcon', this.expensesCard);
         this.forecastCard = this.main.getByTestId('card_forecast');
         this.forecastThisMonthValue = this.forecastCard.locator('//div[.="Forecast this month"]/./following-sibling::div');

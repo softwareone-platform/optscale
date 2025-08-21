@@ -3,8 +3,6 @@ import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
-
-
 function extractMultiplier(input: string): number | null {
     const match = input.match(/\(x([\d.]+)\)/);
     return match ? parseFloat(match[1]) : null;
@@ -17,14 +15,13 @@ function calculateMultiplier(forecast: number, limit: number): number {
 
 //TODO: Add test for Actions including adding sub-pool, editing sub-pool, deleting sub-pool, and editing pool, changing owner.
 // Also test for error validation when trying to delete a pool limit when a sub-pool still has a limit set. Tests for tooltips showing calculated values.
-test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
+test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
     test.describe.configure({mode: 'default'}); // Test in this block are state dependent, so they can't run in parallel with other tests in this block
 
     test.beforeEach(async ({page, poolsPage}) => {
         await restoreUserSessionInLocalForage(page);
         await poolsPage.navigateToURL();
         await poolsPage.expandMoreIcon.waitFor();
-        await poolsPage.waitForPageLoaderToDisappear();
         if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();
         await poolsPage.toggleExpandPool();
         await poolsPage.removeAllSubPoolMonthlyLimits();
@@ -150,22 +147,20 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
             expect(await poolsPage.poolColumn2.textContent()).toBe('-');
-            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn3)).toBe(poolsPage.neutralColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn4)).toBe(poolsPage.neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn3)).toBe(poolsPage.infoColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn4)).toBe(poolsPage.infoColor);
         });
     });
 
-    //TODO: Modify this test as the logic for triggering forecast warning is calculated off expenses, not forecasted value as assumed.
-    test.fixme('[] Verify Organisation Limit functionality - limit set and forecast is less than 90%', async ({poolsPage}) => {
+    test('[] Verify Organisation Limit functionality - expenses are less than 90% of limit', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
         test.skip(expensesThisMonth <= 100, 'Skipping test as it requires expenses to be greater than 100');
         const forecastThisMonth = await poolsPage.getForecastThisMonth();
-        const organizationLimit = Math.ceil(forecastThisMonth / 0.89);
-        expect(forecastThisMonth >= expensesThisMonth).toBe(true);
+        const organizationLimit = Math.ceil(expensesThisMonth / 0.89);//under 90% of the expenses
 
-        await test.step('Set organization limit to an integer where the forecast is less than the 90% of the limit', async () => {
+        await test.step('Set organization limit to an integer where the expenses are less than the 90% of the limit', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
             console.log(`Set organization limit to ${organizationLimit}`);
         });
@@ -174,36 +169,40 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             await expect(poolsPage.exceededLimitCard).not.toBeVisible();
             expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.successColor);
             await expect(poolsPage.expensesThisMonthCheckIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.successColor);
-            await expect(poolsPage.forecastThisMonthCheckIcon).toBeVisible();
-            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
+
+            if(forecastThisMonth > organizationLimit) {
+                expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
+                await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
+                expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.warningColor};`);
+                expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
+            }
             expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
             expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.neutralColor);
+
         });
     });
-    //TODO: Modify this test as the logic for triggering forecast warning is calculated off expenses, not forecasted value as assumed.
-    test.fixme('[] Verify Organisation Limit functionality - limit set and forecast is more than 90%', async ({poolsPage}) => {
+
+    test('[] Verify Organisation Limit functionality - expenses are greater than 90% of limit', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
-        const forecastThisMonth = await poolsPage.getForecastThisMonth();
-        const organizationLimit = Math.ceil(forecastThisMonth / 0.91);
+        const expensesThisMonth = await poolsPage.getExpensesThisMonth();
+        const organizationLimit = Math.ceil(expensesThisMonth / 0.91);
 
-        await test.step('Set organization limit to an integer where the forecast is more than the 90% of the limit', async () => {
+        await test.step('Set organization limit to an integer where the expenses is more than the 90% of the limit', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
             console.log(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert Pools page elements displayed correctly when limit set', async () => {
             await expect(poolsPage.exceededLimitCard).not.toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.successColor);
-            await expect(poolsPage.expensesThisMonthCheckIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.warningColor);
-            await expect(poolsPage.forecastThisMonthWarningIcon).toBeVisible();
-            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
+            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.warningColor);
+            await expect(poolsPage.expensesThisMonthWarningIcon).toBeVisible();
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
+            await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
+            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.warningColor};`);
             expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
             expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
         });
     });
 
@@ -237,6 +236,34 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
             const multiplier = extractMultiplier(await poolsPage.poolColumn4.textContent());
             expect(multiplier).toBe(calculateMultiplier(forecastThisMonth, organizationLimit));
+        });
+    });
+
+    test('[] Verify Organisation Limit functionality - limit set lower forecast', async ({poolsPage}) => {
+        const expensesThisMonth = await poolsPage.getExpensesThisMonth();
+        const forecastThisMonth = await poolsPage.getForecastThisMonth();
+        test.skip(expensesThisMonth <= 1, 'Skipping test as it requires expenses to be greater than 1');
+        const organizationLimit: number = Math.round(forecastThisMonth - 1);
+
+        await test.step('Set organization limit to an integer below the current forecast this month', async () => {
+            await poolsPage.editPoolMonthlyLimit(organizationLimit);
+            console.log(`Set organization limit to ${organizationLimit}`);
+        });
+
+        await test.step('Assert Pools page elements displayed correctly when limit set below forecast this month', async () => {
+            await expect(poolsPage.exceededLimitCard).not.toBeVisible();
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
+            if(expensesThisMonth >= Math.round(organizationLimit / 0.9)) {
+                expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.warningColor);
+                await expect(poolsPage.expensesThisMonthWarningIcon).toBeVisible();
+            }
+            else {
+                expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.successColor);
+                await expect(poolsPage.expensesThisMonthCheckIcon).toBeVisible();
+            }
+            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.warningColor};`);
+            expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
         });
     });
 

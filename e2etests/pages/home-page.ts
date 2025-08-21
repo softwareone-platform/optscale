@@ -310,6 +310,6 @@ export class HomePage extends BasePage {
      */
     async clickPoolsBlockForecastedOverspendTab(): Promise<void> {
         await this.poolsReqAttnExceededForecastedOverspendBtn.click();
-        await this.waitForPageLoaderToDisappear();
+        await this.waitForPageLoad();
     }
 }

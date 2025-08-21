@@ -14,7 +14,7 @@ export abstract class BasePage {
     readonly pageLoader: Locator;
     readonly tooltip: Locator;
 
-    readonly neutralColor: string; // Default color for neutral state
+    readonly infoColor: string; // Default color for neutral state
     readonly warningColor: string; // Default color for warning state
     readonly errorColor: string; // Default color for error state
     readonly successColor: string; // Default color for success state
@@ -31,7 +31,7 @@ export abstract class BasePage {
         this.loadingPageImg = this.page.getByRole('img', {name: 'Loading page'});
         this.pageLoader = this.main.locator('[role="progressbar"]');
         this.tooltip = this.page.getByRole('tooltip');
-        this.neutralColor = 'rgb(0, 0, 0)'; // Default color for neutral state
+        this.infoColor = 'rgb(0, 0, 0)'; // Default color for neutral state
         this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
         this.errorColor = 'rgb(187, 20, 37)'; // Default color for error state
         this.successColor = 'rgb(0, 120, 77)'; // Default color for success state

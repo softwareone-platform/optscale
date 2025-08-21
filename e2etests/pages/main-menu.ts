@@ -95,7 +95,6 @@ export class MainMenu extends BasePage {
 
     async clickHomeBtn() {
         await this.homeBtn.click();
-        await this.waitForPageLoaderToDisappear();
         await this.waitForAllCanvases();
     }
 
