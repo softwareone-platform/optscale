@@ -3,10 +3,7 @@ import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
-const neutralColor = 'rgb(0, 0, 0)'; // Default color for neutral state
-const warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
-const errorColor = 'rgb(187, 20, 37)'; // Default color for error state
-const successColor = 'rgb(0, 120, 77)'; // Default color for success state
+
 
 function extractMultiplier(input: string): number | null {
     const match = input.match(/\(x([\d.]+)\)/);
@@ -19,7 +16,7 @@ function calculateMultiplier(forecast: number, limit: number): number {
 }
 
 //TODO: Add test for Actions including adding sub-pool, editing sub-pool, deleting sub-pool, and editing pool, changing owner.
-// Also test for error validation when trying to delete a pool limit when a sub-pool still has a limit set.
+// Also test for error validation when trying to delete a pool limit when a sub-pool still has a limit set. Tests for tooltips showing calculated values.
 test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
     test.describe.configure({mode: 'default'}); // Test in this block are state dependent, so they can't run in parallel with other tests in this block
 
@@ -147,14 +144,14 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
         await test.step('Assert Pools page elements displayed correctly when limit not set', async () => {
             await expect(poolsPage.exceededLimitCard).not.toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.errorColor);
             await expect(poolsPage.expensesThisMonthCancelIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
             await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
             expect(await poolsPage.poolColumn2.textContent()).toBe('-');
-            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn3)).toBe(neutralColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn4)).toBe(neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn3)).toBe(poolsPage.neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.poolColumn4)).toBe(poolsPage.neutralColor);
         });
     });
 
@@ -174,14 +171,14 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
         await test.step('Assert Pools page elements displayed correctly when limit set', async () => {
             await expect(poolsPage.exceededLimitCard).not.toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.successColor);
             await expect(poolsPage.expensesThisMonthCheckIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.successColor);
             await expect(poolsPage.forecastThisMonthCheckIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
             expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
-            expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(successColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.neutralColor);
         });
     });
 
@@ -198,14 +195,14 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
         await test.step('Assert Pools page elements displayed correctly when limit set', async () => {
             await expect(poolsPage.exceededLimitCard).not.toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.successColor);
             await expect(poolsPage.expensesThisMonthCheckIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(warningColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.warningColor);
             await expect(poolsPage.forecastThisMonthWarningIcon).toBeVisible();
             expect(await poolsPage.poolTableRow.getAttribute('style')).toContain('border-left: 4px solid transparent;');
             expect((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
-            expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(successColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(neutralColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.neutralColor);
         });
     });
 
@@ -228,15 +225,15 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
 
             expect(overLimit).toBe(calculatedOverLimit);
             expect(await poolsPage.getExceededLimitValue()).toBe(1);
-            expect(await poolsPage.getColorFromElement(poolsPage.exceededLimitCard)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.exceededLimitCard)).toBe(poolsPage.errorColor);
             await expect(poolsPage.exceededLimitCancelIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.errorColor);
             await expect(poolsPage.expensesThisMonthCancelIcon).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
             await expect(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
-            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${errorColor};`);
-            expect(await poolsPage.getColorFromElement(poolsPage.column3TextSpan)).toBe(errorColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(warningColor);
+            expect(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.errorColor};`);
+            expect(await poolsPage.getColorFromElement(poolsPage.column3TextSpan)).toBe(poolsPage.errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
             const multiplier = extractMultiplier(await poolsPage.poolColumn4.textContent());
             expect(multiplier).toBe(calculateMultiplier(forecastThisMonth, organizationLimit));
         });
@@ -257,7 +254,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             await poolsPage.toggleExpandPool();
             await poolsPage.editSubPoolMonthlyLimit(1000, false, 1, false);
             await expect(poolsPage.sideModalMonthlyLimitWarningMessage).toBeVisible();
-            expect(await poolsPage.getColorFromElement(poolsPage.sideModalMonthlyLimitWarningMessage)).toBe(errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.sideModalMonthlyLimitWarningMessage)).toBe(poolsPage.errorColor);
             await poolsPage.clickSideModalCloseBtn();
         });
 
@@ -267,7 +264,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getPoolLimitFromTable()).toBe(1000);
         });
 
-        await test.step(('Set a second sub-pool and extend the limit to the parent pool'), async () => {
+        await test.step('Set a second sub-pool and extend the limit to the parent pool', async () => {
             await poolsPage.editSubPoolMonthlyLimit(500, true, 2, true);
             expect(await poolsPage.getSubPoolMonthlyLimit(2)).toBe(500);
             expect(await poolsPage.getPoolLimitFromTable()).toBe(1500);
@@ -313,8 +310,8 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             subPoolLimit = Math.round(subPoolExpenses - 1);
             await poolsPage.editSubPoolMonthlyLimit(subPoolLimit, true, 1, true);
             expect(await poolsPage.getExceededLimitValue()).toBe(1);
-            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn3.first().locator('span'))).toBe(errorColor);
-            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn4.first().locator('span'))).toBe(warningColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn3.first().locator('span'))).toBe(poolsPage.errorColor);
+            expect(await poolsPage.getColorFromElement(poolsPage.subPoolColumn4.first().locator('span'))).toBe(poolsPage.warningColor);
 
             const multiplier = extractMultiplier(await poolsPage.subPoolColumn4.first().textContent());
             subPoolForecast = await poolsPage.getSubPoolForecastThisMonth(1);
