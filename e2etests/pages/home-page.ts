@@ -261,16 +261,6 @@ export class HomePage extends BasePage {
     }
 
     /**
-     * Retrieves the number of rows in the Pools block table.
-     * This method counts the rows in the table within the Pools Requiring Attention block.
-     *
-     * @returns {Promise<number>} The total number of rows in the table.
-     */
-    async getPoolsBlockTableRowsCount(): Promise<number> {
-        return await this.poolsBlockTableRows.count();
-    }
-
-    /**
      * Retrieves the total value displayed in the Pools block.
      * This method fetches the text content of the total value element, removes the "Total:" label,
      * trims whitespace, and parses it as an integer.
@@ -284,17 +274,42 @@ export class HomePage extends BasePage {
         return parseInt(totalValue);
     }
 
-/**
-         * Retrieves the value of the expenses column for a specific row in the Pools block table.
-         * This method adjusts the provided index to be zero-based, fetches the text content of the
-         * specified row in the expenses column, and parses it as a currency value.
-         *
-         * @param {number} index - The 1-based index of the row in the expenses column.
-         * @returns {Promise<number>} The parsed currency value of the expenses for the specified row.
-         */
-        async getPoolsBlockExpensesColumnValue(index: number): Promise<number> {
-            index = index - 1; // Adjusting index to be zero-based
-            const expensesValue = await this.poolsBlockExpensesColumn.nth(index).textContent();
-            return this.parseCurrencyValue(expensesValue);
-        }
+    /**
+     * Retrieves the value of the expenses column for a specific row in the Pools block table.
+     * This method adjusts the provided index to be zero-based, fetches the text content of the
+     * specified row in the expenses column, and parses it as a currency value.
+     *
+     * @param {number} index - The 1-based index of the row in the expenses column.
+     * @returns {Promise<number>} The parsed currency value of the expenses for the specified row.
+     */
+    async getPoolsBlockExpensesColumnValue(index: number): Promise<number> {
+        index = index - 1; // Adjusting index to be zero-based
+        const expensesValue = await this.poolsBlockExpensesColumn.nth(index).textContent();
+        return this.parseCurrencyValue(expensesValue);
+    }
+
+    /**
+     * Retrieves the value of the forecast column for a specific row in the Pools block table.
+     * This method adjusts the provided index to be zero-based, fetches the text content of the
+     * specified row in the forecast column, and parses it as a currency value.
+     *
+     * @param {number} index - The 1-based index of the row in the forecast column.
+     * @returns {Promise<number>} The parsed currency value of the forecast for the specified row.
+     */
+    async getPoolsBlockForecastColumnValue(index: number): Promise<number> {
+        index = index - 1; // Adjusting index to be zero-based
+        const forecastValue = await this.poolsBlockForecastColumn.nth(index).textContent();
+        return this.parseCurrencyValue(forecastValue);
+    }
+
+    /**
+     * Clicks the "Forecasted Overspend" tab in the Pools Requiring Attention block.
+     * This method simulates a user clicking the tab to view pools with forecasted overspend.
+     *
+     * @returns {Promise<void>} A promise that resolves when the click action is complete.
+     */
+    async clickPoolsBlockForecastedOverspendTab(): Promise<void> {
+        await this.poolsReqAttnExceededForecastedOverspendBtn.click();
+        await this.waitForPageLoaderToDisappear();
+    }
 }

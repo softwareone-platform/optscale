@@ -203,14 +203,20 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
             await poolsPage.waitForPageLoaderToDisappear();
             expenseValue = await poolsPage.getExpensesThisMonth();
             forecastedValue = await poolsPage.getForecastThisMonth();
-            const limitValue = Math.ceil(forecastedValue / 0.91);
+            const limitValue = Math.ceil(expenseValue / 0.91);
             await poolsPage.toggleExpandPool();
             await poolsPage.removeAllSubPoolMonthlyLimits();
             await poolsPage.editPoolMonthlyLimit(limitValue);
         });
         await test.step('Navigate to home page and verify Pools Requiring attention block', async () => {
             await mainMenu.clickHomeBtn();
-            //TODO: Add verification that Pools Requiring attention shows the pool and sub-pool that are forecast to overspend.
+            await expect(homePage.poolsNoDataMessage).toBeVisible();
+            await homePage.clickPoolsBlockForecastedOverspendTab();
+            expect(await homePage.getPoolsBlockExpensesColumnValue(1)).toBe(expenseValue);
+            expect(await homePage.getPoolsBlockForecastColumnValue(1)).toBe(forecastedValue);
+            expect(await homePage.getColorFromElement(homePage.poolsBlockExpensesColumn.first().locator('span'))).toBe(homePage.successColor);
+            expect(await homePage.getColorFromElement(homePage.poolsBlockForecastColumn.first().locator('span'))).toBe(homePage.warningColor);
+            expect(await homePage.getPoolsBlockTotalValue()).toBe(1);
         });
 
     });
