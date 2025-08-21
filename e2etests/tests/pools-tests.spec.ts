@@ -155,7 +155,8 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
         });
     });
 
-    test('[] Verify Organisation Limit functionality - limit set and forecast is less than 90%', async ({poolsPage}) => {
+    //TODO: Modify this test as the logic for triggering forecast warning is calculated off expenses, not forecasted value as assumed.
+    test.fixme('[] Verify Organisation Limit functionality - limit set and forecast is less than 90%', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -181,8 +182,8 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pool"]}, () => {
             expect(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.neutralColor);
         });
     });
-
-    test('[] Verify Organisation Limit functionality - limit set and forecast is more than 90%', async ({poolsPage}) => {
+    //TODO: Modify this test as the logic for triggering forecast warning is calculated off expenses, not forecasted value as assumed.
+    test.fixme('[] Verify Organisation Limit functionality - limit set and forecast is more than 90%', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const forecastThisMonth = await poolsPage.getForecastThisMonth();

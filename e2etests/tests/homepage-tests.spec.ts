@@ -159,7 +159,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test.only('[] Verify that Pools Requiring attention is shows Pool and Sub-pools that have exceeded their limit', async ({homePage, poolsPage, mainMenu}) => {
+    test('[] Verify that Pools Requiring attention is shows Pool and Sub-pools that have exceeded their limit', async ({homePage, poolsPage, mainMenu}) => {
         let expenseValue: number;
         let subPoolExpenseValue: number;
 
@@ -191,21 +191,22 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test('[] Verify that Pools Requiring attention is shows Pool and Sub-pools that are forecasted to overspend', async ({homePage, poolsPage, mainMenu}) => {
+    test.only('[] Verify that Pools Requiring attention is shows Pool and Sub-pools that are forecasted to overspend', async ({homePage, poolsPage, mainMenu}) => {
+        let expenseValue: number;
+        let forecastedValue: number;
+
         await test.step('Set monthly limit for a pool and sub-pool that is higher than expenses this month, but lower than forecast', async () => {
             await poolsPage.navigateToURL();
             await homePage.waitForPageLoaderToDisappear();
             await poolsPage.expandMoreIcon.waitFor();
+            if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();
             await poolsPage.waitForPageLoaderToDisappear();
-            const expenseValue = await poolsPage.getExpensesThisMonth();
-            const forecastedValue = await poolsPage.getForecastThisMonth();
-            const limitValue = Math.min(expenseValue, forecastedValue) - 1; // Set limit below forecast but above expenses
-            await poolsPage.editPoolMonthlyLimit(limitValue);
+            expenseValue = await poolsPage.getExpensesThisMonth();
+            forecastedValue = await poolsPage.getForecastThisMonth();
+            const limitValue = Math.ceil(forecastedValue / 0.91);
             await poolsPage.toggleExpandPool();
-            const subPoolExpenseValue = await poolsPage.getSubPoolExpensesThisMonth(1);
-            const subPoolForecastedValue = await poolsPage.getSubPoolForecastThisMonth(1);
-            const subPoolLimitValue = Math.min(subPoolExpenseValue, subPoolForecastedValue) - 100; // Set limit below forecast but above expenses
-            await poolsPage.editSubPoolMonthlyLimit(subPoolLimitValue, true, 1);
+            await poolsPage.removeAllSubPoolMonthlyLimits();
+            await poolsPage.editPoolMonthlyLimit(limitValue);
         });
         await test.step('Navigate to home page and verify Pools Requiring attention block', async () => {
             await mainMenu.clickHomeBtn();
