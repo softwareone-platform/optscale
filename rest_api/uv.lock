@@ -1718,7 +1718,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "check-alembic-down-revisions" },
-    { name = "cloud-adapter" },
     { name = "coverage" },
     { name = "freezegun" },
     { name = "mongomock" },
@@ -1726,7 +1725,6 @@ dev = [
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-xdist" },
-    { name = "pyyaml" },
     { name = "restapi-client" },
     { name = "setuptools" },
 ]
@@ -1770,7 +1768,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "check-alembic-down-revisions", editable = "../tools/check_alembic_down_revisions" },
-    { name = "cloud-adapter", editable = "../tools/cloud_adapter" },
     { name = "coverage", specifier = "==4.2" },
     { name = "freezegun", specifier = "==0.3.8" },
     { name = "mongomock", specifier = "==4.1.2" },
@@ -1778,7 +1775,6 @@ dev = [
     { name = "pylint", specifier = "==3.0.2" },
     { name = "pytest", specifier = "==8.1.0" },
     { name = "pytest-xdist", specifier = "==3.5.0" },
-    { name = "pyyaml", specifier = "==6.0.1" },
     { name = "restapi-client", editable = "../optscale_client/rest_api_client" },
     { name = "setuptools", specifier = "==80.9.0" },
 ]

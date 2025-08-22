@@ -41,7 +41,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "check-alembic-down-revisions",
-    "cloud-adapter",
     "coverage==4.2",
     "freezegun==0.3.8",
     "mongomock==4.1.2",
@@ -49,7 +48,6 @@ dev = [
     "pylint==3.0.2",
     "pytest==8.1.0",
     "pytest-xdist==3.5.0",
-    "pyyaml==6.0.1",
     "restapi-client",
     "setuptools==80.9.0",
 ]
