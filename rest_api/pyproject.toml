@@ -63,17 +63,17 @@ module-root = ".."
 module-name = "rest_api"
 
 [tool.uv.sources]
-optscale-data = { path = "../tools/optscale_data" }
-optscale-exceptions = { path = "../tools/optscale_exceptions" }
-optscale-types = { path = "../tools/optscale_types" }
-optscale-time = { path = "../tools/optscale_time" }
-optscale-password = { path = "../tools/optscale_password" }
-config-client = { path = "../optscale_client/config_client" }
-auth-client = { path = "../optscale_client/auth_client" }
-herald-client = { path = "../optscale_client/herald_client" }
-katara-client = { path = "../optscale_client/katara_client" }
-metroculus-client = { path = "../optscale_client/metroculus_client" }
-insider-client = { path = "../optscale_client/insider_client" }
-cloud-adapter = { path = "../tools/cloud_adapter" }
-check-alembic-down-revisions = { path = "../tools/check_alembic_down_revisions" }
-restapi-client = { path = "../optscale_client/rest_api_client" }
+optscale-data = { path = "../tools/optscale_data", editable = true }
+optscale-exceptions = { path = "../tools/optscale_exceptions", editable = true }
+optscale-types = { path = "../tools/optscale_types", editable = true }
+optscale-time = { path = "../tools/optscale_time", editable = true }
+optscale-password = { path = "../tools/optscale_password", editable = true }
+config-client = { path = "../optscale_client/config_client", editable = true }
+auth-client = { path = "../optscale_client/auth_client", editable = true }
+herald-client = { path = "../optscale_client/herald_client", editable = true }
+katara-client = { path = "../optscale_client/katara_client", editable = true }
+metroculus-client = { path = "../optscale_client/metroculus_client", editable = true }
+insider-client = { path = "../optscale_client/insider_client", editable = true }
+cloud-adapter = { path = "../tools/cloud_adapter", editable = true }
+check-alembic-down-revisions = { path = "../tools/check_alembic_down_revisions", editable = true }
+restapi-client = { path = "../optscale_client/rest_api_client", editable = true }

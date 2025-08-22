@@ -6,15 +6,15 @@ TEST_IMAGE=rest_api_tests:${BUILD_TAG}
 
 docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f rest_api/Dockerfile_tests .
 
-# echo "Pycodestyle tests>>>"
-# docker run -i --rm ${TEST_IMAGE} \
-#     bash -c "uv --project rest_api run pycodestyle --max-line-length=120 rest_api"
-# echo "<<<Pycodestyle tests"
-#
-# echo "Pylint tests>>>"
-# docker run -i --rm ${TEST_IMAGE} bash -c \
-#     "uv --project rest_api run pylint --rcfile=rest_api/.pylintrc --fail-under=9 --fail-on=E,F ./rest_api"
-# echo "<<Pylint tests"
+echo "Pycodestyle tests>>>"
+docker run -i --rm ${TEST_IMAGE} \
+    bash -c "uv --project rest_api run pycodestyle --max-line-length=120 --exclude=.venv rest_api"
+echo "<<<Pycodestyle tests"
+
+echo "Pylint tests>>>"
+docker run -i --rm ${TEST_IMAGE} bash -c \
+    "uv --directory rest_api run pylint --fail-under=9 --fail-on=E,F ."
+echo "<<Pylint tests"
 
 echo "Alembic down revision tests>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
@@ -23,8 +23,7 @@ echo "<<Alembic down revision tests"
 
 echo "Unit tests>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "uv --project rest_api run pytest rest_api --maxfail=1"
+    bash -c "uv --project rest_api run pytest -n auto rest_api --maxprocesses 3 --dist no --disable-warnings"
 echo "<<Unit tests"
 docker rmi ${TEST_IMAGE}
 
-# bash -c "PYTHONPATH=. uv --project rest_api run pytest -n auto rest_api --maxprocesses 3 --dist no --disable-warnings"
