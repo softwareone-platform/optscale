@@ -52,7 +52,7 @@ export class UsersPage extends BasePage {
    * Clicks the Invite button.
    * @returns {Promise<void>}
    */
-  async clickInviteBtn() {
+  async clickInviteBtn(): Promise<void> {
     await this.inviteBtn.click();
   }
 }

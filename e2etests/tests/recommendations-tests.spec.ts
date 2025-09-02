@@ -5,10 +5,9 @@ import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
-    test.beforeEach(async ({loginPage, recommendationsPage, page}) => {
+    test.beforeEach(async ({recommendationsPage, page}) => {
         await test.step('Login as FinOps user', async () => {
             await restoreUserSessionInLocalForage(page);
-            await loginPage.navigateToURL();
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();
         });

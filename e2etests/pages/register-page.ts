@@ -30,7 +30,7 @@ export class RegisterPage extends BasePage {
      * @param {string} inviteLink - The invite link to navigate to.
      * @returns {Promise<void>}
      */
-    async navigateToRegistration(inviteLink: string) {
+    async navigateToRegistration(inviteLink: string): Promise<void> {
         await this.page.goto(inviteLink, {waitUntil: 'networkidle'});
     }
 
@@ -40,7 +40,7 @@ export class RegisterPage extends BasePage {
      * @param {string} password - The password for the user.
      * @returns {Promise<void>}
      */
-    async registerUser(fullName: string, password: string) {
+    async registerUser(fullName: string, password: string): Promise<void> {
         await this.fullNameInput.fill(fullName);
         await this.passwordInput.fill(password);
         await this.confirmPasswordInput.fill(password);
@@ -53,7 +53,7 @@ export class RegisterPage extends BasePage {
      * This method is used to navigate to the sign-in page from the registration page.
      * @returns {Promise<void>} A promise that resolves when the link is clicked.
      */
-    async clickAlreadyHaveAccountLink() {
+    async clickAlreadyHaveAccountLink(): Promise<void> {
         await this.alreadyHaveAccountLink.click();
     }
 }
