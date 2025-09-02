@@ -6,6 +6,7 @@ import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/int
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 import {test} from "../fixtures/page-fixture";
+import {debugLog} from "../utils/debug-logging";
 
 /**
  * Represents the Recommendations Page.
@@ -514,7 +515,7 @@ export class RecommendationsPage extends BasePage {
 
         for (const {label, locator} of cardData) {
             const value = await this.getCurrencyValue(locator);
-            console.log(`${label}: ${value}`);
+            debugLog(`${label}: ${value}`);
             total += value;
         }
 
@@ -570,7 +571,7 @@ export class RecommendationsPage extends BasePage {
         const itemisedSavings = await this.sumCurrencyColumn(columnLocator, this.modalNextPageBtn);
         await this.recommendationsModalCloseBtn.click();
         await this.page.waitForLoadState();
-        console.log(`Itemised Savings: ${itemisedSavings}`);
+        debugLog(`Itemised Savings: ${itemisedSavings}`);
         return itemisedSavings;
     }
 

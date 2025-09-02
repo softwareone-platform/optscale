@@ -10,10 +10,8 @@ import dotenv from "dotenv";
  * @param {FullConfig} config - The full configuration object provided by Playwright.
  */
 async function globalSetup(config: FullConfig) {
-    // Log an error if no configuration is provided
     if (!config) console.error("No config found");
 
-    // Load environment variables from the .env.local file, overriding existing variables
     dotenv.config({
         path: ".env.local",
         override: true,
@@ -26,6 +24,8 @@ async function globalSetup(config: FullConfig) {
     console.log(`Ignoring HTTPS errors: ${process.env.IGNORE_HTTPS_ERRORS}`);
     console.log(`SCREENSHOT_UPDATE_DELAY: ${process.env.SCREENSHOT_UPDATE_DELAY}`);
     console.log(`USE_LIVE_DEMO: ${process.env.USE_LIVE_DEMO}`);
+    console.log(`BROWSER_ERROR_LOGGING: ${process.env.BROWSER_ERROR_LOGGING}`);
+    console.log(`DEBUG_LOG: ${process.env.DEBUG_LOG}`);
     if(process.env.BASE_URL === undefined) console.error('***BASE_URL is not set. This is required for the tests to run.');
     if(process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD === undefined) console.warn('***DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
     if(process.env.DEFAULT_USER_ID === undefined) console.warn(`***DEFAULT_USER_ID is not set. This may cause issues with some API tests`);

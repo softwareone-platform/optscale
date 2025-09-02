@@ -1,6 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import fs from "fs";
 import path from "path";
+import {debugLog} from "../utils/debug-logging";
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -12,6 +13,12 @@ export abstract class BasePage {
     readonly main: Locator;
     readonly loadingPageImg: Locator;
     readonly pageLoader: Locator;
+    readonly tooltip: Locator;
+
+    readonly infoColor: string; // Default color for neutral state
+    readonly warningColor: string; // Default color for warning state
+    readonly errorColor: string; // Default color for error state
+    readonly successColor: string; // Default color for success state
 
     /**
      * Initializes a new instance of the BasePage class.
@@ -24,6 +31,11 @@ export abstract class BasePage {
         this.main = this.page.locator('main');
         this.loadingPageImg = this.page.getByRole('img', {name: 'Loading page'});
         this.pageLoader = this.main.locator('[role="progressbar"]');
+        this.tooltip = this.page.getByRole('tooltip');
+        this.infoColor = 'rgb(0, 0, 0)'; // Default color for neutral state
+        this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
+        this.errorColor = 'rgb(187, 20, 37)'; // Default color for error state
+        this.successColor = 'rgb(0, 120, 77)'; // Default color for success state
     }
 
     /**
@@ -295,6 +307,24 @@ export abstract class BasePage {
         return parseFloat(totalSum.toFixed(2));
     }
 
+    async sumCurrencyColumnWithoutPagination(columnLocator: Locator): Promise<number> {
+        // Wait for the last element in the column to be visible
+        await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
+        });
+
+        // Extract text content from all cells in the column
+        const texts = await columnLocator.allTextContents();
+
+        // Parse the currency values from the text content
+        const values = texts.map(text => {
+            const currencyOnly = text.split('(')[0].trim(); // Remove any text in parentheses
+            return this.parseCurrencyValue(currencyOnly); // Convert the currency string to a numeric value
+        });
+
+        // Return the total sum rounded to two decimal places
+        return parseFloat(values.reduce((sum, val) => sum + val, 0).toFixed(2));
+    }
+
     /**
      * Waits for the loading page image to disappear.
      * This method checks if the loading image is present and waits for it to become hidden.
@@ -310,6 +340,7 @@ export abstract class BasePage {
             return; // Exit the method if the loading image is not present.
         }
         try {
+            debugLog('Waiting for loading page image to disappear...');
             await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
         } catch (error) {
             console.error("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
@@ -332,7 +363,8 @@ export abstract class BasePage {
             return; // Exit the method if the spinner is not present.
         }
         try {
-            await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
+            debugLog('Waiting for page loader to disappear...');
+            await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout});
         } catch {
             console.error("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
         }
@@ -367,6 +399,34 @@ export abstract class BasePage {
         }
 
         return absPath;
+    }
+
+    /**
+     * Retrieves the computed color style of a given element.
+     * This method waits for the element to be available in the DOM and then evaluates its computed style
+     * to extract the `color` property.
+     *
+     * @param {Locator} element - The Playwright locator for the target element.
+     * @returns {Promise<string>} A promise that resolves to the computed color value of the element (e.g., "rgb(255, 0, 0)").
+     */
+    async getColorFromElement(element: Locator): Promise<string> {
+        await element.waitFor();
+        return await element.evaluate((el) => {
+            return window.getComputedStyle(el).color;
+        });
+    }
+
+    /**
+     * Attaches a listener to log browser console errors.
+     * This method listens for `console` events on the Playwright page and logs any messages
+     * of type `error` to the Node.js console with a custom prefix.
+     */
+    attachConsoleErrorLogger() {
+        this.page.on('console', msg => {
+            if (msg.type() === 'error') {
+                console.error(`[Browser Console Error] ${msg.text()}`);
+            }
+        });
     }
 
 }

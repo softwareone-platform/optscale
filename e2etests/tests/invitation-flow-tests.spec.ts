@@ -22,7 +22,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
     await loginPage.navigateToURL()
   });
 
-  test("[229865] Invite new user to organisation, user accepts @p1", async ({
+  test("[229865] Invite new user to organisation, user accepts", {tag: "@p1"}, async ({
                                                                               header,
                                                                               mainMenu,
                                                                               usersPage,

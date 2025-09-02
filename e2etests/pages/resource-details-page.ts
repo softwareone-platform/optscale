@@ -136,7 +136,7 @@ import {BasePage} from "./base-page";
              * Clicks the Expenses Paid Network Traffic button.
              * @returns {Promise<void>}
              */
-            async clickExpensesPaidNetworkTrafficButton() {
+            async clickExpensesPaidNetworkTrafficButton(): Promise<void> {
                 await this.expensesPaidNetworkTrafficButton.click();
             }
         }

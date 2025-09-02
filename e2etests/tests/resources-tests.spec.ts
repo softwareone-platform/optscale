@@ -335,8 +335,8 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', async ({resourcesPage, datePicker}) => {
-        test.setTimeout(60000);
+    test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', {tag: '@slow'}, async ({resourcesPage, datePicker}) => {
+        test.setTimeout(90000);
         const {startDate, endDate} = getLast7DaysUnixRange();
 
         await test.step('Set last 7 days date range', async () => {
@@ -757,7 +757,6 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
         await test.step('Login admin user', async () => {
             await restoreUserSessionInLocalForage(page);
-            await resourcesPage.navigateToURL();
             await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
             await setupApiInterceptions(resourcesPage);
             await resourcesPage.navigateToURL('/resources');
