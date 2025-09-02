@@ -86,7 +86,7 @@ export class MainMenu extends BasePage {
      * @param {string} expectedUrl - The expected URL after navigation.
      * @returns {Promise<void>}
      */
-    async assertMenuNavigation(menuLink: Locator, expectedUrl: string) {
+    async assertMenuNavigation(menuLink: Locator, expectedUrl: string): Promise<void> {
         const baseURL = process.env.BASE_URL;
         await menuLink.click();
         const currentUrl = this.page.url();
@@ -102,7 +102,7 @@ export class MainMenu extends BasePage {
      * Clicks the User Management button.
      * @returns {Promise<void>}
      */
-    async clickUserManagement() {
+    async clickUserManagement(): Promise<void> {
         if (await this.systemBtn.getAttribute('aria-expanded') === 'false') {
             await this.systemBtn.click();
         }
@@ -113,7 +113,7 @@ export class MainMenu extends BasePage {
      * Clicks the Recommendations button.
      * @returns {Promise<void>}
      */
-    async clickRecommendations() {
+    async clickRecommendations(): Promise<void> {
         await this.recommendationsBtn.click();
     }
 
@@ -121,7 +121,7 @@ export class MainMenu extends BasePage {
      * Clicks the Resources button.
      * @returns {Promise<void>}
      */
-    async clickResources() {
+    async clickResources(): Promise<void> {
         await this.resourcesBtn.click();
     }
 
@@ -130,7 +130,7 @@ export class MainMenu extends BasePage {
      * This method is used to navigate to the Settings page.
      * @returns {Promise<void>} A promise that resolves when the Settings button is clicked.
      */
-    async clickSettings() {
+    async clickSettings(): Promise<void> {
         await this.settingsBtn.click();
     }
 }

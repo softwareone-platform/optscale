@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import {debugLog} from "./debug-logging";
 
 /**
  * Deletes all files in a directory if process.env.CLEAN_UP_DOWNLOADS === 'true'.
@@ -25,7 +26,7 @@ export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> 
             })
         );
 
-        console.log(`[CLEANUP] Deleted ${files.length} files from ${resolvedPath}`);
+        debugLog(`[CLEANUP] Deleted ${files.length} files from ${resolvedPath}`);
     } catch (err) {
         console.error(`[CLEANUP ERROR] Failed to clean directory ${resolvedPath}:`, err);
     }

@@ -1,4 +1,5 @@
 import {expect} from "@playwright/test";
+import {debugLog} from "./debug-logging";
 
 /**
  * Asserts that the actual value is within an acceptable drift percentage of the expected value when comparing
@@ -21,9 +22,9 @@ export function expectWithinDrift(
     const allowedDrift = expected * percentageTolerance;
     const actualPercentageDrift = (drift / expected) * 100;
 
-    console.debug(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
-    console.debug(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
-    console.debug(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
+    debugLog(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
+    debugLog(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
+    debugLog(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
 
     expect(drift).toBeLessThanOrEqual(allowedDrift);
 }

@@ -1,6 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import fs from "fs";
 import path from "path";
+import {debugLog} from "../utils/debug-logging";
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -339,6 +340,7 @@ export abstract class BasePage {
             return; // Exit the method if the loading image is not present.
         }
         try {
+            debugLog('Waiting for loading page image to disappear...');
             await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
         } catch (error) {
             console.error("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
@@ -361,7 +363,8 @@ export abstract class BasePage {
             return; // Exit the method if the spinner is not present.
         }
         try {
-            await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout}); // Wait for the spinner to become hidden.
+            debugLog('Waiting for page loader to disappear...');
+            await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout});
         } catch {
             console.error("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
         }
@@ -425,6 +428,7 @@ export abstract class BasePage {
             }
         });
     }
+
 }
 
 

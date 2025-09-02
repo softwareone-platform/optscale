@@ -31,7 +31,7 @@ export class LoginPage extends BasePage {
      * @param {string} password - The password to use for login.
      * @returns {Promise<void>}
      */
-    async login(email: string, password: string) {
+    async login(email: string, password: string): Promise<void> {
         await this.navigateToURL();
         await this.emailInput.fill(email);
         await this.passwordInput.fill(password);
@@ -46,7 +46,7 @@ export class LoginPage extends BasePage {
      * @param {string} password - The password to use for login.
      * @returns {Promise<void>} A promise that resolves when the login process is complete.
      */
-    async loginWithoutNavigation(email: string, password: string) {
+    async loginWithoutNavigation(email: string, password: string): Promise<void> {
         await this.emailInput.fill(email);
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
@@ -60,22 +60,10 @@ export class LoginPage extends BasePage {
      * @param {string} password - The password to use for login.
      * @returns {Promise<void>} A promise that resolves when the login process is complete.
      */
-    async loginWithPreFilledEmail(password: string) {
+    async loginWithPreFilledEmail(password: string): Promise<void> {
         await this.passwordInput.fill(password);
         await this.loginBtn.click();
         await this.waitForElementDetached(this.loginBtn);
         await this.waitForLoadingPageImgToDisappear();
-    }
-
-    /**
-     * Logs in to the live demo using the provided email.
-     * @param {string} email - The email address to use for login.
-     * @returns {Promise<void>}
-     */
-    async loginToLiveDemo(email: string) {
-        await this.page.goto(`${this.url}live-demo`, {waitUntil: 'load'});
-        await this.emailInput.fill(email);
-        await this.proceedToLiveDemoBtn.click();
-        await this.nextBtn.click();
     }
 }

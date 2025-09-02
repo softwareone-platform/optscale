@@ -2,6 +2,7 @@ import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
 import {AllowedActionsPoolResponse, PoolResponse} from "../test-data/pools-data";
+import {debugLog} from "../utils/debug-logging";
 
 /**
  * Represents the Pools Page.
@@ -326,7 +327,7 @@ export class PoolsPage extends BasePage {
         index = index - 1; // Adjust index to be zero-based
         const locator = this.subPoolNameColumn.nth(index);
         const subPool = await locator.textContent();
-        console.log(`Editing monthly limit for sub-pool: ${subPool}`);
+        debugLog(`Editing monthly limit for sub-pool: ${subPool}`);
         await locator.click();
         await this.sideModalEditBtn.click();
         await this.sideModalMonthlyLimit.clear();
@@ -351,11 +352,11 @@ export class PoolsPage extends BasePage {
     async getSubPoolMonthlyLimit(index: number = 1): Promise<number> {
         index = index - 1; // Adjust index to be zero-based
         const subPoolName = await this.subPoolNameColumn.nth(index).textContent();
-        console.log(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
+        debugLog(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
         const locator = this.subPoolColumn2.nth(index);
         const value = await locator.textContent();
         if (value === '-') {
-            console.log(`Monthly limit for sub-pool "${subPoolName}" is not set.`);
+            debugLog(`Monthly limit for sub-pool "${subPoolName}" is not set.`);
             return 0; // Return 0 if the monthly limit is not set
         }
         return this.parseCurrencyValue(value);
@@ -364,7 +365,7 @@ export class PoolsPage extends BasePage {
     async getSubPoolExpensesThisMonth(index: number = 1): Promise<number> {
         index = index - 1; // Adjust index to be zero-based
         const subPoolName = await this.subPoolNameColumn.nth(index).textContent();
-        console.log(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
+        debugLog(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
         const locator = this.subPoolColumn3.nth(index);
         const value = await locator.textContent();
         return this.parseCurrencyValue(value);
@@ -372,7 +373,7 @@ export class PoolsPage extends BasePage {
     async getSubPoolForecastThisMonth(index: number = 1): Promise<number> {
         index = index - 1; // Adjust index to be zero-based
         const subPoolName = await this.subPoolNameColumn.nth(index).textContent();
-        console.log(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
+        debugLog(`Retrieving monthly limit for sub-pool: ${subPoolName}`);
         const locator = this.subPoolColumn4.nth(index);
         const value = await locator.textContent();
         return this.parseCurrencyValue(value);
@@ -383,7 +384,7 @@ export class PoolsPage extends BasePage {
         for (const subPool of subPools) {
             const value = await subPool.textContent();
             if (value !== '-') {
-                console.debug(`Removing monthly limit for sub-pool: ${value}`);
+                debugLog(`Removing monthly limit for sub-pool: ${value}`);
                 await subPool.click();
                 await this.sideModalEditBtn.click();
                 await this.sideModalMonthlyLimit.clear();
