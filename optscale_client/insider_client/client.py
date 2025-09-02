@@ -172,7 +172,7 @@ class Client:
     def get_flavor_prices(
             self, cloud_type, flavor, region, os_type, preinstalled=None,
             quantity=None, billing_method=None, currency=None,
-            cloud_account_id=None):
+            currency_conversion_rate=None, cloud_account_id=None):
         params = {
             'flavor': flavor,
             'region': region,
@@ -186,6 +186,8 @@ class Client:
             params['billing_method'] = billing_method
         if currency:
             params['currency'] = currency
+        if currency_conversion_rate:
+            params['currency_conversion_rate'] = currency_conversion_rate
         if cloud_account_id:
             params['cloud_account_id'] = cloud_account_id
         url = self.flavor_prices_url(cloud_type) + self.query_url(**params)

@@ -27,6 +27,8 @@ class FlavorPricesCollectionHandler(SecretHandler):
             'quantity': self.get_arg('quantity', int),
             'billing_method': self.get_arg('billing_method', str),
             'currency': self.get_arg('currency', str, default='USD'),
+            'currency_conversion_rate': self.get_arg(
+                'currency_conversion_rate', float),
             'cloud_account_id': self.get_arg('cloud_account_id', str),
         }
 
@@ -80,6 +82,12 @@ class FlavorPricesCollectionHandler(SecretHandler):
             description: currency
             required: false
             type: string
+        -   in: query
+            name: currency_conversion_rate
+            description: |
+                Currency conversion rate applied on USD flavor price (GCP only)
+            required: false
+            type: number
         -   in: query
             name: cloud_account_id
             description: id of cloud account to use (for Alibaba only)

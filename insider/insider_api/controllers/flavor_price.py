@@ -43,13 +43,14 @@ class BaseProvider:
         raise NotImplementedError()
 
     def _load_flavor_prices(self, region, flavor, os_type, preinstalled,
-                            quantity, billing_method, currency='USD'):
+                            quantity, billing_method, currency='USD',
+                            currency_conversion_rate=None):
         raise NotImplementedError()
 
     def _load_family_prices(self, instance_family, region, os_type, currency):
         raise NotImplementedError()
 
-    def _flavor_format(self, price_infos, region, os_type):
+    def _flavor_format(self, price_infos, region, os_type, currency="USD"):
         raise NotImplementedError()
 
     def _flavor_family_format(self, price_infos, instance_family, region,
@@ -58,13 +59,16 @@ class BaseProvider:
 
     def get_flavor_prices(self, region, flavor, os_type, preinstalled=None,
                           billing_method=None, quantity=None, currency='USD',
+                          currency_conversion_rate=None,
                           cloud_account_id=None):
         if cloud_account_id:
             self.cloud_account_id = cloud_account_id
-        price_infos = self._load_flavor_prices(region, flavor, os_type,
-                                               preinstalled, billing_method,
-                                               quantity, currency)
-        return self._flavor_format(price_infos, region, os_type)
+        price_infos = self._load_flavor_prices(
+            region, flavor, os_type=os_type, preinstalled=preinstalled,
+            billing_method=billing_method, quantity=quantity,
+            currency=currency,
+            currency_conversion_rate=currency_conversion_rate)
+        return self._flavor_format(price_infos, region, os_type, currency)
 
     def get_family_prices(self, instance_family, region, os_type, currency):
         price_infos = self._load_family_prices(
@@ -113,7 +117,7 @@ class AwsProvider(BaseProvider):
 
     @handle_credentials_error(AwsClientError)
     def _load_flavor_prices(self, region, flavor, os_type, preinstalled=None,
-                            billing_method=None, quantity=None, currency='USD'):
+                            **_kwargs):
         location = self.region_map.get(region)
         if not location:
             raise WrongArgumentsException(Err.OI0012, [region])
@@ -196,7 +200,7 @@ class AwsProvider(BaseProvider):
             return False
         return True
 
-    def _flavor_format(self, price_infos, region, os_type):
+    def _flavor_format(self, price_infos, region, os_type, currency='USD'):
         res = []
         price_unit = '1 hour'
         for price_info in price_infos:
@@ -261,8 +265,8 @@ class AzureProvider(BaseProvider):
     def discoveries_collection(self):
         return self.mongo_client.insider.discoveries
 
-    def _load_flavor_prices(self, region, flavor, os_type, preinstalled=None,
-                            billing_method=None, quantity=None, currency='USD'):
+    def _load_flavor_prices(self, region, flavor, os_type, currency='USD',
+                            **_kwargs):
         regions = set(self.cloud_adapter.get_regions_coordinates())
         if region not in regions:
             raise WrongArgumentsException(Err.OI0012, [region])
@@ -288,7 +292,7 @@ class AzureProvider(BaseProvider):
         return list(self.prices_collection.find(query).sort(
             [('last_seen', -1)]).limit(1))
 
-    def _flavor_format(self, price_infos, region, os_type):
+    def _flavor_format(self, price_infos, region, os_type, currency='USD'):
         res = []
         for price_info in price_infos:
             res.append({
@@ -320,8 +324,8 @@ class AlibabaProvider(BaseProvider):
         return self._cloud_adapter
 
     def _load_flavor_prices(self, region, flavor, os_type='linux',
-                            preinstalled=None, billing_method='pay_as_you_go',
-                            quantity=1, currency='USD'):
+                            billing_method='pay_as_you_go', quantity=1,
+                            currency='USD', **_kwargs):
         now = utcnow()
         query = {
             'region': region,
@@ -357,9 +361,8 @@ class AlibabaProvider(BaseProvider):
                 self.prices_collection.bulk_write(updates)
         return price_infos
 
-    def _flavor_format(self, price_infos, region, os_type):
+    def _flavor_format(self, price_infos, region, os_type, currency='USD'):
         result = []
-        currency = 'USD'
         price_unit = '1 hour'
         for price_info in price_infos:
             result.append({
@@ -380,13 +383,18 @@ class GcpProvider(BaseProvider):
 
     @property
     def cloud_adapter(self):
-        config = self._config_cl.read_branch('/service_credentials/gcp')
-        self._cloud_adapter = Gcp(config)
+        if self._cloud_adapter is None:
+            config = self._config_cl.read_branch('/service_credentials/gcp')
+            if self.cloud_account_id:
+                _, cloud_acc = self.rest_client.cloud_account_get(
+                    self.cloud_account_id)
+                if 'pricing_data' in cloud_acc['config']:
+                    config = cloud_acc['config']
+            self._cloud_adapter = Gcp(config)
         return self._cloud_adapter
 
-    def _load_flavor_prices(self, region, flavor, os_type='linux',
-                            preinstalled=None, billing_method=None,
-                            quantity=None, currency='USD'):
+    def _load_flavor_prices(
+            self, region, flavor, currency_conversion_rate=None, **_kwargs):
         now = utcnow()
         query = {
             'region': region,
@@ -394,8 +402,12 @@ class GcpProvider(BaseProvider):
             'updated_at': {'$gte': now - timedelta(days=60)}
         }
         price_infos = list(self.prices_collection.find(query))
+        use_usd_price = False
+        if currency_conversion_rate:
+            use_usd_price = True
         if not price_infos:
-            prices = self.cloud_adapter.get_instance_types_priced(region)
+            prices = self.cloud_adapter.get_instance_types_priced(
+                region, use_usd_price)
             updates = []
             for flavor_name, price_info in prices.items():
                 price_info['updated_at'] = now
@@ -409,11 +421,15 @@ class GcpProvider(BaseProvider):
                 price_infos.append(price_info)
             if updates:
                 self.prices_collection.bulk_write(updates)
-        return list(filter(lambda x: x['flavor'] == flavor, price_infos))
+        flavor_prices = list(filter(lambda x: x['flavor'] == flavor,
+                                    price_infos))
+        if currency_conversion_rate:
+            for flavor in flavor_prices:
+                flavor['price'] = flavor['price'] * currency_conversion_rate
+        return flavor_prices
 
-    def _flavor_format(self, price_infos, region, os_type):
+    def _flavor_format(self, price_infos, region, os_type, currency='USD'):
         result = []
-        currency = 'USD'
         price_unit = '1 hour'
         for price_info in price_infos:
             result.append({
@@ -482,10 +498,12 @@ class FlavorPriceController(BaseController):
         quantity = kwargs.get('quantity')
         billing_method = kwargs.get('billing_method')
         currency = kwargs.get('currency')
+        currency_conversion_rate = kwargs.get('currency_conversion_rate')
+        cloud_account_id = kwargs.get('cloud_account_id')
         provider = PricesProvider.get_provider(cloud_type)
         return provider(self._config, self.rest_client).get_flavor_prices(
             region, flavor, os_type, preinstalled, billing_method, quantity,
-            currency)
+            currency, currency_conversion_rate, cloud_account_id)
 
 
 class FlavorPriceAsyncController(BaseAsyncControllerWrapper):
