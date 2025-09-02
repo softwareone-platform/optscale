@@ -2,6 +2,7 @@ import {test} from "../fixtures/page-fixture";
 import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
+import {debugLog} from "../utils/debug-logging";
 
 function extractMultiplier(input: string): number | null {
     const match = input.match(/\(x([\d.]+)\)/);
@@ -28,7 +29,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         await poolsPage.toggleExpandPool();
     });
 
-    test('[] Verify Pools page column selection', async ({poolsPage}) => {
+    test('[230911] Verify Pools page column selection', async ({poolsPage}) => {
         const defaultColumns = [poolsPage.nameTableHeading, poolsPage.monthlyLimitTableHeading,
             poolsPage.expensesThisMonthTableHeading, poolsPage.forecastThisMonthTableHeading,
             poolsPage.ownerTableHeading, poolsPage.actionsTableHeading];
@@ -80,7 +81,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', async ({poolsPage}) => {
+    test('[230912] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         let organizationLimitValue: number;
@@ -91,17 +92,17 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
             organizationLimitValue = await poolsPage.getOrganizationLimitValue();
             expensesThisMonthValue = await poolsPage.getExpensesThisMonth();
             forecastThisMonthValue = await poolsPage.getForecastThisMonth();
-            console.log(`Organization Limit: ${organizationLimitValue}, Expenses This Month: ${expensesThisMonthValue}, Forecast This Month: ${forecastThisMonthValue}`);
+            debugLog(`Organization Limit: ${organizationLimitValue}, Expenses This Month: ${expensesThisMonthValue}, Forecast This Month: ${forecastThisMonthValue}`);
         })
 
         await test.step('Verify Organisation Limit matches the table', async () => {
             if (organizationLimitValue === 0) {
                 const limit = await poolsPage.poolColumn2.textContent();
-                console.log('No organization limit set');
+                debugLog('No organization limit set');
                 expect(limit).toBe('-');
             } else {
                 const limit = await poolsPage.getPoolLimitFromTable();
-                console.log(`Organization Limit: ${organizationLimitValue}`);
+                debugLog(`Organization Limit: ${organizationLimitValue}`);
                 expect(limit).toEqual(organizationLimitValue);
             }
         });
@@ -118,24 +119,24 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Verify sub-pools expenses match total pool expenses', async () => {
             const subPoolsExpenses = await poolsPage.sumSubPoolTotals('expenses this month');
-            console.log(`Sub-pools expenses: ${subPoolsExpenses}`);
+            debugLog(`Sub-pools expenses: ${subPoolsExpenses}`);
             expectWithinDrift(subPoolsExpenses, expensesThisMonthValue, 0.0001);
         });
 
         await test.step('Verify sub-pools forecast match total pool forecast', async () => {
             const subPoolsForecast = await poolsPage.sumSubPoolTotals('forecast this month');
-            console.log(`Sub-pools forecast: ${subPoolsForecast}`);
+            debugLog(`Sub-pools forecast: ${subPoolsForecast}`);
             expectWithinDrift(subPoolsForecast, forecastThisMonthValue, 0.0001);
         });
     });
 
-    test('[] Verify Organisation Limit functionality - limit not set', async ({poolsPage}) => {
+    test('[230913] Verify Organisation Limit functionality - limit not set', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         await test.step('Remove organisation limit if it is set.', async () => {
             if (await poolsPage.getOrganizationLimitValue() !== 0) {
                 await poolsPage.editPoolMonthlyLimit(0);
-                console.log('Removed organization limit');
+                debugLog('Removed organization limit');
             }
         });
 
@@ -152,7 +153,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify Organisation Limit functionality - expenses are less than 90% of limit', async ({poolsPage}) => {
+    test('[230914] Verify Organisation Limit functionality - expenses are less than 90% of limit', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -162,7 +163,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Set organization limit to an integer where the expenses are less than the 90% of the limit', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
-            console.log(`Set organization limit to ${organizationLimit}`);
+            debugLog(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert Pools page elements displayed correctly when limit set', async () => {
@@ -182,7 +183,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify Organisation Limit functionality - expenses are greater than 90% of limit', async ({poolsPage}) => {
+    test('[230915] Verify Organisation Limit functionality - expenses are greater than 90% of limit', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -190,7 +191,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Set organization limit to an integer where the expenses is more than the 90% of the limit', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
-            console.log(`Set organization limit to ${organizationLimit}`);
+            debugLog(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert Pools page elements displayed correctly when limit set', async () => {
@@ -206,7 +207,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify Organisation Limit functionality - limit set lower than expenses this month', async ({poolsPage}) => {
+    test('[230916] Verify Organisation Limit functionality - limit set lower than expenses this month', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -216,7 +217,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Set organization limit to an integer below the current expenses this month', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
-            console.log(`Set organization limit to ${organizationLimit}`);
+            debugLog(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert Pools page elements displayed correctly when limit set below expenses this month', async () => {
@@ -239,7 +240,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify Organisation Limit functionality - limit set lower forecast', async ({poolsPage}) => {
+    test('[230917] Verify Organisation Limit functionality - limit set lower forecast', async ({poolsPage}) => {
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
         const forecastThisMonth = await poolsPage.getForecastThisMonth();
         test.skip(expensesThisMonth <= 1, 'Skipping test as it requires expenses to be greater than 1');
@@ -247,7 +248,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Set organization limit to an integer below the current forecast this month', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
-            console.log(`Set organization limit to ${organizationLimit}`);
+            debugLog(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert Pools page elements displayed correctly when limit set below forecast this month', async () => {
@@ -267,14 +268,14 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify sub-pool monthly limit behaviour', async ({poolsPage}) => {
+    test('[230918] Verify sub-pool monthly limit behaviour', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
         test.setTimeout(45000);
 
-        await test.step('Remove organisation if set.', async () => {
+        await test.step('Remove pool limit if set.', async () => {
             if (await poolsPage.getOrganizationLimitValue() !== 0) {
                 await poolsPage.editPoolMonthlyLimit(0);
-                console.log('Removed organization limit');
+                debugLog('Removed organization limit');
             }
         });
 
@@ -307,7 +308,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[] Verify pool exceeded count and expand requiring attention', async ({poolsPage}) => {
+    test('[230919] Verify pool exceeded count and expand requiring attention', async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -318,7 +319,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
 
         await test.step('Set organization limit to an integer above the current expenses this month', async () => {
             await poolsPage.editPoolMonthlyLimit(organizationLimit);
-            console.log(`Set organization limit to ${organizationLimit}`);
+            debugLog(`Set organization limit to ${organizationLimit}`);
         });
 
         await test.step('Assert that expand requiring attention does not expand when no sub-pools are exceeded', async () => {

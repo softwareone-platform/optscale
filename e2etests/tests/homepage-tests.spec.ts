@@ -120,7 +120,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 })
 
 test.describe('[MPT-12743] Home Page test for Pools requiring attention block', {tag: ["@ui", "@pools", "@homepage"]}, () => {
-    test.describe.configure({mode: 'default'}); //Tests in this describe block are state dependent, so they should not run in parallel with each other.
+    test.describe.configure({mode: 'serial'}); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
 
     test.beforeEach(async ({homePage, page}) => {
         await test.step('Login as FinOps user', async () => {
@@ -128,7 +128,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test('[] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({homePage, poolsPage}) => {
+    test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({homePage, poolsPage}) => {
         await test.step('Navigate to home page', async () => {
             await homePage.navigateToURL();
             await homePage.waitForPageLoaderToDisappear();
@@ -141,7 +141,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test('[] Verify that Pools Requiring attention is empty when the are no qualifying pools', async ({homePage, poolsPage, mainMenu}) => {
+    test('[230922] Verify that Pools Requiring attention is empty when the are no qualifying pools', async ({homePage, poolsPage, mainMenu}) => {
         await test.step('Remove limits from all pools if any', async () => {
             await poolsPage.navigateToURL();
             await poolsPage.waitForPageLoaderToDisappear();
@@ -159,11 +159,11 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test('[] Verify that Pools Requiring attention shows Pool and Sub-pools that have exceeded their limit', async ({homePage, poolsPage, mainMenu}) => {
+    test('[230923] Verify that Pools Requiring attention shows Pool and Sub-pools that have exceeded their limit', {tag: ["@p1"]},async ({homePage, poolsPage, mainMenu}) => {
         let expenseValue: number;
         let subPoolExpenseValue: number;
 
-        await test.step('Set monthly limit for a pool and sub-pool', async () => {
+        await test.step('Set monthly limit for a pool and sub-pool lower than expenses', async () => {
             await poolsPage.navigateToURL();
             await poolsPage.waitForPageLoaderToDisappear();
             await poolsPage.expandMoreIcon.waitFor();
@@ -192,11 +192,11 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         });
     });
 
-    test('[] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend', async ({homePage, poolsPage, mainMenu}) => {
+    test('[230924] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend', async ({homePage, poolsPage, mainMenu}) => {
         let expenseValue: number;
         let forecastedValue: number;
 
-        await test.step('Set monthly limit for a pool and sub-pool that is higher than expenses this month, but lower than forecast', async () => {
+        await test.step('Set monthly limit for a pool that is higher than expenses this month, but lower than forecast', async () => {
             await poolsPage.navigateToURL();
             await homePage.waitForPageLoaderToDisappear();
             await poolsPage.expandMoreIcon.waitFor();
@@ -219,5 +219,4 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
             expect(await homePage.getPoolsBlockTotalValue()).toBe(1);
         });
     });
-
 })
