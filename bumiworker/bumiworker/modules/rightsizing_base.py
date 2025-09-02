@@ -227,7 +227,7 @@ class RightsizingBase(ModuleBase):
             region = params['region']
             family_specs = params['family_specs']
             flavor_params = params['flavor_params']
-            if cloud_account['type'] == 'nebius':
+            if cloud_account['type'] in ['alibaba_cnr', 'nebius']:
                 flavor_params['cloud_account_id'] = cloud_account['id']
             current_flavor = self._find_flavor(
                 cloud_account['type'], region, family_specs, 'current',

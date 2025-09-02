@@ -623,6 +623,13 @@ class TestFlavorPricesApi(TestBase):
         self.assertEqual(code, 200)
         self.assertListEqual(res.get('prices'), [])
 
+    def test_alibaba_with_cloud_account_id(self):
+        params = self.alibaba_valid_params.copy()
+        params['cloud_account_id'] = 'test'
+        code, res = self.client.get_flavor_prices(**params)
+        self.assertEqual(code, 200)
+        self.assertListEqual(res.get('prices'), [])
+
     def test_aws_family_valid_params(self):
         now = utcnow_timestamp()
         self.insert_aws_pricing(now)

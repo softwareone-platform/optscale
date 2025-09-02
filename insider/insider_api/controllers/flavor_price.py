@@ -20,10 +20,12 @@ LOG = logging.getLogger(__name__)
 
 
 class BaseProvider:
-    def __init__(self, config_cl):
+    def __init__(self, config_cl, rest_client=None):
         self._config_cl = config_cl
         self._mongo_client = None
+        self.rest_client = rest_client
         self._cloud_adapter = None
+        self.cloud_account_id = None
 
     @property
     def mongo_client(self):
@@ -55,7 +57,10 @@ class BaseProvider:
         raise NotImplementedError()
 
     def get_flavor_prices(self, region, flavor, os_type, preinstalled=None,
-                          billing_method=None, quantity=None, currency='USD'):
+                          billing_method=None, quantity=None, currency='USD',
+                          cloud_account_id=None):
+        if cloud_account_id:
+            self.cloud_account_id = cloud_account_id
         price_infos = self._load_flavor_prices(region, flavor, os_type,
                                                preinstalled, billing_method,
                                                quantity, currency)
@@ -69,8 +74,8 @@ class BaseProvider:
 
 
 class AwsProvider(BaseProvider):
-    def __init__(self, config_cl):
-        super().__init__(config_cl)
+    def __init__(self, config_cl, rest_client=None):
+        super().__init__(config_cl, rest_client)
         self.os_map = {
             'rhel': 'RHEL',
             'windows': 'Windows',
@@ -304,8 +309,14 @@ class AlibabaProvider(BaseProvider):
 
     @property
     def cloud_adapter(self):
-        config = self._config_cl.read_branch('/service_credentials/alibaba')
-        self._cloud_adapter = Alibaba(config)
+        if self._cloud_adapter is None:
+            config = self._config_cl.read_branch(
+                '/service_credentials/alibaba')
+            if self.cloud_account_id:
+                _, cloud_acc = self.rest_client.cloud_account_get(
+                    self.cloud_account_id)
+                config = cloud_acc['config']
+            self._cloud_adapter = Alibaba(config)
         return self._cloud_adapter
 
     def _load_flavor_prices(self, region, flavor, os_type='linux',
@@ -317,7 +328,8 @@ class AlibabaProvider(BaseProvider):
             'flavor': flavor,
             'quantity': quantity,
             'billing_method': billing_method,
-            'updated_at': {'$gte': now - timedelta(days=60)}
+            'updated_at': {'$gte': now - timedelta(days=60)},
+            'cloud_account_id': self.cloud_account_id
         }
         price_infos = list(self.prices_collection.find(query))
         if not price_infos:
@@ -331,10 +343,12 @@ class AlibabaProvider(BaseProvider):
                 price_info['flavor'] = flavor
                 price_info['region'] = region
                 price_info['quantity'] = quantity
+                price_info['cloud_account_id'] = self.cloud_account_id
                 updates.append(UpdateOne(
                     filter={'flavor': flavor, 'region': region,
                             'quantity': quantity,
-                            'billing_method': price_info['billing_method']},
+                            'billing_method': price_info['billing_method'],
+                            'cloud_account_id': self.cloud_account_id},
                     update={'$set': price_info},
                     upsert=True,
                 ))
@@ -469,7 +483,7 @@ class FlavorPriceController(BaseController):
         billing_method = kwargs.get('billing_method')
         currency = kwargs.get('currency')
         provider = PricesProvider.get_provider(cloud_type)
-        return provider(self._config).get_flavor_prices(
+        return provider(self._config, self.rest_client).get_flavor_prices(
             region, flavor, os_type, preinstalled, billing_method, quantity,
             currency)
 
@@ -496,7 +510,7 @@ class FamilyPriceController(FlavorPriceController):
         os_type = kwargs.get('os_type') or 'Linux'
         currency = kwargs.get('currency') or 'USD'
         provider = PricesProvider.get_provider(cloud_type)
-        return provider(self._config).get_family_prices(
+        return provider(self._config, self.rest_client).get_family_prices(
             instance_family=instance_family, region=region, os_type=os_type,
             currency=currency
         )
