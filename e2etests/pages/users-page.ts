@@ -1,7 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
-import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../test-data/user-data";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
+import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../mocks/user-resp";
 
 /**
  * Represents the Users Page.

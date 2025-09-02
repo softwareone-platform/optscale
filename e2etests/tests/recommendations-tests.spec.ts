@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
-import {getCardSavingsData} from "../test-data/recommendation-card-metadata";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {getCardSavingsData} from "../mocks/recommendation-card-metadata";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {

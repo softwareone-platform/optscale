@@ -6,10 +6,10 @@ import {
     OrganizationConstraintsResponse,
     OrganizationExpensesPoolsResponse,
     PoolsResponse
-} from "../test-data/homepage-data";
+} from "../mocks/homepage-resp";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 
 /**
  * Represents the Home Page.

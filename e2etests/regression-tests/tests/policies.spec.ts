@@ -1,0 +1,65 @@
+import {test} from "../../fixtures/page-fixture";
+import {expect} from "@playwright/test";
+import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
+import {roundElementDimensions} from "../utils/roundElementDimensions";
+
+test.use({restoreSession: true});
+
+test.describe('FFC: Policies @swo_regression', () => {
+  test('Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
+    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
+    await test.step('Set up test data', async () => {
+      await policiesPage.setupApiInterceptions();
+    });
+
+    await test.step('Navigate to Policies page', async () => {
+      await policiesPage.navigateToURL();
+    });
+
+    await test.step('Page content', async () => {
+      await policiesPage.heading.hover();
+      await policiesPage.screenshotUpdateDelay();
+      await roundElementDimensions(policiesPage.main);
+      await expect(policiesPage.main).toHaveScreenshot('Policies-screenshot.png');
+    });
+
+    await test.step('Create policy page', async () => {
+      await policiesPage.clickAddBtn();
+      await policiesCreatePage.heading.hover();
+      await policiesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
+      await policiesPage.screenshotUpdateDelay();
+      await roundElementDimensions(policiesCreatePage.main);
+      await expect(policiesCreatePage.main).toHaveScreenshot('Policies-create-screenshot.png');
+    });
+  })
+
+  test('Tagging Policies page matches screenshots', async ({
+                                                                             taggingPoliciesPage,
+                                                                             taggingPoliciesCreatePage
+                                                                           }) => {
+    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
+    await test.step('Set up test data', async () => {
+      await taggingPoliciesPage.setupApiInterceptions();
+    });
+
+    await test.step('Navigate to Tagging Policies page', async () => {
+      await taggingPoliciesPage.navigateToURL();
+    });
+
+    await test.step('Page content', async () => {
+      await taggingPoliciesPage.heading.hover();
+      await taggingPoliciesPage.screenshotUpdateDelay();
+      await roundElementDimensions(taggingPoliciesPage.main);
+      await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
+    });
+
+    await test.step('Create tagging policy page', async () => {
+      await taggingPoliciesPage.clickAddBtn();
+      await taggingPoliciesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
+      await taggingPoliciesCreatePage.heading.hover();
+      await taggingPoliciesPage.screenshotUpdateDelay();
+      await roundElementDimensions(taggingPoliciesCreatePage.main);
+      await expect(taggingPoliciesCreatePage.main).toHaveScreenshot('TaggingPolicies-create-screenshot.png');
+    });
+  })
+})

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {EStorageStatePath, EUserRole} from "../enums";
+import {EStorageStatePath, EUserRole} from "../../models/enums";
 import {APIRequestContext, request} from "@playwright/test";
 
 export interface LiveDemoAuthResponse {

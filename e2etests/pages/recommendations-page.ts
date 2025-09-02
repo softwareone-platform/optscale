@@ -1,8 +1,8 @@
 import {
     GeminisResponse,
     OptimisationsResponse, OptionsResponse, RIBreakdownResponse, SPBreakdownResponse, SummaryExpensesResponse
-} from "../test-data/recommendations-page-data";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+} from "../mocks/recommendations-page-resp";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
 import {test} from "../fixtures/page-fixture";

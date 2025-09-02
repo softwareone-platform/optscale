@@ -1,5 +1,5 @@
 import {test} from "../fixtures/page-fixture";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 

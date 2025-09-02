@@ -1,11 +1,11 @@
 import {BasePage} from "./base-page";
         import {Locator, Page} from "@playwright/test";
-        import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+        import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
         import {
             AllowedActionsSunflowerEUResponse,
             LimitHitsResponse, RawExpensesResponse,
             ResourceDetailsResponse
-        } from "../test-data/resource-details-data";
+        } from "../mocks/resource-details-resp";
 
         /**
          * Represents the Resource Details Page.

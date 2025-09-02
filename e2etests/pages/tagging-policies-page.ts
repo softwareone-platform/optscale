@@ -1,8 +1,7 @@
 import {Locator, Page} from "@playwright/test";
     import {BasePage} from "./base-page";
-    import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../test-data/user-data";
-    import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
-    import {TaggingPolicyResponse} from "../test-data/tagging-data";
+    import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
+    import {TaggingPolicyResponse} from "../mocks/tagging-resp";
 
     /**
      * Represents the Tagging Policies Page.

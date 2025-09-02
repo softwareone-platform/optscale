@@ -1,8 +1,8 @@
 import {test} from "../fixtures/page-fixture";
 import {expect, request} from "@playwright/test";
-import {generateRandomEmail} from "../utils/random-data";
-import {AuthRequest} from "../api-requests/auth-request";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {generateRandomEmail} from "../utils/random-data-generator";
+import {AuthRequest} from "../utils/api-requests/auth-request";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 
 const verificationCode = "123456";
 let invitationEmail: string;

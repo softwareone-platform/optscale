@@ -1,8 +1,8 @@
 import {test} from "../fixtures/page-fixture";
-import {getValueFromAuthResponse} from "../utils/auth-storage/auth-helpers";
-import {EUserRole} from "../utils/enums";
+import {getValueFromAuthResponse} from "../utils/auth-session-storage/auth-helpers";
+import {EUserRole} from "../models/enums";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 
 
 test.describe.skip("User Management tests", () => {

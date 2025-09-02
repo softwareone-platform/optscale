@@ -1,7 +1,7 @@
 import { test } from "../fixtures/api-fixture";
 import { expect } from "@playwright/test";
-import {AuthResponse, UsersResponse} from "../test-data/test-data-response-types";
-import {generateRandomEmail} from "../utils/random-data";
+import {AuthResponse, UsersResponse} from "../models/test-data-response-types";
+import {generateRandomEmail} from "../utils/random-data-generator";
 
 test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
     const email = process.env.DEFAULT_USER_EMAIL;

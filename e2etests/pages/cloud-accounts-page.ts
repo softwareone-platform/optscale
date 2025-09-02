@@ -1,7 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
-import {CloudAccountsResponse, DataSourcesResponse} from "../test-data/cloud-accounts-data";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
+import {CloudAccountsResponse, DataSourcesResponse} from "../mocks/cloud-accounts-resp";
 
 /**
  * Represents the Cloud Accounts Page.

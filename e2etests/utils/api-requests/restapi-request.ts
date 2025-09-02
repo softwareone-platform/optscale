@@ -1,7 +1,8 @@
-import {BaseRequest} from "./base-request";
-import {APIRequestContext} from "@playwright/test";
+import {APIRequestContext, Page} from "@playwright/test";
+import fs from "fs";
+import path from "path";
 
-export class RestAPIRequest extends BaseRequest {
+export class RestAPIRequest {
     readonly request: APIRequestContext;
     readonly organizationsEndpoint: string;
 
@@ -10,7 +11,6 @@ export class RestAPIRequest extends BaseRequest {
      * @param {APIRequestContext} request - The API request context.
      */
     constructor(request: APIRequestContext) {
-        super(request);
         this.request = request;
         this.organizationsEndpoint = "/restapi/v2/organizations";
     }
@@ -23,7 +23,7 @@ export class RestAPIRequest extends BaseRequest {
      * @returns {Promise<string>} A promise that resolves to the response body as a string.
      * @throws Will throw an error if the organization creation fails.
      */
-    async createOrganization(token: string, name: string, currency = 'USD'): Promise<string> {
+    async createOrganization(token: string, name: string, currency: string = 'USD'): Promise<string> {
         const response = await this.request.post(this.organizationsEndpoint, {
             headers: {
                 "Content-Type": "application/json",
@@ -62,4 +62,34 @@ export class RestAPIRequest extends BaseRequest {
         }
         return `Organization ${organizationId} deleted`;
     }
+}
+
+export function saveOrganizationId(organizationId: string): void {
+    fs.writeFile(
+        path.resolve(`.cache/organizationID.txt`),
+        `${organizationId}`,
+        "utf8",
+        function (err) {
+            if (err) {
+                return console.error(err);
+            }
+            console.log("File created!");
+        },
+    );
+}
+
+export async function fetchBreakdownExpenses<T>(
+  page: Page,
+  breakdownBy: string,
+  selectCategorizeBy: (label: string) => Promise<void>,
+  uiLabel: string
+): Promise<T> {
+    const [response] = await Promise.all([
+        page.waitForResponse((resp) =>
+          resp.url().includes(`/breakdown_expenses?breakdown_by=${breakdownBy}`) && resp.status() === 200
+        ),
+        selectCategorizeBy(uiLabel),
+    ]);
+
+    return response.json();
 }

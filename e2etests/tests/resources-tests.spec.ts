@@ -1,7 +1,7 @@
 import {test} from "../fixtures/page-fixture";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 
 import {
     BreakdownExpensesByServiceResponse,
@@ -13,7 +13,7 @@ import {
     BreakdownExpensesByOwnerResponse,
     BreakdownExpensesByPoolResponse,
     BreakdownExpensesByK8sNodeResponse, BreakdownExpensesByK8sNamespaceResponse, BreakdownExpensesByK8sServiceResponse
-} from "../test-data/resources-page-data";
+} from "../mocks/resources-page-resp";
 import {ResourcesPage} from "../pages/resources-page";
 import {comparePngImages} from "../utils/image-comparison";
 import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
@@ -32,9 +32,9 @@ import {
     ServiceNameExpensesResponse,
     ServiceNameResourceResponse,
     TagsResponse
-} from "../test-data/test-data-response-types";
-import {fetchBreakdownExpenses} from "../utils/api-helpers";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+} from "../models/test-data-response-types";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {fetchBreakdownExpenses} from "../utils/api-requests/restapi-request";
 
 
 test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {

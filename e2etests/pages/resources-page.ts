@@ -1,13 +1,13 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {SummaryExpensesResponse} from "../test-data/recommendations-page-data";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+import {SummaryExpensesResponse} from "../mocks/recommendations-page-resp";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 import {
     AvailableFiltersResponse,
     BreakdownExpensesResponse, BreakdownTagsResponse,
     CleanExpensesResponse,
     ResourcesCountResponse
-} from "../test-data/resources-data";
+} from "../mocks/resources-resp";
 
 /**
  * Represents the Resources Page.

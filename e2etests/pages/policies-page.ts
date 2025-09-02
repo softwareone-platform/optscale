@@ -1,7 +1,7 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {PolicyResponse} from "../test-data/policies-data";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
+import {PolicyResponse} from "../mocks/policies-resp";
+import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 
 /**
  * Represents the Policies Page.
