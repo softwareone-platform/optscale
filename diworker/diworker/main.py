@@ -56,7 +56,7 @@ class DIWorker(ConsumerMixin):
         self.thread.start()
         self.executor = ThreadPoolExecutor(
             max_workers=int(
-                config_cl.diworker_settings().get(
+                self.config_cl.diworker_settings().get(
                     'max_report_imports_workers',
                     DEFAULT_MAX_WORKERS
                 )
@@ -127,7 +127,7 @@ class DIWorker(ConsumerMixin):
             accept=['json'],
             callbacks=[self.process_task],
             prefetch_count=int(
-                config_cl.diworker_settings().get(
+                self.config_cl.diworker_settings().get(
                     'max_report_imports_workers',
                     DEFAULT_MAX_WORKERS
                 )
