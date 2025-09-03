@@ -384,9 +384,9 @@ export type ExpensesDailyBreakdown = {
 
 export type GcpBillingDataConfig = {
   __typename?: "GcpBillingDataConfig";
-  dataset_name?: Maybe<Scalars["String"]["output"]>;
+  dataset_name: Scalars["String"]["output"];
   project_id?: Maybe<Scalars["String"]["output"]>;
-  table_name?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type GcpBillingDataConfigInput = {
@@ -397,12 +397,14 @@ export type GcpBillingDataConfigInput = {
 
 export type GcpConfig = {
   __typename?: "GcpConfig";
-  billing_data?: Maybe<GcpBillingDataConfig>;
+  billing_data: GcpBillingDataConfig;
+  pricing_data?: Maybe<GcpPricingDataConfig>;
 };
 
 export type GcpConfigInput = {
   billing_data: GcpBillingDataConfigInput;
   credentials: Scalars["JSONObject"]["input"];
+  pricing_data?: InputMaybe<GcpPricingDataConfigInput>;
 };
 
 export type GcpDataSource = DataSourceInterface & {
@@ -422,21 +424,36 @@ export type GcpDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type GcpPricingDataConfig = {
+  __typename?: "GcpPricingDataConfig";
+  dataset_name: Scalars["String"]["output"];
+  project_id?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
+};
+
+export type GcpPricingDataConfigInput = {
+  dataset_name: Scalars["String"]["input"];
+  project_id?: InputMaybe<Scalars["String"]["input"]>;
+  table_name: Scalars["String"]["input"];
+};
+
 export type GcpTenantBillingDataConfig = {
   __typename?: "GcpTenantBillingDataConfig";
-  dataset_name?: Maybe<Scalars["String"]["output"]>;
+  dataset_name: Scalars["String"]["output"];
   project_id?: Maybe<Scalars["String"]["output"]>;
-  table_name?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type GcpTenantConfig = {
   __typename?: "GcpTenantConfig";
-  billing_data?: Maybe<GcpTenantBillingDataConfig>;
+  billing_data: GcpTenantBillingDataConfig;
+  pricing_data?: Maybe<GcpTenantPricingDataConfig>;
 };
 
 export type GcpTenantConfigInput = {
   billing_data: GcpBillingDataConfigInput;
   credentials: Scalars["JSONObject"]["input"];
+  pricing_data?: InputMaybe<GcpPricingDataConfigInput>;
 };
 
 export type GcpTenantDataSource = DataSourceInterface & {
@@ -454,6 +471,13 @@ export type GcpTenantDataSource = DataSourceInterface & {
   name: Scalars["String"]["output"];
   parent_id?: Maybe<Scalars["String"]["output"]>;
   type: DataSourceType;
+};
+
+export type GcpTenantPricingDataConfig = {
+  __typename?: "GcpTenantPricingDataConfig";
+  dataset_name: Scalars["String"]["output"];
+  project_id?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type Invitation = {
@@ -916,10 +940,13 @@ export type ResolversTypes = {
   GcpConfig: ResolverTypeWrapper<GcpConfig>;
   GcpConfigInput: GcpConfigInput;
   GcpDataSource: ResolverTypeWrapper<GcpDataSource>;
+  GcpPricingDataConfig: ResolverTypeWrapper<GcpPricingDataConfig>;
+  GcpPricingDataConfigInput: GcpPricingDataConfigInput;
   GcpTenantBillingDataConfig: ResolverTypeWrapper<GcpTenantBillingDataConfig>;
   GcpTenantConfig: ResolverTypeWrapper<GcpTenantConfig>;
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: ResolverTypeWrapper<GcpTenantDataSource>;
+  GcpTenantPricingDataConfig: ResolverTypeWrapper<GcpTenantPricingDataConfig>;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   Invitation: ResolverTypeWrapper<Invitation>;
@@ -985,10 +1012,13 @@ export type ResolversParentTypes = {
   GcpConfig: GcpConfig;
   GcpConfigInput: GcpConfigInput;
   GcpDataSource: GcpDataSource;
+  GcpPricingDataConfig: GcpPricingDataConfig;
+  GcpPricingDataConfigInput: GcpPricingDataConfigInput;
   GcpTenantBillingDataConfig: GcpTenantBillingDataConfig;
   GcpTenantConfig: GcpTenantConfig;
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: GcpTenantDataSource;
+  GcpTenantPricingDataConfig: GcpTenantPricingDataConfig;
   ID: Scalars["ID"]["output"];
   Int: Scalars["Int"]["output"];
   Invitation: Invitation;
@@ -1292,9 +1322,9 @@ export type GcpBillingDataConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpBillingDataConfig"] = ResolversParentTypes["GcpBillingDataConfig"]
 > = {
-  dataset_name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
-  table_name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  table_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1302,7 +1332,8 @@ export type GcpConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpConfig"] = ResolversParentTypes["GcpConfig"]
 > = {
-  billing_data?: Resolver<Maybe<ResolversTypes["GcpBillingDataConfig"]>, ParentType, ContextType>;
+  billing_data?: Resolver<ResolversTypes["GcpBillingDataConfig"], ParentType, ContextType>;
+  pricing_data?: Resolver<Maybe<ResolversTypes["GcpPricingDataConfig"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1326,13 +1357,23 @@ export type GcpDataSourceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GcpPricingDataConfigResolvers<
+  ContextType = ContextValue,
+  ParentType extends ResolversParentTypes["GcpPricingDataConfig"] = ResolversParentTypes["GcpPricingDataConfig"]
+> = {
+  dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  table_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GcpTenantBillingDataConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpTenantBillingDataConfig"] = ResolversParentTypes["GcpTenantBillingDataConfig"]
 > = {
-  dataset_name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
-  table_name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  table_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1340,7 +1381,8 @@ export type GcpTenantConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpTenantConfig"] = ResolversParentTypes["GcpTenantConfig"]
 > = {
-  billing_data?: Resolver<Maybe<ResolversTypes["GcpTenantBillingDataConfig"]>, ParentType, ContextType>;
+  billing_data?: Resolver<ResolversTypes["GcpTenantBillingDataConfig"], ParentType, ContextType>;
+  pricing_data?: Resolver<Maybe<ResolversTypes["GcpTenantPricingDataConfig"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1361,6 +1403,16 @@ export type GcpTenantDataSourceResolvers<
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes["DataSourceType"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GcpTenantPricingDataConfigResolvers<
+  ContextType = ContextValue,
+  ParentType extends ResolversParentTypes["GcpTenantPricingDataConfig"] = ResolversParentTypes["GcpTenantPricingDataConfig"]
+> = {
+  dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  table_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1711,9 +1763,11 @@ export type Resolvers<ContextType = ContextValue> = {
   GcpBillingDataConfig?: GcpBillingDataConfigResolvers<ContextType>;
   GcpConfig?: GcpConfigResolvers<ContextType>;
   GcpDataSource?: GcpDataSourceResolvers<ContextType>;
+  GcpPricingDataConfig?: GcpPricingDataConfigResolvers<ContextType>;
   GcpTenantBillingDataConfig?: GcpTenantBillingDataConfigResolvers<ContextType>;
   GcpTenantConfig?: GcpTenantConfigResolvers<ContextType>;
   GcpTenantDataSource?: GcpTenantDataSourceResolvers<ContextType>;
+  GcpTenantPricingDataConfig?: GcpTenantPricingDataConfigResolvers<ContextType>;
   Invitation?: InvitationResolvers<ContextType>;
   InvitationAssignment?: InvitationAssignmentResolvers<ContextType>;
   JSONObject?: GraphQLScalarType;
