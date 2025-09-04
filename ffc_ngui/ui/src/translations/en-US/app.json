@@ -2473,6 +2473,7 @@
   "viewInPerspectives": "View in perspectives",
   "violated": "Violated",
   "violatedAt": "Violated at",
+  "violationsRightNow": "{value} {value, plural, one {violation} other {violations}} right now",
   "violatedOrganizationConstraints": "{count} violated organization {count, plural,\n  =0 {constraints}\n  =1 {constraint}\n  other {constraints}\n}",
   "violatedResourceConstraints": "{count} violated resource {count, plural,\n  =0 {constraints}\n  =1 {constraint}\n  other {constraints}\n}",
   "violation": "Violation",
