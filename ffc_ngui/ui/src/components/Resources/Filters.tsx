@@ -140,10 +140,11 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
       { key: "tag", data: filters.tag },
       { key: "withoutTag", data: filters.without_tag },
       { key: "networkTrafficFrom", data: filters.traffic_from },
-      { key: "networkTrafficTo", data: filters.traffic_to },
-      { key: "k8sNode", data: filters.k8s_node },
-      { key: "k8sService", data: filters.k8s_service },
-      { key: "k8sNamespace", data: filters.k8s_namespace }
+      { key: "networkTrafficTo", data: filters.traffic_to }
+      // MPT_TODO: Add back k8s filters when API supports them
+      // { key: "k8sNode", data: filters.k8s_node },
+      // { key: "k8sService", data: filters.k8s_service },
+      // { key: "k8sNamespace", data: filters.k8s_namespace }
     ]
   };
 
