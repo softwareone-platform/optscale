@@ -1421,9 +1421,7 @@ class Gcp(CloudBase):
                     sku_text, location, wildcard_prefix=True
                 )
                 for row in self._query_prices(sku_desription_pattern):
-                    machine_family = self._parse_machine_family(
-                        row, sku_desription_pattern
-                    )
+                    machine_family = self._parse_machine_family(row)
                     if not machine_family:
                         continue
                     price = self._parse_price(row, usd)
