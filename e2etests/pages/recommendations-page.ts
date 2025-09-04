@@ -1,11 +1,6 @@
-import {
-    GeminisResponse,
-    OptimisationsResponse, OptionsResponse, RIBreakdownResponse, SPBreakdownResponse, SummaryExpensesResponse
-} from "../mocks/recommendations-page-resp";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {test} from "../fixtures/page-fixture";
+import {test} from "../fixtures/page-object-fixtures";
 import {debugLog} from "../utils/debug-logging";
 
 /**
@@ -307,28 +302,6 @@ export class RecommendationsPage extends BasePage {
             (this as any)[`${key}TableSavingsValue`] = this.table.locator(`//button[contains(text(), "${label}")]/ancestor::td/following-sibling::td[3]`);
         }
         this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
-    }
-
-    /**
-     * Sets up API interceptions for the Recommendations page.
-     * Intercepts API requests and provides mock responses.
-     * @returns {Promise<void>}
-     */
-    async setupApiInterceptions(): Promise<void> {
-        const apiInterceptions: IInterceptorConfig[] = [
-            {page: this.page, urlPattern: `/v2/organizations/[^/]+/geminis`, mockResponse: GeminisResponse},
-            {page: this.page, urlPattern: `/v2/organizations/[^/]+/options`, mockResponse: OptionsResponse},
-            {page: this.page, urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mockResponse: RIBreakdownResponse},
-            {page: this.page, urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mockResponse: SPBreakdownResponse},
-            {
-                page: this.page,
-                urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
-                mockResponse: SummaryExpensesResponse
-            },
-            {page: this.page, urlPattern: `/v2/organizations/[^/]+/optimizations`, mockResponse: OptimisationsResponse}
-        ];
-
-        await Promise.all(apiInterceptions.map(interceptApiRequest));
     }
 
     /**

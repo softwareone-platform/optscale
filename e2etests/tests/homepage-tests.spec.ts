@@ -1,12 +1,12 @@
-import {test} from "../fixtures/page-fixture";
-import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
+
+test.use({restoreSession: true});
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
     test.beforeEach(async ({homePage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
@@ -60,7 +60,6 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 
     test.beforeEach(async ({homePage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
@@ -121,12 +120,6 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 
 test.describe('[MPT-12743] Home Page test for Pools requiring attention block', {tag: ["@ui", "@pools", "@homepage"]}, () => {
     test.describe.configure({mode: 'serial'}); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
-
-    test.beforeEach(async ({homePage, page}) => {
-        await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
-        });
-    });
 
     test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({homePage, poolsPage}) => {
         await test.step('Navigate to home page', async () => {

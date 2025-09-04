@@ -1,7 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../mocks/user-resp";
 
 /**
  * Represents the Users Page.
@@ -19,24 +17,6 @@ export class UsersPage extends BasePage {
     super(page, '/users');
     this.inviteBtn = this.main.getByTestId('btn_invite');
     this.heading = this.main.getByTestId('lbl_users');
-  }
-
-  /**
-   * Sets up API interceptions for the Users page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
-  async setupApiInterceptions(): Promise<void> {
-    const apiInterceptions: IInterceptorConfig[] = [
-      {page: this.page, urlPattern: `/v2/organizations/[^/]+/employees`, mockResponse: EmployeesResponse},
-      {
-        page: this.page,
-        urlPattern: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`,
-        mockResponse: UsersPoolsPermissionsResponse
-      },
-    ];
-
-    await Promise.all(apiInterceptions.map(interceptApiRequest));
   }
 
   /**

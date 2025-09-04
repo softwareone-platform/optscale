@@ -53331,7 +53331,7 @@ export const CleanExpensesResponse = {
     "limit": 5000
 }
 
-export const AvailableFiltersResponse = {
+export const ResourceAvailableFiltersResponse = {
     "filter_values": {
         "cloud_account": [
             {

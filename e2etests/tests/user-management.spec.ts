@@ -1,8 +1,21 @@
-import {test} from "../fixtures/page-fixture";
+import {test} from "../fixtures/page-object-fixtures";
 import {getValueFromAuthResponse} from "../utils/auth-session-storage/auth-helpers";
-import {EUserRole} from "../models/enums";
+import {EUserRole} from "../types/enums";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {IInterceptor} from "../utils/api-requests/interceptor";
+import {EmployeesResponse} from "../mocks";
+import {UsersPoolsPermissionsResponse} from "../mocks/user-resp";
+
+const apiInterceptions: IInterceptor[] = [
+    {  urlPattern: `/v2/organizations/[^/]+/employees`, mock: EmployeesResponse},
+    {
+
+        urlPattern: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`,
+        mock: UsersPoolsPermissionsResponse
+    },
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 
 test.describe.skip("User Management tests", () => {
@@ -16,7 +29,6 @@ test.describe.skip("User Management tests", () => {
 
     test.beforeEach(async ({loginPage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await loginPage.navigateToURL();
         });
     });

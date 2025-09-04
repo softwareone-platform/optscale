@@ -1,15 +1,33 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {
+  GeminisResponse, OptimisationsResponse,
+  OptionsResponse,
+  RIBreakdownResponse,
+  SPBreakdownResponse,
+  SummaryExpensesResponse
+} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {urlPattern: `/v2/organizations/[^/]+/geminis`, mock: GeminisResponse},
+  {urlPattern: `/v2/organizations/[^/]+/options`, mock: OptionsResponse},
+  {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownResponse},
+  {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownResponse},
+  {
+    urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
+    mock: SummaryExpensesResponse
+  },
+  {urlPattern: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsResponse}
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Recommendations @swo_regression', () => {
   test('Recommendations page matches screenshots', async ({recommendationsPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
-      await recommendationsPage.setupApiInterceptions();
       await recommendationsPage.navigateToURL();
     });
 

@@ -1,16 +1,25 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {PolicyResponse, TaggingPolicyResponse} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {
+    urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`,
+    mock: PolicyResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`,
+    mock: TaggingPolicyResponse
+  },
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Policies @swo_regression', () => {
   test('Policies page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await policiesPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Policies page', async () => {
       await policiesPage.navigateToURL();
@@ -26,7 +35,10 @@ test.describe('FFC: Policies @swo_regression', () => {
     await test.step('Create policy page', async () => {
       await policiesPage.clickAddBtn();
       await policiesCreatePage.heading.hover();
-      await policiesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
+      await policiesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', {
+        state: 'visible',
+        timeout: 20000
+      });
       await policiesPage.screenshotUpdateDelay();
       await roundElementDimensions(policiesCreatePage.main);
       await expect(policiesCreatePage.main).toHaveScreenshot('Policies-create-screenshot.png');
@@ -34,9 +46,9 @@ test.describe('FFC: Policies @swo_regression', () => {
   })
 
   test('Tagging Policies page matches screenshots', async ({
-                                                                             taggingPoliciesPage,
-                                                                             taggingPoliciesCreatePage
-                                                                           }) => {
+                                                             taggingPoliciesPage,
+                                                             taggingPoliciesCreatePage
+                                                           }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await taggingPoliciesPage.setupApiInterceptions();
@@ -55,7 +67,10 @@ test.describe('FFC: Policies @swo_regression', () => {
 
     await test.step('Create tagging policy page', async () => {
       await taggingPoliciesPage.clickAddBtn();
-      await taggingPoliciesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', { state: 'visible', timeout: 20000 });
+      await taggingPoliciesCreatePage.page.waitForSelector('[data-testid="btn_suggestion_filter"]', {
+        state: 'visible',
+        timeout: 20000
+      });
       await taggingPoliciesCreatePage.heading.hover();
       await taggingPoliciesPage.screenshotUpdateDelay();
       await roundElementDimensions(taggingPoliciesCreatePage.main);

@@ -1,4 +1,4 @@
-import { EStorageStatePath } from "../models/enums";
+import { EStorageStatePath } from "../types/enums";
 import { test as setup } from "@playwright/test";
 import {getLocalforageRoot, injectLocalforage} from "../utils/auth-session-storage/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";

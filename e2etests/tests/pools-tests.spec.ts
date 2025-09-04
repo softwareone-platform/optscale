@@ -1,5 +1,4 @@
-import {test} from "../fixtures/page-fixture";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 import {debugLog} from "../utils/debug-logging";
@@ -14,13 +13,14 @@ function calculateMultiplier(forecast: number, limit: number): number {
     return Math.round((forecast / limit) * 10) / 10; // Round to 1 decimal place
 }
 
+test.use({restoreSession: true});
+
 //TODO: Add test for Actions including adding sub-pool, editing sub-pool, deleting sub-pool, and editing pool, changing owner.
 // Also test for error validation when trying to delete a pool limit when a sub-pool still has a limit set. Tests for tooltips showing calculated values.
 test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
     test.describe.configure({mode: 'default'}); // Test in this block are state dependent, so they can't run in parallel with other tests in this block
 
     test.beforeEach(async ({page, poolsPage}) => {
-        await restoreUserSessionInLocalForage(page);
         await poolsPage.navigateToURL();
         await poolsPage.expandMoreIcon.waitFor();
         if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();

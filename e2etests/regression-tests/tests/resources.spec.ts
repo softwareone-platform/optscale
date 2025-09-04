@@ -1,14 +1,55 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {
+  AllowedActionsSunflowerEUResponse,
+  BreakdownExpensesResponse, BreakdownTagsResponse,
+  CleanExpensesResponse, LimitHitsResponse, RawExpensesResponse,
+  ResourceAvailableFiltersResponse, ResourceDetailsResponse, ResourcesCountResponse,
+  SummaryExpensesResponse
+} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptionsDashboard: IInterceptor[] = [
+  {
+    urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
+    mock: SummaryExpensesResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`,
+    mock: BreakdownExpensesResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/clean_expenses`,
+    mock: CleanExpensesResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/available_filters`,
+    mock: ResourceAvailableFiltersResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/resources_count`,
+    mock: ResourcesCountResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/breakdown_tags`,
+    mock: BreakdownTagsResponse
+  },
+];
+
+const apiInterceptionsDetails: IInterceptor[] = [
+  {urlPattern: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsResponse},
+  {urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsResponse},
+  {urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUResponse},
+  {urlPattern: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesResponse},
+];
+
+test.use({restoreSession: true, interceptAPI: {list: [...apiInterceptionsDashboard, ... apiInterceptionsDetails]} });
 
 test.describe('FFC: Resources @swo_regression', () => {
   test('Resources dashboard page matches screenshots', async ({resourcesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
-      await resourcesPage.setupApiInterceptions();
       await resourcesPage.navigateToURL();
     });
 
@@ -56,12 +97,8 @@ test.describe('FFC: Resources @swo_regression', () => {
                                                                              resourcesPage,
                                                                              resourceDetailsPage
                                                                            }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await resourcesPage.setupApiInterceptions();
-      await resourceDetailsPage.setupApiInterceptions();
-    });
 
+    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
       await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
       await resourcesPage.waitForCanvas();

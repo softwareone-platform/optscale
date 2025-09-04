@@ -1,7 +1,5 @@
 import {Locator, Page} from "@playwright/test";
     import {BasePage} from "./base-page";
-    import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-    import {TaggingPolicyResponse} from "../mocks/tagging-resp";
 
     /**
      * Represents the Tagging Policies Page.
@@ -19,19 +17,6 @@ import {Locator, Page} from "@playwright/test";
             super(page, '/tagging-policies');
             this.heading = this.main.getByTestId('lbl_tagging_policies');
             this.addBtn = this.main.getByTestId('btn_add');
-        }
-
-        /**
-         * Sets up API interceptions for the Tagging Policies page.
-         * Intercepts API requests and provides mock responses.
-         * @returns {Promise<void>}
-         */
-        async setupApiInterceptions(): Promise<void> {
-            const apiInterceptions: IInterceptorConfig[] = [
-                {page: this.page, urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`, mockResponse: TaggingPolicyResponse},
-            ];
-
-            await Promise.all(apiInterceptions.map(interceptApiRequest));
         }
 
         /**

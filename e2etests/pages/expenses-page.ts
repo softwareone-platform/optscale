@@ -1,12 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-import {
-  PoolsExpensesOwnerResponse,
-  PoolsExpensesPoolResponse,
-  PoolsExpensesResponse,
-  PoolsExpensesSourceResponse
-} from "../mocks/expenses-resp";
 
 /**
  * Represents the Expenses Page.
@@ -51,35 +44,6 @@ export class ExpensesPage extends BasePage {
     this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
     this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
   }
-
-  /**
-   * Sets up API interceptions for the Expenses page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
-  async setupApiInterceptions(): Promise<void> {
-    const apiInterceptions: IInterceptorConfig[] = [
-      {
-        page: this.page,
-        urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`,
-        mockResponse: PoolsExpensesSourceResponse
-      },
-      {page: this.page, urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mockResponse: PoolsExpensesPoolResponse},
-      {
-        page: this.page,
-        urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`,
-        mockResponse: PoolsExpensesOwnerResponse
-      },
-      {
-        page: this.page,
-        urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
-        mockResponse: PoolsExpensesResponse
-      },
-    ];
-
-    await Promise.all(apiInterceptions.map(interceptApiRequest));
-  }
-
   /**
    * Clicks the daily button if it is not already selected.
    * @returns {Promise<void>}

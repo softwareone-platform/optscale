@@ -2725,7 +2725,7 @@ export const OptimizationsResponse = {
     "last_completed": 1748311728
 }
 
-export const DataSourcesResponse = {
+export const HomeDataSourcesResponse = {
     "data": {
     "dataSources": [
         {

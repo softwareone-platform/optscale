@@ -22713,7 +22713,7 @@ export const AvailableFiltersResponse = {
     }
 }
 
-export const SummaryExpensesResponse = {
+export const ResourceSummaryExpensesResponse = {
     "start_date": 1751328000,
     "end_date": 1752537599,
     "total_count": 3494,

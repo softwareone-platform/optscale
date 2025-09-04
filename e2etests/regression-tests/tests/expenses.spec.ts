@@ -1,16 +1,36 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {
+  PoolsExpensesOwnerResponse,
+  PoolsExpensesPoolResponse,
+  PoolsExpensesResponse,
+  PoolsExpensesSourceResponse, RegionExpensesResp
+} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {
+    urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`,
+    mock: PoolsExpensesSourceResponse
+  },
+  {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolResponse},
+  {
+    urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`,
+    mock: PoolsExpensesOwnerResponse
+  },
+  {
+    urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
+    mock: PoolsExpensesResponse
+  },
+  { urlPattern: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesResp}
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Expenses @swo_regression', () => {
   test('Expenses dashboard page matches screenshots', async ({expensesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await expensesPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL();
@@ -46,7 +66,6 @@ test.describe('FFC: Expenses @swo_regression', () => {
 
   test("Expenses Map page matches screenshots", async ({expensesMapPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await expensesMapPage.setupApiInterceptions();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
     await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png');
@@ -54,9 +73,6 @@ test.describe('FFC: Expenses @swo_regression', () => {
 
   test('Expenses breakdowns page matches screenshots', async ({expensesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await expensesPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL();

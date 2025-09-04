@@ -1,17 +1,22 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {EventsResponse} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {
+    mock: EventsResponse,
+    graphQlOperationName: "events"
+  },
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Events @swo_regression', () => {
 
   test('Events page matches screenshots', async ({eventsPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await eventsPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Events page', async () => {
       await eventsPage.navigateToURL();

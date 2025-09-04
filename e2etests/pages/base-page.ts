@@ -38,6 +38,10 @@ export abstract class BasePage {
         this.successColor = 'rgb(0, 120, 77)'; // Default color for success state
     }
 
+    // async setupApiInterceptions(apiInterceptions: IInterceptor[]): Promise<void> {
+    //     await apiInterceptors(this.page, apiInterceptions);
+    // }
+
     /**
      * Navigates to the URL of the page.
      * @returns {Promise<void>} A promise that resolves when the navigation is complete.

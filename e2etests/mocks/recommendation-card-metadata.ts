@@ -1,13 +1,7 @@
-import {RecommendationsPage} from "../pages/recommendations-page";
-import {Locator} from "@playwright/test";
+import {RecommendationsPage} from "../pages";
+import {CardSavingsData} from "../types/api-response.types";
 
-export type CardSavingsData = {
-    name: string;
-    cardLocator: Locator;
-    seeAllBtn: Locator;
-    tableLocator: Locator;
-    modalColumnLocator: Locator;
-};
+
 
 export const getCardSavingsData = (recommendationsPage: RecommendationsPage): CardSavingsData[] => [
     {

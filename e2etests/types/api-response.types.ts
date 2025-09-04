@@ -1,3 +1,5 @@
+import {Locator} from "@playwright/test";
+
 export interface AuthResponse {
   created_at: string;
   digest: string;
@@ -244,3 +246,11 @@ export interface K8sServiceExpensesResponse {
   counts: Record<string, K8sServiceSummary>;
   breakdown: Record<string, Record<string, K8sServiceBreakdownItem>>;
 }
+
+export type CardSavingsData = {
+  name: string;
+  cardLocator: Locator;
+  seeAllBtn: Locator;
+  tableLocator: Locator;
+  modalColumnLocator: Locator;
+};

@@ -1,11 +1,5 @@
 import {BasePage} from "./base-page";
         import {Locator, Page} from "@playwright/test";
-        import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-        import {
-            AllowedActionsSunflowerEUResponse,
-            LimitHitsResponse, RawExpensesResponse,
-            ResourceDetailsResponse
-        } from "../mocks/resource-details-resp";
 
         /**
          * Represents the Resource Details Page.
@@ -55,22 +49,6 @@ import {BasePage} from "./base-page";
                 this.table = this.main.locator('table');
                 this.tableColumn2 = this.table.locator('//td[2]')
                 this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
-            }
-
-            /**
-             * Sets up API interceptions for the Resource Details page.
-             * Intercepts API requests and provides mock responses.
-             * @returns {Promise<void>}
-             */
-            async setupApiInterceptions(): Promise<void> {
-                const apiInterceptions: IInterceptorConfig[] = [
-                    {page: this.page, urlPattern: `v2/cloud_resources/[^/]+?details=true`, mockResponse: ResourceDetailsResponse},
-                    {page: this.page, urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mockResponse: LimitHitsResponse},
-                    {page: this.page, urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mockResponse: AllowedActionsSunflowerEUResponse},
-                    {page: this.page, urlPattern: `v2/resources/[^/]+/raw_expenses`, mockResponse: RawExpensesResponse},
-                ];
-
-                await Promise.all(apiInterceptions.map(interceptApiRequest));
             }
 
             /**

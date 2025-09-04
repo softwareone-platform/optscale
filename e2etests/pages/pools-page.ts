@@ -1,7 +1,7 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-import {AllowedActionsPoolResponse, PoolResponse} from "../mocks/pools-resp";
+import {IInterceptor, apiInterceptors} from "../utils/api-requests/interceptor";
+import {AllowedActionsPoolResponse, PoolResponse} from "../mocks";
 import {debugLog} from "../utils/debug-logging";
 
 /**
@@ -156,16 +156,15 @@ export class PoolsPage extends BasePage {
      * @returns {Promise<void>}
      */
     async setupApiInterceptions(): Promise<void> {
-        const apiInterceptions: IInterceptorConfig[] = [
-            {page: this.page, urlPattern: `v2/pools/[^/]+?children=true&details=true`, mockResponse: PoolResponse},
+        const apiInterceptions: IInterceptor[] = [
+            {urlPattern: `v2/pools/[^/]+?children=true&details=true`, mock: PoolResponse},
             {
-                page: this.page,
                 urlPattern: `v2/allowed_actions\\?pool=[^&]+.*`,
-                mockResponse: AllowedActionsPoolResponse
+                mock: AllowedActionsPoolResponse
             },
         ];
 
-        await Promise.all(apiInterceptions.map(interceptApiRequest));
+        await apiInterceptors(this.page, apiInterceptions);
     }
 
     /**

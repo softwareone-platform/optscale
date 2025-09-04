@@ -25,7 +25,7 @@ export class PendingInvitationsPage extends BasePage {
      * Accepts an invitation by clicking the confirm, proceed, and accept buttons.
      * @returns {Promise<void>}
      */
-    async acceptInviteFlow() {
+    async acceptInviteFlow(): Promise<void> {
 
         await this.acceptBtn.click();
     }

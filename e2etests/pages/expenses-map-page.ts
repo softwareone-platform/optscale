@@ -1,7 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/api-requests/interceptor";
-import {RegionExpensesResp} from "../mocks/region-expenses-resp";
 
 /**
  * Represents the Expenses Page.
@@ -17,18 +15,5 @@ export class ExpensesMapPage extends BasePage {
   constructor(page: Page) {
     super(page, '/expenses-map');
     this.heading = this.main.locator('//h1[contains(text(), "Cost map")]');
-  }
-
-  /**
-   * Sets up API interceptions for the Expenses page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
-  async setupApiInterceptions(): Promise<void> {
-    const apiInterceptions: IInterceptorConfig[] = [
-      {page: this.page, urlPattern: `/v2/organizations/[^/]+/region_expenses?.*$`, mockResponse: RegionExpensesResp}
-    ];
-
-    await Promise.all(apiInterceptions.map(interceptApiRequest));
   }
 }

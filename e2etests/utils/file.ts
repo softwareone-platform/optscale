@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { EStorageStatePath } from "../models/enums";
+import { EStorageStatePath } from "../types/enums";
 
 export function safeWriteJsonFile(filePath: string, data: any) {
   const dir = path.dirname(filePath);

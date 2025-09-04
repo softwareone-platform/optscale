@@ -1,13 +1,13 @@
-import {test} from "../fixtures/page-fixture";
+import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
-import {getCardSavingsData} from "../mocks/recommendation-card-metadata";
+import {getCardSavingsData} from "../mocks";
 import {expectWithinDrift} from "../utils/custom-assertions";
+
+test.use({restoreSession: true});
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
     test.beforeEach(async ({recommendationsPage, page}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();
         });

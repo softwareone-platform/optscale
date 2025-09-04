@@ -2,9 +2,15 @@ import {test as base, type Page} from '@playwright/test';
 import * as Pages from '../pages';
 import {LiveDemoService} from '../utils/auth-session-storage/auth-helpers';
 import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {BaseRequest} from "../utils/api-requests/base-request";
+import {apiInterceptors, IInterceptor} from "../utils/api-requests/interceptor";
 
 interface Options {
+  baseRequest: BaseRequest;
   restoreSession?: boolean;
+  interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
+    list: IInterceptor[];
+  }
 }
 
 // Generic "new (page) => instance" type for Page Objects
@@ -75,12 +81,24 @@ const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
   restoreSession: [false, {option: true}],
+  interceptAPI: {list: []}, // default empty list, can be overridden per test
 
-  page: async ({page, restoreSession}, use) => {
+
+  page: async ({page, restoreSession, interceptAPI}, use) => {
+
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, true);
     }
+    if (interceptAPI.list.length > 0) {
+      await apiInterceptors(page, interceptAPI.list);
+    }
+
     await use(page);
+    await apiInterceptors(page, []); // Clear all interceptors after each test
+  },
+
+  baseRequest: async ({request}, use) => {
+    await use(new BaseRequest(request));
   },
 
   storageState: async ({}, use) => {

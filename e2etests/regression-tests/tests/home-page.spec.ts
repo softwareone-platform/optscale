@@ -1,16 +1,47 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {restoreUserSessionInLocalForage} from "../../utils/auth-session-storage/localforage-service";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {
+  AllowedActionsResponse,
+  HomeDataSourcesResponse, OptimizationsResponse,
+  OrganizationCleanExpansesResponseGraphQL, OrganizationConstraintsResponse,
+  OrganizationExpensesPoolsResponse, PoolsResponse
+} from "../../mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {
+    urlPattern: `/v2/organizations/[^/]+/pool_expenses`,
+    mock: OrganizationExpensesPoolsResponse
+  },
+  {
+    graphQlOperationName: 'CleanExpenses',
+    mock: OrganizationCleanExpansesResponseGraphQL
+  },
+  {
+    graphQlOperationName: 'DataSources',
+    mock: HomeDataSourcesResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/optimizations`,
+    mock: OptimizationsResponse
+  },
+  {
+    urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
+    mock: OrganizationConstraintsResponse
+  },
+  {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsResponse},
+  {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsResponse}
+];
+
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Home @swo_regression', () => {
 
   test('Homepage blocks against baseline screenshots', async ({homePage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
-      await homePage.setupApiInterceptions();
       await homePage.navigateToURL();
       await homePage.waitForAllCanvases();
       await homePage.screenshotUpdateDelay();

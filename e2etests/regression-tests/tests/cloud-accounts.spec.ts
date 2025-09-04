@@ -1,19 +1,30 @@
-import {test} from "../../fixtures/page-fixture";
+import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {CloudAccountsResponse, DataSourcesResponse} from "../../mocks";
 
-test.use({restoreSession: true});
+const interceptorList: IInterceptor[] = [
+  {
+    urlPattern: `v2/pools/[^/]+?children=false&details=false`,
+    mock: CloudAccountsResponse,
+  },
+  {
+    mock: DataSourcesResponse,
+    graphQlOperationName: "DataSources",
+  },
+];
+
+test.use({restoreSession: true, interceptAPI: { list: interceptorList }});
+
 
 test.describe('FFC: Cloud Account @swo_regression', () => {
-
   test('Cloud Account page matches screenshots', async ({
                                                                           cloudAccountsPage,
                                                                           cloudAccountsConnectPage
                                                                         }) => {
+
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await cloudAccountsPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Cloud Accounts page', async () => {
       await cloudAccountsPage.navigateToURL();

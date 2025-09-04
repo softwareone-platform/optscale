@@ -2,7 +2,7 @@ import {APIRequestContext, Page} from "@playwright/test";
 import fs from "fs";
 import path from "path";
 
-export class RestAPIRequest {
+export class OrganizationsRequest {
     readonly request: APIRequestContext;
     readonly organizationsEndpoint: string;
 

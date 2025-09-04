@@ -108,4 +108,4 @@ The `global-setup.ts` is executed before the test suite begins and is used to co
 
 ## Fixtures
 Fixtures are used to allow tests to share page objects and methods from the page and request classes, without having to create new instances for each test.
-The `page-fixture.ts` also shares the user session saved as a project dependency in the playwright.config.ts file, allowing the session to be reused and negates logging in before each test.
+The `page-object-fixtures.ts` also shares the user session saved as a project dependency in the playwright.config.ts file, allowing the session to be reused and negates logging in before each test.

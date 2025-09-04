@@ -1,6 +1,6 @@
-import { test } from "../fixtures/api-fixture";
+import { test } from "../fixtures/page-object-fixtures";
 import { expect } from "@playwright/test";
-import {AuthResponse, UsersResponse} from "../models/test-data-response-types";
+import {AuthResponse, UsersResponse} from "../types/api-response.types";
 import {generateRandomEmail} from "../utils/random-data-generator";
 
 test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
@@ -8,8 +8,8 @@ test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
     const password = process.env.DEFAULT_USER_PASSWORD;
     const userId = process.env.DEFAULT_USER_ID;
 
-    test("Set verification codes", async ({ authRequest }) => {
-        const response = await authRequest.setVerificationCode(email, "123456");
+    test("Set verification codes", async ({ baseRequest }) => {
+        const response = await baseRequest.setVerificationCode(email, "123456");
 
         await test.step("Verify response status and payload fields", async () => {
             expect(response.status()).toBe(201);
@@ -17,8 +17,8 @@ test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
 
     });
 
-    test("Authorize user payload", async ({ authRequest }) => {
-        const response = await authRequest.authorization(email, password);
+    test("Authorize user payload", async ({ baseRequest }) => {
+        const response = await baseRequest.authorization(email, password);
         const payload = JSON.parse(await response.text()) as AuthResponse;
 
         await test.step("Verify response status and payload fields", async () => {
@@ -40,25 +40,25 @@ test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
         });
     });
 
-    test("Authorize user with invalid credentials", async ({ authRequest }) => {
-        const response = await authRequest.authorization(email, 'invalidPassword');
+    test("Authorize user with invalid credentials", async ({ baseRequest }) => {
+        const response = await baseRequest.authorization(email, 'invalidPassword');
         expect(response.status()).toBe(403);
     });
 
-    test("Authorize user with invalid email", async ({ authRequest }) => {
+    test("Authorize user with invalid email", async ({ baseRequest }) => {
         const invalidEmail= generateRandomEmail();
-        const response = await authRequest.authorization(invalidEmail, password);
+        const response = await baseRequest.authorization(invalidEmail, password);
         expect(response.status()).toBe(403);
     })
 
-    test("Authorize user with empty email", async ({ authRequest }) => {
-        const response = await authRequest.authorization('', password);
+    test("Authorize user with empty email", async ({ baseRequest }) => {
+        const response = await baseRequest.authorization('', password);
         expect(response.status()).toBe(400);
     })
 
-    test("Get users with Cluster Secret", async ({ authRequest }) => {
+    test("Get users with Cluster Secret", async ({ baseRequest }) => {
         const email = process.env.DEFAULT_USER_EMAIL.toLowerCase();
-        const response = await authRequest.getUsersWithClusterSecret(userId);
+        const response = await baseRequest.getUsersWithClusterSecret(userId);
         const payload = JSON.parse(await response.text()) as UsersResponse;
 
         expect(response.status()).toBe(200);
@@ -80,18 +80,18 @@ test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
         }
     })
 
-    test("Get user with Cluster Secret but no user ID", async ({ authRequest }) => {
-        const response = await authRequest.getUsersWithClusterSecret();
+    test("Get user with Cluster Secret but no user ID", async ({ baseRequest }) => {
+        const response = await baseRequest.getUsersWithClusterSecret();
         expect(response.status()).toBe(401);
     })
 
-    test("Get user with Cluster Secret and invalid user ID", async ({ authRequest }) => {
-        const response = await authRequest.getUsersWithClusterSecret('invalidUserID');
+    test("Get user with Cluster Secret and invalid user ID", async ({ baseRequest }) => {
+        const response = await baseRequest.getUsersWithClusterSecret('invalidUserID');
         expect(response.status()).toBe(404);
     })
 
-    test("Get users with bad cluster secret", async ({ authRequest }) => {
-        const response = await authRequest.getUsersWithBadClusterSecret(userId);
+    test("Get users with bad cluster secret", async ({ baseRequest }) => {
+        const response = await baseRequest.getUsersWithBadClusterSecret(userId);
         expect(response.status()).toBe(403);
     })
 
