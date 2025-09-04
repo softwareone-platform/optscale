@@ -44,6 +44,7 @@ export class ExpensesPage extends BasePage {
     this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
     this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
   }
+
   /**
    * Clicks the daily button if it is not already selected.
    * @returns {Promise<void>}

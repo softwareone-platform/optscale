@@ -21,7 +21,7 @@ export async function getLocalforageRoot(page: Page) {
 }
 
 export async function restoreUserSessionInLocalForage(page: Page, setTime = false) {
-  const sessionData =  safeReadJsonFile(LiveDemoService.getDefaultUserStorageState());
+  const sessionData = safeReadJsonFile(LiveDemoService.getDefaultUserStorageState());
   await page.goto('/', {waitUntil: 'domcontentloaded'});
   await injectLocalforage(page);
   await page.evaluate((data) => {

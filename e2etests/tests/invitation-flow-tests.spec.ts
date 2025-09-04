@@ -16,7 +16,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
     invitationEmail = generateRandomEmail();
     inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
     emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
-
+    await restoreUserSessionInLocalForage(page);
     await loginPage.navigateToURL()
   });
 

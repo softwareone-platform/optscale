@@ -3,27 +3,26 @@ import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
 import {
-  PoolsExpensesOwnerResponse,
-  PoolsExpensesPoolResponse,
-  PoolsExpensesResponse,
-  PoolsExpensesSourceResponse, RegionExpensesResp
-} from "../../mocks";
+  PoolsExpensesOwnerRegressionResponse,
+  PoolsExpensesPoolRegressionResponse, PoolsExpensesRegressionResponse,
+  PoolsExpensesSourceRegressionResponse, RegionExpensesRegressionResponse
+} from "../mocks/expenses.mocks";
 
 const apiInterceptions: IInterceptor[] = [
   {
     urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`,
-    mock: PoolsExpensesSourceResponse
+    mock: PoolsExpensesSourceRegressionResponse
   },
-  {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolResponse},
+  {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
   {
     urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`,
-    mock: PoolsExpensesOwnerResponse
+    mock: PoolsExpensesOwnerRegressionResponse
   },
   {
     urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
-    mock: PoolsExpensesResponse
+    mock: PoolsExpensesRegressionResponse
   },
-  { urlPattern: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesResp}
+  {urlPattern: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse}
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});

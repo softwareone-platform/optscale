@@ -2,49 +2,53 @@ import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
+
 import {
-  AllowedActionsSunflowerEUResponse,
-  BreakdownExpensesResponse, BreakdownTagsResponse,
-  CleanExpensesResponse, LimitHitsResponse, RawExpensesResponse,
-  ResourceAvailableFiltersResponse, ResourceDetailsResponse, ResourcesCountResponse,
-  SummaryExpensesResponse
-} from "../../mocks";
+  BreakdownExpensesRegressionResponse, BreakdownTagsRegressionResponse,
+  CleanExpensesRegressionResponse,
+  ResourceAvailableFiltersRegressionResponse, ResourcesCountRegressionResponse, SummaryRegressionResponse
+} from "../mocks/resources.mocks";
+import {
+  AllowedActionsSunflowerEURegressionResponse,
+  LimitHitsRegressionResponse, RawExpensesRegressionResponse,
+  ResourceDetailsRegressionResponse,
+} from "../mocks/resource.mocks";
 
 const apiInterceptionsDashboard: IInterceptor[] = [
   {
     urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
-    mock: SummaryExpensesResponse
+    mock: SummaryRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`,
-    mock: BreakdownExpensesResponse
+    mock: BreakdownExpensesRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/clean_expenses`,
-    mock: CleanExpensesResponse
+    mock: CleanExpensesRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/available_filters`,
-    mock: ResourceAvailableFiltersResponse
+    mock: ResourceAvailableFiltersRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/resources_count`,
-    mock: ResourcesCountResponse
+    mock: ResourcesCountRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/breakdown_tags`,
-    mock: BreakdownTagsResponse
+    mock: BreakdownTagsRegressionResponse
   },
 ];
 
 const apiInterceptionsDetails: IInterceptor[] = [
-  {urlPattern: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsResponse},
-  {urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsResponse},
-  {urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUResponse},
-  {urlPattern: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesResponse},
+  {urlPattern: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsRegressionResponse},
+  {urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsRegressionResponse},
+  {urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEURegressionResponse},
+  {urlPattern: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesRegressionResponse},
 ];
 
-test.use({restoreSession: true, interceptAPI: {list: [...apiInterceptionsDashboard, ... apiInterceptionsDetails]} });
+test.use({restoreSession: true, interceptAPI: {list: [...apiInterceptionsDashboard, ...apiInterceptionsDetails]}});
 
 test.describe('FFC: Resources @swo_regression', () => {
   test('Resources dashboard page matches screenshots', async ({resourcesPage}) => {
@@ -94,9 +98,9 @@ test.describe('FFC: Resources @swo_regression', () => {
   })
 
   test('Resource details page matches screenshots', async ({
-                                                                             resourcesPage,
-                                                                             resourceDetailsPage
-                                                                           }) => {
+                                                             resourcesPage,
+                                                             resourceDetailsPage
+                                                           }) => {
 
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {

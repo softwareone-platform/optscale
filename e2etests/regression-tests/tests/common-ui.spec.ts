@@ -3,35 +3,35 @@ import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
 import {
-  AllowedActionsResponse,
-  HomeDataSourcesResponse, OptimizationsResponse,
-  OrganizationCleanExpansesResponseGraphQL, OrganizationConstraintsResponse,
-  OrganizationExpensesPoolsResponse, PoolsResponse
-} from "../../mocks";
+  AllowedActionsRegressionResponse,
+  HomeDataSourcesRegressionResponse, OptimizationsRegressionResponse,
+  OrganizationCleanExpansesRegressionResponse, OrganizationConstraintsRegressionResponse,
+  OrganizationExpensesPoolsRegressionResponse, PoolsRegressionResponse
+} from "../mocks/homepage.mocks";
 
 const apiInterceptions: IInterceptor[] = [
   {
     urlPattern: `/v2/organizations/[^/]+/pool_expenses`,
-    mock: OrganizationExpensesPoolsResponse
+    mock: OrganizationExpensesPoolsRegressionResponse
   },
   {
     graphQlOperationName: 'CleanExpenses',
-    mock: OrganizationCleanExpansesResponseGraphQL
+    mock: OrganizationCleanExpansesRegressionResponse
   },
   {
     graphQlOperationName: 'DataSources',
-    mock: HomeDataSourcesResponse
+    mock: HomeDataSourcesRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/optimizations`,
-    mock: OptimizationsResponse
+    mock: OptimizationsRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
-    mock: OrganizationConstraintsResponse
+    mock: OrganizationConstraintsRegressionResponse
   },
-  {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsResponse},
-  {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsResponse}
+  {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsRegressionResponse},
+  {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsRegressionResponse}
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});

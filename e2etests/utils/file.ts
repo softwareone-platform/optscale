@@ -1,13 +1,13 @@
 import fs from "fs";
 import path from "path";
-import { EStorageStatePath } from "../types/enums";
+import {EStorageStatePath} from "../types/enums";
 
 export function safeWriteJsonFile(filePath: string, data: any) {
   const dir = path.dirname(filePath);
 
   // Create directories recursively if they don't exist
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+    fs.mkdirSync(dir, {recursive: true});
   }
 
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));

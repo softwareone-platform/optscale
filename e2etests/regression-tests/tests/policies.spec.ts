@@ -2,16 +2,16 @@ import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
-import {PolicyResponse, TaggingPolicyResponse} from "../../mocks";
+import {PolicyRegressionResponse, TaggingPolicyRegressionResponse} from "../mocks/policies.mocks";
 
 const apiInterceptions: IInterceptor[] = [
   {
     urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`,
-    mock: PolicyResponse
+    mock: PolicyRegressionResponse
   },
   {
     urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`,
-    mock: TaggingPolicyResponse
+    mock: TaggingPolicyRegressionResponse
   },
 ];
 
@@ -50,9 +50,6 @@ test.describe('FFC: Policies @swo_regression', () => {
                                                              taggingPoliciesCreatePage
                                                            }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await taggingPoliciesPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Tagging Policies page', async () => {
       await taggingPoliciesPage.navigateToURL();

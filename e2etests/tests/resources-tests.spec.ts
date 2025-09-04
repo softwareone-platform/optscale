@@ -32,8 +32,7 @@ import {
   BreakdownExpensesByResourceTypeResponse,
   BreakdownExpensesByServiceResponse,
   ResourceSummaryExpensesResponse
-} from "../mocks";
-
+} from "../mocks/resources-page.mocks";
 const apiInterceptions: IInterceptor[] = [
   {
     urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
@@ -747,7 +746,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
-  test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
+  test.beforeEach('Login admin user', async ({resourcesPage}) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');

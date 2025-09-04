@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env.local
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+dotenv.config({path: path.resolve(__dirname, '.env.local')});
 
 const baseURL = process.env.BASE_URL || 'http://0.0.0.0:4000';
 

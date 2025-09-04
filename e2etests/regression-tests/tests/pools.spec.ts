@@ -1,16 +1,23 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
+import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {AllowedActionsPoolRegressionResponse, PoolRegressionResponse} from "../mocks/pools.mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+  {urlPattern: `v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse},
+  {
+    urlPattern: `v2/allowed_actions\\?pool=[^&]+.*`,
+    mock: AllowedActionsPoolRegressionResponse
+  },
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe('FFC: Pools @swo_regression', () => {
 
   test('Pools page matches screenshots', async ({poolsPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Set up test data', async () => {
-      await poolsPage.setupApiInterceptions();
-    });
 
     await test.step('Navigate to Pools page', async () => {
       await poolsPage.navigateToURL();

@@ -26,34 +26,6 @@ export class LiveDemoService {
   private static readonly baseURL: string = process.env.LIVE_DEMO_API || '';
 
   /**
-   * Validates that required environment variables are set for live demo functionality
-   */
-  private static validateEnvironment(): void {
-    if (!this.token || !this.baseURL) {
-      throw new Error(
-        `Live demo environment variables are not properly configured. ` +
-        `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
-        `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!this.baseURL ? 'LIVE_DEMO_API' : ''}`
-      );
-    }
-  }
-
-  /**
-   * Creates a new APIRequestContext with the necessary headers.
-   */
-  private static async createContext(): Promise<APIRequestContext> {
-    this.validateEnvironment();
-
-    return await request.newContext({
-      baseURL: this.baseURL,
-      extraHTTPHeaders: {
-        'X-LiveDemo-Token': this.token,
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-
-  /**
    * Sends a POST request to /restapi/v2/live_demo with given email and subscribe status.
    * @param email - User's email address
    * @param subscribe - Whether the user wants to subscribe
@@ -92,4 +64,32 @@ export class LiveDemoService {
   }
 
   static getDefaultUserStorageState = () => this.shouldUseLiveDemo() ? EStorageStatePath.liveDemoUser : EStorageStatePath.defaultUser;
+
+  /**
+   * Validates that required environment variables are set for live demo functionality
+   */
+  private static validateEnvironment(): void {
+    if (!this.token || !this.baseURL) {
+      throw new Error(
+        `Live demo environment variables are not properly configured. ` +
+        `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
+        `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!this.baseURL ? 'LIVE_DEMO_API' : ''}`
+      );
+    }
+  }
+
+  /**
+   * Creates a new APIRequestContext with the necessary headers.
+   */
+  private static async createContext(): Promise<APIRequestContext> {
+    this.validateEnvironment();
+
+    return await request.newContext({
+      baseURL: this.baseURL,
+      extraHTTPHeaders: {
+        'X-LiveDemo-Token': this.token,
+        'Content-Type': 'application/json',
+      },
+    });
+  }
 }

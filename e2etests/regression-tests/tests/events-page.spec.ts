@@ -2,11 +2,11 @@ import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
-import {EventsResponse} from "../../mocks";
+import {EventsRegressionResponse} from "../mocks/events.mocks";
 
 const apiInterceptions: IInterceptor[] = [
   {
-    mock: EventsResponse,
+    mock: EventsRegressionResponse,
     graphQlOperationName: "events"
   },
 ];

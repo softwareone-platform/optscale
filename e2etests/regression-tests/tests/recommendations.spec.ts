@@ -3,23 +3,24 @@ import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {IInterceptor} from "../../utils/api-requests/interceptor";
 import {
-  GeminisResponse, OptimisationsResponse,
-  OptionsResponse,
-  RIBreakdownResponse,
-  SPBreakdownResponse,
-  SummaryExpensesResponse
-} from "../../mocks";
+  GeminisRegressionResponse,
+  OptionsRegressionResponse,
+  OptimisationsRegressionResponse,
+  RIBreakdownRegressionResponse,
+  SPBreakdownRegressionResponse,
+  SummaryExpensesRegressionResponse
+} from "../mocks/recommendations.mocks";
 
 const apiInterceptions: IInterceptor[] = [
-  {urlPattern: `/v2/organizations/[^/]+/geminis`, mock: GeminisResponse},
-  {urlPattern: `/v2/organizations/[^/]+/options`, mock: OptionsResponse},
-  {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownResponse},
-  {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownResponse},
+  {urlPattern: `/v2/organizations/[^/]+/geminis`, mock: GeminisRegressionResponse},
+  {urlPattern: `/v2/organizations/[^/]+/options`, mock: OptionsRegressionResponse},
+  {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownRegressionResponse},
+  {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownRegressionResponse},
   {
     urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
-    mock: SummaryExpensesResponse
+    mock: SummaryExpensesRegressionResponse
   },
-  {urlPattern: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsResponse}
+  {urlPattern: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsRegressionResponse}
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});

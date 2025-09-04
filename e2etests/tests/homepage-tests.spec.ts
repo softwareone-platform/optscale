@@ -1,11 +1,45 @@
 import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
+import {IInterceptor} from "../utils/api-requests/interceptor";
+import {
+    AllowedActionsResponse,
+    HomeDataSourcesResponse, OptimizationsResponse,
+    OrganizationCleanExpansesResponseGraphQL, OrganizationConstraintsResponse,
+    OrganizationExpensesPoolsResponse, PoolsResponse
+} from "../mocks/homepage.mocks";
 
-test.use({restoreSession: true});
+
+const apiInterceptions: IInterceptor[] = [
+    {
+        urlPattern: `/v2/organizations/[^/]+/pool_expenses`,
+        mock: OrganizationExpensesPoolsResponse
+    },
+    {
+        graphQlOperationName: 'CleanExpenses',
+        mock: OrganizationCleanExpansesResponseGraphQL
+    },
+    {
+        graphQlOperationName: 'DataSources',
+        mock: HomeDataSourcesResponse
+    },
+    {
+        urlPattern: `/v2/organizations/[^/]+/optimizations`,
+        mock: OptimizationsResponse
+    },
+    {
+        urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
+        mock: OrganizationConstraintsResponse
+    },
+    {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsResponse},
+    {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsResponse}
+];
+
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
-    test.beforeEach(async ({homePage, page}) => {
+    test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
@@ -58,7 +92,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
 
 test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
 
-    test.beforeEach(async ({homePage, page}) => {
+    test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
@@ -104,7 +138,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
         });
     });
 
-    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage, resourcesPage}) => {
+    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage}) => {
 
         await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
             const count = await homePage.topResourcesAllLinks.count();

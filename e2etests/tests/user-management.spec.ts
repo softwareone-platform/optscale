@@ -3,8 +3,7 @@ import {getValueFromAuthResponse} from "../utils/auth-session-storage/auth-helpe
 import {EUserRole} from "../types/enums";
 import {expect} from "@playwright/test";
 import {IInterceptor} from "../utils/api-requests/interceptor";
-import {EmployeesResponse} from "../mocks";
-import {UsersPoolsPermissionsResponse} from "../mocks/user-resp";
+import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../mocks/user.mocks";
 
 const apiInterceptions: IInterceptor[] = [
     {  urlPattern: `/v2/organizations/[^/]+/employees`, mock: EmployeesResponse},

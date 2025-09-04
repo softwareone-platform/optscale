@@ -1,7 +1,5 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {apiInterceptors} from "../utils/api-requests/interceptor";
-import {AnomaliesAvailableFilters, AnomaliesConstraintsResponse} from "../mocks/anomalies-resp";
 
 /**
  * Represents the Anomalies Page.

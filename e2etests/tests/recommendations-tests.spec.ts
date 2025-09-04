@@ -1,12 +1,31 @@
 import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
-import {getCardSavingsData} from "../mocks";
 import {expectWithinDrift} from "../utils/custom-assertions";
+import {IInterceptor} from "../utils/api-requests/interceptor";
+import {
+    GeminisResponse, OptimisationsResponse,
+    OptionsResponse,
+    RIBreakdownResponse,
+    SPBreakdownResponse, SummaryExpensesResponse
+} from "../mocks/recommendations-page.mocks";
+import {getCardSavingsData} from "../mocks/recommendation-card-metadata.mocks";
 
-test.use({restoreSession: true});
+const apiInterceptions: IInterceptor[] = [
+    {urlPattern: `/v2/organizations/[^/]+/geminis`, mock: GeminisResponse},
+    {urlPattern: `/v2/organizations/[^/]+/options`, mock: OptionsResponse},
+    {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownResponse},
+    {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownResponse},
+    {
+        urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
+        mock: SummaryExpensesResponse
+    },
+    {urlPattern: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsResponse}
+];
+
+test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
-    test.beforeEach(async ({recommendationsPage, page}) => {
+    test.beforeEach(async ({recommendationsPage}) => {
         await test.step('Login as FinOps user', async () => {
             await recommendationsPage.navigateToURL();
             await recommendationsPage.waitForPageLoaderToDisappear();

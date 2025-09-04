@@ -42,8 +42,6 @@ async function interceptRequest<T>({
                                      graphQlOperationName = null,
                                    }: IInterceptorConfig<T>): Promise<void> {
   await page.route(pattern, async (route, request) => {
-
-
     if (request.method() === "POST" && graphQlOperationName) {
       try {
         const body = JSON.parse(request.postData() || "{}");
