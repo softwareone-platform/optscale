@@ -30,7 +30,7 @@ const GcpTenantCredentials = ({ hidden = [] }: GcpTenantCredentialsProps) => {
 
   const { watch } = useFormContext();
 
-  const automaticallyDetectPricingData = watch(FIELD_NAMES.AUTOMATICALLY_DETECT_PRICING_DATA);
+  const automaticallyDetectPricingData = watch(FIELD_NAMES.AUTOMATICALLY_DETECT_PRICING_DATA) ?? true;
 
   return (
     <>
