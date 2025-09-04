@@ -257,5 +257,5 @@ etcd:
   demo_org_cleanup:
     demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
   diworker:
-    max_report_imports_workers: {{ .Value.import_reports.max_workers }}
+    max_report_imports_workers: {{ .Values.import_reports.max_workers }}
 {{- end }}
