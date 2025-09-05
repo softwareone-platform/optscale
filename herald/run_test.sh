@@ -13,7 +13,7 @@ echo "<<<Linting"
 
 echo "Alembic down revision tests>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
-    "tools/check_alembic_down_revisions/check_alembic_down_revisions.py --alembic_versions_path herald/herald_server/alembic/versions"
+    "uv --project herald run tools/check_alembic_down_revisions/check_alembic_down_revisions.py --alembic_versions_path herald/herald_server/alembic/versions"
 echo "<<Alembic down revision tests"
 
 echo "Unit tests>>>"

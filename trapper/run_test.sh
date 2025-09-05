@@ -11,12 +11,12 @@ do
 
   echo "Pycodestyle tests>>>"
   docker run -i --rm ${TEST_IMAGE}:${BUILD_TAG} bash -c \
-      "pycodestyle --max-line-length=120 trapper"
+      "uv --project trapper run pycodestyle --exclude=.venv --max-line-length=120 trapper"
   echo "<<<Pycodestyle tests"
 
   echo "Pylint tests>>>"
   docker run -i --rm ${TEST_IMAGE}:${BUILD_TAG} \
-      bash -c "cd trapper && pylint --rcfile=.pylintrc --fail-under=9 --fail-on=E,F ./${SERVICE}"
+      bash -c "cd trapper && uv --project trapper run pylint --rcfile=.pylintrc --fail-under=9 --fail-on=E,F ./${SERVICE}"
   echo "<<<Pylint tests"
 
   docker rmi ${TEST_IMAGE}:${BUILD_TAG}
