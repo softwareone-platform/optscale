@@ -19,7 +19,7 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
     test('A successful billing import should have been successful within the last 24 hours', {tag: "@p1"}, async ({page, cloudAccountsPage}) => {
         let dataSourceResponse: DataSourceResponse;
         const now = Math.floor(Date.now() / 1000);
-        const secondsIn24Hours = 24 * 60 * 60;
+        const secondsIn24Hours = 86400;
 
         await test.step('Fetch Data Source Response for first account', async () => {
             const [response] = await Promise.all([

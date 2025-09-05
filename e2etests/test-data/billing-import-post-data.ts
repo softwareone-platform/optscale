@@ -1,21 +1,14 @@
-import {test} from "../../fixtures/api-fixture";
-import {debugLog} from "../../utils/debug-logging";
-import {DataSourceResponse} from "../../test-data/test-data-response-types";
-import {expect} from "@playwright/test";
+export const dataSourceId = process.env.BASE_URL === process.env.DEV
+    ? "c86dfcec-08ba-4007-a617-8f53efbfba06"
+    : process.env.BASE_URL === process.env.TEST
+        ? "9294ab26-47c9-411f-8e62-7734da899f48"
+        : (() => {
+            throw "Data Source ID for this environment is not set";
+        })();
 
-test.describe('Billing import API tests', {tag: ["@api", "@p1"]}, () => {
-
-    const dataSourceId = process.env.BASE_URL === process.env.DEV
-        ? "c86dfcec-08ba-4007-a617-8f53efbfba06"
-        : process.env.BASE_URL === process.env.TEST
-            ? "9294ab26-47c9-411f-8e62-7734da899f48"
-            : (() => {
-                throw "Data Source ID for this environment is not set";
-            })();
-
-    let postData = {
-        operationName: "DataSource",
-        query: `query DataSource($dataSourceId: ID!, $requestParams: DataSourceRequestParams) {
+export const postData = {
+    operationName: "DataSource",
+    query: `query DataSource($dataSourceId: ID!, $requestParams: DataSourceRequestParams) {
     dataSource(dataSourceId: $dataSourceId, requestParams: $requestParams) {
       account_id
       id
@@ -168,44 +161,10 @@ test.describe('Billing import API tests', {tag: ["@api", "@p1"]}, () => {
     }
     __typename
   }`,
-        variables: {
-            dataSourceId: dataSourceId,
-            requestParams: {
-                details: true
-            }
+    variables: {
+        dataSourceId: dataSourceId,
+        requestParams: {
+            details: true
         }
-    };
-
-
-    test('A successful billing import should have been successful within the last 24 hours', async ({
-                                                                                                             restAPIRequest,
-                                                                                                             authRequest
-                                                                                                         }) => {
-        const endpoint = '/api';
-        const email = process.env.DEFAULT_USER_EMAIL as string;
-        const password = process.env.DEFAULT_USER_PASSWORD as string;
-
-        const token = await authRequest.getAuthorizationToken(email, password);
-        const headers = {
-            "Content-Type": "application/json",
-            "X-Optscale-token": token
-        }
-
-        const response = await restAPIRequest.getPostResponse(endpoint, headers, postData);
-        const json = await response.json() as DataSourceResponse;
-        debugLog(`Status: ${response.status().toString()}`);
-
-        const payload = JSON.parse(await response.text());
-        debugLog(`Data Source Response: ${JSON.stringify(payload)}`);
-
-        const lastSuccessfulImport = json.data.dataSource.last_import_at;
-        const now = Math.floor(Date.now() / 1000);
-        const secondsIn24Hours = 24 * 60 * 60;
-
-        const timeDifference = now - lastSuccessfulImport;
-        debugLog(`Current Time (s): ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
-
-        expect(timeDifference).toBeLessThan(secondsIn24Hours);
-    });
-
-});
+    }
+};
