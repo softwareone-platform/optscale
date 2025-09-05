@@ -7,27 +7,27 @@ import {debugLog} from "./debug-logging";
  * @param dirPath Path to the directory whose contents should be deleted.
  */
 export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> {
-    if (process.env.CLEAN_UP_DOWNLOADS !== 'true') {
-        return;
-    }
+  if (process.env.CLEAN_UP_DOWNLOADS !== 'true') {
+    return;
+  }
 
-    const resolvedPath = path.resolve(dirPath);
+  const resolvedPath = path.resolve(dirPath);
 
-    try {
-        const files = await fs.promises.readdir(resolvedPath);
+  try {
+    const files = await fs.promises.readdir(resolvedPath);
 
-        await Promise.all(
-            files.map(async (file) => {
-                const fullPath = path.join(resolvedPath, file);
-                const stat = await fs.promises.stat(fullPath);
-                if (stat.isFile()) {
-                    await fs.promises.unlink(fullPath);
-                }
-            })
-        );
+    await Promise.all(
+      files.map(async (file) => {
+        const fullPath = path.join(resolvedPath, file);
+        const stat = await fs.promises.stat(fullPath);
+        if (stat.isFile()) {
+          await fs.promises.unlink(fullPath);
+        }
+      })
+    );
 
-        debugLog(`[CLEANUP] Deleted ${files.length} files from ${resolvedPath}`);
-    } catch (err) {
-        console.error(`[CLEANUP ERROR] Failed to clean directory ${resolvedPath}:`, err);
-    }
+    debugLog(`[CLEANUP] Deleted ${files.length} files from ${resolvedPath}`);
+  } catch (err) {
+    console.error(`[CLEANUP ERROR] Failed to clean directory ${resolvedPath}:`, err);
+  }
 }

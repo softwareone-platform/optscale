@@ -1,8 +1,9 @@
-import { EStorageStatePath } from "../utils/enums";
-import { test as setup } from "../fixtures/api-fixture";
-import {getLocalforageRoot, injectLocalforage} from "../utils/auth-storage/localforage-service";
+import { EStorageStatePath } from "../types/enums";
+import { test as setup } from "@playwright/test";
+import {getLocalforageRoot, injectLocalforage} from "../utils/auth-session-storage/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";
-import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
+import {LiveDemoService} from "../utils/auth-session-storage/auth-helpers";
+import {debugLog} from "../utils/debug-logging";
 
 setup('Login as live demo user', async ({ page }) => {
   let email: string;
@@ -12,6 +13,7 @@ setup('Login as live demo user', async ({ page }) => {
   await setup.step('Navigate to Live Demo', async () => {
     if( LiveDemoService.shouldUseLiveDemo()) {
       const demoAuth = await LiveDemoService.getDemoLoginCredentials('example@mail.com', false);
+
       email = demoAuth.email;
       password = demoAuth.password;
       storageStatePath = EStorageStatePath.liveDemoUser;
@@ -30,7 +32,7 @@ setup('Login as live demo user', async ({ page }) => {
     await page.getByTestId('input_pass').fill(password);
     await page.getByTestId('btn_login').click();
     await page.waitForLoadState('networkidle');
-
+    debugLog(`Using demo user credentials login: ${email}, password: ${password}`);
     const authValue = await getLocalforageRoot(page);
     const storageState = await page.context().storageState();
 

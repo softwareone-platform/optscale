@@ -14,19 +14,19 @@ import {debugLog} from "./debug-logging";
  * @returns {void} This function does not return a value but throws an assertion error if the drift exceeds the tolerance.
  */
 export function expectWithinDrift(
-    expected: number,
-    actual: number,
-    percentageTolerance: number
+  expected: number,
+  actual: number,
+  percentageTolerance: number
 ): void {
-    const drift = Math.abs(expected - actual);
-    const allowedDrift = expected * percentageTolerance;
-    const actualPercentageDrift = (drift / expected) * 100;
+  const drift = Math.abs(expected - actual);
+  const allowedDrift = expected * percentageTolerance;
+  const actualPercentageDrift = (drift / expected) * 100;
 
-    debugLog(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
-    debugLog(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
-    debugLog(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
+  debugLog(`Expected: ${expected.toFixed(2)}, Actual: ${actual.toFixed(2)}`);
+  debugLog(`Allowable drift: ${allowedDrift.toFixed(2)} (${(percentageTolerance * 100).toFixed(2)}%)`);
+  debugLog(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
 
-    expect(drift).toBeLessThanOrEqual(allowedDrift);
+  expect(drift).toBeLessThanOrEqual(allowedDrift);
 }
 
 
