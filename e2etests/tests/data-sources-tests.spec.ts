@@ -28,11 +28,11 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
             ]);
             dataSourceResponse = response;
         });
+
         debugLog(`Data Source Response: ${JSON.stringify(dataSourceResponse)}`);
+
         await test.step('Validate last successful billing import is less than 24 hours ago', async () => {
             const lastSuccessfulImport = dataSourceResponse.data.dataSource.last_import_attempt_at;
-
-
             const timeDifference = now - lastSuccessfulImport;
             debugLog(`Current Time: ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
 
@@ -44,7 +44,5 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
             await expect(cloudAccountsPage.billingStatusCompletedIcon).toBeVisible();
             expect(await cloudAccountsPage.lastBillingImportStatus.textContent()).toContain('Completed');
         });
-
     });
-
 })
