@@ -67,9 +67,14 @@ export class CloudAccountsPage extends BasePage {
     await this.advancedTabBtn.click();
   }
 
+  async clickCloudAccountLinkByName(name: string): Promise<void> {
+      const locator = this.allCloudAccountLinks.filter({hasText: name});
+      debugLog(`Clicking on cloud account link with name: ${name}`);
+      return locator.click();
+  }
+
   async clickCloudAccountLink(index = 1): Promise<void> {
       debugLog(`Clicking on cloud account link at index: ${index} - ${await this.allCloudAccountLinks.nth(index - 1).textContent()}`);
     return this.allCloudAccountLinks.nth(index - 1).click();
-
   }
 }

@@ -24,7 +24,7 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
         await test.step('Fetch Data Source Response for first account', async () => {
             const [response] = await Promise.all([
                 fetchDataSourceResponse(page),
-                cloudAccountsPage.clickCloudAccountLink(1)
+                cloudAccountsPage.clickCloudAccountLinkByName('SoftwareOne AWS')
             ]);
             dataSourceResponse = response;
         });
@@ -34,7 +34,7 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
 
 
             const timeDifference = now - lastSuccessfulImport;
-            debugLog(`Current Time (s): ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
+            debugLog(`Current Time: ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
 
             expect(timeDifference).toBeLessThan(secondsIn24Hours);
         });

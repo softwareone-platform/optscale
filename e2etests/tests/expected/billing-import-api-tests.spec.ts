@@ -177,7 +177,7 @@ test.describe('Billing import API tests', {tag: ["@api", "@p1"]}, () => {
     };
 
 
-    test.only('A successful billing import should have been successful within the last 24 hours', async ({
+    test('A successful billing import should have been successful within the last 24 hours', async ({
                                                                                                              restAPIRequest,
                                                                                                              authRequest
                                                                                                          }) => {
