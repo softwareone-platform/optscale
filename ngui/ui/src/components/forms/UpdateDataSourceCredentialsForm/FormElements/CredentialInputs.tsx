@@ -113,7 +113,7 @@ const CredentialInputs = ({ type, config }) => {
           hidden={[
             GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET,
             GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE,
-            GCP_CREDENTIALS_FIELD_NAMES.PROJECT_ID
+            GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_PROJECT_ID
           ]}
         />
       );
