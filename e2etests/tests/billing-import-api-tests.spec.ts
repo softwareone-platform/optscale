@@ -29,7 +29,7 @@ test.describe('Billing import API tests', {tag: ["@api", "@p1"]}, () => {
 
         const lastSuccessfulImport = json.data.dataSource.last_import_at;
         const now = Math.floor(Date.now() / 1000);
-        const secondsIn24Hours = 24 * 60 * 60;
+        const secondsIn24Hours = 86400;
 
         const timeDifference = now - lastSuccessfulImport;
         debugLog(`Current Time (s): ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
