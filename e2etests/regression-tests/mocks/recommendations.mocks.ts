@@ -1,4 +1,4 @@
-export const GeminisRegressionResponse = {
+export const GeminisMock = {
     "geminis": [
         {
             "deleted_at": 0,
@@ -362,7 +362,7 @@ export const GeminisRegressionResponse = {
     ]
 }
 
-export const OptionsRegressionResponse = {
+export const OptionsMock = {
     "options": [
         {
             "name": "recommendation_s3_abandoned_buckets",
@@ -491,7 +491,7 @@ export const OptionsRegressionResponse = {
     ]
 }
 
-export const RIBreakdownRegressionResponse = {
+export const RIBreakdownMock = {
     "breakdown": {
         "1739404800": [
             {
@@ -784,7 +784,7 @@ export const RIBreakdownRegressionResponse = {
     }
 }
 
-export const SPBreakdownRegressionResponse = {
+export const SPBreakdownMock = {
     "breakdown": {
         "1739404800": [
             {
@@ -1039,7 +1039,7 @@ export const SPBreakdownRegressionResponse = {
     }
 }
 
-export const SummaryExpensesRegressionResponse = {
+export const SummaryExpensesMock = {
     "start_date": 1738022400,
     "end_date": 1740614399,
     "total_count": 787,
@@ -1047,7 +1047,7 @@ export const SummaryExpensesRegressionResponse = {
     "total_saving": 3733.244514756799
 }
 
-export const OptimisationsRegressionResponse = {
+export const OptimisationsMock = {
     "total_saving": 3956.1424881109824,
     "optimizations": {
         "abandoned_images": {

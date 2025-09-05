@@ -1,4 +1,4 @@
-export const PolicyRegressionResponse = {
+export const PolicyMock = {
     "organization_constraints": [
         {
             "deleted_at": 0,
@@ -156,7 +156,7 @@ export const PolicyRegressionResponse = {
         }
     ]
 }
-export const TaggingPolicyRegressionResponse = {
+export const TaggingPolicyMock = {
     "organization_constraints": [
         {
             "deleted_at": 0,

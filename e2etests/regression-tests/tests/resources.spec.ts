@@ -1,51 +1,36 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 
 import {
-  BreakdownExpensesRegressionResponse, BreakdownTagsRegressionResponse,
-  CleanExpensesRegressionResponse,
-  ResourceAvailableFiltersRegressionResponse, ResourcesCountRegressionResponse, SummaryRegressionResponse
+  BreakdownExpensesMock,
+  BreakdownTagsMock,
+  CleanExpensesMock,
+  ResourceAvailableFiltersMock,
+  ResourcesCountMock,
+  SummaryMock
 } from "../mocks/resources.mocks";
 import {
-  AllowedActionsSunflowerEURegressionResponse,
-  LimitHitsRegressionResponse, RawExpensesRegressionResponse,
-  ResourceDetailsRegressionResponse,
+  AllowedActionsSunflowerEUMock,
+  LimitHitsMock, RawExpensesMock,
+  ResourceDetailsMock,
 } from "../mocks/resource.mocks";
 
-const apiInterceptionsDashboard: IInterceptor[] = [
-  {
-    urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
-    mock: SummaryRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/breakdown_expenses`,
-    mock: BreakdownExpensesRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/clean_expenses`,
-    mock: CleanExpensesRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/available_filters`,
-    mock: ResourceAvailableFiltersRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/resources_count`,
-    mock: ResourcesCountRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/breakdown_tags`,
-    mock: BreakdownTagsRegressionResponse
-  },
+const apiInterceptionsDashboard: InterceptionEntry[] = [
+  {url: `/v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock},
+  {url: `/v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock},
+  {url: `/v2/organizations/[^/]+/clean_expenses`, mock: CleanExpensesMock},
+  {url: `/v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock},
+  {url: `/v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock},
+  {url: `/v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock},
 ];
 
-const apiInterceptionsDetails: IInterceptor[] = [
-  {urlPattern: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsRegressionResponse},
-  {urlPattern: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsRegressionResponse},
-  {urlPattern: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEURegressionResponse},
-  {urlPattern: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesRegressionResponse},
+const apiInterceptionsDetails: InterceptionEntry[] = [
+  {url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock},
+  {url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock},
+  {url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUMock},
+  {url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock},
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: [...apiInterceptionsDashboard, ...apiInterceptionsDetails]}});
@@ -97,61 +82,61 @@ test.describe('FFC: Resources @swo_regression', () => {
     });
   })
 
-  test('Resource details page matches screenshots', async ({
-                                                             resourcesPage,
-                                                             resourceDetailsPage
-                                                           }) => {
+  test('Resource details page matches screenshots',
+    async ({
+             resourcesPage, resourceDetailsPage
+           }) => {
 
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-    await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
-      await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
-      await resourcesPage.waitForCanvas();
+      if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
+      await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
+        await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
+        await resourcesPage.waitForCanvas();
 
-      // Click on the resource name link in the first row to ensure it exists in the live database before navigating
-      await resourcesPage.firstResourceItemInTable.click();
-      await roundElementDimensions(resourceDetailsPage.heading);
-      await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower-eu-fra');
-    });
+        // Click on the resource name link in the first row to ensure it exists in the live database before navigating
+        await resourcesPage.firstResourceItemInTable.click();
+        await roundElementDimensions(resourceDetailsPage.heading);
+        await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower-eu-fra');
+      });
 
-    await test.step('View type - Details tab', async () => {
-      if (!await resourceDetailsPage.isTabSelected(resourceDetailsPage.detailsTab)) await resourceDetailsPage.clickDetailsTab();
-      await resourceDetailsPage.heading.hover();
-      await resourceDetailsPage.screenshotUpdateDelay();
-      await roundElementDimensions(resourceDetailsPage.main);
-      await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png');
-    });
+      await test.step('View type - Details tab', async () => {
+        if (!await resourceDetailsPage.isTabSelected(resourceDetailsPage.detailsTab)) await resourceDetailsPage.clickDetailsTab();
+        await resourceDetailsPage.heading.hover();
+        await resourceDetailsPage.screenshotUpdateDelay();
+        await roundElementDimensions(resourceDetailsPage.main);
+        await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-details-tab-screenshot.png');
+      });
 
-    await test.step('View type - Constraints tab', async () => {
-      await resourceDetailsPage.clickConstraintsTab();
-      await resourceDetailsPage.heading.hover();
-      await resourceDetailsPage.constraintsTable.waitFor();
-      await resourceDetailsPage.screenshotUpdateDelay();
-      await roundElementDimensions(resourceDetailsPage.main);
-      await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
-    });
+      await test.step('View type - Constraints tab', async () => {
+        await resourceDetailsPage.clickConstraintsTab();
+        await resourceDetailsPage.heading.hover();
+        await resourceDetailsPage.constraintsTable.waitFor();
+        await resourceDetailsPage.screenshotUpdateDelay();
+        await roundElementDimensions(resourceDetailsPage.main);
+        await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
+      });
 
-    await test.step('View type - Expenses tab', async () => {
-      await resourceDetailsPage.clickExpensesTab();
-      await resourceDetailsPage.clickExpensesGroupedButtonIfNotActive();
-      await resourceDetailsPage.heading.hover();
-      await resourceDetailsPage.waitForCanvas();
-      await resourceDetailsPage.screenshotUpdateDelay();
-      await roundElementDimensions(resourceDetailsPage.main);
-      await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-grouped-screenshot.png');
-      await resourceDetailsPage.clickExpensesDetailedButton();
-      await resourceDetailsPage.heading.hover();
-      await resourceDetailsPage.waitForCanvas();
-      await resourceDetailsPage.screenshotUpdateDelay();
-      await roundElementDimensions(resourceDetailsPage.main);
-      await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png');
-    });
+      await test.step('View type - Expenses tab', async () => {
+        await resourceDetailsPage.clickExpensesTab();
+        await resourceDetailsPage.clickExpensesGroupedButtonIfNotActive();
+        await resourceDetailsPage.heading.hover();
+        await resourceDetailsPage.waitForCanvas();
+        await resourceDetailsPage.screenshotUpdateDelay();
+        await roundElementDimensions(resourceDetailsPage.main);
+        await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-grouped-screenshot.png');
+        await resourceDetailsPage.clickExpensesDetailedButton();
+        await resourceDetailsPage.heading.hover();
+        await resourceDetailsPage.waitForCanvas();
+        await resourceDetailsPage.screenshotUpdateDelay();
+        await roundElementDimensions(resourceDetailsPage.main);
+        await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png');
+      });
 
-    await test.step('View type - Recommendations tab', async () => {
-      await resourceDetailsPage.clickRecommendationsTab();
-      await resourceDetailsPage.heading.hover();
-      await resourceDetailsPage.screenshotUpdateDelay();
-      await roundElementDimensions(resourceDetailsPage.main);
-      await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-recommendations-tab-screenshot.png');
-    });
-  })
+      await test.step('View type - Recommendations tab', async () => {
+        await resourceDetailsPage.clickRecommendationsTab();
+        await resourceDetailsPage.heading.hover();
+        await resourceDetailsPage.screenshotUpdateDelay();
+        await roundElementDimensions(resourceDetailsPage.main);
+        await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-recommendations-tab-screenshot.png');
+      });
+    })
 })

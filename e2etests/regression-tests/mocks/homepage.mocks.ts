@@ -1,4 +1,4 @@
-export const OrganizationExpensesPoolsRegressionResponse = {
+export const OrganizationExpensesPoolsMock = {
     "expenses": {
         "last_month": {
             "total": 66666.262068558426,
@@ -26,7 +26,7 @@ export const OrganizationExpensesPoolsRegressionResponse = {
     ]
 };
 
-export const OrganizationCleanExpansesRegressionResponse = {
+export const OrganizationCleanExpansesMock = {
     "data": {
         "cleanExpenses": {
             "start_date": 1742079600,
@@ -477,7 +477,7 @@ export const OrganizationCleanExpansesRegressionResponse = {
     }
 }
 
-export const OptimizationsRegressionResponse = {
+export const OptimizationsMock = {
     "total_saving": 4444.667051653359,
     "optimizations": {
         "abandoned_images": {
@@ -2725,7 +2725,7 @@ export const OptimizationsRegressionResponse = {
     "last_completed": 1748311728
 }
 
-export const HomeDataSourcesRegressionResponse = {
+export const HomeDataSourcesMock = {
     "data": {
     "dataSources": [
         {
@@ -2961,7 +2961,7 @@ export const HomeDataSourcesRegressionResponse = {
 }
 }
 
-export const OrganizationConstraintsRegressionResponse = {
+export const OrganizationConstraintsMock = {
     "organization_constraints": [
         {
             "deleted_at": 0,
@@ -3452,7 +3452,7 @@ export const OrganizationConstraintsRegressionResponse = {
     ]
 }
 
-export const PoolsRegressionResponse = {
+export const PoolsMock = {
     "deleted_at": 0,
     "id": "649ba12c-8384-4521-9923-67e514b22d53",
     "created_at": 1739937079,
@@ -3880,7 +3880,7 @@ export const PoolsRegressionResponse = {
     ]
 }
 
-export const AllowedActionsRegressionResponse = {
+export const AllowedActionsMock = {
     "allowed_actions": {
     "10290a37-0591-4726-b727-12f38655cbe4": [
         "CREATE_PARTNER",

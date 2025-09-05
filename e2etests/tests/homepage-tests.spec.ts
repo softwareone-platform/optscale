@@ -1,44 +1,10 @@
 import {test} from "../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
-import {IInterceptor} from "../utils/api-requests/interceptor";
-import {
-    AllowedActionsResponse,
-    HomeDataSourcesResponse, OptimizationsResponse,
-    OrganizationCleanExpansesResponseGraphQL, OrganizationConstraintsResponse,
-    OrganizationExpensesPoolsResponse, PoolsResponse
-} from "../mocks/homepage.mocks";
-
-
-const apiInterceptions: IInterceptor[] = [
-    {
-        urlPattern: `/v2/organizations/[^/]+/pool_expenses`,
-        mock: OrganizationExpensesPoolsResponse
-    },
-    {
-        graphQlOperationName: 'CleanExpenses',
-        mock: OrganizationCleanExpansesResponseGraphQL
-    },
-    {
-        graphQlOperationName: 'DataSources',
-        mock: HomeDataSourcesResponse
-    },
-    {
-        urlPattern: `/v2/organizations/[^/]+/optimizations`,
-        mock: OptimizationsResponse
-    },
-    {
-        urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
-        mock: OrganizationConstraintsResponse
-    },
-    {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsResponse},
-    {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsResponse}
-];
-
-
-test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
+    test.use({restoreSession: true});
+
     test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
             await homePage.navigateToURL();
@@ -91,6 +57,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
 })
 
 test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
+    test.use({restoreSession: true});
 
     test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
@@ -153,6 +120,8 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 })
 
 test.describe('[MPT-12743] Home Page test for Pools requiring attention block', {tag: ["@ui", "@pools", "@homepage"]}, () => {
+    test.use({restoreSession: true});
+
     test.describe.configure({mode: 'serial'}); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
 
     test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({homePage, poolsPage}) => {
@@ -174,7 +143,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
             await poolsPage.waitForPageLoaderToDisappear();
             await poolsPage.expandMoreIcon.waitFor();
             if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();
-            await poolsPage.toggleExpandPool()
+            await poolsPage.toggleExpandPool();
             await poolsPage.removeAllSubPoolMonthlyLimits();
             await poolsPage.toggleExpandPool();
             if(await poolsPage.getOrganizationLimitValue() !== 0) await poolsPage.editPoolMonthlyLimit(0);

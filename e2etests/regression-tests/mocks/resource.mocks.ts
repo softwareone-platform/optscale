@@ -1,4 +1,4 @@
-export const ResourceDetailsRegressionResponse = {
+export const ResourceDetailsMock = {
     "cloud_account_id": "42e6a779-6b1f-4469-b221-412f7aa15466",
     "cloud_resource_id": "sunflower-eu-fra",
     "applied_rules": [
@@ -109,7 +109,7 @@ export const ResourceDetailsRegressionResponse = {
     }
 }
 
-export const LimitHitsRegressionResponse = {
+export const LimitHitsMock = {
     "limit_hits": [
         {
             "deleted_at": 0,
@@ -1037,7 +1037,7 @@ export const LimitHitsRegressionResponse = {
         }
     ]
 }
-export const AllowedActionsSunflowerEURegressionResponse = {
+export const AllowedActionsSunflowerEUMock = {
     "allowed_actions": {
         "ae385f3a-d3ad-4542-b206-21e7abcc9ef3": [
             "CREATE_PARTNER",
@@ -1062,7 +1062,7 @@ export const AllowedActionsSunflowerEURegressionResponse = {
     }
 }
 
-export const RawExpensesRegressionResponse = {
+export const RawExpensesMock = {
     "start_date": 1738368000,
     "end_date": 1740700799,
     "total_cost": 141.4282864259999,

@@ -1,18 +1,12 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
-import {CloudAccountsRegressionResponse, DataSourcesRegressionResponse} from "../mocks/cloud-accounts.mocks";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
+import {CloudAccountsMock, DataSourcesMock} from "../mocks/cloud-accounts.mocks";
 
-const interceptorList: IInterceptor[] = [
-  {
-    urlPattern: `v2/pools/[^/]+?children=false&details=false`,
-    mock: CloudAccountsRegressionResponse,
-  },
-  {
-    mock: DataSourcesRegressionResponse,
-    graphQlOperationName: "DataSources",
-  },
+const interceptorList: InterceptionEntry[] = [
+  {url: `v2/pools/[^/]+?children=false&details=false`, mock: CloudAccountsMock},
+  {mock: DataSourcesMock, gql: "DataSources"}
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: interceptorList}});

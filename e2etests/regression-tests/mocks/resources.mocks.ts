@@ -1,4 +1,4 @@
-export const BreakdownExpensesRegressionResponse = {
+export const BreakdownExpensesMock = {
     "counts": {
         "Elastic Compute Service": {
             "total": 361.1368551199999,
@@ -1658,7 +1658,7 @@ export const BreakdownExpensesRegressionResponse = {
     "breakdown_by": "service_name"
 }
 
-export const CleanExpensesRegressionResponse = {
+export const CleanExpensesMock = {
     "start_date": 1738368000,
     "end_date": 1740700799,
     "total_count": 778,
@@ -53331,7 +53331,7 @@ export const CleanExpensesRegressionResponse = {
     "limit": 5000
 }
 
-export const ResourceAvailableFiltersRegressionResponse = {
+export const ResourceAvailableFiltersMock = {
     "filter_values": {
         "cloud_account": [
             {
@@ -54319,7 +54319,7 @@ export const ResourceAvailableFiltersRegressionResponse = {
     }
 }
 
-export const ResourcesCountRegressionResponse = {
+export const ResourcesCountMock = {
     "start_date": 1738368000,
     "end_date": 1740700799,
     "count": 780,
@@ -57305,7 +57305,7 @@ export const ResourcesCountRegressionResponse = {
     }
 }
 
-export const BreakdownTagsRegressionResponse = {
+export const BreakdownTagsMock = {
     "breakdown": [
         {
             "tag": "sunflower_cloud_agent_nic_id",
@@ -57557,7 +57557,7 @@ export const BreakdownTagsRegressionResponse = {
     "end_date": 1740700799
 }
 
-export const SummaryRegressionResponse = {
+export const SummaryMock = {
   "start_date": 1738022400,
   "end_date": 1740614399,
   "total_count": 787,

@@ -1,6 +1,6 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptor, apiInterceptors} from "../utils/api-requests/interceptor";
+import {InterceptionEntry, apiInterceptors} from "../utils/api-requests/interceptor";
 import {EventsResponse} from "../mocks";
 
 /**

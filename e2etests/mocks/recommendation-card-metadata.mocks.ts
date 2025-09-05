@@ -1,8 +1,6 @@
 import {RecommendationsPage} from "../pages";
 import {CardSavingsData} from "../types/api-response.types";
 
-
-
 export const getCardSavingsData = (recommendationsPage: RecommendationsPage): CardSavingsData[] => [
     {
         name: 'Abandoned Amazon S3 Buckets',

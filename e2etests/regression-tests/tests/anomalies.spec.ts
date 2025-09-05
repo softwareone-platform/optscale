@@ -2,22 +2,20 @@ import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {
-  AnomaliesAvailableFiltersRegressionResponse,
-  AnomaliesConstraintsRegressionResponse
+  AnomaliesAvailableFiltersMock,
+  AnomaliesConstraintsMock
 } from "../mocks/anomalies.mocks";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 
-const interceptions = [
+const interceptorList: InterceptionEntry[] = [
+  {url: `v2/organizations/[^/]+available_filters`, mock: AnomaliesAvailableFiltersMock},
   {
-    urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,
-    mock: AnomaliesConstraintsRegressionResponse,
-  },
-  {
-    urlPattern: `v2/organizations/[^/]+available_filters`,
-    mock: AnomaliesAvailableFiltersRegressionResponse,
+    url: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,
+    mock: AnomaliesConstraintsMock,
   },
 ];
 
-test.use({restoreSession: true, interceptAPI: {list: interceptions}});
+test.use({restoreSession: true, interceptAPI: {list: interceptorList}});
 
 test.describe('FFC: Anomalies @swo_regression', () => {
   test('Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {

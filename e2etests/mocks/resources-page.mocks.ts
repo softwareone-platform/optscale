@@ -1,4 +1,4 @@
-export const BreakdownExpensesByServiceResponse = {
+export const BreakdownExpensesByServiceMock = {
 
     "counts": {
     "microsoft.hybridcompute": {
@@ -1806,7 +1806,7 @@ export const BreakdownExpensesByServiceResponse = {
     "breakdown_by": "service_name"
 }
 
-export const BreakdownExpensesByRegionResponse = {
+export const BreakdownExpensesByRegionMock = {
     "counts": {
         "Brazil South": {
             "total": 87.84229422,
@@ -2747,7 +2747,7 @@ export const BreakdownExpensesByRegionResponse = {
     "breakdown_by": "region"
 }
 
-export const BreakdownExpensesByResourceTypeResponse = {
+export const BreakdownExpensesByResourceTypeMock = {
     "counts": {
         "pyracloud-subscriptions": {
             "total": 0.030817141297043025,
@@ -18209,7 +18209,7 @@ export const BreakdownExpensesByResourceTypeResponse = {
     "breakdown_by": "resource_type"
 }
 
-export const BreakdownExpensesByDataSourceResponse = {
+export const BreakdownExpensesByDataSourceMock = {
     "counts": {
         "e381420e-9305-487f-8772-d09ca7a63078": {
             "total": 79541.45806677267,
@@ -19114,7 +19114,7 @@ export const BreakdownExpensesByDataSourceResponse = {
     "breakdown_by": "cloud_account_id"
 }
 
-export const BreakdownExpensesByOwnerResponse = {
+export const BreakdownExpensesByOwnerMock = {
     "counts": {
         "a7d28901-1c98-4b33-8b6f-a0360cd9a661": {
             "total": 133102.00899378883,
@@ -19231,7 +19231,7 @@ export const BreakdownExpensesByOwnerResponse = {
     "breakdown_by": "employee_id"
 }
 
-export const BreakdownExpensesByPoolResponse = {
+export const BreakdownExpensesByPoolMock = {
     "counts": {
         "efcc204f-b285-4e43-90f8-61e2805874dd": {
             "total": 2543.157393741586,
@@ -20136,7 +20136,7 @@ export const BreakdownExpensesByPoolResponse = {
     "breakdown_by": "pool_id"
 }
 
-export const BreakdownExpensesByK8sNodeResponse = {
+export const BreakdownExpensesByK8sNodeMock = {
     "counts": {
         "null": {
             "total": 133102.00899378886,
@@ -20223,7 +20223,7 @@ export const BreakdownExpensesByK8sNodeResponse = {
     "breakdown_by": "k8s_node"
 }
 
-export const BreakdownExpensesByK8sNamespaceResponse = {
+export const BreakdownExpensesByK8sNamespaceMock = {
     "counts": {
         "null": {
             "total": 133102.00899378717,
@@ -20310,7 +20310,7 @@ export const BreakdownExpensesByK8sNamespaceResponse = {
     "breakdown_by": "k8s_namespace"
 }
 
-export const BreakdownExpensesByK8sServiceResponse = {
+export const BreakdownExpensesByK8sServiceMock = {
     "counts": {
         "null": {
             "total": 133102.00899378717,
@@ -20397,7 +20397,7 @@ export const BreakdownExpensesByK8sServiceResponse = {
     "breakdown_by": "k8s_service"
 }
 
-export const AvailableFiltersResponse = {
+export const AvailableFiltersMock = {
     "filter_values": {
         "cloud_account": [
             {
@@ -22713,7 +22713,7 @@ export const AvailableFiltersResponse = {
     }
 }
 
-export const ResourceSummaryExpensesResponse = {
+export const ResourceSummaryExpensesMock = {
     "start_date": 1751328000,
     "end_date": 1752537599,
     "total_count": 3494,

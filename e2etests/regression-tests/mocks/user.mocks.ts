@@ -1,4 +1,4 @@
-export const EmployeesRegressionResponse = {
+export const EmployeesMock = {
     "employees": [
         {
             "deleted_at": 0,
@@ -461,7 +461,7 @@ export const EmployeesRegressionResponse = {
     ]
 }
 
-export const UsersPoolsPermissionsRegressionResponse = {
+export const UsersPoolsPermissionsMock = {
     "pools": [
         {
             "id": "038193c2-29e8-44a2-a18e-3d362bb82b27",

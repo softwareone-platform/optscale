@@ -1,4 +1,4 @@
-export const CloudAccountsRegressionResponse = {
+export const CloudAccountsMock = {
     "deleted_at": 0,
     "id": "8aa40358-d32b-46d5-b6b0-addf4d341d03",
     "created_at": 1741082622,
@@ -12,7 +12,7 @@ export const CloudAccountsRegressionResponse = {
     "unallocated_limit": 13156
 }
 
-export const DataSourcesRegressionResponse = {
+export const DataSourcesMock = {
     "data": {
         "dataSources": [
             {

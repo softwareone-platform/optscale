@@ -1,28 +1,22 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 import {
   PoolsExpensesOwnerRegressionResponse,
   PoolsExpensesPoolRegressionResponse, PoolsExpensesRegressionResponse,
   PoolsExpensesSourceRegressionResponse, RegionExpensesRegressionResponse
 } from "../mocks/expenses.mocks";
 
-const apiInterceptions: IInterceptor[] = [
+const apiInterceptions: InterceptionEntry[] = [
+  {url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceRegressionResponse},
+  {url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
+  {url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerRegressionResponse},
+  {url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse},
   {
-    urlPattern: `/v2/pools_expenses/[^/]+filter_by=cloud`,
-    mock: PoolsExpensesSourceRegressionResponse
-  },
-  {urlPattern: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
-  {
-    urlPattern: `/v2/pools_expenses/[^/]+filter_by=employee`,
-    mock: PoolsExpensesOwnerRegressionResponse
-  },
-  {
-    urlPattern: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
+    url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
     mock: PoolsExpensesRegressionResponse
-  },
-  {urlPattern: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse}
+  }
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
@@ -67,7 +61,9 @@ test.describe('FFC: Expenses @swo_regression', () => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
-    await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png');
+    await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png', {
+      mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
+    });
   })
 
   test('Expenses breakdowns page matches screenshots', async ({expensesPage}) => {

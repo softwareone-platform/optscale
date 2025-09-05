@@ -1,15 +1,10 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 import {EventsRegressionResponse} from "../mocks/events.mocks";
 
-const apiInterceptions: IInterceptor[] = [
-  {
-    mock: EventsRegressionResponse,
-    graphQlOperationName: "events"
-  },
-];
+const apiInterceptions: InterceptionEntry[] = [{mock: EventsRegressionResponse, gql: "events"}];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
 

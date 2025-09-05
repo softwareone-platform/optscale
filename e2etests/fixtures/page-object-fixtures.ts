@@ -3,13 +3,13 @@ import * as Pages from '../pages';
 import {LiveDemoService} from '../utils/auth-session-storage/auth-helpers';
 import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 import {BaseRequest} from "../utils/api-requests/base-request";
-import {apiInterceptors, IInterceptor} from "../utils/api-requests/interceptor";
+import {apiInterceptors, InterceptionEntry} from "../utils/api-requests/interceptor";
 
 interface Options {
   baseRequest: BaseRequest;
   restoreSession?: boolean;
   interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
-    list: IInterceptor[];
+    list: InterceptionEntry[];
   }
 }
 

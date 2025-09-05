@@ -1,4 +1,4 @@
-export const AnomaliesConstraintsRegressionResponse = {
+export const AnomaliesConstraintsMock = {
     "organization_constraints": [
         {
             "deleted_at": 0,
@@ -97,7 +97,7 @@ export const AnomaliesConstraintsRegressionResponse = {
     ]
 }
 
-export const AnomaliesAvailableFiltersRegressionResponse = {
+export const AnomaliesAvailableFiltersMock = {
     "filter_values": {
         "cloud_account": [
             {

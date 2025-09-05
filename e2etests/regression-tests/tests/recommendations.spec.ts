@@ -1,26 +1,23 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 import {
-  GeminisRegressionResponse,
-  OptionsRegressionResponse,
-  OptimisationsRegressionResponse,
-  RIBreakdownRegressionResponse,
-  SPBreakdownRegressionResponse,
-  SummaryExpensesRegressionResponse
+  GeminisMock,
+  OptionsMock,
+  OptimisationsMock,
+  RIBreakdownMock,
+  SPBreakdownMock,
+  SummaryExpensesMock
 } from "../mocks/recommendations.mocks";
 
-const apiInterceptions: IInterceptor[] = [
-  {urlPattern: `/v2/organizations/[^/]+/geminis`, mock: GeminisRegressionResponse},
-  {urlPattern: `/v2/organizations/[^/]+/options`, mock: OptionsRegressionResponse},
-  {urlPattern: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownRegressionResponse},
-  {urlPattern: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownRegressionResponse},
-  {
-    urlPattern: `/v2/organizations/[^/]+/summary_expenses`,
-    mock: SummaryExpensesRegressionResponse
-  },
-  {urlPattern: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsRegressionResponse}
+const apiInterceptions: InterceptionEntry[] = [
+  {url: `/v2/organizations/[^/]+/geminis`, mock: GeminisMock},
+  {url: `/v2/organizations/[^/]+/options`, mock: OptionsMock},
+  {url: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownMock},
+  {url: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownMock},
+  {url: `/v2/organizations/[^/]+/summary_expenses`, mock: SummaryExpensesMock},
+  {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsMock}
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});

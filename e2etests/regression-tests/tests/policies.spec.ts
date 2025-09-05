@@ -1,17 +1,17 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
-import {PolicyRegressionResponse, TaggingPolicyRegressionResponse} from "../mocks/policies.mocks";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
+import {PolicyMock, TaggingPolicyMock} from "../mocks/policies.mocks";
 
-const apiInterceptions: IInterceptor[] = [
+const apiInterceptions: InterceptionEntry[] = [
   {
-    urlPattern: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`,
-    mock: PolicyRegressionResponse
+    url: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`,
+    mock: PolicyMock
   },
   {
-    urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`,
-    mock: TaggingPolicyRegressionResponse
+    url: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=tagging_policy`,
+    mock: TaggingPolicyMock
   },
 ];
 

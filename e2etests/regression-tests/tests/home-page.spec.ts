@@ -1,37 +1,25 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 import {
-  AllowedActionsRegressionResponse,
-  HomeDataSourcesRegressionResponse, OptimizationsRegressionResponse,
-  OrganizationCleanExpansesRegressionResponse, OrganizationConstraintsRegressionResponse,
-  OrganizationExpensesPoolsRegressionResponse, PoolsRegressionResponse
+  AllowedActionsMock,
+  HomeDataSourcesMock, OptimizationsMock,
+  OrganizationCleanExpansesMock, OrganizationConstraintsMock,
+  OrganizationExpensesPoolsMock, PoolsMock
 } from "../mocks/homepage.mocks";
 
-const apiInterceptions: IInterceptor[] = [
+const apiInterceptions: InterceptionEntry[] = [
+  {gql: 'DataSources', mock: HomeDataSourcesMock},
+  {gql: 'CleanExpenses', mock: OrganizationCleanExpansesMock},
+  {url: `/v2/organizations/[^/]+/pool_expenses`, mock: OrganizationExpensesPoolsMock},
+  {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimizationsMock},
+  {url: `/v2/allowed_actions`, mock: AllowedActionsMock},
+  {url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsMock},
   {
-    urlPattern: `/v2/organizations/[^/]+/pool_expenses`,
-    mock: OrganizationExpensesPoolsRegressionResponse
-  },
-  {
-    graphQlOperationName: 'CleanExpenses',
-    mock: OrganizationCleanExpansesRegressionResponse
-  },
-  {
-    graphQlOperationName: 'DataSources',
-    mock: HomeDataSourcesRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/optimizations`,
-    mock: OptimizationsRegressionResponse
-  },
-  {
-    urlPattern: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
-    mock: OrganizationConstraintsRegressionResponse
-  },
-  {urlPattern: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsRegressionResponse},
-  {urlPattern: `/v2/allowed_actions`, mock: AllowedActionsRegressionResponse}
+    url: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
+    mock: OrganizationConstraintsMock
+  }
 ];
 
 

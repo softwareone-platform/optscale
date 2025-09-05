@@ -1,15 +1,12 @@
 import {test} from "../../fixtures/page-object-fixtures";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {IInterceptor} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../utils/api-requests/interceptor";
 import {AllowedActionsPoolRegressionResponse, PoolRegressionResponse} from "../mocks/pools.mocks";
 
-const apiInterceptions: IInterceptor[] = [
-  {urlPattern: `v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse},
-  {
-    urlPattern: `v2/allowed_actions\\?pool=[^&]+.*`,
-    mock: AllowedActionsPoolRegressionResponse
-  },
+const apiInterceptions: InterceptionEntry[] = [
+  {url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse},
+  {url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolRegressionResponse},
 ];
 
 test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
