@@ -3,7 +3,7 @@ import {debugLog} from "../utils/debug-logging";
 import {CloudAccountsResponse} from "../test-data/test-data-response-types";
 import {expect} from "@playwright/test";
 
-test.describe('Billing import API tests', {tag: ["@api", "@devops"]}, () => {
+test.describe('Billing import API test', {tag: ["@api", "@devops"]}, () => {
 
     test('Test all data sources for an Organization are imported within time period', async ({
                                                                                                         restAPIRequest,
@@ -13,9 +13,8 @@ test.describe('Billing import API tests', {tag: ["@api", "@devops"]}, () => {
         const timeLimit = 3600;
         const organisationId = process.env.DEFAULT_ORG_ID;
         const cloudAccountsEndpoint = `/restapi/v2/organizations/${organisationId}/cloud_accounts`;
-
-        const email = process.env.DEFAULT_USER_EMAIL as string;
-        const password = process.env.DEFAULT_USER_PASSWORD as string;
+        const email = process.env.DEFAULT_USER_EMAIL;
+        const password = process.env.DEFAULT_USER_PASSWORD;
 
         const token = await authRequest.getAuthorizationToken(email, password);
         const headers = {
