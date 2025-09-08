@@ -1,8 +1,7 @@
 import {test} from "../fixtures/api-fixture";
 import {debugLog} from "../utils/debug-logging";
-import {CloudAccountsResponse, DataSourceResponse} from "../test-data/test-data-response-types";
+import {CloudAccountsResponse} from "../test-data/test-data-response-types";
 import {expect} from "@playwright/test";
-import {postData} from "../test-data/billing-import-post-data";
 
 test.describe('Billing import API tests', {tag: ["@api", "@devops"]}, () => {
 
