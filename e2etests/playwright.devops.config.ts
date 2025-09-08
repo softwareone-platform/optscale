@@ -36,12 +36,8 @@ export default defineConfig({
         testIdAttribute: 'data-test-id',
         headless: true,
         trace: "retain-on-failure",
-        video: "retain-on-failure",
-        screenshot: "only-on-failure",
         contextOptions: {
-            reducedMotion: 'reduce',
             ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-            viewport: {width: 1920, height: 1080},
         },
     },
 
