@@ -11,7 +11,7 @@ dotenv.config({path: path.resolve(__dirname, '.env.local')});
 export default defineConfig({
     globalSetup: "./setup/global-setup.ts",
     globalTeardown: "./setup/global-teardown.ts",
-    testDir: '../e2etests',
+    testDir: '../e2etests/dev-ops-tests',
     testIgnore: ['**/regression-tests/**'],
     /* Run tests in files in parallel */
     fullyParallel: true,
@@ -22,7 +22,7 @@ export default defineConfig({
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : 2,
     /* Individual test timeout,test.slow() annotation triples this value for decorated tests*/
-    timeout: 45000,
+    timeout: 10000,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [
         ["list"],
@@ -46,64 +46,11 @@ export default defineConfig({
     },
 
     projects: [
-        // Setup project
-        {name: "setup", testMatch: /e2etests\/setup\/.*\.setup\.ts/},
         {
             name: "chrome",
             use: {
                 channel: "chrome",
             },
-            dependencies: ["setup"],
         },
-        // {
-        //   name: "firefox",
-        //   use: {
-        //     browserName: "firefox",
-        //   },
-        //   dependencies: ["setup"],
-        // },
-        // {
-        //   name: "Microsoft Edge",
-        //   use: {
-        //     channel: "msedge",
-        //   },
-        //   dependencies: ["setup"],
-        // },
-        // {
-        //   name: "firefox",
-        //   use: {
-        //     browserName: "firefox",
-        //   },
-        //   dependencies: ["setup"],
-        // },
-        // {
-        //   name: "Microsoft Edge",
-        //   use: {
-        //     channel: "msedge",
-        //   },
-        //   dependencies: ["setup"],
-        // },
-        // {
-        //   name: "Mobile Safari",
-        //   use: {
-        //     ...devices["iPad Mini"],
-        //     viewport: {width: 744, height: 1024},
-        //   },
-        //   dependencies: ["setup"],
-        // },
-        // {
-        //   name: "webkit",
-        //   use: {
-        //     ...devices["Desktop Safari"],
-        //   },
-        //   dependencies: ["setup"],
-        // },
     ],
-
-    /* Run your local dev server before starting the tests */
-    // webServer: {
-    //   command: 'npm run start',
-    //   url: 'http://127.0.0.1:3000',
-    //   reuseExistingServer: !process.env.CI,
-    // },
 });
