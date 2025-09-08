@@ -13,7 +13,7 @@ echo "<<<Pycodestyle tests"
 
 echo "Pylint tests>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "uv --project gemini/gemini_scheduler run pylint --rcfile=.pylintrc --fail-under=8 --fail-on=E,F ./gemini"
+    bash -c "uv --project gemini/gemini_scheduler run pylint --rcfile=./gemini/.pylintrc --fail-under=8 --fail-on=E,F ./gemini"
 echo "<<<Pylint tests"
 
 docker rmi ${TEST_IMAGE}
