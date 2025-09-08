@@ -1,3 +1,4 @@
+import {APIResponse} from "playwright";
 import {BaseRequest} from "./base-request";
 import {APIRequestContext} from "@playwright/test";
 
@@ -12,7 +13,8 @@ export class RestAPIRequest extends BaseRequest {
     constructor(request: APIRequestContext) {
         super(request);
         this.request = request;
-        this.organizationsEndpoint = "/restapi/v2/organizations";
+        const baseUrl = process.env.API_BASE_URL || "";
+        this.organizationsEndpoint = `${baseUrl}/restapi/v2/organizations`;
     }
 
     /**

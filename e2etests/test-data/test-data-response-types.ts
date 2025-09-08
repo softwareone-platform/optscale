@@ -295,3 +295,39 @@ export interface DataSourceDiscoveryInfo {
     resource_type: string;
     __typename: string;
 }
+
+
+export interface CloudAccountsResponse {
+    cloud_accounts: CloudAccount[];
+}
+
+export interface CloudAccount {
+    deleted_at: number;
+    id: string;
+    created_at: number;
+    name: string;
+    type: string;
+    config: {
+        client_id: string;
+        secret: string;
+        tenant: string;
+        skipped_subscriptions: any;
+        subscription_id: string;
+        expense_import_scheme: string;
+    };
+    organization_id: string;
+    auto_import: boolean;
+    import_period: number;
+    last_import_at: number;
+    last_import_modified_at: number;
+    account_id: string;
+    process_recommendations: boolean;
+    last_import_attempt_at: number;
+    last_import_attempt_error: string;
+    last_getting_metrics_at: number;
+    last_getting_metric_attempt_at: number;
+    last_getting_metric_attempt_error: string;
+    cleaned_at: number;
+    parent_id: string;
+}
+

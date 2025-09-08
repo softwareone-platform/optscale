@@ -53,7 +53,7 @@ export default defineConfig({
             use: {
                 channel: "chrome",
             },
-            dependencies: ["setup"],
+            // dependencies: ["setup"],
         },
         // {
         //   name: "firefox",
