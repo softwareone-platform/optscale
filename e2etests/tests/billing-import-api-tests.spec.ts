@@ -32,7 +32,7 @@ test.describe('Billing import API tests', {tag: ["@api", "@p1"]}, () => {
         const secondsIn24Hours = 86400;
 
         const timeDifference = now - lastSuccessfulImport;
-        debugLog(`Current Time (s): ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
+        debugLog(`Current Time: ${now}, Last Successful Import: ${lastSuccessfulImport}, Time Difference: ${timeDifference} seconds`);
 
         expect(timeDifference).toBeLessThan(secondsIn24Hours);
     });
