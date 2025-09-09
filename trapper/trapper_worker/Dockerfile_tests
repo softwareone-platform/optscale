@@ -4,6 +4,6 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 LABEL org.opencontainers.image.authors="Hystax"
 
 COPY trapper/.pylintrc trapper/.coveragerc ./trapper/
-COPY trapper/trapper_scheduler/pyproject.toml trapper/trapper_scheduler/uv.lock ./trapper/trapper_scheduler/
+COPY trapper/trapper_worker/pyproject.toml trapper/trapper_worker/uv.lock ./trapper/trapper_worker/
 
 RUN uv --project trapper/trapper_worker sync --locked
