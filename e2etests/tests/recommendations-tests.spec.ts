@@ -15,7 +15,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await recommendationsPage.selectCategory('All');
     });
 
-    test("[230511] Verify Card total savings match possible monthly savings", async ({recommendationsPage}) => {
+    test("[230511] Verify Card total savings match possible monthly savings", {tag: ["@p1"]},async ({recommendationsPage}) => {
         let possibleMonthlySavings: number;
         let cardTotalSavings: number;
 
@@ -92,7 +92,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
     });
 
-    test('[230598] Verify only the correct applicable services are displayed for SWO Customisation', async ({recommendationsPage}) => {
+    test('[230598] Verify only the correct applicable services are displayed for SWO Customisation', {tag: ["@p1"]},async ({recommendationsPage}) => {
 
         await test.step('Verify applicable services combo box options shows expected items', async () => {
             await recommendationsPage.applicableServices.click();
@@ -140,7 +140,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
             }
         });
 
-        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+        await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table',async () => {
             await recommendationsPage.clickTableButton();
             await recommendationsPage.allNameTableButtons.last().waitFor();
             const cells = await recommendationsPage.applicableServicesColumn.all();
@@ -189,7 +189,7 @@ test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommen
         expect(buttonNamesSorted).toEqual(expectedSorted);
     };
 
-    test(" [230515] Verify all expected cards are present when All category selected", async ({recommendationsPage}) => {
+    test(" [230515] Verify all expected cards are present when All category selected", {tag: ["@p1"]},async ({recommendationsPage}) => {
         const expectedCardHeadings = [
             "Abandoned Amazon S3 buckets",
             "Abandoned images",

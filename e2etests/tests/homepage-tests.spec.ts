@@ -14,7 +14,7 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
         });
     });
 
-    test('[230550] Compare possible savings on home page with those on recommendations page', async ({
+    test('[230550] Compare possible savings on home page with those on recommendations page',{tag: ["@p1"]}, async ({
                                                                                                          homePage,
                                                                                                          recommendationsPage
                                                                                                      }) => {
@@ -68,14 +68,14 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
         });
     });
 
-    test('[230838] Verify Top Resource block Resource link works correctly', async ({homePage, resourcesPage}) => {
+    test('[230838] Verify Top Resource block Resource link works correctly', {tag: ["@p1"]},async ({homePage, resourcesPage}) => {
         await test.step('Click on Top Resources button', async () => {
             await homePage.clickTopResourcesBtn();
             await expect(resourcesPage.heading).toBeVisible();
         });
     })
 
-    test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
+    test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', {tag: ["@p1"]},async ({
                                                                                                                                      homePage,
                                                                                                                                      resourceDetailsPage,
                                                                                                                                      datePicker
@@ -105,7 +105,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
         });
     });
 
-    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage, resourcesPage}) => {
+    test('[230842] Verify Top Resource Block displayed correctly', {tag: ["@p1"]},async ({homePage, resourcesPage}) => {
 
         await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
             const count = await homePage.topResourcesAllLinks.count();

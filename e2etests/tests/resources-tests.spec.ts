@@ -55,7 +55,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230776] Possible savings matches those on recommendations page", async ({resourcesPage, recommendationsPage}) => {
+    test("[230776] Possible savings matches those on recommendations page", {tag: ["@p1"]},async ({resourcesPage, recommendationsPage}) => {
         let resourcesSavings: number;
         let recommendationsSavings: number;
 
@@ -172,7 +172,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
         });
     });
 
-    test("[230780] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
+    test("[230780] Unfiltered Total expenses matches table itemised total", {tag: ["@p1", "@slow"]}, async ({resourcesPage}) => {
         test.setTimeout(1200000);
 
         await test.step('Get total expenses value from resources page', async () => {
