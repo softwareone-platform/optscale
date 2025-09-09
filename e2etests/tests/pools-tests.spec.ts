@@ -81,7 +81,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[230912] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', async ({poolsPage}) => {
+    test('[230912] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', {tag: ["@p1"]}, async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         let organizationLimitValue: number;
@@ -207,7 +207,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[230916] Verify Organisation Limit functionality - limit set lower than expenses this month', async ({poolsPage}) => {
+    test('[230916] Verify Organisation Limit functionality - limit set lower than expenses this month', {tag: ["@p1"]},async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
         const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -268,7 +268,7 @@ test.describe('[MPT-12743] Pools Tests', {tag: ["@ui", "@pools"]}, () => {
         });
     });
 
-    test('[230918] Verify sub-pool monthly limit behaviour', async ({poolsPage}) => {
+    test('[230918] Verify sub-pool monthly limit behaviour', {tag: ["@p1"]},async ({poolsPage}) => {
         test.fail(await poolsPage.getPoolCount() !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
         test.setTimeout(45000);
 
