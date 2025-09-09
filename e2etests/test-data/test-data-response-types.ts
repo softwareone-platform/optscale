@@ -244,3 +244,90 @@ export interface K8sServiceExpensesResponse {
   counts: Record<string, K8sServiceSummary>;
   breakdown: Record<string, Record<string, K8sServiceBreakdownItem>>;
 }
+
+export interface DataSourceResponse {
+    data: {
+        dataSource: {
+            account_id: string;
+            id: string;
+            last_getting_metric_attempt_at: number;
+            last_getting_metric_attempt_error: string;
+            last_getting_metrics_at: number;
+            last_import_at: number;
+            last_import_attempt_at: number;
+            last_import_attempt_error: string;
+            name: string;
+            parent_id: string;
+            type: string;
+            details: {
+                cost: number;
+                discovery_infos: DataSourceDiscoveryInfo[];
+                forecast: number;
+                last_month_cost: number;
+                resources: number;
+                __typename: string;
+            };
+            config: {
+                client_id: string;
+                expense_import_scheme: string;
+                subscription_id: string;
+                tenant: string;
+                export_name: string | null;
+                container: string | null;
+                directory: string | null;
+                __typename: string;
+            };
+            __typename: string;
+        };
+    };
+}
+
+export interface DataSourceDiscoveryInfo {
+    cloud_account_id: string;
+    created_at: number;
+    deleted_at: number;
+    enabled: boolean;
+    id: string;
+    last_discovery_at: number;
+    last_error: string | null;
+    last_error_at: number;
+    observe_time: number;
+    resource_type: string;
+    __typename: string;
+}
+
+
+export interface CloudAccountsResponse {
+    cloud_accounts: CloudAccount[];
+}
+
+export interface CloudAccount {
+    deleted_at: number;
+    id: string;
+    created_at: number;
+    name: string;
+    type: string;
+    config: {
+        client_id: string;
+        secret: string;
+        tenant: string;
+        skipped_subscriptions: any;
+        subscription_id: string;
+        expense_import_scheme: string;
+    };
+    organization_id: string;
+    auto_import: boolean;
+    import_period: number;
+    last_import_at: number;
+    last_import_modified_at: number;
+    account_id: string;
+    process_recommendations: boolean;
+    last_import_attempt_at: number;
+    last_import_attempt_error: string;
+    last_getting_metrics_at: number;
+    last_getting_metric_attempt_at: number;
+    last_getting_metric_attempt_error: string;
+    cleaned_at: number;
+    parent_id: string;
+}
+

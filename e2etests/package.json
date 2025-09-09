@@ -21,6 +21,7 @@
     "playwright:regression": "cross-env IS_REGRESSION_RUN=true npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
     "playwright:regression:ui": "npm run playwright:regression -- --ui",
     "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
+    "playwright:devops": "npx playwright test --grep @devops --config=playwright.devops.config.ts",
     "docker:test": "./run_pw.sh",
     "docker:update": "./run_pw.sh -u"
   },

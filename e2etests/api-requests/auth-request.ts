@@ -2,6 +2,7 @@ import {APIResponse} from "playwright";
 import {BaseRequest} from "./base-request";
 import {APIRequestContext} from "@playwright/test";
 import fs from "fs";
+import {debugLog} from "../utils/debug-logging";
 
 export class AuthRequest extends BaseRequest {
     readonly request: APIRequestContext;
@@ -53,9 +54,8 @@ export class AuthRequest extends BaseRequest {
             throw new Error('Failed to generate token');
         }
         const body = await response.json();
-        console.log(JSON.stringify(body));
         const {token} = await response.json();
-        console.log(`Token: ${token}`);
+        debugLog(`Token: ${token}`);
         return token;
     }
 
