@@ -26,9 +26,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: e2etests
 
       - name: Install Playwright browsers
         run: npx playwright install
+        working-directory: e2etests
 
       - name: Run Playwright DevOps tests
         run: npm run playwright:test
+        working-directory: e2etests
