@@ -1,4 +1,4 @@
-name: Playwright DevOps Tests
+name: Playwright E2E Tests
 
 on:
   workflow_dispatch:
@@ -31,4 +31,4 @@ jobs:
         run: npx playwright install
 
       - name: Run Playwright DevOps tests
-        run: npm run playwright:devops
+        run: npm run playwright:test
