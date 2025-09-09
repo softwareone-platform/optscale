@@ -135,13 +135,20 @@ export default gql`
 
   # GCP data source
   type GcpBillingDataConfig {
-    dataset_name: String
-    table_name: String
+    dataset_name: String!
+    table_name: String!
+    project_id: String
+  }
+
+  type GcpPricingDataConfig {
+    dataset_name: String!
+    table_name: String!
     project_id: String
   }
 
   type GcpConfig {
-    billing_data: GcpBillingDataConfig
+    billing_data: GcpBillingDataConfig!
+    pricing_data: GcpPricingDataConfig
   }
 
   type GcpDataSource implements DataSourceInterface {
@@ -162,13 +169,20 @@ export default gql`
 
   # GCP tenant data source
   type GcpTenantBillingDataConfig {
-    dataset_name: String
-    table_name: String
+    dataset_name: String!
+    table_name: String!
+    project_id: String
+  }
+
+  type GcpTenantPricingDataConfig {
+    dataset_name: String!
+    table_name: String!
     project_id: String
   }
 
   type GcpTenantConfig {
-    billing_data: GcpTenantBillingDataConfig
+    billing_data: GcpTenantBillingDataConfig!
+    pricing_data: GcpTenantPricingDataConfig
   }
 
   type GcpTenantDataSource implements DataSourceInterface {
@@ -359,13 +373,21 @@ export default gql`
     project_id: String
   }
 
+  input GcpPricingDataConfigInput {
+    dataset_name: String!
+    table_name: String!
+    project_id: String
+  }
+
   input GcpConfigInput {
     billing_data: GcpBillingDataConfigInput!
+    pricing_data: GcpPricingDataConfigInput
     credentials: JSONObject!
   }
 
   input GcpTenantConfigInput {
     billing_data: GcpBillingDataConfigInput!
+    pricing_data: GcpPricingDataConfigInput
     credentials: JSONObject!
   }
 
