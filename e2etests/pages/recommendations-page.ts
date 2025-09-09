@@ -1,6 +1,6 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
-import {test} from "../fixtures/page-object-fixtures";
+import {test} from "../fixtures/page.fixture";
 import {debugLog} from "../utils/debug-logging";
 
 /**

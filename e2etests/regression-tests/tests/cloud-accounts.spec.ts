@@ -1,4 +1,4 @@
-import {test} from "../../fixtures/page-object-fixtures";
+import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {InterceptionEntry} from "../../utils/api-requests/interceptor";
@@ -9,7 +9,7 @@ const interceptorList: InterceptionEntry[] = [
   {mock: DataSourcesMock, gql: "DataSources"}
 ];
 
-test.use({restoreSession: true, interceptAPI: {list: interceptorList}});
+test.use({restoreSession: true, interceptAPI: {entries: interceptorList}});
 
 
 test.describe('FFC: Cloud Account @swo_regression', () => {

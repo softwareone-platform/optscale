@@ -9,7 +9,7 @@ interface Options {
   baseRequest: BaseRequest;
   restoreSession?: boolean;
   interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
-    list: InterceptionEntry[];
+    entries: InterceptionEntry[];
   }
 }
 
@@ -81,7 +81,7 @@ const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
   restoreSession: [false, {option: true}],
-  interceptAPI: {list: []}, // default empty list, can be overridden per test
+  interceptAPI: {entries: []}, // default empty list, can be overridden per test
 
 
   page: async ({page, restoreSession, interceptAPI}, use) => {
@@ -89,8 +89,8 @@ export const test = base.extend<Fixtures & Options>({
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, true);
     }
-    if (interceptAPI.list.length > 0) {
-      await apiInterceptors(page, interceptAPI.list);
+    if (interceptAPI.entries.length > 0) {
+      await apiInterceptors(page, interceptAPI.entries);
     }
 
     await use(page);

@@ -1,6 +1,18 @@
-import {test} from "../fixtures/page-object-fixtures";
+import {test} from "../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
+
+import {
+  BreakdownExpensesByServiceResponse,
+  SummaryExpensesResponse,
+  AvailableFiltersResponse,
+  BreakdownExpensesByRegionResponse,
+  BreakdownExpensesByResourceTypeResponse,
+  BreakdownExpensesByDataSourceResponse,
+  BreakdownExpensesByOwnerResponse,
+  BreakdownExpensesByPoolResponse,
+  BreakdownExpensesByK8sNodeResponse, BreakdownExpensesByK8sNamespaceResponse, BreakdownExpensesByK8sServiceResponse
+} from "../mocks/resources-page.mocks";
 import {comparePngImages} from "../utils/image-comparison";
 import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
 import {
@@ -19,56 +31,13 @@ import {
   ServiceNameResourceResponse,
   TagsResponse
 } from "../types/api-response.types";
-import {fetchBreakdownExpenses} from "../utils/api-requests/organizations-request";
+import {fetchBreakdownExpenses} from "../utils/api-helpers";
 import {InterceptionEntry} from "../utils/api-requests/interceptor";
-import {
-  AvailableFiltersMock,
-  BreakdownExpensesByDataSourceMock, BreakdownExpensesByK8sNamespaceMock,
-  BreakdownExpensesByK8sNodeMock, BreakdownExpensesByK8sServiceMock,
-  BreakdownExpensesByOwnerMock,
-  BreakdownExpensesByPoolMock,
-  BreakdownExpensesByRegionMock,
-  BreakdownExpensesByResourceTypeMock,
-  BreakdownExpensesByServiceMock,
-  ResourceSummaryExpensesMock
-} from "../mocks/resources-page.mocks";
-import {debugLog} from "../utils/debug-logging";
 
-const apiInterceptions: InterceptionEntry[] = [
-  {url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`, mock: BreakdownExpensesByOwnerMock},
-  {url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`, mock: BreakdownExpensesByPoolMock},
-  {url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`, mock: BreakdownExpensesByK8sNodeMock},
-  {url: `/v2/organizations/[^/]+/summary_expenses`, mock: ResourceSummaryExpensesMock},
-  {url: `/v2/organizations/[^/]+/available_filters`, mock: AvailableFiltersMock},
-  {url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`, mock: BreakdownExpensesByRegionMock},
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
-    mock: BreakdownExpensesByServiceMock
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
-    mock: BreakdownExpensesByResourceTypeMock
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
-    mock: BreakdownExpensesByDataSourceMock
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
-    mock: BreakdownExpensesByK8sNamespaceMock
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
-    mock: BreakdownExpensesByK8sServiceMock
-  }
-];
 
 test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
-
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
-
   test.use({restoreSession: true});
-
   let totalExpensesValue: number;
   let itemisedTotal: number;
 
@@ -208,12 +177,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
     await test.step('Get total expenses value from resources page', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      debugLog(`Total expenses value: ${totalExpensesValue}`);
+      console.log(`Total expenses value: ${totalExpensesValue}`);
     });
     await test.step('get the sum of itemised expenses from table', async () => {
       await resourcesPage.table.waitFor();
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      debugLog(`Itemised total: ${itemisedTotal}`);
+      console.log(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare total expenses with itemised total', async () => {
@@ -237,12 +206,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
 
     await test.step('Get total expenses value after filtering', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      debugLog(`Total expenses value after filtering: ${totalExpensesValue}`);
+      console.log(`Total expenses value after filtering: ${totalExpensesValue}`);
     });
 
     await test.step('Get itemised total from table after filtering', async () => {
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      debugLog(`Itemised total: ${itemisedTotal}`);
+      console.log(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare filtered total expenses with itemised total', async () => {
@@ -270,13 +239,13 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
       await datePicker.selectLast7DaysDateRange();
       await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      debugLog(`Total expenses value for last 7 days: ${totalExpensesValue}`);
+      console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
     });
 
     await test.step('Get itemised total from table for last 7 days', async () => {
       await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      debugLog(`Itemised total for last 7 days: ${itemisedTotal}`);
+      console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
     });
 
     await test.step('Compare total expenses with itemised total for last 7 days', async () => {
@@ -725,13 +694,61 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
   });
 })
 
+
+const apiInterceptions: InterceptionEntry[] = [
+  {
+    url: `/v2/organizations/[^/]+/summary_expenses`,
+    mock: SummaryExpensesResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
+    mock: BreakdownExpensesByServiceResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
+    mock: BreakdownExpensesByRegionResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
+    mock: BreakdownExpensesByResourceTypeResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
+    mock: BreakdownExpensesByDataSourceResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
+    mock: BreakdownExpensesByOwnerResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
+    mock: BreakdownExpensesByPoolResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
+    mock: BreakdownExpensesByK8sNodeResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
+    mock: BreakdownExpensesByK8sNamespaceResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
+    mock: BreakdownExpensesByK8sServiceResponse
+  },
+  {
+    url: `/v2/organizations/[^/]+/available_filters`,
+    mock: AvailableFiltersResponse
+  }
+];
+
+
 test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
-
-  test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
-
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
-  test.beforeEach('Login admin user', async ({resourcesPage}) => {
+  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+
+  test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');

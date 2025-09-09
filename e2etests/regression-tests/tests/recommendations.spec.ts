@@ -1,4 +1,4 @@
-import {test} from "../../fixtures/page-object-fixtures";
+import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {InterceptionEntry} from "../../utils/api-requests/interceptor";
@@ -20,7 +20,7 @@ const apiInterceptions: InterceptionEntry[] = [
   {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsMock}
 ];
 
-test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
+test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
 
 test.describe('FFC: Recommendations @swo_regression', () => {
   test('Recommendations page matches screenshots', async ({recommendationsPage}) => {

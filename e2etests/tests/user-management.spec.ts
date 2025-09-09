@@ -1,4 +1,4 @@
-import {test} from "../fixtures/page-object-fixtures";
+import {test} from "../fixtures/page.fixture";
 import {getValueFromAuthResponse} from "../utils/auth-session-storage/auth-helpers";
 import {EUserRole} from "../types/enums";
 import {expect} from "@playwright/test";

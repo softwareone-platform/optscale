@@ -1,4 +1,4 @@
-import {test} from "../../fixtures/page-object-fixtures";
+import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {InterceptionEntry} from "../../utils/api-requests/interceptor";
@@ -6,7 +6,7 @@ import {EventsRegressionResponse} from "../mocks/events.mocks";
 
 const apiInterceptions: InterceptionEntry[] = [{mock: EventsRegressionResponse, gql: "events"}];
 
-test.use({restoreSession: true, interceptAPI: {list: apiInterceptions}});
+test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
 
 test.describe('FFC: Events @swo_regression', () => {
 

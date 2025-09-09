@@ -1,4 +1,4 @@
-import {test} from "../fixtures/page-object-fixtures";
+import {test} from "../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 import {getCardSavingsData} from "../mocks/recommendation-card-metadata.mocks";

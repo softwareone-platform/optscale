@@ -1,4 +1,4 @@
-import {test} from "../../fixtures/page-object-fixtures";
+import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
 import {
@@ -15,7 +15,7 @@ const interceptorList: InterceptionEntry[] = [
   },
 ];
 
-test.use({restoreSession: true, interceptAPI: {list: interceptorList}});
+test.use({restoreSession: true, interceptAPI: {entries: interceptorList}});
 
 test.describe('FFC: Anomalies @swo_regression', () => {
   test('Anomalies page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {

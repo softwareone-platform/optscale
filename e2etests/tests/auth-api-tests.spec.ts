@@ -1,4 +1,4 @@
-import { test } from "../fixtures/page-object-fixtures";
+import { test } from "../fixtures/page.fixture";
 import { expect } from "@playwright/test";
 import {AuthResponse, UsersResponse} from "../types/api-response.types";
 import {generateRandomEmail} from "../utils/random-data-generator";

@@ -1,9 +1,9 @@
-import {test} from "../fixtures/page-fixture";
+import {test} from "../fixtures/page.fixture";
 import {debugLog} from "../utils/debug-logging";
 import {fetchDataSourceResponse} from "../utils/api-helpers";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
-import {DataSourceResponse} from "../test-data/test-data-response-types";
 import {expect} from "@playwright/test";
+import {DataSourceResponse} from "../types/api-response.types";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 
 test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
 
