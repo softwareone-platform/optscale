@@ -29,5 +29,5 @@ COPY auth/auth_server/swagger auth/auth_server/swagger
 RUN uv --project auth sync --locked --no-dev
 RUN uv --project auth run python -u auth/auth_server/write_spec.py
 
-CMD ["uv", "--project", "rest_api", "run", "python", "-u", "/usr/src/app/auth/auth_server/server.py"]
+CMD ["uv", "--project", "auth", "run", "python", "-u", "/usr/src/app/auth/auth_server/server.py"]
 EXPOSE 8905
