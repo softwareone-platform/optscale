@@ -397,7 +397,7 @@ export type GcpBillingDataConfigInput = {
 
 export type GcpConfig = {
   __typename?: "GcpConfig";
-  billing_data: GcpBillingDataConfig;
+  billing_data?: Maybe<GcpBillingDataConfig>;
   pricing_data?: Maybe<GcpPricingDataConfig>;
 };
 
@@ -446,7 +446,7 @@ export type GcpTenantBillingDataConfig = {
 
 export type GcpTenantConfig = {
   __typename?: "GcpTenantConfig";
-  billing_data: GcpTenantBillingDataConfig;
+  billing_data?: Maybe<GcpTenantBillingDataConfig>;
   pricing_data?: Maybe<GcpTenantPricingDataConfig>;
 };
 
@@ -1332,7 +1332,7 @@ export type GcpConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpConfig"] = ResolversParentTypes["GcpConfig"]
 > = {
-  billing_data?: Resolver<ResolversTypes["GcpBillingDataConfig"], ParentType, ContextType>;
+  billing_data?: Resolver<Maybe<ResolversTypes["GcpBillingDataConfig"]>, ParentType, ContextType>;
   pricing_data?: Resolver<Maybe<ResolversTypes["GcpPricingDataConfig"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1381,7 +1381,7 @@ export type GcpTenantConfigResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["GcpTenantConfig"] = ResolversParentTypes["GcpTenantConfig"]
 > = {
-  billing_data?: Resolver<ResolversTypes["GcpTenantBillingDataConfig"], ParentType, ContextType>;
+  billing_data?: Resolver<Maybe<ResolversTypes["GcpTenantBillingDataConfig"]>, ParentType, ContextType>;
   pricing_data?: Resolver<Maybe<ResolversTypes["GcpTenantPricingDataConfig"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
