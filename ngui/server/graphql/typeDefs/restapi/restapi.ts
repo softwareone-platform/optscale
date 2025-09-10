@@ -147,7 +147,7 @@ export default gql`
   }
 
   type GcpConfig {
-    billing_data: GcpBillingDataConfig!
+    billing_data: GcpBillingDataConfig
     pricing_data: GcpPricingDataConfig
   }
 
@@ -181,7 +181,7 @@ export default gql`
   }
 
   type GcpTenantConfig {
-    billing_data: GcpTenantBillingDataConfig!
+    billing_data: GcpTenantBillingDataConfig
     pricing_data: GcpTenantPricingDataConfig
   }
 
