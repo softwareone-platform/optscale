@@ -1,7 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
-import {CloudAccountsResponse, DataSourcesResponse} from "../test-data/cloud-accounts-data";
 import {debugLog} from "../utils/debug-logging";
 
 /**
@@ -30,29 +28,6 @@ export class CloudAccountsPage extends BasePage {
     this.billingStatusCompletedIcon = this.getByAnyTestId('CheckCircleIcon', this.lastBillingImportStatus);
     this.addBtn = this.main.getByTestId('btn_add');
     this.allCloudAccountLinks = this.table.locator('//td//a');
-  }
-
-  /**
-   * Sets up API interceptions for the Cloud Accounts page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
-  async setupApiInterceptions(): Promise<void> {
-    const apiInterceptions: IInterceptorConfig[] = [
-      {
-        page: this.page,
-        urlPattern: `v2/pools/[^/]+?children=false&details=false`,
-        mockResponse: CloudAccountsResponse,
-      },
-      {
-        page: this.page,
-        urlPattern: `/api$`,
-        mockResponse: DataSourcesResponse,
-        graphQlOperationName: "DataSources",
-      },
-    ];
-
-    await Promise.all(apiInterceptions.map(interceptApiRequest));
   }
 
   /**
