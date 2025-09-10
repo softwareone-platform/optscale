@@ -1,8 +1,8 @@
-import { currencyCodes } from "utils/currency";
+import {currencyCodes} from "utils/currency";
 import messagesEnUS from "./en-US/index";
 
 const getCurrencySymbol = (currency, locale) =>
-  new Intl.NumberFormat(locale, { style: "currency", currency, currencyDisplay: "narrowSymbol" })
+  new Intl.NumberFormat(locale, {style: "currency", currency, currencyDisplay: "narrowSymbol"})
     .formatToParts(1)
     .find((x) => x.type === "currency").value;
 
@@ -31,8 +31,8 @@ export default (() => {
           ...Object.fromEntries(
             currencyCodes
               .map((code) => [
-                [code, getCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })],
-                [`${code}Compact`, getCompactCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })]
+                [code, getCurrencyConfiguration(code, {currencyDisplay: "narrowSymbol"})],
+                [`${code}Compact`, getCompactCurrencyConfiguration(code, {currencyDisplay: "narrowSymbol"})]
               ])
               .flat()
           ),
@@ -51,22 +51,21 @@ export default (() => {
 
   // Check translations for forbidden strings
   const checkForbiddenStrings = (obj: Record<string, unknown>, forbidden = ["OptScale", "optScale"], path = ""): string[] => {
-    const issues = [];
+    const issues: string[] = [];
 
-    for (const [key, value] of Object.entries(obj)) {
+    Object.entries(obj).forEach(([key, value]) => {
       const currentPath = path ? `${path}.${key}` : key;
 
       if (typeof value === "string") {
-        for (const term of forbidden) {
+        forbidden.forEach((term) => {
           if (value.includes(term)) {
             issues.push(`Found forbidden term "${term}" in translation at path: ${currentPath}`);
           }
-        }
-      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        });
+      } else if (value && typeof value === "object" && !Array.isArray(value)) {
         issues.push(...checkForbiddenStrings(value as Record<string, unknown>, forbidden, currentPath));
       }
-    }
-
+    });
     return issues;
   };
 
@@ -81,7 +80,7 @@ export default (() => {
 
   const locale = messagesMap[navigator.language] ? navigator.language : DEFAULT_LOCALE;
 
-  const getConfig = () => ({ ...localeConfigMap[locale], locale, messages: messagesMap[locale] });
+  const getConfig = () => ({...localeConfigMap[locale], locale, messages: messagesMap[locale]});
 
   return {
     getConfig,
