@@ -1,12 +1,12 @@
-import {test} from "../fixtures/page-fixture";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {test} from "../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {expectWithinDrift} from "../utils/custom-assertions";
 
 test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui", "@recommendations", "@homepage"]}, () => {
-    test.beforeEach(async ({homePage, page}) => {
+    test.use({restoreSession: true});
+
+    test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
@@ -57,10 +57,10 @@ test.describe("[MPT-11464] Home Page Recommendations block tests", {tag: ["@ui",
 })
 
 test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@resources", "@homepage"]}, () => {
+    test.use({restoreSession: true});
 
-    test.beforeEach(async ({homePage, page}) => {
+    test.beforeEach(async ({homePage}) => {
         await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
             await homePage.navigateToURL();
             await homePage.waitForLoadingPageImgToDisappear();
             await homePage.waitForPageLoaderToDisappear();
@@ -105,7 +105,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
         });
     });
 
-    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage, resourcesPage}) => {
+    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage}) => {
 
         await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
             const count = await homePage.topResourcesAllLinks.count();
@@ -120,13 +120,9 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
 })
 
 test.describe('[MPT-12743] Home Page test for Pools requiring attention block', {tag: ["@ui", "@pools", "@homepage"]}, () => {
-    test.describe.configure({mode: 'serial'}); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
+    test.use({restoreSession: true});
 
-    test.beforeEach(async ({homePage, page}) => {
-        await test.step('Login as FinOps user', async () => {
-            await restoreUserSessionInLocalForage(page);
-        });
-    });
+    test.describe.configure({mode: 'serial'}); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
 
     test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({homePage, poolsPage}) => {
         await test.step('Navigate to home page', async () => {
@@ -147,7 +143,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
             await poolsPage.waitForPageLoaderToDisappear();
             await poolsPage.expandMoreIcon.waitFor();
             if (await poolsPage.getColumnBadgeText() !== 'All') await poolsPage.selectAllColumns();
-            await poolsPage.toggleExpandPool()
+            await poolsPage.toggleExpandPool();
             await poolsPage.removeAllSubPoolMonthlyLimits();
             await poolsPage.toggleExpandPool();
             if(await poolsPage.getOrganizationLimitValue() !== 0) await poolsPage.editPoolMonthlyLimit(0);

@@ -1,8 +1,7 @@
-import {test} from "../fixtures/page-fixture";
-import {expect, request} from "@playwright/test";
-import {generateRandomEmail} from "../utils/random-data";
-import {AuthRequest} from "../api-requests/auth-request";
-import {restoreUserSessionInLocalForage} from "../utils/auth-storage/localforage-service";
+import {test} from "../fixtures/page.fixture";
+import {expect} from "@playwright/test";
+import {generateRandomEmail} from "../utils/random-data-generator";
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 
 const verificationCode = "123456";
 let invitationEmail: string;
@@ -17,23 +16,21 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
     invitationEmail = generateRandomEmail();
     inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
     emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
-
     await restoreUserSessionInLocalForage(page);
-    await loginPage.navigateToURL()
+    await loginPage.navigateToURL();
   });
 
   test("[229865] Invite new user to organisation, user accepts", {tag: "@p1"}, async ({
-                                                                              header,
-                                                                              mainMenu,
-                                                                              usersPage,
-                                                                              usersInvitePage,
-                                                                              registerPage,
-                                                                              pendingInvitationsPage,
-                                                                              emailVerificationPage
-                                                                            }) => {
+                                                                                        header,
+                                                                                        mainMenu,
+                                                                                        usersPage,
+                                                                                        usersInvitePage,
+                                                                                        registerPage,
+                                                                                        pendingInvitationsPage,
+                                                                                        emailVerificationPage,
+                                                                                        baseRequest
+                                                                                      }) => {
     test.slow();
-    const requestContext = await request.newContext();
-    const authRequest = new AuthRequest(requestContext);
 
     await test.step("Navigate to the invitation page", async () => {
       await mainMenu.clickUserManagement();
@@ -57,7 +54,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
 
     await test.step("Set verification code", async () => {
       await emailVerificationPage.waitForVerificationCodeResetTimeout();
-      await authRequest.setVerificationCode(invitationEmail, verificationCode);
+      await baseRequest.setVerificationCode(invitationEmail, verificationCode);
     });
 
     await test.step("Verify and accept invitation from email", async () => {
@@ -82,11 +79,10 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
                                                                                usersInvitePage,
                                                                                registerPage,
                                                                                pendingInvitationsPage,
-                                                                               emailVerificationPage
+                                                                               emailVerificationPage,
+                                                                               baseRequest
                                                                              }) => {
     test.setTimeout(120000);
-    const requestContext = await request.newContext();
-    const authRequest = new AuthRequest(requestContext);
 
     await test.step("Navigate to the invitation page", async () => {
       await mainMenu.clickUserManagement();
@@ -110,7 +106,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
 
     await test.step("Set verification code", async () => {
       await emailVerificationPage.waitForVerificationCodeResetTimeout();
-      await authRequest.setVerificationCode(invitationEmail, verificationCode);
+      await baseRequest.setVerificationCode(invitationEmail, verificationCode);
     });
 
     await test.step("Verify and decline invitation from email", async () => {
@@ -132,11 +128,10 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
                                                                                                usersInvitePage,
                                                                                                registerPage,
                                                                                                pendingInvitationsPage,
-                                                                                               emailVerificationPage
+                                                                                               emailVerificationPage,
+                                                                                               baseRequest
                                                                                              }) => {
     test.setTimeout(120000);
-    const requestContext = await request.newContext();
-    const authRequest = new AuthRequest(requestContext);
 
     await test.step("Navigate to the invitation page", async () => {
       await mainMenu.clickUserManagement();
@@ -160,7 +155,7 @@ test.describe("MPT-8230 Invitation Flow Tests for new users", {tag: ["@invitatio
 
     await test.step("Set verification code", async () => {
       await emailVerificationPage.waitForVerificationCodeResetTimeout();
-      await authRequest.setVerificationCode(invitationEmail, verificationCode);
+      await baseRequest.setVerificationCode(invitationEmail, verificationCode);
     });
 
     await test.step("Verify and decline invitation from email", async () => {
@@ -228,11 +223,10 @@ test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitati
                                                                         registerPage,
                                                                         settingsPage,
                                                                         pendingInvitationsPage,
-                                                                        emailVerificationPage
+                                                                        emailVerificationPage,
+                                                                        baseRequest
                                                                       }) => {
     test.setTimeout(120000);
-    const requestContext = await request.newContext();
-    const authRequest = new AuthRequest(requestContext);
 
     await test.step('Login as Admin user', async () => {
       invitationEmail = generateRandomEmail();
@@ -265,7 +259,7 @@ test.describe("MPT-8229 Validate invitations in the settings", {tag: ["@invitati
 
     await test.step("Set verification code", async () => {
       await emailVerificationPage.waitForVerificationCodeResetTimeout();
-      await authRequest.setVerificationCode(invitationEmail, verificationCode);
+      await baseRequest.setVerificationCode(invitationEmail, verificationCode);
     });
 
     await test.step("Verify and accept invitation from email", async () => {
@@ -327,12 +321,10 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
                                                                        registerPage,
                                                                        settingsPage,
                                                                        pendingInvitationsPage,
-                                                                       emailVerificationPage
+                                                                       emailVerificationPage,
+                                                                       baseRequest
                                                                      }) => {
     test.setTimeout(120000);
-    const requestContext = await request.newContext();
-    const authRequest = new AuthRequest(requestContext);
-
     await test.step('Login as Admin user', async () => {
       invitationEmail = generateRandomEmail();
       inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
@@ -364,7 +356,7 @@ test.describe("MPT-8231 Invitation Flow Tests for an existing user", {tag: ["@in
 
     await test.step("Set verification code", async () => {
       await emailVerificationPage.waitForVerificationCodeResetTimeout();
-      await authRequest.setVerificationCode(invitationEmail, verificationCode);
+      await baseRequest.setVerificationCode(invitationEmail, verificationCode);
     });
 
     await test.step("Verify and accept invitation from email", async () => {

@@ -1,5 +1,5 @@
 import {chromium, APIRequestContext} from "@playwright/test";
-import {AuthRequest} from "../api-requests/auth-request";
+import {AuthRequest} from "../utils/api-requests/auth-request";
 import * as fs from 'fs';
 import * as path from 'path';
 
