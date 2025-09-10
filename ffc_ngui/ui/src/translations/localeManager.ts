@@ -1,8 +1,8 @@
-import {currencyCodes} from "utils/currency";
+import { currencyCodes } from "utils/currency";
 import messagesEnUS from "./en-US/index";
 
 const getCurrencySymbol = (currency, locale) =>
-  new Intl.NumberFormat(locale, {style: "currency", currency, currencyDisplay: "narrowSymbol"})
+  new Intl.NumberFormat(locale, { style: "currency", currency, currencyDisplay: "narrowSymbol" })
     .formatToParts(1)
     .find((x) => x.type === "currency").value;
 
@@ -31,8 +31,8 @@ export default (() => {
           ...Object.fromEntries(
             currencyCodes
               .map((code) => [
-                [code, getCurrencyConfiguration(code, {currencyDisplay: "narrowSymbol"})],
-                [`${code}Compact`, getCompactCurrencyConfiguration(code, {currencyDisplay: "narrowSymbol"})]
+                [code, getCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })],
+                [`${code}Compact`, getCompactCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })]
               ])
               .flat()
           ),
@@ -80,7 +80,7 @@ export default (() => {
 
   const locale = messagesMap[navigator.language] ? navigator.language : DEFAULT_LOCALE;
 
-  const getConfig = () => ({...localeConfigMap[locale], locale, messages: messagesMap[locale]});
+  const getConfig = () => ({ ...localeConfigMap[locale], locale, messages: messagesMap[locale] });
 
   return {
     getConfig,
