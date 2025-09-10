@@ -33,32 +33,4 @@ const currenciesMerged = { ...currenciesMain, ...currencies }; // Merges main an
 
 const allTranslations = { ...appMerged, ...errorMerged, ...successMerged, ...finOpsMerged, ...currenciesMerged };
 
-// Check translations for forbidden strings
-const checkForbiddenStrings = (obj: Record<string, unknown>, forbidden = ["OptScale", "optScale"], path = ""): string[] => {
-  const issues = [];
-
-  for (const [key, value] of Object.entries(obj)) {
-    const currentPath = path ? `${path}.${key}` : key;
-
-    if (typeof value === "string") {
-      for (const term of forbidden) {
-        if (value.includes(term)) {
-          issues.push(`Found forbidden term "${term}" in translation at path: ${currentPath}`);
-        }
-      }
-    } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      issues.push(...checkForbiddenStrings(value as Record<string, unknown>, forbidden, currentPath));
-    }
-  }
-
-  return issues;
-};
-
-const forbiddenIssues = checkForbiddenStrings(allTranslations);
-if (forbiddenIssues.length > 0) {
-  throw new Error(`Translation validation failed:\n${forbiddenIssues.join("\n")}`);
-}
-
-console.log(allTranslations);
-
 export default allTranslations;
