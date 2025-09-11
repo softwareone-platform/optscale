@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage, useIntl } from "react-intl";
 import FormattedDigitalUnit, { SI_UNITS } from "components/FormattedDigitalUnit";
 import FormattedMoney from "components/FormattedMoney";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { EXPENSES_MAP_OBJECT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { EXTERNAL_LAT, EXTERNAL_LON, INTER_REGION_LAT, INTER_REGION_LON, INTER_REGION_NAME } from "utils/maps";
 

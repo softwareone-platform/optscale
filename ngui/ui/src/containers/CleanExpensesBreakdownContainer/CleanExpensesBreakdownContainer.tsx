@@ -12,7 +12,7 @@ import ExpensesDailyBreakdownByContainer from "containers/ExpensesDailyBreakdown
 import { useFetchAndDownload } from "hooks/useFetchAndDownload";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import CleanExpensesService, { mapCleanExpensesRequestParamsToApiParams } from "services/CleanExpensesService";
-import { getLength, isEmpty } from "utils/arrays";
+import { getLength, isEmptyArray } from "utils/arrays";
 import { stringifySearchParams } from "utils/network";
 
 const shouldRenderLimitWarning = (limit, expenses) => getLength(expenses) === limit;
@@ -63,7 +63,7 @@ const CleanExpensesBreakdownContainer = ({ requestParams }) => {
     if (isLoading) {
       return <TableLoader columnsCounter={1} showHeader />;
     }
-    if (isEmpty(expenses)) {
+    if (isEmptyArray(expenses)) {
       return <CleanExpensesTable expenses={expenses} />;
     }
 

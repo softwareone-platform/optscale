@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useInvitationsQuery } from "graphql/__generated__/hooks/restapi";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { Error, Loading } from "../../common";
 import SetupOrganization from "../SetupOrganization/StepContainer";
 import AcceptInvitations from "./AcceptInvitations";

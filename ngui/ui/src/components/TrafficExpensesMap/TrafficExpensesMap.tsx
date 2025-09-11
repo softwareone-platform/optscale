@@ -13,7 +13,7 @@ import FromToArrowLabel from "components/FromToArrowLabel";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import TrafficMapMarker from "components/TrafficMapMarker";
-import { isEmpty } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { EXPENSES_MAP_OBJECT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { getEnvironmentVariable } from "utils/env";
 import { SPACING_2 } from "utils/layouts";
@@ -89,7 +89,7 @@ function getTooltipState(info) {
                 }}
               />
             </Typography>
-            {!isEmpty(object.location.expenses) && (
+            {!isEmptyArray(object.location.expenses) && (
               <>
                 <Typography variant="caption" component="div">
                   <FormattedMessage id="to" />

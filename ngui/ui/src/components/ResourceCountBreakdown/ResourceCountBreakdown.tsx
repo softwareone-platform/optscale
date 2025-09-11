@@ -5,7 +5,7 @@ import { useIntl } from "react-intl";
 import ChartLegendToggle from "components/ChartLegendToggle";
 import BreakdownBy from "components/ExpensesDailyBreakdownBy/BreakdownBy";
 import { useSyncQueryParamWithState } from "hooks/useSyncQueryParamWithState";
-import { splitIntoTwoChunks, isEmpty as isEmptyArray } from "utils/arrays";
+import { splitIntoTwoChunks, isEmptyArray } from "utils/arrays";
 import { getColorsMap } from "utils/charts";
 import { format, secondsToMilliseconds } from "utils/datetime";
 import { SPACING_1 } from "utils/layouts";
