@@ -27,7 +27,7 @@ dev = [
     "pyyaml==6.0.1",
 ]
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build==0.8.15"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
