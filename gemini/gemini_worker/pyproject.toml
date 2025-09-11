@@ -18,7 +18,7 @@ restapi-client = { path = "../../optscale_client/rest_api_client" }
 [dependency-groups]
 dev = ["coverage==4.2", "pycodestyle==2.11.1", "pylint==3.0.2"]
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build==0.8.15"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]

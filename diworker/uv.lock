@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -705,7 +705,7 @@ requires-dist = [
     { name = "config-client", directory = "../optscale_client/config_client" },
     { name = "herald-client", directory = "../optscale_client/herald_client" },
     { name = "insider-client", directory = "../optscale_client/insider_client" },
-    { name = "kombu", specifier = "==5.3.4" },
+    { name = "kombu", specifier = "==5.4.2" },
     { name = "mongodb-migrations", specifier = "==0.7.0" },
     { name = "optscale-data", directory = "../tools/optscale_data" },
     { name = "optscale-time", directory = "../tools/optscale_time" },
@@ -1062,15 +1062,16 @@ wheels = [
 
 [[package]]
 name = "kombu"
-version = "5.3.4"
+version = "5.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "amqp" },
+    { name = "tzdata" },
     { name = "vine" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/24/f88282626d5f5b720fed5a8d1a609a504569b93465cbbfe8e7c049fba54e/kombu-5.3.4.tar.gz", hash = "sha256:0bb2e278644d11dea6272c17974a3dbb9688a949f3bb60aeb5b791329c44fadc", size = 437599, upload-time = "2023-11-16T16:32:18.005Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/38/4d/b93fcb353d279839cc35d0012bee805ed0cf61c07587916bfc35dbfddaf1/kombu-5.4.2.tar.gz", hash = "sha256:eef572dd2fd9fc614b37580e3caeafdd5af46c1eff31e7fba89138cdb406f2cf", size = 442858, upload-time = "2024-09-19T12:25:37.261Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a8/cc/24160d61e8c44bd76a775017c0859a403db471ddbd701e725fdf2becafa6/kombu-5.3.4-py3-none-any.whl", hash = "sha256:63bb093fc9bb80cfb3a0972336a5cec1fa7ac5f9ef7e8237c6bf8dda9469313e", size = 199975, upload-time = "2023-11-16T16:32:07.524Z" },
+    { url = "https://files.pythonhosted.org/packages/87/ec/7811a3cf9fdfee3ee88e54d08fcbc3fabe7c1b6e4059826c59d7b795651c/kombu-5.4.2-py3-none-any.whl", hash = "sha256:14212f5ccf022fc0a70453bb025a1dcc32782a588c49ea866884047d66e14763", size = 201349, upload-time = "2024-09-19T12:25:34.926Z" },
 ]
 
 [[package]]

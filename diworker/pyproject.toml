@@ -9,7 +9,7 @@ dependencies = [
     "config-client",
     "herald-client",
     "insider-client",
-    "kombu==5.3.4",
+    "kombu==5.4.2",
     "mongodb-migrations==0.7.0",
     "optscale-data",
     "optscale-time",
@@ -31,12 +31,10 @@ insider-client = { path = "../optscale_client/insider_client" }
 restapi-client = { path = "../optscale_client/rest_api_client" }
 
 [dependency-groups]
-dev = [
-    "pycodestyle==2.11.1",
-    "pylint==3.0.2",
-]
+dev = ["pycodestyle==2.11.1", "pylint==3.0.2"]
+
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build==0.8.15"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
