@@ -341,6 +341,8 @@ class AlibabaProvider(BaseProvider):
         }
         price_infos = list(self.prices_collection.find(query))
         if not price_infos:
+            if region not in self.cloud_adapter.get_regions_coordinates():
+                raise WrongArgumentsException(Err.OI0012, [region])
             prices = self.cloud_adapter.get_flavor_prices(
                 [flavor], region, os_type=os_type,
                 billing_method=billing_method, quantity=quantity,
