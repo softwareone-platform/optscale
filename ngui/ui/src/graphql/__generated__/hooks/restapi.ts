@@ -15,7 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  JSONObject: { input: unknown; output: unknown };
+  JSONObject: { input: Record<string, unknown>; output: Record<string, unknown> };
 };
 
 export type AlibabaConfig = {
@@ -1720,13 +1720,16 @@ export type OrganizationFeaturesQueryVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
 }>;
 
-export type OrganizationFeaturesQuery = { __typename?: "Query"; organizationFeatures?: unknown | null };
+export type OrganizationFeaturesQuery = { __typename?: "Query"; organizationFeatures?: Record<string, unknown> | null };
 
 export type OrganizationThemeSettingsQueryVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
 }>;
 
-export type OrganizationThemeSettingsQuery = { __typename?: "Query"; organizationThemeSettings?: unknown | null };
+export type OrganizationThemeSettingsQuery = {
+  __typename?: "Query";
+  organizationThemeSettings?: Record<string, unknown> | null;
+};
 
 export type UpdateOrganizationThemeSettingsMutationVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
@@ -1735,14 +1738,14 @@ export type UpdateOrganizationThemeSettingsMutationVariables = Exact<{
 
 export type UpdateOrganizationThemeSettingsMutation = {
   __typename?: "Mutation";
-  updateOrganizationThemeSettings?: unknown | null;
+  updateOrganizationThemeSettings?: Record<string, unknown> | null;
 };
 
 export type OrganizationPerspectivesQueryVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
 }>;
 
-export type OrganizationPerspectivesQuery = { __typename?: "Query"; organizationPerspectives?: unknown | null };
+export type OrganizationPerspectivesQuery = { __typename?: "Query"; organizationPerspectives?: Record<string, unknown> | null };
 
 export type UpdateOrganizationPerspectivesMutationVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
@@ -1751,7 +1754,7 @@ export type UpdateOrganizationPerspectivesMutationVariables = Exact<{
 
 export type UpdateOrganizationPerspectivesMutation = {
   __typename?: "Mutation";
-  updateOrganizationPerspectives?: unknown | null;
+  updateOrganizationPerspectives?: Record<string, unknown> | null;
 };
 
 export type CreateDataSourceMutationVariables = Exact<{
@@ -1802,9 +1805,9 @@ export type GetOrganizationConstraintQuery = {
     id: string;
     name: string;
     type: OrganizationConstraintType;
-    definition: unknown;
-    filters: unknown;
-    last_run_result: unknown;
+    definition: Record<string, unknown>;
+    filters: Record<string, unknown>;
+    last_run_result: Record<string, unknown>;
   } | null;
 };
 
@@ -1834,8 +1837,8 @@ export type GetResourceCountBreakdownQuery = {
   __typename?: "Query";
   resourceCountBreakdown?: {
     __typename?: "ResourceCountBreakdown";
-    breakdown: unknown;
-    counts: unknown;
+    breakdown: Record<string, unknown>;
+    counts: Record<string, unknown>;
     start_date: number;
     end_date: number;
   } | null;
@@ -1981,7 +1984,11 @@ export type GetExpensesDailyBreakdownQueryVariables = Exact<{
 
 export type GetExpensesDailyBreakdownQuery = {
   __typename?: "Query";
-  expensesDailyBreakdown?: { __typename?: "ExpensesDailyBreakdown"; breakdown: unknown; counts: unknown } | null;
+  expensesDailyBreakdown?: {
+    __typename?: "ExpensesDailyBreakdown";
+    breakdown: Record<string, unknown>;
+    counts: Record<string, unknown>;
+  } | null;
 };
 
 export type GetOrganizationLimitHitsQueryVariables = Exact<{
@@ -1993,7 +2000,7 @@ export type GetOrganizationLimitHitsQuery = {
   __typename?: "Query";
   organizationLimitHits?: Array<{
     __typename?: "OrganizationLimitHit";
-    run_result: unknown;
+    run_result: Record<string, unknown>;
     created_at: number;
     value: number;
     constraint_limit: number;
@@ -2005,21 +2012,21 @@ export type RelevantFlavorsQueryVariables = Exact<{
   requestParams?: InputMaybe<Scalars["JSONObject"]["input"]>;
 }>;
 
-export type RelevantFlavorsQuery = { __typename?: "Query"; relevantFlavors?: unknown | null };
+export type RelevantFlavorsQuery = { __typename?: "Query"; relevantFlavors?: Record<string, unknown> | null };
 
 export type CleanExpensesQueryVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<CleanExpensesParams>;
 }>;
 
-export type CleanExpensesQuery = { __typename?: "Query"; cleanExpenses?: unknown | null };
+export type CleanExpensesQuery = { __typename?: "Query"; cleanExpenses?: Record<string, unknown> | null };
 
 export type CloudPoliciesQueryVariables = Exact<{
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<CloudPoliciesParams>;
 }>;
 
-export type CloudPoliciesQuery = { __typename?: "Query"; cloudPolicies?: unknown | null };
+export type CloudPoliciesQuery = { __typename?: "Query"; cloudPolicies?: Record<string, unknown> | null };
 
 export const AwsDataSourceConfigFragmentFragmentDoc = gql`
   fragment AwsDataSourceConfigFragment on AwsDataSource {
