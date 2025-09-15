@@ -15,7 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  JSONObject: { input: Record<string, any>; output: Record<string, any> };
+  JSONObject: { input: Record<string, unknown>; output: Record<string, unknown> };
 };
 
 export type AlibabaConfig = {

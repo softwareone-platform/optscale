@@ -65,6 +65,11 @@ class TestFlavorPricesApi(TestBase):
             'GcpProvider.cloud_adapter.get_regions_coordinates',
             return_value={'us-central1': {'name': 'US West (Oregon)'}}
         ).start()
+        patch(
+            'insider.insider_api.controllers.flavor_price.'
+            'AlibabaProvider.cloud_adapter.get_regions_coordinates',
+            return_value={'Singapore': {'name': 'US West (Oregon)'}}
+        ).start()
         super().setUp()
         patch('insider.insider_api.controllers.flavor_price.'
               'BaseProvider.mongo_client',
