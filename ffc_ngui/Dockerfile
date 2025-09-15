@@ -15,6 +15,11 @@ COPY ffc_ngui/ui/package.json ./package.json
 COPY ffc_ngui/ui/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY ffc_ngui/ui/ ./
+
+# ngui translations are copied so applications using main ngui translations could use them
+RUN mkdir -p /usr/src/ngui/ui/src
+COPY ngui/ui/src/translations /usr/src/ngui/ui/src/translations
+
 RUN pnpm build && rm -rf node_modules
 
 # -------- Server --------
