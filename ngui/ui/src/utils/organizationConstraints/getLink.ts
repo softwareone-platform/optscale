@@ -1,6 +1,6 @@
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { RESOURCES, RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME } from "urls";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import {
   CLEAN_EXPENSES_BREAKDOWN_TYPES,
   END_DATE_FILTER,

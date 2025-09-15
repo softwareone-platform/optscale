@@ -1,7 +1,7 @@
 import ExpandableList from "components/ExpandableList";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 
 const MAX_ROWS = 5;
 
