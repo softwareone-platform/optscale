@@ -384,9 +384,9 @@ export type ExpensesDailyBreakdown = {
 
 export type GcpBillingDataConfig = {
   __typename?: "GcpBillingDataConfig";
-  dataset_name?: Maybe<Scalars["String"]["output"]>;
+  dataset_name: Scalars["String"]["output"];
   project_id?: Maybe<Scalars["String"]["output"]>;
-  table_name?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type GcpBillingDataConfigInput = {
@@ -398,11 +398,13 @@ export type GcpBillingDataConfigInput = {
 export type GcpConfig = {
   __typename?: "GcpConfig";
   billing_data?: Maybe<GcpBillingDataConfig>;
+  pricing_data?: Maybe<GcpPricingDataConfig>;
 };
 
 export type GcpConfigInput = {
   billing_data: GcpBillingDataConfigInput;
   credentials: Scalars["JSONObject"]["input"];
+  pricing_data?: InputMaybe<GcpPricingDataConfigInput>;
 };
 
 export type GcpDataSource = DataSourceInterface & {
@@ -422,21 +424,36 @@ export type GcpDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type GcpPricingDataConfig = {
+  __typename?: "GcpPricingDataConfig";
+  dataset_name: Scalars["String"]["output"];
+  project_id?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
+};
+
+export type GcpPricingDataConfigInput = {
+  dataset_name: Scalars["String"]["input"];
+  project_id?: InputMaybe<Scalars["String"]["input"]>;
+  table_name: Scalars["String"]["input"];
+};
+
 export type GcpTenantBillingDataConfig = {
   __typename?: "GcpTenantBillingDataConfig";
-  dataset_name?: Maybe<Scalars["String"]["output"]>;
+  dataset_name: Scalars["String"]["output"];
   project_id?: Maybe<Scalars["String"]["output"]>;
-  table_name?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type GcpTenantConfig = {
   __typename?: "GcpTenantConfig";
   billing_data?: Maybe<GcpTenantBillingDataConfig>;
+  pricing_data?: Maybe<GcpTenantPricingDataConfig>;
 };
 
 export type GcpTenantConfigInput = {
   billing_data: GcpBillingDataConfigInput;
   credentials: Scalars["JSONObject"]["input"];
+  pricing_data?: InputMaybe<GcpPricingDataConfigInput>;
 };
 
 export type GcpTenantDataSource = DataSourceInterface & {
@@ -454,6 +471,13 @@ export type GcpTenantDataSource = DataSourceInterface & {
   name: Scalars["String"]["output"];
   parent_id?: Maybe<Scalars["String"]["output"]>;
   type: DataSourceType;
+};
+
+export type GcpTenantPricingDataConfig = {
+  __typename?: "GcpTenantPricingDataConfig";
+  dataset_name: Scalars["String"]["output"];
+  project_id?: Maybe<Scalars["String"]["output"]>;
+  table_name: Scalars["String"]["output"];
 };
 
 export type Invitation = {
@@ -834,8 +858,14 @@ export type GcpDataSourceConfigFragmentFragment = {
     __typename?: "GcpConfig";
     billing_data?: {
       __typename?: "GcpBillingDataConfig";
-      dataset_name?: string | null;
-      table_name?: string | null;
+      dataset_name: string;
+      table_name: string;
+      project_id?: string | null;
+    } | null;
+    pricing_data?: {
+      __typename?: "GcpPricingDataConfig";
+      dataset_name: string;
+      table_name: string;
       project_id?: string | null;
     } | null;
   } | null;
@@ -847,8 +877,14 @@ export type GcpTenantDataSourceConfigFragmentFragment = {
     __typename?: "GcpTenantConfig";
     billing_data?: {
       __typename?: "GcpTenantBillingDataConfig";
-      dataset_name?: string | null;
-      table_name?: string | null;
+      dataset_name: string;
+      table_name: string;
+      project_id?: string | null;
+    } | null;
+    pricing_data?: {
+      __typename?: "GcpTenantPricingDataConfig";
+      dataset_name: string;
+      table_name: string;
       project_id?: string | null;
     } | null;
   } | null;
@@ -1120,8 +1156,14 @@ export type DataSourcesQuery = {
           __typename?: "GcpConfig";
           billing_data?: {
             __typename?: "GcpBillingDataConfig";
-            dataset_name?: string | null;
-            table_name?: string | null;
+            dataset_name: string;
+            table_name: string;
+            project_id?: string | null;
+          } | null;
+          pricing_data?: {
+            __typename?: "GcpPricingDataConfig";
+            dataset_name: string;
+            table_name: string;
             project_id?: string | null;
           } | null;
         } | null;
@@ -1150,8 +1192,14 @@ export type DataSourcesQuery = {
           __typename?: "GcpTenantConfig";
           billing_data?: {
             __typename?: "GcpTenantBillingDataConfig";
-            dataset_name?: string | null;
-            table_name?: string | null;
+            dataset_name: string;
+            table_name: string;
+            project_id?: string | null;
+          } | null;
+          pricing_data?: {
+            __typename?: "GcpTenantPricingDataConfig";
+            dataset_name: string;
+            table_name: string;
             project_id?: string | null;
           } | null;
         } | null;
@@ -1493,8 +1541,14 @@ export type DataSourceQuery = {
           __typename?: "GcpConfig";
           billing_data?: {
             __typename?: "GcpBillingDataConfig";
-            dataset_name?: string | null;
-            table_name?: string | null;
+            dataset_name: string;
+            table_name: string;
+            project_id?: string | null;
+          } | null;
+          pricing_data?: {
+            __typename?: "GcpPricingDataConfig";
+            dataset_name: string;
+            table_name: string;
             project_id?: string | null;
           } | null;
         } | null;
@@ -1536,8 +1590,14 @@ export type DataSourceQuery = {
           __typename?: "GcpTenantConfig";
           billing_data?: {
             __typename?: "GcpTenantBillingDataConfig";
-            dataset_name?: string | null;
-            table_name?: string | null;
+            dataset_name: string;
+            table_name: string;
+            project_id?: string | null;
+          } | null;
+          pricing_data?: {
+            __typename?: "GcpTenantPricingDataConfig";
+            dataset_name: string;
+            table_name: string;
             project_id?: string | null;
           } | null;
         } | null;
@@ -1867,8 +1927,14 @@ export type UpdateDataSourceMutation = {
           __typename?: "GcpConfig";
           billing_data?: {
             __typename?: "GcpBillingDataConfig";
-            dataset_name?: string | null;
-            table_name?: string | null;
+            dataset_name: string;
+            table_name: string;
+            project_id?: string | null;
+          } | null;
+          pricing_data?: {
+            __typename?: "GcpPricingDataConfig";
+            dataset_name: string;
+            table_name: string;
             project_id?: string | null;
           } | null;
         } | null;
@@ -2001,6 +2067,11 @@ export const GcpDataSourceConfigFragmentFragmentDoc = gql`
         table_name
         project_id
       }
+      pricing_data {
+        dataset_name
+        table_name
+        project_id
+      }
     }
   }
 `;
@@ -2008,6 +2079,11 @@ export const GcpTenantDataSourceConfigFragmentFragmentDoc = gql`
   fragment GcpTenantDataSourceConfigFragment on GcpTenantDataSource {
     config {
       billing_data {
+        dataset_name
+        table_name
+        project_id
+      }
+      pricing_data {
         dataset_name
         table_name
         project_id
