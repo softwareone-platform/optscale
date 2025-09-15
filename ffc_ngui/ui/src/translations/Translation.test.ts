@@ -1,4 +1,4 @@
-import defaultJson from "translations/en-US/app.json";
+import defaultJson from "translations/en-US/appOverride.json";
 import errors from "translations/en-US/errors.json";
 
 test("en translation file sorted alphabetically", () => {
