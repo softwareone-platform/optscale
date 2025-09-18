@@ -66,7 +66,6 @@ export class AuthRequest {
     if (userID) {
       endpoint += `?user_id=${userID}`;
     }
-    console.log(endpoint);
     return await this.request.get(endpoint, {
       headers: {
         "Content-Type": "application/json",

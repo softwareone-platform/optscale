@@ -122,7 +122,7 @@ export abstract class BasePage {
    * This method is useful to ensure that a canvas has finished rendering before proceeding.
    * @returns {Promise<void>} A promise that resolves when the condition is met.
    */
-  async waitForCanvas(timeout: number = 15000): Promise<void> {
+  async waitForCanvas(timeout: number = 20000): Promise<void> {
     await this.page.waitForFunction(() => {
       const canvases = document.querySelectorAll('canvas');
       return Array.from(canvases).some(canvas => {
@@ -162,7 +162,9 @@ export abstract class BasePage {
    * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
    */
   async evaluateActiveButton(button: Locator): Promise<boolean> {
-    return await button.evaluate((el) => el.classList.contains('tss-1jtfdbf-button-activeButton'));
+    return await button.evaluate((el) => {
+      return Array.from(el.classList).some(className => className.endsWith('-button-activeButton'));
+    });
   }
 
   /**

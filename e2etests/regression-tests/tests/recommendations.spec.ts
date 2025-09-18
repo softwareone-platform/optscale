@@ -1,7 +1,7 @@
 import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../types/interceptor.types";
 import {
   GeminisMock,
   OptionsMock,
@@ -11,19 +11,20 @@ import {
   SummaryExpensesMock
 } from "../mocks/recommendations.mocks";
 
-const apiInterceptions: InterceptionEntry[] = [
-  {url: `/v2/organizations/[^/]+/geminis`, mock: GeminisMock},
-  {url: `/v2/organizations/[^/]+/options`, mock: OptionsMock},
-  {url: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownMock},
-  {url: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownMock},
-  {url: `/v2/organizations/[^/]+/summary_expenses`, mock: SummaryExpensesMock},
-  {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsMock}
-];
-
-test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
 
 test.describe('FFC: Recommendations @swo_regression', () => {
-  test('Recommendations page matches screenshots', async ({recommendationsPage}) => {
+  const apiInterceptions: InterceptionEntry[] = [
+    {url: `/v2/organizations/[^/]+/geminis`, mock: GeminisMock},
+    {url: `/v2/organizations/[^/]+/options`, mock: OptionsMock},
+    {url: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownMock},
+    {url: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownMock},
+    {url: `/v2/organizations/[^/]+/summary_expenses`, mock: SummaryExpensesMock},
+    {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsMock}
+  ];
+
+  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+
+  test('Page matches screenshots', async ({recommendationsPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await recommendationsPage.navigateToURL();

@@ -32,7 +32,7 @@ import {
   TagsResponse
 } from "../types/api-response.types";
 import {fetchBreakdownExpenses} from "../utils/api-helpers";
-import {InterceptionEntry} from "../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../types/interceptor.types";
 
 
 test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
@@ -694,61 +694,60 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
   });
 })
 
-
-const apiInterceptions: InterceptionEntry[] = [
-  {
-    url: `/v2/organizations/[^/]+/summary_expenses`,
-    mock: SummaryExpensesResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
-    mock: BreakdownExpensesByServiceResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
-    mock: BreakdownExpensesByRegionResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
-    mock: BreakdownExpensesByResourceTypeResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
-    mock: BreakdownExpensesByDataSourceResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
-    mock: BreakdownExpensesByOwnerResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
-    mock: BreakdownExpensesByPoolResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
-    mock: BreakdownExpensesByK8sNodeResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
-    mock: BreakdownExpensesByK8sNamespaceResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
-    mock: BreakdownExpensesByK8sServiceResponse
-  },
-  {
-    url: `/v2/organizations/[^/]+/available_filters`,
-    mock: AvailableFiltersResponse
-  }
-];
-
-
 test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
+
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      url: `/v2/organizations/[^/]+/summary_expenses`,
+      mock: SummaryExpensesResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
+      mock: BreakdownExpensesByServiceResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
+      mock: BreakdownExpensesByRegionResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
+      mock: BreakdownExpensesByResourceTypeResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
+      mock: BreakdownExpensesByDataSourceResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
+      mock: BreakdownExpensesByOwnerResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
+      mock: BreakdownExpensesByPoolResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
+      mock: BreakdownExpensesByK8sNodeResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
+      mock: BreakdownExpensesByK8sNamespaceResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
+      mock: BreakdownExpensesByK8sServiceResponse
+    },
+    {
+      url: `/v2/organizations/[^/]+/available_filters`,
+      mock: AvailableFiltersResponse
+    }
+  ];
+
   test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
 
-  test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
+  test.beforeEach('Login admin user', async ({ resourcesPage}) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');

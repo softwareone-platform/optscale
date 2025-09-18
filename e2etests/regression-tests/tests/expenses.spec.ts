@@ -1,28 +1,25 @@
 import {test} from "../../fixtures/page.fixture";
 import {expect} from "@playwright/test";
 import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../../types/interceptor.types";
 import {
   PoolsExpensesOwnerRegressionResponse,
   PoolsExpensesPoolRegressionResponse, PoolsExpensesRegressionResponse,
   PoolsExpensesSourceRegressionResponse, RegionExpensesRegressionResponse
 } from "../mocks/expenses.mocks";
 
-const apiInterceptions: InterceptionEntry[] = [
-  {url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceRegressionResponse},
-  {url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
-  {url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerRegressionResponse},
-  {url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse},
-  {
-    url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
-    mock: PoolsExpensesRegressionResponse
-  }
-];
+test.describe('FFC: Expenses Dashboard page @swo_regression', () => {
 
-test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
+      mock: PoolsExpensesRegressionResponse
+    }
+  ];
 
-test.describe('FFC: Expenses @swo_regression', () => {
-  test('Expenses dashboard page matches screenshots', async ({expensesPage}) => {
+  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+
+  test('Page matches screenshots', async ({expensesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Expenses page', async () => {
@@ -56,8 +53,16 @@ test.describe('FFC: Expenses @swo_regression', () => {
       await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
     });
   });
+})
 
-  test("Expenses Map page matches screenshots", async ({expensesMapPage}) => {
+test.describe('FFC: Expenses Map page @swo_regression', () => {
+  const apiInterceptions: InterceptionEntry[] = [
+    {url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse},
+  ];
+
+  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+
+  test("Page matches screenshots", async ({expensesMapPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
@@ -65,8 +70,22 @@ test.describe('FFC: Expenses @swo_regression', () => {
       mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
     });
   })
+})
 
-  test('Expenses breakdowns page matches screenshots', async ({expensesPage}) => {
+test.describe('FFC: Expenses Breakdowns page @swo_regression', () => {
+  const apiInterceptions: InterceptionEntry[] = [
+    {url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceRegressionResponse},
+    {url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
+    {url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerRegressionResponse},
+    {
+      url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
+      mock: PoolsExpensesRegressionResponse
+    }
+  ];
+
+  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+
+  test('Page matches screenshots', async ({expensesPage}) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Expenses page', async () => {
@@ -80,7 +99,7 @@ test.describe('FFC: Expenses @swo_regression', () => {
       await expensesPage.waitForCanvas();
       await expensesPage.screenshotUpdateDelay();
       await roundElementDimensions(expensesPage.main);
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png', {threshold: 0.9});
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
 
     });
 

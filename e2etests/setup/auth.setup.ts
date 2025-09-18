@@ -41,6 +41,7 @@ setup('Login as live demo user', async ({ page }) => {
       localforageStoredSession: {
         root: authValue,
       },
+
     };
 
     safeWriteJsonFile(storageStatePath, modifiedState);

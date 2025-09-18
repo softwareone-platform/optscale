@@ -3,7 +3,8 @@ import * as Pages from '../pages';
 import {LiveDemoService} from '../utils/auth-session-storage/auth-helpers';
 import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 import {BaseRequest} from "../utils/api-requests/base-request";
-import {apiInterceptors, InterceptionEntry} from "../utils/api-requests/interceptor";
+import {apiInterceptors} from "../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../types/interceptor.types";
 
 interface Options {
   baseRequest: BaseRequest;
@@ -83,18 +84,20 @@ export const test = base.extend<Fixtures & Options>({
   restoreSession: [false, {option: true}],
   interceptAPI: {entries: []}, // default empty list, can be overridden per test
 
-
   page: async ({page, restoreSession, interceptAPI}, use) => {
-
+    let verifyInterceptions: (() => void) | undefined;
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, true);
     }
     if (interceptAPI.entries.length > 0) {
-      await apiInterceptors(page, interceptAPI.entries);
+      verifyInterceptions = await apiInterceptors(page, interceptAPI.entries);
     }
 
     await use(page);
-    await apiInterceptors(page, []); // Clear all interceptors after each test
+
+    if (verifyInterceptions) {
+      verifyInterceptions();
+    }
   },
 
   baseRequest: async ({request}, use) => {
