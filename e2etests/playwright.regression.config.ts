@@ -16,7 +16,7 @@ export default defineConfig({
   testIgnore: ['**/snapshots/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 1,
+  retries: 1,
   workers: process.env.CI ? 2 : 3,
   timeout: 30000,
   reporter: [
