@@ -1,7 +1,5 @@
 import {Locator, Page} from "@playwright/test";
 import {BasePage} from "./base-page";
-import {InterceptionEntry, apiInterceptors} from "../utils/api-requests/interceptor";
-import {EventsResponse} from "../mocks";
 
 /**
  * Represents the Events Page.

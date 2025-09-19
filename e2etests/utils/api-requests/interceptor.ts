@@ -1,99 +1,61 @@
-import {Page, Route} from "@playwright/test";
+import {Page, expect} from "@playwright/test";
 import {debugLog} from "../debug-logging";
+import {InterceptionEntry} from "../../types/interceptor.types";
+import {createInterceptorId, interceptGraphQLRequest, interceptRESTRequest} from "./helpers";
 
-/** XOR helper so a config must be either GraphQL or REST, not both */
-type XOR<T, U> =
-  | (T & { [K in Exclude<keyof U, keyof T>]?: never })
-  | (U & { [K in Exclude<keyof T, keyof U>]?: never });
+export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]): Promise<() => void> {
 
-/**
- * Represents a GraphQL interception entry.
- *
- * @property {string} gql - The name of the GraphQL operation to intercept.
- * @property {any} mock - The mock data to return when the specified GraphQL operation is intercepted.
- */
-type IGraphQLEntry = {
-  gql: string;
-  mock: any;
-};
+  const interceptorHits = new Map<string, boolean>();
 
-/**
- * Represents a REST API interception entry.
- *
- * @property {string} url - The URL pattern to intercept.
- * @property {any} mock - The mock data to return when the specified URL is intercepted.
- */
-type IRESTEntry = {
-  url: string;
-  mock: any;
-};
+  const createHitTracker = (id: string): () => void => {
+    debugLog(`(HIT) Request intercepted&mocked ${id}`);
+    return () => interceptorHits.set(id, true);
+  };
 
-/**
- * Represents an API interception entry, which can be either a GraphQL or REST entry.
- *
- * This type uses the XOR utility type to ensure that an entry is either a GraphQL entry or a REST entry, but not both.
- *
- * @property {string} [gql] - The name of the GraphQL operation to intercept (if applicable).
- * @property {string} [url] - The URL pattern to intercept (if applicable).
- * @property {any} mock - The mock data to return when the specified operation or URL is intercepted.
- */
-export type InterceptionEntry = XOR<IGraphQLEntry, IRESTEntry>;
+  const interceptPromises = config.map(({url, mock, gql}, index) => {
+    const urlRegExp = new RegExp(url || "/api$");
+    const interceptorId = createInterceptorId(gql, url);
+
+    debugLog(`(${index + 1}/${config.length}) Setting up interceptor for ${interceptorId}`);
 
 
-const respondWithMockData = async <T>(route: Route, mock: T) =>
-  route.fulfill({
-    status: 200,
-    contentType: "application/json",
-    body: JSON.stringify(mock),
-  });
+    // Initialize hit tracking
+    interceptorHits.set(interceptorId, false);
 
-/**
- * Handles REST API request interception
- */
-async function interceptRESTRequest<T>(
-  page: Page,
-  pattern: RegExp,
-  mock: T
-): Promise<void> {
-  await page.route(pattern, async (route, request) => {
-    debugLog(`Intercepted REST API call for URL pattern: ${pattern}`);
-    return await respondWithMockData(route, mock);
-  });
-}
-
-/**
- * Handles GraphQL request interception
- */
-async function interceptGraphQLRequest<T>(
-  page: Page,
-  pattern: RegExp,
-  operationName: string,
-  mock: T
-): Promise<void> {
-  await page.route(pattern, async (route, request) => {
-    if (request.method() === "POST") {
-      try {
-        const body = JSON.parse(request.postData() || "{}");
-        if (body.operationName === operationName) {
-          debugLog(`Intercepted GraphQL operation: ${body.operationName} for URL pattern: ${pattern}`);
-          return await respondWithMockData(route, mock);
-        }
-      } catch (error) {
-        console.warn("Failed to parse GraphQL POST data:", error);
-      }
+    if(gql) {
+      return interceptGraphQLRequest(
+        page,
+        urlRegExp,
+        gql,
+        mock,
+        createHitTracker(interceptorId)
+      );
+    }else {
+      return interceptRESTRequest(
+        page,
+        urlRegExp,
+        mock,
+        createHitTracker(interceptorId)
+      );
     }
-    return route.fallback();
-  });
-}
-
-export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]): Promise<void> {
-  const interceptPromises = config.map(({url, mock, gql}) => {
-    const urlRegExp = new RegExp(url || "/api$")
-    return gql
-      ? interceptGraphQLRequest(page, urlRegExp, gql, mock)
-      : interceptRESTRequest(page, urlRegExp, mock);
   });
 
   await Promise.all(interceptPromises);
+
+  return () => {
+    const missingInterceptions = Array.from(interceptorHits.entries())
+      .filter(([_, wasHit]) => !wasHit)
+      .map(([id]) => id);
+
+    if (missingInterceptions.length > 0) {
+      const message =
+        `Test failed: ${missingInterceptions.length} API interception(s) never occurred:\n` +
+        missingInterceptions.map(x => `- ${x}`).join("\n");
+
+      debugLog(message);
+
+      expect.soft(missingInterceptions, message).toHaveLength(0);
+    }
+  };
 }
 

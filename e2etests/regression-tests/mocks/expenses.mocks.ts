@@ -4,7 +4,7 @@ export const PoolsExpensesRegressionResponse = {
         "previous_total": 5333.019745918592,
         "previous_range_start": 1735948800,
         "id": "b1ef0883-2030-4012-b254-a657290729ff",
-        "name": "Sunflower Inc",
+        "name": "Sunflower Inc (E2E)",
         "breakdown": {
             "1739750400": 292.26185874744425,
             "1739923200": 369.17186298852914,
@@ -36,7 +36,7 @@ export const PoolsExpensesRegressionResponse = {
 
 export const PoolsExpensesSourceRegressionResponse = {
     "expenses": {
-        "total": 5074.293801968137,
+        "total": 1111.111111111111,
         "previous_total": 5333.019745918592,
         "previous_range_start": 1735948800,
         "id": "b1ef0883-2030-4012-b254-a657290729ff",
@@ -4275,7 +4275,7 @@ export const PoolsExpensesOwnerRegressionResponse = {
 
 export const RegionExpensesRegressionResponse = {
     "expenses": {
-        "total": 5327.62962,
+        "total": 1111.1111,
         "previous_total": 5847.141660291579,
         "previous_range_start": 1746144000,
         "regions": [

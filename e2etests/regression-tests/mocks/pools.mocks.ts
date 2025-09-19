@@ -428,7 +428,7 @@ export const PoolRegressionResponse = {
     "id": "b1ef0883-2030-4012-b254-a657290729ff",
     "created_at": 1740482948,
     "limit": 15000,
-    "name": "Sunflower Inc",
+    "name": "Sunflower Inc (E2E)",
     "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
     "parent_id": null,
     "purpose": "business_unit",
