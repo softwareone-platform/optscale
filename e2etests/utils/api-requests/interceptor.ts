@@ -1,4 +1,4 @@
-import {Page} from "@playwright/test";
+import {Page, expect} from "@playwright/test";
 import {debugLog} from "../debug-logging";
 import {InterceptionEntry} from "../../types/interceptor.types";
 import {createInterceptorId, interceptGraphQLRequest, interceptRESTRequest} from "./helpers";
@@ -7,11 +7,16 @@ export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]
 
   const interceptorHits = new Map<string, boolean>();
 
+  const createHitTracker = (id: string): () => void => {
+    debugLog(`(HIT) Request intercepted&mocked ${id}`);
+    return () => interceptorHits.set(id, true);
+  };
+
   const interceptPromises = config.map(({url, mock, gql}, index) => {
     const urlRegExp = new RegExp(url || "/api$");
     const interceptorId = createInterceptorId(gql, url);
 
-    debugLog(`[${index + 1}/${config.length}] Setting up interceptor for ${interceptorId}`);
+    debugLog(`(${index + 1}/${config.length}) Setting up interceptor for ${interceptorId}`);
 
 
     // Initialize hit tracking
@@ -23,14 +28,14 @@ export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]
         urlRegExp,
         gql,
         mock,
-        () => interceptorHits.set(interceptorId, true)
+        createHitTracker(interceptorId)
       );
     }else {
       return interceptRESTRequest(
         page,
         urlRegExp,
         mock,
-        () => interceptorHits.set(interceptorId, true)
+        createHitTracker(interceptorId)
       );
     }
   });
@@ -43,8 +48,13 @@ export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]
       .map(([id]) => id);
 
     if (missingInterceptions.length > 0) {
-      const message = `Test failed: ${missingInterceptions.length} API interceptions never occurred: ${missingInterceptions.join(', ')}`;
-      throw new Error(message);
+      const message =
+        `Test failed: ${missingInterceptions.length} API interception(s) never occurred:\n` +
+        missingInterceptions.map(x => `- ${x}`).join("\n");
+
+      debugLog(message);
+
+      expect.soft(missingInterceptions, message).toHaveLength(0);
     }
   };
 }

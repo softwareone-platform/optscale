@@ -60,7 +60,6 @@ const constructors = {
 type Constructors = typeof constructors;
 type Fixtures = { [K in keyof Constructors]: InstanceType<Constructors[K]> };
 
-// Build all fixtures from the constructors map with solid types
 function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
   const result = {} as {
     [K in keyof C]: (
@@ -71,7 +70,6 @@ function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
 
   for (const key in ctors) {
     const Ctor = ctors[key];
-    // The cast is localized and safe: runtime key->ctor mapping is preserved.
     result[key] = createFixture(Ctor) as typeof result[typeof key];
   }
 
@@ -83,6 +81,7 @@ const fixtures = buildFixtures(constructors);
 export const test = base.extend<Fixtures & Options>({
   restoreSession: [false, {option: true}],
   interceptAPI: {entries: []}, // default empty list, can be overridden per test
+
 
   page: async ({page, restoreSession, interceptAPI}, use) => {
     let verifyInterceptions: (() => void) | undefined;
