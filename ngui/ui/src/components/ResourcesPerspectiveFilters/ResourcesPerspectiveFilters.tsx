@@ -2,7 +2,7 @@ import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import SubTitle from "components/SubTitle";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 
 const ResourcesPerspectiveFilters = ({ perspectiveFilterValues = {}, perspectiveAppliedFilters = {} }) => {
   const filters = Object.values(FILTER_CONFIGS)
