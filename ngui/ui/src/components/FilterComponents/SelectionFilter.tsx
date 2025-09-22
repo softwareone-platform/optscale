@@ -14,7 +14,7 @@ import {
 import Button from "@mui/material/Button";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useDebouncedValue } from "hooks/useDebouncedValue";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 
 type SelectionStateButtonProps = {
   appliedItems: string[];

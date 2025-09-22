@@ -955,6 +955,11 @@ token_expiration: 168 # one week
 
 invite_expiration_days: 30 # days before invite url expiration
 
+import_reports:
+  message_expiration_secs: 10800 # 3 hours expiration to process a queue message
+  not_processed_threshold_secs: 10800 # 3 hours gap for report generating
+  max_workers: 10
+
 demo:
   multiplier: 2 # demo multiplier default value
 

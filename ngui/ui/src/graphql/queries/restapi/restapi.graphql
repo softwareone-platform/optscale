@@ -40,12 +40,22 @@ fragment GcpDataSourceConfigFragment on GcpDataSource {
       table_name
       project_id
     }
+    pricing_data {
+      dataset_name
+      table_name
+      project_id
+    }
   }
 }
 
 fragment GcpTenantDataSourceConfigFragment on GcpTenantDataSource {
   config {
     billing_data {
+      dataset_name
+      table_name
+      project_id
+    }
+    pricing_data {
       dataset_name
       table_name
       project_id

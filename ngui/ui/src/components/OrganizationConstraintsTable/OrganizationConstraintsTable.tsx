@@ -14,7 +14,7 @@ import TextWithDataTestId from "components/TextWithDataTestId";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsAllowed } from "hooks/useAllowedActions";
 import { intl } from "translations/react-intl-config";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { organizationConstraintName, organizationConstraintStatus } from "utils/columns";
 import {
   QUOTA_POLICY,
@@ -26,7 +26,7 @@ import {
   FORMATTED_MONEY_TYPES
 } from "utils/constants";
 import { EN_FULL_FORMAT, format, secondsToMilliseconds } from "utils/datetime";
-import { isEmpty as isEmptyObject } from "utils/objects";
+import { isEmptyObject } from "utils/objects";
 import { getResourcesLink } from "utils/organizationConstraints/getResourcesLink";
 import { CELL_EMPTY_VALUE } from "utils/tables";
 

@@ -10,7 +10,7 @@ import { computeXYScalesForSeries } from "@nivo/scales";
 import { FormattedMessage } from "react-intl";
 import ChartTooltip from "components/ChartTooltip";
 import { useChartTheme } from "hooks/useChartTheme";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { getColorScale, TICK_COUNT, getLineYTicks, getLineChartBottomTickValues, truncateCanvasText } from "utils/charts";
 import {
   CHART_LEGEND_LAYOUT_SETTINGS,
