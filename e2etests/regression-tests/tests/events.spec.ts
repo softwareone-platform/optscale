@@ -1,15 +1,15 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
-import {EventsRegressionResponse} from "../mocks/events.mocks";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
+import { EventsRegressionResponse } from "../mocks/events.mocks";
 
 test.describe('FFC: Events @swo_regression', () => {
-  const apiInterceptions: InterceptionEntry[] = [{mock: EventsRegressionResponse, gql: "events"}];
+  const apiInterceptions: InterceptionEntry[] = [{ mock: EventsRegressionResponse, gql: "events" }];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Page matches screenshots', async ({eventsPage}) => {
+  test('Page matches screenshots', async ({ eventsPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Events page', async () => {

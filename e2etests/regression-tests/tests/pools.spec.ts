@@ -1,19 +1,19 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
-import {AllowedActionsPoolRegressionResponse, PoolRegressionResponse} from "../mocks/pools.mocks";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
+import { AllowedActionsPoolRegressionResponse, PoolRegressionResponse } from "../mocks/pools.mocks";
 
 test.describe('FFC: Pools @swo_regression', () => {
 
   const apiInterceptions: InterceptionEntry[] = [
-    {url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse},
-    {url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolRegressionResponse},
+    { url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse },
+    { url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolRegressionResponse },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Page matches screenshots', async ({poolsPage}) => {
+  test('Page matches screenshots', async ({ poolsPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Pools page', async () => {
