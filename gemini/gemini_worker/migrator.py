@@ -1,8 +1,9 @@
-import os
 import hashlib
 import importlib
 import logging
+import os
 from datetime import datetime, timezone
+
 import clickhouse_connect
 
 LOG = logging.getLogger(__name__)
@@ -133,7 +134,7 @@ class Migrator:
         else:
             LOG.info("Found no remote migrations")
         self.check_versions(local_versions, ch_versions)
-        
+
         import_base = MIGRATIONS_PATH.replace('/', '.')
 
         new_migrations = local_versions[len(ch_versions):]
