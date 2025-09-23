@@ -1,4 +1,3 @@
-import {APIResponse} from "playwright";
 import {BaseRequest} from "./base-request";
 import {APIRequestContext} from "@playwright/test";
 

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import {DataSourceResponse} from "../test-data/test-data-response-types";
+import {DataSourceResponse} from "../types/api-response.types";
 
 export async function fetchBreakdownExpenses<T>(
     page: Page,

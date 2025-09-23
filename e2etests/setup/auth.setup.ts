@@ -1,46 +1,56 @@
-import { EStorageStatePath } from "../utils/enums";
-import { test as setup } from "../fixtures/api-fixture";
-import {getLocalforageRoot, injectLocalforage} from "../utils/auth-storage/localforage-service";
+import {EStorageStatePath} from "../types/enums";
+import {test as setup} from "@playwright/test";
+import {getLocalforageRoot, injectLocalforage} from "../utils/auth-session-storage/localforage-service";
 import {safeWriteJsonFile} from "../utils/file";
-import {LiveDemoService} from "../utils/auth-storage/auth-helpers";
+import {LiveDemoService} from "../utils/auth-session-storage/auth-helpers";
 
-setup('Login as live demo user', async ({ page }) => {
-  let email: string;
-  let password: string;
-  let storageStatePath = EStorageStatePath.defaultUser;
+const useLiveDemoCredentials = LiveDemoService.shouldUseLiveDemo();
 
-  await setup.step('Navigate to Live Demo', async () => {
-    if( LiveDemoService.shouldUseLiveDemo()) {
-      const demoAuth = await LiveDemoService.getDemoLoginCredentials('example@mail.com', false);
-      email = demoAuth.email;
-      password = demoAuth.password;
-      storageStatePath = EStorageStatePath.liveDemoUser;
-    } else {
-      email = process.env.DEFAULT_USER_EMAIL
-      password = process.env.DEFAULT_USER_PASSWORD;
-      storageStatePath = EStorageStatePath.defaultUser;
-    }
+setup.describe('Auth Setup', () => {
+  setup.skip(
+    LiveDemoService.hasCachedDemoCredentials() && LiveDemoService.shouldUseLiveDemo(),
+    'Skip if valid live demo credentials are cached'
+  );
 
-    await page.goto('/login', { waitUntil: 'load', timeout: 20000 });
-  });
+  setup(`Login as live demo using ${useLiveDemoCredentials ? 'demo account credentials' : '.env DEFAULT_USER_EMAIL/DEFAULT_USER_PASSWORD'} to Live Demo `, async ({page}) => {
+    const storageStatePath = useLiveDemoCredentials
+      ? EStorageStatePath.liveDemoUser
+      : EStorageStatePath.defaultUser;
 
-  await setup.step('Fill User Email and Proceed', async () => {
-    await injectLocalforage(page);
-    await page.getByTestId('input_email').fill(email);
-    await page.getByTestId('input_pass').fill(password);
-    await page.getByTestId('btn_login').click();
-    await page.waitForLoadState('networkidle');
+    let email: string;
+    let password: string;
+    let demoAuthCredentials = null;
 
-    const authValue = await getLocalforageRoot(page);
-    const storageState = await page.context().storageState();
+    await setup.step(
+      `Get credentials and navigate to /login`,
+      async () => {
+        if (useLiveDemoCredentials) {
+          demoAuthCredentials = await LiveDemoService.getDemoLoginCredentials('example@mail.com', false);
+          ({email, password} = demoAuthCredentials);
+        } else {
+          email = process.env.DEFAULT_USER_EMAIL!;
+          password = process.env.DEFAULT_USER_PASSWORD!;
+        }
 
-    const modifiedState = {
-      ...storageState,
-      localforageStoredSession: {
-        root: authValue,
-      },
-    };
+        await page.goto('/login', {waitUntil: 'load', timeout: 20000});
+      }
+    );
 
-    safeWriteJsonFile(storageStatePath, modifiedState);
+    await setup.step('Fill User Email and Proceed', async () => {
+      await injectLocalforage(page);
+      await page.getByTestId('input_email').fill(email);
+      await page.getByTestId('input_pass').fill(password);
+      await page.getByTestId('btn_login').click();
+      await page.waitForLoadState('networkidle');
+
+      const authValue = await getLocalforageRoot(page);
+      const storageState = await page.context().storageState();
+
+      safeWriteJsonFile(storageStatePath, {
+        ...storageState,
+        localforageStoredSession: {root: authValue},
+        demoAuthCredentials,
+      });
+    });
   });
 });
