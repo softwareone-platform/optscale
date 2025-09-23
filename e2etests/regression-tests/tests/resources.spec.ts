@@ -1,7 +1,7 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
 
 import {
   BreakdownExpensesMock,
@@ -17,16 +17,16 @@ import {
 test.describe('FFC: Resources Dashboard @swo_regression', () => {
 
   const apiInterceptionsDashboard: InterceptionEntry[] = [
-    {url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock},
-    {url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock},
-    {url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock},
-    {url: `v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock},
-    {url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock},
+    { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
+    { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
+    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
+    { url: `v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock },
+    { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: [...apiInterceptionsDashboard]}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: [...apiInterceptionsDashboard] } });
 
-  test('Page matches screenshots', async ({resourcesPage}) => {
+  test('Page matches screenshots', async ({ resourcesPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await resourcesPage.navigateToURL();
@@ -76,24 +76,24 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
 test.describe('FFC: Resources Details @swo_regression', () => {
 
   const apiInterceptionsDetails: InterceptionEntry[] = [
-    {url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock},
-    {url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock},
-    {url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock},
-    {url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock},
-    {url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock},
-    {url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUMock},
-    {url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock},
-    {url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock},
-    {url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock},
-    {url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock},
+    { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
+    { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
+    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
+    { url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock },
+    { url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock },
+    { url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUMock },
+    { url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock },
+    { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
+    { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
+    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: [...apiInterceptionsDetails]}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: [...apiInterceptionsDetails] } });
 
   test('Resource details page matches screenshots',
     async ({
-             resourcesPage, resourceDetailsPage
-           }) => {
+      resourcesPage, resourceDetailsPage
+    }) => {
 
       if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
       await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {

@@ -1,7 +1,7 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
 import {
   PoolsExpensesOwnerRegressionResponse,
   PoolsExpensesPoolRegressionResponse, PoolsExpensesRegressionResponse,
@@ -17,9 +17,9 @@ test.describe('FFC: Expenses Dashboard page @swo_regression', () => {
     }
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Page matches screenshots', async ({expensesPage}) => {
+  test('Page matches screenshots', async ({ expensesPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Expenses page', async () => {
@@ -57,12 +57,12 @@ test.describe('FFC: Expenses Dashboard page @swo_regression', () => {
 
 test.describe('FFC: Expenses Map page @swo_regression', () => {
   const apiInterceptions: InterceptionEntry[] = [
-    {url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse},
+    { url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesRegressionResponse },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test("Page matches screenshots", async ({expensesMapPage}) => {
+  test("Page matches screenshots", async ({ expensesMapPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
@@ -74,18 +74,18 @@ test.describe('FFC: Expenses Map page @swo_regression', () => {
 
 test.describe('FFC: Expenses Breakdowns page @swo_regression', () => {
   const apiInterceptions: InterceptionEntry[] = [
-    {url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceRegressionResponse},
-    {url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse},
-    {url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerRegressionResponse},
+    { url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceRegressionResponse },
+    { url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolRegressionResponse },
+    { url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerRegressionResponse },
     {
       url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
       mock: PoolsExpensesRegressionResponse
     }
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Page matches screenshots', async ({expensesPage}) => {
+  test('Page matches screenshots', async ({ expensesPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Expenses page', async () => {

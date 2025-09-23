@@ -1,22 +1,22 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {DataSourcesMock} from "../mocks/cloud-accounts.mocks";
-import {InterceptionEntry} from "../../types/interceptor.types";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { DataSourcesMock } from "../mocks/cloud-accounts.mocks";
+import { InterceptionEntry } from "../../types/interceptor.types";
 
 
 test.describe('FFC: Cloud Account @swo_regression', () => {
 
   const interceptorList: InterceptionEntry[] = [
-    {mock: DataSourcesMock, gql: "DataSources"}
+    { mock: DataSourcesMock, gql: "DataSources" }
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: interceptorList}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList } });
 
   test('Page matches screenshots', async ({
-                                                          cloudAccountsPage,
-                                                          cloudAccountsConnectPage
-                                                        }) => {
+    cloudAccountsPage,
+    cloudAccountsConnectPage
+  }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Cloud Accounts page', async () => {

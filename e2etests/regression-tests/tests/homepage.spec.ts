@@ -1,7 +1,7 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
 import {
   AllowedActionsMock,
   HomeDataSourcesMock, OptimizationsMock,
@@ -12,21 +12,21 @@ import {
 test.describe('FFC: Home @swo_regression', () => {
 
   const apiInterceptions: InterceptionEntry[] = [
-    {gql: 'DataSources', mock: HomeDataSourcesMock},
-    {gql: 'CleanExpenses', mock: OrganizationCleanExpansesMock},
-    {url: `/v2/organizations/[^/]+/pool_expenses`, mock: OrganizationExpensesPoolsMock},
-    {url: `/v2/organizations/[^/]+/optimizations`, mock: OptimizationsMock},
-    {url: `/v2/allowed_actions`, mock: AllowedActionsMock},
-    {url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsMock},
+    { gql: 'DataSources', mock: HomeDataSourcesMock },
+    { gql: 'CleanExpenses', mock: OrganizationCleanExpansesMock },
+    { url: `/v2/organizations/[^/]+/pool_expenses`, mock: OrganizationExpensesPoolsMock },
+    { url: `/v2/organizations/[^/]+/optimizations`, mock: OptimizationsMock },
+    { url: `/v2/allowed_actions`, mock: AllowedActionsMock },
+    { url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsMock },
     {
       url: `/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy`,
       mock: OrganizationConstraintsMock
     }
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Blocks matches screenshots', async ({homePage}) => {
+  test('Blocks matches screenshots', async ({ homePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await homePage.navigateToURL();

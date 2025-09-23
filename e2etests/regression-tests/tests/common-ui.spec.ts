@@ -1,12 +1,12 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
 
 test.describe('FFC: Common UI @swo_regression', () => {
 
-  test.use({restoreSession: true});
+  test.use({ restoreSession: true, setFixedTime: true });
 
-  test("Header and Main Menu matches screenshots", async ({homePage, header, mainMenu}) => {
+  test("Header and Main Menu matches screenshots", async ({ homePage, header, mainMenu }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await homePage.navigateToURL();

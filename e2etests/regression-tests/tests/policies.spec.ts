@@ -1,8 +1,8 @@
-import {test} from "../../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {roundElementDimensions} from "../utils/roundElementDimensions";
-import {InterceptionEntry} from "../../types/interceptor.types";
-import {PolicyMock, TaggingPolicyMock, AnomaliesConstraintsMock} from "../mocks/policies.mocks";
+import { test } from "../../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { roundElementDimensions } from "../utils/roundElementDimensions";
+import { InterceptionEntry } from "../../types/interceptor.types";
+import { PolicyMock, TaggingPolicyMock, AnomaliesConstraintsMock } from "../mocks/policies.mocks";
 
 test.describe('FFC: Anomalies page @swo_regression', () => {
 
@@ -13,9 +13,9 @@ test.describe('FFC: Anomalies page @swo_regression', () => {
     },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: interceptorList}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList } });
 
-  test('Page matches screenshots', async ({anomaliesPage, anomaliesCreatePage}) => {
+  test('Page matches screenshots', async ({ anomaliesPage, anomaliesCreatePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Anomalies page', async () => {
@@ -52,9 +52,9 @@ test.describe('FFC: Policies page @swo_regression', () => {
     },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
-  test('Page matches screenshots', async ({policiesPage, policiesCreatePage}) => {
+  test('Page matches screenshots', async ({ policiesPage, policiesCreatePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Policies page', async () => {
@@ -92,12 +92,12 @@ test.describe('FFC: Tagging Policies page @swo_regression', () => {
     },
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
   test('Page matches screenshots', async ({
-                                            taggingPoliciesPage,
-                                            taggingPoliciesCreatePage
-                                          }) => {
+    taggingPoliciesPage,
+    taggingPoliciesCreatePage
+  }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Tagging Policies page', async () => {

@@ -1,6 +1,6 @@
-import {test} from "../fixtures/page.fixture";
-import {expect} from "@playwright/test";
-import {expectWithinDrift} from "../utils/custom-assertions";
+import { test } from "../fixtures/page.fixture";
+import { expect } from "@playwright/test";
+import { expectWithinDrift } from "../utils/custom-assertions";
 
 import {
   BreakdownExpensesByServiceResponse,
@@ -13,8 +13,8 @@ import {
   BreakdownExpensesByPoolResponse,
   BreakdownExpensesByK8sNodeResponse, BreakdownExpensesByK8sNamespaceResponse, BreakdownExpensesByK8sServiceResponse
 } from "../mocks/resources-page.mocks";
-import {comparePngImages} from "../utils/image-comparison";
-import {cleanUpDirectoryIfEnabled} from "../utils/test-after-all-utils";
+import { comparePngImages } from "../utils/image-comparison";
+import { cleanUpDirectoryIfEnabled } from "../utils/test-after-all-utils";
 import {
   getExpectedDateRangeText,
   getLast7DaysUnixRange,
@@ -31,17 +31,17 @@ import {
   ServiceNameResourceResponse,
   TagsResponse
 } from "../types/api-response.types";
-import {fetchBreakdownExpenses} from "../utils/api-helpers";
-import {InterceptionEntry} from "../types/interceptor.types";
+import { fetchBreakdownExpenses } from "../utils/api-helpers";
+import { InterceptionEntry } from "../types/interceptor.types";
 
 
-test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
-  test.use({restoreSession: true});
+  test.use({ restoreSession: true });
   let totalExpensesValue: number;
   let itemisedTotal: number;
 
-  test.beforeEach('Login admin user', async ({page, resourcesPage}) => {
+  test.beforeEach('Login admin user', async ({ page, resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.navigateToURL();
       await resourcesPage.waitForPageLoaderToDisappear();
@@ -53,9 +53,9 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
   });
 
   test("[230776] Possible savings matches those on recommendations page", async ({
-                                                                                   resourcesPage,
-                                                                                   recommendationsPage
-                                                                                 }) => {
+    resourcesPage,
+    recommendationsPage
+  }) => {
     let resourcesSavings: number;
     let recommendationsSavings: number;
 
@@ -73,7 +73,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   })
 
-  test("[230778] All expected filters are displayed", async ({resourcesPage}) => {
+  test("[230778] All expected filters are displayed", async ({ resourcesPage }) => {
     await test.step('Click Show more filters button', async () => {
       await resourcesPage.clickShowMoreFilters();
       await resourcesPage.showLessFiltersBtn.waitFor();
@@ -110,7 +110,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   })
 
-  test("[230779] Verify table column selection", async ({resourcesPage}) => {
+  test("[230779] Verify table column selection", async ({ resourcesPage }) => {
     const defaultColumns = [
       resourcesPage.resourceTableHeading, resourcesPage.expensesTableHeading, resourcesPage.paidNetworkTrafficTableHeading,
       resourcesPage.metadataTableHeading, resourcesPage.poolOwnerTableHeading, resourcesPage.typeTableHeading, resourcesPage.tagsTableHeading
@@ -172,7 +172,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   });
 
-  test("[230780] Unfiltered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
+  test("[230780] Unfiltered Total expenses matches table itemised total", { tag: '@slow' }, async ({ resourcesPage }) => {
     test.setTimeout(1200000);
 
     await test.step('Get total expenses value from resources page', async () => {
@@ -191,7 +191,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   });
 
-  test("[230788] Filtered Total expenses matches table itemised total", {tag: '@slow'}, async ({resourcesPage}) => {
+  test("[230788] Filtered Total expenses matches table itemised total", { tag: '@slow' }, async ({ resourcesPage }) => {
     test.setTimeout(90000);
     let initialTotalExpensesValue: number;
 
@@ -229,10 +229,10 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   });
 
-  test("[230781] Total expenses matches table itemised total for date range set to last 7 days", {tag: '@slow'}, async ({
-                                                                                                                          resourcesPage,
-                                                                                                                          datePicker
-                                                                                                                        }) => {
+  test("[230781] Total expenses matches table itemised total for date range set to last 7 days", { tag: '@slow' }, async ({
+    resourcesPage,
+    datePicker
+  }) => {
     test.setTimeout(90000);
 
     await test.step('Get total expenses value for last 7 days', async () => {
@@ -254,8 +254,8 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   });
 
-  test('[230782] Validate API default chart/table data for 7 days', async ({resourcesPage, datePicker}) => {
-    const {startDate, endDate} = getLast7DaysUnixRange();
+  test('[230782] Validate API default chart/table data for 7 days', async ({ resourcesPage, datePicker }) => {
+    const { startDate, endDate } = getLast7DaysUnixRange();
 
     let expensesData: ServiceNameExpensesResponse;
     await test.step('Load expenses data for the last 7 days', async () => {
@@ -277,7 +277,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
 
     await test.step('Validate expenses breakdown covers correct 7-day range', async () => {
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       const responseDates = Object.keys(expensesData.breakdown).map(Number);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
     });
@@ -338,12 +338,12 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     });
   });
 
-  test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', {tag: '@slow'}, async ({
-                                                                                                                   resourcesPage,
-                                                                                                                   datePicker
-                                                                                                                 }) => {
+  test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', { tag: '@slow' }, async ({
+    resourcesPage,
+    datePicker
+  }) => {
     test.setTimeout(90000);
-    const {startDate, endDate} = getLast7DaysUnixRange();
+    const { startDate, endDate } = getLast7DaysUnixRange();
 
     await test.step('Set last 7 days date range', async () => {
       await datePicker.selectLast7DaysDateRange();
@@ -372,7 +372,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
       const breakdownDays = Object.keys(regionExpensesData.breakdown);
       expect.soft(breakdownDays.length).toBe(7);
 
-      const expectedDays = Array.from({length: 7}, (_, i) => (startDate + i * 86400).toString());
+      const expectedDays = Array.from({ length: 7 }, (_, i) => (startDate + i * 86400).toString());
       expect.soft(breakdownDays.sort()).toEqual(expectedDays.sort());
     });
 
@@ -417,7 +417,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate resource type daily breakdown structure', async () => {
       const breakdown = resourceTypeExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, typeMap] of Object.entries(breakdown)) {
@@ -461,7 +461,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate data source breakdown structure for each day', async () => {
       const breakdown = dataSourceExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, sourceMap] of Object.entries(breakdown)) {
@@ -507,7 +507,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate owner breakdown structure for each day', async () => {
       const breakdown = ownerExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, ownerMap] of Object.entries(breakdown)) {
@@ -552,7 +552,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate pool breakdown structure for each day', async () => {
       const breakdown = poolExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, poolMap] of Object.entries(breakdown)) {
@@ -596,7 +596,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate K8s Node breakdown structure for each day', async () => {
       const breakdown = k8sNodeExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, nodeMap] of Object.entries(breakdown)) {
@@ -639,7 +639,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate K8s namespace breakdown structure for each day', async () => {
       const breakdown = k8sNamespaceExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, namespaceMap] of Object.entries(breakdown)) {
@@ -681,7 +681,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
     await test.step('Validate K8s service breakdown structure for each day', async () => {
       const breakdown = k8sServiceExpensesData.breakdown;
       const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({length: 7}, (_, i) => startDate + i * 86400);
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
       expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
       for (const [_day, serviceMap] of Object.entries(breakdown)) {
@@ -694,7 +694,7 @@ test.describe("[MPT-11957] Resources page tests", {tag: ["@ui", "@resources"]}, 
   });
 })
 
-test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resources"]}, () => {
+test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resources"] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
 
 
@@ -745,9 +745,9 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     }
   ];
 
-  test.use({restoreSession: true, interceptAPI: {entries: apiInterceptions}});
+  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions } });
 
-  test.beforeEach('Login admin user', async ({ resourcesPage}) => {
+  test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');
@@ -759,7 +759,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     });
   });
 
-  test('[230784] Verify default service daily expenses chart export with and without legend', {tag: "@p1"}, async ({resourcesPage}) => {
+  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: "@p1" }, async ({ resourcesPage }) => {
     let actualPath = 'tests/downloads/expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
@@ -789,7 +789,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     });
   });
 
-  test('[230785] Verify weekly and monthly expenses chart export', async ({resourcesPage}) => {
+  test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
     let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
@@ -814,7 +814,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     });
   })
 
-  test('[230786] Verify expenses chart export with different categories', async ({resourcesPage}) => {
+  test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
     let actualPath = 'tests/downloads/region-expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
@@ -905,7 +905,7 @@ test.describe("[MPT-11957] Resources page mocked tests", {tag: ["@ui", "@resourc
     });
   });
 
-  test("[230787] Verify table grouping", async ({resourcesPage}) => {
+  test("[230787] Verify table grouping", async ({ resourcesPage }) => {
     await test.step('Verify default grouping is None', async () => {
       await resourcesPage.table.waitFor();
       await resourcesPage.table.scrollIntoViewIfNeeded();
