@@ -179,11 +179,11 @@ importers:
         specifier: 11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react@18.2.0)
       '@flowmap.gl/data':
-        specifier: 8.0.0-alpha.25
-        version: 8.0.0-alpha.25
+        specifier: 8.0.2
+        version: 8.0.2
       '@flowmap.gl/layers':
-        specifier: 8.0.0-alpha.25
-        version: 8.0.0-alpha.25(@deck.gl/core@8.8.22)(@deck.gl/layers@8.8.22(@deck.gl/core@8.8.22)(@loaders.gl/core@3.4.15)(@luma.gl/core@8.5.21))(@luma.gl/constants@8.5.21)(@luma.gl/core@8.5.21)
+        specifier: 8.0.2
+        version: 8.0.2(@deck.gl/core@8.8.22)(@deck.gl/layers@8.8.22(@deck.gl/core@8.8.22)(@loaders.gl/core@3.4.15)(@luma.gl/core@8.5.21))(@luma.gl/constants@8.5.21)(@luma.gl/core@8.5.21)
       '@mui/icons-material':
         specifier: 5.16.14
         version: 5.16.14(@mui/material@5.16.14(@emotion/react@11.14.0(@types/react@18.2.45)(react@18.2.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react@18.2.0))(@types/react@18.2.45)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@types/react@18.2.45)(react@18.2.0)
@@ -1143,11 +1143,11 @@ packages:
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
 
-  '@flowmap.gl/data@8.0.0-alpha.25':
-    resolution: {integrity: sha512-DLDukHaIU94Pa0kgj61F340KUy24EbTfdTtJDP5NFcjVBPsw/VvNI+2NJyudqkaT5fHFMmzFyqJ+tU1oqzyxRw==}
+  '@flowmap.gl/data@8.0.2':
+    resolution: {integrity: sha512-J5fxsSyAzCtTIzNNrhy0Inpt0Hz7xJgR3lQQMxvaqGKd/5r5EYpdQHNeXIhBBMQ1+k35JGhrrkwR3wlHx6EyNQ==}
 
-  '@flowmap.gl/layers@8.0.0-alpha.25':
-    resolution: {integrity: sha512-7MFRWN4YJW3wKv+Xjq0rbeYu1NAbyK3I9NZ4+0x/iKS5KYhxCkhsPWAuY0pMhUDp97tNs+1Kw27I5rcu1ol/uw==}
+  '@flowmap.gl/layers@8.0.2':
+    resolution: {integrity: sha512-AzsXC8yIf5ZW9qhanfZiZYnimBitYVPnIFLMsQ3J8ZEJyLGerm89RiXHGLCzxHMNVEENYWPAotAzH9CKRcfZtQ==}
     peerDependencies:
       '@deck.gl/core': ^8.6.5
       '@deck.gl/layers': ^8.6.5
@@ -8145,7 +8145,7 @@ snapshots:
 
   '@fastify/busboy@3.1.1': {}
 
-  '@flowmap.gl/data@8.0.0-alpha.25':
+  '@flowmap.gl/data@8.0.2':
     dependencies:
       d3-array: 3.2.4
       d3-color: 3.1.0
@@ -8155,14 +8155,15 @@ snapshots:
       d3-scale-chromatic: 3.1.0
       d3-time: 3.1.0
       d3-time-format: 4.1.0
-      kdbush: 3.0.0
+      kdbush: 4.0.2
       reselect: 4.1.7
       seedrandom: 3.0.5
 
-  '@flowmap.gl/layers@8.0.0-alpha.25(@deck.gl/core@8.8.22)(@deck.gl/layers@8.8.22(@deck.gl/core@8.8.22)(@loaders.gl/core@3.4.15)(@luma.gl/core@8.5.21))(@luma.gl/constants@8.5.21)(@luma.gl/core@8.5.21)':
+  '@flowmap.gl/layers@8.0.2(@deck.gl/core@8.8.22)(@deck.gl/layers@8.8.22(@deck.gl/core@8.8.22)(@loaders.gl/core@3.4.15)(@luma.gl/core@8.5.21))(@luma.gl/constants@8.5.21)(@luma.gl/core@8.5.21)':
     dependencies:
       '@deck.gl/core': 8.8.22
       '@deck.gl/layers': 8.8.22(@deck.gl/core@8.8.22)(@loaders.gl/core@3.4.15)(@luma.gl/core@8.5.21)
+      '@flowmap.gl/data': 8.0.2
       '@luma.gl/constants': 8.5.21
       '@luma.gl/core': 8.5.21
 
