@@ -80,7 +80,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
 
     await test.step('Verify all filter buttons are displayed', async () => {
-      await expect(resourcesPage.allFilterBoxButtons).toHaveCount(20);
+      await expect(resourcesPage.allFilterBoxButtons).toHaveCount(17);
 
       const expectedFilters = [
         resourcesPage.suggestionsFilter,
@@ -99,9 +99,10 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
         resourcesPage.withoutTagFilter,
         resourcesPage.paidNetworkTrafficFromFilter,
         resourcesPage.paidNetworkTrafficToFilter,
-        resourcesPage.k8sNodeFilter,
-        resourcesPage.k8sServiceFilter,
-        resourcesPage.k8sNamespaceFilter,
+        // Kubernetes filters are currently hidden
+        // resourcesPage.k8sNodeFilter,
+        // resourcesPage.k8sServiceFilter,
+        // resourcesPage.k8sNamespaceFilter,
       ];
 
       for (const filter of expectedFilters) {
@@ -696,9 +697,9 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
 
 test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resources"] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
+  test.describe.configure({mode: 'default'});
 
-
-  const apiInterceptions: InterceptionEntry[] = [
+    const apiInterceptions: InterceptionEntry[] = [
     {
       url: `/v2/organizations/[^/]+/summary_expenses`,
       mock: SummaryExpensesResponse
@@ -745,7 +746,7 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
     }
   ];
 
-  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions } });
+  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, forceFailure: false } });
 
   test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
