@@ -82,10 +82,7 @@ class MongoMigrator(BaseMigrator):
             module_path = os.path.normpath(module_path)
             module = import_module(module_path.replace(os.path.sep, "."))
 
-            # TODO: Create MigrationBase and uncomment this check
-            # if not issubclass(module.Migration, MigrationBase):
-            #     raise TypeError(f"Migration class in {module_path} does not inherit from MigrationBase")
-
+            # TODO: Change back the arguments here to accept the config client instead
             migration_object = module.Migration(mongo_client=self.mongo_client)
             if downgrade:
                 LOG.info(f"Downgrading version {migration.datetime}")

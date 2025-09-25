@@ -1,4 +1,3 @@
-import abc
 import hashlib
 import importlib
 import logging
@@ -15,23 +14,6 @@ LOG = logging.getLogger(__name__)
 
 MIGRATIONS_FOLDER = "migrations"
 VERSIONS_TABLE = "schema_versions"
-
-
-class MigrationBase(abc.ABC):
-    def __init__(self, clickhouse_client: ClickhouseClient):
-        self.clickhouse_client = clickhouse_client
-
-    @property
-    def name(self):
-        return os.path.basename(__file__)
-
-    @property
-    def migrations_path(self):
-        return os.path
-
-    @abc.abstractmethod
-    def upgrade(self):
-        raise NotImplementedError
 
 
 class ClickhouseMigrator(BaseMigrator):
@@ -145,10 +127,7 @@ class ClickhouseMigrator(BaseMigrator):
             LOG.info(f"Upgrading version {filename}")
             import_path = f"{import_base}.{MIGRATIONS_FOLDER}.{filename}"
             module = importlib.import_module(import_path)
-
-            if not issubclass(module.Migration, MigrationBase):
-                raise TypeError(f"Migration class in {filename} does not inherit from MigrationBase")
-
+            # TODO: Change back the arguments here to accept the config client instead
             migration = module.Migration(self.clickhouse_client)
             migration.upgrade()
             self.update_versions_table(filename)
