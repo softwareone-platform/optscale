@@ -37,6 +37,7 @@ export const useFetchAndDownload = () => {
   const { token } = useGetToken();
 
   const [isFileDownloading, setIsFileDownloading] = useState(false);
+  const [isFileDownloadingError, setIsFileDownloadingError] = useState(false);
 
   const fetchAndDownload = ({ url, fallbackFilename, type = null }) => {
     if (isFileDownloading) {
@@ -45,8 +46,18 @@ export const useFetchAndDownload = () => {
     }
 
     setIsFileDownloading(true);
+    setIsFileDownloadingError(false);
 
     fetch(url, { method: "GET", headers: getHeaders(token) })
+      .then((res) => {
+        if (!res.ok) {
+          setIsFileDownloadingError(true);
+          return Promise.reject("The amount of data is too large to export. Please filter your data before downloading.");
+        }
+
+        setIsFileDownloadingError(false);
+        return res;
+      })
       .then(async (res) => ({
         filename: getFilenameFromHeader(res.headers.get("Content-Disposition")) ?? fallbackFilename,
         blob: await res.blob(),
@@ -63,5 +74,5 @@ export const useFetchAndDownload = () => {
       });
   };
 
-  return { isFileDownloading, fetchAndDownload };
+  return { isFileDownloading, isFileDownloadingError, fetchAndDownload };
 };

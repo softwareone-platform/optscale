@@ -815,6 +815,8 @@
   "fieldLessThanOrEqualToField": "{fieldName1} must be less than or equal to {fieldName2}",
   "fieldMoreThanOrEqualToField": "{fieldName1} must be more than or equal to {fieldName2}",
   "fieldMustBeANumber": "This field must be a number",
+  "fileDownloadingErrorHeader": "Download falied",
+  "fileDownloadingErrorMessage": "The amount of data is too large to export. Please filter your resources before downloading.",
   "fileIsTooBig": "File is too big.",
   "fileTypeNotSupported": "File type is not supported.",
   "fileWasRejected": "File was rejected.",
