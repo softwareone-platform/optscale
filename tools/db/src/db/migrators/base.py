@@ -2,7 +2,7 @@ import abc
 import pathlib
 from dataclasses import dataclass
 
-from migrate.utils import PROJECT_ROOT
+from db.utils import PROJECT_ROOT
 
 
 @dataclass
