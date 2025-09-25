@@ -4,9 +4,9 @@ import re
 from datetime import datetime
 from importlib import import_module
 
-from migrate.migrators.base import BaseMigrator
-
 from pymongo import MongoClient
+
+from db.migrators.base import BaseMigrator
 
 MIGRATIONS_COLLECTION_NAME = "database_migrations"
 LOCAL_MIGRATIONS_REGEX = r"^([0-9]+)[_a-z]*\.py$"
@@ -85,13 +85,13 @@ class MongoMigrator(BaseMigrator):
 
             migration_object = module.Migration(mongo_client=self.mongo_client)
             if downgrade:
-                LOG.info("Downgrading version {}".format(migration.datetime))
+                LOG.info(f"Downgrading version {migration.datetime}")
                 migration_object.downgrade()
             else:
-                LOG.info("Upgrading version {}".format(migration.datetime))
+                LOG.info(f"Upgrading version {migration.datetime}")
                 migration_object.upgrade()
         except Exception:
-            LOG.error("Failed to apply version {}".format(migration.datetime))
+            LOG.error(f"Failed to apply version {migration.datetime}")
             raise
 
     def _upgrade(self, local_migrations, remote_migrations, to_datetime=None):

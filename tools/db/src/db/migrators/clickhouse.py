@@ -8,8 +8,8 @@ from datetime import UTC, datetime
 import clickhouse_connect
 from clickhouse_connect.driver.client import Client as ClickhouseClient
 
-from migrate.migrators.base import BaseMigrator
-from migrate.utils import PROJECT_ROOT
+from db.migrators.base import BaseMigrator
+from db.utils import PROJECT_ROOT
 
 LOG = logging.getLogger(__name__)
 

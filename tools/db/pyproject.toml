@@ -1,7 +1,7 @@
 [project]
-name = "migrate"
+name = "db"
 version = "0.1.0"
-description = "Create and apply alembic migrations"
+description = "Tools for database operations such as creating and applying migrations"
 authors = [{ name = "Hystax", email = "info@hystax.com" }]
 requires-python = ">=3.12"
 dependencies = [

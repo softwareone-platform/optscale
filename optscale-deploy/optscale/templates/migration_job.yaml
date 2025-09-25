@@ -46,7 +46,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - >-
-                python -m tools.migrate.migrate {{ $service_config.service.name }} {{ $db_type }} apply
+                uv run --project tools/db python -m db migrate {{ $db_type }} {{ $service_config.service.name }}
                   --host="{{ $db_host }}"
                   --port="{{ $db_port }}"
                   --username="{{ $db_username }}"

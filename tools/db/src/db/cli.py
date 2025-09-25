@@ -1,7 +1,8 @@
-import typer
 import enum
 
-from migrate.migrators import AlembicMigrator, MongoMigrator, ClickhouseMigrator
+import typer
+
+from db.migrators import AlembicMigrator, ClickhouseMigrator, MongoMigrator
 
 app = typer.Typer()
 

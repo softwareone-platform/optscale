@@ -5,8 +5,8 @@ import shlex
 import subprocess
 import sys
 
-from migrate.migrators.base import BaseMigrator
-from migrate.utils import PROJECT_ROOT
+from db.migrators.base import BaseMigrator
+from db.utils import PROJECT_ROOT
 
 LOG = logging.getLogger()
 LOG.addHandler(logging.StreamHandler())
