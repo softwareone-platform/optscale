@@ -1,9 +1,6 @@
 import logging
-
-from migrate.migrators.clickhouse import MigrationBase
 from pymongo import UpdateOne
-
-# TODO: This migration won't work as it relies on mongo_client
+from risp.risp_worker.migrations.base import MigrationBase
 
 RES_CHUNK_SIZE = 500
 CH_CHUNK_SIZE = 1000

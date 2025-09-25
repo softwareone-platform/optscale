@@ -1,4 +1,4 @@
-from migrate.migrators.clickhouse import MigrationBase
+from gemini.gemini_worker.migrations.base import MigrationBase
 
 
 class Migration(MigrationBase):

@@ -1,12 +1,8 @@
 import logging
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
-
-from migrate.migrators.clickhouse import MigrationBase
-
+from datetime import datetime, timezone, timedelta
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-
-# TODO: This migration won't work as it relies on mongo_client AND the rest_api client
+from risp.risp_worker.migrations.base import MigrationBase
 
 HRS_IN_DAY = 24
 SEC_IN_HR = 3600

@@ -1,4 +1,4 @@
-from migrate.migrators.clickhouse import MigrationBase
+from metroculus.metroculus_worker.migrations.base import MigrationBase
 
 
 class Migration(MigrationBase):
