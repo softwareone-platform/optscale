@@ -1,6 +1,6 @@
 import logging
-from metroculus.metroculus_worker.migrations.base import MigrationBase
 
+from migrate.migrators.clickhouse import MigrationBase
 
 LOG = logging.getLogger(__name__)
 

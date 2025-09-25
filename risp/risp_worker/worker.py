@@ -1,23 +1,22 @@
-from collections import defaultdict
-from datetime import datetime, timezone, timedelta
-from threading import Thread
-
+import logging
 import os
 import re
 import time
-import logging
-import urllib3
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from threading import Thread
 
-from etcd import Lock as EtcdLock
 import clickhouse_connect
-from pymongo import MongoClient
+import urllib3
+from etcd import Lock as EtcdLock
 from kombu import Connection, Exchange, Queue
 from kombu.mixins import ConsumerMixin
 from kombu.utils.debug import setup_logging
+from pymongo import MongoClient
+
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from risp.risp_worker.migrator import Migrator
-
 
 LOG = logging.getLogger(__name__)
 CH_DB_NAME = 'risp'
@@ -630,9 +629,6 @@ if __name__ == '__main__':
         **config_cl.read_branch('/rabbit'))
     with Connection(conn_str) as conn:
         try:
-            migrator = Migrator(config_cl)
-            with EtcdLock(config_cl, 'risp_migrations'):
-                migrator.migrate()
             worker = RISPWorker(conn, config_cl)
             worker.run()
         except KeyboardInterrupt:
