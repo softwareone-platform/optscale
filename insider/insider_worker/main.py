@@ -12,7 +12,6 @@ from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue
 
 from optscale_client.config_client.client import Client as ConfigClient
-from insider.insider_worker.migrator import Migrator
 from insider.insider_worker.processors.factory import get_processor_class
 
 
@@ -92,10 +91,6 @@ if __name__ == '__main__':
         **config_cl.read_branch('/rabbit'))
     with Connection(conn_str) as conn:
         try:
-            migrator = Migrator(
-                config_cl, 'insider', 'insider/insider_worker/migrations')
-            with EtcdLock(config_cl, 'insider_migrations'):
-                migrator.migrate()
             worker = InsiderWorker(conn, config_cl)
             worker.run()
         except KeyboardInterrupt:

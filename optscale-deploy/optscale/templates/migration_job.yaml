@@ -17,24 +17,54 @@ spec:
   template:
     spec:
       containers:
-        {{- range $config.services }}
+        {{- range $db_type, $services := $config.services }}
+        {{- range $services }}
+        
         {{- $service_config := get $.Values . }}
-        - name: {{ $service_config.service.name }}-migrations
+        
+        {{- if eq $db_type "mysql" }}
+          {{- $db_host := $.Values.mariadb.service.host }}
+          {{- $db_port := $.Values.mariadb.service.externalPort }}
+          {{- $db_username := $.Values.mariadb.credentials.username }}
+          {{- $db_password := $.Values.mariadb.credentials.password }}
+          {{- $db_name := $service_config.db.name }}
+        {{- else if eq $db_type "clickhouse" }}
+          {{- $db_host := $.Values.clickhouse.service.host }}
+          {{- $db_port := $.Values.clickhouse.service.externalPort }}
+          {{- $db_username := $.Values.clickhouse.db.user }}
+          {{- $db_password := $.Values.clickhouse.db.password }}
+          {{- $db_name := $service_config.clickhouse.name }}
+        {{- else if eq $db_type "mongo" }}
+          {{- $db_host := $.Values.mongo.service.host }}
+          {{- $db_port := $.Values.mongo.service.externalPort }}
+          {{- $db_username := $.Values.mongo.credentials.username }}
+          {{- $db_password := $.Values.mongo.credentials.password }}
+          {{- $db_name := $service_config.mongodb.name }}
+        {{- end }}
+        
+        - name: {{ $service_config.service.name }}-{{ $db_type }}-migrations
           command: ["/bin/sh", "-c"]
           args:
             - >-
-                python -m tools.migrate.migrate {{ $service_config.service.name }} save-config
-                --host="{{ $.Values.mariadb.service.name }}"
-                --username="{{ $.Values.mariadb.credentials.username }}"
-                --password="{{ $.Values.mariadb.credentials.password }}"
-                --dbname="{{ $service_config.db.name }}"
-                && python -m tools.migrate.migrate {{ $service_config.service.name }} apply
+                python -m tools.migrate.migrate {{ $service_config.service.name }} {{ $db_type }} apply
+                  --host="{{ $db_host }}"
+                  --port="{{ $db_port }}"
+                  --username="{{ $db_username }}"
+                  --password="{{ $db_password }}"
+                  --dbname="{{ $db_name }}"
           image: "{{ $service_config.image.repository }}:{{ $service_config.image.tag }}"
           imagePullPolicy: {{ $service_config.image.pullPolicy }}
-          {{- end }}
+        {{- end }}
+        {{- end }}
       initContainers:
 {{- if .Values.elk.enabled }}
 {{ include "wait_for_elk" . | indent 6 }}
 {{- end }}
 {{ include "wait_mariadb" . | indent 6 }}
+{{- if not .Values.clickhouse.external }}
+{{ include "wait_for_service" .Values.clickhouse | indent 6 }}
+{{- end }}
+{{- if not .Values.mongo.external }}
+{{ include "wait_for_service" .Values.mongo | indent 6 }}
+{{- end }}
       restartPolicy: Never

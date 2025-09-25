@@ -6,7 +6,6 @@ from kombu.log import get_logger
 from kombu import Connection
 from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue
-from metroculus.metroculus_worker.migrator import Migrator
 from metroculus.metroculus_worker.processor import MetricsProcessor
 
 from optscale_client.config_client.client import Client as ConfigClient
@@ -65,9 +64,6 @@ if __name__ == '__main__':
         **config_cl.read_branch('/rabbit'))
     with Connection(conn_str) as conn:
         try:
-            migrator = Migrator(config_cl)
-            with EtcdLock(config_cl, 'metroculus_migrations'):
-                migrator.migrate()
             worker = MetroculusWorker(conn, config_cl)
             worker.run()
         except KeyboardInterrupt:

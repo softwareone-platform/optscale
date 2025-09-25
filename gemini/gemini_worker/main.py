@@ -13,7 +13,6 @@ from clickhouse_connect.driver.httpclient import HttpClient as ClickHouseClient
 from pymongo import MongoClient
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from gemini.gemini_worker.migrator import Migrator
 from gemini.gemini_worker.duplicate_object_finder.aws.stats import Stats
 
 DB_NAME = "gemini"
@@ -700,10 +699,6 @@ def run(config_client: ConfigClient) -> None:
     )
     with Connection(conn_str) as conn:
         try:
-            migrator = Migrator(config_client)
-            with EtcdLock(config_client, "gemini_migrations"):
-                migrator.migrate()
-
             worker = Worker(conn, config_client)
             LOG.info("Starting to consume...")
             worker.run()

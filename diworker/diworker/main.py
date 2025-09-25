@@ -20,7 +20,6 @@ from tools.optscale_time.optscale_time import startday, utcfromtimestamp
 
 from diworker.diworker.importers.base import BaseReportImporter
 from diworker.diworker.importers.factory import get_importer_class
-from diworker.diworker.migrator import Migrator
 
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ALERT_THRESHOLD = 60 * 60 * 24
@@ -275,11 +274,6 @@ if __name__ == '__main__':
     }
     config_cl = ConfigClient(**config_cl_params)
     config_cl.wait_configured()
-    migrator = Migrator(config_cl, 'restapi', 'diworker/diworker/migrations')
-    # Use lock to avoid migration problems with several diworkers
-    # starting at the same time on cluster
-    with EtcdLock(config_cl, 'diworker_migrations'):
-        migrator.migrate()
     LOG.info("starting worker")
     conn_str = 'amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit'))

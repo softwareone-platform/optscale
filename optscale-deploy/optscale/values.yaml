@@ -33,6 +33,7 @@ mariadb:
     password: my-password-01
   service:
     name: *mariadb_name
+    host: *mariadb_name
     type: ClusterIP
     externalPort: 3306
     internalPort: 3306
@@ -255,6 +256,8 @@ diworker:
     repository: *diworker_name
     tag: *tag
     pullPolicy: Never
+  mongodb:
+    name: restapi
 
 katara_service:
   name: &katara_name katara
@@ -433,6 +436,8 @@ insider_worker:
     repository: insider_worker
     tag: *tag
     pullPolicy: Never
+  mongodb:
+    name: insider
 
 insider_api:
   name: &insider_api_name insider-api
@@ -523,6 +528,8 @@ metroculus_worker:
     repository: metroculus_worker
     tag: *tag
     pullPolicy: Never
+  clickhouse:
+    name: default
 
 metroculus_api:
   name: &metroculus_api_name metroculusapi
@@ -675,6 +682,8 @@ risp_worker:
     repository: risp_worker
     tag: *tag
     pullPolicy: Never
+  clickhouse:
+    name: risp
 
 gemini_scheduler:
   name: gemini-scheduler
@@ -694,6 +703,8 @@ gemini_worker:
     repository: gemini_worker
     tag: *tag
     pullPolicy: Never
+  clickhouse:
+    name: gemini
 
 bi_scheduler:
   name: bi-scheduler
@@ -901,12 +912,20 @@ migration_job:
     tag: *tag
     pullPolicy: Never
   services:
-    - rest_api
-    - auth
-    - herald
-    - jira_bus
-    - katara_service
-    - slacker
+    mysql:
+      - rest_api
+      - auth
+      - herald
+      - jira_bus
+      - katara_service
+      - slacker
+    clickhouse:
+      - risp_worker
+      - metroculus_worker
+      - gemini_worker
+    mongo:
+      - diworker
+      - insider_worker
 
 # filled from base overlay
 # we need it to fill agent config correctly
