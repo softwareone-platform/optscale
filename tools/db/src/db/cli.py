@@ -7,7 +7,7 @@ from db.migrators import AlembicMigrator, ClickhouseMigrator, MongoMigrator
 app = typer.Typer()
 
 
-class DBType(str, enum.Enum):
+class DBType(enum.Enum):
     mysql = "mysql"
     mongo = "mongo"
     clickhouse = "clickhouse"
