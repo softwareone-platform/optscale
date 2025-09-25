@@ -7,6 +7,7 @@ from importlib import import_module
 from pymongo import MongoClient
 
 from db.migrators.base import BaseMigrator
+from db.utils import build_url
 
 MIGRATIONS_COLLECTION_NAME = "database_migrations"
 LOCAL_MIGRATIONS_REGEX = r"^([0-9]+)[_a-z]*\.py$"
@@ -34,11 +35,13 @@ class MongoMigrator(BaseMigrator):
     @property
     def mongo_client(self) -> MongoClient:
         if self._mongo_client is None:
-            url = "mongodb://%s:%s@%s:%s" % (
-                self.db_host,
-                self.db_port,
-                self.db_username,
-                self.db_password,
+            url = build_url(
+                scheme="mongodb",
+                username=self.db_username,
+                password=self.db_password,
+                host=self.db_host,
+                port=self.db_port,
+                path=self.db_name,
             )
             self._mongo_client = MongoClient(url)
 

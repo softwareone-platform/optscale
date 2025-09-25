@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 from db.migrators.base import BaseMigrator
-from db.utils import PROJECT_ROOT
+from db.utils import PROJECT_ROOT, build_url
 
 LOG = logging.getLogger()
 LOG.addHandler(logging.StreamHandler())
@@ -14,8 +14,6 @@ LOG.setLevel(logging.DEBUG)
 
 
 class ConfigTemplate:
-    connection_string = "mysql+mysqlconnector://%s:%s@%s/%s"
-
     def __init__(self, service_path):
         self.service_path = service_path
         self.config = None
@@ -28,11 +26,16 @@ class ConfigTemplate:
 
     def save(self, host, username, password, db, file_name="alembic.ini"):
         config = self.load()
-        config.set(
-            "alembic",
-            "sqlalchemy.url",
-            self.connection_string % (username, password, host, db),
+
+        mysql_connection_url = build_url(
+            scheme="mysql+mysqlconnector",
+            username=username,
+            password=password,
+            host=host,
+            path=db,
         )
+
+        config.set("alembic", "sqlalchemy.url", mysql_connection_url)
 
         with (self.service_path / file_name).open("w") as fh:
             config.write(fh)
