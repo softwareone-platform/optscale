@@ -6,7 +6,7 @@ import {debugLog} from "../utils/debug-logging";
 
 
 test.describe("[MPT-11310] Recommendations page tests", {tag: ["@ui", "@recommendations"]}, () => {
-
+  test.describe.configure({mode: 'default'});
   test.use({restoreSession: true});
 
   test.beforeEach(async ({recommendationsPage}) => {

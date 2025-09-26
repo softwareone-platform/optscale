@@ -24,7 +24,7 @@ test.describe('Cloud Accounts Tests', {tag: ["@ui", "@cloudaccounts"]},() => {
         await test.step('Fetch Data Source Response for first account', async () => {
             const [response] = await Promise.all([
                 fetchDataSourceResponse(page),
-                cloudAccountsPage.clickCloudAccountLinkByName('SoftwareOne AWS')
+                cloudAccountsPage.clickCloudAccountLink(1)
             ]);
             dataSourceResponse = response;
         });

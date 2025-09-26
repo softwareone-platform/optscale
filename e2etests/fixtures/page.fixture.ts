@@ -12,6 +12,7 @@ interface Options {
   setFixedTime?: boolean;
   interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
     entries: InterceptionEntry[];
+      forceFailure?: boolean;
   }
 }
 
@@ -80,39 +81,42 @@ function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
 const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
-  restoreSession: [false, { option: true }],
-  setFixedTime: [false, { option: true }],
-  interceptAPI: { entries: [] }, // default empty list, can be overridden per test
+    restoreSession: [false, { option: true }],
+    setFixedTime: [false, { option: true }],
+    interceptAPI: [undefined, { option: true }], // <-- allow full override
 
-
-  page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
-    let verifyInterceptions: (() => void) | undefined;
-    if (restoreSession) {
-      await restoreUserSessionInLocalForage(page, setFixedTime);
-    }
-    if (interceptAPI.entries.length > 0) {
-      verifyInterceptions = await apiInterceptors(page, interceptAPI.entries);
-    }
-    if (process.env.BROWSER_ERROR_LOGGING === 'true') {
-      page.on('console', msg => {
-        if (msg.type() === 'error') {
-          console.error(`[Browser Console Error] ${msg.text()}`);
+    page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
+        let verifyInterceptions: (() => void) | undefined;
+        if (restoreSession) {
+            await restoreUserSessionInLocalForage(page, setFixedTime);
         }
-      });
-    }
-    await use(page);
+        if (interceptAPI?.entries?.length > 0) {
+            verifyInterceptions = await apiInterceptors(
+                page,
+                interceptAPI.entries,
+                interceptAPI.forceFailure ?? true
+            );
+        }
+        if (process.env.BROWSER_ERROR_LOGGING === 'true') {
+            page.on('console', msg => {
+                if (msg.type() === 'error') {
+                    console.error(`[Browser Console Error] ${msg.text()}`);
+                }
+            });
+        }
+        await use(page);
 
-    if (verifyInterceptions) {
-      verifyInterceptions();
-    }
-  },
+        if (verifyInterceptions) {
+            verifyInterceptions();
+        }
+    },
 
-  baseRequest: async ({ request }, use) => {
-    await use(new BaseRequest(request));
-  },
+    baseRequest: async ({ request }, use) => {
+        await use(new BaseRequest(request));
+    },
 
-  storageState: async ({ }, use) => {
-    await use(LiveDemoService.getDefaultUserStorageState());
-  },
-  ...fixtures,
+    storageState: async ({ }, use) => {
+        await use(LiveDemoService.getDefaultUserStorageState());
+    },
+    ...fixtures,
 });
