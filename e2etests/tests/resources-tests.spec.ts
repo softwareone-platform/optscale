@@ -37,6 +37,7 @@ import { InterceptionEntry } from "../types/interceptor.types";
 
 test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
+  test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
   let totalExpensesValue: number;
   let itemisedTotal: number;
