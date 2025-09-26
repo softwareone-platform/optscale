@@ -100,7 +100,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
         resourcesPage.withoutTagFilter,
         resourcesPage.paidNetworkTrafficFromFilter,
         resourcesPage.paidNetworkTrafficToFilter,
-        // Kubernetes filters are currently hidden
+        // Kubernetes filters are temporarily disabled
         // resourcesPage.k8sNodeFilter,
         // resourcesPage.k8sServiceFilter,
         // resourcesPage.k8sNamespaceFilter,
