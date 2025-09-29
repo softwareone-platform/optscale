@@ -1,23 +1,36 @@
-from rest_api.rest_api_server.controllers.breakdown_tag import BreakdownTagAsyncController
-from rest_api.rest_api_server.handlers.v2.expenses import FilteredExpensesBaseAsyncHandler
+from rest_api.rest_api_server.controllers.breakdown_meta import (
+    BreakdownMetaAsyncController)
+from rest_api.rest_api_server.handlers.v2.expenses import (
+    FilteredExpensesBaseAsyncHandler)
+from tools.optscale_exceptions.http_exc import OptHTTPError
+from rest_api.rest_api_server.exceptions import Err
 
 
-class BreakdownTagsAsyncHandler(FilteredExpensesBaseAsyncHandler):
+class BreakdownMetaAsyncHandler(FilteredExpensesBaseAsyncHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.str_filters = ['breakdown_by']
+
     def _get_controller_class(self):
-        return BreakdownTagAsyncController
+        return BreakdownMetaAsyncController
 
     async def get(self, organization_id, **url_params):
         """
         ---
         description: |
-            Get breakdown by tags
+            Get breakdown by meta
             Required permission: INFO_ORGANIZATION or CLUSTER_SECRET
         tags: [expenses]
-        summary: Get breakdown by tags
+        summary: Get breakdown by meta
         parameters:
         -   name: organization_id
             in: path
             description: Organization id
+            required: true
+            type: string
+        -   name: breakdown_by
+            in: query
+            description: meta key for breakdown
             required: true
             type: string
         -   name: start_date
@@ -206,7 +219,7 @@ class BreakdownTagsAsyncHandler(FilteredExpensesBaseAsyncHandler):
                 type: string
         -   name: meta
             in: query
-            description: meta key
+            description: meta field
             required: false
             type: array
             collectionFormat: multi
@@ -214,7 +227,7 @@ class BreakdownTagsAsyncHandler(FilteredExpensesBaseAsyncHandler):
                 type: string
         responses:
             200:
-                description: Breakdown tags data
+                description: Breakdown meta data
                 schema:
                     type: object
                     properties:
@@ -231,15 +244,12 @@ class BreakdownTagsAsyncHandler(FilteredExpensesBaseAsyncHandler):
                             items:
                                 type: object
                             example:
-                                -   tag: aws_created_by
+                                -   meta: host_ip
                                     count: 2
                                     cost: 18.80
-                                -   tag: azure_created_by
+                                -   meta: pod_ip
                                     count: 4
                                     cost: 26.15
-                                -   tag: purpose
-                                    count: 6
-                                    cost: 44.95
             400:
                 description: |
                     Wrong arguments:
@@ -273,3 +283,10 @@ class BreakdownTagsAsyncHandler(FilteredExpensesBaseAsyncHandler):
         - secret: []
         """
         await super().get(organization_id, **url_params)
+
+    def get_expense_arguments(self, filter_required=True):
+        args = super().get_expense_arguments()
+        breakdown_by = self.get_arg('breakdown_by', str)
+        if breakdown_by is None:
+            raise OptHTTPError(400, Err.OE0216, ['breakdown_by'])
+        return args
