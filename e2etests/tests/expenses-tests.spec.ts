@@ -53,6 +53,7 @@ test.describe("Expenses Page Tests", { tag: ["@ui", "@expenses"] }, () => {
 
         await test.step('Validate expenses date range and breakdown type', async () => {
             expect.soft(expensesData.expenses.total).toBeGreaterThan(0);
+            expect.soft(expensesData.expenses.previous_total).toBeLessThan(startDate);
             expect.soft(expensesData.expenses.name).toBe(name);
 
             const breakdown = expensesData.expenses.breakdown;
@@ -72,6 +73,8 @@ test.describe("Expenses Page Tests", { tag: ["@ui", "@expenses"] }, () => {
             for (const key of breakdownKeys) {
                 expect.soft(typeof breakdown[key]).toBe('number');
             }
+
+
         });
     });
 })
