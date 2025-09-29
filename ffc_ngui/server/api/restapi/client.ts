@@ -18,6 +18,7 @@ import {
   QueryEmployeeEmailsArgs,
   QueryRelevantFlavorsArgs,
   QueryCleanExpensesArgs,
+  QueryCloudPoliciesArgs,
 } from "../../graphql/resolvers/restapi.generated.js";
 import { getParams } from "../../utils/getParams.js";
 
@@ -80,6 +81,7 @@ class RestApiClient extends BaseClient {
         config: {
           ...params.awsRootConfig,
           ...params.awsLinkedConfig,
+          ...params.awsAssumedRoleConfig,
           ...params.azureSubscriptionConfig,
           ...params.azureTenantConfig,
           ...params.gcpConfig,
@@ -109,6 +111,7 @@ class RestApiClient extends BaseClient {
         config: {
           ...params.awsRootConfig,
           ...params.awsLinkedConfig,
+          ...params.awsAssumedRoleConfig,
           ...params.azureSubscriptionConfig,
           ...params.azureTenantConfig,
           ...params.gcpConfig,
@@ -354,6 +357,19 @@ class RestApiClient extends BaseClient {
     });
 
     return cleanExpenses;
+  }
+
+  async getCloudPolicies(
+    organizationId: QueryCloudPoliciesArgs["organizationId"],
+    params: QueryCloudPoliciesArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/cloud_policies`;
+
+    const cloudPolicies = await this.get(path, {
+      params: getParams(params),
+    });
+
+    return cloudPolicies;
   }
 }
 

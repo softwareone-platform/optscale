@@ -3,6 +3,8 @@ import { gql } from "@apollo/client";
 const AwsDataSourceConfigFragment = gql`
   fragment AwsDataSourceConfigFragment on AwsDataSource {
     config {
+      assume_role_account_id
+      assume_role_name
       access_key_id
       linked
       use_edp_discount
@@ -100,6 +102,7 @@ const K8sDataSourceConfigFragment = gql`
         cpu_hourly_cost
         memory_hourly_cost
       }
+      custom_price
       user
     }
   }
@@ -435,6 +438,12 @@ const GET_CLEAN_EXPENSES = gql`
   }
 `;
 
+const GET_CLOUD_POLICIES = gql`
+  query CloudPolicies($organizationId: ID!, $params: CloudPoliciesParams) {
+    cloudPolicies(organizationId: $organizationId, params: $params)
+  }
+`;
+
 export {
   CREATE_DATA_SOURCE,
   UPDATE_DATA_SOURCE,
@@ -461,5 +470,6 @@ export {
   GET_EXPENSES_DAILY_BREAKDOWN,
   GET_ORGANIZATION_LIMIT_HITS,
   GET_RELEVANT_FLAVORS,
-  GET_CLEAN_EXPENSES
+  GET_CLEAN_EXPENSES,
+  GET_CLOUD_POLICIES
 };
