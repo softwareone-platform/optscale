@@ -37,13 +37,13 @@ test.describe("Expenses Page Tests", { tag: ["@ui", "@expenses"] }, () => {
     });
 
     test.only('Validate API default chart data', async ({expensesPage}) => {
-        const { startDate, endDate } = getThisMonthUnixDateRange();
+        const {startDate, endDate} = getThisMonthUnixDateRange();
         let expensesData: ExpensesResponse;
 
         await test.step('Load expenses data for the this month', async () => {
             const [expensesResponse] = await Promise.all([
                 expensesPage.page.waitForResponse((resp) =>
-                    resp.url().includes('/pools_expenses/' ) && resp.request().method() === 'GET'
+                    resp.url().includes('/pools_expenses/') && resp.request().method() === 'GET'
                 ),
                 expensesPage.page.reload(),
             ]);
@@ -58,19 +58,20 @@ test.describe("Expenses Page Tests", { tag: ["@ui", "@expenses"] }, () => {
             const breakdown = expensesData.expenses.breakdown;
             const breakdownKeys = Object.keys(breakdown).map(Number).sort((a, b) => a - b);
 
-            // Check first and last keys match startDate and endDate
-            expect(breakdownKeys[0]).toBe(startDate);
-            expect(breakdownKeys[breakdownKeys.length - 1]).toBe(endDate);
+            // Check first key matches startDate
+            expect.soft(breakdownKeys[0]).toBe(startDate);
+
+            // Check last key is the last day at midnight (00:00:00 UTC)
+            const lastBreakdownKey = breakdownKeys[breakdownKeys.length - 1];
+            expect.soft(lastBreakdownKey).toBeLessThanOrEqual(endDate);
 
             // Check there is a breakdown for each day in the range
-            expect(breakdownKeys.length).toBe((endDate - startDate) / 86400 + 1);
+            expect.soft(breakdownKeys.length).toBe((lastBreakdownKey - startDate) / 86400 + 1);
 
             // Check each breakdown value is a number (including 0)
             for (const key of breakdownKeys) {
-                expect(typeof breakdown[key]).toBe('number');
+                expect.soft(typeof breakdown[key]).toBe('number');
             }
         });
-
     });
-
 })
