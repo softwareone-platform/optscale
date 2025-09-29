@@ -105,7 +105,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', {tag: ["@ui", "@reso
         });
     });
 
-    test('[230842] Verify Top Resource Block displayed correctly', async ({homePage}) => {
+    test('[230842] Verify Top Resource Block displayed correctly', {tag: ["@p1"]},async ({homePage}) => {
 
         await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
             const count = await homePage.topResourcesAllLinks.count();
