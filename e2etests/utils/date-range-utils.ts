@@ -29,9 +29,9 @@ export function getExpectedDateRangeText(
       startDate.setDate(endDate.getDate() - 29);
       break;
 
-    case 'this month':
-      startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
-      break;
+case 'this month':
+        startDate = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
+        break;
 
     case 'last month':
       const lastMonthYear = endDate.getFullYear();
@@ -118,6 +118,21 @@ export function getLast30DaysUnixRange(): { startDate: number; endDate: number }
     endDate: Math.floor(endUTC.getTime() / 1000),
   };
 }
+
+export function getThisMonthUnixDateRange(): { startDate: number; endDate: number } {
+        const today = new Date();
+
+        // End of today (UTC)
+        const endUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
+
+        // Start of this month (UTC)
+        const startUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1, 0, 0, 0));
+
+        return {
+            startDate: Math.floor(startUTC.getTime() / 1000),
+            endDate: Math.floor(endUTC.getTime() / 1000),
+        };
+    }
 
 /**
  * Calculates the Unix timestamp range for the previous calendar month.

@@ -33,6 +33,7 @@ import {
 } from "../types/api-response.types";
 import { fetchBreakdownExpenses } from "../utils/api-helpers";
 import { InterceptionEntry } from "../types/interceptor.types";
+import {debugLog} from "../utils/debug-logging";
 
 
 test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }, () => {
@@ -179,12 +180,12 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
 
     await test.step('Get total expenses value from resources page', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value: ${totalExpensesValue}`);
+      debugLog(`Total expenses value: ${totalExpensesValue}`);
     });
     await test.step('get the sum of itemised expenses from table', async () => {
       await resourcesPage.table.waitFor();
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total: ${itemisedTotal}`);
+      debugLog(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare total expenses with itemised total', async () => {
@@ -208,12 +209,12 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
 
     await test.step('Get total expenses value after filtering', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value after filtering: ${totalExpensesValue}`);
+      debugLog(`Total expenses value after filtering: ${totalExpensesValue}`);
     });
 
     await test.step('Get itemised total from table after filtering', async () => {
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total: ${itemisedTotal}`);
+      debugLog(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare filtered total expenses with itemised total', async () => {
@@ -241,13 +242,13 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
       await datePicker.selectLast7DaysDateRange();
       await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
+      debugLog(`Total expenses value for last 7 days: ${totalExpensesValue}`);
     });
 
     await test.step('Get itemised total from table for last 7 days', async () => {
       await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
+      debugLog(`Itemised total for last 7 days: ${itemisedTotal}`);
     });
 
     await test.step('Compare total expenses with itemised total for last 7 days', async () => {

@@ -360,3 +360,16 @@ export type CardSavingsData = {
   tableLocator: Locator;
   modalColumnLocator: Locator;
 };
+
+export interface ExpensesResponse {
+    expenses: {
+        total: number;
+        previous_total: number;
+        previous_range_start: number;
+        id: string;
+        name: string;
+        breakdown: {
+            [timestamp: number]: number;
+        };
+    };
+}

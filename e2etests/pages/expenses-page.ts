@@ -7,6 +7,7 @@ import {BasePage} from "./base-page";
  */
 export class ExpensesPage extends BasePage {
   readonly heading: Locator;
+  readonly downloadButton: Locator;
   readonly expensesSelectedPeriodValue: Locator;
   readonly expensesPreviousPeriodValue: Locator;
   readonly dailyBtn: Locator;
@@ -14,9 +15,11 @@ export class ExpensesPage extends BasePage {
   readonly monthlyBtn: Locator;
   readonly selectedDateText: Locator;
   readonly selectDateBtn: Locator;
+  readonly seeExpensesBreakdownGrid: Locator;
   readonly sourceBtn: Locator;
   readonly poolBtn: Locator;
   readonly ownerBtn: Locator;
+  readonly geographyBtn: Locator;
   readonly costExploreBreadcrumb: Locator;
   readonly dataSourceHeading: Locator;
   readonly poolHeading: Locator;
@@ -30,6 +33,7 @@ export class ExpensesPage extends BasePage {
     super(page, '/expenses');
     this.costExploreBreadcrumb = this.main.locator('[href="/expenses"]');
     this.heading = this.main.locator('//h1[contains(text(), "Cost explorer for")]');
+    this.downloadButton = this.main.getByRole('button', {name: 'Download'});
     this.dataSourceHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Data Source")]');
     this.poolHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Pool")]');
     this.ownerHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Owner")]');
@@ -40,9 +44,11 @@ export class ExpensesPage extends BasePage {
     this.monthlyBtn = this.main.getByTestId('breakdown_ls_item_monthly');
     this.selectedDateText = this.main.getByTestId('text_selected_dates');
     this.selectDateBtn = this.main.getByTestId('btn_select_date');
-    this.sourceBtn = this.main.getByRole('button', {name: 'Source'});
-    this.poolBtn = this.main.getByRole('button', {name: 'Pool'});
-    this.ownerBtn = this.main.getByRole('button', {name: 'Owner'});
+    this.seeExpensesBreakdownGrid = this.main.locator('//div[.="See expenses breakdown by:"]/..');
+    this.sourceBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Source'});
+    this.poolBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Pool'});
+    this.ownerBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Owner'});
+    this.geographyBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Geography'});
   }
 
   /**
