@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import Grid from "@mui/material/Grid";
 import CapabilityWrapper from "components/CapabilityWrapper";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-// import { getSquareNodesStyle } from "utils/layouts";
+import { getSquareNodesStyle } from "utils/layouts";
 
 type DashboardGridLayoutProps = {
   topResourcesExpensesCard: ReactNode;
@@ -54,12 +54,10 @@ const DashboardGridLayout = ({
   ].filter(({ node }) => Boolean(node));
 
   return (
-    <Grid spacing={3} borderRight={"none"} borderLeft={"none"} container>
-      {squareNodes.map(({ key, node, capability }) => (
+    <Grid container>
+      {squareNodes.map(({ key, node, capability }, i) => (
         <CapabilityWrapper capability={capability} key={key}>
-          <Grid item xs={12} lg={6}>
-            {" "}
-            {/* TODO_KU disabled sx={getSquareNodesStyle(squareNodes.length, i)} */}
+          <Grid item xs={12} lg={6} sx={getSquareNodesStyle(squareNodes.length, i)}>
             {node}
           </Grid>
         </CapabilityWrapper>

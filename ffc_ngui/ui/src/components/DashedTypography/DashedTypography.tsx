@@ -8,18 +8,14 @@ type DashedTypographyProps = {
   disablePointerOnHover?: boolean;
   hasRightMargin?: boolean;
   dataTestId?: string;
-  chipMode?: boolean;
 } & TypographyProps;
 
 const DashedTypography = forwardRef<HTMLElement, DashedTypographyProps>(
-  (
-    { className, children, disablePointerOnHover = false, hasRightMargin = false, dataTestId, chipMode = false, ...rest },
-    ref
-  ) => {
+  ({ className, children, disablePointerOnHover = false, hasRightMargin = false, dataTestId, ...rest }, ref) => {
     const { classes, cx } = useStyles();
 
     const typographyClasses = cx(
-      chipMode ? classes.chip : classes.dashed,
+      classes.dashed,
       disablePointerOnHover ? "" : classes.cursorPointer,
       hasRightMargin ? classes.right : "",
       className

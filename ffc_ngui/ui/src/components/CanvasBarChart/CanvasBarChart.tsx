@@ -11,7 +11,7 @@ import { useBarChartColors } from "hooks/useChartColors";
 import { useChartLayoutOptions } from "hooks/useChartLayoutOptions";
 import { useChartTheme } from "hooks/useChartTheme";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { getBarTicks, TICK_COUNT, getMaxAndMinBandValues, getInnerWidth, AXIS_FORMATS, getInnerHeight } from "utils/charts";
 import {
   DEFAULT_BAR_CHART_MARGIN,

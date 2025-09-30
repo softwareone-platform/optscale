@@ -2,6 +2,7 @@ import { Autocomplete } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import { FormattedMessage, useIntl } from "react-intl";
 import Input from "components/Input";
+import PerspectiveNameLabel from "components/PerspectiveNameLabel";
 import { FIELD_NAMES } from "../constants";
 
 const FIELD_NAME = FIELD_NAMES.NAME;
@@ -45,6 +46,11 @@ const NameAutocompleteField = ({ perspectiveNames = [] }: NameAutocompleteFieldP
           onChange={(event, newValue) => {
             onChange(newValue);
           }}
+          renderOption={(props, option) => (
+            <li {...props} key={option}>
+              <PerspectiveNameLabel name={option} />
+            </li>
+          )}
           renderInput={(params) => (
             <Input
               {...params}

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Tooltip from "components/Tooltip";
 import useStyles from "./ButtonGroup.styles";
 
-const ButtonGroup = ({ buttons, activeButtonIndex, activeButtonId, fullWidth, onButtonClick }) => {
+const ButtonGroup = ({ buttons, activeButtonIndex, activeButtonId, fullWidth }) => {
   const { classes, cx } = useStyles();
 
   const findButtonIndexById = (idToFind) => buttons.find(({ id }) => id === idToFind);
@@ -14,8 +14,9 @@ const ButtonGroup = ({ buttons, activeButtonIndex, activeButtonId, fullWidth, on
   const activeButton = Number.isInteger(activeButtonIndex) ? buttons[activeButtonIndex] : findButtonIndexById(activeButtonId);
 
   const renderButtons = () =>
-    buttons.map((button, index) => {
+    buttons.map((button) => {
       const isActive = button === activeButton;
+
       const { id, messageId, messageText, disabled, link, messageValues, dataTestId, action, tooltip, icon, messageIcon } =
         button;
       const buttonClasses = cx(classes.button, isActive && classes.activeButton, disabled && classes.disabled);
@@ -24,14 +25,6 @@ const ButtonGroup = ({ buttons, activeButtonIndex, activeButtonId, fullWidth, on
         messageId || messageText ? (
           <Typography>{messageId ? <FormattedMessage id={messageId} values={messageValues} /> : messageText}</Typography>
         ) : null;
-
-      const handleClick = () => {
-        if (!disabled && action) {
-          action();
-        } else if (typeof onButtonClick === "function" && messageId) {
-          onButtonClick({ name: messageId, index });
-        }
-      };
 
       const buttonComponent = link ? (
         <MuiButton data-test-id={dataTestId} key={id} component={Link} to={link} className={buttonClasses} startIcon={icon}>
@@ -44,7 +37,7 @@ const ButtonGroup = ({ buttons, activeButtonIndex, activeButtonId, fullWidth, on
           key={id}
           disableRipple={disabled}
           className={buttonClasses}
-          onClick={handleClick}
+          onClick={disabled ? null : action}
           startIcon={icon}
         >
           {messageIcon}

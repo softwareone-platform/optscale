@@ -14,7 +14,7 @@ import PoolForecast from "components/PoolForecast";
 import PoolLabel from "components/PoolLabel";
 import PoolTypeIcon from "components/PoolTypeIcon";
 import { useToggle } from "hooks/useToggle";
-import { isEmpty } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { getColorScale } from "utils/charts";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
@@ -106,13 +106,7 @@ const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
               <Summary name={name} purpose={purpose} limit={limit} owner={owner} />
             </div>
             <div>
-              <Button
-                messageId="edit"
-                variant="contained"
-                color="primary"
-                onClick={toggleIsEditMode}
-                startIcon={<EditOutlinedIcon />}
-              />
+              <Button messageId="edit" onClick={toggleIsEditMode} startIcon={<EditOutlinedIcon />} />
             </div>
           </Stack>
         )}
@@ -132,7 +126,7 @@ const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
         &#58;&nbsp;
         <PoolForecast limit={limit} forecast={forecast} />
       </Box>
-      {!isEmpty(childPools) && <Chart poolPurpose={purpose} poolCost={cost} childPools={childPools} />}
+      {!isEmptyArray(childPools) && <Chart poolPurpose={purpose} poolCost={cost} childPools={childPools} />}
     </Stack>
   );
 };

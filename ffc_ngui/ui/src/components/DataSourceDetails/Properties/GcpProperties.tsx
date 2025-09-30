@@ -1,15 +1,14 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { GCP_CNR } from "utils/constants";
 
-const GcpProperties = ({ accountId, config }) => {
-  const { billing_data: billingData } = config;
-  const { dataset_name: datasetName, table_name: tableName, project_id: projectId } = billingData ?? {};
+const GcpProperties = ({ accountId, config = {} }) => {
+  const { billing_data: billingData, pricing_data: pricingData } = config;
+  const { dataset_name: billingDatasetName, table_name: billingTableName, project_id: billingProjectId } = billingData ?? {};
+  const { dataset_name: pricingDatasetName, table_name: pricingTableName, project_id: pricingProjectId } = pricingData ?? {};
 
   return (
     <>
       <KeyValueLabel
-        isBoldKeyLabel
-        variant="property"
         keyMessageId="GCPProjectId"
         value={accountId}
         dataTestIds={{
@@ -18,26 +17,41 @@ const GcpProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
-        isBoldKeyLabel
-        variant="property"
         keyMessageId="billingDataDatasetName"
-        value={datasetName}
-        dataTestIds={{ key: "p_dataset_name_key", value: "p_dataset_name_value" }}
+        value={billingDatasetName}
+        dataTestIds={{ key: "p_billing_dataset_name_key", value: "p_billing_dataset_name_value" }}
       />
       <KeyValueLabel
-        isBoldKeyLabel
-        variant="property"
         keyMessageId="billingDataTableName"
-        value={tableName}
-        dataTestIds={{ key: "p_table_name_key", value: "p_table_name_value" }}
+        value={billingTableName}
+        dataTestIds={{ key: "p_billing_table_name_key", value: "p_billing_table_name_value" }}
       />
-      {projectId && (
+      {billingProjectId && (
         <KeyValueLabel
-          isBoldKeyLabel
-          variant="property"
           keyMessageId="billingDataProjectId"
-          value={projectId}
-          dataTestIds={{ key: "p_project_id", value: "p_project_id" }}
+          value={billingProjectId}
+          dataTestIds={{ key: "p_billing_project_id_key", value: "p_billing_project_id_value" }}
+        />
+      )}
+      {pricingDatasetName && (
+        <KeyValueLabel
+          keyMessageId="pricingDataDatasetName"
+          value={pricingDatasetName}
+          dataTestIds={{ key: "p_pricing_dataset_name_key", value: "p_pricing_dataset_name_value" }}
+        />
+      )}
+      {pricingTableName && (
+        <KeyValueLabel
+          keyMessageId="pricingDataTableName"
+          value={pricingTableName}
+          dataTestIds={{ key: "p_pricing_table_name_key", value: "p_pricing_table_name_value" }}
+        />
+      )}
+      {pricingProjectId && (
+        <KeyValueLabel
+          keyMessageId="pricingDataProjectId"
+          value={pricingProjectId}
+          dataTestIds={{ key: "p_pricing_project_id_key", value: "p_pricing_project_id_value" }}
         />
       )}
     </>

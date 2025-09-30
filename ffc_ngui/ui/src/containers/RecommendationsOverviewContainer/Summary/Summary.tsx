@@ -5,7 +5,7 @@ import SummaryGrid from "components/SummaryGrid";
 import { useAwsDataSources } from "hooks/useAwsDataSources";
 import S3DuplicatesService from "services/S3DuplicatesService";
 import { S3_DUPLICATE_FINDER, getRiSpCoverageUrl } from "urls";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 import { getCurrentUTCTimeInSec, getLast30DaysRange, getTimeDistance } from "utils/datetime";
 import { getSearchParams } from "utils/network";
@@ -246,7 +246,7 @@ const Summary = ({ totalSaving, lastCompleted, lastRun, nextRun, riSpExpensesSum
     s3DuplicateFinderCheckCardDefinition
   ];
 
-  return <SummaryGrid summaryData={summaryData} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={summaryData} />;
 };
 
 export default Summary;

@@ -5,7 +5,7 @@ import { FormattedMessage } from "react-intl";
 import CircleLabel from "components/CircleLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import LineChart from "components/LineChart";
-import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arrays";
+import { createGroupsObjectFromArray, isEmptyArray } from "utils/arrays";
 import { formatSecondsToHHMMSS } from "utils/datetime";
 import { useRenderMilestonesLayer, useRenderStagesLayer } from "../ChartLayers";
 

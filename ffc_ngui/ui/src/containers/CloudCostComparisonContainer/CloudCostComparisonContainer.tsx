@@ -1,12 +1,11 @@
 import { useCallback } from "react";
-import { useLazyQuery } from "@apollo/client";
 import CloudCostComparison from "components/CloudCostComparison";
 import { FIELD_NAMES, SUPPORTED_CLOUD_TYPES } from "components/forms/CloudCostComparisonFiltersForm/constants";
 import { FormValues } from "components/forms/CloudCostComparisonFiltersForm/types";
-import { GET_RELEVANT_FLAVORS } from "graphql/api/restapi/queries/restapi.queries";
+import { useRelevantFlavorsLazyQuery } from "graphql/__generated__/hooks/restapi";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { isEmpty } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { NEBIUS } from "utils/constants";
 import { updateSearchParams } from "utils/network";
 
@@ -27,7 +26,7 @@ const CloudCostComparisonContainer = () => {
           return true;
         });
 
-        if (isEmpty(params[FIELD_NAMES.CLOUD_PROVIDER])) {
+        if (isEmptyArray(params[FIELD_NAMES.CLOUD_PROVIDER])) {
           return allowedTypes;
         }
         return allowedTypes.filter((type) => params[FIELD_NAMES.CLOUD_PROVIDER].includes(type));
@@ -47,7 +46,7 @@ const CloudCostComparisonContainer = () => {
   );
 
   const [getRelevantFlavors, { loading: isLoading, data: { relevantFlavors: { flavors, errors } = {} } = {} }] =
-    useLazyQuery(GET_RELEVANT_FLAVORS);
+    useRelevantFlavorsLazyQuery();
 
   return (
     <CloudCostComparison

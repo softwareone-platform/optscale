@@ -1,10 +1,9 @@
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
-import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ExpensesBreakdownTable from "components/ExpensesBreakdown/Table";
 import IconButton from "components/IconButton";
 import Tooltip from "components/Tooltip";
-import { isEmpty, sortObjects } from "utils/arrays";
+import { isEmptyArray, sortObjects } from "utils/arrays";
 import { EXPENSES_FILTERBY_TYPES } from "utils/constants";
 import { percentXofY } from "utils/math";
 
@@ -56,14 +55,12 @@ const ExpensesBreakdownTableWidget = ({
   endDateTimestamp
 }) => {
   const title = (
-    <Typography variant={"subtitle1"} display={"inline-block"}>
-      <FormattedMessage
-        id="summaryBy"
-        values={{
-          name: getTableWrapperCardTitleName(filterBy)
-        }}
-      />
-    </Typography>
+    <FormattedMessage
+      id="summaryBy"
+      values={{
+        name: getTableWrapperCardTitleName(filterBy)
+      }}
+    />
   );
 
   const tableOptions = {
@@ -91,7 +88,7 @@ const ExpensesBreakdownTableWidget = ({
   return (
     <>
       {title}
-      {!isEmpty(filteredBreakdown) ? (
+      {!isEmptyArray(filteredBreakdown) ? (
         <Tooltip title={<FormattedMessage id="showResources" />}>
           <IconButton icon={<ListAltOutlinedIcon />} isLoading={isLoading} onClick={onTitleButtonClick} />
         </Tooltip>

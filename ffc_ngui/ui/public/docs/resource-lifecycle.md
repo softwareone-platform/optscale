@@ -1,6 +1,6 @@
 ### **Summary**
 
-Use this page to manage the resource lifecycle effectively, ensuring that the cloud 
+Use the **Resource Lifecycle** page to manage the resource lifecycle effectively, ensuring that the cloud 
 infrastructure remains efficient, cost-effective, and aligned with business objectives.
 Effective management of this lifecycle is crucial for maintaining performance, cost-efficiency, and scalability in cloud environments.
 
@@ -10,11 +10,11 @@ Effective management of this lifecycle is crucial for maintaining performance, c
 
 - Effective Pool/Resource Limit control: Attention the Limit column. It gives a clear overview of the limits set to the pool/resource.
    
-- Email Notification: Once a pool/resource violates the constraints, organization manager and manager of a corresponding pool will be alerted via email.
+- Email Notification: Receive an alert when a pool or resource violates its constraints. Relevant for organization managers and manager roles.
 
 ### **Actions**
 
-- Add a Pool Policy: Easily create a new policy by clicking the green "Add" button. Select the pool, and available policy type, and set the desired limit.
+- Add a Pool Policy: Create a new policy by clicking the green "Add" button. Select the pool, and available policy type, and set the desired limit.
 
 - Manage Policies/Constraints: Click on a table row to deactivate/delete, or view detailed information about a policy/constraint.
 

@@ -1,95 +1,23 @@
-import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
-import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import Invitation from "components/Invitation";
 import TypographyLoader from "components/TypographyLoader";
 import InvitationActionsContainer from "containers/InvitationActionsContainer";
-import { DOCS_MARKETPLACE_PENDING_INVITATIONS } from "urls";
-import { createGroupsObjectFromArray, isEmpty as isEmptyArray } from "utils/arrays";
-import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
-import useStyles from "./Invitations.styles";
+import { createGroupsObjectFromArray, isEmptyArray } from "utils/arrays";
+import { SPACING_4 } from "utils/layouts";
 
-interface InvitationAssignment {
-  scope_type: string;
-}
-
-interface InvitationData {
-  owner_name: string;
-  owner_email: string;
-  id: string;
-  organization: string;
-  invite_assignments: InvitationAssignment[];
-}
-
-interface InvitationsProps {
-  invitations: InvitationData[];
-  onSuccessAccept: (id: string) => void;
-  onSuccessDecline: (id: string) => void;
-  isLoading?: boolean;
-  styleProps?: {
-    buttonsJustifyContent?: string;
-  };
-  widget?: boolean;
-}
-
-const NoInvitationsPending = ({ widget = false }: { widget: boolean }) => {
-  const { classes } = useStyles();
-  return (
-    <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"} className={widget ? classes.gridBox : ""}>
-      <Box textAlign={widget ? "center" : "left"}>
-        {widget && (
-          <Typography marginBottom={MPT_SPACING_1}>
-            <MarkAsUnreadOutlinedIcon sx={{ fontSize: 100 }} />
-          </Typography>
-        )}
-        <Typography component="h4" variant="subtitle1" marginBottom={MPT_SPACING_4}>
-          <FormattedMessage id="noPendingInvitationsLeft" />
-        </Typography>
-        <Typography variant="body1">
-          <FormattedMessage
-            id="noPendingInvitationsLeftDescription"
-            values={{
-              invitationDocsLink: (chunks) => (
-                <a href={DOCS_MARKETPLACE_PENDING_INVITATIONS} target="_blank" rel="noreferrer">
-                  {chunks}
-                </a>
-              )
-            }}
-          />
-        </Typography>
-      </Box>
-    </Grid>
-  );
-};
-
-const Invitations = ({
-  invitations,
-  onSuccessAccept,
-  onSuccessDecline,
-  isLoading = false,
-  styleProps = {},
-  widget = false
-}: InvitationsProps) => {
-  const { classes } = useStyles();
-
+const Invitations = ({ invitations, onSuccessAccept, onSuccessDecline, isLoading = false, styleProps = {} }) => {
   if (isLoading) {
     return <TypographyLoader linesCount={4} />;
   }
 
+  if (isEmptyArray(invitations)) {
+    return <FormattedMessage id="noPendingInvitationsLeft" />;
+  }
+
   return (
-    <Grid
-      container
-      direction="row"
-      spacing={SPACING_4}
-      sx={{
-        justifyContent: widget ? "center" : "flexStart",
-        alignItems: "stretch"
-      }}
-    >
-      {isEmptyArray(invitations) && <NoInvitationsPending widget={widget} />}
+    <Grid container direction="column" spacing={SPACING_4}>
       {invitations.map(({ owner_name: name, owner_email: email, id, organization, invite_assignments: assignments }) => {
         const organizationNameInvitedTo = organization;
 
@@ -99,23 +27,22 @@ const Invitations = ({
         );
 
         return (
-          <Grid item md={6} lg={4} key={id} className={widget ? classes.gridBox : classes.grid}>
-            <Box>
+          <Grid item key={id}>
+            <div style={{ marginBottom: "1rem" }}>
               <Invitation
                 owner={{ name, email }}
                 organizationNameInvitedTo={organizationNameInvitedTo}
                 invitesToOrganization={invitesToOrganization}
                 invitesToPools={invitesToPools}
               />
-              <FormButtonsWrapper mt={2} justifyContent={styleProps.buttonsJustifyContent} horizontal>
-                <InvitationActionsContainer
-                  buttonSize="large"
-                  invitationId={id}
-                  onSuccessAccept={onSuccessAccept}
-                  onSuccessDecline={onSuccessDecline}
-                />
-              </FormButtonsWrapper>
-            </Box>
+            </div>
+            <FormButtonsWrapper mt={0} justifyContent={styleProps.buttonsJustifyContent}>
+              <InvitationActionsContainer
+                invitationId={id}
+                onSuccessAccept={onSuccessAccept}
+                onSuccessDecline={onSuccessDecline}
+              />
+            </FormButtonsWrapper>
           </Grid>
         );
       })}

@@ -3,7 +3,7 @@ import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()((theme) => ({
   clearSearchIcon: {
-    color: alpha(theme.palette.text.primary, 1)
+    color: alpha(theme.palette.text.primary, 0.26)
   }
 }));
 

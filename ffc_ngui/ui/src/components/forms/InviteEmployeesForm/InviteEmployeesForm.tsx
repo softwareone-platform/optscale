@@ -12,7 +12,7 @@ import Input from "components/Input";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
-import { getDifference, isEmpty as isEmptyArray } from "utils/arrays";
+import { getDifference, isEmptyArray } from "utils/arrays";
 import { SCOPE_TYPES, EMAIL_MAX_LENGTH, MANAGER, ORGANIZATION_MANAGER } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { removeKey } from "utils/objects";
@@ -122,14 +122,10 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
 
   const saveEmails = (emails: string[]) => {
     emails.forEach((email) => {
-      const normalizedEmail = email.toLowerCase();
       if (isEmailValid(email)) {
-        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, normalizedEmail])] }));
+        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, email])] }));
       } else {
-        setValues((prevState) => ({
-          ...prevState,
-          invalidEmails: [...new Set([...prevState.invalidEmails, email])]
-        }));
+        setValues((prevState) => ({ ...prevState, invalidEmails: [...new Set([...prevState.invalidEmails, email])] }));
       }
       // Clear error state for email field
       setIsEmptyEmail(false);

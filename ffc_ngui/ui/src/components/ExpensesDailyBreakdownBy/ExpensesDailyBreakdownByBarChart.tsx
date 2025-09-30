@@ -4,7 +4,7 @@ import BreakdownLabel, { getBreakdownLabelText } from "components/BreakdownLabel
 import CanvasBarChart from "components/CanvasBarChart";
 import { useMoneyFormatter } from "components/FormattedMoney";
 import KeyValueChartTooltipBody from "components/KeyValueChartTooltipBody";
-import { isEmpty as isEmptyArray, splitIntoTwoChunks } from "utils/arrays";
+import { isEmptyArray, splitIntoTwoChunks } from "utils/arrays";
 import { AXIS_FORMATS, getColorsMap, truncateCanvasText } from "utils/charts";
 import { EXPENSES_SPLIT_PERIODS, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { getResourceExpensesSplits } from "utils/getResourceExpensesSplits";

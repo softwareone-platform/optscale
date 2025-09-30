@@ -1,10 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
-import { GET_INVITATIONS } from "graphql/api/restapi/queries";
-import { isEmpty as isEmptyArray } from "utils/arrays";
-import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
+import { useInvitationsQuery } from "graphql/__generated__/hooks/restapi";
+import { isEmptyArray } from "utils/arrays";
 import { Error, Loading } from "../../common";
-import ProceedToApplication from "../ProceedToApplication";
 import SetupOrganization from "../SetupOrganization/StepContainer";
 import AcceptInvitations from "./AcceptInvitations";
 
@@ -16,7 +13,7 @@ const StepContainer = () => {
     loading: getInvitationsLoading,
     error: getInvitationsError,
     refetch: refetchInvitations
-  } = useQuery(GET_INVITATIONS, {
+  } = useInvitationsQuery({
     fetchPolicy: "network-only"
   });
 
@@ -33,7 +30,7 @@ const StepContainer = () => {
   }
 
   if (proceedToNext) {
-    return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
+    return <SetupOrganization />;
   }
 
   const hasInvitations = !isEmptyArray(invitations?.invitations ?? []);
@@ -50,7 +47,7 @@ const StepContainer = () => {
     );
   }
 
-  return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
+  return <SetupOrganization />;
 };
 
 export default StepContainer;

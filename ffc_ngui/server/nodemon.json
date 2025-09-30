@@ -1,0 +1,8 @@
+{
+  "exec": "NODE_ENV=development pnpm start",
+  "watch": ["**/*.ts", ".env"],
+  "ignore": ["node_modules/", "dist/", "**/*.test.ts", "**/*.spec.ts", "*.d.ts", "graphql/__generated__/**/*"],
+  "ext": "ts,graphql,env",
+  "delay": "500",
+  "verbose": true
+}

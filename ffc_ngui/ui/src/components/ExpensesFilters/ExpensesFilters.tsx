@@ -1,16 +1,15 @@
+import { FormattedMessage } from "react-intl";
 import LinearSelector from "components/LinearSelector";
 import { getPoolIdWithSubPools } from "urls";
-import { isEmpty } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { POOL_ID_FILTER } from "utils/constants";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const ExpensesFilters = ({ items, appliedValues, onFilterAdd, onFilterDelete, onFiltersDelete }) =>
-  !isEmpty(items) && (
+  !isEmptyArray(items) && (
     <LinearSelector
-      label={<LabelColon messageId="filters" />}
+      label={<FormattedMessage id="filters" />}
       value={appliedValues}
       items={items}
-      exposeFirstItem
       onChange={({ name: filterName, value, checked }) => {
         if ([POOL_ID_FILTER].includes(filterName)) {
           onFilterAdd({
