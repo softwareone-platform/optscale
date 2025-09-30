@@ -9,7 +9,7 @@ import SlicedText from "components/SlicedText";
 import SubTitle from "components/SubTitle";
 import SummaryList from "components/SummaryList";
 import Table from "components/Table";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { discoveryStatus, lastTimeLocal, resourceType } from "utils/columns";
 import { DISCOVERY_STATUS } from "utils/columns/discoveryStatus";
 import { BILLING_IMPORT_STATUS, getBillingImportStatus } from "utils/dataSources";
@@ -101,8 +101,6 @@ const AdvancedDataSourceDetails = ({
           items={
             <>
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="lastImportAt"
                 keyMessageId="lastBillingReportProcessed"
                 value={
@@ -116,8 +114,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_billing_report_processed", value: "value_last_billing_report_processed" }}
               />
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="lastImportAttemptAt"
                 keyMessageId="lastBillingReportAttempt"
                 value={
@@ -131,8 +127,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_billing_report_attempt", value: "value_last_billing_report_attempt" }}
               />
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="status"
                 keyMessageId="status"
                 value={
@@ -142,7 +136,6 @@ const AdvancedDataSourceDetails = ({
               />
               {lastImportAttemptError && lastImportAt < lastImportAttemptAt ? (
                 <KeyValueLabel
-                  isBoldKeyLabel
                   key="reason"
                   keyMessageId="reason"
                   value={<SlicedText limit={50} text={lastImportAttemptError} />}
@@ -159,8 +152,6 @@ const AdvancedDataSourceDetails = ({
           items={
             <>
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="lastMetricsRetrieval"
                 keyMessageId="lastMetricsRetrieval"
                 value={
@@ -174,8 +165,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_getting_metrics_at", value: "value_last_getting_metrics_at" }}
               />
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="lastMetricsRetrievalAttempt"
                 keyMessageId="lastMetricsRetrievalAttempt"
                 value={
@@ -189,8 +178,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_getting_metrics_attempt_at", value: "value_last_getting_metrics_attempt_at" }}
               />
               <KeyValueLabel
-                isBoldKeyLabel
-                variant="property"
                 key="status"
                 keyMessageId="status"
                 value={
@@ -204,7 +191,6 @@ const AdvancedDataSourceDetails = ({
               />
               {lastGettingMetricAttemptError && lastMetricsRetrieval < lastMetricsRetrievalAttempt ? (
                 <KeyValueLabel
-                  isBoldKeyLabel
                   key="reason"
                   keyMessageId="reason"
                   value={<SlicedText limit={50} text={lastGettingMetricAttemptError} />}

@@ -1,9 +1,11 @@
 import AlibabaCredentials, { FIELD_NAMES as ALIBABA_CREDENTIALS_FIELD_NAMES } from "./AlibabaCredentials";
+import AwsAssumedRoleCredentials, { FIELD_NAMES as AWS_ROLE_CREDENTIALS_FIELD_NAMES } from "./AwsAssumedRoleCredentials";
+import AwsAssumedRoleInputs from "./AwsAssumedRoleInputs";
+import AwsBillingBucket, { FIELD_NAMES as AWS_BILLING_BUCKET_FIELD_NAMES } from "./AwsBillingBucket";
+import AwsExportType, { FIELD_NAMES as AWS_EXPORT_TYPE_FIELD_NAMES } from "./AwsExportType";
 import AwsLinkedCredentials, { FIELD_NAMES as AWS_LINKED_CREDENTIALS_FIELD_NAMES } from "./AwsLinkedCredentials";
-import AwsRootBillingBucket, { FIELD_NAMES as AWS_ROOT_BILLING_BUCKET_FIELD_NAMES } from "./AwsRootBillingBucket";
 import AwsRootCredentials, { FIELD_NAMES as AWS_ROOT_CREDENTIALS_FIELD_NAMES } from "./AwsRootCredentials";
-import AwsRootExportType, { FIELD_NAMES as AWS_ROOT_EXPORT_TYPE_FIELD_NAMES } from "./AwsRootExportType";
-import AwsRootUseAwsEdpDiscount, { FIELD_NAMES as AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES } from "./AwsRootUseAwsEdpDiscount";
+import AwsUseAwsEdpDiscount, { FIELD_NAMES as AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES } from "./AwsUseAwsEdpDiscount";
 import AzureSubscriptionCredentials, {
   FIELD_NAMES as AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES
 } from "./AzureSubscriptionCredentials";
@@ -15,14 +17,17 @@ import KubernetesCredentials, { FIELD_NAMES as KUBERNETES_CREDENTIALS_FIELD_NAME
 import NebiusCredentials from "./NebiusCredentials";
 
 export {
+  AwsAssumedRoleInputs,
+  AwsAssumedRoleCredentials,
+  AWS_ROLE_CREDENTIALS_FIELD_NAMES,
   AwsRootCredentials,
   AWS_ROOT_CREDENTIALS_FIELD_NAMES,
-  AwsRootBillingBucket,
-  AWS_ROOT_BILLING_BUCKET_FIELD_NAMES,
-  AwsRootExportType,
-  AWS_ROOT_EXPORT_TYPE_FIELD_NAMES,
-  AwsRootUseAwsEdpDiscount,
-  AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
+  AwsBillingBucket,
+  AWS_BILLING_BUCKET_FIELD_NAMES,
+  AwsExportType,
+  AWS_EXPORT_TYPE_FIELD_NAMES,
+  AwsUseAwsEdpDiscount,
+  AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
   AwsLinkedCredentials,
   AWS_LINKED_CREDENTIALS_FIELD_NAMES,
   AzureTenantCredentials,

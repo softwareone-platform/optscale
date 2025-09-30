@@ -1,18 +1,17 @@
 import { ReactNode } from "react";
-import { ApolloError, useQuery } from "@apollo/client";
-import { GET_ORGANIZATION_ALLOWED_ACTIONS } from "graphql/api/auth/queries";
+import { ApolloError } from "@apollo/client";
+import { useOrganizationAllowedActionsQuery } from "graphql/__generated__/hooks/auth";
 import {
-  GET_ORGANIZATIONS,
-  GET_DATA_SOURCES,
-  GET_CURRENT_EMPLOYEE,
-  GET_INVITATIONS,
-  GET_ORGANIZATION_FEATURES,
-  GET_ORGANIZATION_THEME_SETTINGS,
-  GET_ORGANIZATION_PERSPECTIVES
-} from "graphql/api/restapi/queries";
+  useCurrentEmployeeQuery,
+  useDataSourcesQuery,
+  useInvitationsQuery,
+  useOrganizationFeaturesQuery,
+  useOrganizationPerspectivesQuery,
+  useOrganizationsQuery,
+  useOrganizationThemeSettingsQuery
+} from "graphql/__generated__/hooks/restapi";
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
-import { PENDING_INVITATIONS } from "urls";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
@@ -39,7 +38,7 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     loading: getOrganizationsLoading,
     error: getOrganizationsError,
     data: getOrganizationsData
-  } = useQuery(GET_ORGANIZATIONS, {
+  } = useOrganizationsQuery({
     onCompleted: (data) => {
       const { organizationId } = getSearchParams() as { organizationId: string };
 
@@ -49,13 +48,6 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
         });
         removeSearchParam("organizationId");
       }
-
-      if (data.organizations.length === 0) {
-        updateScope({
-          newScopeId: "none",
-          redirectTo: PENDING_INVITATIONS
-        });
-      }
     }
   });
 
@@ -63,62 +55,56 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
 
   const skipRequest = !organizationId;
 
-  const { loading: getOrganizationAllowedActionsLoading, error: getOrganizationAllowedActionsError } = useQuery(
-    GET_ORGANIZATION_ALLOWED_ACTIONS,
-    {
+  const { loading: getOrganizationAllowedActionsLoading, error: getOrganizationAllowedActionsError } =
+    useOrganizationAllowedActionsQuery({
       variables: {
         requestParams: {
           organization: organizationId
         }
       },
       skip: skipRequest
-    }
-  );
+    });
 
-  const { loading: getCurrentEmployeeLoading, error: getCurrentEmployeeError } = useQuery(GET_CURRENT_EMPLOYEE, {
+  const { loading: getCurrentEmployeeLoading, error: getCurrentEmployeeError } = useCurrentEmployeeQuery({
     variables: {
       organizationId
     },
     skip: skipRequest
   });
 
-  const { loading: getDataSourcesLoading, error: getDataSourcesError } = useQuery(GET_DATA_SOURCES, {
+  const { loading: getDataSourcesLoading, error: getDataSourcesError } = useDataSourcesQuery({
     variables: {
       organizationId
     },
     skip: skipRequest
   });
 
-  const { loading: getInvitationsLoading, error: getInvitationsError } = useQuery(GET_INVITATIONS, {
+  const { loading: getInvitationsLoading, error: getInvitationsError } = useInvitationsQuery({
     skip: skipRequest
   });
 
-  const { loading: getOrganizationFeaturesLoading, error: getOrganizationFeaturesError } = useQuery(GET_ORGANIZATION_FEATURES, {
+  const { loading: getOrganizationFeaturesLoading, error: getOrganizationFeaturesError } = useOrganizationFeaturesQuery({
     variables: {
       organizationId
     },
     skip: skipRequest
   });
 
-  const { loading: getOrganizationThemeSettingsLoading, error: getOrganizationThemeSettingsError } = useQuery(
-    GET_ORGANIZATION_THEME_SETTINGS,
-    {
+  const { loading: getOrganizationThemeSettingsLoading, error: getOrganizationThemeSettingsError } =
+    useOrganizationThemeSettingsQuery({
       variables: {
         organizationId
       },
       skip: skipRequest
-    }
-  );
+    });
 
-  const { loading: getOrganizationPerspectivesLoading, error: getOrganizationPerspectivesError } = useQuery(
-    GET_ORGANIZATION_PERSPECTIVES,
-    {
+  const { loading: getOrganizationPerspectivesLoading, error: getOrganizationPerspectivesError } =
+    useOrganizationPerspectivesQuery({
       variables: {
         organizationId
       },
       skip: skipRequest
-    }
-  );
+    });
 
   const error =
     getOrganizationsError ||

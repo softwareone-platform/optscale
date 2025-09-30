@@ -1,5 +1,5 @@
 import FormattedMoney from "components/FormattedMoney";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 import { ObjectValues, TODO } from "utils/types";
 
@@ -128,7 +128,7 @@ class BaseRecommendation {
   }
 
   // TODO: there is no connection between the category and the label.
-  // If it is "cost", we shoud display "savings", should not rely on the actual API response
+  // If it is "cost", we should display "savings", should not rely on the actual API response
   get label() {
     return this.hasSaving ? "savings" : "count";
   }
@@ -141,7 +141,7 @@ class BaseRecommendation {
     return this.categories.includes(category);
   }
 
-  // this will be overriden for each recommendation
+  // this will be overridden for each recommendation
   get color() {
     if (this.saving === 0 && this.count === 0) {
       return RECOMMENDATION_COLOR.SUCCESS;

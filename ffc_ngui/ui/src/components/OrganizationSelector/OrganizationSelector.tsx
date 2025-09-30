@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -8,10 +9,12 @@ import { useNavigate } from "react-router-dom";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
+import { CreateOrganizationModal } from "components/SideModalManager/SideModals";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
+import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
 import { getOrganizationDisplayName } from "utils/organization";
-import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
 
@@ -25,24 +28,24 @@ const SELECTOR_SX = {
      */
     minWidth: 270,
     "& label": {
-      color: (theme) => theme.palette.info.main
+      color: (theme) => theme.palette.primary.main
     },
     "& div": {
-      color: (theme) => theme.palette.common.black,
+      color: (theme) => theme.palette.primary.main,
       "&.Mui-focused": {
         "& fieldset": {
-          borderColor: (theme) => theme.palette.info.main
+          borderColor: (theme) => theme.palette.primary.main
         }
       }
     },
     "& svg": {
-      color: (theme) => theme.palette.common.black
+      color: (theme) => theme.palette.primary.main
     },
     "& fieldset": {
-      borderColor: (theme) => theme.palette.info.main
+      borderColor: (theme) => theme.palette.primary.main
     },
     "&:hover fieldset": {
-      borderColor: (theme) => theme.palette.info.main
+      borderColor: (theme) => theme.palette.primary.main
     }
   }
 };
@@ -64,9 +67,8 @@ const OrganizationSelector = ({
   onChange,
   isLoading = false
 }: OrganizationSelectorProps) => {
-  // MPT_TODO: disabled to meet BDR requirements
-  // const {isDemo} = useOrganizationInfo();
-  // const openSideModal = useOpenSideModal();
+  const { isDemo } = useOrganizationInfo();
+  const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
 
   const isDownSm = useIsDownMediaQuery("sm");
@@ -78,7 +80,7 @@ const OrganizationSelector = ({
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
-        <IconButton sx={{ color: MPT_BRAND_TYPE }} icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
+        <IconButton icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
       </Hidden>
       <Selector
         id="organization-selector"
@@ -130,18 +132,17 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        {/* MPT_TODO: temporary disabled new organisation creation to meet BDR requirements */}
-        {/* <Button */}
-        {/*  icon={{ */}
-        {/*    IconComponent: AddOutlinedIcon */}
-        {/*  }} */}
-        {/*  onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })} */}
-        {/*  dataTestId="orgs_create_new" */}
-        {/*  disabled={isDemo} */}
-        {/*  tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null} */}
-        {/* > */}
-        {/*  <FormattedMessage id="createNewOrganization" /> */}
-        {/* </Button> */}
+        <Button
+          icon={{
+            IconComponent: AddOutlinedIcon
+          }}
+          onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })}
+          dataTestId="orgs_create_new"
+          disabled={isDemo}
+          tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null}
+        >
+          <FormattedMessage id="createNewOrganization" />
+        </Button>
       </Selector>
     </Box>
   );

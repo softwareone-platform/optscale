@@ -1,6 +1,6 @@
 ### Summary
 
-Use a Settings page to manage key configurations for your account and organization. 
+Use the **Settings** page to manage key configurations for your account and organization. 
 The available tabs allow you to fine-tune settings for seamless collaboration and security.
 
 ### View
@@ -25,4 +25,4 @@ The available tabs allow you to fine-tune settings for seamless collaboration an
   
 ### Tips
 
--   Ensure Optimal Performance: Regularly review settings.
+-   Ensure Optimal Performance: Review settings regularly.

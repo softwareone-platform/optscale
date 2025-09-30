@@ -1,6 +1,6 @@
 ### **Summary**
 
-The page displays anomalies identified when cost or usage metrics exceed the configured threshold relative to baseline values during the defined evaluation period.
+The **Anomaly Detection Policy** page displays anomalies identified when cost or usage metrics exceed the configured threshold relative to baseline values during the defined evaluation period.
 
 ### **View**
 

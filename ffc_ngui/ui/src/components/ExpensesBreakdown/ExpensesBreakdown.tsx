@@ -1,5 +1,7 @@
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
+import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import BarChartLoader from "components/BarChartLoader";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
@@ -27,8 +29,6 @@ import {
   K8S_NAMESPACE_FILTER,
   OPTSCALE_RESOURCE_TYPES
 } from "utils/constants";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
-import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 import ExpensesBreakdownActionBar from "./ActionBar";
 import ExpensesBreakdownBarChart from "./BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "./BreakdownByButtonsGroup";
@@ -119,10 +119,18 @@ const ExpensesBreakdown = ({
 
   const renderHeading = () => (
     <>
-      <Grid item xs={12}>
+      <Grid item>
         <ExpensesBreakdownSummaryCards total={total} previousTotal={previousTotal} isLoading={isLoading} />
       </Grid>
-
+      <Grid item>
+        <RangePickerFormContainer
+          onApply={onApply}
+          initialStartDateValue={startDateTimestamp}
+          initialEndDateValue={endDateTimestamp}
+          rangeType="expenses"
+          definedRanges={getBasicRangesSet()}
+        />
+      </Grid>
       {type !== COST_EXPLORER && (
         <Grid item xs={12}>
           <ExpensesBreakdownBreakdownByButtonsGroup
@@ -148,18 +156,6 @@ const ExpensesBreakdown = ({
     }
     return (
       <ExpensesBreakdownByPeriodWidget
-        customContent={
-          <ResponsiveStack>
-            <LabelColon messageId={"dateRange"} />
-            <RangePickerFormContainer
-              onApply={onApply}
-              initialStartDateValue={startDateTimestamp}
-              initialEndDateValue={endDateTimestamp}
-              rangeType="expenses"
-              definedRanges={getBasicRangesSet()}
-            />
-          </ResponsiveStack>
-        }
         render={(periodType) => (
           <ExpensesBreakdownBarChart
             periodType={periodType}
@@ -187,7 +183,11 @@ const ExpensesBreakdown = ({
     );
   };
 
-  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""} />;
+  const PieChartHeader = () => (
+    <Box justifyContent="center" display="flex">
+      <FormattedMessage id="expenses" />
+    </Box>
+  );
 
   const renderPieChartWidget = () => {
     if (isLoading) {
@@ -198,11 +198,9 @@ const ExpensesBreakdown = ({
         </>
       );
     }
-
-    // MPT_TODO: disabled to meet BDR requiremnets
-    // if (filteredBreakdown.length <= 1) {
-    //   return null;
-    // }
+    if (filteredBreakdown.length <= 1) {
+      return null;
+    }
     return (
       <>
         <PieChartHeader />

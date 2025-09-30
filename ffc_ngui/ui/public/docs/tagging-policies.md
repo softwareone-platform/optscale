@@ -1,6 +1,8 @@
 ### **Summary**
 
-Implementing robust tagging policies helps streamline resource identification, enhances automation, and improves governance and compliance. Use the Tag Policies page to monitor the tagging of cloud resources.
+Implementing robust tagging policies helps streamline resource identification, enhances automation, and improves governance and compliance. 
+
+Use the **Tagging Policies** page to monitor the tagging of cloud resources.
 
 ### **View**
 
@@ -8,11 +10,11 @@ Implementing robust tagging policies helps streamline resource identification, e
 
 - A Tooltip: Get a hint about the number of violations over the last three days by hovering at the icon next to the Last check text.
 
-- Email Notification: Once an policy violation has been detected, organization manager will be alerted via email.
+- Email Notification: Receive an alert when a policy violation is detected. Relevant for users with the organization manager role.
 
 ### **Actions**
 
-- Add a Tagging Policy: Easily create a new policy by clicking the green "Add" button. Specify the name, start date, the type of tag, its value, and filters.
+- Add a Tagging Policy: Create a new policy by clicking the green "Add" button. Specify the name, start date, the type of tag, its value, and filters.
 
 - Manage Policies: Click on a table row to edit, delete, or view detailed information about a policy, including policy violation history.
 

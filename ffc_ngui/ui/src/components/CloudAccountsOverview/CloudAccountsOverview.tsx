@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-import { Box } from "@mui/system";
 import ActionBar from "components/ActionBar";
 import CloudAccountsTable from "components/CloudAccountsTable";
 import CloudExpensesChart from "components/CloudExpensesChart";
@@ -7,7 +6,7 @@ import InlineSeverityAlert from "components/InlineSeverityAlert";
 import PageContentWrapper from "components/PageContentWrapper";
 import SummaryGrid from "components/SummaryGrid";
 import { useIsAllowed } from "hooks/useAllowedActions";
-import { getSumByNestedObjectKey, isEmpty as isEmptyArray } from "utils/arrays";
+import { getSumByNestedObjectKey, isEmptyArray } from "utils/arrays";
 import { SUMMARY_VALUE_COMPONENT_TYPES, SUMMARY_CARD_TYPES, AWS_CNR } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { getPercentageChangeModule, round } from "utils/math";
@@ -153,9 +152,7 @@ const CloudAccountsOverview = ({ cloudAccounts, organizationLimit, isLoading = f
             </div>
           )}
           <div>
-            <Box className={"MTPBoxShadow"}>
-              <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
-            </Box>
+            <CloudAccountsTable cloudAccounts={cloudAccounts} isLoading={isLoading} />
           </div>
         </Stack>
       </PageContentWrapper>

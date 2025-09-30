@@ -1,6 +1,6 @@
 ### **Summary**
 
-Get a centralized view of all important system activities and changes. Track key events, quickly find relevant ones using filters and search options, monitor trends, and stay informed about critical updates in your cloud environment.
+The **Events** page allows to get a centralized view of all important system activities and changes. Track key events, quickly find relevant ones using filters and search options, monitor trends, and stay informed about critical updates in your cloud environment.
 
 ### **View**
 
@@ -16,4 +16,4 @@ Get a centralized view of all important system activities and changes. Track key
 
 ### **Tips**
 
--   Stay Updated: Regularly check the Events page to monitor system activities and ensure smooth operations.
+-   Stay Updated: Check the Events page regularly to monitor system activities and ensure smooth operations.

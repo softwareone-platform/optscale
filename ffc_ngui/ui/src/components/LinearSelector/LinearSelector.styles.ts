@@ -5,28 +5,13 @@ const useStyles = makeStyles()((theme) => {
   const halfGap = theme.spacing(0.5);
 
   return {
-    showMoreFilters: {
-      color: theme.palette.primary.main,
-      padding: "5px 8px"
-    },
-    clearAllFilters: {
-      backgroundColor: theme.palette.error.primary,
-      color: theme.palette.error.text,
-      border: "none",
-      fontSize: "13px",
-      padding: "5px 8px",
-      cursor: "pointer",
-      "&:hover": {
-        border: "none"
-      }
-    },
     wrapper: {
       display: "inline-flex",
       alignItems: "center",
       flexWrap: "wrap",
       margin: `-${gap} -${halfGap} 0 -${halfGap}`,
       "& > *": {
-        margin: `${halfGap}`
+        margin: `${gap} ${halfGap} 0 ${halfGap}`
       },
       minHeight: "40px"
     },

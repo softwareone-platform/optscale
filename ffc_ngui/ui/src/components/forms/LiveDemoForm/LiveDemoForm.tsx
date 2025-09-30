@@ -1,7 +1,10 @@
+import { Link, Typography } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
+import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import { EmailField } from "./FormElements";
+import { HYSTAX_PRIVACY_POLICY } from "urls";
+import { EmailField, SubscribeToNewsletterCheckbox } from "./FormElements";
 import { FormValues, LiveDemoFormProps } from "./types";
 import { getDefaultValues } from "./utils";
 
@@ -18,11 +21,11 @@ const LiveDemoForm = ({ onSubmit }: LiveDemoFormProps) => {
         noValidate
         onSubmit={handleSubmit(onSubmit)}
         style={{
-          maxWidth: "430px",
-          minWidth: "430px"
+          maxWidth: "430px"
         }}
       >
         <EmailField />
+        <SubscribeToNewsletterCheckbox />
         <FormButtonsWrapper mb={1} justifyContent="center">
           <Button
             messageId="proceedToLiveDemo"
@@ -32,6 +35,18 @@ const LiveDemoForm = ({ onSubmit }: LiveDemoFormProps) => {
             dataTestId="btn_proceed_to_live_demo"
           />
         </FormButtonsWrapper>
+        <Typography variant="caption" align="center" component="div">
+          <FormattedMessage
+            id="agreeToHystaxPrivacyPolicy"
+            values={{
+              link: (chunks) => (
+                <Link data-test-id="link_privacy_policy" href={HYSTAX_PRIVACY_POLICY} target="_blank" rel="noopener">
+                  {chunks}
+                </Link>
+              )
+            }}
+          />
+        </Typography>
       </form>
     </FormProvider>
   );

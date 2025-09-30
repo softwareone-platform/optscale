@@ -1,12 +1,9 @@
 import { makeStyles } from "tss-react/mui";
-import { MPT_SPACING_4 } from "../../utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   menu: {
-    paddingTop: MPT_SPACING_4,
     "& .MuiAccordionSummary-root": {
       backgroundColor: "unset",
-      padding: 0,
       color: theme.palette.info.main,
       justifyContent: "flex-start",
       "& .MuiAccordionSummary-expandIconWrapper": {
@@ -18,8 +15,7 @@ const useStyles = makeStyles()((theme) => ({
       },
       "& .MuiAccordionSummary-content": {
         flexGrow: 0
-      },
-      "& .MuiAccordionSummary-content .MuiListItem-root": {}
+      }
     },
     "& .MuiAccordionDetails-root": {
       padding: 0

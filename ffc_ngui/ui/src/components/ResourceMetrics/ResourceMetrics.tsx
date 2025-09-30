@@ -1,13 +1,13 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import useMetric from "hooks/useMetric";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { METRIC_TYPES } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import MetricCard from "./MetricCard";
 
 const GridItem = ({ children }: { children: React.ReactNode }) => (
-  <Grid xs={12} sm={6} md={6} lg={6} xl={6} item>
+  <Grid xs={12} sm={6} md={6} lg={4} xl={3} item>
     {children}
   </Grid>
 );

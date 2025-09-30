@@ -22,6 +22,7 @@ const ButtonLoader = ({
   href,
   isLoading = false,
   color = "info",
+  uppercase = true,
   tooltip,
   ...rest
 }) => {
@@ -48,6 +49,7 @@ const ButtonLoader = ({
       <Button
         dataTestId={dataTestId}
         dataProductTourId={dataProductTourId}
+        uppercase={uppercase}
         messageId={messageId}
         startIcon={startIcon}
         color={color}

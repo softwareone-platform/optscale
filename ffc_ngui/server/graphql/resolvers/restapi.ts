@@ -1,5 +1,5 @@
 import { JSONObjectResolver } from "graphql-scalars";
-import { Resolvers } from "./restapi.generated.js";
+import { Resolvers } from "../__generated__/types/restapi";
 
 const resolvers: Resolvers = {
   JSONObject: JSONObjectResolver,
@@ -124,6 +124,9 @@ const resolvers: Resolvers = {
     },
     cleanExpenses: async (_, { organizationId, params }, { dataSources }) => {
       return dataSources.restapi.getCleanExpenses(organizationId, params);
+    },
+    cloudPolicies: async (_, { organizationId, params }, { dataSources }) => {
+      return dataSources.restapi.getCloudPolicies(organizationId, params);
     },
   },
   Mutation: {

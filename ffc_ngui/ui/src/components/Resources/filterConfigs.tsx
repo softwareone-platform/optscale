@@ -19,7 +19,7 @@ import PoolLabel from "components/PoolLabel";
 import ResourceTypeLabel from "components/ResourceTypeLabel";
 import { intl } from "translations/react-intl-config";
 import { isPoolIdWithSubPools } from "urls";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import {
   EMPTY_UUID,
   OPTSCALE_RESOURCE_TYPES,

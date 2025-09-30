@@ -5,7 +5,7 @@ import GoogleMapReact from "google-map-react";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import MapMarker from "components/MapMarker";
 import useGeoClusterer from "hooks/useGeoClusterer";
-import { isEmpty } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { getEnvironmentVariable } from "utils/env";
 import { SPACING_2 } from "utils/layouts";
 import { apiIsLoaded, REGION_EXPENSES_HEIGHT } from "utils/maps";
@@ -21,14 +21,14 @@ const RegionExpensesMap = ({ markers, defaultZoom, defaultCenter, startDateTimes
 
   const key = getEnvironmentVariable("VITE_GOOGLE_MAP_API_KEY");
 
-  return !isEmpty(markersWithClusters) ? (
+  return !isEmptyArray(markersWithClusters) ? (
     <Stack spacing={SPACING_2}>
       {!key && (
         <div>
           <InlineSeverityAlert messageId="googleMapsIsNotConfigured" />
         </div>
       )}
-      <div data-testid={"google-map-wrapper"} style={{ height: `${REGION_EXPENSES_HEIGHT}px`, width: "100%" }}>
+      <div style={{ height: `${REGION_EXPENSES_HEIGHT}px`, width: "100%" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key }}
           defaultCenter={defaultCenter}

@@ -18,7 +18,6 @@ import { getEditMlArtifactUrl } from "urls";
 import { markdown, run, slicedText, tags, utcTime } from "utils/columns";
 import { TAB_QUERY_PARAM_NAME } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 type ArtifactsTableProps = {
   artifacts: Artifact[];
@@ -149,7 +148,7 @@ const ArtifactsTable = ({ artifacts, pagination, search, rangeFilter, tasksFilte
     <Stack spacing={SPACING_1}>
       <div>
         <LinearSelector
-          label={<LabelColon messageId="filters" />}
+          label={<FormattedMessage id="filters" />}
           value={tasksFilter.definition.getAppliedValues()}
           items={tasksFilter.definition.getFilterSelectors()}
           onClear={tasksFilter.onFilterDelete}

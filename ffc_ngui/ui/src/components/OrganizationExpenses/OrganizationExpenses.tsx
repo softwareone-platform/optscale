@@ -1,4 +1,4 @@
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import { useTheme } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ import { EXPENSES_BY_POOL } from "urls";
 import { AXIS_FORMATS } from "utils/charts";
 import { EXPENSES_PERIOD, LAST_MONTH, THIS_MONTH, THIS_MONTH_FORECAST, FORMATTED_MONEY_TYPES } from "utils/constants";
 import { getUTCShortMonthFromTimestamp } from "utils/datetime";
-import { isEmpty as isEmptyObject, idx } from "utils/objects";
+import { isEmptyObject, idx } from "utils/objects";
 
 // Ensure we display bar chart in order
 const getOrderedExpenses = (expenses) => ({
@@ -57,7 +57,6 @@ const OrganizationExpenses = ({ data, isLoading }) => {
 
   return (
     <WrapperCard
-      variant="shadow"
       needAlign
       title={<FormattedMessage id="organizationExpenses" />}
       titleButton={{
@@ -66,7 +65,7 @@ const OrganizationExpenses = ({ data, isLoading }) => {
           title: <FormattedMessage id="goToOrganizationExpenses" />
         },
         buttonProps: {
-          icon: <ArrowForwardIosIcon />,
+          icon: <ExitToAppOutlinedIcon />,
           isLoading,
           onClick: goToExpensesByPool,
           dataTestId: "btn_go_to_org_expenses"

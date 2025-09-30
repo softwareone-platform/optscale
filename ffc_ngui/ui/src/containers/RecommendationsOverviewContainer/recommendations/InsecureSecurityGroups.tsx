@@ -1,8 +1,17 @@
+import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
+import KeyValueLabel from "components/KeyValueLabel";
 import RecommendationListItemResourceLabel from "components/RecommendationListItemResourceLabel";
 import InsecurePortsModal from "components/SideModalManager/SideModals/recommendations/InsecurePortsModal";
 import TextWithDataTestId from "components/TextWithDataTestId";
-import { AWS_EC2_VPC, AZURE_NETWORK, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE } from "hooks/useRecommendationServices";
+import {
+  ALIBABA_ECS,
+  ALIBABA_SLB,
+  AWS_EC2_VPC,
+  AZURE_NETWORK,
+  GCP_COMPUTE_ENGINE,
+  NEBIUS_SERVICE
+} from "hooks/useRecommendationServices";
 import { detectedAt, openPorts, resource, resourceLocation } from "utils/columns";
 import { AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS } from "utils/constants";
 import BaseRecommendation, { CATEGORY } from "./BaseRecommendation";
@@ -34,13 +43,13 @@ class InsecureSecurityGroups extends BaseRecommendation {
 
   name = "insecureSecurityGroups";
 
-  title = "instancesHaveInsecureSGSettingsTitle";
+  title = "resourcesHaveInsecureSGSettingsTitle";
 
   descriptionMessageId = "insecureSecurityGroupsDescription";
 
   emptyMessageId = "noSGOpened";
 
-  services = [AWS_EC2_VPC, AZURE_NETWORK, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE];
+  services = [AWS_EC2_VPC, AZURE_NETWORK, GCP_COMPUTE_ENGINE, NEBIUS_SERVICE, ALIBABA_ECS, ALIBABA_SLB];
 
   appliedDataSources = [AWS_CNR, AZURE_CNR, GCP_CNR, NEBIUS];
 
@@ -67,12 +76,18 @@ class InsecureSecurityGroups extends BaseRecommendation {
   get previewItems() {
     return this.items.map((item) => [
       {
-        key: `${item.cloud_resource_id}-label`,
-        value: <RecommendationListItemResourceLabel item={item} />
-      },
-      {
-        key: `${item.cloud_resource_id}-group-name`,
-        value: item.security_group_name
+        key: `${item.cloud_resource_id}-${item.security_group_name}`,
+        value: (
+          <Stack>
+            <RecommendationListItemResourceLabel item={item} />
+            <KeyValueLabel
+              variant="caption"
+              keyMessageId="securityGroup"
+              value={item.security_group_name}
+              isBoldValue={false}
+            />
+          </Stack>
+        )
       }
     ]);
   }

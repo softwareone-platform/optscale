@@ -1,9 +1,10 @@
-import { useMutation } from "@apollo/client";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ButtonLoader from "components/ButtonLoader";
-import { UPDATE_INVITATION } from "graphql/api/restapi/queries/restapi.queries";
+import { useUpdateInvitationMutation } from "graphql/__generated__/hooks/restapi";
 
 const InvitationActionsContainer = ({ invitationId, onSuccessAccept, onSuccessDecline, buttonSize = "small" }) => {
-  const [updateInvitation, { loading: loginLoading }] = useMutation(UPDATE_INVITATION);
+  const [updateInvitation, { loading: loginLoading }] = useUpdateInvitationMutation();
 
   const onAccept = () => {
     updateInvitation({ variables: { invitationId, action: "accept" } }).then(() => {
@@ -28,20 +29,19 @@ const InvitationActionsContainer = ({ invitationId, onSuccessAccept, onSuccessDe
       <ButtonLoader
         size={buttonSize}
         messageId="accept"
-        color="primary"
+        color="success"
         variant="contained"
         onClick={onAccept}
         isLoading={isButtonLoading}
-        fullWidth
+        startIcon={<CheckOutlinedIcon />}
       />
       <ButtonLoader
         size={buttonSize}
         messageId="decline"
-        variant="contained"
-        color="secondary"
+        color="error"
         onClick={onDecline}
         isLoading={isButtonLoading}
-        fullWidth
+        startIcon={<CloseOutlinedIcon />}
       />
     </>
   );

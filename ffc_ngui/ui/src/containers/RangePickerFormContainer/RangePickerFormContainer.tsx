@@ -43,7 +43,6 @@ const RangePickerFormContainer = ({
           dispatch(setDate(startDateTimestamp, endDateTimestamp, rangeType));
         }}
         definedRanges={definedRanges}
-        hideLabel
         minDate={minDate}
         maxDate={maxDate}
       />

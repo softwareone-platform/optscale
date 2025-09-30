@@ -9,9 +9,6 @@ import { RangeFilter, SelectionFilter, SuggestionFilter } from "components/Filte
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
 import { endOfDay, moveDateFromUTC, startOfDay } from "utils/datetime";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
-import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
-import { MPT_SPACING_1 } from "../../utils/layouts";
 
 const getSelectionFilterProps = ({ config, onChange, appliedFilters, data }) => ({
   items: config.transformers.getItems(data),
@@ -140,11 +137,10 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
       { key: "tag", data: filters.tag },
       { key: "withoutTag", data: filters.without_tag },
       { key: "networkTrafficFrom", data: filters.traffic_from },
-      { key: "networkTrafficTo", data: filters.traffic_to }
-      // MPT_TODO: Add back k8s filters when API supports them
-      // { key: "k8sNode", data: filters.k8s_node },
-      // { key: "k8sService", data: filters.k8s_service },
-      // { key: "k8sNamespace", data: filters.k8s_namespace }
+      { key: "networkTrafficTo", data: filters.traffic_to },
+      { key: "k8sNode", data: filters.k8s_node },
+      { key: "k8sService", data: filters.k8s_service },
+      { key: "k8sNamespace", data: filters.k8s_namespace }
     ]
   };
 
@@ -156,89 +152,72 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
   const appliedSecondaryFilters = FILTER_GROUPS.secondary.filter(({ key }) => hasAppliedValue(key));
 
   return (
-    <ResponsiveStack>
-      <Box sx={{ alignSelf: "flex-start", paddingTop: MPT_SPACING_1, minWidth: "80px" }}>
-        <LabelColon messageId={"filters"} noWrap />
-      </Box>
-      <Box display="flex" gap={2} flexWrap="wrap">
-        <SuggestionFilter
-          suggestionGroups={suggestionGroups}
-          label={<FormattedMessage id="suggestions" />}
-          onApplySuggestion={handleApplySuggestion}
-          appliedFilters={{
-            ownerId: appliedFilters.ownerId.values,
-            resourceType: appliedFilters.resourceType.values,
-            active: appliedFilters.active.values,
-            constraintViolated: appliedFilters.constraintViolated.values
-          }}
+    <Box display="flex" gap={2} flexWrap="wrap">
+      <SuggestionFilter
+        suggestionGroups={suggestionGroups}
+        label={<FormattedMessage id="suggestions" />}
+        onApplySuggestion={handleApplySuggestion}
+        appliedFilters={{
+          ownerId: appliedFilters.ownerId.values,
+          resourceType: appliedFilters.resourceType.values,
+          active: appliedFilters.active.values,
+          constraintViolated: appliedFilters.constraintViolated.values
+        }}
+      />
+      {FILTER_GROUPS.primary.map(({ key, data }) => (
+        <SelectionFilter
+          key={key}
+          {...getSelectionFilterProps({ config: FILTER_CONFIGS[key], onChange: handleChange, appliedFilters, data })}
         />
-        {FILTER_GROUPS.primary.map(({ key, data }) => (
+      ))}
+      {FILTER_GROUPS.range.map(({ key }) => (
+        <RangeFilter
+          key={key}
+          {...getRangeFilterProps({ config: FILTER_CONFIGS[key], onChange: handleRangeChange, appliedFilters })}
+        />
+      ))}
+      {showMoreFilters ? (
+        FILTER_GROUPS.secondary.map(({ key, data }) => (
           <SelectionFilter
             key={key}
             {...getSelectionFilterProps({ config: FILTER_CONFIGS[key], onChange: handleChange, appliedFilters, data })}
           />
-        ))}
-        {FILTER_GROUPS.range.map(({ key }) => (
-          <RangeFilter
-            key={key}
-            {...getRangeFilterProps({ config: FILTER_CONFIGS[key], onChange: handleRangeChange, appliedFilters })}
-          />
-        ))}
-        {showMoreFilters ? (
-          FILTER_GROUPS.secondary.map(({ key, data }) => (
+        ))
+      ) : (
+        <>
+          {appliedSecondaryFilters.map(({ key, data }) => (
             <SelectionFilter
               key={key}
               {...getSelectionFilterProps({ config: FILTER_CONFIGS[key], onChange: handleChange, appliedFilters, data })}
             />
-          ))
-        ) : (
-          <>
-            {appliedSecondaryFilters.map(({ key, data }) => (
-              <SelectionFilter
-                key={key}
-                {...getSelectionFilterProps({
-                  config: FILTER_CONFIGS[key],
-                  onChange: handleChange,
-                  appliedFilters,
-                  data
-                })}
-              />
-            ))}
-          </>
-        )}
-        {
-          // Do not show the button if all secondary filters are applied
-          appliedSecondaryFilters.length === FILTER_GROUPS.secondary.length ? null : (
-            <Badge
-              badgeContent={showMoreFilters ? null : FILTER_GROUPS.secondary.length - appliedSecondaryFilters.length}
-              color="info"
-            >
-              <Button
-                variant="text"
-                sx={{ textTransform: "none" }}
-                color="info"
-                endIcon={showMoreFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                onClick={toggleShowMoreFilters}
-              >
-                <FormattedMessage id={showMoreFilters ? "showLess" : "showMore"} />
-              </Button>
-            </Badge>
-          )
-        }
-        {/* Reset filters button */}
-        {Object.keys(appliedFilters).some((key) => hasAppliedValue(key)) && (
-          <Button
-            variant="text"
-            color="info"
-            startIcon={<RestartAltOutlinedIcon />}
-            sx={{ textTransform: "none" }}
-            onClick={handleResetFilters}
+          ))}
+        </>
+      )}
+      {
+        // Do not show the button if all secondary filters are applied
+        appliedSecondaryFilters.length === FILTER_GROUPS.secondary.length ? null : (
+          <Badge
+            badgeContent={showMoreFilters ? null : FILTER_GROUPS.secondary.length - appliedSecondaryFilters.length}
+            color="primary"
           >
-            <FormattedMessage id="resetFilters" />
-          </Button>
-        )}
-      </Box>
-    </ResponsiveStack>
+            <Button
+              variant="text"
+              color="primary"
+              endIcon={showMoreFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              onClick={toggleShowMoreFilters}
+            >
+              <FormattedMessage id={showMoreFilters ? "showLess" : "showMore"} />
+            </Button>
+          </Badge>
+        )
+      }
+      {/* Reset filters button */}
+      {Object.keys(appliedFilters).some((key) => hasAppliedValue(key)) && (
+        <Button variant="text" color="primary" startIcon={<RestartAltOutlinedIcon />} onClick={handleResetFilters}>
+          <FormattedMessage id="resetFilters" />
+        </Button>
+      )}
+    </Box>
   );
 };
 
