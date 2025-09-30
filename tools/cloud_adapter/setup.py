@@ -35,14 +35,14 @@ requirements = [
     "oauthlib==3.2.2",
 
     # Gcp
-    'google-cloud-iam==2.16.1',
-    'google-cloud-bigquery==3.11.4',
-    'google-cloud-compute==1.14.1',
-    'google-cloud-storage==2.10.0',
-    'google-cloud-monitoring==2.15.1',
+    'google-cloud-iam>=2.16.1,<3.0',
+    'google-cloud-bigquery>=3.11.4,<4.0',
+    'google-cloud-compute>=1.14.1,<2.0',
+    'google-cloud-storage>=2.10.0,<3.0',
+    'google-cloud-monitoring>=2.15.1,<3.0',
 
     # Nebius
-    'yandexcloud==0.327.0',
+    'yandexcloud>=0.327.0',
 
     # Databricks
     'databricks-sdk==0.11.0',

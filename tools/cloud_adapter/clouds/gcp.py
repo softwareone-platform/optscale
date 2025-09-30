@@ -3,6 +3,7 @@ from functools import cached_property
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Tuple
 from datetime import datetime, timezone, timedelta
+from typing import Dict
 import hashlib
 import logging
 
@@ -1419,13 +1420,13 @@ class Gcp(CloudBase):
                 sku_desription_pattern = self._build_sku_description_pattern(
                     sku_text, location, wildcard_prefix=True
                 )
-                instance_family_prices = _get_prices(sku_desription_pattern,
-                                                     instance_family_prices)
-                sku_desription_pattern = self._build_sku_description_pattern(
-                    sku_text, location, wildcard_prefix=True, custom=True
-                )
-                instance_family_prices.update(
-                    _get_prices(sku_desription_pattern, instance_family_prices))
+                for row in self._query_prices(sku_desription_pattern):
+                    machine_family = self._parse_machine_family(row)
+                    if not machine_family:
+                        continue
+                    price = self._parse_price(row, usd)
+                    instance_family_prices[machine_family].set_price(
+                        sku_text, price)
         self._update_m2_prices(instance_family_prices)
         return instance_family_prices
 
