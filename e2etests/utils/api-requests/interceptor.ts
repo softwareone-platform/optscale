@@ -1,7 +1,6 @@
-import {Page, test} from "@playwright/test";
+import {Page, Route, test} from "@playwright/test";
 import {debugLog} from "../debug-logging";
 import {InterceptionEntry} from "../../types/interceptor.types";
-import {createInterceptorId, interceptGraphQLRequest, interceptRESTRequest} from "./helpers";
 
 /**
  * Sets up API interceptors for Playwright tests and returns a function to verify if all interceptions occurred.
@@ -24,9 +23,6 @@ export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]
     const interceptPromises = config.map(({url, mock, gql}, index) => {
         const urlRegExp = new RegExp(url || "/api$");
         const interceptorId = createInterceptorId(gql, url);
-
-        debugLog(`(${index + 1}/${config.length}) Setting up interceptor for ${interceptorId}`);
-
 
         // Initialize hit tracking
         interceptorHits.set(interceptorId, false);
@@ -71,3 +67,66 @@ export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[]
     };
 }
 
+
+export const respondWithMockData = async <T>(route: Route, mock: T) =>
+  route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(mock),
+  });
+
+export const createInterceptorId = (gql?: string, url?: string): string =>
+  gql ? `GraphQL:${gql}` : `REST:${url}`;
+
+/* Handles REST API request interception */
+export async function interceptRESTRequest<T>(
+  page: Page,
+  pattern: RegExp,
+  mock: T,
+  onIntercepted: () => void
+): Promise<void> {
+    await page.route(pattern, async (route, request) => {
+        onIntercepted();
+
+        try {
+            const response = await route.fetch();
+            // console.log(`Original API Response Status for ${pattern}: ${response.status()}`);
+        } catch (error) {
+            // console.warn(`Failed to fetch or parse response for ${pattern}:`, error);
+        }
+
+        return await respondWithMockData(route, mock);
+    });
+}
+
+/* Handles GraphQL request interception */
+export async function interceptGraphQLRequest<T>(
+  page: Page,
+  pattern: RegExp,
+  operationName: string,
+  mock: T,
+  onIntercepted: () => void
+): Promise<void> {
+    await page.route(pattern, async (route, request) => {
+        if (request.method() === "POST") {
+            try {
+                const body = JSON.parse(request.postData() || "{}");
+                if (body.operationName === operationName) {
+                    onIntercepted();
+                    try {
+                        const response = await route.fetch();
+                        // console.log(`Original API Response Status for ${operationName}: ${response.status()}`);
+                    } catch (error) {
+                        // console.warn(`Failed to fetch or parse response for ${operationName}:`, error);
+                    }
+
+                    // Still return mock data after inspecting the real response
+                    return await respondWithMockData(route, mock);
+                }
+            } catch (error) {
+                console.warn("Failed to parse GraphQL POST data:", error);
+            }
+        }
+        return route.fallback();
+    });
+}

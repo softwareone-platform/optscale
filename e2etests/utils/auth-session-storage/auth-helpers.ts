@@ -5,7 +5,7 @@ import {APIRequestContext, request} from "@playwright/test";
 import {DemoAuthCredentials, LiveDemoAuthResponse} from "../../types/api-response.types";
 import {safeReadJsonFile} from "../file";
 
-const baseURL: string = process.env.LIVE_DEMO_API || '';
+const baseAPIUrl: string = process.env.LIVE_DEMO_API || '';
 
 export function getValueFromAuthResponse(role: EUserRole, key: string): string {
   const filePath = path.resolve(`.cache/auth-response-${role}.json`);
@@ -22,11 +22,11 @@ export class LiveDemoService {
   private static readonly token: string = process.env.LIVE_DEMO_TOKEN || '';
 
   private static validateEnvironment(): void {
-    if (!this.token || !baseURL) {
+    if (!this.token || !baseAPIUrl) {
       throw new Error(
         `Live demo environment variables are not properly configured. ` +
         `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
-        `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!baseURL ? 'LIVE_DEMO_API' : ''}`
+        `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!baseAPIUrl ? 'LIVE_DEMO_API' : ''}`
       );
     }
   }
@@ -49,7 +49,7 @@ export class LiveDemoService {
       throw new Error(`Live demo request failed: ${response.status()} - ${errorText}`);
     }
 
-    return { ...await response.json() as LiveDemoAuthResponse, baseApiUrl: baseURL };
+    return { ...await response.json() as LiveDemoAuthResponse, baseApiUrl: baseAPIUrl };
   }
 
   static hasCachedDemoCredentials(): boolean {
@@ -57,7 +57,7 @@ export class LiveDemoService {
 
     return file?.demoAuthCredentials &&
       isCurrentDateLower(file.demoAuthCredentials.created_at) &&
-      baseURL === file.demoAuthCredentials.baseApiUrl
+      baseAPIUrl === file.demoAuthCredentials.baseApiUrl
   }
 
   static shouldUseLiveDemo(): boolean {
@@ -89,7 +89,7 @@ export class LiveDemoService {
     LiveDemoService.validateEnvironment();
 
     return await request.newContext({
-      baseURL: baseURL,
+      baseURL: baseAPIUrl,
       extraHTTPHeaders: {
         'X-LiveDemo-Token': this.token,
         'Content-Type': 'application/json',
