@@ -1,5 +1,5 @@
-import {Locator, Page} from "@playwright/test";
-import {BasePage} from "./base-page";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
 
 /**
  * Represents the Expenses Page.
@@ -33,7 +33,7 @@ export class ExpensesPage extends BasePage {
     super(page, '/expenses');
     this.costExploreBreadcrumb = this.main.locator('[href="/expenses"]');
     this.heading = this.main.locator('//h1[contains(text(), "Cost explorer for")]');
-    this.downloadButton = this.main.getByRole('button', {name: 'Download'});
+    this.downloadButton = this.main.getByRole('button', { name: 'Download' });
     this.dataSourceHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Data Source")]');
     this.poolHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Pool")]');
     this.ownerHeading = this.main.locator('//h1[contains(text(), "Expenses Breakdown by Owner")]');
@@ -45,10 +45,10 @@ export class ExpensesPage extends BasePage {
     this.selectedDateText = this.main.getByTestId('text_selected_dates');
     this.selectDateBtn = this.main.getByTestId('btn_select_date');
     this.seeExpensesBreakdownGrid = this.main.locator('//div[.="See expenses breakdown by:"]/..');
-    this.sourceBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Source'});
-    this.poolBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Pool'});
-    this.ownerBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Owner'});
-    this.geographyBtn = this.seeExpensesBreakdownGrid.getByRole('button', {name: 'Geography'});
+    this.sourceBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Source' });
+    this.poolBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Pool' });
+    this.ownerBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Owner' });
+    this.geographyBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Geography' });
   }
 
   /**

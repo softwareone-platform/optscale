@@ -7,13 +7,8 @@ import prettier from 'eslint-config-prettier/flat';
 export default defineConfig({
   ignores: ['node_modules/**', 'dist/**', 'coverage/**', 'playwright-report/**', 'test-results/**'],
   overrides: [
-    // Base JS recommended rules
     eslint.configs.recommended,
-
-    // TypeScript recommended rules (fast; untyped by default)
     ...tseslint.configs.recommendedTypeChecked,
-
-    // TS files in this package
     {
       files: ['**/*.ts', '**/*.tsx'],
       languageOptions: {
@@ -29,14 +24,10 @@ export default defineConfig({
         ],
       },
     },
-
-    // Playwright recommended rules for tests in this folder
     {
       ...playwright.configs['flat/recommended'],
       files: ['**/*.{ts,tsx}'],
     },
   ],
-
-  // Disable ESLint rules that conflict with Prettier (keep this last)
   ...prettier,
 });
