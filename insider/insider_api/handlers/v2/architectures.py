@@ -61,6 +61,7 @@ class ArchitectureCollectionHandler(SecretHandler):
             description: cloud type
             required: true
             type: string
+            enum: ['aws_cnr', 'azure_cnr', 'alibaba_cnr']
         -   in: query
             name: flavor
             description: flavor name
@@ -68,12 +69,12 @@ class ArchitectureCollectionHandler(SecretHandler):
             type: string
         -   in: query
             name: region
-            description: Flavor region
+            description: flavor region (required for 'aws_cnr', 'alibaba_cnr')
             required: false
             type: string
         -   in: query
             name: cloud_account_id
-            description: Cloud account id
+            description: cloud account id
             required: false
             type: string
         responses:
@@ -83,8 +84,7 @@ class ArchitectureCollectionHandler(SecretHandler):
                     type: object
                     properties:
                         cloud_type: {type: string,
-                            description: "cloud type (aws_cnr, azure_cnr,
-                            alibaba_cnr)"}
+                            description: "cloud type"}
                         region: {type: string,
                             description: "region name"}
                         flavor: {type: string,
