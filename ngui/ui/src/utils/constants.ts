@@ -713,7 +713,8 @@ export const METADATA_FIELDS = Object.freeze({
   SOURCE_CLUSTER_ID: "metadata.sourceClusterId",
   PLATFORM_NAME: "metadata.platformName",
   RAM: "metadata.ram",
-  PLATFORM_ID: "metadata.platformId"
+  PLATFORM_ID: "metadata.platformId",
+  ARCHITECTURE: "metadata.architecture"
 });
 
 export const INSECURE_PORTS_MAP = Object.freeze({
