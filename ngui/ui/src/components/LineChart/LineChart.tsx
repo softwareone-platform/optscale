@@ -48,7 +48,11 @@ const useLineDimensions = ({ height, width, margin: partialMargin }) => {
   };
 };
 
-const useXScaleSpec = ({ xScaleSpecProp = {} }) =>
+const useXScaleSpec = (
+  xScaleSpecProp = {
+    type: "point"
+  }
+) =>
   useMemo(() => {
     if (xScaleSpecProp.type === "linear") {
       return {
@@ -188,7 +192,7 @@ const Line = ({
 }) => {
   const chartTheme = useChartTheme();
 
-  const xScaleSpec = useXScaleSpec({ xScaleSpecProp });
+  const xScaleSpec = useXScaleSpec(xScaleSpecProp);
 
   const yScaleSpec = useYScaleSpec({
     data,
