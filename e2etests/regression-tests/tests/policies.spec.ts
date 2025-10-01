@@ -13,7 +13,7 @@ test.describe('FFC: Anomalies page @swo_regression', () => {
     },
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ anomaliesPage, anomaliesCreatePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();

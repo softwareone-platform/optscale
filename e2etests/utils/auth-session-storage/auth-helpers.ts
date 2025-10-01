@@ -80,8 +80,6 @@ export class LiveDemoService {
 
   static getDefaultUserStorageState = () => this.shouldUseLiveDemo() ? EStorageStatePath.liveDemoUser : EStorageStatePath.defaultUser;
 
-
-
   /**
    * Creates a new APIRequestContext with the necessary headers.
    */
@@ -100,7 +98,7 @@ export class LiveDemoService {
 
 const isCurrentDateLower = (createdAt: number): boolean => {
   const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
-  const createdAtPlusOneDay = createdAt + 86400;
+  const createdAtPlusSixDays = createdAt + 518400;
 
-  return currentTimestampInSeconds < createdAtPlusOneDay;
+  return currentTimestampInSeconds < createdAtPlusSixDays;
 }

@@ -747,7 +747,7 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
     }
   ];
 
-  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, forceFailure: false } });
+  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false } });
 
   test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {

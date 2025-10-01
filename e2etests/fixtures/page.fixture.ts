@@ -1,10 +1,10 @@
-import { test as base, type Page } from '@playwright/test';
+import {test as base, type Page} from '@playwright/test';
 import * as Pages from '../pages';
-import { LiveDemoService } from '../utils/auth-session-storage/auth-helpers';
-import { restoreUserSessionInLocalForage } from "../utils/auth-session-storage/localforage-service";
-import { BaseRequest } from "../utils/api-requests/base-request";
-import { apiInterceptors } from "../utils/api-requests/interceptor";
-import { InterceptionEntry } from "../types/interceptor.types";
+import {LiveDemoService} from '../utils/auth-session-storage/auth-helpers';
+import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
+import {BaseRequest} from "../utils/api-requests/base-request";
+import {apiInterceptors} from "../utils/api-requests/interceptor";
+import {InterceptionEntry} from "../types/interceptor.types";
 
 interface Options {
   baseRequest: BaseRequest;
@@ -12,7 +12,7 @@ interface Options {
   setFixedTime?: boolean;
   interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
     entries: InterceptionEntry[];
-      forceFailure?: boolean;
+    failOnInterceptionMissing?: boolean;
   }
 }
 
@@ -22,7 +22,7 @@ type PageObjectCtor<T = unknown> = new (page: Page) => T;
 // Build a single fixture from a Page Object constructor
 const createFixture =
   <T>(Ctor: PageObjectCtor<T>) =>
-    async ({ page }: { page: Page }, use: (po: T) => Promise<void>) => {
+    async ({page}: { page: Page }, use: (po: T) => Promise<void>) => {
       await use(new Ctor(page));
     };
 
@@ -81,42 +81,42 @@ function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
 const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
-    restoreSession: [false, { option: true }],
-    setFixedTime: [false, { option: true }],
-    interceptAPI: [undefined, { option: true }], // <-- allow full override
+  restoreSession: [false, {option: true}],
+  setFixedTime: [false, {option: true}],
+  interceptAPI: [undefined, {option: true}], // <-- allow full override
 
-    page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
-        let verifyInterceptions: (() => void) | undefined;
-        if (restoreSession) {
-            await restoreUserSessionInLocalForage(page, setFixedTime);
+  page: async ({page, restoreSession, setFixedTime, interceptAPI}, use) => {
+    let verifyInterceptions: (() => void) | undefined;
+    if (restoreSession) {
+      await restoreUserSessionInLocalForage(page, setFixedTime);
+    }
+    if (interceptAPI?.entries?.length > 0) {
+      verifyInterceptions = await apiInterceptors(
+        page,
+        interceptAPI.entries,
+        interceptAPI.failOnInterceptionMissing
+      );
+    }
+    if (process.env.BROWSER_ERROR_LOGGING === 'true') {
+      page.on('console', msg => {
+        if (msg.type() === 'error') {
+          console.error(`[Browser Console Error] ${msg.text()}`);
         }
-        if (interceptAPI?.entries?.length > 0) {
-            verifyInterceptions = await apiInterceptors(
-                page,
-                interceptAPI.entries,
-                interceptAPI.forceFailure ?? true
-            );
-        }
-        if (process.env.BROWSER_ERROR_LOGGING === 'true') {
-            page.on('console', msg => {
-                if (msg.type() === 'error') {
-                    console.error(`[Browser Console Error] ${msg.text()}`);
-                }
-            });
-        }
-        await use(page);
+      });
+    }
+    await use(page);
 
-        if (verifyInterceptions) {
-            verifyInterceptions();
-        }
-    },
+    if (verifyInterceptions) {
+      verifyInterceptions();
+    }
+  },
 
-    baseRequest: async ({ request }, use) => {
-        await use(new BaseRequest(request));
-    },
+  baseRequest: async ({request}, use) => {
+    await use(new BaseRequest(request));
+  },
 
-    storageState: async ({ }, use) => {
-        await use(LiveDemoService.getDefaultUserStorageState());
-    },
-    ...fixtures,
+  storageState: async ({}, use) => {
+    await use(LiveDemoService.getDefaultUserStorageState());
+  },
+  ...fixtures,
 });
