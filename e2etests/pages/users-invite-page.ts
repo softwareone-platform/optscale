@@ -14,6 +14,7 @@ export class UsersInvitePage extends BasePage {
   readonly inviteBtn: Locator;
   readonly cancelBtn: Locator;
   readonly userInvitedAlert: Locator;
+  readonly form: Locator;
   readonly userInvitedAlertCloseButton: Locator;
 
   /**
@@ -29,6 +30,7 @@ export class UsersInvitePage extends BasePage {
     this.poolSelect = this.main.getByTestId('pool-selector-form-control');
     this.inviteBtn = this.main.getByTestId('btn_invite');
     this.cancelBtn = this.main.getByTestId('btn_cancel');
+    this.form = this.main.locator('form');
     this.userInvitedAlert = this.page.getByText('User has been invited');
     this.userInvitedAlertCloseButton = this.page.getByLabel('Close');
   }

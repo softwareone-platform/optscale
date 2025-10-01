@@ -4,9 +4,9 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import SubTitle from "components/SubTitle";
 import { breakdowns } from "hooks/useBreakdownBy";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { SPACING_1 } from "utils/layouts";
-import { isEmpty as isEmptyObject } from "utils/objects";
+import { isEmptyObject } from "utils/objects";
 
 const getBreakdownByRenderData = (breakdownBy) => ({
   controlName: "categorizeBy",

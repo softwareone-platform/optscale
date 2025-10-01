@@ -1,73 +1,118 @@
-import {Page, test} from "@playwright/test";
+import {Page, Route, test} from "@playwright/test";
 import {debugLog} from "../debug-logging";
 import {InterceptionEntry} from "../../types/interceptor.types";
-import {createInterceptorId, interceptGraphQLRequest, interceptRESTRequest} from "./helpers";
+
+const HTTP_STATUS_OK = 200;
+const CONTENT_TYPE_JSON = "application/json";
+const DEFAULT_ERROR_MESSAGE = "Some API interceptions were not triggered and forceFailure is set to true. See logs for details.";
+
+/**
+ * Responds to a route with mock JSON data
+ */
+export const respondWithMockData = async <T>(route: Route, mock: T): Promise<void> => {
+  await route.fulfill({
+    status: HTTP_STATUS_OK,
+    contentType: CONTENT_TYPE_JSON,
+    body: JSON.stringify(mock),
+  });
+};
+
+export const createInterceptorId = (gql?: string, url?: string): string =>
+  gql ? `GraphQL:${gql}` : `REST:${url}`;
+
+/**
+ * Intercepts REST API requests matching the provided pattern
+ */
+export async function interceptRESTRequest<T>(
+  page: Page,
+  pattern: RegExp,
+  mock: T,
+  onIntercepted: () => void
+): Promise<void> {
+  await page.route(pattern, async (route, request) => {
+    onIntercepted();
+
+    return await respondWithMockData(route, mock);
+  });
+}
+
+/**
+ * Intercepts GraphQL requests matching the provided operation name
+ */
+export async function interceptGraphQLRequest<T>(
+  page: Page,
+  pattern: RegExp,
+  operationName: string,
+  mock: T,
+  onIntercepted: () => void
+): Promise<void> {
+  await page.route(pattern, async (route, request) => {
+    if (request.method() !== "POST") {
+      return route.fallback();
+    }
+    try {
+      const body = JSON.parse(request.postData() || "{}");
+      if (body.operationName === operationName) {
+        onIntercepted();
+        await respondWithMockData(route, mock);
+        return;
+      }
+    } catch (error) {
+      console.warn(`Failed to parse GraphQL POST data for operation ${operationName}:`, error);
+    }
+    return route.fallback();
+  });
+}
 
 /**
  * Sets up API interceptors for Playwright tests and returns a function to verify if all interceptions occurred.
  *
- * @template T - Generic type parameter for flexibility.
- * @param {Page} page - The Playwright `Page` object where the interceptors will be applied.
- * @param {InterceptionEntry[]} config - Array of interception configurations, each specifying the URL, mock data, and whether it's a GraphQL request.
- * @param {boolean} forceFailure - Determines whether the test should fail if some interceptions are not triggered.
- * @returns {Promise<() => void>} - A function that verifies if all configured interceptions were triggered.
+ * @param page - The Playwright `Page` object where the interceptors will be applied
+ * @param config - Array of interception configurations
+ * @param failOnInterceptionMissing - Whether the test should fail if interceptions are not triggered
+ * @returns A verification function to check if all interceptions were triggered
  */
-export async function apiInterceptors<T>(page: Page, config: InterceptionEntry[], forceFailure: boolean): Promise<() => void> {
+export async function apiInterceptors(
+  page: Page,
+  config: InterceptionEntry[],
+  failOnInterceptionMissing = false
+): Promise<() => void> {
+  const interceptorHits = new Map<string, boolean>();
 
-    const interceptorHits = new Map<string, boolean>();
+  const registerHit = (id: string): () => void => {
+    debugLog(`(HIT) Request intercepted&mocked ${id}`);
+    return () => interceptorHits.set(id, true);
+  };
 
-    const createHitTracker = (id: string): () => void => {
-        debugLog(`(HIT) Request intercepted&mocked ${id}`);
-        return () => interceptorHits.set(id, true);
-    };
+  const interceptPromises = config.map(({ url, mock, gql }) => {
+    const urlRegExp = new RegExp(url || "/api$");
+    const interceptorId = createInterceptorId(gql, url);
 
-    const interceptPromises = config.map(({url, mock, gql}, index) => {
-        const urlRegExp = new RegExp(url || "/api$");
-        const interceptorId = createInterceptorId(gql, url);
+    // Initialize hit tracking
+    interceptorHits.set(interceptorId, false);
 
-        debugLog(`(${index + 1}/${config.length}) Setting up interceptor for ${interceptorId}`);
+    return gql
+      ? interceptGraphQLRequest(page, urlRegExp, gql, mock, registerHit(interceptorId))
+      : interceptRESTRequest(page, urlRegExp, mock, registerHit(interceptorId));
+  });
 
+  await Promise.all(interceptPromises);
 
-        // Initialize hit tracking
-        interceptorHits.set(interceptorId, false);
+  // Return verification function
+  return () => {
+    const missingInterceptions = Array.from(interceptorHits.entries())
+      .filter(([_, wasHit]) => !wasHit)
+      .map(([id]) => id);
 
-        if (gql) {
-            return interceptGraphQLRequest(
-                page,
-                urlRegExp,
-                gql,
-                mock,
-                createHitTracker(interceptorId)
-            );
-        } else {
-            return interceptRESTRequest(
-                page,
-                urlRegExp,
-                mock,
-                createHitTracker(interceptorId)
-            );
-        }
-    });
+    if (missingInterceptions.length > 0) {
+      const message =
+        `${missingInterceptions.length} API interception(s) never occurred:\n` +
+        missingInterceptions.map(x => `- ${x}`).join("\n");
 
-    await Promise.all(interceptPromises);
+      debugLog(message);
 
-    return () => {
-        const missingInterceptions = Array.from(interceptorHits.entries())
-            .filter(([_, wasHit]) => !wasHit)
-            .map(([id]) => id);
-
-        if (missingInterceptions.length > 0) {
-            const message =
-                `${missingInterceptions.length} API interception(s) never occurred:\n` +
-                missingInterceptions.map(x => `- ${x}`).join("\n");
-
-            debugLog(message);
-
-            // E2E tests need to set up all interceptions at the test.describe level to avoid
-            // duplication for each test. However, not all tests will trigger all interceptions.
-            // Therefore, we make this optional to force failure or not.
-            test.fail(forceFailure, 'Some API interceptions were not triggered and forceFailure is set to true. See logs for details.');
-        }
-    };
+      // Only fail the test if explicitly configured to do so
+      test.fail(!failOnInterceptionMissing, `${DEFAULT_ERROR_MESSAGE} ${message}`);
+    }
+  };
 }
-

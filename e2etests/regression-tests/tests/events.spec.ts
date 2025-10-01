@@ -7,7 +7,7 @@ import { EventsRegressionResponse } from "../mocks/events.mocks";
 test.describe('FFC: Events @swo_regression', () => {
   const apiInterceptions: InterceptionEntry[] = [{ mock: EventsRegressionResponse, gql: "events" }];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ eventsPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();

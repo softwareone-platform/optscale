@@ -24,7 +24,7 @@ test.describe('FFC: Home @swo_regression', () => {
     }
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Blocks matches screenshots', async ({ homePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
