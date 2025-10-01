@@ -941,8 +941,4 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await expect(resourcesPage.allGroups).not.toBeVisible();
     });
   });
-
-  test.afterAll(async () => {
-    await cleanUpDirectoryIfEnabled('tests/downloads');
-  });
 });

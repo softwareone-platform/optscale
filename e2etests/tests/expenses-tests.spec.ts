@@ -106,17 +106,39 @@ test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }
     });
   });
 
-  test.only('[] Verify default service daily expenses chart', async ({ expensesPage }) => {
+  test.only('[] Verify service expenses chart download', async ({ expensesPage }) => {
     let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
     let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
-    let diffPath = 'tests/downloads/diff-expenses-page-daily-chart-export.png';
+    let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
     let match: boolean;
 
-    await test.step('Navigate to Expenses Page', async () => {
+    await test.step('Download daily chart and compare pdf', async () => {
       await test.step('Download the default chart', async () => {
         await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath);
-        expect(match).toBe(true);
+        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+        expect.soft(match).toBe(true);
+      });
+
+      await test.step('Download weekly chart and compare', async () => {
+        actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
+        expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
+        diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
+
+        await expensesPage.clickWeeklyBtn();
+        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+        expect.soft(match).toBe(true);
+      });
+
+      await test.step('Download monthly chart and compare', async () => {
+        actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
+        expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
+        diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
+
+        await expensesPage.clickMonthlyBtn();
+        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+        expect.soft(match).toBe(true);
       });
     });
   });
