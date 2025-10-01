@@ -24,7 +24,7 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
     { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: [...apiInterceptionsDashboard] } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptionsDashboard, failOnInterceptionMissing: true} });
 
   test('Page matches screenshots', async ({ resourcesPage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();

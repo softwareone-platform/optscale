@@ -14,7 +14,6 @@ test.describe.skip("Auth API tests @api_tests", {tag: "@api"}, () => {
         await test.step("Verify response status and payload fields", async () => {
             expect(response.status()).toBe(201);
         });
-
     });
 
     test("Authorize user payload", async ({ baseRequest }) => {

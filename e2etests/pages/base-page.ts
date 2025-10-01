@@ -341,6 +341,7 @@ export abstract class BasePage {
     } catch (error) {
       return; // Exit the method if the loading image is not present.
     }
+
     try {
       debugLog('Waiting for loading page image to disappear...');
       await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});

@@ -7,6 +7,7 @@ import {BasePage} from "./base-page";
  */
 export class ExpensesMapPage extends BasePage {
   readonly heading: Locator;
+  readonly mapLegend: Locator;
 
   /**
    * Initializes a new instance of the ExpensesPage class.
@@ -15,5 +16,6 @@ export class ExpensesMapPage extends BasePage {
   constructor(page: Page) {
     super(page, '/expenses-map');
     this.heading = this.main.locator('//h1[contains(text(), "Cost map")]');
+    this.mapLegend = this.main.locator('[data-testid="map-legend"]');
   }
 }

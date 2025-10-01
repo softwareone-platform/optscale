@@ -11,10 +11,9 @@ test.describe('FFC: Pools @swo_regression', () => {
     { url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolRegressionResponse },
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ poolsPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
 
     await test.step('Navigate to Pools page', async () => {
       await poolsPage.navigateToURL();

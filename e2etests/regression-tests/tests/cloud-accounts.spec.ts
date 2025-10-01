@@ -11,7 +11,7 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
     { mock: DataSourcesMock, gql: "DataSources" }
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({
     cloudAccountsPage,

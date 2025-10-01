@@ -11,7 +11,7 @@ test.describe('FFC: Users @swo_regression', () => {
     { url: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mock: UsersPoolsPermissionsMock },
   ];
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Users page matches screenshots', async ({ usersPage, usersInvitePage }) => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
@@ -31,6 +31,8 @@ test.describe('FFC: Users @swo_regression', () => {
       await usersPage.clickInviteBtn();
       await usersPage.screenshotUpdateDelay();
       await roundElementDimensions(usersInvitePage.main);
+      await expect(usersInvitePage.form).toBeAttached({ timeout: 10000 });
+      await expect(usersInvitePage.form.locator('.MuiCircularProgress-root')).toHaveCount(0, { timeout: 10000 });
       await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
     });
   })
