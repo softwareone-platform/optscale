@@ -93,7 +93,7 @@ test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }
 
   test.use({
     restoreSession: true,
-    interceptAPI: { entries: apiInterceptions, forceFailure: false },
+    interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false },
   });
 
   test.beforeEach('Login admin user', async ({ expensesPage }) => {
@@ -106,7 +106,7 @@ test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }
     });
   });
 
-  test.only('[] Verify service expenses chart download', async ({ expensesPage }) => {
+  test('[] Verify service expenses chart download', async ({ expensesPage }) => {
     let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
     let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
     let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
