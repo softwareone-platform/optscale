@@ -754,7 +754,6 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');
-      await resourcesPage.waitForLoadingPageImgToDisappear();
       await resourcesPage.waitForPageLoaderToDisappear();
       await resourcesPage.waitForCanvas();
       if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();

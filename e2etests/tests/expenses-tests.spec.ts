@@ -3,6 +3,9 @@ import { debugLog } from '../utils/debug-logging';
 import { getExpectedDateRangeText, getThisMonthUnixDateRange } from '../utils/date-range-utils';
 import { expect } from '@playwright/test';
 import { ExpensesResponse } from '../types/api-response.types';
+import { InterceptionEntry } from '../types/interceptor.types';
+import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
+import { comparePdfFiles } from '../utils/pdf-comparison';
 
 test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -73,6 +76,48 @@ test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
       for (const key of breakdownKeys) {
         expect.soft(typeof breakdown[key]).toBe('number');
       }
+    });
+  });
+});
+
+test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }, () => {
+  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
+  test.describe.configure({ mode: 'default' });
+
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      url: `/v2/pools_expenses/`,
+      mock: ExpensesDefaultResponse,
+    },
+  ];
+
+  test.use({
+    restoreSession: true,
+    interceptAPI: { entries: apiInterceptions, forceFailure: false },
+  });
+
+  test.beforeEach('Login admin user', async ({ expensesPage }) => {
+    await test.step('Login admin user, set time and navigate to Expenses page', async () => {
+      await expensesPage.page.clock.setFixedTime(new Date('2025-09-29T14:22:00Z'));
+      await expensesPage.navigateToURL();
+      await expensesPage.waitForPageLoaderToDisappear();
+      await expensesPage.waitForCanvas();
+      await expensesPage.clickDailyBtnIfNotSelected();
+    });
+  });
+
+  test.only('[] Verify default service daily expenses chart', async ({ expensesPage }) => {
+    let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
+    let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
+    let diffPath = 'tests/downloads/diff-expenses-page-daily-chart-export.png';
+    let match: boolean;
+
+    await test.step('Navigate to Expenses Page', async () => {
+      await test.step('Download the default chart', async () => {
+        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+        match = await comparePdfFiles(expectedPath, actualPath);
+        expect(match).toBe(true);
+      });
     });
   });
 });
