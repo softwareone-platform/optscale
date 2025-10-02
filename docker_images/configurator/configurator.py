@@ -1,6 +1,6 @@
+import argparse
 import logging
 import os
-import sys
 import time
 from retrying import retry
 
@@ -15,7 +15,6 @@ from pymongo import MongoClient
 from influxdb import InfluxDBClient
 from optscale_client.config_client.client import Client as EtcdClient
 
-LOG = logging.getLogger(__name__)
 
 ETCD_KEYS_TO_DELETE = ['/logstash_host', '/optscale_meter_enabled']
 RETRY_ARGS = dict(stop_max_attempt_number=300, wait_fixed=500)
@@ -23,10 +22,11 @@ RABBIT_PRECONDIFITON_FAILED_CODE = 406
 
 CH_HTTP_PORT = 8123
 CH_LOCAL_NAME = "clickhouse"
+logger = logging.getLogger(__name__)
 
 
 class Configurator(object):
-    def __init__(self, config_path='config.yml', host='etcd', port=2379):
+    def __init__(self, config_path:str, host='etcd', port=2379):
         self.config = yaml.safe_load(open(config_path, 'r'))
         self.etcd_cl = EtcdClient(host=host, port=port)
         config = self.config['etcd']
@@ -86,50 +86,71 @@ class Configurator(object):
             ch_host = self.etcd_cl.get('/clickhouse/host').value
             ch_port = self.etcd_cl.get('/clickhouse/port').value
             # switch to http port only for local host
-            LOG.info("Ch host: %s", ch_host)
-            LOG.info("Ch port: %s", ch_port)
+            logger.info("Ch host: %s", ch_host)
+            logger.info("Ch port: %s", ch_port)
             if ch_host == CH_LOCAL_NAME and str(ch_port) != str(CH_HTTP_PORT):
-                LOG.info("Updating clickhouse port to %s", CH_HTTP_PORT)
+                logger.info("Updating clickhouse port to %s", CH_HTTP_PORT)
                 self.etcd_cl.write(
                     "/clickhouse/port",
                     CH_HTTP_PORT
                 )
         except etcd.EtcdKeyNotFound:
-            LOG.info("Skipping update ch port due to missing key")
+            logger.info("Skipping update ch port due to missing key")
 
     def commit_config(self):
-        LOG.info("Creating /configured key")
+        logger.info("Creating /configured key")
         self.etcd_cl.write('/configured', time.time())
 
     def pre_configure(self):
-        LOG.info("Creating databases")
+        logger.info("Creating databases")
         self.create_databases()
+        logger.debug("Databases created.")
+        logger.debug("Creating InfluxDB databases.")
         self.configure_influx()
+        logger.debug("InfluxDB databases created.")
+        logger.debug("Configuring ClickHouse databases")
         self.stitch_ch_to_http()
+        logger.debug("ClickHouse databases created.")
+        logger.debug("Creating Thanos.")
         self.configure_thanos()
+        logger.debug("Thanos created.")
         # setting to 0 to block updates until update is finished
         # and new images pushed into registry
+        logger.debug("Writing etc /registry_ready.")
         self.etcd_cl.write('/registry_ready', 0)
-
+        logger.debug("etc /registry_ready wrote.")
         config = self.config.get('etcd')
         if self.config.get('skip_config_update', False):
-            LOG.info('Only making structure updates')
+            logger.info('Only making structure updates.')
+            logger.debug("Updating etcd structure.")
             self.etcd_cl.update_structure('/', config)
+            logger.debug("etcd structure updated.")
+            logger.debug("Committing conf.")
             self.commit_config()
             return
-        LOG.info("Writing default etcd keys")
+        logger.info("Writing default etcd keys")
         for key in ETCD_KEYS_TO_DELETE:
             try:
+                logger.debug("Deleting key %s from etc", key)
                 self.etcd_cl.delete(key)
             except etcd.EtcdKeyNotFound:
                 pass
         self.etcd_cl.write_branch('/', config, overwrite_lists=True)
-        LOG.info("Configuring database server")
+        logger.info("Configuring database server")
         self.configure_databases()
+        logger.debug("Databases configured.")
+        logger.debug("Configuring auth salt")
         self.configure_auth_salt()
+        logger.debug("Auth salt configured.")
+        logger.debug("Configuring mongo.")
         self.configure_mongo()
+        logger.debug("Mongo configured.")
+        logger.debug("Configuring RabbitMQ.")
         self.configure_rabbit()
+        logger.debug("RabbitMQ configured.")
+        logger.debug("Committing conf.")
         self.commit_config()
+        logger.debug("Configuration completed.")
 
     def _create_auth_salt_key(self):
         salt = ""
@@ -148,7 +169,7 @@ class Configurator(object):
             self._create_auth_salt_key()
 
     def _declare_events_queue(self, channel):
-        LOG.info('declaring queue')
+        logger.info('declaring queue')
         channel.queue_declare(
             self.config['etcd']['events_queue'], durable=True
         )
@@ -159,7 +180,7 @@ class Configurator(object):
             self._declare_events_queue(channel)
         except pika.exceptions.ChannelClosed as e:
             if e.args and e.args[0] == RABBIT_PRECONDIFITON_FAILED_CODE:
-                LOG.info(
+                logger.info(
                     'failed to declare queue - %s. Deleting existing queue', e)
                 channel = self.rabbit_client.channel()
                 channel.queue_delete(self.config['etcd']['events_queue'])
@@ -203,22 +224,52 @@ class Configurator(object):
         prefix = 'data'
         try:
             self.s3_client.create_bucket(Bucket=bucket_name)
-            LOG.info('Created %s bucket in minio', bucket_name)
+            logger.info('Created %s bucket in minio', bucket_name)
             self.s3_client.put_object(
                 Bucket=bucket_name, Body='', Key='%s/' % prefix)
-            LOG.info('Created %s folder in %s bucket', prefix, bucket_name)
+            logger.info('Created %s folder in %s bucket', prefix, bucket_name)
         except self.s3_client.exceptions.BucketAlreadyOwnedByYou:
-            LOG.info('Skipping bucket %s creation. Bucket already exists',
-                     bucket_name)
+            logger.info('Skipping bucket %s creation. Bucket already exists',
+                        bucket_name)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     etcd_host = os.environ.get('HX_ETCD_HOST')
     etcd_port = int(os.environ.get('HX_ETCD_PORT'))
-    if len(sys.argv) > 1:
-        conf = Configurator(sys.argv[1], host=etcd_host, port=etcd_port)
-    else:
-        conf = Configurator(host=etcd_host, port=etcd_port)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'config_path',
+        nargs='?',
+        default='config.yml',
+        help='Path to the configuration file (default: config.yml)'
+    )
+    parser.add_argument(
+        '--log-level',
+        default='INFO',
+        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'debug', 'info', 'warning', 'error'],
+        help='Set logging level (default: INFO)'
+    )
+    parser.add_argument(
+        '--log-format',
+        default="%(levelname)s:%(name)s:%(message)s",
+        help="Logging format string (default: %(levelname)s:%(name)s:%(message)s"
+    )
+
+    args = parser.parse_args()
+    numeric_level = getattr(logging, args.log_level.upper())
+    logger.setLevel(numeric_level)
+    if not logger.hasHandlers():
+        handler = logging.StreamHandler()
+        handler.setLevel(numeric_level)
+        formatter = logging.Formatter(
+            fmt=args.log_format,
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    log_level = args.log_level.upper()
+
+    conf = Configurator(config_path=args.config_path, host=etcd_host, port=etcd_port)
     stage = os.environ.get('HX_CONFIG_STAGE')
+    logger.info(f"Starting Configurator with config: {args.config_path} and loglevel: {log_level}")
     conf.pre_configure()
