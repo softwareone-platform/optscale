@@ -222,7 +222,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   test('[230518] Verify all expected cards are present when Savings category selected', async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'Abandoned Amazon S3 buckets',
-      'Abandoned images',
+      'Abandoned Images',
       'Abandoned instances',
       'Abandoned Kinesis Streams',
       'Abandoned Load Balancers',

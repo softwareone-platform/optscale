@@ -1,42 +1,40 @@
-import { test } from "../fixtures/page.fixture";
-import { expect } from "@playwright/test";
-import { expectWithinDrift } from "../utils/custom-assertions";
+import { test } from '../fixtures/page.fixture';
+import { expect } from '@playwright/test';
+import { expectWithinDrift } from '../utils/custom-assertions';
 
 import {
-  BreakdownExpensesByServiceResponse,
-  SummaryExpensesResponse,
   AvailableFiltersResponse,
-  BreakdownExpensesByRegionResponse,
-  BreakdownExpensesByResourceTypeResponse,
   BreakdownExpensesByDataSourceResponse,
+  BreakdownExpensesByK8sNamespaceResponse,
+  BreakdownExpensesByK8sNodeResponse,
+  BreakdownExpensesByK8sServiceResponse,
   BreakdownExpensesByOwnerResponse,
   BreakdownExpensesByPoolResponse,
-  BreakdownExpensesByK8sNodeResponse, BreakdownExpensesByK8sNamespaceResponse, BreakdownExpensesByK8sServiceResponse
-} from "../mocks/resources-page.mocks";
-import { comparePngImages } from "../utils/image-comparison";
-import { cleanUpDirectoryIfEnabled } from "../utils/test-after-all-utils";
-import {
-  getExpectedDateRangeText,
-  getLast7DaysUnixRange,
-} from "../utils/date-range-utils";
+  BreakdownExpensesByRegionResponse,
+  BreakdownExpensesByResourceTypeResponse,
+  BreakdownExpensesByServiceResponse,
+  SummaryExpensesResponse,
+} from '../mocks/resources-page.mocks';
+import { comparePngImages } from '../utils/image-comparison';
+import { getExpectedDateRangeText, getLast7DaysUnixRange } from '../utils/date-range-utils';
 import {
   DataSourceExpensesResponse,
   K8sNamespaceExpensesResponse,
-  K8sNodeExpensesResponse, K8sServiceExpensesResponse,
+  K8sNodeExpensesResponse,
+  K8sServiceExpensesResponse,
   OwnerExpensesResponse,
   PoolExpensesResponse,
   RegionExpensesResponse,
   ResourceTypeExpensesResponse,
   ServiceNameExpensesResponse,
   ServiceNameResourceResponse,
-  TagsResponse
-} from "../types/api-response.types";
-import { fetchBreakdownExpenses } from "../utils/api-helpers";
-import { InterceptionEntry } from "../types/interceptor.types";
+  TagsResponse,
+} from '../types/api-response.types';
+import { fetchBreakdownExpenses } from '../utils/api-helpers';
+import { InterceptionEntry } from '../types/interceptor.types';
 
-
-test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }, () => {
-  test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
+test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }, () => {
+  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
   let totalExpensesValue: number;
@@ -53,10 +51,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
   });
 
-  test("[230776] Possible savings matches those on recommendations page", async ({
-    resourcesPage,
-    recommendationsPage
-  }) => {
+  test('[230776] Possible savings matches those on recommendations page', async ({ resourcesPage, recommendationsPage }) => {
     let resourcesSavings: number;
     let recommendationsSavings: number;
 
@@ -72,9 +67,9 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
       recommendationsSavings = await recommendationsPage.getPossibleMonthlySavingsValue();
       expect(resourcesSavings).toBe(recommendationsSavings);
     });
-  })
+  });
 
-  test("[230778] All expected filters are displayed", async ({ resourcesPage }) => {
+  test('[230778] All expected filters are displayed', async ({ resourcesPage }) => {
     await test.step('Click Show more filters button', async () => {
       await resourcesPage.clickShowMoreFilters();
       await resourcesPage.showLessFiltersBtn.waitFor();
@@ -110,12 +105,17 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
         await expect.soft(filter).toBeVisible();
       }
     });
-  })
+  });
 
-  test("[230779] Verify table column selection", async ({ resourcesPage }) => {
+  test('[230779] Verify table column selection', async ({ resourcesPage }) => {
     const defaultColumns = [
-      resourcesPage.resourceTableHeading, resourcesPage.expensesTableHeading, resourcesPage.paidNetworkTrafficTableHeading,
-      resourcesPage.metadataTableHeading, resourcesPage.poolOwnerTableHeading, resourcesPage.typeTableHeading, resourcesPage.tagsTableHeading
+      resourcesPage.resourceTableHeading,
+      resourcesPage.expensesTableHeading,
+      resourcesPage.paidNetworkTrafficTableHeading,
+      resourcesPage.metadataTableHeading,
+      resourcesPage.poolOwnerTableHeading,
+      resourcesPage.typeTableHeading,
+      resourcesPage.tagsTableHeading,
     ];
 
     await test.step('Verify default column selection is all', async () => {
@@ -174,7 +174,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
   });
 
-  test("[230780] Unfiltered Total expenses matches table itemised total", { tag: '@slow' }, async ({ resourcesPage }) => {
+  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
     test.setTimeout(1200000);
 
     await test.step('Get total expenses value from resources page', async () => {
@@ -193,7 +193,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
   });
 
-  test("[230788] Filtered Total expenses matches table itemised total", { tag: '@slow' }, async ({ resourcesPage }) => {
+  test('[230788] Filtered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
     test.setTimeout(90000);
     let initialTotalExpensesValue: number;
 
@@ -231,30 +231,31 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
   });
 
-  test("[230781] Total expenses matches table itemised total for date range set to last 7 days", { tag: '@slow' }, async ({
-    resourcesPage,
-    datePicker
-  }) => {
-    test.setTimeout(90000);
+  test(
+    '[230781] Total expenses matches table itemised total for date range set to last 7 days',
+    { tag: '@slow' },
+    async ({ resourcesPage, datePicker }) => {
+      test.setTimeout(90000);
 
-    await test.step('Get total expenses value for last 7 days', async () => {
-      await datePicker.selectLast7DaysDateRange();
-      await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
-      totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
-    });
+      await test.step('Get total expenses value for last 7 days', async () => {
+        await datePicker.selectLast7DaysDateRange();
+        await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
+        totalExpensesValue = await resourcesPage.getTotalExpensesValue();
+        console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
+      });
 
-    await test.step('Get itemised total from table for last 7 days', async () => {
-      await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
-      itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
-    });
+      await test.step('Get itemised total from table for last 7 days', async () => {
+        await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
+        itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+        console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
+      });
 
-    await test.step('Compare total expenses with itemised total for last 7 days', async () => {
-      // Allowable drift of 0.5% to account for rounding errors
-      expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
-    });
-  });
+      await test.step('Compare total expenses with itemised total for last 7 days', async () => {
+        // Allowable drift of 0.5% to account for rounding errors
+        expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
+      });
+    }
+  );
 
   test('[230782] Validate API default chart/table data for 7 days', async ({ resourcesPage, datePicker }) => {
     const { startDate, endDate } = getLast7DaysUnixRange();
@@ -262,9 +263,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     let expensesData: ServiceNameExpensesResponse;
     await test.step('Load expenses data for the last 7 days', async () => {
       const [expensesResponse] = await Promise.all([
-        resourcesPage.page.waitForResponse((resp) =>
-          resp.url().includes('/breakdown_expenses')
-        ),
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_expenses')),
         datePicker.selectLast7DaysDateRange(),
       ]);
 
@@ -294,9 +293,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     let resourceData: ServiceNameResourceResponse;
     await test.step('Load resources data from resources_count endpoint', async () => {
       const [resourceResponse] = await Promise.all([
-        resourcesPage.page.waitForResponse((resp) =>
-          resp.url().includes('/resources_count') && resp.status() === 200
-        ),
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/resources_count') && resp.status() === 200),
         resourcesPage.clickResourceCountTab(),
       ]);
 
@@ -320,9 +317,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     let tagsData: TagsResponse;
     await test.step('Load tags data from breakdown_tags endpoint', async () => {
       const [tagResponse] = await Promise.all([
-        resourcesPage.page.waitForResponse((resp) =>
-          resp.url().includes('/breakdown_tags') && resp.status() === 200
-        ),
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_tags') && resp.status() === 200),
         resourcesPage.clickTagsTab(),
       ]);
 
@@ -332,7 +327,7 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     await test.step('Validate structure of tag breakdown items', async () => {
       expect.soft(Array.isArray(tagsData.breakdown)).toBe(true);
 
-      tagsData.breakdown.forEach((item) => {
+      tagsData.breakdown.forEach(item => {
         expect.soft(typeof item.count).toBe('number');
         expect.soft(typeof item.cost).toBe('number');
         expect.soft(typeof item.tag === 'string' || item.tag === null).toBe(true);
@@ -340,411 +335,412 @@ test.describe("[MPT-11957] Resources page tests", { tag: ["@ui", "@resources"] }
     });
   });
 
-  test('[230783] Validate API data for the daily expenses chart by breakdown for 7 days', { tag: '@slow' }, async ({
-    resourcesPage,
-    datePicker
-  }) => {
-    test.setTimeout(90000);
-    const { startDate, endDate } = getLast7DaysUnixRange();
+  test(
+    '[230783] Validate API data for the daily expenses chart by breakdown for 7 days',
+    { tag: '@slow' },
+    async ({ resourcesPage, datePicker }) => {
+      test.setTimeout(90000);
+      const { startDate, endDate } = getLast7DaysUnixRange();
 
-    await test.step('Set last 7 days date range', async () => {
-      await datePicker.selectLast7DaysDateRange();
-    });
+      await test.step('Set last 7 days date range', async () => {
+        await datePicker.selectLast7DaysDateRange();
+      });
 
-    let regionExpensesData: RegionExpensesResponse;
-    await test.step('Load region expenses data', async () => {
-      regionExpensesData = await fetchBreakdownExpenses<RegionExpensesResponse>(
-        resourcesPage.page,
-        'region',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'Region'
-      );
-    });
+      let regionExpensesData: RegionExpensesResponse;
+      await test.step('Load region expenses data', async () => {
+        regionExpensesData = await fetchBreakdownExpenses<RegionExpensesResponse>(
+          resourcesPage.page,
+          'region',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Region'
+        );
+      });
 
-    await test.step('Validate region expenses data', async () => {
-      expect.soft(regionExpensesData.start_date).toBe(startDate);
-      expect.soft(regionExpensesData.end_date).toBe(endDate);
-      expect.soft(regionExpensesData.breakdown_by).toBe('region');
-      expect.soft(regionExpensesData.breakdown).not.toBeNull();
-      expect.soft(regionExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(regionExpensesData.total).toBeGreaterThan(0);
-    });
+      await test.step('Validate region expenses data', async () => {
+        expect.soft(regionExpensesData.start_date).toBe(startDate);
+        expect.soft(regionExpensesData.end_date).toBe(endDate);
+        expect.soft(regionExpensesData.breakdown_by).toBe('region');
+        expect.soft(regionExpensesData.breakdown).not.toBeNull();
+        expect.soft(regionExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(regionExpensesData.total).toBeGreaterThan(0);
+      });
 
-    await test.step('Validate that breakdown covers exactly 7 days', async () => {
-      const breakdownDays = Object.keys(regionExpensesData.breakdown);
-      expect.soft(breakdownDays.length).toBe(7);
+      await test.step('Validate that breakdown covers exactly 7 days', async () => {
+        const breakdownDays = Object.keys(regionExpensesData.breakdown);
+        expect.soft(breakdownDays.length).toBe(7);
 
-      const expectedDays = Array.from({ length: 7 }, (_, i) => (startDate + i * 86400).toString());
-      expect.soft(breakdownDays.sort()).toEqual(expectedDays.sort());
-    });
+        const expectedDays = Array.from({ length: 7 }, (_, i) => (startDate + i * 86400).toString());
+        expect.soft(breakdownDays.sort()).toEqual(expectedDays.sort());
+      });
 
-    await test.step('Validate regional breakdown structure for each day', async () => {
-      for (const [_timestamp, regions] of Object.entries(regionExpensesData.breakdown)) {
-        expect.soft(typeof regions).toBe('object');
+      await test.step('Validate regional breakdown structure for each day', async () => {
+        for (const [_timestamp, regions] of Object.entries(regionExpensesData.breakdown)) {
+          expect.soft(typeof regions).toBe('object');
 
-        for (const [_region, entry] of Object.entries(regions)) {
-          expect.soft(typeof entry.cost).toBe('number');
-          expect.soft(entry.cost).not.toBeNaN();
-          expect.soft(entry.cost).toBeGreaterThanOrEqual(0);
+          for (const [_region, entry] of Object.entries(regions)) {
+            expect.soft(typeof entry.cost).toBe('number');
+            expect.soft(entry.cost).not.toBeNaN();
+            expect.soft(entry.cost).toBeGreaterThanOrEqual(0);
+          }
         }
-      }
-    });
+      });
 
-    let resourceTypeExpensesData: ResourceTypeExpensesResponse;
-    await test.step('Load resource type expenses data', async () => {
-      resourceTypeExpensesData = await fetchBreakdownExpenses<ResourceTypeExpensesResponse>(
-        resourcesPage.page,
-        'resource_type',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'Resource type'
-      );
-    });
+      let resourceTypeExpensesData: ResourceTypeExpensesResponse;
+      await test.step('Load resource type expenses data', async () => {
+        resourceTypeExpensesData = await fetchBreakdownExpenses<ResourceTypeExpensesResponse>(
+          resourcesPage.page,
+          'resource_type',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Resource type'
+        );
+      });
 
-    await test.step('Validate resource type expenses top-level data', async () => {
-      expect.soft(resourceTypeExpensesData.start_date).toBe(startDate);
-      expect.soft(resourceTypeExpensesData.end_date).toBe(endDate);
-      expect.soft(resourceTypeExpensesData.breakdown_by).toBe('resource_type');
-      expect.soft(resourceTypeExpensesData.breakdown).not.toBeNull();
-      expect.soft(resourceTypeExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(resourceTypeExpensesData.total).toBeGreaterThan(0);
-    });
+      await test.step('Validate resource type expenses top-level data', async () => {
+        expect.soft(resourceTypeExpensesData.start_date).toBe(startDate);
+        expect.soft(resourceTypeExpensesData.end_date).toBe(endDate);
+        expect.soft(resourceTypeExpensesData.breakdown_by).toBe('resource_type');
+        expect.soft(resourceTypeExpensesData.breakdown).not.toBeNull();
+        expect.soft(resourceTypeExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(resourceTypeExpensesData.total).toBeGreaterThan(0);
+      });
 
-    await test.step('Validate resource type counts structure', async () => {
-      for (const summary of Object.values(resourceTypeExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-      }
-    });
-
-    await test.step('Validate resource type daily breakdown structure', async () => {
-      const breakdown = resourceTypeExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, typeMap] of Object.entries(breakdown)) {
-        for (const [_resourceType, data] of Object.entries(typeMap)) {
-          expect.soft(data).toHaveProperty('cost');
-          expect.soft(typeof data.cost).toBe('number');
+      await test.step('Validate resource type counts structure', async () => {
+        for (const summary of Object.values(resourceTypeExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
         }
-      }
-    });
+      });
 
-    let dataSourceExpensesData: DataSourceExpensesResponse;
-    await test.step('Load data source expenses data', async () => {
-      dataSourceExpensesData = await fetchBreakdownExpenses<DataSourceExpensesResponse>(
-        resourcesPage.page,
-        'cloud_account_id',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'Data source'
-      );
-    });
+      await test.step('Validate resource type daily breakdown structure', async () => {
+        const breakdown = resourceTypeExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-    await test.step('Validate data source expenses top-level fields', async () => {
-      expect.soft(dataSourceExpensesData.start_date).toBe(startDate);
-      expect.soft(dataSourceExpensesData.end_date).toBe(endDate);
-      expect.soft(dataSourceExpensesData.breakdown_by).toBe('cloud_account_id');
-      expect.soft(dataSourceExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(dataSourceExpensesData.total).toBeGreaterThan(0);
-      expect.soft(dataSourceExpensesData.counts).not.toBeNull();
-      expect.soft(dataSourceExpensesData.breakdown).not.toBeNull();
-    });
-
-    await test.step('Validate data source counts structure', async () => {
-      for (const summary of Object.values(dataSourceExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-        expect.soft(typeof summary.id).toBe('string');
-        expect.soft(typeof summary.name).toBe('string');
-        expect.soft(typeof summary.type).toBe('string');
-      }
-    });
-
-    await test.step('Validate data source breakdown structure for each day', async () => {
-      const breakdown = dataSourceExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, sourceMap] of Object.entries(breakdown)) {
-        for (const [_sourceId, item] of Object.entries(sourceMap)) {
-          expect.soft(typeof item.cost).toBe('number');
-          expect.soft(typeof item.id).toBe('string');
-          expect.soft(typeof item.name).toBe('string');
-          expect.soft(typeof item.type).toBe('string');
+        for (const [_day, typeMap] of Object.entries(breakdown)) {
+          for (const [_resourceType, data] of Object.entries(typeMap)) {
+            expect.soft(data).toHaveProperty('cost');
+            expect.soft(typeof data.cost).toBe('number');
+          }
         }
-      }
-    });
+      });
 
-    let ownerExpensesData: OwnerExpensesResponse;
-    await test.step('Load owner expenses data', async () => {
-      ownerExpensesData = await fetchBreakdownExpenses<OwnerExpensesResponse>(
-        resourcesPage.page,
-        'employee_id',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'Owner'
-      );
-    });
+      let dataSourceExpensesData: DataSourceExpensesResponse;
+      await test.step('Load data source expenses data', async () => {
+        dataSourceExpensesData = await fetchBreakdownExpenses<DataSourceExpensesResponse>(
+          resourcesPage.page,
+          'cloud_account_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Data source'
+        );
+      });
 
-    await test.step('Validate owner expenses top-level fields', async () => {
-      expect.soft(ownerExpensesData.start_date).toBe(startDate);
-      expect.soft(ownerExpensesData.end_date).toBe(endDate);
-      expect.soft(ownerExpensesData.breakdown_by).toBe('employee_id');
-      expect.soft(ownerExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(ownerExpensesData.total).toBeGreaterThan(0);
-      expect.soft(ownerExpensesData.previous_total).toBeGreaterThanOrEqual(0);
-      expect.soft(ownerExpensesData.counts).not.toBeNull();
-      expect.soft(ownerExpensesData.breakdown).not.toBeNull();
-    });
+      await test.step('Validate data source expenses top-level fields', async () => {
+        expect.soft(dataSourceExpensesData.start_date).toBe(startDate);
+        expect.soft(dataSourceExpensesData.end_date).toBe(endDate);
+        expect.soft(dataSourceExpensesData.breakdown_by).toBe('cloud_account_id');
+        expect.soft(dataSourceExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(dataSourceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(dataSourceExpensesData.counts).not.toBeNull();
+        expect.soft(dataSourceExpensesData.breakdown).not.toBeNull();
+      });
 
-    await test.step('Validate owner counts structure', async () => {
-      for (const summary of Object.values(ownerExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-        expect.soft(typeof summary.id).toBe('string');
-        expect.soft(typeof summary.name).toBe('string');
-      }
-    });
-
-    await test.step('Validate owner breakdown structure for each day', async () => {
-      const breakdown = ownerExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, ownerMap] of Object.entries(breakdown)) {
-        for (const [_ownerId, item] of Object.entries(ownerMap)) {
-          expect.soft(typeof item.cost).toBe('number');
-          expect.soft(typeof item.id).toBe('string');
-          expect.soft(typeof item.name).toBe('string');
+      await test.step('Validate data source counts structure', async () => {
+        for (const summary of Object.values(dataSourceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
+          expect.soft(typeof summary.type).toBe('string');
         }
-      }
-    });
+      });
 
-    let poolExpensesData: PoolExpensesResponse;
-    await test.step('Load pool expenses data', async () => {
-      poolExpensesData = await fetchBreakdownExpenses<PoolExpensesResponse>(
-        resourcesPage.page,
-        'pool_id',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'Pool'
-      );
-    });
+      await test.step('Validate data source breakdown structure for each day', async () => {
+        const breakdown = dataSourceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-    await test.step('Validate pool expenses top-level fields', async () => {
-      expect.soft(poolExpensesData.start_date).toBe(startDate);
-      expect.soft(poolExpensesData.end_date).toBe(endDate);
-      expect.soft(poolExpensesData.breakdown_by).toBe('pool_id');
-      expect.soft(poolExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(poolExpensesData.total).toBeGreaterThan(0);
-      expect.soft(poolExpensesData.counts).not.toBeNull();
-      expect.soft(poolExpensesData.breakdown).not.toBeNull();
-    });
-
-    await test.step('Validate pool counts structure', async () => {
-      for (const summary of Object.values(poolExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-        expect.soft(typeof summary.id).toBe('string');
-        expect.soft(typeof summary.name).toBe('string');
-        expect.soft(typeof summary.purpose).toBe('string');
-      }
-    });
-
-    await test.step('Validate pool breakdown structure for each day', async () => {
-      const breakdown = poolExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, poolMap] of Object.entries(breakdown)) {
-        for (const [_poolId, item] of Object.entries(poolMap)) {
-          expect.soft(typeof item.cost).toBe('number');
-          expect.soft(typeof item.id).toBe('string');
-          expect.soft(typeof item.name).toBe('string');
-          expect.soft(typeof item.purpose).toBe('string');
+        for (const [_day, sourceMap] of Object.entries(breakdown)) {
+          for (const [_sourceId, item] of Object.entries(sourceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+            expect.soft(typeof item.type).toBe('string');
+          }
         }
-      }
-    });
+      });
 
-    let k8sNodeExpensesData: K8sNodeExpensesResponse;
-    await test.step('Load K8s node expenses data', async () => {
-      k8sNodeExpensesData = await fetchBreakdownExpenses<K8sNodeExpensesResponse>(
-        resourcesPage.page,
-        'k8s_node',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'K8s node'
-      );
-    });
+      let ownerExpensesData: OwnerExpensesResponse;
+      await test.step('Load owner expenses data', async () => {
+        ownerExpensesData = await fetchBreakdownExpenses<OwnerExpensesResponse>(
+          resourcesPage.page,
+          'employee_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Owner'
+        );
+      });
 
-    await test.step('Validate K8s Node expenses top-level fields', async () => {
-      expect.soft(k8sNodeExpensesData.start_date).toBe(startDate);
-      expect.soft(k8sNodeExpensesData.end_date).toBe(endDate);
-      expect.soft(k8sNodeExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(k8sNodeExpensesData.total).toBeGreaterThan(0);
-      expect.soft(k8sNodeExpensesData.previous_total).toBeGreaterThanOrEqual(0);
-      expect.soft(k8sNodeExpensesData.breakdown_by).toBe('k8s_node');
-      expect.soft(k8sNodeExpensesData.counts).not.toBeNull();
-      expect.soft(k8sNodeExpensesData.breakdown).not.toBeNull();
-    });
+      await test.step('Validate owner expenses top-level fields', async () => {
+        expect.soft(ownerExpensesData.start_date).toBe(startDate);
+        expect.soft(ownerExpensesData.end_date).toBe(endDate);
+        expect.soft(ownerExpensesData.breakdown_by).toBe('employee_id');
+        expect.soft(ownerExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(ownerExpensesData.total).toBeGreaterThan(0);
+        expect.soft(ownerExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(ownerExpensesData.counts).not.toBeNull();
+        expect.soft(ownerExpensesData.breakdown).not.toBeNull();
+      });
 
-    await test.step('Validate K8s Node counts structure', async () => {
-      for (const summary of Object.values(k8sNodeExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-      }
-    });
-
-    await test.step('Validate K8s Node breakdown structure for each day', async () => {
-      const breakdown = k8sNodeExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, nodeMap] of Object.entries(breakdown)) {
-        for (const [_nodeKey, data] of Object.entries(nodeMap)) {
-          expect.soft(data).toHaveProperty('cost');
-          expect.soft(typeof data.cost).toBe('number');
-          expect.soft(data.cost).toBeGreaterThanOrEqual(0);
+      await test.step('Validate owner counts structure', async () => {
+        for (const summary of Object.values(ownerExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
         }
-      }
-    });
+      });
 
-    let k8sNamespaceExpensesData: K8sNamespaceExpensesResponse;
-    await test.step('Load K8s namespace expenses data', async () => {
-      k8sNamespaceExpensesData = await fetchBreakdownExpenses<K8sNamespaceExpensesResponse>(
-        resourcesPage.page,
-        'k8s_namespace',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'K8s namespace'
-      );
-    });
+      await test.step('Validate owner breakdown structure for each day', async () => {
+        const breakdown = ownerExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-    await test.step('Validate K8s namespace expenses top-level fields', async () => {
-      expect.soft(k8sNamespaceExpensesData.start_date).toBe(startDate);
-      expect.soft(k8sNamespaceExpensesData.end_date).toBe(endDate);
-      expect.soft(k8sNamespaceExpensesData.breakdown_by).toBe('k8s_namespace');
-      expect.soft(k8sNamespaceExpensesData.total).toBeGreaterThan(0);
-      expect.soft(k8sNamespaceExpensesData.previous_range_start).toBeGreaterThan(0);
-      expect.soft(k8sNamespaceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
-      expect.soft(k8sNamespaceExpensesData.counts).not.toBeNull();
-      expect.soft(k8sNamespaceExpensesData.breakdown).not.toBeNull();
-    });
-
-    await test.step('Validate K8s namespace counts structure', async () => {
-      for (const [_ns, summary] of Object.entries(k8sNamespaceExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-      }
-    });
-
-    await test.step('Validate K8s namespace breakdown structure for each day', async () => {
-      const breakdown = k8sNamespaceExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, namespaceMap] of Object.entries(breakdown)) {
-        for (const [_ns, item] of Object.entries(namespaceMap)) {
-          expect.soft(typeof item.cost).toBe('number');
-          expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+        for (const [_day, ownerMap] of Object.entries(breakdown)) {
+          for (const [_ownerId, item] of Object.entries(ownerMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+          }
         }
-      }
-    });
+      });
 
-    let k8sServiceExpensesData: K8sServiceExpensesResponse;
-    await test.step('Load K8s service expenses data', async () => {
-      k8sServiceExpensesData = await fetchBreakdownExpenses<K8sServiceExpensesResponse>(
-        resourcesPage.page,
-        'k8s_service',
-        resourcesPage.selectCategorizeBy.bind(resourcesPage),
-        'K8s service'
-      );
-    });
+      let poolExpensesData: PoolExpensesResponse;
+      await test.step('Load pool expenses data', async () => {
+        poolExpensesData = await fetchBreakdownExpenses<PoolExpensesResponse>(
+          resourcesPage.page,
+          'pool_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Pool'
+        );
+      });
 
-    await test.step('Validate K8s service expenses top-level fields', async () => {
-      expect.soft(k8sServiceExpensesData.start_date).toBe(startDate);
-      expect.soft(k8sServiceExpensesData.end_date).toBe(endDate);
-      expect.soft(k8sServiceExpensesData.breakdown_by).toBe('k8s_service');
-      expect.soft(k8sServiceExpensesData.previous_range_start).not.toBeNull();
-      expect.soft(k8sServiceExpensesData.total).toBeGreaterThan(0);
-      expect.soft(k8sServiceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
-      expect.soft(k8sServiceExpensesData.counts).not.toBeNull();
-      expect.soft(k8sServiceExpensesData.breakdown).not.toBeNull();
-    });
+      await test.step('Validate pool expenses top-level fields', async () => {
+        expect.soft(poolExpensesData.start_date).toBe(startDate);
+        expect.soft(poolExpensesData.end_date).toBe(endDate);
+        expect.soft(poolExpensesData.breakdown_by).toBe('pool_id');
+        expect.soft(poolExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(poolExpensesData.total).toBeGreaterThan(0);
+        expect.soft(poolExpensesData.counts).not.toBeNull();
+        expect.soft(poolExpensesData.breakdown).not.toBeNull();
+      });
 
-    await test.step('Validate K8s service counts structure', async () => {
-      for (const summary of Object.values(k8sServiceExpensesData.counts)) {
-        expect.soft(typeof summary.total).toBe('number');
-        expect.soft(typeof summary.previous_total).toBe('number');
-      }
-    });
-
-    await test.step('Validate K8s service breakdown structure for each day', async () => {
-      const breakdown = k8sServiceExpensesData.breakdown;
-      const responseDates = Object.keys(breakdown).map(Number);
-      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
-      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
-
-      for (const [_day, serviceMap] of Object.entries(breakdown)) {
-        for (const [_serviceId, item] of Object.entries(serviceMap)) {
-          expect.soft(typeof item.cost).toBe('number');
-          expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+      await test.step('Validate pool counts structure', async () => {
+        for (const summary of Object.values(poolExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
+          expect.soft(typeof summary.purpose).toBe('string');
         }
-      }
-    });
-  });
-})
+      });
 
-test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resources"] }, () => {
-  test.skip(process.env.USE_LIVE_DEMO === 'true', "Live demo environment is not supported by these tests");
-  test.describe.configure({mode: 'default'});
+      await test.step('Validate pool breakdown structure for each day', async () => {
+        const breakdown = poolExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
 
-    const apiInterceptions: InterceptionEntry[] = [
+        for (const [_day, poolMap] of Object.entries(breakdown)) {
+          for (const [_poolId, item] of Object.entries(poolMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+            expect.soft(typeof item.purpose).toBe('string');
+          }
+        }
+      });
+
+      let k8sNodeExpensesData: K8sNodeExpensesResponse;
+      await test.step('Load K8s node expenses data', async () => {
+        k8sNodeExpensesData = await fetchBreakdownExpenses<K8sNodeExpensesResponse>(
+          resourcesPage.page,
+          'k8s_node',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s node'
+        );
+      });
+
+      await test.step('Validate K8s Node expenses top-level fields', async () => {
+        expect.soft(k8sNodeExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sNodeExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sNodeExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(k8sNodeExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sNodeExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sNodeExpensesData.breakdown_by).toBe('k8s_node');
+        expect.soft(k8sNodeExpensesData.counts).not.toBeNull();
+        expect.soft(k8sNodeExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s Node counts structure', async () => {
+        for (const summary of Object.values(k8sNodeExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s Node breakdown structure for each day', async () => {
+        const breakdown = k8sNodeExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, nodeMap] of Object.entries(breakdown)) {
+          for (const [_nodeKey, data] of Object.entries(nodeMap)) {
+            expect.soft(data).toHaveProperty('cost');
+            expect.soft(typeof data.cost).toBe('number');
+            expect.soft(data.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+
+      let k8sNamespaceExpensesData: K8sNamespaceExpensesResponse;
+      await test.step('Load K8s namespace expenses data', async () => {
+        k8sNamespaceExpensesData = await fetchBreakdownExpenses<K8sNamespaceExpensesResponse>(
+          resourcesPage.page,
+          'k8s_namespace',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s namespace'
+        );
+      });
+
+      await test.step('Validate K8s namespace expenses top-level fields', async () => {
+        expect.soft(k8sNamespaceExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sNamespaceExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sNamespaceExpensesData.breakdown_by).toBe('k8s_namespace');
+        expect.soft(k8sNamespaceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sNamespaceExpensesData.previous_range_start).toBeGreaterThan(0);
+        expect.soft(k8sNamespaceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sNamespaceExpensesData.counts).not.toBeNull();
+        expect.soft(k8sNamespaceExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s namespace counts structure', async () => {
+        for (const [_ns, summary] of Object.entries(k8sNamespaceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s namespace breakdown structure for each day', async () => {
+        const breakdown = k8sNamespaceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, namespaceMap] of Object.entries(breakdown)) {
+          for (const [_ns, item] of Object.entries(namespaceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+
+      let k8sServiceExpensesData: K8sServiceExpensesResponse;
+      await test.step('Load K8s service expenses data', async () => {
+        k8sServiceExpensesData = await fetchBreakdownExpenses<K8sServiceExpensesResponse>(
+          resourcesPage.page,
+          'k8s_service',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s service'
+        );
+      });
+
+      await test.step('Validate K8s service expenses top-level fields', async () => {
+        expect.soft(k8sServiceExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sServiceExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sServiceExpensesData.breakdown_by).toBe('k8s_service');
+        expect.soft(k8sServiceExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(k8sServiceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sServiceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sServiceExpensesData.counts).not.toBeNull();
+        expect.soft(k8sServiceExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s service counts structure', async () => {
+        for (const summary of Object.values(k8sServiceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s service breakdown structure for each day', async () => {
+        const breakdown = k8sServiceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, serviceMap] of Object.entries(breakdown)) {
+          for (const [_serviceId, item] of Object.entries(serviceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+    }
+  );
+});
+
+test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resources'] }, () => {
+  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
+  test.describe.configure({ mode: 'default' });
+
+  const apiInterceptions: InterceptionEntry[] = [
     {
       url: `/v2/organizations/[^/]+/summary_expenses`,
-      mock: SummaryExpensesResponse
+      mock: SummaryExpensesResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
-      mock: BreakdownExpensesByServiceResponse
+      mock: BreakdownExpensesByServiceResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
-      mock: BreakdownExpensesByRegionResponse
+      mock: BreakdownExpensesByRegionResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
-      mock: BreakdownExpensesByResourceTypeResponse
+      mock: BreakdownExpensesByResourceTypeResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
-      mock: BreakdownExpensesByDataSourceResponse
+      mock: BreakdownExpensesByDataSourceResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
-      mock: BreakdownExpensesByOwnerResponse
+      mock: BreakdownExpensesByOwnerResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
-      mock: BreakdownExpensesByPoolResponse
+      mock: BreakdownExpensesByPoolResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
-      mock: BreakdownExpensesByK8sNodeResponse
+      mock: BreakdownExpensesByK8sNodeResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
-      mock: BreakdownExpensesByK8sNamespaceResponse
+      mock: BreakdownExpensesByK8sNamespaceResponse,
     },
     {
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
-      mock: BreakdownExpensesByK8sServiceResponse
+      mock: BreakdownExpensesByK8sServiceResponse,
     },
     {
       url: `/v2/organizations/[^/]+/available_filters`,
-      mock: AvailableFiltersResponse
-    }
+      mock: AvailableFiltersResponse,
+    },
   ];
 
   test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false } });
@@ -761,7 +757,7 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
     });
   });
 
-  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: "@p1" }, async ({ resourcesPage }) => {
+  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
     let actualPath = 'tests/downloads/expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
@@ -814,7 +810,7 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect(match).toBe(true);
     });
-  })
+  });
 
   test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
     let actualPath = 'tests/downloads/region-expenses-chart-export.png';
@@ -907,7 +903,7 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
     });
   });
 
-  test("[230787] Verify table grouping", async ({ resourcesPage }) => {
+  test('[230787] Verify table grouping', async ({ resourcesPage }) => {
     await test.step('Verify default grouping is None', async () => {
       await resourcesPage.table.waitFor();
       await resourcesPage.table.scrollIntoViewIfNeeded();
@@ -941,8 +937,4 @@ test.describe("[MPT-11957] Resources page mocked tests", { tag: ["@ui", "@resour
       await expect(resourcesPage.allGroups).not.toBeVisible();
     });
   });
-
-  test.afterAll(async () => {
-    await cleanUpDirectoryIfEnabled('tests/downloads');
-  });
-})
+});

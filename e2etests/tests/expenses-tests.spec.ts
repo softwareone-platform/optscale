@@ -7,7 +7,7 @@ import { InterceptionEntry } from '../types/interceptor.types';
 import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
 
-test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
+test.describe('[MPT-13974] Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
@@ -28,7 +28,7 @@ test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
     }
   });
 
-  test('Verify default Expenses Page layout', async ({ expensesPage }) => {
+  test('[231181] Verify default Expenses Page layout', async ({ expensesPage }) => {
     await expect(expensesPage.downloadButton).toBeVisible();
     expect(dateRangeReset).toBe(false);
     expect(await expensesPage.evaluateActiveButton(expensesPage.dailyBtn)).toBe(true);
@@ -52,7 +52,7 @@ test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
       expensesData = await expensesResponse.json();
     });
 
-    await test.step('Validate expenses date range and breakdown type', async () => {
+    await test.step('[231182] Validate expenses date range and breakdown type', async () => {
       expect.soft(expensesData.expenses.total).toBeGreaterThan(0);
       expect.soft(expensesData.expenses.previous_total).toBeLessThan(startDate);
       expect.soft(expensesData.expenses.name).toBe(name);
@@ -80,7 +80,7 @@ test.describe('Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
   });
 });
 
-test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }, () => {
+test.describe('[MPT-13974] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
   test.describe.configure({ mode: 'default' });
 
@@ -106,7 +106,7 @@ test.describe('[MPT-] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }
     });
   });
 
-  test('[] Verify service expenses chart download', async ({ expensesPage }) => {
+  test('[231183] Verify service expenses chart download', async ({ expensesPage }) => {
     let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
     let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
     let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
