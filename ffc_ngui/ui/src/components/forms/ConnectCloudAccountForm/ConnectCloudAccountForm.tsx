@@ -46,7 +46,8 @@ import {
   GCP_CNR,
   GCP_TENANT,
   CONNECTION_TYPES,
-  CLOUD_PROVIDERS
+  CLOUD_PROVIDERS,
+  AUTHENTICATION_TYPES
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
@@ -58,6 +59,8 @@ import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./FormElements/ConnectionFields";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
+
+type AuthenticationType = ObjectValues<typeof AUTHENTICATION_TYPES>;
 
 type CloudProvider = ObjectValues<typeof CLOUD_PROVIDERS>;
 
@@ -87,8 +90,11 @@ type CloudProviderTypes = Record<
 
 const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
-    { connectionType: CONNECTION_TYPES.AWS_ROOT, messageId: "root", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_LINKED, messageId: "linked", cloudType: AWS_CNR }
+    // { connectionType: CONNECTION_TYPES.AWS_ROOT, messageId: "root", cloudType: AWS_CNR },
+    // { connectionType: CONNECTION_TYPES.AWS_LINKED, messageId: "linked", cloudType: AWS_CNR },
+    { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "management", cloudType: AWS_CNR },
+    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR },
+    { connectionType: CONNECTION_TYPES.AWS_STANDALONE, messageId: "standalone", cloudType: AWS_CNR }
   ],
   [CLOUD_PROVIDERS.AZURE]: [
     { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
@@ -103,6 +109,15 @@ const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   // [CLOUD_PROVIDERS.DATABRICKS]: { connectionType: CONNECTION_TYPES.DATABRICKS, cloudType: DATABRICKS },
   // [CLOUD_PROVIDERS.KUBERNETES]: { connectionType: CONNECTION_TYPES.KUBERNETES, cloudType: KUBERNETES_CNR }
 };
+
+const authenticationTypes = [
+  {
+    authenticationType: AUTHENTICATION_TYPES.ASSUMED_ROLE,
+    messageId: "assumedRole",
+    cloudType: AWS_CNR
+  },
+  { authenticationType: AUTHENTICATION_TYPES.ACCESS_KEY, messageId: "accessKey", cloudType: AWS_CNR }
+];
 
 const getCloudProviderFromConnectionType = (connectionType: ConnectionType): CloudProvider => {
   const providerEntry = Object.entries(CLOUD_PROVIDER_TYPES).find(([, connectionTypes]) =>
@@ -285,6 +300,48 @@ const renderConnectionTypeDescription = (settings) =>
 const renderConnectionTypeInfoMessage = (connectionType: ConnectionType) =>
   ({
     [CONNECTION_TYPES.AWS_ROOT]: renderConnectionTypeDescription([
+      {
+        key: "createAwsRootDocumentationReference",
+        messageId: "createAwsRootDocumentationReference",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
+      }
+    ]),
+    [CONNECTION_TYPES.AWS_MANAGEMENT]: renderConnectionTypeDescription([
+      {
+        key: "createAwsRootDocumentationReference",
+        messageId: "createAwsRootDocumentationReference",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
+      }
+    ]),
+    [CONNECTION_TYPES.AWS_STANDALONE]: renderConnectionTypeDescription([
+      {
+        key: "createAwsRootDocumentationReference",
+        messageId: "createAwsRootDocumentationReference",
+        values: {
+          link: (chunks) => (
+            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong>{chunks}</strong>
+        }
+      }
+    ]),
+    [CONNECTION_TYPES.AWS_MEMBER]: renderConnectionTypeDescription([
       {
         key: "createAwsRootDocumentationReference",
         messageId: "createAwsRootDocumentationReference",
@@ -494,11 +551,11 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       return connectionTypeFromQueryParams;
     }
 
-    return CONNECTION_TYPES.AWS_ROOT;
+    return CONNECTION_TYPES.AWS_MANAGEMENT;
   });
 
+  const [authenticationType, setAuthenticationType] = useState<AuthenticationType>(() => AUTHENTICATION_TYPES.ASSUMED_ROLE);
   const selectedProvider = getCloudProviderFromConnectionType(connectionType);
-
   const { classes, cx } = useStyles();
 
   useEffect(() => {
@@ -511,7 +568,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       icon: AwsLogoIcon,
       messageId: "aws",
       dataTestId: "btn_aws_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AWS_ROOT)
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_MANAGEMENT)
     },
     {
       id: CLOUD_PROVIDERS.AZURE,
@@ -566,6 +623,48 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       : isDataSourceConnectionTypeEnabled(providerTypes.connectionType);
   });
 
+  const renderAssumedAccount = () => {
+    if (!Array.isArray(CLOUD_PROVIDER_TYPES[selectedProvider])) {
+      return null;
+    }
+
+    return (
+      <>
+        <Box alignItems="center" display="flex" mb={1}>
+          <Typography sx={{ mr: 1 }}>
+            <FormattedMessage id="connectionType" />{" "}
+          </Typography>
+          <ButtonGroup
+            buttons={CLOUD_PROVIDER_TYPES[selectedProvider]
+              .filter((subtype) => isDataSourceConnectionTypeEnabled(subtype.connectionType))
+              .map((subtype) => ({
+                id: subtype.connectionType,
+                messageId: subtype.messageId,
+                action: () => setConnectionType(subtype.connectionType)
+              }))}
+            activeButtonId={connectionType}
+          />
+        </Box>
+
+        {selectedProvider === CLOUD_PROVIDERS.AWS && (
+          <Box alignItems="center" display="flex" mb={1}>
+            <Typography sx={{ mr: 1 }}>
+              <FormattedMessage id="authentication" />{" "}
+            </Typography>
+            <ButtonGroup
+              buttons={authenticationTypes.map((subtype) => ({
+                id: subtype.authenticationType,
+                messageId: subtype.messageId,
+                action: () => setAuthenticationType(subtype.authenticationType)
+              }))}
+              activeButtonId={authenticationType}
+            />
+          </Box>
+        )}
+      </>
+    );
+  };
+
   return (
     <FormProvider {...methods}>
       <Box sx={{ width: { md: "50%" } }}>
@@ -596,23 +695,8 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
           ))}
         </Box>
         <Box>
-          {Array.isArray(CLOUD_PROVIDER_TYPES[selectedProvider]) && (
-            <Box alignItems="center" display="flex" mb={1}>
-              <Typography sx={{ mr: 1 }}>
-                <FormattedMessage id="connectionType" />{" "}
-              </Typography>
-              <ButtonGroup
-                buttons={CLOUD_PROVIDER_TYPES[selectedProvider]
-                  .filter((subtype) => isDataSourceConnectionTypeEnabled(subtype.connectionType))
-                  .map((subtype) => ({
-                    id: subtype.connectionType,
-                    messageId: subtype.messageId,
-                    action: () => setConnectionType(subtype.connectionType)
-                  }))}
-                activeButtonId={connectionType}
-              />
-            </Box>
-          )}
+          {renderAssumedAccount()}
+
           <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage(connectionType)}</Box>
           <form
             onSubmit={
@@ -622,7 +706,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                     const cloudType = getCloudTypeFromConnectionType(connectionType);
 
                     const getParameters = {
-                      [AWS_CNR]: connectionType === CONNECTION_TYPES.AWS_LINKED ? getAwsLinkedParameters : getAwsParameters,
+                      [AWS_CNR]: connectionType === CONNECTION_TYPES.AWS_MANAGEMENT ? getAwsLinkedParameters : getAwsParameters,
                       [AZURE_TENANT]: getAzureTenantParameters,
                       [AZURE_CNR]: getAzureSubscriptionParameters,
                       [GCP_CNR]: getGoogleParameters,
@@ -639,7 +723,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
             noValidate
           >
             <DataSourceNameField />
-            <ConnectionInputs connectionType={connectionType} />
+            <ConnectionInputs connectionType={connectionType} authenticationType={authenticationType} />
             <FormButtonsWrapper justifyContent={!showCancel ? "center" : "left"}>
               <ButtonLoader
                 dataTestId="btn_connect_cloud_account"

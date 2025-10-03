@@ -27,8 +27,9 @@ import {
   ServiceAccountCredentialsDescription
 } from "components/NebiusConfigFormElements";
 import QuestionMark from "components/QuestionMark";
-import { AWS_ROOT_CONNECT_CONFIG_SCHEMES, CONNECTION_TYPES } from "utils/constants";
+import { AUTHENTICATION_TYPES, AWS_ROOT_CONNECT_CONFIG_SCHEMES, CONNECTION_TYPES } from 'utils/constants';
 import { ObjectValues } from "utils/types";
+import { AwsMemberInput } from "./awsMember";
 
 export const AWS_ROOT_INPUTS_FIELD_NAMES = {
   IS_FIND_REPORT: "isFindReport",
@@ -112,11 +113,24 @@ const NebiusInputs = () => (
 );
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
+type AuthenticationType = ObjectValues<typeof AUTHENTICATION_TYPES>;
 
-const ConnectionInputs = ({ connectionType }: { connectionType: ConnectionType }) => {
+const ConnectionInputs = ({
+  connectionType,
+  authenticationType
+}: {
+  connectionType: ConnectionType;
+  authenticationType: AuthenticationType | null;
+}) => {
   switch (connectionType) {
     case CONNECTION_TYPES.AWS_ROOT:
       return <AwsRootInputs />;
+    case CONNECTION_TYPES.AWS_MANAGEMENT:
+      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? <AwsRootInputs /> : <AwsMemberInput />;
+    case CONNECTION_TYPES.AWS_MEMBER:
+      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? <AwsMemberInput /> : <AwsRootInputs />;
+    case CONNECTION_TYPES.AWS_STANDALONE:
+      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? <AwsRootInputs /> : <AwsRootInputs />;
     case CONNECTION_TYPES.AWS_LINKED:
       return <AwsLinkedCredentials />;
     case CONNECTION_TYPES.AZURE_TENANT:
