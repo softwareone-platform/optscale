@@ -1,10 +1,9 @@
-import {Page, Route, test} from "@playwright/test";
-import {debugLog} from "../debug-logging";
-import {InterceptionEntry} from "../../types/interceptor.types";
+import { expect, Page, Route } from '@playwright/test';
+import { debugLog } from '../debug-logging';
+import { InterceptionEntry } from '../../types/interceptor.types';
 
 const HTTP_STATUS_OK = 200;
-const CONTENT_TYPE_JSON = "application/json";
-const DEFAULT_ERROR_MESSAGE = "Some API interceptions were not triggered and forceFailure is set to true. See logs for details.";
+const CONTENT_TYPE_JSON = 'application/json';
 
 /**
  * Responds to a route with mock JSON data
@@ -27,7 +26,7 @@ export async function interceptRESTRequest<T>(
   page: Page,
   pattern: RegExp,
   mock: T,
-  onIntercepted: () => void
+  onIntercepted: () => void,
 ): Promise<void> {
   await page.route(pattern, async (route, request) => {
     onIntercepted();
@@ -44,14 +43,14 @@ export async function interceptGraphQLRequest<T>(
   pattern: RegExp,
   operationName: string,
   mock: T,
-  onIntercepted: () => void
+  onIntercepted: () => void,
 ): Promise<void> {
   await page.route(pattern, async (route, request) => {
-    if (request.method() !== "POST") {
+    if (request.method() !== 'POST') {
       return route.fallback();
     }
     try {
-      const body = JSON.parse(request.postData() || "{}");
+      const body = JSON.parse(request.postData() || '{}');
       if (body.operationName === operationName) {
         onIntercepted();
         await respondWithMockData(route, mock);
@@ -75,7 +74,7 @@ export async function interceptGraphQLRequest<T>(
 export async function apiInterceptors(
   page: Page,
   config: InterceptionEntry[],
-  failOnInterceptionMissing = false
+  failOnInterceptionMissing = false,
 ): Promise<() => void> {
   const interceptorHits = new Map<string, boolean>();
 
@@ -85,10 +84,9 @@ export async function apiInterceptors(
   };
 
   const interceptPromises = config.map(({ url, mock, gql }) => {
-    const urlRegExp = new RegExp(url || "/api$");
+    const urlRegExp = new RegExp(url || '/api$');
     const interceptorId = createInterceptorId(gql, url);
 
-    // Initialize hit tracking
     interceptorHits.set(interceptorId, false);
 
     return gql
@@ -98,21 +96,20 @@ export async function apiInterceptors(
 
   await Promise.all(interceptPromises);
 
-  // Return verification function
   return () => {
     const missingInterceptions = Array.from(interceptorHits.entries())
       .filter(([_, wasHit]) => !wasHit)
       .map(([id]) => id);
 
     if (missingInterceptions.length > 0) {
-      const message =
-        `${missingInterceptions.length} API interception(s) never occurred:\n` +
-        missingInterceptions.map(x => `- ${x}`).join("\n");
+      const message = `${missingInterceptions.length} API interception(s) never occurred:\n` +
+        missingInterceptions.map(x => `- ${x}`).join('\n');
 
       debugLog(message);
 
-      // Only fail the test if explicitly configured to do so
-      test.fail(!failOnInterceptionMissing, `${DEFAULT_ERROR_MESSAGE} ${message}`);
+      if (failOnInterceptionMissing) {
+        expect(missingInterceptions.length, message).toBe(0);
+      }
     }
   };
 }

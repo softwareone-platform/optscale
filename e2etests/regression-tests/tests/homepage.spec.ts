@@ -9,7 +9,7 @@ import {
   OrganizationExpensesPoolsMock, PoolsMock
 } from "../mocks/homepage.mocks";
 
-test.describe('FFC: Home @swo_regression', () => {
+test.describe.only('FFC: Home @swo_regression', () => {
 
   const apiInterceptions: InterceptionEntry[] = [
     { gql: 'DataSources', mock: HomeDataSourcesMock },
