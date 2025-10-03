@@ -108,4 +108,8 @@ export class ExpensesPage extends BasePage {
   async clickOwnerBtn(): Promise<void> {
     await this.ownerBtn.click();
   }
+
+  async clickGeographyBtn(): Promise<void> {
+    await this.geographyBtn.click();
+  }
 }

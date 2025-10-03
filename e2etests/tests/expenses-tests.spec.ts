@@ -2,12 +2,12 @@ import { test } from '../fixtures/page.fixture';
 import { debugLog } from '../utils/debug-logging';
 import { getExpectedDateRangeText, getThisMonthUnixDateRange } from '../utils/date-range-utils';
 import { expect } from '@playwright/test';
-import { ExpensesResponse } from '../types/api-response.types';
+import { ExpensesFilterByDataSourceResponse, ExpensesResponse } from '../types/api-response.types';
 import { InterceptionEntry } from '../types/interceptor.types';
 import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
 
-test.describe('[MPT-13974] Expenses Page Tests', { tag: ['@ui', '@expenses'] }, () => {
+test.describe('[MPT-13974] Expenses Page default view Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
@@ -80,7 +80,7 @@ test.describe('[MPT-13974] Expenses Page Tests', { tag: ['@ui', '@expenses'] }, 
   });
 });
 
-test.describe('[MPT-13974] Expenses page mocked tests', { tag: ['@ui', '@expenses'] }, () => {
+test.describe('[MPT-13974] Expenses page default view mocked tests', { tag: ['@ui', '@expenses'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
   test.describe.configure({ mode: 'default' });
 
@@ -140,6 +140,104 @@ test.describe('[MPT-13974] Expenses page mocked tests', { tag: ['@ui', '@expense
         match = await comparePdfFiles(expectedPath, actualPath, diffPath);
         expect.soft(match).toBe(true);
       });
+    });
+  });
+});
+
+test.describe('[MPT-13976] Expenses Page Source Breakdown Tests', { tag: ['@ui', '@expenses'] }, () => {
+  test.describe.configure({ mode: 'default' });
+  test.use({ restoreSession: true });
+
+  const defaultDateRange = getExpectedDateRangeText('this month');
+  const name = 'SoftwareOne (Test Environment)';
+
+  test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
+    await expensesPage.navigateToURL();
+    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForCanvas();
+    const dateRange = await datePicker.selectedDateText.textContent();
+    debugLog(`Current date range on Expenses Page: ${dateRange}`);
+
+    await expensesPage.clickSourceBtn();
+    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForCanvas();
+  });
+
+  test('[] Verify Expenses Page Source Breakdown layout', async ({ expensesPage, datePicker }) => {
+    await test.step('Verify Expenses Page Source Breakdown elements', async () => {
+      await expect(expensesPage.downloadButton).toBeHidden();
+      await expect(expensesPage.seeExpensesBreakdownGrid).toBeHidden();
+      await expect(expensesPage.dataSourceHeading).toBeVisible();
+      const dateRange = await datePicker.selectedDateText.textContent();
+      expect(dateRange.includes(defaultDateRange)).toBe(true);
+    });
+
+    await test.step('Click Cost Explorer breadcrumb and verify navigation', async () => {
+      await expensesPage.clickCostExploreBreadcrumb();
+      await expect(expensesPage.downloadButton).toBeVisible();
+    });
+  });
+
+  test.only('[] Validate API Source Breakdown chart data', async ({ expensesPage }) => {
+    const { startDate, endDate } = getThisMonthUnixDateRange();
+    let expensesData: ExpensesFilterByDataSourceResponse;
+
+    await test.step('Load expenses data', async () => {
+      const [expensesResponse] = await Promise.all([
+        expensesPage.page.waitForResponse(
+          resp => resp.url().includes('/pools_expenses/') && resp.url().includes('filter_by=cloud') && resp.request().method() === 'GET'
+        ),
+        expensesPage.page.reload(),
+      ]);
+
+      expensesData = await expensesResponse.json();
+    });
+
+    await test.step('Validate expenses date range and breakdown type', async () => {
+      expect.soft(expensesData.expenses.total).toBeGreaterThan(0);
+      expect.soft(expensesData.expenses.previous_total).toBeLessThan(startDate);
+      expect.soft(expensesData.expenses.name).toBe(name);
+
+      const breakdown = expensesData.expenses.breakdown;
+      const breakdownKeys = Object.keys(breakdown)
+        .map(Number)
+        .sort((a, b) => a - b);
+
+      // Check first key matches startDate
+      expect.soft(breakdownKeys[0]).toBe(startDate);
+
+      // Check last key is the last day at midnight (00:00:00 UTC)
+      const lastBreakdownKey = breakdownKeys[breakdownKeys.length - 1];
+      expect.soft(lastBreakdownKey).toBeLessThanOrEqual(endDate);
+
+      // Check there is a breakdown for each day in the range
+      expect.soft(breakdownKeys.length).toBe((lastBreakdownKey - startDate) / 86400 + 1);
+
+      // Check each breakdown value conforms to DataSourceExpense[] interface
+      for (const key of breakdownKeys) {
+        const breakdownValue = breakdown[key];
+        expect.soft(Array.isArray(breakdownValue)).toBe(true);
+
+        if (Array.isArray(breakdownValue)) {
+          for (const dataSource of breakdownValue) {
+            expect.soft(typeof dataSource.id).toBe('string');
+            expect.soft(typeof dataSource.name).toBe('string');
+            expect.soft(typeof dataSource.type).toBe('string');
+            expect.soft(typeof dataSource.expense).toBe('number');
+            expect.soft(dataSource.expense).toBeGreaterThanOrEqual(0);
+          }
+        }
+      }
+      // Check each cloud total conforms to CloudTotals interface
+      for (const cloudTotal of expensesData.expenses.cloud) {
+        expect.soft(typeof cloudTotal.id).toBe('string');
+        expect.soft(typeof cloudTotal.name).toBe('string');
+        expect.soft(typeof cloudTotal.type).toBe('string');
+        expect.soft(typeof cloudTotal.total).toBe('number');
+        expect.soft(cloudTotal.total).toBeGreaterThanOrEqual(0);
+        expect.soft(typeof cloudTotal.previous_total).toBe('number');
+        expect.soft(cloudTotal.previous_total).toBeGreaterThanOrEqual(0);
+      }
     });
   });
 });
