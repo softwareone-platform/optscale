@@ -1,7 +1,7 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
-import {test} from "../fixtures/page.fixture";
-import {debugLog} from "../utils/debug-logging";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
+import { test } from '../fixtures/page.fixture';
+import { debugLog } from '../utils/debug-logging';
 
 /**
  * Represents the Recommendations Page.
@@ -153,7 +153,6 @@ export class RecommendationsPage extends BasePage {
 
   readonly publicS3BucketsCardCountValue: Locator;
 
-
   /**
    * Initializes a new instance of the RecommendationsPage class.
    * @param {Page} page - The Playwright page object.
@@ -174,7 +173,9 @@ export class RecommendationsPage extends BasePage {
     this.s3DuplicatesCard = this.main.getByTestId('card_s3_duplicates');
     this.s3DuplicatesCaption = this.s3DuplicatesCard.locator('//span[@data-test-id="p_s3_duplicates"]');
     this.s3DuplicatesValue = this.s3DuplicatesCard.getByTestId('p_s3_duplicates_value');
-    this.s3DuplicatesPossibleMonthlySavingsValue = this.s3DuplicatesCard.locator('//div[.="Possible monthly savings"]/following-sibling::div');
+    this.s3DuplicatesPossibleMonthlySavingsValue = this.s3DuplicatesCard.locator(
+      '//div[.="Possible monthly savings"]/following-sibling::div'
+    );
     this.categoriesSelect = this.main.locator('//label[.="Categories"]/../div');
 
     this.applicableServices = this.main.locator('//label[.="Applicable services"]/../div');
@@ -196,43 +197,42 @@ export class RecommendationsPage extends BasePage {
     this.liGcpIAM = this.page.locator('[data-value="gcpAim"]');
     this.liGcpCloudStorage = this.page.locator('[data-value="gcpCloudStorage"]');
 
-    this.cardsBtn = this.main.getByRole('button', {name: 'Cards'});
-    this.tableBtn = this.main.getByRole('button', {name: 'Table'});
+    this.cardsBtn = this.main.getByRole('button', { name: 'Cards' });
+    this.tableBtn = this.main.getByRole('button', { name: 'Table' });
     this.searchInput = this.main.getByPlaceholder('Search');
     this.cardsGrid = this.main.locator('//div[contains(@class, "cardsGrid MuiBox-root")]');
     this.table = this.main.locator('table');
 
-
     // Data source icons
     const brandConfigs = {
-      aliBaba: {color: '#f16a21'},
-      aws: {color: '#252f3e'},
-      azure: {className: 'a'},
-      gcp: {color: '#fbbc05'}
+      aliBaba: { color: '#f16a21' },
+      aws: { color: '#252f3e' },
+      azure: { className: 'a' },
+      gcp: { color: '#fbbc05' },
     };
 
     const iconLocators = [
       // AliBaba
-      {prop: 'aliBabaECS_Icon', label: 'ECS', brand: 'aliBaba'},
-      {prop: 'aliBabaECS_VPC_Icon', label: 'ECS::VPC', brand: 'aliBaba'},
-      {prop: 'aliBabaEBS_Icon', label: 'EBS', brand: 'aliBaba'},
-      {prop: 'aliBabaRDS_Icon', label: 'RDS', brand: 'aliBaba'},
-      {prop: 'aliBabaSLB_Icon', label: 'SLB', brand: 'aliBaba'},
+      { prop: 'aliBabaECS_Icon', label: 'ECS', brand: 'aliBaba' },
+      { prop: 'aliBabaECS_VPC_Icon', label: 'ECS::VPC', brand: 'aliBaba' },
+      { prop: 'aliBabaEBS_Icon', label: 'EBS', brand: 'aliBaba' },
+      { prop: 'aliBabaRDS_Icon', label: 'RDS', brand: 'aliBaba' },
+      { prop: 'aliBabaSLB_Icon', label: 'SLB', brand: 'aliBaba' },
       // AWS
-      {prop: 'aws_IAM_Icon', label: 'IAM', brand: 'aws'},
-      {prop: 'aws_EC2_Icon', label: 'EC2', brand: 'aws'},
-      {prop: 'aws_EC2_EBS_Icon', label: 'EC2::EBS', brand: 'aws'},
-      {prop: 'aws_EC2_VPC_Icon', label: 'EC2:VPC', brand: 'aws'},
-      {prop: 'aws_RDS_Icon', label: 'RDS', brand: 'aws'},
-      {prop: 'aws_Kinesis_Icon', label: 'Kinesis', brand: 'aws'},
-      {prop: 'aws_S3_Icon', label: 'S3', brand: 'aws'},
+      { prop: 'aws_IAM_Icon', label: 'IAM', brand: 'aws' },
+      { prop: 'aws_EC2_Icon', label: 'EC2', brand: 'aws' },
+      { prop: 'aws_EC2_EBS_Icon', label: 'EC2::EBS', brand: 'aws' },
+      { prop: 'aws_EC2_VPC_Icon', label: 'EC2:VPC', brand: 'aws' },
+      { prop: 'aws_RDS_Icon', label: 'RDS', brand: 'aws' },
+      { prop: 'aws_Kinesis_Icon', label: 'Kinesis', brand: 'aws' },
+      { prop: 'aws_S3_Icon', label: 'S3', brand: 'aws' },
       // Azure
-      {prop: 'azureCompute_Icon', label: 'Compute', brand: 'azure'},
-      {prop: 'azureNetwork_Icon', label: 'Network', brand: 'azure'},
+      { prop: 'azureCompute_Icon', label: 'Compute', brand: 'azure' },
+      { prop: 'azureNetwork_Icon', label: 'Network', brand: 'azure' },
       // GCP
-      {prop: 'gcpComputeEngine_Icon', label: 'Compute Engine', brand: 'gcp'},
-      {prop: 'gcpIAM_Icon', label: 'IAM', brand: 'gcp'},
-      {prop: 'gcpCloudStorage_Icon', label: 'Cloud Storage', brand: 'gcp'},
+      { prop: 'gcpComputeEngine_Icon', label: 'Compute Engine', brand: 'gcp' },
+      { prop: 'gcpIAM_Icon', label: 'IAM', brand: 'gcp' },
+      { prop: 'gcpCloudStorage_Icon', label: 'Cloud Storage', brand: 'gcp' },
     ];
 
     for (const icon of iconLocators) {
@@ -257,9 +257,8 @@ export class RecommendationsPage extends BasePage {
     this.modalColumn6 = this.recommendationsModal.locator('//tr/td[6]');
     this.modalColumn7 = this.recommendationsModal.locator('//tr/td[7]');
     this.modalColumn8 = this.recommendationsModal.locator('//tr/td[8]');
-    this.cpaDevelopmentAndTestLink = this.page.getByRole("link", {name: "CPA (Development and Test)"});
-    this.azureQALink = this.page.getByRole("link", {name: "Azure QA"});
-
+    this.cpaDevelopmentAndTestLink = this.page.getByRole('link', { name: 'CPA (Development and Test)' });
+    this.azureQALink = this.page.getByRole('link', { name: 'Azure QA' });
 
     // Card and table locators
     this.firstCard = this.cardsGrid.locator('//div[contains(@class, "MuiCard-root")]').first();
@@ -273,7 +272,7 @@ export class RecommendationsPage extends BasePage {
 
     const locators = {
       abandonedAmazonS3Buckets: 'Abandoned Amazon S3 buckets',
-      abandonedImages: 'Abandoned images',
+      abandonedImages: 'Abandoned Images',
       abandonedInstances: 'Abandoned instances',
       abandonedKinesisStreams: 'Abandoned Kinesis Streams',
       abandonedLoadBalancers: 'Abandoned Load Balancers',
@@ -290,18 +289,26 @@ export class RecommendationsPage extends BasePage {
       obsoleteSnapshots: 'Obsolete snapshots',
       reservedInstancesOpportunities: 'Reserved instances opportunities',
       underutilizedInstances: 'Underutilized instances',
-      underutilizedRDSInstances: 'Underutilized RDS Instances'
+      underutilizedRDSInstances: 'Underutilized RDS Instances',
     };
 
     for (const [key, label] of Object.entries(locators)) {
       // Card savings value
-      (this as any)[`${key}CardSavingsValue`] = this.cardsGrid.locator(`//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`);
+      (this as any)[`${key}CardSavingsValue`] = this.cardsGrid.locator(
+        `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`
+      );
       // See all button
-      (this as any)[`${key}SeeAllBtn`] = this.cardsGrid.locator(`//h3[.="${label}"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]`);
+      (this as any)[`${key}SeeAllBtn`] = this.cardsGrid.locator(
+        `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]`
+      );
       // Table savings value
-      (this as any)[`${key}TableSavingsValue`] = this.table.locator(`//button[contains(text(), "${label}")]/ancestor::td/following-sibling::td[3]`);
+      (this as any)[`${key}TableSavingsValue`] = this.table.locator(
+        `//button[contains(text(), "${label}")]/ancestor::td/following-sibling::td[3]`
+      );
     }
-    this.publicS3BucketsCardCountValue = this.main.locator('//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]');
+    this.publicS3BucketsCardCountValue = this.main.locator(
+      '//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]'
+    );
   }
 
   /**
@@ -355,7 +362,7 @@ export class RecommendationsPage extends BasePage {
    * @returns {Promise<void>}
    */
   async clickCardsButtonIfNotActive(): Promise<void> {
-    if (!await this.evaluateActiveButton(this.cardsBtn)) {
+    if (!(await this.evaluateActiveButton(this.cardsBtn))) {
       await this.cardsBtn.click();
     }
   }
@@ -451,42 +458,42 @@ export class RecommendationsPage extends BasePage {
    */
   async calculateTotalSavingsFromCards(): Promise<number> {
     const cardData = [
-      {label: 'Abandoned Amazon S3 Buckets', locator: this.abandonedAmazonS3BucketsCardSavingsValue},
-      {label: 'Abandoned Images', locator: this.abandonedImagesCardSavingsValue},
-      {label: 'Abandoned Instances', locator: this.abandonedInstancesCardSavingsValue},
-      {label: 'Abandoned Kinesis Streams', locator: this.abandonedKinesisStreamsCardSavingsValue},
-      {label: 'Abandoned Load Balancers', locator: this.abandonedLoadBalancersCardSavingsValue},
+      { label: 'Abandoned Amazon S3 Buckets', locator: this.abandonedAmazonS3BucketsCardSavingsValue },
+      { label: 'Abandoned Images', locator: this.abandonedImagesCardSavingsValue },
+      { label: 'Abandoned Instances', locator: this.abandonedInstancesCardSavingsValue },
+      { label: 'Abandoned Kinesis Streams', locator: this.abandonedKinesisStreamsCardSavingsValue },
+      { label: 'Abandoned Load Balancers', locator: this.abandonedLoadBalancersCardSavingsValue },
       {
         label: 'Instances Eligible for Generation Upgrade',
-        locator: this.instancesEligibleForGenerationUpgradeCardSavingsValue
+        locator: this.instancesEligibleForGenerationUpgradeCardSavingsValue,
       },
-      {label: 'Instances for Shutdown', locator: this.instancesForShutdownCardSavingsValue},
+      { label: 'Instances for Shutdown', locator: this.instancesForShutdownCardSavingsValue },
       {
         label: 'Instances with Migration Opportunities',
-        locator: this.instancesWithMigrationOpportunitiesCardSavingsValue
+        locator: this.instancesWithMigrationOpportunitiesCardSavingsValue,
       },
       {
         label: 'Instances with Spot/Preemptible Opportunities',
-        locator: this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue
+        locator: this.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
       },
       {
         label: 'Instances with Subscription Opportunities',
-        locator: this.instancesWithSubscriptionOpportunitiesCardSavingsValue
+        locator: this.instancesWithSubscriptionOpportunitiesCardSavingsValue,
       },
-      {label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue},
-      {label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue},
-      {label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue},
-      {label: 'Obsolete IPs', locator: this.obsoleteIPsCardSavingsValue},
-      {label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue},
-      {label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue},
-      {label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue},
-      {label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue},
-      {label: 'Underutilized RDS Instances', locator: this.underutilizedRDSInstancesCardSavingsValue},
+      { label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue },
+      { label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue },
+      { label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue },
+      { label: 'Obsolete IPs', locator: this.obsoleteIPsCardSavingsValue },
+      { label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue },
+      { label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue },
+      { label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue },
+      { label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue },
+      { label: 'Underutilized RDS Instances', locator: this.underutilizedRDSInstancesCardSavingsValue },
     ];
 
     let total = 0;
 
-    for (const {label, locator} of cardData) {
+    for (const { label, locator } of cardData) {
       const value = await this.getCurrencyValue(locator);
       debugLog(`${label}: ${value}`);
       total += value;
@@ -598,7 +605,7 @@ export class RecommendationsPage extends BasePage {
     await this.allSeeAllBtns.last().waitFor();
 
     // Iterate over each "See All" button to calculate the total sum of items.
-    for (let i = 0; i < await this.allSeeAllBtns.count(); i++) {
+    for (let i = 0; i < (await this.allSeeAllBtns.count()); i++) {
       const seeAllButton = this.allSeeAllBtns.nth(i);
       const text = await seeAllButton.textContent();
 
@@ -623,4 +630,3 @@ export class RecommendationsPage extends BasePage {
     return totalSum;
   }
 }
-
