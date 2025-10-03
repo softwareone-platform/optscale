@@ -70,6 +70,11 @@ export const CLOUD_PROVIDERS = Object.freeze({
   KUBERNETES: "kubernetes"
 });
 
+export const AUTHENTICATION_TYPES = Object.freeze({
+  ASSUMED_ROLE: "assumedRole",
+  ACCESS_KEY: "accessKey"
+});
+
 export const CONNECTION_TYPES = Object.freeze({
   AWS_MANAGEMENT: "awsManagement",
   AWS_MEMBER: "awsMember",

@@ -1,20 +1,14 @@
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ConnectForm from "components/ConnectForm";
-import {
-  AwsRootCredentials,
-  AwsRootBillingBucket,
-} from "components/DataSourceCredentialFields";
+import { AwsRootCredentials, AwsRootBillingBucket } from "components/DataSourceCredentialFields";
 import { RadioGroup } from "components/forms/common/fields";
 import { AWS_ROOT_CONNECT_CONFIG_SCHEMES } from "utils/constants";
-export const AWS_ROOT_INPUTS_FIELD_NAMES = {
-  IS_FIND_REPORT: "isFindReport",
-  CONFIG_SCHEME: "configScheme"
-};
+import { AWS_ROOT_INPUTS_FIELD_NAMES, WatcherType } from "./AwsFieldNames";
 
-export const AwsMemberInput = () => (
+export const FormAwsAccessKey = () => (
   <ConnectForm>
-    {({ watch }) => {
+    {({ watch }: WatcherType) => {
       const isFindReportWatch = watch(AWS_ROOT_INPUTS_FIELD_NAMES.IS_FIND_REPORT, true);
       const configScheme =
         watch(AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME, AWS_ROOT_CONNECT_CONFIG_SCHEMES.CREATE_REPORT) ||
@@ -26,7 +20,7 @@ export const AwsMemberInput = () => (
             <>
               <RadioGroup
                 name={AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME}
-                defaultValue={configScheme}
+                defaultValue={configScheme as string}
                 radioButtons={[
                   {
                     value: AWS_ROOT_CONNECT_CONFIG_SCHEMES.CREATE_REPORT,

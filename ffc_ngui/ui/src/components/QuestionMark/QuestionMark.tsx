@@ -5,6 +5,10 @@ import { FormattedMessage } from "react-intl";
 import Tooltip from "components/Tooltip";
 import useStyles from "./QuestionMark.styles";
 
+type IntlMessageValue = string | number | boolean | null | undefined | ReactNode | ((chunks: ReactNode) => ReactNode);
+
+type IntlMessageValues = Record<string, IntlMessageValue>;
+
 type TooltipTitleType =
   | {
       tooltipText: ReactNode;
@@ -15,7 +19,7 @@ type TooltipTitleType =
   | {
       tooltipText?: never;
       messageId: string;
-      messageValues?: { [key: string]: string };
+      messageValues?: IntlMessageValues;
       onTooltipTitleClick?: (event: MouseEvent<HTMLDivElement>) => void;
     };
 

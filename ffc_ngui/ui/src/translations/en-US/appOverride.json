@@ -1,5 +1,6 @@
 {
   "AWSAccountId": "AWS account ID",
+  "awsAssumedRoleName": "Assumed role name",
   "SharedEnvironment": "Shared environment",
   "abandonedInstancesTitle": "Abandoned instances",
   "abandonedKinesisStreams": "Abandoned kinesis Streams",
