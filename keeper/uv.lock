@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -26,7 +26,7 @@ wheels = [
 [[package]]
 name = "auth-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/auth_client" }
+source = { editable = "../optscale_client/auth_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -79,7 +79,7 @@ wheels = [
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/config_client" }
+source = { editable = "../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -162,10 +162,10 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "apispec", specifier = "==6.3.1" },
-    { name = "auth-client", directory = "../optscale_client/auth_client" },
-    { name = "config-client", directory = "../optscale_client/config_client" },
+    { name = "auth-client", editable = "../optscale_client/auth_client" },
+    { name = "config-client", editable = "../optscale_client/config_client" },
     { name = "mongoengine", specifier = "==0.27.0" },
-    { name = "optscale-exceptions", directory = "../tools/optscale_exceptions" },
+    { name = "optscale-exceptions", editable = "../tools/optscale_exceptions" },
     { name = "pymongo", specifier = "==4.6.3" },
     { name = "pyyaml", specifier = "==6.0.1" },
     { name = "requests", specifier = "==2.32.4" },
@@ -178,7 +178,7 @@ dev = [
     { name = "mongomock", specifier = "==3.19.0" },
     { name = "pycodestyle", specifier = "==2.11.1" },
     { name = "pylint", specifier = "==3.0.2" },
-    { name = "report-client", directory = "../optscale_client/report_client" },
+    { name = "report-client", editable = "../optscale_client/report_client" },
     { name = "setuptools", specifier = "==80.9.0" },
 ]
 
@@ -219,7 +219,7 @@ wheels = [
 [[package]]
 name = "optscale-exceptions"
 version = "0.0.0"
-source = { directory = "../tools/optscale_exceptions" }
+source = { editable = "../tools/optscale_exceptions" }
 dependencies = [
     { name = "requests" },
     { name = "tornado" },
@@ -323,7 +323,7 @@ wheels = [
 [[package]]
 name = "report-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/report_client" }
+source = { editable = "../optscale_client/report_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

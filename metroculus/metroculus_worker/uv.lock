@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -462,6 +462,18 @@ wheels = [
 ]
 
 [[package]]
+name = "click"
+version = "8.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/46/61/de6cd827efad202d7057d93e0fed9294b96952e188f7384832791c7b2254/click-8.3.0.tar.gz", hash = "sha256:e7b8232224eba16f4ebe410c25ced9f7875cb5f3263ffc93cc3e8da705e229c4", size = 276943, upload-time = "2025-09-18T17:32:23.696Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/d3/9dcc0f5797f070ec8edf30fbadfb200e71d9db6b84d211e3b2085a7589a0/click-8.3.0-py3-none-any.whl", hash = "sha256:9b9f285302c6e3064f4330c05f05b81945b2a39544279343e6e7c5f27a9baddc", size = 107295, upload-time = "2025-09-18T17:32:22.42Z" },
+]
+
+[[package]]
 name = "clickhouse-connect"
 version = "0.8.15"
 source = { registry = "https://pypi.org/simple" }
@@ -489,7 +501,7 @@ wheels = [
 [[package]]
 name = "cloud-adapter"
 version = "0.0.0"
-source = { directory = "../../tools/cloud_adapter" }
+source = { editable = "../../tools/cloud_adapter" }
 dependencies = [
     { name = "aliyun-python-sdk-alb" },
     { name = "aliyun-python-sdk-bssopenapi" },
@@ -589,7 +601,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/config_client" }
+source = { editable = "../../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -599,6 +611,15 @@ dependencies = [
 requires-dist = [
     { name = "python-etcd", specifier = "==0.4.5" },
     { name = "retrying" },
+]
+
+[[package]]
+name = "configparser"
+version = "7.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8b/ac/ea19242153b5e8be412a726a70e82c7b5c1537c83f61b20995b2eda3dcd7/configparser-7.2.0.tar.gz", hash = "sha256:b629cc8ae916e3afbd36d1b3d093f34193d851e11998920fdcfc4552218b7b70", size = 51273, upload-time = "2025-03-08T16:04:09.339Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/09/fe/f61e7129e9e689d9e40bbf8a36fb90f04eceb477f4617c02c6a18463e81f/configparser-7.2.0-py3-none-any.whl", hash = "sha256:fee5e1f3db4156dcd0ed95bc4edfa3580475537711f67a819c966b389d09ce62", size = 17232, upload-time = "2025-03-08T16:04:07.743Z" },
 ]
 
 [[package]]
@@ -652,6 +673,33 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/dd/4b/8202e5565c0e2a77a915a384d6f3422605f2a9c55918a727c17605481d23/databricks-sdk-0.11.0.tar.gz", hash = "sha256:054b7ff5603e1ef5f4e852e34df27ccd44efc2423845d8b9dd58b580d601b531", size = 305891, upload-time = "2023-10-12T14:05:20.732Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ec/be/84bb3b39418c1f5014832bf776963e519adae44af566826dfc7cec6084db/databricks_sdk-0.11.0-py3-none-any.whl", hash = "sha256:f36eee592c8e5d9cc36a8257522e5900d0c4eb2ecf0ce52d9f38073a6934ba0f", size = 298910, upload-time = "2023-10-12T14:05:18.687Z" },
+]
+
+[[package]]
+name = "db"
+version = "0.1.0"
+source = { editable = "../../tools/db" }
+dependencies = [
+    { name = "clickhouse-connect" },
+    { name = "config-client" },
+    { name = "mongodb-migrations" },
+    { name = "pymongo" },
+    { name = "typer" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "clickhouse-connect", specifier = ">=0.8.15" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
+    { name = "mongodb-migrations", specifier = ">=0.7.0" },
+    { name = "pymongo", specifier = ">=4.6.3,<5.0" },
+    { name = "typer", specifier = ">=0.19.2" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=8.4.2" },
+    { name = "ruff", specifier = ">=0.13.1" },
 ]
 
 [[package]]
@@ -1000,6 +1048,18 @@ wheels = [
 ]
 
 [[package]]
+name = "markdown-it-py"
+version = "4.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mdurl" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5b/f5/4ec618ed16cc4f8fb3b701563655a69816155e79e24a17b651541804721d/markdown_it_py-4.0.0.tar.gz", hash = "sha256:cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3", size = 73070, upload-time = "2025-08-11T12:57:52.854Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/94/54/e7d793b573f298e1c9013b8c4dade17d481164aa517d1d7148619c2cedbf/markdown_it_py-4.0.0-py3-none-any.whl", hash = "sha256:87327c59b172c5011896038353a81343b6754500a08cd7a4973bb48c6d578147", size = 87321, upload-time = "2025-08-11T12:57:51.923Z" },
+]
+
+[[package]]
 name = "mccabe"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1009,9 +1069,18 @@ wheels = [
 ]
 
 [[package]]
+name = "mdurl"
+version = "0.1.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
+]
+
+[[package]]
 name = "metroculus-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/metroculus_client" }
+source = { editable = "../../optscale_client/metroculus_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1031,6 +1100,7 @@ dependencies = [
     { name = "clickhouse-connect" },
     { name = "cloud-adapter" },
     { name = "config-client" },
+    { name = "db" },
     { name = "kombu" },
     { name = "optscale-data" },
     { name = "optscale-time" },
@@ -1051,23 +1121,37 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "clickhouse-connect", specifier = "==0.8.15" },
-    { name = "cloud-adapter", directory = "../../tools/cloud_adapter" },
-    { name = "config-client", directory = "../../optscale_client/config_client" },
+    { name = "cloud-adapter", editable = "../../tools/cloud_adapter" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
+    { name = "db", editable = "../../tools/db" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "optscale-data", directory = "../../tools/optscale_data" },
-    { name = "optscale-time", directory = "../../tools/optscale_time" },
+    { name = "optscale-data", editable = "../../tools/optscale_data" },
+    { name = "optscale-time", editable = "../../tools/optscale_time" },
     { name = "pymongo", specifier = "==4.6.3" },
     { name = "requests", specifier = "==2.32.4" },
-    { name = "restapi-client", directory = "../../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../../optscale_client/rest_api_client" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "concurrencytest", specifier = "==0.1.2" },
     { name = "coverage", specifier = "==4.2" },
-    { name = "metroculus-client", directory = "../../optscale_client/metroculus_client" },
+    { name = "metroculus-client", editable = "../../optscale_client/metroculus_client" },
     { name = "pycodestyle", specifier = "==2.11.1" },
     { name = "pylint", specifier = "==3.0.2" },
+]
+
+[[package]]
+name = "mongodb-migrations"
+version = "1.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "configparser" },
+    { name = "pymongo" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/de/26/35949496de8d7ad90dde6666f8901f9863c6ff77547a2407ace5f12e74f5/mongodb-migrations-1.3.1.tar.gz", hash = "sha256:5bf866e3a24c9ca351c38ed2181184c342ca491012bc9f7fb3285cb22ca1d548", size = 18911, upload-time = "2024-05-13T21:44:55.101Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/98/0fa09680926108c5d859b4b42dd241dcc77157a67469e320eb3678ebbaa3/mongodb_migrations-1.3.1-py3-none-any.whl", hash = "sha256:3b0eb6cc79b3481f9f562ecaa03e3d7bc545a6e4200c8da3e31562906c89985f", size = 19487, upload-time = "2024-05-13T21:44:53.178Z" },
 ]
 
 [[package]]
@@ -1137,7 +1221,7 @@ wheels = [
 [[package]]
 name = "optscale-data"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_data" }
+source = { editable = "../../tools/optscale_data" }
 dependencies = [
     { name = "clickhouse-connect" },
 ]
@@ -1148,7 +1232,7 @@ requires-dist = [{ name = "clickhouse-connect", specifier = "==0.8.15" }]
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_time" }
+source = { editable = "../../tools/optscale_time" }
 
 [[package]]
 name = "packaging"
@@ -1231,6 +1315,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/1d/b2/31537cf4b1ca988837256c910a668b553fceb8f069bedc4b1c826024b52c/pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6", size = 172736, upload-time = "2024-03-30T13:22:22.564Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/13/a3/a812df4e2dd5696d1f351d58b8fe16a405b234ad2886a0dab9183fb78109/pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc", size = 117552, upload-time = "2024-03-30T13:22:20.476Z" },
+]
+
+[[package]]
+name = "pygments"
+version = "2.19.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887", size = 4968631, upload-time = "2025-06-21T13:39:12.283Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
 ]
 
 [[package]]
@@ -1359,7 +1452,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/rest_api_client" }
+source = { editable = "../../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1379,6 +1472,19 @@ dependencies = [
     { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/44/ef/beae4b4ef80902f22e3af073397f079c96969c69b2c7d52a57ea9ae61c9d/retrying-1.3.3.tar.gz", hash = "sha256:08c039560a6da2fe4f2c426d0766e284d3b736e355f8dd24b37367b0bb41973b", size = 10890, upload-time = "2014-12-15T01:15:08.281Z" }
+
+[[package]]
+name = "rich"
+version = "14.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "markdown-it-py" },
+    { name = "pygments" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fe/75/af448d8e52bf1d8fa6a9d089ca6c07ff4453d86c65c145d0a300bb073b9b/rich-14.1.0.tar.gz", hash = "sha256:e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8", size = 224441, upload-time = "2025-07-25T07:32:58.125Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e3/30/3c4d035596d3cf444529e0b2953ad0466f6049528a879d27534700580395/rich-14.1.0-py3-none-any.whl", hash = "sha256:536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f", size = 243368, upload-time = "2025-07-25T07:32:56.73Z" },
+]
 
 [[package]]
 name = "rsa"
@@ -1414,6 +1520,15 @@ wheels = [
 ]
 
 [[package]]
+name = "shellingham"
+version = "1.5.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/58/15/8b3609fd3830ef7b27b655beb4b4e9c62313a4e8da8c676e142cc210d58e/shellingham-1.5.4.tar.gz", hash = "sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de", size = 10310, upload-time = "2023-10-24T04:13:40.426Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e0/f9/0595336914c5619e5f28a1fb793285925a8cd4b432c9da0a987836c7f822/shellingham-1.5.4-py2.py3-none-any.whl", hash = "sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686", size = 9755, upload-time = "2023-10-24T04:13:38.866Z" },
+]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1441,6 +1556,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/cc/18/0bbf3884e9eaa38819ebe46a7bd25dcd56b67434402b66a58c4b8e552575/tomlkit-0.13.3.tar.gz", hash = "sha256:430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1", size = 185207, upload-time = "2025-06-05T07:13:44.947Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/75/8539d011f6be8e29f339c42e633aae3cb73bffa95dd0f9adec09b9c58e85/tomlkit-0.13.3-py3-none-any.whl", hash = "sha256:c89c649d79ee40629a9fda55f8ace8c6a1b42deb912b2a8fd8d942ddadb606b0", size = 38901, upload-time = "2025-06-05T07:13:43.546Z" },
+]
+
+[[package]]
+name = "typer"
+version = "0.19.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "rich" },
+    { name = "shellingham" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/21/ca/950278884e2ca20547ff3eb109478c6baf6b8cf219318e6bc4f666fad8e8/typer-0.19.2.tar.gz", hash = "sha256:9ad824308ded0ad06cc716434705f691d4ee0bfd0fb081839d2e426860e7fdca", size = 104755, upload-time = "2025-09-23T09:47:48.256Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/22/35617eee79080a5d071d0f14ad698d325ee6b3bf824fc0467c03b30e7fa8/typer-0.19.2-py3-none-any.whl", hash = "sha256:755e7e19670ffad8283db353267cb81ef252f595aa6834a0d1ca9312d9326cb9", size = 46748, upload-time = "2025-09-23T09:47:46.777Z" },
 ]
 
 [[package]]

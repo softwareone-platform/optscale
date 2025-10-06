@@ -19,6 +19,8 @@ spec:
     app: {{ $config.name }}
     release: {{ .Release.Name }}
 ---
+{{ include "migrations_job" (list $config .) }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

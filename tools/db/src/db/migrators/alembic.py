@@ -1,9 +1,12 @@
 import configparser
 import logging
 import os
+import pathlib
 import shlex
 import subprocess
 import sys
+
+from optscale_client.config_client.client import Client as ConfigClient
 
 from db.migrators.base import BaseMigrator
 from db.utils import PROJECT_ROOT, build_url
@@ -19,8 +22,16 @@ class ConfigTemplate:
         self.config = None
 
     def load(self, name="alembic.template"):
+        LOG.debug("Loading alembic config template: %s", self.service_path / name)
+
+        if not (self.service_path / name).exists():
+            raise FileNotFoundError(f"Template file {self.service_path / name} not found")
+
         config = configparser.ConfigParser()
         config.read(str(self.service_path / name))
+
+        LOG.debug("Alembic config template loaded successfully")
+
         self.config = config
         return self.config
 
@@ -56,25 +67,27 @@ class ConfigTemplate:
             sys.exit(proc.returncode)
 
 
-# TODO: Merge the template and the migrator into a single class
-
-
 class AlembicMigrator(BaseMigrator):
+    def __init__(self, service_path: pathlib.Path, config_client: ConfigClient, db_params_etcd_path: str) -> None:
+        super().__init__(service_path=service_path, config_client=config_client)
+        self.db_params_etcd_path = db_params_etcd_path
+
     def save_config(self, file_name: str = "alembic.ini") -> ConfigTemplate:
+        db_params = self.config_client.read_branch(self.db_params_etcd_path)
         template = ConfigTemplate(self.service_path)
-        # TODO: Add support for passing the db port as well
+
         template.save(
-            host=self.db_host,
-            username=self.db_username,
-            password=self.db_password,
-            db=self.db_name,
+            host=db_params["host"],
+            username=db_params["user"],
+            password=db_params["password"],
+            db=db_params["db"],
             file_name=file_name,
         )
+
         return template
 
     def generate_migration(self, name: str):
         template = self.save_config()
-        # TODO: Discrepency with migrate -- do we need the -c arg here?
         cmd = ["alembic", "revision", "--autogenerate", "-m", name]
         template.execute(cmd)
 

@@ -12,12 +12,14 @@ dependencies = [
     "pymongo==4.6.3",
     "pyyaml==6.0.1",
     "restapi-client",
+    "db",
 ]
 
 [tool.uv.sources]
-config-client = { path = "../../optscale_client/config_client" }
-restapi-client = { path = "../../optscale_client/rest_api_client" }
-optscale-exceptions = { path = "../../tools/optscale_exceptions" }
+config-client = { path = "../../optscale_client/config_client", editable = true }
+restapi-client = { path = "../../optscale_client/rest_api_client", editable = true }
+optscale-exceptions = { path = "../../tools/optscale_exceptions", editable = true }
+db = { path = "../../tools/db", editable = true }
 
 [dependency-groups]
 dev = [

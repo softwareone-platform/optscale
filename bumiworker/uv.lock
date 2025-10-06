@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -433,16 +433,16 @@ dev = [
 requires-dist = [
     { name = "boto3", specifier = "==1.34.7" },
     { name = "clickhouse-connect", specifier = "==0.8.15" },
-    { name = "cloud-adapter", directory = "../tools/cloud_adapter" },
-    { name = "config-client", directory = "../optscale_client/config_client" },
-    { name = "herald-client", directory = "../optscale_client/herald_client" },
-    { name = "insider-client", directory = "../optscale_client/insider_client" },
+    { name = "cloud-adapter", editable = "../tools/cloud_adapter" },
+    { name = "config-client", editable = "../optscale_client/config_client" },
+    { name = "herald-client", editable = "../optscale_client/herald_client" },
+    { name = "insider-client", editable = "../optscale_client/insider_client" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "metroculus-client", directory = "../optscale_client/metroculus_client" },
-    { name = "optscale-data", directory = "../tools/optscale_data" },
-    { name = "optscale-time", directory = "../tools/optscale_time" },
+    { name = "metroculus-client", editable = "../optscale_client/metroculus_client" },
+    { name = "optscale-data", editable = "../tools/optscale_data" },
+    { name = "optscale-time", editable = "../tools/optscale_time" },
     { name = "pymongo", specifier = "==4.6.3" },
-    { name = "restapi-client", directory = "../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../optscale_client/rest_api_client" },
 ]
 
 [package.metadata.requires-dev]
@@ -542,7 +542,7 @@ wheels = [
 [[package]]
 name = "cloud-adapter"
 version = "0.0.0"
-source = { directory = "../tools/cloud_adapter" }
+source = { editable = "../tools/cloud_adapter" }
 dependencies = [
     { name = "aliyun-python-sdk-alb" },
     { name = "aliyun-python-sdk-bssopenapi" },
@@ -632,7 +632,7 @@ wheels = [
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/config_client" }
+source = { editable = "../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -984,7 +984,7 @@ wheels = [
 [[package]]
 name = "herald-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/herald_client" }
+source = { editable = "../optscale_client/herald_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1008,7 +1008,7 @@ wheels = [
 [[package]]
 name = "insider-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/insider_client" }
+source = { editable = "../optscale_client/insider_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1088,7 +1088,7 @@ wheels = [
 [[package]]
 name = "metroculus-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/metroculus_client" }
+source = { editable = "../optscale_client/metroculus_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1180,7 +1180,7 @@ wheels = [
 [[package]]
 name = "optscale-data"
 version = "0.0.0"
-source = { directory = "../tools/optscale_data" }
+source = { editable = "../tools/optscale_data" }
 dependencies = [
     { name = "clickhouse-connect" },
 ]
@@ -1191,7 +1191,7 @@ requires-dist = [{ name = "clickhouse-connect", specifier = "==0.8.15" }]
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../tools/optscale_time" }
+source = { editable = "../tools/optscale_time" }
 
 [[package]]
 name = "packaging"
@@ -1389,7 +1389,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/rest_api_client" }
+source = { editable = "../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

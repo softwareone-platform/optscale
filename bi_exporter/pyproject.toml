@@ -15,10 +15,10 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-config-client = { path = "../optscale_client/config_client" }
-restapi-client = { path = "../optscale_client/rest_api_client" }
-optscale-data = { path = "../tools/optscale_data" }
-optscale-time = { path = "../tools/optscale_time" }
+config-client = { path = "../optscale_client/config_client", editable = true }
+restapi-client = { path = "../optscale_client/rest_api_client", editable = true }
+optscale-data = { path = "../tools/optscale_data", editable = true }
+optscale-time = { path = "../tools/optscale_time", editable = true }
 
 [dependency-groups]
 dev = [

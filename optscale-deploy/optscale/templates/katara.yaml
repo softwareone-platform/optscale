@@ -55,6 +55,8 @@ spec:
         - name: HX_KATARA_ROLE
           value: {{ $config.scheduler.role }}
 ---
+{{ include "migrations_job" (list $config .) }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

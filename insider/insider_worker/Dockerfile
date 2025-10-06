@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.authors="Hystax"
 WORKDIR /usr/src/app/
 
 COPY optscale_client optscale_client
+COPY tools tools
 
 COPY insider/__init__.py insider/
 COPY insider/insider_worker/pyproject.toml insider/insider_worker/

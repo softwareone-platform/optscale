@@ -1,5 +1,7 @@
 {{- $config := .Values.metroculus_worker -}}
 ---
+{{ include "migrations_job" (list $config .) }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

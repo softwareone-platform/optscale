@@ -1,7 +1,8 @@
 import pathlib
 from urllib.parse import quote, urlunparse
 
-PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent.resolve()
+DB_TOOL_ROOT = pathlib.Path(__file__).parent.parent.parent.resolve()
+PROJECT_ROOT = DB_TOOL_ROOT.parent.parent.resolve()
 
 
 def build_url(

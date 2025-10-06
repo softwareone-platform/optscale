@@ -18,14 +18,14 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-cloud-adapter = { path = "../tools/cloud_adapter" }
-optscale-data = { path = "../tools/optscale_data" }
-optscale-time = { path = "../tools/optscale_time" }
-config-client = { path = "../optscale_client/config_client" }
-herald-client = { path = "../optscale_client/herald_client" }
-insider-client = { path = "../optscale_client/insider_client" }
-metroculus-client = { path = "../optscale_client/metroculus_client" }
-restapi-client = { path = "../optscale_client/rest_api_client" }
+cloud-adapter = { path = "../tools/cloud_adapter", editable = true }
+optscale-data = { path = "../tools/optscale_data", editable = true }
+optscale-time = { path = "../tools/optscale_time", editable = true }
+config-client = { path = "../optscale_client/config_client", editable = true }
+herald-client = { path = "../optscale_client/herald_client", editable = true }
+insider-client = { path = "../optscale_client/insider_client", editable = true }
+metroculus-client = { path = "../optscale_client/metroculus_client", editable = true }
+restapi-client = { path = "../optscale_client/rest_api_client", editable = true }
 
 [dependency-groups]
 dev = [

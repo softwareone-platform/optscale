@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -464,7 +464,7 @@ wheels = [
 [[package]]
 name = "cloud-adapter"
 version = "0.0.0"
-source = { directory = "../../tools/cloud_adapter" }
+source = { editable = "../../tools/cloud_adapter" }
 dependencies = [
     { name = "aliyun-python-sdk-alb" },
     { name = "aliyun-python-sdk-bssopenapi" },
@@ -564,7 +564,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/config_client" }
+source = { editable = "../../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -952,13 +952,13 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "apispec", specifier = "==6.3.1" },
-    { name = "cloud-adapter", directory = "../../tools/cloud_adapter" },
-    { name = "config-client", directory = "../../optscale_client/config_client" },
-    { name = "optscale-exceptions", directory = "../../tools/optscale_exceptions" },
-    { name = "optscale-time", directory = "../../tools/optscale_time" },
+    { name = "cloud-adapter", editable = "../../tools/cloud_adapter" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
+    { name = "optscale-exceptions", editable = "../../tools/optscale_exceptions" },
+    { name = "optscale-time", editable = "../../tools/optscale_time" },
     { name = "pymongo", specifier = "==4.6.3" },
     { name = "pyyaml", specifier = "==6.0.1" },
-    { name = "restapi-client", directory = "../../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../../optscale_client/rest_api_client" },
     { name = "tornado", specifier = "==6.5" },
 ]
 
@@ -967,7 +967,7 @@ dev = [
     { name = "concurrencytest", specifier = "==0.1.2" },
     { name = "coverage", specifier = "==6.4.2" },
     { name = "freezegun", specifier = "==0.3.8" },
-    { name = "insider-client", directory = "../../optscale_client/insider_client" },
+    { name = "insider-client", editable = "../../optscale_client/insider_client" },
     { name = "mongomock", specifier = "==3.22.1" },
     { name = "pycodestyle", specifier = "==2.11.1" },
     { name = "pylint", specifier = "==3.0.2" },
@@ -976,7 +976,7 @@ dev = [
 [[package]]
 name = "insider-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/insider_client" }
+source = { editable = "../../optscale_client/insider_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1113,7 +1113,7 @@ wheels = [
 [[package]]
 name = "optscale-exceptions"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_exceptions" }
+source = { editable = "../../tools/optscale_exceptions" }
 dependencies = [
     { name = "requests" },
     { name = "tornado" },
@@ -1128,7 +1128,7 @@ requires-dist = [
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_time" }
+source = { editable = "../../tools/optscale_time" }
 
 [[package]]
 name = "packaging"
@@ -1345,7 +1345,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/rest_api_client" }
+source = { editable = "../../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

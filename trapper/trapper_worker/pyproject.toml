@@ -14,10 +14,10 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-restapi-client = { path = "../../optscale_client/rest_api_client" }
-cloud-adapter = { path = "../../tools/cloud_adapter" }
-config-client = { path = "../../optscale_client/config_client" }
-optscale-time = { path = "../../tools/optscale_time" }
+restapi-client = { path = "../../optscale_client/rest_api_client", editable = true }
+cloud-adapter = { path = "../../tools/cloud_adapter", editable = true }
+config-client = { path = "../../optscale_client/config_client", editable = true }
+optscale-time = { path = "../../tools/optscale_time", editable = true }
 
 [dependency-groups]
 dev = [
