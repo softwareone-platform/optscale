@@ -520,7 +520,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         old_config = cloud_acc_obj.decoded_config
         config = kwargs.pop('config', {})
         linked = config.get("linked", False)
-        if linked != old_config.get('linked', False):
+        if 'linked' in config and (linked != old_config.get('linked', False)):
             raise WrongArgumentsException(Err.OE0211, ['linked'])
         LOG.info('Editing cloud account %s. Input: %s. Config: %s', item_id,
                  kwargs, bool(config))

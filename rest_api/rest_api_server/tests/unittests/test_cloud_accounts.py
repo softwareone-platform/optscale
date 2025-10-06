@@ -343,6 +343,35 @@ class TestCloudAccountApi(TestApiBase):
 
     @patch('rest_api.rest_api_server.controllers.cloud_account.'
            'ExpensesRecalculationScheduleController.schedule')
+    def test_edit_assumed_linked_patch_ok(self, t_schedule):
+        config = {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'va-test',
+                'linked': True,  # linked acc with assumed role
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, config)
+        ca_id = cloud_acc["id"]
+        # check service creds account id in config
+        patch('tools.cloud_adapter.clouds.aws.Aws.validate_credentials',
+              return_value={'account_id': ca_id, 'warnings': []}).start()
+
+        ch_config = {
+            'config': {
+                'assume_role_account_id': '87629',  # valid
+                'assume_role_name': 'va-test1',  # valid
+                # linked not passed
+            }
+        }
+        code, new_cloud_acc = self.client.cloud_account_update(
+            ca_id, ch_config)
+        self.assertEqual(code, 200)
+
+    @patch('rest_api.rest_api_server.controllers.cloud_account.'
+           'ExpensesRecalculationScheduleController.schedule')
     def test_edit_assumed_role_required(self, t_schedule):
         config = {
             'name': 'assume_cloud_acc',
