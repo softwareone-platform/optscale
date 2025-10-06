@@ -2,10 +2,12 @@ import hashlib
 import importlib
 import logging
 import os
+import pathlib
 from datetime import UTC, datetime
 
 import clickhouse_connect
 from clickhouse_connect.driver.client import Client as ClickhouseClient
+from optscale_client.config_client.client import Client as ConfigClient
 
 from db.migrators.base import BaseMigrator
 from db.utils import PROJECT_ROOT
@@ -17,25 +19,23 @@ VERSIONS_TABLE = "schema_versions"
 
 
 class ClickhouseMigrator(BaseMigrator):
-    def __post_init__(self):
+    def __init__(self, service_path: pathlib.Path, config_client: ConfigClient, database_name: str) -> None:
+        super().__init__(service_path=service_path, config_client=config_client)
+        self.database_name = database_name
         self._clickhouse_client: ClickhouseClient | None = None
 
     @property
-    def clickhouse_client(self) -> ClickhouseClient:
+    def clickhouse_client(self):
         if self._clickhouse_client is None:
+            user, password, host, _, port, secure = self.config_client.clickhouse_params()
             self._clickhouse_client = clickhouse_connect.get_client(
-                host=self.db_host,
-                port=self.db_port,
-                user=self.db_username,
-                password=self.db_password,
-                database=self.db_name,
-                secure=self.db_secure,
+                host=host, password=password, database=self.database_name, user=user, port=port, secure=secure
             )
 
         return self._clickhouse_client
 
     def init_db(self):
-        self.clickhouse_client.query(f"""CREATE DATABASE IF NOT EXISTS {self.db_name}""")
+        self.clickhouse_client.query(f"CREATE DATABASE IF NOT EXISTS {self.database_name}")
 
     def create_versions_table(self):
         self.clickhouse_client.query(
@@ -120,15 +120,14 @@ class ClickhouseMigrator(BaseMigrator):
         self.check_versions(local_versions, ch_versions)
 
         import_base = self.service_path.relative_to(PROJECT_ROOT)
-        import_base = import_base.replace("/", ".")
+        import_base = str(import_base).replace("/", ".")
 
         new_migrations = local_versions[len(ch_versions) :]
         for filename in new_migrations:
             LOG.info(f"Upgrading version {filename}")
             import_path = f"{import_base}.{MIGRATIONS_FOLDER}.{filename}"
             module = importlib.import_module(import_path)
-            # TODO: Change back the arguments here to accept the config client instead
-            migration = module.Migration(self.clickhouse_client)
+            migration = module.Migration(self.config_client)
             migration.upgrade()
             self.update_versions_table(filename)
             LOG.info(f"Finished migration {filename}")

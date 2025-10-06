@@ -61,6 +61,8 @@ spec:
           value: {{ $config.api.role }}
 {{ include "ready_probe" $config | indent 8 }}
 ---
+{{ include "migrations_job" (list $config .) }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

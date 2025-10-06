@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -80,12 +80,12 @@ requires-dist = [
     { name = "azure-storage-blob", specifier = "==12.25.0" },
     { name = "boto3", specifier = "==1.34.7" },
     { name = "clickhouse-connect", specifier = "==0.8.15" },
-    { name = "config-client", directory = "../optscale_client/config_client" },
+    { name = "config-client", editable = "../optscale_client/config_client" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "optscale-data", directory = "../tools/optscale_data" },
-    { name = "optscale-time", directory = "../tools/optscale_time" },
+    { name = "optscale-data", editable = "../tools/optscale_data" },
+    { name = "optscale-time", editable = "../tools/optscale_time" },
     { name = "pymongo", specifier = "==4.6.3" },
-    { name = "restapi-client", directory = "../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../optscale_client/rest_api_client" },
 ]
 
 [package.metadata.requires-dev]
@@ -221,7 +221,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/config_client" }
+source = { editable = "../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -372,7 +372,7 @@ wheels = [
 [[package]]
 name = "optscale-data"
 version = "0.0.0"
-source = { directory = "../tools/optscale_data" }
+source = { editable = "../tools/optscale_data" }
 dependencies = [
     { name = "clickhouse-connect" },
 ]
@@ -383,7 +383,7 @@ requires-dist = [{ name = "clickhouse-connect", specifier = "==0.8.15" }]
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../tools/optscale_time" }
+source = { editable = "../tools/optscale_time" }
 
 [[package]]
 name = "platformdirs"
@@ -511,7 +511,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../optscale_client/rest_api_client" }
+source = { editable = "../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

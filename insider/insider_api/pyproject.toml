@@ -15,12 +15,12 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-config-client = { path = "../../optscale_client/config_client" }
-restapi-client = { path = "../../optscale_client/rest_api_client" }
-cloud-adapter = { path = "../../tools/cloud_adapter" }
-optscale-exceptions = { path = "../../tools/optscale_exceptions" }
-optscale-time = { path = "../../tools/optscale_time" }
-insider-client = { path = "../../optscale_client/insider_client" }
+config-client = { path = "../../optscale_client/config_client", editable = true }
+restapi-client = { path = "../../optscale_client/rest_api_client", editable = true }
+cloud-adapter = { path = "../../tools/cloud_adapter", editable = true }
+optscale-exceptions = { path = "../../tools/optscale_exceptions", editable = true }
+optscale-time = { path = "../../tools/optscale_time", editable = true }
+insider-client = { path = "../../optscale_client/insider_client", editable = true }
 
 [dependency-groups]
 dev = [

@@ -1,13 +1,14 @@
 import logging
 import os
+import pathlib
 import re
 from datetime import datetime
 from importlib import import_module
 
+from optscale_client.config_client.client import Client as ConfigClient
 from pymongo import MongoClient
 
 from db.migrators.base import BaseMigrator
-from db.utils import build_url
 
 MIGRATIONS_COLLECTION_NAME = "database_migrations"
 LOCAL_MIGRATIONS_REGEX = r"^([0-9]+)[_a-z]*\.py$"
@@ -29,40 +30,35 @@ class LocalMigration:
 
 
 class MongoMigrator(BaseMigrator):
-    def __post_init__(self) -> None:
+    def __init__(self, service_path: pathlib.Path, config_client: ConfigClient, database_name: str) -> None:
+        super().__init__(service_path=service_path, config_client=config_client)
+        self.database_name = database_name
         self._mongo_client: MongoClient | None = None
 
     @property
     def mongo_client(self) -> MongoClient:
         if self._mongo_client is None:
-            url = build_url(
-                scheme="mongodb",
-                username=self.db_username,
-                password=self.db_password,
-                host=self.db_host,
-                port=self.db_port,
-                path=self.db_name,
-            )
-            self._mongo_client = MongoClient(url)
+            mongo_url, _ = self.config_client.mongo_params()
+            self._mongo_client = MongoClient(mongo_url)
 
         return self._mongo_client
 
     @property
-    def _mongo_migrations(self):
-        return self.mongo_client[self.db_name][MIGRATIONS_COLLECTION_NAME]
+    def mongo_migrations(self):
+        return self.mongo_client[self.database_name][MIGRATIONS_COLLECTION_NAME]
 
     @property
     def migrations_path(self):
         return str((self.service_path / "migrations").resolve())
 
     def _get_remote_migrations(self):
-        return list(self._mongo_migrations.find().sort("migration_datetime"))
+        return list(self.mongo_migrations.find().sort("migration_datetime"))
 
     def _put_remote_migration(self, migration_datetime):
-        self._mongo_migrations.insert_one({"migration_datetime": migration_datetime, "created_at": datetime.now()})
+        self.mongo_migrations.insert_one({"migration_datetime": migration_datetime, "created_at": datetime.now()})
 
     def _delete_remote_migration(self, migration_datetime):
-        self._mongo_migrations.delete_one({"migration_datetime": migration_datetime})
+        self.mongo_migrations.delete_one({"migration_datetime": migration_datetime})
 
     def _get_local_migrations(self):
         migrations = []
@@ -82,8 +78,7 @@ class MongoMigrator(BaseMigrator):
             module_path = os.path.normpath(module_path)
             module = import_module(module_path.replace(os.path.sep, "."))
 
-            # TODO: Change back the arguments here to accept the config client instead
-            migration_object = module.Migration(mongo_client=self.mongo_client)
+            migration_object = module.Migration(self.config_client, self.mongo_client[self.database_name])
             if downgrade:
                 LOG.info(f"Downgrading version {migration.datetime}")
                 migration_object.downgrade()

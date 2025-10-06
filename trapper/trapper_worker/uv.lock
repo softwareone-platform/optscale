@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -489,7 +489,7 @@ wheels = [
 [[package]]
 name = "cloud-adapter"
 version = "0.0.0"
-source = { directory = "../../tools/cloud_adapter" }
+source = { editable = "../../tools/cloud_adapter" }
 dependencies = [
     { name = "aliyun-python-sdk-alb" },
     { name = "aliyun-python-sdk-bssopenapi" },
@@ -589,7 +589,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/config_client" }
+source = { editable = "../../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -1075,7 +1075,7 @@ wheels = [
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_time" }
+source = { editable = "../../tools/optscale_time" }
 
 [[package]]
 name = "packaging"
@@ -1286,7 +1286,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/rest_api_client" }
+source = { editable = "../../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -1396,12 +1396,12 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "clickhouse-connect", specifier = "==0.8.15" },
-    { name = "cloud-adapter", directory = "../../tools/cloud_adapter" },
-    { name = "config-client", directory = "../../optscale_client/config_client" },
+    { name = "cloud-adapter", editable = "../../tools/cloud_adapter" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "optscale-time", directory = "../../tools/optscale_time" },
+    { name = "optscale-time", editable = "../../tools/optscale_time" },
     { name = "pymongo", specifier = "==4.6.3" },
-    { name = "restapi-client", directory = "../../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../../optscale_client/rest_api_client" },
     { name = "urllib3", specifier = "==2.5.0" },
 ]
 

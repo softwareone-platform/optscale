@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -74,7 +74,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/config_client" }
+source = { editable = "../../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -162,7 +162,7 @@ wheels = [
 [[package]]
 name = "metroculus-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/metroculus_client" }
+source = { editable = "../../optscale_client/metroculus_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -195,16 +195,16 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "config-client", directory = "../../optscale_client/config_client" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "restapi-client", directory = "../../optscale_client/rest_api_client" },
+    { name = "restapi-client", editable = "../../optscale_client/rest_api_client" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "concurrencytest", specifier = "==0.1.2" },
     { name = "coverage", specifier = "==4.2" },
-    { name = "metroculus-client", directory = "../../optscale_client/metroculus_client" },
+    { name = "metroculus-client", editable = "../../optscale_client/metroculus_client" },
     { name = "pycodestyle", specifier = "==2.11.1" },
     { name = "pylint", specifier = "==3.0.2" },
 ]
@@ -286,7 +286,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/rest_api_client" }
+source = { editable = "../../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

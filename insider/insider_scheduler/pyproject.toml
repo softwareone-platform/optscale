@@ -5,8 +5,8 @@ requires-python = ">=3.12.11,<3.13"
 dependencies = ["config-client", "kombu==5.3.4", "pyyaml==6.0.1"]
 
 [tool.uv.sources]
-config-client = { path = "../../optscale_client/config_client" }
-insider-client = { path = "../../optscale_client/insider_client" }
+config-client = { path = "../../optscale_client/config_client", editable = true }
+insider-client = { path = "../../optscale_client/insider_client", editable = true }
 
 [dependency-groups]
 dev = [

@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.authors="Hystax"
 WORKDIR /usr/src/app/
 
 COPY optscale_client optscale_client
+COPY tools tools
 
 COPY gemini/__init__.py gemini/
 COPY gemini/gemini_worker/pyproject.toml gemini/gemini_worker/

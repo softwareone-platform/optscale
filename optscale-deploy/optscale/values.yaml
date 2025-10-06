@@ -33,7 +33,7 @@ mariadb:
     password: my-password-01
   service:
     name: *mariadb_name
-    host: *mariadb_name
+    host: mariadb
     type: ClusterIP
     externalPort: 3306
     internalPort: 3306
@@ -49,14 +49,14 @@ mongo:
     tag: *tag
     pullPolicy: Never
   service:
-    host: *mongo_name
+    host: &mongo_host mongo
     name: *mongo_name
     type: ClusterIP
-    externalPort: 80
+    externalPort: &mongo_port 80
     internalPort: 27017
   credentials:
-    username: root
-    password: SecurePassword-01-02
+    username: &mongo_username root
+    password: &mongo_password SecurePassword-01-02
     key: secureShardingKeyFFFDDa129
 
 rabbitmq:
@@ -106,8 +106,9 @@ rest_api:
     type: ClusterIP
     externalPort: 80
     internalPort: 8999
-  db:
-    name: my-db
+  migrations_dependencies:
+    - mariadb
+  uv_project: rest_api
 
 auth:
   name: &auth_name auth
@@ -122,8 +123,9 @@ auth:
     type: ClusterIP
     externalPort: 80
     internalPort: 8905
-  db:
-    name: auth-db
+  migrations_dependencies:
+    - mariadb
+  uv_project: auth
   # filled from overlay
   google_oauth_client_id:
   google_oauth_client_secret:
@@ -173,8 +175,9 @@ herald:
     type: ClusterIP
     externalPort: 80
     internalPort: 8906
-  db:
-    name: herald
+  migrations_dependencies:
+    - mariadb
+  uv_project: herald
 
 elk:
   enabled: false
@@ -256,8 +259,19 @@ diworker:
     repository: *diworker_name
     tag: *tag
     pullPolicy: Never
-  mongodb:
+  db:
+    username: *mongo_username
+    password: *mongo_password
+    host: *mongo_host
+    port: *mongo_port
     name: restapi
+  migrations_dependencies:
+    - mongo
+    - clickhouse
+    - rabbitmq
+    - rest_api
+  uv_project: diworker
+    
 
 katara_service:
   name: &katara_name katara
@@ -277,11 +291,12 @@ katara_service:
     type: ClusterIP
     externalPort: 80
     internalPort: 8935
-  db:
-    name: katara
+  migrations_dependencies:
+    - mariadb
+  uv_project: katara/katara_service
 
 katara_worker:
-  name: &katara_name kataraworker
+  name: kataraworker
   replicaCount: 1
   image:
     id:
@@ -436,8 +451,15 @@ insider_worker:
     repository: insider_worker
     tag: *tag
     pullPolicy: Never
-  mongodb:
+  db:
+    username: *mongo_username
+    password: *mongo_password
+    host: *mongo_host
+    port: *mongo_port
     name: insider
+  migrations_dependencies:
+    - mongo
+  uv_project: insider/insider_worker
 
 insider_api:
   name: &insider_api_name insider-api
@@ -470,8 +492,9 @@ slacker:
   slack_signing_secret:
   slack_client_id:
   slack_client_secret:
-  db:
-    name: slacker
+  migrations_dependencies:
+    - mariadb
+  uv_project: slacker
 
 error_pages:
   name: &error_pages_name error-pages
@@ -501,7 +524,7 @@ clickhouse:
     pullPolicy: IfNotPresent
   service:
     name: *clickhouse_name
-    host: *clickhouse_name
+    host: clickhouse
     type: ClusterIP
     httpPort: 8123
     externalPort: 9000
@@ -528,8 +551,9 @@ metroculus_worker:
     repository: metroculus_worker
     tag: *tag
     pullPolicy: Never
-  clickhouse:
-    name: default
+  migrations_dependencies:
+    - clickhouse
+  uv_project: metroculus/metroculus_worker
 
 metroculus_api:
   name: &metroculus_api_name metroculusapi
@@ -604,8 +628,9 @@ jira_bus:
     type: ClusterIP
     externalPort: 80
     internalPort: 8977
-  db:
-    name: jira-bus
+  migrations_dependencies:
+    - mariadb
+  uv_project: jira_bus
 
 jira_ui:
   name: &jira_ui_name jira-ui
@@ -675,15 +700,20 @@ risp_scheduler:
   schedule: "45 */1 * * *"
 
 risp_worker:
-  name: risp-worker
+  name: &risp_worker_name risp-worker
   replicaCount: 1
+  service:
+    name: *risp_worker_name
   image:
     id:
     repository: risp_worker
     tag: *tag
     pullPolicy: Never
-  clickhouse:
-    name: risp
+  migrations_dependencies:
+    - mongo
+    - clickhouse
+    - rest_api
+  uv_project: risp/risp_worker
 
 gemini_scheduler:
   name: gemini-scheduler
@@ -703,8 +733,9 @@ gemini_worker:
     repository: gemini_worker
     tag: *tag
     pullPolicy: Never
-  clickhouse:
-    name: gemini
+  migrations_dependencies:
+    - clickhouse
+  uv_project: gemini/gemini_worker
 
 bi_scheduler:
   name: bi-scheduler
@@ -904,28 +935,6 @@ databases:
   - katara
   - slacker
   - jira-bus
-
-migration_job:
-  name: &migration_job_name migration_job
-  image:
-    repository: *migration_job_name
-    tag: *tag
-    pullPolicy: Never
-  services:
-    mysql:
-      - rest_api
-      - auth
-      - herald
-      - jira_bus
-      - katara_service
-      - slacker
-    clickhouse:
-      - risp_worker
-      - metroculus_worker
-      - gemini_worker
-    mongo:
-      - diworker
-      - insider_worker
 
 # filled from base overlay
 # we need it to fill agent config correctly

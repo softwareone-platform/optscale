@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12.11, <3.13"
 
 [[package]]
@@ -26,7 +26,7 @@ wheels = [
 [[package]]
 name = "auth-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/auth_client" }
+source = { editable = "../../optscale_client/auth_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -117,7 +117,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/ba/8a/8286de6d3aa9a3c47
 [[package]]
 name = "config-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/config_client" }
+source = { editable = "../../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
@@ -214,7 +214,7 @@ wheels = [
 [[package]]
 name = "katara-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/katara_client" }
+source = { editable = "../../optscale_client/katara_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },
@@ -252,14 +252,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "auth-client", directory = "../../optscale_client/auth_client" },
+    { name = "auth-client", editable = "../../optscale_client/auth_client" },
     { name = "boto3", specifier = "==1.34.7" },
-    { name = "config-client", directory = "../../optscale_client/config_client" },
+    { name = "config-client", editable = "../../optscale_client/config_client" },
     { name = "currency-symbols", specifier = "==2.0.3" },
-    { name = "katara-client", directory = "../../optscale_client/katara_client" },
+    { name = "katara-client", editable = "../../optscale_client/katara_client" },
     { name = "kombu", specifier = "==5.3.4" },
-    { name = "optscale-time", directory = "../../tools/optscale_time" },
-    { name = "restapi-client", directory = "../../optscale_client/rest_api_client" },
+    { name = "optscale-time", editable = "../../tools/optscale_time" },
+    { name = "restapi-client", editable = "../../optscale_client/rest_api_client" },
 ]
 
 [package.metadata.requires-dev]
@@ -296,7 +296,7 @@ wheels = [
 [[package]]
 name = "optscale-time"
 version = "0.0.0"
-source = { directory = "../../tools/optscale_time" }
+source = { editable = "../../tools/optscale_time" }
 
 [[package]]
 name = "platformdirs"
@@ -387,7 +387,7 @@ wheels = [
 [[package]]
 name = "restapi-client"
 version = "0.0.0"
-source = { directory = "../../optscale_client/rest_api_client" }
+source = { editable = "../../optscale_client/rest_api_client" }
 dependencies = [
     { name = "requests" },
     { name = "retrying" },

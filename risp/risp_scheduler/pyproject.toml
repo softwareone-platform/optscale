@@ -10,8 +10,8 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-config-client = { path = "../../optscale_client/config_client" }
-restapi-client = { path = "../../optscale_client/rest_api_client" }
+config-client = { path = "../../optscale_client/config_client", editable = true }
+restapi-client = { path = "../../optscale_client/rest_api_client", editable = true }
 
 [dependency-groups]
 dev = [
