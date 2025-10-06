@@ -143,46 +143,116 @@ class TestBreakdownMetaApi(TestApiBase):
         self.verify_error_code(response, 'OE0470')
 
     def test_breakdown_meta(self):
-        start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
+        start = int(datetime(2022, 1, 1).timestamp())
+        end = int(datetime(2022, 1, 5).timestamp())
 
-        day_1_ts = int(datetime(2022, 2, 2, tzinfo=timezone.utc).timestamp())
+        day_1_ts = int(datetime(2022, 1, 1).timestamp())
+        day_2_ts = int(datetime(2022, 1, 2).timestamp())
+        day_3_ts = int(datetime(2022, 1, 3).timestamp())
+        day_4_ts = int(datetime(2022, 1, 4).timestamp())
+        day_5_ts = int(datetime(2022, 1, 5).timestamp())
+
         res1 = self._create_resource(
-            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
-            meta={'os': 'win', 'arch': 'x64'})
+            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_2_ts,
+            meta={'meta_key': 'day_1_2'})
         res2 = self._create_resource(
-            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
-            meta={'os': 'win'})
-        self.expenses = [
-            {
-                'cloud_account_id': self.cloud_acc1['id'],
-                'resource_id': res1['id'],
-                'date': datetime(2022, 2, 1),
-                'cost': 10,
-                'sign': 1
-            },
-            {
-                'cloud_account_id': self.cloud_acc1['id'],
-                'resource_id': res2['id'],
-                'date': datetime(2022, 2, 1),
-                'cost': 15,
-                'sign': 1
-            },
-        ]
-        code, response = self.client.breakdown_meta_get(
-            self.org_id, start, end, 'os')
-        self.assertEqual(code, 200)
-        expected_breakdown = [{'cost': 25, 'count': 2, 'os': 'win'}]
-        self.assertEqual(response['breakdown'], expected_breakdown)
+            self.cloud_acc1['id'], first_seen=day_3_ts, last_seen=day_4_ts,
+            meta={'meta_key': 'day_3_4', 'meta_2': 'day_3_4'})
+        res3 = self._create_resource(
+            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_2_ts,
+            meta={'meta_key': 'day_1_2'})
+        res4 = self._create_resource(
+            self.cloud_acc1['id'], first_seen=day_2_ts, last_seen=day_5_ts,
+            meta={'meta_key': 'day_2_5'})
+        res5 = self._create_resource(
+            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_5_ts,
+            meta={'meta_2': 'day_1_5'})
+
+        # res_id: [(day, cost)]
+        for res_id, info in {
+            res1['id']: [(1, 10)],
+            res2['id']: [(3, 20)],
+            res3['id']: [(2, 30)],
+            res4['id']: [(2, 40), (3, 40)],
+        }.items():
+            for day, cost in info:
+                self.expenses.append({
+                    'cloud_account_id': self.cloud_acc1['id'],
+                    'resource_id': res_id,
+                    'date': datetime(2022, 1, day),
+                    'cost': cost,
+                    'sign': 1
+                })
 
         code, response = self.client.breakdown_meta_get(
-            self.org_id, start, end, 'arch')
+            self.org_id, start, end, 'meta_key')
         self.assertEqual(code, 200)
-        expected_breakdown = [
-            {'arch': '(not set)', 'cost': 15, 'count': 1},
-            {'arch': 'x64', 'cost': 10, 'count': 1}
-        ]
+        expected_breakdown = {
+            str(day_1_ts): {
+                'day_1_2': {'cost': 10, 'count': 2},
+                '(not set)': {'cost': 0, 'count': 1}
+            },
+            str(day_2_ts): {
+                'day_1_2': {'cost': 30, 'count': 2},
+                'day_2_5': {'cost': 40, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            },
+            str(day_3_ts): {
+                'day_3_4': {'cost': 20, 'count': 1},
+                'day_2_5': {'cost': 40, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            },
+            str(day_4_ts): {
+                'day_3_4': {'cost': 0, 'count': 1},
+                'day_2_5': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            },
+            str(day_5_ts): {
+                'day_2_5': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            }
+        }
         self.assertEqual(response['breakdown'], expected_breakdown)
+        self.assertEqual(response['totals'], {
+            '(not set)': {'cost': 0, 'count': 1},
+            'day_1_2': {'cost': 40, 'count': 2},
+            'day_2_5': {'cost': 80, 'count': 1},
+            'day_3_4': {'cost': 20, 'count': 1}
+        })
+
+        code, response = self.client.breakdown_meta_get(
+            self.org_id, start, end, 'meta_2')
+        self.assertEqual(code, 200)
+        expected_breakdown = {
+            str(day_1_ts): {
+                '(not set)': {'cost': 10, 'count': 2},
+                'day_1_5': {'cost': 0, 'count': 1}
+            },
+            str(day_2_ts): {
+                '(not set)': {'cost': 70, 'count': 3},
+                'day_1_5': {'cost': 0, 'count': 1}
+            },
+            str(day_3_ts): {
+                'day_3_4': {'cost': 20, 'count': 1},
+                '(not set)': {'cost': 40, 'count': 1},
+                'day_1_5': {'cost': 0, 'count': 1}
+            },
+            str(day_4_ts): {
+                'day_3_4': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1},
+                'day_1_5': {'cost': 0, 'count': 1}
+            },
+            str(day_5_ts): {
+                '(not set)': {'cost': 0, 'count': 1},
+                'day_1_5': {'cost': 0, 'count': 1}
+            }
+        }
+        self.assertEqual(response['breakdown'], expected_breakdown)
+        self.assertEqual(response['totals'], {
+            '(not set)': {'cost': 120, 'count': 3},
+            'day_3_4': {'cost': 20, 'count': 1},
+            'day_1_5': {'cost': 0, 'count': 1}
+        })
 
     def test_breakdown_meta_incorrect_identity(self):
         start = int(datetime(2022, 2, 1).timestamp())
@@ -208,48 +278,54 @@ class TestBreakdownMetaApi(TestApiBase):
 
     def test_empty_breakdown_meta(self):
         start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
+        end = int(datetime(2022, 2, 28).timestamp())
         code, response = self.client.breakdown_meta_get(
             self.org_id, start, end, 'test')
         self.assertEqual(code, 200)
-        self.assertEqual(response['breakdown'], [])
+        self.assertEqual(len(response['breakdown']), 28)
+        for k in response['breakdown'].keys():
+            self.assertEqual(response['breakdown'][k], {})
+        self.assertEqual(response['totals'], {})
 
     def test_breakdown_meta_without_expenses(self):
         start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
-
-        day_1_ts = int(datetime(2022, 2, 2, tzinfo=timezone.utc).timestamp())
+        end = int(datetime(2022, 2, 3).timestamp())
+        day_2_ts = int(datetime(2022, 2, 2).timestamp())
         self._create_resource(
-            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
+            self.cloud_acc1['id'], first_seen=day_2_ts, last_seen=day_2_ts,
             meta={'os': 'linux'})
         self._create_resource(
-            self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
+            self.cloud_acc1['id'], first_seen=day_2_ts, last_seen=day_2_ts,
             meta={'os': 'windows'})
         code, response = self.client.breakdown_meta_get(
             self.org_id, start, end, 'os')
         self.assertEqual(code, 200)
-        expected_breakdown = [
-            {'cost': 0, 'count': 1, 'os': 'linux'},
-            {'cost': 0, 'count': 1, 'os': 'windows'}
-        ]
+        expected_breakdown = {
+            str(start): {},
+            str(day_2_ts): {
+                'linux': {'cost': 0, 'count': 1},
+                'windows': {'cost': 0, 'count': 1}
+            },
+            str(end): {}
+        }
         self.assertEqual(response['breakdown'], expected_breakdown)
+        self.assertEqual(response['totals'], {
+            'linux': {'cost': 0, 'count': 1},
+            'windows': {'cost': 0, 'count': 1}
+        })
 
     def test_breakdown_meta_expenses_sum(self):
-        start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
-
-        day_1_ts = int(datetime(2022, 2, 2, tzinfo=timezone.utc).timestamp())
+        day_1_ts = int(datetime(2022, 2, 1).timestamp())
         res1 = self._create_resource(
             self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
-            meta={'os': 'windows', 'arch': 'x64'})
-        cost_map = {
-            datetime(2022, 1, 31): 5,
-            datetime(2022, 2, 1): 10,
-            datetime(2022, 2, 2): 20,
-            datetime(2022, 3, 2): 30
-
-        }
-        for dt, cost in cost_map.items():
+            meta={'arch': 'x64'})
+        cost_map = [
+            (datetime(2022, 1, 31), 5),
+            (datetime(2022, 2, 1), 10),
+            (datetime(2022, 2, 1), 20),
+            (datetime(2022, 2, 2), 30),
+        ]
+        for dt, cost in cost_map:
             self.expenses.append({
                 'cloud_account_id': self.cloud_acc1['id'],
                 'resource_id': res1['id'],
@@ -258,18 +334,22 @@ class TestBreakdownMetaApi(TestApiBase):
                 'sign': 1
             })
         code, response = self.client.breakdown_meta_get(
-            self.org_id, start, end, 'arch')
+            self.org_id, day_1_ts, day_1_ts, 'arch')
         self.assertEqual(code, 200)
-        expected_breakdown = [
-            {'arch': 'x64', 'cost': 30, 'count': 1},
-        ]
+        expected_breakdown = {
+            str(day_1_ts): {'x64': {'cost': 30, 'count': 1}}
+        }
         self.assertEqual(response['breakdown'], expected_breakdown)
+        expected_totals = {
+            'x64': {'cost': 30, 'count': 1}
+        }
+        self.assertEqual(response['totals'], expected_totals)
 
     def test_breakdown_meta_clusters(self):
         code, cluster_type = self.client.cluster_type_create(
             self.org_id, {'name': 'awesome', 'tag_key': 'tag1'})
         self.assertEqual(code, 201)
-        dt = datetime(2021, 2, 1, tzinfo=timezone.utc)
+        dt = datetime(2021, 2, 1)
         first_seen = int((dt - timedelta(days=1)).timestamp())
         last_seen = int(dt.timestamp())
         self._create_resource(
@@ -290,13 +370,20 @@ class TestBreakdownMetaApi(TestApiBase):
             first_seen=first_seen, last_seen=last_seen
         )
 
-        expected_breakdown = [
-            {'os': '(not set)', 'cost': 0, 'count': 1},
-            {'os': 'linux', 'cost': 0, 'count': 1},
-            {'os': 'windows', 'cost': 0, 'count': 2}
-        ]
         code, response = self.client.breakdown_meta_get(
             self.org_id, first_seen, last_seen, 'os')
+        expected_breakdown = {
+            str(first_seen): {
+                'windows': {'cost': 0, 'count': 2},
+                'linux': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            },
+            str(last_seen): {
+                'windows': {'cost': 0, 'count': 2},
+                'linux': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1}
+            }
+        }
         self.assertEqual(code, 200)
         self.assertEqual(expected_breakdown, response['breakdown'])
 
@@ -310,26 +397,30 @@ class TestBreakdownMetaApi(TestApiBase):
             self.org_id, first_seen, last_seen, 'os',
             {'region': get_nil_uuid()})
         self.assertEqual(code, 200)
-        expected_breakdown = [
-            {'cost': 0, 'count': 1, 'os': 'windows'}
-        ]
+        expected_breakdown = {
+            str(first_seen): {'windows': {'cost': 0, 'count': 1}},
+            str(last_seen): {'windows': {'cost': 0, 'count': 1}}
+        }
         self.assertEqual(expected_breakdown, response['breakdown'])
 
         code, response = self.client.breakdown_meta_get(
             self.org_id, first_seen, last_seen, 'os',
             {'resource_type': '%s:cluster' % cluster_type['name']})
         self.assertEqual(code, 200)
-        expected_breakdown = [
-            {'os': 'windows', 'cost': 0, 'count': 1},
-            {'os': 'linux', 'cost': 0, 'count': 1}
-        ]
+        expected_breakdown = {
+            str(first_seen): {
+                'windows': {'cost': 0, 'count': 1},
+                'linux': {'cost': 0, 'count': 1},
+            },
+            str(last_seen): {
+                'windows': {'cost': 0, 'count': 1},
+                'linux': {'cost': 0, 'count': 1},
+            }
+        }
         self.assertEqual(expected_breakdown, response['breakdown'])
 
     def test_breakdown_meta_traffic_filters(self):
-        start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
-
-        day_1_ts = int(datetime(2022, 2, 2, tzinfo=timezone.utc).timestamp())
+        day_1_ts = int(datetime(2022, 2, 1).timestamp())
         res1 = self._create_resource(
             self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
             meta={'os': 'win', 'arch': 'x64'})
@@ -396,11 +487,15 @@ class TestBreakdownMetaApi(TestApiBase):
             }
         ]:
             code, response = self.client.breakdown_meta_get(
-                self.org_id, start, end, 'os', body)
+                self.org_id, day_1_ts, day_1_ts, 'os', body)
+            expected_breakdown = {
+                str(day_1_ts): {
+                    'linux': {'cost': 15, 'count': 1}
+                }
+            }
             self.assertEqual(code, 200)
             self.assertEqual(len(response['breakdown']), 1)
-            self.assertEqual(response['breakdown'][0],
-                             {'os': 'linux', 'cost': 15, 'count': 1})
+            self.assertEqual(response['breakdown'], expected_breakdown)
 
         for body in [
             {
@@ -417,21 +512,26 @@ class TestBreakdownMetaApi(TestApiBase):
             },
         ]:
             code, response = self.client.breakdown_meta_get(
-                self.org_id, start, end, 'os', body)
+                self.org_id, day_1_ts, day_1_ts, 'os', body)
             self.assertEqual(code, 200)
-            self.assertEqual(len(response['breakdown']), 2)
-            self.assertEqual(response['breakdown'], [
-                {'os': 'linux', 'cost': 15, 'count': 1},
-                {'os': 'win', 'cost': 10, 'count': 1}
-            ])
+            expected_breakdown = {
+                str(day_1_ts): {
+                    'linux': {'cost': 15, 'count': 1},
+                    'win': {'cost': 10, 'count': 1},
+                }
+            }
+            self.assertEqual(response['breakdown'], expected_breakdown)
 
         code, response = self.client.breakdown_meta_get(
-            self.org_id, start, end, 'os')
+            self.org_id, day_1_ts, day_1_ts, 'os')
         self.assertEqual(code, 200)
-        self.assertEqual(response['breakdown'], [
-            {'os': 'linux', 'cost': 15, 'count': 1},
-            {'os': 'win', 'cost': 40, 'count': 2}
-        ])
+        expected_breakdown = {
+            str(day_1_ts): {
+                'linux': {'cost': 15, 'count': 1},
+                'win': {'cost': 40, 'count': 2},
+            }
+        }
+        self.assertEqual(response['breakdown'], expected_breakdown)
 
     def test_breakdown_meta_filter_by_first_seen(self):
         day_in_month = datetime(2025, 1, 1)
@@ -441,7 +541,7 @@ class TestBreakdownMetaApi(TestApiBase):
             last_seen=time + 1, meta={'os': 'win'})
         resource2 = self._create_resource(
             self.cloud_acc1['id'], name='res2', first_seen=time - 1,
-            last_seen=time, tags={'os': 'lin'})
+            last_seen=time)
         expenses = [
             {
                 'cost': 300,
@@ -468,29 +568,43 @@ class TestBreakdownMetaApi(TestApiBase):
 
         filters = {'first_seen_lte': time - 1}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'os', filters)
+            self.org_id, time, time + 1, 'os', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 1)
-        self.assertEqual(response['breakdown'][0]['cost'], 70)
+        self.assertEqual(response['breakdown'], {
+            str(time): {'(not set)': {'cost': 70, 'count': 1}}
+        })
 
         filters = {'first_seen_lte': time + 1}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'os', filters)
+            self.org_id, time, time + 1, 'os', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 2)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                '(not set)': {'cost': 70, 'count': 1},
+                'win': {'cost': 300, 'count': 1}
+            }
+        })
 
         filters = {'first_seen_gte': time - 1}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'os', filters)
+            self.org_id, time, time + 1, 'os', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 2)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                '(not set)': {'cost': 70, 'count': 1},
+                'win': {'cost': 300, 'count': 1}
+            }
+        })
 
         filters = {'first_seen_gte': time}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'os', filters)
+            self.org_id, time, time + 1, 'os', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 1)
-        self.assertEqual(response['breakdown'][0]['cost'], 300)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                'win': {'cost': 300, 'count': 1}
+            }
+        })
 
     def test_breakdown_meta_filter_by_last_seen(self):
         day_in_month = datetime(2025, 1, 1)
@@ -527,35 +641,49 @@ class TestBreakdownMetaApi(TestApiBase):
 
         filters = {'last_seen_lte': time}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'test', filters)
+            self.org_id, time, time + 1, 'test', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 1)
-        self.assertEqual(response['breakdown'][0]['cost'], 70)
+        self.assertEqual(response['breakdown'], {
+            str(time): {'val2': {'cost': 70, 'count': 1}}
+        })
 
         filters = {'last_seen_lte': time + 1}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'test', filters)
+            self.org_id, time, time + 1, 'test', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 2)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                'val2': {'cost': 70, 'count': 1},
+                'val1': {'cost': 300, 'count': 1}
+            }
+        })
 
         filters = {'last_seen_gte': time}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'test', filters)
+            self.org_id, time, time + 1, 'test', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 2)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                'val2': {'cost': 70, 'count': 1},
+                'val1': {'cost': 300, 'count': 1}
+            }
+        })
 
         filters = {'last_seen_gte': time + 1}
         code, response = self.client.breakdown_meta_get(
-            self.org_id, time - 1, time + 1, 'test', filters)
+            self.org_id, time, time + 1, 'test', filters)
         self.assertEqual(code, 200)
-        self.assertEqual(len(response['breakdown']), 1)
-        self.assertEqual(response['breakdown'][0]['cost'], 300)
+        self.assertEqual(response['breakdown'], {
+            str(time): {
+                'val1': {'cost': 300, 'count': 1}
+            }
+        })
 
     def test_breakdown_meta_types(self):
-        start = int(datetime(2022, 2, 1).timestamp())
-        end = int(datetime(2022, 3, 1).timestamp())
+        start = int(datetime(2022, 2, 2).timestamp())
+        end = int(datetime(2022, 2, 2).timestamp())
 
-        day_1_ts = int(datetime(2022, 2, 2, tzinfo=timezone.utc).timestamp())
+        day_1_ts = int(datetime(2022, 2, 2).timestamp())
         meta_values = [
             ['1', '2'], 'win', {'key': 'value'}, None, 2, True
         ]
@@ -565,13 +693,13 @@ class TestBreakdownMetaApi(TestApiBase):
                 meta={'os': meta_value})
         code, response = self.client.breakdown_meta_get(
             self.org_id, start, end, 'os')
-        self.assertEqual(len(response['breakdown']), len(meta_values))
         self.assertEqual(code, 200)
-        self.assertEqual(response['breakdown'], [
-            {'os': 2, 'cost': 0, 'count': 1},
-            {'os': '(not set)', 'cost': 0, 'count': 1},
-            {'os': 'win', 'cost': 0, 'count': 1},
-            {'os': {'key': 'value'}, 'cost': 0, 'count': 1},
-            {'os': ['1', '2'], 'cost': 0, 'count': 1},
-            {'os': True, 'cost': 0, 'count': 1}
-        ])
+        self.assertEqual(response['breakdown'], {
+            str(day_1_ts): {
+                '(unhashable)': {'cost': 0, 'count': 2},
+                'win': {'cost': 0, 'count': 1},
+                '(not set)': {'cost': 0, 'count': 1},
+                '2': {'cost': 0, 'count': 1},
+                'true': {'cost': 0, 'count': 1}
+            }
+        })

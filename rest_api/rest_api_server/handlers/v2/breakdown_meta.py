@@ -240,16 +240,33 @@ class BreakdownMetaAsyncHandler(FilteredExpensesBaseAsyncHandler):
                             description: end date (timestamp in seconds)
                             example: 1643673600
                         breakdown:
-                            type: array
-                            items:
-                                type: object
+                            type: object
+                            description: breakdown by day
                             example:
-                                -   meta: host_ip
+                                1640995200:
+                                    breakdown_by_value_1:
+                                        cost: 18.80
+                                        count: 2
+                                    breakdown_by_value_2:
+                                        cost: 10.30
+                                        count: 1
+                                1641168000:
+                                    breakdown_by_value_1:
+                                        cost: 8.40
+                                        count: 1
+                                    breakdown_by_value_2:
+                                        cost: 13.30
+                                        count: 2
+                        totals:
+                            type: object
+                            description: calculated totals
+                            example:
+                                breakdown_by_value_1:
+                                    cost: 34.80
+                                    count: 3
+                                breakdown_by_value_2:
+                                    cost: 20.88
                                     count: 2
-                                    cost: 18.80
-                                -   meta: pod_ip
-                                    count: 4
-                                    cost: 26.15
             400:
                 description: |
                     Wrong arguments:
