@@ -121,7 +121,7 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
         config_cl.wait_configured()
 
     db = DBFactory(db_type, config_cl).db
-    
+
     # migrations are already applied by a Helm hook job
     if not db.uses_migrations:
         db.create_schema()

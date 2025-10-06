@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 
+import optscale_client.config_client.client
 import tornado.ioloop
 import tornado.web
 from tornado.web import RedirectHandler
@@ -9,12 +10,9 @@ from tornado.web import RedirectHandler
 import auth.auth_server.handlers.v1 as h_v1
 import auth.auth_server.handlers.v2 as h_v2
 from auth.auth_server.constants import urls_v2
-
 from auth.auth_server.handlers.v1.base import DefaultHandler
 from auth.auth_server.handlers.v1.swagger import SwaggerStaticFileHandler
-from auth.auth_server.models.db_factory import DBType, DBFactory
-
-import optscale_client.config_client.client
+from auth.auth_server.models.db_factory import DBFactory, DBType
 
 DEFAULT_PORT = 8905
 DEFAULT_ETCD_HOST = '127.0.0.1'
@@ -102,11 +100,11 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
     if wait:
         config_cl.wait_configured()
     db = DBFactory(db_type, config_cl).db
-    
+
     # migrations are already applied by a Helm hook
     if not db.uses_migrations:
         db.create_schema()
-        
+
     handler_kwargs = {
         "engine": db.engine,
         "config": config_cl,

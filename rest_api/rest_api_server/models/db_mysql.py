@@ -8,7 +8,7 @@ from rest_api.rest_api_server.models.migrator import Migrator
 
 class MySQLDB(BaseDB):
     uses_migrations = True
-    
+
     def _get_engine(self):
         return create_engine(
             'mysql+mysqlconnector://%s:%s@%s/%s?charset=utf8mb4' %

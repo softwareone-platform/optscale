@@ -17,7 +17,7 @@ def should_retry(exception):
 
 class BaseDB(object):
     uses_migrations = False
-    
+
     def __init__(self, config=None):
         self._engine = None
         self._config = config
