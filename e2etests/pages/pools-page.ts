@@ -1,6 +1,6 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
-import {debugLog} from "../utils/debug-logging";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
+import { debugLog } from '../utils/debug-logging';
 
 /**
  * Represents the Pools Page.
@@ -101,20 +101,20 @@ export class PoolsPage extends BasePage {
     this.columnSelectBtn = this.getByAnyTestId('ViewColumnIcon', this.main);
     this.columnBadge = this.main.locator('//span[contains(@class, "MuiBadge-badge")]');
     this.simplePopover = this.page.getByRole('presentation');
-    this.clearAllColumnsToggle = this.simplePopover.getByText('Clear all', {exact: true});
-    this.selectAllColumnsToggle = this.simplePopover.getByText('Select all', {exact: true});
-    this.monthlyLimitToggle = this.simplePopover.locator('li', {hasText: 'Monthly Limit'});
-    this.expensesThisMonthToggle = this.simplePopover.locator('li', {hasText: 'Expenses this month'});
-    this.forecastToggle = this.simplePopover.locator('li', {hasText: 'Forecast'});
-    this.ownerToggle = this.simplePopover.locator('li', {hasText: 'Owner'});
+    this.clearAllColumnsToggle = this.simplePopover.getByText('Clear all', { exact: true });
+    this.selectAllColumnsToggle = this.simplePopover.getByText('Select all', { exact: true });
+    this.monthlyLimitToggle = this.simplePopover.locator('li', { hasText: 'Monthly Limit' });
+    this.expensesThisMonthToggle = this.simplePopover.locator('li', { hasText: 'Expenses this month' });
+    this.forecastToggle = this.simplePopover.locator('li', { hasText: 'Forecast' });
+    this.ownerToggle = this.simplePopover.locator('li', { hasText: 'Owner' });
 
     this.table = this.main.locator('table');
-    this.nameTableHeading = this.table.locator('th', {hasText: 'Name'});
-    this.monthlyLimitTableHeading = this.table.locator('th', {hasText: 'Monthly Limit'});
-    this.expensesThisMonthTableHeading = this.table.locator('th', {hasText: 'Expenses this month'});
-    this.forecastThisMonthTableHeading = this.table.locator('th', {hasText: 'Forecast this month'});
-    this.ownerTableHeading = this.table.locator('th', {hasText: 'Owner'});
-    this.actionsTableHeading = this.table.locator('th', {hasText: 'Actions'});
+    this.nameTableHeading = this.table.locator('th', { hasText: 'Name' });
+    this.monthlyLimitTableHeading = this.table.locator('th', { hasText: 'Monthly Limit' });
+    this.expensesThisMonthTableHeading = this.table.locator('th', { hasText: 'Expenses this month' });
+    this.forecastThisMonthTableHeading = this.table.locator('th', { hasText: 'Forecast this month' });
+    this.ownerTableHeading = this.table.locator('th', { hasText: 'Owner' });
+    this.actionsTableHeading = this.table.locator('th', { hasText: 'Actions' });
 
     this.poolTableRow = this.table.getByTestId('row_0');
     this.poolNameColumn = this.poolTableRow.locator('//td').first();
@@ -132,20 +132,21 @@ export class PoolsPage extends BasePage {
     this.subPoolColumn4 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[4]');
     this.subPoolActionsColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[5]');
 
-    this.expandMoreIcon = this.table.locator('xpath=(//button[contains(@class, "rgw1hv-expand")] | //button[contains(@class, "u0ks9z-expand")])')
+    this.expandMoreIcon = this.table.locator(
+      'xpath=(//button[contains(@class, "rgw1hv-expand")] | //button[contains(@class, "u0ks9z-expand")])'
+    );
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
 
     //Edit pools side modal
     this.sideModal = this.page.getByTestId('smodal_edit_pool');
-    this.sideModalEditBtn = this.sideModal.getByRole('button', {name: 'Edit'});
+    this.sideModalEditBtn = this.sideModal.getByRole('button', { name: 'Edit' });
     this.sideModalDefaultResourceOwner = this.sideModal.getByTestId('pool-owner-selector-select');
     this.sideModalMonthlyLimit = this.sideModal.getByTestId('input_limit');
-    this.extendParentPoolToggle = this.sideModal.getByLabel('Extend parent pools limits')
-    this.sideModalSaveBtn = this.sideModal.getByRole('button', {name: 'Save'});
-    this.sideModalCancelBtn = this.sideModal.getByRole('button', {name: 'Cancel'});
+    this.extendParentPoolToggle = this.sideModal.getByLabel('Extend parent pools limits');
+    this.sideModalSaveBtn = this.sideModal.getByRole('button', { name: 'Save' });
+    this.sideModalCancelBtn = this.sideModal.getByRole('button', { name: 'Cancel' });
     this.sideModalMonthlyLimitWarningMessage = this.sideModal.getByText('Remaining budget: $0. Extend parent budget if necessary.');
     this.sideModalCloseBtn = this.sideModal.getByTestId('bnt_close');
-
   }
 
   /**
@@ -342,6 +343,12 @@ export class PoolsPage extends BasePage {
     return this.parseCurrencyValue(value);
   }
 
+  /**
+   * Retrieves the "Expenses This Month" value for a specific sub-pool and parses it as a number.
+   *
+   * @param {number} [index=1] - The 1-based index of the sub-pool to retrieve the value for (default is 1).
+   * @returns {Promise<number>} The parsed "Expenses This Month" value for the sub-pool.
+   */
   async getSubPoolExpensesThisMonth(index: number = 1): Promise<number> {
     index = index - 1; // Adjust index to be zero-based
     const subPoolName = await this.subPoolNameColumn.nth(index).textContent();
@@ -351,6 +358,12 @@ export class PoolsPage extends BasePage {
     return this.parseCurrencyValue(value);
   }
 
+  /**
+   * Retrieves the "Forecast This Month" value for a specific sub-pool and parses it as a number.
+   *
+   * @param {number} [index=1] - The 1-based index of the sub-pool to retrieve the value for (default is 1).
+   * @returns {Promise<number>} The parsed "Forecast This Month" value for the sub-pool.
+   */
   async getSubPoolForecastThisMonth(index: number = 1): Promise<number> {
     index = index - 1; // Adjust index to be zero-based
     const subPoolName = await this.subPoolNameColumn.nth(index).textContent();
@@ -360,6 +373,14 @@ export class PoolsPage extends BasePage {
     return this.parseCurrencyValue(value);
   }
 
+  /**
+   * Removes the monthly limits for all sub-pools by setting their values to 0.
+   *
+   * This method iterates through all sub-pools, checks if a monthly limit is set,
+   * and clears it by opening the side modal, updating the value to 0, and saving the changes.
+   *
+   * @returns {Promise<void>}
+   */
   async removeAllSubPoolMonthlyLimits(): Promise<void> {
     const subPools = await this.subPoolColumn2.all();
     for (const subPool of subPools) {

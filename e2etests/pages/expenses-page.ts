@@ -24,6 +24,11 @@ export class ExpensesPage extends BasePage {
   readonly dataSourceHeading: Locator;
   readonly poolHeading: Locator;
   readonly ownerHeading: Locator;
+  readonly expensesPieChartDiv: Locator;
+  readonly expensesPieChartValue: Locator;
+  readonly tableHeadingDatasource: Locator;
+  readonly table: Locator;
+  readonly tableColumn2: Locator;
 
   /**
    * Initializes a new instance of the ExpensesPage class.
@@ -49,6 +54,11 @@ export class ExpensesPage extends BasePage {
     this.poolBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Pool' });
     this.ownerBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Owner' });
     this.geographyBtn = this.seeExpensesBreakdownGrid.getByRole('button', { name: 'Geography' });
+    this.expensesPieChartDiv = this.main.locator('//div[.="Expenses"]/..');
+    this.expensesPieChartValue = this.expensesPieChartDiv.locator('//*[contains(text(), "$")]').first();
+    this.tableHeadingDatasource = this.main.getByText('Summary by data source');
+    this.table = this.main.locator('table');
+    this.tableColumn2 = this.table.locator('//td[2]');
   }
 
   /**
@@ -108,8 +118,51 @@ export class ExpensesPage extends BasePage {
   async clickOwnerBtn(): Promise<void> {
     await this.ownerBtn.click();
   }
-
+  /**
+   * Clicks the Geography button.
+   * @returns {Promise<void>}
+   */
   async clickGeographyBtn(): Promise<void> {
     await this.geographyBtn.click();
+  }
+
+  /**
+   * Retrieves the total expenses for the selected period.
+   *
+   * This method fetches the text content of the element representing
+   * the total expenses for the selected period and parses it into a numeric value.
+   *
+   * @returns {Promise<number>} A promise that resolves to the total expenses as a number.
+   */
+  async getTotalExpensesForSelectedPeriod(): Promise<number> {
+    const value = await this.expensesSelectedPeriodValue.textContent();
+    return this.parseCurrencyValue(value);
+  }
+
+  /**
+   * Retrieves the value displayed in the expenses pie chart.
+   *
+   * This method fetches the text content of the element representing
+   * the expenses pie chart value and parses it into a numeric value.
+   *
+   * @returns {Promise<number>} A promise that resolves to the parsed numeric value of the expenses pie chart.
+   */
+  async getExpensesPieChartValue(): Promise<number> {
+    const value = await this.expensesPieChartValue.textContent();
+    return this.parseCurrencyValue(value);
+  }
+
+  /**
+   * Retrieves the total itemized expenses value from the table.
+   *
+   * This method waits for the last element in the second column of the table
+   * to be available, then calculates the sum of all currency values in the column,
+   * excluding pagination.
+   *
+   * @returns {Promise<number>} A promise that resolves to the total itemized expenses as a number.
+   */
+  async getTableItemisedExpensesValue(): Promise<number> {
+    await this.tableColumn2.last().waitFor();
+    return this.sumCurrencyColumnWithoutPagination(this.tableColumn2);
   }
 }

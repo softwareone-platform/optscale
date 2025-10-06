@@ -170,6 +170,8 @@ test.describe('[MPT-13976] Expenses Page Source Breakdown Tests', { tag: ['@ui',
       await expect(expensesPage.dataSourceHeading).toBeVisible();
       const dateRange = await datePicker.selectedDateText.textContent();
       expect(dateRange.includes(defaultDateRange)).toBe(true);
+      await expect(expensesPage.expensesPieChartDiv).toBeVisible();
+      await expect(expensesPage.tableHeadingDatasource).toBeVisible();
     });
 
     await test.step('Click Cost Explorer breadcrumb and verify navigation', async () => {
@@ -178,7 +180,7 @@ test.describe('[MPT-13976] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     });
   });
 
-  test.only('[] Validate API Source Breakdown chart data', async ({ expensesPage }) => {
+  test('[] Validate API Source Breakdown chart data', async ({ expensesPage }) => {
     const { startDate, endDate } = getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByDataSourceResponse;
 
@@ -238,6 +240,39 @@ test.describe('[MPT-13976] Expenses Page Source Breakdown Tests', { tag: ['@ui',
         expect.soft(typeof cloudTotal.previous_total).toBe('number');
         expect.soft(cloudTotal.previous_total).toBeGreaterThanOrEqual(0);
       }
+    });
+  });
+
+  test('[] Verify expenses total for(default) period matches chart and table totals', async ({ expensesPage }) => {
+    const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
+    debugLog(`Total expenses for selected period: ${totalForPeriod}`);
+    const chartTotal = await expensesPage.getExpensesPieChartValue();
+    debugLog(`Total expenses from pie chart: ${chartTotal}`);
+    const tableTotal = await expensesPage.getTableItemisedExpensesValue();
+    debugLog(`Total expenses from itemised table: ${tableTotal}`);
+
+    await test.step('Compare total expenses values', async () => {
+      expect.soft(chartTotal).toBe(totalForPeriod);
+      expect.soft(tableTotal).toBe(totalForPeriod);
+    });
+  });
+
+  test('[] Verify expenses total for (last month) period matches chart and table totals', async ({ expensesPage, datePicker }) => {
+    await datePicker.selectLastMonthDateRange();
+    const expectedDateRange = getExpectedDateRangeText('last month');
+    debugLog(`Selected date range: ${expectedDateRange}`);
+    const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
+    debugLog(`Total expenses for selected period: ${totalForPeriod}`);
+    const chartTotal = await expensesPage.getExpensesPieChartValue();
+    debugLog(`Total expenses from pie chart: ${chartTotal}`);
+    const tableTotal = await expensesPage.getTableItemisedExpensesValue();
+    debugLog(`Total expenses from itemised table: ${tableTotal}`);
+
+    await test.step('Compare total expenses values', async () => {
+      const dateRange = await datePicker.selectedDateText.textContent();
+      expect(dateRange.includes(expectedDateRange)).toBe(true);
+      expect.soft(chartTotal).toBe(totalForPeriod);
+      expect.soft(tableTotal).toBe(totalForPeriod);
     });
   });
 });
