@@ -189,6 +189,29 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 400)
         self.assertEqual(cloud_acc['error']['error_code'], 'OE0548')
 
+    def test_restrict_change_to_assumed(self):
+        valid_config = {
+            'name': 'my cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'access_key_id': 'key',
+                'secret_access_key': 'secret',
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, valid_config)
+        cloud_acc_id = cloud_acc["id"]
+        valid_config.pop('type')
+        # add valid parameter set for assumed account
+        # but restrict changed account type
+        for i in ['assume_role_account_id', 'assume_role_name']:
+            update_cfg = copy.deepcopy(valid_config)
+            update_cfg['config'][i] = ''
+
+            code, cloud_acc = self.client.cloud_account_update(
+                cloud_acc_id, update_cfg)
+            self.assertEqual(code, 400)
+            self.assertEqual(cloud_acc['error']['error_code'], 'OE0212')
+
     def test_create_aws_cloud_acc_assume(self):
         assume_role_account_id = '87629'
         assume_role_name = 'va-test'
@@ -310,7 +333,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',  # valid
                 'assume_role_name': 'va-test1',  # valid
-                'linked': False  # not allowed
+                'linked': False  # not allowed, linked is immutable
             }
         }
         code, new_cloud_acc = self.client.cloud_account_update(

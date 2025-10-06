@@ -519,8 +519,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             self.session, self._config)
         old_config = cloud_acc_obj.decoded_config
         config = kwargs.pop('config', {})
-        linked = 'linked' in config
-        if linked:
+        linked = config.get("linked", False)
+        if linked != old_config.get('linked', False):
             raise WrongArgumentsException(Err.OE0211, ['linked'])
         LOG.info('Editing cloud account %s. Input: %s. Config: %s', item_id,
                  kwargs, bool(config))
@@ -554,6 +554,7 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                     config["assume_role_name"] = role or old_role
             # non-assumed
             else:
+
                 access_key_id = config.get('access_key_id')
                 secret_access_key = config.get('secret_access_key')
                 if bool(access_key_id) ^ bool(secret_access_key):
@@ -569,6 +570,11 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                                 'secret_access_key'
                             ]
                         )
+                # valid keys, but unexpected for non-assumed roles
+                unexpected = ['assume_role_account_id', 'assume_role_name']
+                for i in unexpected:
+                    if i in config:
+                        raise WrongArgumentsException(Err.OE0212, [i])
         organization = OrganizationController(
             self.session, self._config, self.token).get(
             cloud_acc_obj.organization_id)
