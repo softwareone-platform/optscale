@@ -30,7 +30,7 @@ import {
 import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { AWS_CNR, AZURE_CNR, AZURE_TENANT, GCP_CNR, GCP_TENANT, CONNECTION_TYPES, CLOUD_PROVIDERS } from "utils/constants";
 import { readFileAsText } from "utils/files";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_2, MPT_SPACING_3, SPACING_2 } from "utils/layouts";
 import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 import useStyles from "./ConnectCloudAccountForm.styles";
@@ -498,15 +498,15 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       : isDataSourceConnectionTypeEnabled(providerTypes.connectionType);
   });
 
-  const renderAssumedAccount = () => {
+  const renderTabs = () => {
     if (!Array.isArray(CLOUD_PROVIDER_TYPES[selectedProvider])) {
       return null;
     }
 
     return (
       <>
-        <Box alignItems="center" display="flex" mb={1}>
-          <Typography sx={{ mr: 1 }}>
+        <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
+          <Typography minWidth={110} sx={{ mr: 1 }}>
             <FormattedMessage id="connectionType" />{" "}
           </Typography>
           <ButtonGroup
@@ -530,8 +530,8 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
 
   return (
     <FormProvider {...methods}>
-      <Box sx={{ width: { md: "50%" } }}>
-        <Box display="grid" gap={SPACING_2} mb={SPACING_2} gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))">
+      <Box sx={{ width: { md: "55%" } }}>
+        <Box display="grid" gap={MPT_SPACING_3} mb={MPT_SPACING_3} gridTemplateColumns="repeat(auto-fit, minmax(100px, 1fr))">
           {tiles.map(({ id, icon: Icon, messageId, dataTestId, action, capability }) => (
             <CapabilityWrapper capability={capability} key={id}>
               <Paper
@@ -558,7 +558,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
           ))}
         </Box>
         <Box>
-          {renderAssumedAccount()}
+          {renderTabs()}
 
           <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage(connectionType, authenticationType)}</Box>
           <form
@@ -566,22 +566,30 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
               isRestricted
                 ? (e) => e.preventDefault()
                 : handleSubmit(async (formData: FieldValues) => {
-                    const cloudType = getCloudTypeFromConnectionType(connectionType);
+                    try {
+                      const cloudType = getCloudTypeFromConnectionType(connectionType);
 
-                    let result;
-                    if (cloudType === AWS_CNR) {
-                      result = await awsGetFormParameters(formData, connectionType, authenticationType);
-                    } else if (cloudType === AZURE_TENANT) {
-                      result = await getAzureTenantParameters(formData);
-                    } else if (cloudType === AZURE_CNR) {
-                      result = await getAzureSubscriptionParameters(formData);
-                    } else if (cloudType === GCP_CNR) {
-                      result = await getGoogleParameters(formData);
-                    } else if (cloudType === GCP_TENANT) {
-                      result = await getGoogleTenantParameters(formData);
+                      const params = await (async () => {
+                        switch (cloudType) {
+                          case AWS_CNR:
+                            return awsGetFormParameters(formData, connectionType, authenticationType);
+                          case AZURE_TENANT:
+                            return getAzureTenantParameters(formData);
+                          case AZURE_CNR:
+                            return getAzureSubscriptionParameters(formData);
+                          case GCP_CNR:
+                            return getGoogleParameters(formData);
+                          case GCP_TENANT:
+                            return getGoogleTenantParameters(formData);
+                          default:
+                            throw new Error("Unsupported cloud type");
+                        }
+                      })();
+
+                      await onSubmit(params);
+                    } catch (e) {
+                      console.error(e);
                     }
-
-                    onSubmit(await result);
                   })
             }
             noValidate

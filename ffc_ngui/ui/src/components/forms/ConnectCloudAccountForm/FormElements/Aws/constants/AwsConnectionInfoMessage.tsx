@@ -4,16 +4,23 @@ import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
 import { DOCS_HYSTAX_CONNECT_AWS } from "urls";
 import { CONNECTION_TYPES } from "utils/constants";
+import { MPT_SPACING_2 } from "../../../../../../utils/layouts";
 
-const renderAwsTypeDescription = (messageId: string, linkUrl: string | undefined = undefined) => (
-  <div key={messageId} style={{ marginBottom: "1rem", fontSize: 14 }}>
+const renderAwsTypeDescription = (messageId: string, linkUrl: string | undefined = undefined, linkDisplayBlock = false) => (
+  <div key={messageId} style={{ marginBottom: MPT_SPACING_2, fontSize: 14 }}>
     <FormattedMessage
       id={messageId}
       values={{
         link: (chunks: ReactNode[]) => {
           const linkText = chunks.length > 0 ? chunks : linkUrl;
           return (
-            <Link data-test-id="link_guide" style={{ display: "block" }} href={linkUrl} target="_blank" rel="noopener">
+            <Link
+              data-test-id="link_guide"
+              style={{ display: linkDisplayBlock ? "inline" : "block" }}
+              href={linkUrl}
+              target="_blank"
+              rel="noopener"
+            >
               {linkText}
             </Link>
           );
@@ -31,15 +38,15 @@ const awsDefaultAssumedRoleDescriptions = [
 ];
 
 const awsDefaultAccessKeyDescriptions = [
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS),
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS, true),
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference2"),
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS)
 ];
 
 const awsMemberAccessKeyDescriptions = [
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS),
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS, true),
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference4"),
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS)
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS, false)
 ];
 
 export const awsConnectionAssumedRoleTypeDescriptions = {

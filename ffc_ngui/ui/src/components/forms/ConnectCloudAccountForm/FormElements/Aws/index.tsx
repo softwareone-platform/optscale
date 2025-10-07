@@ -5,6 +5,7 @@ import { FieldValues } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import ConnectForm from "components/ConnectForm";
 import { AWS_CNR, CONNECTION_TYPES } from "../../../../../utils/constants";
+import { MPT_SPACING_2 } from "../../../../../utils/layouts";
 import ButtonGroup from "../../../../ButtonGroup";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "../DataSourceNameField";
 import { AwsAccessKeyForm, getAwsGroupAccessKeyParameters } from "./components/AwsAccessKeyForm";
@@ -56,8 +57,8 @@ export const useAuthenticationType = () => {
 };
 
 export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticationType }: AuthenticationTypeSelectorType) => (
-  <Box alignItems="center" display="flex" mb={1}>
-    <Typography sx={{ mr: 1 }}>
+  <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
+    <Typography minWidth={110} sx={{ mr: 1 }}>
       <FormattedMessage id="authentication" />{" "}
     </Typography>
     <ButtonGroup
