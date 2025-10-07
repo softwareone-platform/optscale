@@ -1,13 +1,14 @@
 import React from "react";
+import { FieldValues } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { TextInput } from "components/forms/common/fields";
 import QuestionMark from "components/QuestionMark";
-import { FIELD_NAMES } from "./AwsFieldNames";
+import { AWS_ACCESS_KEY_FIELD_NAMES } from "../constants/AwsConstants";
 
-const GroupAwsRootCredentials = () => (
+export const AwsAccessKeyForm = () => (
   <>
     <TextInput
-      name={FIELD_NAMES.ACCESS_KEY_ID}
+      name={AWS_ACCESS_KEY_FIELD_NAMES.ACCESS_KEY_ID}
       required
       dataTestId="input_aws_access_key_id"
       InputProps={{
@@ -25,24 +26,27 @@ const GroupAwsRootCredentials = () => (
       autoComplete="off"
     />
     <TextInput
-      name={FIELD_NAMES.ASSUMED_ROLE_NAME}
+      name={AWS_ACCESS_KEY_FIELD_NAMES.AWS_SECRET_ACCESS_KEY}
       required
-      dataTestId="input_assumed_role_name"
+      dataTestId="input_aws_secret_access_key"
       InputProps={{
         endAdornment: (
           <QuestionMark
-            messageId="awsAssumedRoleNameTooltip"
+            messageId="awsSecretAccessKeyTooltip"
             messageValues={{
               i: (chunks) => <i>{chunks}</i>
             }}
-            dataTestId="qmark_assumed_role_key"
+            dataTestId="qmark_secret_access_key"
           />
         )
       }}
-      label={<FormattedMessage id="awsAssumedRoleName" />}
+      label={<FormattedMessage id="awsSecretAccessKey" />}
       autoComplete="off"
     />
   </>
 );
 
-export default GroupAwsRootCredentials;
+export const getAwsGroupAccessKeyParameters = (formData: FieldValues) => ({
+  access_key_id: formData[AWS_ACCESS_KEY_FIELD_NAMES.ACCESS_KEY_ID],
+  secret_access_key: formData[AWS_ACCESS_KEY_FIELD_NAMES.AWS_SECRET_ACCESS_KEY]
+});

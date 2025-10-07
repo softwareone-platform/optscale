@@ -63,29 +63,24 @@ export const ENVIRONMENT = "environment";
 export const CLOUD_PROVIDERS = Object.freeze({
   AWS: "aws",
   AZURE: "azure",
-  GCP: "gcp",
-  ALIBABA: "alibaba",
-  NEBIUS: "nebius",
-  DATABRICKS: "databricks",
-  KUBERNETES: "kubernetes"
-});
-
-export const AUTHENTICATION_TYPES = Object.freeze({
-  ASSUMED_ROLE: "assumedRole",
-  ACCESS_KEY: "accessKey"
+  GCP: "gcp"
+  // ALIBABA: "alibaba",
+  // NEBIUS: "nebius",
+  // DATABRICKS: "databricks",
+  // KUBERNETES: "kubernetes"
 });
 
 export const CONNECTION_TYPES = Object.freeze({
   AWS_MANAGEMENT: "awsManagement",
   AWS_MEMBER: "awsMember",
   AWS_STANDALONE: "awsStandalone",
-  AWS_ROOT: "awsRoot",
-  AWS_LINKED: "awsLinked",
   AZURE_SUBSCRIPTION: "azureSubscription",
   AZURE_TENANT: "azureTenant",
-  // ALIBABA: "alibaba",
   GCP_PROJECT: "gcpProject",
   GCP_TENANT: "gcpTenant"
+  // AWS_ROOT: "awsRoot",
+  // AWS_LINKED: "awsLinked",
+  // ALIBABA: "alibaba",
   // NEBIUS: "nebius",
   // DATABRICKS: "databricks",
   // KUBERNETES: "kubernetes"
@@ -99,13 +94,13 @@ export const CLOUD_ACCOUNT_TYPE = Object.freeze({
   [AWS_CNR]: "aws",
   [AZURE_CNR]: "azureSubscription",
   [AZURE_TENANT]: "azureTenant",
-  [DATABRICKS]: "databricks",
-  [ALIBABA_CNR]: "alibabaCloud",
   [GCP_CNR]: "gcpProject",
   [GCP_TENANT]: "gcpTenant",
-  [ENVIRONMENT]: "environment",
-  [NEBIUS]: "nebius",
-  [KUBERNETES_CNR]: "kubernetes"
+  [ENVIRONMENT]: "environment"
+  // [DATABRICKS]: "databricks",
+  // [ALIBABA_CNR]: "alibabaCloud",
+  // [NEBIUS]: "nebius",
+  // [KUBERNETES_CNR]: "kubernetes"
 });
 
 // Expenses

@@ -1,15 +1,25 @@
 import Typography from "@mui/material/Typography";
+import { FieldValues } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import ConnectForm from "components/ConnectForm";
-import { AwsRootUseAwsEdpDiscount, AwsRootExportType, AwsRootBillingBucket } from "components/DataSourceCredentialFields";
-import { AWS_ROOT_CONNECT_CONFIG_SCHEMES } from "../../../../../utils/constants";
-import QuestionMark from "../../../../QuestionMark";
-import { RadioGroup, Switch } from "../../../common/fields";
-import { AWS_ROOT_INPUTS_FIELD_NAMES, WatcherType } from "./AwsFieldNames";
+import {
+  AwsRootUseAwsEdpDiscount,
+  AwsRootExportType,
+  AwsRootBillingBucket,
+  AWS_ROOT_BILLING_BUCKET_FIELD_NAMES,
+  AWS_ROOT_CREDENTIALS_FIELD_NAMES,
+  AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
+  AWS_ROOT_EXPORT_TYPE_FIELD_NAMES
+} from "components/DataSourceCredentialFields";
+import QuestionMark from "components/QuestionMark";
+import { AWS_ROOT_CONNECT_CONFIG_SCHEMES } from "utils/constants";
+import { RadioGroup, Switch } from "../../../../common/fields";
+import { AWS_ROOT_INPUTS_FIELD_NAMES } from "../constants/AwsConstants";
+import { AwsWatcherType } from "../types/AwsForm.types";
 
-export const GroupAwsExtendedOptions = () => (
+export const AwsAdvancedOptionsForm = () => (
   <ConnectForm>
-    {({ watch }: WatcherType) => {
+    {({ watch }: AwsWatcherType) => {
       const isFindReportWatch = watch(AWS_ROOT_INPUTS_FIELD_NAMES.IS_FIND_REPORT, true);
       const configScheme =
         watch(AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME, AWS_ROOT_CONNECT_CONFIG_SCHEMES.CREATE_REPORT) ||
@@ -65,3 +75,15 @@ export const GroupAwsExtendedOptions = () => (
     }}
   </ConnectForm>
 );
+
+export const getAwsAdvancedOptions = (formData: FieldValues) => ({
+  bucket_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
+  bucket_prefix: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
+  report_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
+  region_name: formData[AWS_ROOT_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
+  config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME],
+  access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
+  secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
+  use_edp_discount: formData[AWS_ROOT_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+  cur_version: Number(formData[AWS_ROOT_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION])
+});

@@ -4,17 +4,10 @@ import {
   GcpCredentials,
   GcpTenantCredentials
 } from "components/DataSourceCredentialFields";
-import { AUTHENTICATION_TYPES, CONNECTION_TYPES } from "utils/constants";
+import { CONNECTION_TYPES } from "utils/constants";
 import { ObjectValues } from "utils/types";
-import { FormAwsAccessKey } from "./AwsFormElements/FormAwsAccessKey";
-import { FormAwsAccessKeyExtended } from "./AwsFormElements/FormAwsAccessKeyExtended";
-import { FormAwsAssumeRole } from "./AwsFormElements/FormAwsAssumeRole";
-import { FormAwsAssumeRoleExtended } from "./AwsFormElements/FormAwsAssumeRoleExtended";
-
-export const AWS_ROOT_INPUTS_FIELD_NAMES = {
-  IS_FIND_REPORT: "isFindReport",
-  CONFIG_SCHEME: "configScheme"
-};
+import { AwsForm } from "./Aws";
+import { AuthenticationType } from "./Aws/types/AwsForm.types";
 
 // MPT_TODO: disabled because these types are not supported in Assumed Role implementatio
 // const AwsRootInputs = () => (
@@ -94,7 +87,6 @@ export const AWS_ROOT_INPUTS_FIELD_NAMES = {
 // );
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
-type AuthenticationType = ObjectValues<typeof AUTHENTICATION_TYPES>;
 
 const ConnectionInputs = ({
   connectionType,
@@ -104,25 +96,10 @@ const ConnectionInputs = ({
   authenticationType: AuthenticationType | null;
 }) => {
   switch (connectionType) {
-    // MPT_TODO: disabled because these types are not supported in Assumed Role implementation
-    // case CONNECTION_TYPES.AWS_ROOT:
-    //   return <AwsRootInputs />;
-    // case CONNECTION_TYPES.AWS_LINKED:
-    //   return <AwsLinkedCredentials />;
     case CONNECTION_TYPES.AWS_MANAGEMENT:
-      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
-        <FormAwsAssumeRoleExtended />
-      ) : (
-        <FormAwsAccessKeyExtended />
-      );
     case CONNECTION_TYPES.AWS_MEMBER:
-      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? <FormAwsAssumeRole /> : <FormAwsAccessKey />;
     case CONNECTION_TYPES.AWS_STANDALONE:
-      return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
-        <FormAwsAssumeRoleExtended />
-      ) : (
-        <FormAwsAccessKeyExtended />
-      );
+      return <AwsForm authenticationType={authenticationType} connectionType={connectionType} />;
     case CONNECTION_TYPES.AZURE_TENANT:
       return <AzureTenantCredentials />;
     case CONNECTION_TYPES.AZURE_SUBSCRIPTION:
@@ -131,6 +108,11 @@ const ConnectionInputs = ({
       return <GcpCredentials />;
     case CONNECTION_TYPES.GCP_TENANT:
       return <GcpTenantCredentials />;
+    // MPT_TODO: disabled because these types are not supported in Assumed Role implementation
+    // case CONNECTION_TYPES.AWS_ROOT:
+    //   return <AwsRootInputs />;
+    // case CONNECTION_TYPES.AWS_LINKED:
+    //   return <AwsLinkedCredentials />;
     // case CONNECTION_TYPES.ALIBABA:
     //   return <AlibabaCredentials />;
     // case CONNECTION_TYPES.NEBIUS:
