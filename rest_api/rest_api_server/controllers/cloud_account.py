@@ -523,6 +523,12 @@ class CloudAccountController(BaseController, ClickHouseMixin):
             linked = config['linked']
             if linked != old_config.get('linked', False):
                 raise WrongArgumentsException(Err.OE0211, ['linked'])
+        # linked not in config, take linked from the old config
+        # to address handle_config -> validate_credentials for the assumed acc
+        else:
+            if 'linked' in old_config:
+                config['linked'] = old_config['linked']
+
         LOG.info('Editing cloud account %s. Input: %s. Config: %s', item_id,
                  kwargs, bool(config))
         if cloud_acc_obj.parent_id and config:
