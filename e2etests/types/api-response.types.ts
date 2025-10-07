@@ -397,3 +397,38 @@ export interface CloudTotals {
   total: number;
   previous_total: number;
 }
+
+export interface ExpensesFilterByPoolResponse {
+  expenses: {
+    total: number;
+    previous_total: number;
+    previous_range_start: number;
+    id: string;
+    name: string;
+    breakdown: Record<`${number}`, PoolExpense[]>;
+  };
+}
+
+export interface PoolExpense {
+  id: string;
+  name: string;
+  purpose: string;
+  expense: number;
+}
+
+export interface ExpensesFilterByEmployeeResponse {
+  expenses: {
+    total: number;
+    previous_total: number;
+    previous_range_start: number;
+    id: string;
+    name: string;
+    breakdown: Record<`${number}`, EmployeeExpense[]>;
+  };
+}
+
+export interface EmployeeExpense {
+  id: string;
+  name: string;
+  expense: number;
+}

@@ -27,6 +27,8 @@ export class ExpensesPage extends BasePage {
   readonly expensesPieChartDiv: Locator;
   readonly expensesPieChartValue: Locator;
   readonly tableHeadingDatasource: Locator;
+  readonly tableHeadingPool: Locator;
+  readonly tableHeadingOwner: Locator;
   readonly table: Locator;
   readonly tableColumn2: Locator;
 
@@ -57,6 +59,8 @@ export class ExpensesPage extends BasePage {
     this.expensesPieChartDiv = this.main.locator('//div[.="Expenses"]/..');
     this.expensesPieChartValue = this.expensesPieChartDiv.locator('//*[contains(text(), "$")]').first();
     this.tableHeadingDatasource = this.main.getByText('Summary by data source');
+    this.tableHeadingPool = this.main.getByText('Summary by pool');
+    this.tableHeadingOwner = this.main.getByText('Summary by owner');
     this.table = this.main.locator('table');
     this.tableColumn2 = this.table.locator('//td[2]');
   }
