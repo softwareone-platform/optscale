@@ -9,12 +9,7 @@
  * @param customEnd - Required for 'Custom' range.
  * @returns A string like "Jul 01 - Jul 23" or "Jul 24, 2024 - Jul 23, 2025"
  */
-export function getExpectedDateRangeText(
-  rangeType: string,
-  today: Date = new Date(),
-  customStart?: Date,
-  customEnd?: Date
-): string {
+export function getExpectedDateRangeText(rangeType: string, today: Date = new Date(), customStart?: Date, customEnd?: Date): string {
   const endDate = new Date(today);
   let startDate: Date;
 
@@ -29,17 +24,18 @@ export function getExpectedDateRangeText(
       startDate.setDate(endDate.getDate() - 29);
       break;
 
-case 'this month':
-        startDate = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
-        break;
+    case 'this month':
+      startDate = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
+      break;
 
     case 'last month':
-      const lastMonthYear = endDate.getFullYear();
-      const lastMonthIndex = endDate.getMonth() - 1;
-      startDate = new Date(lastMonthYear, lastMonthIndex, 1);
-      endDate.setFullYear(lastMonthYear);
-      endDate.setMonth(lastMonthIndex + 1);
-      endDate.setDate(0); // last day of last month
+      const prevMonth = endDate.getUTCMonth() - 1;
+      const lastMonthYear = prevMonth < 0 ? endDate.getUTCFullYear() - 1 : endDate.getUTCFullYear();
+      const lastMonthIndex = (prevMonth + 12) % 12;
+
+      startDate = new Date(Date.UTC(lastMonthYear, lastMonthIndex, 1));
+      const lastDayOfMonth = new Date(Date.UTC(lastMonthYear, lastMonthIndex + 1, 0)).getUTCDate();
+      endDate.setTime(Date.UTC(lastMonthYear, lastMonthIndex, lastDayOfMonth, 23, 59, 59));
       break;
 
     case 'custom':
@@ -60,7 +56,7 @@ case 'this month':
     date.toLocaleDateString('en-US', {
       month: 'short',
       day: '2-digit',
-      ...(yearsDiffer ? {year: 'numeric'} : {}),
+      ...(yearsDiffer ? { year: 'numeric' } : {}),
       timeZone: 'UTC',
     });
 
@@ -88,8 +84,8 @@ export function getLast7DaysUnixRange(): { startDate: number; endDate: number } 
   startUTC.setUTCHours(0, 0, 0, 0); // force 00:00:00
 
   return {
-    startDate: Math.floor(startUTC.getTime() / 1000),  // e.g. 2025-07-19 00:00:00
-    endDate: Math.floor(endUTC.getTime() / 1000),      // e.g. 2025-07-25 23:59:59
+    startDate: Math.floor(startUTC.getTime() / 1000), // e.g. 2025-07-19 00:00:00
+    endDate: Math.floor(endUTC.getTime() / 1000), // e.g. 2025-07-25 23:59:59
   };
 }
 
@@ -120,19 +116,19 @@ export function getLast30DaysUnixRange(): { startDate: number; endDate: number }
 }
 
 export function getThisMonthUnixDateRange(): { startDate: number; endDate: number } {
-        const today = new Date();
+  const today = new Date();
 
-        // End of today (UTC)
-        const endUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
+  // End of today (UTC)
+  const endUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
 
-        // Start of this month (UTC)
-        const startUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1, 0, 0, 0));
+  // Start of this month (UTC)
+  const startUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1, 0, 0, 0));
 
-        return {
-            startDate: Math.floor(startUTC.getTime() / 1000),
-            endDate: Math.floor(endUTC.getTime() / 1000),
-        };
-    }
+  return {
+    startDate: Math.floor(startUTC.getTime() / 1000),
+    endDate: Math.floor(endUTC.getTime() / 1000),
+  };
+}
 
 /**
  * Calculates the Unix timestamp range for the previous calendar month.
