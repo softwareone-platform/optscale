@@ -526,7 +526,9 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         # linked not in config, take linked from the old config
         # to address handle_config -> validate_credentials for the assumed acc
         else:
-            if 'linked' in old_config:
+            # set config properties only in case if config has been passed
+            # to pass requests as update import time
+            if config and 'linked' in old_config:
                 config['linked'] = old_config['linked']
 
         LOG.info('Editing cloud account %s. Input: %s. Config: %s', item_id,
