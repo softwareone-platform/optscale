@@ -371,6 +371,13 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
         network_id = self._cloud_adapter.network_name_to_id.get(network_name)
         return network_id, network_name, network_link
 
+    @staticmethod
+    def _get_architecture(flavor: str) -> str:
+        flavor = flavor.lower()
+        if flavor.startswith("t2a-"):
+            return "arm64"
+        return "x86_64"
+
     def __init__(self, cloud_instance: compute.Instance, cloud_adapter: "Gcp"):
         GcpResource.__init__(self, cloud_instance, cloud_adapter)
 
@@ -384,7 +391,7 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
         network_id, network_name, network_link = self._extract_network()
         security_groups = list(cloud_instance.tags.items)
         zone_id = self._last_path_element(self._cloud_object.zone)
-
+        architecture = self._get_architecture(flavor)
         super().__init__(
             **self._common_fields,
             flavor=flavor,
@@ -395,7 +402,8 @@ class GcpInstance(tools.cloud_adapter.model.InstanceResource, GcpResource):
             cloud_created_at=cloud_created_at,
             vpc_id=network_id,
             vpc_name=network_name,
-            zone_id=zone_id
+            zone_id=zone_id,
+            architecture=architecture
         )
 
     def _new_labels_request(self, key, value):

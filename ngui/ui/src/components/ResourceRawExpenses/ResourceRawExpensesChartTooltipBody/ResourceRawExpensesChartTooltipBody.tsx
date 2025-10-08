@@ -25,7 +25,7 @@ const ResourceRawExpensesChartTooltipBody = ({ slice, stacked }) => {
       {points.map((point) => (
         <KeyValueLabel
           key={point.id}
-          keyText={<CircleLabel figureColor={point.serieColor} label={point.serieId} textFirst={false} />}
+          keyText={<CircleLabel figureColor={point.seriesColor} label={point.seriesId} textFirst={false} />}
           value={
             <>
               <FormattedMoney value={point.data?.y} type={FORMATTED_MONEY_TYPES.COMMON} />
