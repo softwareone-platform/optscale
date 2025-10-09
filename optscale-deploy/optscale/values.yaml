@@ -225,6 +225,7 @@ ngui:
     google_map_api_key:
     ganalytics_id:
     hotjar_id:
+    on_initialize_organization_setup_mode:
 
 minio:
   name: &minio_name minio
