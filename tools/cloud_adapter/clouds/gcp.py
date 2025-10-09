@@ -909,6 +909,20 @@ class Gcp(CloudBase):
             raise tools.cloud_adapter.exceptions.CloudSettingNotSupported(
                 'Currency "%s" is not supported' % dict(result).get("currency")
             )
+        if self.pricing_data:
+            query = f"""
+                SELECT pricing_unit
+                FROM `{self._pricing_table_full_name()}`
+                WHERE TIMESTAMP_TRUNC(_PARTITIONTIME, DAY) >= TIMESTAMP("{dt}")
+                LIMIT 1
+            """
+            query_job = self.bigquery_client.query(query, **DEFAULT_KWARGS)
+            try:
+                list(query_job.result())[0]
+            except Exception as e:
+                raise tools.cloud_adapter.exceptions.CloudSettingNotSupported(
+                    f'Invalid pricing data table: {str(e)}'
+                )
 
     def _validate_billing_type(self):
         if not self.billing_table.startswith(STANDARD_BILLING_PREFIX):
