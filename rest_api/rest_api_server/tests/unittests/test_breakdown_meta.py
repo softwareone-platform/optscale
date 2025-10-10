@@ -685,14 +685,14 @@ class TestBreakdownMetaApi(TestApiBase):
 
         day_1_ts = int(datetime(2022, 2, 2).timestamp())
         meta_values = [
-            ['1', '2'], 'win', {'key': 'value'}, None, 2, True
+            ['1', '2'], 'win', {'key': 'value'}, None, 2, True, False, 0
         ]
         for meta_value in meta_values:
             self._create_resource(
                 self.cloud_acc1['id'], first_seen=day_1_ts, last_seen=day_1_ts,
-                meta={'os': meta_value})
+                meta={'key': meta_value})
         code, response = self.client.breakdown_meta_get(
-            self.org_id, start, end, 'os')
+            self.org_id, start, end, 'key')
         self.assertEqual(code, 200)
         self.assertEqual(response['breakdown'], {
             str(day_1_ts): {
@@ -700,6 +700,8 @@ class TestBreakdownMetaApi(TestApiBase):
                 'win': {'cost': 0, 'count': 1},
                 '(not set)': {'cost': 0, 'count': 1},
                 '2': {'cost': 0, 'count': 1},
-                'true': {'cost': 0, 'count': 1}
+                'True': {'cost': 0, 'count': 1},
+                'False': {'cost': 0, 'count': 1},
+                '0': {'cost': 0, 'count': 1},
             }
         })
