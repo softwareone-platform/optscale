@@ -69,9 +69,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
         await test.step('Verify S3 Duplicate Finder table shows no duplicate checks message', async () => {
           await recommendationsPage.clickS3DuplicatesCard();
-          expect(await s3DuplicateFinder.tableFirstRow.textContent()).toBe(
-            'No duplicate checks, create a new one using the "Run check" button.'
-          );
+          await expect(s3DuplicateFinder.tableFirstRow).toHaveText('No duplicate checks, create a new one using the "Run check" button.');
         });
       });
       return;
@@ -125,7 +123,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
         await expect(service).toBeVisible();
       }
       for (const service of expectedHiddenServices) {
-        await expect(service).not.toBeVisible();
+        await expect(service).toBeHidden();
       }
     });
 
@@ -141,7 +139,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       ];
 
       for (const icon of aliBabaIcons) {
-        await expect(icon).not.toBeVisible();
+        await expect(icon).toBeHidden();
       }
     });
 
@@ -159,7 +157,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
           recommendationsPage.aliBabaRDS_Icon,
         ];
         for (const icon of aliBabaIcons) {
-          await expect(cell.locator(icon)).not.toBeVisible();
+          await expect(cell.locator(icon)).toBeHidden();
         }
       }
     });
@@ -374,7 +372,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
       if (cardSavings === 0) {
         await test.step('Card savings is 0, check table and see-all button', async () => {
-          await expect(seeAllBtn).not.toBeVisible();
+          await expect(seeAllBtn).toBeHidden();
           await recommendationsPage.clickTableButton();
           expect(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
         });

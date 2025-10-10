@@ -28,7 +28,7 @@ export function getExpectedDateRangeText(rangeType: string, today: Date = new Da
       startDate = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
       break;
 
-    case 'last month':
+    case 'last month': {
       const prevMonth = endDate.getUTCMonth() - 1;
       const lastMonthYear = prevMonth < 0 ? endDate.getUTCFullYear() - 1 : endDate.getUTCFullYear();
       const lastMonthIndex = (prevMonth + 12) % 12;
@@ -37,14 +37,16 @@ export function getExpectedDateRangeText(rangeType: string, today: Date = new Da
       const lastDayOfMonth = new Date(Date.UTC(lastMonthYear, lastMonthIndex + 1, 0)).getUTCDate();
       endDate.setTime(Date.UTC(lastMonthYear, lastMonthIndex, lastDayOfMonth, 23, 59, 59));
       break;
+    }
 
-    case 'custom':
+    case 'custom': {
       if (!customStart || !customEnd) {
         throw new Error('Custom range requires start and end dates');
       }
       startDate = customStart;
       endDate.setTime(customEnd.getTime());
       break;
+    }
 
     default:
       throw new Error(`Unsupported range type: ${rangeType}`);

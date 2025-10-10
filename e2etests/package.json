@@ -9,7 +9,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "playwright:show-report": "npx playwright show-report",
-    "playwright:debug": "npx playwright test --debug --workers=1",
+    "playwright:debug": "npx playwright test --debug --workers=1 --grep @ui",
     "playwright:test": "npx playwright test --grep @ui",
     "playwright:api": "npx playwright test --grep @api",
     "playwright:test_chrome": "npx playwright test --project chrome",
@@ -33,6 +33,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.36.0",
     "@playwright/test": "^1.49.1",
     "@types/node": "^22.10.5",

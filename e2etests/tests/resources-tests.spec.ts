@@ -40,12 +40,12 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
   let totalExpensesValue: number;
   let itemisedTotal: number;
 
-  test.beforeEach('Login admin user', async ({ page, resourcesPage }) => {
+  test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.navigateToURL();
       await resourcesPage.waitForPageLoaderToDisappear();
       await resourcesPage.waitForCanvas();
-      if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+      await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
       await resourcesPage.firstResourceItemInTable.waitFor();
     });
@@ -752,7 +752,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.waitForLoadingPageImgToDisappear();
       await resourcesPage.waitForPageLoaderToDisappear();
       await resourcesPage.waitForCanvas();
-      if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+      await resourcesPage.resetFilters();
       await resourcesPage.firstResourceItemInTable.waitFor();
     });
   });
