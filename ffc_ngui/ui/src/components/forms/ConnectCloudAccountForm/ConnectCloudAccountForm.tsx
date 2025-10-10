@@ -506,7 +506,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
     return (
       <>
         <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
-          <Typography minWidth={110} sx={{ mr: 1 }}>
+          <Typography minWidth={110} sx={{ mr: 1, fontWeight: "bold" }}>
             <FormattedMessage id="connectionType" />{" "}
           </Typography>
           <ButtonGroup

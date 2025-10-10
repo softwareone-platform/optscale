@@ -58,7 +58,7 @@ export const useAuthenticationType = () => {
 
 export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticationType }: AuthenticationTypeSelectorType) => (
   <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
-    <Typography minWidth={110} sx={{ mr: 1 }}>
+    <Typography minWidth={110} sx={{ mr: 1, fontWeight: "bold" }}>
       <FormattedMessage id="authentication" />{" "}
     </Typography>
     <ButtonGroup
