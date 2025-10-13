@@ -790,7 +790,8 @@ export const EXPENSES_MAP_OBJECT_TYPES = Object.freeze({
   LOCATION: "location",
   FLOW: "flow",
   EXTERNAL_MARKER: "externalMarker",
-  INTER_REGION_MARKER: "interRegionMarker"
+  INTER_REGION_MARKER: "interRegionMarker",
+  INTER_CONTINENTAL_MARKER: "interContinentalMarker"
 });
 
 export const ARCHIVATION_REASON_MESSAGE_ID = Object.freeze({
