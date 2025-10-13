@@ -1,7 +1,6 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { generateRandomEmail } from '../utils/random-data-generator';
-import { restoreUserSessionInLocalForage } from '../utils/auth-session-storage/localforage-service';
 
 const verificationCode = '123456';
 let invitationEmail: string;
@@ -11,12 +10,12 @@ let emailVerificationLink: string;
 test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
 
-  test.beforeEach('Login admin user', async ({ page, loginPage }) => {
+  test.beforeEach('Login admin user', async ({ loginPage }) => {
     invitationEmail = generateRandomEmail();
     inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
     emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
-    await restoreUserSessionInLocalForage(page);
-    await loginPage.navigateToURL();
+    await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+    await loginPage.waitForLoadingPageImgToDisappear();
   });
 
   test(
@@ -227,8 +226,8 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
       inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
       emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
-      await restoreUserSessionInLocalForage(page);
-      await loginPage.navigateToURL();
+      await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+      await loginPage.waitForLoadingPageImgToDisappear();
     });
 
     await test.step('Navigate to the invitation page', async () => {
@@ -324,8 +323,8 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
       inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
       emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
-      await restoreUserSessionInLocalForage(page);
-      await loginPage.navigateToURL();
+      await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
+      await loginPage.waitForLoadingPageImgToDisappear();
     });
 
     await test.step('Navigate to the invitation page', async () => {

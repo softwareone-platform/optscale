@@ -43,6 +43,7 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the navigation is complete.
    */
   async navigateToURL(customUrl: string = null): Promise<void> {
+    debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);
     await this.page.goto(customUrl ? customUrl : this.url, { waitUntil: 'load' });
     await this.waitForLoadingPageImgToDisappear();
   }
@@ -196,7 +197,7 @@ export abstract class BasePage {
    */
   async screenshotUpdateDelay(timeout: number = 5000): Promise<void> {
     if (process.env.SCREENSHOT_UPDATE_DELAY === 'true') {
-      console.log(`Waiting for ${timeout}ms for screenshot update...`);
+      debugLog(`Waiting for ${timeout}ms for screenshot update...`);
       await new Promise(resolve => setTimeout(resolve, timeout));
     }
   }
@@ -351,7 +352,7 @@ export abstract class BasePage {
       debugLog('Waiting for loading page image to disappear...');
       await this.loadingPageImg.waitFor({ state: 'hidden', timeout: timeout });
     } catch (_error) {
-      console.error('Loading page image did not disappear within the timeout.'); // Log a warning if the image remains visible after the timeout.
+      console.error('[ERROR] Loading page image did not disappear within the timeout.'); // Log a warning if the image remains visible after the timeout.
     }
   }
 
@@ -374,7 +375,7 @@ export abstract class BasePage {
       debugLog('Waiting for page loader to disappear...');
       await this.pageLoader.last().waitFor({ state: 'hidden', timeout: timeout });
     } catch {
-      console.error('Page loader did not disappear within the timeout.'); // Log a warning if the spinner remains visible after the timeout.
+      console.error('[ERROR] Page loader did not disappear within the timeout.'); // Log a warning if the spinner remains visible after the timeout.
     }
   }
 

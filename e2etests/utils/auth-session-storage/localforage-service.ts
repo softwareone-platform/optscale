@@ -22,7 +22,7 @@ export async function getLocalforageRoot(page: Page) {
 
 export async function restoreUserSessionInLocalForage(page: Page, setTime = false) {
   const sessionData = safeReadJsonFile(LiveDemoService.getDefaultUserStorageState());
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/', { waitUntil: 'load' });
   await injectLocalforage(page);
   await page.evaluate(data => {
     const lf = (window as any).localforage;

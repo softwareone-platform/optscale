@@ -221,9 +221,10 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickExpensesTab(): Promise<void> {
+  async clickExpensesTab(wait = true): Promise<void> {
+    debugLog('Clicking ExpensesTab');
     await this.tabExpensesBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
 
   /**
@@ -232,9 +233,10 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickResourceCountTab(): Promise<void> {
+  async clickResourceCountTab(wait = true): Promise<void> {
+    debugLog('Clicking Resource Count tab');
     await this.tabResourceCountBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
 
   /**
@@ -243,9 +245,10 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickTagsTab(): Promise<void> {
+  async clickTagsTab(wait = true): Promise<void> {
+    debugLog('Clicking Tags Tab');
     await this.tabTagsBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
 
   /**
@@ -272,7 +275,10 @@ export class ResourcesPage extends BasePage {
     if (await this.resetFiltersBtn.isVisible()) {
       debugLog('Resetting all filters');
       await this.resetFiltersBtn.click();
-      if (wait) await this.waitForCanvas();
+      if (wait) {
+        await this.waitForPageLoaderToDisappear();
+        await this.waitForCanvas();
+      }
     }
   }
 
@@ -338,12 +344,15 @@ export class ResourcesPage extends BasePage {
    * and waits for the canvas to update after the selection.
    *
    * @param {string} option - The option to select from the dropdown.
+   * @param wait
    * @returns {Promise<void>} Resolves when the option is selected and the canvas is updated.
    */
-  async selectCategorizeBy(option: string): Promise<void> {
+  async selectCategorizeBy(option: string, wait = true): Promise<void> {
     await this.selectFromComboBox(this.categorizeBySelect, option);
-    await this.waitForPageLoad();
-    await this.waitForCanvas();
+    if (wait) {
+      await this.waitForPageLoad();
+      await this.waitForCanvas();
+    }
   }
 
   /**
