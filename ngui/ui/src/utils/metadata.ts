@@ -98,13 +98,15 @@ export const MetadataNodes = ({
 }) => {
   const combinedMeta = { first_seen: firstSeen, last_seen: lastSeen, ...meta };
 
-  const settings = Object.entries(combinedMeta).map(([name, value]) => {
-    const config = getMetaConfigByName(name);
-    if (config) {
-      return { label: intl.formatMessage({ id: config.translationId }), value: config.format?.(value) ?? value };
-    }
-    return { label: name, value: typeof value === "string" ? value : JSON.stringify(value) };
-  });
+  const settings = Object.entries(combinedMeta)
+    .filter(([, value]) => value !== undefined)
+    .map(([name, value]) => {
+      const config = getMetaConfigByName(name);
+      if (config) {
+        return { label: intl.formatMessage({ id: config.translationId }), value: config.format?.(value) ?? value };
+      }
+      return { label: name, value: typeof value === "string" ? value : JSON.stringify(value) };
+    });
 
   const getTags = () => Object.fromEntries(settings.map(({ label, value }) => [label, value]));
 
