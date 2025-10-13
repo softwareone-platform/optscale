@@ -228,7 +228,8 @@ const CanvasBarChart = ({
   valueFormat,
   thresholdMarker,
   withLegend,
-  legendLabel
+  legendLabel,
+  maxValue: maxValueProperty
 }) => {
   const wrapperRef = useRef();
   const canvasRef = useRef();
@@ -260,7 +261,7 @@ const CanvasBarChart = ({
   const innerWidth = getInnerWidth(wrapperWidth, margin);
   const innerHeight = getInnerHeight(wrapperHeight, margin);
 
-  const getMaxValue = () => Math.max(...[maxBandValue, thresholdMarker?.value].filter(Boolean));
+  const getMaxValue = () => Math.max(...[maxBandValue, thresholdMarker?.value, maxValueProperty].filter(Boolean));
   const {
     tickValues: valueTickValues, // ticks on Y axis for vertical layout and X axis for horizontal layout
     gridValues: valueGridValues,

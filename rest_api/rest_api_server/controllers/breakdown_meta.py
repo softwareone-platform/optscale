@@ -45,6 +45,12 @@ class BreakdownMetaController(BreakdownBaseController):
         return res
 
     def _extract_values_from_data(self, resources_data, breakdown_by):
+        def extract_value(value):
+            value = NOT_SET_NAME if value is None else value
+            if not callable(getattr(type(value), "__hash__", None)):
+                value = UNHASHABLE_NAME
+            return str(value)
+
         clusters = set()
         cnt_map = defaultdict(int)
         resources_table = []
@@ -54,7 +60,7 @@ class BreakdownMetaController(BreakdownBaseController):
             if cluster_type_id:
                 clusters.add(_id)
                 continue
-            breakdown_by_value = json.dumps(data.get('breakdown_by'))
+            breakdown_by_value = extract_value(data.get('breakdown_by'))
             resources_table.append({
                 'id': _id,
                 'breakdown_by': breakdown_by_value,
@@ -67,7 +73,7 @@ class BreakdownMetaController(BreakdownBaseController):
                 {'cluster_id': {'$in': list(clusters)}, 'deleted_at': 0},
                 ['meta', 'first_seen', 'last_seen'])
             for s in sub_resources:
-                breakdown_by_value = json.dumps(
+                breakdown_by_value = extract_value(
                     s.get('meta', {}).get(breakdown_by))
                 resources_table.append(
                     {
@@ -117,12 +123,6 @@ class BreakdownMetaController(BreakdownBaseController):
         def inner_breakdown_factory():
             return defaultdict(int, {'cost': 0, 'count': 0})
 
-        def decode_value(encoded_value):
-            value = json.loads(encoded_value) or NOT_SET_NAME
-            if not callable(getattr(type(value), "__hash__", None)):
-                value = UNHASHABLE_NAME
-            return value
-
         breakdown_by = filters['breakdown_by']
         extracted_values = self._extract_values_from_data(
             resources_data, breakdown_by)
@@ -142,7 +142,7 @@ class BreakdownMetaController(BreakdownBaseController):
                 r.get('first_seen'), r.get('last_seen'),
                 last_point=self.end_date
             )
-            breakdown_by = decode_value(r['breakdown_by'])
+            breakdown_by = r['breakdown_by']
             totals[breakdown_by]['count'] += 1
             for p in r_points:
                 if p not in breakdown:
@@ -152,11 +152,10 @@ class BreakdownMetaController(BreakdownBaseController):
         # calculate costs for breakdown and totals
         for dt, costs in expenses.items():
             if dt in breakdown:
-                for k, v in costs.items():
-                    decoded_key = decode_value(k)
-                    if decoded_key in breakdown[dt]:
-                        breakdown[dt][decoded_key]['cost'] = v
-                    totals[decoded_key]['cost'] += v
+                for key, v in costs.items():
+                    if key in breakdown[dt]:
+                        breakdown[dt][key]['cost'] = v
+                    totals[key]['cost'] += v
 
         return {
             'breakdown': breakdown,

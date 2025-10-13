@@ -45,6 +45,11 @@ export type AlibabaDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type AvailableFiltersParams = {
+  end_date: Scalars["Int"]["input"];
+  start_date: Scalars["Int"]["input"];
+};
+
 export type AwsAssumedRoleConfigInput = {
   assume_role_account_id: Scalars["String"]["input"];
   assume_role_name: Scalars["String"]["input"];
@@ -188,13 +193,18 @@ export type BreakdownBy =
 
 export type BreakdownParams = {
   active?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
-  breakdown_by: BreakdownBy;
+  breakdown_by: Scalars["String"]["input"];
   cloud_account_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
   constraint_violated?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   end_date: Scalars["Int"]["input"];
+  first_seen_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  first_seen_lte?: InputMaybe<Scalars["Int"]["input"]>;
   k8s_namespace?: InputMaybe<Array<Scalars["String"]["input"]>>;
   k8s_node?: InputMaybe<Array<Scalars["String"]["input"]>>;
   k8s_service?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  last_seen_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  last_seen_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  meta?: InputMaybe<Array<Scalars["String"]["input"]>>;
   owner_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
   pool_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
   recommendations?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
@@ -222,6 +232,7 @@ export type CleanExpensesParams = {
   last_seen_gte?: InputMaybe<Scalars["Int"]["input"]>;
   last_seen_lte?: InputMaybe<Scalars["Int"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
+  meta?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
   owner_id?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
   pool_id?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
   recommendations?: InputMaybe<Array<InputMaybe<Scalars["Boolean"]["input"]>>>;
@@ -535,6 +546,14 @@ export type K8sDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type MetaBreakdown = {
+  __typename?: "MetaBreakdown";
+  breakdown: Scalars["JSONObject"]["output"];
+  end_date: Scalars["Int"]["output"];
+  start_date: Scalars["Int"]["output"];
+  totals: Scalars["JSONObject"]["output"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   _empty?: Maybe<Scalars["String"]["output"]>;
@@ -688,6 +707,7 @@ export type OrganizationLimitHit = {
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]["output"]>;
+  availableFilters?: Maybe<Scalars["JSONObject"]["output"]>;
   cleanExpenses?: Maybe<Scalars["JSONObject"]["output"]>;
   cloudPolicies?: Maybe<Scalars["JSONObject"]["output"]>;
   currentEmployee?: Maybe<Employee>;
@@ -696,6 +716,7 @@ export type Query = {
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
+  metaBreakdown?: Maybe<MetaBreakdown>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
   organizationFeatures?: Maybe<Scalars["JSONObject"]["output"]>;
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
@@ -704,6 +725,11 @@ export type Query = {
   organizations?: Maybe<Array<Maybe<Organization>>>;
   relevantFlavors?: Maybe<Scalars["JSONObject"]["output"]>;
   resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
+};
+
+export type QueryAvailableFiltersArgs = {
+  organizationId: Scalars["ID"]["input"];
+  params?: InputMaybe<AvailableFiltersParams>;
 };
 
 export type QueryCleanExpensesArgs = {
@@ -734,6 +760,11 @@ export type QueryEmployeeEmailsArgs = {
 };
 
 export type QueryExpensesDailyBreakdownArgs = {
+  organizationId: Scalars["ID"]["input"];
+  params?: InputMaybe<BreakdownParams>;
+};
+
+export type QueryMetaBreakdownArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<BreakdownParams>;
 };
@@ -905,6 +936,7 @@ export type ResolversTypes = {
   AlibabaConfig: ResolverTypeWrapper<AlibabaConfig>;
   AlibabaConfigInput: AlibabaConfigInput;
   AlibabaDataSource: ResolverTypeWrapper<AlibabaDataSource>;
+  AvailableFiltersParams: AvailableFiltersParams;
   AwsAssumedRoleConfigInput: AwsAssumedRoleConfigInput;
   AwsConfig: ResolverTypeWrapper<AwsConfig>;
   AwsDataSource: ResolverTypeWrapper<AwsDataSource>;
@@ -956,6 +988,7 @@ export type ResolversTypes = {
   K8sConfig: ResolverTypeWrapper<K8sConfig>;
   K8sConfigInput: K8sConfigInput;
   K8sDataSource: ResolverTypeWrapper<K8sDataSource>;
+  MetaBreakdown: ResolverTypeWrapper<MetaBreakdown>;
   Mutation: ResolverTypeWrapper<{}>;
   NebiusConfig: ResolverTypeWrapper<NebiusConfig>;
   NebiusConfigInput: NebiusConfigInput;
@@ -979,6 +1012,7 @@ export type ResolversParentTypes = {
   AlibabaConfig: AlibabaConfig;
   AlibabaConfigInput: AlibabaConfigInput;
   AlibabaDataSource: AlibabaDataSource;
+  AvailableFiltersParams: AvailableFiltersParams;
   AwsAssumedRoleConfigInput: AwsAssumedRoleConfigInput;
   AwsConfig: AwsConfig;
   AwsDataSource: AwsDataSource;
@@ -1028,6 +1062,7 @@ export type ResolversParentTypes = {
   K8sConfig: K8sConfig;
   K8sConfigInput: K8sConfigInput;
   K8sDataSource: K8sDataSource;
+  MetaBreakdown: MetaBreakdown;
   Mutation: {};
   NebiusConfig: NebiusConfig;
   NebiusConfigInput: NebiusConfigInput;
@@ -1483,6 +1518,17 @@ export type K8sDataSourceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MetaBreakdownResolvers<
+  ContextType = ContextValue,
+  ParentType extends ResolversParentTypes["MetaBreakdown"] = ResolversParentTypes["MetaBreakdown"]
+> = {
+  breakdown?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
+  end_date?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  start_date?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  totals?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
@@ -1639,6 +1685,12 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  availableFilters?: Resolver<
+    Maybe<ResolversTypes["JSONObject"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAvailableFiltersArgs, "organizationId">
+  >;
   cleanExpenses?: Resolver<
     Maybe<ResolversTypes["JSONObject"]>,
     ParentType,
@@ -1682,6 +1734,12 @@ export type QueryResolvers<
     RequireFields<QueryExpensesDailyBreakdownArgs, "organizationId">
   >;
   invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes["Invitation"]>>>, ParentType, ContextType>;
+  metaBreakdown?: Resolver<
+    Maybe<ResolversTypes["MetaBreakdown"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryMetaBreakdownArgs, "organizationId">
+  >;
   organizationConstraint?: Resolver<
     Maybe<ResolversTypes["OrganizationConstraint"]>,
     ParentType,
@@ -1774,6 +1832,7 @@ export type Resolvers<ContextType = ContextValue> = {
   K8CostModelConfig?: K8CostModelConfigResolvers<ContextType>;
   K8sConfig?: K8sConfigResolvers<ContextType>;
   K8sDataSource?: K8sDataSourceResolvers<ContextType>;
+  MetaBreakdown?: MetaBreakdownResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NebiusConfig?: NebiusConfigResolvers<ContextType>;
   NebiusDataSource?: NebiusDataSourceResolvers<ContextType>;
