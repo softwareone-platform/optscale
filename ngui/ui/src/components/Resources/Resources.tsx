@@ -30,7 +30,7 @@ import {
 import { CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { getSearchParams } from "utils/network";
-import { isEmpty as isEmptyObject } from "utils/objects";
+import { isEmptyObject } from "utils/objects";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import Filters from "./Filters";
 

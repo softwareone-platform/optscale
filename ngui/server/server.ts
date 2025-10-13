@@ -92,6 +92,8 @@ app.get("/*", function (req, res) {
   res.sendFile(path.join(UI_BUILD_PATH, "build", "index.html"));
 });
 
-// Modified server startup
-await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, resolve));
-console.log(`🚀 Server ready at http://localhost:4000/`);
+const port = parseInt(process.env.PORT || "4000", 10);
+
+await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
+
+console.log(`🚀 Server ready at http://localhost:${port}/`);
