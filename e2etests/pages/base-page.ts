@@ -47,6 +47,23 @@ export abstract class BasePage {
     await this.waitForLoadingPageImgToDisappear();
   }
 
+  async fitViewportToFullPage(): Promise<void> {
+    const { maxHeight = 12000 } =  {};
+    const headerHeight = 80;
+    // Get current width (keep it stable) and full content height
+    const { width } = this.page.viewportSize() ?? { width: 1280 };
+    const scrollHeight = await this.page.evaluate(() => {
+      const contentWrapper = document.querySelector('main#mainLayoutWrapper') as HTMLElement | null;
+      if (!contentWrapper) return 0;
+      return Math.max(contentWrapper.scrollHeight, contentWrapper.offsetHeight, contentWrapper.clientHeight);
+    });
+
+    // Clamp to avoid GPU/OS caps (varies by browser/os)
+    const targetHeight = Math.min(scrollHeight + headerHeight, maxHeight);
+
+    await this.page.setViewportSize({ width, height: targetHeight });
+  }
+
   /**
    * Retrieves a locator for an element based on a test ID attribute.
    * This method searches for elements with either `data-test-id` or `data-testid` attributes
@@ -346,7 +363,7 @@ export abstract class BasePage {
       debugLog('Waiting for loading page image to disappear...');
       await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
     } catch (error) {
-      console.error("Loading page image did not disappear within the timeout."); // Log a warning if the image remains visible after the timeout.
+      debugLog("Loading page image did not disappear within the timeout.");
     }
   }
 

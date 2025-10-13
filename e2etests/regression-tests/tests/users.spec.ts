@@ -24,6 +24,7 @@ test.describe('FFC: Users @swo_regression', () => {
       await usersPage.heading.hover();
       await usersPage.screenshotUpdateDelay();
       await roundElementDimensions(usersPage.main);
+      await usersPage.fitViewportToFullPage();
       await expect(usersPage.main).toHaveScreenshot('Users-screenshot.png');
     });
 
@@ -33,6 +34,7 @@ test.describe('FFC: Users @swo_regression', () => {
       await roundElementDimensions(usersInvitePage.main);
       await expect(usersInvitePage.form).toBeAttached({ timeout: 10000 });
       await expect(usersInvitePage.form.locator('.MuiCircularProgress-root')).toHaveCount(0, { timeout: 10000 });
+      await usersPage.fitViewportToFullPage();
       await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
     });
   })

@@ -17,12 +17,14 @@ test.describe('FFC: Pools @swo_regression', () => {
 
     await test.step('Navigate to Pools page', async () => {
       await poolsPage.navigateToURL();
+      await poolsPage.fitViewportToFullPage();
     });
 
     await test.step('View type - Default', async () => {
       await poolsPage.heading.hover();
       await poolsPage.screenshotUpdateDelay();
       await roundElementDimensions(poolsPage.main);
+      await poolsPage.fitViewportToFullPage();
       await expect(poolsPage.main).toHaveScreenshot('Pools-landing-screenshot.png');
     });
 
@@ -31,6 +33,7 @@ test.describe('FFC: Pools @swo_regression', () => {
       await poolsPage.heading.hover();
       await poolsPage.screenshotUpdateDelay();
       await roundElementDimensions(poolsPage.main);
+      await poolsPage.fitViewportToFullPage();
       await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
     });
   });

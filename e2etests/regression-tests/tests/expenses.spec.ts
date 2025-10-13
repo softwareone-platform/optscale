@@ -66,6 +66,7 @@ test.describe('FFC: Expenses Map page @swo_regression', () => {
     if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
+    await expensesMapPage.fitViewportToFullPage();
     await expect(expensesMapPage.mapLegend).toBeVisible();
     await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png', {
       mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
@@ -99,6 +100,7 @@ test.describe('FFC: Expenses Breakdowns page @swo_regression', () => {
       await expensesPage.dataSourceHeading.hover();
       await expensesPage.waitForCanvas();
       await expensesPage.screenshotUpdateDelay();
+      await expensesPage.fitViewportToFullPage();
       await roundElementDimensions(expensesPage.main);
       await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
 

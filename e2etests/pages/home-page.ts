@@ -112,6 +112,16 @@ export class HomePage extends BasePage {
     await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
   }
 
+  async waitForAllBoxesToLoad(): Promise<void> {
+    await this.waitForLoadingPageImgToDisappear()
+    await this.organizationExpensesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
+    await this.topResourcesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
+    await this.recommendationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
+    await this.policyViolationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
+    await this.poolsRequiringAttentionBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
+    await this.fitViewportToFullPage()
+  }
+
   /**
    * Retrieves the possible savings value from the recommendations block.
    * This method fetches the text content of the savings value element and parses it as a currency value.

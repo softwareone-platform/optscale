@@ -1,5 +1,7 @@
 import {BasePage} from "./base-page";
 import {Locator, Page} from "@playwright/test";
+import { roundElementDimensions } from '../regression-tests/utils/roundElementDimensions';
+import { CloudAccountsPage } from './cloud-accounts-page';
 
 /**
  * Represents the Cloud Accounts Connect Page.
@@ -79,6 +81,16 @@ export class CloudAccountsConnectPage extends BasePage {
     this.billingDataDatasetNameInput = this.main.getByTestId('input_billing_data_dataset_name');
     this.billingDataTableNameInput = this.main.getByTestId('input_billing_data_table_name');
     this.billingDatasetProjectIDInput = this.main.getByTestId('input_billing_data_project_id');
+  }
+
+  async prepareConnectPageForScreenshot(cloudAccountsPage: CloudAccountsPage, element: Locator) {
+    await cloudAccountsPage.navigateToURL();
+    await cloudAccountsPage.clickAddBtn();
+    await element.click()
+    await this.screenshotUpdateDelay();
+    await this.heading.hover();
+    await roundElementDimensions(this.main);
+    await this.fitViewportToFullPage();
   }
 
   /**
