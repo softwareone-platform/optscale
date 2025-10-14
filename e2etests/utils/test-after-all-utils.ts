@@ -1,6 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import {debugLog} from "./debug-logging";
+import { debugLog } from './debug-logging';
+import { EmployeesResponse } from '../types/api-response.types';
+import { AuthRequest } from './api-requests/auth-request';
+import { RestAPIRequest } from '../api-requests/restapi-request';
 
 /**
  * Deletes all files in a directory if process.env.CLEAN_UP_DOWNLOADS === 'true'.
@@ -17,7 +20,7 @@ export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> 
     const files = await fs.promises.readdir(resolvedPath);
 
     await Promise.all(
-      files.map(async (file) => {
+      files.map(async file => {
         const fullPath = path.join(resolvedPath, file);
         const stat = await fs.promises.stat(fullPath);
         if (stat.isFile()) {
@@ -29,5 +32,29 @@ export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> 
     debugLog(`[CLEANUP] Deleted ${files.length} files from ${resolvedPath}`);
   } catch (err) {
     console.error(`[CLEANUP ERROR] Failed to clean directory ${resolvedPath}:`, err);
+  }
+}
+
+export async function deleteTestUsers(authRequest: AuthRequest, restAPIRequest: RestAPIRequest) {
+  const email = process.env.DEFAULT_USER_EMAIL;
+  const password = process.env.DEFAULT_USER_PASSWORD;
+  const reassignToUserId = process.env.DEFAULT_USER_ID;
+  const organisationId = process.env.DEFAULT_ORG_ID;
+  const usersEndpoint = `/restapi/v2/organizations/${organisationId}/employees?exclude_myself=false&roles=true`;
+
+  const token = await authRequest.getAuthorizationToken(email, password);
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+
+  const employeesResponse = await restAPIRequest.getGetResponse(usersEndpoint, headers);
+  const employeesResponseBody = (await employeesResponse.json()) as EmployeesResponse;
+
+  for (const employee of employeesResponseBody.employees) {
+    if (employee.user_email.startsWith('mpt.qlt+execution') && employee.user_display_name === 'Test User') {
+      debugLog(`Deleting user: ${employee.user_email} with ID: ${employee.id}`);
+      await restAPIRequest.deleteUserAndReassign(employee.id, reassignToUserId, token);
+    }
   }
 }

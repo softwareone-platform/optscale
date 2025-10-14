@@ -30,6 +30,7 @@ export class AuthRequest extends BaseRequest {
    * @returns {Promise<APIResponse>} A promise that resolves to the API response.
    */
   async authorization(email: string, password: string): Promise<APIResponse> {
+    debugLog(`tokenEndpoint: ${this.tokenEndpoint}`);
     return await this.request.post(this.tokenEndpoint, {
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ export class AuthRequest extends BaseRequest {
       },
     });
     if (response.status() !== 204) {
-      throw new Error(`Failed to delete userID ${userID}`);
+      throw new Error(`Failed to delete userID ${userID}: response status ${response.status()} reason ${response.statusText}`);
     }
     console.log(`UserID ${userID} deleted`);
   }
