@@ -36,5 +36,18 @@ test.describe('FFC: Pools @swo_regression', () => {
       await poolsPage.fitViewportToFullPage();
       await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
     });
+
+    await test.step('Side modal - General tab check', async () => {
+      await poolsPage.firstSubItem.click();
+      await poolsPage.screenshotUpdateDelay();
+      await roundElementDimensions(poolsPage.sideModal);
+      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-side-modal--General.png');
+    });
+
+    await test.step('Side modal - Assignment tabs check', async () => {
+      await poolsPage.sideModalTabAssignment.click();
+      await poolsPage.screenshotUpdateDelay();
+      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-side-modal--Assignment.png');
+    });
   });
 })

@@ -34,6 +34,7 @@ export class PoolsPage extends BasePage {
   readonly expensesThisMonthToggle: Locator;
   readonly forecastToggle: Locator;
   readonly ownerToggle: Locator;
+  readonly firstSubItem: Locator
 
   readonly table: Locator;
   readonly nameTableHeading: Locator;
@@ -72,6 +73,8 @@ export class PoolsPage extends BasePage {
   readonly sideModalCancelBtn: Locator;
   readonly sideModalMonthlyLimitWarningMessage: Locator;
   readonly sideModalCloseBtn: Locator;
+  readonly sideModalTabConstraint: Locator;
+  readonly sideModalTabAssignment: Locator;
 
   /**
    * Initializes a new instance of the PoolsPage class.
@@ -132,6 +135,8 @@ export class PoolsPage extends BasePage {
     this.subPoolColumn4 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[4]');
     this.subPoolActionsColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[5]');
 
+    this.firstSubItem = this.table.locator('//tr[@data-test-id="row_1"]');
+
     this.expandMoreIcon = this.table.locator(
       'xpath=(//button[contains(@class, "rgw1hv-expand")] | //button[contains(@class, "u0ks9z-expand")])'
     );
@@ -139,6 +144,8 @@ export class PoolsPage extends BasePage {
 
     //Edit pools side modal
     this.sideModal = this.page.getByTestId('smodal_edit_pool');
+    this.sideModalTabConstraint = this.page.getByTestId('tab_constraints');
+    this.sideModalTabAssignment = this.page.getByTestId('tab_assignment');
     this.sideModalEditBtn = this.sideModal.getByRole('button', { name: 'Edit' });
     this.sideModalDefaultResourceOwner = this.sideModal.getByTestId('pool-owner-selector-select');
     this.sideModalMonthlyLimit = this.sideModal.getByTestId('input_limit');
