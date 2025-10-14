@@ -1,3 +1,0 @@
-import ResourcesPerspectiveValuesDescription from "./ResourcesPerspectiveValuesDescription";
-
-export default ResourcesPerspectiveValuesDescription;

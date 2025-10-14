@@ -1,7 +1,8 @@
 import { Grid } from "@mui/material";
-import { useIntl } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { getCleanExpenses, REST_API_URL } from "api";
+import AlertDialog from "components/AlertDialog";
 import CleanExpensesTable from "components/CleanExpensesTable";
 import CleanExpensesTableGroup from "components/CleanExpensesTableGroup";
 import ExpensesDailyBreakdown from "components/ExpensesDailyBreakdown";
@@ -38,7 +39,7 @@ const CleanExpensesBreakdownContainer = ({ requestParams }) => {
   const dispatch = useDispatch();
 
   const { organizationId } = useOrganizationInfo();
-  const { isFileDownloading, fetchAndDownload } = useFetchAndDownload();
+  const { isFileDownloading, fetchAndDownload, isFileDownloadingError } = useFetchAndDownload();
 
   const downloadResources = (format) => {
     // Intentionally keep limit in requestParams
@@ -86,17 +87,31 @@ const CleanExpensesBreakdownContainer = ({ requestParams }) => {
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <ExpensesDailyBreakdown
-          container={<ExpensesDailyBreakdownByContainer cleanExpensesRequestParams={requestParams} />}
-          mockup={<ExpensesDailyBreakdownByMockup startDateTimestamp={startDateTimestamp} />}
-        />
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <ExpensesDailyBreakdown
+            container={<ExpensesDailyBreakdownByContainer cleanExpensesRequestParams={requestParams} />}
+            mockup={<ExpensesDailyBreakdownByMockup startDateTimestamp={startDateTimestamp} />}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          {renderExpensesBreakdownTable()}
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        {renderExpensesBreakdownTable()}
-      </Grid>
-    </Grid>
+      <AlertDialog
+        show={isFileDownloadingError}
+        dataTestIds={{
+          title: "lbl_file_download_error",
+          paper: "window_file_download_error",
+          button: "btn_close"
+        }}
+        header={<FormattedMessage id="fileDownloadingErrorHeader" />}
+        message={<FormattedMessage id="fileDownloadingErrorMessage" />}
+        buttonMessageId="close"
+        onClose={() => {}}
+      />
+    </>
   );
 };
 

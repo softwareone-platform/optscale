@@ -1,4 +1,4 @@
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+// import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import mlArtifactsRoute from "utils/routes/mlArtifactsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class MlArtifactsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_artifacts";
 
-  icon = DescriptionOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = DescriptionOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }

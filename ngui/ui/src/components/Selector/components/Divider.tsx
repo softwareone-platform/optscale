@@ -1,5 +1,5 @@
 import { Divider as MuiDivider } from "@mui/material";
 
-const Divider = () => <MuiDivider />;
+const Divider = (props) => <MuiDivider {...props} />;
 
 export default Divider;

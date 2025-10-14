@@ -36,7 +36,7 @@ jobs:
       layout_cleaner_changed: ${{ steps.check_layout_cleaner.outputs.changed }}
       live_demo_generator_changed: ${{ steps.check_live_demo_generator.outputs.changed }}
       metroculus_changed: ${{ steps.check_metroculus.outputs.changed }}
-      ffc_ngui_changed: ${{ steps.check_ffc_ngui.outputs.changed }}
+      ngui_changed: ${{ steps.check_ngui.outputs.changed }}
       organization_violations_changed: ${{ steps.check_organization_violations.outputs.changed }}
       power_schedule_changed: ${{ steps.check_power_schedule.outputs.changed }}
       resource_discovery_changed: ${{ steps.check_resource_discovery.outputs.changed }}
@@ -273,10 +273,10 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-      - name: Check if 'ffc_ngui/**' changed
-        id: check_ffc_ngui
+      - name: Check if 'ngui/**' changed
+        id: check_ngui
         run: |
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^ffc_ngui/'; then
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^ngui/'; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -683,8 +683,8 @@ jobs:
         run: bash -x build.sh metroculus build
       - name: Build test image and run tests
         run: bash -x metroculus/run_test.sh
-  ffc_ngui_tests:
-    if: needs.determine_changes.outputs.ffc_ngui_changed == 'true'
+  ngui_tests:
+    if: needs.determine_changes.outputs.ngui_changed == 'true'
     needs: determine_changes
     runs-on: ubuntu-latest
     steps:
@@ -692,9 +692,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build image
-        run: bash -x build.sh ffc_ngui build
+        run: bash -x build.sh ngui build
       - name: Build test image and run tests
-        run: bash -x ffc_ngui/run_test.sh
+        run: bash -x ngui/run_test.sh
   organization_violations_tests:
     if: needs.determine_changes.outputs.organization_violations_changed == 'true'
     needs: determine_changes
@@ -847,7 +847,7 @@ jobs:
       - layout_cleaner_tests
       - live_demo_generator_tests
       - metroculus_tests
-      - ffc_ngui_tests
+      - ngui_tests
       - organization_violations_tests
       - power_schedule_tests
       - resource_discovery_tests

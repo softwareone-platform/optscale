@@ -1,3 +1,0 @@
-import EditOrganizationCurrencyFormContainer from "./EditOrganizationCurrencyFormContainer";
-
-export default EditOrganizationCurrencyFormContainer;
