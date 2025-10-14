@@ -1,3 +1,0 @@
-import CreateOrganizationConstraintFormContainer from "./CreateOrganizationConstraintFormContainer";
-
-export default CreateOrganizationConstraintFormContainer;

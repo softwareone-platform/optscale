@@ -1,3 +1,0 @@
-import ResourceLifecycleGlobalPoolPoliciesContainer from "./ResourceLifecycleGlobalPoolPoliciesContainer";
-
-export default ResourceLifecycleGlobalPoolPoliciesContainer;

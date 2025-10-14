@@ -1,3 +1,0 @@
-import LeaderboardCandidateDetailsModalContent from "./LeaderboardCandidateDetailsModalContent";
-
-export default LeaderboardCandidateDetailsModalContent;

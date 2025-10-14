@@ -1,3 +1,0 @@
-import OrganizationThemeSettingsContainer from "./OrganizationThemeSettingsContainer";
-
-export default OrganizationThemeSettingsContainer;

@@ -1,3 +1,0 @@
-import ArchivedRecommendationAccordionTitle from "./ArchivedRecommendationAccordionTitle";
-
-export default ArchivedRecommendationAccordionTitle;

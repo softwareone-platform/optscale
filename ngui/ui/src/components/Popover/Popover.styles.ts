@@ -11,12 +11,15 @@ const useStyles = makeStyles()((theme) => ({
   buttonsWrapper: {
     display: "flex",
     justifyContent: "flex-end",
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(2),
     "& > *": {
       marginRight: theme.spacing(1),
       "&:last-child": {
         marginRight: 0
       }
+    },
+    "> button": {
+      minWidth: "80px"
     }
   },
   fullWidth: {

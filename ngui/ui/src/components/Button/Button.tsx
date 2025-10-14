@@ -5,6 +5,7 @@ import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
 import { NavLink, NavLinkProps } from "react-router-dom";
 import Tooltip from "components/Tooltip";
+import { DEFAULT_BUTTON_FONT_UPPERCASE } from "utils/layouts";
 import { ExclusiveUnion } from "utils/types";
 import useStyles from "./Button.styles";
 
@@ -57,7 +58,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       dashedBorder = false,
       size = "small",
       variant = "outlined",
-      uppercase = true,
+      uppercase = DEFAULT_BUTTON_FONT_UPPERCASE,
       disabled = false,
       color = "info",
       type = "button",

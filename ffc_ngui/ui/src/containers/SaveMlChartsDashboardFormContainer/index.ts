@@ -1,3 +1,0 @@
-import SaveMlChartsDashboardFormContainer from "./SaveMlChartsDashboardFormContainer";
-
-export default SaveMlChartsDashboardFormContainer;

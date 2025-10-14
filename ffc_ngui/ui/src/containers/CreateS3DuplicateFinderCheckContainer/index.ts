@@ -1,3 +1,0 @@
-import CreateS3DuplicateFinderCheckContainer from "./CreateS3DuplicateFinderCheckContainer";
-
-export default CreateS3DuplicateFinderCheckContainer;

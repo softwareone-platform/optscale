@@ -1,3 +1,0 @@
-import EditOrganizationConstraintNameFormContainer from "./EditOrganizationConstraintNameFormContainer";
-
-export default EditOrganizationConstraintNameFormContainer;
