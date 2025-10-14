@@ -1017,6 +1017,7 @@
   "integrationsSlackDescription1": "You can connect your Slack user with your OptScale account to get OptScale functionality directly from Slack.",
   "integrationsSlackDescription2": "<strong>{connected}/{total}</strong> {connected, plural,\n =1 {user}\n  other {users}\n} in your organization {connected, plural,\n =1 {has}\n  other {have}\n} connected their Slack users.",
   "integrationsSlackDescription3": "Please use the button below if you need to install the OptScale Slack app or contact your administrator to get assistance.",
+  "interContinentalMarker": "Intercontinental",
   "interRegionMarker": "Inter-Region",
   "invalidCurrencyCode": "Invalid currency code",
   "invalidDateFormat": "Invalid date format",
