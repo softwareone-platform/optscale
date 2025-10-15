@@ -722,7 +722,7 @@ export type Query = {
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
   organizationPerspectives?: Maybe<Scalars["JSONObject"]["output"]>;
   organizationThemeSettings?: Maybe<Scalars["JSONObject"]["output"]>;
-  organizations?: Maybe<Array<Maybe<Organization>>>;
+  organizations: Array<Organization>;
   relevantFlavors?: Maybe<Scalars["JSONObject"]["output"]>;
   resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
 };
@@ -1770,7 +1770,7 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryOrganizationThemeSettingsArgs, "organizationId">
   >;
-  organizations?: Resolver<Maybe<Array<Maybe<ResolversTypes["Organization"]>>>, ParentType, ContextType>;
+  organizations?: Resolver<Array<ResolversTypes["Organization"]>, ParentType, ContextType>;
   relevantFlavors?: Resolver<
     Maybe<ResolversTypes["JSONObject"]>,
     ParentType,

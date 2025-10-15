@@ -650,7 +650,7 @@ export default gql`
   }
 
   type Query {
-    organizations: [Organization]
+    organizations: [Organization!]!
     currentEmployee(organizationId: ID!): Employee
     dataSources(organizationId: ID!): [DataSourceInterface]
     dataSource(dataSourceId: ID!, requestParams: DataSourceRequestParams): DataSourceInterface
