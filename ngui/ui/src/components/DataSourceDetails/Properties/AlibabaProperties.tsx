@@ -7,6 +7,7 @@ const AlibabaProperties = ({ accountId, config }) => {
   return (
     <>
       <KeyValueLabel
+        variant="property"
         key="alibabaAccountId"
         keyMessageId="alibabaAccountId"
         value={accountId}
@@ -16,6 +17,7 @@ const AlibabaProperties = ({ accountId, config }) => {
         }}
       />
       <KeyValueLabel
+        variant="property"
         key="alibabaAccessKeyId"
         keyMessageId="alibabaAccessKeyId"
         value={accessKeyId}

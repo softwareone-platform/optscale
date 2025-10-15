@@ -1,3 +1,0 @@
-import CreateResourceAssignmentRuleFormContainer from "./CreateResourceAssignmentRuleFormContainer";
-
-export default CreateResourceAssignmentRuleFormContainer;

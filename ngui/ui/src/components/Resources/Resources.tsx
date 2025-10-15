@@ -1,8 +1,8 @@
 import AddchartOutlinedIcon from "@mui/icons-material/AddchartOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
-import GroupWorkOutlinedIcon from "@mui/icons-material/GroupWorkOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import { Box, Stack } from "@mui/material";
+import { Box } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { FormattedMessage, useIntl } from "react-intl";
 import ActionBar from "components/ActionBar";
 import CopyText from "components/CopyText";
@@ -20,7 +20,6 @@ import TagsBreakdownContainer from "containers/TagsBreakdownContainer";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import {
-  CLUSTER_TYPES,
   DAILY_EXPENSES_BREAKDOWN_BY_PARAMETER_NAME,
   DAILY_RESOURCE_COUNT_BREAKDOWN_BY_PARAMETER_NAME,
   getResourcesExpensesUrl,
@@ -28,10 +27,13 @@ import {
   RESOURCES_PERSPECTIVE_PARAMETER_NAME
 } from "urls";
 import { CLEAN_EXPENSES_BREAKDOWN_TYPES, DATE_RANGE_TYPE } from "utils/constants";
-import { SPACING_2 } from "utils/layouts";
 import { getSearchParams } from "utils/network";
 import { isEmptyObject } from "utils/objects";
 import { sliceByLimitWithEllipsis } from "utils/strings";
+import DividerHorizontal from "../../shared/components/DividerHorizontal/DividerHorizontal";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
+import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
+import { MPT_SPACING_4 } from "../../utils/layouts";
 import Filters from "./Filters";
 
 const MAX_PERSPECTIVE_NAME_LENGTH = 60;
@@ -110,6 +112,7 @@ const Resources = ({
               key: "perspectives",
               icon: <AssessmentOutlinedIcon fontSize="small" />,
               messageId: "perspectivesTitle",
+              color: "primary",
               type: "button",
               action: () => {
                 openSideModal(ApplyResourcePerspectiveModal, {
@@ -155,16 +158,18 @@ const Resources = ({
           });
         },
         requiredActions: ["EDIT_PARTNER"],
+        color: "primary",
         dataTestId: "btn_create_perspective"
-      },
-      {
-        key: "configureClusterTypes",
-        icon: <GroupWorkOutlinedIcon fontSize="small" />,
-        messageId: "configureClusterTypes",
-        type: "button",
-        link: CLUSTER_TYPES,
-        dataTestId: "btn_configure_cluster_types"
       }
+      // MPT_TODO: disabled to meet BDR requirements
+      // {
+      //   key: "configureClusterTypes",
+      //   icon: <GroupWorkOutlinedIcon fontSize="small" />,
+      //   messageId: "configureClusterTypes",
+      //   type: "button",
+      //   link: CLUSTER_TYPES,
+      //   dataTestId: "btn_configure_cluster_types"
+      // }
     ]
   };
 
@@ -196,41 +201,51 @@ const Resources = ({
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2}>
-          <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap={SPACING_2}>
+        <Grid direction="row" container spacing={3} justifyContent="space-between">
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+            <ExpensesSummaryContainer requestParams={requestParams} />
+          </Grid>
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
             <Box>
-              <ExpensesSummaryContainer requestParams={requestParams} />
+              <ResponsiveStack>
+                <LabelColon messageId={"dateRange"} />
+                <RangePickerFormContainer
+                  onApply={(dateRange) => onApply(dateRange)}
+                  initialStartDateValue={startDateTimestamp}
+                  initialEndDateValue={endDateTimestamp}
+                  rangeType={DATE_RANGE_TYPE.RESOURCES}
+                  definedRanges={getBasicRangesSet()}
+                />
+              </ResponsiveStack>
+              <DividerHorizontal verticalSpacing={MPT_SPACING_4} noHorizontalSpacing />
+              {isFilterValuesLoading ? (
+                <TypographyLoader linesCount={1} />
+              ) : (
+                <Filters
+                  filters={filterValues}
+                  appliedFilters={appliedFilters}
+                  onAppliedFiltersChange={onAppliedFiltersChange}
+                />
+              )}
             </Box>
-            <RangePickerFormContainer
-              onApply={(dateRange) => onApply(dateRange)}
-              initialStartDateValue={startDateTimestamp}
-              initialEndDateValue={endDateTimestamp}
-              rangeType={DATE_RANGE_TYPE.RESOURCES}
-              definedRanges={getBasicRangesSet()}
-            />
-          </Box>
-          <Box>
-            {isFilterValuesLoading ? (
-              <TypographyLoader linesCount={1} />
-            ) : (
-              <Filters filters={filterValues} appliedFilters={appliedFilters} onAppliedFiltersChange={onAppliedFiltersChange} />
-            )}
-          </Box>
-          <Box>
-            <TabsWrapper
-              tabsProps={{
-                tabs,
-                activeTab: activeBreakdown,
-                handleChange: (event, value) => {
-                  onBreakdownChange(value);
-                },
-                queryTabName: RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
-                defaultTab: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
-                name: "resource-breakdowns"
-              }}
-            />
-          </Box>
-        </Stack>
+          </Grid>
+          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+            <Box>
+              <TabsWrapper
+                tabsProps={{
+                  tabs,
+                  activeTab: activeBreakdown,
+                  handleChange: (event, value) => {
+                    onBreakdownChange(value);
+                  },
+                  queryTabName: RESOURCES_BREAKDOWN_BY_QUERY_PARAMETER_NAME,
+                  defaultTab: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+                  name: "resource-breakdowns"
+                }}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </PageContentWrapper>
     </>
   );

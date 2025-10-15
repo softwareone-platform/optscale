@@ -1,3 +1,0 @@
-import SendEmailVerificationCodeAgainContainer from "./SendEmailVerificationCodeAgainContainer";
-
-export default SendEmailVerificationCodeAgainContainer;
