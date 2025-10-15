@@ -415,6 +415,13 @@ export class PoolsPage extends BasePage {
     await this.sideModalCancelBtn.click();
   }
 
+  /**
+   * Clicks the "Close" button in the side modal.
+   *
+   * This method is used to close the side modal without saving any changes.
+   *
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
   async clickSideModalCloseBtn(): Promise<void> {
     await this.sideModalCloseBtn.click();
   }

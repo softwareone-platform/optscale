@@ -117,6 +117,16 @@ export function getLast30DaysUnixRange(): { startDate: number; endDate: number }
   };
 }
 
+/**
+ * Calculates the Unix timestamp range for the current month.
+ * This function determines the start and end timestamps (in seconds) for the current calendar month,
+ * with the start date being midnight (UTC) on the first day of the month,
+ * and the end date being 23:59:59 UTC on the current day.
+ *
+ * @returns {{ startDate: number, endDate: number }} An object containing the start and end timestamps in seconds.
+ * - `startDate`: The Unix timestamp for the start of the current month (00:00:00 UTC, first day of the month).
+ * - `endDate`: The Unix timestamp for the end of the current day (23:59:59 UTC, today).
+ */
 export function getThisMonthUnixDateRange(): { startDate: number; endDate: number } {
   const today = new Date();
 

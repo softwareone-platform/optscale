@@ -6,11 +6,11 @@ import { AuthRequest } from './api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 
 /**
- * Deletes all files in a directory if process.env.CLEAN_UP_DOWNLOADS === 'true'.
+ * Deletes all files in a directory if process.env.CLEAN_UP === 'true'.
  * @param dirPath Path to the directory whose contents should be deleted.
  */
 export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> {
-  if (process.env.CLEAN_UP_DOWNLOADS !== 'true') {
+  if (process.env.CLEAN_UP !== 'true') {
     return;
   }
 
@@ -35,7 +35,22 @@ export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> 
   }
 }
 
-export async function deleteTestUsers(authRequest: AuthRequest, restAPIRequest: RestAPIRequest) {
+/**
+ * Deletes test users from the organization if the CLEAN_UP environment variable is set to 'true'.
+ *
+ * This function retrieves a list of employees from the organization, identifies test users
+ * based on their email and display name, and deletes them while reassigning their ownership
+ * to a default user.
+ *
+ * @param {AuthRequest} authRequest - An instance of the AuthRequest class used to obtain an authorization token.
+ * @param {RestAPIRequest} restAPIRequest - An instance of the RestAPIRequest class used to interact with the REST API.
+ * @returns {Promise<void>} A promise that resolves when the operation is complete.
+ */
+export async function deleteTestUsers(authRequest: AuthRequest, restAPIRequest: RestAPIRequest): Promise<void> {
+  if (process.env.CLEAN_UP !== 'true') {
+    return;
+  }
+
   const email = process.env.DEFAULT_USER_EMAIL;
   const password = process.env.DEFAULT_USER_PASSWORD;
   const reassignToUserId = process.env.DEFAULT_USER_ID;

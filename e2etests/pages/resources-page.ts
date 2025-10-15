@@ -265,13 +265,13 @@ export class ResourcesPage extends BasePage {
   /**
    * Resets all filters on the Resources page.
    *
-   * This method checks if the "Reset Filters" button is visible. If it is, it clicks the button
-   * to reset all applied filters. Optionally, it waits for the canvas to update after resetting.
+   * This method checks if the "Reset Filters" button is visible, clicks it to reset all filters,
+   * and optionally waits for the page loader to disappear and the canvas to update.
    *
-   * @param {boolean} [wait=true] - Whether to wait for the canvas to update after resetting filters.
-   * @returns {Promise<void>} Resolves when the filters are reset and (optionally) the canvas is updated.
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after resetting the filters.
+   * @returns {Promise<void>} Resolves when the filters are reset and the optional wait is complete.
    */
-  async resetFilters(wait = true): Promise<void> {
+  async resetFilters(wait: boolean = true): Promise<void> {
     if (await this.resetFiltersBtn.isVisible()) {
       debugLog('Resetting all filters');
       await this.resetFiltersBtn.click();
@@ -341,13 +341,13 @@ export class ResourcesPage extends BasePage {
   /**
    * Selects an option from the "Categorize By" dropdown on the Resources page.
    * This method uses the `categorizeBySelect` locator to select the specified option
-   * and waits for the canvas to update after the selection.
+   * and optionally waits for the page to load and the canvas to update after the selection.
    *
    * @param {string} option - The option to select from the dropdown.
-   * @param wait
-   * @returns {Promise<void>} Resolves when the option is selected and the canvas is updated.
+   * @param {boolean} [wait=true] - Whether to wait for the page to load and the canvas to update after the selection.
+   * @returns {Promise<void>} Resolves when the option is selected and the optional wait is complete.
    */
-  async selectCategorizeBy(option: string, wait = true): Promise<void> {
+  async selectCategorizeBy(option: string, wait: boolean = true): Promise<void> {
     await this.selectFromComboBox(this.categorizeBySelect, option);
     if (wait) {
       await this.waitForPageLoad();

@@ -437,7 +437,18 @@ export abstract class BasePage {
       }
     });
   }
+
+  /**
+   * Introduces a delay for a specified duration.
+   *
+   * This method creates a promise that resolves after the given number of milliseconds,
+   * effectively pausing execution for the specified time.
+   *
+   * @param {number} ms - The duration of the delay in milliseconds.
+   * @returns {Promise<void>} A promise that resolves after the specified delay.
+   */
   async delay(ms: number): Promise<void> {
+    debugLog(`Waiting for ${ms}ms...`);
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

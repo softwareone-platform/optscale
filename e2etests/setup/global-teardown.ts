@@ -5,7 +5,7 @@ import { cleanUpDirectoryIfEnabled, deleteTestUsers } from '../utils/teardown-ut
 
 async function globalTeardown() {
   const apiRequestContext = await request.newContext({
-    ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
+    ignoreHTTPSErrors: true,
     baseURL: process.env.BASE_URL,
   });
   const authRequest = new AuthRequest(apiRequestContext);

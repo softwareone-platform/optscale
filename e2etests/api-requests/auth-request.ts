@@ -105,13 +105,12 @@ export class AuthRequest extends BaseRequest {
    * @returns {Promise<APIResponse>} A promise that resolves to the API response.
    */
   async getUsersWithBadClusterSecret(userID: string): Promise<APIResponse> {
-    const response = await this.request.get(`${this.userEndpoint}/${userID}`, {
+    return await this.request.get(`${this.userEndpoint}/${userID}`, {
       headers: {
         'Content-Type': 'application/json',
         Secret: 'bad-secret',
       },
     });
-    return response;
   }
 
   /**

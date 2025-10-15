@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Anomalies Page.
@@ -20,12 +20,6 @@ export class AnomaliesPage extends BasePage {
     this.addBtn = this.main.getByTestId('btn_add');
     this.searchInput = this.main.getByPlaceholder('Search');
   }
-
-  /**
-   * Sets up API interceptions for the Anomalies page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
 
   /**
    * Clicks the Add button on the Anomalies page.

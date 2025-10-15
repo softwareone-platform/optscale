@@ -43,7 +43,7 @@ export class RestAPIRequest extends BaseRequest {
       throw new Error('Failed to create organization');
     }
     const responseBody = await response.json();
-    console.log(JSON.stringify(responseBody));
+    debugLog(JSON.stringify(responseBody));
     return JSON.stringify(responseBody);
   }
 
@@ -67,6 +67,15 @@ export class RestAPIRequest extends BaseRequest {
     return `Organization ${organizationId} deleted`;
   }
 
+  /**
+   * Deletes a user and reassigns their ownership to another user.
+   *
+   * @param {string} userID - The ID of the user to delete.
+   * @param {string} reassignUserID - The ID of the user to whom ownership will be reassigned.
+   * @param {string} token - The authorization token for the API request.
+   * @returns {Promise<string>} A promise that resolves to a confirmation message upon successful deletion.
+   * @throws Will throw an error if the deletion fails (non-204 response status).
+   */
   async deleteUserAndReassign(userID: string, reassignUserID: string, token: string): Promise<string> {
     const endpoint = `${this.employeesEndpoint}/${userID}?new_owner_id=${reassignUserID}`;
     debugLog(`Deleting user ${userID} and reassigning to ${reassignUserID}`);

@@ -55,6 +55,12 @@ export class DatePickerPage extends BasePage {
     }
   }
 
+  /**
+   * Selects the "Last 7 Days" date range and applies it.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
   async selectLast7DaysDateRange(wait = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.last7DaysBtn.click();
@@ -67,11 +73,10 @@ export class DatePickerPage extends BasePage {
   }
 
   /**
-   * Selects the "Last 30 Days" date range from the date picker.
-   * This method interacts with the date range selector, clicks the "Last 30 Days" button,
-   * applies the selection, and waits for the canvas to update.
+   * Selects the "Last 30 Days" date range and applies it.
    *
-   * @returns {Promise<void>} Resolves when the date range is selected and the canvas is updated.
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
   async selectLast30DaysDateRange(wait = true): Promise<void> {
     await this.selectDateBtn.click();
@@ -84,6 +89,12 @@ export class DatePickerPage extends BasePage {
     }
   }
 
+  /**
+   * Selects the "Last Month" date range and applies it.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
   async selectLastMonthDateRange(wait = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.lastMonthBtn.click();
@@ -96,11 +107,10 @@ export class DatePickerPage extends BasePage {
   }
 
   /**
-   * Selects the "This Month" date range from the date picker.
-   * This method interacts with the date range selector, clicks the "This Month" button,
-   * applies the selection, and waits for the canvas to update.
+   * Selects the "This Month" date range and applies it.
    *
-   * @returns {Promise<void>} Resolves when the date range is selected and the canvas is updated.
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
   async selectThisMonthDateRange(wait = true): Promise<void> {
     await this.selectDateBtn.click();
