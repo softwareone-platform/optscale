@@ -1,33 +1,33 @@
-import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import playwright from 'eslint-plugin-playwright';
-import prettier from 'eslint-config-prettier/flat';
+import prettier from 'eslint-config-prettier';
 
-export default defineConfig({
-  ignores: ['node_modules/**', 'dist/**', 'coverage/**', 'playwright-report/**', 'test-results/**'],
-  overrides: [
-    eslint.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked,
-    {
-      files: ['**/*.ts', '**/*.tsx'],
-      languageOptions: {
-        parser: tseslint.parser,
-      },
-      plugins: { '@typescript-eslint': tseslint.plugin },
-      rules: {
-        'no-undef': 'off',
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': [
-          'error',
-          { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
-        ],
-      },
+export default [
+  {
+    ignores: ['node_modules/**', 'dist/**', 'coverage/**', 'playwright-report/**', 'test-results/**', '**/localforage.min.js'],
+  },
+  eslint.configs.recommended,
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    ...(Array.isArray(tseslint.configs.recommendedTypeChecked)
+      ? tseslint.configs.recommendedTypeChecked[0]
+      : tseslint.configs.recommendedTypeChecked),
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
     },
-    {
-      ...playwright.configs['flat/recommended'],
-      files: ['**/*.{ts,tsx}'],
+    rules: {
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     },
-  ],
-  ...prettier,
-});
+  },
+  {
+    files: ['**/*.js', '**/*.mjs'],
+    ...eslint.configs.recommended,
+  },
+  ...(Array.isArray(playwright.configs['flat/recommended'])
+    ? playwright.configs['flat/recommended']
+    : [playwright.configs['flat/recommended']]),
+  ...(Array.isArray(prettier) ? prettier : [prettier]),
+];

@@ -1,11 +1,12 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Abstract class representing the base structure for create pages.
  * Extends the BasePage class.
  */
 export abstract class BaseCreatePage extends BasePage {
+  readonly url: string;
   readonly nameInput: Locator;
   readonly typeSelect: Locator;
   readonly suggestedFiltersFilter: Locator;
@@ -33,6 +34,7 @@ export abstract class BaseCreatePage extends BasePage {
    */
   protected constructor(page: Page, url: string) {
     super(page, '');
+    this.url = url;
     this.nameInput = this.main.getByTestId('input_name');
     this.typeSelect = this.main.getByTestId('type-selector-select');
     this.suggestedFiltersFilter = this.main.getByTestId('selector_suggestedFilters');

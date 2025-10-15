@@ -1,52 +1,20 @@
-import { chromium, APIRequestContext } from '@playwright/test';
-import { AuthRequest } from '../utils/api-requests/auth-request';
-import * as fs from 'fs';
-import * as path from 'path';
-import { cleanUpDirectoryIfEnabled } from '../utils/test-after-all-utils';
+import { request } from '@playwright/test';
+import { AuthRequest } from '../api-requests/auth-request';
+import { RestAPIRequest } from '../api-requests/restapi-request';
+import { cleanUpDirectoryIfEnabled, deleteTestUsers } from '../utils/teardown-utils';
 
 async function globalTeardown() {
+  const apiRequestContext = await request.newContext({
+    ignoreHTTPSErrors: true,
+    baseURL: process.env.BASE_URL,
+  });
+  const authRequest = new AuthRequest(apiRequestContext);
+  const restAPIRequest = new RestAPIRequest(apiRequestContext);
+
   await cleanUpDirectoryIfEnabled('./tests/downloads');
-  //TODO: At the moment we are not using disposable users and organisations in the tests. When we are, we will delete
-  // via this teardown function.
-  //     const cacheDir = path.resolve(__dirname, '../.cache');
-  //     const authResponseFiles = fs.readdirSync(cacheDir).filter(file => file.startsWith('auth-response'));
-  //
-  //     console.log(`Global teardown started. Auth response files: ${authResponseFiles}`);
-  //
-  //     if (authResponseFiles.length > 0) {
-  //         // Create a browser and context
-  //         const browser = await chromium.launch();
-  //         const baseUrl = process.env.BASE_URL;
-  //         const context = await browser.newContext({
-  //             baseURL: baseUrl, // Pass baseURL to the context
-  //             ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-  //         });
-  //
-  //         // Get the APIRequestContext
-  //         const requestContext: APIRequestContext = context.request;
-  //
-  //         // Recreate authRequest
-  //         const authRequest = new AuthRequest(requestContext);
-  //
-  //         try {
-  //             for (const file of authResponseFiles) {
-  //                 const filePath = path.join(cacheDir, file);
-  //                 const authResponse = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  //                 const userID = authResponse.user_id;
-  //
-  //                 await authRequest.deleteUser(userID);
-  //                 console.log(`User with ID ${userID} deleted`);
-  //
-  //                 // Delete the auth response file
-  //                 fs.unlinkSync(filePath);
-  //                 console.log(`Auth response file ${file} deleted`);
-  //             }
-  //         } catch (err) {
-  //             console.error(`Failed to delete user or auth response file: ${err}`);
-  //         } finally {
-  //             await browser.close();
-  //         }
-  //     }
+  await deleteTestUsers(authRequest, restAPIRequest);
+
+  await apiRequestContext.dispose();
 }
 
-export default globalTeardown;
+module.exports = globalTeardown;

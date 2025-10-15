@@ -1,7 +1,7 @@
-import {Locator, Page} from "@playwright/test";
-import fs from "fs";
-import path from "path";
-import {debugLog} from "../utils/debug-logging";
+import { Locator, Page } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { debugLog } from '../utils/debug-logging';
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -29,7 +29,7 @@ export abstract class BasePage {
     this.page = page;
     this.url = url;
     this.main = this.page.locator('main');
-    this.loadingPageImg = this.page.getByRole('img', {name: 'Loading page'});
+    this.loadingPageImg = this.page.getByRole('img', { name: 'Loading page' });
     this.pageLoader = this.main.locator('[role="progressbar"]');
     this.tooltip = this.page.getByRole('tooltip');
     this.infoColor = 'rgb(0, 0, 0)'; // Default color for neutral state
@@ -43,7 +43,8 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the navigation is complete.
    */
   async navigateToURL(customUrl: string = null): Promise<void> {
-    await this.page.goto(customUrl ? customUrl : this.url, {waitUntil: "load"});
+    debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);
+    await this.page.goto(customUrl ? customUrl : this.url, { waitUntil: 'load' });
     await this.waitForLoadingPageImgToDisappear();
   }
 
@@ -86,9 +87,9 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the option is selected.
    */
   async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
-    if (await this.selectedComboBoxOption(comboBox) !== option) {
+    if ((await this.selectedComboBoxOption(comboBox)) !== option) {
       await comboBox.click();
-      await this.page.getByRole('option', {name: option, exact: true}).click();
+      await this.page.getByRole('option', { name: option, exact: true }).click();
       if (closeList) await this.page.locator('body').click();
     }
   }
@@ -111,13 +112,13 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the routing is set up.
    */
   async setupRouting(token: string): Promise<void> {
-    await this.page.route('**/*', (route) => {
+    await this.page.route('**/*', route => {
       console.log(`Intercepting request to: ${route.request().url()}`);
       const headers = {
         ...route.request().headers(),
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       };
-      route.continue({headers});
+      route.continue({ headers });
     });
   }
 
@@ -130,7 +131,7 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the page has fully loaded.
    */
   async waitForPageLoad(timeout?: number): Promise<void> {
-    const options = timeout ? {timeout} : undefined; // Set timeout options if provided.
+    const options = timeout ? { timeout } : undefined; // Set timeout options if provided.
     await this.page.waitForLoadState('load', options); // Wait for the page to reach the 'load' state.
   }
 
@@ -140,13 +141,17 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the condition is met.
    */
   async waitForCanvas(timeout: number = 20000): Promise<void> {
-    await this.page.waitForFunction(() => {
-      const canvases = document.querySelectorAll('canvas');
-      return Array.from(canvases).some(canvas => {
-        const ctx = canvas.getContext('2d', {willReadFrequently: true});
-        return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-      });
-    }, null, {timeout});
+    await this.page.waitForFunction(
+      () => {
+        const canvases = document.querySelectorAll('canvas');
+        return Array.from(canvases).some(canvas => {
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+        });
+      },
+      null,
+      { timeout }
+    );
   }
 
   /**
@@ -157,7 +162,7 @@ export abstract class BasePage {
   async waitForAllCanvases(): Promise<void> {
     await this.page.waitForFunction(() => {
       return Array.from(document.querySelectorAll('canvas')).every(canvas => {
-        const ctx = canvas.getContext('2d', {willReadFrequently: true});
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
       });
     });
@@ -170,7 +175,7 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the text content includes the expected text.
    */
   async waitForTextContent(locator: Locator, expectedText: string): Promise<void> {
-    await locator.filter({hasText: expectedText}).waitFor();
+    await locator.filter({ hasText: expectedText }).waitFor();
   }
 
   /**
@@ -179,7 +184,7 @@ export abstract class BasePage {
    * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
    */
   async evaluateActiveButton(button: Locator): Promise<boolean> {
-    return await button.evaluate((el) => {
+    return await button.evaluate(el => {
       return Array.from(el.classList).some(className => className.endsWith('-button-activeButton'));
     });
   }
@@ -199,7 +204,7 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the element is detached.
    */
   async waitForElementDetached(element: Locator): Promise<void> {
-    await element.waitFor({state: 'detached'});
+    await element.waitFor({ state: 'detached' });
   }
 
   /**
@@ -209,8 +214,8 @@ export abstract class BasePage {
    */
   async screenshotUpdateDelay(timeout: number = 5000): Promise<void> {
     if (process.env.SCREENSHOT_UPDATE_DELAY === 'true') {
-      console.log(`Waiting for ${timeout}ms for screenshot update...`);
-      await this.page.waitForTimeout(timeout);
+      debugLog(`Waiting for ${timeout}ms for screenshot update...`);
+      await new Promise(resolve => setTimeout(resolve, timeout));
     }
   }
 
@@ -287,16 +292,15 @@ export abstract class BasePage {
    * @param {Locator} nextPageBtn - The Playwright locator for the "next page" button.
    * @returns {Promise<number>} A promise that resolves to the total sum of currency values, rounded to two decimal places.
    */
-  async sumCurrencyColumn(
-    columnLocator: Locator,
-    nextPageBtn: Locator
-  ): Promise<number> {
+  async sumCurrencyColumn(columnLocator: Locator, nextPageBtn: Locator): Promise<number> {
     let totalSum = 0;
 
     while (true) {
       // Wait for the last element in the column to be visible
-      await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
-      });
+      await columnLocator
+        .last()
+        .waitFor({ state: 'visible', timeout: 5000 })
+        .catch(() => {});
 
       // Extract text content from all cells in the column
       const texts = await columnLocator.allTextContents();
@@ -328,8 +332,10 @@ export abstract class BasePage {
 
   async sumCurrencyColumnWithoutPagination(columnLocator: Locator): Promise<number> {
     // Wait for the last element in the column to be visible
-    await columnLocator.last().waitFor({state: 'visible', timeout: 5000}).catch(() => {
-    });
+    await columnLocator
+      .last()
+      .waitFor({ state: 'visible', timeout: 5000 })
+      .catch(() => {});
 
     // Extract text content from all cells in the column
     const texts = await columnLocator.allTextContents();
@@ -354,16 +360,16 @@ export abstract class BasePage {
    */
   async waitForLoadingPageImgToDisappear(timeout: number = 10000): Promise<void> {
     try {
-      await this.loadingPageImg.first().waitFor({timeout: 1000});
-    } catch (error) {
+      await this.loadingPageImg.first().waitFor({ timeout: 1000 });
+    } catch (_error) {
       return; // Exit the method if the loading image is not present.
     }
 
     try {
       debugLog('Waiting for loading page image to disappear...');
-      await this.loadingPageImg.waitFor({state: 'hidden', timeout: timeout});
-    } catch (error) {
-      debugLog("Loading page image did not disappear within the timeout.");
+      await this.loadingPageImg.waitFor({ state: 'hidden', timeout: timeout });
+    } catch (_error) {
+      console.error('[ERROR] Loading page image did not disappear within the timeout.'); // Log a warning if the image remains visible after the timeout.
     }
   }
 
@@ -378,15 +384,15 @@ export abstract class BasePage {
    */
   async waitForPageLoaderToDisappear(timeout: number = 10000): Promise<void> {
     try {
-      await this.pageLoader.first().waitFor({timeout: 1000});
-    } catch (error) {
+      await this.pageLoader.first().waitFor({ timeout: 1000 });
+    } catch (_error) {
       return; // Exit the method if the spinner is not present.
     }
     try {
       debugLog('Waiting for page loader to disappear...');
-      await this.pageLoader.last().waitFor({state: 'hidden', timeout: timeout});
+      await this.pageLoader.last().waitFor({ state: 'hidden', timeout: timeout });
     } catch {
-      console.error("Page loader did not disappear within the timeout."); // Log a warning if the spinner remains visible after the timeout.
+      console.error('[ERROR] Page loader did not disappear within the timeout.'); // Log a warning if the spinner remains visible after the timeout.
     }
   }
 
@@ -402,7 +408,7 @@ export abstract class BasePage {
 
     // Ensure download folder exists
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, {recursive: true});
+      fs.mkdirSync(dir, { recursive: true });
     }
 
     // Wait for download event and trigger it
@@ -431,7 +437,7 @@ export abstract class BasePage {
    */
   async getColorFromElement(element: Locator): Promise<string> {
     await element.waitFor();
-    return await element.evaluate((el) => {
+    return await element.evaluate(el => {
       return window.getComputedStyle(el).color;
     });
   }
@@ -449,8 +455,17 @@ export abstract class BasePage {
     });
   }
 
+  /**
+   * Introduces a delay for a specified duration.
+   *
+   * This method creates a promise that resolves after the given number of milliseconds,
+   * effectively pausing execution for the specified time.
+   *
+   * @param {number} ms - The duration of the delay in milliseconds.
+   * @returns {Promise<void>} A promise that resolves after the specified delay.
+   */
+  async delay(ms: number): Promise<void> {
+    debugLog(`Waiting for ${ms}ms...`);
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
-
-
-
-

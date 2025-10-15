@@ -1,5 +1,5 @@
-import {APIResponse} from "playwright";
-import {APIRequestContext} from "@playwright/test";
+import { APIResponse } from 'playwright';
+import { APIRequestContext } from '@playwright/test';
 
 export class AuthRequest {
   readonly request: APIRequestContext;
@@ -13,7 +13,7 @@ export class AuthRequest {
    */
   constructor(request: APIRequestContext) {
     this.request = request;
-    const baseUrl = process.env.API_BASE_URL || "";
+    const baseUrl = process.env.API_BASE_URL || '';
     this.userEndpoint = `${baseUrl}/auth/v2/users`;
     this.tokenEndpoint = `${baseUrl}/auth/v2/tokens`;
     this.verificationCodesEndpoint = `${baseUrl}/auth/v2/verification_codes`;
@@ -28,7 +28,7 @@ export class AuthRequest {
   async authorization(email: string, password: string): Promise<APIResponse> {
     return await this.request.post(this.tokenEndpoint, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       data: {
         email: email,
@@ -51,7 +51,7 @@ export class AuthRequest {
     }
     const body = await response.json();
     console.log(JSON.stringify(body));
-    const {token} = await response.json();
+    const { token } = await response.json();
     console.log(`Token: ${token}`);
     return token;
   }
@@ -68,8 +68,8 @@ export class AuthRequest {
     }
     return await this.request.get(endpoint, {
       headers: {
-        "Content-Type": "application/json",
-        Secret: `${process.env.CLUSTER_SECRET}`
+        'Content-Type': 'application/json',
+        Secret: `${process.env.CLUSTER_SECRET}`,
       },
     });
   }
@@ -82,8 +82,8 @@ export class AuthRequest {
   async getUsersWithBadClusterSecret(userID: string): Promise<APIResponse> {
     return await this.request.get(`${this.userEndpoint}/${userID}`, {
       headers: {
-        "Content-Type": "application/json",
-        Secret: 'bad-secret'
+        'Content-Type': 'application/json',
+        Secret: 'bad-secret',
       },
     });
   }
@@ -99,15 +99,15 @@ export class AuthRequest {
   async createUser(email: string, password: string, displayName: string): Promise<APIResponse> {
     const response = await this.request.post(this.userEndpoint, {
       headers: {
-        "Content-Type": "application/json",
-        Secret: process.env.CLUSTER_SECRET
+        'Content-Type': 'application/json',
+        Secret: process.env.CLUSTER_SECRET,
       },
       data: {
         email,
         display_name: displayName,
         password,
-        verified: true
-      }
+        verified: true,
+      },
     });
 
     if (response.status() !== 201) {
@@ -128,22 +128,22 @@ export class AuthRequest {
    */
   async setVerificationCode(email: string, code: string): Promise<APIResponse> {
     if (!process.env.CLUSTER_SECRET) {
-      throw new Error("CLUSTER_SECRET is not defined in the environment variables.");
+      throw new Error('CLUSTER_SECRET is not defined in the environment variables.');
     }
 
     const response = await this.request.post(this.verificationCodesEndpoint, {
       headers: {
-        "Content-Type": "application/json",
-        Secret: process.env.CLUSTER_SECRET
+        'Content-Type': 'application/json',
+        Secret: process.env.CLUSTER_SECRET,
       },
       data: {
         email,
-        code
-      }
+        code,
+      },
     });
     const payload = JSON.parse(await response.text());
     if (response.status() !== 201) {
-      const reason = payload.error?.reason || "Unknown error";
+      const reason = payload.error?.reason || 'Unknown error';
       throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
     }
     return response;
@@ -158,9 +158,9 @@ export class AuthRequest {
   async deleteUser(userID: string): Promise<void> {
     const response = await this.request.delete(`${this.userEndpoint}/${userID}`, {
       headers: {
-        "Content-Type": "application/json",
-        Secret: `${process.env.CLUSTER_SECRET}`
-      }
+        'Content-Type': 'application/json',
+        Secret: `${process.env.CLUSTER_SECRET}`,
+      },
     });
     if (response.status() !== 204) {
       throw new Error(`Failed to delete userID ${userID}`);

@@ -278,12 +278,19 @@ export class PoolsPage extends BasePage {
   }
 
   /**
-   * Selects all columns by clicking the "Select All" toggle in the column selection menu.
-   * @returns {Promise<void>}
+   * Selects all columns in the UI if they are not already selected.
+   *
+   * This method checks the current state of the column badge text to determine
+   * if all columns are already selected. If not, it clicks the "Column Select" button
+   * and then toggles the "Select All" option to ensure all columns are selected.
+   *
+   * @returns {Promise<void>} Resolves when the operation is complete.
    */
   async selectAllColumns(): Promise<void> {
-    await this.clickColumnSelectButton();
-    await this.clickColumnToggle('select all');
+    if ((await this.getColumnBadgeText()) !== 'All') {
+      await this.clickColumnSelectButton();
+      await this.clickColumnToggle('select all');
+    }
   }
 
   /**
@@ -415,6 +422,13 @@ export class PoolsPage extends BasePage {
     await this.sideModalCancelBtn.click();
   }
 
+  /**
+   * Clicks the "Close" button in the side modal.
+   *
+   * This method is used to close the side modal without saving any changes.
+   *
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
   async clickSideModalCloseBtn(): Promise<void> {
     await this.sideModalCloseBtn.click();
   }

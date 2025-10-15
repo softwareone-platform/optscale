@@ -1,5 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { BasePage } from './base-page';
+import { debugLog } from '../utils/debug-logging';
 
 /**
  * Represents the Expenses Page.
@@ -140,6 +141,7 @@ export class ExpensesPage extends BasePage {
    */
   async getTotalExpensesForSelectedPeriod(): Promise<number> {
     const value = await this.expensesSelectedPeriodValue.textContent();
+    debugLog(`Total expenses for selected period text: ${value}`);
     return this.parseCurrencyValue(value);
   }
 
@@ -153,6 +155,7 @@ export class ExpensesPage extends BasePage {
    */
   async getExpensesPieChartValue(): Promise<number> {
     const value = await this.expensesPieChartValue.textContent();
+    debugLog(`Pie chart expenses for selected period text: ${value}`);
     return this.parseCurrencyValue(value);
   }
 

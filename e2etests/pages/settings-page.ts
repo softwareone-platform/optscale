@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Settings Page.

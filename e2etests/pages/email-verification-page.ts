@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 export class EmailVerificationPage extends BasePage {
   readonly verificationCodeInput: Locator;
@@ -11,10 +11,10 @@ export class EmailVerificationPage extends BasePage {
   constructor(page: Page) {
     super(page, '/email-verification');
     this.verificationCodeInput = this.page.getByLabel('Code *');
-    this.sendVerificationCodeBtn = this.page.getByRole("button", {name: "Send verification code again"});
-    this.verificationCodeResendCountdown = this.page.getByText("code can be sent again in")
-    this.confirmBtn = this.page.getByRole("button", {name: "Confirm"});
-    this.proceedToFinOpsBtn = this.page.getByRole('button', {name: 'Proceed to FinOps for Cloud'});
+    this.sendVerificationCodeBtn = this.page.getByRole('button', { name: 'Send verification code again' });
+    this.verificationCodeResendCountdown = this.page.getByText('code can be sent again in');
+    this.confirmBtn = this.page.getByRole('button', { name: 'Confirm' });
+    this.proceedToFinOpsBtn = this.page.getByRole('button', { name: 'Proceed to FinOps for Cloud' });
   }
 
   //TODO: Get url from gmail
@@ -28,8 +28,8 @@ export class EmailVerificationPage extends BasePage {
    */
   async waitForVerificationCodeResetTimeout(timeout: number = 620000): Promise<void> {
     await this.verificationCodeResendCountdown.waitFor();
-    await this.sendVerificationCodeBtn.waitFor({state: 'visible', timeout: timeout});
-    await this.page.waitForTimeout(1000);
+    await this.sendVerificationCodeBtn.waitFor({ state: 'visible', timeout: timeout });
+    await this.delay(1000); // Additional delay to ensure the page is ready
   }
 
   /**

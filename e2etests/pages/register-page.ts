@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Register Page.
@@ -22,7 +22,7 @@ export class RegisterPage extends BasePage {
     this.passwordInput = this.page.getByTestId('input_pass');
     this.confirmPasswordInput = this.page.getByTestId('input_conf_pass');
     this.registerBtn = this.page.getByTestId('btn_register');
-    this.alreadyHaveAccountLink = this.main.getByRole("link", {name: "Already have an account? Sign in"});
+    this.alreadyHaveAccountLink = this.main.getByRole('link', { name: 'Already have an account? Sign in' });
   }
 
   /**
@@ -31,7 +31,8 @@ export class RegisterPage extends BasePage {
    * @returns {Promise<void>}
    */
   async navigateToRegistration(inviteLink: string): Promise<void> {
-    await this.page.goto(inviteLink, {waitUntil: 'networkidle'});
+    await this.page.goto(inviteLink, { waitUntil: 'load' });
+    await this.registerBtn.waitFor();
   }
 
   /**
