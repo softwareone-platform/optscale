@@ -28,7 +28,7 @@ export function getExpectedDateRangeText(rangeType: string, today: Date = new Da
       startDate = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1));
       break;
 
-    case 'last month':
+    case 'last month': {
       const prevMonth = endDate.getUTCMonth() - 1;
       const lastMonthYear = prevMonth < 0 ? endDate.getUTCFullYear() - 1 : endDate.getUTCFullYear();
       const lastMonthIndex = (prevMonth + 12) % 12;
@@ -37,14 +37,16 @@ export function getExpectedDateRangeText(rangeType: string, today: Date = new Da
       const lastDayOfMonth = new Date(Date.UTC(lastMonthYear, lastMonthIndex + 1, 0)).getUTCDate();
       endDate.setTime(Date.UTC(lastMonthYear, lastMonthIndex, lastDayOfMonth, 23, 59, 59));
       break;
+    }
 
-    case 'custom':
+    case 'custom': {
       if (!customStart || !customEnd) {
         throw new Error('Custom range requires start and end dates');
       }
       startDate = customStart;
       endDate.setTime(customEnd.getTime());
       break;
+    }
 
     default:
       throw new Error(`Unsupported range type: ${rangeType}`);
@@ -115,6 +117,16 @@ export function getLast30DaysUnixRange(): { startDate: number; endDate: number }
   };
 }
 
+/**
+ * Calculates the Unix timestamp range for the current month.
+ * This function determines the start and end timestamps (in seconds) for the current calendar month,
+ * with the start date being midnight (UTC) on the first day of the month,
+ * and the end date being 23:59:59 UTC on the current day.
+ *
+ * @returns {{ startDate: number, endDate: number }} An object containing the start and end timestamps in seconds.
+ * - `startDate`: The Unix timestamp for the start of the current month (00:00:00 UTC, first day of the month).
+ * - `endDate`: The Unix timestamp for the end of the current day (23:59:59 UTC, today).
+ */
 export function getThisMonthUnixDateRange(): { startDate: number; endDate: number } {
   const today = new Date();
 

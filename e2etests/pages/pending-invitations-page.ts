@@ -1,5 +1,5 @@
-import {Locator, Page} from '@playwright/test';
-import {BasePage} from "./base-page";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
 
 /**
  * Represents the Pending Invitations Page.
@@ -16,9 +16,9 @@ export class PendingInvitationsPage extends BasePage {
    */
   constructor(page: Page) {
     super(page, '/pending_invitations');
-    this.acceptBtn = this.page.getByRole('button', {name: 'Accept'});
-    this.declineBtn = this.page.getByRole('button', {name: 'Decline'});
-    this.noPendingInvitationsMessage = this.main.getByRole('heading', {name: 'No invitations pending'});
+    this.acceptBtn = this.page.getByRole('button', { name: 'Accept' });
+    this.declineBtn = this.page.getByRole('button', { name: 'Decline' });
+    this.noPendingInvitationsMessage = this.main.getByRole('heading', { name: 'No invitations pending' });
   }
 
   /**
@@ -26,7 +26,6 @@ export class PendingInvitationsPage extends BasePage {
    * @returns {Promise<void>}
    */
   async acceptInviteFlow(): Promise<void> {
-
     await this.acceptBtn.click();
   }
 
@@ -34,7 +33,7 @@ export class PendingInvitationsPage extends BasePage {
    * Declines an invitation by clicking the confirm, proceed, and decline buttons.
    * @returns {Promise<void>}
    */
-  async declineInviteFlow() {
+  async declineInviteFlow(): Promise<void> {
     await this.declineBtn.click();
   }
 
@@ -43,7 +42,7 @@ export class PendingInvitationsPage extends BasePage {
    * This method is used to accept an invitation by clicking the Accept button.
    * @returns {Promise<void>} A promise that resolves when the Accept button is clicked.
    */
-  async clickAcceptBtn() {
+  async clickAcceptBtn(): Promise<void> {
     await this.acceptBtn.click();
   }
 }

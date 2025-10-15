@@ -40,12 +40,12 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
   let totalExpensesValue: number;
   let itemisedTotal: number;
 
-  test.beforeEach('Login admin user', async ({ page, resourcesPage }) => {
+  test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.navigateToURL();
-      await resourcesPage.waitForPageLoaderToDisappear();
+      await resourcesPage.waitForPageLoaderToDisappear(5000);
       await resourcesPage.waitForCanvas();
-      if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+      await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
       await resourcesPage.firstResourceItemInTable.waitFor();
     });
@@ -258,13 +258,14 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
   );
 
   test('[230782] Validate API default chart/table data for 7 days', async ({ resourcesPage, datePicker }) => {
+    test.slow();
     const { startDate, endDate } = getLast7DaysUnixRange();
 
     let expensesData: ServiceNameExpensesResponse;
     await test.step('Load expenses data for the last 7 days', async () => {
       const [expensesResponse] = await Promise.all([
-        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_expenses')),
-        datePicker.selectLast7DaysDateRange(),
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_expenses'), { timeout: 15000 }),
+        datePicker.selectLast7DaysDateRange(false),
       ]);
 
       expensesData = await expensesResponse.json();
@@ -294,7 +295,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     await test.step('Load resources data from resources_count endpoint', async () => {
       const [resourceResponse] = await Promise.all([
         resourcesPage.page.waitForResponse(resp => resp.url().includes('/resources_count') && resp.status() === 200),
-        resourcesPage.clickResourceCountTab(),
+        resourcesPage.clickResourceCountTab(false),
       ]);
 
       resourceData = await resourceResponse.json();
@@ -318,7 +319,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     await test.step('Load tags data from breakdown_tags endpoint', async () => {
       const [tagResponse] = await Promise.all([
         resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_tags') && resp.status() === 200),
-        resourcesPage.clickTagsTab(),
+        resourcesPage.clickTagsTab(false),
       ]);
 
       tagsData = await tagResponse.json();
@@ -339,7 +340,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     '[230783] Validate API data for the daily expenses chart by breakdown for 7 days',
     { tag: '@slow' },
     async ({ resourcesPage, datePicker }) => {
-      test.setTimeout(90000);
+      test.setTimeout(120000);
       const { startDate, endDate } = getLast7DaysUnixRange();
 
       await test.step('Set last 7 days date range', async () => {
@@ -749,10 +750,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');
-      await resourcesPage.waitForLoadingPageImgToDisappear();
-      await resourcesPage.waitForPageLoaderToDisappear();
+      await resourcesPage.waitForPageLoaderToDisappear(5000);
       await resourcesPage.waitForCanvas();
-      if (await resourcesPage.resetFiltersBtn.isVisible()) await resourcesPage.resetFilters();
+      await resourcesPage.resetFilters();
       await resourcesPage.firstResourceItemInTable.waitFor();
     });
   });

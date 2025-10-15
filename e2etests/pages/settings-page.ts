@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Settings Page.
@@ -24,7 +24,7 @@ export class SettingsPage extends BasePage {
    * This method is used to navigate to the Invitations section within the Settings page.
    * @returns {Promise<void>} A promise that resolves when the Invitations tab is clicked.
    */
-  async clickInvitationsTab() {
+  async clickInvitationsTab(): Promise<void> {
     await this.invitationsTab.click();
   }
 }

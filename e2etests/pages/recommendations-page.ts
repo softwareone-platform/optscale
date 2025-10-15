@@ -331,7 +331,7 @@ export class RecommendationsPage extends BasePage {
    */
   async clickRI_SPCard(): Promise<void> {
     await this.page.waitForLoadState();
-    await this.page.waitForTimeout(2000);
+    await this.delay(2000);
     await this.ri_spCard.click();
   }
 
@@ -354,7 +354,7 @@ export class RecommendationsPage extends BasePage {
     await this.applicableServices.waitFor();
     await this.selectFromComboBox(this.applicableServices, service);
     await this.page.waitForLoadState();
-    await this.page.waitForTimeout(200);
+    await this.delay(200);
   }
 
   /**

@@ -1,5 +1,5 @@
-import {Locator, Page} from "@playwright/test";
-import {BasePage} from "./base-page";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
 
 /**
  * Represents the Users Invite Page.
@@ -53,7 +53,7 @@ export class UsersInvitePage extends BasePage {
         await this.selectFromComboBox(this.poolSelect, pool);
       }
     }
-    await this.page.waitForTimeout(1000);
+    await this.delay(1000);
     await this.inviteBtn.click();
   }
 }

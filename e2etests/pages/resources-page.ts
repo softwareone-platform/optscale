@@ -1,25 +1,25 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
+import { debugLog } from '../utils/debug-logging';
 
 /**
  * Represents the Resources Page.
  * Extends the BasePage class.
  */
 export class ResourcesPage extends BasePage {
-// Header
+  // Header
   readonly heading: Locator;
   readonly perspectivesBtn: Locator;
   readonly savePerspectiveBtn: Locator;
   readonly configureClusterTypesBtn: Locator;
 
-// Resources and savings values
+  // Resources and savings values
   readonly totalExpensesValue: Locator;
   readonly resourceCountValue: Locator;
   readonly possibleSavingsCard: Locator;
   readonly possibleMonthlySavingsValue: Locator;
 
-
-// Filters
+  // Filters
   readonly filtersBox: Locator;
   readonly allFilterBoxButtons: Locator;
   readonly filterPopover: Locator;
@@ -48,12 +48,12 @@ export class ResourcesPage extends BasePage {
   readonly showMoreFiltersBtn: Locator;
   readonly showLessFiltersBtn: Locator;
 
-// Tabs
+  // Tabs
   readonly tabExpensesBtn: Locator;
   readonly tabResourceCountBtn: Locator;
   readonly tabTagsBtn: Locator;
 
-// Charts
+  // Charts
   readonly categorizeBySelect: Locator;
   readonly expensesSelect: Locator;
   readonly showWeekendsCheckbox: Locator;
@@ -64,7 +64,7 @@ export class ResourcesPage extends BasePage {
   readonly showLegend: Locator;
   readonly exportChartBtn: Locator;
 
-// Table grouping
+  // Table grouping
   readonly simplePopover: Locator;
   readonly groupedByValue: Locator;
   readonly groupByPoolBtn: Locator;
@@ -73,7 +73,7 @@ export class ResourcesPage extends BasePage {
   readonly groupByOwnerCloseBtn: Locator;
   readonly groupByTagSelect: Locator;
 
-//Column selection
+  //Column selection
   readonly columnsBtn: Locator;
   readonly selectClearAllColumnsToggle: Locator;
   readonly paidNetworkTrafficToggle: Locator;
@@ -83,7 +83,7 @@ export class ResourcesPage extends BasePage {
   readonly locationToggle: Locator;
   readonly tagsToggle: Locator;
 
-// Table
+  // Table
   readonly table: Locator;
 
   readonly resourceTableHeading: Locator;
@@ -105,7 +105,6 @@ export class ResourcesPage extends BasePage {
   readonly clearIcon: Locator;
   readonly navigateNextIcon: Locator;
 
-
   /**
    * Initializes a new instance of the ResourcesPage class.
    * @param {Page} page - The Playwright page object.
@@ -115,9 +114,9 @@ export class ResourcesPage extends BasePage {
 
     // Header
     this.heading = this.main.getByTestId('lbl_resources');
-    this.perspectivesBtn = this.main.getByRole('button', {name: 'Perspectives'});
-    this.savePerspectiveBtn = this.main.getByRole('button', {name: 'Save perspective'});
-    this.configureClusterTypesBtn = this.main.getByRole('button', {name: 'Configure cluster types'});
+    this.perspectivesBtn = this.main.getByRole('button', { name: 'Perspectives' });
+    this.savePerspectiveBtn = this.main.getByRole('button', { name: 'Save perspective' });
+    this.configureClusterTypesBtn = this.main.getByRole('button', { name: 'Configure cluster types' });
 
     // Resources and savings values
     this.totalExpensesValue = this.main.getByTestId('p_expenses_value');
@@ -125,37 +124,36 @@ export class ResourcesPage extends BasePage {
     this.possibleSavingsCard = this.main.getByTestId('card_possible_savings');
     this.possibleMonthlySavingsValue = this.possibleSavingsCard.getByTestId('p_savings_value');
 
-
     //Filters
     this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
     this.allFilterBoxButtons = this.filtersBox.locator('button');
     this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
 
-    this.suggestionsFilter = this.filtersBox.getByRole("button", {name: "Suggestions"});
-    this.dataSourceFilter = this.filtersBox.getByRole("button", {name: "Data source ("});
-    this.poolFilter = this.filtersBox.getByRole("button", {name: "Pool ("});
-    this.ownerFilter = this.filtersBox.getByRole("button", {name: "Owner ("});
-    this.regionFilter = this.filtersBox.getByRole("button", {name: "Region ("});
-    this.serviceFilter = this.filtersBox.getByRole("button", {name: /^Service \(/});
-    this.resourceTypeFilter = this.filtersBox.getByRole("button", {name: "Resource type ("});
-    this.activityFilter = this.filtersBox.getByRole("button", {name: "Activity ("});
-    this.recommendationsFilter = this.filtersBox.getByRole("button", {name: "Recommendations ("});
-    this.constraintViolationsFilter = this.filtersBox.getByRole("button", {name: "Constraint violations ("});
-    this.firstSeenFilter = this.filtersBox.getByRole("button", {name: "First seen ("});
-    this.lastSeenFilter = this.filtersBox.getByRole("button", {name: "Last seen ("});
-    this.tagFilter = this.filtersBox.getByRole("button", {name: /^Tag \(/});
-    this.withoutTagFilter = this.filtersBox.getByRole("button", {name: "Without tag ("});
-    this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole("button", {name: "Paid network traffic from ("});
-    this.paidNetworkTrafficToFilter = this.filtersBox.getByRole("button", {name: "Paid network traffic to ("});
-    this.k8sNodeFilter = this.filtersBox.getByRole("button", {name: "K8s node ("});
-    this.k8sServiceFilter = this.filtersBox.getByRole("button", {name: "K8s service ("});
-    this.k8sNamespaceFilter = this.filtersBox.getByRole('button', {name: 'K8s namespace ('});
+    this.suggestionsFilter = this.filtersBox.getByRole('button', { name: 'Suggestions' });
+    this.dataSourceFilter = this.filtersBox.getByRole('button', { name: 'Data source (' });
+    this.poolFilter = this.filtersBox.getByRole('button', { name: 'Pool (' });
+    this.ownerFilter = this.filtersBox.getByRole('button', { name: 'Owner (' });
+    this.regionFilter = this.filtersBox.getByRole('button', { name: 'Region (' });
+    this.serviceFilter = this.filtersBox.getByRole('button', { name: /^Service \(/ });
+    this.resourceTypeFilter = this.filtersBox.getByRole('button', { name: 'Resource type (' });
+    this.activityFilter = this.filtersBox.getByRole('button', { name: 'Activity (' });
+    this.recommendationsFilter = this.filtersBox.getByRole('button', { name: 'Recommendations (' });
+    this.constraintViolationsFilter = this.filtersBox.getByRole('button', { name: 'Constraint violations (' });
+    this.firstSeenFilter = this.filtersBox.getByRole('button', { name: 'First seen (' });
+    this.lastSeenFilter = this.filtersBox.getByRole('button', { name: 'Last seen (' });
+    this.tagFilter = this.filtersBox.getByRole('button', { name: /^Tag \(/ });
+    this.withoutTagFilter = this.filtersBox.getByRole('button', { name: 'Without tag (' });
+    this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic from (' });
+    this.paidNetworkTrafficToFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic to (' });
+    this.k8sNodeFilter = this.filtersBox.getByRole('button', { name: 'K8s node (' });
+    this.k8sServiceFilter = this.filtersBox.getByRole('button', { name: 'K8s service (' });
+    this.k8sNamespaceFilter = this.filtersBox.getByRole('button', { name: 'K8s namespace (' });
 
     this.billingOnlyOption = this.filterPopover.getByLabel('Billing only');
-    this.filterApplyButton = this.filterPopover.getByRole("button", {name: "Apply"});
-    this.resetFiltersBtn = this.main.getByRole("button", {name: "Reset filters"});
-    this.showMoreFiltersBtn = this.main.getByRole('button', {name: 'Show more'});
-    this.showLessFiltersBtn = this.main.getByRole('button', {name: 'Show less'});
+    this.filterApplyButton = this.filterPopover.getByRole('button', { name: 'Apply' });
+    this.resetFiltersBtn = this.main.getByRole('button', { name: 'Reset filters' });
+    this.showMoreFiltersBtn = this.main.getByRole('button', { name: 'Show more' });
+    this.showLessFiltersBtn = this.main.getByRole('button', { name: 'Show less' });
 
     //tabs
     this.tabExpensesBtn = this.main.getByTestId('tab_expenses');
@@ -182,7 +180,6 @@ export class ResourcesPage extends BasePage {
     this.groupByPoolCloseBtn = this.main.getByTestId('btn_ls_item_pool_close');
     this.groupByOwnerBtn = this.main.getByTestId('selector_owner');
     this.groupByTagSelect = this.main.getByTestId('selector_tag');
-
 
     //Column selection
     this.columnsBtn = this.main.getByTestId('btn_columns');
@@ -224,9 +221,10 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickExpensesTab(): Promise<void> {
+  async clickExpensesTab(wait = true): Promise<void> {
+    debugLog('Clicking ExpensesTab');
     await this.tabExpensesBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
 
   /**
@@ -235,9 +233,10 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickResourceCountTab(): Promise<void> {
+  async clickResourceCountTab(wait = true): Promise<void> {
+    debugLog('Clicking Resource Count tab');
     await this.tabResourceCountBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
 
   /**
@@ -246,11 +245,11 @@ export class ResourcesPage extends BasePage {
    *
    * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
    */
-  async clickTagsTab(): Promise<void> {
+  async clickTagsTab(wait = true): Promise<void> {
+    debugLog('Clicking Tags Tab');
     await this.tabTagsBtn.click();
-    await this.waitForCanvas();
+    if (wait) await this.waitForCanvas();
   }
-
 
   /**
    * Retrieves the total expenses value displayed on the Resources page.
@@ -264,14 +263,23 @@ export class ResourcesPage extends BasePage {
   }
 
   /**
-   * Resets all filters applied on the Resources page.
-   * This method clicks the reset filters button, logs the action, and waits for the canvas to update.
+   * Resets all filters on the Resources page.
    *
-   * @returns {Promise<void>} Resolves when the filters are reset and the canvas is updated.
+   * This method checks if the "Reset Filters" button is visible, clicks it to reset all filters,
+   * and optionally waits for the page loader to disappear and the canvas to update.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after resetting the filters.
+   * @returns {Promise<void>} Resolves when the filters are reset and the optional wait is complete.
    */
-  async resetFilters(): Promise<void> {
-    await this.resetFiltersBtn.click();
-    await this.waitForCanvas();
+  async resetFilters(wait: boolean = true): Promise<void> {
+    if (await this.resetFiltersBtn.isVisible()) {
+      debugLog('Resetting all filters');
+      await this.resetFiltersBtn.click();
+      if (wait) {
+        await this.waitForPageLoaderToDisappear();
+        await this.waitForCanvas();
+      }
+    }
   }
 
   /**
@@ -333,15 +341,18 @@ export class ResourcesPage extends BasePage {
   /**
    * Selects an option from the "Categorize By" dropdown on the Resources page.
    * This method uses the `categorizeBySelect` locator to select the specified option
-   * and waits for the canvas to update after the selection.
+   * and optionally waits for the page to load and the canvas to update after the selection.
    *
    * @param {string} option - The option to select from the dropdown.
-   * @returns {Promise<void>} Resolves when the option is selected and the canvas is updated.
+   * @param {boolean} [wait=true] - Whether to wait for the page to load and the canvas to update after the selection.
+   * @returns {Promise<void>} Resolves when the option is selected and the optional wait is complete.
    */
-  async selectCategorizeBy(option: string): Promise<void> {
+  async selectCategorizeBy(option: string, wait: boolean = true): Promise<void> {
     await this.selectFromComboBox(this.categorizeBySelect, option);
-    await this.waitForPageLoad();
-    await this.waitForCanvas();
+    if (wait) {
+      await this.waitForPageLoad();
+      await this.waitForCanvas();
+    }
   }
 
   /**
@@ -410,7 +421,7 @@ export class ResourcesPage extends BasePage {
       throw new Error('Tag must be provided');
     }
     await this.groupByTagSelect.click();
-    await this.simplePopover.getByText(tag, {exact: true}).click();
+    await this.simplePopover.getByText(tag, { exact: true }).click();
   }
 
   /**

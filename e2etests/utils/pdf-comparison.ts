@@ -71,7 +71,7 @@ export async function comparePdfFiles(expectedPdfPath: string, actualPdfPath: st
     return false;
   } finally {
     // Clean up converted PNG files if the CLEAN_UP_DOWNLOADS environment variable is set
-    if (process.env.CLEAN_UP_DOWNLOADS) {
+    if (process.env.CLEAN_UP) {
       await Promise.all([fs.unlink(expectedPngPath).catch(() => {}), fs.unlink(actualPngPath).catch(() => {})]);
     }
   }
