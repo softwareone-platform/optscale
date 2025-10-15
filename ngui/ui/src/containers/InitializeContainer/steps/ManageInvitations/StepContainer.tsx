@@ -1,25 +1,22 @@
 import { useState } from "react";
 import { useInvitationsQuery } from "graphql/__generated__/hooks/restapi";
 import { isEmptyArray } from "utils/arrays";
+import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
 import { Error, Loading } from "../../common";
+import ProceedToApplication from "../ProceedToApplication";
 import SetupOrganization from "../SetupOrganization/StepContainer";
 import AcceptInvitations from "./AcceptInvitations";
 
 const StepContainer = () => {
   const [proceedToNext, setProceedToNext] = useState(false);
-
   const {
     data: invitations,
-    loading: getInvitationsLoading,
-    error: getInvitationsError,
+    loading: isLoading,
+    error: error,
     refetch: refetchInvitations
   } = useInvitationsQuery({
     fetchPolicy: "network-only"
   });
-
-  const isLoading = getInvitationsLoading;
-
-  const error = getInvitationsError;
 
   if (isLoading) {
     return <Loading />;
@@ -30,7 +27,7 @@ const StepContainer = () => {
   }
 
   if (proceedToNext) {
-    return <SetupOrganization />;
+    return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
   }
 
   const hasInvitations = !isEmptyArray(invitations?.invitations ?? []);
@@ -47,7 +44,7 @@ const StepContainer = () => {
     );
   }
 
-  return <SetupOrganization />;
+  return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
 };
 
 export default StepContainer;

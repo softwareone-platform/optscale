@@ -1,3 +1,0 @@
-import DeleteResourcePerspectiveContainer from "./DeleteResourcePerspectiveContainer";
-
-export default DeleteResourcePerspectiveContainer;

@@ -81,7 +81,10 @@
     "vite-tsconfig-paths": "5.1.4"
   },
   "scripts": {
+    "copy:translations": "node copy-translations.js",
+    "prestart": "pnpm copy:translations",
     "start": "vite",
+    "prestart:ci": "pnpm copy:translations",
     "start:ci": "pnpm install --frozen-lockfile --ignore-scripts && pnpm start",
     "dev": "vite",
     "build": "vite build",
@@ -99,7 +102,10 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "check": "pnpm lint && pnpm translate:check",
-    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix"
+    "check:all": "pnpm check && pnpm prettier:check && pnpm build",
+    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix",
+    "prettier:check": "prettier --check 'src/**/*.{ts,tsx,json}'",
+    "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'"
   },
   "browserslist": {
     "production": [

@@ -1,3 +1,0 @@
-import RemoveInstancesFromScheduleContainer from "./RemoveInstancesFromScheduleContainer";
-
-export default RemoveInstancesFromScheduleContainer;

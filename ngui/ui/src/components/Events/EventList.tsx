@@ -10,6 +10,7 @@ import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import ActionBar from "components/ActionBar";
 import ButtonGroup from "components/ButtonGroup";
+import ButtonLoader from "components/ButtonLoader";
 import Checkbox from "components/Checkbox";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import PageContentWrapper from "components/PageContentWrapper";
@@ -106,11 +107,12 @@ const EventIcon = ({ eventLevel }) =>
     [EVENT_LEVEL.DEBUG]: <PestControlIcon fontSize="small" color="info" />
   })[eventLevel];
 
-const Events = ({
+const EventList = ({
   eventLevel,
   descriptionLike,
   includeDebugEvents,
-  onScroll,
+  eventsCount,
+  getMoreEvents,
   applyFilter,
   events,
   isLoading = false,
@@ -124,7 +126,7 @@ const Events = ({
   };
 
   const [expanded, setExpanded] = useState("");
-  const queryParams = getSearchParams();
+  const SearchParams = getSearchParams();
 
   const handleAccordion = (eventId) => (_, isExpanded) => {
     setExpanded(isExpanded ? eventId : "");
@@ -140,10 +142,10 @@ const Events = ({
   useEffect(() => {
     if (isInitialMount) {
       setIsInitialMount(false);
-    } else if (queryParams.event) {
-      setExpanded(queryParams.event);
+    } else if (SearchParams.event) {
+      setExpanded(SearchParams.event);
     }
-  }, [setExpanded, queryParams, isInitialMount, setIsInitialMount]);
+  }, [setExpanded, SearchParams, isInitialMount, setIsInitialMount]);
 
   const eventTableColumns = useMemo(
     () => [
@@ -246,27 +248,15 @@ const Events = ({
     }
 
     if (noEvents) {
-      return <FormattedMessage id="noEvents" />;
+      return (
+        <Box display="flex" justifyContent="left" py={2}>
+          <FormattedMessage id="noEvents" />
+        </Box>
+      );
     }
 
     return (
-      <Box
-        onScroll={onScroll}
-        display="flex"
-        flexDirection="column"
-        flexGrow={1}
-        flexBasis="0px"
-        overflow="auto"
-        /**
-         * Set an approximate maximum height for the events section to ensure it remains scrollable on large screens.
-         * The maximum height should be determined based on the height of the container when all events belong to a single date.
-         * In this scenario, the container's height will be close to its minimum possible value.
-         *
-         * EVENTS_LIMIT represents the maximum number of events that can be fetched in a single request.
-         * Each event is assumed to occupy approximately 25 pixels in height.
-         */
-        maxHeight={`${EVENTS_LIMIT * 25}px`}
-      >
+      <Box display="flex" flexDirection="column" flexGrow={1} flexBasis="auto">
         <Box>
           <Stack spacing={SPACING_3}>
             {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
@@ -276,7 +266,18 @@ const Events = ({
               </Box>
             ))}
           </Stack>
-          {isFetchingMore ? <Loader /> : null}
+          <Box display="flex" justifyContent="center" py={2}>
+            <ButtonLoader
+              onClick={getMoreEvents}
+              variant="contained"
+              messageId="loadMoreEvents"
+              color="primary"
+              type="submit"
+              isLoading={isFetchingMore}
+              disabled={isFetchingMore || eventsCount < EVENTS_LIMIT}
+              dataTestId="btn_load_more_events"
+            />
+          </Box>
         </Box>
       </Box>
     );
@@ -352,4 +353,4 @@ const Events = ({
   );
 };
 
-export default Events;
+export default EventList;

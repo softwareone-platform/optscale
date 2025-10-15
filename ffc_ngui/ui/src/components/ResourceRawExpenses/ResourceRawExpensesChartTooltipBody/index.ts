@@ -1,3 +1,0 @@
-import ResourceRawExpensesChartTooltipBody from "./ResourceRawExpensesChartTooltipBody";
-
-export default ResourceRawExpensesChartTooltipBody;

@@ -1,3 +1,0 @@
-import PoolsRequiringAttentionCardContainer from "./PoolsRequiringAttentionCardContainer";
-
-export default PoolsRequiringAttentionCardContainer;

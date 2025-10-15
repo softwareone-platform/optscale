@@ -7,6 +7,7 @@ import TableLoader from "components/TableLoader";
 import { isEmptyArray } from "utils/arrays";
 import { SPACING_1 } from "utils/layouts";
 import InfoArea from "./components/InfoArea";
+import TableGradientOverlay from "./components/MptTableGradientOverlay/MptTableGradientOverlay";
 import Pagination from "./components/Pagination";
 import TableActions from "./components/TableActions";
 import { MemoTableBodyCell, TableBodyCell } from "./components/TableBodyCell";
@@ -92,7 +93,7 @@ const Table = ({
   manualGlobalFiltering
 }) => {
   const headerRef = useRef();
-
+  const tableContainerRef = useRef<HTMLElement | null>(null);
   const { classes } = useStyles();
 
   const { stickyHeaderCellStyles, stickyTableStyles } = useSticky({
@@ -273,140 +274,146 @@ const Table = ({
       />
       {/* Wrap with box in order to make table fit 100% width with small amount of columns */}
       {/* TODO: Consider using MUI TableContainer */}
-      <Box
-        className={classes.tableContainer}
-        sx={{
-          overflowX
-        }}
-      >
-        {isLoading ? (
-          <TableLoader columnsCounter={columns.length ?? 5} showHeader />
-        ) : (
-          <MuiTable
-            sx={{
-              tableLayout
-            }}
-            style={{
-              ...stickyTableStyles
-            }}
-          >
-            {withHeader && (
-              <TableHead ref={headerRef}>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHeaderCell
-                        key={header.id}
-                        headerContext={header}
-                        stickyStyles={stickyHeaderCellStyles}
-                        getHeaderCellClassName={getHeaderCellClassName}
-                      />
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHead>
-            )}
-            <TableBody>
-              {isEmptyArray(rows) ? (
-                <TableRow
-                  sx={
-                    disableBottomBorderForLastRow
-                      ? {
-                          "&:last-child > td": {
-                            borderBottom: "none"
-                          }
-                        }
-                      : {}
-                  }
-                >
-                  <TableCell align="center" colSpan={columns.length}>
-                    <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID} />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.map((row, index) => {
-                  const rowStyle = typeof getRowStyle === "function" ? getRowStyle(row.original) : {};
-
-                  return (
-                    <TableRow
-                      {...getRowHoverProperties(row)}
-                      data-test-id={`row_${index}`}
-                      key={row.id}
-                      style={rowStyle}
-                      sx={
-                        disableBottomBorderForLastRow
-                          ? {
-                              "&:last-child > td": {
-                                borderBottom: "none"
-                              }
-                            }
-                          : {}
-                      }
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        if (cell.column.id === SELECTION_COLUMN_ID) {
-                          return <TableBodyCell key={cell.id} cell={cell} />;
-                        }
-                        const Cell = memoBodyCells ? MemoTableBodyCell : TableBodyCell;
-
-                        return (
-                          <Cell
-                            key={cell.id}
-                            cell={cell}
-                            className={
-                              typeof getRowCellClassName === "function" ? getRowCellClassName(cell.getContext()) : undefined
-                            }
-                          />
-                        );
-                      })}
+      <div style={{ position: "relative" }}>
+        <Box
+          ref={tableContainerRef}
+          className={classes.tableContainer}
+          sx={{
+            overflowX,
+            position: "relative"
+          }}
+        >
+          {isLoading ? (
+            <TableLoader columnsCounter={columns.length ?? 5} showHeader />
+          ) : (
+            <MuiTable
+              sx={{
+                tableLayout
+              }}
+              style={{
+                ...stickyTableStyles
+              }}
+            >
+              {withHeader && (
+                <TableHead ref={headerRef}>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHeaderCell
+                          key={header.id}
+                          isSelectionColumn={header.column.id === SELECTION_COLUMN_ID}
+                          headerContext={header}
+                          stickyStyles={stickyHeaderCellStyles}
+                          getHeaderCellClassName={getHeaderCellClassName}
+                        />
+                      ))}
                     </TableRow>
-                  );
-                })
+                  ))}
+                </TableHead>
               )}
-            </TableBody>
-            {withFooter && (
-              <TableFooter>
-                {table.getFooterGroups().map((footerGroup) => (
-                  <TableRow key={footerGroup.id}>
-                    {footerGroup.headers.map((footerContext) => (
-                      <TableFooterCell key={footerContext.id} footerContext={footerContext} />
-                    ))}
+              <TableBody>
+                {isEmptyArray(rows) ? (
+                  <TableRow
+                    sx={
+                      disableBottomBorderForLastRow
+                        ? {
+                            "&:last-child > td": {
+                              borderBottom: "none"
+                            }
+                          }
+                        : {}
+                    }
+                  >
+                    <TableCell align="center" colSpan={columns.length}>
+                      <FormattedMessage id={localization.emptyMessageId || DEFAULT_EMPTY_MESSAGE_ID} />
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableFooter>
-            )}
-          </MuiTable>
-        )}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          paddingTop: SPACING_1,
-          flexWrap: "wrap",
-          flexDirection: { xs: "column-reverse", md: "row" },
-          ":empty": { display: "none" }
-        }}
-      >
-        <InfoArea
-          counters={counters}
-          rowsCount={rows.length}
-          selectedRowsCount={selectedRowsCount}
-          dataTestIds={dataTestIds.infoAreaTestIds}
-          showAllLink={showAllLink}
-          pagination={paginationSettings}
-          withSearch={withSearch}
-          withSelection={withSelection}
-          withPagination={withPagination}
-        />
-        {paginationSettings.pageCount > 1 && (
-          <Pagination
-            count={paginationSettings.pageCount}
-            page={paginationSettings.pageIndex + 1}
-            paginationHandler={paginationSettings.onPageIndexChange}
+                ) : (
+                  rows.map((row, index) => {
+                    const rowStyle = typeof getRowStyle === "function" ? getRowStyle(row.original) : {};
+
+                    return (
+                      <TableRow
+                        {...getRowHoverProperties(row)}
+                        data-test-id={`row_${index}`}
+                        key={row.id}
+                        style={rowStyle}
+                        sx={
+                          disableBottomBorderForLastRow
+                            ? {
+                                "&:last-child > td": {
+                                  borderBottom: "none"
+                                }
+                              }
+                            : {}
+                        }
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          if (cell.column.id === SELECTION_COLUMN_ID) {
+                            return <TableBodyCell className={"tableRowSelection"} key={cell.id} cell={cell} />;
+                          }
+                          const Cell = memoBodyCells ? MemoTableBodyCell : TableBodyCell;
+
+                          return (
+                            <Cell
+                              key={cell.id}
+                              cell={cell}
+                              className={
+                                typeof getRowCellClassName === "function" ? getRowCellClassName(cell.getContext()) : undefined
+                              }
+                            />
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+              {withFooter && (
+                <TableFooter>
+                  {table.getFooterGroups().map((footerGroup) => (
+                    <TableRow key={footerGroup.id}>
+                      {footerGroup.headers.map((footerContext) => (
+                        <TableFooterCell key={footerContext.id} footerContext={footerContext} />
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableFooter>
+              )}
+            </MuiTable>
+          )}
+        </Box>
+        <TableGradientOverlay containerWithScrollRef={tableContainerRef} />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            paddingTop: SPACING_1,
+            flexWrap: "wrap",
+            flexDirection: { xs: "column-reverse", md: "row" },
+            ":empty": { display: "none" }
+          }}
+        >
+          <InfoArea
+            counters={counters}
+            rowsCount={rows.length}
+            selectedRowsCount={selectedRowsCount}
+            dataTestIds={dataTestIds.infoAreaTestIds}
+            showAllLink={showAllLink}
+            pagination={paginationSettings}
+            withSearch={withSearch}
+            withSelection={withSelection}
+            withPagination={withPagination}
           />
-        )}
-      </Box>
+          {paginationSettings.pageCount > 1 && (
+            <Pagination
+              count={paginationSettings.pageCount}
+              page={paginationSettings.pageIndex + 1}
+              paginationHandler={paginationSettings.onPageIndexChange}
+            />
+          )}
+        </Box>
+      </div>
     </div>
   );
 };

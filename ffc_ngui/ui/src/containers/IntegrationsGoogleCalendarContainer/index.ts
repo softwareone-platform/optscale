@@ -1,3 +1,0 @@
-import IntegrationsGoogleCalendarContainer from "./IntegrationsGoogleCalendarContainer";
-
-export default IntegrationsGoogleCalendarContainer;
