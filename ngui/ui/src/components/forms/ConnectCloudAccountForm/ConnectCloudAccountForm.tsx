@@ -171,7 +171,6 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
   const extraParams = {
     use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
     cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
-    account_type: connectionType,
     ...getConfigSchemeParameters()
   };
 
@@ -181,7 +180,7 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
     config: {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-      awsConnectionType: connectionType,
+      account_type: connectionType,
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : {})
     }
   };
