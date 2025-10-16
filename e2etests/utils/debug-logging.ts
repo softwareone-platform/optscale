@@ -12,3 +12,14 @@ export function debugLog(message: string) {
     console.debug(`[DEBUG] ${message}`);
   }
 }
+/**
+ * Logs an error message to the console.
+ *
+ * This function prefixes the provided message with `[ERROR]` and logs it
+ * to the console using `console.error`.
+ *
+ * @param {string} message - The error message to log.
+ */
+export function errorLog(message: string) {
+  console.error(`[ERROR] ${message}`);
+}

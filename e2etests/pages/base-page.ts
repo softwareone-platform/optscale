@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { debugLog } from '../utils/debug-logging';
+import { debugLog, errorLog } from '../utils/debug-logging';
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -204,21 +204,34 @@ export abstract class BasePage {
 
   /**
    * Parses a currency value from a string input and converts it into a numeric value.
-   * Handles various formats, including optional multipliers (e.g., 'k' for thousand, 'm' for million),
-   * and different decimal separator strategies (comma or dot).
+   * Handles various formats, including:
+   * - Optional multipliers (e.g., 'k' for thousand, 'm' for million)
+   * - Different decimal separator strategies (comma or dot)
+   * - Negative values (e.g., '-$1.77')
+   * - Approximate values with symbols (e.g., '≈$0')
+   * - Currency symbols and prefixes
    *
    * @param {string} input - The string input representing the currency value.
    * @returns {number} The parsed numeric value, or NaN if the input is invalid.
    */
   parseCurrencyValue(input: string): number {
-    if (!input) return NaN;
+    if (!input) {
+      errorLog(`parseCurrencyValue: Input is empty or null`);
+      return NaN;
+    }
 
     // Lowercase for uniformity and trim whitespace
-    const value = input.trim().toLowerCase();
+    let value = input.trim().toLowerCase();
 
-    // Match number part and optional multiplier (e.g. 'k', 'm')
+    // Remove currency symbols and approximate symbols
+    value = value.replace(/[$£€¥₹≈~]/g, '');
+
+    // Match number part (including negative sign) and optional multiplier (e.g. 'k', 'm')
     const match = value.match(/([-\d.,]+)\s*([km])?/i);
-    if (!match) return NaN;
+    if (!match) {
+      errorLog(`parseCurrencyValue: Unable to parse value from input "${input}"`);
+      return NaN;
+    }
 
     let numberPart = match[1];
     // Remove all whitespace from the number part
@@ -250,7 +263,10 @@ export abstract class BasePage {
     }
 
     let result = parseFloat(numberPart);
-    if (isNaN(result)) return NaN;
+    if (isNaN(result)) {
+      errorLog(`parseCurrencyValue: Parsed number is NaN for input "${input}"`);
+      return NaN;
+    }
 
     // Apply multiplier if present
     switch (multiplierSuffix) {
@@ -261,7 +277,7 @@ export abstract class BasePage {
         result *= 1_000_000;
         break;
     }
-
+    debugLog(`parseCurrencyValue: Parsed "${input}" to ${result}`);
     return result;
   }
 

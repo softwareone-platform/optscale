@@ -6,7 +6,7 @@ import { LiveDemoService } from './auth-helpers';
 export async function injectLocalforage(page: Page) {
   const scriptPath = path.resolve(__dirname, './script/localforage.min.js');
   await page.addScriptTag({ path: scriptPath });
-  await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 }
 
 export async function getLocalforageRoot(page: Page) {
