@@ -7,7 +7,7 @@ import { CONNECTION_TYPES } from "utils/constants";
 import { MPT_SPACING_2 } from "utils/layouts";
 
 const renderAwsTypeDescription = (messageId: string, linkUrl: string | undefined = undefined, linkDisplayBlock = false) => (
-  <div key={messageId} style={{ marginBottom: MPT_SPACING_2, fontSize: 14 }}>
+  <div key={messageId} style={{ marginBottom: MPT_SPACING_2, fontSize: 12 }}>
     <FormattedMessage
       id={messageId}
       values={{
