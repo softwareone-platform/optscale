@@ -45,7 +45,8 @@ export const MetadataNodes = ({
     source_cluster_id: sourceClusterId,
     platform_name: platformName,
     ram,
-    platform_id: platformId
+    platform_id: platformId,
+    architecture
   } = {}
 }) => {
   const captionSettings = [
@@ -81,7 +82,8 @@ export const MetadataNodes = ({
     { value: folderId, messageId: METADATA_FIELDS.FOLDER_ID },
     { value: sourceClusterId, messageId: METADATA_FIELDS.SOURCE_CLUSTER_ID },
     { value: platformId, messageId: METADATA_FIELDS.PLATFORM_ID },
-    { value: platformName, messageId: METADATA_FIELDS.PLATFORM_NAME }
+    { value: platformName, messageId: METADATA_FIELDS.PLATFORM_NAME },
+    { value: architecture, messageId: METADATA_FIELDS.ARCHITECTURE }
   ]
     .filter(({ value }) => value !== undefined)
     .map(({ value, messageId }) => {
