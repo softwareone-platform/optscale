@@ -81,11 +81,7 @@ class AzurePriceProcessor(BasePriceProcessor):
 
     def process_prices(self):
         last_discovery = self.get_last_discovery()
-        old_prices = self.prices.find(
-            {'last_seen': {'$gte': last_discovery.get('started_at', 0)}},
-            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
-        )
-        old_prices_map = {self.unique_values(p): p for p in old_prices}
+        last_discovery_started_at = last_discovery.get('started_at', 0)
 
         http_client = Client()
         processed_keys = {}
@@ -108,7 +104,7 @@ class AzurePriceProcessor(BasePriceProcessor):
                     code, response = http_client.get(next_page)
                 items = response.get('Items', [])
                 new_prices_map = {self.unique_values(p): p for p in items}
-                self.update_price_records(new_prices_map, old_prices_map,
+                self.update_price_records(new_prices_map, last_discovery_started_at,
                                           processed_keys)
                 new_url = response.get('NextPageLink')
                 if not new_url or new_url == next_page:
@@ -118,12 +114,32 @@ class AzurePriceProcessor(BasePriceProcessor):
                 next_page = new_url
                 prices_counter += PRICES_PER_REQUEST
 
-    def update_price_records(self, new_prices_map, old_prices_map,
+    def update_price_records(self, new_prices_map, last_discovery_started_at,
                              processed_keys):
         if not new_prices_map:
             return
         now_ts = int(datetime.now(tz=timezone.utc).timestamp())
         update_ids = []
+
+        unique_queries = []
+        for key in new_prices_map.keys():
+            query = {}
+            for i, field in enumerate(self.UNIQUE_FIELDS):
+                query[field] = key[i]
+            unique_queries.append(query)
+
+        old_prices = self.prices.find(
+            {
+                '$and': [
+                    {'last_seen': {'$gte': last_discovery_started_at}},
+                    {'$or': unique_queries}
+                ]
+            },
+            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
+        ) if unique_queries else []
+
+        old_prices_batch_map = {self.unique_values(p): p for p in old_prices}
+
         for key, new_price in new_prices_map.copy().items():
             processed_key = processed_keys.get(key)
             if processed_key:
@@ -131,8 +147,8 @@ class AzurePriceProcessor(BasePriceProcessor):
                 continue
             processed_keys[key] = True
             if self.change_values(new_price) == self.change_values(
-                    old_prices_map.get(key, {})):
-                update_ids.append(old_prices_map.get(key)['_id'])
+                    old_prices_batch_map.get(key, {})):
+                update_ids.append(old_prices_batch_map.get(key)['_id'])
                 new_prices_map.pop(key)
                 continue
 
