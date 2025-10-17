@@ -2,12 +2,12 @@ import React, { ReactNode } from "react";
 import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
-import { DOCS_HYSTAX_CONNECT_AWS } from "urls";
+import { DOCS_HYSTAX_CONNECT_AMAZON, DOCS_HYSTAX_CONNECT_AWS } from "urls";
 import { CONNECTION_TYPES } from "utils/constants";
 import { MPT_SPACING_2 } from "utils/layouts";
 
 const renderAwsTypeDescription = (messageId: string, linkUrl: string | undefined = undefined, linkDisplayBlock = false) => (
-  <div key={messageId} style={{ marginBottom: MPT_SPACING_2, fontSize: 12 }}>
+  <div key={messageId} style={{ marginBottom: MPT_SPACING_2, fontSize: 14 }}>
     <FormattedMessage
       id={messageId}
       values={{
@@ -34,19 +34,19 @@ const renderAwsTypeDescription = (messageId: string, linkUrl: string | undefined
 
 const awsDefaultAssumedRoleDescriptions = [
   renderAwsTypeDescription("createAwsMemberAssumedRoleDescriptions"),
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS)
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AMAZON)
 ];
 
 const awsDefaultAccessKeyDescriptions = [
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS, true),
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference2"),
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS)
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AMAZON)
 ];
 
 const awsMemberAccessKeyDescriptions = [
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference1", DOCS_HYSTAX_CONNECT_AWS, true),
   renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference4"),
-  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AWS, false)
+  renderAwsTypeDescription("createAwsDefaultAssumedRoleDDocumentationReference3", DOCS_HYSTAX_CONNECT_AMAZON, false)
 ];
 
 export const awsConnectionAssumedRoleTypeDescriptions = {
