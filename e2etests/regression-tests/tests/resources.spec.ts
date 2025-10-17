@@ -38,6 +38,7 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
       await resourcesPage.heading.hover();
       await resourcesPage.screenshotUpdateDelay();
       await roundElementDimensions(resourcesPage.main);
+      await resourcesPage.fitViewportToFullPage();
       await expect(resourcesPage.main).toHaveScreenshot('Resources-landing-screenshot.png');
     });
 
@@ -48,6 +49,7 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
       await resourcesPage.waitForCanvas();
       await resourcesPage.screenshotUpdateDelay();
       await roundElementDimensions(resourcesPage.expensesBreakdownChart);
+      await resourcesPage.fitViewportToFullPage();
       await expect(resourcesPage.expensesBreakdownChart).toHaveScreenshot('Resources-expenses-chart-screenshot.png');
     });
 
@@ -58,6 +60,7 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
       await resourcesPage.waitForCanvas();
       await resourcesPage.screenshotUpdateDelay();
       await roundElementDimensions(resourcesPage.tagsBreakdownChart);
+      await resourcesPage.fitViewportToFullPage();
       await expect(resourcesPage.tagsBreakdownChart).toHaveScreenshot('Resources-tags-chart-screenshot.png');
     });
 
@@ -68,6 +71,7 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
       await resourcesPage.waitForCanvas();
       await resourcesPage.screenshotUpdateDelay();
       await roundElementDimensions(resourcesPage.resourceCountBreakdownChart);
+      await resourcesPage.fitViewportToFullPage();
       await expect(resourcesPage.resourceCountBreakdownChart).toHaveScreenshot('Resources-resource-count-chart-screenshot.png');
     });
   })
@@ -119,6 +123,7 @@ test.describe('FFC: Resources Details @swo_regression', () => {
         await resourceDetailsPage.constraintsTable.waitFor();
         await resourceDetailsPage.screenshotUpdateDelay();
         await roundElementDimensions(resourceDetailsPage.main);
+        await resourcesPage.fitViewportToFullPage();
         await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-constraints-tab-screenshot.png');
       });
 
@@ -129,12 +134,14 @@ test.describe('FFC: Resources Details @swo_regression', () => {
         await resourceDetailsPage.waitForCanvas();
         await resourceDetailsPage.screenshotUpdateDelay();
         await roundElementDimensions(resourceDetailsPage.main);
+        await resourcesPage.fitViewportToFullPage();
         await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-grouped-screenshot.png');
         await resourceDetailsPage.clickExpensesDetailedButton();
         await resourceDetailsPage.heading.hover();
         await resourceDetailsPage.waitForCanvas();
         await resourceDetailsPage.screenshotUpdateDelay();
         await roundElementDimensions(resourceDetailsPage.main);
+        await resourcesPage.fitViewportToFullPage();
         await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-expenses-tab-detailed-screenshot.png');
       });
 
@@ -143,6 +150,7 @@ test.describe('FFC: Resources Details @swo_regression', () => {
         await resourceDetailsPage.heading.hover();
         await resourceDetailsPage.screenshotUpdateDelay();
         await roundElementDimensions(resourceDetailsPage.main);
+        await resourcesPage.fitViewportToFullPage();
         await expect(resourceDetailsPage.main).toHaveScreenshot('ResourceDetails-recommendations-tab-screenshot.png');
       });
     })
