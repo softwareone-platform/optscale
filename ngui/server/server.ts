@@ -84,13 +84,18 @@ app.use("/jira_bus", proxyMiddleware);
 app.use("/restapi", proxyMiddleware);
 
 const UI_BUILD_PATH = process.env.UI_BUILD_PATH;
+const UI_BUILD_DIR = (process.env.UI_BUILD_DIR || "build").trim();
 
-// Serve static build
-app.use(express.static(path.join(UI_BUILD_PATH, "build")));
+// Validate UI_BUILD_DIR to prevent path traversal and absolute paths
+if (UI_BUILD_DIR.includes("..") || UI_BUILD_DIR.startsWith("/")) {
+  throw new Error("Invalid UI_BUILD_DIR: path traversal and absolute paths are not allowed");
+}
 
-app.get("/*", function (req, res) {
-  res.sendFile(path.join(UI_BUILD_PATH, "build", "index.html"));
-});
+const staticDir = path.join(UI_BUILD_PATH, UI_BUILD_DIR);
+
+app.use(express.static(staticDir));
+
+app.get("*", (_, res) => res.sendFile(path.join(staticDir, "index.html")));
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
