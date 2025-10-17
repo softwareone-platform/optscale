@@ -563,6 +563,8 @@ export const DOCS_HYSTAX_OPTSCALE = "https://docs.finops.softwareone.com/";
 const docUrl = (path: string) => `${DOCS_HYSTAX_OPTSCALE}${path}` as const;
 const dataSourceConnectionDocUrl = (docPath: string) => docUrl(`e2e_guides/${docPath}`);
 
+export const DOCS_HYSTAX_CONNECT_AWS = `https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html`;
+export const DOCS_HYSTAX_CONNECT_AMAZON = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services`;
 export const DOCS_HYSTAX_CONNECT_AWS_ROOT = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-root-account-with-data-export-already-configured`;
 export const DOCS_HYSTAX_CONNECT_AWS_LINKED = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/aws-linked`;
 export const DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/microsoft-azure`;
