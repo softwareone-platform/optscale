@@ -180,7 +180,6 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
     config: {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-      account_type: connectionType,
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : {})
     }
   };
@@ -214,7 +213,6 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
-      account_type: connectionType,
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : {})
     }
   };

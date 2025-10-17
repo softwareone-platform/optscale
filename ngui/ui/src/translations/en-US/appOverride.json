@@ -366,7 +366,7 @@
   "cpuUtilizationTooltip.used": "<strong>Used</strong>: amount of CPU used by all containers in a workload",
   "create": "Create",
   "createAwsMemberAssumedRoleDescriptions": "Connection through an Assumed Role provides the most modern and secure way to connect FinOps for Cloud to your AWS account. Please fill the fields below with the necessary information, then click the Connect button.",
-  "createAwsDefaultAssumedRoleDDocumentationReference1": "<warning>SoftwareOne recommends using the Assume Role method to provide access to your AWS account. For more information, please see our documentation.<link>View documentation</link></warning>",
+  "createAwsDefaultAssumedRoleDDocumentationReference1": "<warning>SoftwareOne recommends using the Assume Role method to provide access to your AWS account. For more information, please see AWS documentation. <link>View documentation</link></warning>",
   "createAwsDefaultAssumedRoleDDocumentationReference2": "Please provide programmatic credentials for an IAM user with access to resource and billing data.",
   "createAwsDefaultAssumedRoleDDocumentationReference3": "For more information and instructions, see our documentation here: <link></link>",
   "createAwsDefaultAssumedRoleDDocumentationReference4": "Please provide programmatic credentials for an IAM user with access to resource data. AWS member account connections use billing report data from their AWS management account.",
