@@ -48,7 +48,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
         process.env.USE_LIVE_DEMO === 'true'
           ? cell.locator(recommendationsPage.azureQALink)
           : cell.locator(recommendationsPage.cpaDevelopmentAndTestLink);
-      await expect(link).toBeVisible();
+      await expect.soft(link).toBeVisible();
     }
   });
 
@@ -69,7 +69,9 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
         await test.step('Verify S3 Duplicate Finder table shows no duplicate checks message', async () => {
           await recommendationsPage.clickS3DuplicatesCard();
-          await expect(s3DuplicateFinder.tableFirstRow).toHaveText('No duplicate checks, create a new one using the "Run check" button.');
+          await expect
+            .soft(s3DuplicateFinder.tableFirstRow)
+            .toHaveText('No duplicate checks, create a new one using the "Run check" button.');
         });
       });
       return;
@@ -92,7 +94,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     const count = await recommendationsPage.allCardHeadings.count();
     debugLog(`Number of card headings found: ${count}`);
 
-    expect(count).toBe(1);
+    expect.soft(count).toBe(1);
     await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
   });
 
@@ -120,10 +122,10 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       ];
 
       for (const service of expectedVisibleServices) {
-        await expect(service).toBeVisible();
+        await expect.soft(service).toBeVisible();
       }
       for (const service of expectedHiddenServices) {
-        await expect(service).toBeHidden();
+        await expect.soft(service).toBeHidden();
       }
     });
 
@@ -139,7 +141,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       ];
 
       for (const icon of aliBabaIcons) {
-        await expect(icon).toBeHidden();
+        await expect.soft(icon).toBeHidden();
       }
     });
 
@@ -157,7 +159,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
           recommendationsPage.aliBabaRDS_Icon,
         ];
         for (const icon of aliBabaIcons) {
-          await expect(cell.locator(icon)).toBeHidden();
+          await expect.soft(cell.locator(icon)).toBeHidden();
         }
       }
     });
@@ -176,11 +178,11 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     const expectedSorted = [...expectedCardHeadings].sort();
     const actualSorted = actualHeadings.map((t: string) => t.trim()).sort();
 
-    expect(actualSorted).toEqual(expectedSorted);
+    expect.soft(actualSorted).toEqual(expectedSorted);
 
     await recommendationsPage.clickTableButton();
     await recommendationsPage.allNameTableButtons.nth(count - 1).waitFor();
-    expect(await recommendationsPage.allNameTableButtons.count()).toBe(count);
+    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(count);
     const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
     const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
@@ -261,17 +263,17 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     debugLog(`Number of card headings found: ${count}`);
     const criticalIconCount = await recommendationsPage.allCriticalIcon.count();
     debugLog(`Number of critical icons found: ${criticalIconCount}`);
-    expect(criticalIconCount).toBe(count);
+    expect.soft(criticalIconCount).toBe(count);
 
     await recommendationsPage.clickTableButton();
     await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
-    expect(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
+    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
     const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
     const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
     const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
-    expect(buttonNamesSorted).toEqual(expectedSorted);
+    expect.soft(buttonNamesSorted).toEqual(expectedSorted);
     const allStatuses = await recommendationsPage.statusColumn.allTextContents();
     for (const status of allStatuses) {
       expect(status.trim()).toBe('Critical');
@@ -290,11 +292,11 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
     const seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
     debugLog(`Number of See Item buttons found: ${seeAllBtnCount}`);
-    expect(seeAllBtnCount).toBe(count);
+    expect.soft(seeAllBtnCount).toBe(count);
 
     await recommendationsPage.clickTableButton();
     await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
-    expect(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
+    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
     const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
     const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
@@ -316,22 +318,22 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await awsRDSIconsInGrid.nth(count - 1).waitFor();
     const rdsCount = await awsRDSIconsInGrid.count();
     debugLog(`Number of RDS cards found: ${rdsCount}`);
-    expect(rdsCount).toBe(count);
+    expect.soft(rdsCount).toBe(count);
 
     await recommendationsPage.clickTableButton();
     await recommendationsPage.allNameTableButtons.nth(rdsCount - 1).waitFor();
-    expect(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
+    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
     const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
 
     const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
     const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
 
-    expect(buttonNamesSorted).toEqual(expectedSorted);
+    expect.soft(buttonNamesSorted).toEqual(expectedSorted);
 
     const cells = await recommendationsPage.applicableServicesColumn.all();
     for (const cell of cells) {
       const icon = cell.locator(recommendationsPage.aws_RDS_Icon);
-      await expect(icon).toBeVisible();
+      await expect.soft(icon).toBeVisible();
     }
   });
 
@@ -367,14 +369,22 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
       const { cardLocator, seeAllBtn, tableLocator, modalColumnLocator } = card;
+      let isApproximate: boolean;
       const cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
-      debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
 
       if (cardSavings === 0) {
+        const value = await cardLocator.textContent();
+        isApproximate = value.includes('≈');
+        debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
+      }
+
+      debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
+
+      if (cardSavings === 0 && !isApproximate) {
         await test.step('Card savings is 0, check table and see-all button', async () => {
-          await expect(seeAllBtn).toBeHidden();
+          await expect.soft(seeAllBtn).toBeHidden();
           await recommendationsPage.clickTableButton();
-          expect(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
+          expect.soft(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
         });
       } else {
         await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
@@ -382,7 +392,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
         const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
 
         await test.step('Compare modal itemised total and card savings', async () => {
-          expect(itemisedSavings).toBeCloseTo(cardSavings, 0);
+          expect.soft(itemisedSavings).toBeCloseTo(cardSavings, 0);
         });
 
         await test.step('Compare modal and table savings', async () => {
