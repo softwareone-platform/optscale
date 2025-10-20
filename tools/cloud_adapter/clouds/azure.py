@@ -426,7 +426,7 @@ class Azure(CloudBase):
             [c.value for c in caps if c.name == 'MemoryGB'][0]) * 1024
         return int(vcpu), int(ram)
 
-    def get_flavors_info(self, flavors=None):
+    def get_flavors_info(self, flavors=None, architecture=False):
         all_sku = self.compute.resource_skus.list()
         flavor_map = {s.name: s for s in all_sku
                       if s.resource_type == 'virtualMachines'}
@@ -442,12 +442,18 @@ class Azure(CloudBase):
         for name in result_flavors:
             flavor = flavor_map[name]
             vcpu, ram = self._get_cpu_ram(flavor)
-            result[name] = {
+            info = {
                 'vcpus': vcpu,
                 'name': name,
                 'ram': ram,
                 'family': flavor.family
             }
+            if architecture:
+                for cap in flavor.capabilities:
+                    if cap.name == "CpuArchitectureType":
+                        info['architecture'] = cap.value.lower()
+                        break
+            result[name] = info
         return result
 
     def _guess_subscription_type(self, subscription_id):
