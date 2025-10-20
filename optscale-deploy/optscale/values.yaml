@@ -226,6 +226,7 @@ ngui:
     ganalytics_id:
     hotjar_id:
     on_initialize_organization_setup_mode:
+    finops_in_practice_portal_overview:
 
 minio:
   name: &minio_name minio
