@@ -13,6 +13,7 @@ import SlackerClient from "./api/slacker/client.js";
 import RestApiClient from "./api/restapi/client.js";
 import AuthClient from "./api/auth/client.js";
 import { schema } from "./graphql/schema.js";
+import rateLimit from "express-rate-limit";
 
 if (process.env.NODE_ENV === "development") {
   const dotenv = await import("dotenv");
@@ -24,6 +25,9 @@ if (process.env.NODE_ENV === "development") {
 checkEnvironment(["UI_BUILD_PATH", "PROXY_URL"]);
 
 const app = express();
+
+// https://github.com/express-rate-limit/express-rate-limit/wiki/Troubleshooting-Proxy-Issues
+app.set("trust proxy", 1);
 
 const httpServer = http.createServer(app);
 
@@ -93,9 +97,14 @@ if (UI_BUILD_DIR.includes("..") || UI_BUILD_DIR.startsWith("/")) {
 
 const staticDir = path.join(UI_BUILD_PATH, UI_BUILD_DIR);
 
-app.use(express.static(staticDir));
+app.use(express.static(staticDir, { index: false }));
 
-app.get("*", (_, res) => res.sendFile(path.join(staticDir, "index.html")));
+const indexLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500
+});
+
+app.get("*", indexLimiter, (_, res) => res.sendFile(path.join(staticDir, "index.html")));
 
 const port = parseInt(process.env.PORT || "4000", 10);
 
