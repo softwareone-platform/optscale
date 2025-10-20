@@ -343,12 +343,14 @@ export interface CloudAccount {
   parent_id: string;
 }
 
-export type CardSavingsData = {
+export type CardMetaData = {
   name: string;
-  cardLocator: Locator;
+  cardLocator?: Locator;
+  countValue?: Locator;
   seeAllBtn: Locator;
-  tableLocator: Locator;
-  modalColumnLocator: Locator;
+  errorLocator: Locator;
+  tableLocator?: Locator;
+  modalColumnLocator?: Locator;
 };
 
 export interface ExpensesResponse {

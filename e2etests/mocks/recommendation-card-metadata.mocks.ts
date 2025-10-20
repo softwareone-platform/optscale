@@ -1,138 +1,185 @@
-import {RecommendationsPage} from "../pages";
-import {CardSavingsData} from "../types/api-response.types";
+import { RecommendationsPage } from '../pages';
+import { CardMetaData } from '../types/api-response.types';
 
-export const getCardSavingsData = (recommendationsPage: RecommendationsPage): CardSavingsData[] => [
-    {
-        name: 'Abandoned Amazon S3 Buckets',
-        cardLocator: recommendationsPage.abandonedAmazonS3BucketsCardSavingsValue,
-        seeAllBtn: recommendationsPage.abandonedAmazonS3BucketsSeeAllBtn,
-        tableLocator: recommendationsPage.abandonedAmazonS3BucketsTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn8
-    },
-    {
-        name: 'Abandoned Images',
-        cardLocator: recommendationsPage.abandonedImagesCardSavingsValue,
-        seeAllBtn: recommendationsPage.abandonedImagesSeeAllBtn,
-        tableLocator: recommendationsPage.abandonedImagesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Abandoned Instances',
-        cardLocator: recommendationsPage.abandonedInstancesCardSavingsValue,
-        seeAllBtn: recommendationsPage.abandonedInstancesSeeAllBtn,
-        tableLocator: recommendationsPage.abandonedInstancesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Abandoned Kinesis Streams',
-        cardLocator: recommendationsPage.abandonedKinesisStreamsCardSavingsValue,
-        seeAllBtn: recommendationsPage.abandonedKinesisStreamsSeeAllBtn,
-        tableLocator: recommendationsPage.abandonedKinesisStreamsTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Abandoned Load Balancers',
-        cardLocator: recommendationsPage.abandonedLoadBalancersCardSavingsValue,
-        seeAllBtn: recommendationsPage.abandonedLoadBalancersSeeAllBtn,
-        tableLocator: recommendationsPage.abandonedLoadBalancersTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Instances Eligible for Generation Upgrade',
-        cardLocator: recommendationsPage.instancesEligibleForGenerationUpgradeCardSavingsValue,
-        seeAllBtn: recommendationsPage.instancesEligibleForGenerationUpgradeSeeAllBtn,
-        tableLocator: recommendationsPage.instancesEligibleForGenerationUpgradeTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Instances for Shutdown',
-        cardLocator: recommendationsPage.instancesForShutdownCardSavingsValue,
-        seeAllBtn: recommendationsPage.instancesForShutdownSeeAllBtn,
-        tableLocator: recommendationsPage.instancesForShutdownTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Instances with Migration Opportunities',
-        cardLocator: recommendationsPage.instancesWithMigrationOpportunitiesCardSavingsValue,
-        seeAllBtn: recommendationsPage.instancesWithMigrationOpportunitiesSeeAllBtn,
-        tableLocator: recommendationsPage.instancesWithMigrationOpportunitiesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Instances with Spot Preemptible Opportunities',
-        cardLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
-        seeAllBtn: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn,
-        tableLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Instances with Subscription Opportunities',
-        cardLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesCardSavingsValue,
-        seeAllBtn: recommendationsPage.instancesWithSubscriptionOpportunitiesSeeAllBtn,
-        tableLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Not Attached Volumes',
-        cardLocator: recommendationsPage.notAttachedVolumesCardSavingsValue,
-        seeAllBtn: recommendationsPage.notAttachedVolumesSeeAllBtn,
-        tableLocator: recommendationsPage.notAttachedVolumesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Not Deallocated Instances',
-        cardLocator: recommendationsPage.notDeallocatedInstancesCardSavingsValue,
-        seeAllBtn: recommendationsPage.notDeallocatedInstancesSeeAllBtn,
-        tableLocator: recommendationsPage.notDeallocatedInstancesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Obsolete Images',
-        cardLocator: recommendationsPage.obsoleteImagesCardSavingsValue,
-        seeAllBtn: recommendationsPage.obsoleteImagesSeeAllBtn,
-        tableLocator: recommendationsPage.obsoleteImagesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Obsolete IPs',
-        cardLocator: recommendationsPage.obsoleteIPsCardSavingsValue,
-        seeAllBtn: recommendationsPage.obsoleteIPsSeeAllBtn,
-        tableLocator: recommendationsPage.obsoleteIPsTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Obsolete Snapshot Chains',
-        cardLocator: recommendationsPage.obsoleteSnapshotChainsCardSavingsValue,
-        seeAllBtn: recommendationsPage.obsoleteSnapshotChainsSeeAllBtn,
-        tableLocator: recommendationsPage.obsoleteSnapshotChainsTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Obsolete Snapshots',
-        cardLocator: recommendationsPage.obsoleteSnapshotsCardSavingsValue,
-        seeAllBtn: recommendationsPage.obsoleteSnapshotsSeeAllBtn,
-        tableLocator: recommendationsPage.obsoleteSnapshotsTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    },
-    {
-        name: 'Reserved Instances Opportunities',
-        cardLocator: recommendationsPage.reservedInstancesOpportunitiesCardSavingsValue,
-        seeAllBtn: recommendationsPage.reservedInstancesOpportunitiesSeeAllBtn,
-        tableLocator: recommendationsPage.reservedInstancesOpportunitiesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn5
-    },
-    {
-        name: 'Under Utilized Instances',
-        cardLocator: recommendationsPage.underutilizedInstancesCardSavingsValue,
-        seeAllBtn: recommendationsPage.underutilizedInstancesSeeAllBtn,
-        tableLocator: recommendationsPage.underutilizedInstancesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn7
-    },
-    {
-        name: 'Under Utilized RDS Instances',
-        cardLocator: recommendationsPage.underutilizedRDSInstancesCardSavingsValue,
-        seeAllBtn: recommendationsPage.underutilizedRDSInstancesSeeAllBtn,
-        tableLocator: recommendationsPage.underutilizedRDSInstancesTableSavingsValue,
-        modalColumnLocator: recommendationsPage.modalColumn6
-    }
+export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardMetaData[] => [
+  {
+    name: 'Abandoned Amazon S3 Buckets',
+    cardLocator: recommendationsPage.abandonedAmazonS3BucketsCardSavingsValue,
+    seeAllBtn: recommendationsPage.abandonedAmazonS3BucketsSeeAllBtn,
+    errorLocator: recommendationsPage.abandonedAmazonS3BucketsError,
+    tableLocator: recommendationsPage.abandonedAmazonS3BucketsTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn8,
+  },
+  {
+    name: 'Abandoned Images',
+    cardLocator: recommendationsPage.abandonedImagesCardSavingsValue,
+    seeAllBtn: recommendationsPage.abandonedImagesSeeAllBtn,
+    errorLocator: recommendationsPage.abandonedImagesError,
+    tableLocator: recommendationsPage.abandonedImagesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Abandoned Instances',
+    cardLocator: recommendationsPage.abandonedInstancesCardSavingsValue,
+    seeAllBtn: recommendationsPage.abandonedInstancesSeeAllBtn,
+    errorLocator: recommendationsPage.abandonedInstancesError,
+    tableLocator: recommendationsPage.abandonedInstancesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Abandoned Kinesis Streams',
+    cardLocator: recommendationsPage.abandonedKinesisStreamsCardSavingsValue,
+    seeAllBtn: recommendationsPage.abandonedKinesisStreamsSeeAllBtn,
+    errorLocator: recommendationsPage.abandonedKinesisStreamsError,
+    tableLocator: recommendationsPage.abandonedKinesisStreamsTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Abandoned Load Balancers',
+    cardLocator: recommendationsPage.abandonedLoadBalancersCardSavingsValue,
+    seeAllBtn: recommendationsPage.abandonedLoadBalancersSeeAllBtn,
+    errorLocator: recommendationsPage.abandonedLoadBalancersError,
+    tableLocator: recommendationsPage.abandonedLoadBalancersTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Inactive IAM Users',
+    countValue: recommendationsPage.inactiveIAMUsersCountValue,
+    seeAllBtn: recommendationsPage.inactiveIAMUsersSeeAllBtn,
+    errorLocator: recommendationsPage.inactiveIAMUsersError,
+  },
+  {
+    name: 'IAM Users With Unused Console Access',
+    cardLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessCardSavingsValue,
+    seeAllBtn: recommendationsPage.iamUsersWithUnusedConsoleAccessSeeAllBtn,
+    errorLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessError,
+    tableLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessTableSavingsValue,
+    modalColumnLocator: undefined, //TODO: Unable to determine which column this card uses without any savings data
+  },
+  {
+    name: 'Instances Eligible for Generation Upgrade',
+    cardLocator: recommendationsPage.instancesEligibleForGenerationUpgradeCardSavingsValue,
+    seeAllBtn: recommendationsPage.instancesEligibleForGenerationUpgradeSeeAllBtn,
+    errorLocator: recommendationsPage.instancesEligibleForGenerationUpgradeError,
+    tableLocator: recommendationsPage.instancesEligibleForGenerationUpgradeTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Instances for Shutdown',
+    cardLocator: recommendationsPage.instancesForShutdownCardSavingsValue,
+    seeAllBtn: recommendationsPage.instancesForShutdownSeeAllBtn,
+    errorLocator: recommendationsPage.instancesForShutdownError,
+    tableLocator: recommendationsPage.instancesForShutdownTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Instances with Migration Opportunities',
+    cardLocator: recommendationsPage.instancesWithMigrationOpportunitiesCardSavingsValue,
+    seeAllBtn: recommendationsPage.instancesWithMigrationOpportunitiesSeeAllBtn,
+    errorLocator: recommendationsPage.instancesWithMigrationOpportunitiesError,
+    tableLocator: recommendationsPage.instancesWithMigrationOpportunitiesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Instances with Spot Preemptible Opportunities',
+    cardLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
+    seeAllBtn: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn,
+    errorLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesError,
+    tableLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Instances with Subscription Opportunities',
+    cardLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesCardSavingsValue,
+    seeAllBtn: recommendationsPage.instancesWithSubscriptionOpportunitiesSeeAllBtn,
+    errorLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesError,
+    tableLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Not Attached Volumes',
+    cardLocator: recommendationsPage.notAttachedVolumesCardSavingsValue,
+    seeAllBtn: recommendationsPage.notAttachedVolumesSeeAllBtn,
+    errorLocator: recommendationsPage.notAttachedVolumesError,
+    tableLocator: recommendationsPage.notAttachedVolumesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Not Deallocated Instances',
+    cardLocator: recommendationsPage.notDeallocatedInstancesCardSavingsValue,
+    seeAllBtn: recommendationsPage.notDeallocatedInstancesSeeAllBtn,
+    errorLocator: recommendationsPage.notDeallocatedInstancesError,
+    tableLocator: recommendationsPage.notDeallocatedInstancesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Obsolete Images',
+    cardLocator: recommendationsPage.obsoleteImagesCardSavingsValue,
+    seeAllBtn: recommendationsPage.obsoleteImagesSeeAllBtn,
+    errorLocator: recommendationsPage.obsoleteImagesError,
+    tableLocator: recommendationsPage.obsoleteImagesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Obsolete IPs',
+    cardLocator: recommendationsPage.obsoleteIPsCardSavingsValue,
+    seeAllBtn: recommendationsPage.obsoleteIPsSeeAllBtn,
+    errorLocator: recommendationsPage.obsoleteIPsError,
+    tableLocator: recommendationsPage.obsoleteIPsTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Obsolete Snapshot Chains',
+    cardLocator: recommendationsPage.obsoleteSnapshotChainsCardSavingsValue,
+    seeAllBtn: recommendationsPage.obsoleteSnapshotChainsSeeAllBtn,
+    errorLocator: recommendationsPage.obsoleteSnapshotChainsError,
+    tableLocator: recommendationsPage.obsoleteSnapshotChainsTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Obsolete Snapshots',
+    cardLocator: recommendationsPage.obsoleteSnapshotsCardSavingsValue,
+    seeAllBtn: recommendationsPage.obsoleteSnapshotsSeeAllBtn,
+    errorLocator: recommendationsPage.obsoleteSnapshotsError,
+    tableLocator: recommendationsPage.obsoleteSnapshotsTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
+  {
+    name: 'Public S3 Buckets',
+    cardLocator: recommendationsPage.publicS3BucketsCardSavingsValue,
+    seeAllBtn: recommendationsPage.publicS3BucketsSeeAllBtn,
+    errorLocator: recommendationsPage.publicS3BucketsError,
+    tableLocator: recommendationsPage.publicS3BucketsTableSavingsValue,
+    modalColumnLocator: undefined, //TODO: Unable to determine which column this card uses without any savings data
+  },
+  {
+    name: 'Reserved Instances Opportunities',
+    cardLocator: recommendationsPage.reservedInstancesOpportunitiesCardSavingsValue,
+    seeAllBtn: recommendationsPage.reservedInstancesOpportunitiesSeeAllBtn,
+    errorLocator: recommendationsPage.reservedInstancesOpportunitiesError,
+    tableLocator: recommendationsPage.reservedInstancesOpportunitiesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
+    name: 'Resources With Insecure Security Groups Settings',
+    countValue: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsCountValue,
+    seeAllBtn: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsSeeAllBtn,
+    errorLocator: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsError,
+  },
+  {
+    name: 'Under Utilized Instances',
+    cardLocator: recommendationsPage.underutilizedInstancesCardSavingsValue,
+    seeAllBtn: recommendationsPage.underutilizedInstancesSeeAllBtn,
+    errorLocator: recommendationsPage.underutilizedInstancesError,
+    tableLocator: recommendationsPage.underutilizedInstancesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn7,
+  },
+  {
+    name: 'Under Utilized RDS Instances',
+    cardLocator: recommendationsPage.underutilizedRDSInstancesCardSavingsValue,
+    seeAllBtn: recommendationsPage.underutilizedRDSInstancesSeeAllBtn,
+    errorLocator: recommendationsPage.underutilizedRDSInstancesError,
+    tableLocator: recommendationsPage.underutilizedRDSInstancesTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn6,
+  },
 ];

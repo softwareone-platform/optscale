@@ -1,17 +1,17 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { expectWithinDrift } from '../utils/custom-assertions';
-import { getCardSavingsData } from '../mocks/recommendation-card-metadata.mocks';
-import { debugLog } from '../utils/debug-logging';
+import { getCardMetaData } from '../mocks/recommendation-card-metadata.mocks';
+import { debugLog, errorLog } from '../utils/debug-logging';
 
 test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recommendations'] }, () => {
-  test.describe.configure({ mode: 'default' });
+  test.describe.configure({ mode: 'parallel' });
   test.use({ restoreSession: true });
 
   test.beforeEach(async ({ recommendationsPage }) => {
     await test.step('Login as FinOps user', async () => {
       await recommendationsPage.navigateToURL();
-      await recommendationsPage.waitForPageLoaderToDisappear();
+      await recommendationsPage.waitForAllProgressBarsToDisappear();
     });
     await recommendationsPage.selectDataSource('All');
     await recommendationsPage.selectCategory('All');
@@ -190,35 +190,56 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     expect(buttonNamesSorted).toEqual(expectedSorted);
   };
 
+  const allExpectedCardHeadings = [
+    'Abandoned Amazon S3 buckets',
+    'Abandoned Images',
+    'Abandoned instances',
+    'Abandoned Kinesis Streams',
+    'Abandoned Load Balancers',
+    'IAM users with unused console access',
+    'Inactive IAM users',
+    'Instances eligible for generation upgrade',
+    'Instances for shutdown',
+    'Resources with insecure Security Groups settings',
+    'Instances with migration opportunities',
+    'Instances with Spot (Preemptible) opportunities',
+    'Instances with Subscription opportunities',
+    'Not attached Volumes',
+    'Not deallocated Instances',
+    'Obsolete images',
+    'Obsolete IPs',
+    'Obsolete snapshot chains',
+    'Obsolete snapshots',
+    'Public S3 buckets',
+    'Reserved instances opportunities',
+    'Underutilized instances',
+    'Underutilized RDS Instances',
+  ];
+
   test(' [230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
-    const expectedCardHeadings = [
-      'Abandoned Amazon S3 buckets',
-      'Abandoned Images',
-      'Abandoned instances',
-      'Abandoned Kinesis Streams',
-      'Abandoned Load Balancers',
-      'IAM users with unused console access',
-      'Inactive IAM users',
-      'Instances eligible for generation upgrade',
-      'Instances for shutdown',
-      'Instances with insecure Security Groups settings',
-      'Instances with migration opportunities',
-      'Instances with Spot (Preemptible) opportunities',
-      'Instances with Subscription opportunities',
-      'Not attached Volumes',
-      'Not deallocated Instances',
-      'Obsolete images',
-      'Obsolete IPs',
-      'Obsolete snapshot chains',
-      'Obsolete snapshots',
-      'Public S3 buckets',
-      'Reserved instances opportunities',
-      'Underutilized instances',
-      'Underutilized RDS Instances',
-    ];
-    await verifyCardsAndTable(recommendationsPage, 'All', expectedCardHeadings);
+    await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
   });
 
+  test(`[] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
+    await recommendationsPage.selectCategory('All');
+    await recommendationsPage.allCardHeadings.last().waitFor();
+
+    const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+    debugLog(`Actual heading texts: ${actualHeadings}`);
+
+    const allCardData = getCardMetaData(recommendationsPage);
+
+    let errorCount = 0;
+    for (const card of allCardData) {
+      const { name, errorLocator } = card;
+      const isVisible = await errorLocator.isVisible();
+      if (isVisible) {
+        errorLog(`Error found on card: ${name}: \n ${await errorLocator.getAttribute('aria-label')}`);
+        errorCount++;
+      }
+    }
+    expect(errorCount, 'No cards should be displaying errors').toBe(0);
+  });
   test('[230518] Verify all expected cards are present when Savings category selected', async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'Abandoned Amazon S3 buckets',
@@ -248,7 +269,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     const expectedCardHeadings = [
       'IAM users with unused console access',
       'Inactive IAM users',
-      'Instances with insecure Security Groups settings',
+      'Resources with insecure Security Groups settings',
       'Public S3 buckets',
     ];
     await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
@@ -343,6 +364,8 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Abandoned Instances',
     'Abandoned Kinesis Streams',
     'Abandoned Load Balancers',
+    'Inactive IAM Users',
+    `IAM Users With Unused Console Access`,
     'Instances Eligible for Generation Upgrade',
     'Instances for Shutdown',
     'Instances with Migration Opportunities',
@@ -354,7 +377,9 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Obsolete IPs',
     'Obsolete Snapshot Chains',
     'Obsolete Snapshots',
+    `Public S3 Buckets`,
     'Reserved Instances Opportunities',
+    `Resources With Insecure Security Groups Settings`,
     'Under Utilized Instances',
     'Under Utilized RDS Instances',
   ];
@@ -364,44 +389,55 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       recommendationsPage,
     }) => {
       // Find this card’s full metadata at runtime
-      const allCardData = getCardSavingsData(recommendationsPage);
+      const allCardData = getCardMetaData(recommendationsPage);
       const card = allCardData.find(c => c.name === cardName);
       if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
-      const { cardLocator, seeAllBtn, tableLocator, modalColumnLocator } = card;
+      const { cardLocator, countValue, seeAllBtn, tableLocator, modalColumnLocator } = card;
       let isApproximate: boolean;
-      const cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
+      let cardSavings = undefined;
+      let cardCount = undefined;
 
-      if (cardSavings === 0) {
-        const value = await cardLocator.textContent();
-        isApproximate = value.includes('≈');
-        debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
-      }
+      if (cardLocator) {
+        cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
 
-      debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
+        if (cardSavings === 0) {
+          const value = await cardLocator.textContent();
+          isApproximate = value.includes('≈');
+          debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
+        }
 
-      if (cardSavings === 0 && !isApproximate) {
-        await test.step('Card savings is 0, check table and see-all button', async () => {
-          await expect.soft(seeAllBtn).toBeHidden();
-          await recommendationsPage.clickTableButton();
-          expect.soft(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
-        });
+        debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
+
+        if (cardSavings === 0 && !isApproximate) {
+          await test.step('Card savings is 0, check table and see-all button', async () => {
+            await expect.soft(seeAllBtn).toBeHidden();
+            await recommendationsPage.clickTableButton();
+            expect.soft(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
+          });
+        } else {
+          await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
+
+          const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
+
+          await test.step('Compare modal itemised total and card savings', async () => {
+            expect.soft(itemisedSavings).toBeCloseTo(cardSavings, 0);
+          });
+
+          await test.step('Compare modal and table savings', async () => {
+            await recommendationsPage.clickTableButton();
+            await recommendationsPage.waitForAllProgressBarsToDisappear();
+            const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
+            debugLog(`${cardName} Table Savings: ${tableSavings}`);
+            expectWithinDrift(cardSavings, tableSavings, 0.001); // Allowable drift of 0.1%
+          });
+        }
       } else {
-        await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
-
-        const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
-
-        await test.step('Compare modal itemised total and card savings', async () => {
-          expect.soft(itemisedSavings).toBeCloseTo(cardSavings, 0);
-        });
-
-        await test.step('Compare modal and table savings', async () => {
-          await recommendationsPage.clickTableButton();
-          await recommendationsPage.waitForPageLoaderToDisappear();
-          const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
-          debugLog(`${cardName} Table Savings: ${tableSavings}`);
-          expectWithinDrift(cardSavings, tableSavings, 0.001); // Allowable drift of 0.1%
-        });
+        cardCount = await recommendationsPage.getCardCountValue(countValue);
+        debugLog(`${cardName} Card Count: ${cardCount}`);
+        const seeAllCount = await recommendationsPage.getItemCountFromSeeAllButton(seeAllBtn);
+        debugLog(`${cardName} See All Button Count: ${seeAllCount}`);
+        expect.soft(seeAllCount).toBeCloseTo(cardCount);
       }
     });
   }

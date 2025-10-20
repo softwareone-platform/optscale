@@ -10,7 +10,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     await test.step('Login as FinOps user', async () => {
       await homePage.navigateToURL();
       await homePage.waitForLoadingPageImgToDisappear();
-      await homePage.waitForPageLoaderToDisappear();
+      await homePage.waitForAllProgressBarsToDisappear();
       await homePage.waitForAllCanvases();
     });
   });
@@ -62,7 +62,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     await test.step('Login as FinOps user', async () => {
       await homePage.navigateToURL();
       await homePage.waitForLoadingPageImgToDisappear();
-      await homePage.waitForPageLoaderToDisappear();
+      await homePage.waitForAllProgressBarsToDisappear();
       await homePage.waitForAllCanvases();
     });
   });
@@ -131,7 +131,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
   }) => {
     await test.step('Navigate to home page', async () => {
       await homePage.navigateToURL();
-      await homePage.waitForPageLoaderToDisappear();
+      await homePage.waitForAllProgressBarsToDisappear();
       await homePage.waitForAllCanvases();
     });
 
@@ -148,7 +148,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
   }) => {
     await test.step('Remove limits from all pools if any', async () => {
       await poolsPage.navigateToURL();
-      await poolsPage.waitForPageLoaderToDisappear();
+      await poolsPage.waitForAllProgressBarsToDisappear();
       await poolsPage.expandMoreIcon.waitFor();
       if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
       await poolsPage.toggleExpandPool();
@@ -172,10 +172,10 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
 
       await test.step('Set monthly limit for a pool and sub-pool lower than expenses', async () => {
         await poolsPage.navigateToURL();
-        await poolsPage.waitForPageLoaderToDisappear();
+        await poolsPage.waitForAllProgressBarsToDisappear();
         await poolsPage.expandMoreIcon.waitFor();
         await poolsPage.selectAllColumns();
-        await poolsPage.waitForPageLoaderToDisappear();
+        await poolsPage.waitForAllProgressBarsToDisappear();
         expenseValue = await poolsPage.getExpensesThisMonth();
         const limitValue = Math.round(expenseValue - 1);
         await poolsPage.toggleExpandPool();
@@ -187,7 +187,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
 
       await test.step('Navigate to home page and verify pool and sub-pool displayed correctly in table', async () => {
         await mainMenu.clickHomeBtn();
-        await homePage.waitForPageLoaderToDisappear();
+        await homePage.waitForAllProgressBarsToDisappear();
         expect.soft(await homePage.poolsBlockNameColumn.count()).toBe(2);
         expect.soft(await homePage.getPoolsBlockExpensesColumnValue(1)).toBe(expenseValue);
         expect
@@ -216,7 +216,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
 
     await test.step('Set monthly limit for a pool that is higher than expenses this month, but lower than forecast', async () => {
       await poolsPage.navigateToURL();
-      await homePage.waitForPageLoaderToDisappear();
+      await homePage.waitForAllProgressBarsToDisappear();
       await poolsPage.expandMoreIcon.waitFor();
       await poolsPage.selectAllColumns();
       expenseValue = await poolsPage.getExpensesThisMonth();

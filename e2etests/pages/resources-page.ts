@@ -276,7 +276,7 @@ export class ResourcesPage extends BasePage {
       debugLog('Resetting all filters');
       await this.resetFiltersBtn.click();
       if (wait) {
-        await this.waitForPageLoaderToDisappear();
+        await this.waitForAllProgressBarsToDisappear();
         await this.waitForCanvas();
       }
     }

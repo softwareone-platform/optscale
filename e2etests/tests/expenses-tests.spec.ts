@@ -23,7 +23,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
@@ -111,7 +111,7 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     await test.step('Login admin user, set time and navigate to Expenses page', async () => {
       await expensesPage.page.clock.setFixedTime(new Date('2025-09-29T14:22:00Z'));
       await expensesPage.navigateToURL();
-      await expensesPage.waitForPageLoaderToDisappear();
+      await expensesPage.waitForAllProgressBarsToDisappear();
       await expensesPage.waitForCanvas();
       await expensesPage.clickDailyBtnIfNotSelected();
     });
@@ -164,13 +164,13 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
     await expensesPage.clickSourceBtn();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
   });
 
@@ -300,13 +300,13 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
     await expensesPage.clickPoolBtn();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
   });
 
@@ -426,13 +426,13 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
     await expensesPage.clickOwnerBtn();
-    await expensesPage.waitForPageLoaderToDisappear();
+    await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
   });
 

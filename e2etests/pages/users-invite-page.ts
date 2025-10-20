@@ -44,7 +44,7 @@ export class UsersInvitePage extends BasePage {
    * @throws Will throw an error if the role is provided but the pool is not.
    */
   async inviteUser(email: string, role?: string, pool?: string): Promise<void> {
-    await this.waitForPageLoaderToDisappear();
+    await this.waitForAllProgressBarsToDisappear();
     await this.inviteUserEmailInput.fill(email);
     if (role) {
       await this.addRoleBtn.click();

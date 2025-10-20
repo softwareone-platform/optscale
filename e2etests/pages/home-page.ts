@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Home Page.
@@ -49,7 +49,6 @@ export class HomePage extends BasePage {
   readonly poolsBlockExpensesColumn: Locator;
   readonly poolsBlockForecastColumn: Locator;
   readonly poolsBlockActionsColumn: Locator;
-
 
   /**
    * Initializes a new instance of the HomePage class.
@@ -109,7 +108,7 @@ export class HomePage extends BasePage {
    */
   async selectPerspectives(option: string): Promise<void> {
     await this.topResourcesPerspectives.click();
-    await this.page.locator('[id="simple-popover"]').getByText(option, {exact: true}).click();
+    await this.page.locator('[id="simple-popover"]').getByText(option, { exact: true }).click();
   }
 
   /**
@@ -206,7 +205,7 @@ export class HomePage extends BasePage {
    */
   async clickPoolsRequiringAttentionBtn(): Promise<void> {
     await this.poolsRequiringAttentionBtn.click();
-    await this.waitForPageLoaderToDisappear();
+    await this.waitForAllProgressBarsToDisappear();
   }
 
   /**

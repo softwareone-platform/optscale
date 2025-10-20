@@ -12,7 +12,7 @@ export abstract class BasePage {
   readonly url: string; // The URL of the page.
   readonly main: Locator;
   readonly loadingPageImg: Locator;
-  readonly pageLoader: Locator;
+  readonly progressBar: Locator;
   readonly tooltip: Locator;
 
   readonly infoColor: string; // Default color for neutral state
@@ -30,7 +30,7 @@ export abstract class BasePage {
     this.url = url;
     this.main = this.page.locator('main');
     this.loadingPageImg = this.page.getByRole('img', { name: 'Loading page' });
-    this.pageLoader = this.main.locator('[role="progressbar"]');
+    this.progressBar = this.page.locator('[role="progressbar"]');
     this.tooltip = this.page.getByRole('tooltip');
     this.infoColor = 'rgb(0, 0, 0)'; // Default color for neutral state
     this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
@@ -381,17 +381,24 @@ export abstract class BasePage {
    * @param {number} [timeout=10000] - The maximum time to wait for the spinner to disappear, in milliseconds.
    * @returns {Promise<void>} A promise that resolves when the spinner is no longer visible or rejects if the timeout is exceeded.
    */
-  async waitForPageLoaderToDisappear(timeout: number = 10000): Promise<void> {
+  async waitForAllProgressBarsToDisappear(timeout: number = 10000): Promise<void> {
     try {
-      await this.pageLoader.first().waitFor({ timeout: 1000 });
+      await this.progressBar.first().waitFor({ timeout: 1000 });
     } catch (_error) {
       return; // Exit the method if the spinner is not present.
     }
     try {
-      debugLog('Waiting for page loader to disappear...');
-      await this.pageLoader.last().waitFor({ state: 'hidden', timeout: timeout });
+      debugLog('Waiting for page loader count to reach zero...');
+      await this.page.waitForFunction(
+        selector => {
+          const elements = document.querySelectorAll(selector);
+          return elements.length === 0;
+        },
+        '[role="progressbar"]',
+        { timeout }
+      );
     } catch {
-      console.error('[ERROR] Page loader did not disappear within the timeout.'); // Log a warning if the spinner remains visible after the timeout.
+      errorLog(`[ERROR] ${await this.progressBar.count()} Page loader(s) still visible at wait timeout: `);
     }
   }
 
