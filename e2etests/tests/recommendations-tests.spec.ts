@@ -269,7 +269,7 @@ test.describe.only('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@re
     const expectedCardHeadings = [
       'IAM users with unused console access',
       'Inactive IAM users',
-      'Resources with insecure Security Groups settings(',
+      'Resources with insecure Security Groups settings',
       'Public S3 buckets',
     ];
     await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
