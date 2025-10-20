@@ -722,7 +722,7 @@ export type Query = {
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
   organizationPerspectives?: Maybe<Scalars["JSONObject"]["output"]>;
   organizationThemeSettings?: Maybe<Scalars["JSONObject"]["output"]>;
-  organizations?: Maybe<Array<Maybe<Organization>>>;
+  organizations: Array<Organization>;
   relevantFlavors?: Maybe<Scalars["JSONObject"]["output"]>;
   resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
 };
@@ -958,7 +958,7 @@ export type OrganizationsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type OrganizationsQuery = {
   __typename?: "Query";
-  organizations?: Array<{
+  organizations: Array<{
     __typename?: "Organization";
     id: string;
     name: string;
@@ -966,7 +966,7 @@ export type OrganizationsQuery = {
     currency: string;
     is_demo: boolean;
     disabled: boolean;
-  } | null> | null;
+  }>;
 };
 
 export type CreateOrganizationMutationVariables = Exact<{

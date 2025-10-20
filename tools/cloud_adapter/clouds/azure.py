@@ -14,6 +14,7 @@ from azure.mgmt.consumption.models import (ModernUsageDetail, LegacyUsageDetail,
 from retrying import retry
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.commerce import UsageManagementClient
 from azure.mgmt.compute import ComputeManagementClient
@@ -157,6 +158,7 @@ class Azure(CloudBase):
         self._billing = None
         self._partner = None
         self._blob = None
+        self._reservations = None
         self._usage = None
         self._monitor = None
         self._currency = self.DEFAULT_CURRENCY
@@ -330,6 +332,13 @@ class Azure(CloudBase):
             self._usage = UsageManagementClient(
                 self.service_principal_credentials, self._subscription_id)
         return self._usage
+
+    @property
+    def reservations(self):
+        if not self._reservations:
+            self._reservations = AzureReservationAPI(
+                self.client_secret_credentials)
+        return self._reservations
 
     @property
     def raw_client(self):

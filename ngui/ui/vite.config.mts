@@ -24,15 +24,27 @@ const parseAllowedHosts = (value?: string): true | string[] | undefined => {
   return trimmed.split(",").map((host) => host.trim());
 };
 
+const getBuildDir = (dir?: string): string => {
+  if (!dir) {
+    return "build";
+  }
+  const normalized = dir.trim();
+  // Prevent path traversal and absolute paths
+  if (normalized.includes("..") || normalized.startsWith("/")) {
+    throw new Error(`Invalid VITE_BUILD_DIR: path traversal and absolute paths are not allowed`);
+  }
+  return dir;
+};
+
 export default defineConfig(({ mode }) => {
   // https://vitejs.dev/guide/api-javascript.html#loadenv
   const env = loadEnv(mode, process.cwd());
 
-  const { VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS } = env;
+  const { VITE_BUILD_DIR, VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS } = env;
 
   return {
     build: {
-      outDir: "build",
+      outDir: getBuildDir(VITE_BUILD_DIR),
       rollupOptions: {
         external: [
           // Exclude redux-immutable-state-invariant in order to prevent error on build when only production dependencies are installed
