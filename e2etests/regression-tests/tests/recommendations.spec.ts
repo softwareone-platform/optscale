@@ -36,6 +36,7 @@ test.describe('FFC: Recommendations @swo_regression', () => {
       await roundElementDimensions(recommendationsPage.main);
       await roundElementDimensions(recommendationsPage.possibleMonthlySavingsDiv);
       await roundElementDimensions(recommendationsPage.firstCard);
+      await recommendationsPage.fitViewportToFullPage();
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
     });
 
@@ -45,6 +46,7 @@ test.describe('FFC: Recommendations @swo_regression', () => {
       await roundElementDimensions(recommendationsPage.main);
       await roundElementDimensions(recommendationsPage.possibleMonthlySavingsDiv);
       await roundElementDimensions(recommendationsPage.table);
+      await recommendationsPage.fitViewportToFullPage();
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png');
       await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
       await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-table--screenshot.png');
