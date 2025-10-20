@@ -4,7 +4,7 @@ import { expectWithinDrift } from '../utils/custom-assertions';
 import { getCardMetaData } from '../mocks/recommendation-card-metadata.mocks';
 import { debugLog, errorLog } from '../utils/debug-logging';
 
-test.describe.only('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recommendations'] }, () => {
+test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recommendations'] }, () => {
   test.describe.configure({ mode: 'parallel' });
   test.use({ restoreSession: true });
 
