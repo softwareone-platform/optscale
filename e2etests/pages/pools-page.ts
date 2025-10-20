@@ -298,7 +298,7 @@ export class PoolsPage extends BasePage {
     await this.sideModalMonthlyLimit.fill(newLimit.toString());
     await this.sideModalSaveBtn.click();
     await this.waitForElementDetached(this.sideModal);
-    await this.waitForPageLoaderToDisappear();
+    await this.waitForAllProgressBarsToDisappear();
   }
 
   /**
@@ -323,9 +323,9 @@ export class PoolsPage extends BasePage {
     if (extendParentPool) await this.extendParentPoolToggle.click();
     await this.sideModalSaveBtn.click();
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForElementDetached(this.sideModal);
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
     }
   }
 
@@ -399,7 +399,7 @@ export class PoolsPage extends BasePage {
         await this.sideModalMonthlyLimit.clear();
         await this.sideModalMonthlyLimit.fill('0');
         await this.sideModalSaveBtn.click();
-        await this.waitForPageLoaderToDisappear();
+        await this.waitForAllProgressBarsToDisappear();
         await this.waitForElementDetached(this.sideModal);
       }
     }

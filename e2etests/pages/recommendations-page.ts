@@ -93,65 +93,98 @@ export class RecommendationsPage extends BasePage {
   readonly statusColumn: Locator;
   readonly abandonedAmazonS3BucketsCardSavingsValue: Locator;
   readonly abandonedAmazonS3BucketsSeeAllBtn: Locator;
+  readonly abandonedAmazonS3BucketsError: Locator;
   readonly abandonedAmazonS3BucketsTableSavingsValue: Locator;
   readonly abandonedImagesCardSavingsValue: Locator;
   readonly abandonedImagesSeeAllBtn: Locator;
+  readonly abandonedImagesError: Locator;
   readonly abandonedImagesTableSavingsValue: Locator;
   readonly abandonedInstancesCardSavingsValue: Locator;
   readonly abandonedInstancesSeeAllBtn: Locator;
+  readonly abandonedInstancesError: Locator;
   readonly abandonedInstancesTableSavingsValue: Locator;
   readonly abandonedKinesisStreamsCardSavingsValue: Locator;
   readonly abandonedKinesisStreamsSeeAllBtn: Locator;
+  readonly abandonedKinesisStreamsError: Locator;
   readonly abandonedKinesisStreamsTableSavingsValue: Locator;
   readonly abandonedLoadBalancersCardSavingsValue: Locator;
   readonly abandonedLoadBalancersSeeAllBtn: Locator;
+  readonly abandonedLoadBalancersError: Locator;
   readonly abandonedLoadBalancersTableSavingsValue: Locator;
+  readonly inactiveIAMUsersCountValue: Locator;
+  readonly inactiveIAMUsersSeeAllBtn: Locator;
+  readonly inactiveIAMUsersError: Locator;
+  readonly iamUsersWithUnusedConsoleAccessCardSavingsValue: Locator;
+  readonly iamUsersWithUnusedConsoleAccessSeeAllBtn: Locator;
+  readonly iamUsersWithUnusedConsoleAccessError: Locator;
+  readonly iamUsersWithUnusedConsoleAccessTableSavingsValue: Locator;
   readonly instancesEligibleForGenerationUpgradeCardSavingsValue: Locator;
   readonly instancesEligibleForGenerationUpgradeSeeAllBtn: Locator;
+  readonly instancesEligibleForGenerationUpgradeError: Locator;
   readonly instancesEligibleForGenerationUpgradeTableSavingsValue: Locator;
   readonly instancesForShutdownCardSavingsValue: Locator;
   readonly instancesForShutdownSeeAllBtn: Locator;
+  readonly instancesForShutdownError: Locator;
   readonly instancesForShutdownTableSavingsValue: Locator;
   readonly instancesWithMigrationOpportunitiesCardSavingsValue: Locator;
   readonly instancesWithMigrationOpportunitiesSeeAllBtn: Locator;
+  readonly instancesWithMigrationOpportunitiesError: Locator;
   readonly instancesWithMigrationOpportunitiesTableSavingsValue: Locator;
   readonly instancesWithSpotPreemptibleOpportunitiesCardSavingsValue: Locator;
   readonly instancesWithSpotPreemptibleOpportunitiesSeeAllBtn: Locator;
+  readonly instancesWithSpotPreemptibleOpportunitiesError: Locator;
   readonly instancesWithSpotPreemptibleOpportunitiesTableSavingsValue: Locator;
   readonly instancesWithSubscriptionOpportunitiesCardSavingsValue: Locator;
   readonly instancesWithSubscriptionOpportunitiesSeeAllBtn: Locator;
+  readonly instancesWithSubscriptionOpportunitiesError: Locator;
   readonly instancesWithSubscriptionOpportunitiesTableSavingsValue: Locator;
   readonly notAttachedVolumesCardSavingsValue: Locator;
   readonly notAttachedVolumesSeeAllBtn: Locator;
+  readonly notAttachedVolumesError: Locator;
   readonly notAttachedVolumesTableSavingsValue: Locator;
   readonly notDeallocatedInstancesCardSavingsValue: Locator;
   readonly notDeallocatedInstancesSeeAllBtn: Locator;
+  readonly notDeallocatedInstancesError: Locator;
   readonly notDeallocatedInstancesTableSavingsValue: Locator;
   readonly obsoleteImagesCardSavingsValue: Locator;
   readonly obsoleteImagesSeeAllBtn: Locator;
+  readonly obsoleteImagesError: Locator;
   readonly obsoleteImagesTableSavingsValue: Locator;
   readonly obsoleteIPsCardSavingsValue: Locator;
   readonly obsoleteIPsSeeAllBtn: Locator;
+  readonly obsoleteIPsError: Locator;
   readonly obsoleteIPsTableSavingsValue: Locator;
   readonly obsoleteSnapshotChainsCardSavingsValue: Locator;
   readonly obsoleteSnapshotChainsSeeAllBtn: Locator;
+  readonly obsoleteSnapshotChainsError: Locator;
   readonly obsoleteSnapshotChainsTableSavingsValue: Locator;
   readonly obsoleteSnapshotsCardSavingsValue: Locator;
   readonly obsoleteSnapshotsSeeAllBtn: Locator;
+  readonly obsoleteSnapshotsError: Locator;
   readonly obsoleteSnapshotsTableSavingsValue: Locator;
 
   readonly reservedInstancesOpportunitiesCardSavingsValue: Locator;
   readonly reservedInstancesOpportunitiesSeeAllBtn: Locator;
+  readonly reservedInstancesOpportunitiesError: Locator;
   readonly reservedInstancesOpportunitiesTableSavingsValue: Locator;
+
+  readonly resourcesWithInsecureSecurityGroupsSettingsCountValue: Locator;
+  readonly resourcesWithInsecureSecurityGroupsSettingsSeeAllBtn: Locator;
+  readonly resourcesWithInsecureSecurityGroupsSettingsError: Locator;
+
+  readonly publicS3BucketsCardSavingsValue: Locator;
+  readonly publicS3BucketsSeeAllBtn: Locator;
+  readonly publicS3BucketsError: Locator;
+  readonly publicS3BucketsTableSavingsValue: Locator;
 
   readonly underutilizedInstancesCardSavingsValue: Locator;
   readonly underutilizedInstancesSeeAllBtn: Locator;
+  readonly underutilizedInstancesError: Locator;
   readonly underutilizedInstancesTableSavingsValue: Locator;
   readonly underutilizedRDSInstancesCardSavingsValue: Locator;
   readonly underutilizedRDSInstancesSeeAllBtn: Locator;
+  readonly underutilizedRDSInstancesError: Locator;
   readonly underutilizedRDSInstancesTableSavingsValue: Locator;
-
-  readonly publicS3BucketsCardCountValue: Locator;
 
   /**
    * Initializes a new instance of the RecommendationsPage class.
@@ -276,6 +309,8 @@ export class RecommendationsPage extends BasePage {
       abandonedInstances: 'Abandoned instances',
       abandonedKinesisStreams: 'Abandoned Kinesis Streams',
       abandonedLoadBalancers: 'Abandoned Load Balancers',
+      inactiveIAMUsers: 'Inactive IAM users',
+      iamUsersWithUnusedConsoleAccess: 'IAM users with unused console access',
       instancesEligibleForGenerationUpgrade: 'Instances eligible for generation upgrade',
       instancesForShutdown: 'Instances for shutdown',
       instancesWithMigrationOpportunities: 'Instances with migration opportunities',
@@ -287,7 +322,9 @@ export class RecommendationsPage extends BasePage {
       obsoleteIPs: 'Obsolete IPs',
       obsoleteSnapshotChains: 'Obsolete snapshot chains',
       obsoleteSnapshots: 'Obsolete snapshots',
+      publicS3Buckets: 'Public S3 buckets',
       reservedInstancesOpportunities: 'Reserved instances opportunities',
+      resourcesWithInsecureSecurityGroupsSettings: 'Resources with insecure Security Groups settings',
       underutilizedInstances: 'Underutilized instances',
       underutilizedRDSInstances: 'Underutilized RDS Instances',
     };
@@ -297,18 +334,21 @@ export class RecommendationsPage extends BasePage {
       (this as any)[`${key}CardSavingsValue`] = this.cardsGrid.locator(
         `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`
       );
+      (this as any)[`${key}CountValue`] = this.cardsGrid.locator(
+        `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]`
+      );
       // See all button
       (this as any)[`${key}SeeAllBtn`] = this.cardsGrid.locator(
         `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiCard-root")]//button[contains(text(), "See")]`
+      );
+      (this as any)[`${key}Error`] = this.cardsGrid.locator(
+        `//h3[.="${label}"]/ancestor::div[contains(@class, "MuiStack-root")][1]/..//*[@data-testid="ErrorOutlineOutlinedIcon"]`
       );
       // Table savings value
       (this as any)[`${key}TableSavingsValue`] = this.table.locator(
         `//button[contains(text(), "${label}")]/ancestor::td/following-sibling::td[3]`
       );
     }
-    this.publicS3BucketsCardCountValue = this.main.locator(
-      '//h3[.="Public S3 buckets"]/ancestor::div[contains(@class, "MuiStack-root")]/div[contains(@class, "value")]/div[1]'
-    );
   }
 
   /**
@@ -441,16 +481,6 @@ export class RecommendationsPage extends BasePage {
   }
 
   /**
-   * Retrieves the count value of public S3 buckets from the page.
-   * Extracts the text content of the corresponding element.
-   *
-   * @returns {Promise<string>} The count value of public S3 buckets as a string.
-   */
-  async getPublicS3BucketsCardCountValue(): Promise<string> {
-    return await this.publicS3BucketsCardCountValue.textContent();
-  }
-
-  /**
    * Calculates the total savings from all cards on the page.
    * Aggregates the savings values from all card elements.
    *
@@ -568,24 +598,28 @@ export class RecommendationsPage extends BasePage {
    * @returns {Promise<void>} Resolves when the check is complete or the test is skipped.
    */
   async skipTestIfMoreThan100Items(seeAllBtn: Locator): Promise<void> {
+    const itemCount = await this.getItemCountFromSeeAllButton(seeAllBtn);
+
+    // If the item count exceeds 100, log a warning and skip the test.
+    if (itemCount > 100) {
+      console.warn(`Test skipped: modal limit exceeded (${itemCount} items > 100)`);
+      test.skip();
+    }
+  }
+
+  async getItemCountFromSeeAllButton(seeAllBtn: Locator): Promise<number> {
     // Retrieve the text content of the "See All" button and normalize it.
     const text = (await seeAllBtn.textContent())!.trim().toLowerCase();
 
     // If the button indicates a single item, proceed with the test.
     if (text === 'see item') {
-      return;
+      return 1;
     }
 
     // Match the text to extract the item count if it indicates multiple items.
     const match = text.match(/see all (\d+) items?/);
     if (match) {
-      const itemCount = parseInt(match[1], 10); // Parse the item count as an integer.
-
-      // If the item count exceeds 100, log a warning and skip the test.
-      if (itemCount > 100) {
-        console.warn(`Test skipped: modal limit exceeded (${itemCount} items > 100)`);
-        test.skip();
-      }
+      return parseInt(match[1], 10);
     }
   }
 
@@ -628,5 +662,10 @@ export class RecommendationsPage extends BasePage {
       }
     }
     return totalSum;
+  }
+
+  async getCardCountValue(cardLocator: Locator): Promise<number> {
+    const text = await cardLocator.textContent();
+    return parseInt(text, 10);
   }
 }

@@ -43,7 +43,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
   test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.navigateToURL();
-      await resourcesPage.waitForPageLoaderToDisappear(5000);
+      await resourcesPage.waitForAllProgressBarsToDisappear();
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
@@ -750,7 +750,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
       await resourcesPage.navigateToURL('/resources');
-      await resourcesPage.waitForPageLoaderToDisappear(5000);
+      await resourcesPage.waitForAllProgressBarsToDisappear();
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.firstResourceItemInTable.waitFor();

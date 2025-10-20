@@ -50,7 +50,7 @@ export class DatePickerPage extends BasePage {
     await this.page.getByRole('button', { name: endDay }).first().click();
     await this.applyDateBtn.click();
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }
@@ -67,7 +67,7 @@ export class DatePickerPage extends BasePage {
     await this.applyDateBtn.click();
     debugLog('Selected Last 7 Days date range');
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }
@@ -84,7 +84,7 @@ export class DatePickerPage extends BasePage {
     await this.applyDateBtn.click();
     debugLog('Selected Last 30 Days date range');
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }
@@ -101,7 +101,7 @@ export class DatePickerPage extends BasePage {
     await this.applyDateBtn.click();
     debugLog('Selected Last Month date range');
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }
@@ -118,7 +118,7 @@ export class DatePickerPage extends BasePage {
     await this.applyDateBtn.click();
     debugLog('Selected This Month date range');
     if (wait) {
-      await this.waitForPageLoaderToDisappear();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }
