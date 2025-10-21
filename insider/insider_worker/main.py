@@ -87,7 +87,7 @@ if __name__ == '__main__':
     profile_memory = str(os.environ.get('PROFILE_MEMORY', 0)).lower() in ("1", "true", "yes")
     if profile_memory:
         import memray
-        mem_profiler_ctx = memray.Tracker(output_filename='insider_worker_memray.bin')
+        mem_profiler_ctx = memray.Tracker(file_name='insider_worker_memray.bin')
     else:
         mem_profiler_ctx = nullcontext()
         
