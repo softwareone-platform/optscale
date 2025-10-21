@@ -37,3 +37,5 @@ spec:
           value: {{ .Values.etcd.service.name }}
         - name: HX_ETCD_PORT
           value: {{ .Values.etcd.service.externalPort | quote }}
+        - name: PROFILE_MEMORY
+          value: {{ $config.profileMemory | default "false" | quote }}

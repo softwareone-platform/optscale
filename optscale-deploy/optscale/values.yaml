@@ -420,6 +420,7 @@ insider_scheduler:
 insider_worker:
   name: insider-worker
   replicaCount: 1
+  profileMemory: true
   image:
     id:
     repository: insider_worker
