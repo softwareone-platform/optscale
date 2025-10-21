@@ -30,6 +30,7 @@ export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticati
       buttons={authenticationTypes.map((subtype) => ({
         id: subtype.authenticationType,
         messageId: subtype.messageId,
+        dataTestId: `btn_${subtype.messageId}`,
         action: () => setAuthenticationType(subtype.authenticationType)
       }))}
       activeButtonId={authenticationType}

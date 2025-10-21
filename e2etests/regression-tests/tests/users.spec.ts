@@ -14,8 +14,6 @@ test.describe('FFC: Users @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Users page matches screenshots', async ({ usersPage, usersInvitePage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Users page', async () => {
       await usersPage.navigateToURL();
     });

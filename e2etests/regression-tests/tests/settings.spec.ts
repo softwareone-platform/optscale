@@ -14,8 +14,6 @@ test.describe('FFC: Settings page @swo_regression', () => {
   });
 
   test('Tabs check', async ({ settingsPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Users page', async () => {
       await settingsPage.navigateToURL();
     });
