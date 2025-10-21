@@ -21,6 +21,7 @@ dev = [
     "coverage==6.4.2",
     "freezegun==0.3.8",
     "insider-client",
+    "memray>=1.19.1",
     "mongomock==3.22.1",
     "pycodestyle==2.11.1",
     "pylint==3.0.2",

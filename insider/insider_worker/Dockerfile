@@ -14,6 +14,6 @@ COPY insider/insider_worker/migrations insider/insider_worker/migrations
 COPY insider/insider_worker/processors insider/insider_worker/processors
 COPY insider/insider_worker/http_client insider/insider_worker/http_client
 
-RUN uv --project insider/insider_worker sync --locked --no-dev
+RUN uv --project insider/insider_worker sync --locked --dev
 
 CMD ["uv", "run", "--project", "insider/insider_worker", "python", "-u","/usr/src/app/insider/insider_worker/main.py"]

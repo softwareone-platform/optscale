@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+from contextlib import nullcontext
 from datetime import datetime, timezone
 
 import urllib3
@@ -82,6 +83,14 @@ if __name__ == '__main__':
     debug = os.environ.get('DEBUG', False)
     log_level = 'INFO' if not debug else 'DEBUG'
     setup_logging(loglevel=log_level, loggers=[''])
+    
+    profile_memory = str(os.environ.get('PROFILE_MEMORY', 0)).lower() in ("1", "true", "yes")
+    if profile_memory:
+        import memray
+        mem_profiler_ctx = memray.Tracker(output_filename='insider_worker_memray.bin')
+    else:
+        mem_profiler_ctx = nullcontext()
+        
 
     config_cl = ConfigClient(
         host=os.environ.get('HX_ETCD_HOST'),
@@ -97,6 +106,7 @@ if __name__ == '__main__':
             with EtcdLock(config_cl, 'insider_migrations'):
                 migrator.migrate()
             worker = InsiderWorker(conn, config_cl)
-            worker.run()
+            with mem_profiler_ctx:
+                worker.run()
         except KeyboardInterrupt:
             LOG.info('Shutdown received')
