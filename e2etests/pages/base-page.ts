@@ -30,7 +30,7 @@ export abstract class BasePage {
     this.url = url;
     this.main = this.page.locator('main');
     this.loadingPageImg = this.page.getByRole('img', { name: 'Loading page' });
-    this.progressBar = this.page.locator('[role="progressbar"]');
+    this.progressBar = this.page.locator('//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]');
     this.tooltip = this.page.getByRole('tooltip');
     this.infoColor = 'rgb(0, 0, 0)'; // Default color for neutral state
     this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
@@ -390,32 +390,41 @@ export abstract class BasePage {
   }
 
   /**
-   * Waits for the page loader spinner to disappear.
+   * Waits for all progress bars to disappear.
    *
-   * This method checks if the page loader spinner is present on the page and waits for it to become hidden.
+   * This method checks if the Progress bar is present on the page and waits for all instances of it to become hidden.
    * It is useful for ensuring that the page has fully loaded before proceeding with further actions.
    *
    * @param {number} [timeout=10000] - The maximum time to wait for the spinner to disappear, in milliseconds.
-   * @returns {Promise<void>} A promise that resolves when the spinner is no longer visible or rejects if the timeout is exceeded.
+   * @returns {Promise<void>} A promise that resolves when the spinner is no longer visible or the timeout is exceeded.
    */
   async waitForAllProgressBarsToDisappear(timeout: number = 10000): Promise<void> {
     try {
       await this.progressBar.first().waitFor({ timeout: 1000 });
+      debugLog(`Progress bar count: ${await this.progressBar.count()}`);
     } catch (_error) {
       return; // Exit the method if the spinner is not present.
     }
+    debugLog(`Waiting for ${await this.progressBar.count()} total progress bar(s) to disappear...`);
     try {
-      debugLog('Waiting for page loader count to reach zero...');
       await this.page.waitForFunction(
-        selector => {
-          const elements = document.querySelectorAll(selector);
-          return elements.length === 0;
+        () => {
+          const xpath = '//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]';
+          const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+          const elements = [];
+          for (let i = 0; i < result.snapshotLength; i++) {
+            elements.push(result.snapshotItem(i));
+          }
+          return elements.every(element => {
+            const style = window.getComputedStyle(element);
+            return style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
+          });
         },
-        '[role="progressbar"]',
+        null,
         { timeout }
       );
     } catch {
-      errorLog(`[ERROR] ${await this.progressBar.count()} Page loader(s) still visible at wait timeout: `);
+      errorLog(`${await this.progressBar.count()} :Progress Bar(s) still visible at wait timeout`);
     }
   }
 
