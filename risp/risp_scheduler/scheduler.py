@@ -15,16 +15,16 @@ TASK_EXCHANGE = Exchange('risp-tasks', type='direct')
 
 
 def get_cloud_accounts(config_cl):
-    cloud_accounts_list = []
+    cloud_accounts_map = {}
     rest_cl = RestClient(url=config_cl.restapi_url(), verify=False)
     rest_cl.secret = config_cl.cluster_secret()
     _, response = rest_cl.organization_list({'disabled': False})
     for org in response['organizations']:
         try:
             _, cloud_accounts = rest_cl.cloud_account_list(org['id'])
-            cloud_accounts_map = {
+            cloud_accounts_map.update({
                 x['id']: x['type'] for x in cloud_accounts['cloud_accounts']
-                if x['type'] in SUPPORTED_CLOUD_TYPES}
+                if x['type'] in SUPPORTED_CLOUD_TYPES})
         except requests.exceptions.HTTPError as ex:
             LOG.error('Failed to publish tasks for org %s: %s',
                       org['id'], str(ex))
