@@ -345,7 +345,7 @@ export interface CloudAccount {
 
 export type CardMetaData = {
   name: string;
-  cardLocator?: Locator;
+  savingsValue?: Locator;
   countValue?: Locator;
   seeAllBtn: Locator;
   errorLocator: Locator;

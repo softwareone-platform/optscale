@@ -304,8 +304,8 @@ export class PoolsPage extends BasePage {
     await this.sideModalMonthlyLimit.clear();
     await this.sideModalMonthlyLimit.fill(newLimit.toString());
     await this.sideModalSaveBtn.click();
-    await this.waitForElementDetached(this.sideModal);
     await this.waitForAllProgressBarsToDisappear();
+    await this.waitForElementDetached(this.sideModal);
   }
 
   /**

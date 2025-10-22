@@ -11,7 +11,7 @@ import {
 import { InterceptionEntry } from '../types/interceptor.types';
 import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
-import { expectWithinDrift } from '../utils/custom-assertions';
+import { isWithinRoundingDrift } from '../utils/custom-assertions';
 
 test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -264,7 +264,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
 
     await test.step('Compare total expenses values', async () => {
       expect.soft(chartTotal).toBe(totalForPeriod);
-      expectWithinDrift(tableTotal, totalForPeriod, 0.01);
+      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
     });
   });
 
@@ -390,7 +390,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
 
     await test.step('Compare total expenses values', async () => {
       expect.soft(chartTotal).toBe(totalForPeriod);
-      expectWithinDrift(tableTotal, totalForPeriod, 0.01);
+      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
     });
   });
 
@@ -412,7 +412,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
       const dateRange = await datePicker.selectedDateText.textContent();
       expect(dateRange.includes(expectedDateRange)).toBe(true);
       expect.soft(chartTotal).toBe(totalForPeriod);
-      expectWithinDrift(tableTotal, totalForPeriod, 0.01);
+      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
     });
   });
 });
@@ -515,7 +515,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
 
     await test.step('Compare total expenses values', async () => {
       expect.soft(chartTotal).toBe(totalForPeriod);
-      expectWithinDrift(tableTotal, totalForPeriod, 0.01);
+      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
     });
   });
 
@@ -537,7 +537,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
       const dateRange = await datePicker.selectedDateText.textContent();
       expect(dateRange.includes(expectedDateRange)).toBe(true);
       expect.soft(chartTotal).toBe(totalForPeriod);
-      expectWithinDrift(tableTotal, totalForPeriod, 0.01);
+      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
     });
   });
 });

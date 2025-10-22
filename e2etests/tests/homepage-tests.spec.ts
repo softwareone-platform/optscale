@@ -1,6 +1,6 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { expectWithinDrift } from '../utils/custom-assertions';
+import { isWithinRoundingDrift } from '../utils/custom-assertions';
 
 test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui', '@recommendations', '@homepage'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -103,7 +103,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
         resourceDetailsPage.tableColumn2,
         resourceDetailsPage.navigateNextIcon
       );
-      expectWithinDrift(homePageExpenseValue, expenseTotal, 0.0001); //0.01% drift is acceptable for the test
+      expect(isWithinRoundingDrift(homePageExpenseValue, expenseTotal, 0.0001)).toBe(true); //0.01% drift is acceptable for the test
     });
   });
 
@@ -187,7 +187,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
 
       await test.step('Navigate to home page and verify pool and sub-pool displayed correctly in table', async () => {
         await mainMenu.clickHomeBtn();
-        await homePage.waitForAllProgressBarsToDisappear();
+        await homePage.poolsBlockNameColumn.last().waitFor();
         expect.soft(await homePage.poolsBlockNameColumn.count()).toBe(2);
         expect.soft(await homePage.getPoolsBlockExpensesColumnValue(1)).toBe(expenseValue);
         expect

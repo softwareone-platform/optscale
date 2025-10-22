@@ -512,4 +512,28 @@ export class ResourcesPage extends BasePage {
   async clearGrouping(): Promise<void> {
     await this.clearIcon.click();
   }
+
+  /**
+   * Retrieves the pool name based on the current environment.
+   * The environment is determined by the `ENVIRONMENT` variable in the process environment.
+   *
+   * @returns {string} The name of the pool corresponding to the current environment.
+   *                   - 'Marketplace Platform Team' for 'staging'
+   *                   - 'CPA (QA and Production)' for 'test'
+   *                   - 'QA & Prod' for 'dev'
+   * @throws {Error} If the environment is unknown or not set.
+   */
+  getPoolNameForEnvironment(): string {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case 'staging':
+        return 'Marketplace Platform Team';
+      case 'test':
+        return 'CPA (QA and Production)';
+      case 'dev':
+        return 'QA & Prod';
+      default:
+        throw new Error(`Unknown environment: ${env}`);
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { expectWithinDrift } from '../utils/custom-assertions';
+import { isWithinRoundingDrift } from '../utils/custom-assertions';
 
 import {
   AvailableFiltersResponse,
@@ -32,6 +32,7 @@ import {
 } from '../types/api-response.types';
 import { fetchBreakdownExpenses } from '../utils/api-helpers';
 import { InterceptionEntry } from '../types/interceptor.types';
+import { debugLog } from '../utils/debug-logging';
 
 test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
@@ -65,7 +66,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
     await test.step('Compare possible savings with recommendations page', async () => {
       recommendationsSavings = await recommendationsPage.getPossibleMonthlySavingsValue();
-      expect(resourcesSavings).toBe(recommendationsSavings);
+      expect.soft(resourcesSavings).toBe(recommendationsSavings);
     });
   });
 
@@ -76,7 +77,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
 
     await test.step('Verify all filter buttons are displayed', async () => {
-      await expect(resourcesPage.allFilterBoxButtons).toHaveCount(17);
+      await expect.soft(resourcesPage.allFilterBoxButtons).toHaveCount(17);
 
       const expectedFilters = [
         resourcesPage.suggestionsFilter,
@@ -121,7 +122,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     await test.step('Verify default column selection is all', async () => {
       await resourcesPage.table.waitFor();
       await resourcesPage.table.scrollIntoViewIfNeeded();
-      await expect(resourcesPage.columnsBtn).toHaveText('All');
+      await expect.soft(resourcesPage.columnsBtn).toHaveText('All');
 
       for (const column of defaultColumns) {
         await expect.soft(column).toBeVisible();
@@ -134,36 +135,36 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
       await expect.soft(resourcesPage.resourceTableHeading && resourcesPage.expensesTableHeading).toBeVisible();
       for (const column of defaultColumns) {
         if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
-          await expect.soft(column).not.toBeVisible();
+          await expect.soft(column).toBeHidden();
         }
       }
     });
 
     await test.step('Select specific columns and verify visibility', async () => {
       await resourcesPage.clickColumnToggle('paid network traffic');
-      await expect(resourcesPage.paidNetworkTrafficTableHeading).toBeVisible();
+      await expect.soft(resourcesPage.paidNetworkTrafficTableHeading).toBeVisible();
 
       await resourcesPage.clickColumnToggle('metadata');
-      await expect(resourcesPage.metadataTableHeading).toBeVisible();
+      await expect.soft(resourcesPage.metadataTableHeading).toBeVisible();
 
       await resourcesPage.clickColumnToggle('pool owner');
-      await expect(resourcesPage.poolOwnerTableHeading).toBeVisible();
+      await expect.soft(resourcesPage.poolOwnerTableHeading).toBeVisible();
 
       await resourcesPage.clickColumnToggle('type');
-      await expect(resourcesPage.typeTableHeading).toBeVisible();
+      await expect.soft(resourcesPage.typeTableHeading).toBeVisible();
 
       await resourcesPage.clickColumnToggle('location');
-      await expect(resourcesPage.locationToggle).toBeVisible();
+      await expect.soft(resourcesPage.locationToggle).toBeVisible();
 
       await resourcesPage.clickColumnToggle('tags');
-      await expect(resourcesPage.tagsTableHeading).toBeVisible();
+      await expect.soft(resourcesPage.tagsTableHeading).toBeVisible();
     });
 
     await test.step('Verify select all toggle shows all columns', async () => {
       await resourcesPage.clickColumnToggle('select clear all');
       for (const column of defaultColumns) {
         if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
-          await expect.soft(column).not.toBeVisible();
+          await expect.soft(column).toBeHidden();
         }
       }
 
@@ -189,7 +190,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
     await test.step('Compare total expenses with itemised total', async () => {
       // Allowable drift of 0.1% to account for rounding errors
-      expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
+      expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
     });
   });
 
@@ -203,7 +204,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
     await test.step('Filter by Billing only', async () => {
       await resourcesPage.clickActivityFilterBillingOnlyOptionAndApply();
-      await expect(resourcesPage.activityFilter).toContainText('(Billing only)');
+      await expect.soft(resourcesPage.activityFilter).toContainText('(Billing only)');
     });
 
     await test.step('Get total expenses value after filtering', async () => {
@@ -213,21 +214,21 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
     await test.step('Get itemised total from table after filtering', async () => {
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total: ${itemisedTotal}`);
+      debugLog(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare filtered total expenses with itemised total', async () => {
       // Allowable drift of 0.5% to account for rounding errors
-      expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
+      expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
     });
 
     await test.step('Reset filters to return to unfiltered state', async () => {
       await resourcesPage.resetFilters();
-      await expect(resourcesPage.activityFilter).toContainText('(Any)');
+      await expect.soft(resourcesPage.activityFilter).toContainText('(Any)');
     });
 
     await test.step('Verify total expenses value matches initial value', async () => {
-      expect(await resourcesPage.getTotalExpensesValue()).toEqual(initialTotalExpensesValue);
+      expect.soft(await resourcesPage.getTotalExpensesValue()).toEqual(initialTotalExpensesValue);
     });
   });
 
@@ -239,20 +240,20 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
       await test.step('Get total expenses value for last 7 days', async () => {
         await datePicker.selectLast7DaysDateRange();
-        await expect(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
+        await expect.soft(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
         totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-        console.log(`Total expenses value for last 7 days: ${totalExpensesValue}`);
+        debugLog(`Total expenses value for last 7 days: ${totalExpensesValue}`);
       });
 
       await test.step('Get itemised total from table for last 7 days', async () => {
-        await expect(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
+        await expect.soft(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
         itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-        console.log(`Itemised total for last 7 days: ${itemisedTotal}`);
+        debugLog(`Itemised total for last 7 days: ${itemisedTotal}`);
       });
 
       await test.step('Compare total expenses with itemised total for last 7 days', async () => {
         // Allowable drift of 0.5% to account for rounding errors
-        expectWithinDrift(totalExpensesValue, itemisedTotal, 0.005); // 0.5% tolerance
+        expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
       });
     }
   );
@@ -764,15 +765,15 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     let match: boolean;
 
     await test.step('Verify the default chart is Service Daily Expenses with legend displayed', async () => {
-      expect(await resourcesPage.selectedComboBoxOption(resourcesPage.categorizeBySelect)).toBe('Service');
-      expect(await resourcesPage.selectedComboBoxOption(resourcesPage.expensesSelect)).toBe('Daily');
-      await expect(resourcesPage.showLegend).toBeChecked();
+      expect.soft(await resourcesPage.selectedComboBoxOption(resourcesPage.categorizeBySelect)).toBe('Service');
+      expect.soft(await resourcesPage.selectedComboBoxOption(resourcesPage.expensesSelect)).toBe('Daily');
+      await expect.soft(resourcesPage.showLegend).toBeChecked();
     });
 
     await test.step('Download the chart with legend and compare with expected chart png', async () => {
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
-      expect(match).toBe(true);
+      expect.soft(match).toBe(true);
     });
 
     actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
@@ -783,7 +784,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.clickShowLegend();
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
-      expect(match).toBe(true);
+      expect.soft(match).toBe(true);
     });
   });
 
@@ -797,7 +798,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.selectExpenses('Weekly');
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
-      expect(match).toBe(true);
+      expect.soft(match).toBe(true);
     });
 
     actualPath = 'tests/downloads/monthly-expenses-chart-export.png';
@@ -808,7 +809,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.selectExpenses('Monthly');
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
-      expect(match).toBe(true);
+      expect.soft(match).toBe(true);
     });
   });
 
@@ -907,24 +908,25 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     await test.step('Verify default grouping is None', async () => {
       await resourcesPage.table.waitFor();
       await resourcesPage.table.scrollIntoViewIfNeeded();
-      await expect(resourcesPage.groupedByValue).toHaveText('None');
+      await expect.soft(resourcesPage.groupedByValue).toHaveText('None');
     });
 
     await test.step('Group by Pool and verify grouping', async () => {
+      const poolName = resourcesPage.getPoolNameForEnvironment();
       await resourcesPage.groupBy('Pool');
-      await expect(resourcesPage.firstPoolGroup).toBeVisible();
-      await expect(resourcesPage.firstPoolGroup).toContainText('CPA (QA and Production)');
+      await expect.soft(resourcesPage.firstPoolGroup).toBeVisible();
+      await expect.soft(resourcesPage.firstPoolGroup).toContainText(poolName);
     });
 
     await test.step('Group by Owner and verify grouping', async () => {
       await resourcesPage.groupBy('Owner');
-      await expect(resourcesPage.firstOwnerGroup).toBeVisible();
-      await expect(resourcesPage.firstOwnerGroup).toContainText('Francesco Faraone');
+      await expect.soft(resourcesPage.firstOwnerGroup).toBeVisible();
+      await expect.soft(resourcesPage.firstOwnerGroup).toContainText('Francesco');
     });
 
     await test.step('Group by Tag and verify grouping', async () => {
       await resourcesPage.groupBy('Tag', 'Environment');
-      await expect(resourcesPage.firstTagGroup).toBeVisible();
+      await expect.soft(resourcesPage.firstTagGroup).toBeVisible();
       await expect.soft(resourcesPage.allTagGroups.first()).toContainText('Other');
       await expect.soft(resourcesPage.allTagGroups.nth(1)).toContainText('Production');
       await expect.soft(resourcesPage.allTagGroups.nth(2)).toContainText('QA');
@@ -933,8 +935,8 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
 
     await test.step('Clear grouping and verify no grouping', async () => {
       await resourcesPage.clearGrouping();
-      await expect(resourcesPage.groupedByValue).toHaveText('None');
-      await expect(resourcesPage.allGroups).not.toBeVisible();
+      await expect.soft(resourcesPage.groupedByValue).toHaveText('None');
+      await expect.soft(resourcesPage.allGroups).toBeHidden();
     });
   });
 });

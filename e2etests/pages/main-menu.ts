@@ -101,8 +101,10 @@ export class MainMenu extends BasePage {
    *
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async clickHomeBtn() {
+  async clickHomeBtn(): Promise<void> {
     await this.homeBtn.click();
+    await this.waitForLoadingPageImgToDisappear();
+    await this.waitForAllProgressBarsToDisappear();
     await this.waitForAllCanvases();
   }
 

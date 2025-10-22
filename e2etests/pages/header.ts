@@ -1,5 +1,5 @@
-import {BasePage} from "./base-page";
-import {Locator, Page} from "@playwright/test";
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
 
 /**
  * Represents the Header component of the page.
@@ -25,7 +25,7 @@ export class Header extends BasePage {
     super(page, '/');
     this.header = this.page.locator('header').first();
     this.swoLogo = this.header.getByTestId('img_logo');
-    this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({hasText: 'You are in a live demo mode'});
+    this.liveDemoAlert = this.page.getByRole('alert').locator('div').filter({ hasText: 'You are in a live demo mode' });
     this.organizationSelect = this.header.getByTestId('organization-selector-select');
     this.documentationBtn = this.header.getByTestId('btn_doc');
     this.productTourBtn = this.header.getByTestId('btn_product_tour');
@@ -44,7 +44,7 @@ export class Header extends BasePage {
   async selectOrganization(organization: string) {
     if (!(await this.organizationSelect.textContent()).includes(organization)) {
       await this.organizationSelect.click();
-      await this.page.getByRole('option', {name: organization}).click();
+      await this.page.getByRole('option', { name: organization }).click();
     }
   }
 
@@ -52,7 +52,7 @@ export class Header extends BasePage {
    * Opens the profile menu.
    * @returns {Promise<void>}
    */
-  async openProfileMenu() {
+  async openProfileMenu(): Promise<void> {
     await this.profileBtn.click();
   }
 
@@ -60,8 +60,22 @@ export class Header extends BasePage {
    * Signs out the current user.
    * @returns {Promise<void>}
    */
-  async signOut() {
+  async signOut(): Promise<void> {
     await this.openProfileMenu();
     await this.profileSignOutBtn.click();
+  }
+
+  getOrganizationNameForEnvironment(): string {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case 'dev':
+      case 'test':
+        return 'SoftwareOne (Test Env';
+      case 'staging':
+        return 'Marketplace Platform';
+
+      default:
+        throw new Error(`Unknown environment: ${env}`);
+    }
   }
 }

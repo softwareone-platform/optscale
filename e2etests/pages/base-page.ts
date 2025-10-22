@@ -49,7 +49,7 @@ export abstract class BasePage {
   }
 
   async fitViewportToFullPage(): Promise<void> {
-    const { maxHeight = 12000 } =  {};
+    const { maxHeight = 12000 } = {};
     const headerHeight = 80;
     // Get current width (keep it stable) and full content height
     const { width } = this.page.viewportSize() ?? { width: 1280 };
@@ -281,8 +281,7 @@ export abstract class BasePage {
 
     let result = parseFloat(numberPart);
     if (isNaN(result)) {
-      errorLog(`parseCurrencyValue: Parsed number is NaN for input "${input}"`);
-      return NaN;
+      throw Error(`parseCurrencyValue: Parsed number is NaN for input "${input}"`);
     }
 
     // Apply multiplier if present
@@ -294,7 +293,7 @@ export abstract class BasePage {
         result *= 1_000_000;
         break;
     }
-    debugLog(`parseCurrencyValue: Parsed "${input}" to ${result}`);
+    // debugLog(`parseCurrencyValue: Parsed "${input}" to ${result}`);
     return result;
   }
 
@@ -401,7 +400,6 @@ export abstract class BasePage {
   async waitForAllProgressBarsToDisappear(timeout: number = 10000): Promise<void> {
     try {
       await this.progressBar.first().waitFor({ timeout: 1000 });
-      debugLog(`Progress bar count: ${await this.progressBar.count()}`);
     } catch (_error) {
       return; // Exit the method if the spinner is not present.
     }
