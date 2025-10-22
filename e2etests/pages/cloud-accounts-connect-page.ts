@@ -13,6 +13,10 @@ export class CloudAccountsConnectPage extends BasePage {
   readonly awsLinkedBtn: Locator;
   readonly azureTenantBtn: Locator;
   readonly googleCloudBtn: Locator;
+  readonly btnStandalone: Locator;
+  readonly btnAssumedRole: Locator;
+  readonly btnMember: Locator;
+  readonly btnAccessKey: Locator;
   readonly googleCloudTenantBtn: Locator;
   readonly nameInput: Locator;
   readonly connectBtn: Locator;
@@ -58,6 +62,10 @@ export class CloudAccountsConnectPage extends BasePage {
     this.awsLinkedBtn = this.main.getByTestId('btn_aws_linked_account');
     this.azureTenantBtn = this.main.getByTestId('btn_azure_account');
     this.googleCloudBtn = this.main.getByTestId('btn_gcp_account');
+    this.btnAssumedRole = this.main.getByTestId('btn_assumedRole');
+    this.btnAccessKey = this.main.getByTestId('btn_accessKey');
+    this.btnMember = this.main.getByTestId('btn_member');
+    this.btnStandalone = this.main.getByTestId('btn_standalone');
     this.googleCloudTenantBtn = this.main.getByTestId('btn_gcp_account');
     this.nameInput = this.main.getByTestId('input_cloud_account_name');
     this.awsAccessKeyIDInput = this.main.getByTestId('input_aws_access_key_id');
@@ -83,12 +91,10 @@ export class CloudAccountsConnectPage extends BasePage {
     this.billingDatasetProjectIDInput = this.main.getByTestId('input_billing_data_project_id');
   }
 
-  async prepareConnectPageForScreenshot(cloudAccountsPage: CloudAccountsPage, element: Locator) {
+  async prepareConnectPageForScreenshot(cloudAccountsPage: CloudAccountsPage) {
     await cloudAccountsPage.navigateToURL();
     await cloudAccountsPage.clickAddBtn();
-    await element.click()
-    await this.screenshotUpdateDelay();
-    await this.heading.hover();
+
     await roundElementDimensions(this.main);
     await this.fitViewportToFullPage();
   }

@@ -20,8 +20,6 @@ test.describe('FFC: Expenses Dashboard page @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
   test('Page matches screenshots', async ({ expensesPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL();
     });
@@ -63,7 +61,6 @@ test.describe('FFC: Expenses Map page @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test("Page matches screenshots", async ({ expensesMapPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
     await expensesMapPage.fitViewportToFullPage();
@@ -88,8 +85,6 @@ test.describe('FFC: Expenses Breakdowns page @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions} });
 
   test('Page matches screenshots', async ({ expensesPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Expenses page', async () => {
       await expensesPage.navigateToURL();
     });

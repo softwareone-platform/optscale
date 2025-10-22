@@ -10,8 +10,6 @@ test.describe('FFC: Events @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ eventsPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Events page', async () => {
       await eventsPage.navigateToURL();
     });

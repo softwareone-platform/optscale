@@ -610,7 +610,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       icon: AwsLogoIcon,
       messageId: "aws",
       dataTestId: "btn_aws_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AWS_MEMBER)
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_MANAGEMENT)
     },
     {
       id: CLOUD_PROVIDERS.AZURE,
@@ -690,6 +690,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
               .map((subtype) => ({
                 id: subtype.connectionType,
                 messageId: subtype.messageId,
+                dataTestId: `btn_${subtype.messageId}`,
                 action: () => setConnectionType(subtype.connectionType)
               }))}
             activeButtonId={connectionType}

@@ -27,7 +27,6 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptionsDashboard, failOnInterceptionMissing: true} });
 
   test('Page matches screenshots', async ({ resourcesPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await resourcesPage.navigateToURL();
     });
@@ -98,8 +97,6 @@ test.describe('FFC: Resources Details @swo_regression', () => {
     async ({
       resourcesPage, resourceDetailsPage
     }) => {
-
-      if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
       await test.step('Navigate to Resource details page for Sunflower EU Fra', async () => {
         await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
 

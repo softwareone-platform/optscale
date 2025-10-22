@@ -16,8 +16,6 @@ test.describe('FFC: Anomalies page @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: interceptorList, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ anomaliesPage, anomaliesCreatePage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Anomalies page', async () => {
       await anomaliesPage.navigateToURL();
     });
@@ -55,8 +53,6 @@ test.describe('FFC: Policies page @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions } });
 
   test('Page matches screenshots', async ({ policiesPage, policiesCreatePage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Policies page', async () => {
       await policiesPage.navigateToURL();
     });
@@ -98,8 +94,6 @@ test.describe('FFC: Tagging Policies page @swo_regression', () => {
     taggingPoliciesPage,
     taggingPoliciesCreatePage
   }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
-
     await test.step('Navigate to Tagging Policies page', async () => {
       await taggingPoliciesPage.navigateToURL();
     });

@@ -25,7 +25,6 @@ test.describe('FFC: Recommendations @swo_regression', () => {
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
   test('Page matches screenshots', async ({ recommendationsPage }) => {
-    if (process.env.SCREENSHOT_UPDATE_DELAY) test.slow();
     await test.step('Set up test data', async () => {
       await recommendationsPage.navigateToURL();
     });
