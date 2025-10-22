@@ -1,5 +1,6 @@
 import { FullConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import { setEnvironment } from '../utils/environment-util';
 
 /**
  * Global setup function for Playwright tests.
@@ -16,6 +17,8 @@ async function globalSetup(config: FullConfig) {
     path: '.env.local',
     override: true,
   });
+
+  process.env.ENVIRONMENT = setEnvironment();
 
   const localHostURL = 'http://localhost:3000';
 

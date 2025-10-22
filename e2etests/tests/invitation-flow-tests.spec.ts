@@ -5,15 +5,14 @@ import { generateRandomEmail } from '../utils/random-data-generator';
 const verificationCode = '123456';
 let invitationEmail: string;
 let inviteLink: string;
-let emailVerificationLink: string;
 
 test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
+  test.describe.configure({ mode: 'parallel' });
 
   test.beforeEach('Login admin user', async ({ loginPage }) => {
     invitationEmail = generateRandomEmail();
     inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
-    emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
     await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
     await loginPage.waitForLoadingPageImgToDisappear();
   });
@@ -194,11 +193,8 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     });
 
     await test.step('Assert organization', async () => {
-      if (process.env.BASE_URL === process.env.STAGING) {
-        await expect(header.organizationSelect).toContainText('Marketplace Platform');
-      } else {
-        await expect(header.organizationSelect).toContainText('SoftwareOne (Test Env');
-      }
+      const orgName = header.getOrganizationNameForEnvironment();
+      await expect(header.organizationSelect).toContainText(orgName);
     });
   });
 });
@@ -208,7 +204,6 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
 
   test('[229868] Invitation is visible in Settings Tab @slow', async ({
     loginPage,
-    page,
     header,
     mainMenu,
     usersPage,
@@ -220,11 +215,11 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
     baseRequest,
   }) => {
     test.setTimeout(120000);
+    const poolName = usersPage.getPoolNameForEnvironment();
 
     await test.step('Login as Admin user', async () => {
       invitationEmail = generateRandomEmail();
       inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
-      emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
       await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
       await loginPage.waitForLoadingPageImgToDisappear();
@@ -280,7 +275,7 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
     });
 
     await test.step('Invite a existing user to the organisation', async () => {
-      await usersInvitePage.inviteUser(invitationEmail, 'Engineer', 'AWS SWO');
+      await usersInvitePage.inviteUser(invitationEmail, 'Engineer', poolName);
       await usersInvitePage.userInvitedAlert.waitFor();
       await usersInvitePage.userInvitedAlertCloseButton.click();
     });
@@ -296,7 +291,7 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
     await test.step('View invitation in Settings', async () => {
       await settingsPage.navigateToURL();
       await settingsPage.clickInvitationsTab();
-      await expect(settingsPage.page.getByText('● Engineer at AWS SWO')).toBeVisible();
+      await expect(settingsPage.page.getByText(`● Engineer at ${poolName}`)).toBeVisible();
     });
   });
 });
@@ -305,7 +300,6 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
 
   test('[229869] Invite existing user with a new role @slow', async ({
-    page,
     header,
     loginPage,
     mainMenu,
@@ -318,10 +312,11 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     baseRequest,
   }) => {
     test.setTimeout(120000);
+    const poolName = usersPage.getPoolNameForEnvironment();
+
     await test.step('Login as Admin user', async () => {
       invitationEmail = generateRandomEmail();
       inviteLink = `${process.env.BASE_URL}/invited?email=${encodeURIComponent(invitationEmail)}`;
-      emailVerificationLink = `${process.env.BASE_URL}/email-verification?email=${encodeURIComponent(invitationEmail)}&code=${verificationCode}`;
 
       await loginPage.login(process.env.DEFAULT_USER_EMAIL, process.env.DEFAULT_USER_PASSWORD);
       await loginPage.waitForLoadingPageImgToDisappear();
@@ -371,7 +366,7 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     });
 
     await test.step('Invite a existing user to the organisation', async () => {
-      await usersInvitePage.inviteUser(invitationEmail, 'Manager', 'AWS SWO');
+      await usersInvitePage.inviteUser(invitationEmail, 'Manager', poolName);
       await usersInvitePage.userInvitedAlert.waitFor();
       await usersInvitePage.userInvitedAlertCloseButton.click();
     });
@@ -387,7 +382,7 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     await test.step('View invitation in Settings', async () => {
       await settingsPage.navigateToURL();
       await settingsPage.clickInvitationsTab();
-      await expect(settingsPage.page.getByText('● Manager at AWS SWO pool')).toBeVisible();
+      await expect(settingsPage.page.getByText(`● Manager at ${poolName} pool`)).toBeVisible();
     });
   });
 });

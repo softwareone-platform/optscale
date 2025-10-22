@@ -1,5 +1,5 @@
-import {Locator, Page} from "@playwright/test";
-import {BasePage} from "./base-page";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
 
 /**
  * Represents the Users Page.
@@ -34,5 +34,19 @@ export class UsersPage extends BasePage {
    */
   async clickInviteBtn(): Promise<void> {
     await this.inviteBtn.click();
+  }
+
+  getPoolNameForEnvironment(): string {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case 'dev':
+        return 'AWS Dev';
+      case 'staging':
+        return 'QA & Production';
+      case 'test':
+        return 'AWS SWO';
+      default:
+        throw new Error(`Unknown environment: ${env}`);
+    }
   }
 }

@@ -4,7 +4,7 @@ import { CardMetaData } from '../types/api-response.types';
 export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardMetaData[] => [
   {
     name: 'Abandoned Amazon S3 Buckets',
-    cardLocator: recommendationsPage.abandonedAmazonS3BucketsCardSavingsValue,
+    savingsValue: recommendationsPage.abandonedAmazonS3BucketsCardSavingsValue,
     seeAllBtn: recommendationsPage.abandonedAmazonS3BucketsSeeAllBtn,
     errorLocator: recommendationsPage.abandonedAmazonS3BucketsError,
     tableLocator: recommendationsPage.abandonedAmazonS3BucketsTableSavingsValue,
@@ -12,7 +12,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Abandoned Images',
-    cardLocator: recommendationsPage.abandonedImagesCardSavingsValue,
+    savingsValue: recommendationsPage.abandonedImagesCardSavingsValue,
     seeAllBtn: recommendationsPage.abandonedImagesSeeAllBtn,
     errorLocator: recommendationsPage.abandonedImagesError,
     tableLocator: recommendationsPage.abandonedImagesTableSavingsValue,
@@ -20,7 +20,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Abandoned Instances',
-    cardLocator: recommendationsPage.abandonedInstancesCardSavingsValue,
+    savingsValue: recommendationsPage.abandonedInstancesCardSavingsValue,
     seeAllBtn: recommendationsPage.abandonedInstancesSeeAllBtn,
     errorLocator: recommendationsPage.abandonedInstancesError,
     tableLocator: recommendationsPage.abandonedInstancesTableSavingsValue,
@@ -28,7 +28,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Abandoned Kinesis Streams',
-    cardLocator: recommendationsPage.abandonedKinesisStreamsCardSavingsValue,
+    savingsValue: recommendationsPage.abandonedKinesisStreamsCardSavingsValue,
     seeAllBtn: recommendationsPage.abandonedKinesisStreamsSeeAllBtn,
     errorLocator: recommendationsPage.abandonedKinesisStreamsError,
     tableLocator: recommendationsPage.abandonedKinesisStreamsTableSavingsValue,
@@ -36,7 +36,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Abandoned Load Balancers',
-    cardLocator: recommendationsPage.abandonedLoadBalancersCardSavingsValue,
+    savingsValue: recommendationsPage.abandonedLoadBalancersCardSavingsValue,
     seeAllBtn: recommendationsPage.abandonedLoadBalancersSeeAllBtn,
     errorLocator: recommendationsPage.abandonedLoadBalancersError,
     tableLocator: recommendationsPage.abandonedLoadBalancersTableSavingsValue,
@@ -50,7 +50,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'IAM Users With Unused Console Access',
-    cardLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessCardSavingsValue,
+    savingsValue: recommendationsPage.iamUsersWithUnusedConsoleAccessCardSavingsValue,
     seeAllBtn: recommendationsPage.iamUsersWithUnusedConsoleAccessSeeAllBtn,
     errorLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessError,
     tableLocator: recommendationsPage.iamUsersWithUnusedConsoleAccessTableSavingsValue,
@@ -58,7 +58,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Instances Eligible for Generation Upgrade',
-    cardLocator: recommendationsPage.instancesEligibleForGenerationUpgradeCardSavingsValue,
+    savingsValue: recommendationsPage.instancesEligibleForGenerationUpgradeCardSavingsValue,
     seeAllBtn: recommendationsPage.instancesEligibleForGenerationUpgradeSeeAllBtn,
     errorLocator: recommendationsPage.instancesEligibleForGenerationUpgradeError,
     tableLocator: recommendationsPage.instancesEligibleForGenerationUpgradeTableSavingsValue,
@@ -66,7 +66,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Instances for Shutdown',
-    cardLocator: recommendationsPage.instancesForShutdownCardSavingsValue,
+    savingsValue: recommendationsPage.instancesForShutdownCardSavingsValue,
     seeAllBtn: recommendationsPage.instancesForShutdownSeeAllBtn,
     errorLocator: recommendationsPage.instancesForShutdownError,
     tableLocator: recommendationsPage.instancesForShutdownTableSavingsValue,
@@ -74,7 +74,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Instances with Migration Opportunities',
-    cardLocator: recommendationsPage.instancesWithMigrationOpportunitiesCardSavingsValue,
+    savingsValue: recommendationsPage.instancesWithMigrationOpportunitiesCardSavingsValue,
     seeAllBtn: recommendationsPage.instancesWithMigrationOpportunitiesSeeAllBtn,
     errorLocator: recommendationsPage.instancesWithMigrationOpportunitiesError,
     tableLocator: recommendationsPage.instancesWithMigrationOpportunitiesTableSavingsValue,
@@ -82,7 +82,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Instances with Spot Preemptible Opportunities',
-    cardLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
+    savingsValue: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesCardSavingsValue,
     seeAllBtn: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesSeeAllBtn,
     errorLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesError,
     tableLocator: recommendationsPage.instancesWithSpotPreemptibleOpportunitiesTableSavingsValue,
@@ -90,7 +90,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Instances with Subscription Opportunities',
-    cardLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesCardSavingsValue,
+    savingsValue: recommendationsPage.instancesWithSubscriptionOpportunitiesCardSavingsValue,
     seeAllBtn: recommendationsPage.instancesWithSubscriptionOpportunitiesSeeAllBtn,
     errorLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesError,
     tableLocator: recommendationsPage.instancesWithSubscriptionOpportunitiesTableSavingsValue,
@@ -98,7 +98,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Not Attached Volumes',
-    cardLocator: recommendationsPage.notAttachedVolumesCardSavingsValue,
+    savingsValue: recommendationsPage.notAttachedVolumesCardSavingsValue,
     seeAllBtn: recommendationsPage.notAttachedVolumesSeeAllBtn,
     errorLocator: recommendationsPage.notAttachedVolumesError,
     tableLocator: recommendationsPage.notAttachedVolumesTableSavingsValue,
@@ -106,7 +106,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Not Deallocated Instances',
-    cardLocator: recommendationsPage.notDeallocatedInstancesCardSavingsValue,
+    savingsValue: recommendationsPage.notDeallocatedInstancesCardSavingsValue,
     seeAllBtn: recommendationsPage.notDeallocatedInstancesSeeAllBtn,
     errorLocator: recommendationsPage.notDeallocatedInstancesError,
     tableLocator: recommendationsPage.notDeallocatedInstancesTableSavingsValue,
@@ -114,7 +114,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Obsolete Images',
-    cardLocator: recommendationsPage.obsoleteImagesCardSavingsValue,
+    savingsValue: recommendationsPage.obsoleteImagesCardSavingsValue,
     seeAllBtn: recommendationsPage.obsoleteImagesSeeAllBtn,
     errorLocator: recommendationsPage.obsoleteImagesError,
     tableLocator: recommendationsPage.obsoleteImagesTableSavingsValue,
@@ -122,7 +122,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Obsolete IPs',
-    cardLocator: recommendationsPage.obsoleteIPsCardSavingsValue,
+    savingsValue: recommendationsPage.obsoleteIPsCardSavingsValue,
     seeAllBtn: recommendationsPage.obsoleteIPsSeeAllBtn,
     errorLocator: recommendationsPage.obsoleteIPsError,
     tableLocator: recommendationsPage.obsoleteIPsTableSavingsValue,
@@ -130,7 +130,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Obsolete Snapshot Chains',
-    cardLocator: recommendationsPage.obsoleteSnapshotChainsCardSavingsValue,
+    savingsValue: recommendationsPage.obsoleteSnapshotChainsCardSavingsValue,
     seeAllBtn: recommendationsPage.obsoleteSnapshotChainsSeeAllBtn,
     errorLocator: recommendationsPage.obsoleteSnapshotChainsError,
     tableLocator: recommendationsPage.obsoleteSnapshotChainsTableSavingsValue,
@@ -138,7 +138,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Obsolete Snapshots',
-    cardLocator: recommendationsPage.obsoleteSnapshotsCardSavingsValue,
+    savingsValue: recommendationsPage.obsoleteSnapshotsCardSavingsValue,
     seeAllBtn: recommendationsPage.obsoleteSnapshotsSeeAllBtn,
     errorLocator: recommendationsPage.obsoleteSnapshotsError,
     tableLocator: recommendationsPage.obsoleteSnapshotsTableSavingsValue,
@@ -146,7 +146,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Public S3 Buckets',
-    cardLocator: recommendationsPage.publicS3BucketsCardSavingsValue,
+    savingsValue: recommendationsPage.publicS3BucketsCardSavingsValue,
     seeAllBtn: recommendationsPage.publicS3BucketsSeeAllBtn,
     errorLocator: recommendationsPage.publicS3BucketsError,
     tableLocator: recommendationsPage.publicS3BucketsTableSavingsValue,
@@ -154,7 +154,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Reserved Instances Opportunities',
-    cardLocator: recommendationsPage.reservedInstancesOpportunitiesCardSavingsValue,
+    savingsValue: recommendationsPage.reservedInstancesOpportunitiesCardSavingsValue,
     seeAllBtn: recommendationsPage.reservedInstancesOpportunitiesSeeAllBtn,
     errorLocator: recommendationsPage.reservedInstancesOpportunitiesError,
     tableLocator: recommendationsPage.reservedInstancesOpportunitiesTableSavingsValue,
@@ -168,7 +168,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Under Utilized Instances',
-    cardLocator: recommendationsPage.underutilizedInstancesCardSavingsValue,
+    savingsValue: recommendationsPage.underutilizedInstancesCardSavingsValue,
     seeAllBtn: recommendationsPage.underutilizedInstancesSeeAllBtn,
     errorLocator: recommendationsPage.underutilizedInstancesError,
     tableLocator: recommendationsPage.underutilizedInstancesTableSavingsValue,
@@ -176,7 +176,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Under Utilized RDS Instances',
-    cardLocator: recommendationsPage.underutilizedRDSInstancesCardSavingsValue,
+    savingsValue: recommendationsPage.underutilizedRDSInstancesCardSavingsValue,
     seeAllBtn: recommendationsPage.underutilizedRDSInstancesSeeAllBtn,
     errorLocator: recommendationsPage.underutilizedRDSInstancesError,
     tableLocator: recommendationsPage.underutilizedRDSInstancesTableSavingsValue,

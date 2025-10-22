@@ -1,6 +1,6 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { expectWithinDrift } from '../utils/custom-assertions';
+import { isWithinRoundingDrift } from '../utils/custom-assertions';
 import { getCardMetaData } from '../mocks/recommendation-card-metadata.mocks';
 import { debugLog, errorLog } from '../utils/debug-logging';
 
@@ -32,7 +32,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await test.step('Compare card total savings with possible monthly savings', async () => {
       debugLog(`Possible Monthly Savings: ${possibleMonthlySavings}`);
       debugLog(`Card Total Savings: ${cardTotalSavings}`);
-      expectWithinDrift(possibleMonthlySavings, cardTotalSavings, 0.001); // Allowable drift of 0.1%
+      expect(isWithinRoundingDrift(possibleMonthlySavings, cardTotalSavings, 0.001)).toBe(true); // Allowable drift of 0.1%
     });
   });
 
@@ -216,16 +216,13 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Underutilized RDS Instances',
   ];
 
-  test(' [230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
+  test('[230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
     await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
   });
 
   test(`[] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
     await recommendationsPage.selectCategory('All');
     await recommendationsPage.allCardHeadings.last().waitFor();
-
-    const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-    debugLog(`Actual heading texts: ${actualHeadings}`);
 
     const allCardData = getCardMetaData(recommendationsPage);
 
@@ -393,16 +390,16 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       const card = allCardData.find(c => c.name === cardName);
       if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
-      const { cardLocator, countValue, seeAllBtn, tableLocator, modalColumnLocator } = card;
+      const { savingsValue, countValue, seeAllBtn, tableLocator, modalColumnLocator } = card;
       let isApproximate: boolean;
       let cardSavings = undefined;
       let cardCount = undefined;
 
-      if (cardLocator) {
-        cardSavings = await recommendationsPage.getCurrencyValue(cardLocator);
+      if (savingsValue) {
+        cardSavings = await recommendationsPage.getCurrencyValue(savingsValue);
 
         if (cardSavings === 0) {
-          const value = await cardLocator.textContent();
+          const value = await savingsValue.textContent();
           isApproximate = value.includes('≈');
           debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
         }
@@ -429,7 +426,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
             await recommendationsPage.waitForAllProgressBarsToDisappear();
             const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
             debugLog(`${cardName} Table Savings: ${tableSavings}`);
-            expectWithinDrift(cardSavings, tableSavings, 0.001); // Allowable drift of 0.1%
+            expect.soft(isWithinRoundingDrift(cardSavings, tableSavings, 0.001)).toBe(true); // Allowable drift of 0.1%
           });
         }
       } else {
