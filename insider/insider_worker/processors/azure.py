@@ -71,13 +71,32 @@ class AzurePriceProcessor(BasePriceProcessor):
         self.publish_activities_tasks(task)
 
     def _get_currencies_list(self):
-        rest_cl = RestClient(
-            url=self.config_client.restapi_url(),
-            secret=self.config_client.cluster_secret(),
-            verify=False)
-        _, orgs = rest_cl.organization_list()
-        currencies = set(map(lambda x: x['currency'], orgs['organizations']))
-        return list(currencies)
+        # rest_cl = RestClient(
+        #     url=self.config_client.restapi_url(),
+        #     secret=self.config_client.cluster_secret(),
+        #     verify=False)
+        # _, orgs = rest_cl.organization_list()
+        # currencies = set(map(lambda x: x['currency'], orgs['organizations']))
+        # return list(currencies)
+        return [
+            "USD",
+            "CHF",
+            "EUR",
+            "AUD",
+            "JPY",
+            "BGN",
+            "INR",
+            "BRL",
+            "KRW",
+            "PHP",
+            "GBP"
+            "AED",
+            "THB",
+            "MYR",
+            "DKK",
+            "SGD",
+            "CAD",
+        ]
 
     def process_prices(self):
         last_discovery = self.get_last_discovery()
