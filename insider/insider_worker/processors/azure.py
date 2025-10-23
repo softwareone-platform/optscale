@@ -81,17 +81,19 @@ class AzurePriceProcessor(BasePriceProcessor):
 
     def process_prices(self):
         last_discovery = self.get_last_discovery()
-        old_prices = self.prices.find(
-            {'last_seen': {'$gte': last_discovery.get('started_at', 0)}},
-            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
-        )
-        old_prices_map = {self.unique_values(p): p for p in old_prices}
 
         http_client = Client()
-        processed_keys = {}
-        prices_counter = 0
         for currency in self._get_currencies_list():
             LOG.info('Processing Azure prices for currency: %s', currency)
+
+            old_prices = self.prices.find(
+                {'last_seen': {'$gte': last_discovery.get('started_at', 0)}, 'currencyCode': currency},
+                {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
+            )
+            old_prices_map = {self.unique_values(p): p for p in old_prices}
+            processed_keys = {}
+            prices_counter = 0
+            
             next_page = 'https://prices.azure.com/api/retail/prices'
             next_page += '?currencyCode=%s' % currency
             while True:
