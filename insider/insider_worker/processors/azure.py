@@ -89,7 +89,7 @@ class AzurePriceProcessor(BasePriceProcessor):
             "BRL",
             "KRW",
             "PHP",
-            "GBP"
+            "GBP",
             "AED",
             "THB",
             "MYR",
@@ -110,6 +110,7 @@ class AzurePriceProcessor(BasePriceProcessor):
         processed_keys = {}
         prices_counter = 0
         for currency in self._get_currencies_list():
+            LOG.info('Processing Azure prices for currency: %s', currency)
             next_page = 'https://prices.azure.com/api/retail/prices'
             next_page += '?currencyCode=%s' % currency
             while True:
