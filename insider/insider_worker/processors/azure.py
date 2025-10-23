@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
-from kombu.log import get_logger
-from requests.exceptions import SSLError
+
+from insider.insider_worker.http_client.client import Client
+from insider.insider_worker.processors.base import BasePriceProcessor
 from kombu import Connection as QConnection
 from kombu import Exchange
+from kombu.log import get_logger
 from kombu.pools import producers
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from insider.insider_worker.processors.base import BasePriceProcessor
-from insider.insider_worker.http_client.client import Client
-
+from requests.exceptions import SSLError
 
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ACTIVITIES_EXCHANGE = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
@@ -91,6 +91,7 @@ class AzurePriceProcessor(BasePriceProcessor):
         processed_keys = {}
         prices_counter = 0
         for currency in self._get_currencies_list():
+            LOG.info('Processing Azure prices for currency: %s', currency)
             next_page = 'https://prices.azure.com/api/retail/prices'
             next_page += '?currencyCode=%s' % currency
             while True:
