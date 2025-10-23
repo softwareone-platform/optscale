@@ -348,6 +348,7 @@ export default gql`
     cur_version: Int
     config_scheme: String
     report_name: String
+    linked: Boolean
   }
 
   input AzureSubscriptionConfigInput {

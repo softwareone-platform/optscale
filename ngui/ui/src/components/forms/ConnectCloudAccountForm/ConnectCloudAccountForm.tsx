@@ -197,8 +197,11 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
-      account_type: connectionType,
-      ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : {})
+      ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
+        ? extraParams
+        : {
+            linked: true
+          })
     }
   };
 };
@@ -258,7 +261,7 @@ const getAlibabaParameters = (formData: FieldValues) => ({
 });
 
 const getGoogleParameters = async (formData: FieldValues) => {
-  const credentials = (await readFileAsText(formData[GCP_CREDENTIALS_FIELD_NAMES.CREDENTIALS])) as string;
+  const credentials = await readFileAsText(formData[GCP_CREDENTIALS_FIELD_NAMES.CREDENTIALS]);
 
   return {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
@@ -284,7 +287,7 @@ const getGoogleParameters = async (formData: FieldValues) => {
 };
 
 const getGoogleTenantParameters = async (formData: FieldValues) => {
-  const credentials = (await readFileAsText(formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.CREDENTIALS])) as string;
+  const credentials = await readFileAsText(formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.CREDENTIALS]);
 
   return {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
@@ -523,7 +526,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       icon: AwsLogoIcon,
       messageId: "aws",
       dataTestId: "btn_aws_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AWS_MEMBER)
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_MANAGEMENT)
     },
     {
       id: CLOUD_PROVIDERS.AZURE,
@@ -603,6 +606,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
               .map((subtype) => ({
                 id: subtype.connectionType,
                 messageId: subtype.messageId,
+                dataTestId: `btn_${subtype.messageId}`,
                 action: () => setConnectionType(subtype.connectionType)
               }))}
             fullWidth={false}
