@@ -1518,6 +1518,24 @@ class Client(Client_v1):
         return self.get(url)
 
     @staticmethod
+    def breakdown_meta_url(organization_id):
+        return '%s/breakdown_meta' % Client.organization_url(
+            organization_id)
+
+    def breakdown_meta_get(self, organization_id, start_date, end_date,
+                           breakdown_by, params=None):
+        query_params = {
+            'breakdown_by': breakdown_by,
+            'start_date': start_date,
+            'end_date': end_date
+        }
+        if params:
+            query_params.update(params)
+        url = self.breakdown_meta_url(
+            organization_id) + self.query_url(**query_params)
+        return self.get(url)
+
+    @staticmethod
     def traffic_processing_task_url(id=None, cloud_account_id=None):
         url = 'traffic_processing_tasks'
         if id is not None:
