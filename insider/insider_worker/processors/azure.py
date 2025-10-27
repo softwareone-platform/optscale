@@ -12,7 +12,6 @@ from requests.exceptions import SSLError
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ACTIVITIES_EXCHANGE = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
 LOG = get_logger(__name__)
-PRICES_PER_REQUEST = 100
 PRICES_COUNT_TO_LOG = 1000
 
 
@@ -119,7 +118,7 @@ class AzurePriceProcessor(BasePriceProcessor):
                              'cloud: %s', prices_counter)
                     break
                 next_page = new_url
-                prices_counter += PRICES_PER_REQUEST
+                prices_counter += response.get('Count', 0)
 
     def update_price_records(self, new_prices_map, old_prices_map,
                              processed_keys):
