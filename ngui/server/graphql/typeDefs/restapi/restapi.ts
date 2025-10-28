@@ -513,23 +513,28 @@ export default gql`
   input BreakdownParams {
     start_date: Int!
     end_date: Int!
-    breakdown_by: BreakdownBy!
-    pool_id: [String!]
+    breakdown_by: String!
     cloud_account_id: [String!]
+    pool_id: [String!]
     owner_id: [String!]
-    service_name: [String!]
     region: [String!]
+    service_name: [String!]
     resource_type: [String!]
     active: [Boolean!]
     recommendations: [Boolean!]
     constraint_violated: [Boolean!]
-    k8s_node: [String!]
+    first_seen_gte: Int
+    first_seen_lte: Int
+    last_seen_gte: Int
+    last_seen_lte: Int
     tag: [String!]
     without_tag: [String!]
-    k8s_namespace: [String!]
-    k8s_service: [String!]
+    meta: [String!]
     traffic_from: [String!]
     traffic_to: [String!]
+    k8s_node: [String!]
+    k8s_service: [String!]
+    k8s_namespace: [String!]
   }
 
   type ResourceCountBreakdown {
@@ -551,6 +556,13 @@ export default gql`
     previous_total: Int!
     start_date: Int!
     total: Int!
+  }
+
+  type MetaBreakdown {
+    breakdown: JSONObject!
+    totals: JSONObject!
+    start_date: Int!
+    end_date: Int!
   }
 
   type OrganizationLimitHit {
@@ -619,6 +631,7 @@ export default gql`
     service_name: [String]
     tag: [String]
     without_tag: [String]
+    meta: [String]
     traffic_from: [String]
     traffic_to: [String]
     first_seen_gte: Int
@@ -630,6 +643,11 @@ export default gql`
   input CloudPoliciesParams {
     bucket_name: String!
     cloud_type: String!
+  }
+
+  input AvailableFiltersParams {
+    start_date: Int!
+    end_date: Int!
   }
 
   type Query {
@@ -645,10 +663,12 @@ export default gql`
     organizationConstraint(constraintId: ID!): OrganizationConstraint
     resourceCountBreakdown(organizationId: ID!, params: BreakdownParams): ResourceCountBreakdown
     expensesDailyBreakdown(organizationId: ID!, params: BreakdownParams): ExpensesDailyBreakdown
+    metaBreakdown(organizationId: ID!, params: BreakdownParams): MetaBreakdown
     organizationLimitHits(organizationId: ID!, constraintId: ID!): [OrganizationLimitHit!]
     relevantFlavors(organizationId: ID!, requestParams: JSONObject): JSONObject
     cleanExpenses(organizationId: ID!, params: CleanExpensesParams): JSONObject
     cloudPolicies(organizationId: ID!, params: CloudPoliciesParams): JSONObject
+    availableFilters(organizationId: ID!, params: AvailableFiltersParams): JSONObject
   }
 
   type Mutation {
