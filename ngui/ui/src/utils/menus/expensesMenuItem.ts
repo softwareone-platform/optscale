@@ -1,4 +1,4 @@
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+// import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import { CLOUD_EXPENSES_BASE, POOL_EXPENSES_BASE, OWNER_EXPENSES_BASE } from "urls";
 import { FILTER_BY } from "utils/constants";
 import expenses from "utils/routes/expensesRoute";
@@ -11,7 +11,8 @@ class ExpensesMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_explorer_page";
 
-  icon = BarChartOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = BarChartOutlinedIcon;
 
   isRootPath = (currentPath, currentQueryParams) =>
     currentPath === this.route.link && currentQueryParams[FILTER_BY] === undefined;

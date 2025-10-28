@@ -1,4 +1,4 @@
-import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
+// import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import mlMetricsRoute from "utils/routes/mlMetricsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class MlTasksMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_metrics";
 
-  icon = TrendingUpOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = TrendingUpOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }
