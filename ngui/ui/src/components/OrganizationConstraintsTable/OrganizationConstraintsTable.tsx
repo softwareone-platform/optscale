@@ -212,6 +212,7 @@ const OrganizationConstraintsTable = ({ constraints, addButtonLink, isLoading = 
               items={filters}
               render={({ displayedNameString, displayedValueString, displayedName, displayedValue }) => (
                 <KeyValueLabel
+                  isBoldValue
                   key={`${displayedNameString}-${displayedValueString}`}
                   keyText={displayedName}
                   value={displayedValue}

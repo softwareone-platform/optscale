@@ -181,6 +181,8 @@
   "authorizedKeyId": "Authorized key ID",
   "automatic": "Automatic",
   "automaticallyChooseBestInstanceFamily": "Automatically choose the best instance family",
+  "automaticallyDetectPricingData": "Automatically detect pricing data",
+  "automaticallyDetectPricingDataDescription": "Enable this option to allow the system to automatically detect and use the default pricing data. If disabled, you can manually specify the BigQuery dataset and table details to use custom pricing data for more accurate price calculations.",
   "available": "Available",
   "availableIn": "Available in",
   "average": "Average",
