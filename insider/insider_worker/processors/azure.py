@@ -92,7 +92,7 @@ class AzurePriceProcessor(BasePriceProcessor):
             old_prices_map = {self.unique_values(p): p for p in old_prices}
             processed_keys = {}
             prices_counter = 0
-            
+
             next_page = 'https://prices.azure.com/api/retail/prices'
             next_page += '?currencyCode=%s' % currency
             while True:
