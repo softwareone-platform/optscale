@@ -1,7 +1,7 @@
 import { NetworkStatus } from "@apollo/client";
 import { useOrganizationsQuery } from "graphql/__generated__/hooks/restapi";
 import { useGetToken } from "hooks/useGetToken";
-import { isEmpty as isEmptyArray } from "utils/arrays";
+import { isEmptyArray } from "utils/arrays";
 import { Error, Loading } from "../../common";
 import ProceedToApplication from "../ProceedToApplication";
 import SetupOrganization from "./SetupOrganization";

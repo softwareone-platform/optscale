@@ -1866,8 +1866,6 @@ class Client(Client_v1):
 
         return url
 
-    def cloud_policy_get(self, org_id, cloud_type, bucket_name):
+    def cloud_policy_get(self, org_id, cloud_type, bucket_name=None, linked=False):
         return self.get(self.cloud_policy_url(org_id)+self.query_url(
-            cloud_type=cloud_type, bucket_name=bucket_name))
-
-
+            cloud_type=cloud_type, bucket_name=bucket_name, linked=linked))
