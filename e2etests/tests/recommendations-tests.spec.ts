@@ -220,7 +220,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
   });
 
-  test(`[] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
+  test(`[231467] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
     await recommendationsPage.selectCategory('All');
     await recommendationsPage.allCardHeadings.last().waitFor();
 

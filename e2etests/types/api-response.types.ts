@@ -447,3 +447,26 @@ export interface EmployeesResponse {
     },
   ];
 }
+
+export interface DefaultAnomalyResponse {
+  organization_constraints: [{
+    deleted_at: number;
+    id: string;
+    created_at: number;
+    name: string;
+    organization_id: string;
+    type: string;
+    definition: {
+      threshold_days: number;
+      threshold: number;
+    };
+    filters: Record<string, unknown>;
+    last_run: number;
+    last_run_result: {
+      average: number;
+      today: number;
+      breakdown: Record<string, number>;
+    }
+    limit_hits: any[];
+  }];
+}

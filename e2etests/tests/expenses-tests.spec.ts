@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { debugLog } from '../utils/debug-logging';
 import { getExpectedDateRangeText, getThisMonthUnixDateRange } from '../utils/date-range-utils';
@@ -123,34 +124,32 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
     let match: boolean;
 
-    await test.step('Download daily chart and compare pdf', async () => {
-      await test.step('Download the default chart', async () => {
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+    await test.step('Download the default chart', async () => {
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-      await test.step('Download weekly chart and compare', async () => {
-        actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
-        expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
-        diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
+    await test.step('Download weekly chart and compare', async () => {
+      actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
+      expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
+      diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
 
-        await expensesPage.clickWeeklyBtn();
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+      await expensesPage.clickWeeklyBtn();
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-      await test.step('Download monthly chart and compare', async () => {
-        actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
-        expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
-        diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
+    await test.step('Download monthly chart and compare', async () => {
+      actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
+      expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
+      diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
 
-        await expensesPage.clickMonthlyBtn();
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+      await expensesPage.clickMonthlyBtn();
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
     });
   });
 });
