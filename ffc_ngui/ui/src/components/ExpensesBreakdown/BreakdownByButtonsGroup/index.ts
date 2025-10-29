@@ -1,3 +1,0 @@
-import ExpensesBreakdownBreakdownByButtonsGroup from "./ExpensesBreakdownBreakdownByButtonsGroup";
-
-export default ExpensesBreakdownBreakdownByButtonsGroup;

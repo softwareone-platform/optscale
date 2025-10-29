@@ -2,14 +2,7 @@
 set -euo pipefail
 
 # List of components to exclude
-EXCLUDE_LIST=("etcd" "mongo" "mariadb" "redis" "filebeat" "grafana" "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui" "slacker" "ngui")
-
-declare -A NAME_OVERRIDES=(
-    # ["directory_name"]="override_name"
-    ["ffc_ngui"]="ngui"
-    # add other overrides here
-)
-
+EXCLUDE_LIST=("etcd" "mongo" "mariadb" "redis" "filebeat" "grafana" "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui" "slacker")
 
 # Function to check if component is in the exclusion list
 should_exclude() {
@@ -31,12 +24,10 @@ while IFS= read -r -d '' dockerfile; do
 
     if should_exclude "$component"; then
         continue
-    fi
-
-    name="${NAME_OVERRIDES[$component]:-$component}"
+    fi    
 
     # Escape values for JSON
-    entries+=("{\"name\": \"${name}\", \"dockerfile\": \"${dockerfile}\"}")
+    entries+=("{\"name\": \"${component}\", \"dockerfile\": \"${dockerfile}\"}")
 done < <(find . -mindepth 2 -maxdepth 3 -type f -name 'Dockerfile' ! -name '*test*' ! -name '*.j2' -print0)
 
 # Join entries with comma

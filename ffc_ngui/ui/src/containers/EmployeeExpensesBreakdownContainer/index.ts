@@ -1,3 +1,0 @@
-import EmployeeExpensesBreakdownContainer from "./EmployeeExpensesBreakdownContainer";
-
-export default EmployeeExpensesBreakdownContainer;

@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useTheme } from "@mui/material";
-import { FormattedMessage } from "react-intl";
 import Filters from "components/Filters";
 import { ML_TASK_RUNS_FILTERS } from "components/Filters/constants";
 import LinearSelector from "components/LinearSelector";
@@ -8,6 +7,7 @@ import TypographyLoader from "components/TypographyLoader";
 import { GOALS_BE_FILTER, GOAL_STATUS, STATUS_BE_FILTER } from "utils/constants";
 import { SPACING_3 } from "utils/layouts";
 import { removeKey } from "utils/objects";
+import LabelColon from "../../../shared/components/LabelColon/LabelColon";
 
 const RunsFilters = ({ datePicker, runs, appliedFilters, onChange, isLoading }) => {
   const theme = useTheme();
@@ -68,7 +68,7 @@ const RunsFilters = ({ datePicker, runs, appliedFilters, onChange, isLoading }) 
         </span>
       ) : (
         <LinearSelector
-          label={<FormattedMessage id="filters" />}
+          label={<LabelColon messageId="filters" />}
           value={filters.getAppliedValues()}
           items={filters.getFilterSelectors()}
           onClear={onFilterDelete}

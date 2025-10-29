@@ -1,3 +1,0 @@
-import UpdateEnvironmentPropertiesFormContainer from "./UpdateEnvironmentPropertiesFormContainer";
-
-export default UpdateEnvironmentPropertiesFormContainer;
