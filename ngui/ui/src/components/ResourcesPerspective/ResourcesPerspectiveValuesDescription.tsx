@@ -1,5 +1,6 @@
 import { Stack } from "@mui/material";
 import { FormattedMessage } from "react-intl";
+import { FILTER_TYPE } from "components/FilterComponents/constants";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import SubTitle from "components/SubTitle";
@@ -59,7 +60,7 @@ const ResourcesPerspectiveValuesDescription = ({
             <FormattedMessage id="filters" />
           </SubTitle>
           {Object.values(FILTER_CONFIGS).map((filterConfig) => {
-            if (filterConfig.type === "range") {
+            if (filterConfig.type === FILTER_TYPE.RANGE) {
               const from = perspectiveAppliedFilters[filterConfig.fromName];
               const to = perspectiveAppliedFilters[filterConfig.toName];
 
@@ -76,7 +77,7 @@ const ResourcesPerspectiveValuesDescription = ({
               );
             }
 
-            if (filterConfig.type === "selection") {
+            if (filterConfig.type === FILTER_TYPE.SELECTION) {
               const values = perspectiveAppliedFilters[filterConfig.id];
 
               if (isEmptyArray(values)) {
