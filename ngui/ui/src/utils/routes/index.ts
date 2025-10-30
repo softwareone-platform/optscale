@@ -72,6 +72,7 @@ import organizationOptionsRoute from "./organizationOptionsRoute";
 import organizationsOverviewRoute from "./organizationsOverviewRoute";
 import ownerExpensesRoute from "./ownerExpensesRoute";
 import resetPasswordRoute from "./passwordRecoveryRoute";
+import pendingInvitationsRoute from "./pendingInvitationsRoute";
 import poolExpensesRoute from "./poolExpensesRoute";
 import poolsRoute from "./poolsRoute";
 import poolTtlAnalysisRoute from "./poolTtlAnalysisRoute";
@@ -130,6 +131,7 @@ export const routes = [
   homeRoute,
   loginRoute,
   registerRoute,
+  pendingInvitationsRoute,
   invitedRoute,
   liveDemoRoute,
   resetPasswordRoute,

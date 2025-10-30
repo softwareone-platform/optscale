@@ -1,0 +1,42 @@
+{
+  "name": "swo-optscale-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests for optScale instance used by SWO",
+  "main": "index.js",
+  "scripts": {
+    "playwright:show-report": "npx playwright show-report",
+    "playwright:debug": "npx playwright test --debug --workers=1",
+    "playwright:test": "npx playwright test --grep @ui",
+    "playwright:api": "npx playwright test --grep @api",
+    "playwright:test_chrome": "npx playwright test --project chrome",
+    "playwright:test_firefox": "npx playwright test --project firefox",
+    "playwright:test_edge": "npx playwright test --project \"Microsoft Edge\"",
+    "playwright:test_chromium": "npx playwright test --project chromium",
+    "playwright:test_webkit": "npx playwright test --project webkit",
+    "playwright:codegen": "npx playwright codegen %BASE_URL%",
+    "playwright:headed": "npx playwright test --headed --workers=1 --project chrome --grep @ui",
+    "playwright:ui": "npx playwright test --ui --project chrome --grep @ui",
+    "playwright:trace": "npx playwright test --trace",
+    "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",
+    "playwright:regression": "cross-env IS_REGRESSION_RUN=true npx playwright test --grep @swo_regression --config=playwright.regression.config.ts",
+    "playwright:regression:ui": "npm run playwright:regression -- --ui",
+    "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
+    "docker:test": "./run_pw.sh",
+    "docker:update": "./run_pw.sh -u"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5",
+    "@types/pngjs": "^6.0.5",
+    "cross-env": "^7.0.3",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "uuid": "^11.0.5"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}

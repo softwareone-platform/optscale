@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+/* MPT_TODO: added arrow  */
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
 import { Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -155,6 +156,7 @@ const PoolsRequiringAttentionCard = ({ withExceededLimit, withForecastedOverspen
 
   return (
     <WrapperCard
+      variant="shadow"
       needAlign
       title={<FormattedMessage id="poolsRequiringAttention" />}
       titleButton={{
@@ -163,7 +165,7 @@ const PoolsRequiringAttentionCard = ({ withExceededLimit, withForecastedOverspen
           title: <FormattedMessage id="goToPools" />
         },
         buttonProps: {
-          icon: <ExitToAppOutlinedIcon />,
+          icon: <ArrowForwardIosIcon />,
           isLoading,
           onClick: goToPools,
           dataTestId: "btn_go_to_pools"
