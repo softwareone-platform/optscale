@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import PriorityHighOutlinedIcon from "@mui/icons-material/PriorityHighOutlined";
-import { Link } from "@mui/material";
+import { Link, Stack } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import { FILTER_TYPE } from "components/FilterComponents/constants";
@@ -20,7 +20,9 @@ import { breakdowns } from "hooks/useBreakdownBy";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { getResourcesExpensesUrl } from "urls";
 import { isEmptyArray } from "utils/arrays";
+import { SPACING_2 } from "utils/layouts";
 import { CELL_EMPTY_VALUE } from "utils/tables";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const ResourcesPerspectives = () => {
   const isAllowedToDeletePerspectives = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
@@ -112,7 +114,7 @@ const ResourcesPerspectives = () => {
       {
         header: (
           <TextWithDataTestId dataTestId="lbl_filters">
-            <FormattedMessage id="filters" />
+            <LabelColon messageId="filters" />
           </TextWithDataTestId>
         ),
         accessorKey: "filtersString",
@@ -265,23 +267,27 @@ const ResourcesPerspectives = () => {
   }, [validPerspectives, intl, invalidPerspectives]);
 
   return (
-    <>
-      <Table
-        columns={columns}
-        data={tableData}
-        localization={{
-          emptyMessageId: "noPerspectives"
-        }}
-        withSearch
-        pageSize={50}
-      />
-      <PageContentDescription
-        position="bottom"
-        alertProps={{
-          messageId: "perspectivesDescription"
-        }}
-      />
-    </>
+    <Stack spacing={SPACING_2}>
+      <div>
+        <Table
+          columns={columns}
+          data={tableData}
+          localization={{
+            emptyMessageId: "noPerspectives"
+          }}
+          withSearch
+          pageSize={50}
+        />
+      </div>
+      <div>
+        <PageContentDescription
+          position="bottom"
+          alertProps={{
+            messageId: "perspectivesDescription"
+          }}
+        />
+      </div>
+    </Stack>
   );
 };
 

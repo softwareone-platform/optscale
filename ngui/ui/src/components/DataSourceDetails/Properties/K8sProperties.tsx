@@ -15,6 +15,7 @@ const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
   return (
     <>
       <KeyValueLabel
+        variant="property"
         keyMessageId="kubernetesId"
         value={accountId}
         dataTestIds={{
@@ -23,6 +24,7 @@ const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
         }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="dataSourceId"
         value={
           <CopyText sx={{ fontWeight: "inherit" }} text={id}>
@@ -31,8 +33,14 @@ const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
         }
         dataTestIds={{ key: "p_data_source_id", value: "value_data_source_id" }}
       />
-      <KeyValueLabel keyMessageId="user" value={user} dataTestIds={{ key: "p_user_key", value: "p_user_value" }} />
       <KeyValueLabel
+        variant="property"
+        keyMessageId="user"
+        value={user}
+        dataTestIds={{ key: "p_user_key", value: "p_user_value" }}
+      />
+      <KeyValueLabel
+        variant="property"
         keyMessageId="costModel"
         value={<FormattedMessage id={customPrice ? "default" : "flavorBased"} />}
         dataTestIds={{ key: "p_cost_model_key", value: "p_cost_model_value" }}
@@ -40,11 +48,13 @@ const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
       {customPrice && (
         <>
           <KeyValueLabel
+            variant="property"
             keyMessageId="cpuPerHour"
             value={<CostModelFormattedMoney value={cpuHourlyCost} />}
             dataTestIds={{ key: "p_cpu_per_hour_key", value: "p_cpu_per_hour_value" }}
           />
           <KeyValueLabel
+            variant="property"
             keyMessageId="memoryPerHour"
             value={<CostModelFormattedMoney value={memoryHourlyCost} />}
             dataTestIds={{ key: "p_memory_per_hour_key", value: "p_memory_per_hour_value" }}

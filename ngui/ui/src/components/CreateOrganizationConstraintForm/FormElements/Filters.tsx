@@ -1,7 +1,5 @@
 import { useMemo } from "react";
-import { FormLabel } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
 import ResourceFilters from "components/Resources/Filters";
 import TypographyLoader from "components/TypographyLoader";
 import AvailableFiltersService from "services/AvailableFiltersService";
@@ -15,9 +13,6 @@ const FiltersView = ({ filterValues }) => {
 
   return (
     <>
-      <FormLabel component="p">
-        <FormattedMessage id="filters" />
-      </FormLabel>
       <Controller
         name={FIELD_NAME}
         control={control}
