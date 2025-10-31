@@ -13,11 +13,8 @@ import {
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useSignOut } from "hooks/useSignOut";
 import { useUpdateScope } from "hooks/useUpdateScope";
-<<<<<<< HEAD
-import { isEmptyArray } from "utils/arrays";
-=======
 import { PENDING_INVITATIONS } from "urls";
->>>>>>> main
+import { isEmptyArray } from "utils/arrays";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
