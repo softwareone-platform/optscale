@@ -13,7 +13,11 @@ import {
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useSignOut } from "hooks/useSignOut";
 import { useUpdateScope } from "hooks/useUpdateScope";
+<<<<<<< HEAD
 import { isEmptyArray } from "utils/arrays";
+=======
+import { PENDING_INVITATIONS } from "urls";
+>>>>>>> main
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
@@ -57,6 +61,13 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
           newScopeId: organizationId
         });
         removeSearchParam("organizationId");
+      }
+
+      if (data.organizations.length === 0) {
+        updateScope({
+          newScopeId: "none",
+          redirectTo: PENDING_INVITATIONS
+        });
       }
     }
   });

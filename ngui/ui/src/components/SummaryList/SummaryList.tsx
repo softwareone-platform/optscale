@@ -6,7 +6,7 @@ import { isEmptyObject } from "utils/objects";
 
 const SummaryList = ({ titleMessage, titleIconButton = {}, isLoading = false, items = [] }) => (
   <Box minWidth={isLoading ? "200px" : undefined}>
-    <Box display="flex" alignItems="center" height="30px">
+    <Box display="flex" alignItems="center">
       <SubTitle>{titleMessage}</SubTitle>
       {isEmptyObject(titleIconButton) ? null : <IconButton {...titleIconButton} />}
     </Box>
