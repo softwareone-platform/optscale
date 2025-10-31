@@ -12,6 +12,7 @@ ADD risp/risp_worker/migrations risp/risp_worker/migrations
 COPY risp/risp_worker/pyproject.toml risp/risp_worker/
 COPY risp/risp_worker/uv.lock risp/risp_worker/
 COPY risp/risp_worker/*.py ./risp/risp_worker/
+COPY risp/risp_worker/processors/*.py ./risp/risp_worker/processors/
 
 RUN uv --project risp/risp_worker sync --locked --no-dev
 
