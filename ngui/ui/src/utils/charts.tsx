@@ -596,3 +596,22 @@ export const truncateCanvasText = (ctx: CanvasRenderingContext2D, text: string, 
 
   return truncatedText + ellipsis;
 };
+
+export const getBreakdownChartLegendLabel =
+  ({ getLabel, getTotalLabel }) =>
+  (legendItem, ctx, options) => {
+    const { maxWidth } = options;
+
+    const label = getLabel(legendItem, ctx, options);
+    const totalLabel = getTotalLabel(legendItem, ctx, options);
+
+    const endString = ` - ${totalLabel}`;
+
+    // Truncate the main label if needed to fit within maxWidth minus the expenses string width
+    const truncatedLabel = truncateCanvasText(ctx, label, maxWidth - ctx.measureText(endString).width);
+
+    return {
+      label: `${truncatedLabel}${endString}`,
+      shouldTruncate: false
+    };
+  };

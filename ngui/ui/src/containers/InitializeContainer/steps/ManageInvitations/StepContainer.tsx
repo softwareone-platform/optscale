@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NetworkStatus } from "@apollo/client";
 import { useInvitationsQuery } from "graphql/__generated__/hooks/restapi";
 import { isEmptyArray } from "utils/arrays";
 import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
@@ -11,14 +12,37 @@ const StepContainer = () => {
   const [proceedToNext, setProceedToNext] = useState(false);
   const {
     data: invitations,
-    loading: isLoading,
-    error: error,
+    networkStatus: getInvitationsNetworkStatus,
+    error: getInvitationsError,
     refetch: refetchInvitations
   } = useInvitationsQuery({
-    fetchPolicy: "network-only"
+    fetchPolicy: "network-only",
+    notifyOnNetworkStatusChange: true
   });
 
-  if (isLoading) {
+  const onRefetch = ({ onSuccess, onError } = {}) => {
+    refetchInvitations()
+      .then((queryResult) => {
+        if (typeof onSuccess === "function") {
+          onSuccess(queryResult);
+        }
+      })
+      .catch((error) => {
+        if (typeof onError === "function") {
+          onError(error);
+        }
+      })
+      .finally(() => {
+        setProceedToNext(false);
+      });
+  };
+
+  const getInvitationsLoading = getInvitationsNetworkStatus === NetworkStatus.loading;
+  const getInvitationsRefetching = getInvitationsNetworkStatus === NetworkStatus.refetch;
+
+  const error = getInvitationsError;
+
+  if (getInvitationsLoading) {
     return <Loading />;
   }
 
@@ -27,7 +51,11 @@ const StepContainer = () => {
   }
 
   if (proceedToNext) {
-    return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
+    return ALLOW_ORGANIZATION_CREATION ? (
+      <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />
+    ) : (
+      <ProceedToApplication />
+    );
   }
 
   const hasInvitations = !isEmptyArray(invitations?.invitations ?? []);
@@ -36,7 +64,7 @@ const StepContainer = () => {
     return (
       <AcceptInvitations
         invitations={invitations?.invitations ?? []}
-        refetchInvitations={refetchInvitations}
+        refetchInvitations={onRefetch}
         onProceed={() => {
           setProceedToNext(true);
         }}
@@ -44,7 +72,11 @@ const StepContainer = () => {
     );
   }
 
-  return ALLOW_ORGANIZATION_CREATION ? <SetupOrganization /> : <ProceedToApplication />;
+  return ALLOW_ORGANIZATION_CREATION ? (
+    <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />
+  ) : (
+    <ProceedToApplication />
+  );
 };
 
 export default StepContainer;

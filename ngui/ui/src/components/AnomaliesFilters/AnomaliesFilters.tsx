@@ -1,4 +1,5 @@
 import ExpandableList from "components/ExpandableList";
+import { FILTER_TYPE } from "components/FilterComponents/constants";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { isEmptyArray } from "utils/arrays";
@@ -7,7 +8,7 @@ const MAX_ROWS = 5;
 
 const AnomaliesFilters = ({ filters, showAll = false }) => {
   const filterItems = Object.values(FILTER_CONFIGS).flatMap((config) => {
-    if (config.type === "selection") {
+    if (config.type === FILTER_TYPE.SELECTION) {
       const appliedFilters = filters[config.apiName] ?? [];
 
       if (isEmptyArray(appliedFilters)) {
@@ -25,7 +26,7 @@ const AnomaliesFilters = ({ filters, showAll = false }) => {
       });
     }
 
-    if (config.type === "range") {
+    if (config.type === FILTER_TYPE.RANGE) {
       const from = filters[config.fromApiName];
       const to = filters[config.toApiName];
 

@@ -137,8 +137,7 @@ export const setObjectsOrder = (arrayOfObject, order, objectKey) =>
     return resultArray;
   }, arrayOfObject);
 
-// TODO - can use getChunks ???
-export const splitIntoTwoChunks = (array, firstChunkLength) => [
+export const splitIntoTwoChunks = <T>(array: T[], firstChunkLength: number): [T[], T[]] => [
   array.slice(0, firstChunkLength),
   array.slice(firstChunkLength, array.length)
 ];

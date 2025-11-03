@@ -232,6 +232,7 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
   }
 
   const externalMarker = data?.externalLocations.length ? data?.externalLocations[0] : null;
+  const intercontinentalMarker = data?.interContinental;
   const interRegionMarker = data?.interRegion;
 
   const key = getEnvironmentVariable("VITE_GOOGLE_MAP_API_KEY");
@@ -283,6 +284,15 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
               lat={interRegionMarker.latitude}
               lng={interRegionMarker.longitude}
               type={EXPENSES_MAP_OBJECT_TYPES.INTER_REGION_MARKER}
+              onClick={onMapClick}
+            />
+          )}
+          {intercontinentalMarker && (
+            <TrafficMapMarker
+              key={`marker-${intercontinentalMarker.id}-${intercontinentalMarker.name}`}
+              lat={intercontinentalMarker.latitude}
+              lng={intercontinentalMarker.longitude}
+              type={EXPENSES_MAP_OBJECT_TYPES.INTER_CONTINENTAL_MARKER}
               onClick={onMapClick}
             />
           )}
