@@ -237,10 +237,17 @@ function vm_show_optscale_info {
         | grep "https: \(\d\+\)" -m 1 -o \
         | awk '{print $2}'
     )
-      
+
     frontend_url="https://localhost:$forwarded_https_port/"
-    status_code=$(curl --insecure -L -I -X GET "$frontend_url" -sw '%{http_code}\n' -o /dev/null)
-    echo "Frontend URL: $frontend_url [HTTP Status: $status_code]"
+    status_code=$(curl --insecure -L -I -X GET "$frontend_url" -sw '%{http_code}\n' -o /dev/null || echo "")
+
+    if [[ -z "$status_code" || "$status_code" == "000" ]]; then
+        http_status="ERROR: Couldn't connect to server"
+    else
+        http_status="HTTP Status: $status_code"
+    fi
+
+    echo "Frontend URL: $frontend_url [$http_status]"
     echo "Cluster IP Address: $cluster_ip_addr"
     echo "Cluster Secret: $cluster_secret"
 
