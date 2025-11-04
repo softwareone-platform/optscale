@@ -33,7 +33,7 @@ import DividerHorizontal from "../../shared/components/DividerHorizontal/Divider
 import LabelColon from "../../shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 import { MPT_SPACING_4 } from "../../utils/layouts";
-import { MetaTabContent } from "./components";
+import { MetaTab } from "./components";
 import { CleanExpensesBreakdownContainer, ResourceCountBreakdownContainer } from "./containers";
 import Filters from "./Filters";
 
@@ -201,7 +201,7 @@ const Resources = ({
     {
       title: CLEAN_EXPENSES_BREAKDOWN_TYPES.META,
       dataTestId: "tab_meta",
-      node: <MetaTabContent requestParams={requestParams} metaNames={filterValues.meta ?? []} />
+      node: <MetaTab requestParams={requestParams} />
     }
   ];
 

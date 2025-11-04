@@ -46,8 +46,29 @@ export type AlibabaDataSource = DataSourceInterface & {
 };
 
 export type AvailableFiltersParams = {
+  active?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  cloud_account_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  constraint_violated?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   end_date: Scalars["Int"]["input"];
+  first_seen_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  first_seen_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  k8s_namespace?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  k8s_node?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  k8s_service?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  last_seen_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  last_seen_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  meta?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  owner_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_id?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  recommendations?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  region?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  resource_type?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  service_name?: InputMaybe<Array<Scalars["String"]["input"]>>;
   start_date: Scalars["Int"]["input"];
+  tag?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  traffic_from?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  traffic_to?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  without_tag?: InputMaybe<Array<Scalars["String"]["input"]>>;
 };
 
 export type AwsAssumedRoleConfigInput = {
@@ -723,7 +744,7 @@ export type Query = {
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
   organizationPerspectives?: Maybe<Scalars["JSONObject"]["output"]>;
   organizationThemeSettings?: Maybe<Scalars["JSONObject"]["output"]>;
-  organizations?: Maybe<Array<Maybe<Organization>>>;
+  organizations: Array<Organization>;
   relevantFlavors?: Maybe<Scalars["JSONObject"]["output"]>;
   resourceCountBreakdown?: Maybe<ResourceCountBreakdown>;
 };
@@ -959,7 +980,7 @@ export type OrganizationsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type OrganizationsQuery = {
   __typename?: "Query";
-  organizations?: Array<{
+  organizations: Array<{
     __typename?: "Organization";
     id: string;
     name: string;
@@ -967,7 +988,7 @@ export type OrganizationsQuery = {
     currency: string;
     is_demo: boolean;
     disabled: boolean;
-  } | null> | null;
+  }>;
 };
 
 export type CreateOrganizationMutationVariables = Exact<{
