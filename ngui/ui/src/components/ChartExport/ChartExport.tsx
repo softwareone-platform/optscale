@@ -62,7 +62,6 @@ const ChartExport = ({ chartWrapperRef, isLoading }: ChartExportProps) => {
     <div>
       <div>
         <ButtonLoader
-          uppercase
           dataTestId="btn_export_chart"
           variant="outlined"
           color="primary"

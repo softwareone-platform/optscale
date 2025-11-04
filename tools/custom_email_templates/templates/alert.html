@@ -1,0 +1,30 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+
+{% include 'partials/organization_block.html' %}
+<table class="row-content stack" align="left" border="0" cellpadding="0" width="100%" cellspacing="0"
+       role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%;">
+    <tbody>
+    <tr>
+        <td class="column column-1" width="100%"
+            style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+    <tr>
+        <td>
+            <p style="margin: 0; font-size: 16px; color: #434952; font-family: Arial, 'Trebuchet MS', Tahoma, sans-serif;">
+                Pool
+                <strong>{{texts.pool_name}}</strong> exceeded the
+                <strong>{{texts.alert_type}}</strong>
+                threshold of <strong>{{texts.threshold}}</strong>.</p>
+        </td>
+    </tr>
+</table>
+
+{% set gotoLink = texts.limit_hit.link %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}

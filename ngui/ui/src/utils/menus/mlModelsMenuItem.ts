@@ -1,4 +1,4 @@
-import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
+// import HubOutlinedIcon from "@mui/icons-material/HubOutlined";
 import mlModelsRoute from "utils/routes/mlModelsRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,7 +9,8 @@ class MlModelsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_ml_models";
 
-  icon = HubOutlinedIcon;
+  // MPT_TODO: disabled to match MPT figma designs
+  // icon = HubOutlinedIcon;
 
   isActive = (currentPath) => currentPath.startsWith(this.route.link);
 }
