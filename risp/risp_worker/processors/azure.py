@@ -149,14 +149,15 @@ class AzureProcessor(RispProcessorBase):
         new_expenses_map = defaultdict(lambda: defaultdict(
             lambda: defaultdict(lambda: (0, 0))))
         for expense in raw_expenses:
+            if "Reserved VM Instance" in expense.get('product', ''):
+                continue
             cost = expense['cost']
             usage_hrs = float(expense['usage_quantity'])
             os_type = 'windows' if 'windows' in expense['meter_details'][
                 'meter_sub_category'] else 'linux'
             instance_type = json.loads(
                 expense.get('additional_properties') or '{}').get(
-                    'ServiceType', '') or expense.get('product').split(
-                        ', ')[1]
+                    'ServiceType', '')
             location = expense.get('resource_location', '')
             res_data = (os_type, instance_type, location)
             total_cost = new_expenses_map[expense['resource_id']][
