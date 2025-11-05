@@ -10,9 +10,9 @@ import {
 import { RadioGroup, Switch } from "components/forms/common/fields";
 import QuestionMark from "components/QuestionMark";
 import { AWS_ROOT_CONNECT_CONFIG_SCHEMES } from "utils/constants";
-import { AWS_ROOT_INPUTS_FIELD_NAMES } from "../ConnectionFields";
+import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./AwsConnectionForm.constants";
 
-export const AwsRootInputs = ({ showAdvancesOptions = true }) => (
+export const AwsConnectionAccessKeyInputs = ({ showAdvancesOptions = true }) => (
   <ConnectForm>
     {({ watch }) => {
       const isFindReportWatch = watch(AWS_ROOT_INPUTS_FIELD_NAMES.IS_FIND_REPORT, true);

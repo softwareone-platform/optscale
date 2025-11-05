@@ -69,11 +69,11 @@ import { ConnectionInputs, DataSourceNameField } from "./FormElements";
 import {
   AuthenticationTypeSelector,
   getAwsConnectionTypeDescriptions,
-  useAuthenticationType
-} from "./FormElements/AwsConnectionForm/AwsConnectionForm";
-import { AUTHENTICATION_TYPES } from "./FormElements/AwsConnectionForm/AwsConnectionForm.constants";
-import { AuthenticationType } from "./FormElements/AwsConnectionForm/AwsConnectionForm.types";
-import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./FormElements/ConnectionFields";
+  useAuthenticationType,
+  AUTHENTICATION_TYPES,
+  AWS_ROOT_INPUTS_FIELD_NAMES,
+  AuthenticationType
+} from "./FormElements/AwsConnectionForm";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
@@ -267,7 +267,7 @@ const getGoogleParameters = async (formData: FieldValues) => {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
     type: GCP_CNR,
     config: {
-      credentials: JSON.parse(credentials),
+      credentials: JSON.parse(credentials as string),
       billing_data: {
         dataset_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
         table_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE],
@@ -293,7 +293,7 @@ const getGoogleTenantParameters = async (formData: FieldValues) => {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
     type: GCP_TENANT,
     config: {
-      credentials: JSON.parse(credentials),
+      credentials: JSON.parse(credentials as string),
       billing_data: {
         dataset_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
         table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]

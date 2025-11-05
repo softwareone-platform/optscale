@@ -21,14 +21,7 @@ import {
 } from "components/NebiusConfigFormElements";
 import { CONNECTION_TYPES } from "utils/constants";
 import { ObjectValues } from "utils/types";
-import { AUTHENTICATION_TYPES } from "./AwsConnectionForm/AwsConnectionForm.constants";
-import { AuthenticationType } from "./AwsConnectionForm/AwsConnectionForm.types";
-import { AwsRootInputs } from "./AwsConnectionForm/AwsRootInputs";
-
-export const AWS_ROOT_INPUTS_FIELD_NAMES = {
-  IS_FIND_REPORT: "isFindReport",
-  CONFIG_SCHEME: "configScheme"
-};
+import { AUTHENTICATION_TYPES, AuthenticationType, AwsConnectionAccessKeyInputs } from "./AwsConnectionForm";
 
 const NebiusInputs = () => (
   <>
@@ -54,7 +47,7 @@ const renderAwsInputs = (connectionType: ConnectionType, authenticationType: Aut
   return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
     <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancesOptions={showAdvancedOptions} />
   ) : (
-    <AwsRootInputs showAdvancesOptions={showAdvancedOptions} />
+    <AwsConnectionAccessKeyInputs showAdvancesOptions={showAdvancedOptions} />
   );
 };
 
