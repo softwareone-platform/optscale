@@ -538,4 +538,17 @@ export class ResourcesPage extends BasePage {
         throw new Error(`Unknown environment: ${env}`);
     }
   }
+
+  getPoolOwnerForEnvironment(): string {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case 'staging':
+        return 'Stuart';
+      case 'test':
+      case 'dev':
+        return 'Francesco';
+      default:
+        throw new Error(`Unknown environment: ${env}`);
+    }
+  }
 }
