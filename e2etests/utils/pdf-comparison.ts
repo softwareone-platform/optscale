@@ -70,8 +70,8 @@ export async function comparePdfFiles(expectedPdfPath: string, actualPdfPath: st
     console.error(`PDF conversion or comparison failed: ${error}`);
     return false;
   } finally {
-    // Clean up converted PNG files if the CLEAN_UP_DOWNLOADS environment variable is set
-    if (process.env.CLEAN_UP) {
+    // Clean up converted PNG files if the CLEAN_UP environment variable is set
+    if (process.env.CLEAN_UP === 'true') {
       await Promise.all([fs.unlink(expectedPngPath).catch(() => {}), fs.unlink(actualPngPath).catch(() => {})]);
     }
   }

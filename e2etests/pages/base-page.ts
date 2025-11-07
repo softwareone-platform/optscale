@@ -435,6 +435,7 @@ export abstract class BasePage {
    */
   async downloadFile(triggerButton: Locator, relativePath: string): Promise<string> {
     const dir = path.dirname(relativePath);
+    await triggerButton.waitFor();
 
     // Ensure download folder exists
     if (!fs.existsSync(dir)) {

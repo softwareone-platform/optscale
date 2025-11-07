@@ -13,6 +13,7 @@ import { InterceptionEntry } from '../types/interceptor.types';
 import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
+import { getEnvironmentTestOrgName } from '../utils/environment-util';
 
 test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -20,7 +21,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
 
   const defaultDateRange = getExpectedDateRangeText('this month');
   let dateRangeReset = false;
-  const name = 'SoftwareOne (Test Environment)';
+  const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
@@ -159,7 +160,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
   test.use({ restoreSession: true });
 
   const defaultDateRange = getExpectedDateRangeText('this month');
-  const name = 'SoftwareOne (Test Environment)';
+  const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
@@ -295,7 +296,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
   test.use({ restoreSession: true });
 
   const defaultDateRange = getExpectedDateRangeText('this month');
-  const name = 'SoftwareOne (Test Environment)';
+  const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
@@ -421,7 +422,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
   test.use({ restoreSession: true });
 
   const defaultDateRange = getExpectedDateRangeText('this month');
-  const name = 'SoftwareOne (Test Environment)';
+  const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
