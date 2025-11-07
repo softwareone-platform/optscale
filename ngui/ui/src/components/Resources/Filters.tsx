@@ -139,6 +139,7 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
     secondary: [
       { key: "tag", data: filters.tag },
       { key: "withoutTag", data: filters.without_tag },
+      { key: "meta", data: filters.meta },
       { key: "networkTrafficFrom", data: filters.traffic_from },
       { key: "networkTrafficTo", data: filters.traffic_to }
       // MPT_TODO: Add back k8s filters when API supports them

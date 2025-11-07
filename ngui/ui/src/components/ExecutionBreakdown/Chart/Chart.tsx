@@ -70,7 +70,7 @@ const Chart = ({
       }}
       renderTooltipBody={({ slice: { points: allPoints = [] } = {} }) => {
         const { milestonePoints = [], ...restPoints } = createGroupsObjectFromArray(allPoints, (point) =>
-          point.serieId === MILESTONES_LINE_ID ? "milestonePoints" : point.data.x
+          point.seriesId === MILESTONES_LINE_ID ? "milestonePoints" : point.data.x
         );
 
         const pointsEntries = Object.entries(restPoints);
@@ -91,10 +91,10 @@ const Chart = ({
               <Typography component="div" fontWeight="bold">
                 {formatToChartTime(time)}
               </Typography>
-              {data.map(({ id, serieColor, data: { formattedLineName, formattedY } }) => (
+              {data.map(({ id, seriesColor, data: { formattedLineName, formattedY } }) => (
                 <KeyValueLabel
                   key={id}
-                  keyText={<CircleLabel figureColor={serieColor} label={formattedLineName} textFirst={false} />}
+                  keyText={<CircleLabel figureColor={seriesColor} label={formattedLineName} textFirst={false} />}
                   value={formattedY}
                   gutterBottom
                 />

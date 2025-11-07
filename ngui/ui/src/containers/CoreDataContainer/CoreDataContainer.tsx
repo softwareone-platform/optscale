@@ -43,7 +43,9 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     onCompleted: (data) => {
       const { organizationId } = getSearchParams() as { organizationId: string };
 
-      if (data.organizations.find((org) => org.id === organizationId)) {
+      const { organizations } = data;
+
+      if (organizations.find((org) => org.id === organizationId)) {
         updateScope({
           newScopeId: organizationId
         });

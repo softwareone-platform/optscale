@@ -37,6 +37,7 @@ export class ResourcesPage extends BasePage {
   readonly lastSeenFilter: Locator;
   readonly tagFilter: Locator;
   readonly withoutTagFilter: Locator;
+  readonly metaFilter: Locator;
   readonly paidNetworkTrafficFromFilter: Locator;
   readonly paidNetworkTrafficToFilter: Locator;
   readonly k8sNodeFilter: Locator;
@@ -143,6 +144,7 @@ export class ResourcesPage extends BasePage {
     this.lastSeenFilter = this.filtersBox.getByRole('button', { name: 'Last seen (' });
     this.tagFilter = this.filtersBox.getByRole('button', { name: /^Tag \(/ });
     this.withoutTagFilter = this.filtersBox.getByRole('button', { name: 'Without tag (' });
+    this.metaFilter = this.filtersBox.getByRole('button', { name: 'Meta (' });
     this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic from (' });
     this.paidNetworkTrafficToFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic to (' });
     this.k8sNodeFilter = this.filtersBox.getByRole('button', { name: 'K8s node (' });

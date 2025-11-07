@@ -75,6 +75,13 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
+  // const organizationSetupMode = getEnvironmentVariable(
+  //   "VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE",
+  //   ORGANIZATION_SETUP_MODE.AUTOMATIC
+  // );
+
+  // const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
+
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
@@ -130,18 +137,19 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        {/* MPT_TODO: temporary disabled new organisation creation to meet BDR requirements */}
-        {/* <Button */}
-        {/*  icon={{ */}
-        {/*    IconComponent: AddOutlinedIcon */}
-        {/*  }} */}
-        {/*  onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })} */}
-        {/*  dataTestId="orgs_create_new" */}
-        {/*  disabled={isDemo} */}
-        {/*  tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null} */}
-        {/* > */}
-        {/*  <FormattedMessage id="createNewOrganization" /> */}
-        {/* </Button> */}
+        {/* {isCreateOrganizationEnabled && (
+          <Button
+            icon={{
+              IconComponent: AddOutlinedIcon
+            }}
+            onClick={() => openSideModal(CreateOrganizationModal, { onSuccess: onChange })}
+            dataTestId="orgs_create_new"
+            disabled={isDemo}
+            tooltipTitle={isDemo ? <FormattedMessage id="notAvailableInLiveDemo" /> : null}
+          >
+            <FormattedMessage id="createNewOrganization" />
+          </Button>
+        )} */}
       </Selector>
     </Box>
   );

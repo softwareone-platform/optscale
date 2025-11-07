@@ -49,6 +49,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
       await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
       await resourcesPage.firstResourceItemInTable.waitFor();
+      await resourcesPage.possibleSavingsCard.waitFor();
     });
   });
 
@@ -77,7 +78,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
 
     await test.step('Verify all filter buttons are displayed', async () => {
-      await expect.soft(resourcesPage.allFilterBoxButtons).toHaveCount(17);
+      await expect.soft(resourcesPage.allFilterBoxButtons).toHaveCount(18);
 
       const expectedFilters = [
         resourcesPage.suggestionsFilter,
@@ -94,6 +95,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
         resourcesPage.lastSeenFilter,
         resourcesPage.tagFilter,
         resourcesPage.withoutTagFilter,
+        resourcesPage.metaFilter,
         resourcesPage.paidNetworkTrafficFromFilter,
         resourcesPage.paidNetworkTrafficToFilter,
         // Kubernetes filters are temporarily disabled
@@ -755,6 +757,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.firstResourceItemInTable.waitFor();
+      await resourcesPage.possibleSavingsCard.waitFor();
     });
   });
 
