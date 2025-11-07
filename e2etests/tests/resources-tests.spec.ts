@@ -242,6 +242,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
       await test.step('Get total expenses value for last 7 days', async () => {
         await datePicker.selectLast7DaysDateRange();
+        await resourcesPage.firstResourceItemInTable.waitFor();
         await expect.soft(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
         totalExpensesValue = await resourcesPage.getTotalExpensesValue();
         debugLog(`Total expenses value for last 7 days: ${totalExpensesValue}`);
@@ -922,9 +923,10 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
 
     await test.step('Group by Owner and verify grouping', async () => {
+      const ownerName = resourcesPage.getPoolOwnerForEnvironment();
       await resourcesPage.groupBy('Owner');
       await expect.soft(resourcesPage.firstOwnerGroup).toBeVisible();
-      await expect.soft(resourcesPage.firstOwnerGroup).toContainText('Francesco');
+      await expect.soft(resourcesPage.firstOwnerGroup).toContainText(ownerName);
     });
 
     await test.step('Group by Tag and verify grouping', async () => {
