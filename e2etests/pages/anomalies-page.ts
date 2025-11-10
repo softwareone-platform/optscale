@@ -41,15 +41,25 @@ export class AnomaliesPage extends BasePage {
     this.defaultExpenseAnomalyLink = this.table.getByRole('link', { name: 'Default - expense anomaly' });
     this.defaultExpenseAnomalyCanvas = this.defaultExpenseAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td/canvas');
     this.defaultExpenseAnomalyDescription = this.defaultExpenseAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td[2]');
-    this.defaultExpenseAnomalyShowResourcesBtn = this.defaultExpenseAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td[4]//button');
+    this.defaultExpenseAnomalyShowResourcesBtn = this.defaultExpenseAnomalyLink.locator(
+      'xpath=/ancestor::td[1]/following-sibling::td[4]//button'
+    );
     this.defaultResourceCountAnomalyLink = this.table.getByRole('link', { name: 'Default - resource count anomaly' });
-    this.defaultResourceCountAnomalyCanvas = this.defaultResourceCountAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td/canvas');
-    this.defaultResourceCountAnomalyDescription = this.defaultResourceCountAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td[2]');
-    this.defaultResourceCountAnomalyShowResourcesBtn = this.defaultResourceCountAnomalyLink.locator('xpath=/ancestor::td[1]/following-sibling::td[4]//button');
-    this.policyDetailsDiv = this.main.locator('//div[contains(@class, "MTPBoxShadow")][1]')
+    this.defaultResourceCountAnomalyCanvas = this.defaultResourceCountAnomalyLink.locator(
+      'xpath=/ancestor::td[1]/following-sibling::td/canvas'
+    );
+    this.defaultResourceCountAnomalyDescription = this.defaultResourceCountAnomalyLink.locator(
+      'xpath=/ancestor::td[1]/following-sibling::td[2]'
+    );
+    this.defaultResourceCountAnomalyShowResourcesBtn = this.defaultResourceCountAnomalyLink.locator(
+      'xpath=/ancestor::td[1]/following-sibling::td[4]//button'
+    );
+    this.policyDetailsDiv = this.main.locator('//div[contains(@class, "MTPBoxShadow")][1]');
     this.policyDetailsNameValue = this.policyDetailsDiv.locator('//span[contains(text(), "Name")]/../following-sibling::div');
     this.policyDetailsTypeValue = this.policyDetailsDiv.locator('//span[contains(text(), "Type")]/../following-sibling::div');
-    this.policyDetailsEvaluationPeriodValue = this.policyDetailsDiv.locator('//span[contains(text(), "Evaluation period")]/../following-sibling::div');
+    this.policyDetailsEvaluationPeriodValue = this.policyDetailsDiv.locator(
+      '//span[contains(text(), "Evaluation period")]/../following-sibling::div'
+    );
     this.policyDetailsThresholdValue = this.policyDetailsDiv.locator('//span[contains(text(), "Threshold")]/../following-sibling::div');
   }
 
@@ -61,5 +71,29 @@ export class AnomaliesPage extends BasePage {
     await this.addBtn.click();
   }
 
+  /**
+   * Searches for an anomaly by clearing the search input, entering the provided search string,
+   * and triggering the search by pressing the Enter key.
+   *
+   * @param {string} searchString - The string to search for in the anomalies table.
+   * @returns {Promise<void>} A promise that resolves when the search operation is complete.
+   */
+  async searchAnomaly(searchString: string): Promise<void> {
+    await this.searchInput.clear();
+    await this.searchInput.fill(searchString);
+    await this.searchInput.press('Enter');
+  }
 
+  async getUserNameByEnvironment(): Promise<string> {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case 'staging':
+      case 'dev':
+        return 'Admin User';
+      case 'test':
+        return 'FinOpsTestUser@outlook.com';
+      default:
+        throw new Error(`Unknown TEST_ENVIRONMENT: ${env}`);
+    }
+  }
 }

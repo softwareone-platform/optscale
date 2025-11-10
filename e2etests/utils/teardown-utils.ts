@@ -73,3 +73,25 @@ export async function deleteTestUsers(authRequest: AuthRequest, restAPIRequest: 
     }
   }
 }
+
+/**
+ * Deletes an anomaly policy by its ID if the CLEAN_UP environment variable is set to 'true'.
+ *
+ * This function authenticates using the provided `AuthRequest` instance, constructs the necessary
+ * headers, and sends a DELETE request to remove the specified anomaly policy.
+ *
+ * @param {AuthRequest} authRequest - An instance of the AuthRequest class used to obtain an authorization token.
+ * @param {RestAPIRequest} restAPIRequest - An instance of the RestAPIRequest class used to interact with the REST API.
+ * @param {string} policyId - The ID of the anomaly policy to be deleted.
+ * @returns {Promise<void>} A promise that resolves when the anomaly policy is successfully deleted.
+ * @throws {Error} If the DELETE request fails with a status other than 204.
+ */
+export async function deleteAnomalyPolicy(authRequest: AuthRequest, restAPIRequest: RestAPIRequest, policyId: string): Promise<void> {
+  if (process.env.CLEAN_UP !== 'true') {
+    return;
+  }
+  const email = process.env.DEFAULT_USER_EMAIL;
+  const password = process.env.DEFAULT_USER_PASSWORD;
+  const token = await authRequest.getAuthorizationToken(email, password);
+  await restAPIRequest.deleteAnomalyPolicy(policyId, token);
+}

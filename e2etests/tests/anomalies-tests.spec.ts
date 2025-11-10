@@ -1,12 +1,17 @@
 /* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 
 import { test } from '../fixtures/page.fixture';
-import { expect } from '@playwright/test';
+import { expect, request } from '@playwright/test';
 import { DefaultAnomalyResponse } from '../types/api-response.types';
+import { deleteAnomalyPolicy } from '../utils/teardown-utils';
+import { AuthRequest } from '../api-requests/auth-request';
+import { RestAPIRequest } from '../api-requests/restapi-request';
 
 test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   test.use({ restoreSession: true });
   test.describe.configure({ mode: 'default' });
+
+  let anomalyPolicyId: string[] = [];
 
   test.beforeEach('Navigate to Anomalies page', async ({ anomaliesPage }) => {
     await anomaliesPage.navigateToURL();
@@ -45,7 +50,6 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect(resourcesPage.heading).toBeVisible();
   });
 
-
   test('[231488] API responses matches expected structure for default anomaly detection policies', async ({ anomaliesPage }) => {
     let anomalyData: DefaultAnomalyResponse;
     await test.step('Load expenses data', async () => {
@@ -83,7 +87,6 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
         expect.soft(typeof constraint.limit_hits).toBe('object');
         expect.soft(Array.isArray(constraint.limit_hits)).toBe(true);
 
-
         // Validate name-type correlation
         if (constraint.name === 'Default - resource count anomaly') {
           expect.soft(constraint.type).toBe('resource_count_anomaly');
@@ -91,9 +94,11 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
           expect.soft(constraint.type).toBe('expense_anomaly');
         }
 
-        // Validate definition thresholds
-        expect.soft(constraint.definition.threshold_days).toBe(7);
-        expect.soft(constraint.definition.threshold).toBe(30);
+        // Validate default definition thresholds
+        if (constraint.name.includes('Default')) {
+          expect.soft(constraint.definition.threshold_days).toBe(7);
+          expect.soft(constraint.definition.threshold).toBe(30);
+        }
 
         // Validate last_run_result structure
         expect.soft(constraint.last_run_result).toHaveProperty('average');
@@ -134,5 +139,68 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
         }
       }
     });
+  });
+
+  test('[231431] Anomalies page search function', async ({ anomaliesPage }) => {
+    await anomaliesPage.searchAnomaly('expense');
+    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
+    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+
+    await anomaliesPage.searchAnomaly('resource');
+    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
+
+    await anomaliesPage.searchAnomaly('non-existent anomaly');
+    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
+    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+
+    await anomaliesPage.searchAnomaly('30%');
+    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
+    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+  });
+
+  test('[231433] Add a resource count anomaly detection policy', async ({ anomaliesPage, anomaliesCreatePage }) => {
+    await anomaliesPage.clickAddBtn();
+    const policyName = `E2E Test - Resource Count Anomaly - ${Date.now()}`;
+
+    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Resource count', '14', '25');
+    anomalyPolicyId.push(policyId);
+
+    const newAnomalyPolicyLink = anomaliesPage.main.getByLabel(policyName);
+    const newAnomalyPolicyDescription = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[2]');
+
+    await expect.soft(newAnomalyPolicyLink).toBeVisible();
+    await expect.soft(newAnomalyPolicyDescription).toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
+  });
+
+  test('[231434] Add an expenses anomaly detection policy with filter', async ({ anomaliesPage, anomaliesCreatePage }) => {
+    await anomaliesPage.clickAddBtn();
+    const policyName = `E2E Test - Expense Anomaly - ${Date.now()}`;
+
+    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '10', '20', anomaliesCreatePage.suggestionsFilter, 'Assigned to me');
+    anomalyPolicyId.push(policyId);
+
+    const newAnomalyPolicyLink = anomaliesPage.main.getByLabel(policyName);
+    const newAnomalyPolicyDescription = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[2]');
+    const newAnomalyPolicyFilter = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[3]');
+
+    await expect.soft(newAnomalyPolicyLink).toBeVisible();
+    await expect.soft(newAnomalyPolicyDescription).toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
+    await expect.soft(newAnomalyPolicyFilter).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
+  });
+
+
+  test.afterAll(async ({ }) => {
+    if (process.env.CLEAN_UP === 'true') {
+      const apiRequestContext = await request.newContext({
+        ignoreHTTPSErrors: true,
+        baseURL: process.env.BASE_URL,
+      });
+      const authRequest = new AuthRequest(apiRequestContext);
+      const restAPIRequest = new RestAPIRequest(apiRequestContext);
+      for (const id of anomalyPolicyId) {
+        await deleteAnomalyPolicy(authRequest, restAPIRequest, id);
+      }
+    }
   });
 });
