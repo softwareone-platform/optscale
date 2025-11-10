@@ -244,7 +244,7 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
     def get_raw_expenses(self, start_date, end_date, filters):
         match_filters = [{'start_date': {'$lt': end_date}}]
         if start_date:
-            match_filters.append({'start_date': {'$gte': start_date}})
+            match_filters.append({'end_date': {'$gt': start_date}})
         match_filters.extend(filters)
         pipeline = [
             {'$match': {'$and': match_filters}}
