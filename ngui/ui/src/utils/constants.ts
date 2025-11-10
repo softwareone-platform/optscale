@@ -798,6 +798,7 @@ export const EXPENSES_MAP_TYPES = Object.freeze({
 export const EXPENSES_MAP_OBJECT_TYPES = Object.freeze({
   LOCATION: "location",
   FLOW: "flow",
+  OTHER_MARKER: "otherMarker",
   EXTERNAL_MARKER: "externalMarker",
   INTER_REGION_MARKER: "interRegionMarker",
   INTER_CONTINENTAL_MARKER: "interContinentalMarker"

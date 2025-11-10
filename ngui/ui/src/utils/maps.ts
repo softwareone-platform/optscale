@@ -2,12 +2,20 @@ import { ONE_CENT } from "utils/constants";
 
 export const REGION_EXPENSES_HEIGHT = 750;
 export const TRAFFIC_EXPENSES_HEIGHT = 650;
+
+export const OTHER_LAT = 73;
+export const OTHER_LON = 2;
+
 export const EXTERNAL_LAT = 73;
-export const EXTERNAL_LON = 25;
+export const EXTERNAL_LON = 35;
+
 export const INTER_CONTINENTAL_LAT = -45;
 export const INTER_CONTINENTAL_LON = 50;
+
 export const INTER_REGION_LAT = -45;
 export const INTER_REGION_LON = -10;
+
+export const EXTERNAL_NAME = "External";
 export const INTER_REGION_NAME = "Inter-Region";
 export const INTER_CONTINENTAL_NAME = "Intercontinental";
 
