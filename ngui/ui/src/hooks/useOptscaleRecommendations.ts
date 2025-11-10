@@ -14,6 +14,7 @@ import InstancesGenerationUpgrade from "containers/RecommendationsOverviewContai
 import InstancesInStoppedStateForALongTime from "containers/RecommendationsOverviewContainer/recommendations/InstancesInStoppedStateForALongTime";
 import InstancesMigration from "containers/RecommendationsOverviewContainer/recommendations/InstancesMigration";
 import InstanceSubscription from "containers/RecommendationsOverviewContainer/recommendations/InstanceSubscription";
+import IntelligentTiering from "containers/RecommendationsOverviewContainer/recommendations/IntelligentTiering";
 import NebiusMigration from "containers/RecommendationsOverviewContainer/recommendations/NebiusMigration";
 import ObsoleteImages from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteImages";
 import ObsoleteIps from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteIps";
@@ -52,6 +53,7 @@ export const useOptscaleRecommendations = () => {
       InsecureSecurityGroups,
       InactiveUsers,
       InactiveConsoleUsers,
+      IntelligentTiering,
       AbandonedS3Buckets,
       AbandonedKinesisStreams,
       AbandonedInstances,
