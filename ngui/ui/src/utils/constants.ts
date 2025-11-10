@@ -716,7 +716,16 @@ export const METADATA_FIELDS = Object.freeze({
   PLATFORM_NAME: "metadata.platformName",
   RAM: "metadata.ram",
   PLATFORM_ID: "metadata.platformId",
-  ARCHITECTURE: "metadata.architecture"
+  ARCHITECTURE: "metadata.architecture",
+  SECURITY_GROUPS: "metadata.securityGroups",
+  STOPPED_ALLOCATED: "metadata.stoppedAllocated",
+  LAST_SEEN_NOT_STOPPED: "metadata.lastSeenNotStopped",
+  SPOTTED: "metadata.spotted",
+  CLOUD_CONSOLE_LINK: "metadata.cloudConsoleLink",
+  START: "metadata.start",
+  END: "metadata.end",
+  IS_PUBLIC_POLICY: "metadata.isPublicPolicy",
+  IS_PUBLIC_ACLS: "metadata.isPublicAcls"
 });
 
 export const INSECURE_PORTS_MAP = Object.freeze({
