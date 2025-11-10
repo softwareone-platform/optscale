@@ -79,10 +79,7 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
-  const organizationSetupMode = getEnvironmentVariable(
-    "VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE",
-    ORGANIZATION_SETUP_MODE.AUTOMATIC
-  );
+  const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
   const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
 
