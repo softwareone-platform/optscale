@@ -22,7 +22,7 @@ type ChartExportProps = {
 };
 
 const defaultConfig: FileNameConfig = {
-  title: "OptScale_chart",
+  title: "FinOps_For_Cloud_chart",
   fileFormat: "png",
   withTime: true
 };
