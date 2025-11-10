@@ -2367,7 +2367,7 @@ class TestExpensesApi(TestApiBase):
                 ],
             },
             {
-                'cost': 300, 'date': dt,
+                'cost': 550, 'date': dt,
                 'cloud_acc': self.cloud_acc2['id'],
                 'region': resource2['region'],
                 'resource_id': resource2['id'],
@@ -2385,6 +2385,14 @@ class TestExpensesApi(TestApiBase):
                         'start_date': dt,
                         'end_date': dt + timedelta(days=1),
                         'cost': 200,
+                        'cloud_account_id': self.cloud_acc2['id'],
+                        'resource_id': resource2['cloud_resource_id']
+                    },
+                    {
+                        'name': 'raw 3',
+                        'start_date': dt - timedelta(days=1),
+                        'end_date': dt + timedelta(days=1),
+                        'cost': 500,
                         'cloud_account_id': self.cloud_acc2['id'],
                         'resource_id': resource2['cloud_resource_id']
                     }
@@ -2406,8 +2414,8 @@ class TestExpensesApi(TestApiBase):
         code, response = self.client.raw_expenses_get(
             resource2['id'], time - 100, time + 100)
         self.assertEqual(code, 200)
-        self.assertEqual(response['total_cost'], 300)
-        self.assertTrue(len(response['raw_expenses']) == 2)
+        self.assertEqual(response['total_cost'], 550)
+        self.assertTrue(len(response['raw_expenses']) == 3)
         for expense in response['raw_expenses']:
             self.assertIn(expense['name'], ['raw 2', 'raw 3'])
 
