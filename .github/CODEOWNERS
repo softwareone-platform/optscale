@@ -1,0 +1,26 @@
+# Frontend only for ngui
+ngui/			@hystax/ui
+
+# Backend for other directories
+auth/			@hystax/backend
+bi_exporter/		@hystax/backend
+bumischeduler/		@hystax/backend
+bumiworker/		@hystax/backend
+diproxy/		@hystax/backend
+diworker/		@hystax/backend
+docker_images/		@hystax/backend
+gemini/			@hystax/backend
+herald/			@hystax/backend
+insider/		@hystax/backend
+jira_bus/		@hystax/backend
+jira_ui/		@hystax/backend
+katara/			@hystax/backend
+keeper/			@hystax/backend
+metroculus/		@hystax/backend
+optscale-deploy/	@hystax/backend
+optscale_client/	@hystax/backend
+rest_api/		@hystax/backend
+risp/			@hystax/backend
+slacker/		@hystax/backend
+tools/			@hystax/backend
+trapper/		@hystax/backend

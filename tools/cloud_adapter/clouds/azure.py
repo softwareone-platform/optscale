@@ -4,6 +4,8 @@ import enum
 import logging
 import re
 import time
+import random
+from typing import Any, Dict
 
 from requests.models import Request
 from urllib.parse import urlencode
@@ -56,7 +58,6 @@ from tools.cloud_adapter.exceptions import (
 from tools.cloud_adapter.utils import (
     CloudParameter,
     gbs_to_bytes,
-    mibs_to_bytes
 )
 
 # Silence annoying logs from Azure SDK
@@ -85,18 +86,116 @@ AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
 
 
+try:
+    LOG.info("INIT: Trying to apply Azure SDK retry policy")
+    from azure.core.pipeline.policies import RetryPolicy
+    _SDK_RETRY = RetryPolicy(
+        retry_total=8,
+        retry_backoff_factor=0.7,
+        retry_backoff_max=50.0,
+        retry_on_status_codes={429, 500, 502, 503, 504},
+    )
+    LOG.info("INIT: Azure retry policy enabled for azure-core clients")
+except Exception:
+    _SDK_RETRY = None
+    LOG.warning("INIT: Azure retry policy not available — falling back to manual retry logic")
+
+_BACKOFF_BASE = 1.0
+_BACKOFF_CAP  = 60.0
+_last_sleep = 1.0
+
+
+def _decorrelated_jitter(prev: float) -> float:
+    low = _BACKOFF_BASE
+    high = max(_BACKOFF_BASE, min(prev * 3.0, _BACKOFF_CAP))
+    wait = min(random.uniform(low, high), _BACKOFF_CAP)
+    return wait
+
+
+def _sleep_with_headers(resp_headers: Dict[str, Any] | None, source="unknown"):
+    """Sleep respecting Retry-After if provided else jitter."""
+    global _last_sleep
+    retry_after = None
+
+    # https://github.com/Azure/azure-sdk-for-net/blob/7e7e9854d4c90fc25ee65d7729d69a8489f00d59/sdk/core/Azure.Core/src/ResponseHeaders.cs#L17
+    if resp_headers:
+        raw = resp_headers.get("Retry-After")
+        if raw is not None:
+            try:
+                retry_after = float(raw)
+            except Exception:
+                pass
+        # https://github.com/Azure/azure-sdk-for-go/issues/22120
+        if retry_after is None and "x-ms-retry-after-ms" in resp_headers:
+            try:
+                retry_after = float(resp_headers["x-ms-retry-after-ms"]) / 1000.0
+            except Exception:
+                pass
+
+    if retry_after is None:
+        retry_after = _decorrelated_jitter(_last_sleep)
+        LOG.warning(
+            "THROTTLE: No Retry-After header — using jitter %.2fs (prev %.2fs)",
+            retry_after, _last_sleep
+        )
+        _last_sleep = retry_after
+    else:
+        jitter = random.uniform(0, 0.5)
+        retry_after = min(retry_after + jitter, _BACKOFF_CAP)
+        LOG.warning(
+            "THROTTLE: Retry-After=%.2fs (+jitter %.2fs) -> sleep=%.2fs [%s]",
+            retry_after - jitter, jitter, retry_after, source
+        )
+        _last_sleep = retry_after
+
+    time.sleep(retry_after)
+
+
 def _retry_on_error(exc):
     if isinstance(exc, AzureConsumptionException):
-        # retry if not Too Many Requests
-        if int(exc.response.status_code) != 429:
+        resp = getattr(exc, "response", None)
+        code = int(getattr(resp, "status_code", 0) or 0)
+        headers = getattr(resp, "headers", {}) or {}
+
+        if code in (429, 503):
+            LOG.error(
+                "RETRY: Azure throttle HTTP %s — honoring server retry headers.",
+                code
+            )
+            _sleep_with_headers(headers, source=f"429/503 ({code})")
             return True
-        else:
-            LOG.info('Too many requests. Will sleep for 60 seconds')
-            time.sleep(60)
+
+        if code in (500, 502, 504):
+            LOG.error("RETRY: Azure transient HTTP %s", code)
+            _sleep_with_headers({}, source=str(code))
             return True
+
+        return False
+
     if isinstance(exc, MetricsServerTimeoutException):
+        LOG.error("RETRY: Metrics timeout")
+        _sleep_with_headers({}, source="metrics_timeout")
         return True
+
+    if isinstance(exc, (ServiceRequestError, ClientRequestError)):
+        LOG.error("RETRY: Network/client exception: %s", type(exc).__name__)
+        _sleep_with_headers({}, source="network")
+        return True
+
     return False
+
+def _client_with_retry(client_cls, *args, **kwargs):
+    # Try to use SDK RetryPolicy
+    if _SDK_RETRY is not None:
+        try:
+            LOG.info("INIT: Creating %s with azure-core retry policy", client_cls.__name__)
+            return client_cls(*args, retry_policy=_SDK_RETRY, **kwargs)
+        except TypeError:
+            LOG.info(
+                "INIT: Client %s does not accept retry_policy — using legacy constructor",
+                client_cls.__name__
+            )
+    return client_cls(*args, **kwargs)
 
 
 def call_with_time_limit(func, args, kwargs, timeout):
@@ -238,34 +337,42 @@ class Azure(CloudBase):
 
     @property
     def compute(self):
-        if self._compute:
-            return self._compute
-        self._compute = ComputeManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+        if not self._compute:
+            self._compute = _client_with_retry(
+                ComputeManagementClient,
+                self.service_principal_credentials,
+                self._subscription_id
+            )
         return self._compute
 
     @property
     def resource(self):
-        if self._resource:
-            return self._resource
-        self._resource = ResourceManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+        if not self._resource:
+            self._resource = _client_with_retry(
+                ResourceManagementClient,
+                self.service_principal_credentials,
+                self._subscription_id
+            )
         return self._resource
 
     @property
     def network(self):
-        if self._network:
-            return self._network
-        self._network = NetworkManagementClient(
-            self.client_secret_credentials, self._subscription_id)
+        if not self._network:
+            self._network = _client_with_retry(
+                NetworkManagementClient,
+                self.client_secret_credentials,
+                self._subscription_id
+                )
         return self._network
 
     @property
     def storage(self):
-        if self._storage:
-            return self._storage
-        self._storage = StorageManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+        if not self._storage:
+            self._storage = _client_with_retry(
+                StorageManagementClient,
+                self.service_principal_credentials,
+                self._subscription_id
+            )
         return self._storage
 
     @property
