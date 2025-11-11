@@ -96,4 +96,36 @@ export class AnomaliesPage extends BasePage {
         throw new Error(`Unknown TEST_ENVIRONMENT: ${env}`);
     }
   }
+
+  /**
+   * Retrieves a Locator for a policy link based on the policy name.
+   *
+   * @param {string} name - The name of the policy to locate.
+   * @returns {Locator} A Locator object for the policy link.
+   */
+  policyLinkByName(name: string): Locator {
+    return this.table.getByLabel(name);
+  }
+
+  /**
+   * Retrieves a Locator for the description of a policy based on the policy name.
+   *
+   * @param {string} name - The name of the policy whose description is to be located.
+   * @returns {Locator} A Locator object for the policy description.
+   */
+  policyDescriptionByName(name: string): Locator {
+    const policyLink = this.policyLinkByName(name);
+    return policyLink.locator('//ancestor::td[1]/following-sibling::td[2]');
+  }
+
+  /**
+   * Retrieves a Locator for the filter of a policy based on the policy name.
+   *
+   * @param {string} name - The name of the policy whose filter is to be located.
+   * @returns {Locator} A Locator object for the policy filter.
+   */
+  policyFilterByName(name: string): Locator {
+    const policyLink = this.policyLinkByName(name);
+    return policyLink.locator('//ancestor::td[1]/following-sibling::td[3]');
+  }
 }

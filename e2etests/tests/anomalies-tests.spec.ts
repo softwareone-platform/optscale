@@ -166,11 +166,9 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Resource count', '14', '25');
     anomalyPolicyId.push(policyId);
 
-    const newAnomalyPolicyLink = anomaliesPage.main.getByLabel(policyName);
-    const newAnomalyPolicyDescription = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[2]');
-
-    await expect.soft(newAnomalyPolicyLink).toBeVisible();
-    await expect.soft(newAnomalyPolicyDescription).toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
+    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
+    await expect.soft(anomaliesPage.policyDescriptionByName(policyName)).toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
+    await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText('-');
   });
 
   test('[231434] Add an expenses anomaly detection policy with filter', async ({ anomaliesPage, anomaliesCreatePage }) => {
@@ -180,13 +178,9 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '10', '20', anomaliesCreatePage.suggestionsFilter, 'Assigned to me');
     anomalyPolicyId.push(policyId);
 
-    const newAnomalyPolicyLink = anomaliesPage.main.getByLabel(policyName);
-    const newAnomalyPolicyDescription = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[2]');
-    const newAnomalyPolicyFilter = newAnomalyPolicyLink.locator('//ancestor::td[1]/following-sibling::td[3]');
-
-    await expect.soft(newAnomalyPolicyLink).toBeVisible();
-    await expect.soft(newAnomalyPolicyDescription).toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
-    await expect.soft(newAnomalyPolicyFilter).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
+    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
+    await expect.soft(anomaliesPage.policyDescriptionByName(policyName)).toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
+    await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
   });
 
 
@@ -201,6 +195,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
       for (const id of anomalyPolicyId) {
         await deleteAnomalyPolicy(authRequest, restAPIRequest, id);
       }
+      await apiRequestContext.dispose();
     }
   });
 });
