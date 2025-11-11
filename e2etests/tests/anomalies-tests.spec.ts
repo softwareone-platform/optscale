@@ -185,6 +185,16 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
   });
 
+  test('[231441] Verify delete policy functions correctly', async ({ anomaliesPage, anomaliesCreatePage }) => {
+    await anomaliesPage.clickAddBtn();
+    const policyName = `E2E Test - Delete Anomaly Policy - ${Date.now()}`;
+
+    await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '5', '15');
+    await anomaliesPage.policyLinkByName(policyName).waitFor();
+    await anomaliesPage.deleteAnomalyPolicy(policyName);
+
+    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeHidden();
+  });
 
   test.afterAll(async ({ }) => {
     if (process.env.CLEAN_UP === 'true') {

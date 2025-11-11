@@ -9,6 +9,10 @@ export class AnomaliesPage extends BasePage {
   readonly anomalyDetectionBreadcrumb: Locator;
   readonly heading: Locator;
   readonly anomalyDetectionPolicyHeading: Locator;
+  readonly showResourcesBtn: Locator;
+  readonly deleteBtn: Locator;
+  readonly deleteSideModal: Locator;
+  readonly sideModalDeleteBtn: Locator;
   readonly addBtn: Locator;
   readonly searchInput: Locator;
   readonly table: Locator;
@@ -35,6 +39,10 @@ export class AnomaliesPage extends BasePage {
     this.anomalyDetectionBreadcrumb = this.main.locator('[href="/anomalies"]');
     this.heading = this.main.getByTestId('lbl_constraints_detection');
     this.anomalyDetectionPolicyHeading = this.getByAnyTestId('lbl_anomaly_detection_policy', this.main);
+    this.showResourcesBtn = this.main.getByTestId('btn_show_resources');
+    this.deleteBtn = this.main.getByTestId('btn_delete');
+    this.deleteSideModal = this.page.getByTestId('smodal_delete');
+    this.sideModalDeleteBtn = this.deleteSideModal.getByTestId('btn_smodal_delete');
     this.addBtn = this.main.getByTestId('btn_add');
     this.searchInput = this.main.getByPlaceholder('Search');
     this.table = this.main.locator('table');
@@ -84,6 +92,12 @@ export class AnomaliesPage extends BasePage {
     await this.searchInput.press('Enter');
   }
 
+  /**
+   * Retrieves the username based on the current environment.
+   *
+   * @returns {Promise<string>} A promise that resolves to the username for the current environment.
+   * @throws {Error} If the environment is unknown.
+   */
   async getUserNameByEnvironment(): Promise<string> {
     const env = process.env.ENVIRONMENT;
     switch (env) {
@@ -127,5 +141,18 @@ export class AnomaliesPage extends BasePage {
   policyFilterByName(name: string): Locator {
     const policyLink = this.policyLinkByName(name);
     return policyLink.locator('//ancestor::td[1]/following-sibling::td[3]');
+  }
+
+  /**
+   * Deletes an anomaly detection policy by its name.
+   *
+   * @param {string} name - The name of the anomaly policy to delete.
+   * @returns {Promise<void>} A promise that resolves when the anomaly policy is successfully deleted.
+   */
+  async deleteAnomalyPolicy(name: string): Promise<void> {
+    await this.policyLinkByName(name).click();
+    await this.deleteBtn.click();
+    await this.waitForTextContent(this.deleteSideModal, name);
+    await this.sideModalDeleteBtn.click();
   }
 }
