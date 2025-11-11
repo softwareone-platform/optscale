@@ -465,7 +465,7 @@ export interface DefaultAnomalyResponse {
     last_run_result: {
       average: number;
       today: number;
-      breakdown: Record<string, number>;
+      breakdown: Record<string, number> | null;
     }
     limit_hits: any[];
   }];
@@ -486,3 +486,17 @@ export interface CreateAnomalyPolicyResponse {
   last_run: number;
   last_run_result: Record<string, unknown>;
 }
+
+
+export interface AnomalyExpensesDailyBreakdownResponse {
+  expensesDailyBreakdown: {
+    breakdown: {
+      [timestamp: number]: {
+        [serviceName: string]: {
+          cost: number;
+        };
+      };
+    };
+  };
+}
+
