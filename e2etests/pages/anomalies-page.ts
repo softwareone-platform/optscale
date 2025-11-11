@@ -29,6 +29,10 @@ export class AnomaliesPage extends BasePage {
   readonly policyDetailsTypeValue: Locator;
   readonly policyDetailsEvaluationPeriodValue: Locator;
   readonly policyDetailsThresholdValue: Locator;
+  readonly categorizeBySelect: Locator;
+  readonly expensesSelect: Locator;
+  readonly showLegend: Locator;
+  readonly exportChartBtn: Locator;
 
   /**
    * Initializes a new instance of the AnomaliesPage class.
@@ -69,6 +73,12 @@ export class AnomaliesPage extends BasePage {
       '//span[contains(text(), "Evaluation period")]/../following-sibling::div'
     );
     this.policyDetailsThresholdValue = this.policyDetailsDiv.locator('//span[contains(text(), "Threshold")]/../following-sibling::div');
+
+    // Charts
+    this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
+    this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
+    this.showLegend = this.main.getByLabel('Show legend');
+    this.exportChartBtn = this.main.getByTestId('btn_export_chart');
   }
 
   /**

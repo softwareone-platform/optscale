@@ -7,6 +7,9 @@ import { deleteAnomalyPolicy } from '../utils/teardown-utils';
 import { AuthRequest } from '../api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 import { debugLog } from '../utils/debug-logging';
+import { InterceptionEntry } from '../types/interceptor.types';
+import { AnomaliesDefaultExpenseServiceDailyResponse, } from '../mocks/anomalies-page.mocks';
+import { comparePngImages } from '../utils/image-comparison';
 
 test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   test.use({ restoreSession: true });
@@ -169,7 +172,9 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     anomalyPolicyId.push(policyId);
 
     await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
-    await expect.soft(anomaliesPage.policyDescriptionByName(policyName)).toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
+    await expect
+      .soft(anomaliesPage.policyDescriptionByName(policyName))
+      .toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
     await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText('-');
   });
 
@@ -177,11 +182,20 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Expense Anomaly - ${Date.now()}`;
 
-    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '10', '20', anomaliesCreatePage.suggestionsFilter, 'Assigned to me');
+    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(
+      policyName,
+      'Expenses',
+      '10',
+      '20',
+      anomaliesCreatePage.suggestionsFilter,
+      'Assigned to me'
+    );
     anomalyPolicyId.push(policyId);
 
     await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
-    await expect.soft(anomaliesPage.policyDescriptionByName(policyName)).toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
+    await expect
+      .soft(anomaliesPage.policyDescriptionByName(policyName))
+      .toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
     await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
   });
 
@@ -196,7 +210,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeHidden();
   });
 
-  test.afterAll(async ({ }) => {
+  test.afterAll(async ({}) => {
     if (process.env.CLEAN_UP === 'true') {
       const apiRequestContext = await request.newContext({
         ignoreHTTPSErrors: true,
@@ -209,5 +223,38 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
       }
       await apiRequestContext.dispose();
     }
+  });
+});
+
+test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      mock: AnomaliesDefaultExpenseServiceDailyResponse,
+    },
+  ];
+
+  test.use({
+    restoreSession: true,
+    interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false },
+  });
+
+  test.beforeEach('Navigate to Anomalies page', async ({ anomaliesPage }) => {
+    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
+    await anomaliesPage.navigateToURL();
+  });
+
+  test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+    let actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-export.png';
+    let expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-export.png';
+    let diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-export.png';
+    let match: boolean;
+
+    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.waitForAllProgressBarsToDisappear();
+    await anomaliesPage.waitForCanvas();
+    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+    match = await comparePngImages(expectedPath, actualPath, diffPath);
+    expect.soft(match).toBe(true);
   });
 });
