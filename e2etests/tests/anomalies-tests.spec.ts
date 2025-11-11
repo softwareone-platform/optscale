@@ -6,6 +6,7 @@ import { DefaultAnomalyResponse } from '../types/api-response.types';
 import { deleteAnomalyPolicy } from '../utils/teardown-utils';
 import { AuthRequest } from '../api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
+import { debugLog } from '../utils/debug-logging';
 
 test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   test.use({ restoreSession: true });
@@ -63,6 +64,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
         anomaliesPage.page.reload(),
       ]);
       anomalyData = await anomalyResponse.json();
+      debugLog(JSON.stringify(anomalyData));
     });
 
     await test.step('Validate API response structure', async () => {
@@ -98,44 +100,44 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
         if (constraint.name.includes('Default')) {
           expect.soft(constraint.definition.threshold_days).toBe(7);
           expect.soft(constraint.definition.threshold).toBe(30);
-        }
 
-        // Validate last_run_result structure
-        expect.soft(constraint.last_run_result).toHaveProperty('average');
-        expect.soft(constraint.last_run_result).toHaveProperty('today');
-        expect.soft(typeof constraint.last_run_result.average).toBe('number');
-        expect.soft(typeof constraint.last_run_result.today).toBe('number');
+          // Validate last_run_result structure
+          expect.soft(constraint.last_run_result).toHaveProperty('average');
+          expect.soft(constraint.last_run_result).toHaveProperty('today');
+          expect.soft(typeof constraint.last_run_result.average).toBe('number');
+          expect.soft(typeof constraint.last_run_result.today).toBe('number');
 
-        // Validate breakdown keys are consecutive daily timestamps for last 7 days
-        const breakdown = constraint.last_run_result.breakdown;
-        const breakdownKeys = Object.keys(breakdown)
-          .map(Number)
-          .sort((a, b) => a - b);
+          // Validate breakdown keys are consecutive daily timestamps for last 7 days
+          const breakdown = constraint.last_run_result.breakdown;
+          const breakdownKeys = Object.keys(breakdown)
+            .map(Number)
+            .sort((a, b) => a - b);
 
-        // Validate we have exactly 7 timestamps
-        expect.soft(breakdownKeys).toHaveLength(7);
+          // Validate we have exactly 7 timestamps
+          expect.soft(breakdownKeys).toHaveLength(7);
 
-        // Validate timestamps are consecutive daily intervals (86400 seconds apart)
-        for (let i = 0; i < breakdownKeys.length - 1; i++) {
-          const dayDifference = breakdownKeys[i + 1] - breakdownKeys[i];
-          expect.soft(dayDifference).toBe(86400); // Exactly 24 hours
-        }
+          // Validate timestamps are consecutive daily intervals (86400 seconds apart)
+          for (let i = 0; i < breakdownKeys.length - 1; i++) {
+            const dayDifference = breakdownKeys[i + 1] - breakdownKeys[i];
+            expect.soft(dayDifference).toBe(86400); // Exactly 24 hours
+          }
 
-        // Validate the range spans exactly 6 days (7 total timestamps)
-        const oldestTimestamp = breakdownKeys[0];
-        const latestTimestamp = breakdownKeys[breakdownKeys.length - 1];
-        expect.soft(latestTimestamp - oldestTimestamp).toBe(6 * 86400);
+          // Validate the range spans exactly 6 days (7 total timestamps)
+          const oldestTimestamp = breakdownKeys[0];
+          const latestTimestamp = breakdownKeys[breakdownKeys.length - 1];
+          expect.soft(latestTimestamp - oldestTimestamp).toBe(6 * 86400);
 
-        // Validate timestamps are reasonable (within last 14 days for safety)
-        const now = Math.floor(Date.now() / 1000);
-        const thirtyDaysAgo = now - 14 * 86400;
-        expect.soft(oldestTimestamp).toBeGreaterThan(thirtyDaysAgo);
-        expect.soft(latestTimestamp).toBeLessThanOrEqual(now);
+          // Validate timestamps are reasonable (within last 14 days for safety)
+          const now = Math.floor(Date.now() / 1000);
+          const thirtyDaysAgo = now - 14 * 86400;
+          expect.soft(oldestTimestamp).toBeGreaterThan(thirtyDaysAgo);
+          expect.soft(latestTimestamp).toBeLessThanOrEqual(now);
 
-        // Validate each breakdown value is a number
-        for (const key of breakdownKeys) {
-          expect.soft(typeof breakdown[key]).toBe('number');
-          expect.soft(breakdown[key]).toBeGreaterThanOrEqual(0);
+          // Validate each breakdown value is a number
+          for (const key of breakdownKeys) {
+            expect.soft(typeof breakdown[key]).toBe('number');
+            expect.soft(breakdown[key]).toBeGreaterThanOrEqual(0);
+          }
         }
       }
     });
