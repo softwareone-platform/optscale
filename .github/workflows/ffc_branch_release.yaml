@@ -1,0 +1,112 @@
+name: Branch Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+      base:
+        description: 'Base branch type to use for release major'
+        required: true
+        type: choice
+        options:
+          - main
+          - release
+        default: 'main'
+      dry_run:
+        description: 'If true, build images but do not push'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Prepare modules for matrix build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      build_tag: ${{ steps.get-build-tag.outputs.build_tag }}
+      push: ${{ steps.set-push.outputs.push }}
+    steps:
+    - name: Checkout specified branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch }}
+        fetch-depth: 0
+    - name: Fetch all branches
+      run: git fetch --prune origin "+refs/heads/*:refs/remotes/origin/*"
+    - name: Generate module.json
+      run: ./generate_modules_json.sh > modules.json
+    - id: set-matrix
+      name: Read module.json into matrix
+      run: echo "matrix=$(cat modules.json)" >> $GITHUB_OUTPUT
+    - id: get-build-tag
+      name: Compute build tag
+      run: |
+        set -euo pipefail
+        BRANCH="${{ github.event.inputs.branch }}"
+        BASE_INPUT="${{ github.event.inputs.base }}"
+        echo "Selected branch: ${BRANCH}, base: ${BASE_INPUT}"
+
+        # Short commit id for tagging
+        COMMIT_SHORT=$(git rev-parse --short=7 HEAD)
+
+        # Choose major based on input 'base'
+        if [ "${BASE_INPUT}" = "main" ]; then
+          MAJOR="${{ vars.NEXT_RELEASE }}"
+        else
+          MAJOR="${{ vars.CURRENT_RELEASE }}"
+        fi
+
+        if [ -z "${MAJOR}" ] || [ "${MAJOR}" = "null" ]; then
+          echo "Warning: release major variable is empty; defaulting to 'main'"
+          MAJOR=main
+        fi
+
+        BUILD_TAG="${MAJOR}_${COMMIT_SHORT}"
+        echo "Computed build tag: ${BUILD_TAG}"
+        echo "build_tag=${BUILD_TAG}" >> $GITHUB_OUTPUT
+
+    - id: set-push
+      name: Determine push behavior (dry-run)
+      run: |
+        if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+          echo "push=false" >> $GITHUB_OUTPUT
+        else
+          echo "push=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    name: Build and push docker images
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+    - name: 'Login to ACR'
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ vars.REGISTRY_LOGIN_SERVER }}
+        username: ${{ vars.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ vars.REGISTRY_LOGIN_SERVER }}/${{ matrix.name }}
+        tags: ${{ needs.prepare.outputs.build_tag }}
+    - name: Build and push docker image
+      id: docker_build
+      uses: docker/build-push-action@v3
+      with:
+        file: ${{ matrix.dockerfile }}
+        push: ${{ needs.prepare.outputs.push }}
+        tags: ${{ steps.meta.outputs.tags }}
+    - name: Docker image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}
