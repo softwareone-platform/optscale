@@ -30,6 +30,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       build_tag: ${{ steps.get-build-tag.outputs.build_tag }}
       push: ${{ steps.set-push.outputs.push }}
+      commit_sha: ${{ steps.get-commit.outputs.commit_sha }}
     steps:
     - name: Checkout specified branch
       uses: actions/checkout@v4
@@ -38,6 +39,10 @@ jobs:
         fetch-depth: 0
     - name: Fetch all branches
       run: git fetch --prune origin "+refs/heads/*:refs/remotes/origin/*"
+    - id: get-commit
+      name: Record commit SHA
+      run: |
+        echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
     - name: Generate module.json
       run: ./generate_modules_json.sh > modules.json
     - id: set-matrix
@@ -89,6 +94,11 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
+    - name: Checkout exact commit produced by prepare
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ needs.prepare.outputs.commit_sha }}
+        fetch-depth: 0
     - name: 'Login to ACR'
       uses: docker/login-action@v3
       with:
@@ -105,6 +115,7 @@ jobs:
       id: docker_build
       uses: docker/build-push-action@v3
       with:
+        context: .
         file: ${{ matrix.dockerfile }}
         push: ${{ needs.prepare.outputs.push }}
         tags: ${{ steps.meta.outputs.tags }}
