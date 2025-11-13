@@ -234,6 +234,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
 });
 
 test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
+  //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
   const apiInterceptions: InterceptionEntry[] = [
     {
       gql: 'Organizations',
@@ -257,8 +258,8 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     },
     {
       gql: 'GetOrganizationLimitHits',
-      mock: AnomaliesDefaultExpensesOrganizationLimitsHitResponse
-    }
+      mock: AnomaliesDefaultExpensesOrganizationLimitsHitResponse,
+    },
   ];
 
   test.use({
@@ -266,16 +267,81 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false },
   });
 
-  test.beforeEach('Navigate to Anomalies page', async ({ anomaliesPage }) => {
-    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
+  //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
+  test.only('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+    let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
+    let expectedPath = 'tests/expected/expected-anomaly-region-daily-chart-export.png';
+    let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';
+    let match: boolean;
+
+    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-13T12:45:00Z'));
     await anomaliesPage.navigateToURL();
+
+    await test.step('Category: Region', async () => {
+      await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+      await anomaliesPage.waitForAllProgressBarsToDisappear();
+      await anomaliesPage.waitForCanvas();
+      await anomaliesPage.selectCategorizeBy('Region');
+
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    await test.step('Category: Resource type', async () => {
+      actualPath = 'tests/downloads/anomaly-expenses-resource-type-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-resource-type-daily-chart-export.png';
+      diffPath = 'tests/downloads/diff-anomaly-expenses-resource-type-daily-chart-export.png';
+
+      await anomaliesPage.selectCategorizeBy('Resource type');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    await test.step('Category: Data source', async () => {
+      actualPath = 'tests/downloads/anomaly-expenses-data-source-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-data-source-daily-chart-export.png';
+      diffPath = 'tests/downloads/diff-anomaly-expenses-data-source-daily-chart-export.png';
+
+      await anomaliesPage.selectCategorizeBy('Data source');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    await test.step('Category: Owner', async () => {
+      actualPath = 'tests/downloads/anomaly-expenses-owner-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-owner-daily-chart-export.png';
+      diffPath = 'tests/downloads/diff-anomaly-expenses-owner-daily-chart-export.png';
+
+      await anomaliesPage.selectCategorizeBy('Owner');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    await test.step('Category: Pool', async () => {
+      actualPath = 'tests/downloads/anomaly-expenses-pool-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-pool-daily-chart-export.png';
+      diffPath = 'tests/downloads/diff-anomaly-expenses-pool-daily-chart-export.png';
+
+      await anomaliesPage.selectCategorizeBy('Pool');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
   });
 
-  test('[231436] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-export.png';
     let match: boolean;
+
+    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
+    await anomaliesPage.navigateToURL();
 
     await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
     await anomaliesPage.waitForAllProgressBarsToDisappear();
@@ -311,6 +377,5 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
-
   });
 });
