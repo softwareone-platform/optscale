@@ -14,14 +14,15 @@ import { PRODUCT_TOUR, useStartTour } from "components/Tour";
 import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
 import ProfileMenuContainer from "containers/ProfileMenuContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
+import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
-import { ENABLE_PRODUCT_TOUR } from "utils/constants";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = ({ isProductTourAvailable = false }) => {
+  const isProductTourEnabled = useIsFeatureEnabled("product_tour");
   const { organizationId } = useOrganizationInfo();
   const startTour = useStartTour();
   const { classes } = useStyles();
@@ -58,7 +59,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
             value: <FormattedMessage id="documentation" />
           }}
         />
-        {ENABLE_PRODUCT_TOUR && organizationId && (
+        {isProductTourEnabled && organizationId && (
           <IconButton
             dataTestId="btn_product_tour"
             color="info"

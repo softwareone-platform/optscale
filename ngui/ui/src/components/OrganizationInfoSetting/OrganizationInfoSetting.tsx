@@ -10,8 +10,9 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Tooltip from "components/Tooltip";
 import EditOrganizationFormContainer from "containers/EditOrganizationFormContainer";
 import { useIsAllowed } from "hooks/useAllowedActions";
+import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_CAPABILITY, ORGANIZATION_EDIT_ALLOWED } from "utils/constants";
+import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import OrganizationCurrency from "./OrganizationCurrency";
@@ -48,8 +49,8 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const enableEditMode = () => setIsEditMode(true);
   const disableEditMode = () => setIsEditMode(false);
-
-  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] }) && ORGANIZATION_EDIT_ALLOWED;
+  const isOrganizationEditAllowed = useIsFeatureEnabled("organization_edit_allowed");
+  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] }) && isOrganizationEditAllowed;
 
   if (isEditMode) {
     return <EditOrganizationFormContainer onCancel={disableEditMode} onSuccess={disableEditMode} />;
@@ -85,6 +86,7 @@ const OrganizationName = ({ name }: OrganizationNameProps) => {
 
 const OrganizationInfoSetting = () => {
   const { name: organizationName, organizationId, currency } = useOrganizationInfo();
+  const isOrganizationEditAllowed = useIsFeatureEnabled("organization_edit_allowed");
 
   return (
     <Stack spacing={SPACING_1}>
@@ -95,7 +97,7 @@ const OrganizationInfoSetting = () => {
         <OrganizationName name={organizationName} />
       </Box>
       <CapabilityWrapper capability={OPTSCALE_CAPABILITY.FINOPS}>
-        {ORGANIZATION_EDIT_ALLOWED && (
+        {isOrganizationEditAllowed && (
           <Box>
             <Typography>
               <FormattedMessage id="organizationCurrencyDescription" />

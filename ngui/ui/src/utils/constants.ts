@@ -1061,8 +1061,3 @@ export const EMPTY_BREAKDOWN_KEY = Object.freeze({
   NOT_SET: "(not set)",
   NULL: "null"
 });
-
-export const ALLOW_ORGANIZATION_CREATION = false;
-export const ENABLE_PRODUCT_TOUR = false;
-export const ORGANIZATION_EDIT_ALLOWED = false;
-export const DOWNLOAD_FEATURE_ENABLED = false;
