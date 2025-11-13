@@ -1,5 +1,5 @@
 import { ObjectValues } from "utils/types";
-import { AUTHENTICATION_TYPES } from "./AwsConnectionForm.constants";
+import { AUTHENTICATION_TYPES } from "./constants";
 
 export type AuthenticationType = ObjectValues<typeof AUTHENTICATION_TYPES>;
 

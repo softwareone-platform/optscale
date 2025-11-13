@@ -5,8 +5,8 @@ import {
   awsConnectionAssumedRoleDescriptions,
   awsConnectionKeyAccessDescriptions,
   AWS_ROOT_INPUTS_FIELD_NAMES
-} from "./AwsConnectionForm.constants";
-import { AuthenticationType } from "./AwsConnectionForm.types";
+} from "./constants";
+import { AuthenticationType } from "./types";
 
 export {
   AUTHENTICATION_TYPES,
@@ -17,6 +17,6 @@ export {
   AwsConnectionAccessKeyInputs
 };
 export type { AuthenticationType };
-export * from "./AwsConnectionForm.constants";
+export * from "./constants";
 export * from "./AwsConnectionFormElements";
 export * from "./AwsConnectionAccessKeyInputs";

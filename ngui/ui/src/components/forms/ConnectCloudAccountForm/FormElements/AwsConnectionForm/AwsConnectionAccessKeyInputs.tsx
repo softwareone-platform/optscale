@@ -10,7 +10,7 @@ import {
 import { RadioGroup, Switch } from "components/forms/common/fields";
 import QuestionMark from "components/QuestionMark";
 import { AWS_ROOT_CONNECT_CONFIG_SCHEMES } from "utils/constants";
-import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./AwsConnectionForm.constants";
+import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./constants";
 
 export const AwsConnectionAccessKeyInputs = ({ showAdvancesOptions = true }) => (
   <ConnectForm>

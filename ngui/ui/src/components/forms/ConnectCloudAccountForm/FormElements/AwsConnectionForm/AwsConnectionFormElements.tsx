@@ -11,8 +11,8 @@ import {
   authenticationTypes,
   awsConnectionAssumedRoleDescriptions,
   awsConnectionKeyAccessDescriptions
-} from "./AwsConnectionForm.constants";
-import { AuthenticationType, AuthenticationTypeSelectorType, AwsTypeDescriptionProps } from "./AwsConnectionForm.types";
+} from "./constants";
+import { AuthenticationType, AuthenticationTypeSelectorType, AwsTypeDescriptionProps } from "./types";
 
 export const AwsTypeDescription = ({
   messageId,
