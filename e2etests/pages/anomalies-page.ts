@@ -165,4 +165,27 @@ export class AnomaliesPage extends BasePage {
     await this.waitForTextContent(this.deleteSideModal, name);
     await this.sideModalDeleteBtn.click();
   }
+
+  /**
+   * Selects an option from the "Expenses" dropdown on the Resources page.
+   * This method uses the `expensesSelect` locator to select the specified option
+   * and waits for the canvas to update after the selection.
+   *
+   * @param {string} option - The option to select from the dropdown.
+   * @returns {Promise<void>} Resolves when the option is selected and the canvas is updated.
+   */
+  async selectExpenses(option: string): Promise<void> {
+    await this.selectFromComboBox(this.expensesSelect, option);
+    await this.waitForCanvas();
+  }
+
+  /**
+   * Toggles the visibility of the legend on the Resources page.
+   * This method interacts with the `showLegend` locator and logs the action.
+   *
+   * @returns {Promise<void>} Resolves when the legend visibility is toggled.
+   */
+  async clickShowLegend(): Promise<void> {
+    await this.showLegend.click();
+  }
 }

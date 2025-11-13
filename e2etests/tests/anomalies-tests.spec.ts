@@ -1,15 +1,22 @@
 /* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 
-import { test } from '../fixtures/page.fixture';
-import { expect, request } from '@playwright/test';
-import { DefaultAnomalyResponse } from '../types/api-response.types';
-import { deleteAnomalyPolicy } from '../utils/teardown-utils';
+import {
+  AnomaliesDataSourcesResponse,
+  AnomaliesDefaultExpenseServiceDailyResponse,
+  AnomaliesDefaultExpensesOrganizationConstraintResponse,
+  AnomaliesDefaultExpensesOrganizationLimitsHitResponse,
+  AnomaliesOrganizationAllowedActionsResponse,
+  AnomaliesOrganizationsResponse,
+} from '../mocks/anomalies-page.mocks';
 import { AuthRequest } from '../api-requests/auth-request';
-import { RestAPIRequest } from '../api-requests/restapi-request';
-import { debugLog } from '../utils/debug-logging';
+import { DefaultAnomalyResponse } from '../types/api-response.types';
 import { InterceptionEntry } from '../types/interceptor.types';
-import { AnomaliesDefaultExpenseServiceDailyResponse, } from '../mocks/anomalies-page.mocks';
+import { RestAPIRequest } from '../api-requests/restapi-request';
 import { comparePngImages } from '../utils/image-comparison';
+import { debugLog } from '../utils/debug-logging';
+import { deleteAnomalyPolicy } from '../utils/teardown-utils';
+import { expect, request } from '@playwright/test';
+import { test } from '../fixtures/page.fixture';
 
 test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   test.use({ restoreSession: true });
@@ -229,9 +236,29 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
 test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   const apiInterceptions: InterceptionEntry[] = [
     {
+      gql: 'Organizations',
+      mock: AnomaliesOrganizationsResponse,
+    },
+    {
+      gql: 'OrganizationAllowedActions',
+      mock: AnomaliesOrganizationAllowedActionsResponse,
+    },
+    {
       gql: 'GetExpensesDailyBreakdown',
       mock: AnomaliesDefaultExpenseServiceDailyResponse,
     },
+    {
+      gql: 'DataSources',
+      mock: AnomaliesDataSourcesResponse,
+    },
+    {
+      gql: 'GetOrganizationConstraints',
+      mock: AnomaliesDefaultExpensesOrganizationConstraintResponse,
+    },
+    {
+      gql: 'GetOrganizationLimitHits',
+      mock: AnomaliesDefaultExpensesOrganizationLimitsHitResponse
+    }
   ];
 
   test.use({
@@ -244,7 +271,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await anomaliesPage.navigateToURL();
   });
 
-  test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test('[231436] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-export.png';
@@ -256,5 +283,34 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
+
+    actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-no-legend-export.png';
+    expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-no-legend-export.png';
+    diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-no-legend-export.png';
+
+    await anomaliesPage.clickShowLegend();
+    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+    match = await comparePngImages(expectedPath, actualPath, diffPath);
+    expect.soft(match).toBe(true);
+
+    actualPath = 'tests/downloads/anomaly-expenses-service-weekly-chart-export.png';
+    expectedPath = 'tests/expected/expected-anomaly-expenses-service-weekly-chart-export.png';
+    diffPath = 'tests/downloads/diff-anomaly-expenses-service-weekly-chart-export.png';
+
+    await anomaliesPage.clickShowLegend();
+    await anomaliesPage.selectExpenses('Weekly');
+    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+    match = await comparePngImages(expectedPath, actualPath, diffPath);
+    expect.soft(match).toBe(true);
+
+    actualPath = 'tests/downloads/anomaly-expenses-service-monthly-chart-export.png';
+    expectedPath = 'tests/expected/expected-anomaly-expenses-service-monthly-chart-export.png';
+    diffPath = 'tests/downloads/diff-anomaly-expenses-service-monthly-chart-export.png';
+
+    await anomaliesPage.selectExpenses('Monthly');
+    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+    match = await comparePngImages(expectedPath, actualPath, diffPath);
+    expect.soft(match).toBe(true);
+
   });
 });

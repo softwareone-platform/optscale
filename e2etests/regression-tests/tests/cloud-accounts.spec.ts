@@ -89,7 +89,8 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
                                                                           cloudAccountsPage,
                                                                           cloudAccountsConnectPage,
                                                                         }) => {
-    await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage, cloudAccountsConnectPage.googleCloudTenantBtn);
+    await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
+    await cloudAccountsConnectPage.googleCloudTenantBtn.click();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-tenant-screenshot.png');
   });
 });
