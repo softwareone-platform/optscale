@@ -591,11 +591,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       <>
         <Stack direction="row" alignItems="center" spacing={2} mb={2}>
           <Typography>
-            {selectedProvider === CLOUD_PROVIDERS.AWS ? (
-              <FormattedMessage id="accountType" />
-            ) : (
-              <FormattedMessage id="connectionType" />
-            )}
+            <FormattedMessage id={selectedProvider === CLOUD_PROVIDERS.AWS ? "accountType" : "connectionType"} />
           </Typography>
           <ButtonGroup
             buttons={CLOUD_PROVIDER_TYPES[selectedProvider]
@@ -606,8 +602,6 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                 dataTestId: `btn_${subtype.messageId}`,
                 action: () => setConnectionType(subtype.connectionType)
               }))}
-            fullWidth={false}
-            activeButtonIndex={undefined}
             activeButtonId={connectionType}
           />
         </Stack>
