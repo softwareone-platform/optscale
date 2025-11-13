@@ -6,7 +6,7 @@ import ButtonLoader from "components/ButtonLoader";
 import Invitations from "components/Invitations";
 import { Error, Loading } from "containers/InitializeContainer/common";
 import { useOrganizationsQuery } from "graphql/__generated__/hooks/restapi";
-import { ALLOW_ORGANIZATION_CREATION } from "utils/constants";
+import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
@@ -25,6 +25,7 @@ const useStyles = makeStyles()((theme) => ({
 
 const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
   const { classes } = useStyles();
+  const isOrganizationCreationAllowed = useIsFeatureEnabled("organization_creation_allowed");
 
   const {
     data,
@@ -48,7 +49,7 @@ const AcceptInvitations = ({ invitations, refetchInvitations, onProceed }) => {
   }
 
   const userHasOrganizations = data && data.organizations && data.organizations.length > 0;
-  const redirectToPendingInvitations = !ALLOW_ORGANIZATION_CREATION && !userHasOrganizations;
+  const redirectToPendingInvitations = !isOrganizationCreationAllowed && !userHasOrganizations;
 
   if (redirectToPendingInvitations) {
     return onProceed();
