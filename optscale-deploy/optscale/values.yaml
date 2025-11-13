@@ -888,7 +888,6 @@ databases:
   - jira-bus
 
 # filled from base overlay
-# we need it to fill agent config correctly
 public_ip:
 company_name: Hystax
 product_name: OptScale

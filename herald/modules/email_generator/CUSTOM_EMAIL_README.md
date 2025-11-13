@@ -48,6 +48,13 @@ def my_filter_fn(value: str | None) -> str:
 See [optscale](https://github.com/hystax/optscale/tree/integration/herald/modules/tests/email_generator/test_data) for a complete example.
 
 
+## How to update default context for generating emails
+
+Create `/optscale/email_templates/custom_context.json` file with a valid JSON object with the variables values you want to update.
+The changes will take effect the next time an email is sent.
+See the default context values in [optscale](https://github.com/hystax/optscale/blob/integration/herald/modules/email_generator/context_generator.py#L69-L105).
+
+
 ## How to use send_templates.py?
 
 `send_templates.py` is a [script](https://github.com/hystax/optscale/tree/integration/herald/send_templates.py) in `optscale` repo that uses already running cluster for sending emails to certain users.
