@@ -8,15 +8,15 @@ import AwsUseAwsEdpDiscount from "../AwsUseAwsEdpDiscount";
 const AwsAssumedRoleInputs = ({
   readOnlyFields = [],
   showAssumedRoleCredentialsInModal = false,
-  showAdvancesOptions = true
+  showAdvancedOptions = true
 }: {
   readOnlyFields?: string[];
   showAssumedRoleCredentialsInModal?: boolean;
-  showAdvancesOptions?: boolean;
+  showAdvancedOptions?: boolean;
 }) => (
   <>
     <AwsAssumedRoleCredentials readOnlyFields={readOnlyFields} />
-    {showAdvancesOptions && (
+    {showAdvancedOptions && (
       <>
         <AwsUseAwsEdpDiscount />
         <Typography gutterBottom data-test-id="p_cost_and_usage_report_parameters_description">

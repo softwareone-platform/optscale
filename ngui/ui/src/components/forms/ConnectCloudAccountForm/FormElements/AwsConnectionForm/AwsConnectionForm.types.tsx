@@ -10,6 +10,7 @@ export type AuthenticationTypeSelectorType = {
 
 export type AwsTypeDescriptionProps = {
   messageId: string;
+  type?: "paragraph" | "warning";
   linkUrl?: string;
   linkDisplayBlock?: boolean;
 };

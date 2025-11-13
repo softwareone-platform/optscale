@@ -76,7 +76,7 @@ const CredentialInputs = ({ type, config }) => {
       return (
         <AwsAssumedRoleInputs
           readOnlyFields={[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]}
-          showAdvancesOptions={!config.linked}
+          showAdvancedOptions={!config.linked}
         />
       );
     }

@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
@@ -588,16 +589,12 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
 
     return (
       <>
-        <Box alignItems="center" display="flex">
-          <Typography minWidth={120}>
+        <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+          <Typography>
             {selectedProvider === CLOUD_PROVIDERS.AWS ? (
-              <>
-                <FormattedMessage id="accountType" />{" "}
-              </>
+              <FormattedMessage id="accountType" />
             ) : (
-              <>
-                <FormattedMessage id="connectionType" />{" "}
-              </>
+              <FormattedMessage id="connectionType" />
             )}
           </Typography>
           <ButtonGroup
@@ -613,7 +610,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
             activeButtonIndex={undefined}
             activeButtonId={connectionType}
           />
-        </Box>
+        </Stack>
 
         {selectedProvider === CLOUD_PROVIDERS.AWS && (
           <AuthenticationTypeSelector authenticationType={authenticationType} setAuthenticationType={setAuthenticationType} />

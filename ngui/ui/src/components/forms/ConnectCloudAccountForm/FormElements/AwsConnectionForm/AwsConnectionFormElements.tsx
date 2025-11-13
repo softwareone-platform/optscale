@@ -1,24 +1,27 @@
 import React, { ReactNode, useState } from "react";
+import { Stack } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import ButtonGroup from "../../../../ButtonGroup";
+import ButtonGroup from "components/ButtonGroup";
 import {
   AUTHENTICATION_TYPES,
   authenticationTypes,
   awsConnectionAssumedRoleDescriptions,
   awsConnectionKeyAccessDescriptions
 } from "./AwsConnectionForm.constants";
-import useStyles from "./AwsConnectionForm.styles";
 import { AuthenticationType, AuthenticationTypeSelectorType, AwsTypeDescriptionProps } from "./AwsConnectionForm.types";
 
-export const AwsTypeDescription = ({ messageId, linkUrl, linkDisplayBlock = false }: AwsTypeDescriptionProps) => {
-  const { classes } = useStyles();
-
-  return (
-    <div key={messageId} className={classes.description}>
+export const AwsTypeDescription = ({
+  messageId,
+  linkUrl,
+  linkDisplayBlock = false,
+  type = "paragraph"
+}: AwsTypeDescriptionProps) => {
+  const content = (
+    <Typography>
       <FormattedMessage
         id={messageId}
         values={{
@@ -27,7 +30,7 @@ export const AwsTypeDescription = ({ messageId, linkUrl, linkDisplayBlock = fals
             return (
               <Link
                 data-test-id="link_guide"
-                style={{ display: linkDisplayBlock ? classes.linkInline : classes.linkBlock }}
+                sx={{ display: linkDisplayBlock ? "inline" : "block" }}
                 href={linkUrl}
                 target="_blank"
                 rel="noopener"
@@ -36,11 +39,24 @@ export const AwsTypeDescription = ({ messageId, linkUrl, linkDisplayBlock = fals
               </Link>
             );
           },
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
-          warning: (chunks: ReactNode) => <Alert severity="warning">{chunks}</Alert>
+          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
         }}
       />
-    </div>
+    </Typography>
+  );
+
+  if (type === "warning") {
+    return (
+      <Alert severity="warning" sx={{ mt: 1, mb: 1 }}>
+        {content}
+      </Alert>
+    );
+  }
+
+  return (
+    <Box key={messageId} sx={{ mt: 1, mb: 1 }}>
+      {content}
+    </Box>
   );
 };
 
@@ -49,28 +65,24 @@ export const useAuthenticationType = () => {
   return { authenticationType, setAuthenticationType };
 };
 
-export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticationType }: AuthenticationTypeSelectorType) => {
-  const { classes } = useStyles();
-
-  return (
-    <Box alignItems="center" display="flex">
-      <Typography className={classes.authenticationLabel}>
-        <FormattedMessage id="authentication" />{" "}
-      </Typography>
-      <ButtonGroup
-        buttons={authenticationTypes.map((subtype) => ({
-          id: subtype.authenticationType,
-          messageId: subtype.messageId,
-          dataTestId: `btn_${subtype.messageId}`,
-          action: () => setAuthenticationType(subtype.authenticationType)
-        }))}
-        activeButtonId={authenticationType}
-        activeButtonIndex={undefined}
-        fullWidth={false}
-      />
-    </Box>
-  );
-};
+export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticationType }: AuthenticationTypeSelectorType) => (
+  <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+    <Typography>
+      <FormattedMessage id="authentication" />{" "}
+    </Typography>
+    <ButtonGroup
+      buttons={authenticationTypes.map((subtype) => ({
+        id: subtype.authenticationType,
+        messageId: subtype.messageId,
+        dataTestId: `btn_${subtype.messageId}`,
+        action: () => setAuthenticationType(subtype.authenticationType)
+      }))}
+      activeButtonId={authenticationType}
+      activeButtonIndex={undefined}
+      fullWidth={false}
+    />
+  </Stack>
+);
 
 export const getAwsConnectionTypeDescriptions = (authenticationType: AuthenticationType) =>
   authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE

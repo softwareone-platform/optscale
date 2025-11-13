@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { Box } from "@mui/material";
 import {
   AzureTenantCredentials,
@@ -41,11 +40,11 @@ const NebiusInputs = () => (
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
 
-const renderAwsInputs = (connectionType: ConnectionType, authenticationType: AuthenticationType | null): JSX.Element => {
+const renderAwsInputs = (connectionType: ConnectionType, authenticationType: AuthenticationType | null) => {
   const showAdvancedOptions = connectionType !== CONNECTION_TYPES.AWS_MEMBER;
 
   return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
-    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancesOptions={showAdvancedOptions} />
+    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancedOptions={showAdvancedOptions} />
   ) : (
     <AwsConnectionAccessKeyInputs showAdvancesOptions={showAdvancedOptions} />
   );

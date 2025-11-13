@@ -26,7 +26,7 @@ const awsDefaultAssumedRoleDescriptions = [
   <AwsTypeDescription key="1" messageId="createAwsMemberAssumedRoleDescriptions" />,
   <AwsTypeDescription
     key="2"
-    messageId="createAwsDefaultAssumedRoleDDocumentationReference3"
+    messageId="createAwsDefaultAssumedRoleDocumentationReference3"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
   />
 ];
@@ -34,14 +34,15 @@ const awsDefaultAssumedRoleDescriptions = [
 const awsDefaultAccessKeyDescriptions = [
   <AwsTypeDescription
     key="1"
-    messageId="createAwsDefaultAssumedRoleDDocumentationReference1"
+    messageId="createAwsDefaultAssumedRoleDocumentationReference1"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
     linkDisplayBlock
+    type={"warning"}
   />,
-  <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDDocumentationReference2" />,
+  <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDocumentationReference2" />,
   <AwsTypeDescription
     key="3"
-    messageId="createAwsDefaultAssumedRoleDDocumentationReference3"
+    messageId="createAwsDefaultAssumedRoleDocumentationReference3"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
   />
 ];
@@ -49,14 +50,15 @@ const awsDefaultAccessKeyDescriptions = [
 const awsMemberAccessKeyDescriptions = [
   <AwsTypeDescription
     key="1"
-    messageId="createAwsDefaultAssumedRoleDDocumentationReference1"
+    messageId="createAwsDefaultAssumedRoleDocumentationReference1"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
     linkDisplayBlock
+    type={"warning"}
   />,
-  <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDDocumentationReference4" />,
+  <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDocumentationReference4" />,
   <AwsTypeDescription
     key="3"
-    messageId="createAwsDefaultAssumedRoleDDocumentationReference3"
+    messageId="createAwsDefaultAssumedRoleDocumentationReference3"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
     linkDisplayBlock={false}
   />
