@@ -5,6 +5,7 @@ import logging
 import re
 import time
 
+import requests
 from requests.models import Request
 from urllib.parse import urlencode
 from multiprocessing import Process, Queue
@@ -12,18 +13,13 @@ from azure.mgmt.consumption import ConsumptionManagementClient
 from azure.mgmt.consumption.models import (ModernUsageDetail, LegacyUsageDetail,
                                            UsageDetail, UsageDetailsListResult)
 from retrying import retry
-from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.network import NetworkManagementClient
-from azure.mgmt.commerce import UsageManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.compute.models import InstanceViewTypes
-from azure.mgmt.commerce.models.error_response import ErrorResponseException
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.subscription import SubscriptionClient
-from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import AuthenticationError, ClientRequestError
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
                                    ResourceNotFoundError, ServiceRequestError)
@@ -45,7 +41,6 @@ from tools.cloud_adapter.model import (
 )
 from tools.cloud_adapter.exceptions import (
     ResourceNotFound,
-    AuthorizationException,
     InvalidParameterException,
     CloudSettingNotSupported,
     CloudConnectionError,
@@ -56,7 +51,6 @@ from tools.cloud_adapter.exceptions import (
 from tools.cloud_adapter.utils import (
     CloudParameter,
     gbs_to_bytes,
-    mibs_to_bytes
 )
 
 # Silence annoying logs from Azure SDK
@@ -80,7 +74,6 @@ DESERIALIZER = Deserializer(classes={
 
 # defining it to use outside CAd
 AzureConsumptionException = HttpResponseError
-AzureErrorResponseException = ErrorResponseException
 AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
 
@@ -146,21 +139,21 @@ class Azure(CloudBase):
     def __init__(self, cloud_config, *args, **kwargs):
         self.config = cloud_config
         self._subscription_id = self.config.get('subscription_id')
-        self._service_principal_credentials = None
         self._client_secret_credentials = None
+        # Azure management clients
         self._compute = None
         self._resource = None
         self._network = None
         self._storage = None
         self._subscription = None
         self._consumption = None
+        self._monitor = None
+        # Other helpers
         self._location_map = None
         self._billing = None
         self._partner = None
         self._blob = None
         self._reservations = None
-        self._usage = None
-        self._monitor = None
         self._currency = self.DEFAULT_CURRENCY
 
     @staticmethod
@@ -221,13 +214,7 @@ class Azure(CloudBase):
         return self.config.get(
             'expense_import_scheme', self.DEFAULT_IMPORT_SCHEME)
 
-    @property
-    def service_principal_credentials(self):
-        if self._service_principal_credentials:
-            return self._service_principal_credentials
-        self._service_principal_credentials = (
-            self._get_service_principal_credentials())
-        return self._service_principal_credentials
+
 
     @property
     def client_secret_credentials(self):
@@ -241,7 +228,8 @@ class Azure(CloudBase):
         if self._compute:
             return self._compute
         self._compute = ComputeManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            credential=self.client_secret_credentials,
+            subscription_id=self._subscription_id)
         return self._compute
 
     @property
@@ -249,7 +237,8 @@ class Azure(CloudBase):
         if self._resource:
             return self._resource
         self._resource = ResourceManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            credential=self.client_secret_credentials,
+            subscription_id=self._subscription_id)
         return self._resource
 
     @property
@@ -257,7 +246,9 @@ class Azure(CloudBase):
         if self._network:
             return self._network
         self._network = NetworkManagementClient(
-            self.client_secret_credentials, self._subscription_id)
+            credential=self.client_secret_credentials,
+            subscription_id=self._subscription_id,
+            )
         return self._network
 
     @property
@@ -265,7 +256,8 @@ class Azure(CloudBase):
         if self._storage:
             return self._storage
         self._storage = StorageManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            credential=self.client_secret_credentials,
+            subscription_id=self._subscription_id,)
         return self._storage
 
     @property
@@ -302,7 +294,7 @@ class Azure(CloudBase):
         if self._subscription:
             return self._subscription
         self._subscription = SubscriptionClient(
-            self.service_principal_credentials)
+            credential=self.client_secret_credentials,)
         return self._subscription
 
     @property
@@ -310,7 +302,9 @@ class Azure(CloudBase):
         if self._monitor:
             return self._monitor
         self._monitor = MonitorManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            credential=self.client_secret_credentials,
+            subscription_id=self._subscription_id,
+        )
         return self._monitor
 
     @property
@@ -326,12 +320,7 @@ class Azure(CloudBase):
                     'Can\'t access partner API for non-partner cloud account')
         return self._partner
 
-    @property
-    def usage(self):
-        if not self._usage:
-            self._usage = UsageManagementClient(
-                self.service_principal_credentials, self._subscription_id)
-        return self._usage
+
 
     @property
     def reservations(self):
@@ -344,23 +333,7 @@ class Azure(CloudBase):
     def raw_client(self):
         return self.subscription._client
 
-    def _get_service_principal_credentials(self):
-        """
-        Obtain service principal credential object for older Azure SDK
-        components. Will raise AuthorizationException if credentials are
-        incorrect.
-        :return: service principal credential object
-        """
-        try:
-            credentials = ServicePrincipalCredentials(
-                client_id=self.config['client_id'],
-                secret=self.config['secret'],
-                tenant=self.config['tenant'],
-            )
-        except AuthenticationError as ex:
-            description = self._get_error_description(ex)
-            raise AuthorizationException(description)
-        return credentials
+
 
     def _get_client_secret_credentials(self):
         """
@@ -382,14 +355,7 @@ class Azure(CloudBase):
                 'partner_client_id' in self.config and
                 'partner_secret' in self.config)
 
-    @staticmethod
-    def _get_error_description(exc: AuthenticationError):
-        try:
-            description = exc.inner_exception.error_response.get(
-                'error_description').split('\r\n')[0]
-        except Exception:
-            description = str(exc)
-        return description
+
 
     @retry(retry_on_exception=_retry_on_error, wait_fixed=2000,
            stop_max_attempt_number=10)
@@ -425,8 +391,10 @@ class Azure(CloudBase):
     def _check_subscription(self, subscription_id):
         try:
             self.subscription.subscriptions.get(subscription_id)
-        except CloudError as ex:
-            raise ResourceNotFound(ex.inner_exception.message)
+        except ResourceNotFoundError:
+            raise ResourceNotFound(f"Subscription {subscription_id} not found")
+        except HttpResponseError as ex:
+            raise CloudConnectionError(str(ex))
 
     def _get_cpu_ram(self, flavor):
         caps = flavor.capabilities
@@ -495,11 +463,11 @@ class Azure(CloudBase):
             usage_detail = next(usage)
             currency = (getattr(usage_detail, 'billing_currency', None) or
                         getattr(usage_detail, 'billing_currency_code', None))
-        except (AzureConsumptionException, StopIteration, ClientRequestError,
+        except (AzureConsumptionException, StopIteration, ServiceRequestError,
                 TypeError) as exc:
             # according to logs in this issue we get TypeError deep inside
             # python lib in case of timeout error
-            is_timeout_error = isinstance(exc, (ClientRequestError, TypeError))
+            is_timeout_error = isinstance(exc, (ServiceRequestError, TypeError))
             is_empty = isinstance(exc, StopIteration)
             is_unsupported = (isinstance(exc, AzureConsumptionException) and
                               int(exc.response.status_code) in [400, 404, 422])
@@ -1045,11 +1013,21 @@ class Azure(CloudBase):
         :param granularity: result granularity, can be Daily or Hourly
         :return: a generator with usage objects
         """
-        return self.usage.usage_aggregates.list(
-            reported_start_time=start_date,
-            reported_end_time=range_end,
-            show_details=True,
-            aggregation_granularity=granularity,
+        # return self.usage.usage_aggregates.list(
+        #     reported_start_time=start_date,
+        #     reported_end_time=range_end,
+        #     show_details=True,
+        #     aggregation_granularity=granularity,
+        # )
+        """
+            DEPRECATED: Legacy commerce Usage Aggregates API is no longer supported
+            in the latest Azure SDKs.
+
+            Use get_usage(...) (Consumption / Cost Management) instead.
+            """
+        raise CloudSettingNotSupported(
+            'get_raw_usage is no longer supported with the latest Azure SDK. '
+            'Please migrate to get_usage (Consumption / Cost Management APIs).'
         )
 
     def get_public_prices(self, currency=None, region=None,
@@ -1078,20 +1056,64 @@ class Azure(CloudBase):
             currency = self._currency
         if not region:
             region = self.get_currency_iso(currency)
-        prices = self.usage.rate_card.get(
-             filter=f"OfferDurableId eq '{offer_id}' "
-                    f"and Currency eq '{currency}' "
-                    f"and Locale eq '{locale}' "
-                    f"and RegionInfo eq '{region}'",
-        )
-        return {
-            p.meter_id: {
-                'rates': list(sorted((float(k), v) for k, v
-                                     in p.meter_rates.items())),
-                'included': p.included_quantity
-            }
-            for p in prices.meters
-        }
+        # prices = self.usage.rate_card.get(
+        #      filter=f"OfferDurableId eq '{offer_id}' "
+        #             f"and Currency eq '{currency}' "
+        #             f"and Locale eq '{locale}' "
+        #             f"and RegionInfo eq '{region}'",
+        # )
+        # return {
+        #     p.meter_id: {
+        #         'rates': list(sorted((float(k), v) for k, v
+        #                              in p.meter_rates.items())),
+        #         'included': p.included_quantity
+        #     }
+        #     for p in prices.meters
+        # }
+            # Azure Retail Prices: filter by currency + region; optionally serviceName, etc.
+            # Docs: https://learn.microsoft.com/azure/cost-management-billing
+            base_url = "https://prices.azure.com/api/retail/prices"
+            # Region is matched against `armRegionName` or `location` in the API.
+            # We'll use location (human-readable, e.g. 'US West', 'EU West', etc.)
+            odata_filter = (
+                f"currencyCode eq '{currency}' and "
+                f"location eq '{region}'"
+            )
+
+            url = f"{base_url}?$filter={odata_filter}"
+            prices = {}
+
+            while url:
+                resp = requests.get(url)
+                if resp.status_code != 200:
+                    raise CloudConnectionError(
+                        f"Azure Retail Prices API error: {resp.status_code} {resp.text}"
+                    )
+                data = resp.json()
+                items = data.get("Items", [])
+
+                for item in items:
+                    meter_id = item.get("meterId")
+                    if not meter_id:
+                        continue
+                    # Approximate your previous structure:
+                    rate = float(item.get("unitPrice", 0.0))
+                    included = float(item.get("tierMinimumUnits", 0.0))
+
+                    prices.setdefault(meter_id, {
+                        'rates': [],
+                        'included': included,
+                    })
+                    prices[meter_id]['rates'].append((0.0, rate))  # single tier only
+
+                url = data.get("NextPageLink")
+
+            # Sort rate tiers per meter, as your old version did
+            for m in prices.values():
+                m['rates'] = sorted(m['rates'], key=lambda x: x[0])
+
+            return prices
+
 
     def get_partner_prices(self, currency=None, region=None):
         """
@@ -1433,18 +1455,17 @@ class Azure(CloudBase):
         try:
             return self.compute.virtual_machines.start(
                 group_name, instance_name)
-        except CloudError as exc:
-            if exc.error.error == 'ResourceNotFound':
-                raise ResourceNotFound(str(exc))
-            else:
-                raise
+        except ResourceNotFoundError:
+            raise ResourceNotFound(f"Instance {instance_name} not found")
+        except HttpResponseError as exc:
+            raise CloudConnectionError(str(exc))
 
     def stop_instance(self, instance_name, group_name):
         try:
             return self.compute.virtual_machines.deallocate(
                 group_name, instance_name)
-        except CloudError as exc:
-            if exc.error.error == 'ResourceNotFound':
-                raise ResourceNotFound(str(exc))
-            else:
-                raise
+        except ResourceNotFoundError:
+            raise ResourceNotFound(f"Instance {instance_name} not found")
+        except HttpResponseError as exc:
+            raise CloudConnectionError(str(exc))
+
