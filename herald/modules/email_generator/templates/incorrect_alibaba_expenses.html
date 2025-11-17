@@ -429,18 +429,18 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; text-align: left; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 10px; text-align: center; mso-line-height-alt: 15px"><span style="font-size: 10px">This email was generated automatically, you don’t need to reply to it.</span></p>
-                                      {% if etcd.support_email|length %}
+                                      {% if texts.support_email|length %}
                                         <p style="margin: 0; font-size: 10px; text-align: center; mso-line-height-alt: 15px">
                                           <span style="font-size: 10px">
                                             <span style>If you want us to stop sending such alerts, please let us know by writing to</span>
                                             <strong>
-                                              <a href="mailto:{{etcd.support_email}}?subject={{etcd.support_email}}" target="_blank" rel="noopener" title="{{etcd.support_email}}" style="text-decoration: underline; color: #4ab4ee">
-                                                <span style>{{etcd.support_email}}</span>
+                                              <a href="mailto:{{texts.support_email}}?subject={{texts.support_email}}" target="_blank" rel="noopener" title="{{texts.support_email}}" style="text-decoration: underline; color: #4ab4ee">
+                                                <span style>{{texts.support_email}}</span>
                                               </a>
                                             </strong>
                                           </span>
                                         </p>
-                                        <a href="mailto:{{etcd.support_email}}?subject={{etcd.support_email}}" target="_blank" rel="noopener" title="{{etcd.support_email}}" style="text-decoration: underline; color: #4ab4ee"></a>
+                                        <a href="mailto:{{texts.support_email}}?subject={{texts.support_email}}" target="_blank" rel="noopener" title="{{texts.support_email}}" style="text-decoration: underline; color: #4ab4ee"></a>
                                       {% endif %}
                                     </div>
                                   </div>
