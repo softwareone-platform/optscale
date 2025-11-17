@@ -1,7 +1,8 @@
 import { debugLog } from './debug-logging';
 
 /**
- * Determines the environment based on the `BASE_URL` and `API_BASE_URL` environment variables.
+ * Determines the environment based on the `BASE_URL` and `API_BASE_URL` environment variables. This is required
+ * to use the correct test data for the different organization configurations on each environment.
  *
  * This function evaluates the `BASE_URL` against predefined environment variables (`TEST`, `STAGING`, `DEV`)
  * to determine the current environment. If `BASE_URL` contains 'localhost', it further checks the `API_BASE_URL`
@@ -24,7 +25,7 @@ export function setEnvironment(): string {
     if (process.env.API_BASE_URL.includes('show')) return 'test';
     if (process.env.API_BASE_URL.includes('today')) return 'dev';
   } else {
-    throw new Error('Unknown environment configuration');
+    throw new Error('Unknown environment configuration, or BASE_URL does not match TEST, STAGING, or DEV.');
   }
 }
 

@@ -268,7 +268,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
-  test.only('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-region-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';
