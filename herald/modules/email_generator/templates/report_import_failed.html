@@ -125,7 +125,7 @@
                             <table class="image_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt">
                               <tr>
                                 <td class="pad" style="width: 100%; padding-right: 0px; padding-left: 0px; padding-top: 20px; padding-bottom: 20px">
-                                  <div class="alignment" align="center" style="line-height: 10px"><img src="https://cdn.hystax.com/OptScale/OptScale-logo-white.png" style="display: block; height: auto; border: 0; width: 154px; max-width: 100%" width="154" alt="your-logo" title="your-logo" /></div>
+                                  <div class="alignment" align="center" style="line-height: 10px"><img src="{{images.logo}}" style="display: block; height: auto; border: 0; width: 154px; max-width: 100%" width="154" alt="your-logo" title="your-logo" /></div>
                                 </td>
                               </tr>
                             </table>
@@ -170,7 +170,7 @@
               </tbody>
             </table>
 
-            <!-- Go to OptScale button -->
+            <!-- Go to product button -->
             <table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
               <tbody>
                 <tr>
@@ -185,7 +185,7 @@
                                   <div class="alignment" align="center">
                                     <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://{{etcd.control_panel_link}}/cloud-accounts/{{texts.cloud_account.id}}{{texts.control_panel_parameters}}" style="height:42px;width:149px;v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#f58535"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px"><![endif]-->
                                     <a href="https://{{etcd.control_panel_link}}/cloud-accounts/{{texts.cloud_account.id}}{{texts.control_panel_parameters}}" target="_blank" rel="noopener" style="text-decoration: none; display: inline-block; color: #ffffff; background-color: #f58535; border-radius: 4px; width: auto; border-top: 0px solid #f58535; font-weight: 400; border-right: 0px solid #f58535; border-bottom: 0px solid #f58535; border-left: 0px solid #f58535; padding-top: 5px; padding-bottom: 5px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all">
-                                      <span style="padding-left: 20px; padding-right: 20px; font-size: 16px; display: inline-block; letter-spacing: normal"><span style="word-break: break-word; line-height: 32px">Go to OptScale</span></span>
+                                      <span style="padding-left: 20px; padding-right: 20px; font-size: 16px; display: inline-block; letter-spacing: normal"><span style="word-break: break-word; line-height: 32px">Go to {{etcd.product_name}}</span></span>
                                     </a>
                                     <!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
                                   </div>
@@ -216,18 +216,26 @@
                                   <div class="alignment" style="text-align: center">
                                     <table class="social-table" width="208px" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block">
                                       <tr>
+                                        {% if links.linkedin|length %}
                                         <td style="padding: 0 10px 0 10px">
-                                          <a href="https://www.linkedin.com/company/hystax" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/linkedin@2x.png" width="32" height="32" alt="LinkedIn" title="LinkedIn" style="display: block; height: auto; border: 0" /></a>
+                                          <a href="{{links.linkedin}}" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/linkedin@2x.png" width="32" height="32" alt="LinkedIn" title="LinkedIn" style="display: block; height: auto; border: 0" /></a>
                                         </td>
+                                        {% endif %}
+                                        {% if links.twitter|length %}
                                         <td style="padding: 0 10px 0 10px">
-                                          <a href="https://twitter.com/hystaxcom" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/twitter@2x.png" width="32" height="32" alt="Twitter" title="Twitter" style="display: block; height: auto; border: 0" /></a>
+                                          <a href="{{links.twitter}}" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/twitter@2x.png" width="32" height="32" alt="Twitter" title="Twitter" style="display: block; height: auto; border: 0" /></a>
                                         </td>
+                                        {% endif %}
+                                        {% if links.facebook|length %}
                                         <td style="padding: 0 10px 0 10px">
-                                          <a href="https://www.facebook.com/hystax" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/facebook@2x.png" width="32" height="32" alt="Facebook" title="Facebook" style="display: block; height: auto; border: 0" /></a>
+                                          <a href="{{links.facebook}}" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/facebook@2x.png" width="32" height="32" alt="Facebook" title="Facebook" style="display: block; height: auto; border: 0" /></a>
                                         </td>
+                                        {% endif %}
+                                        {% if links.telegram|length %}
                                         <td style="padding: 0 10px 0 10px">
-                                          <a href="https://t.me/hystax" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/telegram@2x.png" width="32" height="32" alt="Telegram" title="Telegram" style="display: block; height: auto; border: 0" /></a>
+                                          <a href="{{links.telegram}}" target="_blank" rel="noopener"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-color/telegram@2x.png" width="32" height="32" alt="Telegram" title="Telegram" style="display: block; height: auto; border: 0" /></a>
                                         </td>
+                                        {% endif %}
                                       </tr>
                                     </table>
                                   </div>
@@ -246,13 +254,17 @@
                                             <tr>
                                             <td style="padding-top:5px;padding-right:5px;padding-bottom:5px;padding-left:5px">
                                           <![endif]-->
-                                          <a href="https://hystax.com/terms-of-use/" style="padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; display: inline-block; color: #333f53; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; font-size: 15px; text-decoration: none; letter-spacing: normal">Terms of use</a>
+                                          {% if links.terms_of_use|length %}
+                                          <a href="{{links.terms_of_use}}" style="padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; display: inline-block; color: #333f53; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; font-size: 15px; text-decoration: none; letter-spacing: normal">Terms of use</a>
                                           <!--[if mso]></td><td><![endif]-->
                                           <span class="sep" style="font-size: 15px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; color: #333f53">|</span>
                                           <!--[if mso]></td><![endif]-->
+                                          {% endif %}
+                                          {% if links.privacy_policy|length %}
                                           <!--[if mso]></td><td style="padding-top:5px;padding-right:5px;padding-bottom:5px;padding-left:5px"><![endif]-->
-                                          <a href="https://hystax.com/privacy-policy/" style="padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; display: inline-block; color: #333f53; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; font-size: 15px; text-decoration: none; letter-spacing: normal">Privacy Policy</a>
+                                          <a href="{{links.privacy_policy}}" style="padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; display: inline-block; color: #333f53; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; font-size: 15px; text-decoration: none; letter-spacing: normal">Privacy Policy</a>
                                           <!--[if mso]></td></tr></table><![endif]-->
+                                          {% endif %}
                                         </div>
                                       </td>
                                     </tr>
@@ -265,10 +277,12 @@
                                 <td class="pad">
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                      {% if texts.address|length %}
                                       <p style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 18px">
-                                        <span style="font-size: 12px; color: #004c74"><span style>1250 Borregas Ave, Sunnyvale, CA 94089, USA</span></span>
+                                        <span style="font-size: 12px; color: #004c74"><span style>{{texts.address}}</span></span>
                                       </p>
-                                      <p style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 18px"><span style="font-size: 12px; color: #004c74">{{texts.copyright}} Hystax Inc. All Rights Reserved.</span></p>
+                                      {% endif %}
+                                      <p style="margin: 0; font-size: 14px; text-align: center; mso-line-height-alt: 18px"><span style="font-size: 12px; color: #004c74">{{texts.copyright}} {{texts.copyright_company_name}}. All Rights Reserved.</span></p>
                                     </div>
                                   </div>
                                 </td>
@@ -280,15 +294,19 @@
                                   <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
                                     <div class="txtTinyMce-wrapper" style="font-size: 12px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; text-align: left; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
                                       <p style="margin: 0; font-size: 10px; text-align: center; mso-line-height-alt: 15px"><span style="font-size: 10px">This email was generated automatically, you don’t need to reply to it.</span></p>
-                                      <p style="margin: 0; font-size: 10px; text-align: center; mso-line-height-alt: 15px">
-                                        <span style="font-size: 10px">
-                                          <span style>If you want us to stop sending such alerts, please let us know by writing to</span>
-                                          <strong>
-                                            <a href="mailto:support@hystax.com?subject=support@hystax.com" target="_blank" rel="noopener" title="support@hystax.com" style="text-decoration: underline; color: #4ab4ee"><span style>support@hystax.com</span></a>
-                                          </strong>
-                                        </span>
-                                      </p>
-                                      <a href="mailto:support@hystax.com?subject=support@hystax.com" target="_blank" rel="noopener" title="support@hystax.com" style="text-decoration: underline; color: #4ab4ee"></a>
+                                      {% if etcd.support_email|length %}
+                                        <p style="margin: 0; font-size: 10px; text-align: center; mso-line-height-alt: 15px">
+                                          <span style="font-size: 10px">
+                                            <span style>If you want us to stop sending such alerts, please let us know by writing to</span>
+                                            <strong>
+                                              <a href="mailto:{{etcd.support_email}}?subject={{etcd.support_email}}" target="_blank" rel="noopener" title="{{etcd.support_email}}" style="text-decoration: underline; color: #4ab4ee">
+                                                <span style>{{etcd.support_email}}</span>
+                                              </a>
+                                            </strong>
+                                          </span>
+                                        </p>
+                                        <a href="mailto:{{etcd.support_email}}?subject={{etcd.support_email}}" target="_blank" rel="noopener" title="{{etcd.support_email}}" style="text-decoration: underline; color: #4ab4ee"></a>
+                                      {% endif %}
                                     </div>
                                   </div>
                                 </td>

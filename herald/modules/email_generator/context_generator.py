@@ -1,9 +1,17 @@
+import json
+import logging
+import os
 from datetime import UTC, datetime
 
 # optscale images are also added to cdn, but not used in emails yet
 # 'background': 'https://cdn.hystax.com/OptScale/email-header-background.png'
 # 'logo_new': 'https://cdn.hystax.com/OptScale/email-images/logo-new.png'
 # 'logo_optscale_beta_white': 'https://cdn.hystax.com/OptScale/email-images/logo-optscale-beta-white.png'
+# 'optscale_mlops': 'https://cdn.hystax.com/OptScale/email-images/optscale-mlops-capabilities.png'
+# 'optscale_banner': 'https://cdn.hystax.com/OptScale/email-images/optscale-welcome-banner.png'
+
+CUSTOM_CONTEXT_FILE = "custom_templates/custom_context.json"
+LOG = logging.getLogger(__name__)
 
 
 def generate_event_template_params(event, config_client):
@@ -60,21 +68,21 @@ def _relevant_image_name(event_type):
 def get_default_context():
     return {
         "images": {
-            "logo": "https://cdn.hystax.com/OptScale/email-images/logo-optscale-white.png",
-            "optscale_banner": "https://cdn.hystax.com/OptScale/email-images/optscale-welcome-banner.png",
+            "logo": "https://cdn.hystax.com/OptScale/OptScale-logo-white.png",
             "telegram": "https://cdn.hystax.com/OptScale/email-images/telegram.png",
             "optscale_ml_banner": "https://cdn.hystax.com/OptScale/email-images/optscale-ml-welcome-banner.png",
-            "optscale_mlops": "https://cdn.hystax.com/OptScale/email-images/optscale-mlops-capabilities.png",
             "optscale_finops": "https://cdn.hystax.com/OptScale/email-images/optscale-finops-capabilities.png",
         },
         "texts": {
             "product": "Hystax OptScale",
             "dont_reply": "Please do not reply to this email",
             "copyright": "Copyright © 2016-%s" % datetime.now(tz=UTC).year,
+            "copyright_company_name": "Hystax Inc",
             "address": "1250 Borregas Ave, Sunnyvale, CA 94089, USA",
             "phone": "+1 628 251-1280",
+            "support_email": "support@hystax.com",
         },
-        "etcd": {"control_panel_link": "/public_ip"},
+        "etcd": {"control_panel_link": "/public_ip", "company_name": "/company_name", "product_name": "/product_name"},
         "links": {
             "linkedin": "https://linkedin.com/company/hystax",
             "twitter": "https://twitter.com/hystaxcom",
@@ -82,6 +90,23 @@ def get_default_context():
             "telegram": "https://t.me/hystax",
             "terms_of_use": "https://hystax.com/terms-of-use/",
             "privacy_policy": "https://hystax.com/privacy-policy/",
+            "documentation": "https://hystax.com/documentation/optscale",
             "background_image": "https://cdn.hystax.com/OptScale/email-header-background.png",
+            "e2e_azure": "https://hystax.com/documentation/optscale/e2e-guides/e2e-azure.html",
+            "e2e_aws": "https://hystax.com/documentation/optscale/e2e-guides/e2e-aws.html",
+            "e2e_gcp": "https://hystax.com/documentation/optscale/e2e-guides/e2e-gcp.html",
+            "e2e_alibaba": "https://hystax.com/documentation/optscale/e2e-guides/e2e-alibaba.html",
+            "e2e_k8s": "https://hystax.com/documentation/optscale/e2e-guides/e2e-kubernetes.html",
         },
     }
+
+
+def get_custom_context():
+    data = {}
+    context_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CUSTOM_CONTEXT_FILE)
+    if os.path.exists(context_path):
+        try:
+            data = json.load(open(context_path, encoding="utf-8"))
+        except Exception as exc:
+            LOG.warning("Failed to load custom context file: %s, will use default context", str(exc))
+    return data

@@ -2,18 +2,27 @@ import FlowmapSelectors from "@flowmap.gl/data/dist/FlowmapSelectors";
 import { scaleLinear } from "d3-scale";
 import { createSelector } from "reselect";
 import {
-  EXTERNAL_LAT,
-  EXTERNAL_LON,
+  OTHER_LAT,
+  OTHER_LON,
   INTER_CONTINENTAL_LAT,
   INTER_CONTINENTAL_LON,
   INTER_REGION_LAT,
-  INTER_REGION_LON
+  INTER_REGION_LON,
+  EXTERNAL_LAT,
+  EXTERNAL_LON
 } from "utils/maps";
 
-const isExternalLocation = (location) => location.latitude === EXTERNAL_LAT && location.longitude === EXTERNAL_LON;
+const isOtherLocation = (location) => location.latitude === OTHER_LAT && location.longitude === OTHER_LON;
 const isIntercontinentalLocation = (location) =>
   location.latitude === INTER_CONTINENTAL_LAT && location.longitude === INTER_CONTINENTAL_LON;
-const isInterRegion = (location) => location.latitude === INTER_REGION_LAT && location.longitude === INTER_REGION_LON;
+const isInterRegionLocation = (location) => location.latitude === INTER_REGION_LAT && location.longitude === INTER_REGION_LON;
+const isExternalLocation = (location) => location.latitude === EXTERNAL_LAT && location.longitude === EXTERNAL_LON;
+
+const isSpecialLocation = (location) =>
+  isOtherLocation(location) ||
+  isInterRegionLocation(location) ||
+  isIntercontinentalLocation(location) ||
+  isExternalLocation(location);
 
 const getFlowThicknessScale = (magnitudeExtent) => {
   if (!magnitudeExtent) return undefined;
@@ -39,7 +48,7 @@ export default class FlowMapSelectors extends FlowmapSelectors {
     (locations, circleSizeScale, locationTotals) => (locationId) => {
       const total = locationTotals?.get(locationId);
       const location = locations?.find((loc) => loc.id === locationId);
-      if (isExternalLocation(location) || isInterRegion(location) || isIntercontinentalLocation(location)) {
+      if (isSpecialLocation(location)) {
         return 0;
       }
       if (total && circleSizeScale) {
@@ -61,7 +70,7 @@ export default class FlowMapSelectors extends FlowmapSelectors {
     (locations, circleSizeScale, locationTotals) => (locationId) => {
       const total = locationTotals?.get(locationId);
       const location = locations?.find((loc) => loc.id === locationId);
-      if (isExternalLocation(location) || isInterRegion(location)) {
+      if (isSpecialLocation(location)) {
         return 0;
       }
       if (total && circleSizeScale) {

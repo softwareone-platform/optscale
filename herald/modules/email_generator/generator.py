@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 
 from jinja2 import TemplateNotFound
 
-from herald.modules.email_generator.context_generator import get_default_context
+from herald.modules.email_generator.context_generator import get_custom_context, get_default_context
 from herald.modules.email_generator.utils import get_environment
 
 LOG = logging.getLogger(__name__)
@@ -53,6 +53,11 @@ def _generate_context(template_params, config_client):
         return "?" + "&".join(list_params) if list_params else None
 
     default_context = get_default_context()
+    custom_context = get_custom_context()
+    for k in default_context:
+        if k in custom_context:
+            for k2, v2 in custom_context[k].items():
+                default_context[k][k2] = v2
     texts = template_params.get("texts", {})
     numbered_dict = get_numbered_params(texts)
     organization_info = texts.get("organization", {})
