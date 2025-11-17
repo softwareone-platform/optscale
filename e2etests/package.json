@@ -20,6 +20,7 @@
     "playwright:codegen": "npx playwright codegen %BASE_URL%",
     "playwright:headed": "npx playwright test --headed --workers=1 --project chrome --grep @ui",
     "playwright:ui": "npx playwright test --ui --project chrome --grep @ui",
+    "playwight:p1": "npx playwright test --project chrome --grep @p1",
     "playwright:invitation": "npx playwright test --workers=1 --grep @invitation-flow",
     "playwright:trace": "npx playwright test --trace",
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",

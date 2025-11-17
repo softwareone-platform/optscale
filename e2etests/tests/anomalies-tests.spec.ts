@@ -61,7 +61,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect(resourcesPage.heading).toBeVisible();
   });
 
-  test('[231488] API responses matches expected structure for default anomaly detection policies', async ({ anomaliesPage }) => {
+  test('[231488] API responses matches expected structure for default anomaly detection policies', {tag: '@p1'}, async ({ anomaliesPage }) => {
     let anomalyData: DefaultAnomalyResponse;
     await test.step('Load expenses data', async () => {
       const [anomalyResponse] = await Promise.all([
@@ -171,7 +171,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
   });
 
-  test('[231433] Add a resource count anomaly detection policy', async ({ anomaliesPage, anomaliesCreatePage }) => {
+  test('[231433] Add a resource count anomaly detection policy', {tag: '@p1'}, async ({ anomaliesPage, anomaliesCreatePage }) => {
     await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Resource Count Anomaly - ${Date.now()}`;
 
@@ -268,7 +268,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
-  test.only('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test.fail('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-region-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';

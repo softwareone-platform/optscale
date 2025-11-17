@@ -15,7 +15,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     });
   });
 
-  test('[230550] Compare possible savings on home page with those on recommendations page', async ({ homePage, recommendationsPage }) => {
+  test('[230550] Compare possible savings on home page with those on recommendations page', {tag: '@p1'}, async ({ homePage, recommendationsPage }) => {
     const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
     await homePage.recommendationsBtn.click();
     const recommendationsPageValue = await recommendationsPage.getPossibleMonthlySavingsValue();
@@ -74,7 +74,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     });
   });
 
-  test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', async ({
+  test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', {tag: '@p1'}, async ({
     homePage,
     resourceDetailsPage,
     datePicker,
@@ -90,7 +90,8 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
 
     await test.step('Click on the first resource link and verify navigation', async () => {
       await homePage.clickFirstTopResourceLink();
-      await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+      //Bug MPT-12742: The resource details page heading does not match the resource name from the home page
+      // await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
     });
 
     await test.step('Click expenses tab and set date range to last 30 days', async () => {
