@@ -205,4 +205,24 @@ export class AnomaliesPage extends BasePage {
   async clickShowLegend(): Promise<void> {
     await this.showLegend.click();
   }
+
+  /**
+   * Retrieves the text content of the "Violated At" column for a specific row in the table.
+   *
+   * @param {number} index - The index of the row to retrieve the text from (1-based index).
+   * @returns {Promise<string>} A promise that resolves to the text content of the "Violated At" column.
+   */
+  async getViolatedAtTextByIndex(index: number): Promise<string> {
+    return this.table.locator(`//tr[${index}]/td[1]`).innerText();
+  }
+
+  /**
+   * Retrieves the text content of the "Average Expenses -> Actual Expenses" column for a specific row in the table.
+   *
+   * @param {number} index - The index of the row to retrieve the text from (1-based index).
+   * @returns {Promise<string>} A promise that resolves to the text content of the "Average Expenses -> Actual Expenses" column.
+   */
+  async getAverageActualExpensesByIndex(index: number): Promise<string> {
+    return await this.table.locator(`//tr[${index}]/td[3]`).innerText();
+  }
 }

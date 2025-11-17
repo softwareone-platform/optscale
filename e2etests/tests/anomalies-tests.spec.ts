@@ -268,7 +268,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
-  test.fail('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test.only('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-region-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';
@@ -378,4 +378,28 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
   });
+
+  test('[231439] Verify detected anomalies are displayed in the table correctly', async ({ anomaliesPage }) => {
+    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
+    await anomaliesPage.navigateToURL();
+
+    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.waitForAllProgressBarsToDisappear();
+
+    expect(await anomaliesPage.getViolatedAtTextByIndex(1)).toBe('10/12/2025 09:55 PM');
+    expect(await anomaliesPage.getAverageActualExpensesByIndex(1)).toBe('$14,358.9 ⟶ $48,409.6 (237%)');
+
+    expect(await anomaliesPage.getViolatedAtTextByIndex(2)).toBe('09/12/2025 07:35 PM');
+    expect(await anomaliesPage.getAverageActualExpensesByIndex(2)).toBe('$13,649.7 ⟶ $47,918.1 (251%)');
+
+    expect(await anomaliesPage.getViolatedAtTextByIndex(3)).toBe('08/12/2025 10:30 PM');
+    expect(await anomaliesPage.getAverageActualExpensesByIndex(3)).toBe('$13,184.3 ⟶ $25,579.3 (94%)');
+
+    expect(await anomaliesPage.getViolatedAtTextByIndex(4)).toBe('06/12/2025 10:20 PM');
+    expect(await anomaliesPage.getAverageActualExpensesByIndex(4)).toBe('$10,737 ⟶ $43,279.5 (303%)');
+  });
+
+
+
+
 });
