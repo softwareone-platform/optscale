@@ -243,7 +243,6 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
 });
 
 test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
-  //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
   const apiInterceptions: InterceptionEntry[] = [
     {
       gql: 'Organizations',
@@ -302,7 +301,6 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false },
   });
 
-  //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
   test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
     let expectedPath = 'tests/expected/expected-anomaly-expenses-region-daily-chart-export.png';
