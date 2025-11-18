@@ -47,38 +47,38 @@ async function interceptGraphQLRequest(
     const body = JSON.parse(postData);
 
     // Add logging to see all requests
-    console.log(`\n=== GraphQL Request Interceptor ===`);
-    console.log(`Expected operation: ${operationName}`);
-    console.log(`Actual operation: ${body.operationName}`);
-    console.log(`Expected variableMatch:`, variableMatch);
-    console.log(`Actual variables:`, JSON.stringify(body.variables, null, 2));
+    debugLog(`\n=== GraphQL Request Interceptor ===`);
+    debugLog(`Expected operation: ${operationName}`);
+    debugLog(`Actual operation: ${body.operationName}`);
+    debugLog(`Expected variableMatch: ${variableMatch}`);
+    debugLog(`Actual variables: ${JSON.stringify(body.variables, null, 2)}`);
 
     // Only proceed if operation name matches
     if (body.operationName !== operationName) {
-      //console.log(`❌ Operation name mismatch - continuing to next interceptor`);
+      //debugLog(`❌ Operation name mismatch - continuing to next interceptor`);
       return route.fallback();
     }
 
-    console.log(`✅ Operation name matches`);
+    debugLog(`✅ Operation name matches`);
 
     // If variableMatch is provided, check if all specified variables match
     if (variableMatch) {
       const allVariablesMatch = Object.entries(variableMatch).every(([keyPath, expectedValue]) => {
         const actualValue = getNestedValue(body.variables, keyPath);
-        console.log(`Checking ${keyPath}: expected=${expectedValue}, actual=${actualValue}`);
+        debugLog(`Checking ${keyPath}: expected=${expectedValue}, actual=${actualValue}`);
         return actualValue === expectedValue;
       });
 
       if (!allVariablesMatch) {
-        console.log(`❌ Variable match failed - continuing to next interceptor`);
+        debugLog(`❌ Variable match failed - continuing to next interceptor`);
         return route.fallback();
       }
-      console.log(`✅ Variable match succeeded`);
+      debugLog(`✅ Variable match succeeded`);
     } else {
-      console.log(`ℹ️ No variable matching required`);
+      debugLog(`ℹ️ No variable matching required`);
     }
 
-    console.log(`🎯 INTERCEPTING with mock data`);
+    debugLog(`🎯 INTERCEPTING with mock data`);
     onIntercepted();
     return await respondWithMockData(route, mock);
   });
@@ -109,11 +109,11 @@ export async function apiInterceptors(page: Page, config: InterceptionEntry[], f
     const urlRegExp = new RegExp(url || '/api$');
     const interceptorId = createInterceptorId(gql, url);
 
-    console.log(`\n=== Registering Interceptor ${index + 1} ===`);
-    console.log(`ID: ${interceptorId}`);
-    console.log(`GraphQL Operation: ${gql || 'N/A'}`);
-    console.log(`Variable Match:`, variableMatch || 'None');
-    console.log(`URL Pattern: ${urlRegExp}`);
+    debugLog(`\n=== Registering Interceptor ${index + 1} ===`);
+    debugLog(`ID: ${interceptorId}`);
+    debugLog(`GraphQL Operation: ${gql || 'N/A'}`);
+    debugLog(`Variable Match: ${variableMatch || 'None'}`);
+    debugLog(`URL Pattern: ${urlRegExp}`);
 
     interceptorHits.set(interceptorId, false);
 
