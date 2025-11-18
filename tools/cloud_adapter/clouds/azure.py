@@ -76,6 +76,7 @@ DESERIALIZER = Deserializer(classes={
 AzureConsumptionException = HttpResponseError
 AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
+AzureErrorResponseException = HttpResponseError
 
 
 def _retry_on_error(exc):
