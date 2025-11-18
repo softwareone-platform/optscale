@@ -178,7 +178,7 @@ export class AnomaliesPage extends BasePage {
   async selectCategorizeBy(option: string, wait: boolean = true): Promise<void> {
     await this.selectFromComboBox(this.categorizeBySelect, option);
     if (wait) {
-      await this.waitForPageLoad();
+      await this.waitForAllProgressBarsToDisappear();
       await this.waitForCanvas();
     }
   }

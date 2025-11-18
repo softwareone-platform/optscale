@@ -1,12 +1,17 @@
 /* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 
 import {
+  AnomaliesDataSourceExpensesDailyBreakdown,
   AnomaliesDataSourcesResponse,
   AnomaliesDefaultExpenseServiceDailyResponse,
   AnomaliesDefaultExpensesOrganizationConstraintResponse,
   AnomaliesDefaultExpensesOrganizationLimitsHitResponse,
   AnomaliesOrganizationAllowedActionsResponse,
   AnomaliesOrganizationsResponse,
+  AnomaliesOwnerExpensesDailyBreakdown,
+  AnomaliesPoolExpensesDailyBreakdown,
+  AnomaliesRegionExpensesDailyBreakdown,
+  AnomaliesResourceTypeExpensesDailyBreakdown,
 } from '../mocks/anomalies-page.mocks';
 import { AuthRequest } from '../api-requests/auth-request';
 import { DefaultAnomalyResponse } from '../types/api-response.types';
@@ -61,97 +66,101 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect(resourcesPage.heading).toBeVisible();
   });
 
-  test('[231488] API responses matches expected structure for default anomaly detection policies', {tag: '@p1'}, async ({ anomaliesPage }) => {
-    let anomalyData: DefaultAnomalyResponse;
-    await test.step('Load expenses data', async () => {
-      const [anomalyResponse] = await Promise.all([
-        anomaliesPage.page.waitForResponse(
-          resp =>
-            resp.url().includes('/organization_constraints') &&
-            resp.url().includes('type=resource_count_anomaly&type=expense_anomaly') &&
-            resp.request().method() === 'GET'
-        ),
-        anomaliesPage.page.reload(),
-      ]);
-      anomalyData = await anomalyResponse.json();
-      debugLog(JSON.stringify(anomalyData));
-    });
+  test(
+    '[231488] API responses matches expected structure for default anomaly detection policies',
+    { tag: '@p1' },
+    async ({ anomaliesPage }) => {
+      let anomalyData: DefaultAnomalyResponse;
+      await test.step('Load expenses data', async () => {
+        const [anomalyResponse] = await Promise.all([
+          anomaliesPage.page.waitForResponse(
+            resp =>
+              resp.url().includes('/organization_constraints') &&
+              resp.url().includes('type=resource_count_anomaly&type=expense_anomaly') &&
+              resp.request().method() === 'GET'
+          ),
+          anomaliesPage.page.reload(),
+        ]);
+        anomalyData = await anomalyResponse.json();
+        debugLog(JSON.stringify(anomalyData));
+      });
 
-    await test.step('Validate API response structure', async () => {
-      // Validate that anomalyData is an object with organization_constraints array
-      expect.soft(anomalyData).toHaveProperty('organization_constraints');
-      expect.soft(Array.isArray(anomalyData.organization_constraints)).toBe(true);
-      expect.soft(anomalyData.organization_constraints.length).toBeGreaterThanOrEqual(2);
+      await test.step('Validate API response structure', async () => {
+        // Validate that anomalyData is an object with organization_constraints array
+        expect.soft(anomalyData).toHaveProperty('organization_constraints');
+        expect.soft(Array.isArray(anomalyData.organization_constraints)).toBe(true);
+        expect.soft(anomalyData.organization_constraints.length).toBeGreaterThanOrEqual(2);
 
-      // Validate each organization constraint
-      for (const constraint of anomalyData.organization_constraints) {
-        // Basic structure validation
-        expect.soft(typeof constraint.deleted_at).toBe('number');
-        expect.soft(typeof constraint.id).toBe('string');
-        expect.soft(typeof constraint.created_at).toBe('number');
-        expect.soft(typeof constraint.organization_id).toBe('string');
-        expect.soft(typeof constraint.name).toBe('string');
-        expect.soft(typeof constraint.type).toBe('string');
-        expect.soft(typeof constraint.definition).toBe('object');
-        expect.soft(typeof constraint.filters).toBe('object');
-        expect.soft(typeof constraint.last_run).toBe('number');
-        expect.soft(typeof constraint.last_run_result).toBe('object');
-        expect.soft(typeof constraint.limit_hits).toBe('object');
-        expect.soft(Array.isArray(constraint.limit_hits)).toBe(true);
+        // Validate each organization constraint
+        for (const constraint of anomalyData.organization_constraints) {
+          // Basic structure validation
+          expect.soft(typeof constraint.deleted_at).toBe('number');
+          expect.soft(typeof constraint.id).toBe('string');
+          expect.soft(typeof constraint.created_at).toBe('number');
+          expect.soft(typeof constraint.organization_id).toBe('string');
+          expect.soft(typeof constraint.name).toBe('string');
+          expect.soft(typeof constraint.type).toBe('string');
+          expect.soft(typeof constraint.definition).toBe('object');
+          expect.soft(typeof constraint.filters).toBe('object');
+          expect.soft(typeof constraint.last_run).toBe('number');
+          expect.soft(typeof constraint.last_run_result).toBe('object');
+          expect.soft(typeof constraint.limit_hits).toBe('object');
+          expect.soft(Array.isArray(constraint.limit_hits)).toBe(true);
 
-        // Validate name-type correlation
-        if (constraint.name === 'Default - resource count anomaly') {
-          expect.soft(constraint.type).toBe('resource_count_anomaly');
-        } else if (constraint.name === 'Default - expense anomaly') {
-          expect.soft(constraint.type).toBe('expense_anomaly');
-        }
-
-        // Validate default definition thresholds
-        if (constraint.name.includes('Default')) {
-          expect.soft(constraint.definition.threshold_days).toBe(7);
-          expect.soft(constraint.definition.threshold).toBe(30);
-
-          // Validate last_run_result structure
-          expect.soft(constraint.last_run_result).toHaveProperty('average');
-          expect.soft(constraint.last_run_result).toHaveProperty('today');
-          expect.soft(typeof constraint.last_run_result.average).toBe('number');
-          expect.soft(typeof constraint.last_run_result.today).toBe('number');
-
-          // Validate breakdown keys are consecutive daily timestamps for last 7 days
-          const breakdown = constraint.last_run_result.breakdown;
-          const breakdownKeys = Object.keys(breakdown)
-            .map(Number)
-            .sort((a, b) => a - b);
-
-          // Validate we have exactly 7 timestamps
-          expect.soft(breakdownKeys).toHaveLength(7);
-
-          // Validate timestamps are consecutive daily intervals (86400 seconds apart)
-          for (let i = 0; i < breakdownKeys.length - 1; i++) {
-            const dayDifference = breakdownKeys[i + 1] - breakdownKeys[i];
-            expect.soft(dayDifference).toBe(86400); // Exactly 24 hours
+          // Validate name-type correlation
+          if (constraint.name === 'Default - resource count anomaly') {
+            expect.soft(constraint.type).toBe('resource_count_anomaly');
+          } else if (constraint.name === 'Default - expense anomaly') {
+            expect.soft(constraint.type).toBe('expense_anomaly');
           }
 
-          // Validate the range spans exactly 6 days (7 total timestamps)
-          const oldestTimestamp = breakdownKeys[0];
-          const latestTimestamp = breakdownKeys[breakdownKeys.length - 1];
-          expect.soft(latestTimestamp - oldestTimestamp).toBe(6 * 86400);
+          // Validate default definition thresholds
+          if (constraint.name.includes('Default')) {
+            expect.soft(constraint.definition.threshold_days).toBe(7);
+            expect.soft(constraint.definition.threshold).toBe(30);
 
-          // Validate timestamps are reasonable (within last 14 days for safety)
-          const now = Math.floor(Date.now() / 1000);
-          const thirtyDaysAgo = now - 14 * 86400;
-          expect.soft(oldestTimestamp).toBeGreaterThan(thirtyDaysAgo);
-          expect.soft(latestTimestamp).toBeLessThanOrEqual(now);
+            // Validate last_run_result structure
+            expect.soft(constraint.last_run_result).toHaveProperty('average');
+            expect.soft(constraint.last_run_result).toHaveProperty('today');
+            expect.soft(typeof constraint.last_run_result.average).toBe('number');
+            expect.soft(typeof constraint.last_run_result.today).toBe('number');
 
-          // Validate each breakdown value is a number
-          for (const key of breakdownKeys) {
-            expect.soft(typeof breakdown[key]).toBe('number');
-            expect.soft(breakdown[key]).toBeGreaterThanOrEqual(0);
+            // Validate breakdown keys are consecutive daily timestamps for last 7 days
+            const breakdown = constraint.last_run_result.breakdown;
+            const breakdownKeys = Object.keys(breakdown)
+              .map(Number)
+              .sort((a, b) => a - b);
+
+            // Validate we have exactly 7 timestamps
+            expect.soft(breakdownKeys).toHaveLength(7);
+
+            // Validate timestamps are consecutive daily intervals (86400 seconds apart)
+            for (let i = 0; i < breakdownKeys.length - 1; i++) {
+              const dayDifference = breakdownKeys[i + 1] - breakdownKeys[i];
+              expect.soft(dayDifference).toBe(86400); // Exactly 24 hours
+            }
+
+            // Validate the range spans exactly 6 days (7 total timestamps)
+            const oldestTimestamp = breakdownKeys[0];
+            const latestTimestamp = breakdownKeys[breakdownKeys.length - 1];
+            expect.soft(latestTimestamp - oldestTimestamp).toBe(6 * 86400);
+
+            // Validate timestamps are reasonable (within last 14 days for safety)
+            const now = Math.floor(Date.now() / 1000);
+            const thirtyDaysAgo = now - 14 * 86400;
+            expect.soft(oldestTimestamp).toBeGreaterThan(thirtyDaysAgo);
+            expect.soft(latestTimestamp).toBeLessThanOrEqual(now);
+
+            // Validate each breakdown value is a number
+            for (const key of breakdownKeys) {
+              expect.soft(typeof breakdown[key]).toBe('number');
+              expect.soft(breakdown[key]).toBeGreaterThanOrEqual(0);
+            }
           }
         }
-      }
-    });
-  });
+      });
+    }
+  );
 
   test('[231431] Anomalies page search function', async ({ anomaliesPage }) => {
     await anomaliesPage.searchAnomaly('expense');
@@ -171,7 +180,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
   });
 
-  test('[231433] Add a resource count anomaly detection policy', {tag: '@p1'}, async ({ anomaliesPage, anomaliesCreatePage }) => {
+  test('[231433] Add a resource count anomaly detection policy', { tag: '@p1' }, async ({ anomaliesPage, anomaliesCreatePage }) => {
     await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Resource Count Anomaly - ${Date.now()}`;
 
@@ -246,7 +255,33 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     },
     {
       gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'service_name' },
       mock: AnomaliesDefaultExpenseServiceDailyResponse,
+    },
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'region' },
+      mock: AnomaliesRegionExpensesDailyBreakdown,
+    },
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'resource_type' },
+      mock: AnomaliesResourceTypeExpensesDailyBreakdown,
+    },
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'employee_id' },
+      mock: AnomaliesOwnerExpensesDailyBreakdown,
+    },
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'cloud_account_id' },
+      mock: AnomaliesDataSourceExpensesDailyBreakdown,
+    },
+    {
+      gql: 'GetExpensesDailyBreakdown',
+      variableMatch: { 'params.breakdown_by': 'pool_id' },
+      mock: AnomaliesPoolExpensesDailyBreakdown,
     },
     {
       gql: 'DataSources',
@@ -270,7 +305,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   //TODO: Modify the apiInterceptions to mock gql GetExpensesDailyBreakdown for breakdownBy using the mocks available
   test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
     let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
-    let expectedPath = 'tests/expected/expected-anomaly-region-daily-chart-export.png';
+    let expectedPath = 'tests/expected/expected-anomaly-expenses-region-daily-chart-export.png';
     let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';
     let match: boolean;
 
@@ -290,7 +325,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
 
     await test.step('Category: Resource type', async () => {
       actualPath = 'tests/downloads/anomaly-expenses-resource-type-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-resource-type-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-expenses-resource-type-daily-chart-export.png';
       diffPath = 'tests/downloads/diff-anomaly-expenses-resource-type-daily-chart-export.png';
 
       await anomaliesPage.selectCategorizeBy('Resource type');
@@ -301,7 +336,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
 
     await test.step('Category: Data source', async () => {
       actualPath = 'tests/downloads/anomaly-expenses-data-source-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-data-source-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-expenses-data-source-daily-chart-export.png';
       diffPath = 'tests/downloads/diff-anomaly-expenses-data-source-daily-chart-export.png';
 
       await anomaliesPage.selectCategorizeBy('Data source');
@@ -312,7 +347,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
 
     await test.step('Category: Owner', async () => {
       actualPath = 'tests/downloads/anomaly-expenses-owner-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-owner-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-expenses-owner-daily-chart-export.png';
       diffPath = 'tests/downloads/diff-anomaly-expenses-owner-daily-chart-export.png';
 
       await anomaliesPage.selectCategorizeBy('Owner');
@@ -323,7 +358,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
 
     await test.step('Category: Pool', async () => {
       actualPath = 'tests/downloads/anomaly-expenses-pool-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-pool-daily-chart-export.png';
+      expectedPath = 'tests/expected/expected-anomaly-expenses-pool-daily-chart-export.png';
       diffPath = 'tests/downloads/diff-anomaly-expenses-pool-daily-chart-export.png';
 
       await anomaliesPage.selectCategorizeBy('Pool');
@@ -331,7 +366,6 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
     });
-
   });
 
   test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
@@ -398,8 +432,4 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     expect(await anomaliesPage.getViolatedAtTextByIndex(4)).toBe('06/12/2025 10:20 PM');
     expect(await anomaliesPage.getAverageActualExpensesByIndex(4)).toBe('$10,737 ⟶ $43,279.5 (303%)');
   });
-
-
-
-
 });

@@ -9,10 +9,12 @@ type XOR<T, U> =
  *
  * @property {string} gql - The name of the GraphQL operation to intercept.
  * @property {any} mock - The mock data to return when the specified GraphQL operation is intercepted.
+ * @property {object} [variableMatch] - Optional key-value pairs to match against GraphQL variables.
  */
 type IGraphQLEntry = {
   gql: string;
   mock: any;
+  variableMatch?: Record<string, any>;
 };
 
 /**
