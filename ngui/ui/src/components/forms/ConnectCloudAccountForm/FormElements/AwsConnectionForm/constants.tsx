@@ -66,12 +66,10 @@ const awsMemberAccessKeyDescriptions = [
 
 export const awsConnectionAssumedRoleDescriptions = {
   [CONNECTION_TYPES.AWS_MANAGEMENT]: awsDefaultAssumedRoleDescriptions,
-  [CONNECTION_TYPES.AWS_MEMBER]: awsDefaultAssumedRoleDescriptions,
-  [CONNECTION_TYPES.AWS_STANDALONE]: awsDefaultAssumedRoleDescriptions
+  [CONNECTION_TYPES.AWS_MEMBER]: awsDefaultAssumedRoleDescriptions
 };
 
 export const awsConnectionKeyAccessDescriptions = {
   [CONNECTION_TYPES.AWS_MANAGEMENT]: awsDefaultAccessKeyDescriptions,
-  [CONNECTION_TYPES.AWS_MEMBER]: awsMemberAccessKeyDescriptions,
-  [CONNECTION_TYPES.AWS_STANDALONE]: awsDefaultAccessKeyDescriptions
+  [CONNECTION_TYPES.AWS_MEMBER]: awsMemberAccessKeyDescriptions
 };

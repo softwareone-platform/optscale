@@ -13,7 +13,6 @@ export const useIsDataSourceConnectionTypeEnabled = () => {
       ({
         [CONNECTION_TYPES.AWS_MANAGEMENT]: true,
         [CONNECTION_TYPES.AWS_MEMBER]: true,
-        [CONNECTION_TYPES.AWS_STANDALONE]: true,
         [CONNECTION_TYPES.AZURE_TENANT]: true,
         [CONNECTION_TYPES.AZURE_SUBSCRIPTION]: true,
         [CONNECTION_TYPES.GCP_TENANT]: true,
