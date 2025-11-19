@@ -952,7 +952,7 @@ class Azure(CloudBase):
         :return: an iterator with usage objects
         """
         def get_values(_req):
-            result = self.raw_client.send(_req)
+            result = self.raw_client.transport.send(_req)
             deserialized = DESERIALIZER.deserialize_data(
                 result.json(), "UsageDetailsListResult")
             return deserialized.value or [], deserialized.next_link
@@ -1384,7 +1384,7 @@ class Azure(CloudBase):
             headers={'Content-Type': 'application/json'},
             content={'requests': request_specs},
         )
-        response = self.raw_client.send(batch_request, stream=False)
+        response = self.raw_client.transport.send(batch_request, stream=False)
         return response.json()
 
     @retry(stop_max_attempt_number=5, wait_fixed=5000,
