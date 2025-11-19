@@ -30,6 +30,7 @@ async function globalSetup(config: FullConfig) {
   console.log(`BROWSER_ERROR_LOGGING: ${process.env.BROWSER_ERROR_LOGGING}`);
   console.log(`DEBUG_LOG: ${process.env.DEBUG_LOG}`);
   if (process.env.BASE_URL === undefined) console.error('***BASE_URL is not set. This is required for the tests to run.');
+  if (process.env.DEV === undefined || process.env.TEST === undefined || process.env.STAGING === undefined ) console.error('***DEV, TEST, or STAGING is not set. One of these is required for the tests to run.');
   if (process.env.DEFAULT_USER_EMAIL === undefined || process.env.DEFAULT_USER_PASSWORD === undefined)
     console.warn('***DEFAULT_USER_EMAIL or DEFAULT_USER_PASSWORD is not set. This will block login for tests not using live demo.');
   if (process.env.DEFAULT_AUTH_USER_ID === undefined)

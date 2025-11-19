@@ -6,6 +6,7 @@ export class RestAPIRequest extends BaseRequest {
   readonly request: APIRequestContext;
   readonly organizationsEndpoint: string;
   readonly employeesEndpoint: string;
+  readonly anomalyPoliciesEndpoint: string;
 
   /**
    * Constructs an instance of RestAPIRequest.
@@ -17,6 +18,7 @@ export class RestAPIRequest extends BaseRequest {
     const baseUrl = process.env.API_BASE_URL || '';
     this.organizationsEndpoint = `${baseUrl}/restapi/v2/organizations`;
     this.employeesEndpoint = `${baseUrl}/restapi/v2/employees`;
+    this.anomalyPoliciesEndpoint = `${baseUrl}/restapi/v2/organization_constraints`;
   }
 
   /**
@@ -92,5 +94,28 @@ export class RestAPIRequest extends BaseRequest {
       throw new Error(`[ERROR] Failed to delete userID: ${userID}`);
     }
     return `User ${userID} deleted`;
+  }
+
+  /**
+   * Deletes an anomaly detection policy by its ID.
+   *
+   * @param {string} policyID - The ID of the anomaly policy to delete.
+   * @param {string} token - The authorization token required for the API request.
+   * @returns {Promise<void>} A promise that resolves when the anomaly policy is successfully deleted.
+   * @throws {Error} If the deletion fails with a status other than 204.
+   */
+  async deleteAnomalyPolicy(policyID: string, token: string): Promise<void> {
+    const endpoint = `${this.anomalyPoliciesEndpoint}/${policyID}`;
+    debugLog(`Deleting anomaly policy ${policyID}`);
+    const response = await this.request.delete(endpoint, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status() !== 204) {
+      throw new Error(`[ERROR] Failed to delete anomaly policy ID: ${policyID}`);
+    }
+    debugLog(`Anomaly policy ${policyID} deleted`);
   }
 }

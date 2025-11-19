@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { debugLog } from '../utils/debug-logging';
 import { getExpectedDateRangeText, getThisMonthUnixDateRange } from '../utils/date-range-utils';
@@ -46,7 +47,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
     await expect(expensesPage.geographyBtn).toBeVisible();
   });
 
-  test('Validate API default chart data', async ({ expensesPage }) => {
+  test('Validate API default chart data', {tag: '@p1'}, async ({ expensesPage }) => {
     const { startDate, endDate } = getThisMonthUnixDateRange();
     let expensesData: ExpensesResponse;
 
@@ -118,40 +119,38 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     });
   });
 
-  test('[231183] Verify expenses chart download', async ({ expensesPage }) => {
+  test('[231183] Verify expenses chart download', {tag: '@p1'}, async ({ expensesPage }) => {
     let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
     let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
     let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
     let match: boolean;
 
-    await test.step('Download daily chart and compare pdf', async () => {
-      await test.step('Download the default chart', async () => {
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+    await test.step('Download the default chart', async () => {
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-      await test.step('Download weekly chart and compare', async () => {
-        actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
-        expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
-        diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
+    await test.step('Download weekly chart and compare', async () => {
+      actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
+      expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
+      diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
 
-        await expensesPage.clickWeeklyBtn();
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+      await expensesPage.clickWeeklyBtn();
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-      await test.step('Download monthly chart and compare', async () => {
-        actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
-        expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
-        diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
+    await test.step('Download monthly chart and compare', async () => {
+      actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
+      expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
+      diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
 
-        await expensesPage.clickMonthlyBtn();
-        await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
-        match = await comparePdfFiles(expectedPath, actualPath, diffPath);
-        expect.soft(match).toBe(true);
-      });
+      await expensesPage.clickMonthlyBtn();
+      await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
+      match = await comparePdfFiles(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
     });
   });
 });
@@ -255,7 +254,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     });
   });
 
-  test('[231216] Verify data source expenses total for(default) period matches chart and table totals', async ({ expensesPage }) => {
+  test('[231216] Verify data source expenses total for(default) period matches chart and table totals', {tag: '@p1'}, async ({ expensesPage }) => {
     const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
     debugLog(`Total expenses for selected period: ${totalForPeriod}`);
     const chartTotal = await expensesPage.getExpensesPieChartValue();
@@ -328,7 +327,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     });
   });
 
-  test('[231219] Validate API Pool Breakdown chart data', async ({ expensesPage }) => {
+  test('[231219] Validate API Pool Breakdown chart data', {tag: '@p1'}, async ({ expensesPage }) => {
     const { startDate, endDate } = getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByPoolResponse;
 

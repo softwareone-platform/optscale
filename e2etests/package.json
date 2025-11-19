@@ -20,6 +20,7 @@
     "playwright:codegen": "npx playwright codegen %BASE_URL%",
     "playwright:headed": "npx playwright test --headed --workers=1 --project chrome --grep @ui",
     "playwright:ui": "npx playwright test --ui --project chrome --grep @ui",
+    "playwight:p1": "npx playwright test --project chrome --grep @p1",
     "playwright:invitation": "npx playwright test --workers=1 --grep @invitation-flow",
     "playwright:trace": "npx playwright test --trace",
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",
@@ -52,5 +53,8 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "uuid": "^11.0.5"
+  },
+  "dependencies": {
+    "playwright": "^1.56.1"
   }
 }

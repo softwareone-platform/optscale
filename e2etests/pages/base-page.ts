@@ -499,4 +499,8 @@ export abstract class BasePage {
     debugLog(`Waiting for ${ms}ms...`);
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  async clickLocator(locator: Locator): Promise<void> {
+    await locator.click();
+  }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
@@ -312,7 +313,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230919] Verify pool exceeded count and expand requiring attention', async ({ poolsPage }) => {
+  test('[230919] Verify pool exceeded count and expand requiring attention', {tag: '@p1'}, async ({ poolsPage }) => {
     // test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
     test.setTimeout(75000);
 
