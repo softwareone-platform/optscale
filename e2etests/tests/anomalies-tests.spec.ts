@@ -430,4 +430,16 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     expect(await anomaliesPage.getViolatedAtTextByIndex(4)).toBe('06/12/2025 10:20 PM');
     expect(await anomaliesPage.getAverageActualExpensesByIndex(4)).toBe('$10,737 ⟶ $43,279.5 (303%)');
   });
+
+  test('[231440] Verify detected anomalies are resource button navigate correctly', async ({ anomaliesPage, resourcesPage }) => {
+    await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
+    await anomaliesPage.navigateToURL();
+
+    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.waitForAllProgressBarsToDisappear();
+
+    await anomaliesPage.clickLocator(anomaliesPage.showResourcesBtn.first());
+    await expect(resourcesPage.heading).toBeVisible();
+  });
 });
+

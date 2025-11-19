@@ -43,7 +43,7 @@ export class AnomaliesPage extends BasePage {
     this.anomalyDetectionBreadcrumb = this.main.locator('[href="/anomalies"]');
     this.heading = this.main.getByTestId('lbl_constraints_detection');
     this.anomalyDetectionPolicyHeading = this.getByAnyTestId('lbl_anomaly_detection_policy', this.main);
-    this.showResourcesBtn = this.main.getByTestId('btn_show_resources');
+    this.showResourcesBtn = this.getByAnyTestId('ListAltOutlinedIcon', this.main);
     this.deleteBtn = this.main.getByTestId('btn_delete');
     this.deleteSideModal = this.page.getByTestId('smodal_delete');
     this.sideModalDeleteBtn = this.deleteSideModal.getByTestId('btn_smodal_delete');
