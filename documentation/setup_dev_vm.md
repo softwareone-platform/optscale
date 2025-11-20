@@ -116,7 +116,7 @@ If everything goes well, you should be able to access the platform soon
 > mostly due to all the containers that need to be built from scratch. Also note that the Kubernetes cluster
 > will need some time (~15 mins) to spin all the pods after the playbook's execution is complete
 
-Once ready, open your browser and navigate to `https://localhost:8444/` (if using the `arm` VM) or `https://localhost:8443` if
+Once ready, open your browser and navigate to `https://localhost:9444/` (if using the `arm` VM) or `https://localhost:9443` if
 using the `x86` VM (port values taken from `Vagrantfile`)
 
 ## Troubleshooting

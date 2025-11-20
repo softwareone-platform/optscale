@@ -104,8 +104,8 @@ Vagrant.configure(2) do |config|
     arch: "arm64",
     base_box: "cloud-image/ubuntu-24.04",
     ports: {
-      http: 8081,
-      https: 8444,
+      http: 9081,
+      https: 9444,
       ssh: 50223,
     }
   )
@@ -116,8 +116,8 @@ Vagrant.configure(2) do |config|
     arch: "x86_64",
     base_box: "cloud-image/ubuntu-24.04",
     ports: {
-      http: 8080,
-      https: 8443,
+      http: 9080,
+      https: 9443,
       ssh: 50222,
     }
   )
