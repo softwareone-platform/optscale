@@ -48,13 +48,14 @@ class StuckInStateForALongTimeBase(ArchiveBase):
                     result.append(optimization)
                 continue
 
-            _, response = self.rest_client.cloud_resources_discover(
-                self.organization_id, self.resource_type,
-                filters={'cloud_account_id': [cloud_account_id]})
-            resources_map = {r['cloud_resource_id']: r for r in response['data']}
+            resources = self.mongo_client.restapi.resources.find({
+                'cloud_account_id': cloud_account_id,
+                'resource_type': self.resource_type,
+                'active': True
+            })
+            resources_map = {r['_id']: r for r in resources}
             for optimization in optimizations_:
-                resource = resources_map.get(
-                    optimization['cloud_resource_id'], {})
+                resource = resources_map.get(optimization['resource_id'], {})
                 if not resource:
                     self._set_reason_properties(
                         optimization, ArchiveReason.RECOMMENDATION_APPLIED)

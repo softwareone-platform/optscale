@@ -154,7 +154,7 @@
               <td align="left" style="padding:10px 0px 10px 0px;word-break:break-word;">
 
       <div>
-        <div style="text-align: center; line-height: 100%; font-weight: 600; font-style: normal; font-size: 33px;">Welcome to OptScale</div>
+        <div style="text-align: center; line-height: 100%; font-weight: 600; font-style: normal; font-size: 33px;">Welcome to {{etcd.product_name}}</div>
       </div>
 
               </td>
@@ -226,7 +226,7 @@
               <td align="left" style="padding:6px 20px 6px 20px;word-break:break-word;">
 
       <div>
-          <p><span>OptScale is an open source FinOps platform that optimizes any workload performance and cost.</span></p>
+          <p><span>{{etcd.product_name}} is an open source FinOps platform that optimizes any workload performance and cost.</span></p>
       </div>
 
               </td>
@@ -292,7 +292,7 @@
               <td align="left" style="padding:10px 0px 10px 0px;word-break:break-word;">
 
       <div>
-        <div style="text-align: center; line-height: 100%; font-weight: 600; font-style: normal; font-size: 23px;">OptScale FinOps</div>
+        <div style="text-align: center; line-height: 100%; font-weight: 600; font-style: normal; font-size: 23px;">{{etcd.product_name}} FinOps</div>
       </div>
 
               </td>
@@ -321,11 +321,11 @@
               <td align="left" style="padding:6px 20px 5px 20px;word-break:break-word;">
       <div>
           <p><strong>One step left to implement FinOps principles:</strong></p>
-          <p>Please connect the first cloud account or Kubernetes cluster to start cost optimization immediately and get the most out of your experience with OptScale.</p>
+          <p>Please connect the first cloud account or Kubernetes cluster to start cost optimization immediately and get the most out of your experience with {{etcd.product_name}}.</p>
       </div>
         </td>
             </tr>
-
+      {% if links.e2e_azure|length or links.e2e_aws|length or links.e2e_alibaba|length or links.e2e_gcp|length or links.e2e_k8s|length %}
             <tr>
               <td align="left" style="padding:6px 20px 6px 20px;word-break:break-word;">
       <div>
@@ -333,47 +333,57 @@
       </div>
                     </td>
             </tr>
-
+            {% endif %}
+            {% if links.e2e_aws|length %}
             <tr>
               <td align="left" style="padding:0px 20px 12px 20px;word-break:break-word;">
                   <div>
                     <p><strong><a style="color: #4ab4ee;"
-                                  href="https://hystax.com/documentation/optscale/e2e-guides/e2e-aws.html" target="_blank" rel="noopener">AWS Connection Guide</a></strong></p>
+                                  href="{{links.e2e_aws}}" target="_blank" rel="noopener">AWS Connection Guide</a></strong></p>
                   </div>
               </td>
             </tr>
+            {% endif %}
+            {% if links.e2e_azure|length %}
             <tr>
               <td align="left" style="padding:0px 20px 12px 20px;word-break:break-word;">
                   <div>
                     <p><strong><a style="color: #4ab4ee;"
-                                  href="https://hystax.com/documentation/optscale/e2e-guides/e2e-azure.html" target="_blank" rel="noopener">Azure Connection Guide</a></strong></p>
+                                  href="{{links.e2e_azure}}" target="_blank" rel="noopener">Azure Connection Guide</a></strong></p>
                   </div>
               </td>
             </tr>
+            {% endif %}
+            {% if links.e2e_gcp|length %}
             <tr>
               <td align="left" style="padding:0px 20px 12px 20px;word-break:break-word;">
                   <div>
                     <p><strong><a style="color: #4ab4ee;"
-                                  href="https://hystax.com/documentation/optscale/e2e-guides/e2e-gcp.html" target="_blank" rel="noopener">GCP Connection Guide</a></strong></p>
+                                  href="{{links.e2e_gcp}}" target="_blank" rel="noopener">GCP Connection Guide</a></strong></p>
                   </div>
               </td>
             </tr>
+            {% endif %}
+            {% if links.e2e_alibaba|length %}
             <tr>
               <td align="left" style="padding:0px 20px 12px 20px;word-break:break-word;">
                   <div>
                     <p><strong><a style="color: #4ab4ee;"
-                                  href="https://hystax.com/documentation/optscale/e2e-guides/e2e-alibaba.html" target="_blank" rel="noopener">Alibaba Connection Guide</a></strong></p>
+                                  href="{{links.e2e_alibaba}}" target="_blank" rel="noopener">Alibaba Connection Guide</a></strong></p>
                   </div>
               </td>
             </tr>
+            {% endif %}
+            {% if links.e2e_k8s|length %}
             <tr>
               <td align="left" style="padding:0px 20px 12px 20px;word-break:break-word;">
                   <div>
                     <p><strong><a style="color: #4ab4ee;"
-                                  href="https://hystax.com/documentation/optscale/e2e-guides/e2e-kubernetes.html" target="_blank" rel="noopener">Kubernetes Connection Guide</a></strong></p>
+                                  href="{{links.e2e_k8s}}" target="_blank" rel="noopener">Kubernetes Connection Guide</a></strong></p>
                   </div>
               </td>
             </tr>
+            {% endif %}
       </tbody></table>
 
       </div>
@@ -382,11 +392,13 @@
 
       <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
 
-            <tbody><tr>
+            <tbody>
+            {% if links.documentation|length %}
+            <tr>
               <td align="left" style="padding:6px 20px 6px 20px;word-break:break-word;">
 
       <div>
-        <p><span style="color: #004c74;"><strong>OptScale documentation</strong>:</span></p>
+        <p><span style="color: #004c74;"><strong>{{etcd.product_name}} documentation</strong>:</span></p>
       </div>
 
               </td>
@@ -396,11 +408,12 @@
               <td align="left" style="padding:0px 20px 6px 20px;word-break:break-word;">
 
       <div>
-        <p><strong><span style="color: #4ab4ee;"><a style="color: #4ab4ee;" href="https://hystax.com/documentation/optscale" target="_blank" rel="noopener">https://hystax.com/documentation/optscale</a></span></strong></p>
+        <p><strong><span style="color: #4ab4ee;"><a style="color: #4ab4ee;" href="{{links.documentation}}" target="_blank" rel="noopener">{{links.documentation}}</a></span></strong></p>
       </div>
 
               </td>
             </tr>
+            {% endif %}
 
       </tbody></table>
 
@@ -458,7 +471,9 @@
               <td align="left" style="padding:6px 20px 6px 20px;word-break:break-word;">
 
       <div>
-          <p>Do you have any questions or comments? Feel free to reach us via <strong>support@hystax.com</strong>. We are here to help!</p>
+          {% if texts.support_email|length %}
+          <p>Do you have any questions or comments? Feel free to reach us via <strong>{{texts.support_email}}</strong>. We are here to help!</p>
+          {% endif %}
       </div>
 
               </td>
@@ -468,7 +483,7 @@
               <td align="left" style="padding:19px 20px 6px 20px;word-break:break-word;">
 
       <div>
-        <p>Warm regards,<br>Hystax OptScale Team</p>
+        <p>Warm regards,<br>{{texts.product}} Team</p>
       </div>
 
               </td>
@@ -528,11 +543,12 @@
 
             <tbody><tr>
               <td align="left" style="font-size:0px;padding:6px 20px 6px 20px;word-break:break-word;">
-
+      {% if texts.phone|length or etcd.author_email|length or texts.address|length %}
       <div style="font-size:12px;line-height:15px;text-align:left;">
         <p><span style="font-size: 12px; color: #ffffff;">{{texts.phone}} | {{etcd.author_email}} </span></p>
 <p><span style="font-size: 12px; color: #ffffff;">{{texts.address}}</span></p>
       </div>
+      {% endif %}
 
               </td>
             </tr>
@@ -555,12 +571,13 @@
 
             <tbody><tr>
               <td align="left" style="padding:6px 20px 6px 20px;word-break:break-word;">
-
+      {% if links.terms_of_use|length or links.privacy_policy|length %}
       <div style="font-size:12px;line-height:15px;text-align:left;">
         <p style="text-align: right;"><span style="font-size: 12px; color: #ffffff;">
             <a style="color: #ffffff;" href="{{links.terms_of_use}}" target="_blank" rel="noopener">Terms of use</a> | <a style="color: #ffffff;" href="{{links.privacy_policy}}" target="_blank" rel="noopener">Privacy Policy</a>
         </span></p>
       </div>
+      {% endif %}
 
               </td>
             </tr>
@@ -621,7 +638,7 @@
               <td align="left" style="font-size:0px;padding:25px 15px 5px 15px;word-break:break-word;">
 
       <div style="line-height:15px;text-align:left;">
-        <p><span style="font-size: 12px; color: #ffffff;">{{texts.copyright}} Hystax Inc. All Rights Reserved</span></p>
+        <p><span style="font-size: 12px; color: #ffffff;">{{texts.copyright}} {{texts.copyright_company_name}}. All Rights Reserved</span></p>
       </div>
 
               </td>
@@ -648,6 +665,7 @@
     <tr>
           <td>
         <![endif]-->
+                        {% if links.linkedin|length %}
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; float: none; display: inline-table;">
                           <tbody>
                             <tr>
@@ -667,10 +685,12 @@
                             </tr>
                           </tbody>
                         </table>
+                        {% endif %}
                         <!--[if mso | IE]>
           </td>
           <td>
         <![endif]-->
+                        {% if links.twitter|length %}
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; float: none; display: inline-table;">
                           <tbody>
                             <tr>
@@ -690,10 +710,12 @@
                             </tr>
                           </tbody>
                         </table>
+                        {% endif %}
                         <!--[if mso | IE]>
           </td>
           <td>
         <![endif]-->
+                        {% if links.facebook|length %}
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; float: none; display: inline-table;">
                           <tbody>
                             <tr>
@@ -713,10 +735,12 @@
                             </tr>
                           </tbody>
                         </table>
+                        {% endif %}
                         <!--[if mso | IE]>
           </td>
           <td>
         <![endif]-->
+                        {% if links.telegram|length %}
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; float: none; display: inline-table;">
                           <tbody>
                             <tr>
@@ -736,6 +760,7 @@
                             </tr>
                           </tbody>
                         </table>
+                        {% endif %}
                         <!--[if mso | IE]>
           </td>
       </tr>

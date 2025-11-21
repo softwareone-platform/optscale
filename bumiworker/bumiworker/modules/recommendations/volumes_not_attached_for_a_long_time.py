@@ -32,7 +32,7 @@ class VolumesNotAttachedForALongTime(ModuleBase):
             skip_cloud_accounts=skip_cloud_accounts)
         date_field_name = 'last_attached'
         detached_volumes = self.get_resources_stuck_in_state(
-            resource_type='volume',
+            resource_type='Volume',
             status_field_name='attached',
             date_field_name=date_field_name,
             resource_stuck_condition=False,
@@ -43,7 +43,7 @@ class VolumesNotAttachedForALongTime(ModuleBase):
             {
                 'cloud_resource_id': volume['cloud_resource_id'],
                 'resource_name': volume.get('name'),
-                'resource_id': volume['resource_id'],
+                'resource_id': volume['_id'],
                 'cloud_account_id': volume['cloud_account_id'],
                 'cloud_type': ca_map.get(
                     volume['cloud_account_id'], {}).get('type'),

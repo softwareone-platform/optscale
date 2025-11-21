@@ -38,10 +38,7 @@ const StepContainer = ({ refetchInvitations, isInvitationsRefetching }) => {
     return <ProceedToApplication />;
   }
 
-  const organizationSetupMode = getEnvironmentVariable(
-    "VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE",
-    ORGANIZATION_SETUP_MODE.AUTOMATIC
-  );
+  const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
   if (organizationSetupMode === ORGANIZATION_SETUP_MODE.INVITE_ONLY) {
     return <ThanksForSigningUp refetchInvitations={refetchInvitations} isInvitationsRefetching={isInvitationsRefetching} />;
