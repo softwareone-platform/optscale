@@ -4,8 +4,11 @@ import { fetchDataSourceResponse } from '../utils/api-helpers';
 import { expect } from '@playwright/test';
 import { DataSourceResponse } from '../types/api-response.types';
 import { restoreUserSessionInLocalForage } from '../utils/auth-session-storage/localforage-service';
+import { EAWSAccountType } from '../types/enums';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
+  test.describe.configure({ mode: 'default' });
+
   test.beforeEach('Login admin user', async ({ page, cloudAccountsPage }) => {
     await test.step('Login admin user', async () => {
       await restoreUserSessionInLocalForage(page);
@@ -16,7 +19,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
   });
 
   test(
-    'A successful billing import should have been successful within the last 24 hours',
+    '[231855] A successful billing import should have been successful within the last 24 hours',
     { tag: '@p1' },
     async ({ page, cloudAccountsPage }) => {
       let dataSourceResponse: DataSourceResponse;
@@ -45,4 +48,58 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
       });
     }
   );
+
+  test('[231856] Verify adding a new AWS Assumed role - Management', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
+    const awsAccountName = 'Marketplace (Dev)';
+    await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
+      await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
+    });
+
+    await test.step('Add AWS management account with assumed role', async () => {
+      await cloudAccountsPage.clickAddBtn();
+      await cloudAccountsConnectPage.addAWSAssumedRoleAccount(awsAccountName, EAWSAccountType.management);
+    });
+
+    await test.step(`Verify ${awsAccountName} is connected`, async () => {
+      await cloudAccountsPage.allCloudAccountLinks.last().waitFor();
+      const cloudAccountLink = cloudAccountsPage.getCloudAccountLinkByName(awsAccountName);
+      await expect(cloudAccountLink).toBeVisible();
+    });
+  });
+
+  test('[231857] Verify adding a new AWS Assumed role - Member', { tag: '@p1' }, async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
+    const awsAccountName = 'Marketplace (Dev)';
+    await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
+      await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
+    });
+
+    await test.step('Add AWS member account with assumed role', async () => {
+      await cloudAccountsPage.clickAddBtn();
+      await cloudAccountsConnectPage.addAWSAssumedRoleAccount(awsAccountName, EAWSAccountType.member);
+    });
+
+    await test.step(`Verify ${awsAccountName} is connected`, async () => {
+      await cloudAccountsPage.allCloudAccountLinks.last().waitFor();
+      const cloudAccountLink = cloudAccountsPage.getCloudAccountLinkByName(awsAccountName);
+      await expect(cloudAccountLink).toBeVisible();
+    });
+  });
+
+  test('[231858] Verify adding a new AWS Assumed role - Standalone', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
+    const awsAccountName = 'Marketplace (Dev)';
+    await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
+      await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
+    });
+
+    await test.step('Add AWS standalone account with assumed role', async () => {
+      await cloudAccountsPage.clickAddBtn();
+      await cloudAccountsConnectPage.addAWSAssumedRoleAccount(awsAccountName, EAWSAccountType.management);
+    });
+
+    await test.step(`Verify ${awsAccountName} is connected`, async () => {
+      await cloudAccountsPage.allCloudAccountLinks.last().waitFor();
+      const cloudAccountLink = cloudAccountsPage.getCloudAccountLinkByName(awsAccountName);
+      await expect(cloudAccountLink).toBeVisible();
+    });
+  });
 });
