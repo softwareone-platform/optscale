@@ -14,6 +14,7 @@ import {
   secondsToMilliseconds
 } from "utils/datetime";
 import { objectMap } from "utils/objects";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const RangePicker = ({
   validation = {},
@@ -25,7 +26,8 @@ const RangePicker = ({
   fullWidth = false,
   isUtc = true,
   minTimestamp = getMinPickerDateSec(isUtc),
-  maxTimestamp = getMaxPickerDateSec(isUtc)
+  maxTimestamp = getMaxPickerDateSec(isUtc),
+  hideLabel = false
 }) => {
   const intl = useIntl();
 
@@ -86,7 +88,7 @@ const RangePicker = ({
       fullWidth={fullWidth}
       label={
         <OutlinedDiv
-          label={<FormattedMessage id={isUtc ? "dateRangeUTC" : "dateRange"} />}
+          label={!hideLabel && <FormattedMessage id={isUtc ? "dateRangeUTC" : "dateRange"} />}
           endAdornment={
             <IconButton
               icon={<EventOutlinedIcon />}
@@ -101,7 +103,8 @@ const RangePicker = ({
           dataTestId="text_selected_dates"
           style={{ minWidth: "180px" }}
         >
-          {dateAsText}
+          <span style={{ fontSize: "14px", color: MPT_BRAND_TYPE }}>{dateAsText}</span>
+          {hideLabel}
         </OutlinedDiv>
       }
       menu={popoverContent}

@@ -15,6 +15,7 @@ import Button from "@mui/material/Button";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useDebouncedValue } from "hooks/useDebouncedValue";
 import { isEmptyArray } from "utils/arrays";
+import useStyles from "./FilterComponents.styles";
 
 type SelectionStateButtonProps = {
   appliedItems: string[];
@@ -57,18 +58,21 @@ type FiltersProps<T extends FilterItem> = {
   }[];
 };
 
-const SelectionStateButton = ({ appliedItems, onClick, id, label, icon, selectionLabel }: SelectionStateButtonProps) => (
-  <Button
-    aria-describedby={id}
-    variant={appliedItems.length > 0 ? "contained" : "outlined"}
-    onClick={onClick}
-    color="primary"
-    startIcon={icon}
-  >
-    {label} ({selectionLabel()})
-  </Button>
-);
-
+const SelectionStateButton = ({ appliedItems, onClick, id, label, icon, selectionLabel }: SelectionStateButtonProps) => {
+  const { classes } = useStyles();
+  return (
+    <Button
+      aria-describedby={id}
+      variant={appliedItems.length > 0 ? "contained" : "outlined"}
+      onClick={onClick}
+      color="primary"
+      className={`${classes.selectButton} ${appliedItems.length > 0 ? classes.hasSelection : ""}`}
+      startIcon={icon}
+    >
+      {label} ({selectionLabel()})
+    </Button>
+  );
+};
 const SelectionFilter = <T extends FilterItem>({
   items,
   label,
@@ -273,18 +277,14 @@ const SelectionFilter = <T extends FilterItem>({
                       />
                     }
                     label={valueItemsMap.has(item.value) ? renderItem(item as T) : String(item.value)}
-                    sx={{
-                      px: 2,
-                      width: "100%",
-                      overflowWrap: "anywhere"
-                    }}
+                    sx={{ px: 2, width: "100%" }}
                   />
                 ))}
               </Box>
             </Box>
           )}
           {filteredItems.length === 0 && (
-            <Typography variant="body2" textAlign="center" sx={{ py: 1, px: 1, overflowWrap: "anywhere" }}>
+            <Typography variant="body2" textAlign="center" sx={{ py: 1, px: 1, wordBreak: "break-all" }}>
               <FormattedMessage id="noMatches" values={{ searchQuery: debouncedSearchQuery }} />
             </Typography>
           )}
@@ -334,7 +334,17 @@ const SelectionFilter = <T extends FilterItem>({
       >
         <Box sx={{ display: "flex", flexDirection: "column", width: "300px" }}>
           {renderFilterContent()}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, px: 2, py: 1, borderTop: 1, borderColor: "divider" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1,
+              px: 2,
+              py: 1,
+              borderTop: 1,
+              borderColor: "divider"
+            }}
+          >
             <Button onClick={handleCancel} variant="outlined">
               <FormattedMessage id="cancel" />
             </Button>

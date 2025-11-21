@@ -1,17 +1,14 @@
-import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import Button from "components/Button";
-import useStyles from "./ButtonSwitch.styles";
+import { MPT_SPACING_2 } from "../../utils/layouts";
 
-const ButtonSwitch = ({ buttons }) => {
-  const { classes } = useStyles();
-  return (
-    <Box className={classes.root}>
-      {buttons.map((button) => {
-        const { messageId, link, icon } = button;
-        return <Button key={messageId} messageId={messageId} link={link} color="primary" size="large" startIcon={icon} />;
-      })}
-    </Box>
-  );
-};
+const ButtonSwitch = ({ buttons }) => (
+  <Grid container width={"auto"} gap={MPT_SPACING_2}>
+    {buttons.map((button) => {
+      const { messageId, link, icon } = button;
+      return <Button key={messageId} messageId={messageId} link={link} color="primary" size="large" startIcon={icon} />;
+    })}
+  </Grid>
+);
 
 export default ButtonSwitch;

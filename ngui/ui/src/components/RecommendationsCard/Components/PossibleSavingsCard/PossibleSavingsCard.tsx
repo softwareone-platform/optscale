@@ -38,10 +38,10 @@ const PossibleSavingsCard = ({ possibleMonthlySavings = 0, thisMonthExpensesFore
       <Paper className={classes.progressBarPaper} variant="outlined">
         <Box className={classes.progressBar} />
         <Box p={1} position="relative" display="flex" justifyContent="space-between">
-          <Typography variant="subtitle1" fontWeight="bold">
+          <Typography variant="subtitle1" fontWeight="normal">
             <FormattedMoney value={possibleMonthlySavings} />
           </Typography>
-          <Typography variant="subtitle1" fontWeight="bold">
+          <Typography variant="subtitle1" fontWeight="normal">
             <FormattedMoney value={thisMonthExpensesForecast} />
           </Typography>
         </Box>

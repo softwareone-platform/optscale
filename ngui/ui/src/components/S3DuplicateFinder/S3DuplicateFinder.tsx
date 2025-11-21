@@ -1,5 +1,6 @@
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Link, Stack, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
 import ActionBar from "components/ActionBar";
@@ -28,6 +29,7 @@ const S3DuplicateFinder = ({ geminis, isLoading = false }) => {
         key: "settings",
         icon: <SettingsIcon fontSize="small" />,
         messageId: "settings",
+        color: "primary",
         action: () => openSideModal(S3DuplicateFinderSettingsModal, { recommendationType: "type" }),
         type: "button",
         requiredActions: ["EDIT_PARTNER"]
@@ -40,7 +42,7 @@ const S3DuplicateFinder = ({ geminis, isLoading = false }) => {
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Stack spacing={SPACING_2}>
-          <div>
+          <Box className={"MTPBoxShadow"}>
             <Typography gutterBottom>
               <FormattedMessage id="s3DuplicatesDescription.intro" />
             </Typography>
@@ -53,8 +55,10 @@ const S3DuplicateFinder = ({ geminis, isLoading = false }) => {
             <Typography>
               <FormattedMessage id="s3DuplicatesDescription.ui" />
             </Typography>
-          </div>
-          <div>{isLoading ? <TableLoader showHeader /> : <S3DuplicateFinderChecksTable geminis={geminis} />}</div>
+          </Box>
+          <Box className={"MTPBoxShadow"}>
+            <div>{isLoading ? <TableLoader showHeader /> : <S3DuplicateFinderChecksTable geminis={geminis} />}</div>
+          </Box>
         </Stack>
       </PageContentWrapper>
     </>
