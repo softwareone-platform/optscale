@@ -12,7 +12,7 @@ class VolumesNotAttachedForALongTime(StuckInStateForALongTimeBase):
 
     @property
     def resource_type(self):
-        return 'volume'
+        return 'Volume'
 
     def is_state_changed(self, resource, start_date):
         return (resource.get('meta', {}).get('attached') or
