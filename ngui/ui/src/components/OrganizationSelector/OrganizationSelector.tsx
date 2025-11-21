@@ -1,5 +1,4 @@
 import { useState } from "react";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -9,14 +8,10 @@ import { useNavigate } from "react-router-dom";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
-import { CreateOrganizationModal } from "components/SideModalManager/SideModals";
-import { ORGANIZATION_SETUP_MODE } from "containers/InitializeContainer/constants";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
-import { useOpenSideModal } from "hooks/useOpenSideModal";
-import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
-import { getEnvironmentVariable } from "utils/env";
 import { getOrganizationDisplayName } from "utils/organization";
+import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
 
@@ -30,24 +25,24 @@ const SELECTOR_SX = {
      */
     minWidth: 270,
     "& label": {
-      color: (theme) => theme.palette.primary.main
+      color: (theme) => theme.palette.info.main
     },
     "& div": {
-      color: (theme) => theme.palette.primary.main,
+      color: (theme) => theme.palette.common.black,
       "&.Mui-focused": {
         "& fieldset": {
-          borderColor: (theme) => theme.palette.primary.main
+          borderColor: (theme) => theme.palette.info.main
         }
       }
     },
     "& svg": {
-      color: (theme) => theme.palette.primary.main
+      color: (theme) => theme.palette.common.black
     },
     "& fieldset": {
-      borderColor: (theme) => theme.palette.primary.main
+      borderColor: (theme) => theme.palette.info.main
     },
     "&:hover fieldset": {
-      borderColor: (theme) => theme.palette.primary.main
+      borderColor: (theme) => theme.palette.info.main
     }
   }
 };
@@ -69,8 +64,9 @@ const OrganizationSelector = ({
   onChange,
   isLoading = false
 }: OrganizationSelectorProps) => {
-  const { isDemo } = useOrganizationInfo();
-  const openSideModal = useOpenSideModal();
+  // MPT_TODO: disabled to meet BDR requirements
+  // const {isDemo} = useOrganizationInfo();
+  // const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
 
   const isDownSm = useIsDownMediaQuery("sm");
@@ -79,14 +75,14 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
-  const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
+  // const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
-  const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
+  // const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
 
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
-        <IconButton icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
+        <IconButton sx={{ color: MPT_BRAND_TYPE }} icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
       </Hidden>
       <Selector
         id="organization-selector"
@@ -138,7 +134,7 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        {isCreateOrganizationEnabled && (
+        {/* {isCreateOrganizationEnabled && (
           <Button
             icon={{
               IconComponent: AddOutlinedIcon
@@ -150,7 +146,7 @@ const OrganizationSelector = ({
           >
             <FormattedMessage id="createNewOrganization" />
           </Button>
-        )}
+        )} */}
       </Selector>
     </Box>
   );

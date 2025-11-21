@@ -24,12 +24,14 @@ const Title = ({ title, titleButton, dataTestId }) => {
   const button = titleButton && renderTitleButton(titleButton);
 
   return button ? (
-    <Box display="flex" alignItems="center">
+    <Box display="flex" marginBottom={"20px"} alignItems="center">
       {titleButton.type === "icon" ? titleMessage : <Box mr={1}>{titleMessage}</Box>}
       {button}
     </Box>
   ) : (
-    titleMessage
+    <Box display="flex" marginBottom={"20px"} alignItems="center">
+      {titleMessage}
+    </Box>
   );
 };
 

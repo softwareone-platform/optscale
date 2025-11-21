@@ -55,16 +55,19 @@ const RecommendationsPage = ({ isMock }) => {
         icon: <RestoreOutlinedIcon />,
         messageId: "archive",
         type: "button",
+        color: "primary",
         link: ARCHIVED_RECOMMENDATIONS
       },
       {
         key: "forceCheck",
-        type: "button",
-        disabled: isRestricted || !isForceCheckAvailable,
-        icon: <CachedOutlinedIcon />,
-        action: forceCheck,
         dataTestId: "btn_force_check",
+        icon: <CachedOutlinedIcon />,
         messageId: "forceCheck",
+        variant: "contained",
+        type: "button",
+        color: "secondary",
+        disabled: isRestricted || !isForceCheckAvailable,
+        action: forceCheck,
         tooltip: {
           show: isRestricted,
           value: restrictionReasonMessage
@@ -77,7 +80,7 @@ const RecommendationsPage = ({ isMock }) => {
     <>
       <ActionBar data={recommendationsActionBar} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2} sx={{ minHeight: "100%" }}>
+        <Stack spacing={SPACING_2} sx={{ minHeight: "100%", width: "100%" }}>
           <div>
             <DataSourceMultiSelect
               allDataSources={dataSources.filter((dataSource) =>
