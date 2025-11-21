@@ -234,21 +234,22 @@ class ModuleBase(ServiceBase):
     def get_resources_stuck_in_state(self, resource_type, status_field_name,
                                      date_field_name, resource_stuck_condition,
                                      cloud_account_ids, delta_days=1):
-        _, response = self.rest_client.cloud_resources_discover(
-            self.organization_id, resource_type)
         starting_point = int(
             (utcnow() - timedelta(days=delta_days)).timestamp()
         )
+        resources = self.mongo_client.restapi.resources.find({
+            'cloud_account_id': {'$in': cloud_account_ids},
+            'resource_type': resource_type,
+            'active': True
+        })
         today = startday(utcnow())
         month_ago_timestamp = (today - timedelta(days=1) - timedelta(
             days=DAYS_IN_MONTH))
-        resources = response['data']
 
         def matched_resource(resource):
             status_check = resource['meta'][status_field_name] == resource_stuck_condition
             date_check = resource['meta'][date_field_name] < starting_point
-            cloud_check = resource['cloud_account_id'] in cloud_account_ids
-            return status_check and date_check and cloud_check
+            return status_check and date_check
 
         def get_by_cost_saving_timestamp(resource, is_saving=True):
             res_dt = resource['meta'][date_field_name]
@@ -297,7 +298,7 @@ class ModuleBase(ServiceBase):
                           [x.data for x in ext_data.files])
                 raise
 
-        filtered_resources = {r['resource_id']: r
+        filtered_resources = {r['_id']: r
                               for r in resources if matched_resource(r)}
         if not filtered_resources:
             return {}
@@ -313,12 +314,9 @@ class ModuleBase(ServiceBase):
             filtered_resource = filtered_resources[resource_id]
             # if we don't have last state date info - check when resource was
             # created and skip if less than 1 day ago
-            if days == 1 and filtered_resource['meta'][date_field_name] == 0:
-                _, resource_obj = self.rest_client.cloud_resource_get(
-                    resource_id
-                )
-                if resource_obj['created_at'] > starting_point:
-                    continue
+            if (days == 1 and filtered_resource['meta'][date_field_name] == 0
+                    and filtered_resource['created_at'] > starting_point):
+                continue
 
             filtered_resource[
                 'cost_in_resource_state'] = cost_expenses_res.get(

@@ -31,7 +31,7 @@ class ObsoleteIps(ModuleBase):
             SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         date_field_name = 'last_used'
         available_ip_addresses = self.get_resources_stuck_in_state(
-            resource_type='ip_address',
+            resource_type='IP Address',
             status_field_name='available',
             date_field_name=date_field_name,
             resource_stuck_condition=True,
@@ -42,7 +42,7 @@ class ObsoleteIps(ModuleBase):
             {
                 'cloud_resource_id': ip_address['cloud_resource_id'],
                 'resource_name': ip_address.get('name'),
-                'resource_id': ip_address['resource_id'],
+                'resource_id': ip_address['_id'],
                 'cloud_account_id': ip_address['cloud_account_id'],
                 'cloud_type': ca_map.get(
                     ip_address['cloud_account_id'], {}).get('type'),
