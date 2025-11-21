@@ -1,7 +1,7 @@
 from typing import Dict
 from bumiworker.bumiworker.consts import ArchiveReason
 from bumiworker.bumiworker.modules.base import ArchiveBase
-from bumiworker.bumiworker.modules.recommendations.constants import (
+from bumiworker.bumiworker.modules.constants import (
     IT_POSITIVE_STATUS,
 )
 from bumiworker.bumiworker.modules.recommendations.s3_intelligent_tiering import (

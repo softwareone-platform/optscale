@@ -346,11 +346,13 @@ class ModuleBase(ServiceBase):
                 module_result[module_res_pos]['is_dismissed'] = True
         return module_result
 
-    def load_previous_result(self):
+    def load_previous_result(self, module=None):
+        if not module:
+            module = self.get_name()
         pipeline = [
             {'$match': {'$and': [
                 {'organization_id': self.organization_id},
-                {'module': self.get_name()},
+                {'module': module},
                 {'data': {'$type': "array"}}
             ]}},
             {'$sort': {'created_at': -1}},

@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union, Optional
 from datetime import datetime, date
 
 from bumiworker.bumiworker.modules.abandoned_base import S3AbandonedBucketsBase
-from .constants import (
+from bumiworker.bumiworker.modules.constants import (
     PRICES,
     IT_MONITOR_FEE_PER_1000,
     RETURN_LIMIT,
