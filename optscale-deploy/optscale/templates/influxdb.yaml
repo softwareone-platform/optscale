@@ -62,8 +62,6 @@ spec:
         env:
         - name: IMAGE_ID
           value: {{ $config.image.id }}
-        securityContext:
-          runAsUser: 0
       volumes:
       - name: influxdb-storage
         hostPath:
