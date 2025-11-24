@@ -11,6 +11,7 @@ from pymongo import MongoClient, UpdateOne
 
 from bumiworker.bumiworker.consts import TaskState
 from bumiworker.bumiworker.modules.module import call_module, list_modules
+from bumiworker.bumiworker.modules.base import ModuleBase
 
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
@@ -246,7 +247,11 @@ class SetSucceededNotifiable(SetSucceeded):
             template_type="bumi_module_execution_failed")
 
     def _execute(self):
-        self.get_failed_modules()
+        failed_modules = self.get_failed_modules()
+        msg = 'Task %s succeeded. ' % task_str(self.body)
+        if failed_modules:
+            msg += 'Failed modules: %s' % self.get_failed_modules()
+        LOG.info(msg)
         # TODO: OS-6259: temporary mute service email
         # failed_modules = self.get_failed_modules()
         # if failed_modules:
@@ -332,6 +337,9 @@ class WaitTasksResult(CheckWaitThreshold):
             self.folder)
         s3_objects = self.s3_client.list_objects_v2(
             Bucket=BUCKET_NAME, Prefix=prefix)
+        LOG.info("%s/%s %s tasks for organization %s finished",
+                 s3_objects['KeyCount'], self.body['children_count'],
+                 self.folder, self.body['organization_id'])
         if s3_objects['KeyCount'] == self.body['children_count']:
             self.body['last_update'] = utcnow_timestamp()
             self.update_task_state()
@@ -399,16 +407,16 @@ class CollectCheckResult(CheckTimeoutThreshold):
                     res = json.load(f_in)
                     if res.get('timeout_error'):
                         need_raise = True
-                    else:
-                        modules_result.append(res)
+                        res['error'] = res.pop('timeout_error')
+                    modules_result.append(res)
             finally:
                 if os.path.exists(temp_file_path):
                     os.remove(temp_file_path)
+        if modules_result:
+            self.save_result(modules_result)
         if need_raise:
             self.body['state'] = TaskState.ERROR
         else:
-            if modules_result:
-                self.save_result(modules_result)
             self.body['state'] = TaskState.COLLECTED_CHECK_RESULT
         super()._execute()
 
@@ -475,10 +483,10 @@ class UpdateChecklist(Continue):
 class HandleTaskTimeout(CheckTimeoutThreshold):
     def save_result_to_file(self, module_data):
         result = {
+            **module_data,
             'organization_id': self.body['organization_id'],
             'created_at': self.body['created_at'],
             'module': self.body['module'],
-            **module_data
         }
         temp_file_path = str(uuid.uuid4())
         module_obj_path = os.path.join(
@@ -497,7 +505,16 @@ class HandleTaskTimeout(CheckTimeoutThreshold):
         try:
             super().check_timeout()
         except BumiTaskTimeoutError as exc:
-            self.save_result_to_file({'timeout_error': str(exc)})
+            previous_result = {}
+            try:
+                previous_result['data'] = ModuleBase(
+                    self.body['organization_id'], self.config_cl,
+                    self.body['created_at']
+                ).load_previous_result(self.body['module'])
+            except Exception:
+                pass
+            self.save_result_to_file(
+                {'timeout_error': str(exc), **previous_result})
             raise
 
 

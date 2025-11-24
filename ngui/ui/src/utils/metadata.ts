@@ -13,6 +13,8 @@ const formatTimestampOrNever = (value: number | string) => {
 const formatMetaDigitalUnit = (value: number | string) =>
   formatDigitalUnit({ value: Number(value), baseUnit: IEC_UNITS.BYTE, maximumFractionDigits: 1 });
 
+const stringifyMetaValue = (value: unknown): string => (typeof value === "string" ? value : JSON.stringify(value));
+
 export const metaConfig = {
   first_seen: {
     translationId: METADATA_FIELDS.FIRST_SEEN,
@@ -65,7 +67,16 @@ export const metaConfig = {
   source_cluster_id: { translationId: METADATA_FIELDS.SOURCE_CLUSTER_ID },
   platform_name: { translationId: METADATA_FIELDS.PLATFORM_NAME },
   platform_id: { translationId: METADATA_FIELDS.PLATFORM_ID },
-  architecture: { translationId: METADATA_FIELDS.ARCHITECTURE }
+  architecture: { translationId: METADATA_FIELDS.ARCHITECTURE },
+  security_groups: { translationId: METADATA_FIELDS.SECURITY_GROUPS },
+  stopped_allocated: { translationId: METADATA_FIELDS.STOPPED_ALLOCATED },
+  last_seen_not_stopped: { translationId: METADATA_FIELDS.LAST_SEEN_NOT_STOPPED, format: formatTimestampOrNever },
+  spotted: { translationId: METADATA_FIELDS.SPOTTED },
+  cloud_console_link: { translationId: METADATA_FIELDS.CLOUD_CONSOLE_LINK },
+  start: { translationId: METADATA_FIELDS.START, format: formatTimestampOrNever },
+  end: { translationId: METADATA_FIELDS.END, format: formatTimestampOrNever },
+  is_public_policy: { translationId: METADATA_FIELDS.IS_PUBLIC_POLICY },
+  is_public_acls: { translationId: METADATA_FIELDS.IS_PUBLIC_ACLS }
 };
 
 const getMetaConfigByName = (name: string): ObjectValues<typeof metaConfig> | undefined =>
@@ -103,9 +114,12 @@ export const MetadataNodes = ({
     .map(([name, value]) => {
       const config = getMetaConfigByName(name);
       if (config) {
-        return { label: intl.formatMessage({ id: config.translationId }), value: config.format?.(value) ?? value };
+        return {
+          label: intl.formatMessage({ id: config.translationId }),
+          value: config.format?.(value) ?? stringifyMetaValue(value)
+        };
       }
-      return { label: name, value: typeof value === "string" ? value : JSON.stringify(value) };
+      return { label: name, value: stringifyMetaValue(value) };
     });
 
   const getTags = () => Object.fromEntries(settings.map(({ label, value }) => [label, value]));

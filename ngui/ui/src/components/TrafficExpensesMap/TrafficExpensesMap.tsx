@@ -102,7 +102,20 @@ function getTooltipState(info) {
           </>
         )
       };
-    case PickingType.FLOW:
+    case PickingType.FLOW: {
+      const flowSummary = object.origin.summary.filter(
+        (datum) => datum.mapped_from === object.origin.name && datum.mapped_to === object.dest.name
+      );
+
+      const { flowTotalExpenses, flowTotalUsage } = flowSummary.reduce(
+        (acc, datum) => {
+          acc.flowTotalExpenses += datum.cost;
+          acc.flowTotalUsage += datum.usage;
+          return acc;
+        },
+        { flowTotalExpenses: 0, flowTotalUsage: 0 }
+      );
+
       return {
         position,
         display: "block",
@@ -115,19 +128,35 @@ function getTooltipState(info) {
               <FormattedMessage
                 id="totalExpensesWithTotalExpensesAndCost"
                 values={{
-                  totalExpenses: <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={object.flow.count} />,
-                  totalUsage: (
-                    <FormattedDigitalUnit
-                      value={object.origin.expenses.find((expense) => expense.to.name === object.dest.id).usage}
-                      baseUnit={SI_UNITS.GIGABYTE}
-                    />
-                  )
+                  totalExpenses: <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={flowTotalExpenses} />,
+                  totalUsage: <FormattedDigitalUnit value={flowTotalUsage} baseUnit={SI_UNITS.GIGABYTE} />
                 }}
               />
             </Typography>
+            {flowSummary.length > 1 && (
+              <Typography variant="body1" component="div">
+                {flowSummary.map((datum) => (
+                  <KeyValueLabel
+                    key={`${datum.original_from} -> ${datum.original_to}`}
+                    isBoldValue={false}
+                    keyText={<FromToArrowLabel from={datum.original_from} to={datum.original_to} />}
+                    value={
+                      <FormattedMessage
+                        id="value / value"
+                        values={{
+                          value1: <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={datum.cost} />,
+                          value2: <FormattedDigitalUnit value={datum.usage} baseUnit={SI_UNITS.GIGABYTE} />
+                        }}
+                      />
+                    }
+                  />
+                ))}
+              </Typography>
+            )}
           </>
         )
       };
+    }
     default:
       return DEFAULT_TOOLTIP_STATE;
   }
@@ -231,9 +260,10 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
     return null;
   }
 
-  const externalMarker = data?.externalLocations.length ? data?.externalLocations[0] : null;
+  const otherMarker = data?.otherLocations.length ? data?.otherLocations[0] : null;
   const intercontinentalMarker = data?.interContinental;
   const interRegionMarker = data?.interRegion;
+  const externalMarker = data?.externalLocation;
 
   const key = getEnvironmentVariable("VITE_GOOGLE_MAP_API_KEY");
 
@@ -269,13 +299,14 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
             refreshLayers();
           }}
         >
-          {externalMarker && (
+          {otherMarker && (
             <TrafficMapMarker
-              key={`marker-${externalMarker.id}-${externalMarker.name}`}
-              lat={externalMarker.latitude}
-              lng={externalMarker.longitude}
-              type={EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER}
+              key={`marker-${otherMarker.id}-${otherMarker.name}`}
+              lat={otherMarker.latitude}
+              lng={otherMarker.longitude}
+              type={EXPENSES_MAP_OBJECT_TYPES.OTHER_MARKER}
               onClick={onMapClick}
+              width={80}
             />
           )}
           {interRegionMarker && (
@@ -293,6 +324,16 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
               lat={intercontinentalMarker.latitude}
               lng={intercontinentalMarker.longitude}
               type={EXPENSES_MAP_OBJECT_TYPES.INTER_CONTINENTAL_MARKER}
+              onClick={onMapClick}
+            />
+          )}
+          {externalMarker && (
+            <TrafficMapMarker
+              key={`marker-${externalMarker.id}-${externalMarker.name}`}
+              lat={externalMarker.latitude}
+              lng={externalMarker.longitude}
+              type={EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER}
+              width={80}
               onClick={onMapClick}
             />
           )}

@@ -7,23 +7,22 @@ import FormattedMoney from "components/FormattedMoney";
 import { isEmptyArray } from "utils/arrays";
 import { EXPENSES_MAP_OBJECT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
 import {
-  EXTERNAL_LAT,
-  EXTERNAL_LON,
+  OTHER_LAT,
+  OTHER_LON,
+  EXTERNAL_NAME,
   INTER_CONTINENTAL_LAT,
   INTER_CONTINENTAL_LON,
   INTER_CONTINENTAL_NAME,
   INTER_REGION_LAT,
   INTER_REGION_LON,
-  INTER_REGION_NAME
+  INTER_REGION_NAME,
+  EXTERNAL_LAT,
+  EXTERNAL_LON
 } from "utils/maps";
-
-const DEFAULT_SELECTION_STATE = Object.freeze({ selectedCell: null, selectedColumnNames: [], selectedRowName: "" });
 
 export const TABLE_SELECTION_STATE = Object.freeze({
   NOTHING_SELECTED: "NOTHING_SELECTED",
-  ROW_SELECTED: "ROW_SELECTED",
-  COLUMNS_SELECTED: "COLUMNS_SELECTED",
-  CELL_SELECTED: "CELL_SELECTED"
+  SELECTION_ACTIVE: "SELECTION_ACTIVE"
 });
 
 const getTableData = (expenses, uniqueDestinations) =>
@@ -44,7 +43,9 @@ const getTableData = (expenses, uniqueDestinations) =>
     })
     .filter((row) => Object.keys(row).length > 3);
 
-const getMarkers = (expenses, uniqueDestinations) => {
+const OTHER_NAME = "Other";
+
+const getMarkers = (expenses, uniqueDestinations, destinationsMap) => {
   const locations = uniqueDestinations.reduce((resultArray, uniqueDestination) => {
     const filteredExpenses = expenses
       .filter((expense) => expense.from.name === uniqueDestination)
@@ -58,8 +59,8 @@ const getMarkers = (expenses, uniqueDestinations) => {
       return [...resultArray];
     }
 
-    let latitude = EXTERNAL_LAT;
-    let longitude = EXTERNAL_LON;
+    let latitude = OTHER_LAT;
+    let longitude = OTHER_LON;
     if (expense.from.name === uniqueDestination) {
       latitude = expense.from.latitude;
       longitude = expense.from.longitude;
@@ -72,16 +73,28 @@ const getMarkers = (expenses, uniqueDestinations) => {
     } else if (uniqueDestination === INTER_CONTINENTAL_NAME) {
       latitude = INTER_CONTINENTAL_LAT;
       longitude = INTER_CONTINENTAL_LON;
+    } else if (uniqueDestination === EXTERNAL_NAME) {
+      latitude = EXTERNAL_LAT;
+      longitude = EXTERNAL_LON;
     }
 
     return [
       ...resultArray,
       {
-        id: uniqueDestination,
+        id: destinationsMap[uniqueDestination],
+        originalId: uniqueDestination,
         latitude,
         longitude,
-        type: expense.cloud_type,
-        name: uniqueDestination,
+        summary: filteredExpenses.map((e) => ({
+          original_from: e.from.name,
+          original_to: e.to.name,
+          mapped_from: destinationsMap[e.from.name],
+          mapped_to: destinationsMap[e.to.name],
+          cost: e.cost,
+          usage: e.usage
+        })),
+        name: destinationsMap[uniqueDestination],
+        originalName: uniqueDestination,
         expenses: filteredExpenses,
         totalExpenses: filteredExpenses.reduce((result, e) => result + e.cost, 0),
         totalUsage: filteredExpenses.reduce((result, e) => result + e.usage, 0)
@@ -89,19 +102,79 @@ const getMarkers = (expenses, uniqueDestinations) => {
     ];
   }, []);
 
+  const accumulatedLocations = Object.values(
+    locations.reduce((acc, curr) => {
+      if (curr.id === OTHER_NAME) {
+        return {
+          ...acc,
+          [OTHER_NAME]: {
+            ...curr,
+            expenses: [...(acc[OTHER_NAME]?.expenses || []), ...curr.expenses],
+            summary: [...(acc[OTHER_NAME]?.summary || []), ...curr.summary],
+            totalExpenses: (acc[OTHER_NAME]?.totalExpenses || 0) + curr.totalExpenses,
+            totalUsage: (acc[OTHER_NAME]?.totalUsage || 0) + curr.totalUsage
+          }
+        };
+      }
+
+      return {
+        ...acc,
+        [curr.id]: {
+          ...curr
+        }
+      };
+    }, {})
+  );
+
+  const accumulatedFlows = Object.values(
+    expenses
+      .filter((expense) => expense.from.latitude && expense.from.longitude)
+      .reduce((acc, curr) => {
+        const sourceName = destinationsMap[curr.from.name];
+        const targetName = destinationsMap[curr.to.name];
+
+        const flowName = `${sourceName} -> ${targetName}`;
+
+        if (targetName === OTHER_NAME) {
+          return {
+            ...acc,
+            [flowName]: {
+              ...curr,
+              cost: (acc[flowName]?.cost || 0) + curr.cost,
+              usage: (acc[flowName]?.usage || 0) + curr.usage,
+              to: {
+                name: OTHER_NAME
+              }
+            }
+          };
+        }
+        return {
+          ...acc,
+          [flowName]: {
+            ...curr
+          }
+        };
+      }, {})
+  );
+
   return {
-    locations,
-    flows: expenses.filter((expense) => expense.from.latitude && expense.from.longitude),
-    externalLocations: locations.filter(
-      (location) => location.latitude === EXTERNAL_LAT && location.longitude === EXTERNAL_LON
-    ),
+    locations: accumulatedLocations,
+    flows: accumulatedFlows,
+    otherLocations: locations.filter((location) => location.latitude === OTHER_LAT && location.longitude === OTHER_LON),
     interRegion: locations.find((location) => location.name === INTER_REGION_NAME),
-    interContinental: locations.find((location) => location.name === INTER_CONTINENTAL_NAME)
+    interContinental: locations.find((location) => location.name === INTER_CONTINENTAL_NAME),
+    externalLocation: locations.find((location) => location.name === EXTERNAL_NAME)
   };
 };
 
-const getColumns = ({ uniqueToDestinations, onColumnHeaderClick, onRowHeaderClick, onCellClick, selectedState, tableData }) => {
-  const { selectedColumnNames } = selectedState;
+const getColumns = ({
+  uniqueToDestinations,
+  onColumnHeaderClick,
+  onRowHeaderClick,
+  onCellClick,
+  selectedColumns,
+  tableData
+}) => {
   let columns = uniqueToDestinations.map((field) => ({
     header: (
       <Link component="button" onClick={() => onColumnHeaderClick(field)} color="inherit">
@@ -140,8 +213,8 @@ const getColumns = ({ uniqueToDestinations, onColumnHeaderClick, onRowHeaderClic
       .sort((a, b) => rowValues.get(b.accessorKey) - rowValues.get(a.accessorKey));
   }
 
-  if (!isEmptyArray(selectedColumnNames)) {
-    columns = columns.filter((column) => selectedColumnNames.includes(column.accessorKey));
+  if (!isEmptyArray(selectedColumns)) {
+    columns = columns.filter((column) => selectedColumns.includes(column.accessorKey));
   }
 
   return [
@@ -174,14 +247,10 @@ const getColumns = ({ uniqueToDestinations, onColumnHeaderClick, onRowHeaderClic
   ];
 };
 
-const useTableSelectionState = (selectedState) => {
+const useTableSelectionState = (selectedRows, selectedColumns) => {
   const intl = useIntl();
 
-  const isRowSelected = !!selectedState.selectedRowName;
-  const isColumnsSelected = !isEmptyArray(selectedState.selectedColumnNames);
-  const isCellSelected = !!selectedState.selectedCell;
-
-  if ([isRowSelected, isColumnsSelected, isCellSelected].every((isSelected) => isSelected === false)) {
+  if (isEmptyArray(selectedRows) && isEmptyArray(selectedColumns)) {
     return {
       state: TABLE_SELECTION_STATE.NOTHING_SELECTED,
       labels: {
@@ -195,67 +264,76 @@ const useTableSelectionState = (selectedState) => {
     };
   }
 
-  if (isRowSelected) {
+  if (!isEmptyArray(selectedRows) && isEmptyArray(selectedColumns)) {
     return {
-      state: TABLE_SELECTION_STATE.ROW_SELECTED,
+      state: TABLE_SELECTION_STATE.SELECTION_ACTIVE,
       labels: {
-        from: selectedState.selectedRowName,
+        from: selectedRows.length > 1 ? intl.formatMessage({ id: "somewhere" }).toLowerCase() : selectedRows[0],
         to: intl.formatMessage({ id: "somewhere" }).toLowerCase()
       },
       data: {
-        from: selectedState.selectedRowName,
+        from: selectedRows,
         to: undefined
       }
     };
   }
-  if (isColumnsSelected) {
+
+  if (isEmptyArray(selectedRows) && !isEmptyArray(selectedColumns)) {
     return {
-      state: TABLE_SELECTION_STATE.COLUMNS_SELECTED,
+      state: TABLE_SELECTION_STATE.SELECTION_ACTIVE,
       labels: {
         from: intl.formatMessage({ id: "somewhere" }).toLowerCase(),
-        to:
-          selectedState.selectedColumnNames.length > 1
-            ? intl.formatMessage({ id: "externalAndOtherClouds" })
-            : selectedState.selectedColumnNames[0]
+        to: selectedColumns.length > 1 ? intl.formatMessage({ id: "otherClouds" }) : selectedColumns[0]
       },
       data: {
         from: undefined,
-        to: [...selectedState.selectedColumnNames]
+        to: selectedColumns
       }
     };
   }
+
   return {
-    state: TABLE_SELECTION_STATE.CELL_SELECTED,
+    state: TABLE_SELECTION_STATE.SELECTION_ACTIVE,
     labels: {
-      from: selectedState.selectedCell.from.name,
-      to: selectedState.selectedCell.to.name
+      from: selectedRows.length > 1 ? intl.formatMessage({ id: "somewhere" }).toLowerCase() : selectedRows[0],
+      to: selectedColumns.length > 1 ? intl.formatMessage({ id: "otherClouds" }) : selectedColumns[0]
     },
     data: {
-      from: selectedState.selectedCell.from.name,
-      to: selectedState.selectedCell.to.name
+      from: selectedRows,
+      to: selectedColumns
     }
   };
 };
 
 export const useTrafficExpenses = (expenses) => {
-  const [selectedState, setSelectedState] = useState(DEFAULT_SELECTION_STATE);
+  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const setTableSelectionState = ({ rows = [], columns = [] }) => {
+    setSelectedRows(rows);
+    setSelectedColumns(columns);
+  };
 
   const selectedCloudTrafficExpenses = useMemo(() => {
-    const { selectedCell, selectedColumnNames, selectedRowName } = selectedState;
+    const hasRowSelection = !isEmptyArray(selectedRows);
+    const hasColumnSelection = !isEmptyArray(selectedColumns);
 
-    if (selectedCell !== null) {
+    if (hasRowSelection && hasColumnSelection) {
       return expenses.filter(
-        (expense) => expense.from.name === selectedCell.from.name && expense.to.name === selectedCell.to.name
+        (expense) => selectedRows.includes(expense.from.name) && selectedColumns.includes(expense.to.name)
       );
     }
-    if (!isEmptyArray(selectedColumnNames)) {
-      return expenses.filter((expense) => selectedColumnNames.includes(expense.to.name));
+
+    if (hasColumnSelection) {
+      return expenses.filter((expense) => selectedColumns.includes(expense.to.name));
     }
-    if (selectedRowName !== "") {
-      return expenses.filter((expense) => expense.from.name === selectedRowName);
+
+    if (hasRowSelection) {
+      return expenses.filter((expense) => selectedRows.includes(expense.from.name));
     }
+
     return expenses;
-  }, [expenses, selectedState]);
+  }, [expenses, selectedColumns, selectedRows]);
 
   const uniqueDestinations = useMemo(
     () => [
@@ -272,52 +350,94 @@ export const useTrafficExpenses = (expenses) => {
     [selectedCloudTrafficExpenses]
   );
 
-  const externalLocationNames = useMemo(
+  const otherLocationNames = useMemo(
     () =>
-      expenses.reduce((resultArray, expense) => {
-        if (
-          !(expense.to.latitude && expense.to.longitude) &&
-          expense.to.name !== INTER_REGION_NAME &&
-          expense.to.name !== INTER_CONTINENTAL_NAME &&
-          !resultArray.includes(expense.to.name)
-        ) {
-          return [...resultArray, expense.to.name];
-        }
-        return [...resultArray];
-      }, []),
+      expenses
+        .filter(
+          (expense) =>
+            !expense.to.latitude &&
+            !expense.to.longitude &&
+            expense.to.name !== INTER_REGION_NAME &&
+            expense.to.name !== INTER_CONTINENTAL_NAME &&
+            expense.to.name !== EXTERNAL_NAME
+        )
+        .map((expense) => expense.to.name),
     [expenses]
   );
 
+  const destinationsMap = useMemo(() => {
+    const getDestinationMap = (location: { latitude: number; longitude: number; name: string }) => {
+      if (
+        (location.latitude && location.longitude) ||
+        [INTER_REGION_NAME, INTER_CONTINENTAL_NAME, EXTERNAL_NAME].includes(location.name)
+      ) {
+        return location.name;
+      }
+
+      return OTHER_NAME;
+    };
+
+    return Object.fromEntries(
+      expenses.flatMap((expense) => [
+        [expense.from.name, getDestinationMap(expense.from)],
+        [expense.to.name, getDestinationMap(expense.to)]
+      ])
+    );
+  }, [expenses]);
+
   const markers = useMemo(
-    () => getMarkers(selectedCloudTrafficExpenses, uniqueDestinations),
-    [selectedCloudTrafficExpenses, uniqueDestinations]
+    () => getMarkers(selectedCloudTrafficExpenses, uniqueDestinations, destinationsMap),
+    [destinationsMap, selectedCloudTrafficExpenses, uniqueDestinations]
   );
-
-  const selectColumns = (names) => setSelectedState({ selectedRowName: "", selectedCell: null, selectedColumnNames: names });
-
-  const selectRow = (name) => setSelectedState({ selectedColumnNames: [], selectedRowName: name, selectedCell: null });
-
-  const selectCell = (cellData) => setSelectedState({ selectedRowName: "", selectedColumnNames: [], selectedCell: cellData });
 
   const onMapClick = (object) => {
     if (object.type === EXPENSES_MAP_OBJECT_TYPES.LOCATION) {
       if (object.totals.outgoingCount) {
-        selectRow(object.name);
+        setTableSelectionState({
+          rows: [object.name],
+          columns: []
+        });
       } else {
-        selectColumns([object.name]);
+        setTableSelectionState({
+          rows: [],
+          columns: [object.name]
+        });
       }
     }
-    if (object.type === EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER) {
-      selectColumns(externalLocationNames);
+    if (object.type === EXPENSES_MAP_OBJECT_TYPES.OTHER_MARKER) {
+      setTableSelectionState({
+        rows: [],
+        columns: otherLocationNames
+      });
     }
     if (object.type === EXPENSES_MAP_OBJECT_TYPES.INTER_REGION_MARKER) {
-      selectColumns([INTER_REGION_NAME]);
+      setTableSelectionState({
+        rows: [],
+        columns: [INTER_REGION_NAME]
+      });
     }
     if (object.type === EXPENSES_MAP_OBJECT_TYPES.INTER_CONTINENTAL_MARKER) {
-      selectColumns([INTER_CONTINENTAL_NAME]);
+      setTableSelectionState({
+        rows: [],
+        columns: [INTER_CONTINENTAL_NAME]
+      });
+    }
+    if (object.type === EXPENSES_MAP_OBJECT_TYPES.EXTERNAL_MARKER) {
+      setTableSelectionState({
+        rows: [],
+        columns: [EXTERNAL_NAME]
+      });
     }
     if (object.type === EXPENSES_MAP_OBJECT_TYPES.FLOW) {
-      selectCell({ from: { name: object.flow.origin }, to: { name: object.flow.dest } });
+      const flowSummary = object.origin.summary.filter(
+        (datum) => datum.mapped_from === object.origin.name && datum.mapped_to === object.dest.name
+      );
+      const columns = flowSummary.map((datum) => datum.original_to);
+
+      setTableSelectionState({
+        rows: [object.origin.name],
+        columns: columns
+      });
     }
   };
 
@@ -328,25 +448,37 @@ export const useTrafficExpenses = (expenses) => {
 
   const columns = useMemo(() => {
     const onColumnHeaderClick = (name) => {
-      selectColumns([name]);
+      setTableSelectionState({
+        rows: [],
+        columns: [name]
+      });
     };
 
     const onRowHeaderClick = (name) => {
-      selectRow(name);
+      setTableSelectionState({
+        rows: [name],
+        columns: []
+      });
     };
 
     const onCellClick = (expense) => {
-      selectCell(expense);
+      setTableSelectionState({
+        rows: [expense.from.name],
+        columns: [expense.to.name]
+      });
     };
 
-    return getColumns({ uniqueToDestinations, onColumnHeaderClick, onRowHeaderClick, onCellClick, selectedState, tableData });
-  }, [selectedState, uniqueToDestinations, tableData]);
+    return getColumns({ uniqueToDestinations, onColumnHeaderClick, onRowHeaderClick, onCellClick, selectedColumns, tableData });
+  }, [selectedColumns, tableData, uniqueToDestinations]);
 
   const onFilterClear = useCallback(() => {
-    setSelectedState(DEFAULT_SELECTION_STATE);
-  }, [setSelectedState]);
+    setTableSelectionState({
+      rows: [],
+      columns: []
+    });
+  }, []);
 
-  const tableSelectionState = useTableSelectionState(selectedState);
+  const tableSelectionState = useTableSelectionState(selectedRows, selectedColumns);
 
   return {
     markers,
