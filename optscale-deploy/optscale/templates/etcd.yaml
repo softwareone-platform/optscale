@@ -121,6 +121,7 @@ spec:
         imagePullPolicy: {{ $config.image.pullPolicy }}
         command:
           - "/usr/local/bin/etcd"
+          - "--enable-v2=true"
           - "-listen-client-urls"
           - "http://0.0.0.0:{{ $config.service.internalPort }}"
           - "-advertise-client-urls"
@@ -133,10 +134,10 @@ spec:
         readinessProbe:
           exec:
             command:
-            - sh
-            - -ec
-            - |
-              etcdctl --endpoints=http://[127.0.0.1]:2379 cluster-health
+            - etcdctl
+            - --endpoints=http://[127.0.0.1]:2379
+            - endpoint
+            - health
           initialDelaySeconds: 5
           periodSeconds: 10
           timeoutSeconds: 20
