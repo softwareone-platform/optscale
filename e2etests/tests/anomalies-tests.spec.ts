@@ -4,10 +4,7 @@ import {
   AnomaliesDataSourceExpensesDailyBreakdown,
   AnomaliesDataSourcesResponse,
   AnomaliesDefaultExpenseServiceDailyResponse,
-  AnomaliesDefaultExpensesOrganizationConstraintResponse,
   AnomaliesDefaultExpensesOrganizationLimitsHitResponse,
-  AnomaliesOrganizationAllowedActionsResponse,
-  AnomaliesOrganizationsResponse,
   AnomaliesOwnerExpensesDailyBreakdown,
   AnomaliesPoolExpensesDailyBreakdown,
   AnomaliesRegionExpensesDailyBreakdown,
@@ -245,14 +242,6 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
 test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   const apiInterceptions: InterceptionEntry[] = [
     {
-      gql: 'Organizations',
-      mock: AnomaliesOrganizationsResponse,
-    },
-    {
-      gql: 'OrganizationAllowedActions',
-      mock: AnomaliesOrganizationAllowedActionsResponse,
-    },
-    {
       gql: 'GetExpensesDailyBreakdown',
       variableMatch: { 'params.breakdown_by': 'service_name' },
       mock: AnomaliesDefaultExpenseServiceDailyResponse,
@@ -285,10 +274,6 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     {
       gql: 'DataSources',
       mock: AnomaliesDataSourcesResponse,
-    },
-    {
-      gql: 'GetOrganizationConstraints',
-      mock: AnomaliesDefaultExpensesOrganizationConstraintResponse,
     },
     {
       gql: 'GetOrganizationLimitHits',

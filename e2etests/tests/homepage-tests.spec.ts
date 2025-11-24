@@ -150,7 +150,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     await test.step('Remove limits from all pools if any', async () => {
       await poolsPage.navigateToURL();
       await poolsPage.waitForAllProgressBarsToDisappear();
-      await poolsPage.expandMoreIcon.waitFor();
+      await poolsPage.poolExpandMoreIcon.waitFor();
       if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
       await poolsPage.toggleExpandPool();
       await poolsPage.removeAllSubPoolMonthlyLimits();
@@ -174,7 +174,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
       await test.step('Set monthly limit for a pool and sub-pool lower than expenses', async () => {
         await poolsPage.navigateToURL();
         await poolsPage.waitForAllProgressBarsToDisappear();
-        await poolsPage.expandMoreIcon.waitFor();
+        await poolsPage.poolExpandMoreIcon.waitFor();
         await poolsPage.selectAllColumns();
         await poolsPage.waitForAllProgressBarsToDisappear();
         expenseValue = await poolsPage.getExpensesThisMonth();
@@ -218,7 +218,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     await test.step('Set monthly limit for a pool that is higher than expenses this month, but lower than forecast', async () => {
       await poolsPage.navigateToURL();
       await homePage.waitForAllProgressBarsToDisappear();
-      await poolsPage.expandMoreIcon.waitFor();
+      await poolsPage.poolExpandMoreIcon.waitFor();
       await poolsPage.selectAllColumns();
       expenseValue = await poolsPage.getExpensesThisMonth();
       forecastedValue = await poolsPage.getForecastThisMonth();

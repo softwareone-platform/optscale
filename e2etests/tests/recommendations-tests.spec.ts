@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
@@ -204,6 +205,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Instances with migration opportunities',
     'Instances with Spot (Preemptible) opportunities',
     'Instances with Subscription opportunities',
+    'Intelligent Tiering',
     'Not attached Volumes',
     'Not deallocated Instances',
     'Obsolete images',
@@ -249,6 +251,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       'Instances with migration opportunities',
       'Instances with Spot (Preemptible) opportunities',
       'Instances with Subscription opportunities',
+      'Intelligent Tiering',
       'Not attached Volumes',
       'Not deallocated Instances',
       'Obsolete images',
@@ -368,6 +371,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Instances with Migration Opportunities',
     'Instances with Spot Preemptible Opportunities',
     'Instances with Subscription Opportunities',
+    'Intelligent Tiering',
     'Not Attached Volumes',
     'Not Deallocated Instances',
     'Obsolete Images',

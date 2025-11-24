@@ -23,7 +23,8 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
 
   test.beforeEach(async ({ poolsPage }) => {
     await poolsPage.navigateToURL();
-    await poolsPage.expandMoreIcon.waitFor();
+    await poolsPage.waitForAllProgressBarsToDisappear();
+    await poolsPage.poolExpandMoreIcon.waitFor();
     if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
     await poolsPage.toggleExpandPool();
     await poolsPage.removeAllSubPoolMonthlyLimits();
