@@ -10,23 +10,20 @@ metadata:
 data:
   filebeat.yml: |-
     filebeat.inputs:
-    - type: filestream
+    - type: log
       enabled: true
-      id: containers-collector
-      take_over: true
+      symlinks: true
+      exclude_files: ['filebeat.*',
+                      'logstash.*',
+                      'azure.*',
+                      'kube.*',
+                      'ignite.*',
+                      'influx.*',
+                      'prometheus.*',
+                      'rkubelog.*',
+                      'node-exporter.*']
       paths:
         - /var/log/containers/*.log
-      prospector.scanner.symlinks: true
-      prospector.scanner.exclude_files: 
-        - filebeat.*
-        - logstash.*
-        - azure.*
-        - kube.*
-        - ignite.*
-        - influx.*
-        - prometheus.*
-        - rkubelog.*
-        - node-exporter.*
     processors:
       - drop_fields:
           fields: ["host"]

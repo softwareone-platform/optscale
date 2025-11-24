@@ -2,11 +2,11 @@
   block:
     - name: Download nerdctl
       get_url:
-        url: https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-{{ os_arch }}.tar.gz
-        dest: /tmp/nerdctl-{{ nerdctl_version }}-linux-{{ os_arch }}.tar.gz
+        url: https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
+        dest: /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
     
     - name: Extract nerdctl
-      shell: tar Cxzf /usr/local/bin /tmp/nerdctl-{{ nerdctl_version }}-linux-{{ os_arch }}.tar.gz
+      shell: tar Cxzf /usr/local/bin /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
       become: yes
 
     - name: Create bin directory in the user's home
@@ -31,7 +31,7 @@
  
     - name: Cleanup temporary file
       file:
-        path: /tmp/nerdctl-{{ nerdctl_version }}-linux-{{ os_arch }}.tar.gz
+        path: /tmp/nerdctl-{{ nerdctl_version }}-linux-amd64.tar.gz
         state: absent
 
     - name: Create conf directory
@@ -53,11 +53,11 @@
   block:
     - name: Download buildkit
       get_url:
-        url: https://github.com/moby/buildkit/releases/download/v{{ buildkit_version }}/buildkit-v{{ buildkit_version }}.linux-{{ os_arch }}.tar.gz
-        dest: /tmp/buildkit-{{ buildkit_version }}-linux-{{ os_arch }}.tar.gz
+        url: https://github.com/moby/buildkit/releases/download/v{{ buildkit_version }}/buildkit-v{{ buildkit_version }}.linux-amd64.tar.gz
+        dest: /tmp/buildkit-{{ buildkit_version }}-linux-amd64.tar.gz
 
     - name: Extract buildkit
-      shell: tar Cxzf {{ ansible_env.HOME }} /tmp/buildkit-{{ buildkit_version }}-linux-{{ os_arch }}.tar.gz
+      shell: tar Cxzf {{ ansible_env.HOME }} /tmp/buildkit-{{ buildkit_version }}-linux-amd64.tar.gz
 
     - name: Create systemd unit file
       template:

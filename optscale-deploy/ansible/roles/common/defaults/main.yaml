@@ -52,13 +52,3 @@ etcd_restore_tools:
 open_docker_port: true
 log_to_elk: true
 syslog_rotation_size: 100M
-
-# the architecture returned by `uname -m` (which is the canonical way to get it and it's what
-# the `ansible_architecture` variable uses) can return either x86_64 and amd64 even though they
-# refer to the same CPU architecture (and same for the other aliases). However when we're installing
-# packages only amd64 and arm64 are valid, thus this mapping and the `os_arch` variable bellow
-os_arch_aliases:
-  x86_64: amd64
-  aarch64: arm64
-
-os_arch: "{{ os_arch_aliases.get(ansible_architecture, ansible_architecture) }}"

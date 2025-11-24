@@ -134,18 +134,12 @@ class Runkube:
     @property
     def versions_info(self):
         if self._versions_info is None:
-            self._versions_info = {'optscale': self.version, 'images': {}}
-            
+            self._versions_info = {'optscale': self.version}
             with open(COMPONENTS_FILE) as f_comp:
                 components_dict = yaml.safe_load(f_comp)
-            
-            for component in components_dict: 
-                if component == 'elk' and not self.with_elk:
-                    LOG.warning("elk specified in components file (%s) but --with-elk is not set, ignoring it", COMPONENTS_FILE)
-                    continue
-                
-                self._versions_info['images'][component] = self.version 
-                
+            self._versions_info['images'] = {
+                    component: self.version for component in components_dict
+            }
         return self._versions_info
 
     def _pull_image(self, ctrd_cl, image_name, tag, auth_config):
