@@ -36,6 +36,7 @@ async function globalSetup(config: FullConfig) {
   if (process.env.DEFAULT_AUTH_USER_ID === undefined)
     console.warn(`***DEFAULT_AUTH_USER_ID is not set. This may cause issues with some API tests`);
   if (process.env.DEFAULT_USER_ID === undefined) console.warn(`***DEFAULT_USER_ID is not set. This may cause issues with some API tests`);
+  if (process.env.DEFAULT_AWS_ACCOUNT_ID === undefined) console.warn(`***DEFAULT_AWS_ACCOUNT_ID is not set. This may cause issues with some Cloud Account tests`);
   if (process.env.USE_LIVE_DEMO === `true`) {
     if (process.env.LIVE_DEMO_API === undefined) {
       console.error(`***LIVE_DEMO_API is required when USE_LIVE_DEMO is set to true`);

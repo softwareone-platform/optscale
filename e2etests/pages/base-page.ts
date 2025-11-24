@@ -190,6 +190,20 @@ export abstract class BasePage {
   }
 
   /**
+   * Clicks a button if it is not already active.
+   *
+   * This method checks whether the specified button has the active class.
+   * If the button is not active, it performs a click action on the button.
+   *
+   * @param {Locator} button - The Playwright locator representing the button to be clicked.
+   * @returns {Promise<void>} A promise that resolves when the button is clicked or skipped if already active.
+   */
+  async clickButtonIfNotActive(button: Locator): Promise<void> {
+    if (!(await this.evaluateActiveButton(button))) {
+      await button.click();
+    }
+  }
+  /**
    * Brings the context of the current page to the front.
    * This method is useful when multiple pages or contexts are open and you need to focus on the current page.
    * @returns {Promise<void>} A promise that resolves when the context is brought to the front.
@@ -500,7 +514,94 @@ export abstract class BasePage {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  /**
+   * Clicks on a specified locator.
+   *
+   * This method performs a click action on the provided Playwright `Locator`.
+   * It is useful for interacting with elements on the page, such as buttons, links, or other clickable elements.
+   *
+   * @param {Locator} locator - The Playwright locator representing the element to be clicked.
+   * @returns {Promise<void>} A promise that resolves when the click action is completed.
+   */
   async clickLocator(locator: Locator): Promise<void> {
     await locator.click();
+  }
+
+  /**
+   * Toggles the state of a checkbox.
+   * @param {Locator} checkbox - The locator for the checkbox element.
+   * @returns {Promise<void>} A promise that resolves when the checkbox state is toggled.
+   */
+  async toggleCheckbox(checkbox: Locator): Promise<void> {
+    const isChecked = await checkbox.isChecked();
+    if (isChecked) {
+      await checkbox.uncheck();
+    } else {
+      await checkbox.check();
+    }
+  }
+
+  /**
+   * Unchecks a checkbox if it is currently checked.
+   *
+   * This method evaluates the current state of the checkbox and performs
+   * an uncheck action only if the checkbox is already checked.
+   *
+   * @param {Locator} checkbox - The Playwright locator representing the checkbox element.
+   * @returns {Promise<void>} A promise that resolves when the checkbox is unchecked.
+   */
+  async uncheckCheckbox(checkbox: Locator): Promise<void> {
+    const isChecked = await checkbox.isChecked();
+    if (isChecked) {
+      await checkbox.uncheck();
+    }
+  }
+
+  /**
+   * Checks a checkbox if it is currently unchecked.
+   *
+   * This method evaluates the current state of the checkbox and performs
+   * a check action only if the checkbox is not already checked.
+   *
+   * @param {Locator} checkbox - The Playwright locator representing the checkbox element.
+   * @returns {Promise<void>} A promise that resolves when the checkbox is checked.
+   */
+  async checkCheckbox(checkbox: Locator): Promise<void> {
+    const isChecked = await checkbox.isChecked();
+    if (!isChecked) {
+      await checkbox.check();
+    }
+  }
+
+  /**
+   * Retrieves the current value from an input field.
+   *
+   * This method uses Playwright's `inputValue` function to fetch the value
+   * of the specified input element.
+   *
+   * @param {Locator} input - The Playwright locator representing the input field.
+   * @returns {Promise<string>} A promise that resolves to the current value of the input field as a string.
+   */
+  async getValueFromInput(input: Locator): Promise<string> {
+    return await input.inputValue();
+  }
+
+  /**
+   * Fills an input field with a new value only if the current value is different.
+   *
+   * This method retrieves the current value of the input field and compares it
+   * with the provided value. If the values differ, the input field is cleared
+   * and filled with the new value.
+   *
+   * @param {Locator} input - The Playwright locator representing the input field.
+   * @param {string} value - The new value to set in the input field.
+   * @returns {Promise<void>} A promise that resolves when the input field is updated.
+   */
+  async fillInputIfDifferent(input: Locator, value: string): Promise<void> {
+    const currentValue = await this.getValueFromInput(input);
+    if (currentValue !== value) {
+      await input.clear();
+      await input.fill(value);
+    }
   }
 }

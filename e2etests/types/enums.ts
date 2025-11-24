@@ -8,5 +8,10 @@ export enum EUserRole {
   defaultUser = "default-user",
   demoUser = "demo-user",
   tempUser = "temp-user"
+}
 
+export enum EAWSAccountType {
+  management,
+  member,
+  standalone
 }
