@@ -97,6 +97,14 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
     modalColumnLocator: recommendationsPage.modalColumn6,
   },
   {
+    name: 'Intelligent Tiering',
+    savingsValue: recommendationsPage.intelligentTieringCardSavingsValue,
+    seeAllBtn: recommendationsPage.intelligentTieringSeeAllBtn,
+    errorLocator: recommendationsPage.intelligentTieringError,
+    tableLocator: recommendationsPage.intelligentTieringTableSavingsValue,
+    modalColumnLocator: recommendationsPage.modalColumn5,
+  },
+  {
     name: 'Not Attached Volumes',
     savingsValue: recommendationsPage.notAttachedVolumesCardSavingsValue,
     seeAllBtn: recommendationsPage.notAttachedVolumesSeeAllBtn,

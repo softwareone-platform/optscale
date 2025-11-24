@@ -53,7 +53,8 @@ export class PoolsPage extends BasePage {
   readonly poolColumn4: Locator;
   readonly column4TextSpan: Locator;
   readonly poolActionsColumn: Locator;
-  readonly expandMoreIcon: Locator;
+  readonly poolExpandMoreIcon: Locator;
+  readonly domainOutlinedIcon: Locator;
 
   readonly subPoolNameColumn: Locator;
   readonly subPoolColumn2: Locator;
@@ -136,10 +137,9 @@ export class PoolsPage extends BasePage {
     this.subPoolActionsColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[5]');
 
     this.firstSubItem = this.table.locator('//tr[@data-test-id="row_1"]');
-
-    this.expandMoreIcon = this.table.locator(
-      'xpath=(//button[contains(@class, "rgw1hv-expand")] | //button[contains(@class, "u0ks9z-expand")])'
-    );
+    this.domainOutlinedIcon = this.getByAnyTestId('DomainOutlinedIcon', this.table);
+    this.poolExpandMoreIcon = this.domainOutlinedIcon.locator(
+      'xpath=/ancestor::td//*[@data-testid="ExpandMoreIcon"]');
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
 
     //Edit pools side modal
@@ -216,7 +216,7 @@ export class PoolsPage extends BasePage {
    * @throws {Error} If no pools are found on the page.
    */
   async getPoolCount(): Promise<number> {
-    const count = await this.expandMoreIcon.count();
+    const count = await this.poolExpandMoreIcon.count();
     if (count === 0) {
       throw new Error('No pools found on the page.');
     }
@@ -465,7 +465,7 @@ export class PoolsPage extends BasePage {
    * @returns {Promise<void>}
    */
   async toggleExpandPool(): Promise<void> {
-    await this.expandMoreIcon.click();
+    await this.poolExpandMoreIcon.click();
   }
 
   /**

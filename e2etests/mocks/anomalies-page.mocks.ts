@@ -1,46 +1,3 @@
-export const AnomaliesOrganizationAllowedActionsResponse = {
-  data: {
-    organizationAllowedActions: {
-      '3d0fe384-b1cf-4929-ad5e-1aa544f93dd5': [
-        'MANAGE_CHECKLISTS',
-        'MANAGE_POOLS',
-        'INFO_PARTNER',
-        'MANAGE_OWN_RESOURCES',
-        'LIST_USERS',
-        'MANAGE_PERMISSIONS',
-        'CREATE_PARTNER',
-        'BOOK_ENVIRONMENTS',
-        'MANAGE_RESOURCES',
-        'POLL_EVENT',
-        'DELETE_PARTNER',
-        'ASSIGN_SELF',
-        'INFO_ORGANIZATION',
-        'EDIT_PARTNER',
-        'ASSIGN_USER',
-        'MANAGE_CLOUD_CREDENTIALS',
-        'MANAGE_INVITES',
-        'ACK_EVENT',
-      ],
-    },
-  },
-};
-
-export const AnomaliesOrganizationsResponse = {
-  data: {
-    organizations: [
-      {
-        id: '3d0fe384-b1cf-4929-ad5e-1aa544f93dd5',
-        name: 'SoftwareOne (Test Environment)',
-        pool_id: 'ccaceadf-6878-4ab4-9fd8-3f6177d0b9d3',
-        currency: 'USD',
-        is_demo: false,
-        disabled: false,
-        __typename: 'Organization',
-      },
-    ],
-  },
-};
-
 export const AnomaliesDefaultExpensesOrganizationLimitsHitResponse = {
   data: {
     organizationLimitHits: [
@@ -121,35 +78,6 @@ export const AnomaliesDefaultExpensesOrganizationLimitsHitResponse = {
         __typename: 'OrganizationLimitHit',
       },
     ],
-  },
-};
-
-export const AnomaliesDefaultExpensesOrganizationConstraintResponse = {
-  data: {
-    organizationConstraint: {
-      id: '96ca4f90-0273-4b48-a71c-3ab71e7152be',
-      name: 'Default - expense anomaly',
-      type: 'expense_anomaly',
-      definition: {
-        threshold_days: 7,
-        threshold: 30,
-      },
-      filters: {},
-      last_run_result: {
-        average: 13977.05900977757,
-        today: 8322.009982722153,
-        breakdown: {
-          '1762214400': 14067.61638744421,
-          '1762300800': 14008.000138267224,
-          '1762387200': 14013.566961521621,
-          '1762473600': 14009.072832981701,
-          '1762560000': 14064.62650350049,
-          '1762646400': 13837.408699882479,
-          '1762732800': 13839.121544845262,
-        },
-      },
-      __typename: 'OrganizationConstraint',
-    },
   },
 };
 

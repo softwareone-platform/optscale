@@ -247,8 +247,7 @@ export abstract class BasePage {
    */
   parseCurrencyValue(input: string): number {
     if (!input) {
-      errorLog(`parseCurrencyValue: Input is empty or null`);
-      return NaN;
+      throw Error(`parseCurrencyValue: Input is empty or null`);
     }
 
     // Lowercase for uniformity and trim whitespace

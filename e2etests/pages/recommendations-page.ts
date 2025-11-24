@@ -138,6 +138,10 @@ export class RecommendationsPage extends BasePage {
   readonly instancesWithSubscriptionOpportunitiesSeeAllBtn: Locator;
   readonly instancesWithSubscriptionOpportunitiesError: Locator;
   readonly instancesWithSubscriptionOpportunitiesTableSavingsValue: Locator;
+  readonly intelligentTieringCardSavingsValue: Locator;
+  readonly intelligentTieringSeeAllBtn: Locator;
+  readonly intelligentTieringError: Locator;
+  readonly intelligentTieringTableSavingsValue: Locator;
   readonly notAttachedVolumesCardSavingsValue: Locator;
   readonly notAttachedVolumesSeeAllBtn: Locator;
   readonly notAttachedVolumesError: Locator;
@@ -316,6 +320,7 @@ export class RecommendationsPage extends BasePage {
       instancesWithMigrationOpportunities: 'Instances with migration opportunities',
       instancesWithSpotPreemptibleOpportunities: 'Instances with Spot (Preemptible) opportunities',
       instancesWithSubscriptionOpportunities: 'Instances with Subscription opportunities',
+      intelligentTiering: 'Intelligent Tiering',
       notAttachedVolumes: 'Not attached Volumes',
       notDeallocatedInstances: 'Not deallocated Instances',
       obsoleteImages: 'Obsolete images',
@@ -510,6 +515,7 @@ export class RecommendationsPage extends BasePage {
         label: 'Instances with Subscription Opportunities',
         locator: this.instancesWithSubscriptionOpportunitiesCardSavingsValue,
       },
+      { label: 'Intelligent Tiering', locator: this.intelligentTieringCardSavingsValue },
       { label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue },
       { label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue },
       { label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue },
