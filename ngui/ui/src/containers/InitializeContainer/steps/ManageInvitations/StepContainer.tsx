@@ -15,7 +15,7 @@ const StepContainer = () => {
     error: getInvitationsError,
     refetch: refetchInvitations
   } = useInvitationsQuery({
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     notifyOnNetworkStatusChange: true
   });
 
