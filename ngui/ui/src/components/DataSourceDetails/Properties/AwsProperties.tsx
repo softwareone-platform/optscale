@@ -1,25 +1,9 @@
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { AWS_CNR, AWS_ROOT_CONNECT_CUR_VERSION, AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID } from "utils/constants";
+import { AwsPropertiesProps } from "./types";
 
-type AwsPropertiesProps = {
-  accountId: string;
-  config: {
-    access_key_id: string;
-    assume_role_account_id: string;
-    assume_role_name: string;
-    bucket_name: string;
-    bucket_prefix: string;
-    linked: boolean;
-    report_name: string;
-    config_scheme?: string;
-    region_name?: string;
-    cur_version?: 1 | 2;
-    use_edp_discount?: boolean;
-  };
-};
-
-const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
+const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => {
   const {
     access_key_id: accessKeyId,
     assume_role_account_id: assumeRoleAccountId,
@@ -49,6 +33,14 @@ const AwsProperties = ({ accountId, config }: AwsPropertiesProps) => {
 
   return (
     <>
+      <KeyValueLabel
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       <KeyValueLabel
         keyMessageId="AWSAccountId"
         value={accountId}

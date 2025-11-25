@@ -1,13 +1,22 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { GCP_CNR } from "utils/constants";
+import { GcpPropertiesProps } from "./types";
 
-const GcpProperties = ({ accountId, config = {} }) => {
+const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps) => {
   const { billing_data: billingData, pricing_data: pricingData } = config;
   const { dataset_name: billingDatasetName, table_name: billingTableName, project_id: billingProjectId } = billingData ?? {};
   const { dataset_name: pricingDatasetName, table_name: pricingTableName, project_id: pricingProjectId } = pricingData ?? {};
 
   return (
     <>
+      <KeyValueLabel
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       <KeyValueLabel
         keyMessageId="GCPProjectId"
         value={accountId}
