@@ -3,6 +3,7 @@ import { useApiData } from "hooks/useApiData";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { hasIntersection, getLength, isIdentical } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
+import { ObjectValues } from "utils/types";
 import { useOrganizationAllowedActions } from "./coreData/useOrganizationAllowedActions";
 
 const CHECK_PERMISSION_CONDITION = Object.freeze({
@@ -84,7 +85,18 @@ export const useAllAllowedActions = () => {
  * @param {string} condition - One of "and", "or"
  * @returns A function that accepts an array of permissions to check.
  */
-export const useIsAllowed = ({ entityId, entityType = SCOPE_TYPES.ORGANIZATION, requiredActions = [], condition }) => {
+type UseIsAllowedParams = {
+  entityId?: string;
+  entityType?: string;
+  requiredActions: string[];
+  condition?: ObjectValues<typeof CHECK_PERMISSION_CONDITION>;
+};
+export const useIsAllowed = ({
+  entityId,
+  entityType = SCOPE_TYPES.ORGANIZATION,
+  requiredActions = [],
+  condition
+}: UseIsAllowedParams) => {
   const scopedAllowedActions = useScopedAllowedActions(entityType, entityId);
 
   return isAllowed(requiredActions, scopedAllowedActions, condition);
