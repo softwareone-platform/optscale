@@ -968,10 +968,11 @@ class Aws(S3CloudMixin):
             else:
                 raise
 
-        it_metadata = self._get_bucket_intelligent_tiering_metadata(
-            s3_client=s3,
-            bucket_name=bucket_name
-        )
+        # TODO: temporary fix due to high CloudWatch expenses (OSN-1201)
+        # it_metadata = self._get_bucket_intelligent_tiering_metadata(
+        #     s3_client=s3,
+        #     bucket_name=bucket_name
+        # )
 
         bucket_resource = BucketResource(
             cloud_resource_id=bucket_name,
@@ -982,16 +983,16 @@ class Aws(S3CloudMixin):
             tags=self._extract_tags(tags, dict_name='TagSet'),
             is_public_policy=is_public_policy,
             is_public_acls=is_public_acls,
-            intelligent_tiering_enabled=it_metadata.get('intelligent_tiering_enabled', False),
-            intelligent_tiering_configs=it_metadata.get('intelligent_tiering_configs', []),
-            lifecycle_rules=it_metadata.get('lifecycle_rules', []),
-            storage_class_analysis=it_metadata.get('storage_class_analysis', []),
-            metrics_configurations=it_metadata.get('metrics_configurations', []),
-            total_size_bytes=it_metadata.get('total_size_bytes'),
-            object_count=it_metadata.get('object_count'),
-            it_status_bucket=it_metadata.get('it_status_bucket'),
-            tiers=it_metadata.get('tiers', []),
-            last_checked=it_metadata.get('last_checked', []),
+            # intelligent_tiering_enabled=it_metadata.get('intelligent_tiering_enabled', False),
+            # intelligent_tiering_configs=it_metadata.get('intelligent_tiering_configs', []),
+            # lifecycle_rules=it_metadata.get('lifecycle_rules', []),
+            # storage_class_analysis=it_metadata.get('storage_class_analysis', []),
+            # metrics_configurations=it_metadata.get('metrics_configurations', []),
+            # total_size_bytes=it_metadata.get('total_size_bytes'),
+            # object_count=it_metadata.get('object_count'),
+            # it_status_bucket=it_metadata.get('it_status_bucket'),
+            # tiers=it_metadata.get('tiers', []),
+            # last_checked=it_metadata.get('last_checked', []),
         )
 
         self._set_cloud_link(bucket_resource, region)
