@@ -32,6 +32,7 @@ export type AlibabaDataSource = DataSourceInterface & {
   __typename?: "AlibabaDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AlibabaConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -102,6 +103,7 @@ export type AwsDataSource = DataSourceInterface & {
   __typename?: "AwsDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AwsConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -159,6 +161,7 @@ export type AzureSubscriptionDataSource = DataSourceInterface & {
   __typename?: "AzureSubscriptionDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AzureSubscriptionConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -188,6 +191,7 @@ export type AzureTenantDataSource = DataSourceInterface & {
   __typename?: "AzureTenantDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AzureTenantConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -313,6 +317,7 @@ export type DataSourceDiscoveryInfos = {
 
 export type DataSourceInterface = {
   account_id?: Maybe<Scalars["String"]["output"]>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id?: Maybe<Scalars["String"]["output"]>;
   last_getting_metric_attempt_at?: Maybe<Scalars["Int"]["output"]>;
@@ -358,6 +363,7 @@ export type DatabricksDataSource = DataSourceInterface & {
   __typename?: "DatabricksDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<DatabricksConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -390,6 +396,7 @@ export type EmployeeEmail = {
 export type EnvironmentDataSource = DataSourceInterface & {
   __typename?: "EnvironmentDataSource";
   account_id: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -443,6 +450,7 @@ export type GcpDataSource = DataSourceInterface & {
   __typename?: "GcpDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<GcpConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -492,6 +500,7 @@ export type GcpTenantDataSource = DataSourceInterface & {
   __typename?: "GcpTenantDataSource";
   account_id?: Maybe<Scalars["String"]["output"]>;
   config?: Maybe<GcpTenantConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -554,6 +563,7 @@ export type K8sDataSource = DataSourceInterface & {
   __typename?: "K8sDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<K8sConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -668,6 +678,7 @@ export type NebiusDataSource = DataSourceInterface & {
   __typename?: "NebiusDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<NebiusConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -1034,6 +1045,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "AlibabaDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1056,6 +1068,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "AwsDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1091,6 +1104,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "AzureSubscriptionDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1122,6 +1136,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "AzureTenantDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1144,6 +1159,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "DatabricksDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1166,6 +1182,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "EnvironmentDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1187,6 +1204,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "GcpDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1223,6 +1241,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "GcpTenantDataSource";
         account_id?: string | null;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1259,6 +1278,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "K8sDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1286,6 +1306,7 @@ export type DataSourcesQuery = {
     | {
         __typename?: "NebiusDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1328,6 +1349,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "AlibabaDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1363,6 +1385,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "AwsDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1411,6 +1434,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "AzureSubscriptionDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1455,6 +1479,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "AzureTenantDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1490,6 +1515,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "DatabricksDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1525,6 +1551,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "EnvironmentDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1559,6 +1586,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "GcpDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1608,6 +1636,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "GcpTenantDataSource";
         account_id?: string | null;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1657,6 +1686,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "K8sDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -1697,6 +1727,7 @@ export type DataSourceQuery = {
     | {
         __typename?: "NebiusDataSource";
         account_id: string;
+        created_at?: number | null;
         id: string;
         last_getting_metric_attempt_at: number;
         last_getting_metric_attempt_error?: string | null;
@@ -2453,6 +2484,7 @@ export const DataSourcesDocument = gql`
   query DataSources($organizationId: ID!) {
     dataSources(organizationId: $organizationId) {
       account_id
+      created_at
       id
       last_getting_metric_attempt_at
       last_getting_metric_attempt_error
@@ -2537,6 +2569,7 @@ export const DataSourceDocument = gql`
   query DataSource($dataSourceId: ID!, $requestParams: DataSourceRequestParams) {
     dataSource(dataSourceId: $dataSourceId, requestParams: $requestParams) {
       account_id
+      created_at
       id
       last_getting_metric_attempt_at
       last_getting_metric_attempt_error

@@ -1,11 +1,20 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { DATABRICKS } from "utils/constants";
+import { DatabricksPropertiesProps } from "./types";
 
-const DatabricksProperties = ({ accountId, config }) => {
+const DatabricksProperties = ({ accountId, config, createdAt }: DatabricksPropertiesProps) => {
   const { client_id: clientId } = config;
 
   return (
     <>
+      <KeyValueLabel
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       <KeyValueLabel
         keyMessageId="accountId"
         value={accountId}

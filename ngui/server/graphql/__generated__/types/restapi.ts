@@ -32,6 +32,7 @@ export type AlibabaDataSource = DataSourceInterface & {
   __typename?: "AlibabaDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AlibabaConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -102,6 +103,7 @@ export type AwsDataSource = DataSourceInterface & {
   __typename?: "AwsDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AwsConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -159,6 +161,7 @@ export type AzureSubscriptionDataSource = DataSourceInterface & {
   __typename?: "AzureSubscriptionDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AzureSubscriptionConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -188,6 +191,7 @@ export type AzureTenantDataSource = DataSourceInterface & {
   __typename?: "AzureTenantDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<AzureTenantConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -313,6 +317,7 @@ export type DataSourceDiscoveryInfos = {
 
 export type DataSourceInterface = {
   account_id?: Maybe<Scalars["String"]["output"]>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id?: Maybe<Scalars["String"]["output"]>;
   last_getting_metric_attempt_at?: Maybe<Scalars["Int"]["output"]>;
@@ -358,6 +363,7 @@ export type DatabricksDataSource = DataSourceInterface & {
   __typename?: "DatabricksDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<DatabricksConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -390,6 +396,7 @@ export type EmployeeEmail = {
 export type EnvironmentDataSource = DataSourceInterface & {
   __typename?: "EnvironmentDataSource";
   account_id: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -443,6 +450,7 @@ export type GcpDataSource = DataSourceInterface & {
   __typename?: "GcpDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<GcpConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -492,6 +500,7 @@ export type GcpTenantDataSource = DataSourceInterface & {
   __typename?: "GcpTenantDataSource";
   account_id?: Maybe<Scalars["String"]["output"]>;
   config?: Maybe<GcpTenantConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -554,6 +563,7 @@ export type K8sDataSource = DataSourceInterface & {
   __typename?: "K8sDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<K8sConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -668,6 +678,7 @@ export type NebiusDataSource = DataSourceInterface & {
   __typename?: "NebiusDataSource";
   account_id: Scalars["String"]["output"];
   config?: Maybe<NebiusConfig>;
+  created_at?: Maybe<Scalars["Int"]["output"]>;
   details?: Maybe<DataSourceDetails>;
   id: Scalars["String"]["output"];
   last_getting_metric_attempt_at: Scalars["Int"]["output"];
@@ -1114,6 +1125,7 @@ export type AlibabaDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AlibabaConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1152,6 +1164,7 @@ export type AwsDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AwsConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1186,6 +1199,7 @@ export type AzureSubscriptionDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AzureSubscriptionConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1215,6 +1229,7 @@ export type AzureTenantDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AzureTenantConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1277,6 +1292,7 @@ export type DataSourceInterfaceResolvers<
     ContextType
   >;
   account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
@@ -1305,6 +1321,7 @@ export type DatabricksDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["DatabricksConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1346,6 +1363,7 @@ export type EnvironmentDataSourceResolvers<
   ParentType extends ResolversParentTypes["EnvironmentDataSource"] = ResolversParentTypes["EnvironmentDataSource"]
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1399,6 +1417,7 @@ export type GcpDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["GcpConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1448,6 +1467,7 @@ export type GcpTenantDataSourceResolvers<
 > = {
   account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["GcpTenantConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1525,6 +1545,7 @@ export type K8sDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["K8sConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1642,6 +1663,7 @@ export type NebiusDataSourceResolvers<
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["NebiusConfig"]>, ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
   details?: Resolver<Maybe<ResolversTypes["DataSourceDetails"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   last_getting_metric_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;

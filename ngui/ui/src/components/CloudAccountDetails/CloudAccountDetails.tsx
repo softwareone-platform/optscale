@@ -259,6 +259,7 @@ const Tabs = ({
   id,
   accountId,
   parentId,
+  createdAt,
   type,
   lastImportAt,
   lastImportAttemptAt,
@@ -277,7 +278,16 @@ const Tabs = ({
     {
       title: DETAILS_TAB,
       dataTestId: "tab_details",
-      node: !!id && <DataSourceDetails id={id} parentId={parentId} accountId={accountId} type={type} config={config} />,
+      node: !!id && (
+        <DataSourceDetails
+          id={id}
+          parentId={parentId}
+          accountId={accountId}
+          type={type}
+          config={config}
+          createdAt={createdAt}
+        />
+      ),
       renderCondition: () => type !== ENVIRONMENT
     },
     {
@@ -333,6 +343,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     id,
     name = "",
     type,
+    created_at: createdAt,
     parent_id: parentId,
     account_id: accountId,
     last_import_at: lastImportAt,
@@ -390,6 +401,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
               name={name}
               type={type}
               parentId={parentId}
+              createdAt={createdAt}
               lastImportAt={lastImportAt}
               lastImportAttemptAt={lastImportAttemptAt}
               lastImportAttemptError={lastImportAttemptError}
