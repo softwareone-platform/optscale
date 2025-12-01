@@ -1,14 +1,22 @@
+import { ReactNode } from "react";
 import { Box } from "@mui/material";
 import IconButton from "components/IconButton";
+import { IconButtonProps } from "components/IconButton/IconButton";
 import SubTitle from "components/SubTitle";
 import TypographyLoader from "components/TypographyLoader";
-import { isEmptyObject } from "utils/objects";
 
-const SummaryList = ({ titleMessage, titleIconButton = {}, isLoading = false, items = [] }) => (
+type SummaryListProps = {
+  titleMessage: ReactNode;
+  titleIconButton?: IconButtonProps;
+  isLoading?: boolean;
+  items: ReactNode;
+};
+
+const SummaryList = ({ titleMessage, titleIconButton, isLoading = false, items }: SummaryListProps) => (
   <Box minWidth={isLoading ? "200px" : undefined}>
     <Box display="flex" alignItems="center">
       <SubTitle>{titleMessage}</SubTitle>
-      {isEmptyObject(titleIconButton) ? null : <IconButton {...titleIconButton} />}
+      {titleIconButton?.icon ? <IconButton {...titleIconButton} /> : null}
     </Box>
     {isLoading ? <TypographyLoader linesCount={4} /> : <>{items}</>}
   </Box>

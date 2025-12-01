@@ -3,6 +3,7 @@ import { useApiData } from "hooks/useApiData";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { hasIntersection, getLength, isIdentical } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
+import { ObjectValues } from "utils/types";
 import { useOrganizationAllowedActions } from "./coreData/useOrganizationAllowedActions";
 
 const CHECK_PERMISSION_CONDITION = Object.freeze({
@@ -95,12 +96,18 @@ export type IsAllowedProperties = {
  * @param {string} condition - One of "and", "or"
  * @returns True or False based on whether the user has the required actions for the specified entity.
  */
+type UseIsAllowedParams = {
+  entityId?: string;
+  entityType?: string;
+  requiredActions: string[];
+  condition?: ObjectValues<typeof CHECK_PERMISSION_CONDITION>;
+};
 export const useIsAllowed = ({
   entityId,
   entityType = SCOPE_TYPES.ORGANIZATION,
   requiredActions = [],
   condition
-}: IsAllowedProperties) => {
+}: UseIsAllowedParams) => {
   const scopedAllowedActions = useScopedAllowedActions(entityType, entityId);
 
   return isAllowed(requiredActions, scopedAllowedActions, condition);

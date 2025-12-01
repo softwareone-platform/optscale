@@ -7,7 +7,7 @@ import { NavLink, type To } from "react-router-dom";
 import Tooltip from "components/Tooltip";
 import useStyles from "./IconButton.styles";
 
-type IconButtonProps = MuiIconButtonProps & {
+export type IconButtonProps = MuiIconButtonProps & {
   dataTestId: string;
   dataProductTourId?: string;
   icon: ReactNode;

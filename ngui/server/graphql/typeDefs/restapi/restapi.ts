@@ -40,6 +40,7 @@ export default gql`
 
   interface DataSourceInterface {
     id: String
+    created_at: Int
     name: String
     type: DataSourceType
     parent_id: String
@@ -70,6 +71,7 @@ export default gql`
 
   type AwsDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -92,6 +94,7 @@ export default gql`
 
   type AzureTenantDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -119,6 +122,7 @@ export default gql`
 
   type AzureSubscriptionDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -153,6 +157,7 @@ export default gql`
 
   type GcpDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -187,6 +192,7 @@ export default gql`
 
   type GcpTenantDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -208,6 +214,7 @@ export default gql`
 
   type AlibabaDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -236,6 +243,7 @@ export default gql`
 
   type NebiusDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -258,6 +266,7 @@ export default gql`
 
   type DatabricksDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -286,6 +295,7 @@ export default gql`
 
   type K8sDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
@@ -303,6 +313,7 @@ export default gql`
   # Environment data source
   type EnvironmentDataSource implements DataSourceInterface {
     id: String!
+    created_at: Int
     name: String!
     type: DataSourceType!
     parent_id: String
