@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import ActionBar from "components/ActionBar";
 import ButtonGroup from "components/ButtonGroup";
@@ -20,6 +21,7 @@ const actionBarDefinition = {
       messageId: "goToDashboard",
       type: "button",
       link: HOME,
+      variant: "primary",
       dataTestId: "btn_add"
     }
   ]
@@ -119,7 +121,9 @@ const OrganizationsOverview = ({ data, isLoading = false }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <OrganizationsOverviewTable data={tableData} total={data.length} isLoading={isLoading} />
+            <Box className={"MTPBoxShadow"}>
+              <OrganizationsOverviewTable data={tableData} total={data.length} isLoading={isLoading} />
+            </Box>
           </Grid>
         </Grid>
       </PageContentWrapper>
