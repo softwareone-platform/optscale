@@ -71,6 +71,9 @@ export const CLOUD_PROVIDERS = Object.freeze({
 });
 
 export const CONNECTION_TYPES = Object.freeze({
+  AWS_MANAGEMENT: "awsManagement",
+  AWS_MEMBER: "awsMember",
+  AWS_STANDALONE: "awsStandalone",
   AWS_ROLE: "awsRole",
   AWS_ROOT: "awsRoot",
   AWS_LINKED: "awsLinked",
@@ -199,7 +202,7 @@ export const EVENT_LEVEL = Object.freeze({
   DEBUG: "DEBUG"
 });
 
-export const EVENTS_LIMIT = 80;
+export const EVENTS_LIMIT = 40;
 
 export const CLOUD_ACCOUNT_TYPES_LIST = Object.keys(CLOUD_ACCOUNT_TYPE);
 
@@ -849,6 +852,30 @@ export const BREAKDOWN_LINEAR_SELECTOR_ITEMS = [
   {
     name: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
     value: "tags",
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_tags"
+  }
+];
+
+export const BREAKDOWN_BUTTON_GROUP_ITEMS = [
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.EXPENSES,
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_expenses"
+  },
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.RESOURCE_COUNT,
+    type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
+    dataTestId: "breakdown_ls_item_resource_count"
+  },
+  {
+    name: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+    id: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
+    messageId: CLEAN_EXPENSES_BREAKDOWN_TYPES.TAGS,
     type: LINEAR_SELECTOR_ITEMS_TYPES.TEXT,
     dataTestId: "breakdown_ls_item_tags"
   }

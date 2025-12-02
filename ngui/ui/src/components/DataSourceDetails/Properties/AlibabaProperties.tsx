@@ -8,6 +8,7 @@ const AlibabaProperties = ({ accountId, config, createdAt }: AlibabaPropertiesPr
   return (
     <>
       <KeyValueLabel
+        variant="property"
         keyMessageId="connectedAt"
         value={createdAt}
         dataTestIds={{
@@ -16,6 +17,7 @@ const AlibabaProperties = ({ accountId, config, createdAt }: AlibabaPropertiesPr
         }}
       />
       <KeyValueLabel
+        variant="property"
         key="alibabaAccountId"
         keyMessageId="alibabaAccountId"
         value={accountId}
@@ -25,6 +27,7 @@ const AlibabaProperties = ({ accountId, config, createdAt }: AlibabaPropertiesPr
         }}
       />
       <KeyValueLabel
+        variant="property"
         key="alibabaAccessKeyId"
         keyMessageId="alibabaAccessKeyId"
         value={accessKeyId}
