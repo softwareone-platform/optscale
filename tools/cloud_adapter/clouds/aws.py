@@ -512,7 +512,7 @@ class Aws(S3CloudMixin):
         else:
             raise exc
 
-    def _get_bucket_public_settings(self, bucket_s3, s3_client, bucket_name):
+    def _get_bucket_public_settings(self, bucket_s3, bucket_name):
         """
         Inspect S3 bucket public settings.
 
@@ -591,70 +591,92 @@ class Aws(S3CloudMixin):
         }
 
         return result
-    
-    def _get_bucket_intelligent_tiering_metadata(self, s3_client, bucket_name):
+
+    @staticmethod
+    def get_bucket_storage_info(s3_client, bucket_name):
         """
-        Gather Intelligent-Tiering and related storage metadata for a bucket.
-
-        The returned metadata is a dictionary with the following keys:
-        - intelligent_tiering_enabled (bool): whether any Intelligent-Tiering
-          configuration exists for the bucket.
-        - intelligent_tiering_configs (list): raw IntelligentTieringConfigurationList.
-        - lifecycle_rules (list): bucket lifecycle configuration rules (if any).
-        - has_lifecycle (bool): True when lifecycle configuration exists.
-        - storage_class_analysis (list): analytics configuration list (if any).
-        - metrics_configurations (list): metrics configuration list (if any).
-        - total_size_bytes (int|None): aggregated bucket size in bytes (CloudWatch),
-          if available.
-        - object_count (int|None): estimated or exact number of objects in bucket.
-        - access_pattern (deprecated|placeholder): reserved for future use.
-        - it_status_bucket (str): 'enabled' when intelligent-tiering applies to
-          the full bucket, otherwise 'disabled'.
-        - tiers (list): list of [display_name, size_gb] pairs for detected storage tiers.
-        - last_checked (list): ISO dates (YYYY-MM-DD) where GET object activity was detected.
-
-        Behavior summary:
-        - Attempts to read Intelligent-Tiering configurations (list_bucket_intelligent_tiering_configurations)
-          and determines whether IT applies to the entire bucket (no filter or empty prefix).
-        - Reads lifecycle, analytics and metrics configs where available, ignoring
-          known "no such configuration" errors.
-        - Tries to obtain object count by sampling list_objects_v2 (MaxKeys=1000).
-          If sample returns 1000 items (potentially large bucket), falls back to CloudWatch
-          NumberOfObjects metric (7-day window). For smaller buckets it paginates to compute
-          an accurate object count.
-        - Uses CloudWatch BucketSizeBytes metric (7-day window) per storage type to
-          compute total_size_bytes and per-tier sizes.
-        - Collects last access dates using CloudWatch GetRequests (sum per day)
-          for the last 30 days and returns dates where Sum > 0 in last_checked.
-        - All network/cloud errors are caught and logged; missing data remains None
-          or empty lists as appropriate.
-
-        Parameters:
-        - s3_client: boto3 S3 client already configured for the bucket's region.
-        - bucket_name: name of the bucket to inspect.
-
-        Returns:
-        - dict described above containing metadata about intelligent-tiering and storage metrics.
+        Gather storage metadata for a bucket.
+        - total_size_bytes (int): aggregated bucket size in bytes.
+        - object_count (int): number of objects in bucket.
+        - tiers (dict): aggregated bucket size per storage tier.
         """
+
+        # Filter out directories - only count actual objects
+        def is_actual_object(obj):
+            key = obj.get('Key', '')
+            size = obj.get('Size', 0)
+            return size > 0 or not key.endswith('/')
+
+        paginator = s3_client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=bucket_name, Prefix="")
+        obj_count, total_size = 0, 0
+        tiers = defaultdict(float)
+        for page in pages:
+            for obj in page.get("Contents", list()):
+                if is_actual_object(obj):
+                    obj_count += 1
+                    total_size += obj["Size"]
+                    tiers[obj["StorageClass"]] += obj["Size"]
+        return {
+            bucket_name: {
+                "total_size_bytes": total_size,
+                "object_count": obj_count,
+                "tiers": tiers
+            }
+        }
+
+    @staticmethod
+    def _get_bucket_meta_by_s3(s3_client, bucket_name):
+        """
+         Gather Intelligent-Tiering and related storage metadata for a bucket.
+
+         The returned metadata is a dictionary with the following keys:
+         - intelligent_tiering_enabled (bool): whether any Intelligent-Tiering
+           configuration exists for the bucket.
+         - intelligent_tiering_configs (list): raw IntelligentTieringConfigurationList.
+         - lifecycle_rules (list): bucket lifecycle configuration rules (if any).
+         - has_lifecycle (bool): True when lifecycle configuration exists.
+         - storage_class_analysis (list): analytics configuration list (if any).
+         - metrics_configurations (list): metrics configuration list (if any).
+         - access_pattern (deprecated|placeholder): reserved for future use.
+         - it_status_bucket (str): 'enabled' when intelligent-tiering applies to
+           the full bucket, otherwise 'disabled'.
+
+         Behavior summary:
+         - Attempts to read Intelligent-Tiering configurations (list_bucket_intelligent_tiering_configurations)
+           and determines whether IT applies to the entire bucket (no filter or empty prefix).
+         - Reads lifecycle, analytics and metrics configs where available, ignoring
+           known "no such configuration" errors.
+         - Tries to obtain object count by sampling list_objects_v2 (MaxKeys=1000).
+           If sample returns 1000 items (potentially large bucket), falls back to CloudWatch
+           NumberOfObjects metric (7-day window). For smaller buckets it paginates to compute
+           an accurate object count.
+         - All network/cloud errors are caught and logged; missing data remains None
+           or empty lists as appropriate.
+
+         Parameters:
+         - s3_client: boto3 S3 client already configured for the bucket's region.
+         - bucket_name: name of the bucket to inspect.
+
+         Returns:
+         - dict described above containing metadata about intelligent-tiering and storage metrics.
+         """
         metadata = {
-        'intelligent_tiering_enabled': False,
-        'intelligent_tiering_configs': [],
-        'lifecycle_rules': [],
-        'has_lifecycle': False,
-        'storage_class_analysis': [],
-        'metrics_configurations': [],
-        'total_size_bytes': None,
-        'object_count': None,
-        'access_pattern': None,
-        'it_status_bucket': None,
-        'tiers': [],
-        'last_checked': []
-    }
+            'intelligent_tiering_enabled': False,
+            'intelligent_tiering_configs': [],
+            'lifecycle_rules': [],
+            'has_lifecycle': False,
+            'storage_class_analysis': [],
+            'metrics_configurations': [],
+            'access_pattern': None,
+            'it_status_bucket': None,
+        }
         try:
             it_configs = s3_client.list_bucket_intelligent_tiering_configurations(
                 Bucket=bucket_name
             )
-            configs_list = it_configs.get('IntelligentTieringConfigurationList', [])
+            configs_list = it_configs.get(
+                'IntelligentTieringConfigurationList', [])
             metadata['intelligent_tiering_enabled'] = bool(configs_list)
             metadata['intelligent_tiering_configs'] = configs_list
             # Check if IT applies to entire bucket (no filter or empty prefix)
@@ -669,10 +691,12 @@ class Aws(S3CloudMixin):
                 and_map = flt.get('And', {}) if isinstance(flt, dict) else {}
                 and_prefix = and_map.get('Prefix')
                 and_tags = and_map.get('Tags')
-                if (prefix == '' or prefix is None) and (not and_tags) and (and_prefix in (None, '')):
+                if (prefix == '' or prefix is None) and (not and_tags) and (
+                        and_prefix in (None, '')):
                     full_bucket = True
                     break
-            metadata['it_status_bucket'] = 'enabled' if (metadata['intelligent_tiering_enabled'] and full_bucket) else 'disabled'
+            metadata['it_status_bucket'] = 'enabled' if (
+                    metadata['intelligent_tiering_enabled'] and full_bucket) else 'disabled'
         except ClientError as exc:
             if exc.response['Error'].get('Code') != 'NoSuchConfiguration':
                 LOG.warning(f"[IT] Failed to get Intelligent-Tiering config for bucket {bucket_name}: {str(exc)}")
@@ -707,231 +731,7 @@ class Aws(S3CloudMixin):
             )
         except ClientError as exc:
             if exc.response['Error'].get('Code') not in ['NoSuchConfiguration', 'NoSuchMetricsConfiguration']:
-                LOG.warning(f"[IT] Failed to get metrics config for bucket {bucket_name}: {str(exc)}") 
-
-        # Get bucket size and object count via CloudWatch
-        try:
-            region_name = s3_client.meta.region_name
-            cloudwatch = self.session.client('cloudwatch', region_name=region_name)
-
-            def _latest_value(datapoints):
-                if not datapoints:
-                    return None
-                # Get most recent value from CloudWatch
-                last = sorted(datapoints, key=lambda x: x['Timestamp'])[-1]
-                return last.get('Average') or last.get('Sum') or last.get('Maximum') or last.get('Minimum')
-
-            object_count_val = None
-            try:
-                # Sample bucket to estimate object count
-                sample_response = s3_client.list_objects_v2(
-                    Bucket=bucket_name,
-                    MaxKeys=1000
-                )
-                
-                if not sample_response.get('Contents'):
-                    object_count_val = 0
-                    LOG.info(f"[IT] Bucket {bucket_name} is empty: 0 objects")
-                else:
-                    # Filter out directories - only count actual objects
-                    def is_actual_object(obj):
-                        key = obj.get('Key', '')
-                        size = obj.get('Size', 0)
-                        return size > 0 or not key.endswith('/')
-                    
-                    actual_objects = [obj for obj in sample_response['Contents'] if is_actual_object(obj)]
-                    sample_count = len(actual_objects)
-                    
-                    # For large buckets, use CloudWatch
-                    if len(sample_response['Contents']) == 1000:
-                        objects_stats = cloudwatch.get_metric_statistics(
-                            Namespace='AWS/S3',
-                            MetricName='NumberOfObjects',
-                            Dimensions=[
-                                {'Name': 'BucketName', 'Value': bucket_name},
-                                {'Name': 'StorageType', 'Value': 'AllStorageTypes'}
-                            ],
-                            StartTime=datetime.utcnow().replace(tzinfo=timezone.utc) - timedelta(days=7),
-                            EndTime=datetime.utcnow().replace(tzinfo=timezone.utc),
-                            Period=24 * 60 * 60,
-                            Statistics=['Average']
-                        )
-                        cloudwatch_count = _latest_value(objects_stats.get('Datapoints', []))
-                        if cloudwatch_count is not None:
-                            object_count_val = int(cloudwatch_count)
-                            LOG.info(f"[IT] Using CloudWatch object count for large bucket {bucket_name}: {object_count_val}")
-                        else:
-                            LOG.warning(f"[IT] CloudWatch returned no data for bucket {bucket_name}, using sample estimate")
-                            object_count_val = sample_count
-                    else:
-                        # For smaller buckets, paginate to get accurate count
-                        total_objects = sample_count
-                        continuation_token = sample_response.get('NextContinuationToken')
-                        
-                        while continuation_token:
-                            try:
-                                response = s3_client.list_objects_v2(
-                                    Bucket=bucket_name,
-                                    ContinuationToken=continuation_token
-                                )
-                                
-                                if response.get('Contents'):
-                                    actual_objects = [obj for obj in response['Contents'] if is_actual_object(obj)]
-                                    total_objects += len(actual_objects)
-                                
-                                continuation_token = response.get('NextContinuationToken')
-                                
-                            except Exception as page_exc:
-                                LOG.warning(f"[IT] Failed to get page for bucket {bucket_name}: {str(page_exc)}")
-                                break
-                        
-                        object_count_val = total_objects
-                        LOG.info(f"[IT] Accurate object count for bucket {bucket_name}: {object_count_val}")
-                        
-            except Exception as exc:
-                LOG.warning(f"[IT] Failed to get accurate object count for bucket {bucket_name}: {str(exc)}")
-                # Fallback to CloudWatch if sampling fails
-                try:
-                    objects_stats = cloudwatch.get_metric_statistics(
-                        Namespace='AWS/S3',
-                        MetricName='NumberOfObjects',
-                        Dimensions=[
-                            {'Name': 'BucketName', 'Value': bucket_name},
-                            {'Name': 'StorageType', 'Value': 'AllStorageTypes'}
-                        ],
-                        StartTime=datetime.utcnow().replace(tzinfo=timezone.utc) - timedelta(days=7),
-                        EndTime=datetime.utcnow().replace(tzinfo=timezone.utc),
-                        Period=24 * 60 * 60,
-                        Statistics=['Average']
-                    )
-                    cloudwatch_count = _latest_value(objects_stats.get('Datapoints', []))
-                    if cloudwatch_count is not None:
-                        object_count_val = int(cloudwatch_count)
-                        LOG.warning(f"[IT] Using CloudWatch fallback for bucket {bucket_name} (may include prefixes): {object_count_val}")
-                    else:
-                        LOG.warning(f"[IT] CloudWatch fallback also failed for bucket {bucket_name}")
-                except Exception as fallback_exc:
-                    LOG.warning(f"[IT] Failed to get CloudWatch fallback for bucket {bucket_name}: {str(fallback_exc)}")
-
-            # BucketSizeBytes by StorageType
-            storage_types = [
-                'StandardStorage',
-                'StandardIAStorage',
-                'OneZoneIAStorage',
-                'ReducedRedundancyStorage',
-                'GlacierStorage',
-                'GlacierInstantRetrievalStorage',
-                'GlacierStagingStorage',
-                'GlacierS3ObjectOverhead',
-                'IntelligentTieringFAStorage',
-                'IntelligentTieringIAStorage',
-                'IntelligentTieringAAStorage',
-                'IntelligentTieringDAAStorage',
-                'DeepArchiveStorage',
-                'DeepArchiveS3ObjectOverhead',
-            ]
-            total_size = 0
-            any_size_dp = False
-            tiers_bytes = {}
-            for st in storage_types:
-                size_stats = cloudwatch.get_metric_statistics(
-                    Namespace='AWS/S3',
-                    MetricName='BucketSizeBytes',
-                    Dimensions=[
-                        {'Name': 'BucketName', 'Value': bucket_name},
-                        {'Name': 'StorageType', 'Value': st}
-                    ],
-                    StartTime=datetime.utcnow().replace(tzinfo=timezone.utc) - timedelta(days=7),
-                    EndTime=datetime.utcnow().replace(tzinfo=timezone.utc),
-                    Period=24 * 60 * 60,
-                    Statistics=['Average']
-                )
-                val = _latest_value(size_stats.get('Datapoints', []))
-                if val is not None:
-                    any_size_dp = True
-                    total_size += int(val)
-                    tiers_bytes[st] = int(val)
-
-            if any_size_dp:
-                metadata['total_size_bytes'] = int(total_size)
-            if object_count_val is not None:
-                metadata['object_count'] = int(object_count_val)
-
-            # Build tiers list with sizes in GB
-            def _display_name(storage_type):
-                mapping = {
-                    'StandardStorage': 'Standard',
-                    'StandardIAStorage': 'Standard-IA',
-                    'OneZoneIAStorage': 'One Zone-IA',
-                    'ReducedRedundancyStorage': 'RRS',
-                    'GlacierStorage': 'Glacier',
-                    'GlacierInstantRetrievalStorage': 'Glacier IR',
-                    'GlacierStagingStorage': 'Glacier Staging',
-                    'GlacierS3ObjectOverhead': 'Glacier Overhead',
-                    'IntelligentTieringFAStorage': 'Intelligent Tiering - Frequent',
-                    'IntelligentTieringIAStorage': 'Intelligent Tiering - Infrequent',
-                    'IntelligentTieringAAStorage': 'Intelligent Tiering - Archive Access',
-                    'IntelligentTieringDAAStorage': 'Intelligent Tiering - Deep Archive Access',
-                    'DeepArchiveStorage': 'Deep Archive',
-                    'DeepArchiveS3ObjectOverhead': 'Deep Archive Overhead',
-                }
-                return mapping.get(storage_type, storage_type)
-
-            tiers_list = []
-            BYTES_IN_GB = 1024 ** 3
-            for st, b in tiers_bytes.items():
-                size_gb = round(b / BYTES_IN_GB, 3)
-                tiers_list.append([_display_name(st), size_gb])
-            metadata['tiers'] = tiers_list
-        except Exception as exc:
-            LOG.warning(f"[IT] Failed to fetch CloudWatch metrics for bucket {bucket_name}: {str(exc)}")
-
-        # Get last_checked dates from GET requests
-        try:
-            region_name = s3_client.meta.region_name
-            cloudwatch = self.session.client('cloudwatch', region_name=region_name)
-            
-            get_requests_metric = 'GetRequests'
-            dates_with_object_access = []
-            
-            try:
-                get_stats = cloudwatch.get_metric_statistics(
-                    Namespace='AWS/S3',
-                    MetricName=get_requests_metric,
-                    Dimensions=[
-                        {'Name': 'BucketName', 'Value': bucket_name},
-                        {'Name': 'FilterId', 'Value': 'EntireBucket'}
-                    ],
-                    StartTime=datetime.utcnow().replace(tzinfo=timezone.utc) - timedelta(days=30),
-                    EndTime=datetime.utcnow().replace(tzinfo=timezone.utc),
-                    Period=24 * 60 * 60,
-                    Statistics=['Sum']
-                )
-                get_dps = get_stats.get('Datapoints', [])
-                
-                # Collect dates with GET requests
-                for dp in get_dps:
-                    if dp.get('Sum', 0) > 0:
-                        ts = dp.get('Timestamp')
-                        if isinstance(ts, datetime):
-                            dates_with_object_access.append(ts.date().isoformat())
-                
-                # Store unique sorted dates
-                if dates_with_object_access:
-                    metadata['last_checked'] = sorted(list(set(dates_with_object_access)))
-                    LOG.info(f"[IT] Bucket {bucket_name} had object GETs on dates: {metadata['last_checked']}")
-                else:
-                    metadata['last_checked'] = []
-                    LOG.info(f"[IT] Bucket {bucket_name} had no object GETs in the last 30 days")
-                    
-            except Exception as exc:
-                LOG.warning(f"[IT] Failed to get {get_requests_metric} metrics for bucket {bucket_name}: {str(exc)}")
-                metadata['last_checked'] = []
-            
-        except Exception as exc:
-            LOG.warning(f"[IT] Failed to get access metrics for bucket {bucket_name}: {str(exc)}")
-            metadata['last_checked'] = []
-
+                LOG.warning(f"[IT] Failed to get metrics config for bucket {bucket_name}: {str(exc)}")
         return metadata
 
     @staticmethod
@@ -955,7 +755,7 @@ class Aws(S3CloudMixin):
         # specific region
         s3 = self.session.client('s3', region_name=region)
 
-        public_and_tiering = self._get_bucket_public_settings(s3, s3, bucket_name)
+        public_and_tiering = self._get_bucket_public_settings(s3, bucket_name)
         is_public_policy = public_and_tiering.get('is_public_policy', False)
         is_public_acls = public_and_tiering.get('is_public_acls', False)
 
@@ -968,12 +768,7 @@ class Aws(S3CloudMixin):
             else:
                 raise
 
-        # TODO: temporary fix due to high CloudWatch expenses (OSN-1201)
-        # it_metadata = self._get_bucket_intelligent_tiering_metadata(
-        #     s3_client=s3,
-        #     bucket_name=bucket_name
-        # )
-
+        meta_by_s3 = self._get_bucket_meta_by_s3(s3, bucket_name)
         bucket_resource = BucketResource(
             cloud_resource_id=bucket_name,
             cloud_account_id=self.cloud_account_id,
@@ -983,16 +778,14 @@ class Aws(S3CloudMixin):
             tags=self._extract_tags(tags, dict_name='TagSet'),
             is_public_policy=is_public_policy,
             is_public_acls=is_public_acls,
-            # intelligent_tiering_enabled=it_metadata.get('intelligent_tiering_enabled', False),
-            # intelligent_tiering_configs=it_metadata.get('intelligent_tiering_configs', []),
-            # lifecycle_rules=it_metadata.get('lifecycle_rules', []),
-            # storage_class_analysis=it_metadata.get('storage_class_analysis', []),
-            # metrics_configurations=it_metadata.get('metrics_configurations', []),
-            # total_size_bytes=it_metadata.get('total_size_bytes'),
-            # object_count=it_metadata.get('object_count'),
-            # it_status_bucket=it_metadata.get('it_status_bucket'),
-            # tiers=it_metadata.get('tiers', []),
-            # last_checked=it_metadata.get('last_checked', []),
+            intelligent_tiering_enabled=meta_by_s3.get(
+                'intelligent_tiering_enabled', False),
+            intelligent_tiering_configs=meta_by_s3.get(
+                'intelligent_tiering_configs', []),
+            lifecycle_rules=meta_by_s3.get('lifecycle_rules', []),
+            storage_class_analysis=meta_by_s3.get('storage_class_analysis', []),
+            metrics_configurations=meta_by_s3.get('metrics_configurations', []),
+            it_status_bucket=meta_by_s3.get('it_status_bucket'),
         )
 
         self._set_cloud_link(bucket_resource, region)
@@ -2048,6 +1841,20 @@ class Aws(S3CloudMixin):
                 stats = f.result()['Datapoints']
                 result[instance_id] = stats
         return result
+
+    def get_cloud_watch_metric_data(self, region, queries, start_date,
+                                    end_date, scan_by='TimestampDescending'):
+        try:
+            cloudwatch = self.session.client('cloudwatch', region_name=region)
+            return cloudwatch.get_metric_data(
+                MetricDataQueries=queries,
+                StartTime=start_date,
+                EndTime=end_date,
+                ScanBy=scan_by,
+            )
+        except ClientError as exc:
+            LOG.warning(
+                f"Failed to get cloud watch metric: {str(exc)}")
 
     def get_reserved_instances_offerings(self, pd, tenancy, flavor,
                                          min_duration, max_duration,
