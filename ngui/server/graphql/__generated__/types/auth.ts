@@ -15,7 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  OrganizationAllowedActionsScalar: { input: unknown; output: unknown };
+  StringArrayMap: { input: Record<string, string[]>; output: Record<string, string[]> };
 };
 
 export type Mutation = {
@@ -58,7 +58,7 @@ export type OrganizationAllowedActionsRequestParams = {
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]["output"]>;
-  organizationAllowedActions?: Maybe<Scalars["OrganizationAllowedActionsScalar"]["output"]>;
+  organizationAllowedActions?: Maybe<Scalars["StringArrayMap"]["output"]>;
 };
 
 export type QueryOrganizationAllowedActionsArgs = {
@@ -161,9 +161,9 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   Mutation: ResolverTypeWrapper<{}>;
   OrganizationAllowedActionsRequestParams: OrganizationAllowedActionsRequestParams;
-  OrganizationAllowedActionsScalar: ResolverTypeWrapper<Scalars["OrganizationAllowedActionsScalar"]["output"]>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
+  StringArrayMap: ResolverTypeWrapper<Scalars["StringArrayMap"]["output"]>;
   Token: ResolverTypeWrapper<Token>;
   UpdateUserParams: UpdateUserParams;
   User: ResolverTypeWrapper<User>;
@@ -175,9 +175,9 @@ export type ResolversParentTypes = {
   ID: Scalars["ID"]["output"];
   Mutation: {};
   OrganizationAllowedActionsRequestParams: OrganizationAllowedActionsRequestParams;
-  OrganizationAllowedActionsScalar: Scalars["OrganizationAllowedActionsScalar"]["output"];
   Query: {};
   String: Scalars["String"]["output"];
+  StringArrayMap: Scalars["StringArrayMap"]["output"];
   Token: Token;
   UpdateUserParams: UpdateUserParams;
   User: User;
@@ -209,23 +209,22 @@ export type MutationResolvers<
   >;
 };
 
-export interface OrganizationAllowedActionsScalarScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes["OrganizationAllowedActionsScalar"], any> {
-  name: "OrganizationAllowedActionsScalar";
-}
-
 export type QueryResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   organizationAllowedActions?: Resolver<
-    Maybe<ResolversTypes["OrganizationAllowedActionsScalar"]>,
+    Maybe<ResolversTypes["StringArrayMap"]>,
     ParentType,
     ContextType,
     Partial<QueryOrganizationAllowedActionsArgs>
   >;
 };
+
+export interface StringArrayMapScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes["StringArrayMap"], any> {
+  name: "StringArrayMap";
+}
 
 export type TokenResolvers<
   ContextType = ContextValue,
@@ -250,8 +249,8 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = ContextValue> = {
   Mutation?: MutationResolvers<ContextType>;
-  OrganizationAllowedActionsScalar?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
+  StringArrayMap?: GraphQLScalarType;
   Token?: TokenResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

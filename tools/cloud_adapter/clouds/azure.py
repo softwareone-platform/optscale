@@ -682,8 +682,10 @@ class Azure(CloudBase):
     @property
     def reservations(self):
         if not self._reservations:
-            self._reservations = AzureReservationAPI(
-                self.client_secret_credentials)
+            self._reservations = _client_with_retry(
+                AzureReservationAPI,
+                self.client_secret_credentials
+            )
         return self._reservations
 
     @property
@@ -1802,3 +1804,22 @@ class Azure(CloudBase):
                 raise ResourceNotFound(str(exc))
             else:
                 raise
+
+    @retry(retry_on_exception=_retry_on_error, wait_fixed=2000,
+           stop_max_attempt_number=10)
+    def get_reservation_order(self, reservation_order_id, expand="schedule"):
+        return self.reservations.reservation_order.get(
+            reservation_order_id, expand=expand)
+
+    @retry(retry_on_exception=_retry_on_error, wait_fixed=2000,
+           stop_max_attempt_number=10)
+    def get_reservation_by_ids(self, order_id, reservation_id, start_date,
+                               end_date):
+        start = start_date.strftime('%Y-%m-%dT%H:%M:%S.0Z')
+        end = end_date.strftime('%Y-%m-%dT%H:%M:%S.0Z')
+        filters = (f'properties/UsageDate ge {start} and '
+                   f'properties/UsageDate le {end}')
+        return [
+            x for x in self.consumption.reservations_details.list_by_reservation_order_and_reservation(
+            reservation_order_id=order_id, reservation_id=reservation_id,
+            filter=filters)]
