@@ -18,7 +18,7 @@ const StepContainer = ({ refetchInvitations, isInvitationsRefetching }) => {
     error: getOrganizationsError,
     refetch: refetchOrganizations
   } = useOrganizationsQuery({
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     notifyOnNetworkStatusChange: true
   });
 

@@ -139,6 +139,7 @@ query CurrentEmployee($organizationId: ID!) {
 query DataSources($organizationId: ID!) {
   dataSources(organizationId: $organizationId) {
     account_id
+    created_at
     id
     last_getting_metric_attempt_at
     last_getting_metric_attempt_error
@@ -170,6 +171,7 @@ query DataSources($organizationId: ID!) {
 query DataSource($dataSourceId: ID!, $requestParams: DataSourceRequestParams) {
   dataSource(dataSourceId: $dataSourceId, requestParams: $requestParams) {
     account_id
+    created_at
     id
     last_getting_metric_attempt_at
     last_getting_metric_attempt_error

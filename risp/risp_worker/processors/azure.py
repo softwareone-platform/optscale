@@ -35,12 +35,15 @@ class AzureProcessor(RispProcessorBase):
             return
         new_expenses_map = defaultdict(lambda: defaultdict(
             lambda: defaultdict(dict)))
-        instances = {x['cloud_resource_id']: x.get('region')
-                     for x in self.mongo_client.restapi.resources.find(
-                        {'cloud_account_id': cloud_account_id,
-                         'resource_type': 'Instance'},
-                        {'region': 1, 'cloud_resource_id': 1}
-                    )}
+        instances = {
+            x['cloud_resource_id']: (x.get('region'),
+                                     x.get('meta', {}).get('os') or 'linux')
+            for x in self.mongo_client.restapi.resources.find(
+                {'cloud_account_id': cloud_account_id,
+                 'resource_type': 'Instance'},
+                {'region': 1, 'cloud_resource_id': 1,
+                 'meta.os': 1}
+            )}
         _, cloud_account = self.rest_cl.cloud_account_get(cloud_account_id)
         _, organization = self.rest_cl.organization_get(
             cloud_account['organization_id'])
@@ -55,8 +58,7 @@ class AzureProcessor(RispProcessorBase):
             LOG.info("Start processing reservation %s", offer_id)
             order_id, reservation_id = self._parse_reservation_ids(offer_id)
             try:
-                order = azure.reservations.reservation_order.get(
-                    order_id, expand="schedule")
+                order = azure.get_reservation_order(order_id)
             except Exception as e:
                 LOG.warning('Failed to get reservation order %s: %s',
                             offer_id, str(e))
@@ -78,19 +80,18 @@ class AzureProcessor(RispProcessorBase):
                     offer_exp_cost_per_day[offer_id][
                         cost_plan[i][0] + timedelta(days=j)] = cost
             location_map = {v: k for k, v in azure.location_map.items()}
-            start = datetime.fromtimestamp(
-                reservation['meta']['start']).strftime('%Y-%m-%dT%H:%M:%S.0Z')
-            end = datetime.fromtimestamp(
-                reservation['meta']['end']).strftime('%Y-%m-%dT%H:%M:%S.0Z')
-            filters = (f'properties/UsageDate ge {start} and '
-                       f'properties/UsageDate le {end}')
-            details = azure.consumption.reservations_details.list_by_reservation_order_and_reservation(
-                reservation_order_id=order_id,
-                reservation_id=reservation_id,
-                filter=filters
-            )
+            start = datetime.fromtimestamp(reservation['meta']['start'])
+            end = datetime.fromtimestamp(reservation['meta']['end'])
+            try:
+                details = azure.get_reservation_by_ids(
+                    order_id, reservation_id, start, end)
+            except Exception as e:
+                LOG.warning('Failed to get reservation details %s: %s',
+                            reservation_id, str(e))
+                continue
             for detail in details:
-                region = instances.get(detail.instance_id.lower())
+                region, os = instances.get(detail.instance_id.lower(),
+                                           (None, None))
                 if not region:
                     # instance from other subscription
                     LOG.warning('Instance %s not found, skipping',
@@ -105,12 +106,14 @@ class AzureProcessor(RispProcessorBase):
                     (location, detail.sku_name))
                 if not on_demand_cost:
                     _, response = self.insider_cl.get_flavor_prices(
-                        'azure', detail.sku_name, location, 'linux',
+                        'azure', detail.sku_name, location, os.lower(),
                         preinstalled=None, quantity=None, billing_method=None,
                         currency=organization['currency']
                     )
                     # price per 1 hour
                     if len(response['prices']) == 0:
+                        LOG.warning('No price found for %s',
+                                    detail.sku_name)
                         continue
                     on_demand_cost = response['prices'][0]['price']
                     region_flavor_price_map[

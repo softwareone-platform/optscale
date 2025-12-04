@@ -1,0 +1,29 @@
+name: Manage PR "bug" label
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  manage-bug-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if branch contains "bug"
+        id: check-branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const containsBug = branchName.toLowerCase().startsWith('bug');
+            core.setOutput('contains_bug', containsBug.toString());
+
+      - name: Add "bug" label if branch contains "bug"
+        if: steps.check-branch.outputs.contains_bug == 'true'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: bug

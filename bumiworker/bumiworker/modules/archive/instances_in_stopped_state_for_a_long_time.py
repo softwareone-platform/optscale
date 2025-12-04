@@ -13,7 +13,7 @@ class InstancesInStoppedStateForALongTime(StuckInStateForALongTimeBase):
 
     @property
     def resource_type(self):
-        return 'instance'
+        return 'Instance'
 
     def is_state_changed(self, resource, start_date):
         return (resource.get('meta', {}).get(

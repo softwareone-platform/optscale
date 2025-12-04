@@ -356,6 +356,7 @@
   "connectGoogleCalendar": "Connect Google Calendar",
   "connectKubernetesTip": "Follow the <instructionLinkButton>instructions</instructionLinkButton> to install the software that collects information about running pods and converts them into cost metrics.",
   "connectOnlyToDataInBucket": "Connect only to data in bucket",
+  "connectedAt": "Connected at",
   "connectedToJira": "Connected to Jira",
   "connectedToSlack": "Connected to Slack",
   "connectedWorkspaces": "Connected workspaces",

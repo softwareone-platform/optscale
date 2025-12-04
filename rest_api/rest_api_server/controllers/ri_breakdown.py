@@ -135,10 +135,12 @@ class RiBreakdownController(CleanExpenseController):
                 'cost_without_offer'] += on_demand_cost
         return cloud_account_total
 
-    def get_flavors(self, cloud_account_ids):
+    def get_flavors(self, cloud_accounts_map):
         flavor_factor_map = defaultdict(float)
+        cloud_type_flavors = defaultdict(set)
         flavors = self.execute_clickhouse(
-            """SELECT DISTINCT instance_type, ri_norm_factor
+            """SELECT DISTINCT
+                 instance_type, ri_norm_factor, cloud_account_id
                FROM ri_sp_usage
                WHERE cloud_account_id IN cloud_account_ids AND
                  date >= %(start_date)s AND date <= %(end_date)s AND
@@ -153,25 +155,28 @@ class RiBreakdownController(CleanExpenseController):
                     {
                         'name': 'cloud_account_ids',
                         'structure': [('id', 'String')],
-                        'data': [{'id': r_id} for r_id in cloud_account_ids]
+                        'data': [{'id': r_id} for r_id in cloud_accounts_map]
                     }
                 ]
             )
         )
         for flavor in flavors:
-            flavor_name, norm_factor = flavor
+            flavor_name, norm_factor, cloud_acc_id = flavor
+            cloud_type = cloud_accounts_map[cloud_acc_id]['type']
             if 'db.' in flavor_name:
                 # AWS RDS instances don't have normalization factor
                 # use 1 as default
                 flavor_factor_map[flavor_name] = 1
+                cloud_type_flavors[cloud_type].add(flavor_name)
                 continue
             if norm_factor:
                 flavor_factor_map[flavor_name] = norm_factor
             for key, value in RI_FACTOR_MAP.items():
                 if key in flavor_name:
                     flavor_factor_map[flavor_name] = value
+                    cloud_type_flavors[cloud_type].add(flavor_name)
                     break
-        return flavor_factor_map
+        return flavor_factor_map, cloud_type_flavors
 
     @staticmethod
     def breakdown_dates(start_date, end_date):
@@ -315,8 +320,8 @@ class RiBreakdownController(CleanExpenseController):
             )
         )
 
-    def fill_overprovisioning(self, flavor_factor_map, cloud_account_usage,
-                              start_date, end_date):
+    def fill_overprovisioning(self, cloud_acc_flavor_rate,
+                              cloud_account_usage, start_date, end_date):
         cloud_acc_ids = list(cloud_account_usage.keys())
         expenses = self.get_overprovision_ch_expenses(
             cloud_acc_ids, start_date, end_date)
@@ -343,6 +348,7 @@ class RiBreakdownController(CleanExpenseController):
                     data.update({'overprovision_hrs': {}})
                 ri_overprov_norm_hrs = cloud_acc_overprov_n_hrs.get(
                     cloud_acc_id, {}).get(date, 0)
+                flavor_factor_map = cloud_acc_flavor_rate.get(cloud_acc_id, {})
                 for flavor_name, ri_norm_factor in flavor_factor_map.items():
                     if ri_norm_factor is not None:
                         ri_usage = ri_overprov_norm_hrs / ri_norm_factor
@@ -377,12 +383,18 @@ class RiBreakdownController(CleanExpenseController):
         self.handle_filters(params, filters, organization_id)
         cloud_account_ids = self.filter_cloud_accounts(
             params, cloud_accs_map)
-        flavor_rate_map = self.get_flavors(cloud_account_ids)
+        flavor_rate_map, cloud_type_flavors = self.get_flavors(cloud_accs_map)
         cloud_account_total = self.get_total_stats(cloud_account_ids)
         cloud_account_usage = self.get_cloud_account_usage_stats(
             cloud_account_ids)
+        cloud_acc_flavor_rate = {}
+        for cloud_acc_id in cloud_account_ids:
+            cloud_acc_flavor_rate[cloud_acc_id] = {
+                x: flavor_rate_map.get(x, 1)
+                for x in cloud_type_flavors[
+                    cloud_accs_map[cloud_acc_id]['type']]}
         cloud_account_usage = self.fill_overprovisioning(
-            flavor_rate_map, cloud_account_usage,
+            cloud_acc_flavor_rate, cloud_account_usage,
             datetime.fromtimestamp(self.start_date),
             datetime.fromtimestamp(self.end_date))
         result = defaultdict(list)

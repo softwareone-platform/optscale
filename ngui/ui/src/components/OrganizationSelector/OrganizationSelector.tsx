@@ -11,6 +11,7 @@ import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
 import { CreateOrganizationModal } from "components/SideModalManager/SideModals";
 import { ORGANIZATION_SETUP_MODE } from "containers/InitializeContainer/constants";
+import { useIsAllowed } from "hooks/useAllowedActions";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { useOpenSideModal } from "hooks/useOpenSideModal";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
@@ -79,9 +80,10 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
+  const isDeploymentAdmin = useIsAllowed({ requiredActions: ["DEPLOYMENT_ADMIN"] });
   const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
-  const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
+  const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY || isDeploymentAdmin;
 
   return (
     <Box display="flex" alignItems="center">

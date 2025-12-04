@@ -28,7 +28,7 @@ class InstancesInStoppedStateForALongTime(ModuleBase):
             SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         date_field_name = 'last_seen_not_stopped'
         stopped_instances = self.get_resources_stuck_in_state(
-            resource_type='instance',
+            resource_type='Instance',
             status_field_name='stopped_allocated',
             date_field_name=date_field_name,
             resource_stuck_condition=True,
@@ -39,7 +39,7 @@ class InstancesInStoppedStateForALongTime(ModuleBase):
             {
                 'cloud_resource_id': instance['cloud_resource_id'],
                 'resource_name': instance.get('name'),
-                'resource_id': instance['resource_id'],
+                'resource_id': instance['_id'],
                 'cloud_account_id': instance['cloud_account_id'],
                 'cloud_type': ca_map.get(
                     instance['cloud_account_id'], {}).get('type'),

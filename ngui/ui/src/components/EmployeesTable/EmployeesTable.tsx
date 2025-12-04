@@ -89,48 +89,50 @@ const renderRoles = ({ assignments = [], organizationName, rowId }, toStringsArr
       assignment_resource_type: SCOPE_TYPES.ORGANIZATION
     },
     ...assignments
-  ].map((assignment, assignmentIndex) => {
-    const {
-      purpose,
-      assignment_id: assignmentId,
-      assignment_resource_id: assignmentResourceId,
-      assignment_resource_purpose: assignmentResourcePurpose,
-      assignment_resource_name: assignmentResourceName,
-      assignment_resource_type: assignmentResourceType
-    } = assignment;
+  ]
+    .filter((assignment) => assignment.purpose !== null)
+    .map((assignment, assignmentIndex) => {
+      const {
+        purpose,
+        assignment_id: assignmentId,
+        assignment_resource_id: assignmentResourceId,
+        assignment_resource_purpose: assignmentResourcePurpose,
+        assignment_resource_name: assignmentResourceName,
+        assignment_resource_type: assignmentResourceType
+      } = assignment;
 
-    const isOrganizationScope = assignmentResourceType === SCOPE_TYPES.ORGANIZATION;
-    const assignmentPurposeMessageId = isOrganizationScope ? ORGANIZATION_ROLE_PURPOSES[purpose] : ROLE_PURPOSES[purpose];
+      const isOrganizationScope = assignmentResourceType === SCOPE_TYPES.ORGANIZATION;
+      const assignmentPurposeMessageId = isOrganizationScope ? ORGANIZATION_ROLE_PURPOSES[purpose] : ROLE_PURPOSES[purpose];
 
-    if (toStringsArray) {
-      if (isOrganizationScope) {
-        return intl.formatMessage({ id: assignmentPurposeMessageId });
+      if (toStringsArray) {
+        if (isOrganizationScope) {
+          return intl.formatMessage({ id: assignmentPurposeMessageId });
+        }
+        const role = intl.formatMessage({ id: assignmentPurposeMessageId });
+        const roleAt = intl.formatMessage({ id: "roleAt" }, { role });
+
+        return `${roleAt} ${assignmentResourceName}`;
       }
-      const role = intl.formatMessage({ id: assignmentPurposeMessageId });
-      const roleAt = intl.formatMessage({ id: "roleAt" }, { role });
 
-      return `${roleAt} ${assignmentResourceName}`;
-    }
-
-    return (
-      <Box key={assignmentId}>
-        {isOrganizationScope ? (
-          <FormattedMessage id={assignmentPurposeMessageId} />
-        ) : (
-          <Typography display="flex" alignItems="center" flexWrap="wrap">
-            <FormattedMessage id="roleAt" values={{ role: <FormattedMessage id={assignmentPurposeMessageId} /> }} />
-            &nbsp;
-            <PoolLabel
-              dataTestId={`link_pool_${rowId}_${assignmentIndex}`}
-              name={assignmentResourceName}
-              type={assignmentResourcePurpose}
-              id={assignmentResourceId}
-            />
-          </Typography>
-        )}
-      </Box>
-    );
-  });
+      return (
+        <Box key={assignmentId}>
+          {isOrganizationScope ? (
+            <FormattedMessage id={assignmentPurposeMessageId} />
+          ) : (
+            <Typography display="flex" alignItems="center" flexWrap="wrap">
+              <FormattedMessage id="roleAt" values={{ role: <FormattedMessage id={assignmentPurposeMessageId} /> }} />
+              &nbsp;
+              <PoolLabel
+                dataTestId={`link_pool_${rowId}_${assignmentIndex}`}
+                name={assignmentResourceName}
+                type={assignmentResourcePurpose}
+                id={assignmentResourceId}
+              />
+            </Typography>
+          )}
+        </Box>
+      );
+    });
 
 const EmployeesTable = ({ isLoading = false, employees }) => {
   const openSideModal = useOpenSideModal();
