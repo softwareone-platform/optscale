@@ -75,9 +75,10 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
+  // const isDeploymentAdmin = useIsAllowed({ requiredActions: ["DEPLOYMENT_ADMIN"] });
   // const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
-  // const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY;
+  // const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY || isDeploymentAdmin;
 
   return (
     <Box display="flex" alignItems="center">

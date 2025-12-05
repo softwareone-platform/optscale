@@ -1,11 +1,21 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { ALIBABA_CNR } from "utils/constants";
+import { AlibabaPropertiesProps } from "./types";
 
-const AlibabaProperties = ({ accountId, config }) => {
+const AlibabaProperties = ({ accountId, config, createdAt }: AlibabaPropertiesProps) => {
   const { access_key_id: accessKeyId } = config;
 
   return (
     <>
+      <KeyValueLabel
+        variant="property"
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       <KeyValueLabel
         variant="property"
         key="alibabaAccountId"

@@ -45,10 +45,11 @@ class SpBreakdownController(RiBreakdownController):
             )
         )
 
-    def get_flavors(self, cloud_account_ids):
+    def get_flavors(self, cloud_accounts_map):
         flavor_rate_map = defaultdict(float)
+        cloud_type_flavors = defaultdict(set)
         flavors = self.execute_clickhouse(
-            """SELECT DISTINCT instance_type, sp_rate
+            """SELECT DISTINCT instance_type, sp_rate, cloud_account_id
                FROM ri_sp_usage
                WHERE cloud_account_id IN cloud_account_ids AND
                  date >= %(start_date)s AND date <= %(end_date)s AND
@@ -62,16 +63,18 @@ class SpBreakdownController(RiBreakdownController):
                 {
                     'name': 'cloud_account_ids',
                     'structure': [('id', 'String')],
-                    'data': [{'id': r_id} for r_id in cloud_account_ids]
+                    'data': [{'id': r_id} for r_id in cloud_accounts_map]
                 }
             ])
         )
         # todo: it could be two different rates for flavor
         for flavor in flavors:
-            flavor_name, sp_rate = flavor
+            flavor_name, sp_rate, cloud_acc_id = flavor
+            cloud_type = cloud_accounts_map[cloud_acc_id]['type']
             if sp_rate:
                 flavor_rate_map[flavor_name] = sp_rate
-        return flavor_rate_map
+                cloud_type_flavors[cloud_type].add(flavor_name)
+        return flavor_rate_map, cloud_type_flavors
 
     def get_cloud_account_usage_stats(self, cloud_account_ids):
         cloud_account_usage = defaultdict(
@@ -123,7 +126,7 @@ class SpBreakdownController(RiBreakdownController):
             )
         )
 
-    def fill_overprovisioning(self, flavor_rate_map, cloud_account_usage,
+    def fill_overprovisioning(self, cloud_acc_flavor_rate, cloud_account_usage,
                               start_date, end_date, offer_type='sp'):
         cloud_acc_ids = list(cloud_account_usage.keys())
         sp_acc_date_exp = defaultdict(lambda: defaultdict(float))
@@ -142,6 +145,7 @@ class SpBreakdownController(RiBreakdownController):
                 data['overprovision'] = sp_overprov_exp
                 if 'overprovision_hrs' not in data:
                     data.update({'overprovision_hrs': {}})
+                flavor_rate_map = cloud_acc_flavor_rate.get(cloud_acc_id, {})
                 for flavor_name, sp_rate in flavor_rate_map.items():
                     sp_usage = sp_overprov_exp / sp_rate
                     data['overprovision_hrs'][flavor_name] = sp_usage

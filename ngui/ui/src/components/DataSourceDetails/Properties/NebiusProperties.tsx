@@ -1,6 +1,7 @@
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import { NebiusPropertiesProps } from "./types";
 
-const NebiusProperties = ({ accountId, config }) => {
+const NebiusProperties = ({ accountId, config, createdAt }: NebiusPropertiesProps) => {
   const {
     cloud_name: cloudName,
     service_account_id: serviceAccountId,
@@ -12,6 +13,15 @@ const NebiusProperties = ({ accountId, config }) => {
 
   return (
     <>
+      <KeyValueLabel
+        variant="property"
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_id`,
+          value: `p_connected_value`
+        }}
+      />
       <KeyValueLabel
         variant="property"
         keyMessageId="cloudId"

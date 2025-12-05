@@ -5,7 +5,7 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { KUBERNETES_CNR } from "utils/constants";
 import { K8sPropertiesProps } from "./types";
 
-const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
+const K8sProperties = ({ id, accountId, config, createdAt }: K8sPropertiesProps) => {
   const {
     cost_model: { cpu_hourly_cost: cpuHourlyCost, memory_hourly_cost: memoryHourlyCost } = {},
     user,
@@ -14,6 +14,15 @@ const K8sProperties = ({ id, accountId, config }: K8sPropertiesProps) => {
 
   return (
     <>
+      <KeyValueLabel
+        variant="property"
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       <KeyValueLabel
         variant="property"
         keyMessageId="kubernetesId"

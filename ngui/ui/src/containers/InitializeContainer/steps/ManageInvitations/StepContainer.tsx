@@ -16,7 +16,7 @@ const StepContainer = () => {
     error: getInvitationsError,
     refetch: refetchInvitations
   } = useInvitationsQuery({
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     notifyOnNetworkStatusChange: true
   });
   const isOrganizationCreationAllowed = useIsFeatureEnabled("organization_creation_allowed");

@@ -10,11 +10,15 @@ from typing import Any, Dict
 from requests.models import Request
 from urllib.parse import urlencode
 from multiprocessing import Process, Queue
+
+import msal
+from azure.core.credentials import AccessToken, TokenCredential
+from msrest.authentication import BasicTokenAuthentication
+
 from azure.mgmt.consumption import ConsumptionManagementClient
 from azure.mgmt.consumption.models import (ModernUsageDetail, LegacyUsageDetail,
                                            UsageDetail, UsageDetailsListResult)
 from retrying import retry
-from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.network import NetworkManagementClient
@@ -29,7 +33,6 @@ from msrest.exceptions import AuthenticationError, ClientRequestError
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
                                    ResourceNotFoundError, ServiceRequestError)
-from azure.identity import ClientSecretCredential
 from azure.storage.blob import BlobServiceClient
 from msrest import Deserializer
 
@@ -79,6 +82,8 @@ DESERIALIZER = Deserializer(classes={
     'UsageDetailsListResult': UsageDetailsListResult
 })
 
+ARM_SCOPE = "https://management.azure.com/.default"
+
 # defining it to use outside CAd
 AzureConsumptionException = HttpResponseError
 AzureErrorResponseException = ErrorResponseException
@@ -101,6 +106,138 @@ AUTH_ERROR_CODES = {
     "NoRegisteredProviderFound",
     "SubscriptionNotFound",
 }
+
+
+class MsalCredential(BasicTokenAuthentication, TokenCredential):
+    """
+    Uses MSAL ConfidentialClientApplication
+    Works for msrest-based clients via BasicTokenAuthentication, also
+    works for azure-core clients via TokenCredential.get_token().
+    """
+
+    def __init__(self, tenant_id: str, client_id: str, client_secret: str):
+        super().__init__(token=None)
+        self._tenant_id = tenant_id
+        self._client_id = client_id
+        self._client_secret = client_secret
+        self._authority = f"https://login.microsoftonline.com/{tenant_id}"
+        self._scopes = [ARM_SCOPE]
+
+        LOG.info(
+            "MSAL: Initializing MsalCredential "
+            "(tenant_id=%s, client_id=%s)",
+            tenant_id,
+            client_id,
+        )
+
+        self._app = msal.ConfidentialClientApplication(
+            client_id=self._client_id,
+            authority=self._authority,
+            client_credential=self._client_secret,
+        )
+
+        self._access_token: str | None = None
+        self._expires_on: int = 0
+
+    def _obtain_token(self, scopes: list[str]) -> tuple[str, int]:
+        """
+        Helper to actually talk via MSAL.
+        Tries cache first, then client_credential flow.
+        """
+        LOG.debug("MSAL: _obtain_token called with scopes=%s", scopes)
+
+        result = self._app.acquire_token_silent(scopes=scopes, account=None)
+        if result:
+            LOG.info(
+                "MSAL: acquire_token_silent HIT for scopes=%s; expires_on=%s",
+                scopes,
+                result.get("expires_on"),
+            )
+        else:
+            LOG.info(
+                "MSAL: acquire_token_silent MISS for scopes=%s; "
+                "calling acquire_token_for_client",
+                scopes,
+            )
+            result = self._app.acquire_token_for_client(scopes=scopes)
+
+        if "access_token" not in result:
+            LOG.error(
+                "MSAL: Failed to obtain token. error=%s, description=%s",
+                result.get("error"),
+                result.get("error_description"),
+            )
+            raise RuntimeError(
+                f"Failed to obtain token from MSAL: "
+                f"{result.get('error')} - {result.get('error_description')}"
+            )
+
+        access_token = result["access_token"]
+        expires_on = int(result.get("expires_on") or
+                         (time.time() + int(result.get("expires_in", 3600))))
+
+        self._access_token = access_token
+        self._expires_on = expires_on
+
+        self.token = {"access_token": access_token}
+
+        LOG.info(
+            "MSAL: New access token acquired; expires_on=%s "
+            "(%s seconds from now)",
+            expires_on,
+            expires_on - int(time.time()),
+        )
+
+        return access_token, expires_on
+
+    def _ensure_token(self, scopes: list[str]) -> tuple[str, int]:
+        """
+        Ensure we have a fresh token, re-acquiring if expired or close to expiry.
+        """
+        now = int(time.time())
+        if self._access_token is None or now >= (self._expires_on - 60):
+            LOG.debug(
+                "MSAL: token missing or expiring soon (now=%s, "
+                "expires_on=%s) – refreshing",
+                now,
+                self._expires_on,
+            )
+            return self._obtain_token(scopes)
+
+        LOG.debug(
+            "MSAL: Reusing cached token (now=%s, expires_on=%s, "
+            "ttl=%s seconds)",
+            now,
+            self._expires_on,
+            self._expires_on - now,
+        )
+        return self._access_token, self._expires_on
+
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        """
+        Called by azure-core based SDKs
+        """
+        use_scopes = list(scopes) if scopes else self._scopes
+        LOG.debug("MSAL: get_token() called with scopes=%s", use_scopes)
+        access_token, expires_on = self._ensure_token(use_scopes)
+        LOG.info(
+            "MSAL: get_token() returning AccessToken for scopes=%s; "
+            "expires_on=%s",
+            use_scopes,
+            expires_on,
+        )
+        return AccessToken(access_token, expires_on)
+
+    def signed_session(self, session=None):
+        """
+        Called by msrest-based SDKs (old msrest approach).
+        We refresh token if needed, then delegate to the base class.
+        """
+        LOG.debug("MSAL: signed_session() called for msrest client")
+        self._ensure_token(self._scopes)
+        LOG.info("MSAL: signed_session() using MSAL-backed access token")
+        return super().signed_session(session)
+
 
 def _extract_azure_status_and_code(exc):
     """
@@ -177,7 +314,7 @@ except Exception:
     LOG.warning("INIT: Azure retry policy not available — falling back to manual retry logic")
 
 _BACKOFF_BASE = 1.0
-_BACKOFF_CAP  = 60.0
+_BACKOFF_CAP = 60.0
 _last_sleep = 1.0
 
 
@@ -322,6 +459,7 @@ class Azure(CloudBase):
         self._subscription_id = self.config.get('subscription_id')
         self._service_principal_credentials = None
         self._client_secret_credentials = None
+        self._msal_credential = None  # MSAL-based credential
         self._compute = None
         self._resource = None
         self._network = None
@@ -336,6 +474,27 @@ class Azure(CloudBase):
         self._usage = None
         self._monitor = None
         self._currency = self.DEFAULT_CURRENCY
+
+    def _get_msal_credential(self) -> MsalCredential:
+        """
+        Lazily construct a single MSAL-based credential and reuse it
+        everywhere (old + new SDKs).
+        """
+        if self._msal_credential is not None:
+            return self._msal_credential
+
+        try:
+            cred = MsalCredential(
+                tenant_id=self.config['tenant'],
+                client_id=self.config['client_id'],
+                client_secret=self.config['secret'],
+            )
+            cred.get_token(ARM_SCOPE)
+        except Exception as ex:
+            raise AuthorizationException(str(ex))
+
+        self._msal_credential = cred
+        return self._msal_credential
 
     @staticmethod
     def get_currency_iso(currency):
@@ -395,14 +554,21 @@ class Azure(CloudBase):
 
     @property
     def service_principal_credentials(self):
+        """
+        Backwards-compatible accessor for credentials.
+        Returns MSAL-based credential.
+        """
         if self._service_principal_credentials:
             return self._service_principal_credentials
-        self._service_principal_credentials = (
-            self._get_service_principal_credentials())
+        self._service_principal_credentials = self._get_service_principal_credentials()
         return self._service_principal_credentials
 
     @property
     def client_secret_credentials(self):
+        """
+        Backwards-compatible accessor for credentials.
+        Returns MSAL-based credential.
+        """
         if self._client_secret_credentials:
             return self._client_secret_credentials
         self._client_secret_credentials = self._get_client_secret_credentials()
@@ -526,35 +692,33 @@ class Azure(CloudBase):
 
     def _get_service_principal_credentials(self):
         """
-        Obtain service principal credential object for older Azure SDK
-        components. Will raise AuthorizationException if credentials are
-        incorrect.
-        :return: service principal credential object
+        Returns a unified MSAL-based credential that is compatible with
+        msrest-based clients
         """
         try:
-            credentials = ServicePrincipalCredentials(
-                client_id=self.config['client_id'],
-                secret=self.config['secret'],
-                tenant=self.config['tenant'],
+            cred = self._get_msal_credential()
+            LOG.info(
+                "AUTH: service_principal_credentials is %s",
+                type(cred).__name__,
             )
-        except AuthenticationError as ex:
+            return cred
+        except AuthorizationException:
+            raise
+        except Exception as ex:
             description = self._get_error_description(ex)
             raise AuthorizationException(description)
-        return credentials
 
     def _get_client_secret_credentials(self):
         """
-        Obtain client secret credential object for newer Azure SDK components.
-        If credentials are wrong, credential object will be constructed without
-        errors. An exception will be raised later during an attempt to make an
-        API call.
-        :return: client secret credential object
+        Returns the same MSAL-based credentials
         """
-        return ClientSecretCredential(
-            client_id=self.config['client_id'],
-            client_secret=self.config['secret'],
-            tenant_id=self.config['tenant'],
+        cred = self._get_msal_credential()
+        LOG.info(
+            "AUTH: client_secret_credentials is %s",
+            type(cred).__name__,
         )
+        return cred
+
 
     @property
     def _is_partner_account(self):
@@ -563,10 +727,13 @@ class Azure(CloudBase):
                 'partner_secret' in self.config)
 
     @staticmethod
-    def _get_error_description(exc: AuthenticationError):
+    def _get_error_description(exc: Exception):
         try:
-            description = exc.inner_exception.error_response.get(
-                'error_description').split('\r\n')[0]
+            if isinstance(exc, AuthenticationError):
+                description = exc.inner_exception.error_response.get(
+                    'error_description').split('\r\n')[0]
+            else:
+                description = str(exc)
         except Exception:
             description = str(exc)
         return description
@@ -1167,6 +1334,7 @@ class Azure(CloudBase):
             deserialized = DESERIALIZER.deserialize_data(
                 result.json(), "UsageDetailsListResult")
             return deserialized.value or [], deserialized.next_link
+
         date_format = '%Y-%m-%d'
         start_str = start_date.strftime(date_format)
         end_str = range_end.strftime(date_format)
@@ -1179,7 +1347,13 @@ class Azure(CloudBase):
               f'&endDate={end_str}&api-version=2021-10-01'
         if limit:
             url += f'&top={limit}'
-        token = self.raw_client.config.credentials.token['access_token']
+
+        # Ensure msrest client has a fresh token from our MSAL-based credential
+        cred = self.raw_client.config.credentials
+        # One signed_session() call forces refresh + sets cred.token["access_token"]
+        cred.signed_session()
+        token = cred.token['access_token']
+
         headers = {'Authorization': f'Bearer {token}'}
         request = Request(method='GET', url=url, headers=headers)
         values, next_link = get_values(request)

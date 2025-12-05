@@ -30,6 +30,7 @@ requirements = [
     "azure-mgmt-monitor==0.10.0",
     "azure-mgmt-commerce==1.0.1",
     "azure-mgmt-reservations==2.3.0",
+    "msal==1.34.0",
     "msrest==0.7.1",
     "urllib3==2.5.0",
     "azure-identity==1.16.1",

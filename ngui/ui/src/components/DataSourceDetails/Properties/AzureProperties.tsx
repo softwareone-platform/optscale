@@ -2,10 +2,11 @@ import CloudLabel from "components/CloudLabel";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { AZURE_CNR } from "utils/constants";
+import { AzurePropertiesProps } from "./types";
 
-const ParentDataSource = ({ parentDataSourceId }) => {
+const ParentDataSource = ({ parentDataSourceId }: { parentDataSourceId: string }) => {
   const dataSources = useAllDataSources();
-  const { name, type } = dataSources.find((dataSource) => dataSource.id === parentDataSourceId) ?? {};
+  const { name, type } = dataSources?.find((dataSource) => dataSource?.id === parentDataSourceId) ?? {};
 
   return (
     <KeyValueLabel
@@ -17,7 +18,7 @@ const ParentDataSource = ({ parentDataSourceId }) => {
   );
 };
 
-const AzureProperties = ({ config, parentId }) => {
+const AzureProperties = ({ config, createdAt, parentId }: AzurePropertiesProps) => {
   const {
     client_id: clientId,
     tenant,
@@ -30,6 +31,14 @@ const AzureProperties = ({ config, parentId }) => {
 
   return (
     <>
+      <KeyValueLabel
+        keyMessageId="connectedAt"
+        value={createdAt}
+        dataTestIds={{
+          key: `p_connected_at_id`,
+          value: `p_connected_at_value`
+        }}
+      />
       {parentId && <ParentDataSource parentDataSourceId={parentId} />}
       {subscriptionId && (
         <KeyValueLabel
