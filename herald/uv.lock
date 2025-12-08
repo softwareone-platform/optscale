@@ -109,12 +109,14 @@ source = { directory = "../optscale_client/config_client" }
 dependencies = [
     { name = "python-etcd" },
     { name = "retrying" },
+    { name = "urllib3" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "python-etcd", specifier = "==0.4.5" },
     { name = "retrying" },
+    { name = "urllib3", specifier = "==2.5" },
 ]
 
 [[package]]
