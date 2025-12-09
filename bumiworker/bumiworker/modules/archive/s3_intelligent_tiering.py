@@ -23,7 +23,8 @@ class S3IntelligentTiering(ArchiveBase, S3IntelligentTieringRecommendation):
     def supported_cloud_types(self):
         return list(self.SUPPORTED_CLOUD_TYPES)
 
-    def _is_it_enabled(self, doc: Dict) -> bool:
+    @staticmethod
+    def _is_it_enabled(doc: Dict) -> bool:
         status = doc.get("it_status_bucket")
         if status is None:
             status = (doc.get("meta") or {}).get("it_status_bucket")
@@ -68,8 +69,6 @@ class S3IntelligentTiering(ArchiveBase, S3IntelligentTieringRecommendation):
                 )
                 if resource and self._is_it_enabled(resource):
                     reason = ArchiveReason.RECOMMENDATION_APPLIED
-                elif resource:
-                    reason = ArchiveReason.RESOURCE_DELETED
                 else:
                     reason = ArchiveReason.RESOURCE_DELETED
                 self._set_reason_properties(optimization, reason)
@@ -84,11 +83,7 @@ class S3IntelligentTiering(ArchiveBase, S3IntelligentTieringRecommendation):
             if self._is_it_enabled(bucket_doc):
                 reason = ArchiveReason.RECOMMENDATION_APPLIED
             else:
-                eval_res = self._candidate_and_saving(bucket_doc)
-                if eval_res.get("is_candidate"):
-                    reason = ArchiveReason.OPTIONS_CHANGED
-                else:
-                    reason = ArchiveReason.RECOMMENDATION_IRRELEVANT
+                reason = ArchiveReason.RECOMMENDATION_IRRELEVANT
             self._set_reason_properties(optimization, reason)
             result.append(optimization)
         return result
