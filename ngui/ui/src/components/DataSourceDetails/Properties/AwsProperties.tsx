@@ -1,5 +1,5 @@
 import { FormattedMessage } from "react-intl";
-import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import KeyValueLabel from "components/KeyValueLabel";
 import { AWS_CNR, AWS_ROOT_CONNECT_CUR_VERSION, AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID } from "utils/constants";
 import { AwsPropertiesProps } from "./types";
 
@@ -34,6 +34,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
   return (
     <>
       <KeyValueLabel
+        variant="property"
         keyMessageId="connectedAt"
         value={createdAt}
         dataTestIds={{
@@ -42,6 +43,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="AWSAccountId"
         value={accountId}
         dataTestIds={{
@@ -50,6 +52,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="awsAccountType"
         value={<FormattedMessage id={getAwsAccountTypeMessageId()} />}
         dataTestIds={{
@@ -59,6 +62,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
       />
       {isAssumeRole && (
         <KeyValueLabel
+          variant="property"
           keyMessageId="awsRoleName"
           value={assumeRoleName}
           dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
@@ -66,6 +70,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
       )}
       {!isAssumeRole && (
         <KeyValueLabel
+          variant="property"
           keyMessageId="awsAccessKeyId"
           value={accessKeyId}
           dataTestIds={{ key: "p_access_key_key", value: "p_access_key_value" }}
@@ -73,6 +78,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
       )}
       {curVersion && Object.values(AWS_ROOT_CONNECT_CUR_VERSION).includes(curVersion) ? (
         <KeyValueLabel
+          variant="property"
           keyMessageId="exportType"
           value={<FormattedMessage id={AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID[curVersion]} />}
           dataTestIds={{ key: "p_cur_version_key", value: "p_cur_version_value" }}
@@ -81,21 +87,25 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
       {!linked && (
         <>
           <KeyValueLabel
+            variant="property"
             keyMessageId="useAwsEdpDiscount"
             value={<FormattedMessage id={useEdpDiscount ? "yes" : "no"} />}
             dataTestIds={{ key: "p_use_edp_discount_key", value: "p_use_edp_discount_value" }}
           />
           <KeyValueLabel
+            variant="property"
             keyMessageId="exportName"
             value={reportName}
             dataTestIds={{ key: "p_export_name_key", value: "p_export_name_value" }}
           />
           <KeyValueLabel
+            variant="property"
             keyMessageId="exportS3BucketName"
             value={bucketName}
             dataTestIds={{ key: "p_bucket_name_key", value: "p_bucket_name_value" }}
           />
           <KeyValueLabel
+            variant="property"
             keyMessageId="exportPathPrefix"
             value={bucketPrefix}
             dataTestIds={{ key: "p_bucket_prefix_key", value: "p_bucket_prefix_value" }}

@@ -53,7 +53,11 @@ const useScopedAllowedActions = (entityType, entityId) => {
 
   const organizationAllowedActions = useOrganizationAllowedActions();
 
-  if (entityType === SCOPE_TYPES.ORGANIZATION) {
+  if (!organizationId) {
+    return [];
+  }
+
+  if (organizationAllowedActions && entityType === SCOPE_TYPES.ORGANIZATION) {
     return organizationAllowedActions ? organizationAllowedActions[organizationId] : [];
   }
 
@@ -78,12 +82,19 @@ export const useAllAllowedActions = () => {
   };
 };
 
+export type IsAllowedProperties = {
+  entityId?: string;
+  entityType?: string;
+  requiredActions?: string[];
+  condition?: "and" | "or";
+};
+
 /**
  * @description We can check permissions for three types of entities - organization, pool, resource.
  * @param {string} entityType - One of the organization, pool, resource, etc.
  * @param {string} entityId
  * @param {string} condition - One of "and", "or"
- * @returns A function that accepts an array of permissions to check.
+ * @returns True or False based on whether the user has the required actions for the specified entity.
  */
 type UseIsAllowedParams = {
   entityId?: string;

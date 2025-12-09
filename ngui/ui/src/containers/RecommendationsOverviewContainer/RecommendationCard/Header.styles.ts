@@ -1,5 +1,5 @@
 import { makeStyles } from "tss-react/mui";
-import { SPACING_2 } from "utils/layouts";
+import { MPT_SPACING_1, MPT_SPACING_2, SPACING_2 } from "utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   header: {
@@ -19,8 +19,13 @@ const useStyles = makeStyles()((theme) => ({
     flexDirection: "column",
     alignItems: "flex-end"
   },
+  titleIcon: {
+    marginTop: "5px",
+    marginRight: MPT_SPACING_1
+  },
   title: {
-    marginRight: theme.spacing(SPACING_2)
+    marginRight: MPT_SPACING_2,
+    marginBottom: MPT_SPACING_2
   }
 }));
 
