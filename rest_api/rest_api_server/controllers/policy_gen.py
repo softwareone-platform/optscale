@@ -55,6 +55,10 @@ class PolicyGeneratorController(BaseController):
                     "s3:ListBucket",
                     "s3:PutBucketPolicy",
                     "s3:ListAllMyBuckets",
+                    "s3:GetIntelligentTieringConfiguration",
+                    "s3:GetLifecycleConfiguration",
+                    "s3:GetAnalyticsConfiguration",
+                    "s3:GetMetricsConfiguration",
                     "iam:GetAccessKeyLastUsed",
                     "iam:GetLoginProfile",
                     "iam:ListUsers",
@@ -133,7 +137,11 @@ class PolicyGeneratorController(BaseController):
                         "s3:GetBucketPublicAccessBlock",
                         "s3:GetBucketPolicyStatus",
                         "s3:GetBucketAcl",
-                        "s3:GetBucketTagging"
+                        "s3:GetBucketTagging",
+                        "s3:GetIntelligentTieringConfiguration",
+                        "s3:GetLifecycleConfiguration",
+                        "s3:GetAnalyticsConfiguration",
+                        "s3:GetMetricsConfiguration"
                       ],
                       "Resource": "*"
                 },
