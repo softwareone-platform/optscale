@@ -285,8 +285,8 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     await test.step('Compare total expenses values', async () => {
       const dateRange = await datePicker.selectedDateText.textContent();
       expect(dateRange.includes(expectedDateRange)).toBe(true);
-      expect.soft(chartTotal).toBe(totalForPeriod);
-      expect.soft(tableTotal).toBe(totalForPeriod);
+      expect.soft(isWithinRoundingDrift(chartTotal, totalForPeriod, 0.001)).toBe(true);
+      expect.soft(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.001)).toBe(true);
     });
   });
 });

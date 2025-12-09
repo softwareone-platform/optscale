@@ -58,7 +58,7 @@ test.describe('Auth API tests @api_tests', { tag: '@api' }, () => {
   test('Get users with Cluster Secret', async ({ authRequest }) => {
     const email = process.env.DEFAULT_USER_EMAIL.toLowerCase();
     const response = await authRequest.getUsersWithClusterSecret(userId);
-    const payload = JSON.parse(await response.text()) as UsersResponse;
+      const payload = JSON.parse(await response.text()) as UsersResponse;
 
     expect(response.status()).toBe(200);
     expect(payload.users.length).toBe(1);

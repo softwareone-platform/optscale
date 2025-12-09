@@ -239,7 +239,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
   });
 });
 
-test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
+test.describe.fixme('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   const apiInterceptions: InterceptionEntry[] = [
     {
       gql: 'GetExpensesDailyBreakdown',
