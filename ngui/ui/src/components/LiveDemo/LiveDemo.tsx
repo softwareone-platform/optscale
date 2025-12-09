@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Box, Stack, Typography } from "@mui/material";
-import { FormattedMessage } from "react-intl";
+import { Box, Stack } from "@mui/material";
 import LiveDemoForm from "components/forms/LiveDemoForm";
 import { FormValues } from "components/forms/LiveDemoForm/types";
 import Logo from "components/Logo";
@@ -24,16 +23,6 @@ const LiveDemo = () => {
     <Stack spacing={SPACING_4} alignItems="center">
       <Box>
         <Logo width={200} dataTestId="img_logo" />
-      </Box>
-      <Box pl={2} pr={2}>
-        <Typography align="center">
-          <FormattedMessage
-            id="liveDemoDisclaimer"
-            values={{
-              br: <br />
-            }}
-          />
-        </Typography>
       </Box>
       <Box pl={2} pr={2}>
         <LiveDemoForm
