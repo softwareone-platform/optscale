@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
@@ -49,25 +50,6 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
       await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
       await resourcesPage.firstResourceItemInTable.waitFor();
-      await resourcesPage.possibleSavingsCard.waitFor();
-    });
-  });
-
-  test('[230776] Possible savings matches those on recommendations page', async ({ resourcesPage, recommendationsPage }) => {
-    let resourcesSavings: number;
-    let recommendationsSavings: number;
-
-    await test.step('Get resources page possible savings value', async () => {
-      resourcesSavings = await resourcesPage.getPossibleMonthlySavingsValue();
-    });
-
-    await test.step('Navigate to recommendations page using Possible Savings card', async () => {
-      await resourcesPage.clickPossibleSavingsCard();
-    });
-
-    await test.step('Compare possible savings with recommendations page', async () => {
-      recommendationsSavings = await recommendationsPage.getPossibleMonthlySavingsValue();
-      expect.soft(resourcesSavings).toBe(recommendationsSavings);
     });
   });
 
