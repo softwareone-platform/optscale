@@ -47,7 +47,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
     await expect(expensesPage.geographyBtn).toBeVisible();
   });
 
-  test('Validate API default chart data', {tag: '@p1'}, async ({ expensesPage }) => {
+  test('Validate API default chart data', { tag: '@p1' }, async ({ expensesPage }) => {
     const { startDate, endDate } = getThisMonthUnixDateRange();
     let expensesData: ExpensesResponse;
 
@@ -119,7 +119,7 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     });
   });
 
-  test('[231183] Verify expenses chart download', {tag: '@p1'}, async ({ expensesPage }) => {
+  test('[231183] Verify expenses chart download', { tag: '@p1' }, async ({ expensesPage }) => {
     let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
     let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
     let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
@@ -254,19 +254,23 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     });
   });
 
-  test('[231216] Verify data source expenses total for(default) period matches chart and table totals', {tag: '@p1'}, async ({ expensesPage }) => {
-    const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
-    debugLog(`Total expenses for selected period: ${totalForPeriod}`);
-    const chartTotal = await expensesPage.getExpensesPieChartValue();
-    debugLog(`Total expenses from pie chart: ${chartTotal}`);
-    const tableTotal = await expensesPage.getTableItemisedExpensesValue();
-    debugLog(`Total expenses from itemised table: ${tableTotal}`);
+  test(
+    '[231216] Verify data source expenses total for(default) period matches chart and table totals',
+    { tag: '@p1' },
+    async ({ expensesPage }) => {
+      const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
+      debugLog(`Total expenses for selected period: ${totalForPeriod}`);
+      const chartTotal = await expensesPage.getExpensesPieChartValue();
+      debugLog(`Total expenses from pie chart: ${chartTotal}`);
+      const tableTotal = await expensesPage.getTableItemisedExpensesValue();
+      debugLog(`Total expenses from itemised table: ${tableTotal}`);
 
-    await test.step('Compare total expenses values', async () => {
-      expect.soft(chartTotal).toBe(totalForPeriod);
-      expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
-    });
-  });
+      await test.step('Compare total expenses values', async () => {
+        expect.soft(chartTotal).toBe(totalForPeriod);
+        expect(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.01)).toBe(true);
+      });
+    }
+  );
 
   test('[231217] Verify data source expenses total for (last month) period matches chart and table totals', async ({
     expensesPage,
@@ -327,7 +331,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     });
   });
 
-  test('[231219] Validate API Pool Breakdown chart data', {tag: '@p1'}, async ({ expensesPage }) => {
+  test('[231219] Validate API Pool Breakdown chart data', { tag: '@p1' }, async ({ expensesPage }) => {
     const { startDate, endDate } = getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByPoolResponse;
 
@@ -338,7 +342,6 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
         ),
         expensesPage.page.reload(),
       ]);
-
       expensesData = await expensesResponse.json();
     });
 
@@ -464,7 +467,6 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
         ),
         expensesPage.page.reload(),
       ]);
-
       expensesData = await expensesResponse.json();
     });
 
