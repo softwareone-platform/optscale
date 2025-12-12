@@ -45,10 +45,12 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
                                                                cloudAccountsConnectPage,
                                                              }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
+    await cloudAccountsConnectPage.fitViewportToFullPage()
 
     // AWS Management view
     await  cloudAccountsConnectPage.awsRootBtn.click();
     await cloudAccountsConnectPage.btnAssumedRole.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage()
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-management-assumed-role-tenant-screenshot.png');
     await cloudAccountsConnectPage.btnAccessKey.click();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-management-access-key-tenant-screenshot.png');
@@ -56,6 +58,7 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
     // AWS Member view
     await cloudAccountsConnectPage.btnMember.click();
     await cloudAccountsConnectPage.btnAssumedRole.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage()
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-member-assumed-role-tenant-screenshot.png');
     await cloudAccountsConnectPage.btnAccessKey.click();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-member-access-key-tenant-screenshot.png');
@@ -63,6 +66,7 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
     // AWS Standard view
     await cloudAccountsConnectPage.btnStandalone.click();
     await cloudAccountsConnectPage.btnAssumedRole.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage()
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-standard-assumed-role-tenant-screenshot.png');
     await cloudAccountsConnectPage.btnAccessKey.click();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-aws-standard-access-key-tenant-screenshot.png');
@@ -82,6 +86,7 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
                                                                  }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.googleCloudBtn.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage()
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-screenshot.png');
   });
 
@@ -91,6 +96,7 @@ test.describe('FFC: Cloud Account @swo_regression', () => {
                                                                         }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.googleCloudTenantBtn.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage()
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-connect-google-cloud-tenant-screenshot.png');
   });
 });
