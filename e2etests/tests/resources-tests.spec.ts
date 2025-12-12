@@ -14,6 +14,7 @@ import {
   BreakdownExpensesByRegionResponse,
   BreakdownExpensesByResourceTypeResponse,
   BreakdownExpensesByServiceResponse,
+  CleanExpensesResponse,
   SummaryExpensesResponse,
 } from '../mocks/resources-page.mocks';
 import { comparePngImages } from '../utils/image-comparison';
@@ -685,6 +686,14 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
 
   const apiInterceptions: InterceptionEntry[] = [
     {
+      gql: 'AvailableFilters',
+      mock: AvailableFiltersResponse,
+    },
+    {
+      gql: 'CleanExpenses',
+      mock: CleanExpensesResponse,
+    },
+    {
       url: `/v2/organizations/[^/]+/summary_expenses`,
       mock: SummaryExpensesResponse,
     },
@@ -724,10 +733,6 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
       mock: BreakdownExpensesByK8sServiceResponse,
     },
-    {
-      url: `/v2/organizations/[^/]+/available_filters`,
-      mock: AvailableFiltersResponse,
-    },
   ];
 
   test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false } });
@@ -740,7 +745,6 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.firstResourceItemInTable.waitFor();
-      await resourcesPage.possibleSavingsCard.waitFor();
     });
   });
 
@@ -898,26 +902,24 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
 
     await test.step('Group by Pool and verify grouping', async () => {
-      const poolName = resourcesPage.getPoolNameForEnvironment();
       await resourcesPage.groupBy('Pool');
       await expect.soft(resourcesPage.firstPoolGroup).toBeVisible();
-      await expect.soft(resourcesPage.firstPoolGroup).toContainText(poolName);
+      await expect.soft(resourcesPage.firstPoolGroup).toContainText('QA & Prod');
     });
 
     await test.step('Group by Owner and verify grouping', async () => {
-      const ownerName = resourcesPage.getPoolOwnerForEnvironment();
       await resourcesPage.groupBy('Owner');
       await expect.soft(resourcesPage.firstOwnerGroup).toBeVisible();
-      await expect.soft(resourcesPage.firstOwnerGroup).toContainText(ownerName);
+      await expect.soft(resourcesPage.firstOwnerGroup).toContainText('Francesco');
     });
 
     await test.step('Group by Tag and verify grouping', async () => {
-      await resourcesPage.groupBy('Tag', 'Environment');
+      await resourcesPage.groupBy('Tag', 'devops-billing-env');
       await expect.soft(resourcesPage.firstTagGroup).toBeVisible();
-      await expect.soft(resourcesPage.allTagGroups.first()).toContainText('Other');
-      await expect.soft(resourcesPage.allTagGroups.nth(1)).toContainText('Production');
-      await expect.soft(resourcesPage.allTagGroups.nth(2)).toContainText('QA');
-      await expect.soft(resourcesPage.allTagGroups.nth(3)).toContainText('PROD');
+      await expect.soft(resourcesPage.allTagGroups.first()).toContainText('production');
+      await expect.soft(resourcesPage.allTagGroups.nth(1)).toContainText('Other');
+      await expect.soft(resourcesPage.allTagGroups.nth(2)).toContainText('test');
+      await expect.soft(resourcesPage.allTagGroups.nth(3)).toContainText('qa');
     });
 
     await test.step('Clear grouping and verify no grouping', async () => {
