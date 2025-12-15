@@ -9,31 +9,30 @@ import IconButton from "components/IconButton";
 import Tooltip from "components/Tooltip";
 import WidgetTitle from "components/WidgetTitle";
 import WrapperCardTitlePdf from "components/WrapperCardTitlePdf/WrapperCardTitlePdf";
+import { TitleProps, WrapperCardProps } from "./types";
 import useStyles from "./WrapperCard.styles";
 
-const renderButton = (type, buttonProps) => (type === "icon" ? <IconButton {...buttonProps} /> : <Button {...buttonProps} />);
-
-const renderTitleButton = (options) => {
-  const { type, tooltip, buttonProps } = options;
-  return tooltip ? <Tooltip title={tooltip.title}>{renderButton(type, buttonProps)}</Tooltip> : renderButton(type, buttonProps);
-};
-
-const Title = ({ title, titleButton, dataTestId }) => {
+const Title = ({ title, titleButton, dataTestId }: TitleProps) => {
   const titleMessage = <WidgetTitle dataTestId={dataTestId}>{title}</WidgetTitle>;
 
-  const button = titleButton && renderTitleButton(titleButton);
+  if (!titleButton) {
+    return titleMessage;
+  }
 
-  return button ? (
+  const { type, tooltip, buttonProps } = titleButton;
+  const buttonElement = type === "icon" ? <IconButton {...buttonProps} /> : <Button {...buttonProps} />;
+
+  const button = tooltip ? <Tooltip title={tooltip.title}>{buttonElement}</Tooltip> : buttonElement;
+
+  return (
     <Box display="flex" alignItems="center">
-      {titleButton.type === "icon" ? titleMessage : <Box mr={1}>{titleMessage}</Box>}
+      {type === "icon" ? titleMessage : <Box mr={1}>{titleMessage}</Box>}
       {button}
     </Box>
-  ) : (
-    titleMessage
   );
 };
 
-const WrapperCard = forwardRef(
+const WrapperCard = forwardRef<HTMLDivElement, WrapperCardProps>(
   (
     {
       title,
