@@ -1,0 +1,929 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
+import { test } from '../fixtures/page.fixture';
+import { expect } from '@playwright/test';
+import { isWithinRoundingDrift } from '../utils/custom-assertions';
+
+import {
+  AvailableFiltersResponse,
+  BreakdownExpensesByDataSourceResponse,
+  BreakdownExpensesByK8sNamespaceResponse,
+  BreakdownExpensesByK8sNodeResponse,
+  BreakdownExpensesByK8sServiceResponse,
+  BreakdownExpensesByOwnerResponse,
+  BreakdownExpensesByPoolResponse,
+  BreakdownExpensesByRegionResponse,
+  BreakdownExpensesByResourceTypeResponse,
+  BreakdownExpensesByServiceResponse,
+  SummaryExpensesResponse,
+} from '../mocks/resources-page.mocks';
+import { comparePngImages } from '../utils/image-comparison';
+import { getExpectedDateRangeText, getLast7DaysUnixRange } from '../utils/date-range-utils';
+import {
+  DataSourceExpensesResponse,
+  K8sNamespaceExpensesResponse,
+  K8sNodeExpensesResponse,
+  K8sServiceExpensesResponse,
+  OwnerExpensesResponse,
+  PoolExpensesResponse,
+  RegionExpensesResponse,
+  ResourceTypeExpensesResponse,
+  ServiceNameExpensesResponse,
+  ServiceNameResourceResponse,
+  TagsResponse,
+} from '../types/api-response.types';
+import { fetchBreakdownExpenses } from '../utils/api-helpers';
+import { InterceptionEntry } from '../types/interceptor.types';
+import { debugLog } from '../utils/debug-logging';
+
+test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }, () => {
+  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
+  test.describe.configure({ mode: 'default' });
+  test.use({ restoreSession: true });
+  let totalExpensesValue: number;
+  let itemisedTotal: number;
+
+  test.beforeEach('Login admin user', async ({ resourcesPage }) => {
+    await test.step('Login admin user', async () => {
+      await resourcesPage.navigateToURL();
+      await resourcesPage.waitForAllProgressBarsToDisappear();
+      await resourcesPage.waitForCanvas();
+      await resourcesPage.resetFilters();
+      await resourcesPage.waitForPageLoad();
+      await resourcesPage.firstResourceItemInTable.waitFor();
+    });
+  });
+
+  test('[230778] All expected filters are displayed', async ({ resourcesPage }) => {
+    await test.step('Click Show more filters button', async () => {
+      await resourcesPage.clickShowMoreFilters();
+      await resourcesPage.showLessFiltersBtn.waitFor();
+    });
+
+    await test.step('Verify all filter buttons are displayed', async () => {
+      await expect.soft(resourcesPage.allFilterBoxButtons).toHaveCount(18);
+
+      const expectedFilters = [
+        resourcesPage.suggestionsFilter,
+        resourcesPage.dataSourceFilter,
+        resourcesPage.poolFilter,
+        resourcesPage.ownerFilter,
+        resourcesPage.regionFilter,
+        resourcesPage.serviceFilter,
+        resourcesPage.resourceTypeFilter,
+        resourcesPage.activityFilter,
+        resourcesPage.recommendationsFilter,
+        resourcesPage.constraintViolationsFilter,
+        resourcesPage.firstSeenFilter,
+        resourcesPage.lastSeenFilter,
+        resourcesPage.tagFilter,
+        resourcesPage.withoutTagFilter,
+        resourcesPage.metaFilter,
+        resourcesPage.paidNetworkTrafficFromFilter,
+        resourcesPage.paidNetworkTrafficToFilter,
+        // Kubernetes filters are temporarily disabled
+        // resourcesPage.k8sNodeFilter,
+        // resourcesPage.k8sServiceFilter,
+        // resourcesPage.k8sNamespaceFilter,
+      ];
+
+      for (const filter of expectedFilters) {
+        await expect.soft(filter).toBeVisible();
+      }
+    });
+  });
+
+  test('[230779] Verify table column selection', async ({ resourcesPage }) => {
+    const defaultColumns = [
+      resourcesPage.resourceTableHeading,
+      resourcesPage.expensesTableHeading,
+      resourcesPage.paidNetworkTrafficTableHeading,
+      resourcesPage.metadataTableHeading,
+      resourcesPage.poolOwnerTableHeading,
+      resourcesPage.typeTableHeading,
+      resourcesPage.tagsTableHeading,
+    ];
+
+    await test.step('Verify default column selection is all', async () => {
+      await resourcesPage.table.waitFor();
+      await resourcesPage.table.scrollIntoViewIfNeeded();
+      await expect.soft(resourcesPage.columnsBtn).toHaveText('All');
+
+      for (const column of defaultColumns) {
+        await expect.soft(column).toBeVisible();
+      }
+    });
+
+    await test.step('Clear all columns and verify only Resource and expenses columns are visible', async () => {
+      await resourcesPage.clickColumnsButton();
+      await resourcesPage.clickColumnToggle('select clear all');
+      await expect.soft(resourcesPage.resourceTableHeading && resourcesPage.expensesTableHeading).toBeVisible();
+      for (const column of defaultColumns) {
+        if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
+          await expect.soft(column).toBeHidden();
+        }
+      }
+    });
+
+    await test.step('Select specific columns and verify visibility', async () => {
+      await resourcesPage.clickColumnToggle('paid network traffic');
+      await expect.soft(resourcesPage.paidNetworkTrafficTableHeading).toBeVisible();
+
+      await resourcesPage.clickColumnToggle('metadata');
+      await expect.soft(resourcesPage.metadataTableHeading).toBeVisible();
+
+      await resourcesPage.clickColumnToggle('pool owner');
+      await expect.soft(resourcesPage.poolOwnerTableHeading).toBeVisible();
+
+      await resourcesPage.clickColumnToggle('type');
+      await expect.soft(resourcesPage.typeTableHeading).toBeVisible();
+
+      await resourcesPage.clickColumnToggle('location');
+      await expect.soft(resourcesPage.locationToggle).toBeVisible();
+
+      await resourcesPage.clickColumnToggle('tags');
+      await expect.soft(resourcesPage.tagsTableHeading).toBeVisible();
+    });
+
+    await test.step('Verify select all toggle shows all columns', async () => {
+      await resourcesPage.clickColumnToggle('select clear all');
+      for (const column of defaultColumns) {
+        if (column !== resourcesPage.resourceTableHeading && column !== resourcesPage.expensesTableHeading) {
+          await expect.soft(column).toBeHidden();
+        }
+      }
+
+      await resourcesPage.clickColumnToggle('select clear all');
+      for (const column of defaultColumns) {
+        await expect.soft(column).toBeVisible();
+      }
+    });
+  });
+
+  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
+    test.setTimeout(1200000);
+
+    await test.step('Get total expenses value from resources page', async () => {
+      totalExpensesValue = await resourcesPage.getTotalExpensesValue();
+      console.log(`Total expenses value: ${totalExpensesValue}`);
+    });
+    await test.step('get the sum of itemised expenses from table', async () => {
+      await resourcesPage.table.waitFor();
+      itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+      console.log(`Itemised total: ${itemisedTotal}`);
+    });
+
+    await test.step('Compare total expenses with itemised total', async () => {
+      // Allowable drift of 0.1% to account for rounding errors
+      expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
+    });
+  });
+
+  test('[230788] Filtered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
+    test.setTimeout(90000);
+    let initialTotalExpensesValue: number;
+
+    await test.step('Get unfiltered total expenses value', async () => {
+      initialTotalExpensesValue = await resourcesPage.getTotalExpensesValue();
+    });
+
+    await test.step('Filter by Billing only', async () => {
+      await resourcesPage.clickActivityFilterBillingOnlyOptionAndApply();
+      await expect.soft(resourcesPage.activityFilter).toContainText('(Billing only)');
+    });
+
+    await test.step('Get total expenses value after filtering', async () => {
+      totalExpensesValue = await resourcesPage.getTotalExpensesValue();
+      console.log(`Total expenses value after filtering: ${totalExpensesValue}`);
+    });
+
+    await test.step('Get itemised total from table after filtering', async () => {
+      itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+      debugLog(`Itemised total: ${itemisedTotal}`);
+    });
+
+    await test.step('Compare filtered total expenses with itemised total', async () => {
+      // Allowable drift of 0.5% to account for rounding errors
+      expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
+    });
+
+    await test.step('Reset filters to return to unfiltered state', async () => {
+      await resourcesPage.resetFilters();
+      await expect.soft(resourcesPage.activityFilter).toContainText('(Any)');
+    });
+
+    await test.step('Verify total expenses value matches initial value', async () => {
+      expect.soft(await resourcesPage.getTotalExpensesValue()).toEqual(initialTotalExpensesValue);
+    });
+  });
+
+  test(
+    '[230781] Total expenses matches table itemised total for date range set to last 7 days',
+    { tag: '@slow' },
+    async ({ resourcesPage, datePicker }) => {
+      test.setTimeout(90000);
+
+      await test.step('Get total expenses value for last 7 days', async () => {
+        await datePicker.selectLast7DaysDateRange();
+        await resourcesPage.firstResourceItemInTable.waitFor();
+        await expect.soft(datePicker.selectedDateText).toHaveText(getExpectedDateRangeText('Last 7 days'));
+        totalExpensesValue = await resourcesPage.getTotalExpensesValue();
+        debugLog(`Total expenses value for last 7 days: ${totalExpensesValue}`);
+      });
+
+      await test.step('Get itemised total from table for last 7 days', async () => {
+        await expect.soft(resourcesPage.expensesTableHeading).toContainText(getExpectedDateRangeText('Last 7 days'));
+        itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
+        debugLog(`Itemised total for last 7 days: ${itemisedTotal}`);
+      });
+
+      await test.step('Compare total expenses with itemised total for last 7 days', async () => {
+        // Allowable drift of 0.5% to account for rounding errors
+        expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
+      });
+    }
+  );
+
+  test('[230782] Validate API default chart/table data for 7 days', async ({ resourcesPage, datePicker }) => {
+    test.slow();
+    const { startDate, endDate } = getLast7DaysUnixRange();
+
+    let expensesData: ServiceNameExpensesResponse;
+    await test.step('Load expenses data for the last 7 days', async () => {
+      const [expensesResponse] = await Promise.all([
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_expenses'), { timeout: 15000 }),
+        datePicker.selectLast7DaysDateRange(false),
+      ]);
+
+      expensesData = await expensesResponse.json();
+    });
+
+    await test.step('Validate expenses date range and breakdown type', async () => {
+      expect.soft(expensesData.start_date).toBe(startDate);
+      expect.soft(expensesData.end_date).toBe(endDate);
+      expect.soft(expensesData.breakdown_by).toBe('service_name');
+      expect.soft(expensesData.breakdown).not.toBeNull();
+    });
+
+    await test.step('Validate expenses breakdown covers correct 7-day range', async () => {
+      const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+      const responseDates = Object.keys(expensesData.breakdown).map(Number);
+      expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+    });
+
+    await test.step('Validate structure of expenses counts', async () => {
+      for (const summary of Object.values(expensesData.counts)) {
+        expect.soft(typeof summary.total).toBe('number');
+        expect.soft(typeof summary.previous_total).toBe('number');
+      }
+    });
+
+    let resourceData: ServiceNameResourceResponse;
+    await test.step('Load resources data from resources_count endpoint', async () => {
+      const [resourceResponse] = await Promise.all([
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/resources_count') && resp.status() === 200),
+        resourcesPage.clickResourceCountTab(false),
+      ]);
+
+      resourceData = await resourceResponse.json();
+    });
+
+    await test.step('Validate resource chart metadata and breakdown type', async () => {
+      expect.soft(resourceData.start_date).toBe(startDate);
+      expect.soft(resourceData.end_date).toBe(endDate);
+      expect.soft(resourceData.breakdown_by).toBe('service_name');
+      expect.soft(resourceData.breakdown).not.toBeNull();
+    });
+
+    await test.step('Validate structure of resource counts', async () => {
+      for (const summary of Object.values(resourceData.counts)) {
+        expect.soft(typeof summary.total).toBe('number');
+        expect.soft(typeof summary.average).toBe('number');
+      }
+    });
+
+    let tagsData: TagsResponse;
+    await test.step('Load tags data from breakdown_tags endpoint', async () => {
+      const [tagResponse] = await Promise.all([
+        resourcesPage.page.waitForResponse(resp => resp.url().includes('/breakdown_tags') && resp.status() === 200),
+        resourcesPage.clickTagsTab(false),
+      ]);
+
+      tagsData = await tagResponse.json();
+    });
+
+    await test.step('Validate structure of tag breakdown items', async () => {
+      expect.soft(Array.isArray(tagsData.breakdown)).toBe(true);
+
+      tagsData.breakdown.forEach(item => {
+        expect.soft(typeof item.count).toBe('number');
+        expect.soft(typeof item.cost).toBe('number');
+        expect.soft(typeof item.tag === 'string' || item.tag === null).toBe(true);
+      });
+    });
+  });
+
+  test(
+    '[230783] Validate API data for the daily expenses chart by breakdown for 7 days',
+    { tag: '@slow' },
+    async ({ resourcesPage, datePicker }) => {
+      test.setTimeout(120000);
+      const { startDate, endDate } = getLast7DaysUnixRange();
+
+      await test.step('Set last 7 days date range', async () => {
+        await datePicker.selectLast7DaysDateRange();
+      });
+
+      let regionExpensesData: RegionExpensesResponse;
+      await test.step('Load region expenses data', async () => {
+        regionExpensesData = await fetchBreakdownExpenses<RegionExpensesResponse>(
+          resourcesPage.page,
+          'region',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Region'
+        );
+      });
+
+      await test.step('Validate region expenses data', async () => {
+        expect.soft(regionExpensesData.start_date).toBe(startDate);
+        expect.soft(regionExpensesData.end_date).toBe(endDate);
+        expect.soft(regionExpensesData.breakdown_by).toBe('region');
+        expect.soft(regionExpensesData.breakdown).not.toBeNull();
+        expect.soft(regionExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(regionExpensesData.total).toBeGreaterThan(0);
+      });
+
+      await test.step('Validate that breakdown covers exactly 7 days', async () => {
+        const breakdownDays = Object.keys(regionExpensesData.breakdown);
+        expect.soft(breakdownDays.length).toBe(7);
+
+        const expectedDays = Array.from({ length: 7 }, (_, i) => (startDate + i * 86400).toString());
+        expect.soft(breakdownDays.sort()).toEqual(expectedDays.sort());
+      });
+
+      await test.step('Validate regional breakdown structure for each day', async () => {
+        for (const [_timestamp, regions] of Object.entries(regionExpensesData.breakdown)) {
+          expect.soft(typeof regions).toBe('object');
+
+          for (const [_region, entry] of Object.entries(regions)) {
+            expect.soft(typeof entry.cost).toBe('number');
+            expect.soft(entry.cost).not.toBeNaN();
+            expect.soft(entry.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+
+      let resourceTypeExpensesData: ResourceTypeExpensesResponse;
+      await test.step('Load resource type expenses data', async () => {
+        resourceTypeExpensesData = await fetchBreakdownExpenses<ResourceTypeExpensesResponse>(
+          resourcesPage.page,
+          'resource_type',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Resource type'
+        );
+      });
+
+      await test.step('Validate resource type expenses top-level data', async () => {
+        expect.soft(resourceTypeExpensesData.start_date).toBe(startDate);
+        expect.soft(resourceTypeExpensesData.end_date).toBe(endDate);
+        expect.soft(resourceTypeExpensesData.breakdown_by).toBe('resource_type');
+        expect.soft(resourceTypeExpensesData.breakdown).not.toBeNull();
+        expect.soft(resourceTypeExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(resourceTypeExpensesData.total).toBeGreaterThan(0);
+      });
+
+      await test.step('Validate resource type counts structure', async () => {
+        for (const summary of Object.values(resourceTypeExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate resource type daily breakdown structure', async () => {
+        const breakdown = resourceTypeExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, typeMap] of Object.entries(breakdown)) {
+          for (const [_resourceType, data] of Object.entries(typeMap)) {
+            expect.soft(data).toHaveProperty('cost');
+            expect.soft(typeof data.cost).toBe('number');
+          }
+        }
+      });
+
+      let dataSourceExpensesData: DataSourceExpensesResponse;
+      await test.step('Load data source expenses data', async () => {
+        dataSourceExpensesData = await fetchBreakdownExpenses<DataSourceExpensesResponse>(
+          resourcesPage.page,
+          'cloud_account_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Data source'
+        );
+      });
+
+      await test.step('Validate data source expenses top-level fields', async () => {
+        expect.soft(dataSourceExpensesData.start_date).toBe(startDate);
+        expect.soft(dataSourceExpensesData.end_date).toBe(endDate);
+        expect.soft(dataSourceExpensesData.breakdown_by).toBe('cloud_account_id');
+        expect.soft(dataSourceExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(dataSourceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(dataSourceExpensesData.counts).not.toBeNull();
+        expect.soft(dataSourceExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate data source counts structure', async () => {
+        for (const summary of Object.values(dataSourceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
+          expect.soft(typeof summary.type).toBe('string');
+        }
+      });
+
+      await test.step('Validate data source breakdown structure for each day', async () => {
+        const breakdown = dataSourceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, sourceMap] of Object.entries(breakdown)) {
+          for (const [_sourceId, item] of Object.entries(sourceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+            expect.soft(typeof item.type).toBe('string');
+          }
+        }
+      });
+
+      let ownerExpensesData: OwnerExpensesResponse;
+      await test.step('Load owner expenses data', async () => {
+        ownerExpensesData = await fetchBreakdownExpenses<OwnerExpensesResponse>(
+          resourcesPage.page,
+          'employee_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Owner'
+        );
+      });
+
+      await test.step('Validate owner expenses top-level fields', async () => {
+        expect.soft(ownerExpensesData.start_date).toBe(startDate);
+        expect.soft(ownerExpensesData.end_date).toBe(endDate);
+        expect.soft(ownerExpensesData.breakdown_by).toBe('employee_id');
+        expect.soft(ownerExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(ownerExpensesData.total).toBeGreaterThan(0);
+        expect.soft(ownerExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(ownerExpensesData.counts).not.toBeNull();
+        expect.soft(ownerExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate owner counts structure', async () => {
+        for (const summary of Object.values(ownerExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
+        }
+      });
+
+      await test.step('Validate owner breakdown structure for each day', async () => {
+        const breakdown = ownerExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, ownerMap] of Object.entries(breakdown)) {
+          for (const [_ownerId, item] of Object.entries(ownerMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+          }
+        }
+      });
+
+      let poolExpensesData: PoolExpensesResponse;
+      await test.step('Load pool expenses data', async () => {
+        poolExpensesData = await fetchBreakdownExpenses<PoolExpensesResponse>(
+          resourcesPage.page,
+          'pool_id',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'Pool'
+        );
+      });
+
+      await test.step('Validate pool expenses top-level fields', async () => {
+        expect.soft(poolExpensesData.start_date).toBe(startDate);
+        expect.soft(poolExpensesData.end_date).toBe(endDate);
+        expect.soft(poolExpensesData.breakdown_by).toBe('pool_id');
+        expect.soft(poolExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(poolExpensesData.total).toBeGreaterThan(0);
+        expect.soft(poolExpensesData.counts).not.toBeNull();
+        expect.soft(poolExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate pool counts structure', async () => {
+        for (const summary of Object.values(poolExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+          expect.soft(typeof summary.id).toBe('string');
+          expect.soft(typeof summary.name).toBe('string');
+          expect.soft(typeof summary.purpose).toBe('string');
+        }
+      });
+
+      await test.step('Validate pool breakdown structure for each day', async () => {
+        const breakdown = poolExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, poolMap] of Object.entries(breakdown)) {
+          for (const [_poolId, item] of Object.entries(poolMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(typeof item.id).toBe('string');
+            expect.soft(typeof item.name).toBe('string');
+            expect.soft(typeof item.purpose).toBe('string');
+          }
+        }
+      });
+
+      let k8sNodeExpensesData: K8sNodeExpensesResponse;
+      await test.step('Load K8s node expenses data', async () => {
+        k8sNodeExpensesData = await fetchBreakdownExpenses<K8sNodeExpensesResponse>(
+          resourcesPage.page,
+          'k8s_node',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s node'
+        );
+      });
+
+      await test.step('Validate K8s Node expenses top-level fields', async () => {
+        expect.soft(k8sNodeExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sNodeExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sNodeExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(k8sNodeExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sNodeExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sNodeExpensesData.breakdown_by).toBe('k8s_node');
+        expect.soft(k8sNodeExpensesData.counts).not.toBeNull();
+        expect.soft(k8sNodeExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s Node counts structure', async () => {
+        for (const summary of Object.values(k8sNodeExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s Node breakdown structure for each day', async () => {
+        const breakdown = k8sNodeExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, nodeMap] of Object.entries(breakdown)) {
+          for (const [_nodeKey, data] of Object.entries(nodeMap)) {
+            expect.soft(data).toHaveProperty('cost');
+            expect.soft(typeof data.cost).toBe('number');
+            expect.soft(data.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+
+      let k8sNamespaceExpensesData: K8sNamespaceExpensesResponse;
+      await test.step('Load K8s namespace expenses data', async () => {
+        k8sNamespaceExpensesData = await fetchBreakdownExpenses<K8sNamespaceExpensesResponse>(
+          resourcesPage.page,
+          'k8s_namespace',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s namespace'
+        );
+      });
+
+      await test.step('Validate K8s namespace expenses top-level fields', async () => {
+        expect.soft(k8sNamespaceExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sNamespaceExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sNamespaceExpensesData.breakdown_by).toBe('k8s_namespace');
+        expect.soft(k8sNamespaceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sNamespaceExpensesData.previous_range_start).toBeGreaterThan(0);
+        expect.soft(k8sNamespaceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sNamespaceExpensesData.counts).not.toBeNull();
+        expect.soft(k8sNamespaceExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s namespace counts structure', async () => {
+        for (const [_ns, summary] of Object.entries(k8sNamespaceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s namespace breakdown structure for each day', async () => {
+        const breakdown = k8sNamespaceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, namespaceMap] of Object.entries(breakdown)) {
+          for (const [_ns, item] of Object.entries(namespaceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+
+      let k8sServiceExpensesData: K8sServiceExpensesResponse;
+      await test.step('Load K8s service expenses data', async () => {
+        k8sServiceExpensesData = await fetchBreakdownExpenses<K8sServiceExpensesResponse>(
+          resourcesPage.page,
+          'k8s_service',
+          resourcesPage.selectCategorizeBy.bind(resourcesPage),
+          'K8s service'
+        );
+      });
+
+      await test.step('Validate K8s service expenses top-level fields', async () => {
+        expect.soft(k8sServiceExpensesData.start_date).toBe(startDate);
+        expect.soft(k8sServiceExpensesData.end_date).toBe(endDate);
+        expect.soft(k8sServiceExpensesData.breakdown_by).toBe('k8s_service');
+        expect.soft(k8sServiceExpensesData.previous_range_start).not.toBeNull();
+        expect.soft(k8sServiceExpensesData.total).toBeGreaterThan(0);
+        expect.soft(k8sServiceExpensesData.previous_total).toBeGreaterThanOrEqual(0);
+        expect.soft(k8sServiceExpensesData.counts).not.toBeNull();
+        expect.soft(k8sServiceExpensesData.breakdown).not.toBeNull();
+      });
+
+      await test.step('Validate K8s service counts structure', async () => {
+        for (const summary of Object.values(k8sServiceExpensesData.counts)) {
+          expect.soft(typeof summary.total).toBe('number');
+          expect.soft(typeof summary.previous_total).toBe('number');
+        }
+      });
+
+      await test.step('Validate K8s service breakdown structure for each day', async () => {
+        const breakdown = k8sServiceExpensesData.breakdown;
+        const responseDates = Object.keys(breakdown).map(Number);
+        const expectedDates = Array.from({ length: 7 }, (_, i) => startDate + i * 86400);
+        expect.soft(responseDates.sort()).toEqual(expectedDates.sort());
+
+        for (const [_day, serviceMap] of Object.entries(breakdown)) {
+          for (const [_serviceId, item] of Object.entries(serviceMap)) {
+            expect.soft(typeof item.cost).toBe('number');
+            expect.soft(item.cost).toBeGreaterThanOrEqual(0);
+          }
+        }
+      });
+    }
+  );
+});
+
+test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resources'] }, () => {
+  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
+  test.describe.configure({ mode: 'default' });
+
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      url: `/v2/organizations/[^/]+/summary_expenses`,
+      mock: SummaryExpensesResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=service_name`,
+      mock: BreakdownExpensesByServiceResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=region`,
+      mock: BreakdownExpensesByRegionResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=resource_type`,
+      mock: BreakdownExpensesByResourceTypeResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=cloud_account_id`,
+      mock: BreakdownExpensesByDataSourceResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=employee_id`,
+      mock: BreakdownExpensesByOwnerResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=pool_id`,
+      mock: BreakdownExpensesByPoolResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_node`,
+      mock: BreakdownExpensesByK8sNodeResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_namespace`,
+      mock: BreakdownExpensesByK8sNamespaceResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/breakdown_expenses\\?.*breakdown_by=k8s_service`,
+      mock: BreakdownExpensesByK8sServiceResponse,
+    },
+    {
+      url: `/v2/organizations/[^/]+/available_filters`,
+      mock: AvailableFiltersResponse,
+    },
+  ];
+
+  test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false } });
+
+  test.beforeEach('Login admin user', async ({ resourcesPage }) => {
+    await test.step('Login admin user', async () => {
+      await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
+      await resourcesPage.navigateToURL('/resources');
+      await resourcesPage.waitForAllProgressBarsToDisappear();
+      await resourcesPage.waitForCanvas();
+      await resourcesPage.resetFilters();
+      await resourcesPage.firstResourceItemInTable.waitFor();
+      await resourcesPage.possibleSavingsCard.waitFor();
+    });
+  });
+
+  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
+    let actualPath = 'tests/downloads/expenses-chart-export.png';
+    let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
+    let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
+    let match: boolean;
+
+    await test.step('Verify the default chart is Service Daily Expenses with legend displayed', async () => {
+      expect.soft(await resourcesPage.selectedComboBoxOption(resourcesPage.categorizeBySelect)).toBe('Service');
+      expect.soft(await resourcesPage.selectedComboBoxOption(resourcesPage.expensesSelect)).toBe('Daily');
+      await expect.soft(resourcesPage.showLegend).toBeChecked();
+    });
+
+    await test.step('Download the chart with legend and compare with expected chart png', async () => {
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
+    expectedPath = 'tests/expected/expected-expenses-chart-export-without-legend.png';
+    diffPath = 'tests/downloads/diff-expenses-chart-export-without-legend.png';
+
+    await test.step('Toggle Show Legend and verify the chart without legend', async () => {
+      await resourcesPage.clickShowLegend();
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+  });
+
+  test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
+    let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
+    let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
+    let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
+    let match: boolean;
+
+    await test.step('Change expenses to Weekly and verify the chart', async () => {
+      await resourcesPage.selectExpenses('Weekly');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/monthly-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-monthly-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-monthly-expenses-chart-export.png';
+
+    await test.step('Change expenses to Monthly and verify the chart', async () => {
+      await resourcesPage.selectExpenses('Monthly');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+  });
+
+  test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
+    let actualPath = 'tests/downloads/region-expenses-chart-export.png';
+    let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
+    let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
+    let match: boolean;
+
+    await test.step('Change categorization to Region and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('Region');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/resource-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-resource-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-resource-expenses-chart-export.png';
+
+    await test.step('Change categorization to Resource Type and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('Resource type');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/data-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-data-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-data-expenses-chart-export.png';
+
+    await test.step('Change categorization to Data source and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('Data source');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/owner-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-owner-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-owner-expenses-chart-export.png';
+
+    await test.step('Change categorization to Owner and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('Owner');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/pool-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-pool-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-pool-expenses-chart-export.png';
+
+    await test.step('Change categorization to Pool and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('Pool');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/k8node-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-k8node-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-k8node-expenses-chart-export.png';
+
+    await test.step('Change categorization to K8s node and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('K8s node');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/k8sservice-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-k8sservice-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-k8sservice-expenses-chart-export.png';
+
+    await test.step('Change categorization to K8s service and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('K8s service');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    actualPath = 'tests/downloads/k8snamespace-expenses-chart-export.png';
+    expectedPath = 'tests/expected/expected-k8snamespace-expenses-chart-export.png';
+    diffPath = 'tests/downloads/diff-k8snamespace-expenses-chart-export.png';
+
+    await test.step('Change categorization to K8s namespace and verify the chart', async () => {
+      await resourcesPage.selectCategorizeBy('K8s namespace');
+      await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+  });
+
+  test('[230787] Verify table grouping', async ({ resourcesPage }) => {
+    await test.step('Verify default grouping is None', async () => {
+      await resourcesPage.table.waitFor();
+      await resourcesPage.table.scrollIntoViewIfNeeded();
+      await expect.soft(resourcesPage.groupedByValue).toHaveText('None');
+    });
+
+    await test.step('Group by Pool and verify grouping', async () => {
+      const poolName = resourcesPage.getPoolNameForEnvironment();
+      await resourcesPage.groupBy('Pool');
+      await expect.soft(resourcesPage.firstPoolGroup).toBeVisible();
+      await expect.soft(resourcesPage.firstPoolGroup).toContainText(poolName);
+    });
+
+    await test.step('Group by Owner and verify grouping', async () => {
+      const ownerName = resourcesPage.getPoolOwnerForEnvironment();
+      await resourcesPage.groupBy('Owner');
+      await expect.soft(resourcesPage.firstOwnerGroup).toBeVisible();
+      await expect.soft(resourcesPage.firstOwnerGroup).toContainText(ownerName);
+    });
+
+    await test.step('Group by Tag and verify grouping', async () => {
+      await resourcesPage.groupBy('Tag', 'Environment');
+      await expect.soft(resourcesPage.firstTagGroup).toBeVisible();
+      await expect.soft(resourcesPage.allTagGroups.first()).toContainText('Other');
+      await expect.soft(resourcesPage.allTagGroups.nth(1)).toContainText('Production');
+      await expect.soft(resourcesPage.allTagGroups.nth(2)).toContainText('QA');
+      await expect.soft(resourcesPage.allTagGroups.nth(3)).toContainText('PROD');
+    });
+
+    await test.step('Clear grouping and verify no grouping', async () => {
+      await resourcesPage.clearGrouping();
+      await expect.soft(resourcesPage.groupedByValue).toHaveText('None');
+      await expect.soft(resourcesPage.allGroups).toBeHidden();
+    });
+  });
+});

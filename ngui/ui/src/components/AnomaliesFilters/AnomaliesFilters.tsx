@@ -49,7 +49,9 @@ const AnomaliesFilters = ({ filters, showAll = false }) => {
   return (
     <ExpandableList
       items={filterItems}
-      render={({ key, filterName, filterValue }) => <KeyValueLabel key={key} keyText={filterName} value={filterValue} />}
+      render={({ key, filterName, filterValue }) => (
+        <KeyValueLabel isBoldValue key={key} keyText={filterName} value={filterValue} />
+      )}
       maxRows={showAll ? filters.length : MAX_ROWS}
     />
   );

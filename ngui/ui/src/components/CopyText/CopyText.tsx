@@ -5,6 +5,7 @@ import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FormattedMessage } from "react-intl";
 import Tooltip from "components/Tooltip";
+import useStyles from "./CopyText.styles";
 
 type CopyTextProps = {
   text: string;
@@ -32,6 +33,7 @@ const CopyText = ({
   copiedMessageId = "copied",
   sx = {}
 }: CopyTextProps) => {
+  const { classes, cx } = useStyles();
   const { text: textDataTestId, button: buttonDataTestId } = dataTestIds;
   const [titleMessageId, setTitleMessageId] = useState(copyMessageId);
   const [isHovered, setIsHovered] = useState(false);
@@ -46,6 +48,7 @@ const CopyText = ({
       component="span"
       variant={variant}
       sx={{
+        position: "relative",
         display: "inline-flex",
         alignItems: "center",
         ...sx
@@ -54,39 +57,43 @@ const CopyText = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
-      {children && <span>{children}</span>}
-      <Typography
-        component="span"
-        variant={variant}
-        data-test-id={buttonDataTestId}
-        sx={(theme) => ({
-          cursor: "pointer",
-          display: "inline-flex",
-          pointerEvents: dynamicCopyIcon && !isHovered ? "none" : "auto",
-          visibility: dynamicCopyIcon && !isHovered ? "hidden" : "visible",
-          paddingLeft: children ? theme.spacing(0.5) : 0
-        })}
-      >
-        <CopyToClipboard
-          text={text}
-          onCopy={(_text: string, result: boolean) => {
-            if (result) {
-              setTitleMessageId(copiedMessageId);
-            }
-          }}
+      <span>{children}</span>
+      {dynamicCopyIcon && !isHovered ? null : (
+        <Typography
+          component="span"
+          variant={variant}
+          data-test-id={buttonDataTestId}
+          className={cx(classes.copyWrapper)}
+          sx={
+            dynamicCopyIcon
+              ? {
+                  position: "absolute",
+                  left: "100%"
+                }
+              : undefined
+          }
         >
-          <Tooltip
-            leaveDelay={0}
-            key={titleMessageId}
-            title={<FormattedMessage id={titleMessageId} />}
-            placement="top"
-            disableFocusListener
-            disableTouchListener
+          <CopyToClipboard
+            text={text}
+            onCopy={(_text: string, result: boolean) => {
+              if (result) {
+                setTitleMessageId(copiedMessageId);
+              }
+            }}
           >
-            <Icon fontSize="inherit" />
-          </Tooltip>
-        </CopyToClipboard>
-      </Typography>
+            <Tooltip
+              leaveDelay={0}
+              key={titleMessageId}
+              title={<FormattedMessage id={titleMessageId} />}
+              placement="top"
+              disableFocusListener
+              disableTouchListener
+            >
+              <Icon fontSize="inherit" />
+            </Tooltip>
+          </CopyToClipboard>
+        </Typography>
+      )}
     </Typography>
   );
 };
