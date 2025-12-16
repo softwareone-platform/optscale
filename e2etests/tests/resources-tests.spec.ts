@@ -50,7 +50,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
-      await resourcesPage.firstResourceItemInTable.waitFor();
+      await resourcesPage.firstResourceItemInTable.waitFor({timeout: 15000});
     });
   });
 
