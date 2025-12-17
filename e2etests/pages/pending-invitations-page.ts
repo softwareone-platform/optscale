@@ -25,24 +25,17 @@ export class PendingInvitationsPage extends BasePage {
    * Accepts an invitation by clicking the confirm, proceed, and accept buttons.
    * @returns {Promise<void>}
    */
-  async acceptInviteFlow(): Promise<void> {
+  async acceptInvite(): Promise<void> {
     await this.acceptBtn.click();
+    await this.waitForAllProgressBarsToDisappear();
   }
 
   /**
    * Declines an invitation by clicking the confirm, proceed, and decline buttons.
    * @returns {Promise<void>}
    */
-  async declineInviteFlow(): Promise<void> {
+  async declineInvite(): Promise<void> {
     await this.declineBtn.click();
-  }
-
-  /**
-   * Clicks the Accept button.
-   * This method is used to accept an invitation by clicking the Accept button.
-   * @returns {Promise<void>} A promise that resolves when the Accept button is clicked.
-   */
-  async clickAcceptBtn(): Promise<void> {
-    await this.acceptBtn.click();
+    await this.waitForAllProgressBarsToDisappear();
   }
 }

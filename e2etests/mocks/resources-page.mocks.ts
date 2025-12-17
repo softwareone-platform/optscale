@@ -20398,2320 +20398,3310 @@ export const BreakdownExpensesByK8sServiceResponse = {
 }
 
 export const AvailableFiltersResponse = {
-  "filter_values": {
-    "cloud_account": [
-      {
-        "id": "5f23d9f5-44bb-400f-bf5a-c55163af3ebb",
-        "name": "CPA (Development and Test)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "e381420e-9305-487f-8772-d09ca7a63078",
-        "name": "CPA (QA and Production)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "b67dd3e3-d97f-42d6-b8fe-cfc019f97d38",
-        "name": "CHaaS (QA)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "2f5be954-f881-488d-96a5-269606e03edb",
-        "name": "CPA (Infrastructure)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "4e21ace1-1f32-4be8-a08c-66ff08204dc5",
-        "name": "MPT Finops (Staging)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "82b08294-82f2-412b-8fae-b7b926cd17c6",
-        "name": "MPT (Test)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "89d63330-92d1-45dc-a408-5a768ae22f9f",
-        "name": "MPT (Dev)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "9294ab26-47c9-411f-8e62-7734da899f48",
-        "name": "aws sso",
-        "type": "aws_cnr"
-      },
-      {
-        "id": "52e88897-e0fb-4d5d-8e55-42f7ebaaafe7",
-        "name": "MPT Finops (Production)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "f085cdbd-63e2-4c35-aa45-1a49f83d71f2",
-        "name": "CHaaS (Production)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "fdd3f86a-5270-41dd-84ee-573a87b252a3",
-        "name": "MPT Platform (Staging)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "4cb92d18-cd4f-4340-9b52-7ce9e52c6637",
-        "name": "MPT (Production)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "862ca939-f3fd-4ae3-b914-219fa2577058",
-        "name": "MPT Finops (Dev)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "4b9dc266-de09-40e4-9e31-d709d83d844d",
-        "name": "MPT Finops (Test)",
-        "type": "azure_cnr"
-      },
-      {
-        "id": "87f8dea1-703e-4a92-b188-ec31bf3ddd9e",
-        "name": "SoftwareOne",
-        "type": "azure_tenant"
-      },
-      {
-        "id": "bc5e2597-50f4-4c06-8923-45067f2fe3ce",
-        "name": "softwareone-pyc-dev",
-        "type": "aws_cnr"
-      }
-    ],
-    "owner": [
-      {
-        "id": "a7d28901-1c98-4b33-8b6f-a0360cd9a661",
-        "name": "Francesco Faraone"
-      },
-      {
-        "id": "7f439a9a-264e-4ff2-97a0-dc2c0ac857fa",
-        "name": "Sylwester Grabowski"
-      },
-      {
-        "id": "081fe393-d40c-4d68-81a0-af1eface4d6e",
-        "name": "Test User"
-      },
-      {
-        "id": "67ce94cf-f9b6-4e81-8bd6-f75b806c1225",
-        "name": "Michal Zielonka Test"
-      },
-      {
-        "id": "a98e48dd-9078-4c95-81c2-c1e3268781e3",
-        "name": "Test User"
-      },
-      {
-        "id": "c00eea6c-6d63-4a1d-869d-3b85945381f3",
-        "name": "Test User"
-      },
-      {
-        "id": "32f58001-94f3-441f-9dd4-8ea524ddd8bb",
-        "name": "Test User"
-      },
-      {
-        "id": "bbcf5444-c205-43ee-a2bd-d35387d95c57",
-        "name": "Test User"
-      },
-      {
-        "id": "d458b4e5-1065-4fcd-bffc-3fd847c7d7ca",
-        "name": "Pawel Sotor"
-      },
-      {
-        "id": "fd41f952-279b-49dc-8a9f-5dafc55ee1ca",
-        "name": "Aleksandra Ovchinnikova"
-      },
-      {
-        "id": "a3709b9c-d343-4a99-bd84-fd9f115f695a",
-        "name": "Micha\u0142 Zielonka"
-      },
-      {
-        "id": "8f53b3e2-3304-454e-b3c5-6bb3a50ea351",
-        "name": "PL NN"
-      },
-      {
-        "id": "169464c6-08d4-4a5d-89ec-8f72151b80b7",
-        "name": "Dawid"
-      },
-      {
-        "id": "6e22b165-12f4-40cc-a35c-ab00b241ac7a",
-        "name": "Test User"
-      },
-      {
-        "id": "ccabb332-0efd-48bd-b178-027e621ca37f",
-        "name": "Test User"
-      },
-      {
-        "id": "bd2e52f0-ca8d-4735-a8b2-309689d2c81f",
-        "name": "Test User"
-      },
-      {
-        "id": "caf5b478-e0a0-4da0-9cb5-4b5bce238c4e",
-        "name": "Test User"
-      },
-      {
-        "id": "85dfff1d-6f5f-4271-9d1e-e7e911f39728",
-        "name": "FinOpsTestUser@outlook.com"
-      },
-      {
-        "id": "824ec0e9-75a7-41d0-a983-be071cc97db6",
-        "name": "Test User"
-      },
-      {
-        "id": "3a151717-69f3-4e82-9c8d-6f617ab0d969",
-        "name": "Test User"
-      },
-      {
-        "id": "613be0e6-90b6-48d1-b37f-dbdeb75e0f4b",
-        "name": "Test User"
-      },
-      {
-        "id": "4909d736-c2a5-4511-aef3-e165a0dedcb2",
-        "name": "Test User"
-      },
-      {
-        "id": "cc6d81be-46bb-45c7-b6cc-b93e9bc3311b",
-        "name": "Balint Polgar"
-      },
-      {
-        "id": "8f3d2b94-f953-4782-895c-b0ba3a4de75c",
-        "name": "Steve Churchill"
-      },
-      {
-        "id": "ae3ac8b1-7d26-421f-945f-03aa0852a215",
-        "name": "Test User"
-      },
-      {
-        "id": "440807e5-debe-4d42-aa1b-ac732534bb8d",
-        "name": "Stuart Meeks"
-      },
-      {
-        "id": "dae9d31e-f685-46e6-80ef-9ecb469c4e12",
-        "name": "Test User"
-      }
-    ],
-    "pool": [
-      {
-        "id": "1b5b28c1-61e1-4cfa-9850-4d03099c22ba",
-        "name": "CPA (Development and Test)",
-        "purpose": "budget"
-      },
-      {
-        "id": "c8b836a9-ad45-44d0-b47f-10149e9dd4a8",
-        "name": "CPA (QA and Production)",
-        "purpose": "budget"
-      },
-      {
-        "id": "ea32bb4b-75e2-42fd-855b-cf8bd1c20fda",
-        "name": "CHaaS (QA)",
-        "purpose": "budget"
-      },
-      {
-        "id": "e63e627c-7bfb-4b36-9f05-6af7adc4079b",
-        "name": "CPA (Infrastructure)",
-        "purpose": "budget"
-      },
-      {
-        "id": "7725aa4b-e518-42cb-828f-2c4b2a3a1ade",
-        "name": "MPT Finops (Staging)",
-        "purpose": "budget"
-      },
-      {
-        "id": "5ac569b9-071c-4950-b0e3-d13fefa78d90",
-        "name": "MPT (Test)",
-        "purpose": "budget"
-      },
-      {
-        "id": "e5f6bd31-5a38-4933-b5bf-8615ba90b856",
-        "name": "MPT (Dev)",
-        "purpose": "budget"
-      },
-      {
-        "id": "a1c5e766-0254-44b4-b5e7-e81524480cf9",
-        "name": "aws sso",
-        "purpose": "budget"
-      },
-      {
-        "id": "081c2448-9fe2-41c9-9c48-f464c4150a9b",
-        "name": "MPT Finops (Production)",
-        "purpose": "budget"
-      },
-      {
-        "id": "efcc204f-b285-4e43-90f8-61e2805874dd",
-        "name": "CHaaS (Production)",
-        "purpose": "budget"
-      },
-      {
-        "id": "4a621597-da1e-41ce-b327-69ebe999b123",
-        "name": "MPT Platform (Staging)",
-        "purpose": "budget"
-      },
-      {
-        "id": "034e9f37-9dd9-490b-b5cb-8aeaee9fd425",
-        "name": "MPT (Production)",
-        "purpose": "budget"
-      },
-      {
-        "id": "1db82eef-00f6-42e0-b734-6dd9f1e84f17",
-        "name": "MPT Finops (Dev)",
-        "purpose": "budget"
-      },
-      {
-        "id": "413aa87e-daa7-47fd-bff1-75aede4c1130",
-        "name": "softwareone-pyc-dev",
-        "purpose": "budget"
-      },
-      {
-        "id": "51794a4d-2c32-4019-8ef6-db8ec087e565",
-        "name": "AWS SWO",
-        "purpose": "budget"
-      },
-      {
-        "id": "cdb47c90-49fa-433d-80d8-a8db17a4ba9d",
-        "name": "MPT Finops (Test)",
-        "purpose": "budget"
-      },
-      {
-        "id": "db7ece24-3bf0-44ff-9e48-71dc95ef1c8b",
-        "name": "SoftwareOne (Test Environment) 1",
-        "purpose": "budget"
-      },
-      {
-        "id": "f035abd6-a150-41f1-a2e8-fe46c5aad25f",
-        "name": "AWS SoftwareOne",
-        "purpose": "budget"
-      },
-      {
-        "id": "f648bd92-b53e-4fa7-aebb-cb02bcbf160d",
-        "name": "SoftwareOne (Test Environment)",
-        "purpose": "business_unit"
-      }
-    ],
-    "service_name": [
-      {
-        "name": "microsoft.network",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.compute",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.web",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.logic",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.sql",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.operationalinsights",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.azurearcdata",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.hybridcompute",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.insights",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.storage",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.cdn",
-        "cloud_type": "azure_cnr"
-      },
-      null,
-      {
-        "name": "microsoft.appconfiguration",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.eventgrid",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.keyvault",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.search",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.kusto",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.dbforpostgresql",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.dashboard",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.app",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.servicebus",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.containerregistry",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.recoveryservices",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "AmazonS3",
-        "cloud_type": "aws_cnr"
-      },
-      {
-        "name": "microsoft.security",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.cache",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.eventhub",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.purview",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.documentdb",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.datafactory",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.containerservice",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.capacity",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.dbformysql",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.dataprotection",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "api management",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.monitor",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.signalrservice",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "virtual network",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "bastion scale units",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "api center",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.saas",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "microsoft.maps",
-        "cloud_type": "azure_cnr"
-      }
-    ],
-    "region": [
-      {
-        "name": "West Europe",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "East US",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "AustraliaEast",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "All Regions",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Poland Central",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "us-east-1",
-        "cloud_type": "aws_cnr"
-      },
-      {
-        "name": "eu-central-1",
-        "cloud_type": "aws_cnr"
-      },
-      {
-        "name": "Central US",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Unassigned",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "UK West",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Canada Central",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "West US",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Brazil South",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "North Central US",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Southeast Asia",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Central India",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "eu-west-1",
-        "cloud_type": "aws_cnr"
-      },
-      {
-        "name": "East US 2",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "North Europe",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "South Central US",
-        "cloud_type": "azure_cnr"
-      },
-      null,
-      {
-        "name": "West US 2",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "East Asia",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Australia East",
-        "cloud_type": "azure_cnr"
-      }
-    ],
-    "k8s_node": [
-      null
-    ],
-    "k8s_service": [
-      null
-    ],
-    "k8s_namespace": [
-      null
-    ],
-    "resource_type": [
-      {
-        "name": "applicationgateways",
-        "type": "regular"
-      },
-      {
-        "name": "Instance",
-        "type": "regular"
-      },
-      {
-        "name": "virtualmachinescalesets",
-        "type": "regular"
-      },
-      {
-        "name": "IP Address",
-        "type": "regular"
-      },
-      {
-        "name": "Load Balancer",
-        "type": "regular"
-      },
-      {
-        "name": "sites",
-        "type": "regular"
-      },
-      {
-        "name": "workflows",
-        "type": "regular"
-      },
-      {
-        "name": "restorabledroppeddatabases",
-        "type": "regular"
-      },
-      {
-        "name": "databases",
-        "type": "regular"
-      },
-      {
-        "name": "workspaces",
-        "type": "regular"
-      },
-      {
-        "name": "sqlserverinstances",
-        "type": "regular"
-      },
-      {
-        "name": "machines",
-        "type": "regular"
-      },
-      {
-        "name": "metricalerts",
-        "type": "regular"
-      },
-      {
-        "name": "Bucket",
-        "type": "regular"
-      },
-      {
-        "name": "Volume",
-        "type": "regular"
-      },
-      {
-        "name": "publicipprefixes",
-        "type": "regular"
-      },
-      {
-        "name": "natgateways",
-        "type": "regular"
-      },
-      {
-        "name": "profiles",
-        "type": "regular"
-      },
-      {
-        "name": "configurationstores",
-        "type": "regular"
-      },
-      {
-        "name": "extensiontopics",
-        "type": "regular"
-      },
-      {
-        "name": "vaults",
-        "type": "regular"
-      },
-      {
-        "name": "searchservices",
-        "type": "regular"
-      },
-      {
-        "name": "Marketplace Purchase",
-        "type": "regular"
-      },
-      {
-        "name": "clusters",
-        "type": "regular"
-      },
-      {
-        "name": "slots",
-        "type": "regular"
-      },
-      {
-        "name": "swo-extension-nav-prod_2025-05-07t13-52z",
-        "type": "regular"
-      },
-      {
-        "name": "swo-platform-prod_2025-05-07t12-43z",
-        "type": "regular"
-      },
-      {
-        "name": "flexibleservers",
-        "type": "regular"
-      },
-      {
-        "name": "grafana",
-        "type": "regular"
-      },
-      {
-        "name": "containerapps",
-        "type": "regular"
-      },
-      {
-        "name": "trafficmanagerprofiles",
-        "type": "regular"
-      },
-      {
-        "name": "namespaces",
-        "type": "regular"
-      },
-      {
-        "name": "actiongroups",
-        "type": "regular"
-      },
-      {
-        "name": "registries",
-        "type": "regular"
-      },
-      {
-        "name": "Snapshot",
-        "type": "regular"
-      },
-      {
-        "name": "serverfarms",
-        "type": "regular"
-      },
-      {
-        "name": "azurefirewalls",
-        "type": "regular"
-      },
-      {
-        "name": "dnszones",
-        "type": "regular"
-      },
-      {
-        "name": "scheduledqueryrules",
-        "type": "regular"
-      },
-      {
-        "name": "accounts",
-        "type": "regular"
-      },
-      {
-        "name": "images",
-        "type": "regular"
-      },
-      {
-        "name": "sonarqube",
-        "type": "regular"
-      },
-      {
-        "name": "pricings",
-        "type": "regular"
-      },
-      {
-        "name": "servers",
-        "type": "regular"
-      },
-      {
-        "name": "databaseaccounts",
-        "type": "regular"
-      },
-      {
-        "name": "privatednszones",
-        "type": "regular"
-      },
-      {
-        "name": "enterprisearchitect",
-        "type": "regular"
-      },
-      {
-        "name": "redis",
-        "type": "regular"
-      },
-      {
-        "name": "factories",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-module-billing-prod",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-module-spotlight-test",
-        "type": "regular"
-      },
-      {
-        "name": "privateendpoints",
-        "type": "regular"
-      },
-      {
-        "name": "managedclusters",
-        "type": "regular"
-      },
-      {
-        "name": "networkwatchers",
-        "type": "regular"
-      },
-      {
-        "name": "networksecuritygroups",
-        "type": "regular"
-      },
-      {
-        "name": "notifications-management-prod",
-        "type": "regular"
-      },
-      {
-        "name": "reservations",
-        "type": "regular"
-      },
-      {
-        "name": "backupvaults",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-public-catalog-prod",
-        "type": "regular"
-      },
-      {
-        "name": "service",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-swo-salesprice-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_ee859c36-53ff-4440-bd50-4d8da7e70412",
-        "type": "regular"
-      },
-      {
-        "name": "aly-cloud-utilization-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_54286192-fc00-402c-9575-08102633bf40",
-        "type": "regular"
-      },
-      {
-        "name": "cspshardmap_72ce77e7-2041-4f5d-3a72-08da26e48a74",
-        "type": "regular"
-      },
-      {
-        "name": "int-cco-prod-demo",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_099fd68f-cdc0-470c-83f7-68274cbee998",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-recommendations-prod-restored",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_7f75776e-89af-413b-88a2-28593e2ac6b2",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-address-book-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_1d9e10e9-e0d9-49bc-8362-4635af48e3b0",
-        "type": "regular"
-      },
-      {
-        "name": "int-cco-prod",
-        "type": "regular"
-      },
-      {
-        "name": "pyc-search-prod",
-        "type": "regular"
-      },
-      {
-        "name": "notificationhubquartzdb-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_c7242070-60da-4c92-bc34-8b1a34c50a01",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-customeronboarding-prod",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-shard-map-prod",
-        "type": "regular"
-      },
-      {
-        "name": "dwh-prod",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_c445ff59-32a7-4ff7-b325-3d04eb3f4d82",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-providers-mscsp-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_0da2a725-c790-4d1f-b155-080817a86035",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_e706a119-f41f-4e30-9271-42de678f981c",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-order-fulfillment-prod",
-        "type": "regular"
-      },
-      {
-        "name": "pyra-dot-net-templates-prod",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-swo-rfx-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_5aa598f6-990c-4d69-9f5e-1275d34d14e5",
-        "type": "regular"
-      },
-      {
-        "name": "collab-prod",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_a0b82f35-ecdf-4392-8eab-c2a7269ebc65",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-ea-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-contracts-prod",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_d450009c-5886-4703-8e6d-740dbecc21c9",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-proxy-identity-provider-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-price-calculation-service-prod",
-        "type": "regular"
-      },
-      {
-        "name": "pyracloud-subscriptions_2020-09-29t08-59z",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-configurations-prod",
-        "type": "regular"
-      },
-      {
-        "name": "customer-solutions",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-office365-prod",
-        "type": "regular"
-      },
-      {
-        "name": "int-creditcard-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_f60ce9fd-154d-427d-bf91-2e4b42dd86c4",
-        "type": "regular"
-      },
-      {
-        "name": "nltdb-csp-import-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-license-assignments-prod",
-        "type": "regular"
-      },
-      {
-        "name": "signalr",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-feature-toggle-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-platform-performace_2024-06-28t10-29z",
-        "type": "regular"
-      },
-      {
-        "name": "auth-api-prod",
-        "type": "regular"
-      },
-      {
-        "name": "pyracloud-subscriptions_2020-09-29t06-59z",
-        "type": "regular"
-      },
-      {
-        "name": "marketplace-pim-prod",
-        "type": "regular"
-      },
-      {
-        "name": "elasticpools",
-        "type": "regular"
-      },
-      {
-        "name": "risk-product-lifecyle-db-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-office-prod",
-        "type": "regular"
-      },
-      {
-        "name": "identitymanagementdb",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-cost-allocation-prod",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-navision-scope-prod",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-virtual-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-workspace-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-aws-prod",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_ca4ef284-5503-4019-a176-7b079926439a",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_e3c55fc0-e7ce-48fd-a244-8afd1041d843",
-        "type": "regular"
-      },
-      {
-        "name": "int-pim-integration-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-web-header-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_72016d53-1ba0-4f71-ab9c-0a90df48b048",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-customers-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_2c8c5274-a7cf-477f-a877-977f00622a4c",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_d7275497-ac0b-411b-9396-d98d1c26f634",
-        "type": "regular"
-      },
-      {
-        "name": "customeractivation-migration-prod",
-        "type": "regular"
-      },
-      {
-        "name": "gpp-identity-prod",
-        "type": "regular"
-      },
-      {
-        "name": "aly-invoice-automation-prod",
-        "type": "regular"
-      },
-      {
-        "name": "sub-mgr-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_0c1e78e9-1066-4e18-9882-bd123c54a2bd",
-        "type": "regular"
-      },
-      {
-        "name": "pyracloud-subscriptions",
-        "type": "regular"
-      },
-      {
-        "name": "int-config-prod",
-        "type": "regular"
-      },
-      {
-        "name": "trx-transactions-overview-prod",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-adobe-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-shard-map-coordinator-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_7e3b2aa9-30f9-4316-8b88-e75303e4def2",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_c6469e97-302a-408a-8589-2122a0bb725d",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-providers-adobevipm-prod",
-        "type": "regular"
-      },
-      {
-        "name": "bot-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-subscriptions-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-shard-map-prod",
-        "type": "regular"
-      },
-      {
-        "name": "mgmt-acm-prod",
-        "type": "regular"
-      },
-      {
-        "name": "components",
-        "type": "regular"
-      },
-      {
-        "name": "csp-billing-automation-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-pyraproxy-prod",
-        "type": "regular"
-      },
-      {
-        "name": "samdatawarehouse",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-authorization-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-invoices-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-pricelist-saas",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-subscriptions-prod",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-rfx-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_ac7850af-21d1-4ebd-8c22-b475e5d40978",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_878761c0-f03f-4fb9-89cc-001df25f0b58",
-        "type": "regular"
-      },
-      {
-        "name": "cspshardmap_986dcd1f-43af-4ee7-9dbd-11411d7c399d",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-azure-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-portal-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_c5ea8285-6825-4842-94d2-c309ed449796",
-        "type": "regular"
-      },
-      {
-        "name": "wrk-management-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_37dd1f9c-8205-440f-87f3-da1fb808b40c",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_b4fd484f-d43c-4162-a1ea-83e4b103b46e",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_2b898fc6-f2f6-4d45-a87a-59c44aa1b4d6",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_3c7b4733-d8c6-4030-8605-e2c2b59f6f45",
-        "type": "regular"
-      },
-      {
-        "name": "market-shop-prod",
-        "type": "regular"
-      },
-      {
-        "name": "risk-profiler-reports-db-prod",
-        "type": "regular"
-      },
-      {
-        "name": "staticsites",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_54286192-fc00-402c-9575-08102633bf40",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-recommendations-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-ea-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_b18289b7-cf8f-4e13-971c-9e5b1c0c020e",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-pricemanager",
-        "type": "regular"
-      },
-      {
-        "name": "nlpsql_analytics_scheduler",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_1543ffee-9eff-4a72-a1b3-817f34a29ae2",
-        "type": "regular"
-      },
-      {
-        "name": "customer-support-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_c204d440-36ba-44c9-acfa-a9ba1b66db92",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-order-manager-prod",
-        "type": "regular"
-      },
-      {
-        "name": "pyracloud-subscriptions_2020-09-29t07-59z",
-        "type": "regular"
-      },
-      {
-        "name": "billing-automation-prod",
-        "type": "regular"
-      },
-      {
-        "name": "renewal-manager-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-maturity-calculator-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-extension-nav-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-checkout-prod",
-        "type": "regular"
-      },
-      {
-        "name": "igrt-mgr-tracking-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-cloud-compatibility",
-        "type": "regular"
-      },
-      {
-        "name": "aly-pricelist-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_eeb8bf9d-55d9-4fa3-ae6b-2d42c25df109",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-pricelist-paas",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-slm-prod",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-aws-prod",
-        "type": "regular"
-      },
-      {
-        "name": "nlpsql_analytics_scheduler_kj",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-shard-map-coordinator-prod",
-        "type": "regular"
-      },
-      {
-        "name": "lic-mgr-gus-prod",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-platform-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-customer-prod",
-        "type": "regular"
-      },
-      {
-        "name": "trackit-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-contracts-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_14336735-a54e-41c0-8063-856b5379bd1c",
-        "type": "regular"
-      },
-      {
-        "name": "di-reporting-prod",
-        "type": "regular"
-      },
-      {
-        "name": "user-rank-prod",
-        "type": "regular"
-      },
-      {
-        "name": "exp-global-search-prod",
-        "type": "regular"
-      },
-      {
-        "name": "lic-esd-prod",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_7e23f6f5-a875-4963-af34-29ed1d4ae24d",
-        "type": "regular"
-      },
-      {
-        "name": "emerald-storage-tcs",
-        "type": "regular"
-      },
-      {
-        "name": "issue-detection-engine-prod",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-iam-prod",
-        "type": "regular"
-      },
-      {
-        "name": "products-catalog-api-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-prices-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-platform-prod",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-assessments-prod",
-        "type": "regular"
-      },
-      {
-        "name": "csp-orders-prod",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-itemconfiguration-prod",
-        "type": "regular"
-      },
-      {
-        "name": "partnertopics",
-        "type": "regular"
-      },
-      {
-        "name": "swo-platform-prod_2024-06-26t22-03z",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_d0bc9c1b-06cf-437f-a37f-a3ad2340ed65",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-catalog-prod",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-module-spotlight-prod",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-tasks-prod",
-        "type": "regular"
-      },
-      {
-        "name": "virtualnetworkgateways",
-        "type": "regular"
-      },
-      {
-        "name": "connections",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-cost-allocation-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-ea-integrationtest",
-        "type": "regular"
-      },
-      {
-        "name": "nltapp0127sdb",
-        "type": "regular"
-      },
-      {
-        "name": "reportingenginequartzdb-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-pricelist-paas-test",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-customeronboarding-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-price-calculation-service-test",
-        "type": "regular"
-      },
-      {
-        "name": "customer-support-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-subscriptions-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloudofficeshardmap_2b05987e-f9b4-4348-bce0-712d90c48b24",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-azure-test",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_eedd1e08-b005-4876-8523-3df5ed522281",
-        "type": "regular"
-      },
-      {
-        "name": "bastionhosts",
-        "type": "regular"
-      },
-      {
-        "name": "aly-pricelist-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-extension-nav-test",
-        "type": "regular"
-      },
-      {
-        "name": "pyc-search-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-orders-test",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-shard-map-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-portal-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-read-ea-test",
-        "type": "regular"
-      },
-      {
-        "name": "tellurium-test",
-        "type": "regular"
-      },
-      {
-        "name": "int-creditcard-test",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-navision-scope-test",
-        "type": "regular"
-      },
-      {
-        "name": "sub-mgr-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-billing-automation-test",
-        "type": "regular"
-      },
-      {
-        "name": "nltdb-csp-import-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-invoices-test",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-swo-rfx-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-platform-test",
-        "type": "regular"
-      },
-      {
-        "name": "market-shop-test",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-iam-test",
-        "type": "regular"
-      },
-      {
-        "name": "trackit-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-order-manager-test",
-        "type": "regular"
-      },
-      {
-        "name": "gpp-identity-test",
-        "type": "regular"
-      },
-      {
-        "name": "collab-test",
-        "type": "regular"
-      },
-      {
-        "name": "customeractivation-migration-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-platform-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-contracts-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-customers-test",
-        "type": "regular"
-      },
-      {
-        "name": "customer-solutions-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-workspace-test",
-        "type": "regular"
-      },
-      {
-        "name": "pyra-dot-net-templates-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-office-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-consumption-aws-test",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap-35eb33c3-9ca8-4b3e-995a-e3da72bc1286",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-aws-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-prices-test",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-public-catalog-test",
-        "type": "regular"
-      },
-      {
-        "name": "products-catalog-api-test",
-        "type": "regular"
-      },
-      {
-        "name": "fogtest",
-        "type": "regular"
-      },
-      {
-        "name": "ssisdb",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-feature-toggle-test",
-        "type": "regular"
-      },
-      {
-        "name": "marketplace-pim-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-salesforce-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-cloud-utilization-test",
-        "type": "regular"
-      },
-      {
-        "name": "lic-esd-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-office365-test",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-rfx-test",
-        "type": "regular"
-      },
-      {
-        "name": "cspshardmap_eedd1e08-b005-4876-8523-3df5ed522281",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-customer-test",
-        "type": "regular"
-      },
-      {
-        "name": "reportingenginedb-test",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-cqr-test",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap-26517465236498",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-shard-map-coordinator-test",
-        "type": "regular"
-      },
-      {
-        "name": "int-pim-integration-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloudawsshardmap_50b14c10-7229-4581-b736-0494d49d0bb8",
-        "type": "regular"
-      },
-      {
-        "name": "int-cco-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-recommendations-test",
-        "type": "regular"
-      },
-      {
-        "name": "trackit-test-integrationtest",
-        "type": "regular"
-      },
-      {
-        "name": "pyc-simple-test",
-        "type": "regular"
-      },
-      {
-        "name": "exp-global-search-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-sync-meta-ea-test",
-        "type": "regular"
-      },
-      {
-        "name": "nltsql_analytics_scheduler",
-        "type": "regular"
-      },
-      {
-        "name": "swo-web-header-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-ea-test",
-        "type": "regular"
-      },
-      {
-        "name": "resources",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-swo-salesprice-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloud-shard-map-test",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_35eb33c3-9ca8-4b3e-995a-e3da72bc1286",
-        "type": "regular"
-      },
-      {
-        "name": "wrk-management-test",
-        "type": "regular"
-      },
-      {
-        "name": "billing-automation-test_2019-06-25t15-20z",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-shard-map-coordinator-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-virtual-test",
-        "type": "regular"
-      },
-      {
-        "name": "user-rank-test",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-providers-adobevipm-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloudazureshardmap_eedd1e08-b005-4876-8523-3df5ed522281",
-        "type": "regular"
-      },
-      {
-        "name": "gpm-authorization-test",
-        "type": "regular"
-      },
-      {
-        "name": "auth-api-test",
-        "type": "regular"
-      },
-      {
-        "name": "awsshardmap_eedd1e08-b005-4876-8523-3df5ed522281",
-        "type": "regular"
-      },
-      {
-        "name": "trx-transactions-overview-test",
-        "type": "regular"
-      },
-      {
-        "name": "bot-test",
-        "type": "regular"
-      },
-      {
-        "name": "igrt-mgr-tracking-test",
-        "type": "regular"
-      },
-      {
-        "name": "notificationhubquartzdb-test",
-        "type": "regular"
-      },
-      {
-        "name": "chtvs00471_cpx_full_202109262000",
-        "type": "regular"
-      },
-      {
-        "name": "di-reporting-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-pyraproxy-test",
-        "type": "regular"
-      },
-      {
-        "name": "cloudeashardmap_eedd1e08-b005-4876-8523-3df5ed522281",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-slm-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-invoice-automation-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-maturity-calculator-test",
-        "type": "regular"
-      },
-      {
-        "name": "renewal-manager-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-contracts-test",
-        "type": "regular"
-      },
-      {
-        "name": "cspshardmap_35eb33c3-9ca8-4b3e-995a-e3da72bc1286",
-        "type": "regular"
-      },
-      {
-        "name": "dwh-test",
-        "type": "regular"
-      },
-      {
-        "name": "identitymanagementdb-qa",
-        "type": "regular"
-      },
-      {
-        "name": "swo-digital-assessments-test",
-        "type": "regular"
-      },
-      {
-        "name": "fwk-proxy-identity-provider-test",
-        "type": "regular"
-      },
-      {
-        "name": "billing-automation-test",
-        "type": "regular"
-      },
-      {
-        "name": "csp-backoffice-configurations-test",
-        "type": "regular"
-      },
-      {
-        "name": "int-config-test",
-        "type": "regular"
-      },
-      {
-        "name": "mgmt-acm-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-order-fulfillment-test",
-        "type": "regular"
-      },
-      {
-        "name": "swo-marketplace-address-book-test",
-        "type": "regular"
-      },
-      {
-        "name": "aly-consumption-adobe-test",
-        "type": "regular"
-      },
-      {
-        "name": "mgmt-console-gus-test",
-        "type": "regular"
-      },
-      {
-        "name": "virtualhubs",
-        "type": "regular"
-      },
-      {
-        "name": "eashardmap_f67f6315-1523-4bbb-bab4-ff7aea5e2bca",
-        "type": "regular"
-      },
-      {
-        "name": "notifications-management-test",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-module-billing-test",
-        "type": "regular"
-      },
-      {
-        "name": "spotlightkj-test",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-tasks-test",
-        "type": "regular"
-      },
-      {
-        "name": "mpt-module-billing-prod-debug-1",
-        "type": "regular"
-      },
-      {
-        "name": "jobagents",
-        "type": "regular"
-      }
-    ],
-    "tag": [
-      "devops",
-      "bit:ServiceLevelClass",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpapp0099wap-prod-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-cust-pyracloud-com-nlpaia0003",
-      "devops-project",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-pyracloud-com-nlpaia0003",
-      "owner",
-      "Value[",
-      "bit:ManagedBy",
-      "_env",
-      "aks-managed-bootstrap-profile-acr-name",
-      "aks-managed-createOperationID",
-      "renewed",
-      "action",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002",
-      "map-migrated-app",
-      "office",
-      "map-migrated-project-id",
-      "devops-scope",
-      "establishment",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-customer-pyracloud-com-nlpaia0003",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-corporate-pyracloud-com-nlpaia0003",
-      "__department",
-      "aksAPIServerIPAddress",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping apps-pyracloud-com-nlpaia0003",
-      "SubnetDelegatedToAppGwService",
-      "devops-devgroup",
-      "aks_app",
-      "created-by",
-      "aks-managed-operationID",
-      "kubernetes.io-created-for-pvc-name",
-      "_geo",
-      "devops-donotdelete",
-      "FunctionAppId",
-      "__geo",
-      "_team",
-      "aks-managed-azure-cni-overlay",
-      "devops-region",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-fo-pyracloud-com-nlpaia0003",
-      "kubernetes-cluster-name",
-      "devops-risk-class",
-      "geo",
-      "service",
-      "servicePrincipalVersion",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping login-softwareone-com-nlpaia0003",
-      "hidden-cosmos-mmspecial",
-      "hidden-link /app-insights-instrmentation-key",
-      "AutoMigrationScheduleEndTime",
-      "aks-managed-enable-imds-restriction",
-      "urs_location",
-      "Instance",
-      "Name[",
-      "[Name",
-      "bitenvironment",
-      "ms-resource-usage",
-      "bit:Reference",
-      "swo-refresh",
-      "devops-owner",
-      "dev-component",
-      "__AzureDevOpsElasticPoolTimeStamp",
-      "aks-managed-kubeletIdentityClientID",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003",
-      "aks-managed-ssh-access",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping portal-softwareone-com-nlpaia0003",
-      "hidden-link /app-insights-resource-id",
-      "devops-env",
-      "devops-environment",
-      "defaultExperience",
-      "Region",
-      "poc",
-      "aks-managed-resourceNameSuffix",
-      "aks-managed-consolidated-additional-properties",
-      "EnvironmentId",
-      "qa-e2e-costcenter",
-      "Description",
-      "k8s-azure-cluster-name",
-      "devops-billing-project",
-      "hidden-link /app-insights-instrumentation-key",
-      "aks-managed-coordination",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlqapp0098rgp-qa-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations-qa",
-      "AutoMigration",
-      "Provisioner",
-      "team",
-      "map-migrated",
-      "bit-costcenter",
-      "devops-managed-by",
-      "environment",
-      "hidden-link/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0073rgp-int-rmr-group-test/providers/MicrosoftWeb/sites/nltapp0073wap2-int-monitor-web",
-      "costcenter",
-      "devops-target-env",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/transactionsoverview-nlpaia0002",
-      "devops-billing-env",
-      "aks-managed-creationSource",
-      "aks-managed-cluster-name",
-      "kubernetesio-created-for-pvc-namespace",
-      "AccountId",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-bo-pyracloud-com-nlpaia0003",
-      "containerregistry",
-      "devops-role",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-softwareone-com-nlpaia0003",
-      "costobject",
-      "displayName",
-      "ms.inv.v0.backedby.origin.sourcearmid.0",
-      "CreatedBy",
-      "department",
-      "company",
-      "cluster",
-      "location",
-      "ms.inv.v0.security.owner",
-      "Value",
-      "test",
-      "bit:environment",
-      "hidden-link/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltdb00050rgp/providers/MicrosoftSql/servers/nltdb00050/elasticpools/nltdb00050edp01",
-      "bit-type",
-      "k8s-azure-service",
-      "ms.inv.v0.backedby.origin.tenantid",
-      "devops-description",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/statisconsole-nlpaia0002",
-      "devops-ownerteam",
-      "devops-sec-class",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/statusconsole-nlpaia0003",
-      "test-sup",
-      "VirtualMachineProfileTimeCreated",
-      "devops-security-class",
-      "hidden-link /app-insights-conn-string",
-      "kubernetesio-created-for-pv-name",
-      "kubernetes.io-created-for-pvc-namespace",
-      "kubernetesio-created-for-pvc-name",
-      "ms.inv.v0.backedby.tenantid",
-      "urs_team",
-      "devops-scalingstatus",
-      "urs_department",
-      "Environment",
-      "devops-app",
-      "devops-component",
-      "qa-e2e-type",
-      "qa-e2e-environment",
-      "ms.inv.v0.backedby.sourcearmid.0",
-      "devops-repository",
-      "aks-managed-type",
-      "CostCenter",
-      "a_team_submgr_storage",
-      "devops-shared-resource",
-      "_project",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-pyracloud-com-nlpaia0003",
-      "OwnedBy",
-      "kubernetes.io-created-for-pv-name",
-      "aks-managed-poolName",
-      "bit-environment",
-      "aks-managed-cluster-rg",
-      "bit:Environment",
-      "aks-managed-orchestrator",
-      "q_geo",
-      "__test-empty-tag",
-      "__AzureDevOpsElasticPool",
-      "managed environment resource id",
-      "k8s-azure-created-by",
-      "ManagedBy",
-      "Application",
-      "managed environment name",
-      "type",
-      "product",
-      "CosmosAccountType",
-      "devops-workitem",
-      "_department",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002",
-      "hidden-link/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpapp0241rgp/providers/MicrosoftWeb/sites/azure-devops-build-agent-monitor-selenium"
-    ],
-    "without_tag": [
-      "devops",
-      "bit:ServiceLevelClass",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpapp0099wap-prod-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-cust-pyracloud-com-nlpaia0003",
-      "devops-project",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-pyracloud-com-nlpaia0003",
-      "owner",
-      "Value[",
-      "bit:ManagedBy",
-      "_env",
-      "aks-managed-bootstrap-profile-acr-name",
-      "aks-managed-createOperationID",
-      "renewed",
-      "action",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002",
-      "map-migrated-app",
-      "office",
-      "map-migrated-project-id",
-      "devops-scope",
-      "establishment",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-customer-pyracloud-com-nlpaia0003",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-corporate-pyracloud-com-nlpaia0003",
-      "__department",
-      "aksAPIServerIPAddress",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping apps-pyracloud-com-nlpaia0003",
-      "SubnetDelegatedToAppGwService",
-      "devops-devgroup",
-      "aks_app",
-      "created-by",
-      "aks-managed-operationID",
-      "kubernetes.io-created-for-pvc-name",
-      "_geo",
-      "devops-donotdelete",
-      "FunctionAppId",
-      "__geo",
-      "_team",
-      "aks-managed-azure-cni-overlay",
-      "devops-region",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-fo-pyracloud-com-nlpaia0003",
-      "kubernetes-cluster-name",
-      "devops-risk-class",
-      "geo",
-      "service",
-      "servicePrincipalVersion",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping login-softwareone-com-nlpaia0003",
-      "hidden-cosmos-mmspecial",
-      "hidden-link /app-insights-instrmentation-key",
-      "AutoMigrationScheduleEndTime",
-      "aks-managed-enable-imds-restriction",
-      "urs_location",
-      "Instance",
-      "Name[",
-      "[Name",
-      "bitenvironment",
-      "ms-resource-usage",
-      "bit:Reference",
-      "swo-refresh",
-      "devops-owner",
-      "dev-component",
-      "__AzureDevOpsElasticPoolTimeStamp",
-      "aks-managed-kubeletIdentityClientID",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003",
-      "aks-managed-ssh-access",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping portal-softwareone-com-nlpaia0003",
-      "hidden-link /app-insights-resource-id",
-      "devops-env",
-      "devops-environment",
-      "defaultExperience",
-      "Region",
-      "poc",
-      "aks-managed-resourceNameSuffix",
-      "aks-managed-consolidated-additional-properties",
-      "EnvironmentId",
-      "qa-e2e-costcenter",
-      "Description",
-      "k8s-azure-cluster-name",
-      "devops-billing-project",
-      "hidden-link /app-insights-instrumentation-key",
-      "aks-managed-coordination",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlqapp0098rgp-qa-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations-qa",
-      "AutoMigration",
-      "Provisioner",
-      "team",
-      "map-migrated",
-      "bit-costcenter",
-      "devops-managed-by",
-      "environment",
-      "hidden-link/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0073rgp-int-rmr-group-test/providers/MicrosoftWeb/sites/nltapp0073wap2-int-monitor-web",
-      "costcenter",
-      "devops-target-env",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/transactionsoverview-nlpaia0002",
-      "devops-billing-env",
-      "aks-managed-creationSource",
-      "aks-managed-cluster-name",
-      "kubernetesio-created-for-pvc-namespace",
-      "AccountId",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-bo-pyracloud-com-nlpaia0003",
-      "containerregistry",
-      "devops-role",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-softwareone-com-nlpaia0003",
-      "costobject",
-      "displayName",
-      "ms.inv.v0.backedby.origin.sourcearmid.0",
-      "CreatedBy",
-      "department",
-      "company",
-      "cluster",
-      "location",
-      "ms.inv.v0.security.owner",
-      "Value",
-      "test",
-      "bit:environment",
-      "hidden-link/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltdb00050rgp/providers/MicrosoftSql/servers/nltdb00050/elasticpools/nltdb00050edp01",
-      "bit-type",
-      "k8s-azure-service",
-      "ms.inv.v0.backedby.origin.tenantid",
-      "devops-description",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/statisconsole-nlpaia0002",
-      "devops-ownerteam",
-      "devops-sec-class",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/statusconsole-nlpaia0003",
-      "test-sup",
-      "VirtualMachineProfileTimeCreated",
-      "devops-security-class",
-      "hidden-link /app-insights-conn-string",
-      "kubernetesio-created-for-pv-name",
-      "kubernetes.io-created-for-pvc-namespace",
-      "kubernetesio-created-for-pvc-name",
-      "ms.inv.v0.backedby.tenantid",
-      "urs_team",
-      "devops-scalingstatus",
-      "urs_department",
-      "Environment",
-      "devops-app",
-      "devops-component",
-      "qa-e2e-type",
-      "qa-e2e-environment",
-      "ms.inv.v0.backedby.sourcearmid.0",
-      "devops-repository",
-      "aks-managed-type",
-      "CostCenter",
-      "a_team_submgr_storage",
-      "devops-shared-resource",
-      "_project",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-pyracloud-com-nlpaia0003",
-      "OwnedBy",
-      "kubernetes.io-created-for-pv-name",
-      "aks-managed-poolName",
-      "bit-environment",
-      "aks-managed-cluster-rg",
-      "bit:Environment",
-      "aks-managed-orchestrator",
-      "q_geo",
-      "__test-empty-tag",
-      "__AzureDevOpsElasticPool",
-      "managed environment resource id",
-      "k8s-azure-created-by",
-      "ManagedBy",
-      "Application",
-      "managed environment name",
-      "type",
-      "product",
-      "CosmosAccountType",
-      "devops-workitem",
-      "_department",
-      "hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002",
-      "hidden-link/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpapp0241rgp/providers/MicrosoftWeb/sites/azure-devops-build-agent-monitor-selenium"
-    ],
-    "active": [
-      false,
-      true
-    ],
-    "constraint_violated": [
-      false
-    ],
-    "recommendations": [
-      false,
-      true
-    ],
-    "traffic_from": [
-      {
-        "name": "CentralUS",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "EastUS",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "WestUS",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "northeurope",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "westeurope",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "ukwest",
-        "cloud_type": "azure_cnr"
-      },
-      "ANY"
-    ],
-    "traffic_to": [
-      {
-        "name": "External",
-        "cloud_type": "azure_cnr"
-      },
-      {
-        "name": "Inter-Region",
-        "cloud_type": "azure_cnr"
-      },
-      "ANY"
-    ]
-  }
-}
+  data: {
+    availableFilters: {
+      cloud_account: [
+        {
+          id: '1aa5f619-eab6-4d80-a11f-b2765c4a4795',
+          name: 'CHaaS (QA)',
+          type: 'azure_cnr',
+          account_id: '6c73c89e-7e5b-43b5-a7c4-1b0cb260dafb',
+        },
+        {
+          id: '3f584d10-4293-4599-8ad5-413acc72fd45',
+          name: 'Marketplace (Production)',
+          type: 'aws_cnr',
+          account_id: '654035049067',
+        },
+        {
+          id: 'b509e2e2-20a4-48eb-ac60-b291338feff4',
+          name: 'MPT (Dev)',
+          type: 'azure_cnr',
+          account_id: 'e30e2a6e-0712-48c3-8685-3298df063633',
+        },
+        {
+          id: 'a1adba45-9068-4b49-8cd0-0834d35c3960',
+          name: 'Marketplace (Dev)',
+          type: 'aws_cnr',
+          account_id: '203689795269',
+        },
+        {
+          id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          name: 'CPA (Development and Test)',
+          type: 'azure_cnr',
+          account_id: '91819a1c-c7d3-4b89-bc9f-39f85bff4666',
+        },
+        {
+          id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          name: 'CPA (QA and Production)',
+          type: 'azure_cnr',
+          account_id: 'b6689fdb-ac8c-4116-8136-c7a179cb5be6',
+        },
+        {
+          id: 'ebb1c3bc-73c9-4a40-8fd4-0aabf760ebe5',
+          name: 'Marketplace (Staging)',
+          type: 'aws_cnr',
+          account_id: '563690021965',
+        },
+        {
+          id: '100efd88-28fb-49f1-946b-edbf78ad4650',
+          name: 'CPA (Infrastructure)',
+          type: 'azure_cnr',
+          account_id: '01643997-4d64-4718-8114-15e488ce3f61',
+        },
+        {
+          id: '96e23b8d-854b-42d7-8b59-264e6f314b2d',
+          name: 'MPT (Production)',
+          type: 'azure_cnr',
+          account_id: 'ef415e11-361a-4f91-8b3c-23aeb9c8f2ac',
+        },
+        {
+          id: 'a611abd8-9cde-4b17-ab54-31f9d43dc955',
+          name: 'MPT (Test)',
+          type: 'azure_cnr',
+          account_id: 'dea8e892-1212-42c9-afa0-3b87e7bfffd5',
+        },
+        {
+          id: 'cb78a18a-6adc-4780-9402-d175086accdc',
+          name: 'MPT Finops (Production)',
+          type: 'azure_cnr',
+          account_id: '89b098bc-b400-4578-8058-8416b0c25f6b',
+        },
+        {
+          id: '947cbf94-afc3-4055-b96d-eff284c36a09',
+          name: 'CHaaS (Production)',
+          type: 'azure_cnr',
+          account_id: '2d2f328c-1407-4e5e-ba59-1cbad182940f',
+        },
+        {
+          id: '12fa3bce-5513-40c8-96d7-0be2fc47ebcf',
+          name: 'MPT Finops (Staging)',
+          type: 'azure_cnr',
+          account_id: '63f2c438-c0e1-4606-ac10-eb6aa149c6cb',
+        },
+        {
+          id: '380b7812-d18d-46e6-9286-328ced6771aa',
+          name: 'Marketplace (Test)',
+          type: 'aws_cnr',
+          account_id: '996403779197',
+        },
+        {
+          id: '0708f18c-b23a-4652-8fd1-5d95f89226a9',
+          name: 'MPT Finops (Dev)',
+          type: 'azure_cnr',
+          account_id: '6964b7a4-9ce4-4975-98d7-b9a2e3b0a48e',
+        },
+        {
+          id: '29b2698f-6110-4a7c-88f7-58a14e4db6af',
+          name: 'MPT Finops (Test)',
+          type: 'azure_cnr',
+          account_id: 'a37be38a-56e4-4fab-8e3c-e4738f50ad70',
+        },
+        {
+          id: 'fe5d1e82-2b10-4786-8f44-0dfd7ac3144a',
+          name: 'MPT Platform (Staging)',
+          type: 'azure_cnr',
+          account_id: 'a7e5cb3a-1b68-445b-9234-7cebea7a6458',
+        },
+        {
+          id: '0fd2fbdf-d2cc-42e3-9749-1747b6b1fe83',
+          name: 'SoftwareOne',
+          type: 'azure_tenant',
+          account_id: '1dc9b339-fadb-432e-86df-423c38a0fcb8',
+        },
+      ],
+      owner: [
+        {
+          id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          name: 'Francesco',
+        },
+        {
+          id: '98acce8a-922a-4801-9bc3-0665d2b75e94',
+          name: 'Stuart Meeks',
+        },
+        {
+          id: '6e9dd82c-6923-46cd-9a2b-cff5761b5b5e',
+          name: 'Michał Zielonka',
+        },
+        {
+          id: '9bd277af-09ee-44c5-9bfa-4a8c7d67caa6',
+          name: 'Vova Grebenshchikov',
+        },
+        {
+          id: '9382c140-d629-4bff-89e7-0103c5f9a93e',
+          name: 'string',
+        },
+        {
+          id: 'ee3dbf0f-94d0-49ae-b6fe-b5caa89a4dc6',
+          name: 'Artur Balabanov',
+        },
+        {
+          id: 'c9964d3e-29b0-4cde-8148-0e149350c691',
+          name: 'Balint Polgar',
+        },
+        {
+          id: '8ea24f85-f096-4491-9211-9f55de6fa44f',
+          name: 'Antonio Di Mariano',
+        },
+        {
+          id: '913b44c6-c0ed-4ff1-9d7c-11a814748f52',
+          name: 'Vasilis Pantelis',
+        },
+        {
+          id: '637f7418-e5c7-47b4-88d3-b19924f61046',
+          name: 'Claudio Duranti',
+        },
+        {
+          id: '50e687df-6066-4a3a-8566-3ec405e79c34',
+          name: 'Tatyana Velikanova',
+        },
+        {
+          id: 'b0e8ae2d-d686-4dc9-8224-c3444f4d8fad',
+          name: 'Sylwester Grabowski',
+        },
+        {
+          id: '67735c5c-9d75-47e1-9039-65bf7a645889',
+          name: 'Max Kuzkin',
+        },
+        {
+          id: 'c47ad8fb-49ee-4dda-8d59-355c4fb9bc03',
+          name: 'Steve Churchill',
+        },
+        {
+          id: '27b1e387-aca5-48ea-b0f0-f1fad7e54efa',
+          name: 'Aleksandra Ovchinnikova',
+        },
+        {
+          id: '73b8772c-7a66-4261-96e6-8e4b494dd25b',
+          name: 'Dawid',
+        },
+        {
+          id: 'da9c4030-dd0d-43ec-8a4f-108bab928db7',
+          name: 'Admin User',
+        },
+        {
+          id: 'd6b621a7-7ae0-4964-8e9a-6a0507628761',
+          name: 'Tomasz Pokarowski',
+        },
+        {
+          id: 'bdc8d34f-5e79-46f6-9a34-a605e517a419',
+          name: 'Miroslaw Niegowski',
+        },
+        {
+          id: 'd7122ca4-05c2-42cb-bd8f-d23d31788b71',
+          name: 'Maciej Plebanowicz',
+        },
+        {
+          id: 'cbdadd1f-db6d-4d1a-aaf4-68ca4bb28917',
+          name: 'MS',
+        },
+        {
+          id: '959f3543-4a85-4c1e-9934-af22eed0f295',
+          name: 'Marc',
+        },
+      ],
+      pool: [
+        {
+          id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          name: 'QA & Prod',
+          purpose: 'budget',
+        },
+        {
+          id: 'f7af9162-d278-4098-bdf8-3698c38a7437',
+          name: 'MPT (Dev)',
+          purpose: 'budget',
+        },
+        {
+          id: 'ccaceadf-6878-4ab4-9fd8-3f6177d0b9d3',
+          name: 'SoftwareOne (Test Environment)',
+          purpose: 'business_unit',
+        },
+        {
+          id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          name: 'CPA (Development and Test)',
+          purpose: 'budget',
+        },
+        {
+          id: 'df0586b1-bcb1-404a-bdbd-d5944983db4c',
+          name: 'Marketplace (Staging)',
+          purpose: 'budget',
+        },
+        {
+          id: 'e20b9495-9237-4b22-a03a-f0fb0b481a58',
+          name: 'CPA (Infrastructure)',
+          purpose: 'budget',
+        },
+        {
+          id: 'ad6d23d2-0479-49f9-869e-00a18e99c405',
+          name: 'MPT (Production)',
+          purpose: 'budget',
+        },
+        {
+          id: 'f43692fe-1fd5-4bcc-95b9-1d5245712fde',
+          name: 'MPT (Test)',
+          purpose: 'budget',
+        },
+        {
+          id: '7fa201b8-024c-49ca-aea4-34f575909bf9',
+          name: 'MPT Finops (Production)',
+          purpose: 'budget',
+        },
+        {
+          id: 'af728938-ab69-4b6b-b39a-6f269ff3dd2b',
+          name: 'FinOps for Cloud Overall',
+          purpose: 'budget',
+        },
+        {
+          id: 'b6a8e72f-76a7-4f01-8458-766113012a87',
+          name: 'MPT Finops (Staging)',
+          purpose: 'budget',
+        },
+        {
+          id: '779efc1e-098c-460d-9f4b-8b966e90e8dc',
+          name: 'Marketplace (Test) 2',
+          purpose: 'budget',
+        },
+        {
+          id: '0b8da044-2717-4a28-ac65-d7af738e479e',
+          name: 'MPT Finops (Dev)',
+          purpose: 'budget',
+        },
+        {
+          id: '14b59245-7db3-49a7-98cf-4ba059fe27ab',
+          name: 'Marketplace (Dev) - Member Type 5',
+          purpose: 'budget',
+        },
+        {
+          id: '15e33111-10c3-4aa6-8675-4878ad358d92',
+          name: ' Marketplace (Test)',
+          purpose: 'budget',
+        },
+        {
+          id: '1c71aadc-a8b4-4e56-8dd0-3de6e6498df1',
+          name: 'Marketplace (Dev) - Member Type 19',
+          purpose: 'budget',
+        },
+        {
+          id: '20305aee-843b-421b-bde4-ca131a7cc53e',
+          name: 'Marketplace (Dev) - Member Type 83',
+          purpose: 'budget',
+        },
+        {
+          id: '28b28231-c378-4e98-b298-1a58b9276965',
+          name: 'Marketplace (Dev) - Member Type 34',
+          purpose: 'budget',
+        },
+        {
+          id: '29a7bd14-782a-4451-b3d4-5883f934d265',
+          name: 'Marketplace (Dev) - Member Type 52',
+          purpose: 'budget',
+        },
+        {
+          id: '3111189e-1916-4398-9a9a-a62e3a6a1cd6',
+          name: 'Marketplace (Dev) - Member Type 70',
+          purpose: 'budget',
+        },
+        {
+          id: '331a727e-3878-4fb2-b055-943b4ed2e051',
+          name: 'Marketplace (Dev) - Member Type 1',
+          purpose: 'budget',
+        },
+        {
+          id: '343d643b-4827-451a-bc08-a7530047e213',
+          name: 'Marketplace (Dev) - Member Type 64',
+          purpose: 'budget',
+        },
+        {
+          id: '34bb75be-e62b-40b2-b0d2-56c8e56b1c4d',
+          name: 'Marketplace (Dev)',
+          purpose: 'budget',
+        },
+        {
+          id: '36119fa7-e834-4628-a459-71ea712d6cff',
+          name: 'Marketplace (Dev) - Member Type 11',
+          purpose: 'budget',
+        },
+        {
+          id: '3766e247-4ba3-4531-b75c-ccf3ff670838',
+          name: 'Marketplace (Dev) - Member Type 87',
+          purpose: 'budget',
+        },
+        {
+          id: '38643b0b-2c43-4a80-9a61-1553c5fafdca',
+          name: 'Marketplace (Dev) - Member Type 28',
+          purpose: 'budget',
+        },
+        {
+          id: '3a309f80-0b82-4a66-97f4-9cfe1d8bde5a',
+          name: 'Marketplace (Dev) - Member Type 61',
+          purpose: 'budget',
+        },
+        {
+          id: '3a5b3693-de71-49b8-96c5-18a786e8684d',
+          name: 'Marketplace (Dev) - Member Type 54',
+          purpose: 'budget',
+        },
+        {
+          id: '3da0d638-27bb-4ccd-ab5c-dc82235d50bf',
+          name: 'Marketplace (Dev) - Member Type 29',
+          purpose: 'budget',
+        },
+        {
+          id: '3e5dbe98-0f4a-4e27-b44d-f980369c567b',
+          name: 'Marketplace (Dev) - Member Type 40',
+          purpose: 'budget',
+        },
+        {
+          id: '4071b5bc-a891-4a5a-8597-d34b4c8cb71b',
+          name: 'Marketplace (Production)',
+          purpose: 'budget',
+        },
+        {
+          id: '42de9f66-d443-46d7-8f9b-3537cda7cce2',
+          name: 'AWS Dev - Management',
+          purpose: 'budget',
+        },
+        {
+          id: '43d62b1a-cf28-4e08-8329-6d0d806e3432',
+          name: 'Marketplace (Dev) - Member Type 45',
+          purpose: 'budget',
+        },
+        {
+          id: '45561764-70ce-461d-b6a5-403dc1d96a24',
+          name: 'Marketplace (Dev) - Member Type 77',
+          purpose: 'budget',
+        },
+        {
+          id: '467a77e0-2470-4128-9563-f01afa784dca',
+          name: 'Marketplace (Dev) - Member Test',
+          purpose: 'budget',
+        },
+        {
+          id: '48686233-978f-4c97-bc77-c6673ea9aea9',
+          name: 'Marketplace (Dev) - Member Type 16',
+          purpose: 'budget',
+        },
+        {
+          id: '4defe696-356d-4e9e-ae21-1c3a31899d38',
+          name: 'Marketplace (Dev) - Member Type 3',
+          purpose: 'budget',
+        },
+        {
+          id: '4eed88a5-0e70-43f9-8515-4c20c09ca0e3',
+          name: 'Marketplace (Dev) - Member Type 73',
+          purpose: 'budget',
+        },
+        {
+          id: '563adca4-05d5-447f-b377-44f077cd2581',
+          name: 'Marketplace (Dev) - Member 1',
+          purpose: 'budget',
+        },
+        {
+          id: '585f932b-a043-4045-bd0a-b63a3bd7028c',
+          name: 'Marketplace (Dev) - Member Type 47',
+          purpose: 'budget',
+        },
+        {
+          id: '5c0122f6-61cc-4771-8215-497e4a778450',
+          name: 'Marketplace (Dev) - Member Type 53',
+          purpose: 'budget',
+        },
+        {
+          id: '5c4ba23d-e9d1-4b6f-a8f2-2c4507f62345',
+          name: 'Marketplace (Dev) - Member Type 2',
+          purpose: 'budget',
+        },
+        {
+          id: '5cbf944a-cbf3-41b8-88eb-d831665c8d41',
+          name: 'Marketplace (Dev) - Member Type 10',
+          purpose: 'budget',
+        },
+        {
+          id: '6470fd21-5545-439d-a7a4-72218d777945',
+          name: 'Marketplace (Dev) - Member Type 66',
+          purpose: 'budget',
+        },
+        {
+          id: '64e69e26-9143-4153-ad6d-e3eec1f2619c',
+          name: 'Marketplace (Dev) - Member Type 22',
+          purpose: 'budget',
+        },
+        {
+          id: '69c48119-0b54-448b-9498-84417d510e90',
+          name: 'Marketplace (Dev) - Member Type 82',
+          purpose: 'budget',
+        },
+        {
+          id: '6c192ad7-2ecf-4371-92d7-09ae48d2ce9e',
+          name: 'CPA (QA and Production)',
+          purpose: 'budget',
+        },
+        {
+          id: '6f896910-aa13-4c64-91f3-fda91e5cf600',
+          name: 'Marketplace (Dev) - Member Type 51',
+          purpose: 'budget',
+        },
+        {
+          id: '6fa2bfe3-fa10-48c6-80b6-d0362c3924e8',
+          name: 'Marketplace (Dev) - Member Type 39',
+          purpose: 'budget',
+        },
+        {
+          id: '6ff3a799-fefd-4624-9e16-0e22ac2a586b',
+          name: 'Marketplace (Dev) - Management Type 1',
+          purpose: 'budget',
+        },
+        {
+          id: '7060f41a-167a-4cc3-99c6-7062bdf5517f',
+          name: 'Marketplace (Dev) - Member Type 30',
+          purpose: 'budget',
+        },
+        {
+          id: '70986ea4-3c7c-41c5-b660-d3e7172f8bd9',
+          name: 'CHaaS (Production)',
+          purpose: 'budget',
+        },
+        {
+          id: '746af7de-ba68-4d74-b036-2406fcf51297',
+          name: 'Marketplace (Dev) - Member Type 12',
+          purpose: 'budget',
+        },
+        {
+          id: '781ccb54-7259-47ce-bf12-94cb32c83462',
+          name: 'Marketplace (Dev) - Member 2',
+          purpose: 'budget',
+        },
+        {
+          id: '7b862f51-8035-434e-b2d5-04e4d6aafa51',
+          name: 'CHaaS (QA)',
+          purpose: 'budget',
+        },
+        {
+          id: '7c1f2eb6-db72-4820-baa5-f58b5c91d250',
+          name: 'Marketplace (Dev) - Member Type 25',
+          purpose: 'budget',
+        },
+        {
+          id: '7f386f43-6586-474e-a85b-183ed20ce3f3',
+          name: 'Marketplace (Dev) - Member Type 6',
+          purpose: 'budget',
+        },
+        {
+          id: '80bcda8b-ee97-41fd-ac4e-bf6d995d0a88',
+          name: 'Marketplace (Dev) 1',
+          purpose: 'budget',
+        },
+        {
+          id: '824b6b1a-80e3-4619-981d-1605aee39656',
+          name: 'Marketplace (Dev) - Member Type 72',
+          purpose: 'budget',
+        },
+        {
+          id: '82c0a3cf-328e-4535-aea0-92b455c85eda',
+          name: 'Marketplace (Dev) - Member Type 74',
+          purpose: 'budget',
+        },
+        {
+          id: '82edf3d7-1816-4c33-bb24-10958d03bd92',
+          name: 'Marketplace (Dev) - Member Type 36',
+          purpose: 'budget',
+        },
+        {
+          id: '833345a6-2c4e-4ea7-aaf2-81e6937bb34d',
+          name: 'Marketplace (Dev) - Member Type 13',
+          purpose: 'budget',
+        },
+        {
+          id: '86dba95b-4994-4be9-b352-c0404b342682',
+          name: 'Marketplace (Dev) - Member Type 46',
+          purpose: 'budget',
+        },
+        {
+          id: '8a213702-6900-4d50-81ec-74d43f2786ed',
+          name: 'MPT Finops (Test)',
+          purpose: 'budget',
+        },
+        {
+          id: '90955983-9342-4789-a61f-fe5811463a2e',
+          name: 'FFC - DEV',
+          purpose: 'team',
+        },
+        {
+          id: '947ab7f8-32fa-46de-9bac-b8b716862c29',
+          name: 'Marketplace (Dev) - Member Type 23',
+          purpose: 'budget',
+        },
+        {
+          id: '94cc8269-3b37-4482-a78b-104ecd1781bb',
+          name: 'Marketplace (Dev) - Member Type',
+          purpose: 'budget',
+        },
+        {
+          id: '95d66ac5-b615-4ac0-8b94-6f834b339a3d',
+          name: 'Marketplace (Dev) - Member Type 58',
+          purpose: 'budget',
+        },
+        {
+          id: '967710f3-466d-4407-be82-582373d931bb',
+          name: 'Marketplace (Dev) - Member Type 4',
+          purpose: 'budget',
+        },
+        {
+          id: '9828cabc-8fe0-4049-bda6-26f10ef162e9',
+          name: 'Marketplace (Dev) - Member Type 57',
+          purpose: 'budget',
+        },
+        {
+          id: '9937fbd0-364e-4945-8d98-ecce4db14456',
+          name: 'Marketplace (Dev) - Member Type 18',
+          purpose: 'budget',
+        },
+        {
+          id: '9e7f2ddf-8c68-4f4e-9f6d-7811ffb9ce66',
+          name: 'Marketplace (Dev) - Member Type 31',
+          purpose: 'budget',
+        },
+        {
+          id: '9f39759c-46da-412c-b379-1f381651c690',
+          name: 'Marketplace (Test) 1',
+          purpose: 'budget',
+        },
+        {
+          id: 'a083640d-b546-475a-a40f-18864f3735d7',
+          name: 'Marketplace (Dev) - Member Type 50',
+          purpose: 'budget',
+        },
+        {
+          id: 'a16a6060-c0c7-4ada-a7f1-72d17eb79959',
+          name: 'Marketplace (Dev) - Member Type 15',
+          purpose: 'budget',
+        },
+        {
+          id: 'a213b866-fb46-4f22-8e91-df40aed52240',
+          name: 'Marketplace (Dev) - Member Type 26',
+          purpose: 'budget',
+        },
+        {
+          id: 'a90fac68-ca18-40d7-8da7-2dc670d451c9',
+          name: 'Marketplace (Dev) - Member',
+          purpose: 'budget',
+        },
+        {
+          id: 'aa940177-396d-4792-8adf-95f2de4a288b',
+          name: 'Marketplace (Dev) - Member Type 84',
+          purpose: 'budget',
+        },
+        {
+          id: 'ad8cb9a1-7940-445e-8fe7-c52570cd7c8b',
+          name: 'Marketplace (Test)',
+          purpose: 'budget',
+        },
+        {
+          id: 'b11e2de7-0734-49b6-bea9-4ed8c56edcd7',
+          name: 'Marketplace (Dev) - Member 3',
+          purpose: 'budget',
+        },
+        {
+          id: 'b256664d-915c-4177-a9cf-584f0b90e6d4',
+          name: 'Marketplace (Dev) - Member Type 76',
+          purpose: 'budget',
+        },
+        {
+          id: 'b5be6bd1-2cca-477b-8bd0-cbb1ea833bd5',
+          name: 'Marketplace (Dev) - Member Type 44',
+          purpose: 'budget',
+        },
+        {
+          id: 'b9bd96b1-6f03-45f3-8435-dd0364ff9f02',
+          name: 'Marketplace (Dev) - Member Type 17',
+          purpose: 'budget',
+        },
+        {
+          id: 'b9c1b305-199b-4029-89bc-f6980dcb6a05',
+          name: 'Marketplace (Dev) - Member Type 56',
+          purpose: 'budget',
+        },
+        {
+          id: 'ba1af1b8-9efa-4440-9d34-ad66c5fa650d',
+          name: 'Marketplace (Dev) - Member Type 48',
+          purpose: 'budget',
+        },
+        {
+          id: 'bc068a81-2cb8-4195-9be8-62e661ddc1a3',
+          name: 'Marketplace (Dev) - Member Type 42',
+          purpose: 'budget',
+        },
+        {
+          id: 'bd580a4b-2869-4921-8105-65dc0c9c753a',
+          name: 'Marketplace (Dev) - Member Type 86',
+          purpose: 'budget',
+        },
+        {
+          id: 'c18de243-6d25-4fc1-8f3b-8fb29b284bbd',
+          name: 'Marketplace (Dev) - Member Type 85',
+          purpose: 'budget',
+        },
+        {
+          id: 'c1b8896f-b828-48ca-9de1-12889df68eee',
+          name: 'Marketplace (Dev) - Member Type 59',
+          purpose: 'budget',
+        },
+        {
+          id: 'c2335917-d33a-496d-978b-d234fde029f9',
+          name: 'Marketplace (Dev) - Member Type 43',
+          purpose: 'budget',
+        },
+        {
+          id: 'c4b1206b-d2a4-4c84-8b96-18f476d8dd14',
+          name: 'Marketplace (Dev) - Member Type 67',
+          purpose: 'budget',
+        },
+        {
+          id: 'c9aea643-e896-44f0-ad44-e440cb41fe18',
+          name: 'Marketplace (Dev) - Member Type 75',
+          purpose: 'budget',
+        },
+        {
+          id: 'c9e10d92-0a4b-4315-89c2-f6f002ae9540',
+          name: 'Marketplace (Dev) - Member Type 49',
+          purpose: 'budget',
+        },
+        {
+          id: 'ca49e2dd-3787-45cc-95cb-3c2a33fa48cc',
+          name: 'MPT Platform (Staging)',
+          purpose: 'budget',
+        },
+        {
+          id: 'cd27bcef-bb6f-4fe2-9a98-cf524a604abb',
+          name: 'Marketplace (Dev) - Member Type 68',
+          purpose: 'budget',
+        },
+        {
+          id: 'd211ae97-a755-46dc-ae6d-eeeb95f03422',
+          name: 'Marketplace (Dev) Management',
+          purpose: 'budget',
+        },
+        {
+          id: 'd4ac548b-572d-4717-9eea-0f02e05aab5e',
+          name: 'Marketplace (Dev) - Member Type 21',
+          purpose: 'budget',
+        },
+        {
+          id: 'd4b1ae64-5ccc-473f-b20e-12872f5a4101',
+          name: 'Marketplace (Dev) - Member Type 78',
+          purpose: 'budget',
+        },
+        {
+          id: 'd7ef7eb1-6b8c-4996-a215-df9265d9a034',
+          name: 'Marketplace (Dev) - Member Type 60',
+          purpose: 'budget',
+        },
+        {
+          id: 'de3e8e99-69bb-472d-9f2d-45cffcb54348',
+          name: 'Marketplace (Dev) - Management Type',
+          purpose: 'budget',
+        },
+        {
+          id: 'dee07630-9abe-479f-80a2-fb5031c369c7',
+          name: 'FFC',
+          purpose: 'project',
+        },
+        {
+          id: 'df1fa42f-59bd-4f0d-9d00-61e4c41fb5c1',
+          name: 'SoftwareOne AWS',
+          purpose: 'budget',
+        },
+        {
+          id: 'e41690e6-f5a8-4c39-9b4b-029cecd925cf',
+          name: 'Marketplace (Dev) - Member Type 80',
+          purpose: 'budget',
+        },
+        {
+          id: 'ea4b9dcf-a05a-4c32-82ee-1c75e4b5e8dc',
+          name: 'AWS Dev',
+          purpose: 'budget',
+        },
+        {
+          id: 'ef22076f-7cf1-4030-9d84-3210bedacb4a',
+          name: 'Marketplace (Dev) - Member Type 38',
+          purpose: 'budget',
+        },
+        {
+          id: 'f276280a-3fd2-4846-8774-ef313b660919',
+          name: 'Marketplace (Dev) - Member Type 79',
+          purpose: 'budget',
+        },
+        {
+          id: 'f4754691-dad1-42ca-8523-80f906ed4183',
+          name: 'Marketplace (Dev) - Member Type 24',
+          purpose: 'budget',
+        },
+        {
+          id: 'f54f4d41-43f2-44c6-8c62-3cd8637a3f37',
+          name: 'DevOps Overall',
+          purpose: 'budget',
+        },
+        {
+          id: 'f6ae36be-cdef-4f3a-8973-4103b50e824a',
+          name: 'Marketplace (Dev) - Member Type 35',
+          purpose: 'budget',
+        },
+        {
+          id: 'f7ef5aa4-8198-446b-b85f-3e7f2df7f05f',
+          name: 'Marketplace (Dev) - Member Type 62',
+          purpose: 'budget',
+        },
+        {
+          id: 'f8dec043-e127-4df5-872a-a99de1db2376',
+          name: 'Marketplace (Dev) - Member Type 20',
+          purpose: 'budget',
+        },
+        {
+          id: 'faea151f-4c55-40c1-b6d5-90768fb7e04c',
+          name: 'Marketplace (Dev) - Member Type 69',
+          purpose: 'budget',
+        },
+        {
+          id: 'fea7972d-3e5a-41f8-8b28-bf2ad1380a7d',
+          name: 'Marketplace (Dev) - Member Type 88',
+          purpose: 'budget',
+        },
+        {
+          id: 'ff9f883e-b58c-4f80-b497-985889906cbf',
+          name: 'Marketplace (Dev) - Member Type 8',
+          purpose: 'budget',
+        },
+      ],
+      service_name: [
+        {
+          name: 'microsoft.logic',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.web',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.operationalinsights',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.containerregistry',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.servicebus',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.network',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.storage',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.insights',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.maps',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.keyvault',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.compute',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'AWSLambda',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonS3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonVPC',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'microsoft.appconfiguration',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'AmazonECRPublic',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSDataTransfer',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSCloudTrail',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonCloudWatch',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonMSK',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonRDS',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSSecretsManager',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonECR',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSELB',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonEC2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'awskms',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonSNS',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSQueueService',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSGlue',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AmazonRoute53',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWSConfig',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'AWS',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'microsoft.security',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'AmazonSES',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'microsoft.sql',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.dbforpostgresql',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.datafactory',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.cdn',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.dashboard',
+          cloud_type: 'azure_cnr',
+        },
+        null,
+        {
+          name: 'microsoft.eventgrid',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.cache',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.documentdb',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.purview',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.eventhub',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'virtual network',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'AmazonLocationService',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'microsoft.hybridcompute',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.azurearcdata',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.app',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.dbformysql',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.containerservice',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.recoveryservices',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.dataprotection',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.search',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.monitor',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.certificateregistration',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.saas',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.devcenter',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.notificationhubs',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.signalrservice',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.apicenter',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.apimanagement',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'api management',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'microsoft.kusto',
+          cloud_type: 'azure_cnr',
+        },
+      ],
+      region: [
+        {
+          name: 'East US',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Central US',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'All Regions',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'West US',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'UK West',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'West Europe',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-west-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-north-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-east-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-west-2',
+          cloud_type: 'aws_cnr',
+        },
+        null,
+        {
+          name: 'eu-west-3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-west-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'sa-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-northeast-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-west-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ca-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-northeast-3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-northeast-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-south-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-southeast-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'global',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-southeast-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'West US 2',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Canada Central',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Sweden Central',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'East US 2',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Unassigned',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'South Central US',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'North Europe',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Australia East',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Central India',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Brazil South',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Southeast Asia',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Poland Central',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'North Central US',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'East Asia',
+          cloud_type: 'azure_cnr',
+        },
+      ],
+      k8s_node: [null],
+      k8s_service: [null],
+      k8s_namespace: [null],
+      resource_type: [
+        {
+          name: 'workflows',
+          type: 'regular',
+        },
+        {
+          name: 'sites',
+          type: 'regular',
+        },
+        {
+          name: 'actiongroups',
+          type: 'regular',
+        },
+        {
+          name: 'scheduledqueryrules',
+          type: 'regular',
+        },
+        {
+          name: 'dnszones',
+          type: 'regular',
+        },
+        {
+          name: 'workspaces',
+          type: 'regular',
+        },
+        {
+          name: 'vaults',
+          type: 'regular',
+        },
+        {
+          name: 'Volume',
+          type: 'regular',
+        },
+        {
+          name: 'azurefirewalls',
+          type: 'regular',
+        },
+        {
+          name: 'IP Address',
+          type: 'regular',
+        },
+        {
+          name: 'Instance',
+          type: 'regular',
+        },
+        {
+          name: 'metricalerts',
+          type: 'regular',
+        },
+        {
+          name: 'Bucket',
+          type: 'regular',
+        },
+        {
+          name: 'serverfarms',
+          type: 'regular',
+        },
+        {
+          name: 'registries',
+          type: 'regular',
+        },
+        {
+          name: 'accounts',
+          type: 'regular',
+        },
+        {
+          name: 'namespaces',
+          type: 'regular',
+        },
+        {
+          name: 'Serverless',
+          type: 'regular',
+        },
+        {
+          name: 'applicationgateways',
+          type: 'regular',
+        },
+        {
+          name: 'configurationstores',
+          type: 'regular',
+        },
+        {
+          name: 'API Request',
+          type: 'regular',
+        },
+        {
+          name: 'Management Tools - AWS CloudTrail Free Events Recorded',
+          type: 'regular',
+        },
+        {
+          name: 'Data Transfer',
+          type: 'regular',
+        },
+        {
+          name: 'DNS Zone',
+          type: 'regular',
+        },
+        {
+          name: 'Encryption Key',
+          type: 'regular',
+        },
+        {
+          name: 'Management Tools - AWS Config Rules',
+          type: 'regular',
+        },
+        {
+          name: 'EU-ClientVPN-EndpointHours',
+          type: 'regular',
+        },
+        {
+          name: 'APN3-AWSSecretsManagerAPIRequest',
+          type: 'regular',
+        },
+        {
+          name: 'Load Balancer',
+          type: 'regular',
+        },
+        {
+          name: 'USE1-SAE1-AWS-Out-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'USE2-TimedStorage-ByteHrs',
+          type: 'regular',
+        },
+        {
+          name: 'EU-RDS:ChargedBackupUsage',
+          type: 'regular',
+        },
+        {
+          name: 'EC2 Container Registry',
+          type: 'regular',
+        },
+        {
+          name: 'Storage Snapshot',
+          type: 'regular',
+        },
+        {
+          name: 'EU-Kafka.t3.small',
+          type: 'regular',
+        },
+        {
+          name: 'EU-TimedStorage-ByteHrs',
+          type: 'regular',
+        },
+        {
+          name: 'Dashboard',
+          type: 'regular',
+        },
+        {
+          name: 'EUC1-Tables-Requests-Tier1',
+          type: 'regular',
+        },
+        {
+          name: 'AWS Glue',
+          type: 'regular',
+        },
+        {
+          name: 'USE2-DataTransfer-Regional-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'NAT Gateway',
+          type: 'regular',
+        },
+        {
+          name: 'Secret',
+          type: 'regular',
+        },
+        {
+          name: 'Managed Streaming for Apache Kafka (MSK)',
+          type: 'regular',
+        },
+        {
+          name: 'USSalesTax',
+          type: 'regular',
+        },
+        {
+          name: 'eu-central-1-KMS-Requests',
+          type: 'regular',
+        },
+        {
+          name: 'pricings',
+          type: 'regular',
+        },
+        {
+          name: 'databases',
+          type: 'regular',
+        },
+        {
+          name: 'flexibleservers',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-tasks-prod',
+          type: 'regular',
+        },
+        {
+          name: 'connections',
+          type: 'regular',
+        },
+        {
+          name: 'Snapshot',
+          type: 'regular',
+        },
+        {
+          name: 'privateendpoints',
+          type: 'regular',
+        },
+        {
+          name: 'privatednszones',
+          type: 'regular',
+        },
+        {
+          name: 'factories',
+          type: 'regular',
+        },
+        {
+          name: 'profiles',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-currency-prod',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-helpdesk-prod',
+          type: 'regular',
+        },
+        {
+          name: 'EU-CW:Requests',
+          type: 'regular',
+        },
+        {
+          name: 'Metric',
+          type: 'regular',
+        },
+        {
+          name: 'Savings Plan',
+          type: 'regular',
+        },
+        {
+          name: 'EU-DataTransfer-Out-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'USE1-APS2-AWS-Out-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'USE2-AWSSecretsManagerAPIRequest',
+          type: 'regular',
+        },
+        {
+          name: 'EU-Lambda-GB-Second',
+          type: 'regular',
+        },
+        {
+          name: 'Sending Email',
+          type: 'regular',
+        },
+        {
+          name: 'EU-AttachmentsSize-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'Data Payload',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-extensions-prod',
+          type: 'regular',
+        },
+        {
+          name: 'grafana',
+          type: 'regular',
+        },
+        {
+          name: 'trafficmanagerprofiles',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-extensions-test',
+          type: 'regular',
+        },
+        {
+          name: 'APS3-Requests-Tier1',
+          type: 'regular',
+        },
+        {
+          name: 'Marketplace Purchase',
+          type: 'regular',
+        },
+        {
+          name: 'servers',
+          type: 'regular',
+        },
+        {
+          name: 'publicipprefixes',
+          type: 'regular',
+        },
+        {
+          name: 'slots',
+          type: 'regular',
+        },
+        {
+          name: 'enterprisearchitect',
+          type: 'regular',
+        },
+        {
+          name: 'images',
+          type: 'regular',
+        },
+        {
+          name: 'extensiontopics',
+          type: 'regular',
+        },
+        {
+          name: 'databaseaccounts',
+          type: 'regular',
+        },
+        {
+          name: 'sonarqube',
+          type: 'regular',
+        },
+        {
+          name: 'natgateways',
+          type: 'regular',
+        },
+        {
+          name: 'virtualmachinescalesets',
+          type: 'regular',
+        },
+        {
+          name: 'redis',
+          type: 'regular',
+        },
+        {
+          name: 'elasticpools',
+          type: 'regular',
+        },
+        {
+          name: 'EUC1-Requests-Tier8',
+          type: 'regular',
+        },
+        {
+          name: 'virtualnetworkgateways',
+          type: 'regular',
+        },
+        {
+          name: 'AmazonLocationService',
+          type: 'regular',
+        },
+        {
+          name: 'sqlserverinstances',
+          type: 'regular',
+        },
+        {
+          name: 'machines',
+          type: 'regular',
+        },
+        {
+          name: 'containerapps',
+          type: 'regular',
+        },
+        {
+          name: 'networkwatchers',
+          type: 'regular',
+        },
+        {
+          name: 'networksecuritygroups',
+          type: 'regular',
+        },
+        {
+          name: 'managedclusters',
+          type: 'regular',
+        },
+        {
+          name: 'staticsites',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_f67f6315-1523-4bbb-bab4-ff7aea5e2bca',
+          type: 'regular',
+        },
+        {
+          name: 'backupvaults',
+          type: 'regular',
+        },
+        {
+          name: 'spotlightkj-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-tasks-test',
+          type: 'regular',
+        },
+        {
+          name: 'jobagents',
+          type: 'regular',
+        },
+        {
+          name: 'searchservices',
+          type: 'regular',
+        },
+        {
+          name: 'EU-Recipients-VirtDelivMgr',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-chat-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-procurement-prod',
+          type: 'regular',
+        },
+        {
+          name: 'certificateorders',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-module-spotlight-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-module-billing-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-module-spotlight-prod',
+          type: 'regular',
+        },
+        {
+          name: 'resources',
+          type: 'regular',
+        },
+        {
+          name: 'APN2-Requests-Tier1',
+          type: 'regular',
+        },
+        {
+          name: 'pools',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-public-catalog-prod',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-currency-test',
+          type: 'regular',
+        },
+        {
+          name: 'inboundendpoints',
+          type: 'regular',
+        },
+        {
+          name: 'notifications-management-test',
+          type: 'regular',
+        },
+        {
+          name: 'components',
+          type: 'regular',
+        },
+        {
+          name: 'trx-transactions-overview-test',
+          type: 'regular',
+        },
+        {
+          name: 'int-pim-integration-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloudazureshardmap_eedd1e08-b005-4876-8523-3df5ed522281',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-maturity-calculator-test',
+          type: 'regular',
+        },
+        {
+          name: 'mgmt-acm-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-cqr-test',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-iam-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-pricelist-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-contracts-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-billing-automation-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-pricelist-paas-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-address-book-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-adobe-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-web-header-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-cost-allocation-test',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-feature-toggle-test',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-swo-rfx-test',
+          type: 'regular',
+        },
+        {
+          name: 'customer-support-test',
+          type: 'regular',
+        },
+        {
+          name: 'cspshardmap_eedd1e08-b005-4876-8523-3df5ed522281',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-workspace-test',
+          type: 'regular',
+        },
+        {
+          name: 'lic-esd-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-aws-test',
+          type: 'regular',
+        },
+        {
+          name: 'renewal-manager-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-platform-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-recommendations-test',
+          type: 'regular',
+        },
+        {
+          name: 'nltdb-csp-import-test',
+          type: 'regular',
+        },
+        {
+          name: 'notificationhubquartzdb-test',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-providers-adobevipm-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-virtual-test',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap-26517465236498',
+          type: 'regular',
+        },
+        {
+          name: 'aly-invoice-automation-test',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-shard-map-coordinator-test',
+          type: 'regular',
+        },
+        {
+          name: 'customeractivation-migration-test',
+          type: 'regular',
+        },
+        {
+          name: 'ssisdb',
+          type: 'regular',
+        },
+        {
+          name: 'int-cco-test',
+          type: 'regular',
+        },
+        {
+          name: 'nltapp0127sdb',
+          type: 'regular',
+        },
+        {
+          name: 'pyc-search-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-subscriptions-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-customer-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-office365-test',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_a0b82f35-ecdf-4392-8eab-c2a7269ebc65',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-rfx-test',
+          type: 'regular',
+        },
+        {
+          name: 'signalr',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-cloud-compatibility',
+          type: 'regular',
+        },
+        {
+          name: 'swo-platform-test',
+          type: 'regular',
+        },
+        {
+          name: 'trackit-test',
+          type: 'regular',
+        },
+        {
+          name: 'nltsql_analytics_scheduler',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-aws-test',
+          type: 'regular',
+        },
+        {
+          name: 'billing-automation-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-order-manager-test',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap-35eb33c3-9ca8-4b3e-995a-e3da72bc1286',
+          type: 'regular',
+        },
+        {
+          name: 'gpp-identity-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloudawsshardmap_50b14c10-7229-4581-b736-0494d49d0bb8',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-order-fulfillment-test',
+          type: 'regular',
+        },
+        {
+          name: 'user-rank-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-cloud-utilization-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloudeashardmap_eedd1e08-b005-4876-8523-3df5ed522281',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-sync-meta-ea-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-invoices-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-portal-test',
+          type: 'regular',
+        },
+        {
+          name: 'di-reporting-test',
+          type: 'regular',
+        },
+        {
+          name: 'wrk-management-test',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-customeronboarding-test',
+          type: 'regular',
+        },
+        {
+          name: 'pyra-dot-net-templates-test',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-authorization-test',
+          type: 'regular',
+        },
+        {
+          name: 'identitymanagementdb',
+          type: 'regular',
+        },
+        {
+          name: 'products-catalog-api-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-price-calculation-service-test',
+          type: 'regular',
+        },
+        {
+          name: 'tellurium-test',
+          type: 'regular',
+        },
+        {
+          name: 'service',
+          type: 'regular',
+        },
+        {
+          name: 'emerald-storage-tcs',
+          type: 'regular',
+        },
+        {
+          name: 'int-config-test',
+          type: 'regular',
+        },
+        {
+          name: 'exp-global-search-test',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_eedd1e08-b005-4876-8523-3df5ed522281',
+          type: 'regular',
+        },
+        {
+          name: 'reportingenginequartzdb-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloudofficeshardmap_2b05987e-f9b4-4348-bce0-712d90c48b24',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-configurations-test',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_eedd1e08-b005-4876-8523-3df5ed522281',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-ea-integrationtest',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-shard-map-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-orders-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-office-test',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-navision-scope-test',
+          type: 'regular',
+        },
+        {
+          name: 'int-creditcard-test',
+          type: 'regular',
+        },
+        {
+          name: 'sub-mgr-test',
+          type: 'regular',
+        },
+        {
+          name: 'trackit-test-integrationtest',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-azure-test',
+          type: 'regular',
+        },
+        {
+          name: 'billing-automation-test_2019-06-25t15-20z',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-shard-map-test',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-shard-map-coordinator-test',
+          type: 'regular',
+        },
+        {
+          name: 'bastionhosts',
+          type: 'regular',
+        },
+        {
+          name: 'bot-test',
+          type: 'regular',
+        },
+        {
+          name: 'igrt-mgr-tracking-test',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-swo-salesprice-test',
+          type: 'regular',
+        },
+        {
+          name: 'cspshardmap_35eb33c3-9ca8-4b3e-995a-e3da72bc1286',
+          type: 'regular',
+        },
+        {
+          name: 'swo-pyraproxy-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-salesforce-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-extension-nav-test',
+          type: 'regular',
+        },
+        {
+          name: 'chtvs00471_cpx_full_202109262000',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-contracts-test',
+          type: 'regular',
+        },
+        {
+          name: 'identitymanagementdb-qa',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-read-ea-test',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-prices-test',
+          type: 'regular',
+        },
+        {
+          name: 'dwh-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-slm-test',
+          type: 'regular',
+        },
+        {
+          name: 'reportingenginedb-test',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-ea-test',
+          type: 'regular',
+        },
+        {
+          name: 'auth-api-test',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-proxy-identity-provider-test',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-assessments-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-public-catalog-test',
+          type: 'regular',
+        },
+        {
+          name: 'fogtest',
+          type: 'regular',
+        },
+        {
+          name: 'samdatawarehouse',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_35eb33c3-9ca8-4b3e-995a-e3da72bc1286',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-customers-test',
+          type: 'regular',
+        },
+        {
+          name: 'customer-solutions-test',
+          type: 'regular',
+        },
+        {
+          name: 'pyc-simple-test',
+          type: 'regular',
+        },
+        {
+          name: 'mgmt-console-gus-test',
+          type: 'regular',
+        },
+        {
+          name: 'pyracloud-subscriptions',
+          type: 'regular',
+        },
+        {
+          name: 'collab-test',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_c5ea8285-6825-4842-94d2-c309ed449796',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_c7242070-60da-4c92-bc34-8b1a34c50a01',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_72016d53-1ba0-4f71-ab9c-0a90df48b048',
+          type: 'regular',
+        },
+        {
+          name: 'int-cco-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_0c1e78e9-1066-4e18-9882-bd123c54a2bd',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-rfx-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_d450009c-5886-4703-8e6d-740dbecc21c9',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_54286192-fc00-402c-9575-08102633bf40',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_2c8c5274-a7cf-477f-a877-977f00622a4c',
+          type: 'regular',
+        },
+        {
+          name: 'pyracloud-subscriptions_2020-09-29t06-59z',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-ea-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-pricelist-saas',
+          type: 'regular',
+        },
+        {
+          name: 'csp-subscriptions-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_f60ce9fd-154d-427d-bf91-2e4b42dd86c4',
+          type: 'regular',
+        },
+        {
+          name: 'igrt-mgr-tracking-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_d0bc9c1b-06cf-437f-a37f-a3ad2340ed65',
+          type: 'regular',
+        },
+        {
+          name: 'swo-platform-prod_2024-06-26t22-03z',
+          type: 'regular',
+        },
+        {
+          name: 'nlpsql_analytics_scheduler_kj',
+          type: 'regular',
+        },
+        {
+          name: 'risk-product-lifecyle-db-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-maturity-calculator-prod',
+          type: 'regular',
+        },
+        {
+          name: 'products-catalog-api-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_54286192-fc00-402c-9575-08102633bf40',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_c445ff59-32a7-4ff7-b325-3d04eb3f4d82',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-iam-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cspshardmap_72ce77e7-2041-4f5d-3a72-08da26e48a74',
+          type: 'regular',
+        },
+        {
+          name: 'swo-extension-nav-prod',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-aws-prod',
+          type: 'regular',
+        },
+        {
+          name: 'nltdb-csp-import-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-itemconfiguration-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_7e23f6f5-a875-4963-af34-29ed1d4ae24d',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-checkout-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_c6469e97-302a-408a-8589-2122a0bb725d',
+          type: 'regular',
+        },
+        {
+          name: 'customer-support-prod',
+          type: 'regular',
+        },
+        {
+          name: 'pyracloud-subscriptions_2020-09-29t07-59z',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-slm-prod',
+          type: 'regular',
+        },
+        {
+          name: 'issue-detection-engine-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-recommendations-prod',
+          type: 'regular',
+        },
+        {
+          name: 'billing-automation-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_1d9e10e9-e0d9-49bc-8362-4635af48e3b0',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_1543ffee-9eff-4a72-a1b3-817f34a29ae2',
+          type: 'regular',
+        },
+        {
+          name: 'csp-license-assignments-prod',
+          type: 'regular',
+        },
+        {
+          name: 'pyracloud-subscriptions_2020-09-29t08-59z',
+          type: 'regular',
+        },
+        {
+          name: 'exp-global-search-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-pricelist-paas',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-swo-salesprice-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_2b898fc6-f2f6-4d45-a87a-59c44aa1b4d6',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-authorization-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_ac7850af-21d1-4ebd-8c22-b475e5d40978',
+          type: 'regular',
+        },
+        {
+          name: 'aly-invoice-automation-prod',
+          type: 'regular',
+        },
+        {
+          name: 'aly-pricelist-prod',
+          type: 'regular',
+        },
+        {
+          name: 'risk-profiler-reports-db-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-contracts-prod',
+          type: 'regular',
+        },
+        {
+          name: 'aly-cloud-utilization-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-pyraproxy-prod',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-navision-scope-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-configurations-prod',
+          type: 'regular',
+        },
+        {
+          name: 'user-rank-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_b18289b7-cf8f-4e13-971c-9e5b1c0c020e',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-office365-prod',
+          type: 'regular',
+        },
+        {
+          name: 'trackit-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-platform-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-contracts-prod',
+          type: 'regular',
+        },
+        {
+          name: 'lic-esd-prod',
+          type: 'regular',
+        },
+        {
+          name: 'customer-solutions',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_5aa598f6-990c-4d69-9f5e-1275d34d14e5',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_ca4ef284-5503-4019-a176-7b079926439a',
+          type: 'regular',
+        },
+        {
+          name: 'trx-transactions-overview-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-web-header-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_c204d440-36ba-44c9-acfa-a9ba1b66db92',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-azure-prod',
+          type: 'regular',
+        },
+        {
+          name: 'auth-api-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-pricemanager',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_878761c0-f03f-4fb9-89cc-001df25f0b58',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_eeb8bf9d-55d9-4fa3-ae6b-2d42c25df109',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-adobe-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_b4fd484f-d43c-4162-a1ea-83e4b103b46e',
+          type: 'regular',
+        },
+        {
+          name: 'di-reporting-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-prices-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-providers-mscsp-prod',
+          type: 'regular',
+        },
+        {
+          name: 'int-config-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-cost-allocation-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_7e3b2aa9-30f9-4316-8b88-e75303e4def2',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-proxy-identity-provider-prod',
+          type: 'regular',
+        },
+        {
+          name: 'mgmt-acm-prod',
+          type: 'regular',
+        },
+        {
+          name: 'int-creditcard-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-shard-map-coordinator-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-recommendations-prod-restored',
+          type: 'regular',
+        },
+        {
+          name: 'swo-digital-assessments-prod',
+          type: 'regular',
+        },
+        {
+          name: 'nlpsql_analytics_scheduler',
+          type: 'regular',
+        },
+        {
+          name: 'swo-portal-prod',
+          type: 'regular',
+        },
+        {
+          name: 'aly-consumption-virtual-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-customer-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-invoices-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-shard-map-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-orders-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-billing-automation-prod',
+          type: 'regular',
+        },
+        {
+          name: 'lic-mgr-gus-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-address-book-prod',
+          type: 'regular',
+        },
+        {
+          name: 'collab-prod',
+          type: 'regular',
+        },
+        {
+          name: 'pyra-dot-net-templates-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-price-calculation-service-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_d7275497-ac0b-411b-9396-d98d1c26f634',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_37dd1f9c-8205-440f-87f3-da1fb808b40c',
+          type: 'regular',
+        },
+        {
+          name: 'swo-platform-performace_2024-06-28t10-29z',
+          type: 'regular',
+        },
+        {
+          name: 'notificationhubquartzdb-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-subscriptions-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-ea-prod',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-feature-toggle-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_e706a119-f41f-4e30-9271-42de678f981c',
+          type: 'regular',
+        },
+        {
+          name: 'sub-mgr-prod',
+          type: 'regular',
+        },
+        {
+          name: 'bot-prod',
+          type: 'regular',
+        },
+        {
+          name: 'awsshardmap_099fd68f-cdc0-470c-83f7-68274cbee998',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-order-manager-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_0da2a725-c790-4d1f-b155-080817a86035',
+          type: 'regular',
+        },
+        {
+          name: 'int-pim-integration-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_e3c55fc0-e7ce-48fd-a244-8afd1041d843',
+          type: 'regular',
+        },
+        {
+          name: 'gpp-identity-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-providers-adobevipm-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-swo-rfx-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_7f75776e-89af-413b-88a2-28593e2ac6b2',
+          type: 'regular',
+        },
+        {
+          name: 'wrk-management-prod',
+          type: 'regular',
+        },
+        {
+          name: 'clusters',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_14336735-a54e-41c0-8063-856b5379bd1c',
+          type: 'regular',
+        },
+        {
+          name: 'marketplace-pim-prod',
+          type: 'regular',
+        },
+        {
+          name: 'partnertopics',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-aws-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_ee859c36-53ff-4440-bd50-4d8da7e70412',
+          type: 'regular',
+        },
+        {
+          name: 'market-shop-prod',
+          type: 'regular',
+        },
+        {
+          name: 'gpm-customeronboarding-prod',
+          type: 'regular',
+        },
+        {
+          name: 'renewal-manager-prod',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-shard-map-prod',
+          type: 'regular',
+        },
+        {
+          name: 'csp-backoffice-customers-prod',
+          type: 'regular',
+        },
+        {
+          name: 'eashardmap_3c7b4733-d8c6-4030-8605-e2c2b59f6f45',
+          type: 'regular',
+        },
+        {
+          name: 'int-cco-prod-demo',
+          type: 'regular',
+        },
+        {
+          name: 'swo-platform-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-consumption-office-prod',
+          type: 'regular',
+        },
+        {
+          name: 'pyc-search-prod',
+          type: 'regular',
+        },
+        {
+          name: 'dwh-prod',
+          type: 'regular',
+        },
+        {
+          name: 'cspshardmap_986dcd1f-43af-4ee7-9dbd-11411d7c399d',
+          type: 'regular',
+        },
+        {
+          name: 'cloud-workspace-prod',
+          type: 'regular',
+        },
+        {
+          name: 'swo-marketplace-order-fulfillment-prod',
+          type: 'regular',
+        },
+        {
+          name: 'fwk-shard-map-coordinator-prod',
+          type: 'regular',
+        },
+        {
+          name: 'customeractivation-migration-prod',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-catalog-prod',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-chat-prod',
+          type: 'regular',
+        },
+        {
+          name: 'notifications-management-prod',
+          type: 'regular',
+        },
+        {
+          name: 'pyracloud-subscriptions-restore',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-module-billing-prod-debug-1',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-module-billing-prod',
+          type: 'regular',
+        },
+        {
+          name: 'USE1-EU-AWS-Out-Bytes',
+          type: 'regular',
+        },
+        {
+          name: 'APN2-AWSSecretsManagerAPIRequest',
+          type: 'regular',
+        },
+        {
+          name: 'EUC1-CW:Requests',
+          type: 'regular',
+        },
+        {
+          name: 'swo-platform-prod_2025-05-07t12-43z',
+          type: 'regular',
+        },
+        {
+          name: 'swo-extension-nav-prod_2025-05-07t13-52z',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-helpdesk-test',
+          type: 'regular',
+        },
+        {
+          name: 'mpt-procurement-test',
+          type: 'regular',
+        },
+      ],
+      tag: [
+        'ms.inv.v0.security.owner',
+        'devops-scope',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpapp0099wap-prod-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations',
+        'devops-ownerteam',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-corporate-pyracloud-com-nlpaia0003',
+        'devops-app',
+        'managed environment name',
+        'OwnedBy',
+        'ms-resource-usage',
+        'ms-azores-category',
+        'Revision',
+        'k8s-azure-service',
+        'aks-managed-creationSource',
+        'ms.inv.v0.backedby.origin.tenantid',
+        '_department',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/statusconsole-nlpaia0003',
+        'urs_department',
+        '_geo',
+        'CreatedBy',
+        'managed environment resource id',
+        'action',
+        'bit-costcenter',
+        'Name[',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003',
+        'hidden-link: /app-insights-instrumentation-key',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/statisconsole-nlpaia0002',
+        'location',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping apps-pyracloud-com-nlpaia0003',
+        'hidden-title',
+        'q_geo',
+        'aks-managed-orchestrator',
+        'devops-security-class',
+        'AutoMigrationScheduleEndTime',
+        'devops-owner',
+        '__department',
+        'costobject',
+        'environment',
+        'FunctionAppId',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-fo-pyracloud-com-nlpaia0003',
+        'dev-component',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlqapp0098rgp-qa-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations-qa',
+        'aks-managed-enable-imds-restriction',
+        'kubernetes.io/cluster/Marketplace2',
+        'aks-managed-cluster-name',
+        'devops-scalingstatus',
+        '_env',
+        'devops-repository',
+        'SubnetDelegatedToAppGwService',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-customer-pyracloud-com-nlpaia0003',
+        'devops-devgroup',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-pyracloud-com-nlpaia0003',
+        'costcenter',
+        'Value',
+        'kubernetes.io/service-name',
+        'devops-role',
+        'kubernetesio-created-for-pvc-namespace',
+        'AutoMigration',
+        'devops-project',
+        'hidden-link/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpapp0241rgp/providers/MicrosoftWeb/sites/azure-devops-build-agent-monitor-selenium',
+        'renewed',
+        'swo-refresh',
+        'hidden-cosmos-mmspecial',
+        'aks-managed-coordination',
+        'bit:environment',
+        'devops-component',
+        '__geo',
+        'test',
+        '_city',
+        'aks-managed-networkisolated-outbound-type',
+        'aks-managed-operationID',
+        'hidden-link: /app-insights-resource-id',
+        'kubernetes.io-created-for-pvc-name',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping portal-softwareone-com-nlpaia0003',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003',
+        'company',
+        '[Name',
+        'aks_app',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-pyracloud-com-nlpaia0003',
+        'compute.aks.billing',
+        'devops-description',
+        'DevBoxUniqueId',
+        'ms.inv.v0.backedby.sourcearmid.0',
+        'EnvironmentId',
+        'aks-managed-bootstrap-profile-acr-name',
+        'devops-sec-class',
+        'defaultExperience',
+        'CosmosAccountType',
+        'aks-managed-createOperationID',
+        '_team',
+        'kubernetes.io-created-for-pv-name',
+        'hidden-link: /app-insights-instrmentation-key',
+        'team',
+        'urs_location',
+        'devops-shared-resource',
+        'ms-azores-classification',
+        'qa-e2e-environment',
+        'hidden-link /app-insights-conn-string',
+        'AccountId',
+        'containerregistry',
+        'ms.inv.v0.backedby.origin.sourcearmid.0',
+        'devops-target-env',
+        'ms.inv.v0.backedby.tenantid',
+        'bit-type',
+        'devops',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-bo-pyracloud-com-nlpaia0003',
+        'Instance',
+        'Environment',
+        'kubernetesio-created-for-pv-name',
+        'a_team_submgr_storage',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-softwareone-com-nlpaia0003',
+        '_project',
+        'k8s-azure-cluster-name',
+        'urs_team',
+        'bit-environment',
+        'aks-managed-consolidated-additional-properties',
+        'kubernetes.io-created-for-pvc-namespace',
+        'hidden-link /app-insights-resource-id',
+        'devops-env',
+        'Region',
+        'bitenvironment',
+        'Application',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002',
+        'Product',
+        'establishment',
+        'displayName',
+        'kubernetes.io/cluster/swo-platforem',
+        'k8s-azure-created-by',
+        'department',
+        'geo',
+        'computeaksbilling',
+        'aks-managed-resourceNameSuffix',
+        'devops-risk-class',
+        'qa-e2e-type',
+        'office',
+        'devops-managed-by',
+        'devops-billing-project',
+        'devops-donotdelete',
+        'kubernetesio-created-for-pvc-name',
+        'hidden-link /app-insights-instrumentation-key',
+        'devops-environment',
+        'owner',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002',
+        'region',
+        'Owner',
+        'Value[',
+        'qa-e2e-costcenter',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/transactionsoverview-nlpaia0002',
+        'hidden-link: /app-insights-conn-string',
+        'ManagedBy',
+        'devops-region',
+        'hidden-link:/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0073rgp-int-rmr-group-test/providers/Microsoft.Web/sites/nltapp0073wap2-int-monitor-web',
+        'aks-managed-ssh-access',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-cust-pyracloud-com-nlpaia0003',
+        'aks-managed-type',
+        'aks-managed-kubeletIdentityClientID',
+        'aks-managed-cluster-rg',
+        'devops-billing-env',
+        'cluster',
+        'test-sup',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping login-softwareone-com-nlpaia0003',
+        'hidden-link /app-insights-instrmentation-key',
+        'aks-managed-poolName',
+        'devops-workitem',
+      ],
+      without_tag: [
+        'ms.inv.v0.security.owner',
+        'devops-scope',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpapp0099wap-prod-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations',
+        'devops-ownerteam',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-corporate-pyracloud-com-nlpaia0003',
+        'devops-app',
+        'managed environment name',
+        'OwnedBy',
+        'ms-resource-usage',
+        'ms-azores-category',
+        'Revision',
+        'k8s-azure-service',
+        'aks-managed-creationSource',
+        'ms.inv.v0.backedby.origin.tenantid',
+        '_department',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/statusconsole-nlpaia0003',
+        'urs_department',
+        '_geo',
+        'CreatedBy',
+        'managed environment resource id',
+        'action',
+        'bit-costcenter',
+        'Name[',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003',
+        'hidden-link: /app-insights-instrumentation-key',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/statisconsole-nlpaia0002',
+        'location',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping apps-pyracloud-com-nlpaia0003',
+        'hidden-title',
+        'q_geo',
+        'aks-managed-orchestrator',
+        'devops-security-class',
+        'AutoMigrationScheduleEndTime',
+        'devops-owner',
+        '__department',
+        'costobject',
+        'environment',
+        'FunctionAppId',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-fo-pyracloud-com-nlpaia0003',
+        'dev-component',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlqapp0098rgp-qa-hosting-web-app/providers/MicrosoftWeb/sites/apps-translations-qa',
+        'aks-managed-enable-imds-restriction',
+        'kubernetes.io/cluster/Marketplace2',
+        'aks-managed-cluster-name',
+        'devops-scalingstatus',
+        '_env',
+        'devops-repository',
+        'SubnetDelegatedToAppGwService',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-customer-pyracloud-com-nlpaia0003',
+        'devops-devgroup',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-pyracloud-com-nlpaia0003',
+        'costcenter',
+        'Value',
+        'kubernetes.io/service-name',
+        'devops-role',
+        'kubernetesio-created-for-pvc-namespace',
+        'AutoMigration',
+        'devops-project',
+        'hidden-link/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpapp0241rgp/providers/MicrosoftWeb/sites/azure-devops-build-agent-monitor-selenium',
+        'renewed',
+        'swo-refresh',
+        'hidden-cosmos-mmspecial',
+        'aks-managed-coordination',
+        'bit:environment',
+        'devops-component',
+        '__geo',
+        'test',
+        '_city',
+        'aks-managed-networkisolated-outbound-type',
+        'aks-managed-operationID',
+        'hidden-link: /app-insights-resource-id',
+        'kubernetes.io-created-for-pvc-name',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping portal-softwareone-com-nlpaia0003',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/components/nlpaia0003',
+        'company',
+        '[Name',
+        'aks_app',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-pyracloud-com-nlpaia0003',
+        'compute.aks.billing',
+        'devops-description',
+        'DevBoxUniqueId',
+        'ms.inv.v0.backedby.sourcearmid.0',
+        'EnvironmentId',
+        'aks-managed-bootstrap-profile-acr-name',
+        'devops-sec-class',
+        'defaultExperience',
+        'CosmosAccountType',
+        'aks-managed-createOperationID',
+        '_team',
+        'kubernetes.io-created-for-pv-name',
+        'hidden-link: /app-insights-instrmentation-key',
+        'team',
+        'urs_location',
+        'devops-shared-resource',
+        'ms-azores-classification',
+        'qa-e2e-environment',
+        'hidden-link /app-insights-conn-string',
+        'AccountId',
+        'containerregistry',
+        'ms.inv.v0.backedby.origin.sourcearmid.0',
+        'devops-target-env',
+        'ms.inv.v0.backedby.tenantid',
+        'bit-type',
+        'devops',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-bo-pyracloud-com-nlpaia0003',
+        'Instance',
+        'Environment',
+        'kubernetesio-created-for-pv-name',
+        'a_team_submgr_storage',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping esd-softwareone-com-nlpaia0003',
+        '_project',
+        'k8s-azure-cluster-name',
+        'urs_team',
+        'bit-environment',
+        'aks-managed-consolidated-additional-properties',
+        'kubernetes.io-created-for-pvc-namespace',
+        'hidden-link /app-insights-resource-id',
+        'devops-env',
+        'Region',
+        'bitenvironment',
+        'Application',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourceGroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002',
+        'Product',
+        'establishment',
+        'displayName',
+        'kubernetes.io/cluster/swo-platforem',
+        'k8s-azure-created-by',
+        'department',
+        'geo',
+        'computeaksbilling',
+        'aks-managed-resourceNameSuffix',
+        'devops-risk-class',
+        'qa-e2e-type',
+        'office',
+        'devops-managed-by',
+        'devops-billing-project',
+        'devops-donotdelete',
+        'kubernetesio-created-for-pvc-name',
+        'hidden-link /app-insights-instrumentation-key',
+        'devops-environment',
+        'owner',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/components/nlpaia0002',
+        'region',
+        'Owner',
+        'Value[',
+        'qa-e2e-costcenter',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0002rgp/providers/microsoftinsights/webtests/transactionsoverview-nlpaia0002',
+        'hidden-link: /app-insights-conn-string',
+        'ManagedBy',
+        'devops-region',
+        'hidden-link:/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0073rgp-int-rmr-group-test/providers/Microsoft.Web/sites/nltapp0073wap2-int-monitor-web',
+        'aks-managed-ssh-access',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping api-cust-pyracloud-com-nlpaia0003',
+        'aks-managed-type',
+        'aks-managed-kubeletIdentityClientID',
+        'aks-managed-cluster-rg',
+        'devops-billing-env',
+        'cluster',
+        'test-sup',
+        'hidden-link/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpaia0003rgp/providers/microsoftinsights/webtests/ping login-softwareone-com-nlpaia0003',
+        'hidden-link /app-insights-instrmentation-key',
+        'aks-managed-poolName',
+        'devops-workitem',
+      ],
+      active: [false, true],
+      constraint_violated: [false],
+      recommendations: [false],
+      meta: [
+        'is_public_acls',
+        'available',
+        'last_seen_not_stopped',
+        'cpu_count',
+        'intelligent_tiering_enabled',
+        'flavor',
+        'intelligent_tiering_configs',
+        'storage_class_analysis',
+        'object_count',
+        'attached',
+        'last_attached',
+        'stopped_allocated',
+        'instance_id',
+        'payment_option',
+        'is_public_policy',
+        'last_checked',
+        'cloud_console_link',
+        'last_used',
+        'end',
+        'vpc_id',
+        'purchase_term',
+        'tiers',
+        'category',
+        'offering_type',
+        'vpc_name',
+        'architecture',
+        'ram',
+        'os',
+        'snapshot_id',
+        'spotted',
+        'volume_type',
+        'image_id',
+        'state',
+        'total_size_bytes',
+        'start',
+        'security_groups',
+        'size',
+        'preinstalled',
+        'volume_id',
+        'description',
+        'lifecycle_rules',
+        'applied_region',
+        'metrics_configurations',
+      ],
+      traffic_from: [
+        {
+          name: 'ukwest',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eastus',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'westeurope',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-north-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'northeurope',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'centralus',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-west-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'EastUS',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'CentralUS',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'westus',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'us-east-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        'ANY',
+      ],
+      traffic_to: [
+        {
+          name: 'us-west-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-northeast-3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-southeast-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-southeast-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-south-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-west-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-east-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-southeast-3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-west-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'me-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'sa-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'us-east-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'Intercontinental',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'ap-northeast-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ap-northeast-2',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'North America',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-west-3',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'External',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'eu-north-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'northeurope',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'eu-west-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'ca-central-1',
+          cloud_type: 'aws_cnr',
+        },
+        {
+          name: 'External',
+          cloud_type: 'azure_cnr',
+        },
+        {
+          name: 'Inter-Region',
+          cloud_type: 'azure_cnr',
+        },
+        'ANY',
+      ],
+    },
+  },
+};
 
 export const SummaryExpensesResponse = {
   "start_date": 1751328000,
@@ -22720,3 +23710,1266 @@ export const SummaryExpensesResponse = {
   "total_cost": 133094.8060353869,
   "total_saving": 1448.2920500699997
 }
+
+export const CleanExpensesResponse = {
+  data: {
+    cleanExpenses: {
+      start_date: 1751328000,
+      end_date: 1752623999,
+      total_count: 20,
+      total_cost: 889630.4396726988,
+      clean_expenses: [
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltloa0001rgp/providers/microsoft.operationalinsights/workspaces/nltloa0001wsp1',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297259,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'workspaces',
+          service_name: 'microsoft.operationalinsights',
+          tags: {
+            'devops-billing-env': 'test',
+            'devops-ownerteam': 'DevOps',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 177.37145999549998,
+          },
+          total_cost: 70004.2371939919,
+          id: 'ff3fb410-c7e9-4653-b345-76e4c727cfc9',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 2917.3982251988004,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'ff3fb410-c7e9-4653-b345-76e4c727cfc9',
+          resource_name: 'nltloa0001wsp1',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nldapp0682rgp/providers/microsoft.operationalinsights/workspaces/nldapp0682log',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297239,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'workspaces',
+          service_name: 'microsoft.operationalinsights',
+          tags: {
+            'devops-billing-env': 'dev',
+            'devops-component': 'storage-account',
+            'devops-devgroup': 'shared',
+            'devops-environment': 'dev',
+            'devops-managed-by': 'Terraform',
+            'devops-ownerteam': 'Spartians',
+            'devops-project': 'Pyracloud,Goathpath',
+            'devops-region': 'westeurope',
+            'devops-repository': 'ops-assets',
+            'devops-risk-class': 'non-critical',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 381.97573070696,
+          },
+          total_cost: 31002.216055286975,
+          id: '21257b12-ebd9-42fc-b893-e20cca9ffd5e',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 1249.32841877935,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: '21257b12-ebd9-42fc-b893-e20cca9ffd5e',
+          resource_name: 'nldapp0682log',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltapp0502rgp-nodes/providers/microsoft.compute/virtualmachinescalesets/aks-workercsm-29364886-vmss',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-03-11T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297256,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741651200,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'virtualmachinescalesets',
+          service_name: 'microsoft.compute',
+          tags: {
+            'aks-managed-consolidated-additional-properties': 'f4c950e3-fe55-11ef-818d-762f9de8f818',
+            'aks-managed-createOperationID': '6e0dc47e-5519-4808-9205-5a9ece317aab',
+            'aks-managed-creationSource': 'vmssclient-aks-workercsm-29364886-vmss',
+            'aks-managed-kubeletIdentityClientID': 'da333321-7728-4628-97fe-3817a5969bff',
+            'aks-managed-orchestrator': 'Kubernetes:1.30.7',
+            'aks-managed-poolName': 'workercsm',
+            'aks-managed-resourceNameSuffix': '63345867',
+            'aks-managed-ssh-access': 'LocalUser',
+            'devops-billing-env': 'test',
+            'devops-ownerteam': 'Spartans',
+            'aks-managed-coordination': 'true',
+            'aks-managed-enable-imds-restriction': 'false',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 70.77627944857339,
+          },
+          total_cost: 23799.80917355015,
+          id: 'd29c0b5e-88bd-44ef-969a-4137e05000f1',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 1137.6870517120276,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'd29c0b5e-88bd-44ef-969a-4137e05000f1',
+          resource_name: 'aks-workercsm-29364886-vmss',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+          traffic_expenses: [
+            {
+              from: 'westeurope',
+              to: 'northeurope',
+              usage: 0.01544129941612482,
+              cost: 0.0003088259883224964,
+            },
+            {
+              from: 'westeurope',
+              to: 'Intercontinental',
+              usage: 0.03988526575267315,
+              cost: 0.0019942632876336574,
+            },
+            {
+              from: 'westeurope',
+              to: 'External',
+              usage: 0.15628833044320345,
+              cost: 0.013597084748558698,
+            },
+          ],
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltapp0406rgp/providers/microsoft.compute/virtualmachines/nlpvs00514',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744296057,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765538984,
+          meta: {
+            os: 'Windows',
+            cpu_count: 8,
+            flavor: 'Standard_D8s_v3',
+            cloud_console_link:
+              'https://portal.azure.com/#resource/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/NLTAPP0406RGP/providers/Microsoft.Compute/virtualMachines/nlpvs00514/overview',
+            stopped_allocated: false,
+            last_seen_not_stopped: 1765538993,
+            spotted: false,
+            security_groups: [
+              '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0406rgp/providers/Microsoft.Network/networkSecurityGroups/nlpvs00514-nsg',
+            ],
+            vpc_id:
+              '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourceGroups/nltapp0406rgp/providers/Microsoft.Network/virtualNetworks/nltapp0406vnet',
+            vpc_name: 'nltapp0406vnet',
+            ram: 34359738368,
+            architecture: 'x86_64',
+          },
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'Instance',
+          tags: {
+            'devops-ownerteam': 'Ignite',
+            'devops-billing-env': 'test',
+          },
+          service_name: 'microsoft.compute',
+          last_expense: {
+            date: 1765411200,
+            cost: 35.23240894191154,
+          },
+          total_cost: 14039.713805277566,
+          has_metrics: true,
+          active: true,
+          id: '0fb58206-a392-4146-a4dc-947a9dee7360',
+          is_environment: false,
+          saving: 0,
+          cost: 617.1225187582626,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: '0fb58206-a392-4146-a4dc-947a9dee7360',
+          resource_name: 'nlpvs00514',
+          shareable: false,
+          constraint_violated: false,
+          traffic_expenses: [
+            {
+              from: 'westeurope',
+              to: 'Intercontinental',
+              usage: 0.030402593314647675,
+              cost: 0.0015201296657323838,
+            },
+            {
+              from: 'westeurope',
+              to: 'External',
+              usage: 0.02608293481171131,
+              cost: 0.0022692153286188845,
+            },
+            {
+              from: 'westeurope',
+              to: 'northeurope',
+              usage: 0.12658619694411755,
+              cost: 0.002531723938882351,
+            },
+          ],
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltapp0502rgp-nodes/providers/microsoft.compute/virtualmachinescalesets/aks-apicsm-53288563-vmss',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-03-11T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297244,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741651200,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'virtualmachinescalesets',
+          service_name: 'microsoft.compute',
+          tags: {
+            'aks-managed-consolidated-additional-properties': '1bc480eb-fe55-11ef-b2bb-4671b3a7dc45',
+            'aks-managed-coordination': 'true',
+            'aks-managed-createOperationID': '90746940-f0aa-4edb-9526-c7e7ab677d64',
+            'aks-managed-creationSource': 'vmssclient-aks-apicsm-53288563-vmss',
+            'aks-managed-enable-imds-restriction': 'false',
+            'aks-managed-kubeletIdentityClientID': 'da333321-7728-4628-97fe-3817a5969bff',
+            'aks-managed-orchestrator': 'Kubernetes:1.30.7',
+            'aks-managed-poolName': 'apicsm',
+            'aks-managed-resourceNameSuffix': '63345867',
+            'aks-managed-ssh-access': 'LocalUser',
+            'devops-billing-env': 'test',
+            'devops-ownerteam': 'Spartans',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 42.334260547678845,
+          },
+          total_cost: 12527.17430570503,
+          id: 'db0a4d96-4596-40f7-a88a-5672b3f3f1b8',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 682.6222512317645,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'db0a4d96-4596-40f7-a88a-5672b3f3f1b8',
+          resource_name: 'aks-apicsm-53288563-vmss',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+          traffic_expenses: [
+            {
+              from: 'westeurope',
+              to: 'Intercontinental',
+              usage: 0.004772460088133812,
+              cost: 0.00023862300440669065,
+            },
+            {
+              from: 'westeurope',
+              to: 'External',
+              usage: 0.019300024025142193,
+              cost: 0.0016791020901873704,
+            },
+            {
+              from: 'westeurope',
+              to: 'northeurope',
+              usage: 0.0035411491990089417,
+              cost: 7.082298398017884e-5,
+            },
+          ],
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltdb00050rgp/providers/microsoft.sql/servers/nltdb00050/elasticpools/nltdb00050ep02',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297239,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'elasticpools',
+          service_name: 'microsoft.sql',
+          tags: {
+            'devops-billing-project': 'shared',
+            'devops-billing-env': 'test',
+            'devops-ownerteam': 'Spartans',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 43.74507806451613,
+          },
+          total_cost: 12033.516606129015,
+          id: '2bf0d413-b807-4cfa-8524-5d0f90195c97',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 584.9088930967742,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: '2bf0d413-b807-4cfa-8524-5d0f90195c97',
+          resource_name: 'nltdb00050ep02',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltdb00050rgp/providers/microsoft.sql/servers/nltdb00050/elasticpools/nltdb00050ep03',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297244,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'elasticpools',
+          service_name: 'microsoft.sql',
+          tags: {
+            'devops-billing-project': 'shared',
+            'devops-billing-env': 'test',
+            'devops-ownerteam': 'Spartans',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 40.35037969464046,
+          },
+          total_cost: 7747.84661196111,
+          id: 'cdd210fa-f419-4eb3-9007-4f4a7ed1f166',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 459.5269683969464,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'cdd210fa-f419-4eb3-9007-4f4a7ed1f166',
+          resource_name: 'nltdb00050ep03',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nlddb0697rgp/providers/microsoft.sql/servers/nlddb0697/elasticpools/nlddb0697edp01',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297199,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'elasticpools',
+          service_name: 'microsoft.sql',
+          tags: {
+            'devops-billing-project': 'shared',
+            'devops-billing-env': 'dev',
+            'devops-ownerteam': 'Spartans',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 20.02381197311828,
+          },
+          total_cost: 7592.9690003629,
+          id: 'e1ddd89c-b58d-4221-8cf8-114cd5384275',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 331.01115774193545,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'e1ddd89c-b58d-4221-8cf8-114cd5384275',
+          resource_name: 'nlddb0697edp01',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nltapp0407rgp/providers/microsoft.search/searchservices/nltapp0407ssv',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297211,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'searchservices',
+          service_name: 'microsoft.search',
+          tags: {
+            'devops-ownerteam': 'Prometheus',
+            'devops-billing-env': 'test',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 15.456000000000001,
+          },
+          total_cost: 5562.816000000007,
+          id: 'b90eac27-3ed6-45e1-bf79-0afa4ff6eace',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 241.9199999999999,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: 'b90eac27-3ed6-45e1-bf79-0afa4ff6eace',
+          resource_name: 'nltapp0407ssv',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/91819a1c-c7d3-4b89-bc9f-39f85bff4666/resourcegroups/nldapp0695rgp/providers/microsoft.servicebus/namespaces/nldapp0695sbu',
+          cloud_account_id: 'd4321470-cfa8-4a67-adf5-c11faf491e14',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-12T00:00:00',
+          applied_rules: [
+            {
+              id: '3c2c49ae-2850-47c6-878f-fc13c2febbd7',
+              name: 'Rule for CPA (Development and Test)_1744295707',
+              pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            },
+          ],
+          created_at: 1744297227,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765497600,
+          pool_id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+          region: 'West Europe',
+          resource_type: 'namespaces',
+          service_name: 'microsoft.servicebus',
+          tags: {
+            'devops-billing-env': 'dev',
+            'devops-component': 'servicebus',
+            'devops-devgroup': 'shared',
+            'devops-environment': 'dev',
+            'devops-managed-by': 'Terraform',
+            'devops-ownerteam': 'Spartans',
+            'devops-project': 'Pyracloud,Goathpath',
+            'devops-region': 'WestEurope',
+            'devops-repository': 'ops-assets',
+            'devops-risk-class': 'non-critical',
+          },
+          last_expense: {
+            date: 1765411200,
+            cost: 0,
+          },
+          total_cost: 5253.360000000019,
+          id: '5532e1e3-a24b-4ea9-959f-f7e4b196b619',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 333.8999999999999,
+          cloud_account_name: 'CPA (Development and Test)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '3971cb2b-7075-48a2-85e5-3e016fad478c',
+            name: 'CPA (Development and Test)',
+            purpose: 'budget',
+          },
+          resource_id: '5532e1e3-a24b-4ea9-959f-f7e4b196b619',
+          resource_name: 'nldapp0695sbu',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          cloud_resource_id: '/providers/microsoft.capacity/reservationorders/efa3a01e-70a2-4251-9952-5f5bf2e28f95/reservations/',
+          _first_seen_date: '2025-03-12T00:00:00',
+          _last_seen_date: '2025-11-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301036,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741737600,
+          last_seen: 1762992000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'reservations',
+          service_name: 'microsoft.capacity',
+          tags: {
+            'devops-billing-env': 'production',
+          },
+          last_expense: {
+            date: 1762905600,
+            cost: 13825.47,
+          },
+          total_cost: 124429.22999999998,
+          meta: {
+            purchase_term: '12',
+            cloud_console_link: null,
+          },
+          id: '1de2edea-89a4-4740-9ecd-03572d200ccb',
+          is_environment: false,
+          saving: 0,
+          cost: 13825.47,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '1de2edea-89a4-4740-9ecd-03572d200ccb',
+          resource_name: 'efa3a01e-70a2-4251-9952-5f5bf2e28f95/reservations',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlploa0003rgp/providers/microsoft.operationalinsights/workspaces/nlploa0003wsp1',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301055,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'workspaces',
+          service_name: 'microsoft.operationalinsights',
+          tags: {
+            'devops-billing-env': 'production',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 84.58718817175999,
+          },
+          total_cost: 110027.2303209831,
+          id: 'd1fd49b8-ee53-4aeb-8ca8-a5975ac703ca',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 5687.681482188364,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: 'd1fd49b8-ee53-4aeb-8ca8-a5975ac703ca',
+          resource_name: 'nlploa0003wsp1',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id: '/providers/microsoft.capacity/reservationorders/63adb5f6-df20-4adf-b473-dcc6372b2ae4/reservations/',
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          _first_seen_date: '2025-03-12T00:00:00',
+          _last_seen_date: '2025-11-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301036,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741737600,
+          last_seen: 1762992000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'reservations',
+          service_name: 'microsoft.capacity',
+          tags: {},
+          last_expense: {
+            date: 1762905600,
+            cost: 11123.7,
+          },
+          total_cost: 100113.3,
+          meta: {
+            purchase_term: '12',
+            cloud_console_link: null,
+          },
+          id: '8897ed1e-0785-48e2-be74-cab1301fe4d7',
+          is_environment: false,
+          saving: 0,
+          cost: 11123.7,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '8897ed1e-0785-48e2-be74-cab1301fe4d7',
+          resource_name: '63adb5f6-df20-4adf-b473-dcc6372b2ae4/reservations',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlqloa0002rgp/providers/microsoft.operationalinsights/workspaces/nlqloa0002wsp1',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301119,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'workspaces',
+          service_name: 'microsoft.operationalinsights',
+          tags: {
+            'devops-billing-env': 'qa',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 44.8451402725,
+          },
+          total_cost: 64240.066937726406,
+          id: 'bcb4c927-ced7-4f39-890f-a42b0a7183ee',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 2886.0391511918997,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: 'bcb4c927-ced7-4f39-890f-a42b0a7183ee',
+          resource_name: 'nlqloa0002wsp1',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id: '/providers/microsoft.capacity/reservationorders/d0506833-f5c4-484a-bb15-9dd83a3bf7db/reservations/',
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          _first_seen_date: '2025-03-12T00:00:00',
+          _last_seen_date: '2025-11-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301119,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741737600,
+          last_seen: 1762992000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'reservations',
+          service_name: 'microsoft.capacity',
+          tags: {},
+          last_expense: {
+            date: 1762905600,
+            cost: 7028.7,
+          },
+          total_cost: 63258.299999999996,
+          meta: {
+            purchase_term: '12',
+            cloud_console_link: null,
+          },
+          id: 'd729392f-080d-4dbb-8cce-99967fce10b4',
+          is_environment: false,
+          saving: 0,
+          cost: 7028.7,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: 'd729392f-080d-4dbb-8cce-99967fce10b4',
+          resource_name: 'd0506833-f5c4-484a-bb15-9dd83a3bf7db/reservations',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpapp0051rgp-prod-aly-management/providers/microsoft.storage/storageaccounts/nlpapp0051sda',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301119,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'Bucket',
+          service_name: 'microsoft.storage',
+          tags: {
+            'bit-costcenter': '1160-pc',
+            'bit-type': 'product',
+            'bit-environment': 'prod',
+            'devops-sec-class': 'prod-cds',
+            costcenter: '14.20',
+            costobject: 'pyracloud',
+            bitenvironment: 'production',
+            'devops-billing-env': 'production',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 73.89775817268,
+          },
+          total_cost: 58498.964884893605,
+          id: '34677fd4-8810-42aa-84b4-ae965cf5de2c',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 2870.2351546124,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '34677fd4-8810-42aa-84b4-ae965cf5de2c',
+          resource_name: 'nlpapp0051sda',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+          traffic_expenses: [
+            {
+              from: 'westeurope',
+              to: 'External',
+              usage: 9.1e-5,
+              cost: 7.917e-6,
+            },
+            {
+              from: 'westeurope',
+              to: 'Inter-Region',
+              usage: 0.015479999999999999,
+              cost: 0.00030959999999999994,
+            },
+          ],
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpdb00052rgp/providers/microsoft.sql/servers/nlpdb00052/elasticpools/nlpdb00052ep01',
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301094,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'elasticpools',
+          service_name: 'microsoft.sql',
+          tags: {
+            'devops-billing-project': 'shared',
+            'devops-billing-env': 'prod',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 40.990388466772714,
+          },
+          total_cost: 52699.368943456546,
+          id: '96632fe3-3620-4e38-9401-a2abb504adde',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 2503.7686192939345,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '96632fe3-3620-4e38-9401-a2abb504adde',
+          resource_name: 'nlpdb00052ep01',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlpdb00052rgp/providers/microsoft.sql/servers/nlpdb00052/elasticpools/nlpdb0052ep03',
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301119,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'elasticpools',
+          service_name: 'microsoft.sql',
+          tags: {
+            'devops-billing-project': 'shared',
+            'devops-billing-env': 'prod',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 53.12604723285403,
+          },
+          total_cost: 49769.009108626255,
+          id: '11669a1c-18ca-43a9-9c33-a35d9f00dbd6',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 1598.8199419054704,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '11669a1c-18ca-43a9-9c33-a35d9f00dbd6',
+          resource_name: 'nlpdb0052ep03',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlploa0003rgp/providers/microsoft.storage/storageaccounts/nlploa0003sdi',
+          _first_seen_date: '2025-01-01T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744301119,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1735689600,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'Bucket',
+          service_name: 'microsoft.storage',
+          tags: {
+            'devops-ownerteam': 'Sp',
+            'devops-billing-env': 'production',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 44.3825279,
+          },
+          total_cost: 40698.724490907,
+          id: 'ceb9d50e-8464-4db4-848e-868d2aa640c0',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 1974.9081914950004,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: 'ceb9d50e-8464-4db4-848e-868d2aa640c0',
+          resource_name: 'nlploa0003sdi',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+        },
+        {
+          cloud_resource_id:
+            '/subscriptions/b6689fdb-ac8c-4116-8136-c7a179cb5be6/resourcegroups/nlqapp0504rgp-nodes/providers/microsoft.compute/virtualmachinescalesets/aks-workercsm-23348639-vmss',
+          cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
+          _first_seen_date: '2025-03-13T00:00:00',
+          _last_seen_date: '2025-12-13T00:00:00',
+          applied_rules: [
+            {
+              id: '1c43afcf-aaca-4801-b8e4-11e4d61d7e8c',
+              name: 'QA_PROD_3',
+              pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            },
+          ],
+          created_at: 1744300997,
+          deleted_at: 0,
+          employee_id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+          first_seen: 1741824000,
+          last_seen: 1765584000,
+          pool_id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+          region: 'West Europe',
+          resource_type: 'virtualmachinescalesets',
+          service_name: 'microsoft.compute',
+          tags: {
+            'aks-managed-consolidated-additional-properties': '2a8bfc5d-ffec-11ef-b626-5a4b513415b2',
+            'aks-managed-coordination': 'true',
+            'aks-managed-createOperationID': 'bb768989-a9d1-4aee-a852-ffd4b8c96cf1',
+            'aks-managed-creationSource': 'vmssclient-aks-workercsm-23348639-vmss',
+            'aks-managed-enable-imds-restriction': 'false',
+            'aks-managed-kubeletIdentityClientID': '78239426-3f25-45ce-b372-6d2277ff0270',
+            'aks-managed-orchestrator': 'Kubernetes:1.30.7',
+            'aks-managed-poolName': 'workercsm',
+            'aks-managed-resourceNameSuffix': '37030294',
+            'aks-managed-ssh-access': 'LocalUser',
+            'devops-billing-env': 'qa',
+          },
+          last_expense: {
+            date: 1765497600,
+            cost: 37.92704413002824,
+          },
+          total_cost: 36332.58623384124,
+          id: '2f9e5923-c560-4fe8-aeba-1e2d9db22fc8',
+          meta: {
+            cloud_console_link: null,
+          },
+          is_environment: false,
+          saving: 0,
+          cost: 2275.514609119033,
+          cloud_account_name: 'CPA (QA and Production)',
+          cloud_account_type: 'azure_cnr',
+          owner: {
+            id: '4447ab7b-da32-4d3e-8840-f244ed505c05',
+            name: 'Francesco',
+          },
+          pool: {
+            id: '7365f455-3210-4d34-964e-f00ce45ccbe5',
+            name: 'QA & Prod',
+            purpose: 'budget',
+          },
+          resource_id: '2f9e5923-c560-4fe8-aeba-1e2d9db22fc8',
+          resource_name: 'aks-workercsm-23348639-vmss',
+          active: false,
+          shareable: false,
+          constraint_violated: false,
+          traffic_expenses: [
+            {
+              from: 'westeurope',
+              to: 'External',
+              usage: 1.4764654012396934,
+              cost: 0.1284524899078533,
+            },
+            {
+              from: 'westeurope',
+              to: 'Inter-Region',
+              usage: 0.2763510197401047,
+              cost: 0.013258674181997776,
+            },
+          ],
+        },
+      ],
+      limit: 5000,
+    },
+  },
+};

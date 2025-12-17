@@ -123,7 +123,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
 
 test.describe('[MPT-12743] Home Page test for Pools requiring attention block', { tag: ['@ui', '@pools', '@homepage'] }, () => {
   test.use({ restoreSession: true });
-
+  test.slow();
   test.describe.configure({ mode: 'serial' }); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
 
   test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({

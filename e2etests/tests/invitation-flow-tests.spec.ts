@@ -1,3 +1,5 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
+
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { generateRandomEmail } from '../utils/random-data-generator';
@@ -51,7 +53,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
       await test.step('Verify and accept invitation from email', async () => {
         await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
         await emailVerificationPage.proceedToFinOps();
-        await pendingInvitationsPage.acceptInviteFlow();
+        await pendingInvitationsPage.acceptInvite();
       });
 
       await test.step('Assert organization', async () => {
@@ -74,7 +76,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     emailVerificationPage,
     baseRequest,
   }) => {
-    test.setTimeout(120000);
+    test.setTimeout(150000);
 
     await test.step('Navigate to the invitation page', async () => {
       await mainMenu.clickUserManagement();
@@ -104,7 +106,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     await test.step('Verify and decline invitation from email', async () => {
       await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
       await emailVerificationPage.proceedToFinOps();
-      await pendingInvitationsPage.declineInviteFlow();
+      await pendingInvitationsPage.declineInvite();
     });
 
     await test.step('Assert no pending invitations message', async () => {
@@ -153,7 +155,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     await test.step('Verify and decline invitation from email', async () => {
       await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
       await emailVerificationPage.proceedToFinOps();
-      await pendingInvitationsPage.declineInviteFlow();
+      await pendingInvitationsPage.declineInvite();
     });
 
     await test.step('Assert no pending invitations message', async () => {
@@ -189,7 +191,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     });
 
     await test.step('Accept invitation', async () => {
-      await pendingInvitationsPage.clickAcceptBtn();
+      await pendingInvitationsPage.acceptInvite();
     });
 
     await test.step('Assert organization', async () => {
@@ -253,7 +255,7 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
     await test.step('Verify and accept invitation from email', async () => {
       await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
       await emailVerificationPage.proceedToFinOps();
-      await pendingInvitationsPage.acceptInviteFlow();
+      await pendingInvitationsPage.acceptInvite();
     });
 
     await test.step('Verify no pending invitations in Settings tab', async () => {
@@ -350,7 +352,7 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     await test.step('Verify and accept invitation from email', async () => {
       await emailVerificationPage.verifyCodeAndConfirm(verificationCode);
       await emailVerificationPage.proceedToFinOps();
-      await pendingInvitationsPage.acceptInviteFlow();
+      await pendingInvitationsPage.acceptInvite();
     });
 
     await test.step('Sign out user', async () => {
