@@ -1,5 +1,5 @@
 import React from "react";
-import { DOCS_HYSTAX_CONNECT_AWS_ROOT } from "urls";
+import { DOCS_HYSTAX_CONNECT_AMAZON, DOCS_HYSTAX_CONNECT_AWS_ROOT } from "urls";
 import { AWS_CNR, CONNECTION_TYPES } from "utils/constants";
 import { AwsTypeDescription } from "./AwsConnectionFormElements";
 
@@ -27,7 +27,7 @@ const awsDefaultAssumedRoleDescriptions = [
   <AwsTypeDescription
     key="2"
     messageId="createAwsDefaultAssumedRoleDocumentationReference3"
-    linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
+    linkUrl={DOCS_HYSTAX_CONNECT_AMAZON}
   />
 ];
 
