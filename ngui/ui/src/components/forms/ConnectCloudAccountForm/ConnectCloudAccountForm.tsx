@@ -34,19 +34,14 @@ import DatabricksLogoIcon from "icons/DatabricksLogoIcon";
 import GcpLogoIcon from "icons/GcpLogoIcon";
 import K8sLogoIcon from "icons/K8sLogoIcon";
 import NebiusLogoIcon from "icons/NebiusLogoIcon";
-import { intl } from "translations/react-intl-config";
 import {
   DATABRICKS_CREATE_SERVICE_PRINCIPAL,
-  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
-  DOCS_HYSTAX_CONNECT_AWS_LINKED,
-  DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,
   DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
   DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT,
   DOCS_HYSTAX_CONNECT_KUBERNETES,
-  GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS,
   GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
@@ -74,11 +69,11 @@ import { ConnectionInputs, DataSourceNameField } from "./FormElements";
 import {
   AuthenticationTypeSelector,
   getAwsConnectionTypeDescriptions,
-  useAuthenticationType
-} from "./FormElements/Aws/components/AwsDescription";
-import { AUTHENTICATION_TYPES } from "./FormElements/Aws/constants/AwsConstants";
-import { AuthenticationType } from "./FormElements/Aws/types/AwsForm.types";
-import { AWS_ROOT_INPUTS_FIELD_NAMES } from "./FormElements/ConnectionFields";
+  useAuthenticationType,
+  AUTHENTICATION_TYPES,
+  AWS_ROOT_INPUTS_FIELD_NAMES,
+  AuthenticationType
+} from "./FormElements/AwsConnectionForm";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
 
 type ConnectionType = ObjectValues<typeof CONNECTION_TYPES>;
@@ -113,9 +108,7 @@ const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
     { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "management", cloudType: AWS_CNR },
     { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_STANDALONE, messageId: "standalone", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_ROOT, messageId: "root", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_LINKED, messageId: "linked", cloudType: AWS_CNR }
+    { connectionType: CONNECTION_TYPES.AWS_STANDALONE, messageId: "standalone", cloudType: AWS_CNR }
   ],
   [CLOUD_PROVIDERS.AZURE]: [
     { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
@@ -185,17 +178,6 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
   };
 };
 
-// MPT_TODO: disabled to meet BDR requirements
-// const getAwsLinkedParameters = (formData: FieldValues) => ({
-//   name: formData[DATA_SOURCE_NAME_FIELD_NAME],
-//   type: AWS_CNR,
-//   config: {
-//     access_key_id: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
-//     secret_access_key: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-//     linked: true
-//   }
-// });
-
 const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: string) => {
   const extraParams = {
     use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
@@ -221,17 +203,6 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     }
   };
 };
-
-// MPT_TODO: disabled to meet BDR requirements
-// const getAwsParametersByConnectionType = (connectionType: string) => {
-//   console.log(connectionType);
-//   const parameters = {
-//     [CONNECTION_TYPES.AWS_LINKED]: getAwsLinkedParameters,
-//     [CONNECTION_TYPES.AWS_ROLE]: getAwsAssumedRoleParameters
-//   }[connectionType];
-//
-//   return parameters || getAwsRootParameters;
-// };
 
 const getAwsParametersByAuthenticationType = (connectionType: string, authenticationType: AuthenticationType) =>
   authenticationType === AUTHENTICATION_TYPES.ACCESS_KEY
@@ -294,7 +265,7 @@ const getGoogleParameters = async (formData: FieldValues) => {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
     type: GCP_CNR,
     config: {
-      credentials: JSON.parse(credentials),
+      credentials: JSON.parse(credentials as string),
       billing_data: {
         dataset_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
         table_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE],
@@ -320,7 +291,7 @@ const getGoogleTenantParameters = async (formData: FieldValues) => {
     name: formData[DATA_SOURCE_NAME_FIELD_NAME],
     type: GCP_TENANT,
     config: {
-      credentials: JSON.parse(credentials),
+      credentials: JSON.parse(credentials as string),
       billing_data: {
         dataset_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
         table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]
@@ -437,67 +408,6 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
           ),
           strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
           p: (chunks: ReactNode) => <p>{chunks}</p>
-        }
-      }
-    ]),
-    [CONNECTION_TYPES.AWS_ROLE]: renderConnectionTypeDescription([
-      {
-        key: "createAwsAssumedRoleDescription",
-        messageId: "createAwsAssumedRoleDescription",
-        values: { action: intl.formatMessage({ id: "connect" }) }
-      }
-    ]),
-    [CONNECTION_TYPES.AWS_ROOT]: renderConnectionTypeDescription([
-      {
-        key: "createAwsRootDocumentationReference",
-        messageId: "createAwsRootDocumentationReference",
-        values: {
-          link: (chunks: ReactNode) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
-              {chunks}
-            </Link>
-          ),
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }
-      }
-    ]),
-    [CONNECTION_TYPES.AWS_LINKED]: renderConnectionTypeDescription([
-      {
-        key: "createAwsLinkedDocumentationReference1",
-        messageId: "createAwsLinkedDocumentationReference1",
-        values: {
-          autoBillingAwsLink: (chunks: ReactNode) => (
-            <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_LINKED} target="_blank" rel="noopener">
-              {chunks}
-            </Link>
-          )
-        }
-      },
-      {
-        key: "createAwsLinkedDocumentationReference2",
-        messageId: "createAwsLinkedDocumentationReference2",
-        values: {
-          extractLinkedReports: (
-            <Link
-              data-test-id="extract_linked_reports"
-              href={GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS}
-              target="_blank"
-              rel="noopener"
-            >
-              {GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS}
-            </Link>
-          )
-        }
-      },
-      {
-        key: "createAwsLinkedDocumentationReference3",
-        messageId: "createAwsLinkedDocumentationReference3",
-        values: {
-          discoverResourcesLink: (chunks: ReactNode) => (
-            <Link data-test-id="link_iam_user" href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES} target="_blank" rel="noopener">
-              {chunks}
-            </Link>
-          )
         }
       }
     ]),
@@ -669,7 +579,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       : isDataSourceConnectionTypeEnabled(providerTypes.connectionType);
   });
 
-  const renderTabs = () => {
+  const renderFormTabs = () => {
     if (!Array.isArray(CLOUD_PROVIDER_TYPES[selectedProvider])) {
       return null;
     }
@@ -738,7 +648,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
           ))}
         </Box>
         <Box>
-          {renderTabs()}
+          {renderFormTabs()}
           <Box sx={{ marginBottom: SPACING_2 }}>{renderConnectionTypeInfoMessage(connectionType, authenticationType)}</Box>
           <form
             onSubmit={

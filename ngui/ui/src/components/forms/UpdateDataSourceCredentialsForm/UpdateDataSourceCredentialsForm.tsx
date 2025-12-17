@@ -54,6 +54,14 @@ import { AWS_POOL_UPDATE_DATA_EXPORT_PARAMETERS as AWS_ROOT_UPDATE_DATA_EXPORT_P
 import type { UpdateDataSourceCredentialsFormProps } from "./types";
 
 const getAwsDescription = (config) => {
+  if (config.assume_role_account_id && config.assume_role_name) {
+    return (
+      <Typography sx={{ marginBottom: SPACING_2 }}>
+        <FormattedMessage id="createAwsAssumedRoleDescription" values={{ action: intl.formatMessage({ id: "save" }) }} />
+      </Typography>
+    );
+  }
+
   if (config.linked) {
     return (
       <Typography gutterBottom>
@@ -72,14 +80,6 @@ const getAwsDescription = (config) => {
             )
           }}
         />
-      </Typography>
-    );
-  }
-
-  if (config.assume_role_account_id && config.assume_role_name) {
-    return (
-      <Typography sx={{ marginBottom: SPACING_2 }}>
-        <FormattedMessage id="createAwsAssumedRoleDescription" values={{ action: intl.formatMessage({ id: "save" }) }} />
       </Typography>
     );
   }
@@ -286,6 +286,13 @@ const getConfig = (type, config) => {
             };
           }
 
+          if (config.linked) {
+            return {
+              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
+              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
+            };
+          }
+
           return {
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
@@ -319,7 +326,6 @@ const getConfig = (type, config) => {
                   }
                 };
           }
-
           if (config.linked) {
             return {
               config: {

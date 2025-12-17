@@ -46,7 +46,13 @@ const CloudResourceId = (props) => {
 
   // Additional check to handle cloudResourceIdentifier having 'null' or 'undefined' substring
   if (separator && cloudResourceIdentifier.includes(separator)) {
-    const shortenedCloudResourceId = `${SHORTENED_CLOUD_RESOURCE_ID_PREFIX}${cloudResourceIdentifier.split(separator).pop()}`;
+    // If the path ends with "/", take last 3 segments (last segment is empty)
+    // Example: "path/to/resource/" -> ["to", "resource", ""] -> "to/resource/"
+    const shortId = cloudResourceIdentifier.endsWith(separator)
+      ? cloudResourceIdentifier.split(separator).slice(-3).join(separator)
+      : cloudResourceIdentifier.split(separator).pop();
+
+    const shortenedCloudResourceId = `${SHORTENED_CLOUD_RESOURCE_ID_PREFIX}${shortId}`;
 
     return (
       <CloudResourceIdString
