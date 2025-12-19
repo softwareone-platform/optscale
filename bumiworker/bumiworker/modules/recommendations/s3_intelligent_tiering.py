@@ -228,6 +228,8 @@ class S3IntelligentTiering(S3AbandonedBucketsBase):
         """
         buckets_data = {}
         result = []
+        if not region_candidates:
+            return result
         cw_clients = {
             region: aws.session.client("cloudwatch", region_name=region)
             for region in region_candidates
