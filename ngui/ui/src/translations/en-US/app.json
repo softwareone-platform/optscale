@@ -426,6 +426,7 @@
   "createAwsDefaultAssumedRoleDocumentationReference2": "Please provide programmatic credentials for an IAM user with access to resource and billing data.",
   "createAwsDefaultAssumedRoleDocumentationReference3": "For more information and instructions, see our documentation here: <link></link>",
   "createAwsDefaultAssumedRoleDocumentationReference4": "Please provide programmatic credentials for an IAM user with access to resource data. AWS member account connections use billing report data from their AWS management account.",
+  "createAwsAssumedRoleLinkedDescription": "Connection through Assumed Role provides the most modern and secure way to connect OptScale to your AWS account. Please fill the fields below with the necessary information, then click the {action} button.",
   "createAwsLinkedDocumentationReference1": "AWS Linked Account connection uses billing report data from its AWS Root Account. Please connect a corresponding AWS Root Account according to <autoBillingAwsLink>this guide</autoBillingAwsLink>.",
   "createAwsLinkedDocumentationReference2": "If you do not want to expose billing data of the whole Root Account to OptScale, you can set up data extraction for specific Linked Account using {extractLinkedReports}.",
   "createAwsLinkedDocumentationReference3": "Enter IAM user credentials with <discoverResourcesLink>read-only policy for resource discovery</discoverResourcesLink>.",
