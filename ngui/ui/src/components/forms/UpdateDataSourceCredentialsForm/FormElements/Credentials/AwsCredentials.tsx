@@ -58,8 +58,6 @@ const AwsCredentials = ({ config }) => {
   const getAwsInputs = (config) => {
     const fullAuthenticationType: string = authenticationType + (config.linked ? "Linked" : "");
 
-    console.log("fullAuthenticationType", fullAuthenticationType, config);
-
     switch (fullAuthenticationType) {
       case "assumedRole":
       case "assumedRoleLinked":
