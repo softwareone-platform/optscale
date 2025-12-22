@@ -78,6 +78,17 @@ THROTTLE_ERROR_CODES = {
     'TooManyRequestsException', 'ProvisionedThroughputExceededException',
 }
 
+TIER_STORAGE_TYPE_MAP = {
+    "STANDARD": "StandardStorage",
+    "STANDARD_IA": "StandardIAStorage",
+    "ONEZONE_IA": "OneZoneIAStorage",
+    "REDUCED_REDUNDANCY": "ReducedRedundancyStorage",
+    "GLACIER": "GlacierStorage",
+    "GLACIER_IR": "GlacierInstantRetrievalStorage",
+    "DEEP_ARCHIVE": "DeepArchiveStorage"
+}
+
+
 def _is_auth_error(exc) -> bool:
 
     if isinstance(exc, ClientError):
@@ -593,7 +604,7 @@ class Aws(S3CloudMixin):
         return result
 
     @staticmethod
-    def get_bucket_storage_info(s3_client, bucket_name):
+    def get_bucket_storage_info(cloudwatch, bucket_name):
         """
         Gather storage metadata for a bucket.
         - total_size_bytes (int): aggregated bucket size in bytes.
@@ -601,22 +612,64 @@ class Aws(S3CloudMixin):
         - tiers (dict): aggregated bucket size per storage tier.
         """
 
-        # Filter out directories - only count actual objects
-        def is_actual_object(obj):
-            key = obj.get('Key', '')
-            size = obj.get('Size', 0)
-            return size > 0 or not key.endswith('/')
-
-        paginator = s3_client.get_paginator('list_objects_v2')
-        pages = paginator.paginate(Bucket=bucket_name, Prefix="")
-        obj_count, total_size = 0, 0
-        tiers = defaultdict(float)
-        for page in pages:
-            for obj in page.get("Contents", list()):
-                if is_actual_object(obj):
-                    obj_count += 1
-                    total_size += obj["Size"]
-                    tiers[obj["StorageClass"]] += obj["Size"]
+        end = datetime.now(tz=timezone.utc).replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+        start = end - timedelta(days=2)
+        queries = []
+        for tier, storage_type in TIER_STORAGE_TYPE_MAP.items():
+            queries.append({
+                "Id": f"size{tier}",
+                "MetricStat": {
+                    "Metric": {
+                        "Namespace": "AWS/S3",
+                        "MetricName": "BucketSizeBytes",
+                        "Dimensions": [
+                            {"Name": "BucketName", "Value": bucket_name},
+                            {"Name": "StorageType", "Value": storage_type},
+                        ],
+                    },
+                    "Period": SECONDS_IN_DAY,
+                    "Stat": "Average",
+                },
+            })
+        queries.append({
+            "Id": "count",
+            "MetricStat": {
+                "Metric": {
+                    "Namespace": "AWS/S3",
+                    "MetricName": "NumberOfObjects",
+                    "Dimensions": [
+                        {"Name": "BucketName", "Value": bucket_name},
+                        {"Name": "StorageType", "Value": "AllStorageTypes"},
+                    ],
+                },
+                "Period": SECONDS_IN_DAY,
+                "Stat": "Average",
+            },
+        })
+        total_size = 0
+        obj_count = 0
+        tiers = defaultdict(int)
+        try:
+            response = cloudwatch.get_metric_data(
+                StartTime=start,
+                EndTime=end,
+                MetricDataQueries=queries,
+                ScanBy="TimestampDescending",
+            )
+            for result in response["MetricDataResults"]:
+                if not result["Values"]:
+                    continue
+                value = int(result["Values"][0])
+                metric_id = result["Id"]
+                if metric_id == "count":
+                    obj_count = value
+                else:
+                    tier = metric_id.removeprefix("size")
+                    tiers[tier] = value
+                    total_size += value
+        except ClientError as exc:
+            LOG.warning(f"Failed to get cloud watch metric: {str(exc)}")
         return {
             bucket_name: {
                 "total_size_bytes": total_size,

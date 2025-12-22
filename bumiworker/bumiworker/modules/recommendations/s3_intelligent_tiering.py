@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from concurrent.futures.thread import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Tuple
 from datetime import datetime, date, timedelta
 
@@ -205,7 +205,7 @@ class S3IntelligentTiering(S3AbandonedBucketsBase):
             })
         metrics = aws.get_cloud_watch_metric_data(
             region, metric_queries, today,
-            today - timedelta(days=7))
+            today - timedelta(days=2))
         for md in metrics.get("MetricDataResults", []):
             values = md.get("Values") or []
             if not values:
@@ -228,14 +228,21 @@ class S3IntelligentTiering(S3AbandonedBucketsBase):
         """
         buckets_data = {}
         result = []
-        with ThreadPoolExecutor(max_workers=50) as executor:
+        if not region_candidates:
+            return result
+        cw_clients = {
+            region: aws.session.client("cloudwatch", region_name=region)
+            for region in region_candidates
+        }
+        max_workers = min(20, sum(len(v) for v in region_candidates.values()))
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = []
-            for region, candidates in region_candidates.items():
-                s3_client = aws.session.client("s3", region_name=region)
-                for cand in candidates:
+            for region, buckets in region_candidates.items():
+                cloudwatch = cw_clients[region]
+                for bucket in buckets:
                     futures.append(executor.submit(
-                        aws.get_bucket_storage_info, s3_client, cand, ))
-            for f in futures:
+                        aws.get_bucket_storage_info, cloudwatch, bucket, ))
+            for f in as_completed(futures):
                 res = f.result()
                 if res:
                     buckets_data.update(res)
