@@ -14,12 +14,12 @@ COPY subspector/uv.lock subspector/uv.lock
 
 RUN uv --project subspector sync --locked --no-dev
 
-COPY subspector/*.py subspector
+COPY subspector/*.py subspector/
 COPY subspector/subspector_server/api subspector/subspector_server/api
 COPY subspector/subspector_server/controllers subspector/subspector_server/controllers
 COPY subspector/subspector_server/models subspector/subspector_server/models
 COPY subspector/subspector_server/schemas subspector/subspector_server/schemas
-COPY subspector/subspector_server/*.py subspector/subspector_server
+COPY subspector/subspector_server/*.py subspector/subspector_server/
 COPY subspector/subspector_server/alembic subspector/subspector_server/alembic
 
 EXPOSE 8800
