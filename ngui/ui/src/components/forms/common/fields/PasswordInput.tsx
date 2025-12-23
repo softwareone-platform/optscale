@@ -1,6 +1,7 @@
 import { ReactNode, useState, useRef } from "react";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import IconButton from "components/IconButton";
@@ -21,7 +22,7 @@ type PasswordInputProps = {
   dataTestId?: string;
   margin?: "none" | "dense" | "normal";
   autoComplete?: string;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
 };
 
 const PasswordInput = ({

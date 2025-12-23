@@ -187,3 +187,9 @@ export const currencyCodes = [
   "ZMW",
   "ZWL"
 ] as const;
+
+export type CurrencyCode = (typeof currencyCodes)[number];
+
+export const CURRENCY = Object.fromEntries(currencyCodes.map((code) => [code, code])) as {
+  [K in CurrencyCode]: K;
+};

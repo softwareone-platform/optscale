@@ -1,0 +1,6 @@
+ARG BUILDTAG=build
+FROM subspector:${BUILDTAG}
+
+RUN uv --project subspector sync --locked
+
+COPY subspector/subspector_server/tests/unittests subspector/subspector_server/tests/unittests

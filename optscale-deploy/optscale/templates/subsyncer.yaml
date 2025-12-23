@@ -1,4 +1,5 @@
-{{- $config := .Values.deactivatorg }}
+{{- $config := .Values.subsyncer }}
+{{- if .Values.stripe.enabled }}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -28,7 +29,7 @@ spec:
             release: {{ .Release.Name }}
         spec:
           initContainers:
-{{ include "wait_for_service" .Values.mariadb | indent 10 }}
+{{ include "wait_for_service" .Values.subspector | indent 12 }}
           containers:
           - name: {{ $config.name }}
             image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
@@ -41,4 +42,4 @@ spec:
             - name: HX_ETCD_PORT
               value: {{ .Values.etcd.service.externalPort | quote }}
           restartPolicy: Never
-
+{{- end -}}

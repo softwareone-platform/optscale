@@ -1,11 +1,11 @@
-name: Build deactivatorg test image and run tests on it
-run-name: Build deactivatorg test image and run tests on it - started by ${{ github.actor }}
+name: Build subsyncer test image and run tests on it
+run-name: Build subsyncer test image and run tests on it - started by ${{ github.actor }}
 permissions: read-all
 on:
   pull_request:
     types: [opened, synchronize]
     paths:
-    - 'docker_images/deactivatorg/**'
+    - 'docker_images/subsyncer/**'
   workflow_dispatch:
 
 
@@ -25,6 +25,6 @@ jobs:
           username: ${{ env.username }}
           password: ${{ env.password }}
       - name: Build image
-        run: bash -x build.sh deactivatorg build
+        run: bash -x build.sh subsyncer build
       - name: Build test image and run tests
-        run: bash -x docker_images/run_test.sh deactivatorg
+        run: bash -x docker_images/run_test.sh subsyncer

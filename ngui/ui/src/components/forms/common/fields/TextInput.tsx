@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import Input from "components/Input";
@@ -29,7 +30,7 @@ type TextInputProps = {
     value: RegExp;
     message: string;
   };
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   minRows?: number;
   maxRows?: number;
   disabled?: boolean;

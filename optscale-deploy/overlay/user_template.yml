@@ -150,3 +150,13 @@ password_strength_settings:
   min_uppercase:
   min_digits:
   min_special_chars:
+
+exchange_rates:
+  BRL:
+  INR:
+  EUR:
+
+stripe:
+  enabled: false
+  api_key:
+  webhook_secret:

@@ -156,6 +156,12 @@ etcd:
     password: {{ .Values.mariadb.credentials.password }}
     db: jira-bus
     port: {{ .Values.mariadb.service.externalPort }}
+  subspectordb:
+    host: {{ .Values.mariadb.service.name }}
+    user: {{ .Values.mariadb.credentials.username }}
+    password: {{ .Values.mariadb.credentials.password }}
+    db: subspector
+    port: {{ .Values.mariadb.service.externalPort }}
   mongo:
   {{ if .Values.mongo.url }}
     url: {{ .Values.mongo.url }}
@@ -252,9 +258,9 @@ etcd:
     filename: {{ .Values.failed_imports_dataset_generator.filename }}
     aws_access_key_id: {{ .Values.failed_imports_dataset_generator.aws_access_key_id }}
     aws_secret_access_key: {{ .Values.failed_imports_dataset_generator.aws_secret_access_key }}
-  deactivatorg:
-    enable: {{ .Values.deactivatorg.enable }}
-    days_limit: {{ .Values.deactivatorg.days_limit }}
+  subspector:
+    host: {{ .Values.subspector.service.name }}
+    port: {{ .Values.subspector.service.externalPort }}
   password_strength_settings:
     min_length: {{ .Values.password_strength_settings.min_length }}
     min_lowercase: {{ .Values.password_strength_settings.min_lowercase }}
@@ -265,4 +271,12 @@ etcd:
     demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
   diworker:
     max_report_imports_workers: {{ .Values.import_reports.max_workers }}
+  exchange_rates:
+    {{- range $currency, $rate := .Values.exchange_rates }}
+      {{ $currency }}: {{ $rate }}
+    {{- end }}
+  stripe:
+    api_key: {{ .Values.stripe.api_key }}
+    webhook_secret: {{ .Values.stripe.webhook_secret }}
+    enabled: {{ .Values.stripe.enabled }}
 {{- end }}

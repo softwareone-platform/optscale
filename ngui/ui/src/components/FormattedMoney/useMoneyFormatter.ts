@@ -48,7 +48,7 @@ export const useMoneyFormatter = () => {
 
   return useCallback(
     (type, value, { format, ...rest } = {}) => {
-      const calculatedFormat = format || currency;
+      const calculatedFormat = (format || currency).toUpperCase();
 
       if (!value) {
         return intl.formatNumber(0, { format: calculatedFormat });

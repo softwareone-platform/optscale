@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { ApolloError } from "@apollo/client";
 import { useOrganizationAllowedActionsQuery } from "graphql/__generated__/hooks/auth";
 import {
+  useBillingSubscriptionQuery,
   useCurrentEmployeeQuery,
   useDataSourcesQuery,
   useInvitationsQuery,
@@ -14,11 +15,13 @@ import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useSignOut } from "hooks/useSignOut";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { isEmptyArray } from "utils/arrays";
+import { MILLISECONDS_IN_MINUTE } from "utils/datetime";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
   render: (props: {
-    organizationId: string;
+    organizationId: string | undefined;
+    isDemo: boolean | undefined;
     error: ApolloError | undefined;
     isLoadingProps: {
       getOrganizationsLoading: boolean;
@@ -29,6 +32,7 @@ type CoreDataContainerProps = {
       getOrganizationFeaturesLoading: boolean;
       getOrganizationThemeSettingsLoading: boolean;
       getOrganizationPerspectivesLoading: boolean;
+      getSubscriptionLoading: boolean;
     };
   }) => ReactNode;
 };
@@ -61,7 +65,7 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     }
   });
 
-  const { organizationId } = useCurrentOrganization(getOrganizationsData?.organizations);
+  const { organizationId, isDemo } = useCurrentOrganization(getOrganizationsData?.organizations);
 
   const skipRequest = !organizationId;
 
@@ -116,6 +120,14 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       skip: skipRequest
     });
 
+  const { loading: getSubscriptionLoading, error: getSubscriptionError } = useBillingSubscriptionQuery({
+    variables: {
+      organizationId
+    },
+    pollInterval: 30 * MILLISECONDS_IN_MINUTE,
+    skip: skipRequest || isDemo
+  });
+
   const error =
     getOrganizationsError ||
     getOrganizationAllowedActionsError ||
@@ -124,10 +136,12 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     getInvitationsError ||
     getOrganizationFeaturesError ||
     getOrganizationThemeSettingsError ||
-    getOrganizationPerspectivesError;
+    getOrganizationPerspectivesError ||
+    getSubscriptionError;
 
   return render({
     organizationId,
+    isDemo,
     error,
     isLoadingProps: {
       getOrganizationsLoading,
@@ -137,7 +151,8 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       getInvitationsLoading,
       getOrganizationFeaturesLoading,
       getOrganizationThemeSettingsLoading,
-      getOrganizationPerspectivesLoading
+      getOrganizationPerspectivesLoading,
+      getSubscriptionLoading
     }
   });
 };

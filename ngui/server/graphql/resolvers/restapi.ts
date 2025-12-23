@@ -133,7 +133,16 @@ const resolvers: Resolvers = {
     },
     availableFilters: async (_, { organizationId, params }, { dataSources }) => {
       return dataSources.restapi.getAvailableFilters(organizationId, params);
-    }
+    },
+    billingSubscriptionPlans: async (_, { organizationId }, { dataSources }) => {
+      return dataSources.restapi.getBillingSubscriptionPlans(organizationId);
+    },
+    billingSubscription: async (_, { organizationId }, { dataSources }) => {
+      return dataSources.restapi.getBillingSubscription(organizationId);
+    },
+    organizationSummary: async (_, { organizationId, params }, { dataSources }) => {
+      return dataSources.restapi.getOrganizationSummary(organizationId, params);
+    },
   },
   Mutation: {
     createDataSource: async (
@@ -193,6 +202,25 @@ const resolvers: Resolvers = {
       return dataSources.restapi.updateOrganizationPerspectives(
         organizationId,
         value
+      );
+    },
+    createStripeCheckoutSession: async (
+      _,
+      { organizationId, params },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.createStripeCheckoutSession(
+        organizationId,
+        params
+      );
+    },
+    createStripeBillingPortalSession: async (
+      _,
+      { organizationId },
+      { dataSources }
+    ) => {
+      return dataSources.restapi.createStripeBillingPortalSession(
+        organizationId
       );
     },
   },
