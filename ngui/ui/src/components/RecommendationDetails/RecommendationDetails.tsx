@@ -8,10 +8,16 @@ import { removeSearchParam } from "utils/network";
 import Details from "./Details";
 import RecommendationDetailsService from "./RecommendationDetailsService";
 import SelectedCloudAccounts from "./SelectedCloudAccounts";
+import type {
+  RecommendationsProps,
+  RecommendationsContainerProps,
+  MlRecommendationsContainerProps,
+  RecommendationDetailsProps
+} from "./types";
 
 const QUERY_TAB_NAME = "recommendationDetailsTab";
 
-const Recommendations = ({ isLoading, type, limit, data, status, dataSourceIds, withDownload }) => {
+const Recommendations = ({ isLoading, type, limit, data, status, dataSourceIds, withDownload }: RecommendationsProps) => {
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center">
@@ -25,7 +31,7 @@ const Recommendations = ({ isLoading, type, limit, data, status, dataSourceIds, 
   );
 };
 
-const RecommendationsContainer = ({ type, limit, status, dataSourceIds }) => {
+const RecommendationsContainer = ({ type, limit, status, dataSourceIds }: RecommendationsContainerProps) => {
   const { useGetOptimizations } = RecommendationDetailsService();
   const { isLoading, data } = useGetOptimizations({ type, limit, status, cloudAccountIds: dataSourceIds });
 
@@ -42,7 +48,7 @@ const RecommendationsContainer = ({ type, limit, status, dataSourceIds }) => {
   );
 };
 
-const MlRecommendationsContainer = ({ taskId, type, limit, status }) => {
+const MlRecommendationsContainer = ({ taskId, type, limit, status }: MlRecommendationsContainerProps) => {
   const { useGetTaskRecommendation } = MlTasksService();
   const { isLoading, data } = useGetTaskRecommendation({ taskId, type, status });
 
@@ -52,11 +58,11 @@ const MlRecommendationsContainer = ({ taskId, type, limit, status }) => {
 const RecommendationDetails = ({
   type,
   dataSourceIds = [],
-  limit = 100,
+  limit,
   mlTaskId,
-  dismissable = false,
+  dismissible = false,
   withExclusions = false
-}) => {
+}: RecommendationDetailsProps) => {
   useEffect(
     () => () => {
       removeSearchParam(QUERY_TAB_NAME);
@@ -64,7 +70,7 @@ const RecommendationDetails = ({
     []
   );
 
-  const tabs = [STATUS.ACTIVE, dismissable ? STATUS.DISMISSED : false, withExclusions ? STATUS.EXCLUDED : false]
+  const tabs = [STATUS.ACTIVE, dismissible ? STATUS.DISMISSED : false, withExclusions ? STATUS.EXCLUDED : false]
     .filter(Boolean)
     .map((name) => ({
       title: name,

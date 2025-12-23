@@ -44,7 +44,7 @@ class InactiveUsers extends BaseRecommendation {
 
   settingsSidemodalClass = InactiveUsersModal;
 
-  dismissable = false;
+  dismissible = false;
 
   get previewItems() {
     return this.items.map((item) => [

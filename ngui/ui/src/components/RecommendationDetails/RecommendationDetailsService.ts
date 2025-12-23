@@ -33,7 +33,7 @@ const useGetOptimizations = ({ type, limit, status, cloudAccountIds }) => {
           const newOptimizations = getState()?.[RESTAPI]?.[GET_OPTIMIZATION_DETAILS] ?? {};
           const recommendation = new allRecommendations[type](status, newOptimizations);
 
-          if (!recommendation.dismissable) {
+          if (!recommendation.dismissible) {
             return;
           }
           const ids = recommendation.items.map(({ resource_id: resourceId }) => resourceId).filter(Boolean);

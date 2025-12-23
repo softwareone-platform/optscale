@@ -13,7 +13,6 @@ import {
   RECOMMENDATION_SERVICE_QUERY_PARAMETER,
   RECOMMENDATION_VIEW_QUERY_PARAMETER
 } from "urls";
-import { RECOMMENDATIONS_LIMIT_FILTER } from "utils/constants";
 import { DEFAULT_RECOMMENDATIONS_FILTER, DEFAULT_VIEW, POSSIBLE_RECOMMENDATIONS_FILTERS, POSSIBLE_VIEWS } from "./Filters";
 import RecommendationsOverview from "./RecommendationsOverview";
 import {
@@ -38,7 +37,8 @@ const RecommendationsOverviewContainer = ({
   const { useGet, useGetRecommendationsDownloadOptions } = OrganizationOptionsService();
   const { options: downloadOptions } = useGetRecommendationsDownloadOptions();
   const { options } = useGet(true);
-  const downloadLimit = downloadOptions?.limit ?? RECOMMENDATIONS_LIMIT_FILTER;
+
+  const downloadLimit = downloadOptions?.limit;
 
   const services = useRecommendationServices();
 
@@ -75,7 +75,7 @@ const RecommendationsOverviewContainer = ({
   const optscaleRecommendations = useOptscaleRecommendations();
 
   const organizationRecommendationOptions = options
-    .filter(({ name }) =>
+    .filter(({ name }: { name: string }) =>
       /**
        * The options API has 2 output formats: an array of names ([string]) and an array of objects ([{name, value}]).
        * On the "Org options" page, we request options with withValues set to false, giving us an array of strings.
@@ -95,7 +95,7 @@ const RecommendationsOverviewContainer = ({
         titleMessageId: recommendation.title,
         limit: downloadLimit,
         dataSourceIds: selectedDataSourceIds,
-        dismissable: recommendation.dismissable,
+        dismissible: recommendation.dismissible,
         withExclusions: recommendation.withExclusions
       });
     },
