@@ -1012,6 +1012,14 @@ google_calendar_service:
     client_x509_cert_url:
   enabled: false
 
+# skip sending messages by template parameter value
+skip_email_filters:
+  # email template name:
+  #   template parameter path: parameter value regex to skip email
+  # example:
+  #  anomaly_detection_alert:
+  #    texts.organization.name: ^aqa-(.*)$
+
 bumi_scheduler_timeout: 300
 bumi_worker:
   max_retries: 5

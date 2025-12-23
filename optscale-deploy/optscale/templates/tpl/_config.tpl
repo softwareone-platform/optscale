@@ -38,6 +38,13 @@ etcd:
   optscale_error_emails:
     recipient: {{ .Values.optscale_error_emails.recipient }}
     enabled: {{ .Values.optscale_error_emails.enabled }}
+  skip_email_filters:
+  {{- range $key, $value := .Values.skip_email_filters }}
+    {{ $key }}:
+    {{- range $inKey, $inValue := $value }}
+      {{ $inKey | quote }}: {{ $inValue | quote }}
+    {{- end }}
+  {{- end }}
   google_calendar_service:
     enabled: {{ .Values.google_calendar_service.enabled }}
     access_key:
