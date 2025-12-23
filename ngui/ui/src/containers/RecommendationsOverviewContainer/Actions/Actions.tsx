@@ -11,8 +11,9 @@ import Tooltip from "components/Tooltip";
 import { DOCS_HYSTAX_CLEANUP_SCRIPTS, EMAIL_SALES } from "urls";
 import { Menu } from "../RecommendationCard";
 import { useDownloadCleanupScripts, useDownloadItems, usePinItems, useSettingItems } from "./hooks";
+import type { DownloadCleanupScriptsProps, GeneralActionsProps, DownloadItemsProps, ActionsProps } from "./types";
 
-const DownloadCleanupScripts = ({ recommendation }) => {
+const DownloadCleanupScripts = ({ recommendation }: DownloadCleanupScriptsProps) => {
   const downloadCleanupScripts = useDownloadCleanupScripts(recommendation);
 
   return (
@@ -35,7 +36,7 @@ const DownloadCleanupScripts = ({ recommendation }) => {
   );
 };
 
-const GeneralActions = ({ recommendation, withMenu }) => {
+const GeneralActions = ({ recommendation, withMenu }: GeneralActionsProps) => {
   const settingItems = useSettingItems(recommendation);
   const pinItems = usePinItems(recommendation);
 
@@ -54,7 +55,7 @@ const DownloadItems = ({
   isDownloadAvailable = false,
   isLoading = false,
   selectedDataSourceIds
-}) => {
+}: DownloadItemsProps) => {
   const downloadItems = useDownloadItems(recommendation, downloadLimit, selectedDataSourceIds);
 
   return (
@@ -86,7 +87,7 @@ const Actions = ({
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
   selectedDataSourceIds
-}) => {
+}: ActionsProps) => {
   const { withCleanupScripts, hasItems } = recommendation;
 
   return (

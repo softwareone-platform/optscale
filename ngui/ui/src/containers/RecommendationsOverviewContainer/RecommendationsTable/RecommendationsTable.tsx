@@ -13,7 +13,7 @@ import status from "./columns/status";
 type RecommendationsTableProps = {
   isLoading: boolean;
   recommendations: BaseRecommendation[];
-  downloadLimit: number;
+  downloadLimit?: number;
   onRecommendationClick: (id: string) => void;
   isDownloadAvailable: boolean;
   isGetIsDownloadAvailableLoading: boolean;

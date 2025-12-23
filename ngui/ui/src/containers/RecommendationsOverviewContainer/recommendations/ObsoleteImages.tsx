@@ -89,7 +89,7 @@ class ObsoleteImages extends BaseRecommendation {
 
   emptyMessageId = "noObsoleteImages";
 
-  dismissable = false;
+  dismissible = false;
 
   get previewItems() {
     return this.items.map((item) => [
