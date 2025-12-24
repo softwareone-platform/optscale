@@ -10,6 +10,7 @@ import UserEmailNotificationSettingsContainer from "containers/UserEmailNotifica
 import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { OPTSCALE_CAPABILITY, SETTINGS_TABS } from "utils/constants";
+import { getEnvironmentVariable } from "utils/env";
 
 const actionBarDefinition = {
   title: {
@@ -26,13 +27,15 @@ const Settings = () => {
 
   const { isDemo } = useOrganizationInfo();
 
+  const isBillingIntegrationEnabled = getEnvironmentVariable("VITE_BILLING_INTEGRATION") === "enabled";
+
   const tabs = [
     {
       title: SETTINGS_TABS.ORGANIZATION,
       dataTestId: `tab_${SETTINGS_TABS.ORGANIZATION}`,
       node: <OrganizationSettings />
     },
-    ...(isDemo
+    ...(isDemo || !isBillingIntegrationEnabled
       ? []
       : [
           {

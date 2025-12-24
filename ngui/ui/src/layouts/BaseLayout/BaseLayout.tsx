@@ -117,7 +117,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
 
   return (
     <CoreDataContainer
-      render={({ organizationId, isDemo, isLoadingProps }) => {
+      render={({ organizationId, isDemo, isLoadingProps, isBillingIntegrationEnabled }) => {
         const someApiLoading = Object.values(isLoadingProps).some((isLoading) => isLoading);
 
         const renderPageContent = () => {
@@ -167,7 +167,9 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
         return (
           <>
             <TopAlertWrapper />
-            {isLoadingProps.getSubscriptionLoading || isDemo ? null : <SubscriptionStatusTopAlert />}
+            {isLoadingProps.getSubscriptionLoading || isDemo || !isBillingIntegrationEnabled ? null : (
+              <SubscriptionStatusTopAlert />
+            )}
             <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
               <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
                 {isLoadingProps.getInvitationsLoading ? null : <PendingInvitationsAlert />}

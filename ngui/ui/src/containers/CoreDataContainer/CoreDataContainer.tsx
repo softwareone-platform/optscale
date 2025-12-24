@@ -16,6 +16,7 @@ import { useSignOut } from "hooks/useSignOut";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { isEmptyArray } from "utils/arrays";
 import { MILLISECONDS_IN_MINUTE } from "utils/datetime";
+import { getEnvironmentVariable } from "utils/env";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
@@ -34,6 +35,7 @@ type CoreDataContainerProps = {
       getOrganizationPerspectivesLoading: boolean;
       getSubscriptionLoading: boolean;
     };
+    isBillingIntegrationEnabled: boolean;
   }) => ReactNode;
 };
 
@@ -120,12 +122,14 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       skip: skipRequest
     });
 
+  const isBillingIntegrationEnabled = getEnvironmentVariable("VITE_BILLING_INTEGRATION") === "enabled";
+
   const { loading: getSubscriptionLoading, error: getSubscriptionError } = useBillingSubscriptionQuery({
     variables: {
       organizationId
     },
     pollInterval: 30 * MILLISECONDS_IN_MINUTE,
-    skip: skipRequest || isDemo
+    skip: skipRequest || isDemo || !isBillingIntegrationEnabled
   });
 
   const error =
@@ -142,6 +146,7 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
   return render({
     organizationId,
     isDemo,
+    isBillingIntegrationEnabled,
     error,
     isLoadingProps: {
       getOrganizationsLoading,
