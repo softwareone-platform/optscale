@@ -51,7 +51,8 @@ class OrganizationSubscriptionController(BaseController):
             _, subscription = subspector_cl.get_owner_subscription(organization_id)
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 404:
-                raise NotFoundException(Err.OE0002, ['subscription'])
+                raise NotFoundException(
+                    Err.OE0002, ['subscription', organization_id])
             raise
         finally:
             subspector_cl.close()
