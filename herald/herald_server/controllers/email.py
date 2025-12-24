@@ -19,10 +19,10 @@ class EmailController(BaseController):
         template_type = data.get("template_type")
         template_params = data.get("template_params", {})
         if template_type in ["new_employee", "new_cloud_account", "cloud_account_deleted"]:
-            auth_user_email = None
             if template_params:
                 auth_user_email = template_params.get("texts", {}).get("user_email")
-            return auth_user_email is not None and is_hystax_email(auth_user_email)
+                if auth_user_email is not None and is_hystax_email(auth_user_email):
+                    return True
 
         def _template_param_value(param_name):
             names = [param_name]
