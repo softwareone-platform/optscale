@@ -2267,6 +2267,7 @@
   "subscription": "Subscription",
   "subscriptionBillingCycle.annual": "Annual",
   "subscriptionBillingCycle.monthly": "Monthly",
+  "subscriptionCreationInProgress": "Subscription creation is in progress. Please try again later.",
   "subscriptionId": "Subscription ID",
   "subscriptionIdTooltip": "Subscription ID to which OptScale will connect. Can be found on a corresponding subscription page in Azure cloud portal.",
   "subscriptionPriceTooltip": "<strong>{price}</strong> × <strong>{quantity}</strong> {quantity, plural, one {seat} other {seats}}",

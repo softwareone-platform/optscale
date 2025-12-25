@@ -1,4 +1,5 @@
 import { Box, Stack } from "@mui/material";
+import { FormattedMessage } from "react-intl";
 import SomethingWentWrong from "components/SomethingWentWrong";
 import {
   useBillingSubscriptionPlansQuery,
@@ -8,7 +9,9 @@ import {
 } from "graphql/__generated__/hooks/restapi";
 import { useIsManageBillingSubscriptionAllowed } from "hooks/useIsManageBillingSubscriptionAllowed";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { processGraphQLErrorData } from "utils/apollo";
 import { MILLISECONDS_IN_SECOND } from "utils/datetime";
+import { ERROR_CODES } from "utils/errorCodes";
 import { SPACING_2 } from "utils/layouts";
 import { isNumber } from "utils/validation";
 import { CardLoadingSkeleton, EnterprisePlanCard, SubscriptionCard, ProPlanCard } from "./components/Cards";
@@ -40,9 +43,11 @@ const useData = () => {
     variables: {
       organizationId
     },
-    pollInterval: 30 * MILLISECONDS_IN_SECOND
+    pollInterval: 30 * MILLISECONDS_IN_SECOND,
+    context: {
+      suppressAlertForErrorCodes: [ERROR_CODES.OE0002]
+    }
   });
-
   const {
     data: organizationSummaryData,
     loading: organizationSummaryLoading,
@@ -90,6 +95,13 @@ const BillingSubscription = () => {
 
   if (isLoading) {
     return <CardLoadingSkeleton />;
+  }
+
+  if (error.subscription?.graphQLErrors) {
+    const errorsData = error.subscription?.graphQLErrors.map(processGraphQLErrorData);
+    if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OE0002)) {
+      return <FormattedMessage id="subscriptionCreationInProgress" />;
+    }
   }
 
   if (isError || noData) {

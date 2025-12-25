@@ -17,6 +17,7 @@ import { useUpdateScope } from "hooks/useUpdateScope";
 import { isEmptyArray } from "utils/arrays";
 import { MILLISECONDS_IN_MINUTE } from "utils/datetime";
 import { getEnvironmentVariable } from "utils/env";
+import { ERROR_CODES } from "utils/errorCodes";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
@@ -129,7 +130,10 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       organizationId
     },
     pollInterval: 30 * MILLISECONDS_IN_MINUTE,
-    skip: skipRequest || isDemo || !isBillingIntegrationEnabled
+    skip: skipRequest || isDemo || !isBillingIntegrationEnabled,
+    context: {
+      suppressAlertForErrorCodes: [ERROR_CODES.OE0002]
+    }
   });
 
   const error =
