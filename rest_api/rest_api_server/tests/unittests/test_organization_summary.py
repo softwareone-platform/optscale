@@ -189,3 +189,59 @@ class TestOrganizationSummaryApi(TestApiBase):
             self.assertEqual(code, 200)
             self.assertEqual(response['entities']['month_expenses'],
                              {'2025-12': 1000})
+
+    def test_summary_environment(self):
+        patch('rest_api.rest_api_server.controllers.cloud_account.'
+              'CloudAccountController._configure_report').start()
+        auth_user_id = self.gen_id()
+        _, employee = self.client.employee_create(self.org['id'], {
+            'name': 'employee_1', 'auth_user_id': auth_user_id
+        })
+        aws_cloud_acc = {
+            'name': 'my cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'access_key_id': 'key',
+                'secret_access_key': 'secret',
+                'config_scheme': 'create_report'
+            }
+        }
+        _, cloud_acc = self.create_cloud_account(
+            self.org['id'], aws_cloud_acc, auth_user_id=auth_user_id)
+        _, resource = self.cloud_resource_create(cloud_acc['id'], {
+            'cloud_resource_id': 'res_id',
+            'name': 'resource',
+            'resource_type': 'test'
+        })
+        env_resource = {
+            'name': 'resource',
+            'resource_type': 'some_env_type',
+        }
+        code, env_resource = self.environment_resource_create(
+            self.org['id'], env_resource)
+        self.assertEqual(code, 201)
+
+        date = datetime(2025, 12, 2)
+        self.expenses.extend([
+            {
+                'resource_id': resource['id'],
+                'cloud_account_id': cloud_acc['id'],
+                'date': date,
+                'cost': 10,
+                'sign': 1
+            },
+            {
+                'resource_id': env_resource['id'],
+                'cloud_account_id': env_resource['cloud_account_id'],
+                'date': date,
+                'cost': 10000,
+                'sign': 1
+            }
+        ])
+        with freeze_time(date):
+            code, response = self.client.get_organization_summary(
+                self.org['id'], ['month_expenses', 'cloud_accounts'])
+            self.assertEqual(code, 200)
+            self.assertEqual(response['entities']['cloud_accounts'], 1)
+            self.assertEqual(
+                response['entities']['month_expenses'], {'2025-12': 10})

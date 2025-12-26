@@ -1,6 +1,7 @@
 import logging
 from sqlalchemy import func
 from datetime import datetime, timezone, timedelta
+from rest_api.rest_api_server.models.enums import CloudTypes
 from rest_api.rest_api_server.models.models import Employee, CloudAccount
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper)
@@ -26,6 +27,7 @@ class OrganizationSummaryController(
         ca_ids = self.session.query(CloudAccount.id).filter(
             CloudAccount.organization_id == organization_id,
             CloudAccount.deleted.is_(False),
+            CloudAccount.type != CloudTypes.ENVIRONMENT
         ).all()
         return [x[0] for x in ca_ids]
 
@@ -54,7 +56,13 @@ class OrganizationSummaryController(
         return {r[0].strftime('%Y-%m'): r[1] for r in expenses}
 
     def _get_cloud_accounts_cnt(self, organization):
-        return self._get_entities_cnt(CloudAccount, organization.id)
+        return self.session.query(
+            func.count(CloudAccount.id)
+        ).filter(
+            CloudAccount.organization_id == organization.id,
+            CloudAccount.deleted.is_(False),
+            CloudAccount.type != CloudTypes.ENVIRONMENT
+        ).scalar()
 
     def _get_employees_cnt(self, organization):
         return self._get_entities_cnt(Employee, organization.id)
