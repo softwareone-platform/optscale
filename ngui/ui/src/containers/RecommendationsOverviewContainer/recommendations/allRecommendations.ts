@@ -21,7 +21,6 @@ import {
   LocalStorageBottleneck,
   SpotInstancesUsage
 } from "./ml";
-import ObsoleteImages from "./ObsoleteImages";
 import ObsoleteIps from "./ObsoleteIps";
 import ObsoleteSnapshotChains from "./ObsoleteSnapshotChains";
 import ObsoleteSnapshots from "./ObsoleteSnapshots";
@@ -30,6 +29,7 @@ import ReservedInstances from "./ReservedInstances";
 import RightsizingInstances from "./RightsizingInstances";
 import RightsizingRdsInstances from "./RightsizingRdsInstances";
 import ShortLivingInstances from "./ShortLivingInstances";
+import SnapshotsWithNonUsedImages from "./SnapshotsWithNonUsedImages";
 import VolumesNotAttachedForLongTime from "./VolumesNotAttachedForLongTime";
 
 const ML_RECOMMENDATIONS = Object.fromEntries(
@@ -61,7 +61,7 @@ export const OPTSCALE_RECOMMENDATIONS = Object.fromEntries(
     AbandonedInstances,
     AbandonedLoadBalancers,
     PublicS3Buckets,
-    ObsoleteImages,
+    SnapshotsWithNonUsedImages,
     AbandonedImages,
     AbandonedNebiusS3Buckets,
     CvocAgreementOpportunities

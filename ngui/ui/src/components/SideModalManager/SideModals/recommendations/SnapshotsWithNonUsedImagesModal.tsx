@@ -2,22 +2,22 @@ import BaseSideModal from "../BaseSideModal";
 import DaysThreshold from "./components/DaysThreshold";
 import InformationWrapper from "./components/InformationWrapper";
 
-class ObsoleteImagesModal extends BaseSideModal {
+class SnapshotsWithNonUsedImagesModal extends BaseSideModal {
   headerProps = {
-    messageId: "obsoleteImagesTitle",
+    messageId: "snapshotsWithNonUsedImagesTitle",
     dataTestIds: {
-      title: "lbl_obsolete_images_sidemodal_title",
+      title: "lbl_snapshots_with_non_used_images_sidemodal_title",
       closeButton: "btn_close"
     }
   };
 
-  dataTestId = "smodal_obsolete_images";
+  dataTestId = "smodal_snapshots_with_non_used_mages";
 
   get content() {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId="thresholds.obsoleteImages"
+          messageId="thresholds.snapshotsWithNonUsedImages"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />
@@ -26,4 +26,4 @@ class ObsoleteImagesModal extends BaseSideModal {
   }
 }
 
-export default ObsoleteImagesModal;
+export default SnapshotsWithNonUsedImagesModal;

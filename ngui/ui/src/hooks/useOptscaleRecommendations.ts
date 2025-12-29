@@ -16,7 +16,6 @@ import InstancesMigration from "containers/RecommendationsOverviewContainer/reco
 import InstanceSubscription from "containers/RecommendationsOverviewContainer/recommendations/InstanceSubscription";
 import IntelligentTiering from "containers/RecommendationsOverviewContainer/recommendations/IntelligentTiering";
 import NebiusMigration from "containers/RecommendationsOverviewContainer/recommendations/NebiusMigration";
-import ObsoleteImages from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteImages";
 import ObsoleteIps from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteIps";
 import ObsoleteSnapshotChains from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshotChains";
 import ObsoleteSnapshots from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshots";
@@ -25,6 +24,7 @@ import ReservedInstances from "containers/RecommendationsOverviewContainer/recom
 import RightsizingInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingInstances";
 import RightsizingRdsInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingRdsInstances";
 import ShortLivingInstances from "containers/RecommendationsOverviewContainer/recommendations/ShortLivingInstances";
+import SnapshotsWithNonUsedImages from "containers/RecommendationsOverviewContainer/recommendations/SnapshotsWithNonUsedImages";
 import VolumesNotAttachedForLongTime from "containers/RecommendationsOverviewContainer/recommendations/VolumesNotAttachedForLongTime";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 
@@ -59,7 +59,7 @@ export const useOptscaleRecommendations = () => {
       AbandonedInstances,
       AbandonedLoadBalancers,
       PublicS3Buckets,
-      ObsoleteImages,
+      SnapshotsWithNonUsedImages,
       AbandonedImages,
       ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
     ];
