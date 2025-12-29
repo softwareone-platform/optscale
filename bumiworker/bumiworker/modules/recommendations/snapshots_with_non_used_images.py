@@ -1,6 +1,6 @@
 from concurrent.futures.thread import ThreadPoolExecutor
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from calendar import monthrange
 
 from bumiworker.bumiworker.modules.base import (
@@ -8,7 +8,7 @@ from bumiworker.bumiworker.modules.base import (
 )
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 from tools.optscale_data.clickhouse import ExternalDataConverter
-from tools.optscale_time import utcnow
+from tools.optscale_time import startday, utcnow
 
 DEFAULT_DAYS_THRESHOLD = 7
 BULK_SIZE = 1000
@@ -18,7 +18,7 @@ SUPPORTED_CLOUD_TYPES = [
 ]
 
 
-class ObsoleteImages(ModuleBase):
+class SnapshotsWithNonUsedImages(ModuleBase):
     def __init__(self, organization_id, config_client, created_at):
         super().__init__(organization_id, config_client, created_at)
         self.option_ordered_map = OrderedDict({
@@ -26,7 +26,7 @@ class ObsoleteImages(ModuleBase):
             'skip_cloud_accounts': {'default': []}
         })
 
-    def get_snapshot_info_map(self, account_id_type_map, snapshot_image_map,
+    def get_snapshot_info_map(self, account_id_type_map, snapshot_ids,
                               last_week_time):
         alibaba_clouds = []
         aws_clouds = []
@@ -36,18 +36,16 @@ class ObsoleteImages(ModuleBase):
             elif acc_type == 'alibaba_cnr':
                 alibaba_clouds.append(acc_id)
 
-        bulk_ids = []
-        snapshot_image_ids = list(snapshot_image_map.keys())
-        for i in range(0, len(snapshot_image_ids), BULK_SIZE):
-            bulk_ids = snapshot_image_ids[i:i + BULK_SIZE]
         snapshot_info_alibaba_map = {}
         snapshot_info_aws_map = {}
-        if alibaba_clouds:
-            snapshot_info_alibaba_map = self.get_snapshot_info_alibaba(
-                bulk_ids, alibaba_clouds, last_week_time)
-        if aws_clouds:
-            snapshot_info_aws_map = self.get_snapshot_info_aws(
-                bulk_ids, aws_clouds, last_week_time)
+        for i in range(0, len(snapshot_ids), BULK_SIZE):
+            bulk_ids = snapshot_ids[i:i + BULK_SIZE]
+            if alibaba_clouds:
+                snapshot_info_alibaba_map = self.get_snapshot_info_alibaba(
+                    bulk_ids, alibaba_clouds, last_week_time)
+            if aws_clouds:
+                snapshot_info_aws_map = self.get_snapshot_info_aws(
+                    bulk_ids, aws_clouds, last_week_time)
         return {**snapshot_info_aws_map, **snapshot_info_alibaba_map}
 
     def _get_snapshot_expenses(self, snapshots, start_date):
@@ -55,7 +53,8 @@ class ObsoleteImages(ModuleBase):
             SELECT resource_id, cloud_resource_id,
                 sum(cost * sign) / count(distinct(date))
             FROM expenses
-            JOIN resources ON resource_id = resources._id AND date >= %(date)s
+            JOIN resources ON resource_id = resources._id
+            AND %(date)s <= date < %(today)s
             GROUP BY resource_id, cloud_resource_id
         """
         return self.clickhouse_client.query(
@@ -73,7 +72,8 @@ class ObsoleteImages(ModuleBase):
                 ]
             ),
             parameters={
-                'date': start_date
+                'date': int(startday(start_date).timestamp()),
+                'today': int(startday(utcnow()).timestamp())
             }).result_rows
 
     def get_snapshot_info_aws(self, bulk_ids, account_ids,
@@ -148,14 +148,12 @@ class ObsoleteImages(ModuleBase):
             }
         return snapshot_info_map
 
-    def _get_images_map(self, cloud_accounts, starting_point):
+    def _get_images_map(self, cloud_accounts):
         images_map = {}
 
         def process_images(cloud_account, generator):
             for image in generator:
                 i = image.to_dict()
-                if i['cloud_created_at'] >= int(starting_point.timestamp()):
-                    continue
                 i.update({
                     'cloud_account_id': cloud_account['id'],
                     'cloud_type': cloud_account['type'],
@@ -188,7 +186,8 @@ class ObsoleteImages(ModuleBase):
 
         account_id_type_map = {x['id']: x['type'] for x in cloud_accounts}
         starting_point = utcnow() - timedelta(days=days_threshold)
-        images_map = self._get_images_map(cloud_accounts, starting_point)
+        starting_point_ts = int(starting_point.timestamp())
+        images_map = self._get_images_map(cloud_accounts)
 
         image_ids = list(images_map.keys())
         images = self.mongo_client.restapi.resources.aggregate([
@@ -209,58 +208,49 @@ class ObsoleteImages(ModuleBase):
         ])
         last_used_map = {i['_id']: i['last_used'] for i in images}
         result = {}
-        snapshot_image_map = {}
         for image_id in image_ids:
             last_used = last_used_map.get(image_id, 0)
-            if last_used >= starting_point.timestamp():
-                continue
             image = images_map[image_id]
             for bdm in image['meta']['block_device_mappings']:
                 snapshot_id = bdm.get('snapshot_id')
                 if snapshot_id:
-                    if snapshot_id not in snapshot_image_map:
-                        snapshot_image_map[snapshot_id] = []
-                    snapshot_image_map[snapshot_id].append(
-                        image['cloud_resource_id'])
-
-            result[image_id] = {
-                'cloud_resource_id': image_id,
-                'resource_name': image['name'],
-                'cloud_account_id': image['cloud_account_id'],
-                'cloud_type': image['cloud_type'],
-                'cloud_account_name': image['cloud_account_name'],
-                'first_seen': image['cloud_created_at'],
-                'region': image['region'],
-                'last_used': last_used
-            }
+                    if last_used >= starting_point_ts or image[
+                            'cloud_created_at'] >= int(starting_point_ts):
+                        # exclude snapshot that has some image in use
+                        result.pop(snapshot_id, None)
+                        continue
+                    if snapshot_id not in result:
+                        result[snapshot_id] = {
+                            'cloud_resource_id': snapshot_id,
+                            'images': [image_id],
+                            'cloud_account_id': image['cloud_account_id'],
+                            'cloud_type': image['cloud_type'],
+                            'cloud_account_name': image['cloud_account_name'],
+                            'first_seen': image['cloud_created_at'],
+                            'region': image['region'],
+                            'saving': 0,
+                            'last_used': last_used
+                        }
+                    else:
+                        result[snapshot_id]['images'].append(image_id)
 
         snapshot_info_map = self.get_snapshot_info_map(
-            account_id_type_map, snapshot_image_map, starting_point)
+            account_id_type_map, list(result.keys()), starting_point)
         today = utcnow()
         _, days_in_month = monthrange(today.year, today.month)
-        for snapshot_id, image_ids in snapshot_image_map.items():
-            for image_id in image_ids:
-                image = result.get(image_id)
-                saving = image.get('saving', 0)
-                if not image:
-                    continue
-                snapshots = image.get('snapshots', [])
-                snapshot_info = snapshot_info_map.get(snapshot_id, {})
-                if snapshot_info:
-                    snapshot_cost = snapshot_info.get('cost', 0) * days_in_month
-                    snapshot_info['cost'] = snapshot_cost
-                    snapshot_info.pop('_id', None)
-                    snapshots.append(snapshot_info)
-                    saving += snapshot_cost
-                image['saving'] = saving
-                image['snapshots'] = snapshots
+        for snapshot_id, candidate in result.items():
+            snapshot_info = snapshot_info_map.get(snapshot_id, {})
+            if snapshot_info:
+                snapshot_cost = snapshot_info.get('cost', 0) * days_in_month
+                candidate['saving'] = snapshot_cost
+                candidate['resource_id'] = snapshot_info['resource_id']
         return [r for r in list(result.values()) if r['saving'] != 0]
 
 
 def main(organization_id, config_client, created_at, **kwargs):
-    return ObsoleteImages(
+    return SnapshotsWithNonUsedImages(
         organization_id, config_client, created_at).get()
 
 
 def get_module_email_name():
-    return 'Obsolete Images'
+    return 'Snapshots with non-used images'
