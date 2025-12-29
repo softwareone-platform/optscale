@@ -2,7 +2,8 @@
 export const HTML_SYMBOL = Object.freeze({
   colon: <>&#58;</>,
   comma: <>&#44;</>,
-  period: <>&#46;</>
+  period: <>&#46;</>,
+  multiply: <>&#215;</>
 });
 
 type HtmlSymbolProps = {

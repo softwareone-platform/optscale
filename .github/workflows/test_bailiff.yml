@@ -1,0 +1,30 @@
+name: Build bailiff test image and run tests on it
+run-name: Build bailiff test image and run tests on it - started by ${{ github.actor }}
+permissions: read-all
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+    - 'docker_images/bailiff/**'
+  workflow_dispatch:
+
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub (optional)
+        env:
+          username: ${{ secrets.EXT_DOCKER_LOGIN }}
+          password: ${{ secrets.EXT_DOCKER_TOKEN }}
+        if: ${{ env.username != '' && env.password != ''}}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.username }}
+          password: ${{ env.password }}
+      - name: Build image
+        run: bash -x build.sh bailiff build
+      - name: Build test image and run tests
+        run: bash -x docker_images/run_test.sh bailiff

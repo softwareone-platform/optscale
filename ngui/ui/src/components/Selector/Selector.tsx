@@ -1,5 +1,5 @@
 import { ReactNode, forwardRef } from "react";
-import { FormControl, FormHelperText, type SxProps } from "@mui/material";
+import { FormControl, FormHelperText, type Theme, type SxProps } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Select } from "./components";
 
@@ -14,7 +14,7 @@ type SelectorProps = {
   helperText?: string;
   error?: boolean;
   margin?: "none" | "dense" | "normal" | undefined;
-  sx?: SxProps;
+  sx?: SxProps<Theme>;
   children: ReactNode;
   readOnly?: boolean;
   onBlur?: () => void;

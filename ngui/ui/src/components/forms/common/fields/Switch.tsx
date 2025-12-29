@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { FormControl, FormControlLabel, Switch as MuiSwitch } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, FormControl, FormControlLabel, Switch as MuiSwitch, SxProps, Theme } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import InputLoader from "components/InputLoader";
 
@@ -9,7 +8,7 @@ type ShareSwitchProps = {
   label: ReactNode;
   onChange?: (checked: boolean) => void;
   adornment?: ReactNode;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   isLoading?: boolean;
   defaultValue?: boolean;
 };

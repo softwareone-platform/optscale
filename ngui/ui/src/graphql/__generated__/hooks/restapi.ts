@@ -79,10 +79,10 @@ export type AwsAssumedRoleConfigInput = {
   bucket_prefix?: InputMaybe<Scalars["String"]["input"]>;
   config_scheme?: InputMaybe<Scalars["String"]["input"]>;
   cur_version?: InputMaybe<Scalars["Int"]["input"]>;
+  linked?: InputMaybe<Scalars["Boolean"]["input"]>;
   region_name?: InputMaybe<Scalars["String"]["input"]>;
   report_name?: InputMaybe<Scalars["String"]["input"]>;
   use_edp_discount?: InputMaybe<Scalars["Boolean"]["input"]>;
-  linked?: InputMaybe<Scalars["Boolean"]["input"]>;
 };
 
 export type AwsConfig = {
@@ -206,6 +206,38 @@ export type AzureTenantDataSource = DataSourceInterface & {
   type: DataSourceType;
 };
 
+export type BillingSubscription = {
+  __typename?: "BillingSubscription";
+  cancel_at_period_end: Scalars["Boolean"]["output"];
+  end_date: Scalars["Int"]["output"];
+  grace_period_start: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  plan: BillingSubscriptionPlan;
+  quantity: Scalars["Int"]["output"];
+  status: BillingSubscriptionStatus;
+  stripe_status?: Maybe<Scalars["String"]["output"]>;
+  trial_used: Scalars["Boolean"]["output"];
+};
+
+export type BillingSubscriptionPlan = {
+  __typename?: "BillingSubscriptionPlan";
+  created_at: Scalars["Int"]["output"];
+  currency?: Maybe<Scalars["String"]["output"]>;
+  customer_id?: Maybe<Scalars["ID"]["output"]>;
+  default: Scalars["Boolean"]["output"];
+  deleted_at: Scalars["Int"]["output"];
+  grace_period_days: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  limits: Scalars["JSONObject"]["output"];
+  name: Scalars["String"]["output"];
+  price?: Maybe<Scalars["Float"]["output"]>;
+  price_id?: Maybe<Scalars["ID"]["output"]>;
+  qty_unit?: Maybe<QuantityUnit>;
+  trial_days: Scalars["Int"]["output"];
+};
+
+export type BillingSubscriptionStatus = "active" | "limit_exceeded" | "suspended";
+
 export type BreakdownBy =
   | "cloud_account_id"
   | "employee_id"
@@ -291,6 +323,10 @@ export type CreateDataSourceInput = {
   name?: InputMaybe<Scalars["String"]["input"]>;
   nebiusConfig?: InputMaybe<NebiusConfigInput>;
   type?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type CreateStripeCheckoutSessionInput = {
+  plan_id: Scalars["ID"]["input"];
 };
 
 export type DataSourceDetails = {
@@ -591,6 +627,8 @@ export type Mutation = {
   _empty?: Maybe<Scalars["String"]["output"]>;
   createDataSource?: Maybe<DataSourceInterface>;
   createOrganization?: Maybe<Organization>;
+  createStripeBillingPortalSession?: Maybe<StripeSession>;
+  createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
   updateDataSource?: Maybe<DataSourceInterface>;
@@ -609,6 +647,15 @@ export type MutationCreateDataSourceArgs = {
 
 export type MutationCreateOrganizationArgs = {
   organizationName: Scalars["String"]["input"];
+};
+
+export type MutationCreateStripeBillingPortalSessionArgs = {
+  organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationCreateStripeCheckoutSessionArgs = {
+  organizationId: Scalars["ID"]["input"];
+  params: CreateStripeCheckoutSessionInput;
 };
 
 export type MutationDeleteDataSourceArgs = {
@@ -737,10 +784,40 @@ export type OrganizationLimitHit = {
   value: Scalars["Float"]["output"];
 };
 
+export type OrganizationSummary = {
+  __typename?: "OrganizationSummary";
+  cleaned_at: Scalars["Int"]["output"];
+  created_at: Scalars["Int"]["output"];
+  currency: Scalars["String"]["output"];
+  deleted_at: Scalars["Int"]["output"];
+  disabled: Scalars["Boolean"]["output"];
+  entities: OrganizationSummaryEntities;
+  id: Scalars["ID"]["output"];
+  is_demo: Scalars["Boolean"]["output"];
+  name: Scalars["String"]["output"];
+};
+
+export type OrganizationSummaryEntities = {
+  __typename?: "OrganizationSummaryEntities";
+  cloud_accounts: Scalars["Int"]["output"];
+  employees: Scalars["Int"]["output"];
+  month_expenses: Scalars["JSONObject"]["output"];
+};
+
+export type OrganizationSummaryEntity = "cloud_accounts" | "employees" | "month_expenses";
+
+export type OrganizationSummaryParams = {
+  entity: Array<OrganizationSummaryEntity>;
+};
+
+export type QuantityUnit = "cloud_accounts" | "employees" | "month_expenses";
+
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]["output"]>;
   availableFilters?: Maybe<Scalars["JSONObject"]["output"]>;
+  billingSubscription: BillingSubscription;
+  billingSubscriptionPlans: Array<BillingSubscriptionPlan>;
   cleanExpenses?: Maybe<Scalars["JSONObject"]["output"]>;
   cloudPolicies?: Maybe<Scalars["JSONObject"]["output"]>;
   currentEmployee?: Maybe<Employee>;
@@ -754,6 +831,7 @@ export type Query = {
   organizationFeatures?: Maybe<Scalars["JSONObject"]["output"]>;
   organizationLimitHits?: Maybe<Array<OrganizationLimitHit>>;
   organizationPerspectives?: Maybe<Scalars["JSONObject"]["output"]>;
+  organizationSummary: OrganizationSummary;
   organizationThemeSettings?: Maybe<Scalars["JSONObject"]["output"]>;
   organizations: Array<Organization>;
   relevantFlavors?: Maybe<Scalars["JSONObject"]["output"]>;
@@ -763,6 +841,14 @@ export type Query = {
 export type QueryAvailableFiltersArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<AvailableFiltersParams>;
+};
+
+export type QueryBillingSubscriptionArgs = {
+  organizationId: Scalars["ID"]["input"];
+};
+
+export type QueryBillingSubscriptionPlansArgs = {
+  organizationId: Scalars["ID"]["input"];
 };
 
 export type QueryCleanExpensesArgs = {
@@ -819,6 +905,11 @@ export type QueryOrganizationPerspectivesArgs = {
   organizationId: Scalars["ID"]["input"];
 };
 
+export type QueryOrganizationSummaryArgs = {
+  organizationId: Scalars["ID"]["input"];
+  params?: InputMaybe<OrganizationSummaryParams>;
+};
+
 export type QueryOrganizationThemeSettingsArgs = {
   organizationId: Scalars["ID"]["input"];
 };
@@ -844,6 +935,19 @@ export type ResourceCountBreakdown = {
   last_breakdown: Scalars["Int"]["output"];
   start_date: Scalars["Int"]["output"];
 };
+
+export type StripeSession = {
+  __typename?: "StripeSession";
+  result: StripeSessionResult;
+  url?: Maybe<Scalars["String"]["output"]>;
+};
+
+export type StripeSessionResult =
+  | "billing_portal_created"
+  | "checkout_session_created"
+  | "plan_changed"
+  | "subscription_canceled"
+  | "subscription_reactivated";
 
 export type UpdateDataSourceInput = {
   alibabaConfig?: InputMaybe<AlibabaConfigInput>;
@@ -2134,6 +2238,110 @@ export type AvailableFiltersQueryVariables = Exact<{
 }>;
 
 export type AvailableFiltersQuery = { __typename?: "Query"; availableFilters?: Record<string, unknown> | null };
+
+export type BillingSubscriptionPlansQueryVariables = Exact<{
+  organizationId: Scalars["ID"]["input"];
+}>;
+
+export type BillingSubscriptionPlansQuery = {
+  __typename?: "Query";
+  billingSubscriptionPlans: Array<{
+    __typename?: "BillingSubscriptionPlan";
+    id: string;
+    name: string;
+    limits: Record<string, unknown>;
+    customer_id?: string | null;
+    price_id?: string | null;
+    trial_days: number;
+    grace_period_days: number;
+    created_at: number;
+    deleted_at: number;
+    default: boolean;
+    price?: number | null;
+    qty_unit?: QuantityUnit | null;
+    currency?: string | null;
+  }>;
+};
+
+export type BillingSubscriptionQueryVariables = Exact<{
+  organizationId: Scalars["ID"]["input"];
+}>;
+
+export type BillingSubscriptionQuery = {
+  __typename?: "Query";
+  billingSubscription: {
+    __typename?: "BillingSubscription";
+    id: string;
+    quantity: number;
+    status: BillingSubscriptionStatus;
+    stripe_status?: string | null;
+    end_date: number;
+    grace_period_start: number;
+    cancel_at_period_end: boolean;
+    trial_used: boolean;
+    plan: {
+      __typename?: "BillingSubscriptionPlan";
+      id: string;
+      name: string;
+      limits: Record<string, unknown>;
+      customer_id?: string | null;
+      price_id?: string | null;
+      trial_days: number;
+      grace_period_days: number;
+      created_at: number;
+      deleted_at: number;
+      default: boolean;
+      qty_unit?: QuantityUnit | null;
+      price?: number | null;
+      currency?: string | null;
+    };
+  };
+};
+
+export type CreateStripeCheckoutSessionMutationVariables = Exact<{
+  organizationId: Scalars["ID"]["input"];
+  params: CreateStripeCheckoutSessionInput;
+}>;
+
+export type CreateStripeCheckoutSessionMutation = {
+  __typename?: "Mutation";
+  createStripeCheckoutSession?: { __typename?: "StripeSession"; url?: string | null } | null;
+};
+
+export type CreateStripeBillingPortalSessionMutationVariables = Exact<{
+  organizationId: Scalars["ID"]["input"];
+}>;
+
+export type CreateStripeBillingPortalSessionMutation = {
+  __typename?: "Mutation";
+  createStripeBillingPortalSession?: { __typename?: "StripeSession"; url?: string | null } | null;
+};
+
+export type OrganizationSummaryQueryVariables = Exact<{
+  organizationId: Scalars["ID"]["input"];
+  params?: InputMaybe<OrganizationSummaryParams>;
+}>;
+
+export type OrganizationSummaryQuery = {
+  __typename?: "Query";
+  organizationSummary: {
+    __typename?: "OrganizationSummary";
+    deleted_at: number;
+    created_at: number;
+    id: string;
+    name: string;
+    is_demo: boolean;
+    currency: string;
+    cleaned_at: number;
+    disabled: boolean;
+    entities: {
+      __typename?: "OrganizationSummaryEntities";
+      cloud_accounts: number;
+      employees: number;
+      month_expenses: Record<string, unknown>;
+    };
+  };
+};
 
 export const AwsDataSourceConfigFragmentFragmentDoc = gql`
   fragment AwsDataSourceConfigFragment on AwsDataSource {
@@ -3831,4 +4039,313 @@ export type AvailableFiltersSuspenseQueryHookResult = ReturnType<typeof useAvail
 export type AvailableFiltersQueryResult = Apollo.QueryResult<AvailableFiltersQuery, AvailableFiltersQueryVariables>;
 export function refetchAvailableFiltersQuery(variables: AvailableFiltersQueryVariables) {
   return { query: AvailableFiltersDocument, variables: variables };
+}
+export const BillingSubscriptionPlansDocument = gql`
+  query BillingSubscriptionPlans($organizationId: ID!) {
+    billingSubscriptionPlans(organizationId: $organizationId) {
+      id
+      name
+      limits
+      customer_id
+      price_id
+      trial_days
+      grace_period_days
+      created_at
+      deleted_at
+      default
+      price
+      qty_unit
+      currency
+    }
+  }
+`;
+
+/**
+ * __useBillingSubscriptionPlansQuery__
+ *
+ * To run a query within a React component, call `useBillingSubscriptionPlansQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBillingSubscriptionPlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBillingSubscriptionPlansQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useBillingSubscriptionPlansQuery(
+  baseOptions: Apollo.QueryHookOptions<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables> &
+    ({ variables: BillingSubscriptionPlansQueryVariables; skip?: boolean } | { skip: boolean })
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>(
+    BillingSubscriptionPlansDocument,
+    options
+  );
+}
+export function useBillingSubscriptionPlansLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>(
+    BillingSubscriptionPlansDocument,
+    options
+  );
+}
+export function useBillingSubscriptionPlansSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>
+) {
+  const options = baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>(
+    BillingSubscriptionPlansDocument,
+    options
+  );
+}
+export type BillingSubscriptionPlansQueryHookResult = ReturnType<typeof useBillingSubscriptionPlansQuery>;
+export type BillingSubscriptionPlansLazyQueryHookResult = ReturnType<typeof useBillingSubscriptionPlansLazyQuery>;
+export type BillingSubscriptionPlansSuspenseQueryHookResult = ReturnType<typeof useBillingSubscriptionPlansSuspenseQuery>;
+export type BillingSubscriptionPlansQueryResult = Apollo.QueryResult<
+  BillingSubscriptionPlansQuery,
+  BillingSubscriptionPlansQueryVariables
+>;
+export function refetchBillingSubscriptionPlansQuery(variables: BillingSubscriptionPlansQueryVariables) {
+  return { query: BillingSubscriptionPlansDocument, variables: variables };
+}
+export const BillingSubscriptionDocument = gql`
+  query BillingSubscription($organizationId: ID!) {
+    billingSubscription(organizationId: $organizationId) {
+      id
+      plan {
+        id
+        name
+        limits
+        customer_id
+        price_id
+        trial_days
+        grace_period_days
+        created_at
+        deleted_at
+        default
+        qty_unit
+        price
+        currency
+      }
+      quantity
+      status
+      stripe_status
+      end_date
+      grace_period_start
+      cancel_at_period_end
+      trial_used
+    }
+  }
+`;
+
+/**
+ * __useBillingSubscriptionQuery__
+ *
+ * To run a query within a React component, call `useBillingSubscriptionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBillingSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBillingSubscriptionQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useBillingSubscriptionQuery(
+  baseOptions: Apollo.QueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables> &
+    ({ variables: BillingSubscriptionQueryVariables; skip?: boolean } | { skip: boolean })
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>(BillingSubscriptionDocument, options);
+}
+export function useBillingSubscriptionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>(BillingSubscriptionDocument, options);
+}
+export function useBillingSubscriptionSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>
+) {
+  const options = baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>(
+    BillingSubscriptionDocument,
+    options
+  );
+}
+export type BillingSubscriptionQueryHookResult = ReturnType<typeof useBillingSubscriptionQuery>;
+export type BillingSubscriptionLazyQueryHookResult = ReturnType<typeof useBillingSubscriptionLazyQuery>;
+export type BillingSubscriptionSuspenseQueryHookResult = ReturnType<typeof useBillingSubscriptionSuspenseQuery>;
+export type BillingSubscriptionQueryResult = Apollo.QueryResult<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>;
+export function refetchBillingSubscriptionQuery(variables: BillingSubscriptionQueryVariables) {
+  return { query: BillingSubscriptionDocument, variables: variables };
+}
+export const CreateStripeCheckoutSessionDocument = gql`
+  mutation CreateStripeCheckoutSession($organizationId: ID!, $params: CreateStripeCheckoutSessionInput!) {
+    createStripeCheckoutSession(organizationId: $organizationId, params: $params) {
+      url
+    }
+  }
+`;
+export type CreateStripeCheckoutSessionMutationFn = Apollo.MutationFunction<
+  CreateStripeCheckoutSessionMutation,
+  CreateStripeCheckoutSessionMutationVariables
+>;
+
+/**
+ * __useCreateStripeCheckoutSessionMutation__
+ *
+ * To run a mutation, you first call `useCreateStripeCheckoutSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateStripeCheckoutSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createStripeCheckoutSessionMutation, { data, loading, error }] = useCreateStripeCheckoutSessionMutation({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useCreateStripeCheckoutSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateStripeCheckoutSessionMutation, CreateStripeCheckoutSessionMutationVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateStripeCheckoutSessionMutation, CreateStripeCheckoutSessionMutationVariables>(
+    CreateStripeCheckoutSessionDocument,
+    options
+  );
+}
+export type CreateStripeCheckoutSessionMutationHookResult = ReturnType<typeof useCreateStripeCheckoutSessionMutation>;
+export type CreateStripeCheckoutSessionMutationResult = Apollo.MutationResult<CreateStripeCheckoutSessionMutation>;
+export type CreateStripeCheckoutSessionMutationOptions = Apollo.BaseMutationOptions<
+  CreateStripeCheckoutSessionMutation,
+  CreateStripeCheckoutSessionMutationVariables
+>;
+export const CreateStripeBillingPortalSessionDocument = gql`
+  mutation CreateStripeBillingPortalSession($organizationId: ID!) {
+    createStripeBillingPortalSession(organizationId: $organizationId) {
+      url
+    }
+  }
+`;
+export type CreateStripeBillingPortalSessionMutationFn = Apollo.MutationFunction<
+  CreateStripeBillingPortalSessionMutation,
+  CreateStripeBillingPortalSessionMutationVariables
+>;
+
+/**
+ * __useCreateStripeBillingPortalSessionMutation__
+ *
+ * To run a mutation, you first call `useCreateStripeBillingPortalSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateStripeBillingPortalSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createStripeBillingPortalSessionMutation, { data, loading, error }] = useCreateStripeBillingPortalSessionMutation({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useCreateStripeBillingPortalSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateStripeBillingPortalSessionMutation,
+    CreateStripeBillingPortalSessionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateStripeBillingPortalSessionMutation, CreateStripeBillingPortalSessionMutationVariables>(
+    CreateStripeBillingPortalSessionDocument,
+    options
+  );
+}
+export type CreateStripeBillingPortalSessionMutationHookResult = ReturnType<typeof useCreateStripeBillingPortalSessionMutation>;
+export type CreateStripeBillingPortalSessionMutationResult = Apollo.MutationResult<CreateStripeBillingPortalSessionMutation>;
+export type CreateStripeBillingPortalSessionMutationOptions = Apollo.BaseMutationOptions<
+  CreateStripeBillingPortalSessionMutation,
+  CreateStripeBillingPortalSessionMutationVariables
+>;
+export const OrganizationSummaryDocument = gql`
+  query OrganizationSummary($organizationId: ID!, $params: OrganizationSummaryParams) {
+    organizationSummary(organizationId: $organizationId, params: $params) {
+      entities {
+        cloud_accounts
+        employees
+        month_expenses
+      }
+      deleted_at
+      created_at
+      id
+      name
+      is_demo
+      currency
+      cleaned_at
+      disabled
+    }
+  }
+`;
+
+/**
+ * __useOrganizationSummaryQuery__
+ *
+ * To run a query within a React component, call `useOrganizationSummaryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationSummaryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationSummaryQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *      params: // value for 'params'
+ *   },
+ * });
+ */
+export function useOrganizationSummaryQuery(
+  baseOptions: Apollo.QueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables> &
+    ({ variables: OrganizationSummaryQueryVariables; skip?: boolean } | { skip: boolean })
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>(OrganizationSummaryDocument, options);
+}
+export function useOrganizationSummaryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>(OrganizationSummaryDocument, options);
+}
+export function useOrganizationSummarySuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>
+) {
+  const options = baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>(
+    OrganizationSummaryDocument,
+    options
+  );
+}
+export type OrganizationSummaryQueryHookResult = ReturnType<typeof useOrganizationSummaryQuery>;
+export type OrganizationSummaryLazyQueryHookResult = ReturnType<typeof useOrganizationSummaryLazyQuery>;
+export type OrganizationSummarySuspenseQueryHookResult = ReturnType<typeof useOrganizationSummarySuspenseQuery>;
+export type OrganizationSummaryQueryResult = Apollo.QueryResult<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>;
+export function refetchOrganizationSummaryQuery(variables: OrganizationSummaryQueryVariables) {
+  return { query: OrganizationSummaryDocument, variables: variables };
 }
