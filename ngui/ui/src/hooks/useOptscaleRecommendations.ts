@@ -16,6 +16,7 @@ import InstancesMigration from "containers/RecommendationsOverviewContainer/reco
 import InstanceSubscription from "containers/RecommendationsOverviewContainer/recommendations/InstanceSubscription";
 import IntelligentTiering from "containers/RecommendationsOverviewContainer/recommendations/IntelligentTiering";
 import NebiusMigration from "containers/RecommendationsOverviewContainer/recommendations/NebiusMigration";
+import ObsoleteImages from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteImages";
 import ObsoleteIps from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteIps";
 import ObsoleteSnapshotChains from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshotChains";
 import ObsoleteSnapshots from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshots";
@@ -42,6 +43,7 @@ export const useOptscaleRecommendations = () => {
       RightsizingRdsInstances,
       RightsizingInstances,
       ReservedInstances,
+      ObsoleteImages,
       ObsoleteSnapshots,
       ObsoleteSnapshotChains,
       ObsoleteIps,

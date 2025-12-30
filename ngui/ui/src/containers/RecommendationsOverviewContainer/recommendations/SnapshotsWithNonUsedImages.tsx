@@ -73,7 +73,7 @@ class SnapshotsWithNonUsedImages extends BaseRecommendation {
 
   emptyMessageId = "noSnapshotsWithNonUsedImages";
 
-  dismissable = false;
+  dismissible = true;
 
   static resourceDescriptionMessageId = "snapshotWithNonUsedImagesRecommendation";
 
