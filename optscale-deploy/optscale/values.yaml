@@ -153,6 +153,18 @@ phpmyadmin:
     type: NodePort
     externalPort: 30080
     internalPort: 80
+    
+jaeger:
+  name: &jaeger_name jaeger
+  replicaCount: 1
+  image:
+    id:
+    pullPolicy: IfNotPresent
+  service:
+    name: *jaeger_name
+    type: NodePort
+    externalPort: 16686
+    internalPort: 16686
 
 herald:
   name: &herald_name herald
