@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import Input from "components/Input";
@@ -21,7 +22,7 @@ type NumberInputProps = {
   valueAsNumber?: boolean;
   type?: string;
   inputProps?: Record<string, unknown>;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   defaultValue?: string;
   margin?: "none" | "dense" | "normal";
   onChange?: (event: unknown) => void;

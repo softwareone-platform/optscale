@@ -59,7 +59,7 @@ class ShortLivingInstances extends BaseRecommendation {
 
   withExclusions = true;
 
-  dismissable = false;
+  dismissible = false;
 
   hasSettings = true;
 

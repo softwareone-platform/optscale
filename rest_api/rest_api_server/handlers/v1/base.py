@@ -339,8 +339,16 @@ class BaseAuthHandler(BaseHandler):
         _, user = client.user_get(user_id)
         return user
 
-    def get_roles_info(self, user_ids: list = None, role_purposes: list = None,
-                       scope_ids: list = None):
+    async def get_roles_info(
+            self, user_ids: list = None, role_purposes: list = None,
+            scope_ids: list = None
+    ):
+        return await self.run_on_executor(
+            self._get_roles_info, user_ids=user_ids,
+            role_purposes=role_purposes, scope_ids=scope_ids)
+
+    def _get_roles_info(self, user_ids: list = None, role_purposes: list = None,
+                        scope_ids: list = None):
         client = AuthClient(url=Config().auth_url)
         client.secret = self._config.cluster_secret()
         _, response = client.user_roles_get(user_ids, role_purposes, scope_ids)

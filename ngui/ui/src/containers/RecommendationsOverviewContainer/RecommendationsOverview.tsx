@@ -28,7 +28,7 @@ type RecommendationsOverviewProps = {
   service: string;
   setView: (view: string) => void;
   view: string;
-  downloadLimit: number;
+  downloadLimit?: number;
   isDownloadAvailable: boolean;
   isGetIsDownloadAvailableLoading: boolean;
   selectedDataSourceIds: string[];

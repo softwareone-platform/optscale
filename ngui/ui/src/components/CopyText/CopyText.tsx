@@ -1,6 +1,6 @@
 import { useState, ReactNode } from "react";
 import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
-import { SxProps, Theme } from "@mui/material/styles";
+import { type SxProps, type Theme } from "@mui/material";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FormattedMessage } from "react-intl";

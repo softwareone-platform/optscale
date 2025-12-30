@@ -177,7 +177,7 @@ const Details = ({ type, limit, status, data, dataSourceIds = [], withDownload }
   }
 
   // TODO: Make this a computed class property
-  if (recommendation.dismissable && (status === STATUS.ACTIVE || status === STATUS.DISMISSED)) {
+  if (recommendation.dismissible && (status === STATUS.ACTIVE || status === STATUS.DISMISSED)) {
     const setting =
       status === STATUS.ACTIVE
         ? {

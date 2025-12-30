@@ -368,3 +368,79 @@ query CloudPolicies($organizationId: ID!, $params: CloudPoliciesParams) {
 query AvailableFilters($organizationId: ID!, $params: AvailableFiltersParams) {
   availableFilters(organizationId: $organizationId, params: $params)
 }
+
+query BillingSubscriptionPlans($organizationId: ID!) {
+  billingSubscriptionPlans(organizationId: $organizationId) {
+    id
+    name
+    limits
+    customer_id
+    price_id
+    trial_days
+    grace_period_days
+    created_at
+    deleted_at
+    default
+    price
+    qty_unit
+    currency
+  }
+}
+
+query BillingSubscription($organizationId: ID!) {
+  billingSubscription(organizationId: $organizationId) {
+    id
+    plan {
+      id
+      name
+      limits
+      customer_id
+      price_id
+      trial_days
+      grace_period_days
+      created_at
+      deleted_at
+      default
+      qty_unit
+      price
+      currency
+    }
+    quantity
+    status
+    stripe_status
+    end_date
+    grace_period_start
+    cancel_at_period_end
+    trial_used
+  }
+}
+
+mutation CreateStripeCheckoutSession($organizationId: ID!, $params: CreateStripeCheckoutSessionInput!) {
+  createStripeCheckoutSession(organizationId: $organizationId, params: $params) {
+    url
+  }
+}
+
+mutation CreateStripeBillingPortalSession($organizationId: ID!) {
+  createStripeBillingPortalSession(organizationId: $organizationId) {
+    url
+  }
+}
+
+query OrganizationSummary($organizationId: ID!, $params: OrganizationSummaryParams) {
+  organizationSummary(organizationId: $organizationId, params: $params) {
+    entities {
+      cloud_accounts
+      employees
+      month_expenses
+    }
+    deleted_at
+    created_at
+    id
+    name
+    is_demo
+    currency
+    cleaned_at
+    disabled
+  }
+}

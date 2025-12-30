@@ -72,6 +72,10 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
               'OrganizationController.create_report_subscriptions').start()
         patch('rest_api.rest_api_server.controllers.organization.'
               'OrganizationController.delete_report_subscriptions').start()
+        patch('rest_api.rest_api_server.controllers.organization_subscription.'
+              'OrganizationSubscriptionController.create_subscription').start()
+        patch('rest_api.rest_api_server.controllers.organization_subscription.'
+              'OrganizationSubscriptionController.delete_subscription').start()
         http_provider = optscale_client.rest_api_client.client.FetchMethodHttpProvider(
             self.fetch, rethrow=False)
         self.client = TestApiBase.get_client(version).Client(
