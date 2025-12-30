@@ -2,6 +2,7 @@ import os
 import logging
 import argparse
 import tarfile
+import atexit
 import tornado.ioloop
 import pydevd_pycharm
 from etcd import Lock as EtcdLock
@@ -15,6 +16,7 @@ from rest_api.rest_api_server.constants import urls_v2
 from rest_api.rest_api_server.handlers.v1.base import DefaultHandler
 from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
 from rest_api.rest_api_server.handlers.v1.swagger import SwaggerStaticFileHandler
+from rest_api.rest_api_server.otel_config import OTelConfig
 
 
 DEFAULT_PORT = 8999
@@ -511,6 +513,13 @@ def main():
         )
 
     logging.basicConfig(level=logging.INFO)
+
+    # Initialize OpenTelemetry if enabled
+    otel_initialized = OTelConfig.initialize()
+    if otel_initialized:
+        # Register shutdown handler to ensure proper cleanup
+        atexit.register(OTelConfig.shutdown)
+        LOG.info("OpenTelemetry instrumentation is active")
 
     etcd_host = os.environ.get('HX_ETCD_HOST', DEFAULT_ETCD_HOST)
     etcd_port = os.environ.get('HX_ETCD_PORT', DEFAULT_ETCD_PORT)
