@@ -115,6 +115,13 @@ spec:
               number: {{ .Values.subspector.service.externalPort }}
         path: /subspector
         pathType: Prefix
+      - backend:
+          service:
+            name: {{ .Values.jaeger.service.name }}
+            port:
+              number: {{ .Values.jaeger.service.externalPort }}
+        path: /jaeger
+        pathType: Prefix
 {{- if .Values.public_ip }}
   host: {{ .Values.public_ip }}
 {{- end }}
