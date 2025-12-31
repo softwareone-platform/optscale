@@ -123,7 +123,7 @@ spec:
         path: /jaeger
         pathType: Prefix
 {{- if .Values.public_ip }}
-  host: {{ .Values.public_ip }}
+    host: {{ .Values.public_ip }}
 {{- end }}
   tls:
   - secretName: {{ .Values.ssl.certificate_name }}
