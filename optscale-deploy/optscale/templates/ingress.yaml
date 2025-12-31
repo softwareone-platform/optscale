@@ -108,6 +108,11 @@ spec:
               number: {{ .Values.diproxy.service.externalPort }}
         path: /storage
         pathType: Prefix
+{{- if .Values.public_ip }}
+    host: {{ .Values.public_ip }}
+{{- end }}
+  - http:
+      paths:
       - backend:
           service:
             name: {{ .Values.subspector.service.name }}
@@ -120,14 +125,13 @@ spec:
             name: {{ .Values.jaeger.service.name }}
             port:
               number: {{ .Values.jaeger.service.externalPort }}
-        path: /jaeger
+        path: /
         pathType: Prefix
-{{- if .Values.public_ip }}
-    host: {{ .Values.public_ip }}
-{{- end }}
+    host: jaeger.{{ if .Values.public_ip }}{{ .Values.public_ip }}{{ else }}localhost{{ end }}
   tls:
   - secretName: {{ .Values.ssl.certificate_name }}
 {{- if .Values.public_ip }}
     hosts:
     - {{ .Values.public_ip }}
+    - jaeger.{{ .Values.public_ip }}
 {{- end }}
