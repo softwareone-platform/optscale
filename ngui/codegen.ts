@@ -8,6 +8,9 @@ const auth = {
       skipTypename: false,
       enumsAsTypes: true,
       defaultScalarType: "unknown",
+      scalars: {
+        StringArrayMap: "Record<string, string[]>"
+      },
       contextType: "../../../server#ContextValue"
     }
   },
@@ -19,6 +22,9 @@ const auth = {
       skipTypename: false,
       enumsAsTypes: true,
       defaultScalarType: "unknown",
+      scalars: {
+        StringArrayMap: "Record<string, string[]>"
+      },
       withHooks: true,
       withMutationFn: true,
       withRefetchFn: true,

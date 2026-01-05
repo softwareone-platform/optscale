@@ -63,7 +63,9 @@ export default defineConfig(({ mode }) => {
           target: VITE_PROXY,
           changeOrigin: true,
           secure: false,
-          rewrite: (p) => p.replace(/^\/api/, "/")
+          rewrite: (p) => {
+            return p === '/api' ? p : p.replace(/^\/api/, "/");
+          }
         }
       }
     },

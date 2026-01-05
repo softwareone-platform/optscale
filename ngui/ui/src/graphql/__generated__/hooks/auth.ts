@@ -15,7 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  OrganizationAllowedActionsScalar: { input: unknown; output: unknown };
+  StringArrayMap: { input: Record<string, string[]>; output: Record<string, string[]> };
 };
 
 export type Mutation = {
@@ -58,7 +58,7 @@ export type OrganizationAllowedActionsRequestParams = {
 export type Query = {
   __typename?: "Query";
   _empty?: Maybe<Scalars["String"]["output"]>;
-  organizationAllowedActions?: Maybe<Scalars["OrganizationAllowedActionsScalar"]["output"]>;
+  organizationAllowedActions?: Maybe<Scalars["StringArrayMap"]["output"]>;
 };
 
 export type QueryOrganizationAllowedActionsArgs = {
@@ -89,7 +89,10 @@ export type OrganizationAllowedActionsQueryVariables = Exact<{
   requestParams?: InputMaybe<OrganizationAllowedActionsRequestParams>;
 }>;
 
-export type OrganizationAllowedActionsQuery = { __typename?: "Query"; organizationAllowedActions?: unknown | null };
+export type OrganizationAllowedActionsQuery = {
+  __typename?: "Query";
+  organizationAllowedActions?: Record<string, string[]> | null;
+};
 
 export type CreateTokenMutationVariables = Exact<{
   email: Scalars["String"]["input"];

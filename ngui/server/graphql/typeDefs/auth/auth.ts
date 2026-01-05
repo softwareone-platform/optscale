@@ -18,11 +18,10 @@ export default gql`
     verified: Boolean!
   }
 
-  # TODO: Represents an object with dynamic fields (IDs) and an array of strings
-  scalar OrganizationAllowedActionsScalar
+  scalar StringArrayMap
 
   type Query {
-    organizationAllowedActions(requestParams: OrganizationAllowedActionsRequestParams): OrganizationAllowedActionsScalar
+    organizationAllowedActions(requestParams: OrganizationAllowedActionsRequestParams): StringArrayMap
   }
 
   input UpdateUserParams {

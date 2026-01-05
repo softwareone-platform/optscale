@@ -54,7 +54,7 @@ const useScopedAllowedActions = (entityType, entityId) => {
   const organizationAllowedActions = useOrganizationAllowedActions();
 
   if (entityType === SCOPE_TYPES.ORGANIZATION) {
-    return organizationAllowedActions[organizationId] || [];
+    return organizationAllowedActions ? organizationAllowedActions[organizationId] : [];
   }
 
   return allowedActions[id] || [];

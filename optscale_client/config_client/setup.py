@@ -9,6 +9,6 @@ setup(name='config-client',
       url='http://hystax.com',
       author_email='info@hystax.com',
       package_dir={'config_client': ''},
-      install_requires=['python-etcd==0.4.5', 'retrying'],
+      install_requires=['urllib3==2.5', 'python-etcd==0.4.5', 'retrying'],
       packages=['config_client']
       )
