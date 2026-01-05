@@ -33,7 +33,7 @@ const actionsColumn = ({ active = true, isLoading, patchResource, havePermission
     </TextWithDataTestId>
   ),
   enableSorting: false,
-  accessorKey: "dismissable",
+  accessorKey: "dismissible",
   cell: ({ cell, row: { original, index } }) =>
     cell.getValue() && (
       <IconButton
@@ -113,7 +113,7 @@ const ActiveResourceRecommendations = ({
 }) => {
   const data = useMemo(() => activeRecommendations, [activeRecommendations]);
   const columns = useMemo(() => {
-    const includesAnyDismissable = activeRecommendations.some((recommendation) => recommendation.dismissable);
+    const includesAnyDismissible = activeRecommendations.some((recommendation) => recommendation.dismissible);
 
     return [
       descriptionColumn("active"),
@@ -127,7 +127,7 @@ const ActiveResourceRecommendations = ({
         defaultSort: "desc",
         cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />
       },
-      ...(includesAnyDismissable
+      ...(includesAnyDismissible
         ? [actionsColumn({ active: true, isLoading, patchResource, havePermissionsToPerformActions })]
         : [])
     ];
@@ -158,7 +158,7 @@ const patchRecommendationWithDescriptions = (backendData, RecommendationClass) =
   ...backendData,
   descriptionMessageId: RecommendationClass.resourceDescriptionMessageId,
   descriptionMessageValues: RecommendationClass.getResourceDescriptionMessageValues(backendData),
-  dismissable: new RecommendationClass("active", {}).dismissable
+  dismissible: new RecommendationClass("active", {}).dismissible
 });
 
 const ResourceRecommendations = ({

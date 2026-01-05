@@ -106,6 +106,10 @@ ngui:
     # "enabled" - the overview is enabled
     # otherwise - the overview is disabled
     finops_in_practice_portal_overview: ""
+    # Defines if the billing integration is enabled
+    # "enabled" - the billing integration is enabled
+    # otherwise - the billing integration is disabled
+    billing_integration: ""
 elk:
   env:
     htpasswd_user: userforelk
@@ -150,3 +154,13 @@ password_strength_settings:
   min_uppercase:
   min_digits:
   min_special_chars:
+
+exchange_rates:
+  BRL:
+  INR:
+  EUR:
+
+stripe:
+  enabled: false
+  api_key:
+  webhook_secret:

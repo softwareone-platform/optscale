@@ -1887,3 +1887,30 @@ class Client(Client_v1):
     def cloud_policy_get(self, org_id, cloud_type, bucket_name=None, linked=False):
         return self.get(self.cloud_policy_url(org_id)+self.query_url(
             cloud_type=cloud_type, bucket_name=bucket_name, linked=linked))
+
+    @staticmethod
+    def organization_summary_url(organization_id):
+        return '%s/summary' % Client.organization_url(organization_id)
+
+    def get_organization_summary(self, organization_id, entities=None):
+        url = self.organization_summary_url(organization_id)
+        if entities:
+            url += self.query_url(entity=entities)
+        return self.get(url)
+
+    @staticmethod
+    def subscription_url(organization_id):
+        return '%s/subscription' % Client.organization_url(organization_id)
+
+    @staticmethod
+    def subscription_plan_url(organization_id):
+        return '%s/subscription_plans' % Client.organization_url(organization_id)
+
+    def subscription_update(self, organization_id, params):
+        return self.patch(self.subscription_url(organization_id), params)
+
+    def subscription_get(self, organization_id):
+        return self.get(self.subscription_url(organization_id))
+
+    def subscription_plan_list(self, organization_id):
+        return self.get(self.subscription_plan_url(organization_id))

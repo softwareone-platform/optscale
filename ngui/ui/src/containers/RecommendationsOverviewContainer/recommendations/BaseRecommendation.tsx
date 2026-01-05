@@ -162,7 +162,7 @@ class BaseRecommendation {
     return this.items;
   }
 
-  dismissable = true;
+  dismissible = true;
 
   columns = [];
 

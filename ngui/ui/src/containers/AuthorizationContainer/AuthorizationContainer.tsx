@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,12 +25,12 @@ import {
   OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
+import { processGraphQLErrorData } from "utils/apollo";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { ERROR_CODES } from "utils/errorCodes";
 import { SPACING_4 } from "utils/layouts";
 import macaroon from "utils/macaroons";
 import { stringifySearchParams, getSearchParams } from "utils/network";
-
-const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
 const AuthorizationContainer = () => {
   const { pathname } = useLocation();
@@ -61,8 +62,11 @@ const AuthorizationContainer = () => {
       const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
       dispatch(initialize({ ...data.token, caveats }));
     } catch (error) {
-      if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
-        navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+      if (error instanceof ApolloError) {
+        const errorsData = error.graphQLErrors.map(processGraphQLErrorData);
+        if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OA0073)) {
+          navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+        }
       }
     }
   };

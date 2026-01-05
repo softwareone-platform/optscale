@@ -261,7 +261,7 @@ class OrganizationViolationsWorker(ConsumerMixin):
                                int(end_date.timestamp())))
                 break
             result.append((int(current_date.timestamp()),
-                           int(next_date.timestamp()) - 1))
+                           int((next_date - timedelta(days=1)).timestamp())))
             current_date = next_date
         return result
 
@@ -433,8 +433,28 @@ class OrganizationViolationsWorker(ConsumerMixin):
                 value=len(filtered_resources), run_result=run_result))
         return result
 
+    def _process_anomaly(self, constraint_id, organization_id, constraint_type,
+                         date, threshold_days, threshold, filters):
+        info_funcs = {
+            EXPENSE_ANOMALY: self._get_expense_info,
+            RESOURCE_COUNT_ANOMALY: self._get_resource_count_info
+        }
+        func = info_funcs.get(constraint_type)
+        if not func:
+            raise ValueError(f"Unknown anomaly type: {constraint_type}")
+        todays_value, average_value, breakdown_value = func(
+            constraint_id, organization_id, date, threshold_days, filters)
+        if (todays_value is not None and average_value is not None and
+                todays_value > average_value + average_value * threshold / 100):
+            run_result = self._get_anomaly_run_result(
+                todays_value, average_value, breakdown_value)
+            return run_result, average_value, todays_value
+        else:
+            return {}, None, None
+
     def process_anomaly(self, constraint, organization_id, date, notifications,
                         execution_start_ts):
+        result = []
         c_id = constraint['id']
         last_run = constraint['last_run']
         threshold = constraint['definition']['threshold']
@@ -445,19 +465,22 @@ class OrganizationViolationsWorker(ConsumerMixin):
             last_import_at = self.get_max_last_import_at(organization_id)
             if last_run > last_import_at:
                 return []
-            todays_value, average_value, breakdown_value = self._get_expense_info(
-                c_id, organization_id, date, threshold_days, filters)
-        elif type_ == RESOURCE_COUNT_ANOMALY:
-            todays_value, average_value, breakdown_value = self._get_resource_count_info(
-                c_id, organization_id, date, threshold_days, filters)
-        run_result = self._get_anomaly_run_result(
-            todays_value, average_value, breakdown_value)
-        result = [run_result]
-        if todays_value is None and average_value is None:
-            return []
-        elif todays_value > average_value + average_value * threshold / 100:
+        run_result, average_value, todays_value = self._process_anomaly(
+            c_id, organization_id, type_, date, threshold_days, threshold,
+            filters
+        )
+        if type_ == EXPENSE_ANOMALY and not run_result:
+            # recalculate anomalies for yesterday, as expenses for yesterday
+            # may be generated with a time gap
+            date = date - timedelta(days=1)
+            run_result, average_value, todays_value = self._process_anomaly(
+                c_id, organization_id, type_, date, threshold_days,
+                threshold, filters
+            )
+        if run_result:
             min_created_at = date - timedelta(days=1)
             min_created_at_ts = int(min_created_at.timestamp())
+            result.append(run_result)
             result.append(self._update_limit_hit(
                 organization_id, constraint, notifications, min_created_at_ts,
                 int(date.timestamp()), constraint_limit=average_value,
