@@ -15,7 +15,7 @@ Large apps often share 90% of code across brands but need per‑brand overrides 
 ## How it works
 
 - The plugin activates based on the active theme set in the environment variable `VITE_APP_THEME`.
- <br> **IMPORTANT**: The value must match the theme folder name exactly for example: `your-theme-name` must math <i>src/themes/</i>`your-theme-name`.
+ <br> **IMPORTANT**: The value must match the theme folder name exactly for example: `your-theme-name` must match <i>src/themes/</i>`your-theme-name`.
 - Supported file extensions and directory structure are configurable in `themeResolver/config.ts`.
 - During vite run on build each import, the plugin:
     1. Resolves the original file using Vite.
