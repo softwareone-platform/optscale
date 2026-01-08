@@ -3,15 +3,14 @@ import { debugLog } from '../utils/debug-logging';
 import { fetchDataSourceResponse } from '../utils/api-helpers';
 import { expect } from '@playwright/test';
 import { DataSourceResponse } from '../types/api-response.types';
-import { restoreUserSessionInLocalForage } from '../utils/auth-session-storage/localforage-service';
 import { EAWSAccountType } from '../types/enums';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
   test.describe.configure({ mode: 'default' });
+  test.use({ restoreSession: true });
 
-  test.beforeEach('Login admin user', async ({ page, cloudAccountsPage }) => {
+  test.beforeEach('Login admin user', async ({ cloudAccountsPage }) => {
     await test.step('Login admin user', async () => {
-      await restoreUserSessionInLocalForage(page);
       await cloudAccountsPage.navigateToURL();
       await cloudAccountsPage.waitForAllProgressBarsToDisappear();
       await cloudAccountsPage.allCloudAccountLinks.last().waitFor();

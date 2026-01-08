@@ -1,30 +1,51 @@
 import { debugLog } from './debug-logging';
 
 /**
- * Determines the environment based on the `BASE_URL` and `API_BASE_URL` environment variables. This is required
- * to use the correct test data for the different organization configurations on each environment.
+ * Sets the application environment based on the `ENVIRONMENT` or `BASE_URL` environment variables.
  *
- * This function evaluates the `BASE_URL` against predefined environment variables (`TEST`, `STAGING`, `DEV`)
- * to determine the current environment. If `BASE_URL` contains 'localhost', it further checks the `API_BASE_URL`
- * for specific substrings ('show' or 'today') to decide between 'test' and 'dev' environments.
+ * This function first checks if the `ENVIRONMENT` variable is already set to one of the predefined
+ * environments ('TEST', 'STAGING', or 'DEV'). If so, it logs the current environment and returns it.
  *
- * @throws {Error} Throws an error if the environment configuration is unknown.
- * @returns {string} The determined environment ('test', 'staging', or 'dev').
+ * If the `ENVIRONMENT` variable is not set, the function determines the environment based on the `BASE_URL`
+ * variable. It supports the following cases:
+ * - If `BASE_URL` matches the `TEST`, `STAGING`, or `DEV` environment variables, it sets the environment accordingly.
+ * - If `BASE_URL` includes 'localhost', additional checks are performed on the `API_BASE_URL` variable to determine
+ *   if the environment is 'test' or 'dev'.
+ *
+ * If none of the conditions are met, the function throws an error indicating an unknown environment configuration.
+ *
+ * @returns {string} The name of the environment ('TEST', 'STAGING', 'DEV', 'test', or 'dev').
+ * @throws {Error} If the environment configuration is unknown or `BASE_URL` does not match any predefined values.
  */
 export function setEnvironment(): string {
+  // Check if the environment is already set to 'TEST', 'STAGING', or 'DEV'
+  if(process.env.ENVIRONMENT) {
+    if (
+      process.env.ENVIRONMENT.toUpperCase() === 'TEST' ||
+      process.env.ENVIRONMENT.toUpperCase() === 'STAGING' ||
+      process.env.ENVIRONMENT.toUpperCase() === 'DEV'
+    ) {
+      debugLog(`Environment already set to ${process.env.ENVIRONMENT}`);
+      return process.env.ENVIRONMENT;
+    }
+  }
+
+  // Determine the environment based on the BASE_URL variable
   if (process.env.BASE_URL === process.env.TEST) {
     debugLog('Environment set to TEST');
-    return 'test';
+    return 'TEST';
   } else if (process.env.BASE_URL === process.env.STAGING) {
     debugLog('Environment set to STAGING');
-    return 'staging';
+    return 'STAGING';
   } else if (process.env.BASE_URL === process.env.DEV) {
     debugLog('Environment set to DEV');
-    return 'dev';
+    return 'DEV';
   } else if (process.env.BASE_URL.includes('localhost')) {
-    if (process.env.API_BASE_URL.includes('show')) return 'test';
-    if (process.env.API_BASE_URL.includes('today')) return 'dev';
+    // Additional checks for localhost environments
+    if (process.env.API_BASE_URL.includes('show')) return 'TEST';
+    if (process.env.API_BASE_URL.includes('today')) return 'DEV';
   } else {
+    // Throw an error if the environment configuration is unknown
     throw new Error('Unknown environment configuration, or BASE_URL does not match TEST, STAGING, or DEV.');
   }
 }

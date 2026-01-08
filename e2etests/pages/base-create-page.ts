@@ -9,6 +9,7 @@ export abstract class BaseCreatePage extends BasePage {
   readonly url: string;
   readonly nameInput: Locator;
   readonly typeSelect: Locator;
+
   // Filters
   readonly filtersBox: Locator;
   readonly allFilterBoxButtons: Locator;
@@ -79,6 +80,8 @@ export abstract class BaseCreatePage extends BasePage {
     this.k8sServiceFilter = this.filtersBox.getByRole('button', { name: 'K8s service (' });
     this.k8sNamespaceFilter = this.filtersBox.getByRole('button', { name: 'K8s namespace (' });
 
+    this.showMoreFiltersBtn = this.main.getByRole('button', { name: 'Show more' });
+    this.showLessFiltersBtn = this.main.getByRole('button', { name: 'Show less' });
     this.saveBtn = this.main.getByTestId('btn_create');
     this.cancelBtn = this.main.getByTestId('btn_cancel');
   }
