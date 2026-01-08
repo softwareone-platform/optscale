@@ -6,7 +6,7 @@ import { AzurePropertiesProps } from "./types";
 
 const ParentDataSource = ({ parentDataSourceId }: { parentDataSourceId: string }) => {
   const dataSources = useAllDataSources();
-  const { name, type } = dataSources?.find((dataSource) => dataSource?.id === parentDataSourceId) ?? {};
+  const { name, type } = dataSources.find((dataSource) => dataSource?.id === parentDataSourceId) ?? {};
 
   return (
     <KeyValueLabel
