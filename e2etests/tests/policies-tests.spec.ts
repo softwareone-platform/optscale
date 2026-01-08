@@ -251,7 +251,12 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
       gql: 'GetOrganizationConstraint',
       mock: ResourceUnderLimitResponse,
       variableMatch: { constraintId: 'aaa8654e-0c83-48e9-93f5-d5831f6fa0e7' },
-    }
+    },
+    {
+      gql: 'GetOrganizationLimitHits',
+      mock: EmptyLimitHitsResponse,
+      variableMatch: { constraintId: 'aaa8654e-0c83-48e9-93f5-d5831f6fa0e7' },
+    },
   ];
 
   test.use({
@@ -267,7 +272,9 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     });
   });
 
-  test('[232337] Verify that statuses are displayed correctly from each policy type when over and under limit', async ({ policiesPage }) => {
+  test('[232337] Verify that statuses are displayed correctly from each policy type when over and under limit', async ({
+    policiesPage,
+  }) => {
     expect(await policiesPage.getColorFromElement(policiesPage.resourceUnderLimitStatus)).toBe(policiesPage.successColor);
     expect(await policiesPage.getColorFromElement(policiesPage.resourceOverLimitStatus)).toBe(policiesPage.errorColor);
     expect(await policiesPage.getColorFromElement(policiesPage.recurringBudgetUnderLimitStatus)).toBe(policiesPage.successColor);
