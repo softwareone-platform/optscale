@@ -12,6 +12,11 @@ import Switch from "@mui/material/Switch";
 import Toolbar from "@mui/material/Toolbar";
 import { FormattedMessage } from "react-intl";
 import { NavLink } from "react-router-dom";
+import {
+  COLLAPSE_MODE,
+  HIDE_MODE,
+  useHideActionsForSmallScreens
+} from "@main/components/ActionBar/useHideActionsForSmallScreens";
 import ActionBarHeader from "components/ActionBarHeader";
 import Breadcrumbs from "components/Breadcrumbs";
 import ButtonGroup from "components/ButtonGroup";
@@ -21,11 +26,6 @@ import Popover from "components/Popover";
 import { useAllowedItems } from "hooks/useAllowedActions";
 import { isEmptyArray, splitIntoTwoChunks } from "utils/arrays";
 import { SCOPE_TYPES } from "utils/constants";
-import {
-  COLLAPSE_MODE,
-  HIDE_MODE,
-  useHideActionsForSmallScreens
-} from "../../../../components/ActionBar/useHideActionsForSmallScreens";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./ActionBar.styles";
 
@@ -271,6 +271,7 @@ const ActionBar = ({ data, isPage = true }) => {
                       renderMenu={({ closeHandler }) => <DropDownMenu items={hidden} onClose={closeHandler} />}
                       label={
                         <IconButton
+                          dataTestId="action-bar-more-button"
                           sx={{ color: MPT_BRAND_TYPE }}
                           isLoading={hidden.some((item) => item.isLoading)}
                           icon={<MoreVertOutlinedIcon />}
