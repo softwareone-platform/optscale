@@ -1083,26 +1083,25 @@ class Aws(S3CloudMixin):
         for common_prefix in resp.get('CommonPrefixes', []):
             common_prefix = common_prefix['Prefix']
             last_objects_map = {}
-            resp = self.s3.list_objects_v2(
-                Bucket=bucket_name,
-                Prefix=common_prefix,
-            )
-            for r in resp.get('Contents', []):
-                # replace daily reports with the latest
-                # for "create_new" report versioning
-                path = r['Key']
-                day = path.split(common_prefix)[1].split(report_name)[0]
-                if day:
-                    for rgx in [el for el_l in GROUP_DATES_PATTERNS.values()
-                                for el in el_l]:
-                        if re.search(rgx, day):
-                            day = re.sub(rgx, '', day)
-                            break
-                key = path.replace(day, '')
-                last_obj = last_objects_map.get(key)
-                if not last_obj or last_obj['LastModified'] < r['LastModified']:
-                    last_objects_map[key] = r
-            result['Contents'].extend(last_objects_map.values())
+            paginator = self.s3.get_paginator('list_objects_v2')
+            pages = paginator.paginate(Bucket=bucket_name, Prefix=common_prefix)
+            for p in pages:
+                for r in p['Contents']:
+                    # replace daily reports with the latest
+                    # for "create_new" report versioning
+                    path = r['Key']
+                    day = path.split(common_prefix)[1].split(report_name)[0]
+                    if day:
+                        for rgx in [el for el_l in GROUP_DATES_PATTERNS.values()
+                                    for el in el_l]:
+                            if re.search(rgx, day):
+                                day = re.sub(rgx, '', day)
+                                break
+                    key = path.replace(day, '')
+                    last_obj = last_objects_map.get(key)
+                    if not last_obj or last_obj['LastModified'] < r['LastModified']:
+                        last_objects_map[key] = r
+                result['Contents'].extend(last_objects_map.values())
         return result
 
     def get_report_files(self):
