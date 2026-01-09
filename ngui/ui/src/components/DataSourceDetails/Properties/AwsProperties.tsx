@@ -65,6 +65,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="awsAuthenticationType"
         value={<FormattedMessage id={getAwsAuthenticationTypeMessageId()} />}
         dataTestIds={{ key: "p_authentication_type_key", value: "p_authentication_type_value" }}
@@ -121,6 +122,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
           />
           {!!regionName && (
             <KeyValueLabel
+              variant="property"
               keyMessageId="exportRegionName"
               value={regionName}
               dataTestIds={{ key: "p_region_name_key", value: "p_region_name_value" }}
