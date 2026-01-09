@@ -1,4 +1,5 @@
 import { debugLog } from './debug-logging';
+import { EEnvironment } from '../types/enums';
 
 /**
  * Sets the application environment based on the `ENVIRONMENT` or `BASE_URL` environment variables.
@@ -10,23 +11,20 @@ import { debugLog } from './debug-logging';
  * variable. It supports the following cases:
  * - If `BASE_URL` matches the `TEST`, `STAGING`, or `DEV` environment variables, it sets the environment accordingly.
  * - If `BASE_URL` includes 'localhost', additional checks are performed on the `API_BASE_URL` variable to determine
- *   if the environment is 'test' or 'dev'.
+ *   if the environment is 'TEST', 'DEV', or 'STAGING'.
  *
  * If none of the conditions are met, the function throws an error indicating an unknown environment configuration.
  *
- * @returns {string} The name of the environment ('TEST', 'STAGING', 'DEV', 'test', or 'dev').
+ * @returns {string} The name of the environment ('TEST', 'STAGING', 'DEV', or corresponding `EEnvironment` values).
  * @throws {Error} If the environment configuration is unknown or `BASE_URL` does not match any predefined values.
  */
 export function setEnvironment(): string {
   // Check if the environment is already set to 'TEST', 'STAGING', or 'DEV'
-  if(process.env.ENVIRONMENT) {
-    if (
-      process.env.ENVIRONMENT.toUpperCase() === 'TEST' ||
-      process.env.ENVIRONMENT.toUpperCase() === 'STAGING' ||
-      process.env.ENVIRONMENT.toUpperCase() === 'DEV'
-    ) {
-      debugLog(`Environment already set to ${process.env.ENVIRONMENT}`);
-      return process.env.ENVIRONMENT;
+  if (process.env.ENVIRONMENT) {
+    const env = process.env.ENVIRONMENT.toUpperCase();
+    if (env === EEnvironment.TEST || env === EEnvironment.STAGING || env === EEnvironment.DEV) {
+      debugLog(`Environment already set to ${env}`);
+      return env;
     }
   }
 
@@ -42,8 +40,9 @@ export function setEnvironment(): string {
     return 'DEV';
   } else if (process.env.BASE_URL.includes('localhost')) {
     // Additional checks for localhost environments
-    if (process.env.API_BASE_URL.includes('show')) return 'TEST';
-    if (process.env.API_BASE_URL.includes('today')) return 'DEV';
+    if (process.env.API_BASE_URL.includes('show')) return EEnvironment.TEST;
+    if (process.env.API_BASE_URL.includes('today')) return EEnvironment.DEV;
+    if (process.env.API_BASE_URL.includes('live')) return EEnvironment.STAGING;
   } else {
     // Throw an error if the environment configuration is unknown
     throw new Error('Unknown environment configuration, or BASE_URL does not match TEST, STAGING, or DEV.');

@@ -15,3 +15,9 @@ export enum EAWSAccountType {
   member,
   standalone
 }
+
+export enum EEnvironment {
+  TEST = "TEST",
+  STAGING = "STAGING",
+  DEV = "DEV"
+}
