@@ -449,26 +449,28 @@ export interface EmployeesResponse {
 }
 
 export interface DefaultAnomalyResponse {
-  organization_constraints: [{
-    deleted_at: number;
-    id: string;
-    created_at: number;
-    name: string;
-    organization_id: string;
-    type: string;
-    definition: {
-      threshold_days: number;
-      threshold: number;
-    };
-    filters: Record<string, unknown>;
-    last_run: number;
-    last_run_result: {
-      average: number;
-      today: number;
-      breakdown: Record<string, number> | null;
-    }
-    limit_hits: any[];
-  }];
+  organization_constraints: [
+    {
+      deleted_at: number;
+      id: string;
+      created_at: number;
+      name: string;
+      organization_id: string;
+      type: string;
+      definition: {
+        threshold_days: number;
+        threshold: number;
+      };
+      filters: Record<string, unknown>;
+      last_run: number;
+      last_run_result: {
+        average: number;
+        today: number;
+        breakdown: Record<string, number> | null;
+      };
+      limit_hits: any[];
+    },
+  ];
 }
 
 export interface CreateAnomalyPolicyResponse {
@@ -487,7 +489,6 @@ export interface CreateAnomalyPolicyResponse {
   last_run_result: Record<string, unknown>;
 }
 
-
 export interface AnomalyExpensesDailyBreakdownResponse {
   expensesDailyBreakdown: {
     breakdown: {
@@ -500,3 +501,64 @@ export interface AnomalyExpensesDailyBreakdownResponse {
   };
 }
 
+/**
+ * Budget/Quota policies returned by the API
+ */
+export interface PolicyBudgetAndQuotaResponse {
+  organization_constraints: [
+    {
+      id: string;
+      created_at: number;
+      deleted_at: number;
+      name: string;
+      organization_id: string;
+      type: 'recurring_budget' | 'resource_quota' | 'expiring_budget';
+
+      definition: PolicyDefinition;
+
+      filters?: Record<string, { name: string }>;
+
+      last_run: number;
+      last_run_result: {
+        limit: number;
+        current: number;
+      };
+
+      limit_hits: {
+        id: string;
+        deleted_at: number;
+        created_at: number;
+        organization_id: string;
+        constraint_id: string;
+        constraint_limit: number;
+        value: number;
+
+        run_result: {
+          limit: number;
+          current: number;
+        };
+      };
+    },
+  ];
+}
+
+/**
+ * Definition differs by policy `type`
+ * - recurring_budget → { monthly_budget: number }
+ * - resource_quota  → { max_value: number }
+ * - expiring_budget → { total_budget: number, start_date: number }
+ */
+export type PolicyDefinition = RecurringBudgetDefinition | ResourceQuotaDefinition | ExpiringBudgetDefinition
+
+export interface RecurringBudgetDefinition {
+  monthly_budget: number;
+}
+
+export interface ResourceQuotaDefinition {
+  max_value: number;
+}
+
+export interface ExpiringBudgetDefinition {
+  total_budget: number;
+  start_date: number; // UNIX timestamp
+}

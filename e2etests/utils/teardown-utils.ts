@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { debugLog } from './debug-logging';
-import { EmployeesResponse } from '../types/api-response.types';
+import { EmployeesResponse, PolicyBudgetAndQuotaResponse } from '../types/api-response.types';
 import { AuthRequest } from './api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 
@@ -42,22 +42,19 @@ export async function cleanUpDirectoryIfEnabled(dirPath: string): Promise<void> 
  * based on their email and display name, and deletes them while reassigning their ownership
  * to a default user.
  *
- * @param {AuthRequest} authRequest - An instance of the AuthRequest class used to obtain an authorization token.
  * @param {RestAPIRequest} restAPIRequest - An instance of the RestAPIRequest class used to interact with the REST API.
+ * @param token
  * @returns {Promise<void>} A promise that resolves when the operation is complete.
  */
-export async function deleteTestUsers(authRequest: AuthRequest, restAPIRequest: RestAPIRequest): Promise<void> {
+export async function deleteTestUsers(restAPIRequest: RestAPIRequest, token: string): Promise<void> {
   if (process.env.CLEAN_UP !== 'true') {
     return;
   }
-
-  const email = process.env.DEFAULT_USER_EMAIL;
-  const password = process.env.DEFAULT_USER_PASSWORD;
   const reassignToUserId = process.env.DEFAULT_USER_ID;
   const organisationId = process.env.DEFAULT_ORG_ID;
   const usersEndpoint = `/restapi/v2/organizations/${organisationId}/employees?exclude_myself=false&roles=true`;
 
-  const token = await authRequest.getAuthorizationToken(email, password);
+
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -93,5 +90,14 @@ export async function deleteAnomalyPolicy(authRequest: AuthRequest, restAPIReque
   const email = process.env.DEFAULT_USER_EMAIL;
   const password = process.env.DEFAULT_USER_PASSWORD;
   const token = await authRequest.getAuthorizationToken(email, password);
-  await restAPIRequest.deleteAnomalyPolicy(policyId, token);
+  await restAPIRequest.deletePolicy(policyId, token);
+}
+
+export async function deletePolicies(restAPIRequest: RestAPIRequest, token: string): Promise<void> {
+  const policyResponse = await restAPIRequest.getPolicies(token);
+  const policyResponseBody = await policyResponse.json() as PolicyBudgetAndQuotaResponse;
+    for (const policy of policyResponseBody.organization_constraints) {
+        debugLog(`Deleting policy: ${policy.name} with ID: ${policy.id}`);
+        await restAPIRequest.deletePolicy(policy.id, token);
+    }
 }

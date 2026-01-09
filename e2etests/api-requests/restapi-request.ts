@@ -1,12 +1,14 @@
 import { BaseRequest } from './base-request';
 import { APIRequestContext } from '@playwright/test';
 import { debugLog } from '../utils/debug-logging';
+import { APIResponse } from 'playwright';
 
 export class RestAPIRequest extends BaseRequest {
   readonly request: APIRequestContext;
   readonly organizationsEndpoint: string;
   readonly employeesEndpoint: string;
-  readonly anomalyPoliciesEndpoint: string;
+  readonly organizationConstraintsEndpoint: string;
+  readonly policiesEndpoint: string;
 
   /**
    * Constructs an instance of RestAPIRequest.
@@ -18,7 +20,8 @@ export class RestAPIRequest extends BaseRequest {
     const baseUrl = process.env.API_BASE_URL || '';
     this.organizationsEndpoint = `${baseUrl}/restapi/v2/organizations`;
     this.employeesEndpoint = `${baseUrl}/restapi/v2/employees`;
-    this.anomalyPoliciesEndpoint = `${baseUrl}/restapi/v2/organization_constraints`;
+    this.organizationConstraintsEndpoint = `${baseUrl}/restapi/v2/organization_constraints`;
+    this.policiesEndpoint = `${this.organizationsEndpoint}/${process.env.DEFAULT_ORG_ID}/organization_constraints?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`;
   }
 
   /**
@@ -29,7 +32,7 @@ export class RestAPIRequest extends BaseRequest {
    * @returns {Promise<string>} A promise that resolves to the response body as a string.
    * @throws Will throw an error if the organization creation fails.
    */
-  async createOrganization(token: string, name: string, currency = 'USD'): Promise<string> {
+  async createOrganization(token: string, name: string, currency: string = 'USD'): Promise<string> {
     const response = await this.request.post(this.organizationsEndpoint, {
       headers: {
         'Content-Type': 'application/json',
@@ -104,8 +107,8 @@ export class RestAPIRequest extends BaseRequest {
    * @returns {Promise<void>} A promise that resolves when the anomaly policy is successfully deleted.
    * @throws {Error} If the deletion fails with a status other than 204.
    */
-  async deleteAnomalyPolicy(policyID: string, token: string): Promise<void> {
-    const endpoint = `${this.anomalyPoliciesEndpoint}/${policyID}`;
+  async deletePolicy(policyID: string, token: string): Promise<void> {
+    const endpoint = `${this.organizationConstraintsEndpoint}/${policyID}`;
     debugLog(`Deleting anomaly policy ${policyID}`);
     const response = await this.request.delete(endpoint, {
       headers: {
@@ -117,5 +120,22 @@ export class RestAPIRequest extends BaseRequest {
       throw new Error(`[ERROR] Failed to delete anomaly policy ID: ${policyID}`);
     }
     debugLog(`Anomaly policy ${policyID} deleted`);
+  }
+
+  /**
+   * Retrieves the policies associated with the current organization.
+   *
+   * @param {string} token - The authorization token required for the API request.
+   * @returns {Promise<APIResponse>} A promise that resolves to the API response containing the policies.
+   */
+  async getPolicies(token: string): Promise<APIResponse> {
+    const endpoint = this.policiesEndpoint;
+
+    return await this.request.get(endpoint, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
   }
 }

@@ -14,6 +14,7 @@ export abstract class BasePage {
   readonly loadingPageImg: Locator;
   readonly progressBar: Locator;
   readonly tooltip: Locator;
+  readonly table: Locator;
 
   readonly infoColor: string; // Default color for neutral state
   readonly warningColor: string; // Default color for warning state
@@ -36,6 +37,7 @@ export abstract class BasePage {
     this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
     this.errorColor = 'rgb(187, 20, 37)'; // Default color for error state
     this.successColor = 'rgb(0, 120, 77)'; // Default color for success state
+    this.table = this.main.locator('table');
   }
 
   /**

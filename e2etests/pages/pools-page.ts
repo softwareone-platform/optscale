@@ -36,7 +36,6 @@ export class PoolsPage extends BasePage {
   readonly ownerToggle: Locator;
   readonly firstSubItem: Locator
 
-  readonly table: Locator;
   readonly nameTableHeading: Locator;
   readonly monthlyLimitTableHeading: Locator;
   readonly expensesThisMonthTableHeading: Locator;
@@ -112,7 +111,6 @@ export class PoolsPage extends BasePage {
     this.forecastToggle = this.simplePopover.locator('li', { hasText: 'Forecast' });
     this.ownerToggle = this.simplePopover.locator('li', { hasText: 'Owner' });
 
-    this.table = this.main.locator('table');
     this.nameTableHeading = this.table.locator('th', { hasText: 'Name' });
     this.monthlyLimitTableHeading = this.table.locator('th', { hasText: 'Monthly Limit' });
     this.expensesThisMonthTableHeading = this.table.locator('th', { hasText: 'Expenses this month' });
