@@ -1,5 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { BasePage } from './base-page';
+import { EEnvironment } from '../types/enums';
 
 /**
  * Represents the Users Page.
@@ -39,11 +40,11 @@ export class UsersPage extends BasePage {
   getPoolNameForEnvironment(): string {
     const env = process.env.ENVIRONMENT;
     switch (env) {
-      case 'dev':
+      case EEnvironment.DEV:
         return 'AWS Dev';
-      case 'staging':
+      case EEnvironment.STAGING:
         return 'QA & Production';
-      case 'test':
+      case EEnvironment.TEST:
         return 'AWS SWO';
       default:
         throw new Error(`Unknown environment: ${env}`);

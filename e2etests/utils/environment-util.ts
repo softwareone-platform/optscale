@@ -31,13 +31,13 @@ export function setEnvironment(): string {
   // Determine the environment based on the BASE_URL variable
   if (process.env.BASE_URL === process.env.TEST) {
     debugLog('Environment set to TEST');
-    return 'TEST';
+    return EEnvironment.TEST;
   } else if (process.env.BASE_URL === process.env.STAGING) {
     debugLog('Environment set to STAGING');
-    return 'STAGING';
+    return EEnvironment.STAGING;
   } else if (process.env.BASE_URL === process.env.DEV) {
     debugLog('Environment set to DEV');
-    return 'DEV';
+    return EEnvironment.DEV;
   } else if (process.env.BASE_URL.includes('localhost')) {
     // Additional checks for localhost environments
     if (process.env.API_BASE_URL.includes('show')) return EEnvironment.TEST;
@@ -59,5 +59,5 @@ export function setEnvironment(): string {
  * @returns {string} The name of the test organization.
  */
 export function getEnvironmentTestOrgName(): string {
-  return process.env.ENVIRONMENT === 'staging' ? 'Marketplace Platform Team' : 'SoftwareOne (Test Environment)';
+  return process.env.ENVIRONMENT === EEnvironment.STAGING ? 'Marketplace Platform Team' : 'SoftwareOne (Test Environment)';
 }
