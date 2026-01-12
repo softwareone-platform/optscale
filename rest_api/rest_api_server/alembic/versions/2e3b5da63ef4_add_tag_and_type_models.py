@@ -1,7 +1,7 @@
 """add_tag_and_type_models
 
 Revision ID: 2e3b5da63ef4
-Revises: c9f036cdbcce
+Revises: 4f92c1b3d8e9
 Create Date: 2025-11-19 13:10:47.620503
 
 """
@@ -18,7 +18,7 @@ from rest_api.rest_api_server.models.types import (
 
 # revision identifiers, used by Alembic.
 revision = "2e3b5da63ef4"
-down_revision = "c9f036cdbcce"
+down_revision = "4f92c1b3d8e9"
 branch_labels = None
 depends_on = None
 
