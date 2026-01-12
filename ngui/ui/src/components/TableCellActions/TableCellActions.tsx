@@ -40,6 +40,7 @@ const TableCellActions = ({ items, entityId, entityType }) => {
       style={{
         display: "flex"
       }}
+      onClick={(e) => e.stopPropagation()}
     >
       {renderActions(items, allowedItems, isGetAllowedActionsLoading)}
     </div>

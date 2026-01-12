@@ -9,9 +9,9 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import Accordion from "components/Accordion";
 import ActionBar from "components/ActionBar";
+import ButtonGroup from "components/ButtonGroup";
 import Checkbox from "components/Checkbox";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
-import LinearSelector from "components/LinearSelector";
 import PageContentWrapper from "components/PageContentWrapper";
 import RangePickerForm from "components/RangePickerForm";
 import SearchInput from "components/SearchInput";
@@ -51,57 +51,42 @@ const Picker = ({ onApply }) => {
 
 const EVENT_LEVEL_ITEMS = [
   {
-    name: "all",
+    id: "all",
+    messageId: "all",
     value: EVENT_LEVEL.ALL,
     type: "text",
     dataTestId: "event_lvl_all"
   },
   {
-    name: "info",
+    id: "info",
+    messageId: "info",
     value: EVENT_LEVEL.INFO,
     type: "text",
     dataTestId: "event_lvl_info"
   },
   {
-    name: "warning",
+    id: "warning",
+    messageId: "warning",
     value: EVENT_LEVEL.WARNING,
     type: "text",
     dataTestId: "event_lvl_warning"
   },
   {
-    name: "error",
+    id: "error",
+    messageId: "error",
     value: EVENT_LEVEL.ERROR,
     type: "text",
     dataTestId: "event_lvl_error"
   }
 ];
 
-const DEFAULT_EVENT_LEVEL = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => itemValue === EVENT_LEVEL.ALL);
-
 const formatEventTime = (eventTime) => `${formatUTC(eventTime, EN_FULL_FORMAT)} UTC`;
 
 const EventLevelSelector = ({ eventLevel, onApply }) => {
-  const getValue = () => {
-    const { name, value } = EVENT_LEVEL_ITEMS.find(({ value: itemValue }) => eventLevel === itemValue) ?? DEFAULT_EVENT_LEVEL;
+  const activeButtonIndex = EVENT_LEVEL_ITEMS.findIndex(({ value }) => value === eventLevel);
+  const buttons = EVENT_LEVEL_ITEMS.map((e) => ({ ...e, action: () => onApply({ level: e.value }) }));
 
-    return {
-      name,
-      value
-    };
-  };
-
-  return (
-    <LinearSelector
-      value={getValue()}
-      label={<FormattedMessage id="eventLevel" />}
-      onChange={({ value }) =>
-        onApply({
-          level: value
-        })
-      }
-      items={EVENT_LEVEL_ITEMS}
-    />
-  );
+  return <ButtonGroup buttons={buttons} activeButtonIndex={activeButtonIndex === -1 ? 0 : activeButtonIndex} />;
 };
 
 const getEventsGroupedByTime = (events) =>
@@ -115,7 +100,7 @@ const getEventsGroupedByTime = (events) =>
 
 const EventIcon = ({ eventLevel }) =>
   ({
-    [EVENT_LEVEL.INFO]: <InfoIcon fontSize="small" color="info" />,
+    [EVENT_LEVEL.INFO]: <InfoIcon fontSize="small" color="primary" />,
     [EVENT_LEVEL.WARNING]: <ErrorIcon fontSize="small" color="warning" />,
     [EVENT_LEVEL.ERROR]: <ErrorIcon fontSize="small" color="error" />,
     [EVENT_LEVEL.DEBUG]: <PestControlIcon fontSize="small" color="info" />
@@ -247,9 +232,7 @@ const Events = ({
           <Box display="flex" mr={0.5}>
             <EventIcon eventLevel={event.level} />
           </Box>
-          <Typography variant="body2" noWrap>
-            {`${formatEventTime(event.time)} | ${event.description}`}
-          </Typography>
+          <Typography variant="body2">{`${formatEventTime(event.time)} | ${event.description}`}</Typography>
         </Box>
         {getAccordionContent(event)}
       </Accordion>
@@ -288,7 +271,7 @@ const Events = ({
           <Stack spacing={SPACING_3}>
             {Object.entries(getEventsGroupedByTime(events)).map(([groupKey, groupData], index) => (
               <Box key={groupKey}>
-                <Typography>{groupKey}</Typography>
+                <Typography variant="subtitle1">{groupKey}</Typography>
                 {renderAccordion(groupData, index)}
               </Box>
             ))}
@@ -304,7 +287,7 @@ const Events = ({
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Stack spacing={SPACING_1} height="100%">
-          <Box display="flex" flexWrap="wrap" gap={SPACING_2}>
+          <Box display="flex" flexWrap="wrap" gap={SPACING_2} className={"MTPBoxShadow"}>
             <Box display="flex" gap={2}>
               <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} />
               <FormControlLabel
