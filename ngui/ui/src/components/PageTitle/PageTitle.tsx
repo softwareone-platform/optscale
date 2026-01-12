@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import Typography, { type TypographyProps } from "@mui/material/Typography";
 
 type PageTitleCustomProps = {
-  dataTestId: string;
+  dataTestId?: string;
   dataProductTourId?: string;
 };
 

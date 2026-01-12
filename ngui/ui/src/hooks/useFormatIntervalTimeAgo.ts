@@ -6,7 +6,7 @@ export const useFormatIntervalTimeAgo = () => {
   const intl = useIntl();
 
   return useCallback(
-    (agoSecondsTimestamp, precision) =>
+    (agoSecondsTimestamp: number, precision?: number) =>
       formatIntervalTimeAgo({
         agoSecondsTimestamp,
         precision,

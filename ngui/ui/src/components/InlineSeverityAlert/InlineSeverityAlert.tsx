@@ -1,11 +1,11 @@
-import { ReactNode } from "react";
 import { Alert, Typography, type AlertProps, type SxProps, type Theme } from "@mui/material";
 import { FormattedMessage } from "react-intl";
+import { IntlFormatValues } from "utils/types";
 import useStyles from "./InlineSeverityAlert.styles";
 
 type TextOrMessageIdProps =
   | { text: string; messageId?: never; messageValues?: never; messageDataTestId?: never }
-  | { text?: never; messageId: string; messageValues?: Record<string, ReactNode>; messageDataTestId?: string };
+  | { text?: never; messageId: string; messageValues?: IntlFormatValues; messageDataTestId?: string };
 
 export type InlineSeverityAlertProps = TextOrMessageIdProps & {
   severity?: AlertProps["severity"];

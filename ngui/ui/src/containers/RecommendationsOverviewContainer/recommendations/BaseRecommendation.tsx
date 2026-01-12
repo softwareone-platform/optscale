@@ -164,7 +164,7 @@ class BaseRecommendation {
 
   dismissible = true;
 
-  columns = [];
+  columns: TODO[] = [];
 
   descriptionMessageId = "my_message";
 
