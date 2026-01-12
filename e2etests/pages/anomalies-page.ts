@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import {EEnvironment} from "../types/enums";
 
 /**
  * Represents the Anomalies Page.
@@ -111,10 +112,10 @@ export class AnomaliesPage extends BasePage {
   async getUserNameByEnvironment(): Promise<string> {
     const env = process.env.ENVIRONMENT;
     switch (env) {
-      case 'staging':
-      case 'dev':
+      case EEnvironment.STAGING:
+      case EEnvironment.DEV:
         return 'Admin User';
-      case 'test':
+      case EEnvironment.TEST:
         return 'FinOpsTestUser@outlook.com';
       default:
         throw new Error(`Unknown TEST_ENVIRONMENT: ${env}`);
