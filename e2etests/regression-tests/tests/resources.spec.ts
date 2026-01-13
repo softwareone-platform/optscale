@@ -19,7 +19,6 @@ test.describe('FFC: Resources Dashboard @swo_regression', () => {
   const apiInterceptionsDashboard: InterceptionEntry[] = [
     { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
     { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
-    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
     { url: `v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock },
     { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
   ];
@@ -81,14 +80,12 @@ test.describe('FFC: Resources Details @swo_regression', () => {
   const apiInterceptionsDetails: InterceptionEntry[] = [
     { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
     { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
-    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
     { url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock },
     { url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock },
     { url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUMock },
     { url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock },
     { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
     { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
-    { url: `v2/organizations/[^/]+/available_filters`, mock: ResourceAvailableFiltersMock },
   ];
 
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: [...apiInterceptionsDetails] } });
