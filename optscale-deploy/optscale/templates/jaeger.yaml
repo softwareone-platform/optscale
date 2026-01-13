@@ -11,17 +11,24 @@ metadata:
 spec:
   type: {{ $config.service.type }}
   ports:
-    - nodePort: {{ $config.service.externalPort }}
-      port: {{ $config.service.internalPort }}
-      targetPort: {{ $config.service.internalPort }}
+    - port: {{ $config.service.frontendInternalPort }}
+      targetPort: frontend
       protocol: TCP
-      name: {{ $config.service.name }}
+      name: {{ $config.service.name }}-frontend
+    - port: {{ $config.service.grpcReceiverExternalPort}}
+      targetPort: grpc-receiver
+      protocol: TCP
+      name: {{ $config.service.name }}-grpc-receiver
+    - port: {{ $config.service.httpReceiverExternalPort}}
+      targetPort: http-receiver
+      protocol: TCP
+      name: {{ $config.service.name }}-http-receiver
   selector:
     app: {{ $config.name }}
     release: {{ .Release.Name }}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ $config.name }}
   labels:
@@ -29,6 +36,7 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
 spec:
+  serviceName: {{ $config.name }}
   replicas: {{ $config.replicaCount }}
   selector:
     matchLabels:
@@ -40,13 +48,19 @@ spec:
         app: {{ $config.name }}
         release: {{ .Release.Name }}
     spec:
-      initContainers:
-{{- if .Values.elk.enabled }}
-{{ include "wait_for_elk" . | indent 6 }}
-{{- end }}
       containers:
       - name: {{ $config.name }}
-        image: "jaegertracing/all-in-one:latest"
+        image: "jaegertracing/jaeger:2.14.0"
         imagePullPolicy: {{ $config.image.pullPolicy }}
         ports:
-        - containerPort: {{ $config.service.internalPort }}
+        - containerPort: {{ $config.service.frontendInternalPort }}
+          name: frontend
+        - containerPort: {{ $config.service.grpcReceiverInternalPort }}
+          name: grpc-receiver
+        - containerPort: {{ $config.service.httpReceiverInternalPort }}
+          name: http-receiver
+        env:
+        - name: SPAN_STORAGE_TYPE
+          value: memory
+        - name: COLLECTOR_OTLP_ENABLED
+          value: "true"

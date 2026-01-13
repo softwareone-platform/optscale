@@ -1,18 +1,25 @@
 import json
-from tools.optscale_exceptions.common_exc import (NotFoundException,
-                                                  UnauthorizedException)
-from tools.optscale_exceptions.http_exc import OptHTTPError
-from rest_api.rest_api_server.exceptions import Err
-from tools.optscale_exceptions.common_exc import WrongArgumentsException
-from rest_api.rest_api_server.handlers.v2.base import BaseHandler
-from rest_api.rest_api_server.handlers.v1.organizations import (
-    OrganizationAsyncCollectionHandler as OrganizationAsyncCollectionHandler_v1)
-from rest_api.rest_api_server.controllers.organization import OrganizationAsyncController
-from rest_api.rest_api_server.handlers.v1.organizations import (
-    OrganizationAsyncItemHandler as OrganizationAsyncItemHandler_v1)
-from rest_api.rest_api_server.controllers.register import RegisterAsyncController
-from rest_api.rest_api_server.utils import ModelEncoder, run_task, check_int_attribute
+import logging
 
+from tools.optscale_exceptions.common_exc import (NotFoundException,
+                                                  UnauthorizedException,
+                                                  WrongArgumentsException)
+from tools.optscale_exceptions.http_exc import OptHTTPError
+
+from rest_api.rest_api_server.controllers.organization import \
+    OrganizationAsyncController
+from rest_api.rest_api_server.controllers.register import \
+    RegisterAsyncController
+from rest_api.rest_api_server.exceptions import Err
+from rest_api.rest_api_server.handlers.v1.organizations import \
+    OrganizationAsyncCollectionHandler as OrganizationAsyncCollectionHandler_v1
+from rest_api.rest_api_server.handlers.v1.organizations import \
+    OrganizationAsyncItemHandler as OrganizationAsyncItemHandler_v1
+from rest_api.rest_api_server.handlers.v2.base import BaseHandler
+from rest_api.rest_api_server.utils import (ModelEncoder, check_int_attribute,
+                                            run_task)
+
+LOG = logging.getLogger(__name__)
 
 class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1,
                                          BaseHandler):
@@ -89,6 +96,9 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1,
         )
         data.update({'user_id': user_id, 'token': self.token})
         res = await run_task(register_ctrl.register_new_organization, **data)
+        from opentelemetry import trace
+        LOG.info("HANDLER: Organization %s with id %s created by user %s, current span: %s", res.name, res.id, user_id,
+                 trace.get_current_span())
         self.set_status(201)
         self.write(res.to_json())
 

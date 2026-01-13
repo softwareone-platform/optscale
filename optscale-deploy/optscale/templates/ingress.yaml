@@ -124,7 +124,7 @@ spec:
           service:
             name: {{ .Values.jaeger.service.name }}
             port:
-              number: {{ .Values.jaeger.service.externalPort }}
+              number: {{ .Values.jaeger.service.frontendExternalPort }}
         path: /
         pathType: Prefix
     host: jaeger.{{ if .Values.public_ip }}{{ .Values.public_ip }}{{ else }}localhost{{ end }}

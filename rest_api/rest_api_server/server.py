@@ -1,23 +1,23 @@
-import os
-import logging
 import argparse
-import tarfile
 import atexit
-import tornado.ioloop
-import pydevd_pycharm
-from etcd import Lock as EtcdLock
-from tornado.web import RedirectHandler
+import logging
+import os
+import tarfile
 
 import optscale_client.config_client.client
+import pydevd_pycharm
+import tornado.ioloop
+from etcd import Lock as EtcdLock
+from tornado.web import RedirectHandler
 
 import rest_api.rest_api_server.handlers.v1 as h_v1
 import rest_api.rest_api_server.handlers.v2 as h_v2
 from rest_api.rest_api_server.constants import urls_v2
 from rest_api.rest_api_server.handlers.v1.base import DefaultHandler
-from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
-from rest_api.rest_api_server.handlers.v1.swagger import SwaggerStaticFileHandler
-from rest_api.rest_api_server.otel_config import OTelConfig
-
+from rest_api.rest_api_server.handlers.v1.swagger import \
+    SwaggerStaticFileHandler
+from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
+from rest_api.rest_api_server.otel_config import OpenTelemetryConfig
 
 DEFAULT_PORT = 8999
 DEFAULT_ETCD_HOST = 'etcd'
@@ -475,7 +475,7 @@ def get_handler_version(h_v, handler, default_version=h_v1):
     return res
 
 
-def make_app(db_type, etcd_host, etcd_port, wait=False):
+def make_app(db_type, etcd_host, etcd_port, wait=False, otel_config=None):
     config_cl = optscale_client.config_client.client.Client(
         host=etcd_host, port=etcd_port)
     if wait:
@@ -490,6 +490,9 @@ def make_app(db_type, etcd_host, etcd_port, wait=False):
             db.create_schema()
     else:
         db.create_schema()
+
+    if otel_config is not None:
+        otel_config.instrument_sqlalchemy(db.engine)
 
     handler_kwargs = {
         "engine": db.engine,
@@ -512,14 +515,17 @@ def main():
             suspend=False,
         )
 
-    logging.basicConfig(level=logging.INFO)
+    otel_config = OpenTelemetryConfig()
+    otel_config.setup_open_telemetry()
+ 
+    if otel_config.is_enabled():
+        otel_config.instrument_logging()
+    else:
+        logging.basicConfig(level=logging.INFO)
 
-    # Initialize OpenTelemetry if enabled
-    otel_initialized = OTelConfig.initialize()
-    if otel_initialized:
-        # Register shutdown handler to ensure proper cleanup
-        atexit.register(OTelConfig.shutdown)
-        LOG.info("OpenTelemetry instrumentation is active")
+    otel_config.instrument_threading()
+    otel_config.instrument_asyncio()
+    otel_config.instrument_tornado()
 
     etcd_host = os.environ.get('HX_ETCD_HOST', DEFAULT_ETCD_HOST)
     etcd_port = os.environ.get('HX_ETCD_PORT', DEFAULT_ETCD_PORT)
@@ -529,7 +535,7 @@ def main():
     parser.add_argument('--etcdport', type=int, default=etcd_port)
     args = parser.parse_args()
 
-    app = make_app(DBType.MySQL, args.etcdhost, args.etcdport, wait=True)
+    app = make_app(DBType.MySQL, args.etcdhost, args.etcdport, wait=True, otel_config=otel_config)
     try:
         with tarfile.open(PRESET_TAR_XZ, 'r:xz') as f:
             f.extract(
@@ -538,6 +544,16 @@ def main():
     except Exception as exc:
         LOG.exception(exc)
     LOG.info("start listening on port %d", DEFAULT_PORT)
+ 
+
+    from opentelemetry import trace
+
+    tracer = trace.get_tracer("my.tracer")
+    with tracer.start_as_current_span("print", kind=trace.SpanKind.CLIENT) as span:
+        LOG.info("Printed foo %s", "bar", extra={"printed_string": "foo"})
+        LOG.info("another print")
+
+    atexit.register(otel_config.shutdown)
     app.listen(DEFAULT_PORT, decompress_request=True)
     tornado.ioloop.IOLoop.instance().start()
 

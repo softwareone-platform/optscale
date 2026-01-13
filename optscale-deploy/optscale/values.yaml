@@ -63,8 +63,8 @@ rabbitmq:
   replicaCount: 1
   mnesiaSize: 10Gi
   memory_limit: 512
-  enableClassicMirroring: false     # MUST be false on 4.x
-  enableQuorumDefaults: true        # optional: default policy for quorum queues
+  enableClassicMirroring: false # MUST be false on 4.x
+  enableQuorumDefaults: true # optional: default policy for quorum queues
   quorum:
     deliveryLimit: 100
   image:
@@ -153,7 +153,7 @@ phpmyadmin:
     type: NodePort
     externalPort: 30080
     internalPort: 80
-    
+
 jaeger:
   name: &jaeger_name jaeger
   replicaCount: 1
@@ -162,9 +162,13 @@ jaeger:
     pullPolicy: IfNotPresent
   service:
     name: *jaeger_name
-    type: NodePort
-    externalPort: 16686
-    internalPort: 16686
+    type: ClusterIP
+    frontendExternalPort: 16686
+    frontendInternalPort: 16686
+    grpcReceiverInternalPort: 4317
+    grpcReceiverExternalPort: 4317
+    httpReceiverInternalPort: 4318
+    httpReceiverExternalPort: 4318
 
 herald:
   name: &herald_name herald

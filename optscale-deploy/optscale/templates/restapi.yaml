@@ -66,4 +66,22 @@ spec:
           value: /etc/ssl/certs/ca-certificates.crt
         - name: FAKE_CAD_ENABLED
           value: {{ .Values.fake_cad_enabled | quote }}
+        - name: OTEL_ENABLED
+          value: "1"
+        - name: OTEL_EXPORTER
+          value: otlp
+        - name: OTEL_SQLALCHEMY_ENABLED
+          value: "true"
+        - name: OTEL_PYTHON_ASYNCIO_FUTURE_TRACE_ENABLED
+          value: "true"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://{{ .Values.jaeger.service.name }}.default.svc.{{ .Values.clusterDomain }}:{{ .Values.jaeger.service.grpcReceiverExternalPort }}"
+        - name: OTEL_OTLP_PROTOCOL
+          value: grpc
+        - name: OTEL_SERVICE_NAME
+          value: {{ $config.name }}
+        - name: OTEL_SERVICE_VERSION
+          value: {{ $config.image.tag }}
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: "true"
 {{ include "ready_probe" $config | indent 8 }}
