@@ -1776,3 +1776,50 @@ class EmployeeEmail(Base, ValidatorMixin, MutableMixin):
     @validates("employee_id", "enabled", "email_template")
     def _validate(self, key, value):
         return self.get_validator(key, value)
+
+
+class Type(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
+    __tablename__ = 'type'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(NotWhiteSpaceString('name'), nullable=False,
+                  info=ColumnPermissions.full)
+
+    @hybrid_property
+    def unique_fields(self):
+        return ["name"]
+
+    __table_args__ = (UniqueConstraint(
+        "name", "deleted_at", name="name_deleted_at"),)
+
+    @validates("name")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+
+class Tag(Base, CreatedMixin, MutableMixin, ValidatorMixin):
+    __tablename__ = 'tag'
+
+    id = Column(AutogenUuid('id'), primary_key=True, default=gen_id,
+                info=ColumnPermissions.create_only)
+    type_id = Column(Integer, ForeignKey('type.id'), nullable=False,
+                     info=ColumnPermissions.create_only)
+    resource_id = Column(Uuid('resource_id'), nullable=False,
+                         info=ColumnPermissions.create_only, index=True)
+    name = Column(NotWhiteSpaceString('name'), nullable=False,
+                  info=ColumnPermissions.full)
+    value = Column(NotWhiteSpaceString('value'), nullable=False, info=ColumnPermissions.full)
+    updated_at = Column(NullableInt('updated_at'), default=0, nullable=False,
+                        info=ColumnPermissions.update_only)
+
+    @hybrid_property
+    def unique_fields(self):
+        return ["type_id", "resource_id", "name"]
+
+    __table_args__ = (
+        UniqueConstraint("type_id", 'resource_id', "name",
+                         'deleted_at', name="uc_type_id_res_id_name_del_at"),)
+
+    @validates("type_id", "resource_id", "name", "value")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
