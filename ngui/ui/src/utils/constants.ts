@@ -1068,3 +1068,11 @@ export const EMPTY_BREAKDOWN_KEY = Object.freeze({
   NOT_SET: "(not set)",
   NULL: "null"
 });
+
+export const SETTINGS_TABS = Object.freeze({
+  ORGANIZATION: "organization",
+  SUBSCRIPTION: "subscription",
+  INVITATIONS: "invitations",
+  // SSH: "sshKeys",
+  EMAIL_NOTIFICATIONS: "emailNotifications"
+});

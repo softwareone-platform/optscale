@@ -1,7 +1,7 @@
 import logging
 
 import requests
-from sqlalchemy import and_, true, false, or_
+from sqlalchemy import and_, true, false
 from sqlalchemy.exc import IntegrityError
 from rest_api.rest_api_server.controllers.base import (
     BaseController, ClickHouseMixin)
@@ -11,12 +11,15 @@ from rest_api.rest_api_server.controllers.organization_bi import OrganizationBIC
 from rest_api.rest_api_server.controllers.organization_gemini import OrganizationGeminiController
 from rest_api.rest_api_server.controllers.organization_constraint import OrganizationConstraintController
 from rest_api.rest_api_server.controllers.pool import PoolController
+from rest_api.rest_api_server.controllers.organization_subscription import (
+    OrganizationSubscriptionController)
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.enums import (
-    RolePurposes, OrganizationConstraintTypes, OrganizationDisableTypes)
+    RolePurposes, OrganizationConstraintTypes
+)
 from rest_api.rest_api_server.models.models import (
-    CloudAccount, CloudTypes, Organization, Pool, ShareableBooking,
-    ProfilingToken)
+    CloudAccount, CloudTypes, Organization, Pool, ShareableBooking
+)
 
 from tools.optscale_exceptions.common_exc import (
     FailedDependency, NotFoundException, UnauthorizedException,
@@ -68,6 +71,11 @@ class OrganizationController(BaseController, ClickHouseMixin):
     def _get_model_type(self):
         return Organization
 
+    def _get_subscription_controller(self):
+        return OrganizationSubscriptionController(
+            self.session, self._config, self.token
+        )
+
     def _validate(self, item, is_new=True, **kwargs):
         currency = kwargs.get('currency')
         if currency is not None and currency not in CURRENCY_SYMBOLS_MAP:
@@ -106,53 +114,22 @@ class OrganizationController(BaseController, ClickHouseMixin):
         return organization
 
     def _handle_disabled_in_kwargs(self, organization, kwargs):
-        disable_type = kwargs.pop('disable_type',
-                                  OrganizationDisableTypes.HARD.value)
         if 'disabled' in kwargs:
             disabled = kwargs.pop('disabled')
             check_bool_attribute('disabled', disabled)
             organization = self.set_organization_disabled(
-                organization.id, disabled, disable_type)
+                organization, disabled)
         return organization
 
-    def set_organization_disabled(self, organization_id, disabled: bool,
-                                  disable_type: str, context: bool = False):
-        organization = self.get(organization_id)
-        try:
-            disable_type = OrganizationDisableTypes(disable_type)
-        except ValueError:
-            raise WrongArgumentsException(Err.OE0217, ['disable_type'])
-        if (organization.disabled == OrganizationDisableTypes.HARD and
-                disable_type == OrganizationDisableTypes.SOFT):
-            if not context:
-                raise WrongArgumentsException(Err.OE0568, [])
-            return organization
-        disabled_value = disable_type if disabled else None
-
-        # exclude if value already set
-        exclude_subquery = self.model_type.disabled.isnot(None)
-        if disabled_value:
-            exclude_subquery = or_(
-                self.model_type.disabled.is_(None),
-                self.model_type.disabled != disabled_value
-            )
-        if disable_type != OrganizationDisableTypes.HARD:
-            # exclude hard disabled
-            exclude_subquery = and_(
-                exclude_subquery,
-                or_(
-                    self.model_type.disabled != OrganizationDisableTypes.HARD,
-                    self.model_type.disabled.is_(None)
-                )
-            )
+    def set_organization_disabled(self, organization, disabled: bool):
+        disabled_value = true() if disabled else false()
         query = self.session.query(self.model_type).filter(
-            self.model_type.id == organization_id,
+            self.model_type.id == organization.id,
             self.model_type.deleted.is_(False),
-            exclude_subquery
+            self.model_type.disabled.isnot(disabled_value)
         )
         if query.update({self.model_type.disabled: disabled_value}):
             self.session.commit()
-            disabled = False if not disabled_value else True
             action = 'organization_%s' % ('disabled' if disabled else 'enabled')
             self._publish_organization_activity(organization, action)
         return organization
@@ -239,6 +216,8 @@ class OrganizationController(BaseController, ClickHouseMixin):
             organization.pool_id = pool.id
             if not organization.is_demo:
                 self.create_organization_constraints(organization)
+                subscription_ctrl = self._get_subscription_controller()
+                subscription_ctrl.create_subscription(org_id, organization.name)
             self.session.commit()
         except Exception as exc:
             LOG.warning('Error on pool (or org constraint) creation, '
@@ -284,10 +263,9 @@ class OrganizationController(BaseController, ClickHouseMixin):
             )
         )
         if disabled is not None:
-            disabled_expr = self.model_type.disabled.is_(None)
-            if disabled:
-                disabled_expr = self.model_type.disabled.isnot(None)
-            organizations_query = organizations_query.filter(disabled_expr)
+            organizations_query = organizations_query.filter(
+                self.model_type.disabled.is_(true() if disabled else false())
+            )
         if with_shareable_bookings:
             organizations_query = organizations_query.join(
                 ShareableBooking, and_(
@@ -378,6 +356,9 @@ class OrganizationController(BaseController, ClickHouseMixin):
                 if user_id not in auth_user_ids:
                     self.auth_client.user_delete(user_id)
                     auth_user_ids.add(user_id)
+        if not organization.is_demo:
+            subscription_ctrl = self._get_subscription_controller()
+            subscription_ctrl.delete_subscription(organization.id)
         OrganizationConstraintController(self.session, self._config, self.token
                                          ).delete_constraints_with_hits(item_id)
         OrganizationBIController(

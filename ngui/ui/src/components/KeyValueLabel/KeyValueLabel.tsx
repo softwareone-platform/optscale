@@ -1,5 +1,5 @@
 import { ReactNode, forwardRef } from "react";
-import { Box } from "@mui/material";
+import { Box, type SxProps, type Theme } from "@mui/material";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 
@@ -23,7 +23,7 @@ type KeyValueLabelProps = KeyType & {
     value?: string;
   };
   gutterBottom?: boolean;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
 };
 
 const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(

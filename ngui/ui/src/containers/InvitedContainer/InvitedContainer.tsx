@@ -5,9 +5,9 @@ import Redirector from "components/Redirector";
 import WrongInvitationEmailAlert from "components/WrongInvitationEmailAlert";
 import { useGetToken } from "hooks/useGetToken";
 import { useSignOut } from "hooks/useSignOut";
-import { SETTINGS_TABS } from "pages/Settings/Settings";
 import UserService from "services/UserService";
 import { HOME, REGISTER, getSettingsUrl } from "urls";
+import { SETTINGS_TABS } from "utils/constants";
 import { SPACING_6 } from "utils/layouts";
 import { stringifySearchParams, getSearchParams } from "utils/network";
 

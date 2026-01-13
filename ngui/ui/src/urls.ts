@@ -8,11 +8,13 @@ import {
   TAB_QUERY_PARAM_NAME,
   EMPTY_UUID,
   CONNECTION_TYPE_SEARCH_PARAMETER,
-  CONNECTION_TYPES
+  CONNECTION_TYPES,
+  SETTINGS_TABS
 } from "utils/constants";
 import { getLast30DaysRange, getCurrentMonthRange } from "utils/datetime";
 import { stringifySearchParams } from "utils/network";
 import { buildQueryParameters, concatenateUrl, hasSymbolAtTheEnd, isString } from "utils/strings";
+import { ObjectValues } from "utils/types";
 
 const CREATE = "create";
 const CONNECT = "connect";
@@ -272,7 +274,8 @@ export const INTEGRATIONS = "/integrations";
 export const INTEGRATION_QUERY_PARAM = "id";
 
 export const SETTINGS = "/settings";
-export const getSettingsUrl = (tab) => (tab ? `${SETTINGS}?${TAB_QUERY_PARAM_NAME}=${tab}` : SETTINGS);
+export const getSettingsUrl = (tab?: ObjectValues<typeof SETTINGS_TABS>) =>
+  tab ? `${SETTINGS}?${TAB_QUERY_PARAM_NAME}=${tab}` : SETTINGS;
 
 // Recommendation
 const RECOMMENDATIONS_BASE = "recommendations";
@@ -626,3 +629,5 @@ export const NEXT_QUERY_PARAMETER_NAME = "next";
 export const WITH_LEGEND_QUERY_PARAMETER_NAME = "withLegend";
 
 export const APPLY_FILTER_BY_CATEGORY_QUERY_PARAMETER_NAME = "applyFilterByCategory";
+
+export const CONTACT_US_URL = "https://hystax.com/contact-us/";

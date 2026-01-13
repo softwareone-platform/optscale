@@ -6,14 +6,12 @@ import { GET_ARCHIVED_OPTIMIZATION_DETAILS } from "api/restapi/actionTypes";
 import Accordion from "components/Accordion";
 import ArchivedRecommendationAccordionTitle from "components/ArchivedRecommendationAccordionTitle";
 import ArchivedRecommendationDescription from "components/ArchivedRecommendationDescription";
-import RecommendationLimitWarning from "components/RecommendationLimitWarning";
 import Table from "components/Table";
 import TableLoader from "components/TableLoader";
 import { useAllRecommendations } from "hooks/useAllRecommendations";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { RECOMMENDATIONS_LIMIT_FILTER } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 
 const ArchivedRecommendationAccordion = ({
@@ -30,7 +28,7 @@ const ArchivedRecommendationAccordion = ({
   const { organizationId } = useOrganizationInfo();
 
   const {
-    apiData: { items = [], limit }
+    apiData: { items = [] }
   } = useApiData(GET_ARCHIVED_OPTIMIZATION_DETAILS, {});
 
   const { isLoading, shouldInvoke } = useApiState(GET_ARCHIVED_OPTIMIZATION_DETAILS, {
@@ -48,8 +46,7 @@ const ArchivedRecommendationAccordion = ({
         getArchivedOptimizationDetails(organizationId, {
           type: recommendationType,
           archivedAt,
-          reason,
-          limit: RECOMMENDATIONS_LIMIT_FILTER
+          reason
         })
       );
     }
@@ -73,11 +70,6 @@ const ArchivedRecommendationAccordion = ({
         <div>
           <ArchivedRecommendationDescription reason={reason} isLoading={isLoading} />
         </div>
-        {count > limit && (
-          <div>
-            <RecommendationLimitWarning limit={limit} />
-          </div>
-        )}
         <div>
           {isLoading ? (
             <TableLoader />

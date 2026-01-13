@@ -445,7 +445,16 @@ def get_handlers(handler_kwargs, version=None):
             (urls_v2.employee_emails_bulk,
              h_v2.employee_emails.EmployeeEmailsBulkAsyncCollectionHandler,
              handler_kwargs),
-            *profiling_urls
+            *profiling_urls,
+            (urls_v2.organization_summary,
+             h_v2.organization_summaries.OrganizationSummariesAsyncHandler,
+             handler_kwargs),
+            (urls_v2.organization_subscription,
+             h_v2.organization_subscription.OrganizationSubscriptionItemHandler,
+             handler_kwargs),
+            (urls_v2.subscription_plans,
+             h_v2.organization_subscription.PlanAsyncCollectionHandler,
+             handler_kwargs),
         ])
     return result
 

@@ -12,6 +12,7 @@ from rest_api.rest_api_server.models.models import (
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   NotFoundException)
 from rest_api.rest_api_server.utils import tp_executor_context
+from sqlalchemy import true
 from rest_api.rest_api_server.controllers.organization import OrganizationController
 
 LOG = logging.getLogger(__name__)
@@ -195,18 +196,14 @@ class ContextController(MongoMixin):
         return None
 
     def _get_disabled_organizations(self, ids):
-        organization_ctrl = OrganizationController(
-            self.session, self._config, self.token)
-        disabled_ids = []
-        for org_id in ids:
-            org = organization_ctrl.set_organization_disabled(
-                org_id, False, 'soft', context=True)
-            if org.disabled:
-                disabled_ids.append(org_id)
-        return disabled_ids
+        return self.session.query(Organization.id).filter(
+            Organization.id.in_(ids),
+            Organization.deleted.is_(False),
+            Organization.disabled.is_(true())
+        ).all()
 
     def restrict_allowed_actions(self, result_map):
-        # key: (get_restricted_object_ids, allowed_actions)
+        # key: (get_restricted_objects, allowed_actions)
         models = {
             'organization': lambda x: (
                 self._get_disabled_organizations(x),
@@ -220,7 +217,7 @@ class ContextController(MongoMixin):
             objects, allowed_actions = expr_set(ids)
             result_map[obj_type] = [
                 _id if _id not in [
-                    r_id for r_id in objects
+                    r_id for (r_id,) in objects
                 ] else {_id: allowed_actions} for _id in ids
             ]
 

@@ -340,11 +340,6 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                         type: boolean
                         description: is organization disabled
                         required: False
-                    disable_type:
-                        type: string
-                        description: Disable type
-                        enum: [hard,soft]
-                        default: hard
         responses:
             200:
                 description: Modified organization
@@ -366,7 +361,6 @@ class OrganizationAsyncItemHandler(OrganizationAsyncItemHandler_v1, BaseHandler)
                 - OE0224: Wrong int argument value \n\n
                 - OE0214: Argument should be a string \n\n
                 - OE0215: Wrong argument's length \n\n
-                - OE0217: Invalid query parameter \n\n
                 - OE0536: Invalid currency \n\n
                 - OE0561: Cannot use disabled without secret \n\n
                 - OE0568: Disable type can't be changed for hard disabled organization"}

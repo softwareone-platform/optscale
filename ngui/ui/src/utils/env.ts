@@ -22,7 +22,8 @@ const envSchema = Object.freeze({
   VITE_BASE_URL: stringWithDefault(),
   VITE_FINOPS_IN_PRACTICE_PORTAL_OVERVIEW: oneOf(["enabled", "disabled"], "disabled"),
   VITE_HOTJAR_ID: stringWithDefault(),
-  VITE_MICROSOFT_OAUTH_CLIENT_ID: stringWithDefault()
+  VITE_MICROSOFT_OAUTH_CLIENT_ID: stringWithDefault(),
+  VITE_BILLING_INTEGRATION: oneOf(["enabled", "disabled"], "disabled")
 });
 
 type EnvKeys = keyof typeof envSchema;
