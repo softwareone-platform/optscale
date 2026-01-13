@@ -6,7 +6,6 @@ import { InterceptionEntry } from "../../types/interceptor.types";
 import {
   BreakdownExpensesMock,
   BreakdownTagsMock,
-  ResourceAvailableFiltersMock,
   ResourcesCountMock,
   SummaryMock,
   AllowedActionsSunflowerEUMock,
