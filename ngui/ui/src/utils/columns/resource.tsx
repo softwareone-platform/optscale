@@ -6,7 +6,14 @@ import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { getCloudResourceIdentifier } from "utils/resources";
 import { RESOURCE_ID_COLUMN_CELL_STYLE } from "utils/tables";
 
-const CellContent = ({ rowData }) => {
+type CellRowData = { resource_name: string; resource_id: string; cloud_account_id: string };
+
+type ResourceColumnConfig = {
+  headerDataTestId?: string;
+  id?: string;
+};
+
+const CellContent = ({ rowData }: { rowData: CellRowData }) => {
   const { resource_name: name, resource_id: resourceId, cloud_account_id: dataSourceId } = rowData;
 
   const dataSources = useAllDataSources();
@@ -23,7 +30,7 @@ const CellContent = ({ rowData }) => {
   );
 };
 
-const resource = ({ headerDataTestId, id = "cloudResourceIdentifier" }) => ({
+const resource = ({ headerDataTestId, id = "cloudResourceIdentifier" }: ResourceColumnConfig = {}) => ({
   header: (
     <TextWithDataTestId dataTestId={headerDataTestId}>
       <FormattedMessage id="resource" />
@@ -31,7 +38,7 @@ const resource = ({ headerDataTestId, id = "cloudResourceIdentifier" }) => ({
   ),
   id,
   style: RESOURCE_ID_COLUMN_CELL_STYLE,
-  cell: ({ row: { original } }) => <CellContent rowData={original} />
+  cell: ({ row: { original } }: { row: { original: CellRowData } }) => <CellContent rowData={original} />
 });
 
 export default resource;
