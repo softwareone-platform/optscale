@@ -2,7 +2,11 @@
 set -euo pipefail
 
 # List of components to exclude
-EXCLUDE_LIST=("etcd" "mongo" "mariadb" "redis" "filebeat" "grafana" "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui" "slacker")
+EXCLUDE_LIST=(
+    "etcd" "mongo" "mariadb" "redis" "filebeat" "grafana"
+    "grafana_nginx" "elk" "cleanelkdb" "jira_bus" "jira_ui"
+    "slacker" "subsyncer" "bailiff" "subspector"
+)
 
 # Function to check if component is in the exclusion list
 should_exclude() {
