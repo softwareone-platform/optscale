@@ -81,9 +81,9 @@ class Client(Client_v1):
     def cloud_account_create(self, org_id, params):
         return self.post(self.cloud_account_url(org_id=org_id), params)
 
-    def cloud_account_get(self, cloud_account_id, details=False):
+    def cloud_account_get(self, cloud_account_id, details=False, with_tags=False):
         url = self.cloud_account_url(cloud_account_id) + self.query_url(
-            details=details
+            details=details, with_tags=with_tags,
         )
         return self.get(url)
 
@@ -94,12 +94,16 @@ class Client(Client_v1):
         return self.delete(self.cloud_account_url(cloud_account_id))
 
     def cloud_account_list(self, org_id, details=False, auto_import=None,
-                           type=None, only_linked=None,
-                           process_recommendations=None):
+                           type=None, only_linked=None, tags=None,
+                           process_recommendations=None, with_tags=None):
+        if tags:
+            tags = json.dumps(tags)
         url = self.cloud_account_url(org_id=org_id) + self.query_url(
             details=details, auto_import=auto_import, type=type,
             only_linked=only_linked,
-            process_recommendations=process_recommendations
+            process_recommendations=process_recommendations,
+            with_tags=with_tags,
+            tags=tags,
         )
         return self.get(url)
 
@@ -1914,3 +1918,28 @@ class Client(Client_v1):
 
     def subscription_plan_list(self, organization_id):
         return self.get(self.subscription_plan_url(organization_id))
+
+    @staticmethod
+    def tag_url(resource_id, resource='cloud_accounts', tag_name=None):
+        url = '%s/%s/tags' % (resource, resource_id)
+        if tag_name is not None:
+            url = '%s/%s' % (url, tag_name)
+        return url
+
+    def tag_create(self, resource_id, params, resource='cloud_accounts'):
+        return self.post(self.tag_url(resource_id=resource_id, resource=resource), params)
+
+    def tag_list(self, resource_id, resource='cloud_accounts'):
+        return self.get(self.tag_url(resource_id, resource=resource))
+
+    def tag_get(self, resource_id, tag_name, resource='cloud_accounts'):
+        return self.get(self.tag_url(resource_id, resource=resource, tag_name=tag_name))
+
+    def tag_update(self, resource_id, tag_name, params, resource='cloud_accounts'):
+        return self.patch(
+            self.tag_url(resource_id, resource=resource, tag_name=tag_name),
+            params,
+        )
+
+    def tag_delete(self, resource_id, tag_name, resource='cloud_accounts'):
+        return self.delete(self.tag_url(resource_id, resource=resource, tag_name=tag_name))

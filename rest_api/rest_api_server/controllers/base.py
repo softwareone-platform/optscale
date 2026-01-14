@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import threading
 
@@ -631,6 +632,14 @@ class BaseController:
         if not self._is_cloud_account_exists(cloud_account_id):
             raise NotFoundException(
                 Err.OE0002, [CloudAccount.__name__, cloud_account_id])
+
+    @staticmethod
+    def try_load(param, type_):
+        try:
+            dict_ = json.loads(param)
+            return dict_
+        except (json.JSONDecodeError, TypeError):
+            raise WrongArgumentsException(Err.OE0398, [type_])
 
 
 class BaseHierarchicalController(BaseController):

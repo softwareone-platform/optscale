@@ -1806,9 +1806,9 @@ class Tag(Base, CreatedMixin, MutableMixin, ValidatorMixin):
                      info=ColumnPermissions.create_only)
     resource_id = Column(Uuid('resource_id'), nullable=False,
                          info=ColumnPermissions.create_only, index=True)
-    name = Column(NotWhiteSpaceString('name'), nullable=False,
+    name = Column(BaseString('name'), nullable=False,
                   info=ColumnPermissions.full)
-    value = Column(NotWhiteSpaceString('value'), nullable=False, info=ColumnPermissions.full)
+    value = Column(BaseString('value'), nullable=False, info=ColumnPermissions.full)
     updated_at = Column(NullableInt('updated_at'), default=0, nullable=False,
                         info=ColumnPermissions.update_only)
 
@@ -1820,6 +1820,6 @@ class Tag(Base, CreatedMixin, MutableMixin, ValidatorMixin):
         UniqueConstraint("type_id", 'resource_id', "name",
                          'deleted_at', name="uc_type_id_res_id_name_del_at"),)
 
-    @validates("type_id", "resource_id", "name", "value")
+    @validates("resource_id", "name", "value")
     def _validate(self, key, value):
         return self.get_validator(key, value)

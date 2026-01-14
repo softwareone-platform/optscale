@@ -224,14 +224,6 @@ class CloudResourceDiscover(BaseController, MongoMixin):
                                reverse=True)
         return resources
 
-    @staticmethod
-    def try_load(param, type_):
-        try:
-            dict_ = json.loads(param)
-            return dict_
-        except (json.JSONDecodeError, TypeError):
-            raise WrongArgumentsException(Err.OE0398, [type_])
-
     def try_load_from_cache(self, organization_id, resource_type, filters,
                             sort, cloud_type):
         result = []

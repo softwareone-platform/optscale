@@ -173,6 +173,20 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             type: boolean
             description: Show only cloud accounts with enabled recommendations
             required: false
+        -   name: with_tags
+            in: query
+            type: boolean
+            description: Show linked tags for cloud account
+            required: false
+        -   name: tags
+            in: query
+            description: |
+                Filters conditions (dict {tag1: [value1, value2], tag2: [value3]})
+            content:
+                application/json:
+                    type: string
+            required: false
+            type: string
         responses:
             200:
                 description: Cloud accounts list
@@ -238,6 +252,27 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                                         description: "UTC timestamp of last error"}
                                                     last_error: {type: string,
                                                         description: "Error message of last error"}
+                                    tags:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                id: {type: string,
+                                                    description: "Unique tag id"}
+                                                name: {type: string,
+                                                    description: "Tag name"}
+                                                value: {type: string,
+                                                    description: "Tag value"}
+                                                resource_id: {type: string,
+                                                    description: "Cloud account id"}
+                                                type_id: {type: integer,
+                                                    description: "Tag type id"}
+                                                created_at: {type: integer,
+                                                    description: "Created timestamp (service field)"}
+                                                updated_at: {type: integer,
+                                                    description: "Updated timestamp (service field)"}
+                                                deleted_at: {type: integer,
+                                                    description: "Deleted timestamp (service field)"}
                                     import_period:
                                         type: integer
                                         description: period in hours between data imports
@@ -295,6 +330,8 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             secure=secure,
             only_linked=self.get_arg('only_linked', bool),
             type=self.get_arg('type', str),
+            with_tags=self.get_arg('with_tags', bool, False),
+            tags_filter=self.get_arg('tags', str, None)
         )
 
         auto_import = self.get_arg('auto_import', bool)
@@ -332,6 +369,11 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
             in: query
             type: boolean
             description: Resource expenses information for cloud account
+            required: false
+        -   name: with_tags
+            in: query
+            type: boolean
+            description: Show linked tags for cloud account
             required: false
         responses:
             200:
@@ -387,6 +429,27 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
                                             description: "UTC timestamp of last error"}
                                         last_error: {type: string,
                                             description: "Error message of last error"}
+                        tags:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    id: {type: string,
+                                        description: "Unique tag id"}
+                                    name: {type: string,
+                                        description: "Tag name"}
+                                    value: {type: string,
+                                        description: "Tag value"}
+                                    resource_id: {type: string,
+                                        description: "Cloud account id"}
+                                    type_id: {type: integer,
+                                        description: "Tag type id"}
+                                    created_at: {type: integer,
+                                        description: "Created timestamp (service field)"}
+                                    updated_at: {type: integer,
+                                        description: "Updated timestamp (service field)"}
+                                    deleted_at: {type: integer,
+                                        description: "Deleted timestamp (service field)"}
                         import_period:
                             type: integer
                             description: period in hours between data imports
@@ -439,6 +502,7 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
             await self.check_permissions(
                 'INFO_ORGANIZATION', 'cloud_account', id)
         details = self.get_arg('details', bool, False)
+        with_tags = self.get_arg('with_tags', bool, False)
         try:
             item = await self._get_item(id, **kwargs)
             self._validate_params(item, **kwargs)
@@ -449,6 +513,10 @@ class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,
             res = await run_task(
                 self.controller.get_details, item.id)
             result['details'] = res
+        if with_tags:
+            tags = await run_task(self.controller.get_cloud_account_tags, [item.id])
+            if tags:
+                result['tags'] = tags[item.id]
         self.write(json.dumps(result, cls=ModelEncoder))
 
     @staticmethod

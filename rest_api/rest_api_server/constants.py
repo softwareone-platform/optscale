@@ -186,6 +186,10 @@ class UrlsV2(Urls):
         'employee_emails_bulk':
             r"%s/employees/(?P<employee_id>[^/]+)/emails/bulk",
         'cloud_policies': r"%s/organizations/(?P<organization_id>["r"^/]+)/cloud_policies",
+        'cloud_account_tags': r"%s/cloud_accounts/(?P<cloud_account_id>[^/]+)/tags",
+        'cloud_account_tag': r"%s/cloud_accounts/(?P<cloud_account_id>[^/]+)/tags/(?P<tag_name>[^/]+)",
+        'organization_tags': r"%s/organizations/(?P<organization_id>[^/]+)/tags",
+        'organization_tag': r"%s/organizations/(?P<organization_id>[^/]+)/tags/(?P<tag_name>[^/]+)",
     })
 
 

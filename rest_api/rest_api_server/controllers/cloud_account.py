@@ -1,6 +1,8 @@
 import logging
 import etcd
 import re
+from collections import defaultdict
+
 import tools.optscale_time as opttime
 from datetime import timedelta
 from calendar import monthrange
@@ -9,6 +11,7 @@ from optscale_client.herald_client.client_v2 import Client as HeraldClient
 
 from sqlalchemy import Enum, true
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql import and_, exists, or_
 from tools.cloud_adapter.exceptions import (
     InvalidParameterException, ReportConfigurationException,
@@ -47,8 +50,9 @@ from rest_api.rest_api_server.controllers.report_import import (
 from rest_api.rest_api_server.controllers.rule import RuleController
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.models import (
-    CloudAccount, DiscoveryInfo, Organization, Pool)
-from rest_api.rest_api_server.models.enums import CloudTypes, ConditionTypes
+    CloudAccount, DiscoveryInfo, Organization, Pool, Tag, Type,
+)
+from rest_api.rest_api_server.models.enums import CloudTypes, ConditionTypes, TagTypes
 from rest_api.rest_api_server.controllers.base import BaseController
 from rest_api.rest_api_server.controllers.base_async import (
     BaseAsyncControllerWrapper)
@@ -774,8 +778,75 @@ class CloudAccountController(BaseController, ClickHouseMixin):
         return CloudAccountController._get_cloud_expenses(
             expense_ctrl, start, end, cloud_acc_ids)
 
-    def list(self, details=False, secure=True, only_linked=None, type=None,
-             **kwargs):
+    def get_ca_type_id(self):
+        ca_type = self.session.query(Type).filter(
+            Type.name == TagTypes.CLOUD_ACCOUNT.value,
+            Type.deleted.is_(False),
+        ).first()
+
+        if ca_type:
+            return ca_type.id
+
+        return None
+
+    @staticmethod
+    def check_tag_filter(tag_filter):
+        if not tag_filter:
+            return
+        if not (isinstance(tag_filter, dict)):
+            raise WrongArgumentsException(Err.OE0392, [])
+        for k, v in tag_filter.items():
+            if not isinstance(v, list):
+                raise WrongArgumentsException(Err.OE0393, [k])
+
+    def filter_by_tags(self, cloud_acc_ids, tags_filter, ca_type_id):
+        tags_filter = self.try_load(tags_filter, type_="tags")
+        self.check_tag_filter(tags_filter)
+
+        TagReq = aliased(Tag)
+
+        resource_query = (
+            self.session.query(Tag.resource_id)
+            .filter(
+                Tag.resource_id.in_(cloud_acc_ids),
+                Tag.type_id == ca_type_id,
+                Tag.deleted.is_(False),
+            )
+        )
+
+        for name, values in tags_filter.items():
+            resource_query = resource_query.filter(
+                exists().where(
+                    and_(
+                        TagReq.resource_id == Tag.resource_id,
+                        TagReq.type_id == Tag.type_id,
+                        TagReq.deleted.is_(False),
+                        TagReq.name == name,
+                        TagReq.value.in_(values),
+                    )
+                )
+            )
+
+        return [rid for (rid,) in resource_query.distinct()]
+
+    def get_cloud_account_tags(self, cloud_acc_ids, ca_type_id=None):
+        if ca_type_id is None:
+            ca_type_id = self.get_ca_type_id()
+
+        tags_query = self.session.query(Tag).filter(
+            Tag.resource_id.in_(cloud_acc_ids),
+            Tag.type_id == ca_type_id,
+            Tag.deleted.is_(False),
+        )
+
+        tags_by_cloud_acc = defaultdict(list)
+        for tag in tags_query:
+            tags_by_cloud_acc[tag.resource_id].append(tag.to_dict())
+
+        return tags_by_cloud_acc
+
+    def list(self, details=False, secure=True, only_linked=None, type=None, with_tags=False,
+             tags_filter=None, **kwargs):
         organization_id = kwargs.get('organization_id')
         if organization_id:
             self._check_organization(kwargs['organization_id'])
@@ -802,38 +873,53 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                     linked_accounts.append(ca)
             cloud_accounts = linked_accounts
 
-        if not details:
+        if not (details or with_tags or tags_filter):
             return list(map(lambda x: x.to_dict(secure), cloud_accounts))
 
-        cloud_acc_ids = [x.id for x in cloud_accounts]
+        result = {acc.id: acc.to_dict(secure) for acc in cloud_accounts}
+        cloud_acc_ids = [acc.id for acc in cloud_accounts]
 
-        today = opttime.utcnow()
-        expense_ctrl = ExpenseController(self._config)
-        month_expenses = self._get_this_month_expenses(
-            expense_ctrl, today, cloud_acc_ids
-        ) if cloud_acc_ids else {}
-        last_month_expenses = self._get_last_month_expenses(
-            expense_ctrl, today, cloud_acc_ids
-        ) if cloud_acc_ids else {}
-        first_expenses = expense_ctrl.get_first_expenses_for_forecast(
-            'cloud_account_id', cloud_acc_ids)
+        if with_tags or tags_filter:
+            ca_type_id = self.get_ca_type_id()
+            if ca_type_id:
+                if tags_filter:
+                    cloud_acc_ids = self.filter_by_tags(cloud_acc_ids, tags_filter, ca_type_id)
+                    result = {
+                        acc_id: result[acc_id]
+                        for acc_id in cloud_acc_ids
+                    }
 
-        result = {}
-        discovery_infos = self._get_discovery_infos(cloud_acc_ids)
-        for acc in cloud_accounts:
-            default = {'cost': 0, 'count': 0}
-            current_stats = month_expenses.get(acc.id, default)
-            last_stats = last_month_expenses.get(acc.id, default)
-            result[acc.id] = acc.to_dict(secure)
-            result[acc.id]['details'] = {
-                'cost': current_stats['cost'],
-                'forecast': expense_ctrl.get_monthly_forecast(
-                    last_stats['cost'] + current_stats['cost'],
-                    current_stats['cost'], first_expenses.get(acc.id)),
-                'resources': current_stats['count'],
-                'last_month_cost': last_stats['cost'],
-                'discovery_infos': discovery_infos.get(acc.id, {})
-            }
+                tags_by_cloud_acc = self.get_cloud_account_tags(cloud_acc_ids, ca_type_id)
+                for acc_id, tags in tags_by_cloud_acc.items():
+                    result[acc_id]['tags'] = tags
+
+        if details:
+            today = opttime.utcnow()
+            expense_ctrl = ExpenseController(self._config)
+            month_expenses = self._get_this_month_expenses(
+                expense_ctrl, today, cloud_acc_ids
+            ) if cloud_acc_ids else {}
+            last_month_expenses = self._get_last_month_expenses(
+                expense_ctrl, today, cloud_acc_ids
+            ) if cloud_acc_ids else {}
+            first_expenses = expense_ctrl.get_first_expenses_for_forecast(
+                'cloud_account_id', cloud_acc_ids)
+
+            discovery_infos = self._get_discovery_infos(cloud_acc_ids)
+            for acc in cloud_accounts:
+                default = {'cost': 0, 'count': 0}
+                current_stats = month_expenses.get(acc.id, default)
+                last_stats = last_month_expenses.get(acc.id, default)
+                result[acc.id]['details'] = {
+                    'cost': current_stats['cost'],
+                    'forecast': expense_ctrl.get_monthly_forecast(
+                        last_stats['cost'] + current_stats['cost'],
+                        current_stats['cost'], first_expenses.get(acc.id)),
+                    'resources': current_stats['count'],
+                    'last_month_cost': last_stats['cost'],
+                    'discovery_infos': discovery_infos.get(acc.id, {})
+                }
+
         return list(result.values())
 
     def get_employee(self, user_id, org_id):
