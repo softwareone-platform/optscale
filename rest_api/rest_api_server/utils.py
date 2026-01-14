@@ -33,6 +33,7 @@ from pymongo.errors import BulkWriteError
 from tools.cloud_adapter.exceptions import CloudAdapterBaseException
 from tools.optscale_time import utcfromtimestamp, utcnow
 from rest_api.rest_api_server.exceptions import Err
+from rest_api.rest_api_server.models.enums import TagTypes
 from retrying import retry
 import unicodedata
 
@@ -601,3 +602,14 @@ def handle_http_exc(func):
 def timestamp_to_day_start(timestamp) -> datetime:
     return utcfromtimestamp(timestamp).replace(
         hour=0, minute=0, second=0, microsecond=0)
+
+
+def get_resource_and_type(url_params):
+    cloud_account_id = url_params.get("cloud_account_id")
+    organization_id = url_params.get("organization_id")
+    if cloud_account_id:
+        return cloud_account_id, TagTypes.CLOUD_ACCOUNT.value
+    if organization_id:
+        return organization_id, TagTypes.ORGANIZATION.value
+
+    return None, None

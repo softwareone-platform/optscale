@@ -84,3 +84,4 @@ import rest_api.rest_api_server.handlers.v2.employee_emails
 import rest_api.rest_api_server.handlers.v2.policy_gen
 import rest_api.rest_api_server.handlers.v2.organization_subscription
 import rest_api.rest_api_server.handlers.v2.organization_summaries
+import rest_api.rest_api_server.handlers.v2.tags

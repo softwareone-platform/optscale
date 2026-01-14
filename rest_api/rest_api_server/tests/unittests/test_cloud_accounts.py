@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from sqlalchemy import and_
 from unittest.mock import patch, ANY, call
 from rest_api.rest_api_server.models.models import (
-    CloudAccount, DiscoveryInfo, OrganizationLimitHit, Organization)
+    CloudAccount, DiscoveryInfo, OrganizationLimitHit, Organization, Type)
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
 from rest_api.rest_api_server.utils import decode_config
@@ -16,7 +16,7 @@ from rest_api.rest_api_server.controllers.cloud_account import (
     CloudAccountController)
 from tools.cloud_adapter.exceptions import ReportConfigurationException
 from rest_api.rest_api_server.tests.unittests.test_api_base import TestApiBase
-from rest_api.rest_api_server.models.enums import CloudTypes
+from rest_api.rest_api_server.models.enums import CloudTypes, TagTypes
 from tools.cloud_adapter.cloud import Cloud as CloudAdapter
 
 
@@ -896,6 +896,73 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(response['error']['reason'],
                          'access_key_id is not provided')
 
+    def test_list_with_tag_filter(self):
+        self.valid_aws_cloud_acc['name'] = 'cloud_1'
+        code, cloud_acc1 = self.create_cloud_account(
+            self.org_id, self.valid_aws_cloud_acc)
+        self.assertEqual(code, 201)
+        self.create_tag_type(TagTypes.CLOUD_ACCOUNT.value)
+        self.client.tag_create(
+            cloud_acc1["id"],
+            {
+                "name": "version",
+                "value": "v1",
+            },
+            resource="cloud_accounts",
+        )
+        self.client.tag_create(
+            cloud_acc1["id"],
+            {
+                "name": "auto-pay",
+                "value": "enabled",
+            },
+            resource="cloud_accounts",
+        )
+
+        ca_params2 = deepcopy(self.valid_aws_cloud_acc)
+        ca_params2['name'] = 'awesome_cloud_acc'
+        code, cloud_acc2 = self.create_cloud_account(
+            self.org_id, ca_params2, account_id='mock2')
+        self.assertEqual(code, 201)
+        self.client.tag_create(
+            cloud_acc2["id"],
+            {
+                "name": "version",
+                "value": "v2",
+            },
+            resource="cloud_accounts",
+        )
+
+        ca_params2 = deepcopy(self.valid_aws_cloud_acc)
+        ca_params2['config']['linked'] = True
+        ca_params2['name'] = 'linked cloud_acc'
+        code, cloud_acc3 = self.create_cloud_account(self.org_id, ca_params2)
+        self.assertEqual(code, 201)
+        self.client.tag_create(
+            cloud_acc3["id"],
+            {
+                "name": "version",
+                "value": "v2",
+            },
+            resource="cloud_accounts",
+        )
+        self.client.tag_create(
+            cloud_acc3["id"],
+            {
+                "name": "auto-pay",
+                "value": "disabled",
+            },
+            resource="cloud_accounts",
+        )
+
+        code, cloud_acc_list = self.client.cloud_account_list(
+            self.org_id,
+            tags={'version': ['v1', 'v2'], 'auto-pay': ['enabled']},
+        )
+        self.assertEqual(code, 200)
+        self.assertEqual(len(cloud_acc_list['cloud_accounts']), 1)
+        self.assertEqual(cloud_acc_list['cloud_accounts'][0]['id'], cloud_acc1['id'])
+
     def test_list_details(self):
         self.valid_aws_cloud_acc['name'] = 'cloud_1'
         code, cloud_acc1 = self.create_cloud_account(
@@ -906,6 +973,25 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 200)
         res_discovery_info_1 = {
             di['id']: di for di in discovery_info_1['discovery_info']}
+
+        self.create_tag_type(TagTypes.CLOUD_ACCOUNT.value)
+        self.client.tag_create(
+            cloud_acc1["id"],
+            {
+                "name": "entitlement",
+                "value": "FENT-1234-1234",
+            },
+            resource="cloud_accounts",
+        )
+        self.client.tag_create(
+            cloud_acc1["id"],
+            {
+                "name": "management",
+                "value": "external",
+            },
+            resource="cloud_accounts",
+        )
+
         ca_params2 = deepcopy(self.valid_aws_cloud_acc)
         ca_params2['name'] = 'awesome_cloud_acc'
         code, cloud_acc2 = self.create_cloud_account(
@@ -944,13 +1030,14 @@ class TestCloudAccountApi(TestApiBase):
             })
         with freeze_time(datetime.datetime(2020, 1, 15)):
             code, cloud_acc_list = self.client.cloud_account_list(
-                self.org_id, details=True)
+                self.org_id, details=True, with_tags=True)
         self.assertEqual(len(cloud_acc_list['cloud_accounts']), 2)
         for cloud_acc in cloud_acc_list['cloud_accounts']:
             details = cloud_acc['details']
             cloud_discovery_info = {
                 di['id']: di for di in details['discovery_infos']
             }
+            tags = cloud_acc.get('tags')
             if cloud_acc['id'] == cloud_acc2['id']:
                 self.assertEqual(cloud_acc['details']['cost'], 90)
                 self.assertEqual(cloud_acc['details']['resources'], 1)
@@ -959,6 +1046,7 @@ class TestCloudAccountApi(TestApiBase):
                     cloud_acc['details']['last_month_cost'], 240)
                 self.assertDictEqual(cloud_discovery_info,
                                      res_discovery_info_2)
+                self.assertEqual(tags, None)
             else:
                 self.assertEqual(cloud_acc['details']['cost'], 450)
                 self.assertEqual(cloud_acc['details']['resources'], 2)
@@ -967,12 +1055,33 @@ class TestCloudAccountApi(TestApiBase):
                     cloud_acc['details']['last_month_cost'], 180)
                 self.assertDictEqual(cloud_discovery_info,
                                      res_discovery_info_1)
+                self.assertEqual(len(tags), 2)
 
     def test_get_details(self):
         self.valid_aws_cloud_acc['name'] = 'cloud_1'
         code, cloud_acc1 = self.create_cloud_account(
             self.org_id, self.valid_aws_cloud_acc)
+        _, cloud_acc2 = self.create_cloud_account(
+            self.org_id, self.valid_azure_cloud_acc)
         self.assertEqual(code, 201)
+
+        self.create_tag_type(TagTypes.CLOUD_ACCOUNT.value)
+        self.client.tag_create(
+            cloud_acc1["id"],
+            {
+                "name": "entitlement",
+                "value": "FENT-1234-1234",
+            },
+            resource="cloud_accounts",
+        )
+        self.client.tag_create(
+            cloud_acc2["id"],
+            {
+                "name": "entitlement",
+                "value": "FENT-5678-5678",
+            },
+            resource="cloud_accounts",
+        )
 
         day_in_month = datetime.datetime(2020, 1, 14)
         day_in_last_month = datetime.datetime(2019, 12, 16)
@@ -1034,7 +1143,7 @@ class TestCloudAccountApi(TestApiBase):
 
         with freeze_time(datetime.datetime(2020, 1, 15)):
             code, cloud_acc = self.client.cloud_account_get(
-                cloud_acc1['id'], details=True)
+                cloud_acc1['id'], details=True, with_tags=True)
             details = cloud_acc['details']
             cloud_discovery_info = {
                 di['id']: di for di in details['discovery_infos']
@@ -1044,6 +1153,10 @@ class TestCloudAccountApi(TestApiBase):
             self.assertEqual(details['last_month_cost'], 360)
             self.assertEqual(details['resources'], 2)
             self.assertDictEqual(cloud_discovery_info, res_discovery_info)
+
+            tags = cloud_acc['tags']
+            self.assertEqual(len(tags), 1)
+            self.assertEqual(tags[0]['value'], 'FENT-1234-1234')
 
     def test_get_details_deleted_res(self):
         self.valid_aws_cloud_acc['name'] = 'cloud_1'

@@ -11,6 +11,7 @@ from clickhouse_connect.driver.external import ExternalData
 import mongomock
 import tornado.testing
 from collections import defaultdict
+
 from tools.cloud_adapter.model import (
     InstanceResource, VolumeResource, PodResource, IpAddressResource)
 import optscale_client.rest_api_client.client
@@ -19,7 +20,7 @@ from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.db_factory import DBType, DBFactory
 from rest_api.rest_api_server.models.models import (
     CloudAccount, Pool, OrganizationConstraint, OrganizationConstraintTypes,
-    OrganizationLimitHit)
+    OrganizationLimitHit, Type)
 from rest_api.rest_api_server.server import make_app
 from rest_api.rest_api_server.utils import get_root_directory_path
 from pymongo import UpdateMany
@@ -878,3 +879,14 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
             CloudAccount.organization_id == organization_id,
             CloudAccount.deleted_at == 0).all()
         return list(cloud_accounts)
+
+    @staticmethod
+    def create_tag_type(name):
+        db = DBFactory(DBType.Test, None).db
+        engine = db.engine
+        session = BaseDB.session(engine)()
+        tag_type = Type(name=name)
+        session.add(tag_type)
+        session.commit()
+
+        return tag_type
