@@ -53,7 +53,7 @@ const {
   PRICING: PRICING_TAB
 } = CLOUD_ACCOUNT_DETAILS_PAGE_TABS;
 
-const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoading }) => {
+const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, lastImportAt, isLoading }) => {
   const openSideModal = useOpenSideModal();
 
   // TODO: initial values from useDataSources are default ones, which means logo is empty, Icon is null, JSX error in console.
@@ -127,7 +127,7 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           dataTestId: "btn_update_data_source_credentials_modal",
           type: "button",
           isLoading,
-          action: () => openSideModal(UpdateDataSourceCredentialsModal, { name, id, type, config }),
+          action: () => openSideModal(UpdateDataSourceCredentialsModal, { name, id, type, config, dataSourceProps }),
           requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
           disabled: parentId,
           tooltip: {
@@ -382,6 +382,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
         name={name}
         parentId={parentId}
         config={config}
+        dataSourceProps={{ accountId }}
         lastImportAt={lastImportAt}
         isLoading={isLoading}
       />
