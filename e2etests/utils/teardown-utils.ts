@@ -141,7 +141,6 @@ export async function getSubPoolIdsContainingName(restAPIRequest: RestAPIRequest
       subPoolIds.push(child.id);
     }
   }
-  debugLog(subPoolIds.toString());
   return subPoolIds;
 }
 
@@ -225,7 +224,7 @@ export async function getDatasourceIdByNameViaOpsAPI(request: RestAPIRequest, na
   const tokensEndpoint = `${process.env.BASE_URL}/ops/v1/auth/tokens`;
   const email = process.env.DEFAULT_USER_EMAIL;
   const password = process.env.DEFAULT_USER_PASSWORD;
-  const accountId = getEnvironmentOpsAccountId;
+  const accountId = getEnvironmentOpsAccountId();
   const data = {
     email: email,
     password: password,
@@ -238,7 +237,7 @@ export async function getDatasourceIdByNameViaOpsAPI(request: RestAPIRequest, na
     throw new Error('Failed to generate token');
   }
   const { access_token } = await response.json();
-  debugLog(`Token: ${access_token}`);
+  debugLog(`Ops Token: ${access_token}`);
 
   const opsOrgID = getEnvironmentOpsOrgId();
   const datasourceEndpoint = `${process.env.BASE_URL}/ops/v1/organizations/${opsOrgID}/datasources`;
@@ -290,7 +289,7 @@ export async function connectDataSource(restAPIRequest: RestAPIRequest, token: s
       name: name,
       type: 'aws_cnr',
       awsAssumedRoleConfig: {
-        assume_role_account_id: '203689795269',
+        assume_role_account_id: process.env.DEFAULT_AWS_ACCOUNT_ID,
         assume_role_name: 'FinOpsForCloudOperations',
         bucket_name: 'swofinopsdevcur',
         bucket_prefix: 'reports',

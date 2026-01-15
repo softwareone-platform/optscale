@@ -1,5 +1,5 @@
 import { debugLog } from './debug-logging';
-import { EEnvironment, EOpsDefaultAccountID, EOpsDefaultOrgId } from '../types/enums';
+import { EEnvironment, EOpsDefaultAccountID, EOpsDefaultOrgId, EParentPoolId } from '../types/enums';
 
 /**
  * Sets the application environment based on the `ENVIRONMENT` or `BASE_URL` environment variables.
@@ -109,5 +109,30 @@ export function getEnvironmentOpsAccountId(): string {
       return EOpsDefaultAccountID.DEV;
     default:
       throw new Error('Unknown environment for OPS_ACCOUNT_ID retrieval.');
+  }
+}
+
+/**
+ * Retrieves the parent pool ID for the current environment.
+ *
+ * This function determines the parent pool ID based on the `ENVIRONMENT` environment variable.
+ * It matches the environment to predefined values in the `EEnvironment` enum and returns the corresponding
+ * parent pool ID from the `EParentPoolId` enum. If the environment is not recognized, an error is thrown.
+ *
+ * @returns {string} The parent pool ID for the current environment.
+ * @throws {Error} If the `ENVIRONMENT` variable does not match any known environment.
+ */
+export function getEnvironmentParentPoolId(): string {
+  const env = process.env.ENVIRONMENT;
+
+  switch (env) {
+    case EEnvironment.TEST:
+      return EParentPoolId.TEST;
+    case EEnvironment.STAGING:
+      return EParentPoolId.STAGING;
+    case EEnvironment.DEV:
+      return EParentPoolId.DEV;
+    default:
+      throw new Error('Unknown environment for PARENT_POOL_ID retrieval.');
   }
 }

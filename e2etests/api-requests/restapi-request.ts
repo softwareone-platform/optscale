@@ -2,7 +2,7 @@ import { BaseRequest } from './base-request';
 import { APIRequestContext } from '@playwright/test';
 import { debugLog } from '../utils/debug-logging';
 import { APIResponse } from 'playwright';
-import { EEnvironment } from '../types/enums';
+import { getEnvironmentParentPoolId } from '../utils/environment-util';
 
 export class RestAPIRequest extends BaseRequest {
   readonly request: APIRequestContext;
@@ -11,7 +11,6 @@ export class RestAPIRequest extends BaseRequest {
   readonly organizationConstraintsEndpoint: string;
   readonly policiesEndpoint: string;
   readonly poolsEndpoint: string;
-  private poolId: string;
 
   /**
    * Constructs an instance of RestAPIRequest.
@@ -26,7 +25,6 @@ export class RestAPIRequest extends BaseRequest {
     this.organizationConstraintsEndpoint = `${baseUrl}/restapi/v2/organization_constraints`;
     this.policiesEndpoint = `${this.organizationsEndpoint}/${process.env.DEFAULT_ORG_ID}/organization_constraints?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`;
     this.poolsEndpoint = `${baseUrl}/restapi/v2/pools`;
-    this.poolId = '';
   }
 
   /**
@@ -144,22 +142,8 @@ export class RestAPIRequest extends BaseRequest {
     });
   }
 
-  setPoolId() {
-    const env = process.env.ENVIRONMENT;
-    switch (env) {
-      case EEnvironment.DEV:
-        return this.poolId = 'ccaceadf-6878-4ab4-9fd8-3f6177d0b9d3';
-      case EEnvironment.STAGING:
-        return this.poolId = '624abd3c-0d70-4859-964a-e14aafb96c7b';
-      case EEnvironment.TEST:
-        return this.poolId = 'f648bd92-b53e-4fa7-aebb-cb02bcbf160d';
-
-    }
-  }
-
   async getPoolsResponse(token: string): Promise<APIResponse> {
-    this.setPoolId();
-    const endpoint = `${this.poolsEndpoint}/${this.poolId}?children=true&details=true`;
+    const endpoint = `${this.poolsEndpoint}/${getEnvironmentParentPoolId()}?children=true&details=true`;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
