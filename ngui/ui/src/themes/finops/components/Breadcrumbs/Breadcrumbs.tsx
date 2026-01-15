@@ -1,30 +1,13 @@
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
-import { Breadcrumbs as MuiBreadcrumbs } from "@mui/material";
-import useStyles from "./Breadcrumbs.styles";
+import { ComponentProps } from "react";
+import { Box } from "@mui/material";
+import BreadcrumbsOriginal from "@main/components/Breadcrumbs/Breadcrumbs";
 
-const Breadcrumbs = ({ children, withSlashAtTheEnd = false }) => {
-  const { classes } = useStyles();
+type BreadcrumbsProps = ComponentProps<typeof BreadcrumbsOriginal>;
 
-  return (
-    <MuiBreadcrumbs
-      classes={{
-        separator: classes.separator
-      }}
-      sx={{ "& ol": { flexWrap: "nowrap" } }}
-      separator={
-        <HorizontalRuleIcon
-          sx={{
-            transform: "rotate(115deg)"
-          }}
-          color="info"
-          fontSize="small"
-        />
-      }
-    >
-      {children}
-      {withSlashAtTheEnd && <span />}
-    </MuiBreadcrumbs>
-  );
-};
+const Breadcrumbs = (props: BreadcrumbsProps) => (
+  <Box sx={{ "& ol": { flexWrap: "nowrap" } }}>
+    <BreadcrumbsOriginal {...props} />
+  </Box>
+);
 
 export default Breadcrumbs;
