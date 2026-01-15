@@ -232,6 +232,7 @@ ngui:
     on_initialize_organization_setup_mode:
     finops_in_practice_portal_overview:
     billing_integration:
+    app_theme:
 
 minio:
   name: &minio_name minio
