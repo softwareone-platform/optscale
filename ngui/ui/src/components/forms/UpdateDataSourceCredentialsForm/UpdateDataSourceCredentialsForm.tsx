@@ -183,7 +183,7 @@ const UpdateCredentialsWarning = ({ type }) => {
   }
 };
 
-const getConfig = (type, config) => {
+const getConfig = (type, config, dataSourceProps) => {
   switch (type) {
     case AWS_CNR: {
       const billingBucketFields = {
@@ -208,6 +208,7 @@ const getConfig = (type, config) => {
 
           if (config.linked) {
             return {
+              [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: dataSourceProps.accountId,
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
             };
@@ -508,13 +509,14 @@ const UpdateDataSourceCredentialsForm = ({
   id,
   type,
   config,
+  dataSourceProps,
   onSubmit,
   onCancel,
   isLoading = false
 }: UpdateDataSourceCredentialsFormProps) => {
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
-  const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config);
+  const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config, dataSourceProps);
 
   const methods = useForm({
     defaultValues: getDefaultFormValues()
