@@ -42,7 +42,6 @@ const ArchivedRecommendations = ({
     }
 
     return (
-      // this box
       <Box>
         <ArchivedResourcesCountBarChart onSelect={onBarChartSelect} breakdown={archivedRecommendationsChartBreakdown} />
       </Box>

@@ -947,10 +947,7 @@ const getThemeConfig = (settings = {}) => {
           {
             props: { variant: "property" },
             style: () => ({
-              marginBottom: MPT_SPACING_1,
-              "span.keyLabel": {
-                fontWeight: "bold"
-              }
+              marginBottom: MPT_SPACING_1
             })
           }
         ]
