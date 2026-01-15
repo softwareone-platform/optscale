@@ -1,7 +1,7 @@
-import { FormattedMessage } from "react-intl";
 import Filters from "components/Filters";
 import { ML_TASKS_FILTERS } from "components/Filters/constants";
 import LinearSelector from "components/LinearSelector";
+import LabelColon from "../../shared/components/LabelColon/LabelColon";
 
 const MlTasksFilters = ({ appliedFilters, filterValues, onChange: onChangeHandler }) => {
   const mlTasksFilters = new Filters({
@@ -32,7 +32,7 @@ const MlTasksFilters = ({ appliedFilters, filterValues, onChange: onChangeHandle
 
   return (
     <LinearSelector
-      label={<FormattedMessage id="filters" />}
+      label={<LabelColon messageId="filters" />}
       value={mlTasksFilters.getAppliedValues()}
       items={mlTasksFilters.getFilterSelectors()}
       onClear={onFilterDelete}

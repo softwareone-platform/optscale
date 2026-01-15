@@ -60,6 +60,7 @@ const ConnectionInputs = ({
   switch (connectionType) {
     case CONNECTION_TYPES.AWS_MANAGEMENT:
     case CONNECTION_TYPES.AWS_MEMBER:
+    case CONNECTION_TYPES.AWS_STANDALONE:
       return renderAwsInputs(connectionType, authenticationType);
     case CONNECTION_TYPES.AZURE_TENANT:
       return <AzureTenantCredentials />;

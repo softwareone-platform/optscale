@@ -10,6 +10,7 @@ const ParentDataSource = ({ parentDataSourceId }: { parentDataSourceId: string }
 
   return (
     <KeyValueLabel
+      variant="property"
       keyMessageId="parentDataSource"
       value={<CloudLabel id={parentDataSourceId} name={name} type={type} />}
       dataTestIds={{ key: "p_parent_data_source_key", value: "p_parent_data_source_value" }}
@@ -41,6 +42,7 @@ const AzureProperties = ({ config, createdAt, parentId }: AzurePropertiesProps) 
       {parentId && <ParentDataSource parentDataSourceId={parentId} />}
       {subscriptionId && (
         <KeyValueLabel
+          variant="property"
           keyMessageId="subscriptionId"
           value={subscriptionId}
           dataTestIds={{
@@ -50,16 +52,19 @@ const AzureProperties = ({ config, createdAt, parentId }: AzurePropertiesProps) 
         />
       )}
       <KeyValueLabel
+        variant="property"
         keyMessageId="applicationClientId"
         value={clientId}
         dataTestIds={{ key: "p_client_id_key", value: "p_client_id_value" }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="directoryTenantId"
         value={tenant}
         dataTestIds={{ key: "p_tenant_key", value: "p_tenant_value" }}
       />
       <KeyValueLabel
+        variant="property"
         keyMessageId="expenseImportScheme"
         value={expenseImportScheme}
         dataTestIds={{ key: "p_expense_import_scheme_key", value: "p_expense_import_scheme_value" }}
