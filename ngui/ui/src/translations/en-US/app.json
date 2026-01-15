@@ -2200,6 +2200,7 @@
   "snapshotObsoleteLastUsedHelp": "Last time a snapshot was used",
   "snapshotWithNonUsedImagesRecommendation": "This snapshot is locked by an unused AMI. Consider AMI and corresponding snapshot cleanup.",
   "snapshots": "Snapshots",
+  "snapshotsWithNonUsedImages": "Snapshots with non-used images",
   "snapshotsWithNonUsedImagesDescription": "Some snapshots are locked by the AMIs which have not been used for instance creation for the last <strong>{daysThreshold} {daysThreshold, plural,\n  =1 {day}\n other {days}\n}</strong>. Consider AMIs and corresponding snapshots cleanup.",
   "snapshotsWithNonUsedImagesLastUsedHelp": "Last time an image was seen used for instance creation",
   "snapshotsWithNonUsedImagesTitle": "Snapshots with non-used Images",
