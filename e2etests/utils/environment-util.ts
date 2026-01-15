@@ -1,5 +1,5 @@
 import { debugLog } from './debug-logging';
-import { EEnvironment } from '../types/enums';
+import { EEnvironment, EOpsDefaultAccountID, EOpsDefaultOrgId } from '../types/enums';
 
 /**
  * Sets the application environment based on the `ENVIRONMENT` or `BASE_URL` environment variables.
@@ -60,4 +60,54 @@ export function setEnvironment(): string {
  */
 export function getEnvironmentTestOrgName(): string {
   return process.env.ENVIRONMENT === EEnvironment.STAGING ? 'Marketplace Platform Team' : 'SoftwareOne (Test Environment)';
+}
+
+/**
+ * Retrieves the organization ID for the current environment.
+ *
+ * This function determines the organization ID based on the `ENVIRONMENT` environment variable.
+ * It matches the environment to predefined values in the `EEnvironment` enum and returns the corresponding
+ * organization ID from the `EOpsDefaultOrgId` enum. If the environment is not recognized, an error is thrown.
+ *
+ * @returns {string} The organization ID for the current environment.
+ * @throws {Error} If the `ENVIRONMENT` variable does not match any known environment.
+ */
+export function getEnvironmentOpsOrgId(): string {
+  const env = process.env.ENVIRONMENT;
+
+  switch (env) {
+    case EEnvironment.TEST:
+      return EOpsDefaultOrgId.TEST;
+    case EEnvironment.STAGING:
+      return EOpsDefaultOrgId.STAGING;
+    case EEnvironment.DEV:
+      return EOpsDefaultOrgId.DEV;
+    default:
+      throw new Error('Unknown environment for OPS_ORG_ID retrieval.');
+  }
+}
+
+/**
+ * Retrieves the account ID for the current environment.
+ *
+ * This function determines the account ID based on the `ENVIRONMENT` environment variable.
+ * It matches the environment to predefined values in the `EEnvironment` enum and returns the corresponding
+ * account ID from the `EOpsDefaultAccountID` enum. If the environment is not recognized, an error is thrown.
+ *
+ * @returns {string} The account ID for the current environment.
+ * @throws {Error} If the `ENVIRONMENT` variable does not match any known environment.
+ */
+export function getEnvironmentOpsAccountId(): string {
+  const env = process.env.ENVIRONMENT;
+
+  switch (env) {
+    case EEnvironment.TEST:
+      return EOpsDefaultAccountID.TEST;
+    case EEnvironment.STAGING:
+      return EOpsDefaultAccountID.STAGING;
+    case EEnvironment.DEV:
+      return EOpsDefaultAccountID.DEV;
+    default:
+      throw new Error('Unknown environment for OPS_ACCOUNT_ID retrieval.');
+  }
 }

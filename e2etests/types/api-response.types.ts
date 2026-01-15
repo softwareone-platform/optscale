@@ -258,7 +258,37 @@ export interface K8sServiceExpensesResponse {
   breakdown: Record<string, Record<string, K8sServiceBreakdownItem>>;
 }
 
-export interface DataSourceResponse {
+export interface DataSourcesResponse {
+  data: {
+    dataSources: [
+      {
+        account_id: number;
+        created_at: number;
+        id: string;
+        last_getting_metric_attempt_at: number;
+        last_getting_metric_attempt_error: string | null;
+        last_getting_metrics_at: number;
+        last_import_at: number;
+        last_import_attempt_at: number;
+        last_import_attempt_error: string | null;
+        name: string;
+        parent_id: string | null;
+        type: string;
+        details: {
+          cost: number;
+          resources: number;
+          forecast: number;
+          last_month_cost: number;
+          __typename: string;
+        };
+        config: unknown;
+        __typename: string;
+      },
+    ];
+  };
+}
+
+export interface DataSourceBillingResponse {
   data: {
     dataSource: {
       account_id: string;
@@ -548,7 +578,7 @@ export interface PolicyBudgetAndQuotaResponse {
  * - resource_quota  → { max_value: number }
  * - expiring_budget → { total_budget: number, start_date: number }
  */
-export type PolicyDefinition = RecurringBudgetDefinition | ResourceQuotaDefinition | ExpiringBudgetDefinition
+export type PolicyDefinition = RecurringBudgetDefinition | ResourceQuotaDefinition | ExpiringBudgetDefinition;
 
 export interface RecurringBudgetDefinition {
   monthly_budget: number;
@@ -561,4 +591,41 @@ export interface ResourceQuotaDefinition {
 export interface ExpiringBudgetDefinition {
   total_budget: number;
   start_date: number; // UNIX timestamp
+}
+
+export interface PoolsResponse {
+  deleted_at: number;
+  id: string;
+  created_at: number;
+  limit: number;
+  name: string;
+  organization_id: string;
+  parent_id: null;
+  purpose: string;
+  default_owner_id: string;
+  default_owner_name: string;
+  unallocated_limit: number;
+  cost: number;
+  forecast: number;
+  saving: number;
+  total_recommendations: number;
+  children: [
+    {
+      deleted_at: number;
+      id: string;
+      created_at: number;
+      limit: string;
+      name: string;
+      organization_id: string;
+      parent_id: string;
+      purpose: string;
+      default_owner_id: string;
+      default_owner_name: string;
+      unallocated_limit: number;
+      policies: [];
+      cost: number;
+      forecast: number;
+    },
+  ];
+  policies: [];
 }
