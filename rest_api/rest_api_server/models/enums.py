@@ -175,3 +175,13 @@ class GeminiStatuses(enum.Enum):
 class PowerScheduleActions(str, enum.Enum):
     POWER_ON = 'power_on'
     POWER_OFF = 'power_off'
+
+
+class OrganizationDisableTypes(str, enum.Enum):
+    SOFT = 'soft'
+    HARD = 'hard'
+
+
+class TagTypes(enum.Enum):
+    CLOUD_ACCOUNT = 'cloud_account'
+    ORGANIZATION = 'organization'
