@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { DataSourceBillingResponse } from '../types/api-response.types';
+import {Page} from '@playwright/test';
+import {DataSourceBillingResponse} from '../types/api-response.types';
 
 /**
  * Fetches the breakdown expenses from the API.
@@ -66,4 +66,20 @@ export async function fetchDataSourceResponse(page: Page): Promise<DataSourceBil
     { timeout: 5000 }
   );
   return (await response.json()) as DataSourceBillingResponse;
+}
+
+/**
+ * Generates a headers object with a Bearer token for authorization.
+ *
+ * This function creates an object containing the `Content-Type` and `Authorization` headers.
+ * The `Authorization` header includes a Bearer token for authenticated API requests.
+ *
+ * @param {string} token - The Bearer token to include in the `Authorization` header.
+ * @returns {{ [key: string]: string }} An object containing the headers for an HTTP request.
+ */
+export function getBearerTokenHeader(token: string): { [key: string]: string } {
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
 }

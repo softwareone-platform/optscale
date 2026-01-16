@@ -3,6 +3,7 @@ import { APIRequestContext } from '@playwright/test';
 import { debugLog } from '../utils/debug-logging';
 import { APIResponse } from 'playwright';
 import { getEnvironmentParentPoolId } from '../utils/environment-util';
+import { getBearerTokenHeader } from '../utils/api-helpers';
 
 export class RestAPIRequest extends BaseRequest {
   readonly request: APIRequestContext;
@@ -37,10 +38,7 @@ export class RestAPIRequest extends BaseRequest {
    */
   async createOrganization(token: string, name: string, currency: string = 'USD'): Promise<string> {
     const response = await this.request.post(this.organizationsEndpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getBearerTokenHeader(token),
       data: {
         name: name,
         currency: currency,
@@ -88,10 +86,7 @@ export class RestAPIRequest extends BaseRequest {
     const endpoint = `${this.employeesEndpoint}/${userID}?new_owner_id=${reassignUserID}`;
     debugLog(`Deleting user ${userID} and reassigning to ${reassignUserID}`);
     const response = await this.request.delete(endpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getBearerTokenHeader(token),
       data: {
         new_owner_id: reassignUserID,
       },
@@ -114,10 +109,7 @@ export class RestAPIRequest extends BaseRequest {
     const endpoint = `${this.organizationConstraintsEndpoint}/${policyID}`;
     debugLog(`Deleting anomaly policy ${policyID}`);
     const response = await this.request.delete(endpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getBearerTokenHeader(token),
     });
     if (response.status() !== 204) {
       throw new Error(`[ERROR] Failed to delete anomaly policy ID: ${policyID}`);
@@ -135,19 +127,13 @@ export class RestAPIRequest extends BaseRequest {
     const endpoint = this.policiesEndpoint;
 
     return await this.request.get(endpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getBearerTokenHeader(token),
     });
   }
 
   async getPoolsResponse(token: string): Promise<APIResponse> {
     const endpoint = `${this.poolsEndpoint}/${getEnvironmentParentPoolId()}?children=true&details=true`;
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    };
+    const headers = getBearerTokenHeader(token);
     return await this.request.get(endpoint, { headers });
   }
 
@@ -155,10 +141,7 @@ export class RestAPIRequest extends BaseRequest {
     const endpoint = `${this.poolsEndpoint}/${poolId}`;
     debugLog(`Deleting pool ${poolId}`);
     const response = await this.request.delete(endpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getBearerTokenHeader(token),
     });
     if (response.status() !== 204) {
       throw new Error(`[ERROR] Failed to delete pool ID: ${poolId}, status code: ${response.status()}`);

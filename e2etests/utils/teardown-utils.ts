@@ -6,6 +6,7 @@ import { AuthRequest } from './api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 import { GetDatasourcesByOrganizationIDResponse } from '../types/GetDatasourcesByIDResponse';
 import { getEnvironmentOpsAccountId, getEnvironmentOpsOrgId } from './environment-util';
+import { getBearerTokenHeader } from './api-helpers';
 
 /**
  * Deletes all files in a directory if process.env.CLEAN_UP === 'true'.
@@ -56,10 +57,7 @@ export async function deleteTestUsers(restAPIRequest: RestAPIRequest, token: str
   const organisationId = process.env.DEFAULT_ORG_ID;
   const usersEndpoint = `/restapi/v2/organizations/${organisationId}/employees?exclude_myself=false&roles=true`;
 
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
+  const headers = getBearerTokenHeader(token);
 
   const employeesResponse = await restAPIRequest.getGetResponse(usersEndpoint, headers);
   const employeesResponseBody = (await employeesResponse.json()) as EmployeesResponse;
@@ -162,10 +160,7 @@ export async function disconnectDataSource(restAPIRequest: RestAPIRequest, token
     return;
   }
   const endpoint = `${process.env.BASE_URL}/api`;
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
+  const headers = getBearerTokenHeader(token);
   const data = {
     operationName: 'DeleteDataSource',
     variables: { dataSourceId: id },
@@ -242,10 +237,7 @@ export async function getDatasourceIdByNameViaOpsAPI(request: RestAPIRequest, na
   const opsOrgID = getEnvironmentOpsOrgId();
   const datasourceEndpoint = `${process.env.BASE_URL}/ops/v1/organizations/${opsOrgID}/datasources`;
 
-  let headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${access_token}`,
-  };
+  let headers = getBearerTokenHeader(access_token);
 
   const dsResponse = await request.request.get(datasourceEndpoint, { headers });
   const responseBody = (await dsResponse.json()) as GetDatasourcesByOrganizationIDResponse;
@@ -276,10 +268,7 @@ export async function connectDataSource(restAPIRequest: RestAPIRequest, token: s
     return;
   }
   const endpoint = `${process.env.BASE_URL}/api`;
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
+  const headers = getBearerTokenHeader(token);
   const data = {
     operationName: 'CreateDataSource',
     variables: { organizationId: process.env.DEFAULT_ORG_ID },
