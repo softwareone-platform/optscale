@@ -22,7 +22,7 @@ type ChartExportProps = {
 };
 
 const defaultConfig: FileNameConfig = {
-  title: "OptScale_chart",
+  title: "FinOps_For_Cloud_chart",
   fileFormat: "png",
   withTime: true
 };
@@ -62,7 +62,6 @@ const ChartExport = ({ chartWrapperRef, isLoading }: ChartExportProps) => {
     <div>
       <div>
         <ButtonLoader
-          uppercase
           dataTestId="btn_export_chart"
           variant="outlined"
           color="primary"

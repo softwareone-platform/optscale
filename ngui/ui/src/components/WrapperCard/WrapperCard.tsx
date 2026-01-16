@@ -24,10 +24,14 @@ const Title = ({ title, titleButton, dataTestId }: TitleProps) => {
 
   const button = tooltip ? <Tooltip title={tooltip.title}>{buttonElement}</Tooltip> : buttonElement;
 
-  return (
-    <Box display="flex" alignItems="center">
-      {type === "icon" ? titleMessage : <Box mr={1}>{titleMessage}</Box>}
+  return button ? (
+    <Box display="flex" marginBottom={"20px"} alignItems="center">
+      {titleButton.type === "icon" ? titleMessage : <Box mr={1}>{titleMessage}</Box>}
       {button}
+    </Box>
+  ) : (
+    <Box display="flex" marginBottom={"20px"} alignItems="center">
+      {titleMessage}
     </Box>
   );
 };
