@@ -36,6 +36,8 @@ const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
 
 const getWebkitAutofillBackgroundColor = (theme) => lighten(theme.palette.lightBlue.main, 0.9);
 
+export const isMedia = (property) => property.startsWith("@media");
+
 const applyPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyObject(settings.palette?.[name] ?? {});
 
