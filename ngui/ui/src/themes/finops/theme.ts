@@ -31,25 +31,10 @@ import {
   MPT_GRAY_1
 } from "./utils/layouts";
 
-declare module "@mui/material/Typography" {
-  interface TypographyPropsVariantOverrides {
-    header: true;
-    property: true;
-  }
-}
-
-declare module "@mui/material/Chip" {
-  interface ChipPropsVariantOverrides {
-    organization: true;
-  }
-}
-
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
 const getDarken = (color, darkenAlpha = 0.3) => darken(color, darkenAlpha);
 
 const getWebkitAutofillBackgroundColor = (theme) => lighten(theme.palette.lightBlue.main, 0.9);
-
-export const isMedia = (property) => property.startsWith("@media");
 
 const applyPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyObject(settings.palette?.[name] ?? {});
@@ -136,6 +121,23 @@ const applyPaletteSettings = (settings) => {
 };
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
+
+  // MPT_TODO: change colors palette
+  // Original:
+  // [
+  //         "#4AB4EE",
+  //         "#FFC348",
+  //         "#30D5C8",
+  //         "#9950B1",
+  //         "#4A63EE",
+  //         "#FF6648",
+  //         "#30D575",
+  //         "#B19950",
+  //         "#834AEE",
+  //         "#48E1FF",
+  //         "#D53090",
+  //         "#99B150"
+  //       ]
 
   const chart = isEmptySetting("chart")
     ? [
@@ -947,7 +949,10 @@ const getThemeConfig = (settings = {}) => {
           {
             props: { variant: "property" },
             style: () => ({
-              marginBottom: MPT_SPACING_1
+              marginBottom: MPT_SPACING_1,
+              "span.keyLabel": {
+                fontWeight: "bold"
+              }
             })
           }
         ]

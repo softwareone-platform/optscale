@@ -8,7 +8,7 @@ type AssignmentRulesTableBaseProps = ComponentProps<typeof AssignmentRulesRulesB
 const AssignmentRulesRules = (props: AssignmentRulesTableBaseProps) => (
   <Box
     sx={{
-      "#page-content-wrapper > .MuiBox-root:first-of-type": MPT_BOX_SHADOW_STYLES
+      "#page-content-wrapper > .MuiBox-root": MPT_BOX_SHADOW_STYLES
     }}
   >
     <AssignmentRulesRulesBase {...props} />

@@ -60,6 +60,7 @@ export const MPT_BOX_SHADOW_STYLES = {
 export const MPT_PAGE_WRAPPER_STYLES = {
   padding: MPT_SPACING_3,
   display: "flex",
+  flexDirection: "column",
   paddingTop: MPT_SPACING_3
 } as const;
 
