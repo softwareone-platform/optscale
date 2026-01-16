@@ -1,7 +1,6 @@
-import {Locator, Page} from "@playwright/test";
-import {BasePage} from "./base-page";
-import {IInterceptorConfig, interceptApiRequest} from "../utils/interceptor";
-import {EmployeesResponse, UsersPoolsPermissionsResponse} from "../test-data/user-data";
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
+import { EEnvironment } from '../types/enums';
 
 /**
  * Represents the Users Page.
@@ -22,24 +21,6 @@ export class UsersPage extends BasePage {
   }
 
   /**
-   * Sets up API interceptions for the Users page.
-   * Intercepts API requests and provides mock responses.
-   * @returns {Promise<void>}
-   */
-  async setupApiInterceptions(): Promise<void> {
-    const apiInterceptions: IInterceptorConfig[] = [
-      {page: this.page, urlPattern: `/v2/organizations/[^/]+/employees`, mockResponse: EmployeesResponse},
-      {
-        page: this.page,
-        urlPattern: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`,
-        mockResponse: UsersPoolsPermissionsResponse
-      },
-    ];
-
-    await Promise.all(apiInterceptions.map(interceptApiRequest));
-  }
-
-  /**
    * Gets the user email in the table.
    * @param {string} email - The email to search for.
    * @returns {Promise<Locator>} - The locator for the email cell.
@@ -52,7 +33,21 @@ export class UsersPage extends BasePage {
    * Clicks the Invite button.
    * @returns {Promise<void>}
    */
-  async clickInviteBtn() {
+  async clickInviteBtn(): Promise<void> {
     await this.inviteBtn.click();
+  }
+
+  getPoolNameForEnvironment(): string {
+    const env = process.env.ENVIRONMENT;
+    switch (env) {
+      case EEnvironment.DEV:
+        return 'AWS Dev';
+      case EEnvironment.STAGING:
+        return 'QA & Production';
+      case EEnvironment.TEST:
+        return 'AWS SWO';
+      default:
+        throw new Error(`Unknown environment: ${env}`);
+    }
   }
 }

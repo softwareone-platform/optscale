@@ -4,14 +4,14 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env.local
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
+dotenv.config({path: path.resolve(__dirname, '.env.local')});
 
 const baseURL = process.env.BASE_URL || 'http://0.0.0.0:4000';
 
 
 export default defineConfig({
   testDir: './',
-  testMatch: /regression-tests\/tests\/swo-regression-tests\.spec\.ts/,
+  testMatch: /regression-tests\/tests\/.*\.spec\.ts$/,
   snapshotPathTemplate: `./snapshots/{projectName}/${os.platform()}-{arg}{ext}`,
   testIgnore: ['**/snapshots/**'],
   fullyParallel: true,
@@ -32,7 +32,7 @@ export default defineConfig({
   },
   use: {
     baseURL: baseURL,
-    actionTimeout: 15000,
+    actionTimeout: 20000,
     testIdAttribute: 'data-test-id',
     headless: true,
     trace: "retain-on-failure",

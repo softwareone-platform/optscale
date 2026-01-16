@@ -1,50 +1,41 @@
-import {chromium, APIRequestContext} from "@playwright/test";
-import {AuthRequest} from "../api-requests/auth-request";
-import * as fs from 'fs';
-import * as path from 'path';
+import { request } from '@playwright/test';
+import { AuthRequest } from '../api-requests/auth-request';
+import { RestAPIRequest } from '../api-requests/restapi-request';
+import {
+  cleanUpDirectoryIfEnabled, connectDataSource,
+  deletePolicies,
+  deleteSubPoolsByName,
+  deleteTestUsers,
+  disconnectDataSource,
+  getDatasourceIdByNameViaOpsAPI,
+} from '../utils/teardown-utils';
 
 async function globalTeardown() {
-    //TODO: At the moment we are not using disposable users and organisations in the tests. When we are, we will delete
-    // via this teardown function.
-//     const cacheDir = path.resolve(__dirname, '../.cache');
-//     const authResponseFiles = fs.readdirSync(cacheDir).filter(file => file.startsWith('auth-response'));
-//
-//     console.log(`Global teardown started. Auth response files: ${authResponseFiles}`);
-//
-//     if (authResponseFiles.length > 0) {
-//         // Create a browser and context
-//         const browser = await chromium.launch();
-//         const baseUrl = process.env.BASE_URL;
-//         const context = await browser.newContext({
-//             baseURL: baseUrl, // Pass baseURL to the context
-//             ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-//         });
-//
-//         // Get the APIRequestContext
-//         const requestContext: APIRequestContext = context.request;
-//
-//         // Recreate authRequest
-//         const authRequest = new AuthRequest(requestContext);
-//
-//         try {
-//             for (const file of authResponseFiles) {
-//                 const filePath = path.join(cacheDir, file);
-//                 const authResponse = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-//                 const userID = authResponse.user_id;
-//
-//                 await authRequest.deleteUser(userID);
-//                 console.log(`User with ID ${userID} deleted`);
-//
-//                 // Delete the auth response file
-//                 fs.unlinkSync(filePath);
-//                 console.log(`Auth response file ${file} deleted`);
-//             }
-//         } catch (err) {
-//             console.error(`Failed to delete user or auth response file: ${err}`);
-//         } finally {
-//             await browser.close();
-//         }
-//     }
+
+  if (process.env.CLEAN_UP === 'true') {
+    const apiRequestContext = await request.newContext({
+      ignoreHTTPSErrors: true,
+      baseURL: process.env.BASE_URL,
+    });
+    const email = process.env.DEFAULT_USER_EMAIL;
+    const password = process.env.DEFAULT_USER_PASSWORD;
+    const authRequest = new AuthRequest(apiRequestContext);
+    const restAPIRequest = new RestAPIRequest(apiRequestContext);
+    const token = await authRequest.getAuthorizationToken(email, password);
+
+    await cleanUpDirectoryIfEnabled('./tests/downloads');
+    await deleteTestUsers(restAPIRequest, token);
+    await deletePolicies(restAPIRequest, token);
+
+    // clear down orphaned Marketplace (Dev) Sub-pools and reconnect data source
+    const dataSourceName = 'Marketplace (Dev)';
+    const marketplaceDevId = await getDatasourceIdByNameViaOpsAPI(restAPIRequest, dataSourceName);
+    await disconnectDataSource(restAPIRequest, token, marketplaceDevId);
+    await deleteSubPoolsByName(restAPIRequest, token, dataSourceName);
+    await connectDataSource(restAPIRequest, token, dataSourceName);
+
+    await apiRequestContext.dispose();
+  }
 }
 
-export default globalTeardown;
+module.exports = globalTeardown;
