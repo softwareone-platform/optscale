@@ -49,6 +49,20 @@ export const DEFAULT_BUTTON_FONT_UPPERCASE = false;
 
 export const scrolledToBottom = (target) => target.scrollTop + target.clientHeight >= target.scrollHeight;
 
+export const MPT_BOX_SHADOW_STYLES = {
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+  background: "#FFFFFF",
+  padding: MPT_SPACING_3,
+  borderRadius: MPT_SPACING_1,
+  width: "100%"
+} as const;
+
+export const MPT_PAGE_WRAPPER_STYLES = {
+  padding: MPT_SPACING_3,
+  display: "flex",
+  paddingTop: MPT_SPACING_3
+} as const;
+
 /**
  * Calculate the approximate width of the provided text
  *
