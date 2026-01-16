@@ -96,9 +96,6 @@ class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1,
         )
         data.update({'user_id': user_id, 'token': self.token})
         res = await run_task(register_ctrl.register_new_organization, **data)
-        from opentelemetry import trace
-        LOG.info("HANDLER: Organization %s with id %s created by user %s, current span: %s", res.name, res.id, user_id,
-                 trace.get_current_span())
         self.set_status(201)
         self.write(res.to_json())
 

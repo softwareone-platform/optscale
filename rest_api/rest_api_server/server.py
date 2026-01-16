@@ -545,14 +545,6 @@ def main():
         LOG.exception(exc)
     LOG.info("start listening on port %d", DEFAULT_PORT)
  
-
-    from opentelemetry import trace
-
-    tracer = trace.get_tracer("my.tracer")
-    with tracer.start_as_current_span("print", kind=trace.SpanKind.CLIENT) as span:
-        LOG.info("Printed foo %s", "bar", extra={"printed_string": "foo"})
-        LOG.info("another print")
-
     atexit.register(otel_config.shutdown)
     app.listen(DEFAULT_PORT, decompress_request=True)
     tornado.ioloop.IOLoop.instance().start()

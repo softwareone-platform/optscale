@@ -49,9 +49,6 @@ class RegisterController(BaseController):
             auth_user_id=user_info['id']
         )
         
-        from opentelemetry import trace
-        LOG.info("Organization %s with id %s created by user %s, trace span: %s", name, org.id, user_info['id'],
-                 trace.get_current_span())
         if not is_demo:
             employee_ctl.send_new_employee_email(
                 org.id, org.name, org.currency, employee.id, user_info['email'],
