@@ -2,7 +2,7 @@ import { test } from '../fixtures/page.fixture';
 import { debugLog } from '../utils/debug-logging';
 import { fetchDataSourceResponse } from '../utils/api-helpers';
 import { expect } from '@playwright/test';
-import { DataSourceResponse } from '../types/api-response.types';
+import { DataSourceBillingResponse } from '../types/api-response.types';
 import { EAWSAccountType } from '../types/enums';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
@@ -21,7 +21,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
     '[231860] A successful billing import should have been successful within the last 24 hours',
     { tag: '@p1' },
     async ({ page, cloudAccountsPage }) => {
-      let dataSourceResponse: DataSourceResponse;
+      let dataSourceResponse: DataSourceBillingResponse;
       const now = Math.floor(Date.now() / 1000);
       const secondsIn24Hours = 86400;
 

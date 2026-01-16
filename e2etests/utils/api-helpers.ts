@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { DataSourceResponse } from '../types/api-response.types';
+import {Page} from '@playwright/test';
+import {DataSourceBillingResponse} from '../types/api-response.types';
 
 /**
  * Fetches the breakdown expenses from the API.
@@ -40,10 +40,10 @@ export async function fetchBreakdownExpenses<T>(
  * If a matching response is found, it parses and returns the response body as a `DataSourceResponse`.
  *
  * @param {Page} page - The Playwright `Page` instance used to intercept and wait for the network response.
- * @returns {Promise<DataSourceResponse>} A promise that resolves to the parsed response body typed as `DataSourceResponse`.
+ * @returns {Promise<DataSourceBillingResponse>} A promise that resolves to the parsed response body typed as `DataSourceBillingResponse`.
  * @throws {Error} If the response is not received within the specified timeout or if the JSON parsing fails.
  */
-export async function fetchDataSourceResponse(page: Page): Promise<DataSourceResponse> {
+export async function fetchDataSourceResponse(page: Page): Promise<DataSourceBillingResponse> {
   const response = await page.waitForResponse(
     async response => {
       const request = response.request();
@@ -65,7 +65,21 @@ export async function fetchDataSourceResponse(page: Page): Promise<DataSourceRes
     },
     { timeout: 5000 }
   );
+  return (await response.json()) as DataSourceBillingResponse;
+}
 
-  // Return response body typed as DataResourceResponse
-  return (await response.json()) as DataSourceResponse;
+/**
+ * Generates a headers object with a Bearer token for authorization.
+ *
+ * This function creates an object containing the `Content-Type` and `Authorization` headers.
+ * The `Authorization` header includes a Bearer token for authenticated API requests.
+ *
+ * @param {string} token - The Bearer token to include in the `Authorization` header.
+ * @returns {{ [key: string]: string }} An object containing the headers for an HTTP request.
+ */
+export function getBearerTokenHeader(token: string): { [key: string]: string } {
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
 }

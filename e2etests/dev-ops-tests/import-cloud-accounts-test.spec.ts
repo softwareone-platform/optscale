@@ -2,6 +2,7 @@ import { test } from '../fixtures/api.fixture';
 import { debugLog } from '../utils/debug-logging';
 import { expect } from '@playwright/test';
 import { CloudAccountsResponse } from '../types/api-response.types';
+import { getBearerTokenHeader } from '../utils/api-helpers';
 
 test.describe('Billing import API test', { tag: ['@api', '@devops'] }, () => {
   test('[] Test all data sources for an Organization are imported within time period', async ({ restAPIRequest, authRequest }) => {
@@ -13,10 +14,7 @@ test.describe('Billing import API test', { tag: ['@api', '@devops'] }, () => {
     const password = process.env.DEFAULT_USER_PASSWORD;
 
     const token = await authRequest.getAuthorizationToken(email, password);
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    };
+    const headers = getBearerTokenHeader(token);
 
     const cloudAccountsResponse = await restAPIRequest.getGetResponse(cloudAccountsEndpoint, headers);
     const cloudAccountsResponseBody = (await cloudAccountsResponse.json()) as CloudAccountsResponse;

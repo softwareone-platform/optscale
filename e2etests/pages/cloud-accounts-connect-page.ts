@@ -37,7 +37,6 @@ export class CloudAccountsConnectPage extends BasePage {
   readonly exportNameInput: Locator;
   readonly exportAmazonS3BucketNameInput: Locator;
   readonly exportPathPrefixInput: Locator;
-  readonly exportRegionNameInput: Locator;
   //#endregion
 
   //#region Azure specific
@@ -85,7 +84,6 @@ export class CloudAccountsConnectPage extends BasePage {
     this.exportNameInput = this.main.getByTestId('input_export_name');
     this.exportAmazonS3BucketNameInput = this.main.getByTestId('input_s3_bucket_name');
     this.exportPathPrefixInput = this.main.getByTestId('input_export_path_prefix');
-    this.exportRegionNameInput = this.main.getByTestId('input_region_name');
     this.connectBtn = this.main.getByTestId('btn_connect_cloud_account');
     this.cancelBtn = this.main.getByTestId('btn_cancel_cloud_account');
     this.directoryTenantIDInput = this.main.getByTestId('input_tenant_id');
@@ -236,7 +234,6 @@ export class CloudAccountsConnectPage extends BasePage {
         await this.exportNameInput.fill('FinopsTest');
         await this.exportAmazonS3BucketNameInput.fill('swofinopsdevcur');
         await this.fillInputIfDifferent(this.exportPathPrefixInput, 'reports');
-        await this.exportRegionNameInput.fill('eu-west-1');
         break;
       default:
         throw new Error(`Unsupported AWS account type: ${accountType}`);
