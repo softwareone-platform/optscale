@@ -63,7 +63,7 @@ const AwsCredentials = ({ config }) => {
       case "assumedRoleLinked":
         return (
           <AwsAssumedRoleInputs
-            readOnlyFields={config.assume_role_account_id ? [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID] : []}
+            readOnlyFields={[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]}
             showAdvancedOptions={!config.linked}
           />
         );

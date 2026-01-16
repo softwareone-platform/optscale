@@ -19,6 +19,7 @@ const UpdateDataSourceCredentialsContainer = ({
   id,
   type,
   config,
+  dataSourceProps,
   closeSideModal
 }: UpdateDataSourceCredentialsContainerProps) => {
   const refetch = useRefetchApis();
@@ -68,6 +69,7 @@ const UpdateDataSourceCredentialsContainer = ({
       id={id}
       type={type}
       config={config}
+      dataSourceProps={dataSourceProps}
       onSubmit={onSubmit}
       onCancel={closeSideModal}
       isLoading={loading}

@@ -23,6 +23,7 @@ class UpdateDataSourceCredentialsModal extends BaseSideModal {
         name={this.payload?.type}
         type={this.payload?.type}
         config={this.payload?.config}
+        dataSourceProps={this.payload?.dataSourceProps}
         closeSideModal={this.closeSideModal}
       />
     );
