@@ -63,7 +63,7 @@ class InsecureSecurityGroups extends BaseRecommendation {
 
   settingsSidemodalClass = InsecurePortsModal;
 
-  dismissable = false;
+  dismissible = false;
 
   static resourceDescriptionMessageId = "insecureSecurityGroupsResourceRecommendation";
 

@@ -186,16 +186,11 @@ class Configurator(object):
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def create_databases(self):
         for db in self.config.get('databases'):
-            # heat migrations fail with utf8mb4
-            if db != 'heat':
-                # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
-                self.engine.execute(
-                    "CREATE DATABASE IF NOT EXISTS `{0}` "
-                    "DEFAULT CHARACTER SET `utf8mb4` "
-                    "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
-            else:
-                self.engine.execute(
-                    'CREATE DATABASE IF NOT EXISTS `{0}`'.format(db))
+            # http://dev.mysql.com/doc/refman/5.6/en/innodb-row-format-dynamic.html NOQA
+            self.engine.execute(
+                "CREATE DATABASE IF NOT EXISTS `{0}` "
+                "DEFAULT CHARACTER SET `utf8mb4` "
+                "DEFAULT COLLATE `utf8mb4_unicode_ci`".format(db))
 
     @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
     def configure_thanos(self):

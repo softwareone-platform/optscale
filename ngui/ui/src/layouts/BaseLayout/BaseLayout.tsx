@@ -18,6 +18,7 @@ import Logo from "components/Logo";
 import MainMenu from "components/MainMenu";
 import PageContentWrapper from "components/PageContentWrapper";
 import PendingInvitationsAlert from "components/PendingInvitationsAlert";
+import SubscriptionStatusTopAlert from "components/SubscriptionStatusTopAlert";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import CoreDataContainer from "containers/CoreDataContainer";
 import OrganizationSelectorContainer from "containers/OrganizationSelectorContainer";
@@ -132,7 +133,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
 
   return (
     <CoreDataContainer
-      render={({ organizationId, isLoadingProps }) => {
+      render={({ organizationId, isDemo, isLoadingProps, isBillingIntegrationEnabled }) => {
         const someApiLoading = Object.values(isLoadingProps).some((isLoading) => isLoading);
 
         const renderPageContent = () => {
@@ -182,6 +183,9 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
         return (
           <>
             <TopAlertWrapper />
+            {isLoadingProps.getSubscriptionLoading || isDemo || !isBillingIntegrationEnabled ? null : (
+              <SubscriptionStatusTopAlert />
+            )}
             <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
               <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
                 {isLoadingProps.getInvitationsLoading ? null : <PendingInvitationsAlert />}

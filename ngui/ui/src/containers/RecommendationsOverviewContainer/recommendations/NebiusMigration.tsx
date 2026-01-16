@@ -112,7 +112,7 @@ class NebiusMigration extends BaseRecommendation {
 
   settingsSidemodalClass = NebiusMigrationModal;
 
-  dismissable = false;
+  dismissible = false;
 
   get previewItems() {
     return this.items.map((item) => [

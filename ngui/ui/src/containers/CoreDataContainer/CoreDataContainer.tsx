@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { ApolloError } from "@apollo/client";
 import { useOrganizationAllowedActionsQuery } from "graphql/__generated__/hooks/auth";
 import {
+  useBillingSubscriptionQuery,
   useCurrentEmployeeQuery,
   useDataSourcesQuery,
   useInvitationsQuery,
@@ -13,11 +14,15 @@ import {
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
 import { useUpdateScope } from "hooks/useUpdateScope";
 import { PENDING_INVITATIONS } from "urls";
+import { MILLISECONDS_IN_MINUTE } from "utils/datetime";
+import { getEnvironmentVariable } from "utils/env";
+import { ERROR_CODES } from "utils/errorCodes";
 import { getSearchParams, removeSearchParam } from "utils/network";
 
 type CoreDataContainerProps = {
   render: (props: {
-    organizationId: string;
+    organizationId: string | undefined;
+    isDemo: boolean | undefined;
     error: ApolloError | undefined;
     isLoadingProps: {
       getOrganizationsLoading: boolean;
@@ -28,7 +33,9 @@ type CoreDataContainerProps = {
       getOrganizationFeaturesLoading: boolean;
       getOrganizationThemeSettingsLoading: boolean;
       getOrganizationPerspectivesLoading: boolean;
+      getSubscriptionLoading: boolean;
     };
+    isBillingIntegrationEnabled: boolean;
   }) => ReactNode;
 };
 
@@ -61,7 +68,7 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     }
   });
 
-  const { organizationId } = useCurrentOrganization(getOrganizationsData?.organizations);
+  const { organizationId, isDemo } = useCurrentOrganization(getOrganizationsData?.organizations);
 
   const skipRequest = !organizationId;
 
@@ -116,6 +123,19 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       skip: skipRequest
     });
 
+  const isBillingIntegrationEnabled = getEnvironmentVariable("VITE_BILLING_INTEGRATION") === "enabled";
+
+  const { loading: getSubscriptionLoading, error: getSubscriptionError } = useBillingSubscriptionQuery({
+    variables: {
+      organizationId
+    },
+    pollInterval: 30 * MILLISECONDS_IN_MINUTE,
+    skip: skipRequest || isDemo || !isBillingIntegrationEnabled,
+    context: {
+      suppressAlertForErrorCodes: [ERROR_CODES.OE0002]
+    }
+  });
+
   const error =
     getOrganizationsError ||
     getOrganizationAllowedActionsError ||
@@ -124,10 +144,13 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
     getInvitationsError ||
     getOrganizationFeaturesError ||
     getOrganizationThemeSettingsError ||
-    getOrganizationPerspectivesError;
+    getOrganizationPerspectivesError ||
+    getSubscriptionError;
 
   return render({
     organizationId,
+    isDemo,
+    isBillingIntegrationEnabled,
     error,
     isLoadingProps: {
       getOrganizationsLoading,
@@ -137,7 +160,8 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
       getInvitationsLoading,
       getOrganizationFeaturesLoading,
       getOrganizationThemeSettingsLoading,
-      getOrganizationPerspectivesLoading
+      getOrganizationPerspectivesLoading,
+      getSubscriptionLoading
     }
   });
 };

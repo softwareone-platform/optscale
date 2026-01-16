@@ -1,0 +1,77 @@
+[project]
+name = "subspector"
+version = "0.1.0"
+requires-python = ">=3.12.11,<3.13"
+dependencies = [
+    "uvicorn==0.35.0",
+    "fastapi==0.116.0",
+    "pydantic==2.4.2",
+    "SQLAlchemy==2.0.41",
+    "asyncmy==0.2.10",
+    "alembic==1.16.4",
+    "tenacity==9.1.2",
+    "mysql-connector-python==9.1.0",
+    "aio-pika==9.5.5",
+    "config-client",
+    "stripe-client"
+]
+
+[tool.uv.sources]
+config-client = { path = "../optscale_client/config_client", editable = true }
+stripe-client = { path = "../tools/stripe_client", editable = true }
+check-alembic-down-revisions = { path = "../tools/check_alembic_down_revisions", editable = true }
+subspector-client = { path = "../optscale_client/subspector_client", editable = true }
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.1",
+    "pytest-asyncio==1.1.0",
+    "pytest-mock==3.14.1",
+    "aiosqlite==0.21.0",
+    "ruff==0.12.5",
+    "pytest-cov==6.2.1",
+    "mypy==1.17.0",
+    "httpx==0.28.1",
+    "check-alembic-down-revisions",
+    "subspector-client",
+]
+
+[build-system]
+requires = ["uv_build==0.8.15"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ".."
+module-name = "subspector"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+output-format = "full"
+extend-exclude = [
+]
+
+[tool.ruff.lint]
+preview = true
+select = [
+    "E",  # w errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade,
+    "PT",  # flake8-pytest-style
+    "T10",  # flake8-pytest-style
+]
+ignore = [
+    "B008",  # do not perform function calls in argument defaults
+    "B904",  # Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling,
+]
+
+[tool.ruff.format]
+preview = true
+quote-style = "single"
+docstring-code-format = true
+
+[tool.mypy]
+disable_error_code = ["import-untyped"]

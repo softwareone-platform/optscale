@@ -9,6 +9,8 @@ import {
   MutationCreateOrganizationArgs,
   MutationDeleteOrganizationArgs,
   MutationUpdateOrganizationPerspectivesArgs,
+  MutationCreateStripeCheckoutSessionArgs,
+  MutationCreateStripeBillingPortalSessionArgs,
   QueryOrganizationPerspectivesArgs,
   QueryOrganizationFeaturesArgs,
   QueryOrganizationConstraintArgs,
@@ -20,7 +22,10 @@ import {
   QueryCleanExpensesArgs,
   QueryCloudPoliciesArgs,
   QueryMetaBreakdownArgs,
-  QueryAvailableFiltersArgs
+  QueryAvailableFiltersArgs,
+  QueryOrganizationSummaryArgs,
+  QueryBillingSubscriptionPlansArgs,
+  QueryBillingSubscriptionArgs
 } from "../../graphql/__generated__/types/restapi";
 import { getParams } from "../../utils/getParams.js";
 
@@ -366,6 +371,52 @@ class RestApiClient extends BaseClient {
     });
 
     return availableFilters.filter_values;
+  }
+
+  async getBillingSubscriptionPlans(organizationId: QueryBillingSubscriptionPlansArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription_plans`;
+    const plans = await this.get(path);
+
+    return plans.plans;
+  }
+
+  async getBillingSubscription(organizationId: QueryBillingSubscriptionArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription`;
+    const subscription = await this.get(path);
+
+    return subscription;
+  }
+
+  async createStripeCheckoutSession(
+    organizationId: MutationCreateStripeCheckoutSessionArgs["organizationId"],
+    params: MutationCreateStripeCheckoutSessionArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/subscription`;
+    const session = await this.patch(path, {
+      body: params
+    });
+
+    return session;
+  }
+
+  async createStripeBillingPortalSession(organizationId: MutationCreateStripeBillingPortalSessionArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription`;
+    const session = await this.patch(path, {
+      body: {}
+    });
+    return session;
+  }
+
+  async getOrganizationSummary(
+    organizationId: QueryOrganizationSummaryArgs["organizationId"],
+    params: QueryOrganizationSummaryArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/summary`;
+    const summary = await this.get(path, {
+      params: getParams(params)
+    });
+
+    return summary;
   }
 }
 
