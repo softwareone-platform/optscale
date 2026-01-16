@@ -4,6 +4,20 @@ import ResourceLocationCell from "components/ResourceLocationCell";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { intl } from "translations/react-intl-config";
 
+type CellRowData = Record<string, string>;
+
+type ResourceLocationConfig = {
+  headerDataTestId?: string;
+  idAccessor?: string;
+  typeAccessor?: string;
+  locationAccessors?: {
+    region?: string;
+    folderId?: string;
+    zoneId?: string;
+  };
+  accessorKey?: string;
+};
+
 const resourceLocation = ({
   headerDataTestId,
   idAccessor = "cloud_account_id",
@@ -14,14 +28,14 @@ const resourceLocation = ({
     zoneId: zoneIdAccessor = "zone_id"
   } = {},
   accessorKey: nameAccessor = "cloud_account_name"
-}) => ({
+}: ResourceLocationConfig = {}) => ({
   header: (
     <TextWithDataTestId dataTestId={headerDataTestId}>
       <FormattedMessage id="location" />
     </TextWithDataTestId>
   ),
   accessorKey: nameAccessor,
-  cell: ({ row: { original } }) => (
+  cell: ({ row: { original } }: { row: { original: CellRowData } }) => (
     <ResourceLocationCell
       dataSource={{
         id: original[idAccessor],
@@ -44,7 +58,7 @@ const resourceLocation = ({
       ].filter(({ node }) => node !== null)}
     />
   ),
-  globalFilterFn: (_, filterValue, { row: { original } }) => {
+  globalFilterFn: (_: unknown, filterValue: string, { row: { original } }: { row: { original: CellRowData } }) => {
     const { [nameAccessor]: name, [regionAccessor]: region, [folderIdAccessor]: folderId, [zoneIdAccessor]: zoneId } = original;
 
     const search = filterValue.toLocaleLowerCase();

@@ -1,4 +1,4 @@
-import { ReactNode, SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import WidthNormalIcon from "@mui/icons-material/WidthNormal";
 import WidthWideIcon from "@mui/icons-material/WidthWide";
@@ -9,11 +9,12 @@ import { FormattedMessage } from "react-intl";
 import IconButton from "components/IconButton";
 import SideModalTitle from "components/SideModalTitle";
 import { capitalize } from "utils/strings";
+import { IntlFormatValues } from "utils/types";
 import useStyles from "./SideModalHeader.styles";
 
 type Title =
   | { text: string; messageId?: never; formattedMessageValues?: never }
-  | { text?: never; messageId: string; formattedMessageValues?: Record<string, ReactNode> };
+  | { text?: never; messageId: string; formattedMessageValues?: IntlFormatValues };
 
 export type SideModalHeaderProps = Title & {
   onClose: (event: SyntheticEvent) => void;
