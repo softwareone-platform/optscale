@@ -25,5 +25,3 @@ rest_api/.clickhouse
 jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
-
-optscale-deploy/.vagrant/

@@ -1,25 +1,18 @@
 import json
-import logging
-
 from tools.optscale_exceptions.common_exc import (NotFoundException,
-                                                  UnauthorizedException,
-                                                  WrongArgumentsException)
+                                                  UnauthorizedException)
 from tools.optscale_exceptions.http_exc import OptHTTPError
-
-from rest_api.rest_api_server.controllers.organization import \
-    OrganizationAsyncController
-from rest_api.rest_api_server.controllers.register import \
-    RegisterAsyncController
 from rest_api.rest_api_server.exceptions import Err
-from rest_api.rest_api_server.handlers.v1.organizations import \
-    OrganizationAsyncCollectionHandler as OrganizationAsyncCollectionHandler_v1
-from rest_api.rest_api_server.handlers.v1.organizations import \
-    OrganizationAsyncItemHandler as OrganizationAsyncItemHandler_v1
+from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from rest_api.rest_api_server.handlers.v2.base import BaseHandler
-from rest_api.rest_api_server.utils import (ModelEncoder, check_int_attribute,
-                                            run_task)
+from rest_api.rest_api_server.handlers.v1.organizations import (
+    OrganizationAsyncCollectionHandler as OrganizationAsyncCollectionHandler_v1)
+from rest_api.rest_api_server.controllers.organization import OrganizationAsyncController
+from rest_api.rest_api_server.handlers.v1.organizations import (
+    OrganizationAsyncItemHandler as OrganizationAsyncItemHandler_v1)
+from rest_api.rest_api_server.controllers.register import RegisterAsyncController
+from rest_api.rest_api_server.utils import ModelEncoder, run_task, check_int_attribute
 
-LOG = logging.getLogger(__name__)
 
 class OrganizationAsyncCollectionHandler(OrganizationAsyncCollectionHandler_v1,
                                          BaseHandler):

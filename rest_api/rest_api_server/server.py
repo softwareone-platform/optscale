@@ -517,7 +517,7 @@ def main():
 
     otel_config = OpenTelemetryConfig()
     otel_config.setup_open_telemetry()
- 
+
     if otel_config.is_enabled():
         otel_config.instrument_logging()
     else:
@@ -544,7 +544,7 @@ def main():
     except Exception as exc:
         LOG.exception(exc)
     LOG.info("start listening on port %d", DEFAULT_PORT)
- 
+
     atexit.register(otel_config.shutdown)
     app.listen(DEFAULT_PORT, decompress_request=True)
     tornado.ioloop.IOLoop.instance().start()

@@ -1,18 +1,16 @@
 import logging
-
-from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
-from optscale_client.herald_client.client_v2 import Client as HeraldClient
 from sqlalchemy import and_
 
 from rest_api.rest_api_server.controllers.base import BaseController
-from rest_api.rest_api_server.controllers.base_async import \
-    BaseAsyncControllerWrapper
+from rest_api.rest_api_server.controllers.base_async import BaseAsyncControllerWrapper
 from rest_api.rest_api_server.controllers.employee import EmployeeController
-from rest_api.rest_api_server.controllers.organization import \
-    OrganizationController
-from rest_api.rest_api_server.models.enums import (InviteAssignmentScopeTypes,
-                                                   RolePurposes)
+from rest_api.rest_api_server.controllers.organization import OrganizationController
 from rest_api.rest_api_server.models.models import Employee
+from rest_api.rest_api_server.models.enums import (
+    RolePurposes, InviteAssignmentScopeTypes)
+
+from optscale_client.herald_client.client_v2 import Client as HeraldClient
+from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 
 LOG = logging.getLogger(__name__)
 
@@ -48,7 +46,6 @@ class RegisterController(BaseController):
             name=user_info['display_name'],
             auth_user_id=user_info['id']
         )
-        
         if not is_demo:
             employee_ctl.send_new_employee_email(
                 org.id, org.name, org.currency, employee.id, user_info['email'],

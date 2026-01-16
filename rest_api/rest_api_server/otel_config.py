@@ -26,7 +26,7 @@ class OpenTelemetryExporter(str, enum.Enum):
     @classmethod
     def from_env(cls) -> 'OpenTelemetryExporter':
         exporter_str = os.environ.get('OTEL_EXPORTER', 'console').lower()
-        
+
         try:
             return cls(exporter_str)
         except ValueError:
@@ -38,7 +38,7 @@ class OTLPProtocol(str, enum.Enum):
     GRPC = "grpc"
     HTTP = "http"
 
-    
+
 def only_if_enabled(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -77,20 +77,20 @@ class OpenTelemetryConfig:
     def otlp_traces_endpoint(self) -> str | None:
         if not self.otlp_endpoint:
             return None
-            
+
         if self.otlp_protocol == OTLPProtocol.GRPC:
             return self.otlp_endpoint
 
         return self.otlp_endpoint.removesuffix('/') + '/v1/traces'
-        
+
     @property
     def otlp_logs_endpoint(self) -> str | None:
         if not self.otlp_endpoint:
             return None
-        
+
         if self.otlp_protocol == OTLPProtocol.GRPC:
             return self.otlp_endpoint
-            
+
         return self.otlp_endpoint.removesuffix('/') + '/v1/logs'
 
     @classmethod
@@ -113,19 +113,19 @@ class OpenTelemetryConfig:
         if self.otel_exporter == OpenTelemetryExporter.OTLP and self.otlp_protocol == OTLPProtocol.HTTP:
             from opentelemetry.exporter.otlp.proto.http.trace_exporter import \
                 OTLPSpanExporter
-            
+
             LOG.info("Configuring HTTP OTLP Span Exporter with endpoint: %s", self.otlp_traces_endpoint)
             span_exporter = OTLPSpanExporter(endpoint=self.otlp_traces_endpoint)
         elif self.otel_exporter == OpenTelemetryExporter.OTLP and self.otlp_protocol == OTLPProtocol.GRPC:
             from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import \
                 OTLPSpanExporter
-                
+
             LOG.info("Configuring gRPC OTLP Span Exporter with endpoint: %s", self.otlp_traces_endpoint)
             span_exporter = OTLPSpanExporter(endpoint=self.otlp_traces_endpoint)
         else:
             LOG.info("Configuring ConsoleSpanExporter")
             span_exporter = ConsoleSpanExporter()
-            
+
         span_processor = BatchSpanProcessor(span_exporter)
         tracer_provider.add_span_processor(span_processor)
 
@@ -138,14 +138,14 @@ class OpenTelemetryConfig:
         if self.otel_exporter == OpenTelemetryExporter.OTLP and self.otlp_protocol == OTLPProtocol.HTTP:
             from opentelemetry.exporter.otlp.proto.http._log_exporter import \
                 OTLPLogExporter
-            
+
             LOG.info("Configuring HTTP OTLP Log Exporter with endpoint: %s", self.otlp_logs_endpoint)
             log_exporter = OTLPLogExporter(endpoint=self.otlp_logs_endpoint)
         elif self.otel_exporter == OpenTelemetryExporter.OTLP and self.otlp_protocol == OTLPProtocol.GRPC:
             from opentelemetry.exporter.otlp.proto.grpc._log_exporter import \
                 OTLPLogExporter
             LOG.info("Configuring gRPC OTLP Log Exporter with endpoint: %s", self.otlp_logs_endpoint)
-            
+
             log_exporter = OTLPLogExporter(endpoint=self.otlp_logs_endpoint)
         else:
             LOG.info("Configuring ConsoleLogExporter")
@@ -162,14 +162,14 @@ class OpenTelemetryConfig:
         root_logger = logging.getLogger()
         root_logger.addHandler(log_handler)
         root_logger.setLevel(logging.NOTSET)
-        
+
         event_logger_provider = EventLoggerProvider(logger_provider=self.logger_provider)
         set_event_logger_provider(event_logger_provider)
 
     def shutdown(self):
         if not self.is_enabled():
             return
-        
+
         tracer_provider = trace.get_tracer_provider()
         if hasattr(tracer_provider, 'shutdown'):
             tracer_provider.shutdown()
@@ -182,9 +182,9 @@ class OpenTelemetryConfig:
     @only_if_enabled
     def instrument_asyncio(self):
         from opentelemetry.instrumentation.asyncio import AsyncioInstrumentor
-        
+
         AsyncioInstrumentor().instrument()
-            
+
     @only_if_enabled
     def instrument_logging(self):
         from opentelemetry.instrumentation.logging import LoggingInstrumentor
@@ -229,14 +229,14 @@ class OpenTelemetryConfig:
     @only_if_enabled
     def instrument_tornado(self):
         from opentelemetry.instrumentation.tornado import TornadoInstrumentor
-        
+
         TornadoInstrumentor().instrument()
 
     @only_if_enabled
     def instrument_threading(self):
         from opentelemetry.instrumentation.threading import \
             ThreadingInstrumentor
-        
+
         ThreadingInstrumentor().instrument()
 
     @only_if_enabled
@@ -247,5 +247,5 @@ class OpenTelemetryConfig:
         if os.environ.get('OTEL_SQLALCHEMY_ENABLED', '0').lower() not in ('true', '1', 'yes'):
             LOG.info("SQLAlchemy instrumentation is disabled.")
             return
-        
+
         SQLAlchemyInstrumentor().instrument(engine=engine, enable_commenter=True)
