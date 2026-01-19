@@ -75,6 +75,8 @@ class SnapshotsWithNonUsedImages extends BaseRecommendation {
 
   dismissible = true;
 
+  withExclusions = true;
+
   static resourceDescriptionMessageId = "snapshotWithNonUsedImagesRecommendation";
 
   get previewItems() {

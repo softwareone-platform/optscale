@@ -23,7 +23,11 @@ class SnapshotsWithNonUsedImages(ModuleBase):
         super().__init__(organization_id, config_client, created_at)
         self.option_ordered_map = OrderedDict({
             'days_threshold': {'default': DEFAULT_DAYS_THRESHOLD},
-            'skip_cloud_accounts': {'default': []}
+            'skip_cloud_accounts': {'default': []},
+            'excluded_pools': {
+                'default': {},
+                'clean_func': self.clean_excluded_pools,
+            },
         })
 
     def get_snapshot_info_map(self, account_id_type_map, snapshot_ids,
@@ -81,7 +85,11 @@ class SnapshotsWithNonUsedImages(ModuleBase):
         snapshots = list(self.mongo_client.restapi.resources.find({
             'cloud_account_id': {'$in': account_ids},
             'cloud_resource_id': {'$in': bulk_ids},
-        }, ['cloud_resource_id']))
+        }, ['cloud_resource_id', 'pool_id']))
+        snapshot_pool_map = {}
+        for snapshot in snapshots:
+            snapshot_pool_map[
+                snapshot['cloud_resource_id']] = snapshot.pop('pool_id')
         snapshot_expenses = self._get_snapshot_expenses(
             snapshots, last_week_time)
         snapshot_info_map = {}
@@ -89,7 +97,8 @@ class SnapshotsWithNonUsedImages(ModuleBase):
             snapshot_info_map[cloud_resource_id] = {
                 'cloud_resource_id': cloud_resource_id,
                 'resource_id': resource_id,
-                'cost': cost
+                'cost': cost,
+                'pool_id': snapshot_pool_map[cloud_resource_id]
             }
         return snapshot_info_map
 
@@ -113,7 +122,8 @@ class SnapshotsWithNonUsedImages(ModuleBase):
                 '$project': {
                     '_id': '$_id',
                     'cloud_resource_id': '$cloud_resource_id',
-                    'snapshots': '$meta.snapshots'
+                    'snapshots': '$meta.snapshots',
+                    'pool_id': '$pool_id',
                 }
             },
             {
@@ -129,6 +139,7 @@ class SnapshotsWithNonUsedImages(ModuleBase):
         snap_chains = self.mongo_client.restapi.resources.aggregate(
             snapshot_chain_resources_pipeline)
         sc_snapshot_map = {}
+        sc_pool_map = {}
         external_table = []
         for sc in snap_chains:
             external_table.append({
@@ -137,6 +148,7 @@ class SnapshotsWithNonUsedImages(ModuleBase):
             })
             sc_snapshot_map[sc['cloud_resource_id']] = sc['snapshots'][
                 'cloud_resource_id']
+            sc_pool_map[sc['cloud_resource_id']] = sc['pool_id']
 
         snapshot_expenses = self._get_snapshot_expenses(
             external_table, last_week_time)
@@ -144,7 +156,8 @@ class SnapshotsWithNonUsedImages(ModuleBase):
             snapshot_info_map[sc_snapshot_map[cloud_resource_id]] = {
                 'resource_id': resource_id,
                 'cloud_resource_id': cloud_resource_id,
-                'cost': cost
+                'cost': cost,
+                'pool_id': sc_pool_map[cloud_resource_id]
             }
         return snapshot_info_map
 
@@ -179,7 +192,8 @@ class SnapshotsWithNonUsedImages(ModuleBase):
         return images_map
 
     def _get(self):
-        (days_threshold, skip_cloud_accounts) = self.get_options_values()
+        (days_threshold, skip_cloud_accounts,
+         excluded_pools) = self.get_options_values()
         cloud_account_map = self.get_cloud_accounts(
             SUPPORTED_CLOUD_TYPES, skip_cloud_accounts)
         cloud_accounts = list(cloud_account_map.values())
@@ -244,6 +258,8 @@ class SnapshotsWithNonUsedImages(ModuleBase):
                 snapshot_cost = snapshot_info.get('cost', 0) * days_in_month
                 candidate['saving'] = snapshot_cost
                 candidate['resource_id'] = snapshot_info['resource_id']
+                candidate['is_excluded'] = snapshot_info.get(
+                    'pool_id') in excluded_pools
         return [r for r in list(result.values()) if r['saving'] != 0]
 
 

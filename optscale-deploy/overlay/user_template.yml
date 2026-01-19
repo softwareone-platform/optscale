@@ -110,6 +110,7 @@ ngui:
     # "enabled" - the billing integration is enabled
     # otherwise - the billing integration is disabled
     billing_integration: ""
+    app_theme: ""
 elk:
   env:
     htpasswd_user: userforelk
