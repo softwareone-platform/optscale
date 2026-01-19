@@ -71,7 +71,6 @@ import {
   getAwsConnectionTypeDescriptions,
   useAuthenticationType,
   AUTHENTICATION_TYPES,
-  AWS_ROOT_INPUTS_FIELD_NAMES,
   AuthenticationType
 } from "./FormElements/AwsConnectionForm";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
@@ -158,7 +157,7 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
           bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
           report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
           region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
-          config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
+          config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY
         };
 
   const extraParams = {
