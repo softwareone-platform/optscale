@@ -41,7 +41,7 @@ const getButton = (item) => (
     dataTestId={item.dataTestId}
     dataProductTourId={item.dataProductTourId}
     variant={item.variant || "text"}
-    color={item.color}
+    color={item.color || "primary"}
     startIcon={item.icon}
     tooltip={item.tooltip}
   />
@@ -281,7 +281,7 @@ const ActionBar = ({ data, isPage = true }) => {
                   </Box>
                 )}
                 {!isEmptyArray(visible) && (
-                  <Box component="div" className={actionsClasses}>
+                  <Box component="div" id={"action_bar_actions"} className={actionsClasses}>
                     {renderItems(visible)}
                   </Box>
                 )}
