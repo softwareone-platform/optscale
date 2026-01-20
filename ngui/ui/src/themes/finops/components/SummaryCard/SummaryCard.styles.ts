@@ -1,7 +1,7 @@
+import { Theme } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import { SPACING_1, SPACING_2, SPACING_3, MPT_BOX_SHADOW_HOVER, MPT_SPACING_4 } from "@theme/utils/layouts";
-
-const useStyles = makeStyles()((theme, color) => ({
+const useStyles = makeStyles<{ color: string }>()((theme: Theme, { color }) => ({
   root: {
     minWidth: 150,
     minHeight: 60,
@@ -9,7 +9,8 @@ const useStyles = makeStyles()((theme, color) => ({
     padding: 0,
     [theme.breakpoints.down("xl")]: {
       minWidth: 100
-    }
+    },
+    color: color
   },
   button: {
     transition: "background-color 0.3s ease-in",

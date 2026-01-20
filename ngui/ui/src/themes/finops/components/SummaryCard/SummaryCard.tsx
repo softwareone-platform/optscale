@@ -17,6 +17,52 @@ import Tooltip from "components/Tooltip";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import useStyles from "./SummaryCard.styles";
 
+interface CardLayoutProps {
+  children: React.ReactNode;
+  color: string;
+  clickable?: boolean;
+  onClick?: () => void;
+  cardTestId?: string;
+  type: string;
+}
+
+interface SummaryCardProps {
+  value: React.ReactNode;
+  caption: React.ReactNode;
+  dataTestIds?: {
+    cardTestId?: string;
+  };
+  icon?: {
+    show?: boolean;
+    value?: React.ReactNode;
+  };
+  color?: string;
+  isLoading?: boolean;
+  help?: {
+    show?: boolean;
+    messageId?: string;
+    dataTestId?: string;
+  };
+  button?: {
+    show?: boolean;
+    tooltip?: {
+      show?: boolean;
+      messageId?: string;
+      placement?: "top" | "bottom" | "left" | "right";
+    };
+    onClick?: () => void;
+    link?: string;
+  };
+  rawValue?: React.ReactNode;
+  rawCaption?: React.ReactNode;
+  pdfId?: string;
+  customContent?: React.ReactNode;
+  backdrop?: {
+    show?: boolean;
+    message?: string;
+  };
+}
+
 export const SUMMARY_CARD_ICONS = Object.freeze({
   PRIMARY: "primary",
   SUCCESS: "success",
@@ -24,7 +70,7 @@ export const SUMMARY_CARD_ICONS = Object.freeze({
   ERROR: "error"
 });
 
-const getCardIcon = (cardType: string, classes) =>
+const getCardIcon = (cardType: string, classes: ReturnType<typeof useStyles>["classes"]) =>
   ({
     [SUMMARY_CARD_ICONS.PRIMARY]: "",
     [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon} />,
@@ -32,31 +78,33 @@ const getCardIcon = (cardType: string, classes) =>
     [SUMMARY_CARD_ICONS.ERROR]: <CancelIcon className={classes.icon} />
   })[cardType];
 
-const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
-  const { classes, cx } = useStyles(color);
-  const cardClasses = cx(classes.root, clickable ? classes.button : "");
-  const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
+const CardLayout = forwardRef<HTMLDivElement, CardLayoutProps>(
+  ({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
+    const { classes, cx } = useStyles({ color });
+    const cardClasses = cx(classes.root, clickable ? classes.button : "");
+    const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
 
-  return (
-    <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
-      <CardContent className={cardContentClasses}>
-        <Box>
-          {type !== "primary" && (
-            <Box position="absolute" bottom={"0px"} right={"18px"} fontSize={"18px"}>
-              {getCardIcon(type, classes)}
-            </Box>
-          )}
-          {children}
-          {clickable && (
-            <Box position="absolute" bottom={"25px"} right={"14px"}>
-              <ArrowForwardIosIcon color={color} sx={{ opacity: 1 }} />
-            </Box>
-          )}
-        </Box>
-      </CardContent>
-    </Card>
-  );
-});
+    return (
+      <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
+        <CardContent className={cardContentClasses}>
+          <Box>
+            {type !== "primary" && (
+              <Box position="absolute" bottom={"0px"} right={"18px"} fontSize={"18px"}>
+                {getCardIcon(type, classes)}
+              </Box>
+            )}
+            {children}
+            {clickable && (
+              <Box position="absolute" bottom={"25px"} right={"14px"}>
+                <ArrowForwardIosIcon />
+              </Box>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  }
+);
 
 const SummaryCard = ({
   value,
@@ -72,7 +120,7 @@ const SummaryCard = ({
   pdfId,
   customContent,
   backdrop
-}) => {
+}: SummaryCardProps) => {
   const theme = useTheme();
 
   const themeColor = theme.palette[color].card;
