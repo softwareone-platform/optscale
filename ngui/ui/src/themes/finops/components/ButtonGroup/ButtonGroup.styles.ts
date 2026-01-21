@@ -1,4 +1,5 @@
 import { makeStyles } from "tss-react/mui";
+import { MPT_BRAND_WHITE } from "@theme/utils/layouts";
 
 const useStyles = makeStyles()((theme) => ({
   button: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles()((theme) => ({
       color: "white"
     },
     ".MuiTypography-root": {
-      color: theme.palette.primary.white
+      color: MPT_BRAND_WHITE
     },
     "&:hover": {
       backgroundColor: theme.palette.secondary.light
