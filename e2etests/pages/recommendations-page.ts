@@ -482,7 +482,6 @@ export class RecommendationsPage extends BasePage {
       { label: 'Intelligent Tiering', locator: this.intelligentTieringCardSavingsValue },
       { label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue },
       { label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue },
-      // { label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue },
       { label: 'Obsolete IPs', locator: this.obsoleteIPsCardSavingsValue },
       { label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue },
       { label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue },
