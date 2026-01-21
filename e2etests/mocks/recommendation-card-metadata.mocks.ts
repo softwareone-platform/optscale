@@ -120,15 +120,7 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
     tableLocator: recommendationsPage.notDeallocatedInstancesTableSavingsValue,
     modalColumnLocator: recommendationsPage.modalColumn6,
   },
-  {
-    name: 'Obsolete Images',
-    savingsValue: recommendationsPage.obsoleteImagesCardSavingsValue,
-    seeAllBtn: recommendationsPage.obsoleteImagesSeeAllBtn,
-    errorLocator: recommendationsPage.obsoleteImagesError,
-    tableLocator: recommendationsPage.obsoleteImagesTableSavingsValue,
-    modalColumnLocator: recommendationsPage.modalColumn6,
-  },
-  {
+   {
     name: 'Obsolete IPs',
     savingsValue: recommendationsPage.obsoleteIPsCardSavingsValue,
     seeAllBtn: recommendationsPage.obsoleteIPsSeeAllBtn,
@@ -173,6 +165,14 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
     countValue: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsCountValue,
     seeAllBtn: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsSeeAllBtn,
     errorLocator: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsError,
+  },
+  {
+    name: 'Snapshots with non-used Images',
+    savingsValue: recommendationsPage.snapshotsWithNonUsedImagesCardSavingsValue,
+    seeAllBtn: recommendationsPage.snapshotsWithNonUsedImagesSeeAllBtn,
+    errorLocator: recommendationsPage.snapshotsWithNonUsedImagesError,
+    tableLocator: recommendationsPage.snapshotsWithNonUsedImagesTableSavingsValue,
+    modalColumnLocator: undefined, //TODO: Unable to determine which column this card uses without any savings data
   },
   {
     name: 'Under Utilized Instances',

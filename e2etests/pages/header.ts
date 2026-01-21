@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import { EEnvironment } from '../types/enums';
 
 /**
  * Represents the Header component of the page.
@@ -68,10 +69,10 @@ export class Header extends BasePage {
   getOrganizationNameForEnvironment(): string {
     const env = process.env.ENVIRONMENT;
     switch (env) {
-      case 'dev':
-      case 'test':
+      case EEnvironment.DEV:
+      case EEnvironment.TEST:
         return 'SoftwareOne (Test Env';
-      case 'staging':
+      case EEnvironment.STAGING:
         return 'Marketplace Platform';
 
       default:
