@@ -18,7 +18,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await recommendationsPage.selectCategory('All');
   });
 
-  test('[230511] Verify Card total savings match possible monthly savings', {tag: '@p1'}, async ({ recommendationsPage }) => {
+  test('[230511] Verify Card total savings match possible monthly savings', { tag: '@p1' }, async ({ recommendationsPage }) => {
     let possibleMonthlySavings: number;
     let cardTotalSavings: number;
 
@@ -68,6 +68,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       await test.step('Verify behaviour is correct if no completed duplicate checks', async () => {
         debugLog('No successfully completed checks found.');
 
+        // eslint-disable-next-line playwright/no-nested-step
         await test.step('Verify S3 Duplicate Finder table shows no duplicate checks message', async () => {
           await recommendationsPage.clickS3DuplicatesCard();
           await expect
@@ -99,59 +100,43 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await expect(recommendationsPage.allCardHeadings.first()).toHaveText('Public S3 buckets');
   });
 
-  test('[230598] Verify only the correct applicable services are displayed for SWO Customisation', {tag: '@p1'}, async ({ recommendationsPage }) => {
-    await test.step('Verify applicable services combo box options shows expected items', async () => {
-      await recommendationsPage.applicableServices.click();
-      const expectedVisibleServices = [
-        recommendationsPage.liAwsIAM,
-        recommendationsPage.liAwsEC2,
-        recommendationsPage.liAwsEC2EBS,
-        recommendationsPage.liAwsEC2VPC,
-        recommendationsPage.liAwsRDS,
-        recommendationsPage.liAwsS3,
-        recommendationsPage.liAwsKinesis,
-        recommendationsPage.liAzureCompute,
-        recommendationsPage.liAzureNetwork,
-        recommendationsPage.liGcpIAM,
-        recommendationsPage.liGcpCloudStorage,
-      ];
-      const expectedHiddenServices = [
-        recommendationsPage.liAliBabaECS,
-        recommendationsPage.liAliBabaVPC,
-        recommendationsPage.liAliBabaEBS,
-        recommendationsPage.liAliBabaSLB,
-      ];
+  test(
+    '[230598] Verify only the correct applicable services are displayed for SWO Customisation',
+    { tag: '@p1' },
+    async ({ recommendationsPage }) => {
+      await test.step('Verify applicable services combo box options shows expected items', async () => {
+        await recommendationsPage.applicableServices.click();
+        const expectedVisibleServices = [
+          recommendationsPage.liAwsIAM,
+          recommendationsPage.liAwsEC2,
+          recommendationsPage.liAwsEC2EBS,
+          recommendationsPage.liAwsEC2VPC,
+          recommendationsPage.liAwsRDS,
+          recommendationsPage.liAwsS3,
+          recommendationsPage.liAwsKinesis,
+          recommendationsPage.liAzureCompute,
+          recommendationsPage.liAzureNetwork,
+          recommendationsPage.liGcpIAM,
+          recommendationsPage.liGcpCloudStorage,
+        ];
+        const expectedHiddenServices = [
+          recommendationsPage.liAliBabaECS,
+          recommendationsPage.liAliBabaVPC,
+          recommendationsPage.liAliBabaEBS,
+          recommendationsPage.liAliBabaSLB,
+        ];
 
-      for (const service of expectedVisibleServices) {
-        await expect.soft(service).toBeVisible();
-      }
-      for (const service of expectedHiddenServices) {
-        await expect.soft(service).toBeHidden();
-      }
-    });
+        for (const service of expectedVisibleServices) {
+          await expect.soft(service).toBeVisible();
+        }
+        for (const service of expectedHiddenServices) {
+          await expect.soft(service).toBeHidden();
+        }
+      });
 
-    await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
-      await recommendationsPage.liAll.click();
-      await recommendationsPage.allCardHeadings.last().waitFor();
-      const aliBabaIcons = [
-        recommendationsPage.aliBabaEBS_Icon,
-        recommendationsPage.aliBabaECS_Icon,
-        recommendationsPage.aliBabaSLB_Icon,
-        recommendationsPage.aliBabaECS_VPC_Icon,
-        recommendationsPage.aliBabaRDS_Icon,
-      ];
-
-      for (const icon of aliBabaIcons) {
-        await expect.soft(icon).toBeHidden();
-      }
-    });
-
-    await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
-      await recommendationsPage.clickTableButton();
-      await recommendationsPage.allNameTableButtons.last().waitFor();
-      const cells = await recommendationsPage.applicableServicesColumn.all();
-
-      for (const cell of cells) {
+      await test.step('Verify that no AliBaba applicable services are displayed on any cards', async () => {
+        await recommendationsPage.liAll.click();
+        await recommendationsPage.allCardHeadings.last().waitFor();
         const aliBabaIcons = [
           recommendationsPage.aliBabaEBS_Icon,
           recommendationsPage.aliBabaECS_Icon,
@@ -159,12 +144,32 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
           recommendationsPage.aliBabaECS_VPC_Icon,
           recommendationsPage.aliBabaRDS_Icon,
         ];
+
         for (const icon of aliBabaIcons) {
-          await expect.soft(cell.locator(icon)).toBeHidden();
+          await expect.soft(icon).toBeHidden();
         }
-      }
-    });
-  });
+      });
+
+      await test.step('Verify that no AliBaba applicable services are displayed in the applicable services column of the table', async () => {
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.last().waitFor();
+        const cells = await recommendationsPage.applicableServicesColumn.all();
+
+        for (const cell of cells) {
+          const aliBabaIcons = [
+            recommendationsPage.aliBabaEBS_Icon,
+            recommendationsPage.aliBabaECS_Icon,
+            recommendationsPage.aliBabaSLB_Icon,
+            recommendationsPage.aliBabaECS_VPC_Icon,
+            recommendationsPage.aliBabaRDS_Icon,
+          ];
+          for (const icon of aliBabaIcons) {
+            await expect.soft(cell.locator(icon)).toBeHidden();
+          }
+        }
+      });
+    }
+  );
 
   const verifyCardsAndTable = async (recommendationsPage: any, category: string, expectedCardHeadings: string[]) => {
     await recommendationsPage.selectCategory(category);
@@ -208,16 +213,17 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Intelligent Tiering',
     'Not attached Volumes',
     'Not deallocated Instances',
-    'Obsolete images',
     'Obsolete IPs',
     'Obsolete snapshot chains',
     'Obsolete snapshots',
     'Public S3 buckets',
     'Reserved instances opportunities',
+    'Snapshots with non-used Images',
     'Underutilized instances',
     'Underutilized RDS Instances',
   ];
 
+  // eslint-disable-next-line playwright/expect-expect
   test('[230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
     await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
   });
@@ -239,6 +245,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     }
     expect(errorCount, 'No cards should be displaying errors').toBe(0);
   });
+  // eslint-disable-next-line playwright/expect-expect
   test('[230518] Verify all expected cards are present when Savings category selected', async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'Abandoned Amazon S3 buckets',
@@ -254,17 +261,18 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       'Intelligent Tiering',
       'Not attached Volumes',
       'Not deallocated Instances',
-      'Obsolete images',
       'Obsolete IPs',
       'Obsolete snapshot chains',
       'Obsolete snapshots',
       'Reserved instances opportunities',
+      'Snapshots with non-used Images',
       'Underutilized instances',
       'Underutilized RDS Instances',
     ];
     await verifyCardsAndTable(recommendationsPage, 'Savings', expectedCardHeadings);
   });
 
+  // eslint-disable-next-line playwright/expect-expect
   test('[230519] Verify all expected cards are present when Security category selected', async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'IAM users with unused console access',
@@ -374,13 +382,13 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     'Intelligent Tiering',
     'Not Attached Volumes',
     'Not Deallocated Instances',
-    'Obsolete Images',
     'Obsolete IPs',
     'Obsolete Snapshot Chains',
     'Obsolete Snapshots',
     `Public S3 Buckets`,
     'Reserved Instances Opportunities',
     `Resources With Insecure Security Groups Settings`,
+    'Snapshots with non-used Images',
     'Under Utilized Instances',
     'Under Utilized RDS Instances',
   ];

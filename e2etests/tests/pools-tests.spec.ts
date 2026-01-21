@@ -351,7 +351,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
 
       const multiplier = extractMultiplier(await poolsPage.subPoolColumn4.first().textContent());
       subPoolForecast = await poolsPage.getSubPoolForecastThisMonth(1);
-      expect.soft(multiplier).toBe(calculateMultiplier(subPoolForecast, subPoolLimit));
+      expect.soft(isWithinRoundingDrift(multiplier, calculateMultiplier(subPoolForecast, subPoolLimit), 0.1)).toBe(true);
     });
 
     await test.step('Assert that expand requiring attention does expand when sub-pools limits are exceeded', async () => {

@@ -150,10 +150,6 @@ export class RecommendationsPage extends BasePage {
   readonly notDeallocatedInstancesSeeAllBtn: Locator;
   readonly notDeallocatedInstancesError: Locator;
   readonly notDeallocatedInstancesTableSavingsValue: Locator;
-  readonly obsoleteImagesCardSavingsValue: Locator;
-  readonly obsoleteImagesSeeAllBtn: Locator;
-  readonly obsoleteImagesError: Locator;
-  readonly obsoleteImagesTableSavingsValue: Locator;
   readonly obsoleteIPsCardSavingsValue: Locator;
   readonly obsoleteIPsSeeAllBtn: Locator;
   readonly obsoleteIPsError: Locator;
@@ -189,6 +185,10 @@ export class RecommendationsPage extends BasePage {
   readonly underutilizedRDSInstancesSeeAllBtn: Locator;
   readonly underutilizedRDSInstancesError: Locator;
   readonly underutilizedRDSInstancesTableSavingsValue: Locator;
+  readonly snapshotsWithNonUsedImagesCardSavingsValue: Locator;
+  readonly snapshotsWithNonUsedImagesSeeAllBtn: Locator;
+  readonly snapshotsWithNonUsedImagesError: Locator;
+  readonly snapshotsWithNonUsedImagesTableSavingsValue: Locator;
 
   /**
    * Initializes a new instance of the RecommendationsPage class.
@@ -323,13 +323,13 @@ export class RecommendationsPage extends BasePage {
       intelligentTiering: 'Intelligent Tiering',
       notAttachedVolumes: 'Not attached Volumes',
       notDeallocatedInstances: 'Not deallocated Instances',
-      obsoleteImages: 'Obsolete images',
       obsoleteIPs: 'Obsolete IPs',
       obsoleteSnapshotChains: 'Obsolete snapshot chains',
       obsoleteSnapshots: 'Obsolete snapshots',
       publicS3Buckets: 'Public S3 buckets',
       reservedInstancesOpportunities: 'Reserved instances opportunities',
       resourcesWithInsecureSecurityGroupsSettings: 'Resources with insecure Security Groups settings',
+      snapshotsWithNonUsedImages: 'Snapshots with non-used Images',
       underutilizedInstances: 'Underutilized instances',
       underutilizedRDSInstances: 'Underutilized RDS Instances',
     };
@@ -363,21 +363,6 @@ export class RecommendationsPage extends BasePage {
    */
   async selectDataSource(dataSource: string): Promise<void> {
     await this.selectFromComboBox(this.dataSourcesSelect, dataSource, true);
-  }
-
-  /**
-   * Clicks the RI/SP card on the Recommendations page.
-   *
-   * This method interacts with the `ri_spCard` locator to simulate a user clicking
-   * on the RI/SP card element. The action is typically used to navigate to a specific
-   * section or trigger functionality associated with the RI/SP card.
-   *
-   * @returns {Promise<void>} Resolves when the click action is complete.
-   */
-  async clickRI_SPCard(): Promise<void> {
-    await this.page.waitForLoadState();
-    await this.delay(2000);
-    await this.ri_spCard.click();
   }
 
   /**
@@ -453,27 +438,6 @@ export class RecommendationsPage extends BasePage {
   }
 
   /**
-   * Retrieves the saved amount with commitments value from the page.
-   * Parses the text content of the saved value element into a numeric value.
-   *
-   * @returns {Promise<number>} The parsed saved amount with commitments value.
-   */
-  async getSavedWithCommitmentsValue(): Promise<number> {
-    const value = await this.savedWithCommitmentsValue.textContent();
-    return this.parseCurrencyValue(value);
-  }
-
-  /**
-   * Retrieves the percentage of saved expenses covered with commitments.
-   * Extracts the text content of the relevant element.
-   *
-   * @returns {Promise<string>} The percentage value as a string.
-   */
-  async getSavedExpensesWithCommitmentsPercentageValue(): Promise<string> {
-    return await this.computeExpensesWithCommitmentsValue.textContent();
-  }
-
-  /**
    * Retrieves a currency value given its locator.
    *
    * @param {Locator} currencyLocator - The locator for an element with a currency value.
@@ -518,11 +482,13 @@ export class RecommendationsPage extends BasePage {
       { label: 'Intelligent Tiering', locator: this.intelligentTieringCardSavingsValue },
       { label: 'Not Attached Volumes', locator: this.notAttachedVolumesCardSavingsValue },
       { label: 'Not Deallocated Instances', locator: this.notDeallocatedInstancesCardSavingsValue },
-      { label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue },
+      // { label: 'Obsolete Images', locator: this.obsoleteImagesCardSavingsValue },
       { label: 'Obsolete IPs', locator: this.obsoleteIPsCardSavingsValue },
       { label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue },
       { label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue },
       { label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue },
+      { label: 'Public S3 Buckets', locator: this.publicS3BucketsCardSavingsValue },
+      { label: 'Snapshots With Non-used Images', locator: this.snapshotsWithNonUsedImagesCardSavingsValue},
       { label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue },
       { label: 'Underutilized RDS Instances', locator: this.underutilizedRDSInstancesCardSavingsValue },
     ];
