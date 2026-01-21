@@ -2,27 +2,19 @@ import Grid from "@mui/material/Grid";
 import { FormattedNumber, FormattedMessage } from "react-intl";
 import { v4 as uuidv4 } from "uuid";
 import FormattedDigitalUnit from "components/FormattedDigitalUnit";
-import FormattedMoney from "components/FormattedMoney";
 import SummaryCard from "components/SummaryCard";
 import SummaryCardExtended from "components/SummaryCardExtended";
-import Tooltip from "components/Tooltip";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES, FORMATTED_MONEY_TYPES } from "utils/constants";
+import { SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 
 const getValueComponentSettings = (type, CustomComponent) => ({
   component: {
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedNumber]: FormattedNumber,
-    [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney]: ({ value, ...rest }) => {
+    [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney]: ({ value }) => {
       const { currency } = useOrganizationInfo();
 
-      return (
-        <Tooltip title={<FormattedNumber format={currency} value={value} />}>
-          <span>
-            <FormattedMoney {...rest} value={value} type={FORMATTED_MONEY_TYPES.COMPACT} />
-          </span>
-        </Tooltip>
-      );
+      return <FormattedNumber format={currency} value={value} />;
     },
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedMessage]: FormattedMessage,
     [SUMMARY_VALUE_COMPONENT_TYPES.FormattedDigitalUnit]: FormattedDigitalUnit,

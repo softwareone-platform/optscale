@@ -124,23 +124,6 @@ const applyPaletteSettings = (settings) => {
 const applyChartPaletteSettings = (settings) => {
   const isEmptySetting = (name) => isEmptyArray(settings.chartPalette?.[name] ?? []);
 
-  // MPT_TODO: change colors palette
-  // Original:
-  // [
-  //         "#4AB4EE",
-  //         "#FFC348",
-  //         "#30D5C8",
-  //         "#9950B1",
-  //         "#4A63EE",
-  //         "#FF6648",
-  //         "#30D575",
-  //         "#B19950",
-  //         "#834AEE",
-  //         "#48E1FF",
-  //         "#D53090",
-  //         "#99B150"
-  //       ]
-
   const chart = isEmptySetting("chart")
     ? [
         "#959BFF",
