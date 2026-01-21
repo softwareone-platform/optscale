@@ -107,7 +107,7 @@ const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
     { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "management", cloudType: AWS_CNR },
     { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "standalone", cloudType: AWS_CNR }
+    { connectionType: CONNECTION_TYPES.AWS_STANDALONE, messageId: "standalone", cloudType: AWS_CNR }
   ],
   [CLOUD_PROVIDERS.AZURE]: [
     { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
