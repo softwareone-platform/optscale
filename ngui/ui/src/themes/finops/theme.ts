@@ -303,6 +303,9 @@ const getThemeConfig = (settings = {}) => {
       fontFamily: "'Arial', sans-serif",
       mono: {
         fontFamily: "'Ubuntu Mono', monospace"
+      },
+      body2: {
+        color: MPT_BRAND_TYPE
       }
     },
     components: {
@@ -389,7 +392,7 @@ const getThemeConfig = (settings = {}) => {
               */
               "&[aria-selected='true']": {
                 backgroundColor: ACTION_SELECTED,
-                color: secondary.contrastText,
+                color: MPT_BRAND_WHITE,
                 "&.Mui-focused": {
                   backgroundColor: ACTION_SELECTED
                 }

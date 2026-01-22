@@ -210,7 +210,7 @@ const Resources = ({
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Grid direction="row" container spacing={3} justifyContent="space-between">
-          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+          <Grid item xs={12}>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
           <Grid item xs={12} className={"MTPBoxShadowRoot"}>

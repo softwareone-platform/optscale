@@ -5,13 +5,13 @@ import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import { Badge, Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import { FormattedMessage, useIntl } from "react-intl";
+import { RangeFilter, SelectionFilter, SuggestionFilter } from "@main/components/FilterComponents";
+import { FILTER_CONFIGS } from "@main/components/Resources/filterConfigs";
+import { useCurrentEmployee } from "@main/hooks/coreData/useCurrentEmployee";
+import { endOfDay, moveDateFromUTC, startOfDay } from "@main/utils/datetime";
 import LabelColon from "@theme/shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "@theme/shared/components/ResponsiveStack/ResponsiveStack";
 import { MPT_SPACING_1 } from "@theme/utils/layouts";
-import { RangeFilter, SelectionFilter, SuggestionFilter } from "components/FilterComponents";
-import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
-import { useCurrentEmployee } from "hooks/coreData/useCurrentEmployee";
-import { endOfDay, moveDateFromUTC, startOfDay } from "utils/datetime";
 
 const getSelectionFilterProps = ({ config, onChange, appliedFilters, data }) => ({
   items: config.transformers.getItems(data),
