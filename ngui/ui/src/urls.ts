@@ -595,6 +595,11 @@ export const DOCS_HYSTAX_SLACK_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integration
 export const DOCS_HYSTAX_GOOGLE_CALENDAR_INTEGRATION = `${DOCS_HYSTAX_OPTSCALE}integrations.html#google-calendar`;
 export const DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD = dataSourceConnectionDocUrl("e2e_alibaba.html");
 
+export const DOCS_FINOPS_AUTHENTICATION_TYPE_MIGRATION = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services#aws-organizations`;
+export const DOCS_FINOPS_AWS_DATA_SOURCE = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services`;
+export const DOCS_FINOPS_AWS_DATA_SOURCE_MIGRATE_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/migrate-from-legacy-cur-to-cur-2.0`;
+export const DOCS_AWS_CREDENTIALS_ACCESS_KEYS = `https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html`;
+
 // Hystax open source links
 export const GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR =
   "https://github.com/hystax/helm-charts/tree/main/charts/kube-cost-metrics-collector";
