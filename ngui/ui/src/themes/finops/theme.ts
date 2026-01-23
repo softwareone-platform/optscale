@@ -28,7 +28,9 @@ import {
   MPT_GRADIENT,
   MPT_BRAND_TYPE,
   MPT_ALERTS_SUCCESS_3,
-  MPT_GRAY_1
+  MPT_GRAY_1,
+  MPT_BOX_WHITE_SHADOW_RADIUS_2,
+  MPT_BOX_WHITE
 } from "./utils/layouts";
 
 const getLighten = (color, lightenAlpha = 0.2) => lighten(color, lightenAlpha);
@@ -306,6 +308,11 @@ const getThemeConfig = (settings = {}) => {
       },
       body2: {
         color: MPT_BRAND_TYPE
+      },
+      subtitle1: {
+        color: MPT_BRAND_TYPE,
+        fontWeight: "bold",
+        marginBottom: MPT_SPACING_3
       }
     },
     components: {
@@ -616,27 +623,9 @@ const getThemeConfig = (settings = {}) => {
           "input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active": {
             WebkitBoxShadow: `0 0 0 30px ${getWebkitAutofillBackgroundColor(theme)} inset !important`
           },
-          ".MTPBoxShadow.MuiBox-root": {
-            boxShadow: MPT_BOX_SHADOW,
-            background: "#FFFFFF",
-            padding: MPT_SPACING_3,
-            borderRadius: MPT_SPACING_1,
-            width: "100%"
-          },
-          ".MTPBoxShadowRoot": {
-            "> .MuiBox-root": {
-              boxShadow: MPT_BOX_SHADOW,
-              background: "#FFFFFF",
-              padding: MPT_SPACING_3,
-              borderRadius: MPT_SPACING_2
-            }
-          },
-          ".MuiBox-WhiteCard": {
-            boxShadow: MPT_BOX_SHADOW,
-            background: MPT_BRAND_WHITE,
-            padding: MPT_SPACING_3,
-            borderRadius: MPT_SPACING_1
-          }
+          ".MTPBoxShadow.MuiBox-root": MPT_BOX_WHITE_SHADOW_RADIUS_2,
+          ".MTPBoxShadowRoot > .MuiBox-root": MPT_BOX_WHITE_SHADOW_RADIUS_2,
+          ".MuiBox-WhiteCard": MPT_BOX_WHITE
         })
       },
       MuiDialogActions: {

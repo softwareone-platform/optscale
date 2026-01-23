@@ -1,11 +1,4 @@
-import { SUCCESS, WARNING, ERROR } from "utils/constants";
-
-export const SPACING_1 = 1;
-export const SPACING_2 = 2;
-export const SPACING_3 = 3;
-export const SPACING_4 = 4;
-export const SPACING_5 = 5;
-export const SPACING_6 = 6;
+export * from "@main/utils/layouts";
 
 export const MPT_BRAND_PRIMARY = "#472AFF";
 
@@ -47,14 +40,16 @@ export const MPT_GRADIENT = "linear-gradient(270deg, #00c9cd, #472aff, #392d9c)"
 
 export const DEFAULT_BUTTON_FONT_UPPERCASE = false;
 
-export const scrolledToBottom = (target) => target.scrollTop + target.clientHeight >= target.scrollHeight;
-
-export const MPT_BOX_SHADOW_STYLES = {
-  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-  background: "#FFFFFF",
+export const MPT_BOX_WHITE = {
+  background: MPT_BRAND_WHITE,
   padding: MPT_SPACING_3,
-  borderRadius: MPT_SPACING_1,
-  width: "100%"
+  borderRadius: MPT_SPACING_1
+} as const;
+
+export const MPT_BOX_WHITE_SHADOW_RADIUS_2 = {
+  ...MPT_BOX_WHITE,
+  boxShadow: MPT_BOX_SHADOW,
+  borderRadius: MPT_SPACING_2
 } as const;
 
 export const MPT_PAGE_WRAPPER_STYLES = {
@@ -64,55 +59,6 @@ export const MPT_PAGE_WRAPPER_STYLES = {
   paddingTop: MPT_SPACING_3
 } as const;
 
-/**
- * Calculate the approximate width of the provided text
- *
- * @param { string } text - The text whose width we want to calculate
- * @param { string } font - Font string (e.g. "12px sans-serif")
- *
- * @description
- * Calculates text width using the canvas "measureText" function
- *
- * @returns Rounded up to the next largest integer width
- */
-export const getTextWidth = (text, font) => {
-  const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
-  const context = canvas.getContext("2d");
-  context.font = font;
-  const { width } = context.measureText(text);
-  return Math.ceil(width);
-};
-
-export const getPoolColorStatus = (percent = 0) => {
-  if (percent >= 90 && percent < 100) {
-    return WARNING;
-  }
-  if (percent >= 100) {
-    return ERROR;
-  }
-  return SUCCESS;
-};
-
-/**
- * Calculate border styles for n*2 cards/nodes layouts (home page, integrations)
- *
- * @param count - The number of cards/nodes
- * @param index - The current card/node index. Cards are iterated in a loop.
- *
- * TODO - improve to add a dynamic number of columns, more breakpoints
- * @returns The border styles object, ready to use for `sx`
- */
-export const getSquareNodesStyle = (count: number, index: number) => ({
-  borderRight: {
-    xs: "0",
-    lg: index % 2 === 0 ? "1px solid" : "0px solid"
-  },
-  borderBottom: {
-    xs: index + 1 === count ? "0" : "1px solid",
-    lg: index + 2 >= count ? "0" : "1px solid"
-  },
-  borderColor: {
-    xs: "divider",
-    lg: "divider"
-  }
-});
+export const MPT_SEMICOLON = {
+  "&::after": { content: '":"', marginLeft: "-3px" }
+} as const;
