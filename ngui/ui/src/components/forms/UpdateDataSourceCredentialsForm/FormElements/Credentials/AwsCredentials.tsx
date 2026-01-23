@@ -14,6 +14,7 @@ import {
   AUTHENTICATION_TYPES,
   AuthenticationTypeSelector
 } from "components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm";
+import AwsAuthenticationTypeAlert from "./AwsAuthenticationTypeAlert";
 import AwsDescription from "./AwsDescription";
 
 const CostAndUsageReport = () => (
@@ -36,9 +37,9 @@ const getAwsAuthType = (config) => {
 const AwsCredentials = ({ config }) => {
   const currentAuthType = getAwsAuthType(config);
   const [authenticationType, setAuthenticationType] = useState<string>(currentAuthType);
-  const getAwsInputs = (config) => {
-    const fullAuthenticationType: string = authenticationType + (config.linked ? "Linked" : "");
 
+  const fullAuthenticationType: string = authenticationType + (config.linked ? "Linked" : "");
+  const getAwsInputs = (config) => {
     switch (fullAuthenticationType) {
       case "assumedRole":
       case "assumedRoleLinked":
@@ -63,8 +64,13 @@ const AwsCredentials = ({ config }) => {
   };
   return (
     <>
-      <AuthenticationTypeSelector authenticationType={authenticationType} setAuthenticationType={setAuthenticationType} />
-      <AwsDescription config={config} authenticationType={authenticationType} />
+      {currentAuthType === AUTHENTICATION_TYPES.ACCESS_KEY && (
+        <>
+          <AuthenticationTypeSelector authenticationType={authenticationType} setAuthenticationType={setAuthenticationType} />
+          <AwsAuthenticationTypeAlert authenticationType={fullAuthenticationType} />
+        </>
+      )}
+      <AwsDescription authenticationType={fullAuthenticationType} />
       {getAwsInputs(config)}
     </>
   );

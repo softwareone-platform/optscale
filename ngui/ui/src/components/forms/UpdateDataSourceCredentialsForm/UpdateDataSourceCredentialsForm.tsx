@@ -524,8 +524,6 @@ const UpdateDataSourceCredentialsForm = ({
 
   const { handleSubmit } = methods;
 
-  const isAssumedRole = Boolean(config?.assume_role_account_id && config?.assume_role_name);
-
   return (
     <FormProvider {...methods}>
       <form
@@ -536,7 +534,7 @@ const UpdateDataSourceCredentialsForm = ({
       >
         <Description type={type} config={config} />
         <CredentialInputs type={type} config={config} />
-        {!isAssumedRole && <UpdateCredentialsWarning type={type} />}
+        <UpdateCredentialsWarning type={type} />
         <FormButtonsWrapper>
           <ButtonLoader
             dataTestId="btn_update_data_source_credentials"
