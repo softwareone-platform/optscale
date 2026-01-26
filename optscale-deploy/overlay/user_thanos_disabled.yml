@@ -1,0 +1,16 @@
+# overlay/user_thanos_disabled.yml
+thanos_compactor:
+  cronJob:
+    suspend: true
+
+thanos_query:
+  replicaCount: 0
+
+thanos_receive:
+  replicaCount: 0
+
+thanos_storegateway:
+  replicaCount: 0
+
+diproxy:
+  replicaCount: 0
