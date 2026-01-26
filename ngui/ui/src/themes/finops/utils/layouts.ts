@@ -1,6 +1,9 @@
+import { darken } from "@mui/material/styles";
+
 export * from "@main/utils/layouts";
 
 export const MPT_BRAND_PRIMARY = "#472AFF";
+export const MPT_BRAND_PRIMARY_DARKER = darken(MPT_BRAND_PRIMARY, 0.3);
 
 export const MPT_BRAND_TYPE = "#000000";
 export const MPT_BRAND_WHITE = "#FFFFFF";
