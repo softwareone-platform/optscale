@@ -2196,6 +2196,7 @@
   "tagValueStartsWith": "Tag value starts with",
   "tagging": "Tagging",
   "taggingPolicy": "Tagging policy",
+  "taggingPolicies": "Tagging policies",
   "taggingPolicy.anyTagHelpText": "The empty field means that resources must be tagged.",
   "taggingPolicy.anyTags": "Resources must be tagged starting from <strong>{startDate}</strong>.",
   "taggingPolicy.anyTagsShort": "Resources must be tagged.",

@@ -12,11 +12,11 @@ import quotas from "@main/utils/menus/quotasMenuItem";
 import recommendations from "@main/utils/menus/recommendationsMenuItem";
 import resources from "@main/utils/menus/resourcesMenuItem";
 import settings from "@main/utils/menus/settingsMenuItem";
-import taggingPolicies from "@main/utils/menus/taggingPoliciesMenuItem";
 import users from "@main/utils/menus/usersMenuItem";
 import MainMenuSectionTitle from "@theme/components/MainMenuSectionTitle/MainMenuSectionTitle";
 import { MAIN_MENU_SECTION_IDS } from "components/MenuGroupWrapper/reducer";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
+import taggingPolicies from "./taggingPoliciesMenuItem";
 
 export default [
   {

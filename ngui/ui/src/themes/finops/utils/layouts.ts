@@ -43,6 +43,12 @@ export const MPT_GRADIENT = "linear-gradient(270deg, #00c9cd, #472aff, #392d9c)"
 
 export const DEFAULT_BUTTON_FONT_UPPERCASE = false;
 
+export const MPT_DIVIDER_DIV_BOTTOM = {
+  borderBottom: `1px solid ${MPT_GRAY_2}`,
+  marginBottom: MPT_SPACING_3,
+  paddingBottom: MPT_SPACING_3
+};
+
 export const MPT_BOX_WHITE = {
   background: MPT_BRAND_WHITE,
   padding: MPT_SPACING_3,
@@ -64,4 +70,18 @@ export const MPT_PAGE_WRAPPER_STYLES = {
 
 export const MPT_SEMICOLON = {
   "&::after": { content: '":"', marginLeft: "-3px" }
+} as const;
+
+export const MPT_BUTTON_DEFAULT_SUCCESS_TO_PRIMARY = {
+  backgroundColor: MPT_BRAND_PRIMARY,
+  "&:hover": {
+    backgroundColor: MPT_BRAND_PRIMARY_DARKER
+  }
+} as const;
+
+export const MPT_BUTTON_TEXT_PRIMARY_TO_DANGER = {
+  color: MPT_ALERTS_DANGER_3,
+  "&:hover": {
+    color: MPT_ALERTS_DANGER_4
+  }
 } as const;
