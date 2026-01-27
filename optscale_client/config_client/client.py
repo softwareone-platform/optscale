@@ -1,6 +1,7 @@
 import os
 
 import etcd
+import json
 import logging
 import subprocess
 from retrying import retry
@@ -603,3 +604,39 @@ class Client(etcd.Client):
             'webhook_secret': branch['webhook_secret'],
             'enabled': True if branch['enabled'].lower() == 'true' else False
         }
+
+    def disabled_recommendations(self):
+        """
+        Get settings for disabled recommendations.
+        Accepts:
+          - "r1,r2,r3"
+          - "r1, r2, r3"
+          - multiline: "r1,r2\nr3"
+          - JSON list: ["r1","r2"]
+        Returns: List[str]
+        """
+        try:
+            dr = self.get('/disabled_recommendations').value
+        except etcd.EtcdKeyNotFound:
+            return []
+
+        if dr is None:
+            return []
+
+        if isinstance(dr, (bytes, bytearray)):
+            dr = dr.decode("utf-8", errors="replace")
+
+        dr = str(dr).strip()
+        if not dr:
+            return []
+
+        if dr.startswith("["):
+            try:
+                val = json.loads(dr)
+                if isinstance(val, list):
+                    return [str(x).strip() for x in val if str(x).strip()]
+            except Exception:
+                pass
+
+        dr = dr.replace("\n", ",").replace(";", ",")
+        return [x.strip() for x in dr.split(",") if x.strip()]
