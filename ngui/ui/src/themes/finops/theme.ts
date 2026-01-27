@@ -311,7 +311,8 @@ const getThemeConfig = (settings = {}) => {
       },
       subtitle1: {
         color: MPT_BRAND_TYPE,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginBottom: MPT_SPACING_2
       }
     },
     components: {
