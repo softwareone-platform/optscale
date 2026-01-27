@@ -214,14 +214,8 @@ const getConfig = (type, config, dataSourceProps) => {
             };
           }
 
-          if (config.linked) {
-            return {
-              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
-              [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
-            };
-          }
-
           return {
+            [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: dataSourceProps.accountId,
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
             [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
