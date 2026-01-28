@@ -61,6 +61,12 @@ const columns = [
   })
 ];
 
+/**
+ * @deprecated
+ * OSN-1266. `ObsoleteImages` is deprecated but still used on the Archived Recommendations page.
+ * Use `SnapshotsWithNonUsedImages` instead.
+ */
+
 class ObsoleteImages extends BaseRecommendation {
   type = "obsolete_images";
 

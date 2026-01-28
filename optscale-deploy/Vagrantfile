@@ -1,0 +1,177 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+selected_provider = ENV["VAGRANT_DEFAULT_PROVIDER"].to_s.strip
+if selected_provider == "qemu" && !Vagrant.has_plugin?("vagrant-qemu")
+  warn "WARNING: vagrant-qemu plugin is missing. QEMU provider won't be available. " \
+       "Install it with 'vagrant plugin install vagrant-qemu' if you want to use the qemu provider."
+end
+
+X86_64_ARCHITECTURES = ["x86_64", "amd64"].freeze
+ARM_64_ARCHITECTURES = ["arm64", "aarch64", "aarch64_be", "armv8b", "armv8l"].freeze
+VM_CPUS    = (ENV["VM_CPUS"]    || "4").to_i
+VM_RAM_GB  = (ENV["VM_RAM_GB"]  || "10").to_i
+VM_DISK_GB = (ENV["VM_DISK_GB"] || "75").to_i
+
+def cpu_emulated?(guest_cpu_arch)
+  host_cpu_arch = `uname -m`.strip
+
+  [X86_64_ARCHITECTURES, ARM_64_ARCHITECTURES].each do |aliases|
+    if aliases.include?(host_cpu_arch)
+      return !aliases.include?(guest_cpu_arch)
+    end
+  end
+
+  raise RuntimeError, "Unknown host CPU architecture: #{host_cpu_arch}"
+end
+
+def define_vm(config, name:, arch:, base_box:, ports:)
+    opts = {
+        primary:   !cpu_emulated?(arch),
+        autostart: !cpu_emulated?(arch),
+    }
+
+    config.vm.define name, opts do |vm_config|
+    vm_config.vm.box = base_box
+
+    if X86_64_ARCHITECTURES.include?(arch)
+      vm_config.vm.box_architecture = "amd64"
+    elsif ARM_64_ARCHITECTURES.include?(arch)
+      vm_config.vm.box_architecture = "arm64"
+    else
+      raise RuntimeError, "Unsupported architecture: #{arch}"
+    end
+
+    vm_config.vm.hostname = name
+
+    # Port forwarding
+    vm_config.vm.network "forwarded_port", guest: 80,  host: ports[:http]
+    vm_config.vm.network "forwarded_port", guest: 443, host: ports[:https]
+
+    # - For QEMU (vagrant-qemu): SSH forwarding is handled by qemu.ssh_port
+    selected_provider = ENV["VAGRANT_DEFAULT_PROVIDER"].to_s.strip
+    if selected_provider == "virtualbox"
+      vm_config.vm.network "forwarded_port",
+                           guest: 22, host: ports[:ssh],
+                           id: "ssh_#{name}"
+    end
+
+    # DB / Kibana / Grafana
+    vm_config.vm.network "forwarded_port", guest: 30080, host: 41080, id: "db_#{name}"
+    vm_config.vm.network "forwarded_port", guest: 30081, host: 41081, id: "kibana_#{name}"
+    vm_config.vm.network "forwarded_port", guest: 30082, host: 41082, id: "grafana_#{name}"
+
+    # QEMU provider (only if plugin is installed)
+    if Vagrant.has_plugin?("vagrant-qemu")
+      vm_config.vagrant.plugins = "vagrant-qemu"
+
+      vm_config.vm.provider "qemu" do |qemu|
+        qemu.memory      = "#{VM_RAM_GB}G"
+        qemu.net_device  = "virtio-net-pci"
+        qemu.disk_resize = "#{VM_DISK_GB}G"
+
+        # default to OS install, but also support homebrew
+        if Dir.exist?("/usr/share/qemu")
+          qemu.qemu_dir = "/usr/share/qemu"
+        elsif ENV["HOMEBREW_PREFIX"] && Dir.exist?("#{ENV["HOMEBREW_PREFIX"]}/share/qemu")
+          qemu.qemu_dir = "#{ENV["HOMEBREW_PREFIX"]}/share/qemu"
+        else
+          raise RuntimeError, "QEMU directory not found. Please ensure QEMU is installed."
+        end
+
+        if cpu_emulated?(arch)
+          qemu.cpu = "max"
+          accelerator = "tcg,thread=multi,tb-size=512"
+        else
+          qemu.cpu = "host"
+
+          if Vagrant::Util::Platform.linux?
+            accelerator = "kvm"
+          elsif Vagrant::Util::Platform.darwin?
+            accelerator = "hvf"
+          else
+            raise RuntimeError, "Unsupported platform: #{Vagrant::Util::Platform.platform}"
+          end
+        end
+
+        qemu.extra_qemu_args = ["-accel", accelerator]
+
+        qemu.ssh_port = ports[:ssh]
+
+        if X86_64_ARCHITECTURES.include?(arch)
+          qemu.arch    = "x86_64"
+          qemu.machine = "q35"
+          qemu.smp     = "cpus=#{VM_CPUS},sockets=1,cores=#{VM_CPUS},threads=1"
+        elsif ARM_64_ARCHITECTURES.include?(arch)
+          qemu.arch    = "aarch64"
+          qemu.machine = "virt,gic-version=3"
+          qemu.smp     = "cores=#{VM_CPUS},threads=1"
+        else
+          raise RuntimeError, "Unsupported architecture: #{arch}"
+        end
+      end
+    end
+
+    # VirtualBox provider
+    vm_config.vm.provider "virtualbox" do |vb|
+      vb.name   = name
+      vb.memory = VM_RAM_GB * 1024
+      vb.cpus   = VM_CPUS
+
+      # ioapic required
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+
+      # Optional tweaks; comment out if not wanted
+      vb.customize ["modifyvm", :id, "--audio", "none"]
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
+    end
+  end
+end
+
+
+Vagrant.configure(2) do |config|
+
+  selected_provider = ENV["VAGRANT_DEFAULT_PROVIDER"].to_s.strip
+
+  # Require vagrant-disksize for VirtualBox resizing
+  if selected_provider == "virtualbox"
+    if Vagrant.has_plugin?("vagrant-disksize")
+      config.disksize.size = "#{VM_DISK_GB}GB"
+    else
+      raise Vagrant::Errors::VagrantError.new,
+            "The 'vagrant-disksize' plugin is required for VirtualBox. " \
+            "Install it:\n\n  vagrant plugin install vagrant-disksize"
+    end
+  end
+
+  config.vm.synced_folder "..", "/home/vagrant/optscale", type: "rsync",
+                         rsync__exclude: [
+                           "*/.venv/",
+                           "optscale-deploy/.vagrant/",
+                         ]
+
+  define_vm(
+    config,
+    name: "ubuntu-2404-arm-64",
+    arch: "arm64",
+    base_box: "cloud-image/ubuntu-24.04",
+    ports: {
+      http: 9081,
+      https: 9444,
+      ssh: 50223,
+    }
+  )
+
+  define_vm(
+    config,
+    name: "ubuntu-2404-x86-64",
+    arch: "x86_64",
+    base_box: "cloud-image/ubuntu-24.04",
+    ports: {
+      http: 9080,
+      https: 9443,
+      ssh: 50222,
+    }
+  )
+end
