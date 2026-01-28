@@ -55,11 +55,6 @@ const CleanExpensesTable = ({
   assignmentRuleCreationLinkParameters,
   totalResourcesCount
 }) => {
-  // MTP_TODO: Disabled to meet BDR requirements
-  // const dispatch = useDispatch();
-  // const { organizationId } = useOrganizationInfo();
-  // const { isLoading: isMarkResourcesAsEnvironmentsLoading } = useApiState(MARK_RESOURCES_AS_ENVIRONMENTS);
-
   const [rowSelection, setRowSelection] = useState({});
 
   const columns = useMemo(
@@ -274,25 +269,7 @@ const CleanExpensesTable = ({
   );
 
   const getActionBarItems = () => {
-    // MPT_TODO: Disabled markAsEnvironment to meet BDR requirements
-    // const selectedResourceIds = Object.keys(rowSelection);
-
-    const actionBarItems = [
-      // MPT_TODO: Disabled markAsEnvironment to meet BDR requirements
-      // {
-      //   key: "markAsEnvironment",
-      //   icon: <DnsOutlinedIcon fontSize="small" />,
-      //   messageId: "markAsEnvironment",
-      //   enableIfSelectedRows: true,
-      //   type: "button",
-      //   isLoading: isMarkResourcesAsEnvironmentsLoading,
-      //   requiredActions: ["MANAGE_RESOURCES"],
-      //   dataTestId: "btn_mark_as_environment",
-      //   action: () => {
-      //     dispatch(markResourcesAsEnvironments(organizationId, selectedResourceIds));
-      //   }
-      // }
-    ];
+    const actionBarItems = [];
 
     if (typeof downloadResources === "function") {
       actionBarItems.push({

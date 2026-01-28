@@ -258,23 +258,6 @@ const EmployeesTable = ({ isLoading = false, employees }) => {
                 dataTestId: "btn_invite",
                 requiredActions: ["MANAGE_INVITES"]
               },
-              // MPT_TODO: disabled to meet BDR requirements
-              // {
-              //   key: "slack",
-              //   icon: <SlackIcon />,
-              //   messageId: "slack",
-              //   action: () => openSideModal(SlackIntegrationModal),
-              //   type: "button",
-              //   dataTestId: "btn_slack"
-              // },
-              // {
-              //   key: "jira",
-              //   icon: <JiraIcon />,
-              //   messageId: "jira",
-              //   link: getIntegrationsUrl(JIRA),
-              //   type: "button",
-              //   dataTestId: "btn_jira"
-              // },
               {
                 key: "download",
                 startIcon: <CloudDownloadOutlinedIcon />,

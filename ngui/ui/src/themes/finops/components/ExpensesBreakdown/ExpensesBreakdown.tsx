@@ -210,10 +210,6 @@ const ExpensesBreakdown = ({
       );
     }
 
-    // MPT_TODO: disabled to meet BDR requiremnets
-    // if (filteredBreakdown.length <= 1) {
-    //   return null;
-    // }
     return (
       <>
         <PieChartHeader />

@@ -170,15 +170,6 @@ const Resources = ({
         color: "primary",
         dataTestId: "btn_create_perspective"
       }
-      // MPT_TODO: disabled to meet BDR requirements
-      // {
-      //   key: "configureClusterTypes",
-      //   icon: <GroupWorkOutlinedIcon fontSize="small" />,
-      //   messageId: "configureClusterTypes",
-      //   type: "button",
-      //   link: CLUSTER_TYPES,
-      //   dataTestId: "btn_configure_cluster_types"
-      // }
     ]
   };
 
