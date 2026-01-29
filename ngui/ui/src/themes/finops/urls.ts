@@ -40,3 +40,8 @@ export const GITHUB_HYSTAX_OPTSCALE_REPO = "https://github.com/softwareone-platf
 export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS =
   "https://github.com/softwareone-platform/optscale_tools/tree/main/extract_linked_reports";
 export const PYPI_OPTSCALE_ARCEE = "https://pypi.org/project/optscale-arcee";
+
+export const DOCS_FINOPS_AUTHENTICATION_TYPE_MIGRATION = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services#aws-organizations`;
+export const DOCS_FINOPS_AWS_DATA_SOURCE = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services`;
+export const DOCS_FINOPS_AWS_DATA_SOURCE_MIGRATE_CUR_2_0 = `${DOCS_HYSTAX_OPTSCALE}system/data-sources/amazon-web-services/migrate-from-legacy-cur-to-cur-2.0`;
+export const DOCS_AWS_CREDENTIALS_ACCESS_KEYS = `https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html`;

@@ -8,6 +8,7 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import { FormattedMessage } from "react-intl";
+import { MPT_BRAND_TYPE } from "@theme/utils/layouts";
 import IconButton from "components/IconButton";
 import Popover from "components/Popover";
 import { PRODUCT_TOUR, useStartTour } from "components/Tour";
@@ -18,7 +19,6 @@ import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useMainMenuState } from "hooks/useMainMenuState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { DOCS_HYSTAX_OPTSCALE } from "urls";
-import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./HeaderButtons.styles";
 
 const HeaderButtons = ({ isProductTourAvailable = false }) => {

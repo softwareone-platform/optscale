@@ -4,13 +4,18 @@ import Typography from "@mui/material/Typography";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import {
+  ConfirmPassword,
+  EmailField,
+  FullNameField,
+  PasswordField
+} from "@main/components/forms/RegistrationForm/FormElements";
+import useStyles from "@main/components/forms/RegistrationForm/RegistrationForm.styles";
+import { FormValues, RegistrationFormProps } from "@main/components/forms/RegistrationForm/types";
+import { getDefaultValues } from "@main/components/forms/RegistrationForm/utils";
 import ButtonLoader from "components/ButtonLoader";
 import { HYSTAX_PRIVACY_POLICY, LOGIN } from "urls";
 import { getSearchParams } from "utils/network";
-import { ConfirmPassword, EmailField, FullNameField, PasswordField } from "./FormElements";
-import useStyles from "./RegistrationForm.styles";
-import { FormValues, RegistrationFormProps } from "./types";
-import { getDefaultValues } from "./utils";
 
 const RegistrationForm = ({ onSubmit, isLoading = false, disabled = false, isInvited = false }: RegistrationFormProps) => {
   const { classes } = useStyles();
