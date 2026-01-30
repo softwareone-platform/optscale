@@ -26,9 +26,9 @@ import {
   EMPTY_UUID,
   DATE_RANGE_TYPE
 } from "utils/constants";
-import { SPACING_2, getPoolColorStatus } from "utils/layouts";
+import { SPACING_2, getPoolColorStatusByLimit } from "utils/layouts";
 import { REGION_EXPENSES_HEIGHT } from "utils/maps";
-import { percentXofY, intPercentXofY } from "utils/math";
+import { percentXofY } from "utils/math";
 
 const getGoToExpensesLink = (name, startDate, endDate) =>
   getResourcesExpensesUrl({
@@ -95,8 +95,6 @@ const RegionExpenses = ({ expenses, isLoading = false }) => {
     return getFilteredMarkers(markers, total, getColor);
   }, [markers, theme.palette.chart, total]);
 
-  const percent = intPercentXofY(total, previousTotal);
-
   const summaryData = [
     {
       key: "totalExpensesForSelectedPeriod",
@@ -104,7 +102,7 @@ const RegionExpenses = ({ expenses, isLoading = false }) => {
       valueComponentProps: {
         value: total
       },
-      color: getPoolColorStatus(percent),
+      color: getPoolColorStatusByLimit(total, previousTotal),
       captionMessageId: "totalExpensesForSelectedPeriod",
       isLoading
     },
