@@ -2,8 +2,7 @@ import SummaryGrid from "components/SummaryGrid";
 import { getPoolIdWithSubPools, getResourcesExpensesUrl } from "urls";
 import { RECOMMENDATIONS_FILTER, POOL_ID_FILTER, SUMMARY_CARD_TYPES, SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
 import { getCurrentMonthRange } from "utils/datetime";
-import { getPoolColorStatus } from "utils/layouts";
-import { intPercentXofY } from "utils/math";
+import { getPoolColorStatusByLimit } from "utils/layouts";
 
 type SummaryProps = {
   data: {
@@ -19,9 +18,6 @@ type SummaryProps = {
 
 const Summary = ({ data, isLoading = false }: SummaryProps) => {
   const { id, limit = 0, cost = 0, forecast = 0, saving = 0 } = data;
-
-  const costPercent = intPercentXofY(cost, limit);
-  const forecastPercent = intPercentXofY(forecast, limit);
   const { today, startOfMonth } = getCurrentMonthRange(true);
 
   const { exceededPools, exceededByValue } = [data, ...(data.children ?? [])].reduce(
@@ -73,7 +69,7 @@ const Summary = ({ data, isLoading = false }: SummaryProps) => {
       valueComponentProps: {
         value: cost
       },
-      color: getPoolColorStatus(costPercent),
+      color: getPoolColorStatusByLimit(cost, limit),
       captionMessageId: "expensesThisMonth",
       isLoading,
       dataTestIds: {
@@ -87,7 +83,7 @@ const Summary = ({ data, isLoading = false }: SummaryProps) => {
         value: forecast
       },
       captionMessageId: "forecastThisMonth",
-      color: getPoolColorStatus(forecastPercent),
+      color: getPoolColorStatusByLimit(forecast, limit),
       isLoading,
       dataTestIds: {
         cardTestId: "card_forecast"
