@@ -14,7 +14,7 @@ import { useRefetchApis } from "hooks/useRefetchApis";
 import { ML_TASKS, getMlTaskDetailsUrl } from "urls";
 import { SPACING_2 } from "utils/layouts";
 import { formatRunFullName } from "utils/ml";
-import { Charts, Executors, Overview, Status, Tabs } from "./Components";
+import { Charts, Executors, Overview, Status, Tabs } from "./components";
 
 const MlTaskRun = ({
   run,
