@@ -7,8 +7,7 @@ import ActionBar from "components/ActionBar";
 import PageContentWrapper from "components/PageContentWrapper";
 import { BI_EXPORTS, INTEGRATIONS, getEditBIExportUrl } from "urls";
 import { getBIExportActivityStatus, getBIExportStatus } from "utils/biExport";
-import { FilesSummaryList, TargetStorageSummaryList } from "./Components";
-import DetailsSummaryList from "./Components/DetailsSummaryList";
+import { FilesSummaryList, TargetStorageSummaryList, DetailsSummaryList } from "./components";
 
 const BIExport = ({ biExport, isLoading = false }) => {
   const {
