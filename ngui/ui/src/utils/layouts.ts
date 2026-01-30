@@ -78,6 +78,18 @@ export const getPoolColorStatus = (percent = 0) => {
   return SUCCESS;
 };
 
+export const getPoolColorStatusByLimit = (value: number, limit: number, threshold: number = 0.9) => {
+  const warningLimit = limit * threshold;
+  if (value > warningLimit && value <= limit) {
+    return WARNING;
+  }
+  if (value > limit) {
+    return ERROR;
+  }
+
+  return SUCCESS;
+};
+
 /**
  * Calculate border styles for n*2 cards/nodes layouts (home page, integrations)
  *
