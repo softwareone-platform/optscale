@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -38,6 +38,10 @@ const OrganizationOptions = ({
   const [isValidJson, setIsValidJson] = useState(true);
 
   const openSideModal = useOpenSideModal();
+
+  useEffect(() => {
+    setUpdatedValue(value);
+  }, [value]);
 
   const onJsonChange = ({ error, jsObject }) => {
     setUpdatedValue(jsObject);
