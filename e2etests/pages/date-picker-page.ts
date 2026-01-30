@@ -61,7 +61,7 @@ export class DatePickerPage extends BasePage {
    * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async selectLast7DaysDateRange(wait = true): Promise<void> {
+  async selectLast7DaysDateRange(wait: boolean = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.last7DaysBtn.click();
     await this.applyDateBtn.click();
@@ -78,7 +78,7 @@ export class DatePickerPage extends BasePage {
    * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async selectLast30DaysDateRange(wait = true): Promise<void> {
+  async selectLast30DaysDateRange(wait: boolean = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.last30DaysBtn.click();
     await this.applyDateBtn.click();
@@ -95,7 +95,7 @@ export class DatePickerPage extends BasePage {
    * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async selectLastMonthDateRange(wait = true): Promise<void> {
+  async selectLastMonthDateRange(wait: boolean = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.lastMonthBtn.click();
     await this.applyDateBtn.click();
@@ -112,7 +112,7 @@ export class DatePickerPage extends BasePage {
    * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after applying the date range.
    * @returns {Promise<void>} A promise that resolves when the operation is complete.
    */
-  async selectThisMonthDateRange(wait = true): Promise<void> {
+  async selectThisMonthDateRange(wait: boolean = true): Promise<void> {
     await this.selectDateBtn.click();
     await this.thisMonthBtn.click();
     await this.applyDateBtn.click();

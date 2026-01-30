@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { debugLog } from './debug-logging';
-import { EmployeesResponse, PolicyBudgetAndQuotaResponse, PoolsResponse } from '../types/api-response.types';
+import {
+  EmployeesResponse,
+  PolicyBudgetAndQuotaResponse,
+  PoolsResponse,
+  TaggingPolicyResponse
+} from '../types/api-response.types';
 import { AuthRequest } from './api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 import { GetDatasourcesByOrganizationIDResponse } from '../types/GetDatasourcesByIDResponse';
@@ -104,13 +109,30 @@ export async function deleteAnomalyPolicy(authRequest: AuthRequest, restAPIReque
  * @returns {Promise<void>} A promise that resolves when all policies have been deleted.
  */
 export async function deletePolicies(restAPIRequest: RestAPIRequest, token: string): Promise<void> {
-  if (process.env.CLEAN_UP !== 'true') {
-    return;
-  }
   const policyResponse = await restAPIRequest.getPolicies(token);
   const policyResponseBody = (await policyResponse.json()) as PolicyBudgetAndQuotaResponse;
   for (const policy of policyResponseBody.organization_constraints) {
     debugLog(`Deleting policy: ${policy.name} with ID: ${policy.id}`);
+    await restAPIRequest.deletePolicy(policy.id, token);
+  }
+}
+
+/**
+ * Deletes all tagging policies associated with the organization.
+ *
+ * This function retrieves a list of tagging policies using the provided `RestAPIRequest` instance
+ * and iterates through each policy in the `organization_constraints` array. For each policy,
+ * it logs the policy name and ID, then sends a request to delete the policy.
+ *
+ * @param {RestAPIRequest} restAPIRequest - An instance of the `RestAPIRequest` class used to interact with the REST API.
+ * @param {string} token - The authorization token used for API requests.
+ * @returns {Promise<void>} A promise that resolves when all tagging policies have been deleted.
+ */
+export async function deleteTaggingPolicies(restAPIRequest: RestAPIRequest, token: string): Promise<void> {
+  const taggingPolicyResponse = await restAPIRequest.getTaggingPolicies(token);
+  const taggingPolicyResponseBody = (await taggingPolicyResponse.json()) as TaggingPolicyResponse;
+  for (const policy of taggingPolicyResponseBody.organization_constraints) {
+    debugLog(`Deleting tagging policy: ${policy.name} with ID: ${policy.id}`);
     await restAPIRequest.deletePolicy(policy.id, token);
   }
 }

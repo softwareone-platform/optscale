@@ -46,9 +46,12 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
 
   test('[232286] Verify that Sample data pop-up is visible when no policies exist', async ({ policiesPage }) => {
     await test.step('Ensure all policies are deleted', async () => {
-      await deleteAllPolicies();
-      await policiesPage.page.reload();
-      await policiesPage.waitForAllProgressBarsToDisappear();
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      if(!await policiesPage.realDataAddBtn.isVisible()) {
+        await deleteAllPolicies();
+        await policiesPage.page.reload();
+        await policiesPage.waitForAllProgressBarsToDisappear();
+      }
     });
 
     await test.step('Verify Sample data pop-up visibility', async () => {
@@ -266,7 +269,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
 
   test.beforeEach('Login admin user', async ({ policiesPage }) => {
     await test.step('Login admin user', async () => {
-      await policiesPage.page.clock.setFixedTime(new Date('2026-08-01T14:00:00Z'));
+      await policiesPage.page.clock.setFixedTime(new Date('2026-01-08T14:00:00Z'));
       await policiesPage.navigateToURL();
       await policiesPage.waitForAllProgressBarsToDisappear();
     });

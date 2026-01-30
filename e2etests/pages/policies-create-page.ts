@@ -10,11 +10,6 @@ export class PoliciesCreatePage extends BaseCreatePage {
   readonly resourceCountInput: Locator;
   readonly monthlyBudgetInput: Locator;
   readonly totalBudgetInput: Locator;
-  readonly setDateBtn: Locator;
-  readonly timePicker: Locator;
-  readonly amButton: Locator;
-  readonly pmButton: Locator;
-  readonly setButton: Locator;
 
   /**
    * Initializes a new instance of the PoliciesCreatePage class.
@@ -26,11 +21,6 @@ export class PoliciesCreatePage extends BaseCreatePage {
     this.resourceCountInput = this.main.getByTestId('input_maxValue');
     this.monthlyBudgetInput = this.main.getByTestId('input_monthlyBudget');
     this.totalBudgetInput = this.main.getByTestId('input_totalBudget');
-    this.setDateBtn = this.main.getByTestId('btn_select_date');
-    this.timePicker = this.page.locator('//input[@data-test-id="half-hour-time-selector"]/..');
-    this.amButton = this.page.getByRole('button', { name: 'AM' });
-    this.pmButton = this.page.getByRole('button', { name: 'PM' });
-    this.setButton = this.page.getByRole('button', { name: 'Set' });
   }
 
   /**
@@ -89,44 +79,5 @@ export class PoliciesCreatePage extends BaseCreatePage {
     await this.setTime();
     await this.selectFilter(filter, filterOption);
     await this.saveBtn.click();
-  }
-
-  /**
-   * Sets the time for the policy.
-   *
-   * @param {string} [time='12:00'] - The time to set in the format 'hh:mm'.
-   * @param {boolean} [am=true] - Whether to set the time as AM (true) or PM (false).
-   * @returns {Promise<void>} A promise that resolves when the time is set.
-   */
-  async setTime(time: string = '12:00', am: boolean = true): Promise<void> {
-    await this.setDateBtn.click();
-    await this.selectFromComboBox(this.timePicker, time);
-    if (am) {
-      await this.amButton.click();
-    } else {
-      await this.pmButton.click();
-    }
-    await this.setButton.click();
-  }
-
-  /**
-   * Selects a filter and applies the specified filter option.
-   *
-   * @param {Locator} filter - The filter locator to select.
-   * @param {string} filterOption - The specific filter option to apply.
-   * @throws {Error} Throws an error if `filterOption` is not provided when `filter` is specified.
-   * @returns {Promise<void>} A promise that resolves when the filter is applied.
-   */
-  private async selectFilter(filter: Locator, filterOption: string): Promise<void> {
-    if (filter) {
-      if (!filterOption) {
-        throw new Error('filterOption must be provided when filter is specified');
-      }
-      if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
-      await filter.click();
-
-      await this.filterPopover.getByLabel(filterOption).click();
-      await this.filterApplyButton.click();
-    }
   }
 }

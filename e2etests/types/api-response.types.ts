@@ -572,6 +572,48 @@ export interface PolicyBudgetAndQuotaResponse {
   ];
 }
 
+export interface TaggingPolicyResponse {
+  organization_constraints: [
+    {
+      deleted_at: number;
+      id: string;
+      created_at: number;
+      name: string;
+      organization_id: string;
+      type: 'tagging_policy';
+      definition: {
+        start_date: number;
+        conditions:
+          | {
+              tag: string;
+              without_tag: string;
+            }
+          | { tag: string }
+          | { without_tag: string };
+      };
+      filters?: [Record<string, { name: string }>];
+      last_run: number;
+      last_run_result: {
+        value: number;
+      };
+      limit_hits: [
+        {
+          deleted_at: number;
+          id: string;
+          organization_id: string;
+          constraint_id: string;
+          constraint_limit: number;
+          value: number;
+          created_at: number;
+          run_result: {
+            value: number;
+          };
+        },
+      ];
+    },
+  ];
+}
+
 /**
  * Definition differs by policy `type`
  * - recurring_budget → { monthly_budget: number }

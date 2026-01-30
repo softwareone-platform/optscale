@@ -288,7 +288,8 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
 
     await test.step('Compare total expenses values', async () => {
       const dateRange = await datePicker.selectedDateText.textContent();
-      expect(dateRange.includes(expectedDateRange)).toBe(true);
+      debugLog(`Actual date range: ${dateRange}`);
+      expect.soft(dateRange.includes(expectedDateRange)).toBe(true);
       expect.soft(isWithinRoundingDrift(chartTotal, totalForPeriod, 0.001)).toBe(true);
       expect.soft(isWithinRoundingDrift(tableTotal, totalForPeriod, 0.001)).toBe(true);
     });
