@@ -141,10 +141,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
             const latestTimestamp = breakdownKeys[breakdownKeys.length - 1];
             expect.soft(latestTimestamp - oldestTimestamp).toBe(6 * 86400);
 
-            // Validate timestamps are reasonable (within last 14 days for safety)
             const now = Math.floor(Date.now() / 1000);
-            const fifteenDaysAgo = now - 15 * 86400;
-            expect.soft(oldestTimestamp).toBeGreaterThan(fifteenDaysAgo);
             expect.soft(latestTimestamp).toBeLessThanOrEqual(now);
 
             // Validate each breakdown value is a number

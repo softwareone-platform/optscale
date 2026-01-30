@@ -11,6 +11,7 @@ export class RestAPIRequest extends BaseRequest {
   readonly employeesEndpoint: string;
   readonly organizationConstraintsEndpoint: string;
   readonly policiesEndpoint: string;
+  readonly taggingPoliciesEndpoint: string;
   readonly poolsEndpoint: string;
 
   /**
@@ -25,6 +26,7 @@ export class RestAPIRequest extends BaseRequest {
     this.employeesEndpoint = `${baseUrl}/restapi/v2/employees`;
     this.organizationConstraintsEndpoint = `${baseUrl}/restapi/v2/organization_constraints`;
     this.policiesEndpoint = `${this.organizationsEndpoint}/${process.env.DEFAULT_ORG_ID}/organization_constraints?hit_days=3&type=resource_quota&type=recurring_budget&type=expiring_budget`;
+    this.taggingPoliciesEndpoint = `${this.organizationsEndpoint}/${process.env.DEFAULT_ORG_ID}/organization_constraints?hit_days=3&type=tagging_policy`;
     this.poolsEndpoint = `${baseUrl}/restapi/v2/pools`;
   }
 
@@ -107,14 +109,13 @@ export class RestAPIRequest extends BaseRequest {
    */
   async deletePolicy(policyID: string, token: string): Promise<void> {
     const endpoint = `${this.organizationConstraintsEndpoint}/${policyID}`;
-    debugLog(`Deleting anomaly policy ${policyID}`);
     const response = await this.request.delete(endpoint, {
       headers: getBearerTokenHeader(token),
     });
     if (response.status() !== 204) {
       throw new Error(`[ERROR] Failed to delete anomaly policy ID: ${policyID}`);
     }
-    debugLog(`Anomaly policy ${policyID} deleted`);
+    debugLog(`Policy ${policyID} deleted`);
   }
 
   /**
@@ -125,6 +126,14 @@ export class RestAPIRequest extends BaseRequest {
    */
   async getPolicies(token: string): Promise<APIResponse> {
     const endpoint = this.policiesEndpoint;
+
+    return await this.request.get(endpoint, {
+      headers: getBearerTokenHeader(token),
+    });
+  }
+
+  async getTaggingPolicies(token: string): Promise<APIResponse> {
+    const endpoint = this.taggingPoliciesEndpoint;
 
     return await this.request.get(endpoint, {
       headers: getBearerTokenHeader(token),

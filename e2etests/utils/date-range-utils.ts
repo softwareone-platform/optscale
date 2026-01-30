@@ -52,7 +52,8 @@ export function getExpectedDateRangeText(rangeType: string, today: Date = new Da
       throw new Error(`Unsupported range type: ${rangeType}`);
   }
 
-  const yearsDiffer = startDate.getFullYear() !== endDate.getFullYear();
+  const yearsDiffer = startDate.getUTCFullYear() !== endDate.getUTCFullYear() ||
+                      startDate.getUTCFullYear() !== today.getUTCFullYear();
 
   const format = (date: Date) =>
     date.toLocaleDateString('en-US', {

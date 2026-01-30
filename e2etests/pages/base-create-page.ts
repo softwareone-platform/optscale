@@ -42,6 +42,12 @@ export abstract class BaseCreatePage extends BasePage {
   readonly saveBtn: Locator;
   readonly cancelBtn: Locator;
 
+  readonly setDateBtn: Locator;
+  readonly timePicker: Locator;
+  readonly amButton: Locator;
+  readonly pmButton: Locator;
+  readonly setButton: Locator;
+
   /**
    * Initializes a new instance of the BaseCreatePage class.
    * @param {Page} page - The Playwright page object.
@@ -57,7 +63,7 @@ export abstract class BaseCreatePage extends BasePage {
     this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
     this.allFilterBoxButtons = this.filtersBox.locator('button');
     this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
-    this.filterApplyButton = this.filterPopover.getByRole('button' , { name: 'Apply' });
+    this.filterApplyButton = this.filterPopover.getByRole('button', { name: 'Apply' });
 
     this.suggestionsFilter = this.filtersBox.getByRole('button', { name: 'Suggestions' });
     this.dataSourceFilter = this.filtersBox.getByRole('button', { name: 'Data source (' });
@@ -84,5 +90,66 @@ export abstract class BaseCreatePage extends BasePage {
     this.showLessFiltersBtn = this.main.getByRole('button', { name: 'Show less' });
     this.saveBtn = this.main.getByTestId('btn_create');
     this.cancelBtn = this.main.getByTestId('btn_cancel');
+
+    this.setDateBtn = this.main.getByTestId('btn_select_date');
+    this.timePicker = this.page.locator('//input[@data-test-id="half-hour-time-selector"]/..');
+    this.amButton = this.page.getByRole('button', { name: 'AM' });
+    this.pmButton = this.page.getByRole('button', { name: 'PM' });
+    this.setButton = this.page.getByRole('button', { name: 'Set' });
+  }
+
+  /**
+   * Sets the time for the policy.
+   *
+   * @param {string} [time='12:00'] - The time to set in the format 'hh:mm'.
+   * @param {boolean} [am=true] - Whether to set the time as AM (true) or PM (false).
+   * @returns {Promise<void>} A promise that resolves when the time is set.
+   */
+  protected async setTime(time: string = '12:00', am: boolean = true): Promise<void> {
+    await this.setDateBtn.click();
+    await this.selectFromComboBox(this.timePicker, time);
+    if (am) {
+      await this.amButton.click();
+    } else {
+      await this.pmButton.click();
+    }
+    await this.setButton.click();
+  }
+
+  /**
+   * Selects a filter and applies the specified filter option.
+   *
+   * @param {Locator} filter - The filter locator to select.
+   * @param {string} filterOption - The specific filter option to apply.
+   * @throws {Error} Throws an error if `filterOption` is not provided when `filter` is specified.
+   * @returns {Promise<void>} A promise that resolves when the filter is applied.
+   */
+  protected async selectFilter(filter: Locator, filterOption: string): Promise<void> {
+    if (filter) {
+      if (!filterOption) {
+        throw new Error('filterOption must be provided when filter is specified');
+      }
+      if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
+      await filter.click();
+
+      await this.filterPopover.getByLabel(filterOption).click();
+      await this.filterApplyButton.click();
+    }
+  }
+
+  /**
+   * Selects a filter by its text and applies the specified filter option.
+   *
+   * This method locates a filter button within the filters box by matching its name
+   * with the provided `filter` parameter. It then applies the specified `filterOption`
+   * to the selected filter.
+   *
+   * @param {string} filter - The name of the filter to select.
+   * @param {string} filterOption - The specific filter option to apply.
+   * @returns {Promise<void>} A promise that resolves when the filter is applied.
+   */
+  async selectFilterByText(filter: string, filterOption: string): Promise<void> {
+    const filterLocator = this.filtersBox.getByRole('button', { name: new RegExp(`^${filter}`) });
+    await this.selectFilter(filterLocator, filterOption);
   }
 }

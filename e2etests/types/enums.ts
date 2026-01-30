@@ -38,3 +38,9 @@ export enum EParentPoolId {
   STAGING = "624abd3c-0d70-4859-964a-e14aafb96c7b",
   TEST = "f648bd92-b53e-4fa7-aebb-cb02bcbf160d"
 }
+
+export enum ETaggingPolicyType {
+  requiredTag = "Required tag",
+  prohibitedTag = "Prohibited tag",
+  tagsCorrelation = "Tags correlation"
+}

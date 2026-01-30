@@ -2,9 +2,11 @@ import { request } from '@playwright/test';
 import { AuthRequest } from '../api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 import {
-  cleanUpDirectoryIfEnabled, connectDataSource,
+  cleanUpDirectoryIfEnabled,
+  connectDataSource,
   deletePolicies,
   deleteSubPoolsByName,
+  deleteTaggingPolicies,
   deleteTestUsers,
   disconnectDataSource,
   getDatasourceIdByNameViaOpsAPI,
@@ -26,6 +28,7 @@ async function globalTeardown() {
     await cleanUpDirectoryIfEnabled('./tests/downloads');
     await deleteTestUsers(restAPIRequest, token);
     await deletePolicies(restAPIRequest, token);
+    await deleteTaggingPolicies(restAPIRequest, token);
 
     // clear down orphaned Marketplace (Dev) Sub-pools and reconnect data source
     const dataSourceName = 'Marketplace (Dev)';
