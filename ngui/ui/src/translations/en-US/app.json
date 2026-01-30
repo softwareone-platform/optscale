@@ -1745,6 +1745,7 @@
   "powerOff": "Power off",
   "powerOn": "Power on",
   "powerSchedule": "Power schedule",
+  "powerScheduleExpired": "This Power Schedule is expired",
   "powerSchedulesTitle": "Power Schedules",
   "preferredCurrency": "Preferred currency",
   "preparingLiveDemoMessage": "OptScale is preparing your live demo experience. Please stand by.",
