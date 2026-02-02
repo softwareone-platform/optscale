@@ -311,8 +311,7 @@ const getThemeConfig = (settings = {}) => {
       },
       subtitle1: {
         color: MPT_BRAND_TYPE,
-        fontWeight: "bold",
-        marginBottom: MPT_SPACING_2
+        fontWeight: "bold"
       }
     },
     components: {
@@ -872,7 +871,7 @@ const getThemeConfig = (settings = {}) => {
             textTransform: "none",
             padding: `20px 12px`,
             margin: "0 12px 0 4px",
-            color: "inherit"
+            color: MPT_BRAND_TYPE
           }
         }
       },

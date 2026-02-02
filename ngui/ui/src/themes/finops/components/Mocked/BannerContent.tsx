@@ -1,7 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
-import useStyles from "@main/components/Mocked/BannerContent.styles";
 import Button from "components/Button";
 import PoolModal from "components/SideModalManager/SideModals/PoolModal";
 import { useAllowedItems } from "hooks/useAllowedActions";
@@ -21,6 +20,7 @@ import {
   TAGGING_POLICY_CREATE
 } from "urls";
 import { isEmptyArray } from "utils/arrays";
+import useStyles from "./BannerContent.styles";
 
 const CONNECT_DATA_SOURCE = "connectDataSource";
 const SET_POOL = "setPoolLimit";
