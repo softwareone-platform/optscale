@@ -3,13 +3,13 @@ import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
 import { FormattedMessage } from "react-intl";
+import { DOCS_MARKETPLACE_PENDING_INVITATIONS } from "@theme/urls";
+import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "@theme/utils/layouts";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import Invitation from "components/Invitation";
 import TypographyLoader from "components/TypographyLoader";
 import InvitationActionsContainer from "containers/InvitationActionsContainer";
-import { DOCS_MARKETPLACE_PENDING_INVITATIONS } from "urls";
 import { createGroupsObjectFromArray, isEmptyArray } from "utils/arrays";
-import { MPT_SPACING_1, MPT_SPACING_4, SPACING_4 } from "utils/layouts";
 import useStyles from "./Invitations.styles";
 
 interface InvitationAssignment {

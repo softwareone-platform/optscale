@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
-      open: false,
+      open: true,
       port: Number(VITE_PORT) || 3000,
       host: parseViteHost(VITE_HOST),
       allowedHosts: parseAllowedHosts(VITE_ALLOWED_HOSTS),
