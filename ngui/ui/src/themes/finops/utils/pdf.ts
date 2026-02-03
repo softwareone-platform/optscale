@@ -151,7 +151,7 @@ const createSummaryCard = (doc, value, parameters) => {
   const paddingSmall = { top: 5, bottom: 3, left: 5, right: 5 };
   const paddingBig = { top: 0, bottom: 5, left: 5, right: 0 };
   const heightTotal =
-    smallFont * 1.15 + bigFont * 1.15 + paddingSmall.top + paddingSmall.bottom + paddingBig.top + paddingBig.bottom; // todo: will work only for cards without wordwrap
+    smallFont * 1.15 + bigFont * 1.15 + paddingSmall.top + paddingSmall.bottom + paddingBig.top + paddingBig.bottom;
   checkAvailablePageSpace({ doc, dy: heightTotal, addPage: true, moveCursor: false });
 
   autoTable(doc, {
@@ -204,7 +204,7 @@ const createSummaryCard = (doc, value, parameters) => {
 
   currentColumn += 1;
   if (currentColumn >= currentSettings.summaryGridColumns || !nextElementIsSameType) {
-    cursorY = doc.lastAutoTable.finalY + currentSettings.spacingV; // todo: won't work for cards with different heights (big first)
+    cursorY = doc.lastAutoTable.finalY + currentSettings.spacingV;
     currentColumn = 0;
   }
 };
