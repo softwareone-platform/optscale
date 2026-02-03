@@ -42,7 +42,6 @@ const breakdownLinearSelectorItems = [
   }
 ];
 
-// todo: unify with resources selector
 const BreakdownLinearSelector = ({ value, items, onChange }) => {
   const initQueryBreakdownParameter = getSearchParams()[PERIOD_TYPE_QUERY_PARAMETER_NAME] || null;
   const [position, setPosition] = useState(() => {

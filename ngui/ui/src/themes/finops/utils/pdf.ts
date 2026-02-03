@@ -107,7 +107,6 @@ const createFooter = (doc) => {
   doc.setTextColor(savedColor);
 };
 
-// todo: I bet it wont work right after more pages added (image will appear on the last page)
 const createLogo = (doc) => {
   const imageWidth = 100;
   const imageX = doc.internal.pageSize.width - currentSettings.pageMarginLR - imageWidth;

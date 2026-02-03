@@ -3,7 +3,6 @@ import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/materia
 import useMenuItemState from "hooks/useMenuItemState";
 import useStyles from "./MenuGroupWrapper.styles";
 
-// TODO: there is a refactoring proposition https://gitlab.com/hystax/ngui/-/merge_requests/2936#note_1123674985
 const MenuGroupWrapper = ({ menuSectionTitle, children, id, keepExpanded = false }) => {
   const { classes } = useStyles();
   const { isExpanded, updateIsExpanded } = useMenuItemState(id);

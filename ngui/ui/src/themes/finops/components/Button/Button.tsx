@@ -112,8 +112,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ) : (
         button
       );
-
-    // TODO: NGUI-1509. Need to bring the solution to one type(MenuItem, Button, Popover).
     const renderLinkButton = () => {
       if (link) {
         return disabled ? (

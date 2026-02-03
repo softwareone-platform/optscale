@@ -1001,14 +1001,11 @@ const PDF_THEME = {
     footerNote: 10
   },
   colors: {
-    // TODO: Make this color configurable, get PRIMARY (`getLighten(PRIMARY)`) from `theme`
     link: getLighten("#004C74")
   },
   logoWidth: 120
 };
 
-// TODO: applyChartPaletteSettings needs to be rewritten, adding one one chart palette affects multiple files,
-// hard to support and maintain.
 export const RI_SP_CHART_PALETTE = ["#9950B1", "#4AB4EE", "#FFC348", "#30D5C8"];
 
 export default (settings = {}) => customResponsiveFontSizes(createTheme(getThemeConfig(settings)), settings);

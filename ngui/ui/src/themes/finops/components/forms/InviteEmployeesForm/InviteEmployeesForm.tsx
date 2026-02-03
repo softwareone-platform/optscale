@@ -84,8 +84,6 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
     const { emails, invalidEmails } = values;
     if (isEmptyArray(emails)) {
       // Custom error handling for email field, since it is not a part of the form
-      // TODO - onFormSubmit will not be triggered if there are validation error on the form itself, the error will not be shown
-      // investigate if it is possible to make autocomplete a form field
       if (isEmptyArray(invalidEmails)) {
         return setIsEmptyEmail(true);
       }

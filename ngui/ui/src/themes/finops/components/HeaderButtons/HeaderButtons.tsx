@@ -87,8 +87,6 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
           menu={<ProfileMenuContainer />}
         />
       </Box>
-      {/* TODO: Maybe we can make the Popup component more universal and include the case below */}
-      {/* TODO: https://datatrendstech.atlassian.net/browse/NGUI-2808 to handle dynamic header buttons, product tour is hidden on mdDown (when hamburger menu is activated) */}
       <Box component="div" className={classes.sectionMobile}>
         <IconButton icon={<MoreVertIcon />} sx={{ color: MPT_BRAND_TYPE }} onClick={openMobileMenu} />
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMobileMenu}>

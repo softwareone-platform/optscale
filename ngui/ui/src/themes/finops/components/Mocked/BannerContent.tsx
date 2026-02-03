@@ -126,8 +126,6 @@ const getConfiguration = (messageType) =>
       item: {
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS", "MANAGE_RESOURCES"],
         mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "dashboardBackdropMessage"],
-        // TODO: generalize approach to render buttons
-        // currently we support 2 types of definition: array and plain properties
         buttons: [
           {
             messageId: CONNECT_DATA_SOURCE,

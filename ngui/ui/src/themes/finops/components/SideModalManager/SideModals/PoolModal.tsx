@@ -12,8 +12,6 @@ export const POOL_TABS = Object.freeze({
   GENERAL: "general",
   CONSTRAINTS: "constraints",
   ASSIGNMENT_RULES: "assignmentRules"
-  // MTP_TODO: disabled to meet BDR requirements
-  // SHARE: "share"
 });
 
 const Pool = ({ onSuccess, id }) => {
@@ -44,12 +42,6 @@ const Pool = ({ onSuccess, id }) => {
       dataTestId: "tab_assignment",
       node: <PoolAssignmentRulesContainer poolId={poolId} />
     }
-    // MTP_TODO: disabled to meet BDR requirements
-    // {
-    //   title: POOL_TABS.SHARE,
-    //   dataTestId: "tab_share",
-    //   node: <ShareSettingsContainer poolId={poolId} poolName={poolName} poolPurpose={poolPurpose} initialLink={initialLink} />
-    // }
   ];
   return (
     <TabsWrapper

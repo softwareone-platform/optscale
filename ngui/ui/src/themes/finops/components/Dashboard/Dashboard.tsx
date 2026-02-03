@@ -35,7 +35,6 @@ const Dashboard = () => {
 
   const closeAlert = () => {
     removeSearchParam(SHOW_POLICY_QUERY_PARAM);
-    // TODO: https://datatrendstech.atlassian.net/browse/NGUI-2808 to handle dynamic header buttons, product tour is hidden on mdDown (when hamburger menu is activated)
     if (!isFinished && isUpMd) {
       startTour(PRODUCT_TOUR);
     }

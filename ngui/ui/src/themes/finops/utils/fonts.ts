@@ -13,10 +13,6 @@ export const MAP_MARKER_FONT_SIZE_IN_PX = 11;
  * @returns px
  */
 
-// TODO - rewrite this.
-// 1. We need a dynamic value
-// 2. htmlFontSize cannot be used here - it is inversely proportional to font size
-// https://datatrendstech.atlassian.net/browse/NGUI-1587
 export const remToPx = (rem) => {
   const coefficient = 16;
   return rem * coefficient;

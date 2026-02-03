@@ -47,7 +47,6 @@ const getButton = (item) => (
   />
 );
 
-// TODO: to add support for a mobile view
 const renderIconButton = (item) => (
   <IconButton
     icon={item.icon}
@@ -89,10 +88,6 @@ const onMenuItemClick = (action, onClose) => {
   onClose();
 };
 
-/**
- * TODO: There is no mobile support for custom nodes, e.g date pickers
- * See OSN-140
- */
 const DropDownMenu = ({ items, onClose }) => {
   const { classes } = useStyles();
 

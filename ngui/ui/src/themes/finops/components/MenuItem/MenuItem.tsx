@@ -38,7 +38,6 @@ const MenuItem = ({
   const currentPath = getPathname();
   const currentQueryParams = getSearchParams();
 
-  // TODO - we need to be able to pass values to formatted messages
   const renderItem = (
     <ListItem
       data-test-id={dataTestId}

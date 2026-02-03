@@ -448,8 +448,6 @@ const getConfig = (type, config, dataSourceProps) => {
           };
         },
         parseFormDataToApiParams: async (formData) => {
-          // TODO: the form validates the file itself, not the content.
-          // Try to do both to avoid parsing the string here.
           const credentials = await readFileAsText(formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.CREDENTIALS]);
 
           return {

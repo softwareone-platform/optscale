@@ -41,12 +41,6 @@ const Greeter = ({ content }: GreeterProps) => {
   const spacing = SPACING_2;
   const halfSpacing = spacing / 2;
 
-  /**
-   * TODO: Remove custom padding and margin when mui-v5 fixes will released
-   *    https://gitlab.com/hystax/ngui/-/merge_requests/2495
-   *    https://github.com/mui-org/material-ui/issues/29266
-   *    https://github.com/mui-org/material-ui/pull/30333
-   */
   return (
     <>
       <TopAlertWrapper blacklistIds={[ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING, ALERT_TYPES.DATA_SOURCES_PROCEEDED]} />
