@@ -86,7 +86,7 @@ jobs:
         id: check_pr_main
         if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
         run: |
           pr_state=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
@@ -109,7 +109,7 @@ jobs:
         id: check_pr_bp
         if: steps.check_branch_release.outputs.branch_release_exists != 'yes'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
         run: |
           pr_state=$(gh pr list \
               --repo "$GITHUB_REPOSITORY" \
@@ -134,7 +134,7 @@ jobs:
 
       - name: Create or Update Pull Request for Main
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
         if: steps.check_pr_main.outputs.pr_main_state != 'OPEN'
         run: |
           TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> main ${{ steps.current_date.outputs.date }}'
@@ -158,7 +158,7 @@ jobs:
 
       - name: Create or Update Pull Request Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
         if: steps.check_pr_bp.outputs.pr_bp_state != 'OPEN'
         run: |
           TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> release/${{ vars.CURRENT_RELEASE }} ${{ steps.current_date.outputs.date }}'
