@@ -17,7 +17,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
     });
   });
 
-  //TODO: The first datasource has not been configured correctly in the environment. The test will need to be changed to use Marketplace (Dev) which is the
+  //TODO: The first datasource has not been configured correctly in the environment. The test will need to be changed to use Marketplace (Dev) which is
   // the test datasource that we can configure without external dependencies.
   test.fixme(
     '[231860] A successful billing import should have been successful within the last 24 hours',
