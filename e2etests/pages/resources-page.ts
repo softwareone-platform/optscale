@@ -1,6 +1,6 @@
-import { BasePage } from './base-page';
-import { Locator, Page } from '@playwright/test';
-import { debugLog } from '../utils/debug-logging';
+import {BasePage} from './base-page';
+import {Locator, Page} from '@playwright/test';
+import {debugLog} from '../utils/debug-logging';
 
 /**
  * Represents the Resources Page.
@@ -299,28 +299,6 @@ export class ResourcesPage extends BasePage {
   }
 
   /**
-   * Retrieves the possible monthly savings value displayed on the Resources page.
-   * The value is extracted from the `possibleMonthlySavingsValue` locator and parsed into a numeric format.
-   *
-   * @returns {Promise<number>} A promise that resolves to the possible monthly savings value as a number.
-   */
-  async getPossibleMonthlySavingsValue(): Promise<number> {
-    const value = await this.possibleMonthlySavingsValue.textContent();
-    return this.parseCurrencyValue(value);
-  }
-
-  /**
-   * Clicks the possible savings card on the Resources page.
-   * This method interacts with the `possibleSavingsCard` locator and waits for the page to load after the click.
-   *
-   * @returns {Promise<void>} Resolves when the card is clicked and the page load state is complete.
-   */
-  async clickPossibleSavingsCard(): Promise<void> {
-    await this.possibleSavingsCard.click();
-    await this.waitForPageLoad();
-  }
-
-  /**
    * Clicks the "Show More Filters" button on the Resources page.
    * This method interacts with the `showMoreFiltersBtn` locator to expand the filters section.
    *
@@ -513,5 +491,16 @@ export class ResourcesPage extends BasePage {
    */
   async clearGrouping(): Promise<void> {
     await this.clearIcon.click();
+  }
+
+  /**
+   * Retrieves the total resource count value displayed on the Resources page.
+   * The value is extracted from the `resourceCountValue` locator and parsed into a numeric format.
+   *
+   * @returns {Promise<number>} A promise that resolves to the resource count value as a number.
+   */
+  async getResourceCountValue(): Promise<number> {
+    const value = await this.resourceCountValue.textContent(); // Get the text content of the resource count element
+    return parseInt(value); // Parse the text content into an integer and return it
   }
 }

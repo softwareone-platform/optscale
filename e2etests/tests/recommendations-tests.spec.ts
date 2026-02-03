@@ -53,9 +53,8 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     }
   });
 
-  // Interim solution to handle the where no duplicate checks have been run in this test is scenario encountered.
-  // TODO - add a separate test with mocked data to test the scenario where no duplicate checks have been run.
-  test('[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page', async ({
+  //It appears that environments don't have the correct permissions to run S3 Duplicate checks, so marking this as FIXME for now.
+  test.fixme('[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page', async ({
     recommendationsPage,
     s3DuplicateFinder,
   }) => {

@@ -192,9 +192,10 @@ export class HomePage extends BasePage {
    *
    * @returns {Promise<string>} The cleaned title of the first resource.
    */
-  async getFirstResourceTitle(): Promise<string> {
-    return (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
-  }
+async getFirstResourceTitle(): Promise<string> {
+  let title = (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
+  return title.replace(/\/$/, '');
+}
 
   /**
    * Retrieves the value of the first resource in the "Top Resources" section.

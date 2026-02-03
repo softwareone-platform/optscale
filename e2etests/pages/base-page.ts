@@ -315,7 +315,7 @@ export abstract class BasePage {
    * Calculates the sum of currency values in a column across multiple pages.
    * This method iterates through all pages of a table, extracts currency values from a specified column,
    * parses them into numeric values, and sums them up. It handles pagination by clicking the "next page" button
-   * until no more pages are available.
+   * until no more pages are available or a zero value is encountered (indicating all subsequent values will be zero).
    *
    * @param {Locator} columnLocator - The Playwright locator for the column containing currency values.
    * @param {Locator} nextPageBtn - The Playwright locator for the "next page" button.
@@ -339,6 +339,14 @@ export abstract class BasePage {
         const currencyOnly = text.split('(')[0].trim(); // Remove any text in parentheses
         return this.parseCurrencyValue(currencyOnly); // Convert the currency string to a numeric value
       });
+
+      // Check if any value is zero and stop iteration
+      if (values.some(val => val === 0)) {
+        // Add only non-zero values before stopping
+        totalSum += values.reduce((sum, val) => (val === 0 ? sum : sum + val), 0);
+        debugLog("Encountered zero value, stopping iteration.");
+        break;
+      }
 
       // Add the parsed values to the total sum
       totalSum += values.reduce((sum, val) => sum + val, 0);

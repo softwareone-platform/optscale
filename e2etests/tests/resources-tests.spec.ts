@@ -37,7 +37,6 @@ import { InterceptionEntry } from '../types/interceptor.types';
 import { debugLog } from '../utils/debug-logging';
 
 test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }, () => {
-  test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment is not supported by these tests');
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
   let totalExpensesValue: number;
@@ -50,7 +49,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
       await resourcesPage.waitForCanvas();
       await resourcesPage.resetFilters();
       await resourcesPage.waitForPageLoad();
-      await resourcesPage.firstResourceItemInTable.waitFor({timeout: 15000});
+      await resourcesPage.firstResourceItemInTable.waitFor({ timeout: 15000 });
     });
   });
 
@@ -162,19 +161,22 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
   test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
     test.setTimeout(1200000);
+    test.skip(
+      (await resourcesPage.getResourceCountValue()) > 5000,
+      'Skipping test as resource count is greater than the tables maximum resources'
+    );
 
     await test.step('Get total expenses value from resources page', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value: ${totalExpensesValue}`);
+      debugLog(`Total expenses value: ${totalExpensesValue}`);
     });
     await test.step('get the sum of itemised expenses from table', async () => {
       await resourcesPage.table.waitFor();
       itemisedTotal = await resourcesPage.sumCurrencyColumn(resourcesPage.tableExpensesValue, resourcesPage.navigateNextIcon);
-      console.log(`Itemised total: ${itemisedTotal}`);
+      debugLog(`Itemised total: ${itemisedTotal}`);
     });
 
     await test.step('Compare total expenses with itemised total', async () => {
-      // Allowable drift of 0.1% to account for rounding errors
       expect.soft(isWithinRoundingDrift(totalExpensesValue, itemisedTotal, 0.005)).toBe(true); // 0.5% tolerance
     });
   });
@@ -194,7 +196,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
     await test.step('Get total expenses value after filtering', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
-      console.log(`Total expenses value after filtering: ${totalExpensesValue}`);
+      debugLog(`Total expenses value after filtering: ${totalExpensesValue}`);
     });
 
     await test.step('Get itemised total from table after filtering', async () => {
@@ -749,6 +751,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = 'tests/downloads/expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
@@ -779,6 +782,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
@@ -804,6 +808,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = 'tests/downloads/region-expenses-chart-export.png';
     let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
     let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
