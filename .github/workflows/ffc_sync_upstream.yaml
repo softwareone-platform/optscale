@@ -67,7 +67,7 @@ jobs:
       - name: Check for changes in optscale-deploy folder for main
         id: check_deploy_changes_main
         run: |
-          if git diff origin/main sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} -- optscale-deploy | grep -q .; then
+          if git diff origin/main upstream/integration -- optscale-deploy | grep -q .; then
             echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
           else
             echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
@@ -76,7 +76,7 @@ jobs:
       - name: Check for changes in optscale-deploy folder for release
         id: check_deploy_changes_release
         run: |
-          if git diff origin/release/${{ vars.CURRENT_RELEASE }} bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} -- optscale-deploy | grep -q .; then
+          if git diff origin/release/${{ vars.CURRENT_RELEASE }} upstream/integration -- optscale-deploy | grep -q .; then
             echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
           else
             echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
