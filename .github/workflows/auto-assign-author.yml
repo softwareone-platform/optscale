@@ -9,17 +9,51 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      issues: write  # Required because assignees API works via issues 
+      contents: read # Minimal read access to repository contents
 
     steps:
       - name: Assign PR author
         uses: actions/github-script@v8
         with:
           script: |
-            const reporter = context.actor
-            await github.rest.issues.addAssignees({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              assignees: [reporter]
-            })
+            // Repository owner (organization or user who owns the repo)
+            const owner = context.repo.owner;
+
+            // Repository name
+            const repo = context.repo.repo;
+
+            // Login of the pull request author
+            const prAuthor = context.payload.pull_request.user.login;
+
+            try {
+              // Check the permission level of the PR author
+              const { data: perm } =
+                await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner,
+                  repo,
+                  username: prAuthor
+                });
+
+              // If the author has write/maintain/admin rights → assign them to the PR
+              if (["write", "maintain", "admin"].includes(perm.permission)) {
+                await github.rest.issues.addAssignees({
+                  owner,
+                  repo,
+                  issue_number: context.payload.pull_request.number,
+                  assignees: [prAuthor]
+                });
+                console.log(`Assigned PR to ${prAuthor}`);
+              } else {
+                // If the author has insufficient rights → skip assignment
+                console.log(
+                  `Skipping assignment for ${prAuthor}: permission=${perm.permission}`
+                );
+              }
+            } catch (error) {
+              // If the author is not a collaborator (e.g., PR from a fork) → skip without failing
+              console.log(
+                `Skipping assignment for ${prAuthor}: not a collaborator`
+              );
+            }
 
