@@ -154,21 +154,24 @@ phpmyadmin:
     externalPort: 30080
     internalPort: 80
 
-jaeger:
-  name: &jaeger_name jaeger
+tempo:
+  enabled: true
+  name: &tempo_name tempo
   replicaCount: 1
   image:
     id:
+    repository: grafana/tempo
+    tag: "2.10.0"
     pullPolicy: IfNotPresent
   service:
-    name: *jaeger_name
+    name: *tempo_name
     type: ClusterIP
-    frontendExternalPort: 16686
-    frontendInternalPort: 16686
-    grpcReceiverInternalPort: 4317
-    grpcReceiverExternalPort: 4317
-    httpReceiverInternalPort: 4318
-    httpReceiverExternalPort: 4318
+    externalQueryPort: 3200
+    internalQueryPort: 3200
+    externalGrpcPort: 4317
+    internalGrpcPort: 4317
+    externalHttpPort: 4318
+    internalHttpPort: 4318
 
 herald:
   name: &herald_name herald

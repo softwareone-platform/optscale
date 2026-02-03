@@ -515,17 +515,16 @@ def main():
             suspend=False,
         )
 
+    logging.basicConfig(level=logging.INFO)
+
     otel_config = OpenTelemetryConfig()
     otel_config.setup_open_telemetry()
 
-    if otel_config.is_enabled():
-        otel_config.instrument_logging()
-    else:
-        logging.basicConfig(level=logging.INFO)
-
+    otel_config.instrument_logging()
     otel_config.instrument_threading()
     otel_config.instrument_asyncio()
     otel_config.instrument_tornado()
+    otel_config.instrument_requests()
 
     etcd_host = os.environ.get('HX_ETCD_HOST', DEFAULT_ETCD_HOST)
     etcd_port = os.environ.get('HX_ETCD_PORT', DEFAULT_ETCD_PORT)

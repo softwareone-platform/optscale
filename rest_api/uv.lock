@@ -1494,6 +1494,21 @@ wheels = [
 ]
 
 [[package]]
+name = "opentelemetry-instrumentation-requests"
+version = "0.54b0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "opentelemetry-semantic-conventions" },
+    { name = "opentelemetry-util-http" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e0/20/2ef61cc45a44f1d865d0a57c84c65649799d1d22fcb69f78c3133dd8fcba/opentelemetry_instrumentation_requests-0.54b0.tar.gz", hash = "sha256:abc604d58a0da9cbfad2e9439df2b85437ec00bf550753cf64bf6d61e2b98bdd", size = 15148, upload-time = "2025-05-09T14:59:44.091Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/46/0507f3f64683f8cf4aef9483c1b760418f9f17a2480fa970db6225ea42da/opentelemetry_instrumentation_requests-0.54b0-py3-none-any.whl", hash = "sha256:c05324b3a5a047b28cd7bccf1f506d7ebadbfd8faefc2661fe7d40c3218d9a8c", size = 12967, upload-time = "2025-05-09T14:58:58.498Z" },
+]
+
+[[package]]
 name = "opentelemetry-instrumentation-sqlalchemy"
 version = "0.54b0"
 source = { registry = "https://pypi.org/simple" }
@@ -1950,6 +1965,7 @@ dependencies = [
     { name = "opentelemetry-exporter-otlp-proto-http" },
     { name = "opentelemetry-instrumentation-asyncio" },
     { name = "opentelemetry-instrumentation-logging" },
+    { name = "opentelemetry-instrumentation-requests" },
     { name = "opentelemetry-instrumentation-sqlalchemy" },
     { name = "opentelemetry-instrumentation-threading" },
     { name = "opentelemetry-instrumentation-tornado" },
@@ -2010,6 +2026,7 @@ requires-dist = [
     { name = "opentelemetry-exporter-otlp-proto-http", specifier = "==1.33.*" },
     { name = "opentelemetry-instrumentation-asyncio", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-logging", specifier = "==0.54b0" },
+    { name = "opentelemetry-instrumentation-requests", specifier = ">=0.54b0" },
     { name = "opentelemetry-instrumentation-sqlalchemy", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-threading", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-tornado", specifier = "==0.54b0" },

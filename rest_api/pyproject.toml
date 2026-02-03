@@ -30,6 +30,7 @@ dependencies = [
     "opentelemetry-exporter-otlp-proto-grpc==1.33.*",
     "opentelemetry-instrumentation-asyncio==0.54b0",
     "opentelemetry-instrumentation-logging==0.54b0",
+    "opentelemetry-instrumentation-requests>=0.54b0",
     "opentelemetry-instrumentation-sqlalchemy==0.54b0",
     "opentelemetry-instrumentation-threading==0.54b0",
     "opentelemetry-instrumentation-tornado==0.54b0",

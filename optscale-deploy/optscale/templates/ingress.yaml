@@ -120,18 +120,9 @@ spec:
               number: {{ .Values.subspector.service.externalPort }}
         path: /subspector
         pathType: Prefix
-      - backend:
-          service:
-            name: {{ .Values.jaeger.service.name }}
-            port:
-              number: {{ .Values.jaeger.service.frontendExternalPort }}
-        path: /
-        pathType: Prefix
-    host: jaeger.{{ if .Values.public_ip }}{{ .Values.public_ip }}{{ else }}localhost{{ end }}
   tls:
   - secretName: {{ .Values.ssl.certificate_name }}
 {{- if .Values.public_ip }}
     hosts:
     - {{ .Values.public_ip }}
-    - jaeger.{{ .Values.public_ip }}
 {{- end }}
