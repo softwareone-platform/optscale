@@ -60,6 +60,24 @@ jobs:
           git checkout -b bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
           git push origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
 
+      - name: Check for changes in optscale-deploy folder for main
+        id: check_deploy_changes_main
+        run: |
+          if git diff main sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} -- optscale-deploy | grep -q .; then
+            echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for changes in optscale-deploy folder for release
+        id: check_deploy_changes_release
+        run: |
+          if git diff release/${{ vars.CURRENT_RELEASE }} bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} -- optscale-deploy | grep -q .; then
+            echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check if PR exists for main
         id: check_pr_main
         if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
@@ -107,11 +125,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.check_pr_main.outputs.pr_main_exists == 'no'
         run: |
+          TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> main ${{ steps.current_date.outputs.date }}'
+          if [ "${{ steps.check_deploy_changes_main.outputs.deploy_changes }}" == "yes" ]; then
+            TITLE="⚠️ $TITLE (deployment changes present)"
+          fi
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
               --head 'sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
               --base 'main' \
-              --title 'Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> main ${{ steps.current_date.outputs.date }}' \
+              --title "$TITLE" \
               --body "This PR syncs the latest changes from upstream to main."
 
 
@@ -120,9 +142,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.check_pr_bp.outputs.pr_bp_exists == 'no'
         run: |
+          TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> release/${{ vars.CURRENT_RELEASE }} ${{ steps.current_date.outputs.date }}'
+          if [ "${{ steps.check_deploy_changes_release.outputs.deploy_changes }}" == "yes" ]; then
+            TITLE="⚠️ $TITLE (deployment changes present)"
+          fi
           gh pr create \
               --repo "$GITHUB_REPOSITORY" \
               --head 'bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
               --base 'release/${{ vars.CURRENT_RELEASE }}' \
-              --title 'Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> release/${{ vars.CURRENT_RELEASE }} ${{ steps.current_date.outputs.date }}' \
+              --title "$TITLE" \
               --body "This PR syncs the latest changes from upstream to release branch."
