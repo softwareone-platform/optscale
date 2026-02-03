@@ -3,7 +3,7 @@ permissions: read-all
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:

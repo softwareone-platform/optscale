@@ -28,6 +28,8 @@ jobs:
         run: |
           git remote add upstream https://github.com/hystax/optscale.git
           git fetch upstream --tags
+          git fetch origin main
+          git fetch origin release/${{ vars.CURRENT_RELEASE }}
 
       - name: Get latest commit SHA from upstream/integration
         id: latest_commit
