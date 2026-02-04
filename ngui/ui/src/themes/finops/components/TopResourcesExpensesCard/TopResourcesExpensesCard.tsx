@@ -113,7 +113,7 @@ const TopResourcesView = ({ data }) => {
                 cloudResourceIdentifier={getCloudResourceIdentifier(original)}
               />
             </div>
-            <TitleValue>
+            <TitleValue style={{ fontWeight: "normal", fontSize: 16 }}>
               <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cost} />
             </TitleValue>
           </div>
