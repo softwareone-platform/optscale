@@ -35,6 +35,7 @@ import {
 import { fetchBreakdownExpenses } from '../utils/api-helpers';
 import { InterceptionEntry } from '../types/interceptor.types';
 import { debugLog } from '../utils/debug-logging';
+import path from 'path';
 
 test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -751,10 +752,10 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
-    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = 'tests/downloads/expenses-chart-export.png';
-    let expectedPath = 'tests/expected/expected-expenses-chart-export.png';
-    let diffPath = 'tests/downloads/diff-expenses-chart-export.png';
+    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    let actualPath = path.resolve('tests', 'downloads', 'expenses-chart-export.png');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-expenses-chart-export.png');
+    let diffPath = path.resolve('tests', 'downloads', 'diff-expenses-chart-export.png');
     let match: boolean;
 
     await test.step('Verify the default chart is Service Daily Expenses with legend displayed', async () => {
@@ -769,9 +770,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/expenses-chart-export-without-legend.png';
-    expectedPath = 'tests/expected/expected-expenses-chart-export-without-legend.png';
-    diffPath = 'tests/downloads/diff-expenses-chart-export-without-legend.png';
+    actualPath = path.resolve('tests', 'downloads', 'expenses-chart-export-without-legend.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-expenses-chart-export-without-legend.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-expenses-chart-export-without-legend.png');
 
     await test.step('Toggle Show Legend and verify the chart without legend', async () => {
       await resourcesPage.clickShowLegend();
@@ -782,10 +783,10 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
-    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = 'tests/downloads/weekly-expenses-chart-export.png';
-    let expectedPath = 'tests/expected/expected-weekly-expenses-chart-export.png';
-    let diffPath = 'tests/downloads/diff-weekly-expenses-chart-export.png';
+    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    let actualPath = path.resolve('tests', 'downloads', 'weekly-expenses-chart-export.png');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-weekly-expenses-chart-export.png');
+    let diffPath = path.resolve('tests', 'downloads', 'diff-weekly-expenses-chart-export.png');
     let match: boolean;
 
     await test.step('Change expenses to Weekly and verify the chart', async () => {
@@ -795,9 +796,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/monthly-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-monthly-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-monthly-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'monthly-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-monthly-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-monthly-expenses-chart-export.png');
 
     await test.step('Change expenses to Monthly and verify the chart', async () => {
       await resourcesPage.selectExpenses('Monthly');
@@ -808,10 +809,10 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
-    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = 'tests/downloads/region-expenses-chart-export.png';
-    let expectedPath = 'tests/expected/expected-region-expenses-chart-export.png';
-    let diffPath = 'tests/downloads/diff-region-expenses-chart-export.png';
+    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    let actualPath = path.resolve('tests', 'downloads', 'region-expenses-chart-export.png');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-region-expenses-chart-export.png');
+    let diffPath = path.resolve('tests', 'downloads', 'diff-region-expenses-chart-export.png');
     let match: boolean;
 
     await test.step('Change categorization to Region and verify the chart', async () => {
@@ -821,9 +822,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/resource-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-resource-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-resource-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'resource-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-resource-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-resource-expenses-chart-export.png');
 
     await test.step('Change categorization to Resource Type and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('Resource type');
@@ -832,9 +833,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/data-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-data-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-data-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'data-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-data-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-data-expenses-chart-export.png');
 
     await test.step('Change categorization to Data source and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('Data source');
@@ -843,9 +844,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/owner-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-owner-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-owner-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'owner-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-owner-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-owner-expenses-chart-export.png');
 
     await test.step('Change categorization to Owner and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('Owner');
@@ -854,9 +855,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/pool-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-pool-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-pool-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'pool-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-pool-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-pool-expenses-chart-export.png');
 
     await test.step('Change categorization to Pool and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('Pool');
@@ -865,9 +866,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/k8node-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-k8node-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-k8node-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'k8node-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-k8node-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-k8node-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s node and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('K8s node');
@@ -876,9 +877,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/k8sservice-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-k8sservice-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-k8sservice-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'k8sservice-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-k8sservice-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-k8sservice-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s service and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('K8s service');
@@ -887,9 +888,9 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
       expect.soft(match).toBe(true);
     });
 
-    actualPath = 'tests/downloads/k8snamespace-expenses-chart-export.png';
-    expectedPath = 'tests/expected/expected-k8snamespace-expenses-chart-export.png';
-    diffPath = 'tests/downloads/diff-k8snamespace-expenses-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'k8snamespace-expenses-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-k8snamespace-expenses-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-k8snamespace-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s namespace and verify the chart', async () => {
       await resourcesPage.selectCategorizeBy('K8s namespace');
