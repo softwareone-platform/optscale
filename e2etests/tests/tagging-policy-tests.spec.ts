@@ -101,7 +101,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     taggingPoliciesCreatePage,
   }) => {
     const policyName = `Correlated Tag Policy ${Date.now()}`;
-    const tagName = 'CostCenter';
+    const tagName = 'Instance';
     const secondaryTagName = 'Environment';
 
     await test.step('Create tags correlation Tagging Policy page', async () => {

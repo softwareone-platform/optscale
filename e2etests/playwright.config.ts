@@ -30,6 +30,7 @@ export default defineConfig({
     actionTimeout: 10000,
     baseURL: process.env.BASE_URL,
     testIdAttribute: 'data-test-id',
+    timezoneId: 'UTC',
     headless: true,
     trace: 'retain-on-failure',
     video: 'retain-on-failure',

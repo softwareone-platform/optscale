@@ -90,8 +90,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
 
     await test.step('Click on the first resource link and verify navigation', async () => {
       await homePage.clickFirstTopResourceLink();
-      //Bug MPT-12742: The resource details page heading does not match the resource name from the home page
-      // await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+      await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
     });
 
     await test.step('Click expenses tab and set date range to last 30 days', async () => {
