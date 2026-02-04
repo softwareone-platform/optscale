@@ -55,10 +55,6 @@ const {
 
 const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, lastImportAt, isLoading }) => {
   const openSideModal = useOpenSideModal();
-
-  // TODO: initial values from useDataSources are default ones, which means logo is empty, Icon is null, JSX error in console.
-  // Additional check on Icon mount below.
-  // Loading state is inconsistent, the title is not displayed at all on initial load
   const { logo, icon: Icon } = useDataSources(type);
 
   const getActionBarItems = () => {
@@ -171,8 +167,7 @@ const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, last
             alt: type,
             dataTestId: `img_${type}`
           }
-        : // TODO: icon is used fro Environment only, replace with custom svg and keep only `logo`
-          { icon: Icon && <Icon /> }
+        : { icon: Icon && <Icon /> }
     },
     items: getActionBarItems()
   };
