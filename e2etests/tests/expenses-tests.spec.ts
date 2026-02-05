@@ -95,7 +95,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
 });
 
 test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@ui', '@expenses'] }, () => {
-  // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+  test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
   test.describe.configure({ mode: 'default' });
 
   const apiInterceptions: InterceptionEntry[] = [

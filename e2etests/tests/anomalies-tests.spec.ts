@@ -280,7 +280,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
-    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-region-daily-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-region-daily-chart-export.png');
     let diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-region-daily-chart-export.png');
@@ -346,7 +346,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
-    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-export.png');
     let diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-export.png');
