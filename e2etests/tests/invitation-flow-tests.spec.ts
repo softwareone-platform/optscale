@@ -187,7 +187,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     await test.step('Login as new user', async () => {
       await registerPage.navigateToRegistration(inviteLink);
       await registerPage.clickAlreadyHaveAccountLink();
-      await loginPage.loginWithPreFilledEmail(process.env.Default_USER_PASSWORD);
+      await loginPage.loginWithPreFilledEmail(process.env.DEFAULT_USER_PASSWORD);
     });
 
     await test.step('Accept invitation', async () => {
