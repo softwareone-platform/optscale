@@ -18,6 +18,7 @@ import { debugLog } from '../utils/debug-logging';
 import { deleteAnomalyPolicy } from '../utils/teardown-utils';
 import { expect, request } from '@playwright/test';
 import { test } from '../fixtures/page.fixture';
+import path from 'path';
 
 test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () => {
   test.use({ restoreSession: true });
@@ -279,10 +280,10 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
-    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = 'tests/downloads/anomaly-expenses-region-daily-chart-export.png';
-    let expectedPath = 'tests/expected/expected-anomaly-expenses-region-daily-chart-export.png';
-    let diffPath = 'tests/downloads/diff-anomaly-expenses-region-daily-chart-export.png';
+    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-region-daily-chart-export.png');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-region-daily-chart-export.png');
+    let diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-region-daily-chart-export.png');
     let match: boolean;
 
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-13T12:45:00Z'));
@@ -300,9 +301,9 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
 
     await test.step('Category: Resource type', async () => {
-      actualPath = 'tests/downloads/anomaly-expenses-resource-type-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-expenses-resource-type-daily-chart-export.png';
-      diffPath = 'tests/downloads/diff-anomaly-expenses-resource-type-daily-chart-export.png';
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-resource-type-daily-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-resource-type-daily-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-resource-type-daily-chart-export.png');
 
       await anomaliesPage.selectCategorizeBy('Resource type');
       await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
@@ -311,9 +312,9 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
 
     await test.step('Category: Data source', async () => {
-      actualPath = 'tests/downloads/anomaly-expenses-data-source-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-expenses-data-source-daily-chart-export.png';
-      diffPath = 'tests/downloads/diff-anomaly-expenses-data-source-daily-chart-export.png';
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-data-source-daily-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-data-source-daily-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-data-source-daily-chart-export.png');
 
       await anomaliesPage.selectCategorizeBy('Data source');
       await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
@@ -322,9 +323,9 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
 
     await test.step('Category: Owner', async () => {
-      actualPath = 'tests/downloads/anomaly-expenses-owner-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-expenses-owner-daily-chart-export.png';
-      diffPath = 'tests/downloads/diff-anomaly-expenses-owner-daily-chart-export.png';
+      actualPath = path.resolve('tests', 'downloads/anomaly-expenses-owner-daily-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-owner-daily-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-owner-daily-chart-export.png');
 
       await anomaliesPage.selectCategorizeBy('Owner');
       await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
@@ -333,9 +334,9 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
 
     await test.step('Category: Pool', async () => {
-      actualPath = 'tests/downloads/anomaly-expenses-pool-daily-chart-export.png';
-      expectedPath = 'tests/expected/expected-anomaly-expenses-pool-daily-chart-export.png';
-      diffPath = 'tests/downloads/diff-anomaly-expenses-pool-daily-chart-export.png';
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-pool-daily-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-pool-daily-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-pool-daily-chart-export.png');
 
       await anomaliesPage.selectCategorizeBy('Pool');
       await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
@@ -345,10 +346,10 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
   });
 
   test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
-    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-export.png';
-    let expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-export.png';
-    let diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-export.png';
+    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-export.png');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-export.png');
+    let diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-export.png');
     let match: boolean;
 
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
@@ -361,18 +362,18 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
 
-    actualPath = 'tests/downloads/anomaly-expenses-service-daily-chart-no-legend-export.png';
-    expectedPath = 'tests/expected/expected-anomaly-expenses-service-daily-chart-no-legend-export.png';
-    diffPath = 'tests/downloads/diff-anomaly-expenses-service-daily-chart-no-legend-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-no-legend-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-no-legend-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-no-legend-export.png');
 
     await anomaliesPage.clickShowLegend();
     await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
 
-    actualPath = 'tests/downloads/anomaly-expenses-service-weekly-chart-export.png';
-    expectedPath = 'tests/expected/expected-anomaly-expenses-service-weekly-chart-export.png';
-    diffPath = 'tests/downloads/diff-anomaly-expenses-service-weekly-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-weekly-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-weekly-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-weekly-chart-export.png');
 
     await anomaliesPage.clickShowLegend();
     await anomaliesPage.selectExpenses('Weekly');
@@ -380,16 +381,15 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
 
-    actualPath = 'tests/downloads/anomaly-expenses-service-monthly-chart-export.png';
-    expectedPath = 'tests/expected/expected-anomaly-expenses-service-monthly-chart-export.png';
-    diffPath = 'tests/downloads/diff-anomaly-expenses-service-monthly-chart-export.png';
+    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-monthly-chart-export.png');
+    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-monthly-chart-export.png');
+    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-monthly-chart-export.png');
 
     await anomaliesPage.selectExpenses('Monthly');
     await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
   });
-
   test('[231439] Verify detected anomalies are displayed in the table correctly', async ({ anomaliesPage }) => {
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
@@ -421,4 +421,3 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await expect(resourcesPage.heading).toBeVisible();
   });
 });
-

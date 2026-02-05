@@ -14,6 +14,7 @@ import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
 import { getEnvironmentTestOrgName } from '../utils/environment-util';
+import path from 'path';
 
 test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -94,7 +95,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
 });
 
 test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@ui', '@expenses'] }, () => {
-  test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+  // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
   test.describe.configure({ mode: 'default' });
 
   const apiInterceptions: InterceptionEntry[] = [
@@ -118,11 +119,10 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
       await expensesPage.clickDailyBtnIfNotSelected();
     });
   });
-
   test('[231183] Verify expenses chart download', { tag: '@p1' }, async ({ expensesPage }) => {
-    let actualPath = 'tests/downloads/expenses-page-daily-chart.pdf';
-    let expectedPath = 'tests/expected/expected-expenses-page-daily-chart.pdf';
-    let diffPath = 'tests/downloads/expenses-page-daily-chart-diff.png';
+    let actualPath = path.resolve('tests', 'downloads', 'expenses-page-daily-chart.pdf');
+    let expectedPath = path.resolve('tests', 'expected', 'expected-expenses-page-daily-chart.pdf');
+    let diffPath = path.resolve('tests', 'downloads', 'expenses-page-daily-chart-diff.png');
     let match: boolean;
 
     await test.step('Download the default chart', async () => {
@@ -132,9 +132,9 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     });
 
     await test.step('Download weekly chart and compare', async () => {
-      actualPath = 'tests/downloads/expenses-page-weekly-chart.pdf';
-      expectedPath = 'tests/expected/expected-expenses-page-weekly-chart.pdf';
-      diffPath = 'tests/downloads/expenses-page-weekly-chart-diff.png';
+      actualPath = path.resolve('tests', 'downloads', 'expenses-page-weekly-chart.pdf');
+      expectedPath = path.resolve('tests', 'expected', 'expected-expenses-page-weekly-chart.pdf');
+      diffPath = path.resolve('tests', 'downloads', 'expenses-page-weekly-chart-diff.png');
 
       await expensesPage.clickWeeklyBtn();
       await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
@@ -143,9 +143,9 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     });
 
     await test.step('Download monthly chart and compare', async () => {
-      actualPath = 'tests/downloads/expenses-page-monthly-chart.pdf';
-      expectedPath = 'tests/expected/expected-expenses-page-monthly-chart.pdf';
-      diffPath = 'tests/downloads/expenses-page-monthly-chart-diff.png';
+      actualPath = path.resolve('tests', 'downloads', 'expenses-page-monthly-chart.pdf');
+      expectedPath = path.resolve('tests', 'expected', 'expected-expenses-page-monthly-chart.pdf');
+      diffPath = path.resolve('tests', 'downloads', 'expenses-page-monthly-chart-diff.png');
 
       await expensesPage.clickMonthlyBtn();
       await expensesPage.downloadFile(expensesPage.downloadButton, actualPath);
@@ -154,7 +154,6 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
     });
   });
 });
-
 test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui', '@expenses'] }, () => {
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
