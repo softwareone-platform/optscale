@@ -1,10 +1,10 @@
-import BaseRoute from "@main/utils/routes/baseRoute";
 import { PENDING_INVITATIONS } from "@theme/urls";
+import BaseRoute from "@theme/utils/routes/baseRoute";
 
-class PendginInvitationsRoute extends BaseRoute {
+class PendingInvitationsRoute extends BaseRoute {
   page = "PendingInvitations";
 
   link = PENDING_INVITATIONS;
 }
 
-export default new PendginInvitationsRoute();
+export default new PendingInvitationsRoute();
