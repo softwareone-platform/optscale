@@ -752,7 +752,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
-    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-expenses-chart-export.png');
     let diffPath = path.resolve('tests', 'downloads', 'diff-expenses-chart-export.png');
@@ -783,7 +783,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
-    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'weekly-expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-weekly-expenses-chart-export.png');
     let diffPath = path.resolve('tests', 'downloads', 'diff-weekly-expenses-chart-export.png');
@@ -809,7 +809,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   });
 
   test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
-    // test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
+    test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'region-expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-region-expenses-chart-export.png');
     let diffPath = path.resolve('tests', 'downloads', 'diff-region-expenses-chart-export.png');
