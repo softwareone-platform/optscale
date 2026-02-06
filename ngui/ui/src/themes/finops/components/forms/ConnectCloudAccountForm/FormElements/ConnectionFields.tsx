@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import { CONNECTION_TYPES } from "@theme/utils/constants";
 import { AwsConnectionAccessKeyInputs } from "@theme/components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm/AwsConnectionAccessKeyInputs";
 import { AUTHENTICATION_TYPES } from "@theme/components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm/constants";
 import { AuthenticationType } from "@theme/components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm/types";
+import { CONNECTION_TYPES } from "@theme/utils/constants";
 import {
   AzureTenantCredentials,
   AzureSubscriptionCredentials,

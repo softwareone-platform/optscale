@@ -4,12 +4,12 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { TitleProps, WrapperCardProps } from "@main/components/WrapperCard/types";
 import Button from "components/Button";
 import IconButton from "components/IconButton";
 import Tooltip from "components/Tooltip";
 import WidgetTitle from "components/WidgetTitle";
 import WrapperCardTitlePdf from "components/WrapperCardTitlePdf/WrapperCardTitlePdf";
-import { TitleProps, WrapperCardProps } from "./types";
 import useStyles from "./WrapperCard.styles";
 
 const Title = ({ title, titleButton, dataTestId }: TitleProps) => {

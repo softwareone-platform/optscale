@@ -1,9 +1,9 @@
 import { MouseEvent, ReactNode, ComponentType } from "react";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { SvgIconProps } from "@mui/material";
-import { IntlFormatValues } from "@theme/utils/types";
 import { FormattedMessage } from "react-intl";
 import useStyles from "@main/components/QuestionMark/QuestionMark.styles";
+import { IntlFormatValues } from "@theme/utils/types";
 import Tooltip from "components/Tooltip";
 
 type TooltipTitleType =

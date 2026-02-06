@@ -1,6 +1,6 @@
 import React from "react";
-import { AWS_CNR, CONNECTION_TYPES } from "@theme/utils/constants";
 import { DOCS_HYSTAX_CONNECT_AMAZON, DOCS_HYSTAX_CONNECT_AWS_ROOT } from "@theme/urls";
+import { AWS_CNR, CONNECTION_TYPES } from "@theme/utils/constants";
 import { AwsTypeDescription } from "./AwsConnectionFormElements";
 
 export const AUTHENTICATION_TYPES = Object.freeze({

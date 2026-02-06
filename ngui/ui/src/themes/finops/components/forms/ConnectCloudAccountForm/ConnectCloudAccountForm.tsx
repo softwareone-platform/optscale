@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { CONNECTION_TYPES } from "@theme/utils/constants";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 import useStyles from "@main/components/forms/ConnectCloudAccountForm/ConnectCloudAccountForm.styles";
@@ -31,6 +30,7 @@ import {
 import { AUTHENTICATION_TYPES } from "@theme/components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm/constants";
 import { AuthenticationType } from "@theme/components/forms/ConnectCloudAccountForm/FormElements/AwsConnectionForm/types";
 import { useIsDataSourceConnectionTypeEnabled } from "@theme/hooks/useIsDataSourceConnectionTypeEnabled";
+import { CONNECTION_TYPES } from "@theme/utils/constants";
 import { MPT_SPACING_2, SPACING_2 } from "@theme/utils/layouts";
 import Button from "components/Button";
 import ButtonGroup from "components/ButtonGroup/ButtonGroup";
