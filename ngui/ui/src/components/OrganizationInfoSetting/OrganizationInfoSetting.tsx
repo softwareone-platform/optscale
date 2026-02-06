@@ -101,7 +101,6 @@ const OrganizationInfoSetting = () => {
           <OrganizationCurrency currencyCode={currency} />
         </Box>
       </CapabilityWrapper>
-      123
     </Stack>
   );
 };
