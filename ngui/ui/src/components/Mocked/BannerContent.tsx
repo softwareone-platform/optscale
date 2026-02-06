@@ -91,7 +91,7 @@ const getConfiguration = (messageType) =>
     cloudAccounts: {
       item: {
         requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
-        mainMessageIds: ["sampleDataToGiveSenseOfTheProduct123", "dataSourcesBackdropMessage"],
+        mainMessageIds: ["sampleDataToGiveSenseOfTheProduct", "dataSourcesBackdropMessage"],
         buttonMessageId: CONNECT_DATA_SOURCE,
         subMessageIds: [CLOUD_CONNECTION_BACKDROP_MESSAGE],
         onButtonClick: redirectToCreateCloudAccount,
