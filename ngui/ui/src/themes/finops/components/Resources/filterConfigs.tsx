@@ -127,6 +127,10 @@ export const FILTER_CONFIGS = {
               type: {
                 type: "string",
                 enum: CLOUD_ACCOUNT_TYPES_LIST
+              },
+              account_id: {
+                type: "string",
+                nullable: true
               }
             }
           }
