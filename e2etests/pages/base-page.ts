@@ -11,6 +11,7 @@ export abstract class BasePage {
   readonly page: Page; // The Playwright page object representing the current page.
   readonly url: string; // The URL of the page.
   readonly main: Locator;
+  readonly initialisationMessage: Locator;
   readonly loadingPageImg: Locator;
   readonly progressBar: Locator;
   readonly tooltip: Locator;
@@ -30,6 +31,7 @@ export abstract class BasePage {
     this.url = url;
     this.main = this.page.locator('main');
     this.table = this.main.locator('table');
+    this.initialisationMessage = this.page.getByTestId('p_initializing');
     this.loadingPageImg = this.page.getByRole('img', { name: 'Loading page' });
     this.progressBar = this.page.locator('//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]');
     this.tooltip = this.page.getByRole('tooltip');
@@ -322,6 +324,7 @@ export abstract class BasePage {
    * @returns {Promise<number>} A promise that resolves to the total sum of currency values, rounded to two decimal places.
    */
   async sumCurrencyColumn(columnLocator: Locator, nextPageBtn: Locator): Promise<number> {
+    await columnLocator.last().waitFor({'timeout': 10000})
     let totalSum = 0;
 
     while (true) {
@@ -344,7 +347,7 @@ export abstract class BasePage {
       if (values.some(val => val === 0)) {
         // Add only non-zero values before stopping
         totalSum += values.reduce((sum, val) => (val === 0 ? sum : sum + val), 0);
-        debugLog("Encountered zero value, stopping iteration.");
+        debugLog('Encountered zero value, stopping iteration.');
         break;
       }
 
@@ -401,12 +404,36 @@ export abstract class BasePage {
     } catch (_error) {
       return; // Exit the method if the loading image is not present.
     }
-
     try {
       debugLog('Waiting for loading page image to disappear...');
       await this.loadingPageImg.waitFor({ state: 'hidden', timeout: timeout });
     } catch (_error) {
-      console.error('[ERROR] Loading page image did not disappear within the timeout.'); // Log a warning if the image remains visible after the timeout.
+      errorLog('[ERROR] Loading page image did not disappear within the timeout.'); // Log a warning if the image remains visible after the timeout.
+    }
+  }
+
+  /**
+   * Waits for the initialisation message to disappear from the page.
+   *
+   * This method first checks if the initialisation message is present on the page.
+   * If the message is found, it waits for it to disappear within the specified timeout.
+   * If the message is not present, the method exits early.
+   *
+   * @param {number} [timeout=10000] - The maximum time to wait for the initialisation message to disappear, in milliseconds.
+   * @returns {Promise<void>} A promise that resolves when the initialisation message is no longer visible or exits early if the message is not present.
+   */
+  async waitForInitialisationToComplete(timeout: number = 10000): Promise<void> {
+    try {
+      await this.initialisationMessage.first().waitFor({ timeout: 1000 });
+    } catch (_error) {
+      // Exit the method if the initialisation message is not present.
+      return;
+    }
+    try {
+      debugLog('Waiting for initialisaton message to disappear...');
+      await this.initialisationMessage.waitFor({ state: 'hidden', timeout: timeout });
+    } catch (_error) {
+      errorLog('[ERROR] initialisaton message did not disappear within the timeout.');
     }
   }
 
