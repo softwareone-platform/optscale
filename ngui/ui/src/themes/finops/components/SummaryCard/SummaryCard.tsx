@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef, ReactNode } from "react";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -18,7 +18,7 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import useStyles from "./SummaryCard.styles";
 
 interface CardLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   color: string;
   clickable?: boolean;
   onClick?: () => void;
@@ -27,14 +27,14 @@ interface CardLayoutProps {
 }
 
 interface SummaryCardProps {
-  value: React.ReactNode;
-  caption: React.ReactNode;
+  value: ReactNode;
+  caption: ReactNode;
   dataTestIds?: {
     cardTestId?: string;
   };
   icon?: {
     show?: boolean;
-    value?: React.ReactNode;
+    value?: ReactNode;
   };
   color?: string;
   isLoading?: boolean;
@@ -53,10 +53,10 @@ interface SummaryCardProps {
     onClick?: () => void;
     link?: string;
   };
-  rawValue?: React.ReactNode;
-  rawCaption?: React.ReactNode;
+  rawValue?: ReactNode;
+  rawCaption?: ReactNode;
   pdfId?: string;
-  customContent?: React.ReactNode;
+  customContent?: ReactNode;
   backdrop?: {
     show?: boolean;
     message?: string;
