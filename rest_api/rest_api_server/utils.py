@@ -614,5 +614,4 @@ def get_trace_headers():
     if not ctx.is_valid:
         return {}
     tid = format(ctx.trace_id, "032x")
-    sid = format(ctx.span_id, "016x")
-    return {"x-trace-id": tid, "traceparent": f"00-{tid}-{sid}-01"}
+    return {"x-trace-id": tid}
