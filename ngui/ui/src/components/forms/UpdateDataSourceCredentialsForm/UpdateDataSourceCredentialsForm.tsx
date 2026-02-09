@@ -22,12 +22,16 @@ import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
+import { intl } from "translations/react-intl-config";
 import {
+  DOCS_HYSTAX_CONNECT_AWS_ROOT,
   DOCS_HYSTAX_CONNECT_ALIBABA_CLOUD,
   DOCS_HYSTAX_CONNECT_AZURE_TENANT,
   DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
+  DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES,
   GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
   DATABRICKS_CREATE_SERVICE_PRINCIPAL,
+  DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0,
   DOCS_HYSTAX_CONNECT_AZURE_SUBSCRIPTION
 } from "urls";
 import {
@@ -44,14 +48,83 @@ import {
   GCP_TENANT
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
+import { SPACING_2 } from "utils/layouts";
 import { CredentialInputs } from "./FormElements";
 import { AWS_POOL_UPDATE_DATA_EXPORT_PARAMETERS as AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS } from "./FormElements/CredentialInputs";
 import type { UpdateDataSourceCredentialsFormProps } from "./types";
 
-const Description = ({ type }) => {
+const getAwsDescription = (config) => {
+  if (config.assume_role_account_id && config.assume_role_name) {
+    return (
+      <Typography sx={{ marginBottom: SPACING_2 }}>
+        <FormattedMessage id="createAwsAssumedRoleDescription" values={{ action: intl.formatMessage({ id: "save" }) }} />
+      </Typography>
+    );
+  }
+
+  if (config.linked) {
+    return (
+      <Typography gutterBottom>
+        <FormattedMessage
+          id="createAwsLinkedDocumentationReference3"
+          values={{
+            discoverResourcesLink: (chunks) => (
+              <Link
+                data-test-id="link_iam_user"
+                href={DOCS_HYSTAX_AWS_LINKED_DISCOVER_RESOURCES}
+                target="_blank"
+                rel="noopener"
+              >
+                {chunks}
+              </Link>
+            )
+          }}
+        />
+      </Typography>
+    );
+  }
+
+  return (
+    <Typography gutterBottom component="div">
+      <div>
+        <FormattedMessage
+          id="createAwsRootDocumentationReference"
+          values={{
+            link: (chunks) => (
+              <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_AWS_ROOT} target="_blank" rel="noopener">
+                {chunks}
+              </Link>
+            ),
+            strong: (chunks) => <strong>{chunks}</strong>
+          }}
+        />
+      </div>
+      <div>
+        <FormattedMessage
+          id="migrateToCur2.0"
+          values={{
+            link: (chunks) => (
+              <Link
+                data-test-id="link_guide"
+                href={DOCS_HYSTAX_MIGRATE_FROM_CUR_TO_DATA_EXPORTS_CUR_2_0}
+                target="_blank"
+                rel="noopener"
+              >
+                {chunks}
+              </Link>
+            ),
+            strong: (chunks) => <strong>{chunks}</strong>
+          }}
+        />
+      </div>
+    </Typography>
+  );
+};
+
+const Description = ({ type, config }) => {
   switch (type) {
     case AWS_CNR:
-      return "";
+      return getAwsDescription(config);
     case AZURE_TENANT:
       return (
         <Typography gutterBottom>
@@ -183,7 +256,7 @@ const UpdateCredentialsWarning = ({ type }) => {
   }
 };
 
-const getConfig = (type, config, dataSourceProps) => {
+const getConfig = (type, config) => {
   switch (type) {
     case AWS_CNR: {
       const billingBucketFields = {
@@ -208,14 +281,12 @@ const getConfig = (type, config, dataSourceProps) => {
 
           if (config.linked) {
             return {
-              [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: dataSourceProps.accountId,
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: ""
             };
           }
 
           return {
-            [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: dataSourceProps.accountId,
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
             [AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
             [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
@@ -225,12 +296,7 @@ const getConfig = (type, config, dataSourceProps) => {
           };
         },
         parseFormDataToApiParams: (formData) => {
-          const hasSecret = formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY];
-          const isAssumeRoleData =
-            formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID] &&
-            formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME];
-
-          if (!hasSecret && isAssumeRoleData) {
+          if (config.assume_role_account_id && config.assume_role_name) {
             return config.linked
               ? {
                   config: {
@@ -503,20 +569,21 @@ const UpdateDataSourceCredentialsForm = ({
   id,
   type,
   config,
-  dataSourceProps,
   onSubmit,
   onCancel,
   isLoading = false
 }: UpdateDataSourceCredentialsFormProps) => {
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
-  const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config, dataSourceProps);
+  const { getDefaultFormValues, parseFormDataToApiParams } = getConfig(type, config);
 
   const methods = useForm({
     defaultValues: getDefaultFormValues()
   });
 
   const { handleSubmit } = methods;
+
+  const isAssumedRole = Boolean(config?.assume_role_account_id && config?.assume_role_name);
 
   return (
     <FormProvider {...methods}>
@@ -528,7 +595,7 @@ const UpdateDataSourceCredentialsForm = ({
       >
         <Description type={type} config={config} />
         <CredentialInputs type={type} config={config} />
-        <UpdateCredentialsWarning type={type} />
+        {!isAssumedRole && <UpdateCredentialsWarning type={type} />}
         <FormButtonsWrapper>
           <ButtonLoader
             dataTestId="btn_update_data_source_credentials"

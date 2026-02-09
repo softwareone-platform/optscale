@@ -1,11 +1,10 @@
 import React from "react";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Popover, Button, IconButton } from "@mui/material";
+import { Box, Button, Popover, IconButton } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import IntervalTimePicker from "components/IntervalTimePicker";
 import { EN_FORMAT, format } from "utils/datetime";
-import useStyles from "./FilterComponents.styles";
 
 export type RangeValue = {
   from?: number;
@@ -30,21 +29,17 @@ type SelectionStateButtonProps = {
 
 const formatDate = (date: number) => format(date, EN_FORMAT);
 
-const SelectionStateButton = ({ appliedRange, label, selectionLabel, onClick, id, icon }: SelectionStateButtonProps) => {
-  const { classes } = useStyles();
-  return (
-    <Button
-      aria-describedby={id}
-      variant={appliedRange.from || appliedRange.to ? "contained" : "outlined"}
-      onClick={onClick}
-      color="primary"
-      className={classes.selectButton}
-      startIcon={icon}
-    >
-      {label} ({selectionLabel()})
-    </Button>
-  );
-};
+const SelectionStateButton = ({ appliedRange, label, selectionLabel, onClick, id, icon }: SelectionStateButtonProps) => (
+  <Button
+    aria-describedby={id}
+    variant={appliedRange.from || appliedRange.to ? "contained" : "outlined"}
+    onClick={onClick}
+    color="primary"
+    startIcon={icon}
+  >
+    {label} ({selectionLabel()})
+  </Button>
+);
 
 const RangeFilter: React.FC<RangeFilterProps> = ({
   label,

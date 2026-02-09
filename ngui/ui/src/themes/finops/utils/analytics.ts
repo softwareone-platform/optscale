@@ -1,9 +1,9 @@
 import googleAnalytics from "@analytics/google-analytics";
 import Analytics from "analytics";
 import { isDemo, isProduction } from "@main/urls";
+import { getEnvironmentVariable } from "@main/utils/env";
+import { isEmptyObject } from "@main/utils/objects";
 import { initialize } from "utils/hotjar";
-import { getEnvironmentVariable } from "./env";
-import { isEmptyObject } from "./objects";
 
 // Hotjar analytics
 const HOT_JAR_ID = getEnvironmentVariable("VITE_HOTJAR_ID");

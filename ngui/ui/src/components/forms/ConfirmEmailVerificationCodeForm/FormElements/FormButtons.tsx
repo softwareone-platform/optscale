@@ -7,7 +7,7 @@ const FormButtons = ({ isLoading = false }) => (
       uppercase
       fullWidth
       variant="contained"
-      color="primary"
+      color="lightBlue"
       isLoading={isLoading}
       messageId="confirm"
       type="submit"

@@ -61,13 +61,13 @@ const generateResponsiveFontSizes = (themeInput) => {
   theme.typography.subtitle1 = {
     ...theme.typography.subtitle1,
     [upXsBreakpoint]: {
-      fontSize: "0.92rem"
+      fontSize: "0.85rem"
     },
     [upLgBreakpoint]: {
-      fontSize: "0.1"
+      fontSize: "0.92rem"
     },
     [upXlBreakpoint]: {
-      fontSize: "1.11rem"
+      fontSize: "1rem"
     }
   };
 

@@ -1,33 +1,28 @@
-import { PictureAsPdf } from "@mui/icons-material";
 import BusinessIcon from "@mui/icons-material/Business";
-import ChevronRight from "@mui/icons-material/ChevronRight";
 import CloudIcon from "@mui/icons-material/Cloud";
 import PeopleIcon from "@mui/icons-material/People";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PublicIcon from "@mui/icons-material/Public";
-import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BarChartLoader from "components/BarChartLoader";
+import ButtonSwitch from "components/ButtonSwitch";
 import { getBasicRangesSet } from "components/DateRangePicker/defaults";
 import ExpensesBreakdownBarChart from "components/ExpensesBreakdown/BarChart";
 import ExpensesBreakdownByPeriodWidget from "components/ExpensesBreakdown/BreakdownByPeriodWidget";
 import ExpensesBreakdownSummaryCards from "components/ExpensesBreakdown/SummaryCards";
 import PageContentWrapper from "components/PageContentWrapper";
+import SubTitle from "components/SubTitle";
 import Tooltip from "components/Tooltip";
 import RangePickerFormContainer from "containers/RangePickerFormContainer";
 import { useBreakdownData } from "hooks/useBreakdownData";
-import { EXPENSES_BY_CLOUD, EXPENSES_BY_OWNER, EXPENSES_BY_POOL, EXPENSES_MAP, getResourcesExpensesUrl } from "urls";
+import { getResourcesExpensesUrl, EXPENSES_BY_CLOUD, EXPENSES_BY_POOL, EXPENSES_BY_OWNER, EXPENSES_MAP } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
-import { SPACING_2, SPACING_4 } from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
+import { createPdf } from "utils/pdf";
 import { sliceByLimitWithEllipsis } from "utils/strings";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
-import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
-import { EVariantOptions } from "../../shared/models/EVariantOptions";
-import { createPdf } from "../../utils/pdf";
-import Button from "../Button";
-import useStyles from "./CostExplorer.styles";
 
 const breakdownByButtons = [
   { messageId: "source", link: EXPENSES_BY_CLOUD, icon: <CloudIcon /> },
@@ -52,7 +47,6 @@ const CostExplorer = ({
   const navigate = useNavigate();
 
   const breakdownData = useBreakdownData(breakdown);
-  const { classes } = useStyles();
 
   const isNameLong = organizationName?.length > MAX_ORGANIZATION_NAME_LENGTH;
 
@@ -60,7 +54,7 @@ const CostExplorer = ({
     title: {
       text: (
         <FormattedMessage
-          id="costExplorerFor"
+          id="expensesOf"
           values={{
             name: (
               <Tooltip title={isNameLong ? organizationName : undefined}>
@@ -77,13 +71,13 @@ const CostExplorer = ({
     items: [
       {
         key: "costExplorerPdfDownload",
-        icon: <PictureAsPdf fontSize="small" />,
+        icon: <PictureAsPdfIcon fontSize="small" />,
         messageId: "download",
         type: "button",
         isLoading,
         action: () => {
           createPdf([
-            { type: PDF_ELEMENTS.markup.initPortrait },
+            { type: PDF_ELEMENTS.markup.initPortrait }, // always first
 
             {
               type: PDF_ELEMENTS.basics.fileName,
@@ -162,63 +156,41 @@ const CostExplorer = ({
       <ActionBar data={actionBarData} />
       <PageContentWrapper>
         <Grid container direction="row" justifyContent="space-between" spacing={SPACING_2}>
-          <Grid item xs={12}>
+          <Grid item>
             <ExpensesBreakdownSummaryCards
               total={total}
               previousTotal={previousTotal}
               isLoading={isLoading}
-              // MPT_TODO: disabled to meet BDR requirements
-              // pdfIds={{
-              //   totalExpensesForSelectedPeriod: PDF_ELEMENTS.costExplorer.expensesSummary,
-              //   totalExpensesForPreviousPeriod: PDF_ELEMENTS.costExplorer.previousExpensesSummary
-              // }}
+              pdfIds={{
+                totalExpensesForSelectedPeriod: PDF_ELEMENTS.costExplorer.expensesSummary,
+                totalExpensesForPreviousPeriod: PDF_ELEMENTS.costExplorer.previousExpensesSummary
+              }}
             />
           </Grid>
-          <Grid container item spacing={SPACING_4}>
-            <Grid item lg={9}>
-              <Box className={"MTPBoxShadow"}>
-                <ExpensesBreakdownByPeriodWidget
-                  customContent={
-                    <ResponsiveStack>
-                      <LabelColon messageId={"dateRange"} />
-                      <RangePickerFormContainer
-                        onApply={onApply}
-                        initialStartDateValue={startDateTimestamp}
-                        initialEndDateValue={endDateTimestamp}
-                        pdfId={PDF_ELEMENTS.costExplorer.dates}
-                        rangeType="expenses"
-                        hideLabel
-                        definedRanges={getBasicRangesSet()}
-                      />
-                    </ResponsiveStack>
-                  }
-                  render={(periodType) => (
-                    <Grid container spacing={SPACING_2}>
-                      {renderBarChart(periodType)}
-                    </Grid>
-                  )}
-                />
-              </Box>
-            </Grid>
-
-            <Grid item lg={3}>
-              <Box className={"MTPBoxShadow"}>
-                <LabelColon messageId={"seeExpensesBreakdownBy"} variant={EVariantOptions.SUBTITLE1} />
-                <div className={classes.costExplorerSubMenu}>
-                  {breakdownByButtons.map(({ messageId, link, icon }) => (
-                    <Button
-                      key={messageId}
-                      messageId={messageId}
-                      startIcon={icon}
-                      endIcon={<ChevronRight />}
-                      link={link}
-                      variant="text"
-                      color="primary"
-                    />
-                  ))}
-                </div>
-              </Box>
-            </Grid>
+          <Grid item>
+            <RangePickerFormContainer
+              onApply={onApply}
+              initialStartDateValue={startDateTimestamp}
+              initialEndDateValue={endDateTimestamp}
+              pdfId={PDF_ELEMENTS.costExplorer.dates}
+              rangeType="expenses"
+              definedRanges={getBasicRangesSet()}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <ExpensesBreakdownByPeriodWidget
+              render={(periodType) => (
+                <Grid container spacing={SPACING_2}>
+                  {renderBarChart(periodType)}
+                  <Grid item xs={12}>
+                    <SubTitle align="center">
+                      <FormattedMessage id="seeExpensesBreakdownBy" />
+                    </SubTitle>
+                    <ButtonSwitch buttons={breakdownByButtons} />
+                  </Grid>
+                </Grid>
+              )}
+            />
           </Grid>
         </Grid>
       </PageContentWrapper>
