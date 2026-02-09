@@ -93,6 +93,9 @@ const RecommendationsOverview = ({
     .filter(serviceFilter(service))
     .filter(searchFilter(search))
     .filter(appliedDataSourcesFilter(selectedDataSourceTypes))
+    // TODO : Remove obsolete_images recommendation but keep it in archived recommendations
+    // discuss solutions
+    .filter((rec) => rec.type !== "obsolete_images")
     .sort(sortRecommendation);
 
   return (

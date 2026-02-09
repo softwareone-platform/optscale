@@ -55,6 +55,7 @@ import {
 import { enUS } from "date-fns/locale";
 import { objectMap } from "./objects";
 import { capitalize } from "./strings";
+import { IntlFormatValues } from "./types";
 
 /**
  * @typedef {Object} DateRange
@@ -527,7 +528,14 @@ export const formatIntervalDuration = ({
  * @param {Object} options.intlFormatter - An object providing an internationalization formatter, typically from react-intl.
  * @returns {string} The formatted time ago string with an internationalized "ago" suffix.
  */
-export const formatIntervalTimeAgo = ({ agoSecondsTimestamp, precision, intlFormatter }) => {
+type FormatIntervalTimeAgoParams = {
+  agoSecondsTimestamp: number;
+  precision?: number;
+  intlFormatter: {
+    formatMessage: (descriptor: { id: string }, values?: IntlFormatValues) => string;
+  };
+};
+export const formatIntervalTimeAgo = ({ agoSecondsTimestamp, precision, intlFormatter }: FormatIntervalTimeAgoParams) => {
   const duration = intervalToDuration({ start: +new Date(), end: secondsToMilliseconds(agoSecondsTimestamp) });
 
   const agoIntervalString = formatIntervalDuration({

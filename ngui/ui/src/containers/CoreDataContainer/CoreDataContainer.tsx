@@ -12,9 +12,8 @@ import {
   useOrganizationThemeSettingsQuery
 } from "graphql/__generated__/hooks/restapi";
 import { useCurrentOrganization } from "hooks/useOrganizationInfo";
-import { useSignOut } from "hooks/useSignOut";
 import { useUpdateScope } from "hooks/useUpdateScope";
-import { isEmptyArray } from "utils/arrays";
+import { PENDING_INVITATIONS } from "urls";
 import { MILLISECONDS_IN_MINUTE } from "utils/datetime";
 import { getEnvironmentVariable } from "utils/env";
 import { ERROR_CODES } from "utils/errorCodes";
@@ -42,7 +41,6 @@ type CoreDataContainerProps = {
 
 const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
   const updateScope = useUpdateScope();
-  const signOut = useSignOut();
 
   const {
     loading: getOrganizationsLoading,
@@ -54,16 +52,18 @@ const CoreDataContainer = ({ render }: CoreDataContainerProps) => {
 
       const { organizations } = data;
 
-      if (isEmptyArray(organizations)) {
-        signOut();
-        return;
-      }
-
       if (organizations.find((org) => org.id === organizationId)) {
         updateScope({
           newScopeId: organizationId
         });
         removeSearchParam("organizationId");
+      }
+
+      if (data.organizations.length === 0) {
+        updateScope({
+          newScopeId: "none",
+          redirectTo: PENDING_INVITATIONS
+        });
       }
     }
   });

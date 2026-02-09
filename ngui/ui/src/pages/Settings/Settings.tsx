@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BillingSubscription from "components/BillingSubscription";
@@ -5,11 +6,9 @@ import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
-import SshSettingsContainer from "containers/SshSettingsContainer";
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
-import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { OPTSCALE_CAPABILITY, SETTINGS_TABS } from "utils/constants";
+import { SETTINGS_TABS } from "utils/constants";
 import { getEnvironmentVariable } from "utils/env";
 
 const actionBarDefinition = {
@@ -21,7 +20,8 @@ const actionBarDefinition = {
 const TAB_SEARCH_PARAM_NAME = "tab";
 
 const Settings = () => {
-  const isFinOpsCapabilityEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
+  // MTP_TODO: disabled to meet BDR requirements
+  // const isFinOpsCapabilityEnabled = useIsOptScaleCapabilityEnabled(OPTSCALE_CAPABILITY.FINOPS);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -49,15 +49,20 @@ const Settings = () => {
       dataTestId: `tab_${SETTINGS_TABS.INVITATIONS}`,
       node: <InvitationsContainer />
     },
-    ...(isFinOpsCapabilityEnabled
-      ? [
-          {
-            title: SETTINGS_TABS.SSH,
-            dataTestId: `tab_${SETTINGS_TABS.SSH}`,
-            node: <SshSettingsContainer />
-          }
-        ]
-      : []),
+    // {
+    //   title: SETTINGS_TABS.CAPABILITIES,
+    //   dataTestId: `tab_${SETTINGS_TABS.CAPABILITIES}`,
+    //   node: <CapabilityContainer />
+    // },
+    // ...(isFinOpsCapabilityEnabled
+    //   ? [
+    //       {
+    //         title: SETTINGS_TABS.SSH,
+    //         dataTestId: `tab_${SETTINGS_TABS.SSH}`,
+    //         node: <SshSettingsContainer />
+    //       }
+    //     ]
+    //   : []),
     {
       title: SETTINGS_TABS.EMAIL_NOTIFICATIONS,
       dataTestId: `tab_${SETTINGS_TABS.EMAIL_NOTIFICATIONS}`,
@@ -69,17 +74,19 @@ const Settings = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <TabsWrapper
-          tabsProps={{
-            name: "settings",
-            tabs,
-            defaultTab: SETTINGS_TABS.ORGANIZATION,
-            activeTab: searchParams.get(TAB_SEARCH_PARAM_NAME),
-            handleChange: (event, value) => {
-              setSearchParams({ [TAB_SEARCH_PARAM_NAME]: value });
-            }
-          }}
-        />
+        <Box className={"MTPBoxShadow"}>
+          <TabsWrapper
+            tabsProps={{
+              name: "settings",
+              tabs,
+              defaultTab: SETTINGS_TABS.ORGANIZATION,
+              activeTab: searchParams.get(TAB_SEARCH_PARAM_NAME),
+              handleChange: (event, value) => {
+                setSearchParams({ [TAB_SEARCH_PARAM_NAME]: value });
+              }
+            }}
+          />
+        </Box>
       </PageContentWrapper>
     </>
   );

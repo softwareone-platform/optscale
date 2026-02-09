@@ -4,13 +4,10 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
-import GoogleAuthButton from "components/GoogleAuthButton";
 import Greeter from "components/Greeter";
-import MicrosoftSignInButton from "components/MicrosoftSignInButton";
-import OAuthSignIn from "components/OAuthSignIn";
 import Redirector from "components/Redirector";
 import { initialize } from "containers/InitializeContainer/redux";
-import { useCreateTokenMutation, useCreateUserMutation, useSignInMutation } from "graphql/__generated__/hooks/auth";
+import { useCreateTokenMutation, useCreateUserMutation } from "graphql/__generated__/hooks/auth";
 import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import VerifyEmailService from "services/VerifyEmailService";
@@ -54,7 +51,7 @@ const AuthorizationContainer = () => {
 
   const [createUser, { loading: registerLoading }] = useCreateUserMutation();
 
-  const [signIn, { loading: signInLoading }] = useSignInMutation();
+  // const [signIn, { loading: signInLoading }] = useSignInMutation();
 
   const handleLogin = async ({ email, password }) => {
     try {
@@ -99,35 +96,30 @@ const AuthorizationContainer = () => {
     );
   };
 
-  const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
-    const { data } = await signIn({
-      variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
-    });
+  // const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
+  //   const { data } = await signIn({
+  //     variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
+  //   });
 
-    const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
-    if (caveats.register) {
-      trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
-    }
-    dispatch(initialize({ ...data.signIn, caveats }));
-  };
+  //   const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
+  //   if (caveats.register) {
+  //     trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: caveats.provider });
+  //   }
+  //   dispatch(initialize({ ...data.signIn, caveats }));
+  // };
 
   const isInvited = queryInvited !== undefined;
 
   const createForm =
     {
       [LOGIN]: () => (
-        <LoginForm
-          onSubmit={handleLogin}
-          isLoading={loginLoading}
-          disabled={registerLoading || signInLoading}
-          isInvited={isInvited}
-        />
+        <LoginForm onSubmit={handleLogin} isLoading={loginLoading} disabled={registerLoading} isInvited={isInvited} />
       ),
       [REGISTER]: () => (
         <RegistrationForm
           onSubmit={handleRegister}
           isLoading={registerLoading}
-          disabled={loginLoading || signInLoading || isSendEmailVerificationCodeLoading}
+          disabled={loginLoading || isSendEmailVerificationCodeLoading}
           isInvited={isInvited}
         />
       )
@@ -165,7 +157,7 @@ const AuthorizationContainer = () => {
         content={
           <Stack spacing={SPACING_4}>
             <div>{createForm()}</div>
-            <div>
+            {/* <div>
               <OAuthSignIn
                 googleButton={
                   <GoogleAuthButton
@@ -182,7 +174,7 @@ const AuthorizationContainer = () => {
                   />
                 }
               />
-            </div>
+            </div> */}
           </Stack>
         }
       />

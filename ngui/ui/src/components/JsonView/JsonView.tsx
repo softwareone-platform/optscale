@@ -13,7 +13,7 @@ const JsonView = ({ value, onChange, id, viewOnly = false }) => {
       height="auto"
       width="100%"
       onChange={onChange}
-      waitAfterKeyPress={0}
+      waitAfterKeyPress={1000}
       confirmGood={false}
       colors={theme.palette.json}
       viewOnly={viewOnly}

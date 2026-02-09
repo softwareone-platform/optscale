@@ -78,4 +78,6 @@ spec:
           value: {{ $config.env.finops_in_practice_portal_overview }}
         - name: VITE_BILLING_INTEGRATION
           value: {{ $config.env.billing_integration }}
+        - name: VITE_APP_THEME
+          value: {{ $config.env.app_theme }}
 {{ include "ready_probe" $config | indent 8 }}

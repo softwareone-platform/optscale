@@ -28,7 +28,7 @@ const RegionExpensesMap = ({ markers, defaultZoom, defaultCenter, startDateTimes
           <InlineSeverityAlert messageId="googleMapsIsNotConfigured" />
         </div>
       )}
-      <div style={{ height: `${REGION_EXPENSES_HEIGHT}px`, width: "100%" }}>
+      <div data-testid={"google-map-wrapper"} style={{ height: `${REGION_EXPENSES_HEIGHT}px`, width: "100%" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key }}
           defaultCenter={defaultCenter}

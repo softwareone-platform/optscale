@@ -82,7 +82,10 @@
     "vite-tsconfig-paths": "5.1.4"
   },
   "scripts": {
+    "copy:translations": "node copy-translations.js",
+    "prestart": "pnpm copy:translations",
     "start": "vite",
+    "prestart:ci": "pnpm copy:translations",
     "start:ci": "pnpm install --frozen-lockfile --ignore-scripts && pnpm start",
     "dev": "vite",
     "build": "vite build",

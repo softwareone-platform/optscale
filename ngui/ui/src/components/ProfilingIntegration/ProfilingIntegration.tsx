@@ -12,6 +12,7 @@ import { ProfilingIntegrationModalContext } from "contexts/ProfilingIntegrationM
 import { ML_METRICS, ML_TASKS, PYPI_OPTSCALE_ARCEE, isProduction } from "urls";
 import { isEmptyArray } from "utils/arrays";
 import { SPACING_2 } from "utils/layouts";
+import { IntlFormatValues } from "utils/types";
 
 type ProfilingIntegrationProps = {
   profilingToken: string;
@@ -33,7 +34,7 @@ type MethodUsageProps = {
 };
 
 type MethodDescriptionProps = {
-  descriptionMessage: { id: string; values?: Record<string, unknown> };
+  descriptionMessage: { id: string; values?: IntlFormatValues };
   parameterMessageIds?: string[];
   method: string;
   example?: string;

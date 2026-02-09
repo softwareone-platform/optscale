@@ -25,6 +25,7 @@ import ReservedInstances from "containers/RecommendationsOverviewContainer/recom
 import RightsizingInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingInstances";
 import RightsizingRdsInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingRdsInstances";
 import ShortLivingInstances from "containers/RecommendationsOverviewContainer/recommendations/ShortLivingInstances";
+import SnapshotsWithNonUsedImages from "containers/RecommendationsOverviewContainer/recommendations/SnapshotsWithNonUsedImages";
 import VolumesNotAttachedForLongTime from "containers/RecommendationsOverviewContainer/recommendations/VolumesNotAttachedForLongTime";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 
@@ -42,6 +43,7 @@ export const useOptscaleRecommendations = () => {
       RightsizingRdsInstances,
       RightsizingInstances,
       ReservedInstances,
+      ObsoleteImages,
       ObsoleteSnapshots,
       ObsoleteSnapshotChains,
       ObsoleteIps,
@@ -59,7 +61,7 @@ export const useOptscaleRecommendations = () => {
       AbandonedInstances,
       AbandonedLoadBalancers,
       PublicS3Buckets,
-      ObsoleteImages,
+      SnapshotsWithNonUsedImages,
       AbandonedImages,
       ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
     ];
