@@ -1,6 +1,6 @@
 import googleAnalytics from "@analytics/google-analytics";
 import Analytics from "analytics";
-import { isDemo, isProduction } from "@main/urls";
+import { isDemo, isProduction } from "urls";
 import { initialize } from "utils/hotjar";
 import { getEnvironmentVariable } from "./env";
 import { isEmptyObject } from "./objects";
