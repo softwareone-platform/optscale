@@ -49,6 +49,12 @@ class InstanceSubscription extends BaseRecommendation {
 
   descriptionMessageId = "instanceSubscriptionDescription";
 
+  get descriptionMessageValues() {
+    const { days_threshold: daysThreshold } = this.options;
+
+    return { daysThreshold };
+  }
+
   emptyMessageId = "noInstanceSubscription";
 
   services = [ALIBABA_ECS];
