@@ -1,40 +1,46 @@
+import base64
 import enum
+import hashlib
 import io
 import json
 import logging
 import os
 import re
-import base64
+import unicodedata
 import uuid
-import hashlib
-import cryptocode
-from urllib.parse import urlencode
 from concurrent.futures import ThreadPoolExecutor
-from cryptography.fernet import Fernet
 from datetime import datetime
 from decimal import Decimal
 from string import ascii_letters, digits
+from urllib.parse import urlencode
 
+import cryptocode
 import json_excel_converter.xlsx.formats as ExcelFormats
 import netaddr
 from bson import ObjectId
-from optscale_client.config_client.client import Client as ConfigClient
+from cryptography.fernet import Fernet
 from json_excel_converter import Converter as ExcelConverter
-from json_excel_converter.xlsx import (Writer as ExcelWriter,
-                                       DEFAULT_COLUMN_WIDTH)
+from json_excel_converter.xlsx import Writer as ExcelWriter, DEFAULT_COLUMN_WIDTH
+from opentelemetry import trace
+from pymongo.errors import BulkWriteError
 from requests import HTTPError
+from retrying import retry
 from sqlalchemy.exc import InternalError, DatabaseError
 
-from tools.optscale_exceptions.common_exc import (
-    WrongArgumentsException, NotFoundException, ConflictException,
-    FailedDependency, ForbiddenException, TimeoutException, UnauthorizedException)
-from tools.optscale_exceptions.http_exc import OptHTTPError
-from pymongo.errors import BulkWriteError
-from tools.cloud_adapter.exceptions import CloudAdapterBaseException
-from tools.optscale_time import utcfromtimestamp, utcnow
+from optscale_client.config_client.client import Client as ConfigClient
 from rest_api.rest_api_server.exceptions import Err
-from retrying import retry
-import unicodedata
+from tools.cloud_adapter.exceptions import CloudAdapterBaseException
+from tools.optscale_exceptions.common_exc import (
+    WrongArgumentsException,
+    NotFoundException,
+    ConflictException,
+    FailedDependency,
+    ForbiddenException,
+    TimeoutException,
+    UnauthorizedException,
+)
+from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_time import utcfromtimestamp, utcnow
 
 MAX_32_INT = 2 ** 31 - 1
 MAX_64_INT = 2 ** 63 - 1
@@ -601,3 +607,12 @@ def handle_http_exc(func):
 def timestamp_to_day_start(timestamp) -> datetime:
     return utcfromtimestamp(timestamp).replace(
         hour=0, minute=0, second=0, microsecond=0)
+
+
+def get_trace_headers():
+    ctx = trace.get_current_span().get_span_context()
+    if not ctx.is_valid:
+        return {}
+    tid = format(ctx.trace_id, "032x")
+    sid = format(ctx.span_id, "016x")
+    return {"x-trace-id": tid, "traceparent": f"00-{tid}-{sid}-01"}

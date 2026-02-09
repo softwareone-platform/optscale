@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import enum
 import functools
@@ -270,3 +271,20 @@ class OpenTelemetryConfig:
             return
 
         SQLAlchemyInstrumentor().instrument(engine=engine, enable_commenter=True)
+
+
+def setup_otel_config() -> OpenTelemetryConfig:
+    otel_config = OpenTelemetryConfig()
+
+    if otel_config.is_enabled():
+        otel_config.setup_open_telemetry()
+
+        otel_config.instrument_logging()
+        otel_config.instrument_threading()
+        otel_config.instrument_asyncio()
+        otel_config.instrument_tornado()
+        otel_config.instrument_requests()
+
+        atexit.register(otel_config.shutdown)
+
+    return otel_config

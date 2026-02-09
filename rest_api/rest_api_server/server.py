@@ -1,5 +1,4 @@
 import argparse
-import atexit
 import logging
 import os
 import tarfile
@@ -14,10 +13,9 @@ import rest_api.rest_api_server.handlers.v1 as h_v1
 import rest_api.rest_api_server.handlers.v2 as h_v2
 from rest_api.rest_api_server.constants import urls_v2
 from rest_api.rest_api_server.handlers.v1.base import DefaultHandler
-from rest_api.rest_api_server.handlers.v1.swagger import \
-    SwaggerStaticFileHandler
+from rest_api.rest_api_server.handlers.v1.swagger import SwaggerStaticFileHandler
 from rest_api.rest_api_server.models.db_factory import DBFactory, DBType
-from rest_api.rest_api_server.otel_config import OpenTelemetryConfig
+from rest_api.rest_api_server.otel_config import setup_otel_config
 
 DEFAULT_PORT = 8999
 DEFAULT_ETCD_HOST = 'etcd'
@@ -491,7 +489,7 @@ def make_app(db_type, etcd_host, etcd_port, wait=False, otel_config=None):
     else:
         db.create_schema()
 
-    if otel_config is not None:
+    if otel_config and otel_config.is_enabled():
         otel_config.instrument_sqlalchemy(db.engine)
 
     handler_kwargs = {
@@ -517,14 +515,7 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    otel_config = OpenTelemetryConfig()
-    otel_config.setup_open_telemetry()
-
-    otel_config.instrument_logging()
-    otel_config.instrument_threading()
-    otel_config.instrument_asyncio()
-    otel_config.instrument_tornado()
-    otel_config.instrument_requests()
+    otel_config = setup_otel_config()
 
     etcd_host = os.environ.get('HX_ETCD_HOST', DEFAULT_ETCD_HOST)
     etcd_port = os.environ.get('HX_ETCD_PORT', DEFAULT_ETCD_PORT)
@@ -534,7 +525,13 @@ def main():
     parser.add_argument('--etcdport', type=int, default=etcd_port)
     args = parser.parse_args()
 
-    app = make_app(DBType.MySQL, args.etcdhost, args.etcdport, wait=True, otel_config=otel_config)
+    app = make_app(
+        db_type=DBType.MySQL,
+        etcd_host=args.etcdhost,
+        etcd_port=args.etcdport,
+        wait=True,
+        otel_config=otel_config,
+    )
     try:
         with tarfile.open(PRESET_TAR_XZ, 'r:xz') as f:
             f.extract(
@@ -544,7 +541,6 @@ def main():
         LOG.exception(exc)
     LOG.info("start listening on port %d", DEFAULT_PORT)
 
-    atexit.register(otel_config.shutdown)
     app.listen(DEFAULT_PORT, decompress_request=True)
     tornado.ioloop.IOLoop.instance().start()
 
