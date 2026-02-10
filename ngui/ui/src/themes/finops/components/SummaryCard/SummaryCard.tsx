@@ -82,7 +82,11 @@ const CardLayout = forwardRef<HTMLDivElement, CardLayoutProps>(
   ({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
     const { classes, cx } = useStyles({ color });
     const cardClasses = cx(classes.root, clickable ? classes.button : "");
-    const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
+    const cardContentClasses = cx(
+      classes.content,
+      type !== "primary" ? classes.contentWithIcon : "",
+      clickable ? classes.contentWithIcon : ""
+    );
 
     return (
       <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
@@ -95,7 +99,7 @@ const CardLayout = forwardRef<HTMLDivElement, CardLayoutProps>(
             )}
             {children}
             {clickable && (
-              <Box position="absolute" bottom={"25px"} right={"14px"}>
+              <Box position="absolute" bottom={"25px"} right={"12px"}>
                 <ArrowForwardIosIcon />
               </Box>
             )}

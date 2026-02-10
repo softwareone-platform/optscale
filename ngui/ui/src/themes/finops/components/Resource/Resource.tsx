@@ -12,7 +12,9 @@ const Resource = (props: ResourceProps) => (
         ...MPT_BOX_WHITE_SHADOW_RADIUS_2,
         margin: MPT_SPACING_2,
         paddingTop: MPT_SPACING_1
-      }
+      },
+      "& h4": { marginBottom: MPT_SPACING_2 },
+      "& div.MuiTypography-body2": { marginBottom: MPT_SPACING_1 }
     }}
   >
     <ResourceBase {...props} />

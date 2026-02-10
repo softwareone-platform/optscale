@@ -657,6 +657,15 @@ const getThemeConfig = (settings = {}) => {
           })
         }
       },
+      MuiFormLabel: {
+        styleOverrides: {
+          root: {
+            "&.MuiFormLabel-colorPrimary": {
+              color: MPT_BRAND_TYPE
+            }
+          }
+        }
+      },
       MuiIconButton: {
         defaultProps: {
           size: "small"
