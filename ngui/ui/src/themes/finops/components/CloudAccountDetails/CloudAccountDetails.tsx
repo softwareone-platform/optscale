@@ -247,7 +247,7 @@ const Summary = ({ lastMonthCost, cost, forecast, isLoading }) => {
           }
         ];
 
-  return <SummaryGrid summaryData={getSummaryData()} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={getSummaryData()} />;
 };
 
 const Tabs = ({

@@ -5,6 +5,7 @@ const useStyles = makeStyles()(() => ({
   summaryGridWrapper: {
     margin: 0,
     marginBottom: MPT_SPACING_2,
+    marginTop: MPT_SPACING_1,
     ".MuiPaper-rounded": {
       borderRadius: MPT_SPACING_1,
       textAlign: "left",
