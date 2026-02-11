@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { NetworkStatus } from "@apollo/client";
 import { useInvitationsQuery } from "graphql/__generated__/hooks/restapi";
-import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { isEmptyArray } from "utils/arrays";
 import { Error, Loading } from "../../common";
-import ProceedToApplication from "../ProceedToApplication";
 import SetupOrganization from "../SetupOrganization/StepContainer";
 import AcceptInvitations from "./AcceptInvitations";
 
 const StepContainer = () => {
   const [proceedToNext, setProceedToNext] = useState(false);
+
   const {
     data: invitations,
     networkStatus: getInvitationsNetworkStatus,
@@ -19,7 +18,6 @@ const StepContainer = () => {
     fetchPolicy: "no-cache",
     notifyOnNetworkStatusChange: true
   });
-  const isOrganizationCreationAllowed = useIsFeatureEnabled("organization_creation_allowed");
 
   const onRefetch = ({ onSuccess, onError } = {}) => {
     refetchInvitations()
@@ -52,11 +50,7 @@ const StepContainer = () => {
   }
 
   if (proceedToNext) {
-    return isOrganizationCreationAllowed ? (
-      <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />
-    ) : (
-      <ProceedToApplication />
-    );
+    return <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />;
   }
 
   const hasInvitations = !isEmptyArray(invitations?.invitations ?? []);
@@ -73,11 +67,7 @@ const StepContainer = () => {
     );
   }
 
-  return isOrganizationCreationAllowed ? (
-    <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />
-  ) : (
-    <ProceedToApplication />
-  );
+  return <SetupOrganization isInvitationsRefetching={getInvitationsRefetching} refetchInvitations={onRefetch} />;
 };
 
 export default StepContainer;

@@ -1,9 +1,11 @@
 import { Box, Stack } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { FormattedMessage, useIntl } from "react-intl";
+import ButtonLoader from "components/ButtonLoader";
 import Input from "components/Input";
 import QuestionMark from "components/QuestionMark";
 import { DEFAULT_MAX_INPUT_LENGTH } from "utils/constants";
+import type { AwsBillingBucketProps } from "../types";
 
 export const FIELD_NAMES = Object.freeze({
   BUCKET_NAME: "bucketName",
@@ -14,7 +16,7 @@ export const FIELD_NAMES = Object.freeze({
 
 const DEFAULT_PATH_PREFIX = "reports";
 
-const AwsBillingBucket = () => {
+const AwsBillingBucket = ({ showRoleButton }: AwsBillingBucketProps) => {
   const intl = useIntl();
 
   const {
@@ -72,6 +74,19 @@ const AwsBillingBucket = () => {
             })}
           />
         </Box>
+        {showRoleButton && (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <ButtonLoader
+              sx={{ height: 40, position: "relative", top: 2 }}
+              messageId="showRole"
+              size="medium"
+              color="primary"
+              disabled={showRoleButton.isDisabled}
+              isLoading={showRoleButton.isLoading}
+              onClick={showRoleButton.onClick}
+            />
+          </Box>
+        )}
       </Stack>
       <Input
         required
@@ -94,6 +109,25 @@ const AwsBillingBucket = () => {
             message: intl.formatMessage(
               { id: "maxLength" },
               { inputName: intl.formatMessage({ id: "exportPathPrefix" }), max: DEFAULT_MAX_INPUT_LENGTH }
+            )
+          }
+        })}
+      />
+      <Input
+        dataTestId="input_region_name"
+        key={FIELD_NAMES.REGION_NAME}
+        error={!!errors[FIELD_NAMES.REGION_NAME]}
+        helperText={errors[FIELD_NAMES.REGION_NAME] && errors[FIELD_NAMES.REGION_NAME].message}
+        InputProps={{
+          endAdornment: <QuestionMark messageId="exportRegionNameTooltip" dataTestId="qmark_region_name" />
+        }}
+        label={<FormattedMessage id="exportRegionName" />}
+        {...register(FIELD_NAMES.REGION_NAME, {
+          maxLength: {
+            value: DEFAULT_MAX_INPUT_LENGTH,
+            message: intl.formatMessage(
+              { id: "maxLength" },
+              { inputName: intl.formatMessage({ id: "exportRegionName" }), max: DEFAULT_MAX_INPUT_LENGTH }
             )
           }
         })}

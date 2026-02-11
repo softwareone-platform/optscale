@@ -14,8 +14,6 @@ import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { DATE_RANGE_TYPE, EXPENSES_MAP_TYPES } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { updateSearchParams } from "utils/network";
-import LabelColon from "../../shared/components/LabelColon/LabelColon";
-import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
 
 const actionBarDefinition = {
   title: {
@@ -37,7 +35,7 @@ const ExpensesMap = () => {
     },
     {
       title: EXPENSES_MAP_TYPES.TRAFFIC,
-      dataTestId: `tab_${EXPENSES_MAP_TYPES.TRAFFIC}`,
+      dataTestId: `tab_${EXPENSES_MAP_TYPES.TRAFFI}`,
       node: (
         <Mocked mock={<TrafficExpensesMocked />}>
           <TrafficExpensesContainer />
@@ -60,38 +58,33 @@ const ExpensesMap = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Box className={"MTPBoxShadow"}>
-          <TabsWrapper
-            tabsProps={{
-              name: "expensesMapsTab",
-              queryTabName: "type",
-              tabs,
-              defaultTab: EXPENSES_MAP_TYPES.REGION
-            }}
-            headerSx={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: {
-                sm: "row",
-                xs: "column"
-              }
-            }}
-            headerAdornment={
-              <Box display="flex" alignItems="center" sx={{ py: { xs: theme.spacing(SPACING_2), sm: 0 } }}>
-                <ResponsiveStack>
-                  <LabelColon messageId={"dateRange"} />
-                  <RangePickerFormContainer
-                    onApply={applyDates}
-                    initialStartDateValue={startDateTimestamp}
-                    initialEndDateValue={endDateTimestamp}
-                    rangeType={DATE_RANGE_TYPE.EXPENSES}
-                    definedRanges={getBasicRangesSet()}
-                  />
-                </ResponsiveStack>
-              </Box>
+        <TabsWrapper
+          tabsProps={{
+            name: "expensesMapsTab",
+            queryTabName: "type",
+            tabs,
+            defaultTab: EXPENSES_MAP_TYPES.REGION
+          }}
+          headerSx={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: {
+              sm: "row",
+              xs: "column"
             }
-          />
-        </Box>
+          }}
+          headerAdornment={
+            <Box display="flex" alignItems="center" sx={{ py: { xs: theme.spacing(SPACING_2), sm: 0 } }}>
+              <RangePickerFormContainer
+                onApply={applyDates}
+                initialStartDateValue={startDateTimestamp}
+                initialEndDateValue={endDateTimestamp}
+                rangeType={DATE_RANGE_TYPE.EXPENSES}
+                definedRanges={getBasicRangesSet()}
+              />
+            </Box>
+          }
+        />
       </PageContentWrapper>
     </>
   );

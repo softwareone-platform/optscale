@@ -1,27 +1,24 @@
-import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { MPT_SPACING_2, MPT_SPACING_3 } from "../../../utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 
 const ExpensesBreakdownLayoutWrapper = ({ top, center: { left: centerLeft, right: centerRight }, bottom }) => (
-  <Grid container>
+  <Grid container direction="row" justifyContent="space-between" spacing={SPACING_2}>
     {top}
-    {centerLeft && (
-      <Grid item xs={12} md={centerRight ? 9 : 12} paddingTop={MPT_SPACING_2}>
-        <Box className={"MTPBoxShadow"} height={"100%"}>
+    <Grid item container spacing={SPACING_2}>
+      {centerLeft && (
+        <Grid item xs={12} md={centerRight ? 9 : 12}>
           {centerLeft}
-        </Box>
-      </Grid>
-    )}
-    {centerRight ? (
-      <Grid item paddingLeft={MPT_SPACING_3} paddingTop={MPT_SPACING_2} xs={12} md={3}>
-        <Box className={"MTPBoxShadow"} height={"100%"}>
+        </Grid>
+      )}
+      {centerRight ? (
+        <Grid item xs={12} md={3}>
           {centerRight}
-        </Box>
-      </Grid>
-    ) : null}
+        </Grid>
+      ) : null}
+    </Grid>
     {bottom && (
-      <Grid item xs={12} paddingTop={MPT_SPACING_3}>
-        <Box className={"MTPBoxShadow"}>{bottom}</Box>
+      <Grid item xs={12}>
+        {bottom}
       </Grid>
     )}
   </Grid>

@@ -49,31 +49,6 @@ export default (() => {
     }
   };
 
-  // Check translations for forbidden strings
-  const checkForbiddenStrings = (obj: Record<string, unknown>, forbidden = ["OptScale", "optScale"], path = ""): string[] => {
-    const issues: string[] = [];
-
-    Object.entries(obj).forEach(([key, value]) => {
-      const currentPath = path ? `${path}.${key}` : key;
-
-      if (typeof value === "string") {
-        forbidden.forEach((term) => {
-          if (value.includes(term)) {
-            issues.push(`Found forbidden term "${term}" in translation at path: ${currentPath}`);
-          }
-        });
-      } else if (value && typeof value === "object" && !Array.isArray(value)) {
-        issues.push(...checkForbiddenStrings(value as Record<string, unknown>, forbidden, currentPath));
-      }
-    });
-    return issues;
-  };
-
-  const forbiddenIssues = checkForbiddenStrings(messagesEnUS);
-  if (forbiddenIssues.length > 0) {
-    throw new Error(`Translation validation failed:\n${forbiddenIssues.join("\n")}`);
-  }
-
   const messagesMap = {
     [DEFAULT_LOCALE]: messagesEnUS
   };

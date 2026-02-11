@@ -1,17 +1,16 @@
 import SvgIcon from "@mui/material/SvgIcon";
-import { MPT_BRAND_PRIMARY } from "../../utils/layouts";
 
 const PoolLimitIcon = (props) => (
   <SvgIcon {...props} viewBox="0 0 52.34043 52.34043">
     <>
-      <circle fill={MPT_BRAND_PRIMARY} cx="26.17021" cy="26.17021" r="26.17021" />
+      <circle fill="#4ab4ee" cx="26.17021" cy="26.17021" r="26.17021" />
       <path
-        fill={MPT_BRAND_PRIMARY}
+        fill="#4ab4ee"
         d="M26.361,14.44688a1.67693,1.67693,0,0,0-1.67473,1.67473V36.87547a1.67474,1.67474,0,0,0,3.34947,0V16.12161A1.67694,1.67694,0,0,0,26.361,14.44688Z"
         transform="translate(0 0.00001)"
       />
       <path
-        fill={MPT_BRAND_PRIMARY}
+        fill="#4ab4ee"
         d="M33.66954,14.44688a1.67693,1.67693,0,0,0-1.67473,1.67473V36.87547a1.67474,1.67474,0,0,0,3.34947,0V16.12161A1.67694,1.67694,0,0,0,33.66954,14.44688Z"
         transform="translate(0 0.00001)"
       />
@@ -26,12 +25,12 @@ const PoolLimitIcon = (props) => (
         transform="translate(0 0.00001)"
       />
       <path
-        fill={MPT_BRAND_PRIMARY}
+        fill="#4ab4ee"
         d="M26.39733,27.21605a3.35083,3.35083,0,1,0,3.35078,3.35078A3.35082,3.35082,0,0,0,26.39733,27.21605Z"
         transform="translate(0 0.00001)"
       />
       <path
-        fill={MPT_BRAND_PRIMARY}
+        fill="#4ab4ee"
         d="M33.70579,17.74313a3.35083,3.35083,0,1,0,3.35078,3.35078A3.35081,3.35081,0,0,0,33.70579,17.74313Z"
         transform="translate(0 0.00001)"
       />
@@ -51,7 +50,7 @@ const PoolLimitIcon = (props) => (
         transform="translate(0 0.00001)"
       />
       <path
-        fill={MPT_BRAND_PRIMARY}
+        fill="#4ab4ee"
         d="M19.16126,20.2014A3.35083,3.35083,0,1,0,22.512,23.55218,3.35081,3.35081,0,0,0,19.16126,20.2014Z"
         transform="translate(0 0.00001)"
       />

@@ -1,11 +1,11 @@
-import { ReactNode, useState } from "react";
+import React, { ReactNode, useState } from "react";
+import { Stack } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import ButtonGroup from "components/ButtonGroup";
-import { MPT_SPACING_2 } from "utils/layouts";
 import {
   AUTHENTICATION_TYPES,
   authenticationTypes,
@@ -66,8 +66,8 @@ export const useAuthenticationType = () => {
 };
 
 export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticationType }: AuthenticationTypeSelectorType) => (
-  <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
-    <Typography minWidth={110} sx={{ mr: 1, fontWeight: "bold" }}>
+  <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+    <Typography>
       <FormattedMessage id="authentication" />{" "}
     </Typography>
     <ButtonGroup
@@ -80,9 +80,8 @@ export const AuthenticationTypeSelector = ({ authenticationType, setAuthenticati
       activeButtonId={authenticationType}
       activeButtonIndex={undefined}
       fullWidth={false}
-      onButtonClick={undefined}
     />
-  </Box>
+  </Stack>
 );
 
 export const getAwsConnectionTypeDescriptions = (authenticationType: AuthenticationType) =>

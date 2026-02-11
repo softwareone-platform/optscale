@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,10 +14,6 @@ const AlertDialog = ({ show, header, message, buttonMessageId, onClose, dataTest
     setOpen(false);
     if (typeof onClose === "function") onClose();
   };
-
-  useEffect(() => {
-    setOpen(show);
-  }, [show]);
 
   const { classes } = useStyles();
 

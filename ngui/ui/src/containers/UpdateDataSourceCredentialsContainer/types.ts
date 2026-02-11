@@ -1,14 +1,9 @@
 import { TODO } from "utils/types";
 
-export type DataSourceProperties = {
-  accountId?: string;
-};
-
 export type UpdateDataSourceCredentialsContainerProps = {
   id: string;
   type: string;
   config: TODO;
-  dataSourceProps: DataSourceProperties;
   closeSideModal: () => void;
 };
 

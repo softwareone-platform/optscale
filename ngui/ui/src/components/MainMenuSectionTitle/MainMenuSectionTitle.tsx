@@ -2,13 +2,12 @@ import { ListItem, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import useStyles from "./MainMenuSectionTitle.styles";
 
-const MainMenuSectionTitle = ({ messageId, icon: Icon = null }) => {
+const MainMenuSectionTitle = ({ messageId }) => {
   const { classes } = useStyles();
 
   return (
     <ListItem className={classes.textWrapper}>
-      <Typography className={classes.text}>
-        {Icon && <Icon className={classes.titleIcon} />}
+      <Typography variant="caption" className={classes.text}>
         <FormattedMessage id={messageId} />
       </Typography>
     </ListItem>

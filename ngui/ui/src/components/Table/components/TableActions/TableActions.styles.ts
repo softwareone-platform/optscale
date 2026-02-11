@@ -15,19 +15,6 @@ const useStyles = makeStyles()((theme) => ({
         marginRight: theme.spacing(1)
       }
     },
-    ".MuiOutlinedInput-root": {
-      boxShadow: " inset 0 0 5px rgba(0, 0, 0, 0.2)"
-    },
-    ".MuiOutlinedInput-root svg": {
-      fill: "black"
-    },
-    ".MuiBadge-root > svg": {
-      fill: "black"
-    },
-    ".MuiOutlinedInput-notchedOutline": {},
-    ".MuiInputBase-input": {
-      fontSize: "14px"
-    },
     [theme.breakpoints.down("md")]: {
       paddingBottom: theme.spacing(1)
     }

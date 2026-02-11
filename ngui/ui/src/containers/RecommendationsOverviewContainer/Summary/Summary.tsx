@@ -246,7 +246,7 @@ const Summary = ({ totalSaving, lastCompleted, lastRun, nextRun, riSpExpensesSum
     s3DuplicateFinderCheckCardDefinition
   ];
 
-  return <SummaryGrid summaryData={summaryData} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={summaryData} />;
 };
 
 export default Summary;
