@@ -13,7 +13,7 @@ docker run -i --rm ${TEST_IMAGE} sh -c "cd ${WORKDIR} && pnpm check"
 echo "<<<Linter"
 
 echo "Check code quality UI >>>"
-docker run -i --rm ${TEST_IMAGE} sh -c "cd ${UI_DIR} && pnpm check:all"
+docker run -i --rm -e VITE_APP_THEME=finops ${TEST_IMAGE} sh -c "cd ${UI_DIR} && pnpm check:all"
 echo "<<<Check code quality UI "
 
 echo "Translations order test>>>"
