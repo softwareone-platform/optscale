@@ -9,3 +9,4 @@ export class RiSpCoveragePage extends BasePage {
     this.heading = this.main.locator('//h1[.="RI/SP coverage"]');
   }
 }
+
