@@ -101,7 +101,6 @@ const AdvancedDataSourceDetails = ({
           items={
             <>
               <KeyValueLabel
-                variant="property"
                 key="lastImportAt"
                 keyMessageId="lastBillingReportProcessed"
                 value={
@@ -115,7 +114,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_billing_report_processed", value: "value_last_billing_report_processed" }}
               />
               <KeyValueLabel
-                variant="property"
                 key="lastImportAttemptAt"
                 keyMessageId="lastBillingReportAttempt"
                 value={
@@ -138,7 +136,6 @@ const AdvancedDataSourceDetails = ({
               />
               {lastImportAttemptError && lastImportAt < lastImportAttemptAt ? (
                 <KeyValueLabel
-                  variant="property"
                   key="reason"
                   keyMessageId="reason"
                   value={<SlicedText limit={50} text={lastImportAttemptError} />}
@@ -155,7 +152,6 @@ const AdvancedDataSourceDetails = ({
           items={
             <>
               <KeyValueLabel
-                variant="property"
                 key="lastMetricsRetrieval"
                 keyMessageId="lastMetricsRetrieval"
                 value={
@@ -169,7 +165,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_getting_metrics_at", value: "value_last_getting_metrics_at" }}
               />
               <KeyValueLabel
-                variant="property"
                 key="lastMetricsRetrievalAttempt"
                 keyMessageId="lastMetricsRetrievalAttempt"
                 value={
@@ -183,7 +178,6 @@ const AdvancedDataSourceDetails = ({
                 dataTestIds={{ key: "p_last_getting_metrics_attempt_at", value: "value_last_getting_metrics_attempt_at" }}
               />
               <KeyValueLabel
-                variant="property"
                 key="status"
                 keyMessageId="status"
                 value={
@@ -197,7 +191,6 @@ const AdvancedDataSourceDetails = ({
               />
               {lastGettingMetricAttemptError && lastMetricsRetrieval < lastMetricsRetrievalAttempt ? (
                 <KeyValueLabel
-                  variant="property"
                   key="reason"
                   keyMessageId="reason"
                   value={<SlicedText limit={50} text={lastGettingMetricAttemptError} />}

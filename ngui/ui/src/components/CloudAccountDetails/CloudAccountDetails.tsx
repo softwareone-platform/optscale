@@ -1,7 +1,7 @@
 import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import PowerOffOutlinedIcon from "@mui/icons-material/PowerOffOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Box, Link } from "@mui/material";
+import { Link } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { FormattedMessage } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
@@ -42,7 +42,7 @@ import {
   GCP_TENANT
 } from "utils/constants";
 import { summarizeChildrenDetails } from "utils/dataSources";
-import { MPT_SPACING_3, SPACING_2 } from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 import { getPercentageChangeModule, round } from "utils/math";
 
 const {
@@ -53,7 +53,7 @@ const {
   PRICING: PRICING_TAB
 } = CLOUD_ACCOUNT_DETAILS_PAGE_TABS;
 
-const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, lastImportAt, isLoading }) => {
+const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoading }) => {
   const openSideModal = useOpenSideModal();
 
   // TODO: initial values from useDataSources are default ones, which means logo is empty, Icon is null, JSX error in console.
@@ -127,7 +127,7 @@ const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, last
           dataTestId: "btn_update_data_source_credentials_modal",
           type: "button",
           isLoading,
-          action: () => openSideModal(UpdateDataSourceCredentialsModal, { name, id, type, config, dataSourceProps }),
+          action: () => openSideModal(UpdateDataSourceCredentialsModal, { name, id, type, config }),
           requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
           disabled: parentId,
           tooltip: {
@@ -252,7 +252,7 @@ const Summary = ({ lastMonthCost, cost, forecast, isLoading }) => {
           }
         ];
 
-  return <SummaryGrid summaryData={getSummaryData()} summaryStyle="customBox" />;
+  return <SummaryGrid summaryData={getSummaryData()} />;
 };
 
 const Tabs = ({
@@ -328,7 +328,6 @@ const Tabs = ({
 
   return (
     <TabsWrapper
-      headerSx={{ margin: `-${MPT_SPACING_3} -${MPT_SPACING_3} 0`, padding: `0 ${MPT_SPACING_3}` }}
       isLoading={isLoading}
       tabsProps={{
         tabs,
@@ -382,7 +381,6 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
         name={name}
         parentId={parentId}
         config={config}
-        dataSourceProps={{ accountId }}
         lastImportAt={lastImportAt}
         isLoading={isLoading}
       />
@@ -397,28 +395,26 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Box className={"MTPBoxShadow"}>
-              <Tabs
-                id={id}
-                accountId={accountId}
-                name={name}
-                type={type}
-                parentId={parentId}
-                createdAt={createdAt}
-                lastImportAt={lastImportAt}
-                lastImportAttemptAt={lastImportAttemptAt}
-                lastImportAttemptError={lastImportAttemptError}
-                lastMetricsRetrieval={lastMetricsRetrieval}
-                lastMetricsRetrievalAttempt={lastMetricsRetrievalAttempt}
-                lastGettingMetricAttemptError={lastGettingMetricAttemptError}
-                discoveryInfos={discoveryInfos}
-                config={config}
-                isLoading={isLoading}
-                isTenant={isTenant}
-                isChildSubscription={isChildSubscription}
-                isSubscription={isSubscription}
-              />
-            </Box>
+            <Tabs
+              id={id}
+              accountId={accountId}
+              name={name}
+              type={type}
+              parentId={parentId}
+              createdAt={createdAt}
+              lastImportAt={lastImportAt}
+              lastImportAttemptAt={lastImportAttemptAt}
+              lastImportAttemptError={lastImportAttemptError}
+              lastMetricsRetrieval={lastMetricsRetrieval}
+              lastMetricsRetrievalAttempt={lastMetricsRetrievalAttempt}
+              lastGettingMetricAttemptError={lastGettingMetricAttemptError}
+              discoveryInfos={discoveryInfos}
+              config={config}
+              isLoading={isLoading}
+              isTenant={isTenant}
+              isChildSubscription={isChildSubscription}
+              isSubscription={isSubscription}
+            />
           </Grid>
         </Grid>
       </PageContentWrapper>

@@ -1,8 +1,5 @@
 import { forwardRef } from "react";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import CancelIcon from "@mui/icons-material/Cancel";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
+import TouchAppIcon from "@mui/icons-material/TouchApp";
 import { Box, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -17,39 +14,18 @@ import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import useStyles from "./SummaryCard.styles";
 import SummaryCardPdf from "./SummaryCardPdf";
 
-export const SUMMARY_CARD_ICONS = Object.freeze({
-  PRIMARY: "primary",
-  SUCCESS: "success",
-  WARNING: "warning",
-  ERROR: "error"
-});
-
-const getCardIcon = (cardType: string, classes) =>
-  ({
-    [SUMMARY_CARD_ICONS.PRIMARY]: "",
-    [SUMMARY_CARD_ICONS.SUCCESS]: <CheckCircleIcon className={classes.icon} />,
-    [SUMMARY_CARD_ICONS.WARNING]: <ErrorIcon className={classes.icon} />,
-    [SUMMARY_CARD_ICONS.ERROR]: <CancelIcon className={classes.icon} />
-  })[cardType];
-
-const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, type, ...rest }, ref) => {
+const CardLayout = forwardRef(({ children, color, clickable, onClick, cardTestId, ...rest }, ref) => {
   const { classes, cx } = useStyles(color);
   const cardClasses = cx(classes.root, clickable ? classes.button : "");
-  const cardContentClasses = cx(classes.content, type !== "primary" ? classes.contentWithIcon : "");
 
   return (
     <Card {...rest} elevation={0} data-test-id={cardTestId} className={cardClasses} onClick={onClick} ref={ref}>
-      <CardContent className={cardContentClasses}>
+      <CardContent className={classes.content}>
         <Box>
-          {type !== "primary" && (
-            <Box position="absolute" bottom={"0px"} right={"10px"} fontSize={"18px"}>
-              {getCardIcon(type, classes)}
-            </Box>
-          )}
           {children}
           {clickable && (
-            <Box position="absolute" bottom={"25px"} right={"6px"}>
-              <ArrowForwardIosIcon color={color} sx={{ opacity: 1 }} />
+            <Box position="absolute" bottom={0} right={0}>
+              <TouchAppIcon color="info" sx={{ opacity: 0.5 }} />
             </Box>
           )}
         </Box>
@@ -75,7 +51,8 @@ const SummaryCard = ({
 }) => {
   const theme = useTheme();
 
-  const themeColor = theme.palette[color].card;
+  const themeColor = theme.palette[color].main;
+
   const { currency } = useOrganizationInfo();
   const { cardTestId } = dataTestIds || {};
 
@@ -130,7 +107,7 @@ const SummaryCard = ({
               </Typography>
             </>
           ) : null}
-          <CardLayout clickable={clickable} cardTestId={cardTestId} onClick={cardClickHandler} color={themeColor} type={color}>
+          <CardLayout clickable={clickable} cardTestId={cardTestId} onClick={cardClickHandler} color={themeColor}>
             {customContent || (
               <SummaryCardContent value={value} caption={caption} dataTestIds={dataTestIds} icon={icon} help={help} />
             )}

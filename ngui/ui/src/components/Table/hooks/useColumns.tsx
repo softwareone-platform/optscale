@@ -82,7 +82,6 @@ const addSelectionColumn = (columns) => {
 export const useColumns = (defaultColumns, { withSelection }) =>
   useMemo(() => {
     let columns = [...defaultColumns];
-    columns = columns.filter((column) => column.hidden !== true);
 
     if (withSelection) {
       columns = addSelectionColumn(columns);

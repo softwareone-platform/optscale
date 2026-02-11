@@ -1,4 +1,4 @@
-// import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
+import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { BI_EXPORTS } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
 import integrations from "utils/routes/integrationsRoute";
@@ -11,8 +11,7 @@ class IntegrationsMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_integrations";
 
-  // MPT_TODO: disabled to match MPT figma designs
-  // icon = SyncAltOutlinedIcon;
+  icon = SyncAltOutlinedIcon;
 
   capability = OPTSCALE_CAPABILITY.FINOPS;
 

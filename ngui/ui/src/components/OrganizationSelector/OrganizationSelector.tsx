@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -8,10 +9,15 @@ import { useNavigate } from "react-router-dom";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
+import { CreateOrganizationModal } from "components/SideModalManager/SideModals";
+import { ORGANIZATION_SETUP_MODE } from "containers/InitializeContainer/constants";
+import { useIsAllowed } from "hooks/useAllowedActions";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
+import { useOpenSideModal } from "hooks/useOpenSideModal";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
+import { getEnvironmentVariable } from "utils/env";
 import { getOrganizationDisplayName } from "utils/organization";
-import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
 
@@ -25,24 +31,24 @@ const SELECTOR_SX = {
      */
     minWidth: 270,
     "& label": {
-      color: (theme) => theme.palette.info.main
+      color: (theme) => theme.palette.primary.main
     },
     "& div": {
-      color: (theme) => theme.palette.common.black,
+      color: (theme) => theme.palette.primary.main,
       "&.Mui-focused": {
         "& fieldset": {
-          borderColor: (theme) => theme.palette.info.main
+          borderColor: (theme) => theme.palette.primary.main
         }
       }
     },
     "& svg": {
-      color: (theme) => theme.palette.common.black
+      color: (theme) => theme.palette.primary.main
     },
     "& fieldset": {
-      borderColor: (theme) => theme.palette.info.main
+      borderColor: (theme) => theme.palette.primary.main
     },
     "&:hover fieldset": {
-      borderColor: (theme) => theme.palette.info.main
+      borderColor: (theme) => theme.palette.primary.main
     }
   }
 };
@@ -64,9 +70,8 @@ const OrganizationSelector = ({
   onChange,
   isLoading = false
 }: OrganizationSelectorProps) => {
-  // MPT_TODO: disabled to meet BDR requirements
-  // const {isDemo} = useOrganizationInfo();
-  // const openSideModal = useOpenSideModal();
+  const { isDemo } = useOrganizationInfo();
+  const openSideModal = useOpenSideModal();
   const navigate = useNavigate();
 
   const isDownSm = useIsDownMediaQuery("sm");
@@ -75,15 +80,15 @@ const OrganizationSelector = ({
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
 
-  // const isDeploymentAdmin = useIsAllowed({ requiredActions: ["DEPLOYMENT_ADMIN"] });
-  // const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
+  const isDeploymentAdmin = useIsAllowed({ requiredActions: ["DEPLOYMENT_ADMIN"] });
+  const organizationSetupMode = getEnvironmentVariable("VITE_ON_INITIALIZE_ORGANIZATION_SETUP_MODE");
 
-  // const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY || isDeploymentAdmin;
+  const isCreateOrganizationEnabled = organizationSetupMode !== ORGANIZATION_SETUP_MODE.INVITE_ONLY || isDeploymentAdmin;
 
   return (
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
-        <IconButton sx={{ color: MPT_BRAND_TYPE }} icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
+        <IconButton icon={<ExpandMoreOutlinedIcon />} onClick={handleOpen} />
       </Hidden>
       <Selector
         id="organization-selector"
@@ -135,7 +140,7 @@ const OrganizationSelector = ({
         >
           <FormattedMessage id="organizationsOverview" />
         </Button>
-        {/* {isCreateOrganizationEnabled && (
+        {isCreateOrganizationEnabled && (
           <Button
             icon={{
               IconComponent: AddOutlinedIcon
@@ -147,7 +152,7 @@ const OrganizationSelector = ({
           >
             <FormattedMessage id="createNewOrganization" />
           </Button>
-        )} */}
+        )}
       </Selector>
     </Box>
   );

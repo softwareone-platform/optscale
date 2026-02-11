@@ -4,9 +4,6 @@ const useStyles = makeStyles()((theme) => ({
   buttonMargin: {
     marginBottom: theme.spacing(1)
   },
-  normal: {
-    fontWeight: "normal"
-  },
   bold: {
     fontWeight: "bold"
   },

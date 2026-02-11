@@ -4,8 +4,6 @@ import { TAGS_RELATED_FILTERS } from "components/Filters/constants";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { FILTER_CONFIGS } from "components/Resources/filterConfigs";
 import { ANOMALY_TYPES, EXPIRING_BUDGET_POLICY, QUOTA_POLICY, RECURRING_BUDGET_POLICY, TAGGING_POLICY } from "utils/constants";
-import DividerHorizontal from "../../shared/components/DividerHorizontal/DividerHorizontal";
-import { MPT_SPACING_3 } from "../../utils/layouts";
 import { CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES } from "./constants";
 import {
   NameInput,
@@ -53,44 +51,30 @@ const CreateOrganizationConstraintForm = ({ onSubmit, types, navigateAway }) => 
   const typeSelected = watch(CREATE_ORGANIZATION_CONSTRAINT_FORM_FIELD_NAMES.TYPE);
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Box sx={{ width: { md: "50%" } }}>
+    <Box sx={{ width: { md: "50%" } }}>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <NameInput />
           {types.length > 1 && <TypeSelector types={types} />}
           {ANOMALY_TYPES[typeSelected] && (
             <>
-              <DividerHorizontal verticalSpacing={MPT_SPACING_3} noHorizontalSpacing />
               <EvaluationPeriodInput />
               <ThresholdInput />
             </>
           )}
-          {typeSelected === RECURRING_BUDGET_POLICY && (
-            <>
-              <DividerHorizontal verticalSpacing={MPT_SPACING_3} noHorizontalSpacing />
-              <MonthlyBudgetInput />
-            </>
-          )}
-          {typeSelected === EXPIRING_BUDGET_POLICY && (
-            <>
-              <DividerHorizontal verticalSpacing={MPT_SPACING_3} noHorizontalSpacing />
-              <TotalBudgetInput />
-            </>
-          )}
+          {typeSelected === RECURRING_BUDGET_POLICY && <MonthlyBudgetInput />}
+          {typeSelected === EXPIRING_BUDGET_POLICY && <TotalBudgetInput />}
           {(typeSelected === EXPIRING_BUDGET_POLICY || typeSelected === TAGGING_POLICY) && <StartDatePicker />}
-        </Box>
-        <DividerHorizontal verticalSpacing={MPT_SPACING_3} noHorizontalSpacing />
-        <Box sx={{ width: { md: "50%", marginBottom: MPT_SPACING_3 } }}>
           {typeSelected === QUOTA_POLICY && <MaxValueInput />}
           {typeSelected === TAGGING_POLICY && <TagsInputs />}
-        </Box>
-        <Filters exceptions={typeSelected === TAGGING_POLICY ? TAGS_RELATED_FILTERS : undefined} />
-        <FormButtonsWrapper>
-          <SubmitButton />
-          <CancelButton navigateAway={navigateAway} />
-        </FormButtonsWrapper>
-      </form>
-    </FormProvider>
+          <Filters exceptions={typeSelected === TAGGING_POLICY ? TAGS_RELATED_FILTERS : undefined} />
+          <FormButtonsWrapper>
+            <SubmitButton />
+            <CancelButton navigateAway={navigateAway} />
+          </FormButtonsWrapper>
+        </form>
+      </FormProvider>
+    </Box>
   );
 };
 

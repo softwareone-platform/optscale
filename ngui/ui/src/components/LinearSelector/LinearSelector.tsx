@@ -1,12 +1,10 @@
 import { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
-import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
-import RemoveIcon from "@mui/icons-material/Remove";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
@@ -16,11 +14,9 @@ import Chip from "components/Chip";
 import DashedTypography from "components/DashedTypography";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import Popover from "components/Popover";
+import { isEmptyArray } from "utils/arrays";
 import { LINEAR_SELECTOR_ITEMS_TYPES } from "utils/constants";
 import { isEmptyObject } from "utils/objects";
-import ResponsiveStack from "../../shared/components/ResponsiveStack/ResponsiveStack";
-import { SPACING_1, SPACING_2 } from "../../utils/layouts";
-import { processItemDefinition } from "./itemDefinition.helper";
 import useStyles from "./LinearSelector.styles";
 
 const NONE = "none";
@@ -31,7 +27,7 @@ const ItemLabel = ({ name, handleChange, dataTestId, displayedName, endAdornment
   const { classes } = useStyles();
 
   return (
-    <DashedTypography onClick={handleChange} component="span" dataTestId={dataTestId} className={classes.label} chipMode>
+    <DashedTypography onClick={handleChange} component="span" dataTestId={dataTestId} className={classes.label}>
       {displayedName || <FormattedMessage id={name} />}
       {endAdornment}
     </DashedTypography>
@@ -151,7 +147,7 @@ const MultiPopoverItem = ({ name, items, label, handleApply, values }) => {
 const PopoverLabelExpandIcon = ({ isOpen }) => {
   const { classes } = useStyles();
 
-  const Icon = isOpen ? KeyboardArrowUpOutlined : KeyboardArrowDownOutlinedIcon;
+  const Icon = isOpen ? ArrowDropUpIcon : ArrowDropDownIcon;
 
   return <Icon className={classes.labelIcon} />;
 };
@@ -210,11 +206,10 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
   const getChipLabel = () => {
     const nameDisplayed = displayedName || <FormattedMessage id={name} />;
     const valueDisplayed = displayedValue || value;
-    const typographyVariant = "subtitle";
+    const typographyVariant = "subtitle2";
 
     return [LINEAR_SELECTOR_ITEMS_TYPES.POPOVER, LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER].includes(type) ? (
       <KeyValueLabel
-        isBoldValue
         keyText={nameDisplayed}
         value={valueDisplayed}
         variant={typographyVariant}
@@ -237,8 +232,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
         chip: `chip_${dataTestId}`,
         deleteIcon: `btn_${dataTestId}_close`
       }}
-      className={"selectedFilter"}
-      color="primary"
+      color="info"
       size="medium"
       variant="outlined"
       onDelete={onDelete}
@@ -246,50 +240,59 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
   );
 };
 
-const SelectorItems = ({ items, values, onChange, onApply }) => {
-  const renderItem = (itemDefinition, notSelectedPopoverItems) => (
-    <Box data-test-id={`selector_${itemDefinition.name}`} key={itemDefinition.name}>
-      <Item
-        {...itemDefinition}
-        items={notSelectedPopoverItems}
-        handleChange={({ name: itemName, value: itemValue, checked }) => {
-          if (typeof onChange === "function") {
-            onChange({ name: itemName, value: itemValue, checked });
-          }
-        }}
-        handleApply={onApply}
-        values={values}
-      />
-    </Box>
-  );
+const SelectorItems = ({ items, values, onChange, onApply }) =>
+  items.reduce((selectorItems, itemDefinition) => {
+    const { name, items: popoverItems, type } = itemDefinition;
+    const isSelected = values.some(({ name: valueName }) => valueName === name);
 
-  return items.reduce((selectorItems, itemDefinition) => {
-    const { skip, notSelectedPopoverItems } = processItemDefinition(itemDefinition, values);
-
-    if (skip) {
+    // skipping all selected items, except multiselector
+    if (isSelected && type !== LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER) {
       return selectorItems;
     }
 
-    return [...selectorItems, renderItem(itemDefinition, notSelectedPopoverItems)];
+    let notSelectedPopoverItems = [];
+
+    if (type === LINEAR_SELECTOR_ITEMS_TYPES.POPOVER) {
+      const { name: selectedItemName, value: selectedItemValue } =
+        values.find((valueObject) => valueObject.name === name) ?? {};
+
+      notSelectedPopoverItems =
+        selectedItemName === name ? popoverItems.filter((el) => el.value !== selectedItemValue) : popoverItems;
+
+      // skip if there are no items left in the popover
+      if (isEmptyArray(notSelectedPopoverItems)) {
+        return selectorItems;
+      }
+    }
+
+    if (type === LINEAR_SELECTOR_ITEMS_TYPES.MULTISELECT_POPOVER) {
+      // Skip popover if there are no items
+      if (isEmptyArray(popoverItems)) {
+        return selectorItems;
+      }
+      notSelectedPopoverItems = popoverItems;
+    }
+
+    return [
+      ...selectorItems,
+      <Box data-test-id={`selector_${name}`} key={itemDefinition.name}>
+        <Item
+          {...itemDefinition}
+          items={notSelectedPopoverItems}
+          handleChange={({ name: itemName, value: itemValue, checked }) => {
+            if (typeof onChange === "function") {
+              onChange({ name: itemName, value: itemValue, checked });
+            }
+          }}
+          handleApply={onApply}
+          values={values}
+        />
+      </Box>
+    ];
   }, []);
-};
 
-const LinearSelector = ({
-  value,
-  label,
-  items,
-  onClear,
-  onClearAll,
-  onChange,
-  onApply,
-  dataTestIds = {},
-  exposeFirstItem = false
-}) => {
+const LinearSelector = ({ value, label, items, onClear, onClearAll, onChange, onApply, dataTestIds = {} }) => {
   const { label: labelDataTestId } = dataTestIds;
-  let expandableItems = [];
-  let alwaysVisibleItems = [];
-
-  const [isAccordionVisible, setIsAccordionVisible] = useState(false);
 
   const getValuesArray = () => {
     if (isEmptyObject(value)) {
@@ -318,100 +321,67 @@ const LinearSelector = ({
 
   const { classes } = useStyles();
 
-  if (exposeFirstItem) {
-    const [firstItem, ...rest] = items;
-    alwaysVisibleItems = [firstItem];
-    expandableItems = rest;
-  }
-
   return (
-    <Box>
-      <ResponsiveStack>
-        {label && (
-          <Box alignSelf={"start"} sx={{ lineHeight: "1.8em" }} component="div" data-test-id={labelDataTestId}>
-            {label}
-          </Box>
-        )}
-        <Grid item xs={12} md={12}>
-          <Grid container gap={SPACING_1}>
-            {valuesArray.length === 0 ? (
-              <Typography lineHeight={SPACING_2} component="span">
-                <FormattedMessage id={NONE} />
-              </Typography>
-            ) : (
-              <>
-                {valuesArray.map((pickedValue) => {
-                  const {
-                    name: itemName,
-                    value: itemValue,
-                    displayedValue: itemDisplayedValue,
-                    type: itemType,
-                    displayedName,
-                    dataTestId
-                  } = pickedValue;
+    <Box className={classes.wrapper}>
+      {label && (
+        <Typography component="div" data-test-id={labelDataTestId}>
+          {label}
+          {": "}
+        </Typography>
+      )}
+      {valuesArray.length === 0 ? (
+        <Typography component="span">
+          <FormattedMessage id={NONE} />
+        </Typography>
+      ) : (
+        <>
+          {valuesArray.map((pickedValue) => {
+            const {
+              name: itemName,
+              value: itemValue,
+              displayedValue: itemDisplayedValue,
+              type: itemType,
+              displayedName,
+              dataTestId
+            } = pickedValue;
 
-                  return (
-                    <PickedItem
-                      key={`${itemName}-${itemValue}`}
-                      name={itemName}
-                      dataTestId={dataTestId}
-                      // equal to node that was defined in "values" array (LinearSelector)
-                      // or to node that was defined as a displayedName in items
-                      // or <FormattedMessage id={name}/>
-                      displayedName={displayedName}
-                      displayedValue={itemDisplayedValue}
-                      value={itemValue}
-                      type={itemType}
-                      onDelete={
-                        typeof onClear === "function"
-                          ? () =>
-                              onClear({
-                                filterName: itemName,
-                                filterValue: itemValue
-                              })
-                          : undefined
-                      }
-                    />
-                  );
-                })}
-
-                {valuesArray.length > 1 && onClearAll ? (
-                  <Button
-                    dataTestId="btn_clear"
-                    startIcon={<DeleteOutlinedIcon />}
-                    customClass={classes.clearAllFilters}
-                    onClick={onClearAll}
-                    messageId="clearFilters"
-                    color="error"
-                  />
-                ) : null}
-              </>
-            )}
-          </Grid>
-          <Grid container gap={SPACING_1} marginTop={SPACING_1}>
-            <SelectorItems
-              items={alwaysVisibleItems.length > 0 ? alwaysVisibleItems : items}
-              values={valuesArray}
-              onApply={onApply}
-              onChange={onChange}
-            />
-
-            {isAccordionVisible && expandableItems.length > 0 && (
-              <SelectorItems items={expandableItems} values={valuesArray} onApply={onApply} onChange={onChange} />
-            )}
-            {expandableItems.length > 0 && (
-              <Button
-                startIcon={isAccordionVisible ? <RemoveIcon /> : <AddIcon />}
-                customClass={classes.showMoreFilters}
-                variant="text"
-                onClick={() => setIsAccordionVisible((prev) => !prev)} // Toggle visibility
-                dataTestId="btn_show_more_filters"
-                messageId={isAccordionVisible ? "showLess" : "showMore"}
+            return (
+              <PickedItem
+                key={`${itemName}-${itemValue}`}
+                name={itemName}
+                dataTestId={dataTestId}
+                // equal to node that was defined in "values" array (LinearSelector)
+                // or to node that was defined as a displayedName in items
+                // or <FormattedMessage id={name}/>
+                displayedName={displayedName}
+                displayedValue={itemDisplayedValue}
+                value={itemValue}
+                type={itemType}
+                onDelete={
+                  typeof onClear === "function" ? () => onClear({ filterName: itemName, filterValue: itemValue }) : undefined
+                }
               />
-            )}
-          </Grid>
-        </Grid>
-      </ResponsiveStack>
+            );
+          })}
+          {valuesArray.length > 1 && onClearAll ? (
+            <Button
+              dataTestId="btn_clear"
+              dashedBorder
+              startIcon={<DeleteOutlinedIcon />}
+              onClick={onClearAll}
+              messageId="clearFilters"
+              color="error"
+            />
+          ) : null}
+        </>
+      )}
+      <Divider
+        component="span"
+        style={{ marginLeft: "8px", marginRight: "8px", width: "2px" }}
+        flexItem
+        orientation="vertical"
+      />
+      <SelectorItems items={items} values={valuesArray} onApply={onApply} onChange={onChange} />
     </Box>
   );
 };

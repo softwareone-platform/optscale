@@ -1,4 +1,4 @@
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import { useTheme } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +57,6 @@ const OrganizationExpenses = ({ data, isLoading }) => {
 
   return (
     <WrapperCard
-      variant="shadow"
       needAlign
       title={<FormattedMessage id="organizationExpenses" />}
       titleButton={{
@@ -66,7 +65,7 @@ const OrganizationExpenses = ({ data, isLoading }) => {
           title: <FormattedMessage id="goToOrganizationExpenses" />
         },
         buttonProps: {
-          icon: <ArrowForwardIosIcon />,
+          icon: <ExitToAppOutlinedIcon />,
           isLoading,
           onClick: goToExpensesByPool,
           dataTestId: "btn_go_to_org_expenses"

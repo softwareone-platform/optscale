@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import { Box } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +59,6 @@ const RecentTasksCard = ({ tasks, isLoading = false }) => {
 
   return (
     <WrapperCard
-      variant="shadow"
       needAlign
       title={
         <Box display="flex" alignItems="center">
@@ -68,7 +67,7 @@ const RecentTasksCard = ({ tasks, isLoading = false }) => {
           </Box>
           <Box display="flex">
             <IconButton
-              icon={<ArrowForwardIosIcon />}
+              icon={<ExitToAppOutlinedIcon />}
               tooltip={{
                 show: true,
                 messageId: "goToTasks"

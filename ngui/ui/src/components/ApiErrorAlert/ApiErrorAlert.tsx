@@ -38,7 +38,6 @@ const ApiErrorAlert = () => {
     <SnackbarAlert
       severity="error"
       body={errorMessage}
-      autoHideDuration={40000}
       openState={open}
       handleClose={handleClose}
       dataTestIds={{

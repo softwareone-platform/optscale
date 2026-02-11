@@ -117,7 +117,7 @@ export const FILTER_CONFIGS = {
             type: "object",
             required: ["id", "name", "type"],
             nullable: true,
-            additionalProperties: true,
+            additionalProperties: false,
             properties: {
               id: {
                 type: "string"

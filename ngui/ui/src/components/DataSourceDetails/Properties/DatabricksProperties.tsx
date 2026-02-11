@@ -8,7 +8,6 @@ const DatabricksProperties = ({ accountId, config, createdAt }: DatabricksProper
   return (
     <>
       <KeyValueLabel
-        variant="property"
         keyMessageId="connectedAt"
         value={createdAt}
         dataTestIds={{
@@ -17,7 +16,6 @@ const DatabricksProperties = ({ accountId, config, createdAt }: DatabricksProper
         }}
       />
       <KeyValueLabel
-        variant="property"
         keyMessageId="accountId"
         value={accountId}
         dataTestIds={{
@@ -26,7 +24,6 @@ const DatabricksProperties = ({ accountId, config, createdAt }: DatabricksProper
         }}
       />
       <KeyValueLabel
-        variant="property"
         keyMessageId="clientId"
         value={clientId}
         dataTestIds={{

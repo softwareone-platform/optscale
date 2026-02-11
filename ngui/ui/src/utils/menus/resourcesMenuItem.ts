@@ -1,4 +1,4 @@
-// import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
+import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
 import { PRODUCT_TOUR_IDS } from "components/Tour";
 import { CLUSTER_TYPE_CREATE } from "urls";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
@@ -15,8 +15,7 @@ class ResourcesMenuItem extends BaseMenuItem {
 
   dataProductTourId = PRODUCT_TOUR_IDS.RESOURCES;
 
-  // MPT_TODO: disabled to match MPT figma designs
-  // icon = StorageOutlinedIcon;
+  icon = StorageOutlinedIcon;
 
   capability = OPTSCALE_CAPABILITY.FINOPS;
 
