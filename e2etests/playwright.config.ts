@@ -34,11 +34,14 @@ export default defineConfig({
     headless: true,
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    screenshot: {
+      mode: 'only-on-failure',
+      fullPage: true,
+    },
     contextOptions: {
       reducedMotion: 'reduce',
       ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-      viewport: { width: 1920, height: 1080 },
+      viewport: { width: 1900, height: 1050 },
     },
   },
 

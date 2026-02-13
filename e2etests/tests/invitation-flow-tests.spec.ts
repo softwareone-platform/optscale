@@ -57,6 +57,10 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
         await pendingInvitationsPage.acceptInvite();
       });
 
+      await test.step('Accept privacy policy', async () => {
+        await pendingInvitationsPage.acceptPrivacyPolicy();
+      })
+
       await test.step('Assert organization', async () => {
         if (process.env.BASE_URL === process.env.STAGING) {
           await expect(header.organizationSelect).toContainText('Marketplace Platform');
@@ -195,6 +199,10 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
       await pendingInvitationsPage.acceptInvite();
     });
 
+    await test.step('Accept privacy policy', async () => {
+      await pendingInvitationsPage.acceptPrivacyPolicy();
+    })
+
     await test.step('Assert organization', async () => {
       const orgName = header.getOrganizationNameForEnvironment();
       await expect(header.organizationSelect).toContainText(orgName);
@@ -216,6 +224,7 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
     pendingInvitationsPage,
     emailVerificationPage,
     baseRequest,
+    homePage,
   }) => {
     test.setTimeout(120000);
     const poolName = usersPage.getPoolNameForEnvironment();
@@ -258,6 +267,14 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
       await emailVerificationPage.proceedToFinOps();
       await pendingInvitationsPage.acceptInvite();
     });
+
+    await test.step('Accept privacy policy', async () => {
+      await pendingInvitationsPage.acceptPrivacyPolicy();
+    })
+
+    await test.step('Skip welcome tour', async () => {
+      await homePage.skipTour();
+    })
 
     await test.step('Verify no pending invitations in Settings tab', async () => {
       await mainMenu.clickSettings();
@@ -313,6 +330,7 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     pendingInvitationsPage,
     emailVerificationPage,
     baseRequest,
+    homePage,
   }) => {
     test.setTimeout(120000);
     const poolName = usersPage.getPoolNameForEnvironment();
@@ -355,6 +373,15 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
       await emailVerificationPage.proceedToFinOps();
       await pendingInvitationsPage.acceptInvite();
     });
+
+    await test.step('Accept privacy policy', async () => {
+      await pendingInvitationsPage.acceptPrivacyPolicy();
+    })
+
+
+    await test.step('Skip welcome tour', async () => {
+      await homePage.skipTour();
+    })
 
     await test.step('Sign out user', async () => {
       await header.signOut();

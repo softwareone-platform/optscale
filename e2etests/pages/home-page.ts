@@ -1,5 +1,5 @@
-import { BasePage } from './base-page';
-import { Locator, Page } from '@playwright/test';
+import {BasePage} from './base-page';
+import {Locator, Page} from '@playwright/test';
 
 /**
  * Represents the Home Page.
@@ -7,6 +7,7 @@ import { Locator, Page } from '@playwright/test';
  */
 export class HomePage extends BasePage {
   readonly connectDataSourceBanner: Locator;
+  readonly skipTourBtn: Locator;
 
   //Organization expenses block elements
   readonly organizationExpensesBlock: Locator;
@@ -57,6 +58,7 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page, '/');
     this.connectDataSourceBanner = this.page.getByTestId('img_connect_data_source');
+    this.skipTourBtn = this.page.getByTestId('btn_skip_tour');
 
     ///Organization expenses block elements
     this.organizationExpensesBlock = this.page.getByTestId('block_org_expenses');
@@ -94,7 +96,9 @@ export class HomePage extends BasePage {
     this.poolsNoDataMessage = this.poolsBlockTable.getByText('No data to display');
     this.poolsBlockTableHeaders = this.poolsBlockTable.locator('//thead//th');
     this.poolsBlockTableRows = this.poolsBlockTable.locator('//tbody/tr');
-    this.poolsBlockTotal = this.poolsRequiringAttentionBlock.locator('//span[contains(text(), "Total")]/../following-sibling::div');
+    this.poolsBlockTotal = this.poolsRequiringAttentionBlock.locator(
+      "//div[contains(normalize-space(translate(., ' ', ' ')), 'Total:')]/following-sibling::div/span"
+    );
     this.poolsBlockNameColumn = this.poolsBlockTable.locator('//tbody//td[1]');
     this.poolsBlockExpensesColumn = this.poolsBlockTable.locator('//tbody//td[2]');
     this.poolsBlockForecastColumn = this.poolsBlockTable.locator('//tbody//td[3]');
@@ -111,14 +115,24 @@ export class HomePage extends BasePage {
     await this.page.locator('[id="simple-popover"]').getByText(option, { exact: true }).click();
   }
 
+  /**
+   * Skips the introductory tour on the Home Page.
+   * This method simulates a user clicking the "Skip Tour" button.
+   *
+   * @returns {Promise<void>} A promise that resolves when the click action is complete.
+   */
+  async skipTour(): Promise<void> {
+    await this.skipTourBtn.click();
+  }
+
   async waitForAllBoxesToLoad(): Promise<void> {
-    await this.waitForLoadingPageImgToDisappear()
+    await this.waitForLoadingPageImgToDisappear();
     await this.organizationExpensesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.topResourcesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.recommendationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.policyViolationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.poolsRequiringAttentionBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
-    await this.fitViewportToFullPage()
+    await this.fitViewportToFullPage();
   }
 
   /**
@@ -192,10 +206,10 @@ export class HomePage extends BasePage {
    *
    * @returns {Promise<string>} The cleaned title of the first resource.
    */
-async getFirstResourceTitle(): Promise<string> {
-  let title = (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
-  return title.replace(/\/$/, '');
-}
+  async getFirstResourceTitle(): Promise<string> {
+    let title = (await this.topResourcesFirstLink.textContent()).replace(/\.{3}\//g, '').trim();
+    return title.replace(/\/$/, '');
+  }
 
   /**
    * Retrieves the value of the first resource in the "Top Resources" section.
