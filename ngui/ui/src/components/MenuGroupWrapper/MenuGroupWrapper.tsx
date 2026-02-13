@@ -1,5 +1,4 @@
-// import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Accordion, AccordionDetails, AccordionSummary, Box } from "@mui/material";
 import useMenuItemState from "hooks/useMenuItemState";
 import useStyles from "./MenuGroupWrapper.styles";
@@ -29,7 +28,7 @@ const MenuGroupWrapper = ({ menuSectionTitle, children, id, keepExpanded = false
           height: "32px"
         }}
       >
-        <AccordionSummary sx={{ paddingRight: "0px" }} expandIcon={<KeyboardArrowDownOutlinedIcon fontSize="small" />}>
+        <AccordionSummary sx={{ paddingRight: "0px" }} expandIcon={<ArrowDropDownIcon fontSize="small" />}>
           {menuSectionTitle}
         </AccordionSummary>
       </Box>

@@ -67,13 +67,13 @@ export class AnomaliesPage extends BasePage {
     this.defaultResourceCountAnomalyShowResourcesBtn = this.defaultResourceCountAnomalyLink.locator(
       'xpath=/ancestor::td[1]/following-sibling::td[4]//button'
     );
-    this.policyDetailsDiv = this.main.locator('//div[contains(@class, "MTPBoxShadow")][1]');
-    this.policyDetailsNameValue = this.policyDetailsDiv.locator('//span[contains(text(), "Name")]/../following-sibling::div');
-    this.policyDetailsTypeValue = this.policyDetailsDiv.locator('//span[contains(text(), "Type")]/../following-sibling::div');
+    this.policyDetailsDiv = this.main.locator('//div[@id="page-content-wrapper"]/div');
+    this.policyDetailsNameValue = this.policyDetailsDiv.locator('//div[contains(text(), "Name")]/following-sibling::div');
+    this.policyDetailsTypeValue = this.policyDetailsDiv.locator('//div[contains(text(), "Type")]/following-sibling::div');
     this.policyDetailsEvaluationPeriodValue = this.policyDetailsDiv.locator(
-      '//span[contains(text(), "Evaluation period")]/../following-sibling::div'
+      '//div[contains(text(), "Evaluation period")]/following-sibling::div'
     );
-    this.policyDetailsThresholdValue = this.policyDetailsDiv.locator('//span[contains(text(), "Threshold")]/../following-sibling::div');
+    this.policyDetailsThresholdValue = this.policyDetailsDiv.locator('//div[contains(text(), "Threshold")]/following-sibling::div');
 
     // Charts
     this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');

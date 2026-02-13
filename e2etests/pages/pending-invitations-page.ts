@@ -9,6 +9,7 @@ export class PendingInvitationsPage extends BasePage {
   readonly acceptBtn: Locator;
   readonly declineBtn: Locator;
   readonly noPendingInvitationsMessage: Locator;
+  readonly proceedToFinOpsBtn: Locator;
 
   /**
    * Initializes a new instance of the PendingInvitationsPage class.
@@ -19,6 +20,7 @@ export class PendingInvitationsPage extends BasePage {
     this.acceptBtn = this.page.getByRole('button', { name: 'Accept' });
     this.declineBtn = this.page.getByRole('button', { name: 'Decline' });
     this.noPendingInvitationsMessage = this.main.getByRole('heading', { name: 'No invitations pending' });
+    this.proceedToFinOpsBtn = this.page.getByTestId('btn_proceed');
   }
 
   /**
@@ -28,6 +30,17 @@ export class PendingInvitationsPage extends BasePage {
   async acceptInvite(): Promise<void> {
     await this.acceptBtn.click();
     await this.waitForAllProgressBarsToDisappear();
+  }
+
+  /**
+   * Accepts the privacy policy by waiting for the "Proceed to FinOps" button to appear
+   * and then clicking it.
+   *
+   * @returns {Promise<void>} A promise that resolves when the action is complete.
+   */
+  async acceptPrivacyPolicy(): Promise<void> {
+    await this.proceedToFinOpsBtn.waitFor();
+    await this.proceedToFinOpsBtn.click();
   }
 
   /**

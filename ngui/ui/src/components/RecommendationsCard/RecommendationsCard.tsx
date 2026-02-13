@@ -1,4 +1,7 @@
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
+import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
+import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import { Grid } from "@mui/material";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 import { createSearchParams, useNavigate } from "react-router-dom";
@@ -31,7 +34,6 @@ const RecommendationsCard = ({
 
   return (
     <WrapperCard
-      variant="shadow"
       needAlign
       title={<FormattedMessage id="recommendations" />}
       titleButton={{
@@ -40,7 +42,7 @@ const RecommendationsCard = ({
           title: <FormattedMessage id="seeAllRecommendations" />
         },
         buttonProps: {
-          icon: <ArrowForwardIosIcon />,
+          icon: <ExitToAppOutlinedIcon />,
           isLoading,
           onClick: seeAllRecommendations,
           dataTestId: "btn_see_all_recommendations"
@@ -68,7 +70,7 @@ const RecommendationsCard = ({
               </RecommendationLink>
             }
             color="success"
-            icon={null}
+            icon={<MonetizationOnOutlinedIcon />}
             value={<FormattedNumber value={costRecommendationsCount} />}
             isLoading={isLoading}
             dataTestIds={{
@@ -88,7 +90,7 @@ const RecommendationsCard = ({
               </RecommendationLink>
             }
             color="warning"
-            icon={null}
+            icon={<GppGoodOutlinedIcon />}
             value={<FormattedNumber value={securityRecommendationsCount} />}
             isLoading={isLoading}
             dataTestIds={{
@@ -108,7 +110,7 @@ const RecommendationsCard = ({
               </RecommendationLink>
             }
             color="error"
-            icon={null}
+            icon={<GppMaybeOutlinedIcon />}
             value={<FormattedNumber value={criticalRecommendationsCount} />}
             isLoading={isLoading}
             dataTestIds={{

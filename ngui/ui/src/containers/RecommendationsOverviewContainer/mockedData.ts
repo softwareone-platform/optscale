@@ -44,13 +44,13 @@ const MOCKED_DATA = {
           cloud_resource_id: "i-gw87l0czzy3lr9es2npa",
           region: "Germany (Frankfurt)",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           owner: { id: "33e28316-f72f-4592-96c6-4766c963519b", name: "Lincoln Morton" },
-          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "AWS dev", purpose: "budget" },
+          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "Ali dev", purpose: "budget" },
           is_excluded: false,
           saving: 186.10285714285718,
           detected_at: 1682054418,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           resource_id: "a945f0a3-9f5a-4490-bd1e-39ab1009a79f",
@@ -58,13 +58,13 @@ const MOCKED_DATA = {
           cloud_resource_id: "i-gw87l0czzy3lr9es2npa-x1",
           region: "Germany (Frankfurt)",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           owner: { id: "33e28316-f72f-4592-96c6-4766c963519b", name: "Lincoln Morton" },
-          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "AWS dev", purpose: "budget" },
+          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "Ali dev", purpose: "budget" },
           is_excluded: false,
           saving: 186.10285714285718,
           detected_at: 1682054418,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           resource_id: "aed1a586-2c3d-4813-922d-52c5ebdf646e",
@@ -72,13 +72,13 @@ const MOCKED_DATA = {
           cloud_resource_id: "i-gw87l0czzy3lr9es2npa-x2",
           region: "Germany (Frankfurt)",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           owner: { id: "33e28316-f72f-4592-96c6-4766c963519b", name: "Lincoln Morton" },
-          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "AWS dev", purpose: "budget" },
+          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "Ali dev", purpose: "budget" },
           is_excluded: false,
           saving: 186.10285714285718,
           detected_at: 1682054418,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         }
       ],
       limit: 3
@@ -246,16 +246,16 @@ const MOCKED_DATA = {
           resource_name: "aqa-instance-generation-upgrade",
           resource_id: "f0b98d89-13ee-4938-bfe3-34342cbcd7b1",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           region: "Germany (Frankfurt)",
           owner: { id: "33e28316-f72f-4592-96c6-4766c963519b", name: "Lincoln Morton" },
-          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "AWS dev", purpose: "budget" },
+          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "Ali dev", purpose: "budget" },
           saving: 11.519999999999984,
           recommended_flavor: "ecs.g7.large",
           is_excluded: false,
           flavor: "ecs.g6.large",
           detected_at: 1681968318,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           cloud_resource_id:
@@ -308,10 +308,10 @@ const MOCKED_DATA = {
           resource_name: "aqa-instance-generation-upgrade",
           resource_id: "f0b98d89-13ee-4938-bfe3-34342cbcd7b1",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           is_excluded: false,
           detected_at: 1683880978,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           saving: 1.152000000000001,
@@ -346,10 +346,10 @@ const MOCKED_DATA = {
           resource_name: "aqa-instance-generation-upgrade",
           resource_id: "f0b98d89-13ee-4938-bfe3-34342cbcd7b1",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           is_excluded: false,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           monthly_saving: 20.080000000000005,
@@ -362,10 +362,10 @@ const MOCKED_DATA = {
           resource_name: "aqa-eu-underutilized-instance",
           resource_id: "c3a0703f-b327-42ce-be0d-6201d0053611",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           is_excluded: false,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           monthly_saving: 5.699999999999999,
@@ -378,10 +378,10 @@ const MOCKED_DATA = {
           resource_name: "aqa-alibaba-short-living-instance",
           resource_id: "45fb006d-1133-470c-bb67-eb583bd3b59a",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           is_excluded: false,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         }
       ],
       limit: 3
@@ -403,9 +403,9 @@ const MOCKED_DATA = {
           cloud_resource_id: "i-gw87l0czzy3lr9es2npa",
           region: "Germany (Frankfurt)",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           owner: { id: "33e28316-f72f-4592-96c6-4766c963519b", name: "Lincoln Morton" },
-          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "AWS dev", purpose: "budget" },
+          pool: { id: "71f91ed4-9c63-4c36-9e2b-5686accf9ba0", name: "Ali dev", purpose: "budget" },
           is_excluded: false,
           inactivity_periods: [
             { start: { day_of_week: 0, hour: 0 }, end: { day_of_week: 3, hour: 11 } },
@@ -413,7 +413,7 @@ const MOCKED_DATA = {
           ],
           saving: 176.4156190476191,
           detected_at: 1681972518,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           resource_id: "958e44e2-c83d-4dfd-bdda-5a3878003c47",
@@ -534,14 +534,14 @@ const MOCKED_DATA = {
           resource_name: "aqa-stopped-not-deallocated",
           resource_id: "e58786ee-d883-4d7e-b5f2-dbb031abce56",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           cost_in_stopped_state: 26.280000000000015,
           saving: 12.825000000000003,
           region: "Germany (Frankfurt)",
           is_excluded: false,
           last_seen_active: 0,
           detected_at: 1681968318,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         }
       ],
       limit: 3
@@ -621,28 +621,28 @@ const MOCKED_DATA = {
           resource_name: "aqa-obsolete-ip",
           resource_id: "110149d3-87ff-45e6-940e-eab72ba29105",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           cost_not_active_ip: 17.520000000000007,
           saving: 8.55,
           region: "Germany (Frankfurt)",
           is_excluded: false,
           last_seen_active: 0,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           cloud_resource_id: "eip-gw8f117dmb0k4e4nkobsl",
           resource_name: "ds-test",
           resource_id: "789d0671-b43c-413e-81b1-b569c23089d4",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           cost_not_active_ip: 17.520000000000007,
           saving: 8.55,
           region: "Germany (Frankfurt)",
           is_excluded: false,
           last_seen_active: 0,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           cloud_resource_id:
@@ -672,7 +672,7 @@ const MOCKED_DATA = {
           resource_name: null,
           resource_id: "6e4cd878-6576-46e6-9279-0f9cfc617508",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           saving: 1.5765479999999998,
           region: "Germany (Frankfurt)",
           last_used: 0,
@@ -688,14 +688,14 @@ const MOCKED_DATA = {
           first_seen: 1681344000,
           last_seen: 1683936000,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           cloud_resource_id: "sl-gw84m857olspqve95jb9",
           resource_name: null,
           resource_id: "2b508d50-41d6-477b-9015-6aa11805b0c8",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           saving: 1.5207642,
           region: "Germany (Frankfurt)",
           last_used: 0,
@@ -711,14 +711,14 @@ const MOCKED_DATA = {
           first_seen: 1681344000,
           last_seen: 1683936000,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         },
         {
           cloud_resource_id: "sl-gw8d2sicdq9oq331hb05",
           resource_name: null,
           resource_id: "a98efeb7-1058-477e-9f24-d71a0bbc732e",
           cloud_account_id: "5c75d0f5-3c30-4f5d-a92f-d0ea150af205",
-          cloud_type: "aws_cnr",
+          cloud_type: "alibaba_cnr",
           saving: 0.17989560000000004,
           region: "Germany (Frankfurt)",
           last_used: 0,
@@ -734,7 +734,7 @@ const MOCKED_DATA = {
           first_seen: 1681344000,
           last_seen: 1683936000,
           detected_at: 1681968018,
-          cloud_account_name: "AWS dev"
+          cloud_account_name: "Ali dev"
         }
       ],
       limit: 3

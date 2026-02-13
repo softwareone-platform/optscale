@@ -23,5 +23,7 @@ export function isWithinRoundingDrift(expected: number, actual: number, percenta
   debugLog(`Actual drift: ${drift.toFixed(2)} (${actualPercentageDrift.toFixed(4)}%)`);
 
   // Return true if the actual drift is within the allowable drift, otherwise false.
-  if (drift <= allowedDrift) return true;
+  const result = drift <= allowedDrift;
+  debugLog('Returning: ' + result);
+  return result;
 }

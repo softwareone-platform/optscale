@@ -40,7 +40,7 @@ export class PoliciesPage extends BasePage {
     this.showResourcesBtn = this.page.getByTestId('actions_column_link_1');
     this.deleteBtn = this.page.getByTestId('btn_delete');
     this.sideModalDeleteBtn = this.page.getByTestId('btn_smodal_delete');
-    this.policyDetailsDiv = this.main.locator('//div[@class="MTPBoxShadow MuiBox-root mui-0"][1]');
+    this.policyDetailsDiv = this.main.locator('//div[@id="page-content-wrapper"]/div');
     this.resourceUnderLimitLink = this.table.locator('//td//a[.="Resource under limit"]');
     this.resourceUnderLimitStatus = this.resourceUnderLimitLink.locator('xpath=/ancestor::tr/td[2]/div/div');
     this.resourceOverLimitLink = this.table.locator('//td//a[.="Resource over limit"]');

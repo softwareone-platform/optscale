@@ -7,7 +7,7 @@ import { SPACING_2 } from "utils/layouts";
 import MetricCard from "./MetricCard";
 
 const GridItem = ({ children }: { children: React.ReactNode }) => (
-  <Grid xs={12} sm={6} md={6} lg={6} xl={6} item>
+  <Grid xs={12} sm={6} md={6} lg={4} xl={3} item>
     {children}
   </Grid>
 );

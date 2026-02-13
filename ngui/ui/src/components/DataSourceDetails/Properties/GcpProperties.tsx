@@ -10,7 +10,6 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
   return (
     <>
       <KeyValueLabel
-        variant="property"
         keyMessageId="connectedAt"
         value={createdAt}
         dataTestIds={{
@@ -19,7 +18,6 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
         }}
       />
       <KeyValueLabel
-        variant="property"
         keyMessageId="GCPProjectId"
         value={accountId}
         dataTestIds={{
@@ -28,20 +26,17 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
         }}
       />
       <KeyValueLabel
-        variant="property"
         keyMessageId="billingDataDatasetName"
         value={billingDatasetName}
         dataTestIds={{ key: "p_billing_dataset_name_key", value: "p_billing_dataset_name_value" }}
       />
       <KeyValueLabel
-        variant="property"
         keyMessageId="billingDataTableName"
         value={billingTableName}
         dataTestIds={{ key: "p_billing_table_name_key", value: "p_billing_table_name_value" }}
       />
       {billingProjectId && (
         <KeyValueLabel
-          variant="property"
           keyMessageId="billingDataProjectId"
           value={billingProjectId}
           dataTestIds={{ key: "p_billing_project_id_key", value: "p_billing_project_id_value" }}
@@ -49,7 +44,6 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
       )}
       {pricingDatasetName && (
         <KeyValueLabel
-          variant="property"
           keyMessageId="pricingDataDatasetName"
           value={pricingDatasetName}
           dataTestIds={{ key: "p_pricing_dataset_name_key", value: "p_pricing_dataset_name_value" }}
@@ -57,7 +51,6 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
       )}
       {pricingTableName && (
         <KeyValueLabel
-          variant="property"
           keyMessageId="pricingDataTableName"
           value={pricingTableName}
           dataTestIds={{ key: "p_pricing_table_name_key", value: "p_pricing_table_name_value" }}
@@ -65,7 +58,6 @@ const GcpProperties = ({ accountId, createdAt, config = {} }: GcpPropertiesProps
       )}
       {pricingProjectId && (
         <KeyValueLabel
-          variant="property"
           keyMessageId="pricingDataProjectId"
           value={pricingProjectId}
           dataTestIds={{ key: "p_pricing_project_id_key", value: "p_pricing_project_id_value" }}

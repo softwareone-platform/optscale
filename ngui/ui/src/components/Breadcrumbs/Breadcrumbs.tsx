@@ -10,7 +10,6 @@ const Breadcrumbs = ({ children, withSlashAtTheEnd = false }) => {
       classes={{
         separator: classes.separator
       }}
-      sx={{ "& ol": { flexWrap: "nowrap" } }}
       separator={
         <HorizontalRuleIcon
           sx={{

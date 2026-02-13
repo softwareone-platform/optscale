@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
@@ -61,7 +62,7 @@ import {
   OPTSCALE_CAPABILITY
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
-import { MPT_SPACING_2, SPACING_2 } from "utils/layouts";
+import { SPACING_2 } from "utils/layouts";
 import { getSearchParams } from "utils/network";
 import { ObjectValues } from "utils/types";
 import useStyles from "./ConnectCloudAccountForm.styles";
@@ -71,6 +72,7 @@ import {
   getAwsConnectionTypeDescriptions,
   useAuthenticationType,
   AUTHENTICATION_TYPES,
+  AWS_ROOT_INPUTS_FIELD_NAMES,
   AuthenticationType
 } from "./FormElements/AwsConnectionForm";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
@@ -105,9 +107,8 @@ type CloudProviderTypes = Record<
 
 const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
-    { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "management", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_STANDALONE, messageId: "standalone", cloudType: AWS_CNR }
+    { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "managementStandalone", cloudType: AWS_CNR },
+    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR }
   ],
   [CLOUD_PROVIDERS.AZURE]: [
     { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
@@ -157,7 +158,7 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
           bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
           report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
           region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
-          config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY
+          config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
         };
 
   const extraParams = {
@@ -585,17 +586,9 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
 
     return (
       <>
-        <Box alignItems="center" display="flex" mb={MPT_SPACING_2}>
-          <Typography minWidth={110} sx={{ mr: 1, fontWeight: "bold" }}>
-            {selectedProvider === CLOUD_PROVIDERS.AWS ? (
-              <>
-                <FormattedMessage id="accountType" />{" "}
-              </>
-            ) : (
-              <>
-                <FormattedMessage id="connectionType" />{" "}
-              </>
-            )}
+        <Stack direction="row" alignItems="center" spacing={2} mb={2}>
+          <Typography>
+            <FormattedMessage id={selectedProvider === CLOUD_PROVIDERS.AWS ? "accountType" : "connectionType"} />
           </Typography>
           <ButtonGroup
             buttons={CLOUD_PROVIDER_TYPES[selectedProvider]
@@ -608,7 +601,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
               }))}
             activeButtonId={connectionType}
           />
-        </Box>
+        </Stack>
 
         {selectedProvider === CLOUD_PROVIDERS.AWS && (
           <AuthenticationTypeSelector authenticationType={authenticationType} setAuthenticationType={setAuthenticationType} />
