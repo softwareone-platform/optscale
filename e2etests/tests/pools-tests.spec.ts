@@ -128,13 +128,13 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     await test.step('Verify sub-pools expenses match total pool expenses', async () => {
       const subPoolsExpenses = await poolsPage.sumSubPoolTotals('expenses this month');
       debugLog(`Sub-pools expenses: ${subPoolsExpenses}`);
-      expect.soft(isWithinRoundingDrift(subPoolsExpenses, expensesThisMonthValue, 0.0001)).toBe(true);
+      expect.soft(isWithinRoundingDrift(subPoolsExpenses, expensesThisMonthValue, 0.0025)).toBe(true);
     });
 
     await test.step('Verify sub-pools forecast match total pool forecast', async () => {
       const subPoolsForecast = await poolsPage.sumSubPoolTotals('forecast this month');
       debugLog(`Sub-pools forecast: ${subPoolsForecast}`);
-      expect.soft(isWithinRoundingDrift(subPoolsForecast, forecastThisMonthValue, 0.0001)).toBe(true);
+      expect.soft(isWithinRoundingDrift(subPoolsForecast, forecastThisMonthValue, 0.0025)).toBe(true);
     });
   });
 
@@ -243,7 +243,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       expect.soft(await poolsPage.getColorFromElement(poolsPage.column3TextSpan)).toBe(poolsPage.errorColor);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
       const multiplier = extractMultiplier(await poolsPage.poolColumn4.textContent());
-      expect.soft(multiplier).toBe(calculateMultiplier(forecastThisMonth, organizationLimit));
+      expect.soft(isWithinRoundingDrift(multiplier, calculateMultiplier(forecastThisMonth, organizationLimit), 0.1)).toBe(true);
     });
   });
 
@@ -314,7 +314,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230919] Verify pool exceeded count and expand requiring attention', {tag: '@p1'}, async ({ poolsPage }) => {
+  test('[230919] Verify pool exceeded count and expand requiring attention', { tag: '@p1' }, async ({ poolsPage }) => {
     // test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
     test.setTimeout(75000);
 

@@ -213,7 +213,7 @@ export class ResourcesPage extends BasePage {
     this.firstTagGroup = this.main.getByTestId('group_tag_0');
     this.allTagGroups = this.main.locator('[data-test-id^="group_tag_"]');
     this.allGroups = this.main.locator('[data-test-id^="group_"]');
-    this.clearIcon = this.getByAnyTestId('ClearIcon', this.main);
+    this.clearIcon = this.getByAnyTestId('btn_ls_item_tag_close', this.main);
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
   }
 

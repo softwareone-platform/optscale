@@ -22,7 +22,7 @@ export class TaggingPoliciesPage extends BasePage {
     this.heading = this.main.getByTestId('lbl_tagging_policies');
     this.addBtn = this.main.getByTestId('btn_add');
     this.addRealDataBtn = this.getByAnyTestId('btn_add_tagging_policy');
-    this.policyDetailsDiv = this.main.locator('//div[@class="MTPBoxShadow MuiBox-root mui-0"][1]');
+    this.policyDetailsDiv = this.main.locator('//div[@id="page-content-wrapper"]/div');
     this.deleteBtn = this.page.getByTestId('btn_delete');
     this.sideModalDeleteBtn = this.page.getByTestId('btn_smodal_delete');
   }
