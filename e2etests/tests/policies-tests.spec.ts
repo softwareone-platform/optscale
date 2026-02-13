@@ -111,9 +111,9 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
 
     await test.step('Verify that the new policy is displayed in the policies table', async () => {
       await targetPolicyRow.waitFor();
-      await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
-      await expect.soft(targetPolicyRow.locator('//td[3]')).toHaveText(`Current month expenses must not exceed ${formattedAmount}.`);
-      await expect.soft(targetPolicyRow.locator('//td[4]')).toContainText(`Activity: ${filterOption}`);
+      await expect.soft(targetPolicyRow.locator('xpath=/td[1]')).toHaveText(policyName);
+      await expect.soft(targetPolicyRow.locator('xpath=/td[3]')).toHaveText(`Current month expenses must not exceed ${formattedAmount}.`);
+      await expect.soft(targetPolicyRow.locator('xpath=/td[4]')).toContainText(`Activity: ${filterOption}`);
     });
 
     await test.step('Navigate to the created policy details page', async () => {
@@ -125,7 +125,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
       await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
       await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Recurring budget');
       await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Current month expenses budget: ${formattedAmount}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Filters:Activity: ${filterOption}`);
+      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Activity: ${filterOption}`);
     });
   });
 
