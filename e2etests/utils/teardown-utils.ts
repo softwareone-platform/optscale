@@ -212,7 +212,6 @@ export async function deleteSubPoolsByName(restAPIRequest: RestAPIRequest, token
   if (process.env.CLEAN_UP !== 'true') {
     return;
   }
-  await disconnectDataSource(restAPIRequest, token, poolName);
 
   const subPoolIds = await getSubPoolIdsContainingName(restAPIRequest, token, poolName);
   for (const subPoolId of subPoolIds) {
