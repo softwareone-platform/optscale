@@ -4,19 +4,20 @@ import enum
 import functools
 import logging
 import os
+from typing import Any
 
 from opentelemetry import trace
 from opentelemetry._events import set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
+from opentelemetry.instrumentation.urllib3 import RequestInfo
 from opentelemetry.sdk._events import EventLoggerProvider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import SERVICE_NAME, SERVICE_VERSION, Resource
 from opentelemetry.sdk.trace import Span, TracerProvider
-from opentelemetry.sdk.trace.export import (
-    BatchSpanProcessor,
-    ConsoleSpanExporter,
-)
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from urllib3.connectionpool import HTTPConnectionPool
+
 
 LOG = logging.getLogger(__name__)
 
@@ -245,22 +246,16 @@ class OpenTelemetryConfig:
         )
 
     @only_if_enabled
-    def instrument_tornado(self):
-        from opentelemetry.instrumentation.tornado import TornadoInstrumentor
+    def instrument_mongo(self):
+        from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
 
-        TornadoInstrumentor().instrument()
+        PymongoInstrumentor().instrument()
 
     @only_if_enabled
     def instrument_requests(self):
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
         RequestsInstrumentor().instrument()
-
-    @only_if_enabled
-    def instrument_threading(self):
-        from opentelemetry.instrumentation.threading import ThreadingInstrumentor
-
-        ThreadingInstrumentor().instrument()
 
     @only_if_enabled
     def instrument_sqlalchemy(self, engine):
@@ -271,6 +266,48 @@ class OpenTelemetryConfig:
             return
 
         SQLAlchemyInstrumentor().instrument(engine=engine, enable_commenter=True)
+
+    @only_if_enabled
+    def instrument_threading(self):
+        from opentelemetry.instrumentation.threading import ThreadingInstrumentor
+
+        ThreadingInstrumentor().instrument()
+
+    @only_if_enabled
+    def instrument_tornado(self):
+        from opentelemetry.instrumentation.tornado import TornadoInstrumentor
+
+        TornadoInstrumentor().instrument()
+
+    @only_if_enabled
+    def instrument_urllib3(self):
+        from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
+
+        def urllib3_request_hook(
+            span: Span,
+            pool: HTTPConnectionPool,
+            request_info: RequestInfo,
+        ) -> Any:
+            if not span or not span.is_recording():
+                return
+
+            url = request_info.url.lower()
+
+            if "clickhouse" in url:
+                span.set_attribute("peer.service", "clickhouse")
+                span.set_attribute("db.system", "clickhouse")
+                span.update_name("HTTP clickhouse")
+                return
+
+            if "etcd" in url:
+                span.set_attribute("peer.service", "etcd")
+                span.set_attribute("component", "etcd")
+                span.update_name("HTTP etcd")
+                return
+
+        URLLib3Instrumentor().instrument(
+            request_hook=urllib3_request_hook,
+        )
 
 
 def setup_otel_config() -> OpenTelemetryConfig:
@@ -284,6 +321,8 @@ def setup_otel_config() -> OpenTelemetryConfig:
         otel_config.instrument_asyncio()
         otel_config.instrument_tornado()
         otel_config.instrument_requests()
+        otel_config.instrument_urllib3()
+        otel_config.instrument_mongo()
 
         atexit.register(otel_config.shutdown)
 

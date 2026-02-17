@@ -1494,6 +1494,20 @@ wheels = [
 ]
 
 [[package]]
+name = "opentelemetry-instrumentation-pymongo"
+version = "0.54b0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "opentelemetry-semantic-conventions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/8c/e5729b8bdd7835af07fe99b658ae5000107dfeebd9b4c0d4c4e1cc1883b6/opentelemetry_instrumentation_pymongo-0.54b0.tar.gz", hash = "sha256:c7f7d19b150682adccb570c0aea2c302a900b80dd50ef5d9be90db061cc168ed", size = 9613, upload-time = "2025-05-09T14:59:39.537Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f1/92/2c3bb8ff52f86c6d4bd3dc425984646ae401e053864f4f8d2f46ec79bb76/opentelemetry_instrumentation_pymongo-0.54b0-py3-none-any.whl", hash = "sha256:8b6855f9c30ed32af8bfaeafeaf8540522f0d5bcfc8a27ac72c862df8eba1d45", size = 11315, upload-time = "2025-05-09T14:58:52.657Z" },
+]
+
+[[package]]
 name = "opentelemetry-instrumentation-requests"
 version = "0.54b0"
 source = { registry = "https://pypi.org/simple" }
@@ -1551,6 +1565,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/01/85/32d4d209daada13f3e798f48513ca33d0977c2c2265eceb9ba502ef7c45b/opentelemetry_instrumentation_tornado-0.54b0.tar.gz", hash = "sha256:96f29b58e8df7cc967cf9445cd6a9ae6d1e79d8f786e23f644f8fb1f2ddc00d5", size = 17089, upload-time = "2025-05-09T14:59:48.67Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/c8/c757e9f4463a86818febd0b436ebc9c8bdc1996f2cdb3209635ca6badebe/opentelemetry_instrumentation_tornado-0.54b0-py3-none-any.whl", hash = "sha256:0019acbd749901bbf1120d98d91ef7a0523dcaa6b8960e4128804febdf581b10", size = 15327, upload-time = "2025-05-09T14:59:03.796Z" },
+]
+
+[[package]]
+name = "opentelemetry-instrumentation-urllib3"
+version = "0.54b0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-instrumentation" },
+    { name = "opentelemetry-semantic-conventions" },
+    { name = "opentelemetry-util-http" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/3b/881db46fc473b0beeb6a2c50633c53f229d016be33727f7d8f93cd5f671f/opentelemetry_instrumentation_urllib3-0.54b0.tar.gz", hash = "sha256:ba8d278f1be5622096068bff9720d25f7c52d1303d554e874ca4b205f0eea88a", size = 15697, upload-time = "2025-05-09T14:59:50.898Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/13/545661a8adbbc32690c0aa87809cc0744c04905c34a1b16deb9114b3939d/opentelemetry_instrumentation_urllib3-0.54b0-py3-none-any.whl", hash = "sha256:1d4c088cde7c6258e182e5b58d6ffd2685317cd5407c69d5d1e8b5d64a5a28a9", size = 13124, upload-time = "2025-05-09T14:59:06.941Z" },
 ]
 
 [[package]]
@@ -1965,10 +1995,12 @@ dependencies = [
     { name = "opentelemetry-exporter-otlp-proto-http" },
     { name = "opentelemetry-instrumentation-asyncio" },
     { name = "opentelemetry-instrumentation-logging" },
+    { name = "opentelemetry-instrumentation-pymongo" },
     { name = "opentelemetry-instrumentation-requests" },
     { name = "opentelemetry-instrumentation-sqlalchemy" },
     { name = "opentelemetry-instrumentation-threading" },
     { name = "opentelemetry-instrumentation-tornado" },
+    { name = "opentelemetry-instrumentation-urllib3" },
     { name = "opentelemetry-sdk" },
     { name = "optscale-data" },
     { name = "optscale-exceptions" },
@@ -2026,10 +2058,12 @@ requires-dist = [
     { name = "opentelemetry-exporter-otlp-proto-http", specifier = "==1.33.*" },
     { name = "opentelemetry-instrumentation-asyncio", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-logging", specifier = "==0.54b0" },
+    { name = "opentelemetry-instrumentation-pymongo", specifier = ">=0.54b0" },
     { name = "opentelemetry-instrumentation-requests", specifier = ">=0.54b0" },
     { name = "opentelemetry-instrumentation-sqlalchemy", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-threading", specifier = "==0.54b0" },
     { name = "opentelemetry-instrumentation-tornado", specifier = "==0.54b0" },
+    { name = "opentelemetry-instrumentation-urllib3", specifier = ">=0.54b0" },
     { name = "opentelemetry-sdk", specifier = "==1.33.*" },
     { name = "optscale-data", editable = "../tools/optscale_data" },
     { name = "optscale-exceptions", editable = "../tools/optscale_exceptions" },
