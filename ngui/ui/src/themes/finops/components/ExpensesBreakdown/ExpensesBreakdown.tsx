@@ -5,10 +5,10 @@ import ExpensesBreakdownActionBar from "@main/components/ExpensesBreakdown/Actio
 import ExpensesBreakdownBarChart from "@main/components/ExpensesBreakdown/BarChart";
 import ExpensesBreakdownBreakdownByButtonsGroup from "@main/components/ExpensesBreakdown/BreakdownByButtonsGroup";
 import ExpensesBreakdownByPeriodWidget from "@main/components/ExpensesBreakdown/BreakdownByPeriodWidget";
-import ExpensesBreakdownLayoutWrapper from "@main/components/ExpensesBreakdown/LayoutWrapper";
 import ExpensesBreakdownPieChart from "@main/components/ExpensesBreakdown/PieChart";
 import ExpensesBreakdownSummaryCards from "@main/components/ExpensesBreakdown/SummaryCards";
 import ExpensesBreakdownTableWidget from "@main/components/ExpensesBreakdown/TableWidget";
+import ExpensesBreakdownLayoutWrapper from "@theme/components/ExpensesBreakdown/layoutWrapper/ExpensesBreakdownLayoutWrapper";
 import LabelColon from "@theme/shared/components/LabelColon/LabelColon";
 import ResponsiveStack from "@theme/shared/components/ResponsiveStack/ResponsiveStack";
 import { MPT_SEMICOLON, MPT_SPACING_2 } from "@theme/utils/layouts";
