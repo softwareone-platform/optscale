@@ -55,8 +55,8 @@ class AWSObjectEnumerator:
                 region = location_constraint
                 LOG.info(f"Processing bucket {bucket} in {region}")
 
-            paginator = self._client_factory.create_client(
-                region).get_paginator("list_objects_v2")
+            paginator = self._client_factory.create_client().get_paginator(
+                "list_objects_v2")
 
             kwargs = {"Bucket": bucket}
             before_request = datetime.now()
