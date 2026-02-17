@@ -20,7 +20,7 @@ const powerScheduleValidityPeriod = ({ startDateAccessor, endDateAccessor }) => 
   cell: ({ row: { original } }) => {
     const { [startDateAccessor]: startDate, [endDateAccessor]: endDate } = original;
 
-    return <PowerScheduleValidityPeriod startDate={startDate} endDate={endDate} />;
+    return <PowerScheduleValidityPeriod startDate={startDate} endDate={endDate} iconFontSize="small" />;
   }
 });
 

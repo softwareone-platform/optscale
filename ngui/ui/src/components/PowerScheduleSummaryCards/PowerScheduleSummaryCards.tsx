@@ -6,11 +6,12 @@ import PowerScheduleValidityPeriod from "components/PowerScheduleValidityPeriod"
 import QuestionMark from "components/QuestionMark";
 import SummaryGrid from "components/SummaryGrid";
 import { SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
+import { isPowerScheduleExpired } from "utils/poweSchedules";
 
 type PowerScheduleSummaryCardsProps = {
   timeZone: string;
-  startDate: string;
-  endDate: string;
+  startDate: number;
+  endDate: number;
   lastRun: number;
   lastRunError: string;
   resourcesOnSchedule: number;
@@ -83,6 +84,7 @@ const PowerScheduleSummaryCards = ({
         dataTestIds: {
           cardTestId: "card_time_zone"
         },
+        color: isPowerScheduleExpired(endDate) ? "warning" : "primary",
         isLoading,
         renderCondition: () => !!startDate || !!endDate
       }

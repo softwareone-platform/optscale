@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import { MlEditArtifactForm } from "components/forms/MlArtifactForm";
-import { TABS } from "components/MlTaskRun/Components/Tabs";
+import { TABS } from "components/MlTaskRun/components/Tabs";
 import PageContentWrapper from "components/PageContentWrapper";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import MlArtifactsService from "services/MlArtifactsService";

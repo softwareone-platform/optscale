@@ -31,9 +31,11 @@ import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled
 
 const NEBIUS_RECOMMENDATIONS = [CvocAgreementOpportunities, AbandonedNebiusS3Buckets, NebiusMigration];
 
+const DEPRECATED_RECOMMENDATIONS = [ObsoleteImages];
+
 export const NEBIUS_RECOMMENDATION_TYPES = NEBIUS_RECOMMENDATIONS.map((Recommendation) => new Recommendation().type);
 
-export const useOptscaleRecommendations = () => {
+export const useOptscaleRecommendations = ({ withDeprecated = false }: { withDeprecated?: boolean } = {}) => {
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
 
   return useMemo(() => {
@@ -43,7 +45,6 @@ export const useOptscaleRecommendations = () => {
       RightsizingRdsInstances,
       RightsizingInstances,
       ReservedInstances,
-      ObsoleteImages,
       ObsoleteSnapshots,
       ObsoleteSnapshotChains,
       ObsoleteIps,
@@ -63,9 +64,10 @@ export const useOptscaleRecommendations = () => {
       PublicS3Buckets,
       SnapshotsWithNonUsedImages,
       AbandonedImages,
-      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
+      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : []),
+      ...(withDeprecated ? DEPRECATED_RECOMMENDATIONS : [])
     ];
 
     return Object.fromEntries(recommendations.map((Rec) => [new Rec().type, Rec]));
-  }, [isNebiusConnectionEnabled]);
+  }, [isNebiusConnectionEnabled, withDeprecated]);
 };
