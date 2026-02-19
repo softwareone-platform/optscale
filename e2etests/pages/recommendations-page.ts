@@ -203,7 +203,7 @@ export class RecommendationsPage extends BasePage {
     this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
     this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
     this.ri_spCard = this.main.getByTestId('card_ri_sp_expenses');
-    this.savedWithCommitmentsValue = this.main.getByTestId('p_ri_sp_expenses');
+    this.savedWithCommitmentsValue = this.main.locator('//div[@data-test-id="p_ri_sp_expenses"]');
     this.computeExpensesWithCommitmentsValue = this.main.locator('//div[.="Compute expenses covered with commitments"]/../div/div');
     this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
     this.nextCheckTimeValue = this.main.locator('//span[.="Next check time"]/../following-sibling::div');
@@ -469,7 +469,7 @@ export class RecommendationsPage extends BasePage {
    *
    * @returns {Promise<string>} The percentage value as a string.
    */
-  async getSavedExpensesWithCommitmentsPercentageValue(): Promise<string> {
+  async getSavedWithCommitmentsPercentageValue(): Promise<string> {
     return await this.computeExpensesWithCommitmentsValue.textContent();
   }
 
