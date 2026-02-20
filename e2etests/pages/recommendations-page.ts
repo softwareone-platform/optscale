@@ -203,7 +203,7 @@ export class RecommendationsPage extends BasePage {
     this.possibleMonthlySavingsDiv = this.main.getByTestId('card_saving');
     this.possibleMonthlySavingsValue = this.main.getByTestId('p_saving_value');
     this.ri_spCard = this.main.getByTestId('card_ri_sp_expenses');
-    this.savedWithCommitmentsValue = this.main.getByTestId('p_ri_sp_expenses');
+    this.savedWithCommitmentsValue = this.main.locator('//div[@data-test-id="p_ri_sp_expenses"]');
     this.computeExpensesWithCommitmentsValue = this.main.locator('//div[.="Compute expenses covered with commitments"]/../div/div');
     this.lastCheckTimeValue = this.main.getByTestId('p_last_time');
     this.nextCheckTimeValue = this.main.locator('//span[.="Next check time"]/../following-sibling::div');
@@ -366,6 +366,21 @@ export class RecommendationsPage extends BasePage {
   }
 
   /**
+   * Clicks the RI/SP card on the Recommendations page.
+   *
+   * This method interacts with the `ri_spCard` locator to simulate a user clicking
+   * on the RI/SP card element. The action is typically used to navigate to a specific
+   * section or trigger functionality associated with the RI/SP card.
+   *
+   * @returns {Promise<void>} Resolves when the click action is complete.
+   */
+  async clickRI_SPCard(): Promise<void> {
+    await this.page.waitForLoadState();
+    await this.delay(2000);
+    await this.ri_spCard.click();
+  }
+
+  /**
    * Selects a category from the categories combo box.
    * @param {string} category - The category to select.
    * @returns {Promise<void>}
@@ -435,6 +450,27 @@ export class RecommendationsPage extends BasePage {
    */
   async clickS3DuplicatesCard(): Promise<void> {
     await this.s3DuplicatesCard.click();
+  }
+
+  /**
+   * Retrieves the saved amount with commitments value from the page.
+   * Parses the text content of the saved value element into a numeric value.
+   *
+   * @returns {Promise<number>} The parsed saved amount with commitments value.
+   */
+  async getSavedWithCommitmentsValue(): Promise<number> {
+    const value = await this.savedWithCommitmentsValue.textContent();
+    return this.parseCurrencyValue(value);
+  }
+
+  /**
+   * Retrieves the percentage of saved expenses covered with commitments.
+   * Extracts the text content of the relevant element.
+   *
+   * @returns {Promise<string>} The percentage value as a string.
+   */
+  async getSavedWithCommitmentsPercentageValue(): Promise<string> {
+    return await this.computeExpensesWithCommitmentsValue.textContent();
   }
 
   /**

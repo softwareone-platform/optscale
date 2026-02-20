@@ -6,6 +6,7 @@ import { DataSourceBillingResponse } from '../types/api-response.types';
 import { EAWSAccountType } from '../types/enums';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
+  test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 

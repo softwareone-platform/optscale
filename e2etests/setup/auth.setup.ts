@@ -39,6 +39,9 @@ setup.describe('Auth Setup', () => {
         await page.getByTestId('input_email').fill(email);
         await page.getByTestId('input_pass').fill(password);
         await page.getByTestId('btn_login').click();
+        const initializingMessage = page.getByTestId('p_initializing')
+        await initializingMessage.waitFor({ timeout: 10000 });
+        await initializingMessage.waitFor({ state: 'detached', timeout: 20000 });
         const loadingImage = page.getByRole('img', { name: 'Loading page' });
         await loadingImage.waitFor();
         await loadingImage.waitFor({ state: 'detached', timeout: 10000 });
