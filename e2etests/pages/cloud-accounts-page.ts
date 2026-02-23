@@ -18,6 +18,14 @@ export class CloudAccountsPage extends BasePage {
   readonly table: Locator;
   readonly allCloudAccountLinks: Locator;
 
+  readonly updateSideModal: Locator;
+  readonly sideModalAccessKeyButton: Locator;
+  readonly sideModalAssumedRoleButton: Locator;
+  readonly sideModalPrimaryAlert: Locator;
+  readonly sideModalSecondaryAlert: Locator;
+
+  readonly updateCredentialsBtn: Locator;
+
   /**
    * Initializes a new instance of the CloudAccountsPage class.
    * @param {Page} page - The Playwright page object.
@@ -34,6 +42,12 @@ export class CloudAccountsPage extends BasePage {
     this.billingStatusCompletedIcon = this.getByAnyTestId('CheckCircleIcon', this.lastBillingImportStatus);
     this.addBtn = this.main.getByTestId('btn_add');
     this.allCloudAccountLinks = this.table.locator('xpath=(//td//a)');
+    this.updateSideModal = this.page.getByTestId('smodal_update_data_source_credentials');
+    this.sideModalAccessKeyButton = this.updateSideModal.getByTestId('btn_accessKey');
+    this.sideModalAssumedRoleButton = this.updateSideModal.getByTestId('btn_assumedRole');
+    this.sideModalPrimaryAlert = this.updateSideModal.locator('//div[@role="alert"]').first();
+    this.sideModalSecondaryAlert = this.updateSideModal.locator('//div[@role="alert"]').last();
+    this.updateCredentialsBtn = this.main.getByTestId('btn_update_data_source_credentials_modal');
   }
 
   /**
@@ -42,6 +56,10 @@ export class CloudAccountsPage extends BasePage {
    */
   async clickAddBtn(): Promise<void> {
     await this.addBtn.click();
+  }
+
+  async clickUpdateCredentialsBtn(): Promise<void> {
+    await this.updateCredentialsBtn.click();
   }
 
   /**

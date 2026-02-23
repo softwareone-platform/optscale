@@ -523,7 +523,7 @@ export class RecommendationsPage extends BasePage {
       { label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue },
       { label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue },
       { label: 'Public S3 Buckets', locator: this.publicS3BucketsCardSavingsValue },
-      { label: 'Snapshots With Non-used Images', locator: this.snapshotsWithNonUsedImagesCardSavingsValue},
+      { label: 'Snapshots With Non-used Images', locator: this.snapshotsWithNonUsedImagesCardSavingsValue },
       { label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue },
       { label: 'Underutilized RDS Instances', locator: this.underutilizedRDSInstancesCardSavingsValue },
     ];
@@ -671,6 +671,16 @@ export class RecommendationsPage extends BasePage {
     return totalSum;
   }
 
+  /**
+   * Retrieves the numeric count value from a card element.
+   *
+   * This method extracts the text content from the provided card locator
+   * and parses it as an integer. It is typically used to get count values
+   * displayed on recommendation cards (e.g., number of resources affected).
+   *
+   * @param {Locator} cardLocator - The locator for the card element containing the count value.
+   * @returns {Promise<number>} The parsed count value as an integer.
+   */
   async getCardCountValue(cardLocator: Locator): Promise<number> {
     const text = await cardLocator.textContent();
     return parseInt(text, 10);

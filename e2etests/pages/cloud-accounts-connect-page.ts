@@ -37,6 +37,7 @@ export class CloudAccountsConnectPage extends BasePage {
   readonly exportNameInput: Locator;
   readonly exportAmazonS3BucketNameInput: Locator;
   readonly exportPathPrefixInput: Locator;
+  readonly alertMessage: Locator;
   //#endregion
 
   //#region Azure specific
@@ -53,6 +54,7 @@ export class CloudAccountsConnectPage extends BasePage {
   readonly billingDatasetProjectIDInput: Locator;
 
   //#endregion
+
 
   /**
    * Initializes a new instance of the CloudAccountsConnectPage class.
@@ -84,6 +86,7 @@ export class CloudAccountsConnectPage extends BasePage {
     this.exportNameInput = this.main.getByTestId('input_export_name');
     this.exportAmazonS3BucketNameInput = this.main.getByTestId('input_s3_bucket_name');
     this.exportPathPrefixInput = this.main.getByTestId('input_export_path_prefix');
+    this.alertMessage  = this.main.getByRole("alert");
     this.connectBtn = this.main.getByTestId('btn_connect_cloud_account');
     this.cancelBtn = this.main.getByTestId('btn_cancel_cloud_account');
     this.directoryTenantIDInput = this.main.getByTestId('input_tenant_id');
@@ -156,6 +159,10 @@ export class CloudAccountsConnectPage extends BasePage {
    */
   async clickGoogleCloud(): Promise<void> {
     await this.googleCloudBtn.click();
+  }
+
+  async clickAccessKey(): Promise<void> {
+    await this.btnAccessKey.click();
   }
 
   /**
