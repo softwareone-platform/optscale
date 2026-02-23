@@ -23,8 +23,16 @@ export class CloudAccountsPage extends BasePage {
   readonly sideModalAssumedRoleButton: Locator;
   readonly sideModalPrimaryAlert: Locator;
   readonly sideModalSecondaryAlert: Locator;
-
   readonly updateCredentialsBtn: Locator;
+
+  readonly billingReimportBtn: Locator;
+  readonly billingReimportSideModal: Locator;
+  readonly billingReimportAlert: Locator;
+  readonly scheduleImportBtn: Locator;
+  readonly importDatePickerInput: Locator;
+  private datePopup: Locator;
+  readonly dateSetBtn: Locator;
+
 
   /**
    * Initializes a new instance of the CloudAccountsPage class.
@@ -48,6 +56,14 @@ export class CloudAccountsPage extends BasePage {
     this.sideModalPrimaryAlert = this.updateSideModal.locator('//div[@role="alert"]').first();
     this.sideModalSecondaryAlert = this.updateSideModal.locator('//div[@role="alert"]').last();
     this.updateCredentialsBtn = this.main.getByTestId('btn_update_data_source_credentials_modal');
+    this.billingReimportBtn = this.main.getByTestId('btn_expenses_reimport_data_source_modal');
+    this.billingReimportSideModal = this.page.getByTestId('smodal_reimport_data_source_expenses');
+    this.billingReimportAlert = this.billingReimportSideModal.locator('//div[@role="alert"]');
+    this.scheduleImportBtn = this.billingReimportSideModal.getByTestId('btn_confirm');
+    this.importDatePickerInput = this.billingReimportSideModal.getByTestId('input_importFrom');
+    this.datePopup = this.page.locator('//div[@id="simple-popover"]');
+    this.dateSetBtn = this.datePopup.getByRole('button', { name: 'Set' });
+
   }
 
   /**
@@ -58,8 +74,43 @@ export class CloudAccountsPage extends BasePage {
     await this.addBtn.click();
   }
 
+  /**
+   * Clicks the "Update Credentials" button to open the update credentials modal.
+   * This method is typically used to initiate the process of updating
+   * cloud account credentials (e.g., AWS access keys or assumed roles).
+   * @returns {Promise<void>} A promise that resolves when the button is clicked.
+   */
   async clickUpdateCredentialsBtn(): Promise<void> {
     await this.updateCredentialsBtn.click();
+  }
+
+  /**
+   * Clicks the "Billing Reimport" button to open the billing reimport modal.
+   * This method is used to initiate the process of re-importing billing data
+   * for a cloud account from a specified date.
+   * @returns {Promise<void>} A promise that resolves when the button is clicked.
+   */
+  async clickBillingReimportBtn(): Promise<void> {
+    await this.billingReimportBtn.click();
+  }
+
+  /**
+   * Schedules a billing data re-import using the default date in the date picker.
+   * This method performs the following steps:
+   * 1. Opens the date picker by clicking the import date input field
+   * 2. Confirms the default date by clicking the "Set" button
+   * 3. Initiates the import by clicking the "Schedule Import" button
+   * 4. Logs the scheduled date for debugging purposes
+   *
+   * @returns {Promise<string>} A promise that resolves with the text content of the selected date.
+   * @throws {Error} If the date picker input or buttons are not accessible.
+   */
+  async scheduleImportWithDefaultDate(): Promise<string> {
+    await this.importDatePickerInput.click();
+    await this.dateSetBtn.click();
+    await this.scheduleImportBtn.click();
+    debugLog(`Scheduled billing re-import with default date: ${await this.importDatePickerInput.textContent()}`);
+    return await this.importDatePickerInput.textContent();
   }
 
   /**
@@ -80,7 +131,6 @@ export class CloudAccountsPage extends BasePage {
     debugLog(`Clicking on cloud account link with name: ${name}`);
     return locator.click();
   }
-
 
   /**
      * Retrieves a cloud account link by its name.

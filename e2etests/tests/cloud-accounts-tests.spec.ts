@@ -140,6 +140,35 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
       await expect(cloudAccountsConnectPage.alertMessage).toHaveText(expectedMessage);
     });
   });
+
+  test('[232862] Verify that the user can schedule a billing reimport, and see warning alert', async ({ cloudAccountsPage }) => {
+    const expectedAlertMessage = 'Reimporting billing starting from the selected import date will overwrite existing billing data. This action may cause discrepancies or breaks in the current billing records and can take some time to complete. The new billing data will be imported during the next billing import report processing. Please proceed with caution, as this process cannot be undone. Ensure that this action is necessary and that you are prepared for any potential data loss and inaccuracies in billing tracking.';
+
+    await test.step('Navigate to the Billing reimport side modal', async () => {
+      await cloudAccountsPage.clickCloudAccountLinkByName('Marketplace (Dev)');
+      await cloudAccountsPage.clickBillingReimportBtn();
+      await cloudAccountsPage.billingReimportSideModal.waitFor();
+    });
+
+    await test.step('Verify that the warning alert is displayed with correct message', async () => {
+      await expect(cloudAccountsPage.billingReimportAlert).toBeVisible();
+      await expect(cloudAccountsPage.billingReimportAlert).toHaveText(expectedAlertMessage);
+    });
+
+    await test.step('Verify that API request is successfully made when scheduling a billing reimport with default date', async () => {
+      let responseStatus: number;
+      const [response] = await Promise.all([
+        cloudAccountsPage.page.waitForResponse(
+          resp => resp.request().postData().includes('operationName":"UpdateDataSource') && resp.request().method() === 'POST'
+        ),
+        cloudAccountsPage.scheduleImportWithDefaultDate(),
+      ])
+        responseStatus = response.status();
+        debugLog(`API Response status: ${responseStatus}`);
+        expect(responseStatus).toBe(200);
+    });
+  });
+
 });
 
 test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
