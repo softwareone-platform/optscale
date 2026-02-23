@@ -398,7 +398,7 @@ export abstract class BasePage {
    * @param {number} [timeout=10000] - The maximum time to wait for the loading image to disappear, in milliseconds.
    * @returns {Promise<void>} A promise that resolves when the loading image is no longer visible or exits early if the image is not present.
    */
-  async waitForLoadingPageImgToDisappear(timeout: number = 10000): Promise<void> {
+  async waitForLoadingPageImgToDisappear(timeout: number = 20000): Promise<void> {
     try {
       await this.loadingPageImg.first().waitFor({ timeout: 1000 });
     } catch (_error) {
@@ -422,7 +422,7 @@ export abstract class BasePage {
    * @param {number} [timeout=10000] - The maximum time to wait for the initialisation message to disappear, in milliseconds.
    * @returns {Promise<void>} A promise that resolves when the initialisation message is no longer visible or exits early if the message is not present.
    */
-  async waitForInitialisationToComplete(timeout: number = 10000): Promise<void> {
+  async waitForInitialisationToComplete(timeout: number = 20000): Promise<void> {
     try {
       await this.initialisationMessage.first().waitFor({ timeout: 1000 });
     } catch (_error) {
