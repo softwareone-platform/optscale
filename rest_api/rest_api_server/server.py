@@ -515,8 +515,6 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    otel_config = setup_otel_config()
-
     etcd_host = os.environ.get('HX_ETCD_HOST', DEFAULT_ETCD_HOST)
     etcd_port = os.environ.get('HX_ETCD_PORT', DEFAULT_ETCD_PORT)
 
@@ -524,6 +522,12 @@ def main():
     parser.add_argument('--etcdhost', type=str, default=etcd_host)
     parser.add_argument('--etcdport', type=int, default=etcd_port)
     args = parser.parse_args()
+
+    otel_config = setup_otel_config(
+        etcd_host=args.etcdhost,
+        etcd_port=args.etcdport,
+        wait=True,
+    )
 
     app = make_app(
         db_type=DBType.MySQL,

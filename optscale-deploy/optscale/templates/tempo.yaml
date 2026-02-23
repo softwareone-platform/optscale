@@ -1,4 +1,5 @@
 {{- $config := .Values.tempo -}}
+{{- if .Values.tempo.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -108,3 +109,4 @@ data:
           path: /var/tempo/wal
         local:
           path: /var/tempo/traces
+{{- end }}

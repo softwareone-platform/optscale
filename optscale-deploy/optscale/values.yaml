@@ -1119,3 +1119,17 @@ stripe:
   enabled: false
   api_key:
   webhook_secret:
+
+#open telemetry settings
+opentelemetry:
+  enabled: true
+  exporter: otlp
+  exporters:
+    azure_monitor:
+      connection_string: connectionString
+    tempo:
+      port: 4317
+      host: tempo.default.svc.cluster.local
+  enable_sqlalchemy: true
+  enable_future_traces: true
+  enable_mongo_statements: true
