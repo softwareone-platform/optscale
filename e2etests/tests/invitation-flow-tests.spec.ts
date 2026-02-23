@@ -56,10 +56,6 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
         await emailVerificationPage.proceedToFinOps();
         await pendingInvitationsPage.acceptInvite();
       });
-      //
-      // await test.step('Accept privacy policy', async () => {
-      //   await pendingInvitationsPage.acceptPrivacyPolicy();
-      // })
 
       await test.step('Assert organization', async () => {
         if (process.env.BASE_URL === process.env.STAGING) {
@@ -198,10 +194,6 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     await test.step('Accept invitation', async () => {
       await pendingInvitationsPage.acceptInvite();
     });
-
-    // await test.step('Accept privacy policy', async () => {
-    //   await pendingInvitationsPage.acceptPrivacyPolicy();
-    // })
 
     await test.step('Assert organization', async () => {
       const orgName = header.getOrganizationNameForEnvironment();
