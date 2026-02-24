@@ -390,6 +390,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     match = await comparePngImages(expectedPath, actualPath, diffPath);
     expect.soft(match).toBe(true);
   });
+
   test('[231439] Verify detected anomalies are displayed in the table correctly', async ({ anomaliesPage }) => {
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();

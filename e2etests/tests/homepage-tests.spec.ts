@@ -1,6 +1,8 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
+import { InterceptionEntry } from '../types/interceptor.types';
+import { OrganisationConstraintsMock } from '../mocks/home-page.mocks';
 
 test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui', '@recommendations', '@homepage'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -15,12 +17,16 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     });
   });
 
-  test('[230550] Compare possible savings on home page with those on recommendations page', {tag: '@p1'}, async ({ homePage, recommendationsPage }) => {
-    const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
-    await homePage.recommendationsBtn.click();
-    const recommendationsPageValue = await recommendationsPage.getPossibleMonthlySavingsValue();
-    expect.soft(homePageValue).toBe(recommendationsPageValue);
-  });
+  test(
+    '[230550] Compare possible savings on home page with those on recommendations page',
+    { tag: '@p1' },
+    async ({ homePage, recommendationsPage }) => {
+      const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
+      await homePage.recommendationsBtn.click();
+      const recommendationsPageValue = await recommendationsPage.getPossibleMonthlySavingsValue();
+      expect.soft(homePageValue).toBe(recommendationsPageValue);
+    }
+  );
 
   test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', async ({
     homePage,
@@ -74,38 +80,38 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     });
   });
 
-  test('[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match', {tag: '@p1'}, async ({
-    homePage,
-    resourceDetailsPage,
-    datePicker,
-  }) => {
-    let homepageResourceTitle: string;
-    let homePageExpenseValue: number;
-    await test.step("Get first resource's homepage values", async () => {
-      await homePage.topResourcesAllLinks.last().waitFor();
-      homepageResourceTitle = await homePage.getFirstResourceTitle();
-      homePageExpenseValue = await homePage.getFirstResourceValue();
-      expect.soft(homepageResourceTitle).toBeTruthy();
-    });
+  test(
+    '[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match',
+    { tag: '@p1' },
+    async ({ homePage, resourceDetailsPage, datePicker }) => {
+      let homepageResourceTitle: string;
+      let homePageExpenseValue: number;
+      await test.step("Get first resource's homepage values", async () => {
+        await homePage.topResourcesAllLinks.last().waitFor();
+        homepageResourceTitle = await homePage.getFirstResourceTitle();
+        homePageExpenseValue = await homePage.getFirstResourceValue();
+        expect.soft(homepageResourceTitle).toBeTruthy();
+      });
 
-    await test.step('Click on the first resource link and verify navigation', async () => {
-      await homePage.clickFirstTopResourceLink();
-      await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
-    });
+      await test.step('Click on the first resource link and verify navigation', async () => {
+        await homePage.clickFirstTopResourceLink();
+        await expect.soft(resourceDetailsPage.heading).toContainText(homepageResourceTitle);
+      });
 
-    await test.step('Click expenses tab and set date range to last 30 days', async () => {
-      await resourceDetailsPage.clickExpensesTab();
-      await datePicker.selectLast30DaysDateRange();
-    });
+      await test.step('Click expenses tab and set date range to last 30 days', async () => {
+        await resourceDetailsPage.clickExpensesTab();
+        await datePicker.selectLast30DaysDateRange();
+      });
 
-    await test.step('Verify that the expenses column total matches the home page last 30 days expenses value', async () => {
-      const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(
-        resourceDetailsPage.tableColumn2,
-        resourceDetailsPage.navigateNextIcon
-      );
-      expect(isWithinRoundingDrift(homePageExpenseValue, expenseTotal, 0.0001)).toBe(true); //0.01% drift is acceptable for the test
-    });
-  });
+      await test.step('Verify that the expenses column total matches the home page last 30 days expenses value', async () => {
+        const expenseTotal = await resourceDetailsPage.sumCurrencyColumn(
+          resourceDetailsPage.tableColumn2,
+          resourceDetailsPage.navigateNextIcon
+        );
+        expect(isWithinRoundingDrift(homePageExpenseValue, expenseTotal, 0.0001)).toBe(true); //0.01% drift is acceptable for the test
+      });
+    }
+  );
 
   test('[230842] Verify Top Resource Block displayed correctly', async ({ homePage }) => {
     await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
@@ -129,6 +135,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     homePage,
     poolsPage,
   }) => {
+    test.describe.configure({ mode: 'serial' }); // The test is state dependent, so it should not run in parallel with other resource tests.
     await test.step('Navigate to home page', async () => {
       await homePage.navigateToURL();
       await homePage.waitForAllProgressBarsToDisappear();
@@ -237,6 +244,74 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         .toBe(homePage.successColor);
       expect.soft(await homePage.getColorFromElement(homePage.poolsBlockForecastColumn.locator('span'))).toBe(homePage.warningColor);
       expect.soft(await homePage.getPoolsBlockTotalValue()).toBe(1);
+    });
+  });
+});
+
+test.describe('[MPT-18353] Home Page test for Policy Violation block', { tag: ['@ui', '@anomalies', '@homepage'] }, () => {
+  const apiInterceptions: InterceptionEntry[] = [
+    {
+      url: '/v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly&type=resource_quota&type=recurring_budget&type=expiring_budget&type=tagging_policy',
+      mock: OrganisationConstraintsMock,
+    },
+  ];
+
+  test.use({
+    restoreSession: true,
+    interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true },
+  });
+
+  test('[232876] Verify that Policy Violation block displays policy violations correctly', async ({ homePage }) => {
+    await test.step('Navigate to home page', async () => {
+      await homePage.page.clock.setFixedTime(new Date('2026-02-24T11:00:00Z'));
+      await homePage.navigateToURL();
+      await homePage.waitForAllCanvases();
+    });
+
+    const typeColumn = '//td[2]';
+    const statusColumn = '//td[3]';
+
+    await test.step('Verify that the Policy Violation block first page is displayed with correct data', async () => {
+      const NBSP = '\u00A0';
+
+      await expect.soft(homePage.correlatedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
+      await expect.soft(homePage.correlatedTaggingRow.locator(statusColumn)).toHaveText('1 violation right now');
+
+      await expect.soft(homePage.defaultExpenseAnomalyRow.locator(typeColumn)).toHaveText('Anomaly');
+      await homePage.defaultExpenseAnomalyRow.locator(statusColumn).hover();
+      await expect.soft(homePage.tooltip).toHaveText(`Average:${NBSP}$7,621.64Today:${NBSP}$63,376.15`);
+
+      await expect.soft(homePage.expiringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+      await expect.soft(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$1,175.82');
+      expect
+        .soft(await homePage.getColorFromElement(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)))
+        .toBe(homePage.errorColor);
+
+      await expect.soft(homePage.prohibitedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
+      await expect.soft(homePage.prohibitedTaggingRow.locator(statusColumn)).toHaveText('2 violations right now');
+
+      await expect.soft(homePage.recurringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+      await expect.soft(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$234,445.89');
+      expect
+        .soft(await homePage.getColorFromElement(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)))
+        .toBe(homePage.errorColor);
+
+      await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
+    });
+
+    await test.step('Verify second page of the Policy Violation block is displayed with correct data when clicking on the pagination button', async () => {
+      await homePage.policyViolationsNavigateNextBtn.click();
+
+      await expect.soft(homePage.resourceQuotaRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+      await expect.soft(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)).toHaveText('478');
+      expect
+        .soft(await homePage.getColorFromElement(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)))
+        .toBe(homePage.errorColor);
+
+      await expect.soft(homePage.taggingRequiredRow.locator(`${typeColumn}`)).toHaveText('Tagging');
+      await expect.soft(homePage.taggingRequiredRow.locator(`${statusColumn}`)).toHaveText('3119 violations right now');
+
+      await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
     });
   });
 });
