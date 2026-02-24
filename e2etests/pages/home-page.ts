@@ -35,6 +35,16 @@ export class HomePage extends BasePage {
 
   //Policy violations block
   readonly policyViolationsBlock: Locator;
+  readonly policyViolationsTable: Locator;
+  readonly policyViolationsNavigateNextBtn: Locator;
+  readonly correlatedTaggingRow: Locator;
+  readonly defaultExpenseAnomalyRow: Locator;
+  readonly expiringBudgetRow: Locator;
+  readonly prohibitedTaggingRow: Locator;
+  readonly recurringBudgetRow: Locator;
+  readonly resourceQuotaRow: Locator;
+  readonly taggingRequiredRow: Locator;
+  readonly defaultResourceCountAnomalyRow: Locator;
 
   //Pools requiring attention block
   readonly poolsRequiringAttentionBlock: Locator;
@@ -86,6 +96,16 @@ export class HomePage extends BasePage {
 
     //Policy violations block
     this.policyViolationsBlock = this.page.getByTestId('block_policies_violations');
+    this.policyViolationsTable = this.policyViolationsBlock.locator('table');
+    this.policyViolationsNavigateNextBtn = this.getByAnyTestId('NavigateNextIcon', this.policyViolationsBlock);
+    this.correlatedTaggingRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Correlated tagging policy' });
+    this.expiringBudgetRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Expiring budget' });
+    this.prohibitedTaggingRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Prohibited tagging policy' });
+    this.recurringBudgetRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Recurring budget' });
+    this.resourceQuotaRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Resource quota' });
+    this.taggingRequiredRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Tagging required policy' });
+    this.defaultExpenseAnomalyRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Default - expense anomaly' });
+    this.defaultResourceCountAnomalyRow = this.policyViolationsTable.locator('tbody tr').filter({ hasText: 'Default - resource count anomaly' });
 
     //Pools requiring attention block
     this.poolsRequiringAttentionBlock = this.main.getByTestId('block_pools');
@@ -284,5 +304,11 @@ export class HomePage extends BasePage {
   async clickPoolsBlockForecastedOverspendTab(): Promise<void> {
     await this.poolsReqAttnExceededForecastedOverspendBtn.click();
     await this.waitForPageLoad();
+  }
+
+  async getPolicyViolationsTableRowByText(text: string): Promise<Locator> {
+    const row = this.policyViolationsTable.locator('tbody tr').filter({ hasText: text });
+    await row.waitFor();
+    return row;
   }
 }
