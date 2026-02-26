@@ -182,3 +182,33 @@ export function getLastMonthUnixDateRange(): { startDate: number; endDate: numbe
 export function unixToDateString(unix: number): string {
   return new Date(unix * 1000).toISOString().split('T')[0]; // yyyy-mm-dd
 }
+
+/**
+ * Gets the current UTC timestamp formatted as a string.
+ *
+ * This function returns the current date and time in UTC with zero-padded values
+ * for month, day, hour, and minute in 12-hour format without seconds.
+ *
+ * @returns {string} A formatted timestamp string in the format "MM/DD/YYYY HH:MM AM/PM".
+ *
+ * @example
+ * // Returns something like: "02/26/2026 09:23 AM"
+ * const timestamp = getCurrentUTCTimestamp();
+ *
+ * @remarks
+ * The format is specifically designed to match event log timestamps in the OptScale UI.
+ * The comma between date and time is removed to produce the final format.
+ */
+export function getCurrentUTCTimestamp(): string {
+  return new Date()
+    .toLocaleString('en-US', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+    .replace(',', '');
+}

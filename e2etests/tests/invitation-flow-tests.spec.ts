@@ -3,6 +3,7 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { generateRandomEmail } from '../utils/random-data-generator';
+import { debugLog } from '../utils/debug-logging';
 
 const verificationCode = '123456';
 let invitationEmail: string;
@@ -389,3 +390,35 @@ test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@i
     });
   });
 });
+
+test.describe(
+  '[MPT-18378] Verify that an invitation is recorded in the events log',
+  { tag: ['@invitation-flow', '@ui', '@events'] },
+  () => {
+    test.use({ restoreSession: true });
+
+    test('[232868] Invite a new user and verify the event is logged', async ({ mainMenu, usersPage, usersInvitePage, eventsPage }) => {
+      invitationEmail = generateRandomEmail();
+
+      await test.step('Invite a new user to the organisation', async () => {
+        await usersPage.navigateToURL();
+        await usersPage.clickInviteBtn();
+        await usersInvitePage.inviteUser(invitationEmail);
+        await usersInvitePage.userInvitedAlert.waitFor();
+        await usersInvitePage.userInvitedAlertCloseButton.click();
+      });
+
+      await test.step('Navigate to Events page and verify invitation event is logged', async () => {
+        const date = new Date().toLocaleDateString('en-US'); // Get current date in US format (M/D/YYYY)
+        debugLog(`Current date: ${date}`);
+        await mainMenu.clickEvents();
+        await eventsPage.filterByEventLevel('Info');
+        const invitationEventText = await (await eventsPage.getEventByText(invitationEmail)).textContent();
+        debugLog(`Invitation event text: ${invitationEventText}`);
+        expect(invitationEventText).toContain(date);
+        expect(invitationEventText.toLowerCase()).toContain(`employee ${invitationEmail} invited by`);
+        expect(invitationEventText).toContain(process.env.DEFAULT_USER_EMAIL);
+      });
+    });
+  }
+);
