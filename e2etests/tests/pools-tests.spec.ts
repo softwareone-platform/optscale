@@ -3,6 +3,8 @@ import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
 import { debugLog } from '../utils/debug-logging';
+import { getCurrentUTCTimestamp } from '../utils/date-range-utils';
+import { getEnvironmentTestOrgName } from '../utils/environment-util';
 
 function extractMultiplier(input: string): number | null {
   const match = input.match(/\(x([\d.]+)\)/);
@@ -359,6 +361,45 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       await expect.soft(poolsPage.subPoolNameColumn.first()).toBeHidden();
       await poolsPage.clickExpandRequiringAttentionBtn();
       await expect.soft(poolsPage.subPoolNameColumn.first()).toBeVisible();
+    });
+  });
+
+  test('[232865] Verify that updating limits of pools and sub-pools is recorded in the logs', async ({ poolsPage, eventsPage }) => {
+    test.setTimeout(60000);
+    let timestamp: string;
+    const randomNumber = Math.floor(Math.random() * 1_000);
+
+    await test.step('Modify a pool limit and verify event log', async () => {
+      timestamp = getCurrentUTCTimestamp();
+      await poolsPage.editPoolMonthlyLimit(randomNumber);
+      await eventsPage.navigateToURL();
+      const poolEvent = eventsPage.getEventByMultipleTexts([
+        `Pool ${getEnvironmentTestOrgName()}`,
+        `updated with parameters: limit: ${randomNumber}`,
+      ]);
+      const poolEventText = await poolEvent.textContent();
+      debugLog(`Pool event log text: ${poolEventText}`);
+      expect.soft(poolEventText).toContain(`${timestamp} UTC`);
+      expect.soft(poolEventText).toContain(`limit: ${randomNumber},`);
+      expect.soft(poolEventText).toContain(`(${process.env.DEFAULT_USER_EMAIL})`);
+    });
+
+    await test.step('Add a sub-pool limit and verify event log', async () => {
+      await poolsPage.navigateToURL();
+      timestamp = getCurrentUTCTimestamp();
+      await poolsPage.toggleExpandPool();
+      const subPoolName = await poolsPage.getSubPoolName(1);
+      await poolsPage.editSubPoolMonthlyLimit(randomNumber, true, 1, true);
+      await eventsPage.navigateToURL();
+      const subPoolEvent = eventsPage.getEventByMultipleTexts([
+        `Pool ${subPoolName}`,
+        `updated with parameters: name:`,
+        `limit: ${randomNumber},`,
+      ]);
+      const subPoolEventText = await subPoolEvent.textContent();
+      debugLog(`Sub-pool event log text: ${subPoolEventText}`);
+      expect.soft(subPoolEventText).toContain(`${timestamp} UTC`);
+      expect.soft(subPoolEventText).toContain(`(${process.env.DEFAULT_USER_EMAIL})`);
     });
   });
 });

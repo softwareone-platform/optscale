@@ -135,7 +135,6 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     homePage,
     poolsPage,
   }) => {
-    test.describe.configure({ mode: 'serial' }); // The test is state dependent, so it should not run in parallel with other resource tests.
     await test.step('Navigate to home page', async () => {
       await homePage.navigateToURL();
       await homePage.waitForAllProgressBarsToDisappear();

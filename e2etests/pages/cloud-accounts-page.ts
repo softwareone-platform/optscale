@@ -66,6 +66,12 @@ export class CloudAccountsPage extends BasePage {
 
   }
 
+  async navigateToCloudAccountsPage(): Promise<void> {
+  await this.navigateToURL();
+  await this.waitForAllProgressBarsToDisappear();
+  await this.allCloudAccountLinks.last().waitFor();
+  }
+
   /**
    * Clicks the Add button on the Cloud Accounts page.
    * @returns {Promise<void>}

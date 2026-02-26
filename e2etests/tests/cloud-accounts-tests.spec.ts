@@ -16,18 +16,11 @@ import {
   OrganizationsResponse,
   OrganizationThemeSettingsResponse,
 } from '../mocks/cloud-accounts-page.mocks';
+import { getCurrentUTCTimestamp } from '../utils/date-range-utils';
 
-test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
-  test.describe.configure({ mode: 'default' });
+test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
+  test.describe.configure({ mode: 'serial' });
   test.use({ restoreSession: true });
-
-  test.beforeEach('Login admin user', async ({ cloudAccountsPage }) => {
-    await test.step('Login admin user', async () => {
-      await cloudAccountsPage.navigateToURL();
-      await cloudAccountsPage.waitForAllProgressBarsToDisappear();
-      await cloudAccountsPage.allCloudAccountLinks.last().waitFor();
-    });
-  });
 
   //TODO: The first datasource has not been configured correctly in the environment. The test will need to be changed to use Marketplace (Dev) which is
   // the test datasource that we can configure without external dependencies.
@@ -38,6 +31,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
       let dataSourceResponse: DataSourceBillingResponse;
       const now = Math.floor(Date.now() / 1000);
       const secondsIn24Hours = 86400;
+      await cloudAccountsPage.navigateToCloudAccountsPage();
 
       await test.step('Fetch Data Source Response for first account', async () => {
         const [response] = await Promise.all([fetchDataSourceResponse(page), cloudAccountsPage.clickCloudAccountLink(1)]);
@@ -64,7 +58,9 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
 
   test('[231861] Verify adding a new AWS Assumed role - Management', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
+    await cloudAccountsPage.navigateToCloudAccountsPage();
     const awsAccountName = 'Marketplace (Dev)';
+
     await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
       await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
     });
@@ -86,7 +82,9 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
     { tag: '@p1' },
     async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
       test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
+      await cloudAccountsPage.navigateToCloudAccountsPage();
       const awsAccountName = 'Marketplace (Dev)';
+
       await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
         await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
       });
@@ -106,7 +104,9 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
 
   test('[231863] Verify adding a new AWS Assumed role - Standalone', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
+    await cloudAccountsPage.navigateToCloudAccountsPage();
     const awsAccountName = 'Marketplace (Dev)';
+
     await test.step(`Disconnect ${awsAccountName} if connected`, async () => {
       await cloudAccountsPage.disconnectIfConnectedCloudAccountByName(awsAccountName);
     });
@@ -129,7 +129,10 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
   }) => {
     const expectedMessage =
       'We recommend using the Assume Role method to provide access to your AWS account. For more information, please see the documentation.';
+
+
     await test.step('Navigate to add cloud account page and select AWS Access key method', async () => {
+      await cloudAccountsPage.navigateToCloudAccountsPage();
       await cloudAccountsPage.clickAddBtn();
       await cloudAccountsConnectPage.clickDataSourceTileIfNotActive(cloudAccountsConnectPage.awsRootBtn);
       await cloudAccountsConnectPage.clickAccessKey();
@@ -142,9 +145,11 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
   });
 
   test('[232862] Verify that the user can schedule a billing reimport, and see warning alert', async ({ cloudAccountsPage }) => {
-    const expectedAlertMessage = 'Reimporting billing starting from the selected import date will overwrite existing billing data. This action may cause discrepancies or breaks in the current billing records and can take some time to complete. The new billing data will be imported during the next billing import report processing. Please proceed with caution, as this process cannot be undone. Ensure that this action is necessary and that you are prepared for any potential data loss and inaccuracies in billing tracking.';
+    const expectedAlertMessage =
+      'Reimporting billing starting from the selected import date will overwrite existing billing data. This action may cause discrepancies or breaks in the current billing records and can take some time to complete. The new billing data will be imported during the next billing import report processing. Please proceed with caution, as this process cannot be undone. Ensure that this action is necessary and that you are prepared for any potential data loss and inaccuracies in billing tracking.';
 
     await test.step('Navigate to the Billing reimport side modal', async () => {
+      await cloudAccountsPage.navigateToCloudAccountsPage();
       await cloudAccountsPage.clickCloudAccountLinkByName('Marketplace (Dev)');
       await cloudAccountsPage.clickBillingReimportBtn();
       await cloudAccountsPage.billingReimportSideModal.waitFor();
@@ -162,17 +167,16 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => 
           resp => resp.request().postData().includes('operationName":"UpdateDataSource') && resp.request().method() === 'POST'
         ),
         cloudAccountsPage.scheduleImportWithDefaultDate(),
-      ])
-        responseStatus = response.status();
-        debugLog(`API Response status: ${responseStatus}`);
-        expect(responseStatus).toBe(200);
+      ]);
+      responseStatus = response.status();
+      debugLog(`API Response status: ${responseStatus}`);
+      expect(responseStatus).toBe(200);
     });
   });
-
 });
 
-test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] }, () => {
-  test.describe.configure({ mode: 'default' });
+test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
+  test.describe.configure({ mode: 'serial' });
 
   const apiInterceptions: InterceptionEntry[] = [
     {
@@ -224,13 +228,8 @@ test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] },
     const assumeRoleMessage =
       'Switching from an access key to an assumed role is permanent. After you make this change, you can’t switch back to using an access key for this data source.If you later want to use an access key again, you’ll need to delete this data source and recreate it with access key credentials. This will delete all existing data for this data source and require a full reimport of the resource and billing data.';
 
-    await test.step('Login admin user', async () => {
-      await cloudAccountsPage.navigateToURL();
-      await cloudAccountsPage.waitForAllProgressBarsToDisappear();
-      await cloudAccountsPage.allCloudAccountLinks.last().waitFor();
-    });
-
     await test.step('Navigate to update credentials side modal for AWS Access Key account', async () => {
+      await cloudAccountsPage.navigateToCloudAccountsPage();
       await cloudAccountsPage.clickCloudAccountLinkByName('Marketplace (Production)');
       await cloudAccountsPage.clickUpdateCredentialsBtn();
     });
@@ -252,3 +251,67 @@ test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloudaccounts'] },
     });
   });
 });
+
+
+test.describe(
+  '[MPT-18378] Verify Cloud Account actions are recorded correctly in the events log',
+  { tag: ['@ui', '@cloud-accounts', '@events'] },
+  () => {
+    test.describe.configure({ mode: 'serial' });
+    test.use({ restoreSession: true });
+
+    test('[232954] Verify that disconnecting and creating a cloud account is recorded in the events log', async ({
+      cloudAccountsPage,
+      cloudAccountsConnectPage,
+      eventsPage,
+    }) => {
+      const awsAccountName = 'Marketplace (Dev)';
+      let timestamp: string;
+
+      await test.step('Login admin user and disconnect cloud account', async () => {
+        await cloudAccountsPage.navigateToCloudAccountsPage();
+        timestamp = getCurrentUTCTimestamp();
+        await cloudAccountsPage.disconnectCloudAccountByName(awsAccountName);
+
+        debugLog(`Timestamp: ${timestamp}`);
+      });
+
+      await test.step('Navigate to events page and verify disconnect event is recorded with correct time', async () => {
+        await eventsPage.navigateToURL();
+        await eventsPage.waitForAllProgressBarsToDisappear();
+
+        const disconnectEvent = eventsPage.getEventByMultipleTexts([`Cloud account ${awsAccountName}`, 'deleted']);
+        await expect.soft(disconnectEvent).toBeVisible();
+
+        const eventText = await disconnectEvent.textContent();
+        debugLog(`Disconnect event text: ${eventText}`);
+        expect.soft(eventText).toContain(`${timestamp} UTC`);
+      });
+
+      await test.step('Add new cloud account and ensure that the events log includes account and pool creation', async () => {
+        await cloudAccountsPage.navigateToURL();
+        await cloudAccountsPage.clickAddBtn();
+        timestamp = getCurrentUTCTimestamp();
+        debugLog(`Timestamp: ${timestamp}`);
+        await cloudAccountsConnectPage.addAWSAssumedRoleAccount(awsAccountName, EAWSAccountType.management);
+
+        await eventsPage.navigateToURL();
+        await eventsPage.waitForAllProgressBarsToDisappear();
+
+        const creationEvent = eventsPage.getEventByMultipleTexts([`Cloud account ${awsAccountName}`, 'created']);
+        await expect.soft(creationEvent).toBeVisible();
+
+        const eventText = await creationEvent.textContent();
+        debugLog(`Creation event text: ${eventText}`);
+        expect.soft(eventText).toContain(`${timestamp} UTC`);
+
+        const poolCreationEvent = eventsPage.getEventByMultipleTexts([`Rule for ${awsAccountName}`, `created for pool ${awsAccountName}`]);
+        await expect.soft(poolCreationEvent).toBeVisible();
+        const poolEventText = await poolCreationEvent.textContent();
+        debugLog(`Pool Creation event text: ${poolEventText}`);
+        expect.soft(poolEventText).toContain(`${timestamp} UTC`);
+        expect.soft(poolEventText).toContain(process.env.DEFAULT_USER_EMAIL);
+      });
+    });
+  }
+);

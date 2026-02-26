@@ -12,6 +12,7 @@ import {
   getDatasourceIdByNameViaOpsAPI,
   getSubPoolIdsContainingName,
 } from '../utils/teardown-utils';
+import { debugLog } from '../utils/debug-logging';
 
 async function globalTeardown() {
 
@@ -37,6 +38,7 @@ async function globalTeardown() {
 
     if (subPoolIds.length > 1) {
       const marketplaceDevId = await getDatasourceIdByNameViaOpsAPI(restAPIRequest, dataSourceName);
+      debugLog('Orphaned Sub-pools found for Marketplace (Dev), proceeding to disconnect data source, delete sub-pools and reconnect data source to clean them up');
       await disconnectDataSource(restAPIRequest, token, marketplaceDevId);
       await deleteSubPoolsByName(restAPIRequest, token, dataSourceName);
       await connectDataSource(restAPIRequest, token, dataSourceName);

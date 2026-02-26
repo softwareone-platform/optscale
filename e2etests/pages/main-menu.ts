@@ -143,4 +143,13 @@ export class MainMenu extends BasePage {
   async clickSettings(): Promise<void> {
     await this.settingsBtn.click();
   }
+
+  /**
+   * Clicks the Events button.
+   * This method is used to navigate to the Events page.
+   * @returns {Promise<void>} A promise that resolves when the Events button is clicked.
+   */
+  async clickEvents(): Promise<void> {
+    await this.eventsBtn.click();
+  }
 }

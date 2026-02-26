@@ -34,7 +34,7 @@ export class PoolsPage extends BasePage {
   readonly expensesThisMonthToggle: Locator;
   readonly forecastToggle: Locator;
   readonly ownerToggle: Locator;
-  readonly firstSubItem: Locator
+  readonly firstSubItem: Locator;
 
   readonly nameTableHeading: Locator;
   readonly monthlyLimitTableHeading: Locator;
@@ -136,8 +136,7 @@ export class PoolsPage extends BasePage {
 
     this.firstSubItem = this.table.locator('//tr[@data-test-id="row_1"]');
     this.domainOutlinedIcon = this.getByAnyTestId('DomainOutlinedIcon', this.table);
-    this.poolExpandMoreIcon = this.domainOutlinedIcon.locator(
-      'xpath=/ancestor::td//*[@data-testid="ExpandMoreIcon"]');
+    this.poolExpandMoreIcon = this.domainOutlinedIcon.locator('xpath=/ancestor::td//*[@data-testid="ExpandMoreIcon"]');
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
 
     //Edit pools side modal
@@ -332,6 +331,30 @@ export class PoolsPage extends BasePage {
       await this.waitForElementDetached(this.sideModal);
       await this.waitForAllProgressBarsToDisappear();
     }
+  }
+
+  /**
+   * Retrieves the name of a specific sub-pool from the table.
+   *
+   * This method adjusts the provided 1-based index to zero-based indexing,
+   * locates the sub-pool name element, and returns the trimmed text content.
+   *
+   * @param {number} [index=1] - The 1-based index of the sub-pool to retrieve the name for (default is 1).
+   * @returns {Promise<string>} The trimmed name of the sub-pool.
+   *
+   * @example
+   * // Get the first sub-pool name
+   * const firstName = await poolsPage.getSubPoolName();
+   *
+   * @example
+   * // Get the third sub-pool name
+   * const thirdName = await poolsPage.getSubPoolName(3);
+   */
+  async getSubPoolName(index: number = 1): Promise<string> {
+    index = index - 1; // Adjust index to be zero-based
+    const locator = this.subPoolNameColumn.nth(index);
+    const text = await locator.textContent();
+    return text.trim();
   }
 
   /**
