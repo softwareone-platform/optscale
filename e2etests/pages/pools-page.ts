@@ -54,6 +54,7 @@ export class PoolsPage extends BasePage {
   readonly poolActionsColumn: Locator;
   readonly poolExpandMoreIcon: Locator;
   readonly domainOutlinedIcon: Locator;
+  readonly subPoolAddIcon: Locator;
 
   readonly subPoolNameColumn: Locator;
   readonly subPoolColumn2: Locator;
@@ -127,6 +128,7 @@ export class PoolsPage extends BasePage {
     this.poolColumn4 = this.table.locator('//td[4]');
     this.column4TextSpan = this.poolColumn4.locator('xpath=/span');
     this.poolActionsColumn = this.table.locator('//td').last();
+    this.subPoolAddIcon = this.getByAnyTestId('AddCircleOutlineIcon', this.poolActionsColumn);
 
     this.subPoolNameColumn = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[1]');
     this.subPoolColumn2 = this.table.locator('//tr[@data-test-id="row_0"]/following-sibling::tr/td[2]');
@@ -303,6 +305,8 @@ export class PoolsPage extends BasePage {
     await this.sideModalSaveBtn.click();
     await this.waitForAllProgressBarsToDisappear();
     await this.waitForElementDetached(this.sideModal);
+    await this.waitForAllProgressBarsToDisappear();
+    await this.subPoolAddIcon.first().waitFor({timeout: 10000}); // Wait for the sub-pool add icon to ensure the page has fully loaded after saving
   }
 
   /**
@@ -330,6 +334,7 @@ export class PoolsPage extends BasePage {
       await this.waitForAllProgressBarsToDisappear();
       await this.waitForElementDetached(this.sideModal);
       await this.waitForAllProgressBarsToDisappear();
+      await this.subPoolAddIcon.first().waitFor({timeout: 10000});
     }
   }
 
