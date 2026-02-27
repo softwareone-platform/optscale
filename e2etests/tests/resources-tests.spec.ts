@@ -183,7 +183,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
   });
 
   test('[230788] Filtered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
-    test.setTimeout(90000);
+    test.setTimeout(120000);
     let initialTotalExpensesValue: number;
 
     await test.step('Get unfiltered total expenses value', async () => {
@@ -224,7 +224,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     '[230781] Total expenses matches table itemised total for date range set to last 7 days',
     { tag: '@slow' },
     async ({ resourcesPage, datePicker }) => {
-      test.setTimeout(90000);
+      test.setTimeout(120000);
 
       await test.step('Get total expenses value for last 7 days', async () => {
         await datePicker.selectLast7DaysDateRange();

@@ -30,6 +30,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
     await poolsPage.toggleExpandPool();
     await poolsPage.removeAllSubPoolMonthlyLimits();
+    await poolsPage.waitForAllProgressBarsToDisappear();
     await poolsPage.toggleExpandPool();
   });
 
@@ -147,6 +148,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       if ((await poolsPage.getOrganizationLimitValue()) !== 0) {
         await poolsPage.editPoolMonthlyLimit(0);
         debugLog('Removed organization limit');
+        await poolsPage.waitForAllProgressBarsToDisappear();
       }
     });
 
@@ -197,6 +199,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
 
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
     const organizationLimit = Math.ceil(expensesThisMonth / 0.91);
+    const forecastThisMonth = await poolsPage.getForecastThisMonth();
 
     await test.step('Set organization limit to an integer where the expenses is more than the 90% of the limit', async () => {
       await poolsPage.editPoolMonthlyLimit(organizationLimit);
@@ -207,12 +210,18 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       await expect.soft(poolsPage.exceededLimitCard).toBeHidden();
       expect.soft(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.warningColor);
       await expect.soft(poolsPage.expensesThisMonthWarningIcon).toBeVisible();
-      expect.soft(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor || poolsPage.warningColor);
-      //TODO: Fix the line below as border colour is not always warning color, if at the end of the month.
-      // expect.soft(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.warningColor};`);
+      if(forecastThisMonth > organizationLimit){
+        expect.soft(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
+        await expect.soft(poolsPage.forecastThisMonthCancelIcon).toBeVisible();
+        expect.soft(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.warningColor};`);
+        expect.soft(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
+      } else {
+        expect.soft(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.warningColor);
+        await expect.soft(poolsPage.forecastThisMonthWarningIcon).toBeVisible();
+        expect.soft(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.infoColor);
+      }
       expect.soft((await poolsPage.poolColumn2.textContent()).replace(/\D/g, '')).toBe(organizationLimit.toString());
       expect.soft(await poolsPage.getColorFromElement(poolsPage.column3TextDiv)).toBe(poolsPage.successColor);
-      expect.soft(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
     });
   });
 
@@ -249,7 +258,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230917] Verify Organisation Limit functionality - limit set lower forecast', async ({ poolsPage }) => {
+  test('[230917] Verify Organisation Limit functionality - limit set lower than forecast', async ({ poolsPage }) => {
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
     const forecastThisMonth = await poolsPage.getForecastThisMonth();
     test.skip(expensesThisMonth <= 1, 'Skipping test as it requires expenses to be greater than 1');
@@ -263,7 +272,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     await test.step('Assert Pools page elements displayed correctly when limit set below forecast this month', async () => {
       await expect.soft(poolsPage.exceededLimitCard).toBeHidden();
       expect.soft(await poolsPage.getColorFromElement(poolsPage.forecastCard)).toBe(poolsPage.errorColor);
-      if (expensesThisMonth >= Math.round(organizationLimit / 0.9)) {
+      if (expensesThisMonth >= Math.round(organizationLimit * 0.9)) {
         expect.soft(await poolsPage.getColorFromElement(poolsPage.expensesCard)).toBe(poolsPage.warningColor);
         await expect.soft(poolsPage.expensesThisMonthWarningIcon).toBeVisible();
       } else {
@@ -347,6 +356,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     await test.step('Assert pool is exceeded when sub-pool limit set below sub-pool expenses', async () => {
       subPoolLimit = Math.round(subPoolExpenses - 1);
       await poolsPage.editSubPoolMonthlyLimit(subPoolLimit, true, 1, true);
+      await poolsPage.waitForAllProgressBarsToDisappear();
       expect.soft(await poolsPage.getExceededLimitValue()).toBe(1);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.subPoolColumn3.first().locator('span'))).toBe(poolsPage.errorColor);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.subPoolColumn4.first().locator('span'))).toBe(poolsPage.warningColor);
