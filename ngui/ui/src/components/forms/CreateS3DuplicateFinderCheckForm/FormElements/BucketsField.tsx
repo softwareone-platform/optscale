@@ -14,7 +14,7 @@ import { FormValues } from "../types";
 
 const FIELD_NAME = FIELD_NAMES.BUCKETS;
 
-const MAX_SELECTED_BUCKETS = 100;
+const MAX_SELECTED_BUCKETS = 10;
 
 const VALIDATION_TYPE = {
   AT_LEAST_ONE_SELECTED: "atLeastOneSelected",
