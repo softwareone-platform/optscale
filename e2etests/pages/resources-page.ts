@@ -208,6 +208,30 @@ export class ResourcesPage extends BasePage {
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
   }
 
+  /**
+   * Navigates to the Resources page and resets all active filters.
+   *
+   * This method navigates to `/resources`, waits for all progress bars to disappear,
+   * waits for the canvas to finish rendering, resets any active filters, waits for the
+   * page to fully load, and finally waits for the first resource item in the table to
+   * be present. This ensures the page is in a clean, fully loaded state before any
+   * test interactions begin.
+   *
+   * @returns {Promise<void>} Resolves when the page is loaded, filters are reset, and
+   *   the first resource table item is visible.
+   *
+   * @example
+   * // Use in a beforeEach to ensure a clean state before each test
+   * test.beforeEach(async ({ resourcesPage }) => {
+   *   await resourcesPage.navigateToResourcesPageAndResetFilters();
+   * });
+   *
+   * @remarks
+   * - Prefer this method over a bare `navigateToURL()` call when tests require a
+   *   filter-free state and a populated resource table before proceeding.
+   * - The `firstResourceItemInTable` wait uses a 15 second timeout to account for
+   *   slow data loading on the Resources page.
+   */
   async navigateToResourcesPageAndResetFilters(): Promise<void> {
     await this.navigateToURL('/resources');
     await this.waitForAllProgressBarsToDisappear();

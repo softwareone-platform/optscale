@@ -168,6 +168,7 @@ export class PerspectivesPage extends BasePage {
         await this.allDeleteButtons.first().click();
         await this.sideModalDeleteButton.click();
         await this.sideModalDeleteButton.waitFor({ state: 'detached' });
+        await this.waitForAllProgressBarsToDisappear();
       }
     }
   }

@@ -240,7 +240,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232969] user can create a perspective with multiple filters', async ({ resourcesPage, perspectivesPage }) => {
+  test('[232969] User can create a perspective with multiple filters', async ({ resourcesPage, perspectivesPage }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter1 = 'Region';
@@ -298,6 +298,10 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
       await resourcesPage.savePerspective(perspectiveName);
     });
 
+    await test.step('Return to the resources page and return to default view', async () => {
+        await resourcesPage.navigateToResourcesPageAndResetFilters();
+    });
+
     await test.step('Attempt to create another perspective with the same name and validate the overwrite message is displayed', async () => {
       await resourcesPage.selectFilterByText(filter2, filterOption2);
       await resourcesPage.click(resourcesPage.savePerspectiveBtn);
@@ -328,6 +332,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
   }) => {
     await test.step('Navigate to perspectives page and delete all perspectives', async () => {
       await perspectivesPage.navigateToURL();
+      await perspectivesPage.waitForAllProgressBarsToDisappear();
       await perspectivesPage.deleteAllPerspectives();
       await expect.soft(perspectivesPage.noPerspectivesMessage).toBeVisible();
     });
