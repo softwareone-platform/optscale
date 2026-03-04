@@ -56,7 +56,7 @@ export class AnomaliesCreatePage extends BaseCreatePage {
       if (!filterOption) {
         throw new Error('filterOption must be provided when filter is specified');
       }
-      if (!(await filter.isVisible())) await this.clickLocator(this.showMoreFiltersBtn);
+      if (!(await filter.isVisible())) await this.click(this.showMoreFiltersBtn);
       await filter.click();
       const option = this.filterPopover.getByText(filterOption);
       await option.click();

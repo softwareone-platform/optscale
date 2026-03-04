@@ -31,36 +31,48 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
   });
 
   test('[231429] Anomalies page components', async ({ anomaliesPage }) => {
-    await expect.soft(anomaliesPage.heading).toHaveText('Anomaly detection');
-    await expect.soft(anomaliesPage.addBtn).toBeVisible();
-    await expect.soft(anomaliesPage.searchInput).toBeVisible();
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyCanvas).toBeVisible();
-    await expect
-      .soft(anomaliesPage.defaultExpenseAnomalyDescription)
-      .toHaveText('Daily expenses must not exceed the average amount for the last 7 days by 30%.');
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyShowResourcesBtn).toBeVisible();
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyCanvas).toBeVisible();
-    await expect
-      .soft(anomaliesPage.defaultResourceCountAnomalyDescription)
-      .toHaveText('Daily resource count must not exceed the average amount for the last 7 days by 30%.');
-    await expect(anomaliesPage.defaultResourceCountAnomalyShowResourcesBtn).toBeVisible();
+    await test.step('Verify page header components', async () => {
+      await expect.soft(anomaliesPage.heading).toHaveText('Anomaly detection');
+      await expect.soft(anomaliesPage.addBtn).toBeVisible();
+      await expect.soft(anomaliesPage.searchInput).toBeVisible();
+    });
+
+    await test.step('Verify default expense anomaly components', async () => {
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyCanvas).toBeVisible();
+      await expect
+        .soft(anomaliesPage.defaultExpenseAnomalyDescription)
+        .toHaveText('Daily expenses must not exceed the average amount for the last 7 days by 30%.');
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyShowResourcesBtn).toBeVisible();
+    });
+
+    await test.step('Verify default resource count anomaly components', async () => {
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyCanvas).toBeVisible();
+      await expect
+        .soft(anomaliesPage.defaultResourceCountAnomalyDescription)
+        .toHaveText('Daily resource count must not exceed the average amount for the last 7 days by 30%.');
+      await expect(anomaliesPage.defaultResourceCountAnomalyShowResourcesBtn).toBeVisible();
+    });
   });
 
   test('[231432] Verify navigation of link and show resources button', async ({ anomaliesPage, resourcesPage }) => {
-    await anomaliesPage.waitForAllProgressBarsToDisappear();
-    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
-    await expect.soft(anomaliesPage.anomalyDetectionPolicyHeading).toHaveText('Anomaly detection policy');
-    await expect.soft(anomaliesPage.policyDetailsNameValue).toHaveText('Default - expense anomaly');
-    await expect.soft(anomaliesPage.policyDetailsTypeValue).toHaveText('Expenses');
-    await expect.soft(anomaliesPage.policyDetailsEvaluationPeriodValue).toHaveText('7 days');
-    await expect.soft(anomaliesPage.policyDetailsThresholdValue).toHaveText('30%');
+    await test.step('Navigate to policy details and verify values', async () => {
+      await anomaliesPage.waitForAllProgressBarsToDisappear();
+      await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
+      await expect.soft(anomaliesPage.anomalyDetectionPolicyHeading).toHaveText('Anomaly detection policy');
+      await expect.soft(anomaliesPage.policyDetailsNameValue).toHaveText('Default - expense anomaly');
+      await expect.soft(anomaliesPage.policyDetailsTypeValue).toHaveText('Expenses');
+      await expect.soft(anomaliesPage.policyDetailsEvaluationPeriodValue).toHaveText('7 days');
+      await expect.soft(anomaliesPage.policyDetailsThresholdValue).toHaveText('30%');
+    });
 
-    await anomaliesPage.clickLocator(anomaliesPage.anomalyDetectionBreadcrumb);
-    await anomaliesPage.waitForAllProgressBarsToDisappear();
-    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyShowResourcesBtn);
-    await expect(resourcesPage.heading).toBeVisible();
+    await test.step('Navigate back and verify Show Resources button navigates to Resources page', async () => {
+      await anomaliesPage.click(anomaliesPage.anomalyDetectionBreadcrumb);
+      await anomaliesPage.waitForAllProgressBarsToDisappear();
+      await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyShowResourcesBtn);
+      await expect(resourcesPage.heading).toBeVisible();
+    });
   });
 
   test(
@@ -157,67 +169,92 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
   );
 
   test('[231431] Anomalies page search function', async ({ anomaliesPage }) => {
-    await anomaliesPage.searchAnomaly('expense');
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+    await test.step('Search by "expense" shows only expense anomaly', async () => {
+      await anomaliesPage.searchAnomaly('expense');
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+    });
 
-    await anomaliesPage.searchAnomaly('resource');
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
+    await test.step('Search by "resource" shows only resource count anomaly', async () => {
+      await anomaliesPage.searchAnomaly('resource');
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
+    });
 
-    await anomaliesPage.searchAnomaly('non-existent anomaly');
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+    await test.step('Search by non-existent term hides all anomalies', async () => {
+      await anomaliesPage.searchAnomaly('non-existent anomaly');
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeHidden();
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeHidden();
+    });
 
-    await anomaliesPage.searchAnomaly('30%');
-    await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
-    await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+    await test.step('Search by "30%" shows all anomalies', async () => {
+      await anomaliesPage.searchAnomaly('30%');
+      await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
+      await expect.soft(anomaliesPage.defaultResourceCountAnomalyLink).toBeVisible();
+    });
   });
 
   test('[231433] Add a resource count anomaly detection policy', { tag: '@p1' }, async ({ anomaliesPage, anomaliesCreatePage }) => {
-    await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Resource Count Anomaly - ${Date.now()}`;
 
-    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Resource count', '14', '25');
-    anomalyPolicyId.push(policyId);
+    await test.step('Create a new resource count anomaly policy', async () => {
+      await anomaliesPage.clickAddBtn();
+      const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Resource count', '14', '25');
+      anomalyPolicyId.push(policyId);
+    });
 
-    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
-    await expect
-      .soft(anomaliesPage.policyDescriptionByName(policyName))
-      .toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
-    await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText('-');
+    await test.step('Verify policy is visible with correct details', async () => {
+      await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
+      await expect
+        .soft(anomaliesPage.policyDescriptionByName(policyName))
+        .toHaveText('Daily resource count must not exceed the average amount for the last 14 days by 25%.');
+      await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText('-');
+    });
   });
 
   test('[231434] Add an expenses anomaly detection policy with filter', async ({ anomaliesPage, anomaliesCreatePage }) => {
-    await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Expense Anomaly - ${Date.now()}`;
 
-    const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(
-      policyName,
-      'Expenses',
-      '10',
-      '20',
-      anomaliesCreatePage.suggestionsFilter,
-      'Assigned to me'
-    );
-    anomalyPolicyId.push(policyId);
+    await test.step('Create a new expenses anomaly policy with a filter', async () => {
+      await anomaliesPage.clickAddBtn();
+      const policyId = await anomaliesCreatePage.addNewAnomalyPolicy(
+        policyName,
+        'Expenses',
+        '10',
+        '20',
+        anomaliesCreatePage.suggestionsFilter,
+        'Assigned to me'
+      );
+      anomalyPolicyId.push(policyId);
+    });
 
-    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
-    await expect
-      .soft(anomaliesPage.policyDescriptionByName(policyName))
-      .toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
-    await expect.soft(anomaliesPage.policyFilterByName(policyName)).toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
+    await test.step('Verify policy is visible with correct details and filter', async () => {
+      await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeVisible();
+      await expect
+        .soft(anomaliesPage.policyDescriptionByName(policyName))
+        .toHaveText('Daily expenses must not exceed the average amount for the last 10 days by 20%.');
+      await expect
+        .soft(anomaliesPage.policyFilterByName(policyName))
+        .toHaveText(`Owner: ${await anomaliesPage.getUserNameByEnvironment()}`);
+    });
   });
 
   test('[231441] Verify delete policy functions correctly', async ({ anomaliesPage, anomaliesCreatePage }) => {
-    await anomaliesPage.clickAddBtn();
     const policyName = `E2E Test - Delete Anomaly Policy - ${Date.now()}`;
 
-    await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '5', '15');
-    await anomaliesPage.policyLinkByName(policyName).waitFor();
-    await anomaliesPage.deleteAnomalyPolicy(policyName);
+    await test.step('Create a new anomaly policy', async () => {
+      await anomaliesPage.clickAddBtn();
+      await anomaliesCreatePage.addNewAnomalyPolicy(policyName, 'Expenses', '5', '15');
+      await anomaliesPage.policyLinkByName(policyName).waitFor();
+    });
 
-    await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeHidden();
+    await test.step('Delete the anomaly policy', async () => {
+      await anomaliesPage.deleteAnomalyPolicy(policyName);
+    });
+
+    await test.step('Verify the policy is no longer visible', async () => {
+      await expect.soft(anomaliesPage.policyLinkByName(policyName)).toBeHidden();
+    });
   });
 
   test.afterAll(async ({}) => {
@@ -290,7 +327,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await anomaliesPage.navigateToURL();
 
     await test.step('Category: Region', async () => {
-      await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+      await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
       await anomaliesPage.waitForAllProgressBarsToDisappear();
       await anomaliesPage.waitForCanvas();
       await anomaliesPage.selectCategorizeBy('Region');
@@ -347,55 +384,67 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
 
   test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
-    let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-export.png');
-    let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-export.png');
-    let diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-export.png');
+    let actualPath: string;
+    let expectedPath: string;
+    let diffPath: string;
     let match: boolean;
 
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
-
-    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
     await anomaliesPage.waitForAllProgressBarsToDisappear();
     await anomaliesPage.waitForCanvas();
-    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
-    match = await comparePngImages(expectedPath, actualPath, diffPath);
-    expect.soft(match).toBe(true);
 
-    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-no-legend-export.png');
-    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-no-legend-export.png');
-    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-no-legend-export.png');
+    await test.step('Expenses: Daily (with legend)', async () => {
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-export.png');
 
-    await anomaliesPage.clickShowLegend();
-    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
-    match = await comparePngImages(expectedPath, actualPath, diffPath);
-    expect.soft(match).toBe(true);
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-weekly-chart-export.png');
-    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-weekly-chart-export.png');
-    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-weekly-chart-export.png');
+    await test.step('Expenses: Daily (no legend)', async () => {
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-daily-chart-no-legend-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-daily-chart-no-legend-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-daily-chart-no-legend-export.png');
 
-    await anomaliesPage.clickShowLegend();
-    await anomaliesPage.selectExpenses('Weekly');
-    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
-    match = await comparePngImages(expectedPath, actualPath, diffPath);
-    expect.soft(match).toBe(true);
+      await anomaliesPage.clickShowLegend();
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
 
-    actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-monthly-chart-export.png');
-    expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-monthly-chart-export.png');
-    diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-monthly-chart-export.png');
+    await test.step('Expenses: Weekly', async () => {
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-weekly-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-weekly-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-weekly-chart-export.png');
 
-    await anomaliesPage.selectExpenses('Monthly');
-    await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
-    match = await comparePngImages(expectedPath, actualPath, diffPath);
-    expect.soft(match).toBe(true);
+      await anomaliesPage.clickShowLegend();
+      await anomaliesPage.selectExpenses('Weekly');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
+
+    await test.step('Expenses: Monthly', async () => {
+      actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-service-monthly-chart-export.png');
+      expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-service-monthly-chart-export.png');
+      diffPath = path.resolve('tests', 'downloads', 'diff-anomaly-expenses-service-monthly-chart-export.png');
+
+      await anomaliesPage.selectExpenses('Monthly');
+      await anomaliesPage.downloadFile(anomaliesPage.exportChartBtn, actualPath);
+      match = await comparePngImages(expectedPath, actualPath, diffPath);
+      expect.soft(match).toBe(true);
+    });
   });
 
   test('[231439] Verify detected anomalies are displayed in the table correctly', async ({ anomaliesPage }) => {
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
 
-    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
     await anomaliesPage.waitForAllProgressBarsToDisappear();
 
     expect.soft(await anomaliesPage.getViolatedAtTextByIndex(1)).toBe('10/12/2025 08:55 PM');
@@ -415,10 +464,10 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
 
-    await anomaliesPage.clickLocator(anomaliesPage.defaultExpenseAnomalyLink);
+    await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
     await anomaliesPage.waitForAllProgressBarsToDisappear();
 
-    await anomaliesPage.clickLocator(anomaliesPage.showResourcesBtn.first());
+    await anomaliesPage.click(anomaliesPage.showResourcesBtn.first());
     await expect(resourcesPage.heading).toBeVisible();
   });
 });

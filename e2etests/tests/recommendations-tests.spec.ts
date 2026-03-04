@@ -40,17 +40,21 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   test('[230597] Verify Data Source selection works correctly', async ({ recommendationsPage }) => {
     const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'CPA (Development and Test)';
 
-    await recommendationsPage.selectDataSource(dataSource);
-    await recommendationsPage.clickFirstSeeAllButton();
+    await test.step(`Select data source: ${dataSource}`, async () => {
+      await recommendationsPage.selectDataSource(dataSource);
+      await recommendationsPage.clickFirstSeeAllButton();
+    });
 
-    const cells = await recommendationsPage.modalColumn2.all();
-    for (const cell of cells) {
-      const link =
-        process.env.USE_LIVE_DEMO === 'true'
-          ? cell.locator(recommendationsPage.azureQALink)
-          : cell.locator(recommendationsPage.cpaDevelopmentAndTestLink);
-      await expect.soft(link).toBeVisible();
-    }
+    await test.step('Verify all modal cells show the correct data source link', async () => {
+      const cells = await recommendationsPage.modalColumn2.all();
+      for (const cell of cells) {
+        const link =
+          process.env.USE_LIVE_DEMO === 'true'
+            ? cell.locator(recommendationsPage.azureQALink)
+            : cell.locator(recommendationsPage.cpaDevelopmentAndTestLink);
+        await expect.soft(link).toBeVisible();
+      }
+    });
   });
 
   //It appears that environments don't have the correct permissions to run S3 Duplicate checks, so marking this as FIXME for now.
@@ -283,86 +287,115 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   });
 
   test('[230520] Verify all cards display critical icon when Critical category selected', async ({ recommendationsPage }) => {
-    await recommendationsPage.selectCategory('Critical');
-    await recommendationsPage.allCardHeadings.last().waitFor();
-    const count = await recommendationsPage.allCardHeadings.count();
-    const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-    debugLog(`Actual heading texts: ${actualHeadings}`);
-    debugLog(`Number of card headings found: ${count}`);
-    const criticalIconCount = await recommendationsPage.allCriticalIcon.count();
-    debugLog(`Number of critical icons found: ${criticalIconCount}`);
-    expect.soft(criticalIconCount).toBe(count);
+    let count: number;
+    let actualHeadings: string[];
+    let criticalIconCount: number;
 
-    await recommendationsPage.clickTableButton();
-    await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
-    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
-    const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+    await test.step('Select Critical category and verify every card has a critical icon', async () => {
+      await recommendationsPage.selectCategory('Critical');
+      await recommendationsPage.allCardHeadings.last().waitFor();
+      count = await recommendationsPage.allCardHeadings.count();
+      actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+      debugLog(`Actual heading texts: ${actualHeadings}`);
+      debugLog(`Number of card headings found: ${count}`);
+      criticalIconCount = await recommendationsPage.allCriticalIcon.count();
+      debugLog(`Number of critical icons found: ${criticalIconCount}`);
+      expect.soft(criticalIconCount).toBe(count);
+    });
 
-    const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
-    const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+    await test.step('Switch to table view and verify row count matches card count', async () => {
+      await recommendationsPage.clickTableButton();
+      await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
+      expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
+    });
 
-    expect.soft(buttonNamesSorted).toEqual(expectedSorted);
-    const allStatuses = await recommendationsPage.statusColumn.allTextContents();
-    for (const status of allStatuses) {
-      expect(status.trim()).toBe('Critical');
-    }
+    await test.step('Verify table row names match card headings', async () => {
+      const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+      const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+      const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+      expect.soft(buttonNamesSorted).toEqual(expectedSorted);
+    });
+
+    await test.step('Verify all table rows have Critical status', async () => {
+      const allStatuses = await recommendationsPage.statusColumn.allTextContents();
+      for (const status of allStatuses) {
+        expect(status.trim()).toBe('Critical');
+      }
+    });
   });
 
   test('[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({
     recommendationsPage,
   }) => {
-    await recommendationsPage.selectCategory('Non-empty');
-    await recommendationsPage.allCardHeadings.last().waitFor();
-    const count = await recommendationsPage.allCardHeadings.count();
-    const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-    debugLog(`Actual heading texts: ${actualHeadings}`);
-    debugLog(`Number of card headings found: ${count}`);
+    let count: number;
+    let actualHeadings: string[];
+    let seeAllBtnCount: number;
 
-    const seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
-    debugLog(`Number of See Item buttons found: ${seeAllBtnCount}`);
-    expect.soft(seeAllBtnCount).toBe(count);
+    await test.step('Select Non-empty category and verify every card has a See All button', async () => {
+      await recommendationsPage.selectCategory('Non-empty');
+      await recommendationsPage.allCardHeadings.last().waitFor();
+      count = await recommendationsPage.allCardHeadings.count();
+      actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+      debugLog(`Actual heading texts: ${actualHeadings}`);
+      debugLog(`Number of card headings found: ${count}`);
+      seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
+      debugLog(`Number of See Item buttons found: ${seeAllBtnCount}`);
+      expect.soft(seeAllBtnCount).toBe(count);
+    });
 
-    await recommendationsPage.clickTableButton();
-    await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
-    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
-    const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+    await test.step('Switch to table view and verify row count matches card count', async () => {
+      await recommendationsPage.clickTableButton();
+      await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
+      expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
+    });
 
-    const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
-    const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
-
-    expect(buttonNamesSorted).toEqual(expectedSorted);
+    await test.step('Verify table row names match card headings', async () => {
+      const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+      const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+      const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+      expect(buttonNamesSorted).toEqual(expectedSorted);
+    });
   });
 
   test('[230523] Verify filtering by applicable service works correctly', async ({ recommendationsPage }) => {
-    await recommendationsPage.selectApplicableService('RDS');
+    let count: number;
+    let actualHeadings: string[];
+    let rdsCount: number;
 
-    await recommendationsPage.allCardHeadings.last().waitFor();
-    const actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-    const count = await recommendationsPage.allCardHeadings.count();
-    debugLog(`Actual heading texts: ${actualHeadings}`);
-    debugLog(`Number of card headings found: ${count}`);
+    await test.step('Select RDS applicable service and verify every card has an RDS icon', async () => {
+      await recommendationsPage.selectApplicableService('RDS');
+      await recommendationsPage.allCardHeadings.last().waitFor();
+      actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+      count = await recommendationsPage.allCardHeadings.count();
+      debugLog(`Actual heading texts: ${actualHeadings}`);
+      debugLog(`Number of card headings found: ${count}`);
+      const awsRDSIconsInGrid = recommendationsPage.cardsGrid.locator(recommendationsPage.aws_RDS_Icon);
+      await awsRDSIconsInGrid.nth(count - 1).waitFor();
+      rdsCount = await awsRDSIconsInGrid.count();
+      debugLog(`Number of RDS cards found: ${rdsCount}`);
+      expect.soft(rdsCount).toBe(count);
+    });
 
-    const awsRDSIconsInGrid = recommendationsPage.cardsGrid.locator(recommendationsPage.aws_RDS_Icon);
-    await awsRDSIconsInGrid.nth(count - 1).waitFor();
-    const rdsCount = await awsRDSIconsInGrid.count();
-    debugLog(`Number of RDS cards found: ${rdsCount}`);
-    expect.soft(rdsCount).toBe(count);
+    await test.step('Switch to table view and verify row count matches card count', async () => {
+      await recommendationsPage.clickTableButton();
+      await recommendationsPage.allNameTableButtons.nth(rdsCount - 1).waitFor();
+      expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
+    });
 
-    await recommendationsPage.clickTableButton();
-    await recommendationsPage.allNameTableButtons.nth(rdsCount - 1).waitFor();
-    expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(rdsCount);
-    const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+    await test.step('Verify table row names match card headings', async () => {
+      const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+      const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+      const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+      expect.soft(buttonNamesSorted).toEqual(expectedSorted);
+    });
 
-    const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
-    const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
-
-    expect.soft(buttonNamesSorted).toEqual(expectedSorted);
-
-    const cells = await recommendationsPage.applicableServicesColumn.all();
-    for (const cell of cells) {
-      const icon = cell.locator(recommendationsPage.aws_RDS_Icon);
-      await expect.soft(icon).toBeVisible();
-    }
+    await test.step('Verify all applicable service column cells show the RDS icon', async () => {
+      const cells = await recommendationsPage.applicableServicesColumn.all();
+      for (const cell of cells) {
+        const icon = cell.locator(recommendationsPage.aws_RDS_Icon);
+        await expect.soft(icon).toBeVisible();
+      }
+    });
   });
 
   const cardEntries = [

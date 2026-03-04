@@ -66,10 +66,30 @@ export class CloudAccountsPage extends BasePage {
 
   }
 
+  /**
+   * Navigates to the Cloud Accounts page and waits for it to be fully loaded.
+   *
+   * This method navigates to the default Cloud Accounts URL, waits for all progress
+   * bars to disappear, and then waits for at least one cloud account link to be present
+   * in the table, ensuring the page is fully ready for interaction before proceeding.
+   *
+   * @returns {Promise<void>} Resolves when the page is fully loaded and cloud account links are visible.
+   *
+   * @example
+   * // Navigate to the Cloud Accounts page before running a test
+   * await cloudAccountsPage.navigateToCloudAccountsPage();
+   * await expect(cloudAccountsPage.heading).toBeVisible();
+   *
+   * @remarks
+   * - Prefer this method over a bare `navigateToURL()` call when tests require the
+   *   cloud account table to be populated before proceeding.
+   * - If no cloud account links are present, this method will hang until the default
+   *   Playwright timeout is exceeded.
+   */
   async navigateToCloudAccountsPage(): Promise<void> {
-  await this.navigateToURL();
-  await this.waitForAllProgressBarsToDisappear();
-  await this.allCloudAccountLinks.last().waitFor();
+    await this.navigateToURL();
+    await this.waitForAllProgressBarsToDisappear();
+    await this.allCloudAccountLinks.last().waitFor();
   }
 
   /**

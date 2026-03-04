@@ -84,7 +84,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
 
     await test.step('Navigate to the created policy details page', async () => {
-      await policiesPage.clickLocator(targetPolicyRow.locator('//a'));
+      await policiesPage.click(targetPolicyRow.locator('//a'));
       await policiesPage.policyDetailsDiv.waitFor();
     });
 
@@ -117,7 +117,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
 
     await test.step('Navigate to the created policy details page', async () => {
-      await policiesPage.clickLocator(targetPolicyRow.locator('//a'));
+      await policiesPage.click(targetPolicyRow.locator('//a'));
       await policiesPage.policyDetailsDiv.waitFor();
     });
 
@@ -152,7 +152,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
 
     await test.step('Navigate to the created policy details page', async () => {
-      await policiesPage.clickLocator(targetPolicyRow.locator('//a'));
+      await policiesPage.click(targetPolicyRow.locator('//a'));
       await policiesPage.policyDetailsDiv.waitFor();
     });
 
@@ -178,7 +178,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
 
     await test.step('Navigate to the created policy details page', async () => {
       await targetPolicyRow.waitFor();
-      await policiesPage.clickLocator(targetPolicyRow.locator('//a'));
+      await policiesPage.click(targetPolicyRow.locator('//a'));
       await policiesPage.policyDetailsDiv.waitFor();
     });
 

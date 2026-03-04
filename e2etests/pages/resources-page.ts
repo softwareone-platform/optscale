@@ -19,44 +19,33 @@ export class ResourcesPage extends BasePage {
   readonly possibleSavingsCard: Locator;
   readonly possibleMonthlySavingsValue: Locator;
 
-  // Filters
-  readonly filtersBox: Locator;
-  readonly allFilterBoxButtons: Locator;
-  readonly filterPopover: Locator;
-  readonly suggestionsFilter: Locator;
-  readonly dataSourceFilter: Locator;
-  readonly poolFilter: Locator;
-  readonly ownerFilter: Locator;
-  readonly regionFilter: Locator;
-  readonly serviceFilter: Locator;
-  readonly resourceTypeFilter: Locator;
-  readonly activityFilter: Locator;
-  readonly recommendationsFilter: Locator;
-  readonly constraintViolationsFilter: Locator;
-  readonly firstSeenFilter: Locator;
-  readonly lastSeenFilter: Locator;
-  readonly tagFilter: Locator;
-  readonly withoutTagFilter: Locator;
-  readonly metaFilter: Locator;
-  readonly paidNetworkTrafficFromFilter: Locator;
-  readonly paidNetworkTrafficToFilter: Locator;
-  readonly k8sNodeFilter: Locator;
-  readonly k8sServiceFilter: Locator;
-  readonly k8sNamespaceFilter: Locator;
-  readonly billingOnlyOption: Locator;
-  readonly filterApplyButton: Locator;
-  readonly resetFiltersBtn: Locator;
-  readonly showMoreFiltersBtn: Locator;
-  readonly showLessFiltersBtn: Locator;
+  readonly perspectivesSideModal: Locator;
+  readonly perspectivesSeeAllPerspectivesLink: Locator;
+  readonly perspectivesApplyBtn: Locator;
+
+  // Save perspective modal
+  readonly savePerspectiveSideModal: Locator;
+  readonly savePerspectiveSaveAsInput: Locator;
+  readonly savePerspectiveBreakDownByValue: Locator;
+  readonly savePerspectiveCategorizeByValue: Locator;
+  readonly savePerspectiveGroupByTypeValue: Locator;
+  readonly savePerspectiveGroupByValue: Locator;
+  readonly savePerspectiveFiltersValue: Locator;
+  readonly savePerspectiveFiltersOptionValue: Locator;
+  readonly savePerspectiveNoFiltersValue: Locator;
+  readonly savePerspectiveSaveBtn: Locator;
 
   // Tabs
   readonly tabExpensesBtn: Locator;
   readonly tabResourceCountBtn: Locator;
   readonly tabTagsBtn: Locator;
+  readonly tabMetaBtn: Locator;
 
   // Charts
   readonly categorizeBySelect: Locator;
+  readonly metaCategorizeBySelect: Locator;
   readonly expensesSelect: Locator;
+  readonly breakdownTypeSelect: Locator;
   readonly showWeekendsCheckbox: Locator;
   readonly searchInput: Locator;
   readonly expensesBreakdownChart: Locator;
@@ -73,6 +62,9 @@ export class ResourcesPage extends BasePage {
   readonly groupByOwnerBtn: Locator;
   readonly groupByOwnerCloseBtn: Locator;
   readonly groupByTagSelect: Locator;
+  readonly selectedGroupByTagItem: Locator;
+  readonly selectedGroupByTagKey: Locator;
+  readonly selectedGroupByTagValue: Locator;
 
   //Column selection
   readonly columnsBtn: Locator;
@@ -125,46 +117,42 @@ export class ResourcesPage extends BasePage {
     this.possibleSavingsCard = this.main.getByTestId('card_possible_savings');
     this.possibleMonthlySavingsValue = this.possibleSavingsCard.getByTestId('p_savings_value');
 
-    //Filters
-    this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
-    this.allFilterBoxButtons = this.filtersBox.locator('button');
-    this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
+    // Perspectives side modal
+    this.perspectivesSideModal = this.page.getByTestId('smodal_perspective');
+    this.perspectivesSeeAllPerspectivesLink = this.perspectivesSideModal.getByRole('link', { name: 'See all Perspectives' });
+    this.perspectivesApplyBtn = this.perspectivesSideModal.getByRole('button', { name: 'Apply' });
 
-    this.suggestionsFilter = this.filtersBox.getByRole('button', { name: 'Suggestions' });
-    this.dataSourceFilter = this.filtersBox.getByRole('button', { name: 'Data source (' });
-    this.poolFilter = this.filtersBox.getByRole('button', { name: 'Pool (' });
-    this.ownerFilter = this.filtersBox.getByRole('button', { name: 'Owner (' });
-    this.regionFilter = this.filtersBox.getByRole('button', { name: 'Region (' });
-    this.serviceFilter = this.filtersBox.getByRole('button', { name: /^Service \(/ });
-    this.resourceTypeFilter = this.filtersBox.getByRole('button', { name: 'Resource type (' });
-    this.activityFilter = this.filtersBox.getByRole('button', { name: 'Activity (' });
-    this.recommendationsFilter = this.filtersBox.getByRole('button', { name: 'Recommendations (' });
-    this.constraintViolationsFilter = this.filtersBox.getByRole('button', { name: 'Constraint violations (' });
-    this.firstSeenFilter = this.filtersBox.getByRole('button', { name: 'First seen (' });
-    this.lastSeenFilter = this.filtersBox.getByRole('button', { name: 'Last seen (' });
-    this.tagFilter = this.filtersBox.getByRole('button', { name: /^Tag \(/ });
-    this.withoutTagFilter = this.filtersBox.getByRole('button', { name: 'Without tag (' });
-    this.metaFilter = this.filtersBox.getByRole('button', { name: 'Meta (' });
-    this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic from (' });
-    this.paidNetworkTrafficToFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic to (' });
-    this.k8sNodeFilter = this.filtersBox.getByRole('button', { name: 'K8s node (' });
-    this.k8sServiceFilter = this.filtersBox.getByRole('button', { name: 'K8s service (' });
-    this.k8sNamespaceFilter = this.filtersBox.getByRole('button', { name: 'K8s namespace (' });
-
-    this.billingOnlyOption = this.filterPopover.getByLabel('Billing only');
-    this.filterApplyButton = this.filterPopover.getByRole('button', { name: 'Apply' });
-    this.resetFiltersBtn = this.main.getByRole('button', { name: 'Reset filters' });
-    this.showMoreFiltersBtn = this.main.getByRole('button', { name: 'Show more' });
-    this.showLessFiltersBtn = this.main.getByRole('button', { name: 'Show less' });
+    // Save perspective modal
+    this.savePerspectiveSideModal = this.page.getByTestId('smodal_save_perspective');
+    this.savePerspectiveSaveAsInput = this.savePerspectiveSideModal.getByTestId('input_save_as');
+    this.savePerspectiveBreakDownByValue = this.savePerspectiveSideModal.locator(
+      '//div[contains(text(), "Breakdown by")]/following-sibling::div'
+    );
+    this.savePerspectiveCategorizeByValue = this.savePerspectiveSideModal.locator(
+      '//div[contains(text(), "Categorize by")]/following-sibling::div'
+    );
+    this.savePerspectiveGroupByTypeValue = this.savePerspectiveSideModal.locator(
+      '//div[contains(text(), "Group by")]/following-sibling::div//div[1]/div[1]'
+    );
+    this.savePerspectiveGroupByValue = this.savePerspectiveSideModal.locator(
+      '//div[contains(text(), "Group by")]/following-sibling::div//div[1]/div[2]'
+    );
+    this.savePerspectiveFiltersValue = this.savePerspectiveSideModal.locator('//h4[.="Filters"]/../div/div[1]');
+    this.savePerspectiveFiltersOptionValue = this.savePerspectiveSideModal.locator('//h4[.="Filters"]/../div/div[2]');
+    this.savePerspectiveNoFiltersValue = this.savePerspectiveSideModal.locator('//div[contains(text(), "Filters")]/following-sibling::div');
+    this.savePerspectiveSaveBtn = this.savePerspectiveSideModal.getByRole('button', { name: 'Save' });
 
     //tabs
     this.tabExpensesBtn = this.main.getByTestId('tab_expenses');
     this.tabResourceCountBtn = this.main.getByTestId('tab_counts');
     this.tabTagsBtn = this.main.getByTestId('tab_tags');
+    this.tabMetaBtn = this.main.getByTestId('tab_meta');
 
     // Charts
     this.categorizeBySelect = this.main.getByTestId('resource-categorize-by-selector-select');
+    this.metaCategorizeBySelect = this.main.getByTestId('resources-meta-categorize-by-selector-select');
     this.expensesSelect = this.main.getByTestId('expenses-split-selector-select');
+    this.breakdownTypeSelect = this.main.getByTestId('resources-meta-breakdown-type-selector-select');
 
     this.showWeekendsCheckbox = this.main.getByLabel('Show weekends');
     this.searchInput = this.main.getByPlaceholder('Search');
@@ -182,6 +170,9 @@ export class ResourcesPage extends BasePage {
     this.groupByPoolCloseBtn = this.main.getByTestId('btn_ls_item_pool_close');
     this.groupByOwnerBtn = this.main.getByTestId('selector_owner');
     this.groupByTagSelect = this.main.getByTestId('selector_tag');
+    this.selectedGroupByTagItem = this.main.getByTestId('chip_ls_item_tag');
+    this.selectedGroupByTagKey = this.selectedGroupByTagItem.getByTestId('chip_ls_item_tag_key');
+    this.selectedGroupByTagValue = this.selectedGroupByTagItem.getByTestId('chip_ls_item_tag_value');
 
     //Column selection
     this.columnsBtn = this.main.getByTestId('btn_columns');
@@ -217,6 +208,15 @@ export class ResourcesPage extends BasePage {
     this.navigateNextIcon = this.getByAnyTestId('NavigateNextIcon', this.main);
   }
 
+  async navigateToResourcesPageAndResetFilters(): Promise<void> {
+    await this.navigateToURL('/resources');
+    await this.waitForAllProgressBarsToDisappear();
+    await this.waitForCanvas();
+    await this.resetFilters();
+    await this.waitForPageLoad();
+    await this.firstResourceItemInTable.waitFor({ timeout: 15000 });
+  }
+
   /**
    * Clicks the "Expenses" tab on the Resources page.
    * This method interacts with the `tabExpensesBtn` locator and waits for the canvas to update.
@@ -225,8 +225,13 @@ export class ResourcesPage extends BasePage {
    */
   async clickExpensesTab(wait = true): Promise<void> {
     debugLog('Clicking ExpensesTab');
-    await this.tabExpensesBtn.click();
-    if (wait) await this.waitForCanvas();
+    if ((await this.tabExpensesBtn.getAttribute('aria-selected')) !== 'true') {
+      await this.tabExpensesBtn.click();
+    }
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
   }
 
   /**
@@ -238,7 +243,10 @@ export class ResourcesPage extends BasePage {
   async clickResourceCountTab(wait = true): Promise<void> {
     debugLog('Clicking Resource Count tab');
     await this.tabResourceCountBtn.click();
-    if (wait) await this.waitForCanvas();
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
   }
 
   /**
@@ -250,7 +258,39 @@ export class ResourcesPage extends BasePage {
   async clickTagsTab(wait = true): Promise<void> {
     debugLog('Clicking Tags Tab');
     await this.tabTagsBtn.click();
-    if (wait) await this.waitForCanvas();
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
+  }
+
+  /**
+   * Clicks the "Meta" tab on the Resources page.
+   *
+   * This method interacts with the `tabMetaBtn` locator and optionally waits for
+   * the canvas to finish rendering and all progress bars to disappear after the tab
+   * is clicked.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the canvas and progress bars after clicking.
+   *   Set to `false` when chaining multiple tab interactions without needing to wait between them.
+   * @returns {Promise<void>} Resolves when the tab is clicked and the optional wait is complete.
+   *
+   * @example
+   * // Click the Meta tab and wait for the chart to render
+   * await resourcesPage.clickMetaTab();
+   *
+   * @example
+   * // Click without waiting, e.g. when chaining with a subsequent selection
+   * await resourcesPage.clickMetaTab(false);
+   * await resourcesPage.selectMetaCategorizeBy('Region');
+   */
+  async clickMetaTab(wait = true): Promise<void> {
+    debugLog('Clicking Meta Tab');
+    await this.tabMetaBtn.click();
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
   }
 
   /**
@@ -265,60 +305,6 @@ export class ResourcesPage extends BasePage {
   }
 
   /**
-   * Resets all filters on the Resources page.
-   *
-   * This method checks if the "Reset Filters" button is visible, clicks it to reset all filters,
-   * and optionally waits for the page loader to disappear and the canvas to update.
-   *
-   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after resetting the filters.
-   * @returns {Promise<void>} Resolves when the filters are reset and the optional wait is complete.
-   */
-  async resetFilters(wait: boolean = true): Promise<void> {
-    if (await this.resetFiltersBtn.isVisible()) {
-      debugLog('Resetting all filters');
-      await this.resetFiltersBtn.click();
-      if (wait) {
-        await this.waitForAllProgressBarsToDisappear();
-        await this.waitForCanvas();
-      }
-    }
-  }
-
-  /**
-   * Applies the "Billing only" filter on the Resources page.
-   * This method clicks the activity filter, selects the "Billing only" option, and applies the filter.
-   * It logs the action and waits for the canvas to update.
-   *
-   * @returns {Promise<void>} Resolves when the filter is applied and the canvas is updated.
-   */
-  async clickActivityFilterBillingOnlyOptionAndApply(): Promise<void> {
-    await this.activityFilter.click();
-    await this.billingOnlyOption.click();
-    await this.filterApplyButton.click();
-    await this.waitForCanvas();
-  }
-
-  /**
-   * Clicks the "Show More Filters" button on the Resources page.
-   * This method interacts with the `showMoreFiltersBtn` locator to expand the filters section.
-   *
-   * @returns {Promise<void>} Resolves when the button is clicked.
-   */
-  async clickShowMoreFilters(): Promise<void> {
-    await this.showMoreFiltersBtn.click();
-  }
-
-  /**
-   * Toggles the visibility of the legend on the Resources page.
-   * This method interacts with the `showLegend` locator and logs the action.
-   *
-   * @returns {Promise<void>} Resolves when the legend visibility is toggled.
-   */
-  async clickShowLegend(): Promise<void> {
-    await this.showLegend.click();
-  }
-
-  /**
    * Selects an option from the "Categorize By" dropdown on the Resources page.
    * This method uses the `categorizeBySelect` locator to select the specified option
    * and optionally waits for the page to load and the canvas to update after the selection.
@@ -330,8 +316,62 @@ export class ResourcesPage extends BasePage {
   async selectCategorizeBy(option: string, wait: boolean = true): Promise<void> {
     await this.selectFromComboBox(this.categorizeBySelect, option);
     if (wait) {
-      await this.waitForPageLoad();
       await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
+  }
+
+  /**
+   * Selects an option from the "Categorize By" dropdown on the Meta tab of the Resources page.
+   *
+   * This method uses the `metaCategorizeBySelect` locator to select the specified option
+   * and optionally waits for the canvas to update and all progress bars to disappear
+   * after the selection.
+   *
+   * @param {string} option - The option to select from the Meta Categorize By dropdown.
+   * @param {boolean} [wait=true] - Whether to wait for the canvas and progress bars after selection.
+   * @returns {Promise<void>} Resolves when the option is selected and the optional wait is complete.
+   *
+   * @example
+   * // Select a meta categorize by option and wait for the chart to update
+   * await resourcesPage.selectMetaCategorizeBy('Service name');
+   *
+   * @example
+   * // Select without waiting, e.g. when chaining multiple selections
+   * await resourcesPage.selectMetaCategorizeBy('Region', false);
+   */
+  async selectMetaCategorizeBy(option: string, wait: boolean = true): Promise<void> {
+    await this.selectFromComboBox(this.metaCategorizeBySelect, option);
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
+    }
+  }
+
+  /**
+   * Selects an option from the "Breakdown Type" dropdown on the Meta tab of the Resources page.
+   *
+   * This method uses the `breakdownTypeSelect` locator to select the specified option
+   * and optionally waits for the canvas to update and all progress bars to disappear
+   * after the selection.
+   *
+   * @param {string} option - The option to select from the Breakdown Type dropdown.
+   * @param {boolean} [wait=true] - Whether to wait for the canvas and progress bars after selection.
+   * @returns {Promise<void>} Resolves when the option is selected and the optional wait is complete.
+   *
+   * @example
+   * // Select a breakdown type and wait for the chart to update
+   * await resourcesPage.selectBreakdownType('Daily');
+   *
+   * @example
+   * // Select without waiting, e.g. when chaining multiple selections
+   * await resourcesPage.selectBreakdownType('Weekly', false);
+   */
+  async selectBreakdownType(option: string, wait: boolean = true): Promise<void> {
+    await this.selectFromComboBox(this.breakdownTypeSelect, option);
+    if (wait) {
+      await this.waitForCanvas();
+      await this.waitForAllProgressBarsToDisappear();
     }
   }
 
@@ -346,6 +386,7 @@ export class ResourcesPage extends BasePage {
   async selectExpenses(option: string): Promise<void> {
     await this.selectFromComboBox(this.expensesSelect, option);
     await this.waitForCanvas();
+    await this.waitForAllProgressBarsToDisappear();
   }
 
   /**
@@ -359,16 +400,6 @@ export class ResourcesPage extends BasePage {
   }
 
   /**
-   * Closes the "Group by Pool" section on the Resources page.
-   * This method interacts with the `groupByPoolCloseBtn` locator.
-   *
-   * @returns {Promise<void>} Resolves when the section is closed.
-   */
-  async clickGroupByPoolClose(): Promise<void> {
-    await this.groupByPoolCloseBtn.click();
-  }
-
-  /**
    * Clicks the "Group by Owner" button on the Resources page.
    * This method interacts with the `groupByOwnerBtn` locator.
    *
@@ -376,16 +407,6 @@ export class ResourcesPage extends BasePage {
    */
   async clickGroupByOwner(): Promise<void> {
     await this.groupByOwnerBtn.click();
-  }
-
-  /**
-   * Closes the "Group by Owner" section on the Resources page.
-   * This method interacts with the `groupByOwnerCloseBtn` locator.
-   *
-   * @returns {Promise<void>} Resolves when the section is closed.
-   */
-  async clickGroupByOwnerClose(): Promise<void> {
-    await this.groupByOwnerCloseBtn.click();
   }
 
   /**
@@ -412,6 +433,16 @@ export class ResourcesPage extends BasePage {
    */
   async clickColumnsButton(): Promise<void> {
     await this.columnsBtn.click();
+  }
+
+  /**
+   * Toggles the visibility of the legend on the Resources page.
+   * This method interacts with the `showLegend` locator and logs the action.
+   *
+   * @returns {Promise<void>} Resolves when the legend visibility is toggled.
+   */
+  async toggleShowLegend(): Promise<void> {
+    await this.showLegend.click();
   }
 
   /**
@@ -491,6 +522,7 @@ export class ResourcesPage extends BasePage {
    */
   async clearGrouping(): Promise<void> {
     await this.clearIcon.click();
+    await this.clearIcon.waitFor({ state: 'hidden' });
   }
 
   /**
@@ -502,5 +534,142 @@ export class ResourcesPage extends BasePage {
   async getResourceCountValue(): Promise<number> {
     const value = await this.resourceCountValue.textContent(); // Get the text content of the resource count element
     return parseInt(value); // Parse the text content into an integer and return it
+  }
+
+  /**
+   * Fills in the perspective name in the save perspective modal.
+   *
+   * This method types the given name into the "Save as" input field and then clicks
+   * the modal background to close any open dropdowns and ensure the Save button
+   * becomes enabled before proceeding.
+   *
+   * @param {string} perspectiveName - The name to enter into the "Save as" input field.
+   * @returns {Promise<void>} Resolves when the name has been filled and the modal has been clicked.
+   *
+   * @example
+   * // Fill in the perspective name without immediately saving
+   * await resourcesPage.fillSavePerspectiveName('My Perspective');
+   * await expect(resourcesPage.savePerspectiveSaveBtn).toBeEnabled();
+   *
+   * @remarks
+   * - This method is called internally by `savePerspective` as part of the full save workflow.
+   * - The modal click after filling is required to dismiss any open combo box dropdowns
+   *   and trigger validation, which enables the Save button.
+   */
+  async fillSavePerspectiveName(perspectiveName: string): Promise<void> {
+    await this.savePerspectiveSaveAsInput.fill(perspectiveName);
+    // Click the modal to close the dropdowns and ensure the Save button is enabled
+    await this.savePerspectiveSideModal.click();
+  }
+
+  /**
+   * Saves a new perspective with the specified name.
+   *
+   * This method performs the save perspective workflow:
+   * 1. Fills in the perspective name in the "Save as" input field
+   * 2. Clicks the save perspective side modal to ensure focus
+   * 3. Clicks the Save button to complete the save operation
+   *
+   * @param {string} perspectiveName - The name to give the new perspective.
+   * @returns {Promise<void>} A promise that resolves when the perspective is saved.
+   *
+   * @example
+   * // Save a new perspective named "Development Resources"
+   * await resourcesPage.savePerspective("Development Resources");
+   *
+   * @remarks
+   * This method assumes the save perspective modal is already open. Make sure to
+   * open the modal (e.g., by clicking the "Save perspective" button) before calling this method.
+   */
+  async savePerspective(perspectiveName: string): Promise<void> {
+    await this.fillSavePerspectiveName(perspectiveName);
+    await this.savePerspectiveSaveBtn.click();
+  }
+
+  /**
+   * Retrieves a perspective button locator by its name from the perspectives side modal.
+   *
+   * This method searches for a button with the specified name within the perspectives
+   * side modal and returns a Playwright locator that can be used to interact with it.
+   *
+   * @param {string} name - The name of the perspective button to find.
+   * @returns {Promise<Locator>} A promise that resolves to the locator for the perspective button.
+   *
+   * @example
+   * // Get a perspective button by name
+   * const perspectiveBtn = await resourcesPage.getPerspectivesButtonByName("Q1 Resources");
+   * await perspectiveBtn.click();
+   *
+   * @example
+   * // Use with applyPerspective method
+   * const perspectiveBtn = await resourcesPage.getPerspectivesButtonByName("Production View");
+   * await resourcesPage.applyPerspective(perspectiveBtn);
+   *
+   * @remarks
+   * This method returns a locator, not an element handle. The locator can be used
+   * for assertions or interactions with the perspective button.
+   */
+  async getPerspectivesButtonByName(name: string): Promise<Locator> {
+    return this.perspectivesSideModal.getByRole('button', { name: name });
+  }
+
+  /**
+   * Applies a perspective by clicking its button and confirming the application.
+   *
+   * This method performs the complete perspective application workflow:
+   * 1. Opens the perspectives side modal by clicking the Perspectives button
+   * 2. Clicks the specified perspective button to select it
+   * 3. Clicks the Apply button to apply the perspective
+   * 4. Waits for the Apply button to be hidden (modal closes)
+   * 5. Waits for the canvas to re-render with the new perspective
+   * 6. Waits for all progress bars to disappear
+   *
+   * @param {Locator} perspectiveButton - The Playwright locator for the perspective button to apply.
+   * @returns {Promise<void>} A promise that resolves when the perspective is fully applied and the page is loaded.
+   *
+   * @example
+   * // Apply a perspective by name
+   * const perspectiveBtn = await resourcesPage.getPerspectivesButtonByName("My Perspective");
+   * await resourcesPage.applyPerspective(perspectiveBtn);
+   *
+   * @example
+   * // Apply and verify the perspective was applied
+   * const perspectiveBtn = await resourcesPage.getPerspectivesButtonByName("Cost Overview");
+   * await resourcesPage.applyPerspective(perspectiveBtn);
+   * await expect(resourcesPage.expensesBreakdownChart).toBeVisible();
+   *
+   * @remarks
+   * This method includes waits to ensure the perspective is fully loaded before
+   * proceeding. It waits for both the canvas rendering and any progress indicators
+   * to complete, ensuring the page is in a stable state for subsequent interactions.
+   */
+  async applyPerspective(perspectiveButton: Locator): Promise<void> {
+    await this.perspectivesBtn.click();
+    await perspectiveButton.click();
+    await this.perspectivesApplyBtn.click();
+    await this.perspectivesApplyBtn.waitFor({ state: 'hidden' });
+    await this.waitForCanvas();
+    await this.waitForAllProgressBarsToDisappear();
+  }
+
+  /**
+   * Returns a locator for the overwrite confirmation message in the save perspective modal.
+   *
+   * This message is displayed when a perspective with the given name already exists,
+   * warning the user that the existing perspective will be overwritten with the new options.
+   *
+   * @param {string} perspectiveName - The name of the perspective that will be overwritten.
+   * @returns {Locator} A Playwright locator for the overwrite warning message element.
+   *
+   * @example
+   * // Assert the overwrite warning is visible before saving
+   * await expect(resourcesPage.getPerspectiveOverwriteMessage('My Perspective')).toBeVisible();
+   *
+   * @remarks
+   * Uses exact text matching, so the perspective name must match precisely
+   * (case-sensitive) the name of the existing perspective shown in the modal.
+   */
+  getPerspectiveOverwriteMessage(perspectiveName: string): Locator {
+    return this.savePerspectiveSideModal.getByText(`The existing perspective (${perspectiveName}) will be overwritten with new options.`, { exact: true });
   }
 }
