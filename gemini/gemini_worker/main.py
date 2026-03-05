@@ -264,21 +264,19 @@ class Worker(ConsumerMixin):
                     }
                 }
         """
-        self_query = ""
+        queries = []
         params = {"gemini_id": gemini_id}
 
         for index, bucket in enumerate(buckets):
             params[bucket] = bucket
-            self_query += f"""
-                SELECT bucket, tag, count(id) count, sum(size) size
-                FROM gemini
-                WHERE id=%(gemini_id)s AND bucket=%({bucket})s
-                GROUP BY bucket, tag
-                HAVING count > 1
-            """
-            if index < len(buckets) - 1:
-                self_query += " UNION ALL "
-
+            queries.append(
+                f"SELECT bucket, tag, count(id) count, sum(size) size "
+                f"FROM gemini "
+                f"WHERE id=%(gemini_id)s AND bucket=%({bucket})s "
+                f"GROUP BY bucket, tag "
+                f"HAVING count > 1"
+            )
+        self_query = " UNION ALL ".join(queries)
         self_result_q = self.clickhouse_client.query(
             f"SELECT bucket, count, size * (1 - 1/count) FROM ({self_query})",
             parameters=params,
@@ -325,13 +323,9 @@ class Worker(ConsumerMixin):
                     (
                         SELECT tag
                         FROM gemini
-                        WHERE id="1" AND bucket="bucket_1"
-
-                        INTERSECT
-
-                        SELECT tag
-                        FROM gemini
-                        WHERE id="1" AND bucket="bucket_2"
+                        WHERE id="1" AND bucket IN (bucket_1, bucket_2)
+                        GROUP BY tag
+                        HAVING COUNT(DISTINCT bucket) = 2
                     ) GROUP BY tag
 
                     UNION ALL
@@ -342,13 +336,9 @@ class Worker(ConsumerMixin):
                     (
                         SELECT tag
                         FROM gemini
-                        WHERE id="1" AND bucket="bucket_2"
-
-                        INTERSECT
-
-                        SELECT tag
-                        FROM gemini
-                        WHERE id="1" AND bucket="bucket_3"
+                        WHERE id="1" AND bucket IN (bucket_1, bucket_2)
+                        GROUP BY tag
+                        HAVING COUNT(DISTINCT bucket) = 2
                     ) GROUP BY tag
 
                     UNION ALL
@@ -359,13 +349,9 @@ class Worker(ConsumerMixin):
                     (
                         SELECT tag
                         FROM gemini
-                        WHERE id="1" AND bucket="bucket_3"
-
-                        INTERSECT
-
-                        SELECT tag
-                        FROM gemini
-                        WHERE id="1" AND bucket="bucket_1"
+                        WHERE id="1" AND bucket IN (bucket_1, bucket_2)
+                        GROUP BY tag
+                        HAVING COUNT(DISTINCT bucket) = 2
                     ) GROUP BY tag
                 ) GROUP BY index, size ORDER BY index
 
@@ -393,34 +379,30 @@ class Worker(ConsumerMixin):
         """
 
         bucket_pairs = list(combinations(buckets, PAIR))
-        cross_query = ""
+        queries = []
         params = {"gemini_id": gemini_id}
 
         for index, pair in enumerate(bucket_pairs):
-            params[str(index)] = pair
-            params[pair[0]] = pair[0]
-            params[pair[1]] = pair[1]
-
+            p_0 = f'p_{index}_0'
+            p_1 = f'p_{index}_1'
             pair_list_sql = ", ".join([f"'{bucket}'" for bucket in pair])
-
-            cross_query += f"""
-                SELECT {index} index, tag, bucket, count(id) count, sum(size) size
-                FROM gemini
-                WHERE id=%(gemini_id)s AND bucket IN ({pair_list_sql}) AND tag in (
-                    SELECT tag
-                    FROM gemini
-                    WHERE id=%(gemini_id)s AND bucket=%({pair[0]})s
-
-                    INTERSECT
-
-                    SELECT tag
-                    FROM gemini
-                    WHERE id=%(gemini_id)s AND bucket=%({pair[1]})s
-                ) GROUP BY tag, bucket
-            """
-            if index < len(bucket_pairs) - 1:
-                cross_query += " UNION ALL "
-
+            params.update({
+                p_0: pair[0],
+                p_1: pair[1],
+            })
+            queries.append(
+                f"SELECT {index} AS index, tag, bucket, count(id) AS count, "
+                f"sum(size) AS size "
+                f"FROM gemini "
+                f"WHERE id=%(gemini_id)s AND bucket IN ({pair_list_sql}) "
+                f"AND tag IN ("
+                f"SELECT tag FROM gemini "
+                f"WHERE id=%(gemini_id)s AND bucket IN (%({p_0})s, %({p_1})s) "
+                f"GROUP BY tag "
+                f"HAVING COUNT(DISTINCT bucket) = 2) "
+                f"GROUP BY tag, bucket"
+            )
+        cross_query = " UNION ALL ".join(queries)
         cross_result_q = self.clickhouse_client.query(
             f"""
                 SELECT index, bucket, sum(count) count, size FROM ({cross_query})
