@@ -21,6 +21,32 @@ export abstract class BasePage {
   readonly errorColor: string; // Default color for error state
   readonly successColor: string; // Default color for success state
 
+  // Filters
+  readonly filtersBox: Locator;
+  readonly allFilterBoxButtons: Locator;
+  readonly filterPopover: Locator;
+  readonly suggestionsFilter: Locator;
+  readonly dataSourceFilter: Locator;
+  readonly poolFilter: Locator;
+  readonly ownerFilter: Locator;
+  readonly regionFilter: Locator;
+  readonly serviceFilter: Locator;
+  readonly resourceTypeFilter: Locator;
+  readonly activityFilter: Locator;
+  readonly recommendationsFilter: Locator;
+  readonly constraintViolationsFilter: Locator;
+  readonly firstSeenFilter: Locator;
+  readonly lastSeenFilter: Locator;
+  readonly tagFilter: Locator;
+  readonly withoutTagFilter: Locator;
+  readonly metaFilter: Locator;
+  readonly paidNetworkTrafficFromFilter: Locator;
+  readonly paidNetworkTrafficToFilter: Locator;
+  readonly filterApplyButton: Locator;
+  readonly resetFiltersBtn: Locator;
+  readonly showMoreFiltersBtn: Locator;
+  readonly showLessFiltersBtn: Locator;
+
   /**
    * Initializes a new instance of the BasePage class.
    * @param {Page} page - The Playwright page object.
@@ -39,11 +65,55 @@ export abstract class BasePage {
     this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
     this.errorColor = 'rgb(187, 20, 37)'; // Default color for error state
     this.successColor = 'rgb(0, 120, 77)'; // Default color for success state
+
+    //Filters
+    this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
+    this.allFilterBoxButtons = this.filtersBox.locator('button');
+    this.filterPopover = this.page.locator('//div[contains(@id, "filter-popover")]');
+    this.filterApplyButton = this.filterPopover.getByRole('button', { name: 'Apply' });
+
+    this.suggestionsFilter = this.filtersBox.getByRole('button', { name: 'Suggestions' });
+    this.dataSourceFilter = this.filtersBox.getByRole('button', { name: 'Data source (' });
+    this.poolFilter = this.filtersBox.getByRole('button', { name: 'Pool (' });
+    this.ownerFilter = this.filtersBox.getByRole('button', { name: 'Owner (' });
+    this.regionFilter = this.filtersBox.getByRole('button', { name: 'Region (' });
+    this.serviceFilter = this.filtersBox.getByRole('button', { name: /^Service \(/ });
+    this.resourceTypeFilter = this.filtersBox.getByRole('button', { name: 'Resource type (' });
+    this.activityFilter = this.filtersBox.getByRole('button', { name: 'Activity (' });
+    this.recommendationsFilter = this.filtersBox.getByRole('button', { name: 'Recommendations (' });
+    this.constraintViolationsFilter = this.filtersBox.getByRole('button', { name: 'Constraint violations (' });
+    this.firstSeenFilter = this.filtersBox.getByRole('button', { name: 'First seen (' });
+    this.lastSeenFilter = this.filtersBox.getByRole('button', { name: 'Last seen (' });
+    this.tagFilter = this.filtersBox.getByRole('button', { name: /^Tag \(/ });
+    this.withoutTagFilter = this.filtersBox.getByRole('button', { name: 'Without tag (' });
+    this.metaFilter = this.filtersBox.getByRole('button', { name: 'Meta (' });
+    this.paidNetworkTrafficFromFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic from (' });
+    this.paidNetworkTrafficToFilter = this.filtersBox.getByRole('button', { name: 'Paid network traffic to (' });
+    this.resetFiltersBtn = this.main.getByRole('button', { name: 'Reset filters' });
+    this.showMoreFiltersBtn = this.main.getByRole('button', { name: 'Show more' });
+    this.showLessFiltersBtn = this.main.getByRole('button', { name: 'Show less' });
   }
 
   /**
-   * Navigates to the URL of the page.
-   * @returns {Promise<void>} A promise that resolves when the navigation is complete.
+   * Navigates to the page URL.
+   *
+   * This method navigates to either a custom URL or the default page URL and waits
+   * for the loading page image to disappear before continuing.
+   *
+   * @param {string | null} [customUrl=null] - Optional custom URL to navigate to. If not provided, uses the page's default URL.
+   * @returns {Promise<void>} A promise that resolves when navigation is complete and the page has loaded.
+   *
+   * @example
+   * // Navigate to the default page URL
+   * await resourcesPage.navigateToURL();
+   *
+   * @example
+   * // Navigate to a custom URL
+   * await resourcesPage.navigateToURL('/resources?filter=active');
+   *
+   * @remarks
+   * This method waits for the 'load' event and also ensures the loading spinner/image
+   * has disappeared, providing a more reliable indication that the page is ready for interaction.
    */
   async navigateToURL(customUrl: string = null): Promise<void> {
     debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);
@@ -51,6 +121,32 @@ export abstract class BasePage {
     await this.waitForLoadingPageImgToDisappear();
   }
 
+  /**
+   * Fits the viewport to the full height of the page content.
+   *
+   * This method adjusts the browser viewport to match the full scrollable height
+   * of the main content wrapper, up to a maximum height limit. This is useful
+   * for capturing full-page screenshots or ensuring all content is visible
+   * without scrolling.
+   *
+   * @returns {Promise<void>} A promise that resolves when the viewport has been resized.
+   *
+   * @example
+   * // Fit viewport before taking a full-page screenshot
+   * await resourcesPage.fitViewportToFullPage();
+   * await resourcesPage.page.screenshot({ path: 'full-page.png' });
+   *
+   * @example
+   * // Ensure all table rows are visible for testing
+   * await poolsPage.fitViewportToFullPage();
+   * const rowCount = await poolsPage.table.locator('tr').count();
+   *
+   * @remarks
+   * - The viewport width remains unchanged to maintain consistency
+   * - Maximum height is capped at 12000px to avoid GPU/OS limitations
+   * - Includes an 80px header height adjustment
+   * - If the main content wrapper is not found, returns 0 height (no resize)
+   */
   async fitViewportToFullPage(): Promise<void> {
     const { maxHeight = 12000 } = {};
     const headerHeight = 80;
@@ -69,25 +165,58 @@ export abstract class BasePage {
   }
 
   /**
-   * Retrieves a locator for an element based on a test ID attribute.
-   * This method searches for elements with either `data-test-id` or `data-testid` attributes
-   * matching the provided test ID value.
+   * Locates an element by either `data-test-id` or `data-testid` attribute.
+   *
+   * This method provides a unified way to query elements that may use either the
+   * hyphenated (`data-test-id`) or the camelCase-style (`data-testid`) test ID
+   * attribute convention, returning the first match for either variant.
    *
    * @param {string} testId - The test ID value to search for.
-   * @param {Locator | Page} [root=this.page] - The root element or page to perform the search within.
-   * Defaults to the current Playwright page.
-   * @returns {Locator} A Playwright locator for the matching element(s).
+   * @param {Locator | Page} [root=this.page] - The root element or page to scope the search within.
+   *   Defaults to the current page, but can be narrowed to a specific locator for scoped queries.
+   * @returns {Locator} A Playwright locator matching elements with the given test ID under either attribute name.
+   *
+   * @example
+   * // Find an element by test ID anywhere on the page
+   * const submitBtn = basePage.getByAnyTestId('submit-button');
+   * await submitBtn.click();
+   *
+   * @example
+   * // Scope the search to a specific container
+   * const modal = page.locator('.modal');
+   * const confirmBtn = basePage.getByAnyTestId('confirm-button', modal);
+   * await confirmBtn.click();
+   *
+   * @remarks
+   * This method is useful when the codebase is inconsistent about which test ID
+   * attribute convention is used (`data-test-id` vs `data-testid`), allowing tests
+   * to remain resilient regardless of which attribute is present on the element.
    */
   getByAnyTestId(testId: string, root: Locator | Page = this.page): Locator {
     return root.locator(`[data-test-id="${testId}"], [data-testid="${testId}"]`);
   }
 
+
   /**
    * Selects an option from a combo box if it is not already selected.
-   * @param {Locator} comboBox - The locator for the combo box element.
-   * @param {string} option - The option to select from the combo box.
-   * @param {boolean} [closeList=false] - Whether to close the list after selecting the option.
-   * @returns {Promise<void>} A promise that resolves when the option is selected.
+   *
+   * Reads the currently selected value and, if it differs from the desired option,
+   * opens the dropdown and clicks the matching option by its exact name. Optionally
+   * dismisses the dropdown afterwards by clicking the page body.
+   *
+   * @param {Locator} comboBox - The Playwright locator representing the combo box element.
+   * @param {string} option - The exact text of the option to select (case-sensitive).
+   * @param {boolean} [closeList=false] - When `true`, clicks the page body after selection
+   *   to close the dropdown. Useful when subsequent interactions require the list to be dismissed.
+   * @returns {Promise<void>} Resolves when the option is selected, or immediately if it was already selected.
+   *
+   * @example
+   * // Select 'Monthly' from a period combo box
+   * await basePage.selectFromComboBox(periodComboBox, 'Monthly');
+   *
+   * @example
+   * // Select an option and close the dropdown afterwards
+   * await basePage.selectFromComboBox(regionComboBox, 'US East', true);
    */
   async selectFromComboBox(comboBox: Locator, option: string, closeList: boolean = false): Promise<void> {
     if ((await this.selectedComboBoxOption(comboBox)) !== option) {
@@ -98,31 +227,25 @@ export abstract class BasePage {
   }
 
   /**
-   * Retrieves the currently selected option from a combo box.
-   * This method locates the text content of the selected option within the combo box
-   * and trims any leading or trailing whitespace.
+   * Retrieves the currently selected option text from a combo box.
    *
-   * @param {Locator} comboBox - The locator for the combo box element.
-   * @returns {Promise<string>} A promise that resolves to the trimmed text content of the selected option.
+   * Reads the text content of the first child `div` inside the combo box element,
+   * which is expected to display the currently selected value, and returns it trimmed.
+   *
+   * @param {Locator} comboBox - The Playwright locator representing the combo box element.
+   * @returns {Promise<string>} Resolves to the trimmed text of the selected option,
+   *   or `undefined` if no text content is found.
+   *
+   * @example
+   * const selected = await basePage.selectedComboBoxOption(periodComboBox);
+   * expect(selected).toBe('Monthly');
+   *
+   * @remarks
+   * Relies on the combo box having a first child `div` that holds the displayed value.
+   * If the combo box DOM structure differs, this method may not return the expected result.
    */
   async selectedComboBoxOption(comboBox: Locator): Promise<string> {
     return (await comboBox.locator('xpath=/div[1]').textContent())?.trim();
-  }
-
-  /**
-   * Sets up routing for the page to intercept all network requests and add an Authorization header.
-   * @param {string} token - The token to be used for the Authorization header.
-   * @returns {Promise<void>} A promise that resolves when the routing is set up.
-   */
-  async setupRouting(token: string): Promise<void> {
-    await this.page.route('**/*', route => {
-      console.log(`Intercepting request to: ${route.request().url()}`);
-      const headers = {
-        ...route.request().headers(),
-        Authorization: `Bearer ${token}`,
-      };
-      route.continue({ headers });
-    });
   }
 
   /**
@@ -140,8 +263,32 @@ export abstract class BasePage {
 
   /**
    * Waits for at least one canvas element on the page to have non-zero pixel data.
-   * This method is useful to ensure that a canvas has finished rendering before proceeding.
-   * @returns {Promise<void>} A promise that resolves when the condition is met.
+   *
+   * This method polls the DOM until any `<canvas>` element contains at least one
+   * non-zero pixel in its 2D rendering context, indicating that it has finished
+   * rendering. It is useful for ensuring charts or visual elements are fully painted
+   * before taking screenshots or making visual assertions.
+   *
+   * @param {number} [timeout=20000] - Maximum time in milliseconds to wait for a canvas
+   *   to contain non-zero pixel data. Defaults to 20000ms (20 seconds).
+   * @returns {Promise<void>} Resolves as soon as at least one canvas has rendered content,
+   *   or rejects if the timeout is exceeded before any canvas renders.
+   *
+   * @example
+   * // Wait for a chart to finish rendering before taking a screenshot
+   * await basePage.waitForCanvas();
+   * await basePage.page.screenshot({ path: 'chart.png' });
+   *
+   * @example
+   * // Use a custom timeout for slow-rendering canvases
+   * await basePage.waitForCanvas(30000);
+   *
+   * @remarks
+   * - Uses `willReadFrequently: true` on the canvas context for optimised pixel reads.
+   * - Only requires **one** canvas to be non-empty; use `waitForAllCanvases` if all
+   *   canvases must be rendered before proceeding.
+   * - If no `<canvas>` elements are present on the page, this method will wait until
+   *   the timeout is reached.
    */
   async waitForCanvas(timeout: number = 20000): Promise<void> {
     await this.page.waitForFunction(
@@ -159,8 +306,27 @@ export abstract class BasePage {
 
   /**
    * Waits for all canvas elements on the page to have non-zero pixel data.
-   * This method ensures that all canvases have finished rendering before proceeding.
-   * @returns {Promise<void>} A promise that resolves when the condition is met.
+   *
+   * This method polls the DOM until every `<canvas>` element contains at least one
+   * non-zero pixel in its 2D rendering context, indicating that all canvases have
+   * finished rendering. Use this when multiple charts or visual elements must all be
+   * fully painted before proceeding.
+   *
+   * @returns {Promise<void>} Resolves when every canvas on the page has rendered content,
+   *   or rejects if the default Playwright timeout is exceeded.
+   *
+   * @example
+   * // Wait for all charts to finish rendering before taking a screenshot
+   * await basePage.waitForAllCanvases();
+   * await basePage.page.screenshot({ path: 'dashboard.png' });
+   *
+   * @remarks
+   * - Uses `willReadFrequently: true` on each canvas context for optimised pixel reads.
+   * - Requires **all** canvases to be non-empty; use `waitForCanvas` if only one canvas
+   *   needs to be rendered before proceeding.
+   * - If no `<canvas>` elements are present on the page, this method resolves immediately
+   *   since `every` returns `true` for an empty array.
+   * - No explicit timeout parameter is exposed; the default Playwright function timeout applies.
    */
   async waitForAllCanvases(): Promise<void> {
     await this.page.waitForFunction(() => {
@@ -173,9 +339,28 @@ export abstract class BasePage {
 
   /**
    * Waits for the text content of an element to include the expected text.
+   *
+   * This method filters the locator to match only elements containing the specified
+   * text, then waits for that filtered element to appear in the DOM. It is useful for
+   * asserting that dynamic content has been rendered before proceeding with further
+   * interactions or assertions.
+   *
    * @param {Locator} locator - The locator for the element whose text content is being checked.
-   * @param {string} expectedText - The text expected to be included in the element's text content.
-   * @returns {Promise<void>} A promise that resolves when the text content includes the expected text.
+   * @param {string} expectedText - The text expected to be present within the element's text content.
+   * @returns {Promise<void>} Resolves when the element containing the expected text is attached to the DOM.
+   *
+   * @example
+   * // Wait for a success message to appear
+   * await basePage.waitForTextContent(basePage.tooltip, 'Saved successfully');
+   *
+   * @example
+   * // Wait for a table cell to display a specific value
+   * await basePage.waitForTextContent(basePage.table.locator('td').first(), '$1,234.56');
+   *
+   * @remarks
+   * - Uses Playwright's `filter({ hasText })` which performs a substring match, not an exact match.
+   * - The method waits for the element to be attached to the DOM but does not assert visibility.
+   *   Use `toBeVisible()` for stricter visibility assertions.
    */
   async waitForTextContent(locator: Locator, expectedText: string): Promise<void> {
     await locator.filter({ hasText: expectedText }).waitFor();
@@ -183,8 +368,28 @@ export abstract class BasePage {
 
   /**
    * Evaluates whether a button element has the active button class.
-   * @param {Locator} button - The locator for the button element to be evaluated.
-   * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the button has the active button class.
+   *
+   * This method inspects the CSS class list of the given button element and returns
+   * `true` if any class name ends with `-button-activeButton`, which is the convention
+   * used in this codebase to mark a button as active/selected.
+   *
+   * @param {Locator} button - The Playwright locator for the button element to evaluate.
+   * @returns {Promise<boolean>} Resolves to `true` if the button has the active class, `false` otherwise.
+   *
+   * @example
+   * // Check if a toggle button is active before clicking
+   * const isActive = await basePage.evaluateActiveButton(myToggleBtn);
+   * console.log(`Button is active: ${isActive}`);
+   *
+   * @example
+   * // Use with clickButtonIfNotActive to ensure a button is activated
+   * await basePage.clickButtonIfNotActive(viewToggleBtn);
+   *
+   * @remarks
+   * - The check is based on the CSS class suffix `-button-activeButton`, which is specific
+   *   to MUI-based components in this project. If the component library changes, this
+   *   detection logic may need to be updated.
+   * - This method evaluates the element in the browser context via `element.evaluate`.
    */
   async evaluateActiveButton(button: Locator): Promise<boolean> {
     return await button.evaluate(el => {
@@ -206,10 +411,56 @@ export abstract class BasePage {
       await button.click();
     }
   }
+
   /**
-   * Brings the context of the current page to the front.
-   * This method is useful when multiple pages or contexts are open and you need to focus on the current page.
-   * @returns {Promise<void>} A promise that resolves when the context is brought to the front.
+   * Checks if an element is marked as selected using the aria-selected attribute.
+   *
+   * This method retrieves the `aria-selected` attribute from the specified element
+   * and returns true if its value is 'true', otherwise returns false.
+   * This is commonly used for checking the selection state of elements in accessible
+   * UI components like tabs, options in listboxes, or tree items.
+   *
+   * @param {Locator} element - The Playwright locator for the element to check.
+   * @returns {Promise<boolean>} A promise that resolves to true if the element has aria-selected="true", false otherwise.
+   *
+   * @example
+   * // Check if a tab is selected
+   * const tab = page.getByRole('tab', { name: 'Overview' });
+   * const isSelected = await basePage.isAriaSelected(tab);
+   * if (isSelected) {
+   *   console.log('Tab is currently selected');
+   * }
+   *
+   * @example
+   * // Use in an assertion
+   * const option = page.getByRole('option', { name: 'Option 1' });
+   * await expect(await basePage.isAriaSelected(option)).toBe(true);
+   *
+   * @remarks
+   * This method checks the ARIA attribute rather than visual state, making it
+   * more reliable for accessibility-compliant components. If the aria-selected
+   * attribute is not present, the method will return false.
+   */
+  async isAriaSelected(element: Locator): Promise<boolean> {
+    return (await element.getAttribute('aria-selected')) === 'true';
+  }
+
+  /**
+   * Brings the current page to the front of the browser window stack.
+   *
+   * This method calls Playwright's `bringToFront` on the current page, ensuring it
+   * is the active/focused tab. It is useful in multi-page or multi-context test
+   * scenarios where focus may have shifted to another page or popup.
+   *
+   * @returns {Promise<void>} Resolves when the page has been brought to the front.
+   *
+   * @example
+   * // Bring the main page back into focus after a popup was opened
+   * await basePage.bringContextToFront();
+   *
+   * @remarks
+   * - This is a thin wrapper around Playwright's `page.bringToFront()`.
+   * - Has no effect if the page is already the active tab.
    */
   async bringContextToFront(): Promise<void> {
     await this.page.bringToFront();
@@ -217,17 +468,58 @@ export abstract class BasePage {
 
   /**
    * Waits for an element to be detached from the DOM.
-   * @param {Locator} element - The locator for the element to wait for detachment.
-   * @returns {Promise<void>} A promise that resolves when the element is detached.
+   *
+   * This method waits until the specified element is removed from the DOM entirely.
+   * It is useful for asserting that a modal, tooltip, spinner, or other transient
+   * element has been fully dismissed before proceeding.
+   *
+   * @param {Locator} element - The Playwright locator for the element to wait for detachment.
+   * @returns {Promise<void>} Resolves when the element has been detached from the DOM,
+   *   or rejects if the default Playwright timeout is exceeded.
+   *
+   * @example
+   * // Wait for a loading spinner to be removed before interacting with the page
+   * await basePage.waitForElementDetached(basePage.progressBar);
+   *
+   * @example
+   * // Wait for a modal to be closed and removed from the DOM
+   * await confirmModal.clickCancel();
+   * await basePage.waitForElementDetached(confirmModal.dialog);
+   *
+   * @remarks
+   * - Uses Playwright's `waitFor({ state: 'detached' })`, which waits for the element
+   *   to be removed from the DOM, not just hidden.
+   * - If the element is already detached when this method is called, it resolves immediately.
    */
   async waitForElementDetached(element: Locator): Promise<void> {
     await element.waitFor({ state: 'detached' });
   }
 
   /**
-   * Introduces a delay for screenshot updates, required to ensure that the target is fully loaded.
-   * @param {number} [timeout=5000] - The delay duration in milliseconds.
-   * @returns {Promise<void>} A promise that resolves after the specified timeout.
+   * Introduces a conditional delay intended for use during screenshot update runs.
+   *
+   * When the `SCREENSHOT_UPDATE_DELAY` environment variable is set to `'true'`,
+   * this method pauses execution for the specified duration to allow visual elements
+   * to fully settle before a screenshot is captured. When the variable is not set,
+   * this method resolves immediately without any delay.
+   *
+   * @param {number} [timeout=5000] - The delay duration in milliseconds. Defaults to 5000ms (5 seconds).
+   * @returns {Promise<void>} Resolves after the delay if the env var is set, or immediately otherwise.
+   *
+   * @example
+   * // Allow animations to settle before capturing a baseline screenshot
+   * await basePage.screenshotUpdateDelay();
+   * await expect(basePage.page).toMatchSnapshot('dashboard.png');
+   *
+   * @example
+   * // Use a shorter delay for faster screenshot update runs
+   * await basePage.screenshotUpdateDelay(2000);
+   *
+   * @remarks
+   * - This method is a no-op in normal test runs; the delay is only applied when
+   *   `SCREENSHOT_UPDATE_DELAY=true` is set in the environment.
+   * - Prefer using this over a bare `delay()` call in screenshot-related tests to
+   *   keep the delay behaviour configurable and skippable in CI.
    */
   async screenshotUpdateDelay(timeout: number = 5000): Promise<void> {
     if (process.env.SCREENSHOT_UPDATE_DELAY === 'true') {
@@ -324,7 +616,7 @@ export abstract class BasePage {
    * @returns {Promise<number>} A promise that resolves to the total sum of currency values, rounded to two decimal places.
    */
   async sumCurrencyColumn(columnLocator: Locator, nextPageBtn: Locator): Promise<number> {
-    await columnLocator.last().waitFor({'timeout': 10000})
+    await columnLocator.last().waitFor({ timeout: 10000 });
     let totalSum = 0;
 
     while (true) {
@@ -558,7 +850,7 @@ export abstract class BasePage {
    * @param {Locator} locator - The Playwright locator representing the element to be clicked.
    * @returns {Promise<void>} A promise that resolves when the click action is completed.
    */
-  async clickLocator(locator: Locator): Promise<void> {
+  async click(locator: Locator): Promise<void> {
     await locator.click();
   }
 
@@ -638,5 +930,102 @@ export abstract class BasePage {
       await input.clear();
       await input.fill(value);
     }
+  }
+
+  /**
+   * Selects a filter by its text and applies the specified filter option.
+   *
+   * This method locates a filter button within the filters box by matching its name
+   * with the provided `filter` parameter. It then applies the specified `filterOption`
+   * to the selected filter.
+   *
+   * @param {string} filter - The name of the filter to select.
+   * @param {string} filterOption - The specific filter option to apply.
+   * @returns {Promise<void>} A promise that resolves when the filter is applied.
+   */
+  async selectFilterByText(filter: string, filterOption: string): Promise<void> {
+    const filterLocator = this.filtersBox.getByRole('button', { name: new RegExp(`^${filter}`) });
+    await this.selectFilter(filterLocator, filterOption);
+  }
+
+  /**
+   * Clicks the "Show More Filters" button on the Resources page.
+   * This method interacts with the `showMoreFiltersBtn` locator to expand the filters section.
+   *
+   * @returns {Promise<void>} Resolves when the button is clicked.
+   */
+  async clickShowMoreFilters(): Promise<void> {
+    await this.showMoreFiltersBtn.click();
+  }
+
+  /**
+   * Resets all filters on the page.
+   *
+   * This method checks if the "Reset Filters" button is visible, clicks it to reset all filters,
+   * and optionally waits for the page loader to disappear and the canvas to update.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the page loader to disappear and the canvas to load after resetting the filters.
+   * @returns {Promise<void>} Resolves when the filters are reset and the optional wait is complete.
+   */
+  async resetFilters(wait: boolean = true): Promise<void> {
+    if (await this.resetFiltersBtn.isVisible()) {
+      debugLog('Resetting all filters');
+      await this.resetFiltersBtn.click();
+      await this.resetFiltersBtn.waitFor({ state: 'hidden' });
+      if (wait) {
+        await this.waitForAllProgressBarsToDisappear();
+        await this.waitForCanvas();
+      }
+    }
+  }
+
+  /**
+   * Selects a filter and applies the specified filter option.
+   *
+   * @param {Locator} filter - The filter locator to select.
+   * @param {string} filterOption - The specific filter option to apply.
+   * @throws {Error} Throws an error if `filterOption` is not provided when `filter` is specified.
+   * @returns {Promise<void>} A promise that resolves when the filter is applied.
+   */
+  protected async selectFilter(filter: Locator, filterOption: string): Promise<void> {
+    if (filter) {
+      if (!filterOption) {
+        throw new Error('filterOption must be provided when filter is specified');
+      }
+      if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
+      await filter.click();
+
+      await this.filterPopover.getByLabel(filterOption).click();
+      await this.filterApplyButton.click();
+    }
+  }
+
+  /**
+   * Retrieves the currently active filter button from the filters box.
+   *
+   * This method locates and returns the filter button that has the "contained" style,
+   * which indicates it is currently active or selected. Active filters are identified
+   * by the presence of the "MuiButton-contained" CSS class.
+   *
+   * @returns {Locator} A Playwright locator for the active filter button.
+   *
+   * @example
+   * // Get the active filter and verify it's visible
+   * const activeFilter = await resourcesPage.getActiveFilter();
+   * await expect(activeFilter).toBeVisible();
+   *
+   * @example
+   * // Get the text of the active filter
+   * const activeFilter = resourcesPage.getActiveFilter();
+   * const filterText = await activeFilter.textContent();
+   * console.log(`Active filter: ${filterText}`);
+   *
+   * @remarks
+   * This method uses XPath to find buttons with the MUI "contained" variant class,
+   * which is the visual style applied to active/selected filter buttons in the UI.
+   * Note that this method is synchronous and returns a Locator immediately.
+   */
+  getActiveFilter(): Locator {
+    return this.filtersBox.locator('//button[contains(@class, "MuiButton-contained")]');
   }
 }

@@ -4,6 +4,7 @@ import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { generateRandomEmail } from '../utils/random-data-generator';
 import { debugLog } from '../utils/debug-logging';
+import { getCurrentUTCTimestamp } from '../utils/date-range-utils';
 
 const verificationCode = '123456';
 let invitationEmail: string;
@@ -399,17 +400,19 @@ test.describe(
 
     test('[232868] Invite a new user and verify the event is logged', async ({ mainMenu, usersPage, usersInvitePage, eventsPage }) => {
       invitationEmail = generateRandomEmail();
+      let date: string;
 
       await test.step('Invite a new user to the organisation', async () => {
         await usersPage.navigateToURL();
         await usersPage.clickInviteBtn();
+
+        date = getCurrentUTCTimestamp();
         await usersInvitePage.inviteUser(invitationEmail);
         await usersInvitePage.userInvitedAlert.waitFor();
         await usersInvitePage.userInvitedAlertCloseButton.click();
       });
 
       await test.step('Navigate to Events page and verify invitation event is logged', async () => {
-        const date = new Date().toLocaleDateString('en-US'); // Get current date in US format (M/D/YYYY)
         debugLog(`Current date: ${date}`);
         await mainMenu.clickEvents();
         await eventsPage.filterByEventLevel('Info');

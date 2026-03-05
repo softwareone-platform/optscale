@@ -16,7 +16,7 @@ import {
   OrganizationsResponse,
   OrganizationThemeSettingsResponse,
 } from '../mocks/cloud-accounts-page.mocks';
-import { getCurrentUTCTimestamp } from '../utils/date-range-utils';
+import { getCurrentUTCTimestamp, getTimestampWithVariance } from '../utils/date-range-utils';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
   test.describe.configure({ mode: 'serial' });
@@ -285,7 +285,14 @@ test.describe(
 
         const eventText = await disconnectEvent.textContent();
         debugLog(`Disconnect event text: ${eventText}`);
-        expect.soft(eventText).toContain(`${timestamp} UTC`);
+
+        // Generate timestamps with ±1 minute variance
+        const timestamps = getTimestampWithVariance(timestamp);
+        debugLog(`Checking for timestamps: ${timestamps.join(', ')}`);
+
+        // Assert that the event text contains at least one of the timestamps
+        const hasMatchingTimestamp = timestamps.some(ts => eventText.includes(`${ts} UTC`));
+        expect.soft(hasMatchingTimestamp, `Event should contain one of the timestamps: ${timestamps.join(', ')}`).toBe(true);
       });
 
       await test.step('Add new cloud account and ensure that the events log includes account and pool creation', async () => {
@@ -298,18 +305,27 @@ test.describe(
         await eventsPage.navigateToURL();
         await eventsPage.waitForAllProgressBarsToDisappear();
 
+        const timestamps = getTimestampWithVariance(timestamp);
+        debugLog(`Checking for timestamps: ${timestamps.join(', ')}`);
+
         const creationEvent = eventsPage.getEventByMultipleTexts([`Cloud account ${awsAccountName}`, 'created']);
         await expect.soft(creationEvent).toBeVisible();
 
         const eventText = await creationEvent.textContent();
         debugLog(`Creation event text: ${eventText}`);
-        expect.soft(eventText).toContain(`${timestamp} UTC`);
+
+        // Assert that the event text contains at least one of the timestamps
+        const hasMatchingTimestamp = timestamps.some(ts => eventText.includes(`${ts} UTC`));
+        expect.soft(hasMatchingTimestamp, `Event should contain one of the timestamps: ${timestamps.join(', ')}`).toBe(true);
 
         const poolCreationEvent = eventsPage.getEventByMultipleTexts([`Rule for ${awsAccountName}`, `created for pool ${awsAccountName}`]);
         await expect.soft(poolCreationEvent).toBeVisible();
         const poolEventText = await poolCreationEvent.textContent();
         debugLog(`Pool Creation event text: ${poolEventText}`);
-        expect.soft(poolEventText).toContain(`${timestamp} UTC`);
+
+        // Assert that the pool event text contains at least one of the timestamps (reusing same timestamps array)
+        const hasMatchingPoolTimestamp = timestamps.some(ts => poolEventText.includes(`${ts} UTC`));
+        expect.soft(hasMatchingPoolTimestamp, `Event should contain one of the timestamps: ${timestamps.join(', ')}`).toBe(true);
         expect.soft(poolEventText).toContain(process.env.DEFAULT_USER_EMAIL);
       });
     });

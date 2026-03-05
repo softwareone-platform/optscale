@@ -45,12 +45,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
   test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
-      await resourcesPage.navigateToURL();
-      await resourcesPage.waitForAllProgressBarsToDisappear();
-      await resourcesPage.waitForCanvas();
-      await resourcesPage.resetFilters();
-      await resourcesPage.waitForPageLoad();
-      await resourcesPage.firstResourceItemInTable.waitFor({ timeout: 15000 });
+      await resourcesPage.navigateToResourcesPageAndResetFilters();
     });
   });
 
@@ -81,10 +76,6 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
         resourcesPage.metaFilter,
         resourcesPage.paidNetworkTrafficFromFilter,
         resourcesPage.paidNetworkTrafficToFilter,
-        // Kubernetes filters are temporarily disabled
-        // resourcesPage.k8sNodeFilter,
-        // resourcesPage.k8sServiceFilter,
-        // resourcesPage.k8sNamespaceFilter,
       ];
 
       for (const filter of expectedFilters) {
@@ -191,7 +182,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
 
     await test.step('Filter by Billing only', async () => {
-      await resourcesPage.clickActivityFilterBillingOnlyOptionAndApply();
+      await resourcesPage.selectFilterByText('Activity', 'Billing only');
       await expect.soft(resourcesPage.activityFilter).toContainText('(Billing only)');
     });
 
@@ -775,7 +766,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-expenses-chart-export-without-legend.png');
 
     await test.step('Toggle Show Legend and verify the chart without legend', async () => {
-      await resourcesPage.clickShowLegend();
+      await resourcesPage.toggleShowLegend();
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);

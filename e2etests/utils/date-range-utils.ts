@@ -212,3 +212,68 @@ export function getCurrentUTCTimestamp(): string {
     })
     .replace(',', '');
 }
+
+/**
+ * Generates an array of timestamp strings with +1 minute variance.
+ *
+ * This function takes a base timestamp string and returns an array containing:
+ * - The original timestamp
+ * - The timestamp 1 minute later
+ *
+ * This is useful for comparing event log timestamps where the timestamp is captured
+ * before the event occurs, so the logged timestamp might be slightly later.
+ *
+ * @param {string} timestamp - The base timestamp string in format "MM/DD/YYYY HH:MM AM/PM".
+ * @returns {string[]} An array of two timestamp strings (original, +1 min).
+ *
+ * @example
+ * // Returns ["02/26/2026 09:23 AM", "02/26/2026 09:24 AM"]
+ * const timestamps = getTimestampWithVariance("02/26/2026 09:23 AM");
+ *
+ * @example
+ * // Use in an assertion to check if event contains any of the timestamps
+ * const timestamps = getTimestampWithVariance(capturedTimestamp);
+ * const hasMatch = timestamps.some(ts => eventText.includes(`${ts} UTC`));
+ * expect(hasMatch).toBe(true);
+ */
+export function getTimestampWithVariance(timestamp: string): string[] {
+  // Parse the timestamp string "MM/DD/YYYY HH:MM AM/PM"
+  const datePart = timestamp.split(' ')[0]; // "02/26/2026"
+  const timePart = timestamp.split(' ')[1]; // "09:23"
+  const ampm = timestamp.split(' ')[2]; // "AM" or "PM"
+
+  const [month, day, year] = datePart.split('/').map(Number);
+  let [hours, minutes] = timePart.split(':').map(Number);
+
+  // Convert to 24-hour format for calculation
+  if (ampm === 'PM' && hours !== 12) {
+    hours += 12;
+  } else if (ampm === 'AM' && hours === 12) {
+    hours = 0;
+  }
+
+  // Create a Date object
+  const baseDate = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+
+  // Generate timestamps: original and +1 minute
+  const timestamps: string[] = [];
+
+  for (let offset of [0, 1]) {
+    const newDate = new Date(baseDate.getTime() + offset * 60 * 1000);
+    const formatted = newDate
+      .toLocaleString('en-US', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
+      .replace(',', '');
+    timestamps.push(formatted);
+  }
+
+  return timestamps;
+}
+

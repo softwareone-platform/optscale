@@ -138,7 +138,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
 
     await test.step('Navigate to the created policy details page', async () => {
       await targetPolicyRow.waitFor();
-      await taggingPoliciesPage.clickLocator(targetPolicyRow.locator('//a'));
+      await taggingPoliciesPage.click(targetPolicyRow.locator('//a'));
       await taggingPoliciesPage.policyDetailsDiv.waitFor();
     });
 

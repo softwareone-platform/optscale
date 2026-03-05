@@ -13,7 +13,6 @@ export class EventsPage extends BasePage {
   readonly errorBtn: Locator;
   readonly noEventsMessage: Locator;
 
-
   /**
    * Initializes a new instance of the EventsPage class.
    * @param {Page} page - The Playwright page object.
@@ -48,15 +47,6 @@ export class EventsPage extends BasePage {
 
   async getEventByText(text: string): Promise<Locator> {
     return this.main.locator(`//p[contains(text(), "${text}")]`)
-  }
-
-  /**
-   * Gets an event by matching text using a RegExp pattern.
-   * @param {RegExp} pattern - The regular expression pattern to match.
-   * @returns {Locator} A locator for the event matching the pattern.
-   */
-  getEventByPattern(pattern: RegExp): Locator {
-    return this.main.getByText(pattern);
   }
 
   /**
