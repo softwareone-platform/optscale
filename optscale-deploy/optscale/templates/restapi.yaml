@@ -49,6 +49,9 @@ spec:
 {{- if .Values.stripe.enabled }}
 {{ include "wait_for_service" .Values.subspector | indent 6 }}
 {{- end }}
+{{- if .Values.tempo.enabled }}
+{{ include "wait_for_tempo_service" .Values.tempo | indent 6 }}
+{{- end }}
       containers:
       - name: {{ $config.name }}
         image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
@@ -66,4 +69,14 @@ spec:
           value: /etc/ssl/certs/ca-certificates.crt
         - name: FAKE_CAD_ENABLED
           value: {{ .Values.fake_cad_enabled | quote }}
+        - name: OTEL_ENABLED
+          value: {{ .Values.opentelemetry.enabled | quote }}
+        - name: OTEL_EXPORTER
+          value: {{ .Values.opentelemetry.exporter | quote}}
+        - name: OTEL_SERVICE_NAME
+          value: {{ $config.name }}
+        - name: OTEL_SERVICE_VERSION
+          value: {{ $config.image.tag }}
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: "true"
 {{ include "ready_probe" $config | indent 8 }}

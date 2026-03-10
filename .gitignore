@@ -17,6 +17,7 @@ rest_api/.clickhouse
 **/.pytest_cache/
 **/.ruff_cache/
 # Build files
+**/build
 **/dist
 **/*egg-info/
 **/*.tar.gz

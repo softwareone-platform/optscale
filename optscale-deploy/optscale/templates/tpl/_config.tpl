@@ -279,4 +279,17 @@ etcd:
     api_key: {{ .Values.stripe.api_key }}
     webhook_secret: {{ .Values.stripe.webhook_secret }}
     enabled: {{ .Values.stripe.enabled }}
+{{- if .Values.opentelemetry.enabled }}
+  opentelemetry:
+{{- if (and (eq .Values.opentelemetry.exporter "otlp") (.Values.tempo.enabled)) }}
+    tempo_host: {{ .Values.opentelemetry.exporters.tempo.host }}
+    tempo_port: {{ .Values.opentelemetry.exporters.tempo.port }}
+{{- end }}
+{{- if (eq .Values.opentelemetry.exporter "azure_monitor") }}
+    connection_string: {{ .Values.opentelemetry.exporters.azure_monitor.connection_string }}
+{{- end }}
+    enable_sqlalchemy: {{ .Values.opentelemetry.enable_sqlalchemy | quote }}
+    enable_future_traces: {{ .Values.opentelemetry.enable_future_traces | quote }}
+    enable_mongo_statements: {{ .Values.opentelemetry.enable_mongo_statements | quote }}
+{{- end }}
 {{- end }}
