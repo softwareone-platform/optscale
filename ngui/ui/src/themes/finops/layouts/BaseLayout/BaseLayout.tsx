@@ -61,7 +61,7 @@ const AppToolbar = ({
           <IconButton
             sx={{ display: { xs: "inherit", md: "none", color: MPT_BRAND_TYPE } }}
             customClass={classes.marginRight1}
-            dataTestId={"btn_menu_open_drawer"}
+            dataTestId="btn_menu_open_drawer"
             icon={<MenuIcon />}
             onClick={onMenuIconClick}
             aria-label="open drawer"
@@ -78,7 +78,7 @@ const AppToolbar = ({
 
           <Hidden mode="down" breakpoint="md">
             <Typography data-test-id="p_live_demo_mode" className={override.classes.headerTitle}>
-              <FormattedMessage id={"finopsForCloud"} />
+              <FormattedMessage id="finopsForCloud" />
             </Typography>
           </Hidden>
         </div>

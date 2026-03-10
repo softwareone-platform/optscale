@@ -75,7 +75,7 @@ const OrganizationSelector = ({
     <Box display="flex" alignItems="center">
       <Hidden mode="up" breakpoint="sm">
         <IconButton
-          dataTestId={"icon_expand_more"}
+          dataTestId="icon_expand_more"
           sx={{ color: MPT_BRAND_TYPE }}
           icon={<ExpandMoreOutlinedIcon />}
           onClick={handleOpen}

@@ -121,7 +121,7 @@ const OrganizationsOverview = ({ data, isLoading = false }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Box className={"MTPBoxShadow"}>
+            <Box className="MTPBoxShadow">
               <OrganizationsOverviewTable data={tableData} total={data.length} isLoading={isLoading} />
             </Box>
           </Grid>

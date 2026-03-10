@@ -155,7 +155,7 @@ const ResourceFilters = ({ filters, appliedFilters, onAppliedFiltersChange }) =>
   return (
     <ResponsiveStack>
       <Box sx={{ alignSelf: "flex-start", paddingTop: MPT_SPACING_1, minWidth: "80px" }}>
-        <LabelColon messageId={"filters"} noWrap />
+        <LabelColon messageId="filters" noWrap />
       </Box>
       <Box display="flex" gap={2} flexWrap="wrap">
         <SuggestionFilter

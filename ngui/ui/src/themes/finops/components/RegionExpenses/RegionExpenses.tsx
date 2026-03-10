@@ -157,7 +157,7 @@ const RegionExpenses = ({ expenses, isLoading = false }) => {
           )}
         </Grid>
         <Grid item xs={12}>
-          <Typography variant={"subtitle1"} sx={{ mb: MPT_SPACING_2 }}>
+          <Typography variant="subtitle1" sx={{ mb: MPT_SPACING_2 }}>
             <FormattedMessage
               id="summaryBy"
               values={{

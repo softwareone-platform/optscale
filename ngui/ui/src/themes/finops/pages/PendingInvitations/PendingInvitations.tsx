@@ -58,8 +58,8 @@ const PendingInvitations = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Stack spacing={SPACING_2} width={"100%"}>
-          <Box className={"MTPBoxShadow"}>
+        <Stack spacing={SPACING_2} width="100%">
+          <Box className="MTPBoxShadow">
             <Typography component="h1" variant="subtitle1" marginBottom={MPT_SPACING_2}>
               <FormattedMessage id="noOrganizations.welcomeHeader" />
             </Typography>

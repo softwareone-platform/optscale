@@ -6,7 +6,7 @@ interface PageContentWrapperProps {
   children: ReactNode;
 }
 const PageContentWrapper = ({ children }: PageContentWrapperProps) => (
-  <Box sx={MPT_PAGE_WRAPPER_STYLES} id={"page-content-wrapper"}>
+  <Box sx={MPT_PAGE_WRAPPER_STYLES} id="page-content-wrapper">
     {children}
   </Box>
 );

@@ -93,13 +93,13 @@ const CardLayout = forwardRef<HTMLDivElement, CardLayoutProps>(
         <CardContent className={cardContentClasses}>
           <Box>
             {type !== "primary" && (
-              <Box position="absolute" bottom={"0px"} right={"18px"} fontSize={"18px"}>
+              <Box position="absolute" bottom="0px" right="18px" fontSize="18px">
                 {getCardIcon(type, classes)}
               </Box>
             )}
             {children}
             {clickable && (
-              <Box position="absolute" bottom={"25px"} right={"12px"}>
+              <Box position="absolute" bottom="25px" right="12px">
                 <ArrowForwardIosIcon />
               </Box>
             )}

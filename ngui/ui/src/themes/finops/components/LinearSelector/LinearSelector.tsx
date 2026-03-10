@@ -237,7 +237,7 @@ const PickedItem = ({ name, dataTestId = name, value, type, onDelete, displayedN
         chip: `chip_${dataTestId}`,
         deleteIcon: `btn_${dataTestId}_close`
       }}
-      className={"selectedFilter"}
+      className="selectedFilter"
       color="primary"
       size="medium"
       variant="outlined"
@@ -328,7 +328,7 @@ const LinearSelector = ({
     <Box>
       <ResponsiveStack>
         {label && (
-          <Box alignSelf={"start"} sx={{ lineHeight: "1.8em" }} component="div" data-test-id={labelDataTestId}>
+          <Box alignSelf="start" sx={{ lineHeight: "1.8em" }} component="div" data-test-id={labelDataTestId}>
             {label}
           </Box>
         )}

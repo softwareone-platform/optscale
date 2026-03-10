@@ -17,7 +17,7 @@ import { RI_SP_CHART_PALETTE } from "theme";
 const UsageTitle = () => (
   <SubTitle>
     <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
-      <Typography variant={"subtitle1"}>
+      <Typography variant="subtitle1">
         <FormattedMessage id="usage" />
       </Typography>
     </Box>
@@ -77,7 +77,7 @@ const ExpensesTitle = ({ showSavingsCheckbox }) => {
   return (
     <SubTitle>
       <Box display="flex" alignItems="center" marginBottom={MPT_SPACING_1}>
-        <Typography variant={"subtitle1"}>
+        <Typography variant="subtitle1">
           <FormattedMessage id="expenses" />
         </Typography>
         <FormControlLabel
@@ -149,14 +149,14 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
       {isUpMd ? (
         <>
           <Grid item xs={6}>
-            <Box className={"MTPBoxShadow"} height={"100%"}>
+            <Box className="MTPBoxShadow" height="100%">
               {usageTitle}
               {usageDescription}
               {coverageBarChart}
             </Box>
           </Grid>
           <Grid item xs={6}>
-            <Box className={"MTPBoxShadow"}>
+            <Box className="MTPBoxShadow">
               {expensesTitle}
               {expensesDescription}
               {expensesBarChart}
@@ -178,7 +178,7 @@ const RiSpCoverage = ({ usageBreakdown, expensesBreakdown, isLoadingProps }) => 
         </>
       )}
       <Grid item xs={12} marginTop={MPT_SPACING_1}>
-        <Box className={"MTPBoxShadow"}>
+        <Box className="MTPBoxShadow">
           <RiSpCoverageTable
             breakdown={[...Object.values(usageBreakdown).flat(), ...Object.values(expensesBreakdown).flat()]}
             isLoading={isGetUsageBreakdownLoading || isGetExpensesBreakdownLoading}
