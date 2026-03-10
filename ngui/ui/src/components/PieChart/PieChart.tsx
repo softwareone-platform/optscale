@@ -71,8 +71,8 @@ const PieChart = ({
         animate={false}
         theme={{
           tooltip: {
-            zIndex: theme.zIndex.tooltip,
-          },
+            zIndex: theme.zIndex.tooltip
+          }
         }}
       />
     </Box>

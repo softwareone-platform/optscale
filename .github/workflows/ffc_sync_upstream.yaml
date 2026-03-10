@@ -1,0 +1,180 @@
+name: Sync Branch and Create PR
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"  # Every Monday at 09:00 UTC
+  workflow_dispatch:  # Manual trigger option
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/hystax/optscale.git
+          git fetch upstream --tags
+          git fetch origin main
+          git fetch origin release/${{ vars.CURRENT_RELEASE }}
+
+      - name: Get latest commit SHA from upstream/integration
+        id: latest_commit
+        run: |
+          LATEST_COMMIT=$(git rev-parse --short=7 upstream/integration)
+          echo "LATEST_COMMIT=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+
+      - name: Check if branch for main exists
+        id: check_branch_main
+        run: |
+          if git ls-remote --heads origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}; then
+            echo "Branch sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} already exists. Skipping..."
+            echo "branch_main_exists=yes" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check if branch for release exists
+        id: check_branch_release
+        run: |
+          if git ls-remote --heads origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} | grep bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}; then
+            echo "Branch bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} already exists. Skipping..."
+            echo "branch_release_exists=yes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create new branch from latest tag for main
+        if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
+        run: |
+          git checkout -b sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+          git push origin sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+
+      - name: Create new branch from latest tag for release
+        if: steps.check_branch_release.outputs.branch_release_exists != 'yes'
+        run: |
+          git checkout -b bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }} ${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+          git push origin bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}
+
+      - name: Check for changes in optscale-deploy folder for main
+        id: check_deploy_changes_main
+        run: |
+          if git diff origin/main upstream/integration -- optscale-deploy | grep -q .; then
+            echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for changes in optscale-deploy folder for release
+        id: check_deploy_changes_release
+        run: |
+          if git diff origin/release/${{ vars.CURRENT_RELEASE }} upstream/integration -- optscale-deploy | grep -q .; then
+            echo "deploy_changes=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_changes=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if PR exists for main
+        id: check_pr_main
+        if: steps.check_branch_main.outputs.branch_main_exists != 'yes'
+        env:
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
+        run: |
+          pr_state=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'main' \
+              --state all \
+              --json number,state \
+              --jq '.[0]')
+          if [ "$pr_state" != "" ]; then
+              pr_number=$(echo "$pr_state" | jq -r '.number')
+              state=$(echo "$pr_state" | jq -r '.state')
+              echo "pr_main_number=$pr_number" >> "$GITHUB_OUTPUT"
+              echo "pr_main_state=$state" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request #$pr_number exists with state: $state"
+          else
+              echo "pr_main_state=none" >> "$GITHUB_OUTPUT"
+          fi
+          
+      - name: Check if PR exists for release
+        id: check_pr_bp
+        if: steps.check_branch_release.outputs.branch_release_exists != 'yes'
+        env:
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
+        run: |
+          pr_state=$(gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head 'bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+              --base 'release/${{ vars.CURRENT_RELEASE }}' \
+              --state all \
+              --json number,state \
+              --jq '.[0]')
+          if [ "$pr_state" != "" ]; then
+              pr_number=$(echo "$pr_state" | jq -r '.number')
+              state=$(echo "$pr_state" | jq -r '.state')
+              echo "pr_bp_number=$pr_number" >> "$GITHUB_OUTPUT"
+              echo "pr_bp_state=$state" >> "$GITHUB_OUTPUT"
+              echo "::notice::Pull Request #$pr_number exists with state: $state"
+          else
+              echo "pr_bp_state=none" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Get current date
+        id: current_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Create or Update Pull Request for Main
+        env:
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
+        if: steps.check_pr_main.outputs.pr_main_state != 'OPEN'
+        run: |
+          TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> main ${{ steps.current_date.outputs.date }}'
+          if [ "${{ steps.check_deploy_changes_main.outputs.deploy_changes }}" == "yes" ]; then
+            TITLE="⚠️ $TITLE (deployment changes present)"
+          fi
+          
+          if [ "${{ steps.check_pr_main.outputs.pr_main_state }}" == "CLOSED" ] || [ "${{ steps.check_pr_main.outputs.pr_main_state }}" == "MERGED" ]; then
+            echo "Reopening PR #${{ steps.check_pr_main.outputs.pr_main_number }}"
+            gh pr reopen ${{ steps.check_pr_main.outputs.pr_main_number }} --repo "$GITHUB_REPOSITORY"
+            gh pr edit ${{ steps.check_pr_main.outputs.pr_main_number }} --repo "$GITHUB_REPOSITORY" --title "$TITLE"
+          else
+            gh pr create \
+                --repo "$GITHUB_REPOSITORY" \
+                --head 'sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+                --base 'main' \
+                --title "$TITLE" \
+                --body "This PR syncs the latest changes from upstream to main."
+          fi
+
+
+      - name: Create or Update Pull Request Release
+        env:
+          GH_TOKEN: ${{ secrets.FFC_SYNC_INTEGRATION_WF_PAT }}
+        if: steps.check_pr_bp.outputs.pr_bp_state != 'OPEN'
+        run: |
+          TITLE='Sync upstream/integration (${{ steps.latest_commit.outputs.LATEST_COMMIT }}) -> release/${{ vars.CURRENT_RELEASE }} ${{ steps.current_date.outputs.date }}'
+          if [ "${{ steps.check_deploy_changes_release.outputs.deploy_changes }}" == "yes" ]; then
+            TITLE="⚠️ $TITLE (deployment changes present)"
+          fi
+          
+          if [ "${{ steps.check_pr_bp.outputs.pr_bp_state }}" == "CLOSED" ] || [ "${{ steps.check_pr_bp.outputs.pr_bp_state }}" == "MERGED" ]; then
+            echo "Reopening PR #${{ steps.check_pr_bp.outputs.pr_bp_number }}"
+            gh pr reopen ${{ steps.check_pr_bp.outputs.pr_bp_number }} --repo "$GITHUB_REPOSITORY"
+            gh pr edit ${{ steps.check_pr_bp.outputs.pr_bp_number }} --repo "$GITHUB_REPOSITORY" --title "$TITLE"
+          else
+            gh pr create \
+                --repo "$GITHUB_REPOSITORY" \
+                --head 'bp-sync-${{ steps.latest_commit.outputs.LATEST_COMMIT }}' \
+                --base 'release/${{ vars.CURRENT_RELEASE }}' \
+                --title "$TITLE" \
+                --body "This PR syncs the latest changes from upstream to release branch."
+          fi
