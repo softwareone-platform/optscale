@@ -167,11 +167,11 @@ const CostExplorer = ({
           </Grid>
           <Grid container item spacing={SPACING_4}>
             <Grid item lg={9}>
-              <Box className={"MTPBoxShadow"}>
+              <Box className="MTPBoxShadow">
                 <ExpensesBreakdownByPeriodWidget
                   customContent={
                     <ResponsiveStack>
-                      <LabelColon messageId={"dateRange"} />
+                      <LabelColon messageId="dateRange" />
                       <RangePickerFormContainer
                         onApply={onApply}
                         initialStartDateValue={startDateTimestamp}
@@ -193,8 +193,8 @@ const CostExplorer = ({
             </Grid>
 
             <Grid item lg={3}>
-              <Box className={"MTPBoxShadow"}>
-                <LabelColon messageId={"seeExpensesBreakdownBy"} variant={EVariantOptions.SUBTITLE1} />
+              <Box className="MTPBoxShadow">
+                <LabelColon messageId="seeExpensesBreakdownBy" variant={EVariantOptions.SUBTITLE1} />
                 <div className={classes.costExplorerSubMenu}>
                   {breakdownByButtons.map(({ messageId, link, icon }) => (
                     <Button

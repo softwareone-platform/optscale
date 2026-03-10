@@ -23,5 +23,3 @@ export default [
     plugins: { react: reactPlugin }
   } // custom rules can be added here
 ];
-
-import hystaxConfig from "@hystax/eslint-config-ui";

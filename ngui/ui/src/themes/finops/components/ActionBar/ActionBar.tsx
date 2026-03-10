@@ -243,10 +243,10 @@ const ActionBar = ({ data, isPage = true }) => {
   return title || !isEmptyActions ? (
     <AppBar position="static" className={mapBarClass}>
       <Toolbar disableGutters ref={wrapperRef}>
-        <Box width={"100%"} display={"flex"} alignItems={"center"}>
+        <Box width="100%" display="flex" alignItems="center">
           {showBreadcrumbs ? (
             <>
-              <ChevronLeft color={"primary"} sx={{ fontSize: "18px" }} />
+              <ChevronLeft color="primary" sx={{ fontSize: "18px" }} />
               <Box>
                 <Breadcrumbs withSlashAtTheEnd>{breadcrumbs}</Breadcrumbs>
               </Box>
@@ -261,7 +261,7 @@ const ActionBar = ({ data, isPage = true }) => {
             {!isEmptyActions ? (
               <Box className={classes.itemsWrapper} ref={buttonsRef}>
                 {!isEmptyArray(hidden) && (
-                  <Box component="div" width={"100%"} sx={{ display: "flex" }} className={actionsClasses}>
+                  <Box component="div" width="100%" sx={{ display: "flex" }} className={actionsClasses}>
                     <Popover
                       renderMenu={({ closeHandler }) => <DropDownMenu items={hidden} onClose={closeHandler} />}
                       label={
@@ -276,7 +276,7 @@ const ActionBar = ({ data, isPage = true }) => {
                   </Box>
                 )}
                 {!isEmptyArray(visible) && (
-                  <Box component="div" id={"action_bar_actions"} className={actionsClasses}>
+                  <Box component="div" id="action_bar_actions" className={actionsClasses}>
                     {renderItems(visible)}
                   </Box>
                 )}

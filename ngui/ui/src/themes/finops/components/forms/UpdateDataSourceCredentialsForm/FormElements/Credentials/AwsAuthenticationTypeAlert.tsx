@@ -1,6 +1,6 @@
+import { ReactNode } from "react";
 import { Alert, Link, SxProps, Theme, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
-import { ReactNode } from "react-markdown/lib/react-markdown";
 import { DOCS_AWS_CREDENTIALS_ACCESS_KEYS, DOCS_FINOPS_AUTHENTICATION_TYPE_MIGRATION } from "@theme/urls";
 import { SPACING_2 } from "utils/layouts";
 

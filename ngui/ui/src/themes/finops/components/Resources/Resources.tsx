@@ -204,10 +204,10 @@ const Resources = ({
           <Grid item xs={12}>
             <ExpensesSummaryContainer requestParams={requestParams} />
           </Grid>
-          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+          <Grid item xs={12} className="MTPBoxShadowRoot">
             <Box>
               <ResponsiveStack>
-                <LabelColon messageId={"dateRange"} />
+                <LabelColon messageId="dateRange" />
                 <RangePickerFormContainer
                   onApply={(dateRange) => onApply(dateRange)}
                   initialStartDateValue={startDateTimestamp}
@@ -228,7 +228,7 @@ const Resources = ({
               )}
             </Box>
           </Grid>
-          <Grid item xs={12} className={"MTPBoxShadowRoot"}>
+          <Grid item xs={12} className="MTPBoxShadowRoot">
             <Box>
               <TabsWrapper
                 isLoading={isFilterValuesLoading}

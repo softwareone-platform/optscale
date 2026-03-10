@@ -65,7 +65,7 @@ const ExpensesBreakdownBreakdownByButtonsGroup = ({ type, onClick, filterBy, dat
       </Hidden>
       <Hidden mode="down" breakpoint="sm">
         <ResponsiveStack>
-          <LabelColon messageId={"breakdownBy"} />
+          <LabelColon messageId="breakdownBy" />
           <ButtonGroup buttons={buttonsGroup} activeButtonIndex={activeButtonIndex} />
         </ResponsiveStack>
       </Hidden>

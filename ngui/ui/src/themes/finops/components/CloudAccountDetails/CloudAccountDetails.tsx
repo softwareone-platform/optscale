@@ -392,7 +392,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Box className={"MTPBoxShadow"}>
+            <Box className="MTPBoxShadow">
               <Tabs
                 id={id}
                 accountId={accountId}

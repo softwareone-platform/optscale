@@ -16,7 +16,7 @@ const Header = ({
   questionMarkUsedMessageId,
   questionMarkRequestsMessageId,
   questionMarkLimitMessageId,
-  questionMarkDataTestId,
+  questionMarkDataTestId
 }) => {
   const theme = useTheme();
   return (
@@ -36,7 +36,7 @@ const Header = ({
                 <FormattedMessage
                   id={questionMarkUsedMessageId}
                   values={{
-                    strong: (chunks) => <strong>{chunks}</strong>,
+                    strong: (chunks) => <strong>{chunks}</strong>
                   }}
                 />
               }
@@ -50,7 +50,7 @@ const Header = ({
                 <FormattedMessage
                   id={questionMarkRequestsMessageId}
                   values={{
-                    strong: (chunks) => <strong>{chunks}</strong>,
+                    strong: (chunks) => <strong>{chunks}</strong>
                   }}
                 />
               }
@@ -64,13 +64,13 @@ const Header = ({
                 <FormattedMessage
                   id={questionMarkLimitMessageId}
                   values={{
-                    strong: (chunks) => <strong>{chunks}</strong>,
+                    strong: (chunks) => <strong>{chunks}</strong>
                   }}
                 />
               }
               textFirst={false}
             />
-          ),
+          )
         }}
         dataTestId={questionMarkDataTestId}
       />
@@ -86,7 +86,7 @@ const Cell = ({
   limitNotSetMessageId,
   mismatchedLimitMessageId,
   valueFormatterFn,
-  dataTestId,
+  dataTestId
 }) => {
   const theme = useTheme();
 
@@ -114,7 +114,7 @@ const Cell = ({
         id="{key}:{value}"
         values={{
           key: <FormattedMessage id="used" />,
-          value: <strong>{valueFormatterFn(used)}</strong>,
+          value: <strong>{valueFormatterFn(used)}</strong>
         }}
       />
     ),
@@ -129,7 +129,7 @@ const Cell = ({
             <strong>
               <FormattedMessage id="none" />
             </strong>
-          ),
+          )
         }}
       />
     ),
@@ -144,11 +144,11 @@ const Cell = ({
             <strong>
               <FormattedMessage id="none" />
             </strong>
-          ),
+          )
         }}
       />
     ),
-    customTooltipMessage: customMessageId ? <FormattedMessage id={customMessageId} /> : "",
+    customTooltipMessage: customMessageId ? <FormattedMessage id={customMessageId} /> : ""
   };
   return (
     <BufferedProgressBar
@@ -179,7 +179,7 @@ const resourcesMeter = ({
   limitExceededMessageId = "cpuUtilizationProgressbarTooltip.limitExceeded",
   limitNotSetMessageId = "cpuUtilizationProgressbarTooltip.limitsNotSet",
   mismatchedLimitMessageId = "cpuUtilizationProgressbarTooltip.mismatchedLimit",
-  valueFormatterFn = (value) => <FormattedNumber value={value} maximumFractionDigits={MAXIMUM_FRACTION_DIGITS} />,
+  valueFormatterFn = (value) => <FormattedNumber value={value} maximumFractionDigits={MAXIMUM_FRACTION_DIGITS} />
 }) => ({
   id,
   header: (
@@ -206,7 +206,7 @@ const resourcesMeter = ({
       valueFormatterFn={valueFormatterFn}
       dataTestId={dataTestId}
     />
-  ),
+  )
 });
 
 export default resourcesMeter;

@@ -6,8 +6,8 @@ class AbandonedImagesModal extends BaseSideModal {
     messageId: "abandonedImages",
     dataTestIds: {
       title: "lbl_abandoned_images_sidemodal_title",
-      closeButton: "btn_close",
-    },
+      closeButton: "btn_close"
+    }
   };
 
   dataTestId = "smodal_abandoned_images_strategy";

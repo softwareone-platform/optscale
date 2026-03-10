@@ -14,7 +14,7 @@ const Employees = ({ employees, isLoading }) => (
       }}
     />
     <PageContentWrapper>
-      <Box className={"MTPBoxShadow"}>
+      <Box className="MTPBoxShadow">
         <EmployeesTable employees={employees} isLoading={isLoading} />
       </Box>
     </PageContentWrapper>

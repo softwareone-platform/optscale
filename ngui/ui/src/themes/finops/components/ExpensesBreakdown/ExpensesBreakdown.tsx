@@ -161,7 +161,7 @@ const ExpensesBreakdown = ({
       <ExpensesBreakdownByPeriodWidget
         customContent={
           <ResponsiveStack>
-            <LabelColon messageId={"dateRange"} />
+            <LabelColon messageId="dateRange" />
             <RangePickerFormContainer
               onApply={onApply}
               initialStartDateValue={startDateTimestamp}
@@ -198,7 +198,7 @@ const ExpensesBreakdown = ({
     );
   };
 
-  const PieChartHeader = () => <LabelColon messageId={"expenses"} suffix={""} />;
+  const PieChartHeader = () => <LabelColon messageId="expenses" suffix="" />;
 
   const renderPieChartWidget = () => {
     if (isLoading) {
