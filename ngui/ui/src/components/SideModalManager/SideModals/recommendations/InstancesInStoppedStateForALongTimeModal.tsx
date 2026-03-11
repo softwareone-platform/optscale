@@ -17,7 +17,7 @@ class InstancesInStoppedStateForALongTimeModal extends BaseSideModal {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId={"thresholds.instancesInStoppedStateForALongTime"}
+          messageId="thresholds.instancesInStoppedStateForALongTime"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />

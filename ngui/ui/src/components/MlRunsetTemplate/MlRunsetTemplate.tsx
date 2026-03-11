@@ -10,7 +10,7 @@ import PageContentWrapper from "components/PageContentWrapper";
 import { useRefetchApis } from "hooks/useRefetchApis";
 import { getMlEditRunsetTemplateUrl, getMlRunsetConfigurationUrl, ML_RUNSET_TEMPLATES } from "urls";
 import { SPACING_2 } from "utils/layouts";
-import { RunsetsTable, Summary, Details } from "./Components";
+import { RunsetsTable, Summary, Details } from "./components";
 
 const MlRunsetTemplate = ({
   runsetTemplate,

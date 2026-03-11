@@ -17,7 +17,7 @@ class InactiveUsersModal extends BaseSideModal {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId={"thresholds.inactiveUsers"}
+          messageId="thresholds.inactiveUsers"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />

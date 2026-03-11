@@ -15,8 +15,8 @@ const ML_RECOMMENDATIONS = Object.fromEntries(
   )
 );
 
-export const useAllRecommendations = () => {
-  const optscaleRecommendation = useOptscaleRecommendations();
+export const useAllRecommendations = ({ withDeprecated = false }: { withDeprecated?: boolean } = {}) => {
+  const optscaleRecommendation = useOptscaleRecommendations({ withDeprecated });
 
   return useMemo(() => ({ ...ML_RECOMMENDATIONS, ...optscaleRecommendation }), [optscaleRecommendation]);
 };

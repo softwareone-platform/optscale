@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import ResourcesPerspectivesBase from "@main/components/ResourcesPerspectives/ResourcesPerspectives";
 
 const ResourcesPerspectives = () => (
-  <Box className={"MTPBoxShadow"}>
+  <Box className="MTPBoxShadow">
     <ResourcesPerspectivesBase />
   </Box>
 );

@@ -338,10 +338,10 @@ const TrafficExpensesMap = ({ markers, defaultZoom, defaultCenter, onMapClick = 
             />
           )}
         </GoogleMapReact>
-        <div id={"map-legend"} style={{ visibility: "hidden" }}>
+        <div id="map-legend" style={{ visibility: "hidden" }}>
           {legend}
         </div>
-        <div id={"map-tooltip"} className={classes.tooltip} style={{ display: tooltip.display, ...tooltip.position }}>
+        <div id="map-tooltip" className={classes.tooltip} style={{ display: tooltip.display, ...tooltip.position }}>
           {tooltip.content}
         </div>
       </div>

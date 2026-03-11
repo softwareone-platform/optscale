@@ -93,7 +93,7 @@ const RangePicker = ({
               size="small"
               edge="end"
               style={{ marginRight: "-11px" }}
-              dataTestId={"btn_select_date"}
+              dataTestId="btn_select_date"
             />
           }
           helperText={validation.helperText}

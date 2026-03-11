@@ -59,7 +59,7 @@ const K8sRightsizingTable = ({ namespaces, isLoading = false, tableActionBarDefi
           }
         }) => {
           const link = (
-            <Tooltip title={<FormattedMessage id={"showResources"} />}>
+            <Tooltip title={<FormattedMessage id="showResources" />}>
               <Link
                 data-test-id="namespase"
                 color="primary"

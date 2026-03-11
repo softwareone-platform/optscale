@@ -38,7 +38,7 @@ const ArchivedRecommendationAccordion = ({
     reason
   });
 
-  const allRecommendations = useAllRecommendations();
+  const allRecommendations = useAllRecommendations({ withDeprecated: true });
 
   useEffect(() => {
     if (isExpanded && shouldInvoke) {

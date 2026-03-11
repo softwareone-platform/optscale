@@ -193,12 +193,12 @@ const getColumns = ({
 
       return (
         <Link component="button" onClick={() => onCellClick(expense)} color="inherit">
-          <Typography variant="caption" component="div" align={"left"}>
+          <Typography variant="caption" component="div" align="left">
             <strong>
               <FormattedMoney value={expense.cost} type={FORMATTED_MONEY_TYPES.COMPACT} disableTooltip />{" "}
             </strong>
           </Typography>
-          <Typography variant="caption" component="div" align={"left"}>
+          <Typography variant="caption" component="div" align="left">
             <FormattedDigitalUnit value={expense.usage} baseUnit={SI_UNITS.GIGABYTE} />
           </Typography>
         </Link>
@@ -228,10 +228,10 @@ const getColumns = ({
       },
       cell: ({ row: { original } }) => (
         <Link component="button" onClick={() => onRowHeaderClick(original.col_name)} color="inherit">
-          <Typography variant="subtitle2" component="div" align={"left"}>
+          <Typography variant="subtitle2" component="div" align="left">
             <strong>{original.col_name}</strong>
           </Typography>
-          <Typography variant="caption" component="div" align={"left"}>
+          <Typography variant="caption" component="div" align="left">
             <FormattedMessage
               id="totalExpensesWithTotalExpensesAndCost"
               values={{

@@ -17,7 +17,7 @@ class InactiveConsoleUsersModal extends BaseSideModal {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId={"thresholds.inactiveConsoleUsers"}
+          messageId="thresholds.inactiveConsoleUsers"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />

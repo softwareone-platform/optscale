@@ -16,8 +16,7 @@ import { ML_RUNSET_TEMPLATES, getMlTaskDetailsUrl, getMlRunsetTemplateUrl } from
 import { getColorScale } from "utils/charts";
 import { SPACING_1 } from "utils/layouts";
 import { formatRunFullName } from "utils/ml";
-import { InputParameters, SummaryCards, Tabs } from "./Components";
-import Correlations from "./Components/Correlations";
+import { InputParameters, SummaryCards, Tabs, Correlations } from "./components";
 
 const MlRunsetOverview = ({
   runset,

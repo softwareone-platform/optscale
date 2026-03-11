@@ -151,7 +151,9 @@ const EmailSetting = ({ emailId, employeeId, enabled, emailTitle, description }:
           isLoading={updateEmployeeEmailLoading}
         />
       </Box>
-      <Typography variant="caption">{<FormattedMessage id={description} />}</Typography>
+      <Typography variant="caption">
+        <FormattedMessage id={description} />
+      </Typography>
     </Box>
   );
 };

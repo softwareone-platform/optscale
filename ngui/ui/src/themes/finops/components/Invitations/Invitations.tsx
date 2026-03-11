@@ -38,7 +38,7 @@ interface InvitationsProps {
 const NoInvitationsPending = ({ widget = false }: { widget: boolean }) => {
   const { classes } = useStyles();
   return (
-    <Grid item md={6} lg={4} key={"noPendingInvitationsLeft"} className={widget ? classes.gridBox : ""}>
+    <Grid item md={6} lg={4} key="noPendingInvitationsLeft" className={widget ? classes.gridBox : ""}>
       <Box textAlign={widget ? "center" : "left"}>
         {widget && (
           <Typography marginBottom={MPT_SPACING_1}>

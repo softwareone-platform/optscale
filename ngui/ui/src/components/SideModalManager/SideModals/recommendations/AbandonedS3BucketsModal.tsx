@@ -27,7 +27,7 @@ const AbandonedS3BucketsForm = ({ recommendationType, onSuccess }) => {
     <FormProvider {...methods}>
       <form noValidate onSubmit={submitHandler}>
         <TextWithInlineInput
-          messageId={"thresholds.abandonedS3Buckets.intro"}
+          messageId="thresholds.abandonedS3Buckets.intro"
           isLoading={isGetDataLoading}
           lessOrEqualValidation={lessOrEqual(COMMON_YEAR_LENGTH)}
           name={THRESHOLD_INPUT_NAMES.DAYS_THRESHOLD}

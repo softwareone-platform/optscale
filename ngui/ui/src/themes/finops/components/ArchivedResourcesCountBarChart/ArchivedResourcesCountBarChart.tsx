@@ -5,7 +5,7 @@ import ArchivedResourcesCountBarChartBase from "@main/components/ArchivedResourc
 type ArchivedResourcesCountBarChartProps = ComponentProps<typeof ArchivedResourcesCountBarChartBase>;
 
 const ArchivedResourcesCountBarChart = (props: ArchivedResourcesCountBarChartProps) => (
-  <Box className={"MTPBoxShadow"}>
+  <Box className="MTPBoxShadow">
     <ArchivedResourcesCountBarChartBase {...props} />
   </Box>
 );

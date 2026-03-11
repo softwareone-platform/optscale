@@ -289,7 +289,7 @@ const EventList = ({
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
         <Stack spacing={SPACING_1} height="100%">
-          <Box display="flex" flexWrap="wrap" gap={SPACING_2} className={"MTPBoxShadow"}>
+          <Box display="flex" flexWrap="wrap" gap={SPACING_2} className="MTPBoxShadow">
             <Box display="flex" gap={2}>
               <EventLevelSelector eventLevel={eventLevel} onApply={applyFilter} />
               <FormControlLabel

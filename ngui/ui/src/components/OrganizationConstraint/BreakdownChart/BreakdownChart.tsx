@@ -97,7 +97,7 @@ const ExpensesDailyBreakdownByContainer = ({ constraint }) => {
 
 const BreakdownChart = ({ constraint, isGetConstraintLoading }) => {
   if (isGetConstraintLoading) {
-    return <Skeleton variant="rectangular" height={"320px"} />;
+    return <Skeleton variant="rectangular" height="320px" />;
   }
 
   if (constraint.type === RESOURCE_COUNT_ANOMALY) {

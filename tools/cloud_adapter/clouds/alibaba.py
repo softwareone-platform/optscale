@@ -678,10 +678,10 @@ class Alibaba(CloudBase):
         for lb in response:
             lb_id = lb['LoadBalancerId']
             if attr_request:
-                attr_request = attr_request()
-                attr_request.set_LoadBalancerId(lb_id)
+                req = attr_request()
+                req.set_LoadBalancerId(lb_id)
                 attrs = handle_discovery_client_exc(
-                    self._send_request, attr_request,
+                    self._send_request, req,
                     region_id=region_details['RegionId'])
                 security_groups = attrs.get('SecurityGroupIds', [])
             if 'Tags' in lb and isinstance(lb['Tags'], dict):

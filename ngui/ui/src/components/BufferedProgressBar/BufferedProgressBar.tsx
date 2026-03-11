@@ -35,7 +35,7 @@ const BufferedProgressBar = ({
           bar2Buffer: classes.bar2Buffer,
           dashed: classes.dashed
         }}
-        variant={"buffer"}
+        variant="buffer"
         value={Math.min(value, 100)}
         valueBuffer={valueBuffer}
       />

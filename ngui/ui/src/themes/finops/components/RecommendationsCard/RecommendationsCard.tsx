@@ -2,7 +2,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { Grid } from "@mui/material";
 import { FormattedMessage, FormattedNumber } from "react-intl";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import { InfoCard, PossibleSavingsCard } from "@main/components/RecommendationsCard/Components";
+import { InfoCard, PossibleSavingsCard } from "@main/components/RecommendationsCard/components";
 import { MPT_SPACING_2 } from "@theme/utils/layouts";
 import RecommendationLink from "components/RecommendationLink";
 import WrapperCard from "components/WrapperCard";

@@ -37,7 +37,7 @@ const awsDefaultAccessKeyDescriptions = [
     messageId="createAwsDefaultAssumedRoleDocumentationReference1"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
     linkDisplayBlock
-    type={"warning"}
+    type="warning"
   />,
   <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDocumentationReference2" />,
   <AwsTypeDescription
@@ -53,7 +53,7 @@ const awsMemberAccessKeyDescriptions = [
     messageId="createAwsDefaultAssumedRoleDocumentationReference1"
     linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
     linkDisplayBlock
-    type={"warning"}
+    type="warning"
   />,
   <AwsTypeDescription key="2" messageId="createAwsDefaultAssumedRoleDocumentationReference4" />,
   <AwsTypeDescription

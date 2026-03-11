@@ -57,7 +57,7 @@ const Settings = () => {
     <>
       <ActionBar data={actionBarDefinition} />
       <PageContentWrapper>
-        <Box className={"MTPBoxShadow"}>
+        <Box className="MTPBoxShadow">
           <TabsWrapper
             tabsProps={{
               name: "settings",
