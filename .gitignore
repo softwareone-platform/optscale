@@ -21,6 +21,10 @@ rest_api/.clickhouse
 **/dist
 **/*egg-info/
 **/*.tar.gz
+htmlcov
+.coverage
+coverage.xml
+.cache
 
 # ngui
 ngui/server/.env

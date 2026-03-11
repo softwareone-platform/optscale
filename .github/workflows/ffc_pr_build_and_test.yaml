@@ -48,6 +48,7 @@ jobs:
       trapper_changed: ${{ steps.check_trapper.outputs.changed }}
       users_dataset_generator_changed: ${{ steps.check_users_dataset_generator.outputs.changed }}
       webhook_executor_changed: ${{ steps.check_webhook_executor.outputs.changed }}
+      tools_changed: ${{ steps.check_tools.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -357,6 +358,15 @@ jobs:
         id: check_webhook_executor
         run: |
           if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^docker_images/webhook_executor/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if 'tools/**' changed
+        id: check_tools
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^tools/'; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -817,6 +827,16 @@ jobs:
         run: bash -x build.sh webhook_executor build
       - name: Build test image and run tests
         run: bash -x docker_images/run_test.sh webhook_executor
+  tools_tests:
+    if: needs.determine_changes.outputs.tools_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build test image and run tests
+        run: bash -x tools/run_test.sh
 
   pr_notification:
     needs:
@@ -858,6 +878,7 @@ jobs:
       - trapper_tests
       - users_dataset_generator_tests
       - webhook_executor_tests
+      - tools_tests
     runs-on: ubuntu-latest
     if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     steps:
