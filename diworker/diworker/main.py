@@ -17,6 +17,7 @@ import clickhouse_connect
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from tools.optscale_time.optscale_time import startday, utcfromtimestamp
+from tools.optscale_telemetry import OpenTelemetryConfig
 
 from diworker.diworker.importers.base import BaseReportImporter
 from diworker.diworker.importers.factory import get_importer_class
@@ -285,6 +286,13 @@ if __name__ == '__main__':
         **config_cl.read_branch('/rabbit'))
     dw_settings = config_cl.diworker_settings()
     with QConnection(conn_str) as conn:
+        config = OpenTelemetryConfig(
+            service_name=os.getenv("OTEL_SERVICE_NAME", "diworker"),
+            service_version=os.getenv("OTEL_SERVICE_VERSION", "local"),
+            otel_config=config_cl.read_branch("/opentelemetry"),
+            service_config=config_cl.read_branch("diworker/opentelemetry"),
+        )
+        config.setup_open_telemetry()
         try:
             worker = DIWorker(conn, conn_str, dw_settings, config_cl_params)
             worker.run()

@@ -107,9 +107,6 @@ class BaseHandler(tornado.web.RequestHandler):
         return self._session()
 
     def prepare(self):
-        for k, v in get_trace_headers().items():
-            self.set_header(k, v)
-
         self.set_content_type()
         if self.request.method == 'POST':
             self._validate_post_parameters()
