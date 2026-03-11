@@ -35,6 +35,10 @@ class TestApiBase(tornado.testing.AsyncHTTPTestCase):
         return make_app(DBType.Test, '127.0.0.1', 80)
 
     def setUp(self, version='v2'):
+        patch(
+            'optscale_client.config_client.client.Client.read_branch',
+            return_value=None,
+        ).start()
         super().setUp()
         os.environ['ASYNC_TEST_TIMEOUT'] = '30'
         patch(
