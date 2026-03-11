@@ -149,6 +149,13 @@ def check_list_attribute(name, value, required=True):
         raise WrongArgumentsException(Err.OA0055, [name])
 
 
+def strtobool(val):
+    val = val.lower()
+    if val not in ['true', 'false']:
+        raise ValueError('Should be false or true')
+    return val == 'true'
+
+
 class ModelEncoder(json.JSONEncoder):
     # pylint: disable=E0202
     def default(self, obj):
