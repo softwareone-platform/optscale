@@ -4,7 +4,8 @@ from auth.auth_server.controllers.base import BaseController
 from auth.auth_server.controllers.base_async import BaseAsyncControllerWrapper
 from auth.auth_server.exceptions import Err
 from auth.auth_server.models.models import UserOption, User
-from auth.auth_server.utils import strtobool, check_string_attribute
+from auth.auth_server.utils import (strtobool, check_string_attribute,
+                                    check_valid_json)
 from tools.optscale_exceptions.common_exc import (
     WrongArgumentsException, ForbiddenException, NotFoundException)
 
@@ -58,6 +59,7 @@ class UserOptionsController(BaseController):
         self.check_user_access(user_id, token)
 
         options = super().list(user_id=user_id, name=option_name)
+        check_valid_json(value_data, 'value')
         if len(options) > 1:
             raise WrongArgumentsException(Err.OA0029, [])
         elif len(options) == 0:

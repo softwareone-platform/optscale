@@ -60,7 +60,6 @@ class UserOptionsAsyncCollectionHandler(BaseAsyncAuthCollectionHandler,
             400:
                 description: |
                     Wrong arguments:
-                    - OA0060: Invalid argument
                     - OA0063: Parameter should be true or false
             401:
                 description: |
@@ -76,7 +75,6 @@ class UserOptionsAsyncCollectionHandler(BaseAsyncAuthCollectionHandler,
             404:
                 description: |
                     Not found:
-                    - OA0003: User not found
                     - OA0024: User was not found
         security:
         - token: []
@@ -135,10 +133,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
                         value:
                             type: string
                             description: Option value
-            400:
-                description: |
-                    Wrong arguments:
-                    - OA0029: Non unique parameters in get request
             401:
                 description: |
                     Unauthorized:
@@ -153,7 +147,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
             404:
                 description: |
                     Not found:
-                    - OA0003: User not found
                     - OA0024: User was not found
         security:
         - token: []
@@ -212,11 +205,10 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
             400:
                 description: |
                     Wrong arguments:
-                    - OA0029: Non unique parameters in get request
                     - OA0032: Parameter is not provided
                     - OA0033: Parameter should be a string
+                    - OA0046: Value is not a valid json
                     - OA0048: Parameter should contain 1-256 characters
-                    - OA0065: Parameter should not contain only whitespaces
             401:
                 description: |
                     Unauthorized:
@@ -231,7 +223,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
             404:
                 description: |
                     Not found:
-                    - OA0003: User not found
                     - OA0024: User was not found
         security:
         - token: []
@@ -273,10 +264,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
         responses:
             204:
                 description: Success
-            400:
-                description: |
-                    Wrong arguments:
-                    - OA0029: Non unique parameters in get request
             401:
                 description: |
                     Unauthorized:
@@ -291,7 +278,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
             404:
                 description: |
                     Not found:
-                    - OA0003: User not found
                     - OA0024: User was not found
         security:
         - token: []

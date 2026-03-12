@@ -130,6 +130,12 @@ class TestUserOptionsApi(TestAuthBase):
             self.user_id1, self.name2, self.value2)
         self.assertEqual(code, 200)
         self.assertEqual(resp, self.value2)
+
+        code, resp = self.client.user_options_create(
+            self.user_id1, self.name1, {'value': 'some_str_not_json'})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OA0046')
+
         code, _ = self.client.user_options_create(
             'abcd', self.name1, self.value1)
         self.assertEqual(code, 404)
@@ -145,7 +151,13 @@ class TestUserOptionsApi(TestAuthBase):
             self.user_id2, self.name1, self.value2)
         self.assertEqual(code, 200)
         self.assertEqual(resp, self.value2)
-        code, _ = self.client.user_options_update(
+
+        code, resp = self.client.user_options_update(
+            self.user_id2, self.name1, {'value': 'some_str_not_json'})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OA0046')
+
+        code, resp = self.client.user_options_update(
             'abcd', self.name1, self.value1)
         self.assertEqual(code, 404)
 
