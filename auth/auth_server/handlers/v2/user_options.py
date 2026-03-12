@@ -206,7 +206,6 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
                 description: |
                     Wrong arguments:
                     - OA0032: Parameter is not provided
-                    - OA0033: Parameter should be a string
                     - OA0046: Value is not a valid json
                     - OA0048: Parameter should contain 1-256 characters
             401:
@@ -278,6 +277,7 @@ class UserOptionsAsyncItemHandler(BaseAsyncAuthItemHandler,
             404:
                 description: |
                     Not found:
+                    - OA0003: UserOption not found
                     - OA0024: User was not found
         security:
         - token: []

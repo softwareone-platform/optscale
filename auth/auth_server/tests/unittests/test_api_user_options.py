@@ -136,6 +136,21 @@ class TestUserOptionsApi(TestAuthBase):
         self.assertEqual(code, 400)
         self.assertEqual(resp['error']['error_code'], 'OA0046')
 
+        code, resp = self.client.user_options_create(
+            self.user_id1, self.name1, {'value': 123})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OA0046')
+
+        code, resp = self.client.user_options_create(
+            self.user_id1, self.name1, {'value': True})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OA0046')
+
+        code, resp = self.client.user_options_create(
+            self.user_id1, self.name1, {'value': 1.23})
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OA0046')
+
         code, _ = self.client.user_options_create(
             'abcd', self.name1, self.value1)
         self.assertEqual(code, 404)

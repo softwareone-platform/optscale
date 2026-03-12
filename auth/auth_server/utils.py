@@ -210,7 +210,7 @@ def _get_valid_json(json_str_value, json_value_key):
         json_dict = json.loads(json_str_value)
         if not isinstance(json_dict, dict):
             return None
-    except ValueError:
+    except (TypeError, ValueError):
         raise WrongArgumentsException(Err.OA0046, [json_value_key])
     return json_dict
 
