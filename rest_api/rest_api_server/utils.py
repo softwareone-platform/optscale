@@ -607,11 +607,3 @@ def handle_http_exc(func):
 def timestamp_to_day_start(timestamp) -> datetime:
     return utcfromtimestamp(timestamp).replace(
         hour=0, minute=0, second=0, microsecond=0)
-
-
-def get_trace_headers():
-    ctx = trace.get_current_span().get_span_context()
-    if not ctx.is_valid:
-        return {}
-    tid = format(ctx.trace_id, "032x")
-    return {"x-trace-id": tid}
