@@ -21,6 +21,10 @@ rest_api/.clickhouse
 **/dist
 **/*egg-info/
 **/*.tar.gz
+htmlcov
+.coverage
+coverage.xml
+.cache
 
 # ngui
 ngui/server/.env
@@ -33,14 +37,6 @@ ngui/*/storybook
 # MPT_TODO: prevent accidental package-lock commits
 ngui/server/package-lock.json
 ngui/ui/package-lock.json
-
-# ffc_ngui
-ffc_ngui/server/.env
-ffc_ngui/ui/.env
-ffc_ngui/*/node_modules
-ffc_ngui/*/build/
-ffc_ngui/*/dist/
-ffc_ngui/*/storybook
 
 **/npm-debug.log*
 **/yarn-debug.log*
@@ -62,3 +58,4 @@ optscale-deploy/.vagrant/
 /e2etests/.cache/
 /e2etests/.cache/*
 /e2etests/tests/downloads/*
+
