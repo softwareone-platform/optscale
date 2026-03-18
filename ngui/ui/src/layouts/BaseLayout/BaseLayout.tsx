@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { CircularProgress } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -7,7 +8,8 @@ import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import preloaderLogo from "assets/logo/swo-logo-animated.gif";
+import { useNavigate } from "react-router-dom";
+import Button from "components/Button";
 import CollapsableMenuDrawer from "components/CollapsableMenuDrawer";
 import DocsPanel from "components/DocsPanel";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -25,12 +27,12 @@ import OrganizationSelectorContainer from "containers/OrganizationSelectorContai
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { REGISTER } from "urls";
+import { trackEvent, GA_EVENT_CATEGORIES } from "utils/analytics";
 import { BASE_LAYOUT_CONTAINER_ID, LOGO_SIZE } from "utils/constants";
-import InlineSeverityAlert from "../../components/InlineSeverityAlert";
-import { MPT_BRAND_TYPE } from "../../utils/layouts";
 import useStyles from "./BaseLayout.styles";
 
-const logoHeight = 30;
+const logoHeight = 45;
 
 const getLogoSize = (isDemo = false, isDownMd = false, isDownSm = false) => {
   if (isDemo) {
@@ -46,77 +48,59 @@ const AppToolbar = ({
   isOrganizationSelectorLoading = false,
   isProductTourAvailable = false
 }) => {
-  const { classes } = useStyles();
-  // const navigate = useNavigate();
+  const { classes, cx } = useStyles();
+  const navigate = useNavigate();
   const isDownMd = useIsDownMediaQuery("md");
   const isDownSm = useIsDownMediaQuery("sm");
 
-  const { isDemo, organizationId } = useOrganizationInfo();
+  const { isDemo } = useOrganizationInfo();
 
-  // MPT_TODO: disabled to meet BDR requirements
-  // const navigate = useNavigate();
-  // const onLiveDemoRegisterClick = () => {
-  //   navigate(REGISTER);
-  //   trackEvent({ category: GA_EVENT_CATEGORIES.LIVE_DEMO, action: "Try register" });
-  // };
+  const onLiveDemoRegisterClick = () => {
+    navigate(REGISTER);
+    trackEvent({ category: GA_EVENT_CATEGORIES.LIVE_DEMO, action: "Try register" });
+  };
 
   return (
-    <header>
-      <Toolbar className={classes.toolbar}>
-        {showMainMenu && (
-          <IconButton
-            sx={{ display: { xs: "inherit", md: "none", color: MPT_BRAND_TYPE } }}
-            customClass={classes.marginRight1}
-            icon={<MenuIcon />}
-            onClick={onMenuIconClick}
-            aria-label="open drawer"
-          />
-        )}
-        <div style={{ height: logoHeight }} className={classes.logo}>
-          <Logo
-            size={getLogoSize(isDemo, isDownMd, isDownSm)}
-            dataTestId="img_logo"
-            height={logoHeight}
-            demo={isDemo}
-            active={organizationId !== undefined}
-          />
-
-          <Hidden mode="down" breakpoint="md">
-            <Typography data-test-id="p_live_demo_mode" className={classes.headerTitle}>
-              <FormattedMessage id={"finopsForCloud"} />
-            </Typography>
-          </Hidden>
-        </div>
-        {isDemo ? (
-          <Hidden mode="down" breakpoint="md">
-            <Box display="flex" alignItems="center">
-              <InlineSeverityAlert messageId="liveDemoMode" data-test-id="p_live_demo_mode" />
-
-              {/* MPT_TODO: disabled to meet BDR Requirements */}
-              {/* <Button */}
-              {/*  customClass={cx(classes.marginLeft1, classes.marginRight1)} */}
-              {/*  disableElevation */}
-              {/*  dataTestId="btn_register" */}
-              {/*  messageId="register" */}
-              {/*  variant="contained" */}
-              {/*  size={isDownSm ? "small" : "medium"} */}
-              {/*  color="success" */}
-              {/*  onClick={onLiveDemoRegisterClick} */}
-              {/* /> */}
-            </Box>
-          </Hidden>
-        ) : null}
+    <Toolbar className={classes.toolbar}>
+      {showMainMenu && (
+        <IconButton
+          sx={{ display: { xs: "inherit", md: "none" } }}
+          customClass={classes.marginRight1}
+          icon={<MenuIcon />}
+          color="primary"
+          onClick={onMenuIconClick}
+          aria-label="open drawer"
+        />
+      )}
+      <div style={{ height: logoHeight }} className={classes.logo}>
+        <Logo size={getLogoSize(isDemo, isDownMd, isDownSm)} dataTestId="img_logo" height={logoHeight} demo={isDemo} active />
+      </div>
+      {isDemo ? (
         <Box display="flex" alignItems="center">
-          {showOrganizationSelector && (
-            <Box mr={1}>
-              <OrganizationSelectorContainer isLoading={isOrganizationSelectorLoading} />
-            </Box>
-          )}
-          <HeaderButtons isProductTourAvailable={isProductTourAvailable} />
+          <Typography data-test-id="p_live_demo_mode" sx={{ display: { xs: "none", md: "inherit" } }} color="primary">
+            <FormattedMessage id="liveDemoMode" />
+          </Typography>
+          <Button
+            customClass={cx(classes.marginLeft1, classes.marginRight1)}
+            disableElevation
+            dataTestId="btn_register"
+            messageId="register"
+            variant="contained"
+            size={isDownSm ? "small" : "medium"}
+            color="success"
+            onClick={onLiveDemoRegisterClick}
+          />
         </Box>
-      </Toolbar>
-      <div className={classes.headerSpacer} />
-    </header>
+      ) : null}
+      <Box display="flex" alignItems="center">
+        {showOrganizationSelector && (
+          <Box mr={1}>
+            <OrganizationSelectorContainer isLoading={isOrganizationSelectorLoading} />
+          </Box>
+        )}
+        <HeaderButtons isProductTourAvailable={isProductTourAvailable} />
+      </Box>
+    </Toolbar>
   );
 };
 
@@ -140,9 +124,9 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
           if (someApiLoading) {
             return (
               <PageContentWrapper>
-                <div data-testid="mainPreloader" className={classes.preloaderOverlay}>
-                  <img src={preloaderLogo} alt="Loading page" />
-                </div>
+                <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                  <CircularProgress />
+                </Box>
               </PageContentWrapper>
             );
           }

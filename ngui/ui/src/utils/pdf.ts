@@ -5,7 +5,7 @@ import { intl } from "translations/react-intl-config";
 import { PRODUCTION as URL_PRODUCTION } from "urls";
 import { PDF_ELEMENTS } from "utils/constants";
 import UbuntuFilePath from "../assets/fonts/Ubuntu-Regular.ttf";
-import logo from "../assets/logo/swo-pdf-logo.png";
+import logo from "../assets/logo/logo_pdf.png";
 
 const defaultFileName = "optscale-report-%___time___%";
 let fileName = "";

@@ -1,4 +1,4 @@
-// import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
+import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import expensesMap from "utils/routes/expensesMapRoute";
 import BaseMenuItem from "./baseMenuItem";
 
@@ -9,8 +9,7 @@ class ExpensesMapMenuItem extends BaseMenuItem {
 
   dataTestId = "btn_cost_map";
 
-  // MPT_TODO: disabled to match MPT figma designs
-  // icon = PublicOutlinedIcon;
+  icon = PublicOutlinedIcon;
 }
 
 export default new ExpensesMapMenuItem();

@@ -11,7 +11,7 @@ import useStyles from "./SummaryCardContent.styles";
 const EMPTY_VALUES = [null, undefined, NaN, Infinity, -Infinity, ""];
 
 const renderString = (value, ref, dataTestId) => (
-  <Typography fontWeight="normal" component="div" variant="h5" data-test-id={dataTestId} ref={ref} noWrap>
+  <Typography fontWeight="bold" component="div" variant="h5" data-test-id={dataTestId} ref={ref} noWrap>
     {value}
   </Typography>
 );

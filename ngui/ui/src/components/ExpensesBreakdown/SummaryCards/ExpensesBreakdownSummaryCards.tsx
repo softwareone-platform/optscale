@@ -1,8 +1,11 @@
 import SummaryGrid from "components/SummaryGrid";
 import { SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
-import { getPoolColorStatusByLimit } from "utils/layouts";
+import { getPoolColorStatus } from "utils/layouts";
+import { intPercentXofY } from "utils/math";
 
 const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading = false, pdfIds = {} }) => {
+  const percent = intPercentXofY(total, previousTotal);
+
   const summaryData = [
     {
       key: "totalExpensesForSelectedPeriod",
@@ -10,7 +13,7 @@ const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading
       valueComponentProps: {
         value: total
       },
-      color: getPoolColorStatusByLimit(total, previousTotal),
+      color: getPoolColorStatus(percent),
       isLoading,
       captionMessageId: "totalExpensesForSelectedPeriod",
       pdfId: pdfIds.totalExpensesForSelectedPeriod
@@ -26,7 +29,7 @@ const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading
       pdfId: pdfIds.totalExpensesForPreviousPeriod
     }
   ];
-  return <SummaryGrid summaryStyle={"customBox"} summaryData={summaryData} />;
+  return <SummaryGrid summaryData={summaryData} />;
 };
 
 export default ExpensesBreakdownSummaryCards;

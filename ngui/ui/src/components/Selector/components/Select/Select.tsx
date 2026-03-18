@@ -1,5 +1,4 @@
 import { type ReactNode, type Ref } from "react";
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import { InputAdornment, InputLabel, Select as MuiSelect, Skeleton } from "@mui/material";
 import Item from "../Item";
 import useStyles from "./Select.styles";
@@ -79,7 +78,7 @@ const Select = ({
         label={label}
         notched={shrinkLabel}
         onBlur={onBlur}
-        IconComponent={readOnly && !isLoading ? () => null : ExpandMoreOutlinedIcon}
+        IconComponent={readOnly && !isLoading ? () => null : undefined}
         inputRef={inputRef}
         disabled={isLoading || disabled}
         open={open}

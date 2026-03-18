@@ -1,5 +1,4 @@
-// import CancelIcon from "@mui/icons-material/Cancel";
-import ClearIcon from "@mui/icons-material/Clear";
+import CancelIcon from "@mui/icons-material/Cancel";
 import MuiChip from "@mui/material/Chip";
 import useStyles from "./Chip.styles";
 
@@ -26,7 +25,7 @@ const Chip = ({
       variant={variant}
       color={color}
       deleteIcon={
-        <ClearIcon
+        <CancelIcon
           data-test-id={deleteIconDataTestId}
           onMouseDown={stopMouseDownPropagationOnDelete ? (e) => e.stopPropagation() : undefined}
         />

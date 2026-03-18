@@ -14,7 +14,7 @@ type SummaryListProps = {
 
 const SummaryList = ({ titleMessage, titleIconButton, isLoading = false, items }: SummaryListProps) => (
   <Box minWidth={isLoading ? "200px" : undefined}>
-    <Box display="flex" alignItems="center">
+    <Box display="flex" alignItems="center" height="30px">
       <SubTitle>{titleMessage}</SubTitle>
       {titleIconButton?.icon ? <IconButton {...titleIconButton} /> : null}
     </Box>

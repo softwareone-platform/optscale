@@ -27,7 +27,7 @@ type KeyValueLabelProps = KeyType & {
 };
 
 const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
-  ({ value, variant, keyMessageId, keyText, isBoldValue = false, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
+  ({ value, variant, keyMessageId, keyText, isBoldValue = true, dataTestIds = {}, sx = {}, gutterBottom = false }, ref) => {
     const renderValue = () => {
       if (value || value === 0) {
         return value;
@@ -69,19 +69,18 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
             overflowWrap: "anywhere"
           }}
         >
-          <span className="keyLabel" style={{ display: "flex" }}>
-            {renderKey()}
-            {<>:&nbsp;</>}
-          </span>
+          {renderKey()}
+          {<>:&nbsp;</>}
         </Box>
         <Box
           sx={{
+            fontWeight: isBoldValue ? "bold" : undefined,
             whiteSpace: "normal",
             overflowWrap: "anywhere"
           }}
           data-test-id={valueDataTestId}
         >
-          <span style={{ fontWeight: isBoldValue ? "bold" : "normal" }}>{renderValue()}</span>
+          {renderValue()}
         </Box>
       </Typography>
     );

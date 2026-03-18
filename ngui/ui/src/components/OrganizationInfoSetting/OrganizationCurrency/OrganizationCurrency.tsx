@@ -7,7 +7,6 @@ import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import EditOrganizationCurrencyFormContainer from "containers/EditOrganizationCurrencyFormContainer";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useIsAllowed } from "hooks/useAllowedActions";
-import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { ENVIRONMENT } from "utils/constants";
 
@@ -19,8 +18,8 @@ const OrganizationCurrency = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const enableEditMode = () => setIsEditMode(true);
   const disableEditMode = () => setIsEditMode(false);
-  const isOrganizationEditAllowed = useIsFeatureEnabled("organization_edit_allowed");
-  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] }) && isOrganizationEditAllowed;
+
+  const isEditAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });
 
   return isEditMode ? (
     <EditOrganizationCurrencyFormContainer onCancel={disableEditMode} onSuccess={disableEditMode} />
@@ -28,7 +27,6 @@ const OrganizationCurrency = () => {
     <Box display="flex" alignItems="center">
       <KeyValueLabel
         keyMessageId="currency"
-        variant="property"
         value={<FormattedOrganizationCurrency currencyCode={currencyCode} />}
         sx={{ marginRight: 1 }}
       />

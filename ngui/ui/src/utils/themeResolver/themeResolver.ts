@@ -44,11 +44,22 @@ export function ThemeResolver(theme: string): Plugin {
    * Redirects an absolute file path to its theme-specific equivalent if available.
    *
    * @param absolutePath - Absolute path to the original file.
+   * @param importerPath
    * @returns Theme-specific file path if found, otherwise null.
    */
-  const redirectToThemePath = (absolutePath: string): string | null => {
+  const redirectToThemePath = (absolutePath: string, importerPath: string): string | null => {
     const relativePath = path.relative(projectRoot, absolutePath).replace(/\\/g, "/");
-    if (relativePath.startsWith(`${THEME_RESOLVER_CONFIG.themesDir}/${theme}/`)) return null;
+    const importerRelative = path.relative(projectRoot, importerPath).replace(/\\/g, "/");
+
+    // Don't redirect if target is already in current theme
+    if (relativePath.startsWith(`${THEME_RESOLVER_CONFIG.themesDir}/${theme}/`)) {
+      return null;
+    }
+
+    // Don't redirect if importer is in theme directory (prevents @main/ imports from being redirected)
+    if (importerRelative.startsWith(`${THEME_RESOLVER_CONFIG.themesDir}/${theme}/`)) {
+      return null;
+    }
     return resolveWithExtensions(
       path.join(themeBase, relativePath.replace(new RegExp(`^${THEME_RESOLVER_CONFIG.srcDir}/`), ""))
     );
@@ -67,7 +78,7 @@ export function ThemeResolver(theme: string): Plugin {
       const resolved = await this.resolve(source, importer, { skipSelf: true, ...options });
       if (!resolved?.id?.startsWith("/")) return null;
 
-      return redirectToThemePath(resolved.id);
+      return redirectToThemePath(resolved.id, importer);
     }
   };
 }

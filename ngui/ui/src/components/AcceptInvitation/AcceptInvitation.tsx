@@ -43,7 +43,7 @@ const AcceptInvitation = ({ invitation, sendState, onSuccessAccept, onSuccessDec
       ) : (
         <>
           <Box>
-            <Logo width="200" dataTestId={"LogoAcceptInvitation"} />
+            <Logo width="200" />
           </Box>
           <Box>
             <Box mb="1rem" pl={2} pr={2}>

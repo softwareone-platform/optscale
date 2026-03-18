@@ -144,7 +144,7 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
         dataTestId: "btn_add",
         icon: <AddOutlinedIcon fontSize="small" />,
         messageId: "add",
-        color: "primary",
+        color: "success",
         variant: "contained",
         type: "button",
         action: () => navigate(CLOUD_ACCOUNT_CONNECT),

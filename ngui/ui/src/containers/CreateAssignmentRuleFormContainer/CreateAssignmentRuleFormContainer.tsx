@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Grid, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useDispatch } from "react-redux";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
@@ -28,7 +28,6 @@ import {
   REGION_IS,
   ASSIGNMENT_RULE_OPERATORS
 } from "utils/constants";
-import { SPACING_1 } from "utils/layouts";
 import { getSearchParams } from "utils/network";
 import { parseJSON } from "utils/strings";
 
@@ -190,47 +189,47 @@ const CreateAssignmentRuleFormContainer = () => {
     <>
       <PageActionBar isFormDataLoading={isFormDataLoading} pools={pools} />
       <PageContentWrapper>
-        <Box className={"MTPBoxShadow"}>
-          <Grid container spacing={SPACING_1}>
-            <Grid item xs={12} sm={12} lg={6}>
-              <AssignmentRuleForm
-                onSubmit={(params) => {
-                  dispatch((_, getState) => {
-                    dispatch(createAssignmentRule(organizationId, params)).then(() => {
-                      if (!isError(CREATE_ASSIGNMENT_RULE, getState())) {
-                        redirect();
-                      }
-                      return undefined;
-                    });
-                  });
-                }}
-                onCancel={redirect}
-                pools={pools}
-                cloudAccounts={dataSources}
-                resourceTypes={resourceTypes}
-                regions={regions}
-                onPoolChange={(newPoolId, callback) => {
-                  dispatch((_, getState) => {
-                    dispatch(getPoolOwners(newPoolId)).then(() => {
-                      const { poolOwners: owners = [] } = getState()?.[RESTAPI]?.[GET_POOL_OWNERS] ?? {};
-                      callback(owners);
-                    });
-                  });
-                }}
-                poolOwners={poolOwners}
-                defaultValues={defaultValues}
-                isLoadingProps={{
-                  isActiveCheckboxLoading: false,
-                  isNameInputLoading: false,
-                  isConditionsFieldLoading: isAvailableFiltersLoading,
-                  isConjunctionTypeLoading: isFormDataLoading,
-                  isPoolSelectorLoading: isFormDataLoading,
-                  isOwnerSelectorLoading: isFormDataLoading,
-                  isSubmitButtonLoading: isFormDataLoading || isCreateAssignmentRuleLoading
-                }}
-              />
-            </Grid>
-          </Grid>
+        <Box
+          sx={{
+            width: { md: "50%" }
+          }}
+        >
+          <AssignmentRuleForm
+            onSubmit={(params) => {
+              dispatch((_, getState) => {
+                dispatch(createAssignmentRule(organizationId, params)).then(() => {
+                  if (!isError(CREATE_ASSIGNMENT_RULE, getState())) {
+                    redirect();
+                  }
+                  return undefined;
+                });
+              });
+            }}
+            onCancel={redirect}
+            pools={pools}
+            cloudAccounts={dataSources}
+            resourceTypes={resourceTypes}
+            regions={regions}
+            onPoolChange={(newPoolId, callback) => {
+              dispatch((_, getState) => {
+                dispatch(getPoolOwners(newPoolId)).then(() => {
+                  const { poolOwners: owners = [] } = getState()?.[RESTAPI]?.[GET_POOL_OWNERS] ?? {};
+                  callback(owners);
+                });
+              });
+            }}
+            poolOwners={poolOwners}
+            defaultValues={defaultValues}
+            isLoadingProps={{
+              isActiveCheckboxLoading: false,
+              isNameInputLoading: false,
+              isConditionsFieldLoading: isAvailableFiltersLoading,
+              isConjunctionTypeLoading: isFormDataLoading,
+              isPoolSelectorLoading: isFormDataLoading,
+              isOwnerSelectorLoading: isFormDataLoading,
+              isSubmitButtonLoading: isFormDataLoading || isCreateAssignmentRuleLoading
+            }}
+          />
         </Box>
       </PageContentWrapper>
     </>

@@ -82,10 +82,7 @@
     "vite-tsconfig-paths": "5.1.4"
   },
   "scripts": {
-    "copy:translations": "node copy-translations.js",
-    "prestart": "pnpm copy:translations",
     "start": "vite",
-    "prestart:ci": "pnpm copy:translations",
     "start:ci": "pnpm install --frozen-lockfile --ignore-scripts && pnpm start",
     "dev": "vite",
     "build": "vite build",
@@ -129,6 +126,7 @@
     "@storybook/react": "8.6.6",
     "@storybook/react-vite": "8.6.6",
     "@storybook/theming": "8.6.6",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "glob": "10.3.10",
     "jsdom": "22.1.0",
     "redux-immutable-state-invariant": "2.1.0",

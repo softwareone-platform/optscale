@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Button from "components/Button";
-import { DEFAULT_BUTTON_FONT_UPPERCASE } from "utils/layouts";
 import useStyles from "./ButtonLoader.styles";
 
 const ButtonLoader = ({
@@ -23,7 +22,7 @@ const ButtonLoader = ({
   href,
   isLoading = false,
   color = "info",
-  uppercase = DEFAULT_BUTTON_FONT_UPPERCASE,
+  uppercase = true,
   tooltip,
   ...rest
 }) => {

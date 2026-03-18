@@ -1,5 +1,5 @@
 import React from "react";
-import { DOCS_HYSTAX_CONNECT_AMAZON, DOCS_HYSTAX_CONNECT_AWS_ROOT } from "urls";
+import { DOCS_HYSTAX_CONNECT_AWS_ROOT } from "urls";
 import { AWS_CNR, CONNECTION_TYPES } from "utils/constants";
 import { AwsTypeDescription } from "./AwsConnectionFormElements";
 
@@ -27,7 +27,7 @@ const awsDefaultAssumedRoleDescriptions = [
   <AwsTypeDescription
     key="2"
     messageId="createAwsDefaultAssumedRoleDocumentationReference3"
-    linkUrl={DOCS_HYSTAX_CONNECT_AMAZON}
+    linkUrl={DOCS_HYSTAX_CONNECT_AWS_ROOT}
   />
 ];
 
@@ -66,12 +66,10 @@ const awsMemberAccessKeyDescriptions = [
 
 export const awsConnectionAssumedRoleDescriptions = {
   [CONNECTION_TYPES.AWS_MANAGEMENT]: awsDefaultAssumedRoleDescriptions,
-  [CONNECTION_TYPES.AWS_MEMBER]: awsDefaultAssumedRoleDescriptions,
-  [CONNECTION_TYPES.AWS_STANDALONE]: awsDefaultAssumedRoleDescriptions
+  [CONNECTION_TYPES.AWS_MEMBER]: awsDefaultAssumedRoleDescriptions
 };
 
 export const awsConnectionKeyAccessDescriptions = {
   [CONNECTION_TYPES.AWS_MANAGEMENT]: awsDefaultAccessKeyDescriptions,
-  [CONNECTION_TYPES.AWS_MEMBER]: awsMemberAccessKeyDescriptions,
-  [CONNECTION_TYPES.AWS_STANDALONE]: awsDefaultAccessKeyDescriptions
+  [CONNECTION_TYPES.AWS_MEMBER]: awsMemberAccessKeyDescriptions
 };

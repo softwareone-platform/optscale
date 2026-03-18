@@ -44,6 +44,9 @@ export default [
           // if unset, default is just '.js', but it must be re-added explicitly if set
           extensions: [".js", ".jsx", ".ts", ".tsx"],
           moduleDirectory: ["node_modules", "src/"]
+        },
+        typescript: {
+          project: './tsconfig.json'
         }
       },
       react: {

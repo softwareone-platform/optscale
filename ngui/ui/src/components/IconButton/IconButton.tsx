@@ -30,7 +30,7 @@ const IconButton = forwardRef(
       customClass,
       isLoading,
       disabled = false,
-      color = "primary",
+      color = "info",
       size = "small",
       type = "button",
       edge = false,
