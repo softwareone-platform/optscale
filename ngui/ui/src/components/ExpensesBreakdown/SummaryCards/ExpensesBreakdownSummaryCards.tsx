@@ -1,11 +1,8 @@
 import SummaryGrid from "components/SummaryGrid";
 import { SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
-import { getPoolColorStatus } from "utils/layouts";
-import { intPercentXofY } from "utils/math";
+import { getPoolColorStatusByLimit } from "utils/layouts";
 
 const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading = false, pdfIds = {} }) => {
-  const percent = intPercentXofY(total, previousTotal);
-
   const summaryData = [
     {
       key: "totalExpensesForSelectedPeriod",
@@ -13,7 +10,7 @@ const ExpensesBreakdownSummaryCards = ({ total = 0, previousTotal = 0, isLoading
       valueComponentProps: {
         value: total
       },
-      color: getPoolColorStatus(percent),
+      color: getPoolColorStatusByLimit(total, previousTotal),
       isLoading,
       captionMessageId: "totalExpensesForSelectedPeriod",
       pdfId: pdfIds.totalExpensesForSelectedPeriod
