@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from cryptography.fernet import Fernet
 from datetime import datetime
 from decimal import Decimal
+from functools import cache
 from string import ascii_letters, digits
 
 import json_excel_converter.xlsx.formats as ExcelFormats
@@ -517,6 +518,7 @@ def get_root_directory_path():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+@cache
 def _get_encryption_salt():
     return Config().client.encryption_salt()
 
