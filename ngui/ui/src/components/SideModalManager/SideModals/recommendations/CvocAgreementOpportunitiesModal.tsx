@@ -15,7 +15,7 @@ class CvocAgreementOpportunitiesModal extends BaseSideModal {
   get content() {
     return (
       <DaysThreshold
-        messageId={"thresholds.cvosAgreementOpportunities"}
+        messageId="thresholds.cvosAgreementOpportunities"
         recommendationType={this.payload?.recommendationType}
         onSuccess={this.closeSideModal}
       />

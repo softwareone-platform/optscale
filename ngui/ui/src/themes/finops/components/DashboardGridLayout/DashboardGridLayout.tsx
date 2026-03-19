@@ -54,7 +54,7 @@ const DashboardGridLayout = ({
   ].filter(({ node }) => Boolean(node));
 
   return (
-    <Grid spacing={3} borderRight={"none"} borderLeft={"none"} container>
+    <Grid spacing={3} borderRight="none" borderLeft="none" container>
       {squareNodes.map(({ key, node, capability }) => (
         <CapabilityWrapper capability={capability} key={key}>
           <Grid sx={{ "& > .MuiCard-root": MPT_BOX_WHITE_SHADOW_RADIUS_2 }} item xs={12} lg={6}>

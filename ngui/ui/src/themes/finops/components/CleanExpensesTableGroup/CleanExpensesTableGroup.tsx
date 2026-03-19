@@ -198,7 +198,7 @@ const CleanExpensesTableGroup = ({
   return (
     <Box>
       <Grid container>
-        <Grid item xs={"auto"} md={"auto"} sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2}>
+        <Grid item xs="auto" md="auto" sx={{ lineHeight: SPACING_2 }} paddingRight={MPT_SPACING_2}>
           <Box marginTop={SPACING_1}>
             <LinearSelector
               value={
@@ -209,7 +209,7 @@ const CleanExpensesTableGroup = ({
                       value: groupState.groupBy
                     }
               }
-              label={<LabelColon messageId={"groupBy"} noWrap />}
+              label={<LabelColon messageId="groupBy" noWrap />}
               onChange={({ name: groupType, value: groupBy }) => {
                 updateSearchParams({
                   [getPaginationQueryKey(CLEAN_EXPENSES_TABLE_QUERY_PARAM_PREFIX)]: undefined,
@@ -266,10 +266,10 @@ const CleanExpensesTableGroup = ({
             />
           </Box>
         </Grid>
-        <Grid item xs={"auto"} md={"auto"}>
+        <Grid item xs="auto" md="auto">
           {!isGroupStateEmpty && (
-            <Box display={"flex"}>
-              <Divider orientation={"vertical"} flexItem sx={{ marginTop: MPT_SPACING_1, marginBottom: MPT_SPACING_1 }} />
+            <Box display="flex">
+              <Divider orientation="vertical" flexItem sx={{ marginTop: MPT_SPACING_1, marginBottom: MPT_SPACING_1 }} />
               <SortGroupsBySelector sortGroupsBy={sortGroupsBy} setSortGroupsBy={setSortGroupsBy} />
             </Box>
           )}

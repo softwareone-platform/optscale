@@ -19,7 +19,7 @@ const EventsOverviewListItem = (props) => {
             <Box className={classes[level.toString().toLowerCase()] || classes.info} ml={-2}>
               <div className={classes.level} />
             </Box>
-            <Box pl={1} fontWeight={"fontWeightBold"}>
+            <Box pl={1} fontWeight="fontWeightBold">
               <Typography className={classes.title}>{title}</Typography>
               <Typography className={classes.description}>{sliceByLimitWithEllipsis(description, 350)}</Typography>
               <Typography className={classes.timeAgo}>

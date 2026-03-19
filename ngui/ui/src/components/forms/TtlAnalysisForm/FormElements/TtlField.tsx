@@ -63,7 +63,7 @@ const TtlField = ({ ttlPolicyLimit, ttlMode, isLoading = false }) => {
               label: (
                 <div data-test-id="lbl_custom_pool" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                   <FormattedMessage id="custom" />
-                  {":"}&nbsp;
+                  :&nbsp;
                   <Input
                     dataTestId="input_custom_pool"
                     onClick={() => setValue(FIELD_NAME, customTtlRadioName)}

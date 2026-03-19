@@ -1,0 +1,19 @@
+---
+all:
+  children:
+    local:
+      hosts:
+        ubuntu-2404-arm-64:
+          # generated from the output of `vagrant ssh-config`
+          ansible_host: 127.0.0.1
+          ansible_port: "50223"
+          ansible_user: vagrant
+          ansible_ssh_user: vagrant
+
+          # Use provider-specific private key (qemu / virtualbox)
+          ansible_ssh_private_key_file: ".vagrant/machines/ubuntu-2404-arm-64/{{ lookup('env', 'VAGRANT_DEFAULT_PROVIDER') | default('qemu') }}/private_key"
+
+          ansible_ssh_common_args: >-
+            -o StrictHostKeyChecking=no
+            -o UserKnownHostsFile=/dev/null
+            -o LogLevel=FATAL

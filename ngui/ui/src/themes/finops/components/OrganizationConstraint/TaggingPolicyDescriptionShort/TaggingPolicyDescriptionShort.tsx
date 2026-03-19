@@ -10,22 +10,19 @@ const TaggingPolicyDescriptionShort = ({ conditions }) => {
 
   if (!prohibitedTag) {
     return (
-      <InlineSeverityAlert messageId={"taggingPolicy.requiredTagDescriptionShort"} messageValues={{ requiredTag, strong }} />
+      <InlineSeverityAlert messageId="taggingPolicy.requiredTagDescriptionShort" messageValues={{ requiredTag, strong }} />
     );
   }
 
   if (!requiredTag) {
     return (
-      <InlineSeverityAlert
-        messageId={"taggingPolicy.prohibitedTagDescriptionShort"}
-        messageValues={{ prohibitedTag, strong }}
-      />
+      <InlineSeverityAlert messageId="taggingPolicy.prohibitedTagDescriptionShort" messageValues={{ prohibitedTag, strong }} />
     );
   }
 
   return (
     <InlineSeverityAlert
-      messageId={"taggingPolicy.tagsCorrelationDescriptionShort"}
+      messageId="taggingPolicy.tagsCorrelationDescriptionShort"
       messageValues={{ firstTag: prohibitedTag, secondTag: requiredTag, strong }}
     />
   );

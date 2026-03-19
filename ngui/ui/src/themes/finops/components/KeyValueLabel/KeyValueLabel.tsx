@@ -53,7 +53,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
       >
         <Box data-test-id={keyDataTestId} className={classes.keyBox}>
           {renderKey()}
-          {<>:&nbsp;</>}
+          <>:&nbsp;</>
         </Box>
         <Box className={classes.valueBox} data-test-id={valueDataTestId}>
           <span style={{ fontWeight: isBoldValue ? "bold" : "normal" }}>{renderValue()}</span>

@@ -164,7 +164,7 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
         marginBottom: MPT_SPACING_3
       }}
     >
-      <Typography component="span" variant={"subtitle1"}>
+      <Typography component="span" variant="subtitle1">
         {tableSelectionState.state === TABLE_SELECTION_STATE.NOTHING_SELECTED ? (
           <FormattedMessage id="allNetworkTrafficExpenses" />
         ) : (
@@ -172,7 +172,7 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
         )}
       </Typography>
       <Button
-        messageId={"seeResources"}
+        messageId="seeResources"
         variant="outlined"
         endIcon={<ChevronRightRounded />}
         size="small"
@@ -181,9 +181,9 @@ const TrafficExpenses = ({ expenses, isLoading = false }) => {
 
       {tableSelectionState.state !== TABLE_SELECTION_STATE.NOTHING_SELECTED && (
         <Button
-          messageId={"clearFilter"}
+          messageId="clearFilter"
           variant="outlined"
-          color={"error"}
+          color="error"
           dataTestId="clearFilter"
           endIcon={<CloseIcon />}
           size="small"

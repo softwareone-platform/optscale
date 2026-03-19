@@ -329,7 +329,7 @@ const OrganizationConstraintsMocked = ({ actionBarDefinition }) => {
       actionBarDefinition={actionBarDefinition}
       constraints={constraints}
       isLoading={false}
-      addButtonLink={""}
+      addButtonLink=""
     />
   );
 };

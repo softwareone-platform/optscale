@@ -83,7 +83,7 @@ const Tooltip = ({ coords, onBack, onNext, onSkip, stepIndex, size, stepContent:
         </CardActions>
       </Card>
       <Box className={scrollHelpClasses}>
-        <Typography color={"white"} marginRight={SPACING_1}>
+        <Typography color="white" marginRight={SPACING_1}>
           <FormattedMessage id="scrollToTheTarget" />
         </Typography>
         <Box>

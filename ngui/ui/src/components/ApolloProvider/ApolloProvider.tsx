@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ApolloClient, ApolloProvider, InMemoryCache, split, HttpLink, from } from "@apollo/client";
 import { onError, type ErrorResponse } from "@apollo/client/link/error";
 import { RetryLink } from "@apollo/client/link/retry";
@@ -10,10 +11,14 @@ import { useSignOut } from "hooks/useSignOut";
 import { processGraphQLErrorData } from "utils/apollo";
 import { getEnvironmentVariable } from "utils/env";
 
+type ApolloClientProviderProps = {
+  children: ReactNode;
+};
+
 const httpBase = getEnvironmentVariable("VITE_APOLLO_HTTP_BASE");
 const wsBase = getEnvironmentVariable("VITE_APOLLO_WS_BASE");
 
-const ApolloClientProvider = ({ children }) => {
+const ApolloClientProvider = ({ children }: ApolloClientProviderProps) => {
   const { token } = useGetToken();
 
   const signOut = useSignOut();
@@ -21,7 +26,7 @@ const ApolloClientProvider = ({ children }) => {
   const cache = new InMemoryCache();
 
   const httpLink = new HttpLink({
-    uri: `${httpBase}/api`,
+    uri: (operation) => `${httpBase}/api?op=${operation.operationName}`,
     headers: {
       "x-optscale-token": token
     }

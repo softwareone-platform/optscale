@@ -16,8 +16,7 @@ const EnvironmentCiCdIntegration = ({ text }) => (
     </Box>
     <Box mb={2}>
       <Typography>
-        <FormattedMessage id="youNeedToInsertFollowingPOSTRequest" />
-        {":"}
+        <FormattedMessage id="youNeedToInsertFollowingPOSTRequest" />:
       </Typography>
     </Box>
     <Box mb={2}>

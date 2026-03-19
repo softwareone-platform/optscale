@@ -94,8 +94,8 @@ const ExpensesBreakdownByPeriodWidget = ({ render, customContent = null }) => {
   return (
     <>
       <ResponsiveStack>
-        <LabelColon messageId={"timeInterval"} />
-        <Stack direction={"row"} alignItems={"center"}>
+        <LabelColon messageId="timeInterval" />
+        <Stack direction="row" alignItems="center">
           <BreakdownLinearSelector value={periodType} items={breakdownLinearSelectorItems} onChange={handleClick} />
           <QuestionMark
             messageId="expensesBreakdownBarChartDescription"

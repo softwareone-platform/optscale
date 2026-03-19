@@ -26,7 +26,7 @@ const InstancesForShutdownForm = ({ recommendationType, onSuccess }) => {
     <FormProvider {...methods}>
       <form noValidate onSubmit={submitHandler}>
         <TextWithInlineInput
-          messageId={"thresholds.instancesForShutdown.intro"}
+          messageId="thresholds.instancesForShutdown.intro"
           isLoading={isGetDataLoading}
           lessOrEqualValidation={lessOrEqual(COMMON_YEAR_LENGTH)}
           name={THRESHOLD_INPUT_NAMES.DAYS_THRESHOLD}

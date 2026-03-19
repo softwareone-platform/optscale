@@ -1,11 +1,10 @@
+import { isValidElement } from "react";
 import { Box } from "@mui/material";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { Highlight, themes } from "prism-react-renderer";
 import ReactMarkdown from "react-markdown";
-import remarkDirective from "remark-directive";
 import remarkGfm from "remark-gfm";
-import { visit } from "unist-util-visit";
 import { v4 as uuidv4 } from "uuid";
 import CopyText from "components/CopyText";
 import { MarkdownProps } from "./types";
@@ -13,22 +12,7 @@ import { MarkdownProps } from "./types";
 const THEME = themes.github;
 const PADDING = "0.5em";
 
-function reactMarkdownRemarkDirective() {
-  return (tree) => {
-    visit(tree, ["textDirective", "leafDirective", "containerDirective"], (node) => {
-      // won't work without reassign.
-      // eslint-disable-next-line no-param-reassign
-      node.data = {
-        hName: node.name,
-        hProperties: node.attributes,
-        ...node.data
-      };
-      return node;
-    });
-  };
-}
-
-const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
+const Markdown = ({ children, urlTransform }: MarkdownProps) => (
   <Box
     sx={{
       "& > :last-child": {
@@ -37,8 +21,7 @@ const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
     }}
   >
     <ReactMarkdown
-      transformImageUri={(uri) => (typeof transformImageUri === "function" ? transformImageUri(uri) : uri)}
-      linkTarget="_blank"
+      urlTransform={urlTransform}
       components={{
         a: ({ children: markdownChildren, href }) => (
           <Link href={href} target="_blank" rel="noopener noreferrer">
@@ -84,8 +67,7 @@ const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
           </Typography>
         ),
         pre: ({ children: pChildren }) => {
-          const codeText = pChildren[0].props.children;
-
+          const codeText = isValidElement(pChildren) ? pChildren.props.children : String(pChildren);
           return (
             <Typography
               component="div"
@@ -108,11 +90,11 @@ const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
             </Typography>
           );
         },
-        code: ({ inline, className, children: codeChildren }) => {
+        code: ({ className, children: codeChildren }) => {
           const match = /language-(\w+)/.exec(className || "");
 
           // Block code
-          if (!inline && match) {
+          if (match) {
             return (
               <Highlight theme={THEME} code={String(codeChildren).replace(/\n$/, "")} language={match[1]}>
                 {({ style, tokens, getLineProps, getTokenProps }) => (
@@ -154,7 +136,7 @@ const Markdown = ({ children, transformImageUri }: MarkdownProps) => (
           );
         }
       }}
-      remarkPlugins={[remarkGfm, remarkDirective, reactMarkdownRemarkDirective]}
+      remarkPlugins={[remarkGfm]}
     >
       {children}
     </ReactMarkdown>

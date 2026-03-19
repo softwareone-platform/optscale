@@ -17,7 +17,7 @@ class VolumesNotAttachedForLongTimeModal extends BaseSideModal {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId={"thresholds.volumesNotAttached"}
+          messageId="thresholds.volumesNotAttached"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />

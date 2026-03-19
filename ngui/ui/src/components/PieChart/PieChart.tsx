@@ -71,7 +71,6 @@ const PieChart = ({
         animate={false}
         theme={{
           tooltip: {
-            minWidth: "250px",
             zIndex: theme.zIndex.tooltip
           }
         }}

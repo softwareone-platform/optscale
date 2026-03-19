@@ -2,6 +2,11 @@ import BaseSideModal from "../BaseSideModal";
 import DaysThreshold from "./components/DaysThreshold";
 import InformationWrapper from "./components/InformationWrapper";
 
+/**
+ * @deprecated OSN-1266.
+ * `ObsoleteImagesModal` is deprecated because `ObsoleteImages` was replaced with `SnapshotsWithNonUsedImages`.
+ */
+
 class ObsoleteImagesModal extends BaseSideModal {
   headerProps = {
     messageId: "obsoleteImagesTitle",

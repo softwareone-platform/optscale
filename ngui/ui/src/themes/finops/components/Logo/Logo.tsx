@@ -14,7 +14,7 @@ interface LogoProps {
 
 const getLogo = (demo: boolean) => (demo ? logoDemo : logo);
 const Logo = ({ dataTestId, demo = false, active = false, width = "auto", height = "auto" }: LogoProps) => {
-  const renderLogo = <img width={width} height={height} src={getLogo(demo)} alt={"swo-logo"} data-test-id={dataTestId} />;
+  const renderLogo = <img width={width} height={height} src={getLogo(demo)} alt="swo-logo" data-test-id={dataTestId} />;
 
   return active ? (
     <Link component={RouterLink} sx={{ display: "flex" }} to={HOME}>

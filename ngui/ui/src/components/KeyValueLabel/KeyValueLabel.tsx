@@ -70,7 +70,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
           }}
         >
           {renderKey()}
-          {<>:&nbsp;</>}
+          <>:&nbsp;</>
         </Box>
         <Box
           sx={{

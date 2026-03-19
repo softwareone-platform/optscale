@@ -115,7 +115,7 @@ const CloudExpensesChart = ({ cloudAccounts, limit, forecast, isLoading = false 
             value={limit}
             chartBorderWidth={CHART_BORDER_WIDTH}
             chartSegmentHeight={CHART_SEGMENT_HEIGHT}
-            valueMessageId={"limit"}
+            valueMessageId="limit"
             chartBase={chartBase}
           />
         ) : (

@@ -113,7 +113,7 @@ const Cell = ({
       <FormattedMessage
         id="{key}:{value}"
         values={{
-          key: <FormattedMessage id={"used"} />,
+          key: <FormattedMessage id="used" />,
           value: <strong>{valueFormatterFn(used)}</strong>
         }}
       />
@@ -122,12 +122,12 @@ const Cell = ({
       <FormattedMessage
         id="{key}:{value}"
         values={{
-          key: <FormattedMessage id={"requests"} />,
+          key: <FormattedMessage id="requests" />,
           value: requests ? (
             <strong>{valueFormatterFn(requests)}</strong>
           ) : (
             <strong>
-              <FormattedMessage id={"none"} />
+              <FormattedMessage id="none" />
             </strong>
           )
         }}
@@ -137,12 +137,12 @@ const Cell = ({
       <FormattedMessage
         id="{key}:{value}"
         values={{
-          key: <FormattedMessage id={"limit"} />,
+          key: <FormattedMessage id="limit" />,
           value: limit ? (
             <strong>{valueFormatterFn(limit)}</strong>
           ) : (
             <strong>
-              <FormattedMessage id={"none"} />
+              <FormattedMessage id="none" />
             </strong>
           )
         }}

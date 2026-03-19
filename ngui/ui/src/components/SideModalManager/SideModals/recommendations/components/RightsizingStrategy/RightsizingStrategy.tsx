@@ -112,7 +112,7 @@ const RightsizingStrategy = ({
                 const { value } = event.target;
                 onCustomMetricChange("limit", Math.abs(value));
               }}
-              endAdornment={"%"}
+              endAdornment="%"
               error={Object.keys(thresholdValidationRules).includes(error.type)}
             />
           )

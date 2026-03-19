@@ -15,7 +15,7 @@ class AbandonedImagesModal extends BaseSideModal {
   get content() {
     return (
       <DaysThreshold
-        messageId={"thresholds.abandonedImages"}
+        messageId="thresholds.abandonedImages"
         recommendationType={this.payload?.recommendationType}
         onSuccess={this.closeSideModal}
       />

@@ -17,7 +17,7 @@ class AbandonedKinesisStreamsModal extends BaseSideModal {
     return (
       <InformationWrapper>
         <DaysThreshold
-          messageId={"thresholds.abandonedKinesisStreams"}
+          messageId="thresholds.abandonedKinesisStreams"
           recommendationType={this.payload?.recommendationType}
           onSuccess={this.closeSideModal}
         />

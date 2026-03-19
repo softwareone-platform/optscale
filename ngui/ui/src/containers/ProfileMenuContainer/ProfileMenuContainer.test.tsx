@@ -13,7 +13,7 @@ it("renders without crashing", () => {
         }
       }}
     >
-      <ProfileMenuContainer name={"profile-name"} />
+      <ProfileMenuContainer name="profile-name" />
     </TestProvider>
   );
   root.unmount();

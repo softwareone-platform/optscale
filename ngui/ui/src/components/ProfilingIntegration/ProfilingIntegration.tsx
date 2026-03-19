@@ -406,7 +406,7 @@ const AddingMilestone = () => (
 
 const AddingStage = () => (
   <>
-    <SectionTitle messageId={"mlProfilingIntegration.addingStage.title"} />
+    <SectionTitle messageId="mlProfilingIntegration.addingStage.title" />
     <MethodDescription
       descriptionMessage={{
         id: "mlProfilingIntegration.addingStage.description"
@@ -558,7 +558,7 @@ const FinishTaskRun = () => (
       descriptionMessage={{
         id: "mlProfilingIntegration.finishTaskRun.description"
       }}
-      method={`arcee.finish()`}
+      method="arcee.finish()"
     />
   </>
 );
@@ -570,7 +570,7 @@ const FailTaskRun = () => (
       descriptionMessage={{
         id: "mlProfilingIntegration.failTaskRun.description"
       }}
-      method={`arcee.error()`}
+      method="arcee.error()"
     />
   </>
 );

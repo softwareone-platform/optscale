@@ -56,7 +56,7 @@ const ExpensesBreakdownTableWidget = ({
   endDateTimestamp
 }) => {
   const title = (
-    <Typography variant={"subtitle1"} display={"inline-block"}>
+    <Typography variant="subtitle1" display="inline-block">
       <FormattedMessage
         id="summaryBy"
         values={{
