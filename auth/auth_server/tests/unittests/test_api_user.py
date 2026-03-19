@@ -722,6 +722,19 @@ class TestUser(TestAuthBase):
         self.assertEqual(response['error']['reason'],
                          'Parameter "type_id" is immutable')
 
+    def test_check_invalid_user_info(self):
+        code, response = self.client.user_exists(
+            'test@email.com', user_info=True)
+        self.assertEqual(code, 200)
+        self.assertEqual(response['exists'], False)
+        self.assertIsNone(response.get('user_info'))
+
+        for invalid_value in [1234, 'invalid']:
+            code, response = self.client.user_exists(
+                'test@email.com', user_info=invalid_value)
+            self.assertEqual(code, 400)
+            self.assertEqual(response['error']['error_code'], 'OA0063')
+
     def test_check_existence(self):
         code, response = self.client.user_exists('test@email.com')
         self.assertEqual(code, 200)
