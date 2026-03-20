@@ -15,7 +15,7 @@ class TestUserOptionsApi(TestAuthBase):
         self.customer2_scope_id = '6cfea3e7-a037-4529-9a14-dd9c5151b1f5'
         self.group11_scope_id = 'be7b4d5e-33b6-40aa-bc6a-00c7d822606f'
         self.hierarchy = (
-            {'root': {'null': {'partner': {
+            {'partner': {
                 'a5cb80ad-891d-4ec2-99de-ba4f20ba2c5d':
                     {'customer': {
                         '19a00828-fbff-4318-8291-4b6c14a8066d':
@@ -26,7 +26,7 @@ class TestUserOptionsApi(TestAuthBase):
                                        '42667dde-0427-49be-9541-8e99362ee96e']
                              },
                     }},
-                '843f42c4-76b5-467f-b5e3-f7370b1235d6': {'customer': {}}}}}})
+                '843f42c4-76b5-467f-b5e3-f7370b1235d6': {'customer': {}}}})
         admin_user = self.create_root_user()
         session = self.db_session
         type_partner = Type(id_=10, name='partner', parent=admin_user.type)
