@@ -89,6 +89,12 @@ def get_handlers(handler_kwargs):
             h_v2, "signin").SignInAsyncHandler, handler_kwargs),
         (urls_v2.verification_codes, get_handler_version(
             h_v2, "verification_codes").VerificationCodeAsyncHandler,
+         handler_kwargs),
+        (urls_v2.user_options_collection, get_handler_version(
+            h_v2, "user_options").UserOptionsAsyncCollectionHandler,
+         handler_kwargs),
+        (urls_v2.user_options, get_handler_version(
+            h_v2, "user_options").UserOptionsAsyncItemHandler,
          handler_kwargs)
     ]
 
