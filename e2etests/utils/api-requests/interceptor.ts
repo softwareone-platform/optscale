@@ -42,7 +42,6 @@ async function interceptGraphQLRequest(
   onIntercepted: () => void,
   variableMatch?: Record<string, any>
 ) {
-  // Match the per-operation URL: the API now appends ?op=<operationName>
   const requestUrl = new RegExp(`[?&]op=${operationName}(?:&|$)`);
 
   await page.route(requestUrl, async route => {
@@ -75,7 +74,6 @@ async function interceptGraphQLRequest(
       });
 
       if (!allVariablesMatch) {
-        // debugLog(`❌ Variable match failed - continuing to next interceptor`);
         return route.fallback();
       }
       debugLog(`✅ Variable match succeeded`);
