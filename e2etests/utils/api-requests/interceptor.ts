@@ -30,17 +30,22 @@ export async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock:
 }
 
 /**
- * Intercepts GraphQL requests matching the provided operation name
+ * Intercepts GraphQL requests matching the provided operation name.
+ * Matches on the request URL (e.g. `api?op=<operationName>`) so that each
+ * operation gets its own route handler, replacing the previous single `/api`
+ * endpoint that was shared by all operations.
  */
 async function interceptGraphQLRequest(
   page: Page,
-  urlPattern: RegExp,
   operationName: string,
   mock: any,
   onIntercepted: () => void,
   variableMatch?: Record<string, any>
 ) {
-  await page.route(urlPattern, async route => {
+  // Match the per-operation URL: the API now appends ?op=<operationName>
+  const requestUrl = new RegExp(`[?&]op=${operationName}(?:&|$)`);
+
+  await page.route(requestUrl, async route => {
     const postData = route.request().postData();
     if (!postData) return route.fallback();
 
@@ -50,12 +55,12 @@ async function interceptGraphQLRequest(
     debugLog(`\n=== GraphQL Request Interceptor ===`);
     debugLog(`Expected operation: ${operationName}`);
     debugLog(`Actual operation: ${body.operationName}`);
-    debugLog(`Expected variableMatch: ${variableMatch}`);
+    debugLog(`Expected variableMatch: ${JSON.stringify(variableMatch)}`);
     debugLog(`Actual variables: ${JSON.stringify(body.variables, null, 2)}`);
 
     // Only proceed if operation name matches
     if (body.operationName !== operationName) {
-      //debugLog(`❌ Operation name mismatch - continuing to next interceptor`);
+      debugLog(`❌ Operation name mismatch - continuing to next interceptor`);
       return route.fallback();
     }
 
@@ -70,7 +75,7 @@ async function interceptGraphQLRequest(
       });
 
       if (!allVariablesMatch) {
-        debugLog(`❌ Variable match failed - continuing to next interceptor`);
+        // debugLog(`❌ Variable match failed - continuing to next interceptor`);
         return route.fallback();
       }
       debugLog(`✅ Variable match succeeded`);
@@ -112,13 +117,13 @@ export async function apiInterceptors(page: Page, config: InterceptionEntry[], f
     debugLog(`\n=== Registering Interceptor ${index + 1} ===`);
     debugLog(`ID: ${interceptorId}`);
     debugLog(`GraphQL Operation: ${gql || 'N/A'}`);
-    debugLog(`Variable Match: ${variableMatch || 'None'}`);
-    debugLog(`URL Pattern: ${urlRegExp}`);
+    debugLog(`Variable Match: ${JSON.stringify(variableMatch) || 'None'}`);
+    debugLog(`URL Pattern: ${gql ? `[?&]op=${gql}` : urlRegExp}`);
 
     interceptorHits.set(interceptorId, false);
 
     return gql
-      ? interceptGraphQLRequest(page, urlRegExp, gql, mock, registerHit(interceptorId), variableMatch)
+      ? interceptGraphQLRequest(page, gql, mock, registerHit(interceptorId), variableMatch)
       : interceptRESTRequest(page, urlRegExp, mock, registerHit(interceptorId));
   });
 

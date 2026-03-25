@@ -15,7 +15,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter = 'Region';
-    const filterOption = 'West Europe';
+    const filterOption = 'East US';
     const categorizeBy = 'Resource type';
     const groupByTag = 'costcenter';
     const perspectiveName = `Test Perspective ${new Date().getTime()}`;

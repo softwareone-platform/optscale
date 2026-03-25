@@ -19,7 +19,7 @@ import {
 import { getCurrentUTCTimestamp, getTimestampWithVariance } from '../utils/date-range-utils';
 
 test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
-  test.fixme(process.env.CI === '1', 'Tests are unstable in CI environment due to external dependencies and may cause data corruption. Run locally for now.');
+  test.fixme();
   test.describe.configure({ mode: 'serial' });
   test.use({ restoreSession: true });
 
@@ -177,6 +177,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
 });
 
 test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
+  test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
   test.describe.configure({ mode: 'serial' });
 
   const apiInterceptions: InterceptionEntry[] = [
@@ -259,7 +260,7 @@ test.describe(
   { tag: ['@ui', '@cloud-accounts', '@events'] },
   () => {
     test.describe.configure({ mode: 'serial' });
-    test.fixme(process.env.CI === '1', 'Tests are unstable in CI environment due to external dependencies and may cause data corruption. Run locally for now.');
+    test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
     test.use({ restoreSession: true });
 
     test('[232954] Verify that disconnecting and creating a cloud account is recorded in the events log', async ({
