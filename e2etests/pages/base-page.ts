@@ -944,7 +944,7 @@ export abstract class BasePage {
    * @returns {Promise<void>} A promise that resolves when the filter is applied.
    */
   async selectFilterByText(filter: string, filterOption: string): Promise<void> {
-    const filterLocator = this.filtersBox.getByRole('button', { name: new RegExp(`^${filter}`) });
+    const filterLocator = this.filtersBox.getByRole('button', { name: new RegExp(`^${filter}`) }).first();
     await this.selectFilter(filterLocator, filterOption);
   }
 
@@ -995,7 +995,7 @@ export abstract class BasePage {
       if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
       await filter.click();
 
-      await this.filterPopover.getByLabel(filterOption).click();
+      await this.filterPopover.getByLabel(filterOption).first().click();
       await this.filterApplyButton.click();
     }
   }

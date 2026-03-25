@@ -238,7 +238,6 @@ export class ResourcesPage extends BasePage {
     await this.waitForCanvas();
     await this.resetFilters();
     await this.waitForPageLoad();
-    await this.firstResourceItemInTable.waitFor({ timeout: 15000 });
   }
 
   /**

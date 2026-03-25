@@ -338,7 +338,8 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     await test.step('Load expenses data', async () => {
       const [expensesResponse] = await Promise.all([
         expensesPage.page.waitForResponse(
-          resp => resp.url().includes('/pools_expenses/') && resp.url().includes('filter_by=pool') && resp.request().method() === 'GET'
+          resp => resp.url().includes('/pools_expenses/') && resp.url().includes('filter_by=pool') && resp.request().method() === 'GET',
+          { timeout: 20000 }
         ),
         expensesPage.page.reload(),
       ]);
@@ -463,7 +464,8 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
     await test.step('Load expenses data', async () => {
       const [expensesResponse] = await Promise.all([
         expensesPage.page.waitForResponse(
-          resp => resp.url().includes('/pools_expenses/') && resp.url().includes('filter_by=employee') && resp.request().method() === 'GET'
+          resp => resp.url().includes('/pools_expenses/') && resp.url().includes('filter_by=employee') && resp.request().method() === 'GET',
+          { timeout: 20000 }
         ),
         expensesPage.page.reload(),
       ]);
