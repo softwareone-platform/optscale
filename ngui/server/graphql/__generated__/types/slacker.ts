@@ -128,7 +128,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   connect?: Resolver<Maybe<ResolversTypes["SlackUser"]>, ParentType, ContextType, RequireFields<MutationConnectArgs, "secret">>;
@@ -136,7 +136,7 @@ export type MutationResolvers<
 
 export type QueryResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
+  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -144,7 +144,7 @@ export type QueryResolvers<
 
 export type SlackUserResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["SlackUser"] = ResolversParentTypes["SlackUser"]
+  ParentType extends ResolversParentTypes["SlackUser"] = ResolversParentTypes["SlackUser"],
 > = {
   slack_user_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
