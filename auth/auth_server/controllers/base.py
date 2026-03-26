@@ -221,7 +221,13 @@ class BaseController(object):
             if id_ in [x[0] for x in aset]:
                 # downward hierarchy was derived from a higher entity
                 continue
-            response = self.get_downward_hierarchy(res_type, id_)
+            try:
+                response = self.get_downward_hierarchy(res_type, id_)
+            except requests.exceptions.HTTPError as exc:
+                if exc.response.status_code == 404:
+                    # resource is deleted
+                    continue
+                raise
             self.render(action_resources, aset, response)
         result = dict(map(lambda k: (k, list()), action_list))
         for i in aset:
