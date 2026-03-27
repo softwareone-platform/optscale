@@ -2,6 +2,7 @@
 import { test } from '../fixtures/page.fixture';
 import { expect, Locator } from '@playwright/test';
 import { debugLog } from '../utils/debug-logging';
+import { LARGE_DATA_TIMEOUT } from '../playwright.config';
 
 test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@perspectives', '@slow'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -23,7 +24,9 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await test.step('Select options to save as a perspective', async () => {
       await resourcesPage.selectFilterByText(filter, filterOption);
       await resourcesPage.clickExpensesTab();
-      await resourcesPage.selectCategorizeBy(categorizeBy);
+      await resourcesPage.selectCategorizeBy(categorizeBy, false);
+      await resourcesPage.waitForAPIResponseByPartialTextMatch('breakdown_expenses', LARGE_DATA_TIMEOUT);
+      await resourcesPage.waitForCanvas();
       await resourcesPage.selectGroupByTag(groupByTag);
       await resourcesPage.click(resourcesPage.savePerspectiveBtn);
     });
