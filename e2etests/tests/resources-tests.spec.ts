@@ -734,11 +734,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
   test.beforeEach('Login admin user', async ({ resourcesPage }) => {
     await test.step('Login admin user', async () => {
       await resourcesPage.page.clock.setFixedTime(new Date('2025-07-15T14:40:00Z'));
-      await resourcesPage.navigateToURL('/resources');
-      await resourcesPage.waitForAllProgressBarsToDisappear();
-      await resourcesPage.waitForCanvas();
-      await resourcesPage.resetFilters();
-      await resourcesPage.firstResourceItemInTable.waitFor();
+      await resourcesPage.navigateToResourcesPageAndResetFilters();
     });
   });
 
@@ -807,7 +803,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     let match: boolean;
 
     await test.step('Change categorization to Region and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('Region');
+      await resourcesPage.selectCategorizeBy('Region', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -818,7 +814,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-resource-expenses-chart-export.png');
 
     await test.step('Change categorization to Resource Type and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('Resource type');
+      await resourcesPage.selectCategorizeBy('Resource type', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -829,7 +825,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-data-expenses-chart-export.png');
 
     await test.step('Change categorization to Data source and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('Data source');
+      await resourcesPage.selectCategorizeBy('Data source', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -840,7 +836,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-owner-expenses-chart-export.png');
 
     await test.step('Change categorization to Owner and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('Owner');
+      await resourcesPage.selectCategorizeBy('Owner', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -851,7 +847,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-pool-expenses-chart-export.png');
 
     await test.step('Change categorization to Pool and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('Pool');
+      await resourcesPage.selectCategorizeBy('Pool', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -862,7 +858,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-k8node-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s node and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('K8s node');
+      await resourcesPage.selectCategorizeBy('K8s node', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -873,7 +869,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-k8sservice-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s service and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('K8s service');
+      await resourcesPage.selectCategorizeBy('K8s service', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);
@@ -884,7 +880,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     diffPath = path.resolve('tests', 'downloads', 'diff-k8snamespace-expenses-chart-export.png');
 
     await test.step('Change categorization to K8s namespace and verify the chart', async () => {
-      await resourcesPage.selectCategorizeBy('K8s namespace');
+      await resourcesPage.selectCategorizeBy('K8s namespace', false);
       await resourcesPage.downloadFile(resourcesPage.exportChartBtn, actualPath);
       match = await comparePngImages(expectedPath, actualPath, diffPath);
       expect.soft(match).toBe(true);

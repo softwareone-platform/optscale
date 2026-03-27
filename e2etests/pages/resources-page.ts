@@ -1,6 +1,7 @@
-import {BasePage} from './base-page';
-import {Locator, Page} from '@playwright/test';
-import {debugLog} from '../utils/debug-logging';
+import { BasePage } from './base-page';
+import { Locator, Page } from '@playwright/test';
+import { debugLog } from '../utils/debug-logging';
+import { LARGE_DATA_TIMEOUT } from '../playwright.config';
 
 /**
  * Represents the Resources Page.
@@ -211,63 +212,88 @@ export class ResourcesPage extends BasePage {
   /**
    * Navigates to the Resources page and resets all active filters.
    *
-   * This method navigates to `/resources`, waits for all progress bars to disappear,
-   * waits for the canvas to finish rendering, resets any active filters, waits for the
-   * page to fully load, and finally waits for the first resource item in the table to
-   * be present. This ensures the page is in a clean, fully loaded state before any
-   * test interactions begin.
+   * Performs the following steps:
+   * 1. Navigates to the `/resources` URL.
+   * 2. Waits for the first API response matching any of the expected data identifiers.
+   * 3. Waits for all progress bars to disappear.
+   * 4. Resets all active filters on the page.
+   * 5. Waits for the page to finish loading.
    *
-   * @returns {Promise<void>} Resolves when the page is loaded, filters are reset, and
-   *   the first resource table item is visible.
+   * @param {number} [timeout=LARGE_DATA_TIMEOUT] - Maximum time in milliseconds to wait for the
+   *   initial API response. Defaults to `LARGE_DATA_TIMEOUT` to accommodate slow data loads.
+   * @returns {Promise<void>} Resolves when the page is loaded and all filters have been reset.
    *
    * @example
-   * // Use in a beforeEach to ensure a clean state before each test
-   * test.beforeEach(async ({ resourcesPage }) => {
-   *   await resourcesPage.navigateToResourcesPageAndResetFilters();
-   * });
+   * // Navigate and reset filters using the default timeout
+   * await resourcesPage.navigateToResourcesPageAndResetFilters();
    *
-   * @remarks
-   * - Prefer this method over a bare `navigateToURL()` call when tests require a
-   *   filter-free state and a populated resource table before proceeding.
-   * - The `firstResourceItemInTable` wait uses a 15 second timeout to account for
-   *   slow data loading on the Resources page.
+   * @example
+   * // Navigate and reset filters with a custom timeout
+   * await resourcesPage.navigateToResourcesPageAndResetFilters(60000);
    */
-  async navigateToResourcesPageAndResetFilters(): Promise<void> {
+  async navigateToResourcesPageAndResetFilters(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     await this.navigateToURL('/resources');
+    await this.waitForFirstAPIResponseByPartialTextMatch(
+      ['op=CleanExpenses', 'resources_count', 'breakdown_tags', 'op=MetaBreakdown'],
+      timeout
+    );
     await this.waitForAllProgressBarsToDisappear();
-    await this.waitForCanvas();
     await this.resetFilters();
     await this.waitForPageLoad();
   }
 
   /**
    * Clicks the "Expenses" tab on the Resources page.
-   * This method interacts with the `tabExpensesBtn` locator and waits for the canvas to update.
    *
-   * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
+   * If the tab is not already selected, it clicks the tab button and optionally
+   * waits for the breakdown expenses API response and all progress bars to disappear.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the API response and progress bars after clicking.
+   *   Set to `false` to skip waiting, e.g. when chaining multiple interactions.
+   * @returns {Promise<void>} Resolves when the tab is active and the optional wait is complete.
+   *
+   * @example
+   * // Click the Expenses tab and wait for data to load
+   * await resourcesPage.clickExpensesTab();
+   *
+   * @example
+   * // Click without waiting
+   * await resourcesPage.clickExpensesTab(false);
    */
-  async clickExpensesTab(wait = true): Promise<void> {
+  async clickExpensesTab(wait: boolean = true): Promise<void> {
     debugLog('Clicking ExpensesTab');
     if ((await this.tabExpensesBtn.getAttribute('aria-selected')) !== 'true') {
       await this.tabExpensesBtn.click();
-    }
-    if (wait) {
-      await this.waitForCanvas();
+      if (wait) {
+        await this.waitForAPIResponseByPartialTextMatch('breakdown_expenses', LARGE_DATA_TIMEOUT);
+      }
       await this.waitForAllProgressBarsToDisappear();
     }
   }
 
   /**
    * Clicks the "Resource Count" tab on the Resources page.
-   * This method interacts with the `tabResourceCountBtn` locator and waits for the canvas to update.
    *
-   * @returns {Promise<void>} Resolves when the tab is clicked and the canvas is updated.
+   * Clicks the tab button and optionally waits for the resource count API
+   * response and all progress bars to disappear.
+   *
+   * @param {boolean} [wait=true] - Whether to wait for the API response and progress bars after clicking.
+   *   Set to `false` to skip waiting, e.g. when chaining multiple interactions.
+   * @returns {Promise<void>} Resolves when the tab is clicked and the optional wait is complete.
+   *
+   * @example
+   * // Click the Resource Count tab and wait for data to load
+   * await resourcesPage.clickResourceCountTab();
+   *
+   * @example
+   * // Click without waiting
+   * await resourcesPage.clickResourceCountTab(false);
    */
   async clickResourceCountTab(wait = true): Promise<void> {
     debugLog('Clicking Resource Count tab');
     await this.tabResourceCountBtn.click();
     if (wait) {
-      await this.waitForCanvas();
+      await this.waitForAPIResponseByPartialTextMatch('resources_count', LARGE_DATA_TIMEOUT);
       await this.waitForAllProgressBarsToDisappear();
     }
   }
@@ -282,7 +308,7 @@ export class ResourcesPage extends BasePage {
     debugLog('Clicking Tags Tab');
     await this.tabTagsBtn.click();
     if (wait) {
-      await this.waitForCanvas();
+      await this.waitForAPIResponseByPartialTextMatch('breakdown_tags', LARGE_DATA_TIMEOUT);
       await this.waitForAllProgressBarsToDisappear();
     }
   }
@@ -307,11 +333,11 @@ export class ResourcesPage extends BasePage {
    * await resourcesPage.clickMetaTab(false);
    * await resourcesPage.selectMetaCategorizeBy('Region');
    */
-  async clickMetaTab(wait = true): Promise<void> {
+  async clickMetaTab(wait: boolean = true): Promise<void> {
     debugLog('Clicking Meta Tab');
     await this.tabMetaBtn.click();
     if (wait) {
-      await this.waitForCanvas();
+      await this.waitForAPIResponseByPartialTextMatch('op=MetaBreakdown', LARGE_DATA_TIMEOUT);
       await this.waitForAllProgressBarsToDisappear();
     }
   }
@@ -329,17 +355,31 @@ export class ResourcesPage extends BasePage {
 
   /**
    * Selects an option from the "Categorize By" dropdown on the Resources page.
-   * This method uses the `categorizeBySelect` locator to select the specified option
-   * and optionally waits for the page to load and the canvas to update after the selection.
    *
-   * @param {string} option - The option to select from the dropdown.
-   * @param {boolean} [wait=true] - Whether to wait for the page to load and the canvas to update after the selection.
+   * If the selected option differs from the current selection, waits for the
+   * breakdown API response before continuing. Optionally waits for all progress
+   * bars to disappear after the selection.
+   *
+   * @param {string} option - The option to select from the Categorize By dropdown.
+   * @param {boolean} [wait=true] - Whether to wait for the API response and progress bars after selection.
+   *   Set to `false` to skip waiting, e.g. when chaining multiple interactions.
    * @returns {Promise<void>} Resolves when the option is selected and the optional wait is complete.
+   *
+   * @example
+   * // Select a categorize by option and wait for data to load
+   * await resourcesPage.selectCategorizeBy('Service name');
+   *
+   * @example
+   * // Select without waiting
+   * await resourcesPage.selectCategorizeBy('Region', false);
    */
   async selectCategorizeBy(option: string, wait: boolean = true): Promise<void> {
+    const selectedOption = await this.selectedComboBoxOption(this.categorizeBySelect);
     await this.selectFromComboBox(this.categorizeBySelect, option);
     if (wait) {
-      await this.waitForCanvas();
+      if (selectedOption !== option) {
+        await this.waitForFirstAPIResponseByPartialTextMatch(['breakdown_by', 'resources_count'], LARGE_DATA_TIMEOUT);
+      }
       await this.waitForAllProgressBarsToDisappear();
     }
   }
@@ -445,7 +485,8 @@ export class ResourcesPage extends BasePage {
       throw new Error('Tag must be provided');
     }
     await this.groupByTagSelect.click();
-    await this.simplePopover.getByText(tag, { exact: true }).click();
+    await this.simplePopover.locator('li').last().waitFor();
+    await this.simplePopover.locator(`//li[.="${tag}"]`).click();
   }
 
   /**
@@ -671,7 +712,7 @@ export class ResourcesPage extends BasePage {
     await perspectiveButton.click();
     await this.perspectivesApplyBtn.click();
     await this.perspectivesApplyBtn.waitFor({ state: 'hidden' });
-    await this.waitForCanvas();
+    await this.waitForFirstAPIResponseByPartialTextMatch(['breakdown_by', 'resources_count', 'op=MetaBreakdown'], LARGE_DATA_TIMEOUT);
     await this.waitForAllProgressBarsToDisappear();
   }
 
@@ -693,6 +734,8 @@ export class ResourcesPage extends BasePage {
    * (case-sensitive) the name of the existing perspective shown in the modal.
    */
   getPerspectiveOverwriteMessage(perspectiveName: string): Locator {
-    return this.savePerspectiveSideModal.getByText(`The existing perspective (${perspectiveName}) will be overwritten with new options.`, { exact: true });
+    return this.savePerspectiveSideModal.getByText(`The existing perspective (${perspectiveName}) will be overwritten with new options.`, {
+      exact: true,
+    });
   }
 }

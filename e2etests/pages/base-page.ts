@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { debugLog, errorLog } from '../utils/debug-logging';
+import { LARGE_DATA_TIMEOUT } from '../playwright.config';
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -20,6 +21,7 @@ export abstract class BasePage {
   readonly warningColor: string; // Default color for warning state
   readonly errorColor: string; // Default color for error state
   readonly successColor: string; // Default color for success state
+  readonly noDataMessage: Locator;
 
   // Filters
   readonly filtersBox: Locator;
@@ -65,6 +67,7 @@ export abstract class BasePage {
     this.warningColor = 'rgb(232, 125, 30)'; // Default color for warning state
     this.errorColor = 'rgb(187, 20, 37)'; // Default color for error state
     this.successColor = 'rgb(0, 120, 77)'; // Default color for success state
+    this.noDataMessage = this.main.getByText('No data to display');
 
     //Filters
     this.filtersBox = this.main.locator('xpath=(//div[.="Filters:"])[1]/..');
@@ -196,7 +199,6 @@ export abstract class BasePage {
     return root.locator(`[data-test-id="${testId}"], [data-testid="${testId}"]`);
   }
 
-
   /**
    * Selects an option from a combo box if it is not already selected.
    *
@@ -290,7 +292,7 @@ export abstract class BasePage {
    * - If no `<canvas>` elements are present on the page, this method will wait until
    *   the timeout is reached.
    */
-  async waitForCanvas(timeout: number = 20000): Promise<void> {
+  async waitForCanvas(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     await this.page.waitForFunction(
       () => {
         const canvases = document.querySelectorAll('canvas');
@@ -328,13 +330,60 @@ export abstract class BasePage {
    *   since `every` returns `true` for an empty array.
    * - No explicit timeout parameter is exposed; the default Playwright function timeout applies.
    */
-  async waitForAllCanvases(): Promise<void> {
-    await this.page.waitForFunction(() => {
-      return Array.from(document.querySelectorAll('canvas')).every(canvas => {
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-      });
+  async waitForAllCanvases(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
+    await this.page.waitForFunction(
+      () => {
+        return Array.from(document.querySelectorAll('canvas')).every(canvas => {
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+        });
+      },
+      null,
+      { timeout }
+    );
+  }
+
+  /**
+   * Waits for an API response whose URL contains the specified text.
+   *
+   * Listens for incoming network responses and resolves as soon as one is received
+   * whose URL includes `urlText` and has an HTTP 200 status code.
+   *
+   * @param {string} urlText - A substring to match against the URL of incoming responses.
+   * @param {number} timeout - Maximum time in milliseconds to wait for a matching response.
+   *   Rejects if no matching response is received within this duration.
+   * @returns {Promise<void>} Resolves when a matching 200 response is received.
+   *
+   * @example
+   * // Wait for the resources API to respond
+   * await basePage.waitForAPIResponseByPartialTextMatch('op=CleanExpenses', 30000);
+   *
+   * @remarks
+   * For waiting on any one of multiple possible URLs, use
+   * `waitForFirstAPIResponseByPartialTextMatch` instead.
+   */
+  async waitForAPIResponseByPartialTextMatch(urlText: string, timeout: number): Promise<void> {
+    debugLog(`Waiting for ${urlText} API response`);
+    await this.page.waitForResponse(response => response.url().includes(urlText) && response.status() === 200, { timeout });
+    debugLog(`API response including ${urlText} received`);
+  }
+
+  /**
+   * Waits for the first API response whose URL matches any of the provided strings.
+   *
+   * Resolves as soon as one matching response is received, ignoring the rest.
+   * Useful when multiple endpoints may satisfy a condition and only the first is needed.
+   *
+   * @param {string[]} urlTexts - Array of URL substrings to match against incoming responses.
+   * @param {number} timeout - Maximum time in milliseconds to wait for a matching response.
+   * @returns {Promise<void>} Resolves when the first matching response is received.
+   */
+  async waitForFirstAPIResponseByPartialTextMatch(urlTexts: string[], timeout: number): Promise<void> {
+    debugLog(`Waiting for first API response matching any of: [${urlTexts.join(', ')}]`);
+    await this.page.waitForResponse(response => urlTexts.some(urlText => response.url().includes(urlText)) && response.status() === 200, {
+      timeout,
     });
+    debugLog(`First matching API response received`);
   }
 
   /**
@@ -690,7 +739,7 @@ export abstract class BasePage {
    * @param {number} [timeout=10000] - The maximum time to wait for the loading image to disappear, in milliseconds.
    * @returns {Promise<void>} A promise that resolves when the loading image is no longer visible or exits early if the image is not present.
    */
-  async waitForLoadingPageImgToDisappear(timeout: number = 20000): Promise<void> {
+  async waitForLoadingPageImgToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {
       await this.loadingPageImg.first().waitFor({ timeout: 1000 });
     } catch (_error) {
@@ -714,7 +763,7 @@ export abstract class BasePage {
    * @param {number} [timeout=10000] - The maximum time to wait for the initialisation message to disappear, in milliseconds.
    * @returns {Promise<void>} A promise that resolves when the initialisation message is no longer visible or exits early if the message is not present.
    */
-  async waitForInitialisationToComplete(timeout: number = 20000): Promise<void> {
+  async waitForInitialisationToComplete(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {
       await this.initialisationMessage.first().waitFor({ timeout: 1000 });
     } catch (_error) {
@@ -980,27 +1029,6 @@ export abstract class BasePage {
   }
 
   /**
-   * Selects a filter and applies the specified filter option.
-   *
-   * @param {Locator} filter - The filter locator to select.
-   * @param {string} filterOption - The specific filter option to apply.
-   * @throws {Error} Throws an error if `filterOption` is not provided when `filter` is specified.
-   * @returns {Promise<void>} A promise that resolves when the filter is applied.
-   */
-  protected async selectFilter(filter: Locator, filterOption: string): Promise<void> {
-    if (filter) {
-      if (!filterOption) {
-        throw new Error('filterOption must be provided when filter is specified');
-      }
-      if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
-      await filter.click();
-
-      await this.filterPopover.getByLabel(filterOption).first().click();
-      await this.filterApplyButton.click();
-    }
-  }
-
-  /**
    * Retrieves the currently active filter button from the filters box.
    *
    * This method locates and returns the filter button that has the "contained" style,
@@ -1027,5 +1055,27 @@ export abstract class BasePage {
    */
   getActiveFilter(): Locator {
     return this.filtersBox.locator('//button[contains(@class, "MuiButton-contained")]');
+  }
+
+  /**
+   * Selects a filter and applies the specified filter option.
+   *
+   * @param {Locator} filter - The filter locator to select.
+   * @param {string} filterOption - The specific filter option to apply.
+   * @throws {Error} Throws an error if `filterOption` is not provided when `filter` is specified.
+   * @returns {Promise<void>} A promise that resolves when the filter is applied.
+   */
+  protected async selectFilter(filter: Locator, filterOption: string): Promise<void> {
+    if (filter) {
+      if (!filterOption) {
+        throw new Error('filterOption must be provided when filter is specified');
+      }
+      if (!(await filter.isVisible())) await this.showMoreFiltersBtn.click();
+      await filter.click();
+
+      const escapedOption = filterOption.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      await this.filterPopover.getByLabel(new RegExp(`${escapedOption}$`)).click();
+      await this.filterApplyButton.click();
+    }
   }
 }
