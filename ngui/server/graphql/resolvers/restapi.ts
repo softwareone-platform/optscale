@@ -107,6 +107,9 @@ const resolvers: Resolvers = {
     organizationSummary: async (_, { organizationId, params }, { dataSources }) => {
       return dataSources.restapi.getOrganizationSummary(organizationId, params);
     },
+    geminiDataPreparation: async (_, { id }, { dataSources }) => {
+      return dataSources.restapi.getGeminiDataPreparation(id);
+    },
   },
   Mutation: {
     createDataSource: async (_, { organizationId, params }, { dataSources }) => {
@@ -147,6 +150,9 @@ const resolvers: Resolvers = {
     },
     createStripeBillingPortalSession: async (_, { organizationId }, { dataSources }) => {
       return dataSources.restapi.createStripeBillingPortalSession(organizationId);
+    },
+    scheduleGeminiDataPreparation: async (_, { geminiId, buckets }, { dataSources }) => {
+      return dataSources.restapi.scheduleGeminiDataPreparation(geminiId, buckets);
     },
   },
 };

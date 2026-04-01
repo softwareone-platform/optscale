@@ -558,6 +558,20 @@ export type GcpTenantPricingDataConfig = {
   table_name: Scalars["String"]["output"];
 };
 
+export type GeminiDataPreparation = {
+  __typename?: "GeminiDataPreparation";
+  buckets: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
+  deleted_at?: Maybe<Scalars["Int"]["output"]>;
+  gemini_id: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  status: GeminiDataPreparationStatus;
+  url?: Maybe<Scalars["String"]["output"]>;
+  valid_until?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type GeminiDataPreparationStatus = "FAILED" | "QUEUED" | "RUNNING" | "SUCCESS";
+
 export type Invitation = {
   __typename?: "Invitation";
   id: Scalars["String"]["output"];
@@ -631,6 +645,7 @@ export type Mutation = {
   createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
+  scheduleGeminiDataPreparation?: Maybe<ScheduleGeminiDataPreparation>;
   updateDataSource?: Maybe<DataSourceInterface>;
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
   updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
@@ -664,6 +679,11 @@ export type MutationDeleteDataSourceArgs = {
 
 export type MutationDeleteOrganizationArgs = {
   organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationScheduleGeminiDataPreparationArgs = {
+  buckets: Array<Scalars["String"]["input"]>;
+  geminiId: Scalars["ID"]["input"];
 };
 
 export type MutationUpdateDataSourceArgs = {
@@ -825,6 +845,7 @@ export type Query = {
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
+  geminiDataPreparation: GeminiDataPreparation;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
   metaBreakdown?: Maybe<MetaBreakdown>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
@@ -883,6 +904,10 @@ export type QueryExpensesDailyBreakdownArgs = {
   params?: InputMaybe<BreakdownParams>;
 };
 
+export type QueryGeminiDataPreparationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type QueryMetaBreakdownArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<BreakdownParams>;
@@ -934,6 +959,11 @@ export type ResourceCountBreakdown = {
   first_breakdown: Scalars["Int"]["output"];
   last_breakdown: Scalars["Int"]["output"];
   start_date: Scalars["Int"]["output"];
+};
+
+export type ScheduleGeminiDataPreparation = {
+  __typename?: "ScheduleGeminiDataPreparation";
+  id: Scalars["ID"]["output"];
 };
 
 export type StripeSession = {
@@ -1120,6 +1150,8 @@ export type ResolversTypes = {
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: ResolverTypeWrapper<GcpTenantDataSource>;
   GcpTenantPricingDataConfig: ResolverTypeWrapper<GcpTenantPricingDataConfig>;
+  GeminiDataPreparation: ResolverTypeWrapper<GeminiDataPreparation>;
+  GeminiDataPreparationStatus: GeminiDataPreparationStatus;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   Invitation: ResolverTypeWrapper<Invitation>;
@@ -1145,6 +1177,7 @@ export type ResolversTypes = {
   QuantityUnit: QuantityUnit;
   Query: ResolverTypeWrapper<{}>;
   ResourceCountBreakdown: ResolverTypeWrapper<ResourceCountBreakdown>;
+  ScheduleGeminiDataPreparation: ResolverTypeWrapper<ScheduleGeminiDataPreparation>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
   StripeSession: ResolverTypeWrapper<StripeSession>;
   StripeSessionResult: StripeSessionResult;
@@ -1204,6 +1237,7 @@ export type ResolversParentTypes = {
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: GcpTenantDataSource;
   GcpTenantPricingDataConfig: GcpTenantPricingDataConfig;
+  GeminiDataPreparation: GeminiDataPreparation;
   ID: Scalars["ID"]["output"];
   Int: Scalars["Int"]["output"];
   Invitation: Invitation;
@@ -1226,6 +1260,7 @@ export type ResolversParentTypes = {
   OrganizationSummaryParams: OrganizationSummaryParams;
   Query: {};
   ResourceCountBreakdown: ResourceCountBreakdown;
+  ScheduleGeminiDataPreparation: ScheduleGeminiDataPreparation;
   String: Scalars["String"]["output"];
   StripeSession: StripeSession;
   UpdateDataSourceInput: UpdateDataSourceInput;
@@ -1651,6 +1686,21 @@ export type GcpTenantPricingDataConfigResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GeminiDataPreparationResolvers<
+  ContextType = ContextValue,
+  ParentType extends ResolversParentTypes["GeminiDataPreparation"] = ResolversParentTypes["GeminiDataPreparation"],
+> = {
+  buckets?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  deleted_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  gemini_id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes["GeminiDataPreparationStatus"], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  valid_until?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type InvitationResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["Invitation"] = ResolversParentTypes["Invitation"],
@@ -1770,6 +1820,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationDeleteOrganizationArgs, "organizationId">
+  >;
+  scheduleGeminiDataPreparation?: Resolver<
+    Maybe<ResolversTypes["ScheduleGeminiDataPreparation"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationScheduleGeminiDataPreparationArgs, "buckets" | "geminiId">
   >;
   updateDataSource?: Resolver<
     Maybe<ResolversTypes["DataSourceInterface"]>,
@@ -1985,6 +2041,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryExpensesDailyBreakdownArgs, "organizationId">
   >;
+  geminiDataPreparation?: Resolver<
+    ResolversTypes["GeminiDataPreparation"],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGeminiDataPreparationArgs, "id">
+  >;
   invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes["Invitation"]>>>, ParentType, ContextType>;
   metaBreakdown?: Resolver<
     Maybe<ResolversTypes["MetaBreakdown"]>,
@@ -2058,6 +2120,15 @@ export type ResourceCountBreakdownResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ScheduleGeminiDataPreparationResolvers<
+  ContextType = ContextValue,
+  ParentType extends
+    ResolversParentTypes["ScheduleGeminiDataPreparation"] = ResolversParentTypes["ScheduleGeminiDataPreparation"],
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type StripeSessionResolvers<
   ContextType = ContextValue,
   ParentType extends ResolversParentTypes["StripeSession"] = ResolversParentTypes["StripeSession"],
@@ -2095,6 +2166,7 @@ export type Resolvers<ContextType = ContextValue> = {
   GcpTenantConfig?: GcpTenantConfigResolvers<ContextType>;
   GcpTenantDataSource?: GcpTenantDataSourceResolvers<ContextType>;
   GcpTenantPricingDataConfig?: GcpTenantPricingDataConfigResolvers<ContextType>;
+  GeminiDataPreparation?: GeminiDataPreparationResolvers<ContextType>;
   Invitation?: InvitationResolvers<ContextType>;
   InvitationAssignment?: InvitationAssignmentResolvers<ContextType>;
   JSONObject?: GraphQLScalarType;
@@ -2112,5 +2184,6 @@ export type Resolvers<ContextType = ContextValue> = {
   OrganizationSummaryEntities?: OrganizationSummaryEntitiesResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ResourceCountBreakdown?: ResourceCountBreakdownResolvers<ContextType>;
+  ScheduleGeminiDataPreparation?: ScheduleGeminiDataPreparationResolvers<ContextType>;
   StripeSession?: StripeSessionResolvers<ContextType>;
 };
