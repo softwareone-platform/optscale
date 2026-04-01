@@ -227,7 +227,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
       await poolsPage.selectAllColumns();
       expenseValue = await poolsPage.getExpensesThisMonth();
       forecastedValue = await poolsPage.getForecastThisMonth();
-      const limitValue = Math.ceil(expenseValue / 0.91);
+      const limitValue = Math.ceil(expenseValue / 0.99);
       await poolsPage.toggleExpandPool();
       await poolsPage.removeAllSubPoolMonthlyLimits();
       await poolsPage.editPoolMonthlyLimit(limitValue);

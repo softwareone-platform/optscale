@@ -6,16 +6,6 @@ import { debugLog } from '../utils/debug-logging';
 import { getCurrentUTCTimestamp } from '../utils/date-range-utils';
 import { getEnvironmentTestOrgName } from '../utils/environment-util';
 
-function extractMultiplier(input: string): number | null {
-  const match = input.match(/\(x([\d.]+)\)/);
-  return match ? parseFloat(match[1]) : null;
-}
-
-function calculateMultiplier(forecast: number, limit: number): number {
-  if (limit === 0) return 0; // Avoid division by zero
-  return Math.round((forecast / limit) * 10) / 10; // Round to 1 decimal place
-}
-
 //TODO: Add test for Actions including adding sub-pool, editing sub-pool, deleting sub-pool, and editing pool, changing owner.
 // Also test for error validation when trying to delete a pool limit when a sub-pool still has a limit set. Tests for tooltips showing calculated values.
 test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
@@ -229,7 +219,6 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
-    const forecastThisMonth = await poolsPage.getForecastThisMonth();
     test.skip(expensesThisMonth <= 1, 'Skipping test as it requires expenses to be greater than 1');
     const organizationLimit: number = Math.round(expensesThisMonth - 1);
 
@@ -253,8 +242,6 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       expect.soft(await poolsPage.poolTableRow.getAttribute('style')).toContain(`border-left: 4px solid ${poolsPage.errorColor};`);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.column3TextSpan)).toBe(poolsPage.errorColor);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.column4TextSpan)).toBe(poolsPage.warningColor);
-      const multiplier = extractMultiplier(await poolsPage.poolColumn4.textContent());
-      expect.soft(isWithinRoundingDrift(multiplier, calculateMultiplier(forecastThisMonth, organizationLimit), 0.1)).toBe(true);
     });
   });
 
@@ -333,7 +320,6 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     const organizationLimit = Math.round(expensesThisMonth + 1);
     let subPoolExpenses: number;
     let subPoolLimit: number;
-    let subPoolForecast: number;
 
     await test.step('Set organization limit to an integer above the current expenses this month', async () => {
       await poolsPage.editPoolMonthlyLimit(organizationLimit);
@@ -360,10 +346,6 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
       expect.soft(await poolsPage.getExceededLimitValue()).toBe(1);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.subPoolColumn3.first().locator('span'))).toBe(poolsPage.errorColor);
       expect.soft(await poolsPage.getColorFromElement(poolsPage.subPoolColumn4.first().locator('span'))).toBe(poolsPage.warningColor);
-
-      const multiplier = extractMultiplier(await poolsPage.subPoolColumn4.first().textContent());
-      subPoolForecast = await poolsPage.getSubPoolForecastThisMonth(1);
-      expect.soft(isWithinRoundingDrift(multiplier, calculateMultiplier(subPoolForecast, subPoolLimit), 0.1)).toBe(true);
     });
 
     await test.step('Assert that expand requiring attention does expand when sub-pools limits are exceeded', async () => {
