@@ -113,6 +113,8 @@ class Configurator(object):
         logger.debug("Creating Thanos.")
         self.configure_thanos()
         logger.debug("Thanos created.")
+        self.configure_gemini()
+        logger.debug("Gemini created.")
         # setting to 0 to block updates until update is finished
         # and new images pushed into registry
         logger.debug("Writing etc /registry_ready.")
@@ -227,6 +229,34 @@ class Configurator(object):
             logger.info(
                 "Skipping bucket %s creation. Bucket already exists", bucket_name
             )
+
+    @retry(**RETRY_ARGS, retry_on_exception=lambda x: True)
+    def configure_gemini(self):
+        bucket_name = "gemini"
+        prefix = "data"
+        try:
+            self.s3_client.create_bucket(Bucket=bucket_name)
+            logger.info("Created %s bucket in minio", bucket_name)
+        except self.s3_client.exceptions.BucketAlreadyOwnedByYou:
+            logger.info("Skipping bucket %s creation. "
+                        "Bucket already exists", bucket_name)
+        lifecycle_config = {
+            "Rules": [
+                {
+                    "ID": f"retention-1-day",
+                    "Status": "Enabled",
+                    "Filter": {
+                        "Prefix": f"{prefix}/"
+                    },
+                    "Expiration": {"Days": 1},
+                }
+            ]
+        }
+        self.s3_client.put_bucket_lifecycle_configuration(
+            Bucket=bucket_name,
+            LifecycleConfiguration=lifecycle_config,
+        )
+        logger.info('Gemini bucket lifecycle configuration updated')
 
 
 if __name__ == "__main__":
