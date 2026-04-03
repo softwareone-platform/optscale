@@ -710,6 +710,15 @@ gemini_worker:
     tag: *tag
     pullPolicy: Never
 
+gemini_data_worker:
+  name: gemini-data-worker
+  replicaCount: 1
+  image:
+    id:
+    repository: gemini_data_worker
+    tag: *tag
+    pullPolicy: Never
+
 bi_scheduler:
   name: bi-scheduler
   image:

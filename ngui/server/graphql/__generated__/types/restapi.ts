@@ -558,6 +558,20 @@ export type GcpTenantPricingDataConfig = {
   table_name: Scalars["String"]["output"];
 };
 
+export type GeminiDataPreparation = {
+  __typename?: "GeminiDataPreparation";
+  buckets: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
+  deleted_at?: Maybe<Scalars["Int"]["output"]>;
+  gemini_id: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  status: GeminiDataPreparationStatus;
+  url?: Maybe<Scalars["String"]["output"]>;
+  valid_until?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type GeminiDataPreparationStatus = "FAILED" | "QUEUED" | "RUNNING" | "SUCCESS";
+
 export type Invitation = {
   __typename?: "Invitation";
   id: Scalars["String"]["output"];
@@ -631,6 +645,7 @@ export type Mutation = {
   createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
+  scheduleGeminiDataPreparation?: Maybe<ScheduleGeminiDataPreparation>;
   updateDataSource?: Maybe<DataSourceInterface>;
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
   updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
@@ -664,6 +679,11 @@ export type MutationDeleteDataSourceArgs = {
 
 export type MutationDeleteOrganizationArgs = {
   organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationScheduleGeminiDataPreparationArgs = {
+  buckets: Array<Scalars["String"]["input"]>;
+  geminiId: Scalars["ID"]["input"];
 };
 
 export type MutationUpdateDataSourceArgs = {
@@ -825,6 +845,7 @@ export type Query = {
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
+  geminiDataPreparation: GeminiDataPreparation;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
   metaBreakdown?: Maybe<MetaBreakdown>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
@@ -883,6 +904,10 @@ export type QueryExpensesDailyBreakdownArgs = {
   params?: InputMaybe<BreakdownParams>;
 };
 
+export type QueryGeminiDataPreparationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type QueryMetaBreakdownArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<BreakdownParams>;
@@ -934,6 +959,11 @@ export type ResourceCountBreakdown = {
   first_breakdown: Scalars["Int"]["output"];
   last_breakdown: Scalars["Int"]["output"];
   start_date: Scalars["Int"]["output"];
+};
+
+export type ScheduleGeminiDataPreparation = {
+  __typename?: "ScheduleGeminiDataPreparation";
+  id: Scalars["ID"]["output"];
 };
 
 export type StripeSession = {
@@ -1120,6 +1150,8 @@ export type ResolversTypes = {
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: ResolverTypeWrapper<GcpTenantDataSource>;
   GcpTenantPricingDataConfig: ResolverTypeWrapper<GcpTenantPricingDataConfig>;
+  GeminiDataPreparation: ResolverTypeWrapper<GeminiDataPreparation>;
+  GeminiDataPreparationStatus: GeminiDataPreparationStatus;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   Invitation: ResolverTypeWrapper<Invitation>;
@@ -1145,6 +1177,7 @@ export type ResolversTypes = {
   QuantityUnit: QuantityUnit;
   Query: ResolverTypeWrapper<{}>;
   ResourceCountBreakdown: ResolverTypeWrapper<ResourceCountBreakdown>;
+  ScheduleGeminiDataPreparation: ResolverTypeWrapper<ScheduleGeminiDataPreparation>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
   StripeSession: ResolverTypeWrapper<StripeSession>;
   StripeSessionResult: StripeSessionResult;
@@ -1204,6 +1237,7 @@ export type ResolversParentTypes = {
   GcpTenantConfigInput: GcpTenantConfigInput;
   GcpTenantDataSource: GcpTenantDataSource;
   GcpTenantPricingDataConfig: GcpTenantPricingDataConfig;
+  GeminiDataPreparation: GeminiDataPreparation;
   ID: Scalars["ID"]["output"];
   Int: Scalars["Int"]["output"];
   Invitation: Invitation;
@@ -1226,6 +1260,7 @@ export type ResolversParentTypes = {
   OrganizationSummaryParams: OrganizationSummaryParams;
   Query: {};
   ResourceCountBreakdown: ResourceCountBreakdown;
+  ScheduleGeminiDataPreparation: ScheduleGeminiDataPreparation;
   String: Scalars["String"]["output"];
   StripeSession: StripeSession;
   UpdateDataSourceInput: UpdateDataSourceInput;
@@ -1236,7 +1271,7 @@ export type ResolversParentTypes = {
 
 export type AlibabaConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AlibabaConfig"] = ResolversParentTypes["AlibabaConfig"]
+  ParentType extends ResolversParentTypes["AlibabaConfig"] = ResolversParentTypes["AlibabaConfig"],
 > = {
   access_key_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1244,7 +1279,7 @@ export type AlibabaConfigResolvers<
 
 export type AlibabaDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AlibabaDataSource"] = ResolversParentTypes["AlibabaDataSource"]
+  ParentType extends ResolversParentTypes["AlibabaDataSource"] = ResolversParentTypes["AlibabaDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AlibabaConfig"]>, ParentType, ContextType>;
@@ -1265,7 +1300,7 @@ export type AlibabaDataSourceResolvers<
 
 export type AwsConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AwsConfig"] = ResolversParentTypes["AwsConfig"]
+  ParentType extends ResolversParentTypes["AwsConfig"] = ResolversParentTypes["AwsConfig"],
 > = {
   access_key_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   assume_role_account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1283,7 +1318,7 @@ export type AwsConfigResolvers<
 
 export type AwsDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AwsDataSource"] = ResolversParentTypes["AwsDataSource"]
+  ParentType extends ResolversParentTypes["AwsDataSource"] = ResolversParentTypes["AwsDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AwsConfig"]>, ParentType, ContextType>;
@@ -1304,7 +1339,7 @@ export type AwsDataSourceResolvers<
 
 export type AzureSubscriptionConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AzureSubscriptionConfig"] = ResolversParentTypes["AzureSubscriptionConfig"]
+  ParentType extends ResolversParentTypes["AzureSubscriptionConfig"] = ResolversParentTypes["AzureSubscriptionConfig"],
 > = {
   client_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   container?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1318,7 +1353,7 @@ export type AzureSubscriptionConfigResolvers<
 
 export type AzureSubscriptionDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AzureSubscriptionDataSource"] = ResolversParentTypes["AzureSubscriptionDataSource"]
+  ParentType extends ResolversParentTypes["AzureSubscriptionDataSource"] = ResolversParentTypes["AzureSubscriptionDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AzureSubscriptionConfig"]>, ParentType, ContextType>;
@@ -1339,7 +1374,7 @@ export type AzureSubscriptionDataSourceResolvers<
 
 export type AzureTenantConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AzureTenantConfig"] = ResolversParentTypes["AzureTenantConfig"]
+  ParentType extends ResolversParentTypes["AzureTenantConfig"] = ResolversParentTypes["AzureTenantConfig"],
 > = {
   client_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   tenant?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1348,7 +1383,7 @@ export type AzureTenantConfigResolvers<
 
 export type AzureTenantDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["AzureTenantDataSource"] = ResolversParentTypes["AzureTenantDataSource"]
+  ParentType extends ResolversParentTypes["AzureTenantDataSource"] = ResolversParentTypes["AzureTenantDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["AzureTenantConfig"]>, ParentType, ContextType>;
@@ -1369,7 +1404,7 @@ export type AzureTenantDataSourceResolvers<
 
 export type BillingSubscriptionResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["BillingSubscription"] = ResolversParentTypes["BillingSubscription"]
+  ParentType extends ResolversParentTypes["BillingSubscription"] = ResolversParentTypes["BillingSubscription"],
 > = {
   cancel_at_period_end?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   end_date?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1385,7 +1420,7 @@ export type BillingSubscriptionResolvers<
 
 export type BillingSubscriptionPlanResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["BillingSubscriptionPlan"] = ResolversParentTypes["BillingSubscriptionPlan"]
+  ParentType extends ResolversParentTypes["BillingSubscriptionPlan"] = ResolversParentTypes["BillingSubscriptionPlan"],
 > = {
   created_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   currency?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1405,7 +1440,7 @@ export type BillingSubscriptionPlanResolvers<
 
 export type DataSourceDetailsResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["DataSourceDetails"] = ResolversParentTypes["DataSourceDetails"]
+  ParentType extends ResolversParentTypes["DataSourceDetails"] = ResolversParentTypes["DataSourceDetails"],
 > = {
   cost?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
   discovery_infos?: Resolver<Maybe<Array<Maybe<ResolversTypes["DataSourceDiscoveryInfos"]>>>, ParentType, ContextType>;
@@ -1417,7 +1452,7 @@ export type DataSourceDetailsResolvers<
 
 export type DataSourceDiscoveryInfosResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["DataSourceDiscoveryInfos"] = ResolversParentTypes["DataSourceDiscoveryInfos"]
+  ParentType extends ResolversParentTypes["DataSourceDiscoveryInfos"] = ResolversParentTypes["DataSourceDiscoveryInfos"],
 > = {
   cloud_account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1434,7 +1469,7 @@ export type DataSourceDiscoveryInfosResolvers<
 
 export type DataSourceInterfaceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["DataSourceInterface"] = ResolversParentTypes["DataSourceInterface"]
+  ParentType extends ResolversParentTypes["DataSourceInterface"] = ResolversParentTypes["DataSourceInterface"],
 > = {
   __resolveType: TypeResolveFn<
     | "AlibabaDataSource"
@@ -1467,7 +1502,7 @@ export type DataSourceInterfaceResolvers<
 
 export type DatabricksConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["DatabricksConfig"] = ResolversParentTypes["DatabricksConfig"]
+  ParentType extends ResolversParentTypes["DatabricksConfig"] = ResolversParentTypes["DatabricksConfig"],
 > = {
   account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   client_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1476,7 +1511,7 @@ export type DatabricksConfigResolvers<
 
 export type DatabricksDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["DatabricksDataSource"] = ResolversParentTypes["DatabricksDataSource"]
+  ParentType extends ResolversParentTypes["DatabricksDataSource"] = ResolversParentTypes["DatabricksDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["DatabricksConfig"]>, ParentType, ContextType>;
@@ -1497,7 +1532,7 @@ export type DatabricksDataSourceResolvers<
 
 export type EmployeeResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Employee"] = ResolversParentTypes["Employee"]
+  ParentType extends ResolversParentTypes["Employee"] = ResolversParentTypes["Employee"],
 > = {
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   jira_connected?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
@@ -1507,7 +1542,7 @@ export type EmployeeResolvers<
 
 export type EmployeeEmailResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["EmployeeEmail"] = ResolversParentTypes["EmployeeEmail"]
+  ParentType extends ResolversParentTypes["EmployeeEmail"] = ResolversParentTypes["EmployeeEmail"],
 > = {
   available_by_role?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   email_template?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
@@ -1519,7 +1554,7 @@ export type EmployeeEmailResolvers<
 
 export type EnvironmentDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["EnvironmentDataSource"] = ResolversParentTypes["EnvironmentDataSource"]
+  ParentType extends ResolversParentTypes["EnvironmentDataSource"] = ResolversParentTypes["EnvironmentDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
@@ -1539,7 +1574,7 @@ export type EnvironmentDataSourceResolvers<
 
 export type ExpensesDailyBreakdownResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["ExpensesDailyBreakdown"] = ResolversParentTypes["ExpensesDailyBreakdown"]
+  ParentType extends ResolversParentTypes["ExpensesDailyBreakdown"] = ResolversParentTypes["ExpensesDailyBreakdown"],
 > = {
   breakdown?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
   breakdown_by?: Resolver<ResolversTypes["BreakdownBy"], ParentType, ContextType>;
@@ -1553,7 +1588,7 @@ export type ExpensesDailyBreakdownResolvers<
 
 export type GcpBillingDataConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpBillingDataConfig"] = ResolversParentTypes["GcpBillingDataConfig"]
+  ParentType extends ResolversParentTypes["GcpBillingDataConfig"] = ResolversParentTypes["GcpBillingDataConfig"],
 > = {
   dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1563,7 +1598,7 @@ export type GcpBillingDataConfigResolvers<
 
 export type GcpConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpConfig"] = ResolversParentTypes["GcpConfig"]
+  ParentType extends ResolversParentTypes["GcpConfig"] = ResolversParentTypes["GcpConfig"],
 > = {
   billing_data?: Resolver<Maybe<ResolversTypes["GcpBillingDataConfig"]>, ParentType, ContextType>;
   pricing_data?: Resolver<Maybe<ResolversTypes["GcpPricingDataConfig"]>, ParentType, ContextType>;
@@ -1572,7 +1607,7 @@ export type GcpConfigResolvers<
 
 export type GcpDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpDataSource"] = ResolversParentTypes["GcpDataSource"]
+  ParentType extends ResolversParentTypes["GcpDataSource"] = ResolversParentTypes["GcpDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["GcpConfig"]>, ParentType, ContextType>;
@@ -1593,7 +1628,7 @@ export type GcpDataSourceResolvers<
 
 export type GcpPricingDataConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpPricingDataConfig"] = ResolversParentTypes["GcpPricingDataConfig"]
+  ParentType extends ResolversParentTypes["GcpPricingDataConfig"] = ResolversParentTypes["GcpPricingDataConfig"],
 > = {
   dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1603,7 +1638,7 @@ export type GcpPricingDataConfigResolvers<
 
 export type GcpTenantBillingDataConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpTenantBillingDataConfig"] = ResolversParentTypes["GcpTenantBillingDataConfig"]
+  ParentType extends ResolversParentTypes["GcpTenantBillingDataConfig"] = ResolversParentTypes["GcpTenantBillingDataConfig"],
 > = {
   dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1613,7 +1648,7 @@ export type GcpTenantBillingDataConfigResolvers<
 
 export type GcpTenantConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpTenantConfig"] = ResolversParentTypes["GcpTenantConfig"]
+  ParentType extends ResolversParentTypes["GcpTenantConfig"] = ResolversParentTypes["GcpTenantConfig"],
 > = {
   billing_data?: Resolver<Maybe<ResolversTypes["GcpTenantBillingDataConfig"]>, ParentType, ContextType>;
   pricing_data?: Resolver<Maybe<ResolversTypes["GcpTenantPricingDataConfig"]>, ParentType, ContextType>;
@@ -1622,7 +1657,7 @@ export type GcpTenantConfigResolvers<
 
 export type GcpTenantDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpTenantDataSource"] = ResolversParentTypes["GcpTenantDataSource"]
+  ParentType extends ResolversParentTypes["GcpTenantDataSource"] = ResolversParentTypes["GcpTenantDataSource"],
 > = {
   account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["GcpTenantConfig"]>, ParentType, ContextType>;
@@ -1643,7 +1678,7 @@ export type GcpTenantDataSourceResolvers<
 
 export type GcpTenantPricingDataConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["GcpTenantPricingDataConfig"] = ResolversParentTypes["GcpTenantPricingDataConfig"]
+  ParentType extends ResolversParentTypes["GcpTenantPricingDataConfig"] = ResolversParentTypes["GcpTenantPricingDataConfig"],
 > = {
   dataset_name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   project_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1651,9 +1686,24 @@ export type GcpTenantPricingDataConfigResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GeminiDataPreparationResolvers<
+  ContextType = ContextValue,
+  ParentType extends ResolversParentTypes["GeminiDataPreparation"] = ResolversParentTypes["GeminiDataPreparation"],
+> = {
+  buckets?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  created_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  deleted_at?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  gemini_id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes["GeminiDataPreparationStatus"], ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  valid_until?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type InvitationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Invitation"] = ResolversParentTypes["Invitation"]
+  ParentType extends ResolversParentTypes["Invitation"] = ResolversParentTypes["Invitation"],
 > = {
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   invite_assignments?: Resolver<Maybe<Array<ResolversTypes["InvitationAssignment"]>>, ParentType, ContextType>;
@@ -1665,7 +1715,7 @@ export type InvitationResolvers<
 
 export type InvitationAssignmentResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["InvitationAssignment"] = ResolversParentTypes["InvitationAssignment"]
+  ParentType extends ResolversParentTypes["InvitationAssignment"] = ResolversParentTypes["InvitationAssignment"],
 > = {
   id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   purpose?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
@@ -1681,7 +1731,7 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type K8CostModelConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["K8CostModelConfig"] = ResolversParentTypes["K8CostModelConfig"]
+  ParentType extends ResolversParentTypes["K8CostModelConfig"] = ResolversParentTypes["K8CostModelConfig"],
 > = {
   cpu_hourly_cost?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
   memory_hourly_cost?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
@@ -1690,7 +1740,7 @@ export type K8CostModelConfigResolvers<
 
 export type K8sConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["K8sConfig"] = ResolversParentTypes["K8sConfig"]
+  ParentType extends ResolversParentTypes["K8sConfig"] = ResolversParentTypes["K8sConfig"],
 > = {
   cost_model?: Resolver<Maybe<ResolversTypes["K8CostModelConfig"]>, ParentType, ContextType>;
   custom_price?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
@@ -1700,7 +1750,7 @@ export type K8sConfigResolvers<
 
 export type K8sDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["K8sDataSource"] = ResolversParentTypes["K8sDataSource"]
+  ParentType extends ResolversParentTypes["K8sDataSource"] = ResolversParentTypes["K8sDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["K8sConfig"]>, ParentType, ContextType>;
@@ -1721,7 +1771,7 @@ export type K8sDataSourceResolvers<
 
 export type MetaBreakdownResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["MetaBreakdown"] = ResolversParentTypes["MetaBreakdown"]
+  ParentType extends ResolversParentTypes["MetaBreakdown"] = ResolversParentTypes["MetaBreakdown"],
 > = {
   breakdown?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
   end_date?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1732,7 +1782,7 @@ export type MetaBreakdownResolvers<
 
 export type MutationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   createDataSource?: Resolver<
@@ -1770,6 +1820,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationDeleteOrganizationArgs, "organizationId">
+  >;
+  scheduleGeminiDataPreparation?: Resolver<
+    Maybe<ResolversTypes["ScheduleGeminiDataPreparation"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationScheduleGeminiDataPreparationArgs, "buckets" | "geminiId">
   >;
   updateDataSource?: Resolver<
     Maybe<ResolversTypes["DataSourceInterface"]>,
@@ -1817,7 +1873,7 @@ export type MutationResolvers<
 
 export type NebiusConfigResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["NebiusConfig"] = ResolversParentTypes["NebiusConfig"]
+  ParentType extends ResolversParentTypes["NebiusConfig"] = ResolversParentTypes["NebiusConfig"],
 > = {
   access_key_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   bucket_name?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -1830,7 +1886,7 @@ export type NebiusConfigResolvers<
 
 export type NebiusDataSourceResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["NebiusDataSource"] = ResolversParentTypes["NebiusDataSource"]
+  ParentType extends ResolversParentTypes["NebiusDataSource"] = ResolversParentTypes["NebiusDataSource"],
 > = {
   account_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   config?: Resolver<Maybe<ResolversTypes["NebiusConfig"]>, ParentType, ContextType>;
@@ -1851,7 +1907,7 @@ export type NebiusDataSourceResolvers<
 
 export type OrganizationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Organization"] = ResolversParentTypes["Organization"]
+  ParentType extends ResolversParentTypes["Organization"] = ResolversParentTypes["Organization"],
 > = {
   currency?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   disabled?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
@@ -1864,7 +1920,7 @@ export type OrganizationResolvers<
 
 export type OrganizationConstraintResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["OrganizationConstraint"] = ResolversParentTypes["OrganizationConstraint"]
+  ParentType extends ResolversParentTypes["OrganizationConstraint"] = ResolversParentTypes["OrganizationConstraint"],
 > = {
   created_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   definition?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
@@ -1881,7 +1937,7 @@ export type OrganizationConstraintResolvers<
 
 export type OrganizationLimitHitResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["OrganizationLimitHit"] = ResolversParentTypes["OrganizationLimitHit"]
+  ParentType extends ResolversParentTypes["OrganizationLimitHit"] = ResolversParentTypes["OrganizationLimitHit"],
 > = {
   constraint_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   constraint_limit?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
@@ -1896,7 +1952,7 @@ export type OrganizationLimitHitResolvers<
 
 export type OrganizationSummaryResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["OrganizationSummary"] = ResolversParentTypes["OrganizationSummary"]
+  ParentType extends ResolversParentTypes["OrganizationSummary"] = ResolversParentTypes["OrganizationSummary"],
 > = {
   cleaned_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1912,7 +1968,7 @@ export type OrganizationSummaryResolvers<
 
 export type OrganizationSummaryEntitiesResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["OrganizationSummaryEntities"] = ResolversParentTypes["OrganizationSummaryEntities"]
+  ParentType extends ResolversParentTypes["OrganizationSummaryEntities"] = ResolversParentTypes["OrganizationSummaryEntities"],
 > = {
   cloud_accounts?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   employees?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
@@ -1922,7 +1978,7 @@ export type OrganizationSummaryEntitiesResolvers<
 
 export type QueryResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
+  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   availableFilters?: Resolver<
@@ -1985,6 +2041,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryExpensesDailyBreakdownArgs, "organizationId">
   >;
+  geminiDataPreparation?: Resolver<
+    ResolversTypes["GeminiDataPreparation"],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGeminiDataPreparationArgs, "id">
+  >;
   invitations?: Resolver<Maybe<Array<Maybe<ResolversTypes["Invitation"]>>>, ParentType, ContextType>;
   metaBreakdown?: Resolver<
     Maybe<ResolversTypes["MetaBreakdown"]>,
@@ -2045,7 +2107,7 @@ export type QueryResolvers<
 
 export type ResourceCountBreakdownResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["ResourceCountBreakdown"] = ResolversParentTypes["ResourceCountBreakdown"]
+  ParentType extends ResolversParentTypes["ResourceCountBreakdown"] = ResolversParentTypes["ResourceCountBreakdown"],
 > = {
   breakdown?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
   breakdown_by?: Resolver<ResolversTypes["BreakdownBy"], ParentType, ContextType>;
@@ -2058,9 +2120,18 @@ export type ResourceCountBreakdownResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ScheduleGeminiDataPreparationResolvers<
+  ContextType = ContextValue,
+  ParentType extends
+    ResolversParentTypes["ScheduleGeminiDataPreparation"] = ResolversParentTypes["ScheduleGeminiDataPreparation"],
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type StripeSessionResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["StripeSession"] = ResolversParentTypes["StripeSession"]
+  ParentType extends ResolversParentTypes["StripeSession"] = ResolversParentTypes["StripeSession"],
 > = {
   result?: Resolver<ResolversTypes["StripeSessionResult"], ParentType, ContextType>;
   url?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -2095,6 +2166,7 @@ export type Resolvers<ContextType = ContextValue> = {
   GcpTenantConfig?: GcpTenantConfigResolvers<ContextType>;
   GcpTenantDataSource?: GcpTenantDataSourceResolvers<ContextType>;
   GcpTenantPricingDataConfig?: GcpTenantPricingDataConfigResolvers<ContextType>;
+  GeminiDataPreparation?: GeminiDataPreparationResolvers<ContextType>;
   Invitation?: InvitationResolvers<ContextType>;
   InvitationAssignment?: InvitationAssignmentResolvers<ContextType>;
   JSONObject?: GraphQLScalarType;
@@ -2112,5 +2184,6 @@ export type Resolvers<ContextType = ContextValue> = {
   OrganizationSummaryEntities?: OrganizationSummaryEntitiesResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ResourceCountBreakdown?: ResourceCountBreakdownResolvers<ContextType>;
+  ScheduleGeminiDataPreparation?: ScheduleGeminiDataPreparationResolvers<ContextType>;
   StripeSession?: StripeSessionResolvers<ContextType>;
 };
