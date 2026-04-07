@@ -3,6 +3,7 @@ from typing import Annotated
 from pydantic import Field, computed_field
 
 from app.schemas.core import BaseSchema, IdSchema
+from app.schemas.tags import TagRef
 from app.services.roles_loader import get_roles
 
 
@@ -32,6 +33,7 @@ class AuthUserRead(IdSchema, BaseSchema):
 
 class UserRead(IdSchema, UserBase):
     auth_user: AuthUserRead
+    tags: list[TagRef] = []
 
     @computed_field  # type: ignore[misc]
     @property

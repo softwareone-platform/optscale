@@ -68,7 +68,6 @@ def extract_events[M: Base | OptScaleBase, S: BaseModel](
     """
     schema_values: dict[str, AuditFieldSchema | None] = {}
     for field_name, field_info in events_schema_cls.model_fields.items():
-        print(field_name, field_info.annotation)
         event_field_schema_cls = resolve_field_type(field_info.annotation)
 
         if not issubclass(event_field_schema_cls, AuditFieldSchema):  # type: ignore
@@ -79,7 +78,6 @@ def extract_events[M: Base | OptScaleBase, S: BaseModel](
         schema_values[field_name] = (
             event_field_schema_cls(at=at_value) if at_value else None  # type: ignore
         )
-    print(schema_values)
     return events_schema_cls(**schema_values)
 
 
@@ -150,6 +148,7 @@ class BaseSchema(BaseModel):
 
 class IdSchema(BaseSchema):
     id: str
+
 
 class AuditFieldSchema(BaseSchema):
     at: datetime.datetime

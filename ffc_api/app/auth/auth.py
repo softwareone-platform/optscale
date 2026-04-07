@@ -6,7 +6,6 @@ from pymacaroons import Macaroon, Verifier
 
 from app.auth.constants import UNAUTHORIZED_EXCEPTION
 
-
 LOG = logging.getLogger(__name__)
 
 

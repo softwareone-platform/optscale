@@ -4,6 +4,7 @@ import pycountry
 from pydantic import Field, field_validator
 
 from app.schemas.core import BaseSchema, IdSchema
+from app.schemas.tags import TagRef
 
 EXCLUDED_CURRENCIES = [
     "XAU",  # gold
@@ -27,7 +28,9 @@ class OrganizationBase(BaseSchema):
     currency: Annotated[str, Field(min_length=3, max_length=3, examples=["USD"])]
     disabled: Annotated[bool, Field(examples=[False])]
 
-    @field_validator("currency", )
+    @field_validator(
+        "currency",
+    )
     @classmethod
     def validate_currency(cls, currency: str) -> str:
         if currency and (
@@ -38,4 +41,4 @@ class OrganizationBase(BaseSchema):
 
 
 class OrganizationRead(IdSchema, OrganizationBase):
-    pass
+    tags: list[TagRef] = []

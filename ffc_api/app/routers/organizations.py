@@ -5,15 +5,24 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import Select
 
 from app.db.handlers import NotFoundError
-from app.dependencies.db import DataSourceRepository, OrganizationRepository, UserRepository
-from app.dependencies.path import OrganizationId
+from app.db.models import Tag
+from app.dependencies.db import (
+    DataSourceRepository,
+    OrganizationRepository,
+    TagRepository,
+    UserRepository,
+)
+from app.dependencies.path import OrganizationId, TagId
+from app.enums import TagResourceType
+from app.optscale.models import DataSource, Organization, User
 from app.pagination import LimitOffsetPage, paginate
-from app.rql import DataSourceRules, OrganizationRules, RQLQuery, UserRules
+from app.rql import DataSourceRules, OrganizationRules, RQLQuery, TagRules, UserRules
 from app.schemas.core import convert_model_to_schema
 from app.schemas.datasources import DataSourceRead
 from app.schemas.organizations import OrganizationRead
+from app.schemas.tags import TagRead
 from app.schemas.users import UserRead
-from app.optscale.models import DataSource, Organization, User
+from app.services.tags import fetch_tag_or_404
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -134,7 +143,8 @@ async def get_users_by_organization_id(
                 },
             },
         },
-    },)
+    },
+)
 async def get_datasources_by_organization_id(
     organization: Annotated[Organization, Depends(fetch_organization_or_404)],
     datasource_repo: DataSourceRepository,
@@ -146,3 +156,39 @@ async def get_datasources_by_organization_id(
         base_query=base_query,
         where_clauses=[DataSource.organization_id == organization.id],
     )
+
+
+@router.get(
+    "/{organization_id}/tags",
+    response_model=LimitOffsetPage[TagRead],
+)
+async def get_tags_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    tag_repo: TagRepository,
+    base_query: Select = Depends(RQLQuery(TagRules())),
+):
+    return await paginate(
+        tag_repo,
+        TagRead,
+        base_query=base_query,
+        where_clauses=[
+            Tag.deleted_at.is_(None),
+            Tag.resource_type == TagResourceType.ORGANIZATION,
+            Tag.resource_id == organization.id,
+        ],
+    )
+
+
+@router.get(
+    "/{organization_id}/tags/{tag_id_or_name}",
+    response_model=TagRead,
+)
+async def get_tag_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    tag_id_or_name: TagId,
+    tag_repo: TagRepository,
+):
+    tag = await fetch_tag_or_404(
+        organization.id, tag_id_or_name, tag_repo, TagResourceType.ORGANIZATION
+    )
+    return convert_model_to_schema(TagRead, tag)

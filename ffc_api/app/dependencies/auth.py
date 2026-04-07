@@ -1,14 +1,14 @@
 import secrets
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import APIKeyHeader
 
+from app.auth.auth import MacaroonToken, TokenBearer
 from app.conf import get_settings
-from app.auth.auth import TokenBearer, MacaroonToken
-from app.utils import get_digest, utcnow
 from app.db.handlers import TokenHandler
-from app.optscale.models import Token
 from app.dependencies.db import DBSession
-
+from app.optscale.models import Token
+from app.utils import get_digest, utcnow
 
 secret_header = APIKeyHeader(name="Secret", auto_error=False)
 
@@ -24,6 +24,7 @@ def verify_cluster_secret(secret: str | None = Depends(secret_header)):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid cluster secret",
         )
+
 
 token_bearer = TokenBearer()
 

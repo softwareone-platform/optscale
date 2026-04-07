@@ -10,21 +10,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import ORMOption
 
-from app.db.models import Tag, TimestampMixin
 from app.db.models import Base as BaseModel
+from app.db.models import Tag, TimestampMixin
 from app.optscale.models import (
+    Assignment,
+    AuthUser,
     DataSource,
     Organization,
-    Token,
-    User,
-    AuthUser,
-    Assignment,
-    Type,
     Role,
+    Token,
+    Type,
+    User,
 )
 from app.optscale.models import Base as OptscaleBaseModel
 from app.utils import utcnow_timestamp
-
 
 M = TypeVar("M", bound=BaseModel | OptscaleBaseModel)
 
@@ -57,7 +56,9 @@ class BaseHandler(Generic[M]):
         self.default_options: list[ORMOption] = []
 
     async def get(
-        self, id: str, extra_conditions: list[ColumnExpressionArgument] | None = None,
+        self,
+        id: str,
+        extra_conditions: list[ColumnExpressionArgument] | None = None,
     ) -> M:
         query = select(self.model_cls).where(self.model_cls.id == id)
         if extra_conditions:
@@ -136,7 +137,6 @@ class BaseHandler(Generic[M]):
         if offset:
             # apply offset
             query = query.offset(offset)
-        print(query)
         results = await self.session.scalars(query)
         if unique:
             return results.unique().all()
@@ -298,7 +298,6 @@ class ReadWriteHandler(BaseHandler[M]):
 
 
 class ReadOnlyHandler(BaseHandler[M]):
-
     async def create(self, *args, **kwargs):
         raise DatabaseError("Model is read-only")
 
@@ -319,7 +318,7 @@ class DataSourceHandler(ReadOnlyHandler[DataSource]):
         ]
 
 
-class OrganizationHandler(ReadWriteHandler[Organization]):
+class OrganizationHandler(ReadOnlyHandler[Organization]):
     model_cls = Organization
 
 
@@ -342,7 +341,6 @@ class UserHandler(ReadOnlyHandler[User]):
                 Assignment.role_id,
             ),
         ]
-
 
 
 class TagHandler(ReadWriteHandler[Tag]):

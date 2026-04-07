@@ -4,14 +4,14 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import Select
 
-from app.db.handlers import NotFoundError, ConstraintViolationError
+from app.db.handlers import ConstraintViolationError, NotFoundError
+from app.db.models import Tag
 from app.dependencies.db import TagRepository
 from app.dependencies.path import TagId
 from app.pagination import LimitOffsetPage, paginate
 from app.rql import RQLQuery, TagRules
 from app.schemas.core import convert_model_to_schema, convert_schema_to_model
-from app.schemas.tags import TagRead, TagCreate, TagUpdate
-from app.db.models import Tag
+from app.schemas.tags import TagCreate, TagRead, TagUpdate
 from app.utils import wrap_exc_in_http_response
 
 router = APIRouter()
@@ -34,11 +34,19 @@ async def get_tags(
     base_query: Select = Depends(RQLQuery(TagRules())),
 ):
     return await paginate(
-        tag_repo, TagRead, base_query=base_query, where_clauses=[Tag.deleted_at.is_(None)],
+        tag_repo,
+        TagRead,
+        base_query=base_query,
+        where_clauses=[Tag.deleted_at.is_(None)],
     )
 
 
-@router.post("", response_model=TagRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=TagRead,
+    status_code=status.HTTP_201_CREATED,
+    # dependencies=[Depends(verify_cluster_token)],
+)
 async def create_tag(
     data: TagCreate,
     tag_repo: TagRepository,
@@ -69,7 +77,11 @@ async def get_tag_by_id(
     return convert_model_to_schema(TagRead, tag)
 
 
-@router.delete("/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{tag_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    # dependencies=[Depends(verify_cluster_token)],
+)
 async def delete_tag_by_id(
     tag: Annotated[Tag, Depends(fetch_tag_or_404)],
     tag_repo: TagRepository,
@@ -77,7 +89,11 @@ async def delete_tag_by_id(
     await tag_repo.delete(tag)
 
 
-@router.put("/{tag_id}", response_model=TagRead)
+@router.put(
+    "/{tag_id}",
+    response_model=TagRead,
+    # dependencies=[Depends(verify_cluster_token)],
+)
 async def update_account(
     data: TagUpdate,
     tag_repo: TagRepository,

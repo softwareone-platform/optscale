@@ -6,7 +6,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.services.config_loader import load_etcd_config
 
-
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 
 
@@ -57,6 +56,7 @@ class Settings(BaseSettings):
             port=self.mysql_port,
             path=self.db_name,
         )
+
 
 _settings = None
 
