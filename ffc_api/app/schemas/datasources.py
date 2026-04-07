@@ -3,6 +3,7 @@ from typing import Annotated
 from pydantic import Field
 
 from app.schemas.core import BaseSchema, IdSchema
+from app.schemas.tags import TagRef
 
 
 class DataSourceBase(BaseSchema):
@@ -17,3 +18,4 @@ class DataSourceReference(IdSchema):
 
 class DataSourceRead(IdSchema, DataSourceBase):
     parent: DataSourceReference | None = None
+    tags: list[TagRef] = []

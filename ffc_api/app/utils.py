@@ -1,8 +1,8 @@
 import contextlib
+import hashlib
 import logging
 import os
-import hashlib
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import httpx
 from fastapi import HTTPException, status
@@ -14,16 +14,17 @@ logger = logging.getLogger(__name__)
 def dateformat(date_obj: datetime | None) -> str:
     return date_obj.strftime("%-d %B %Y") if date_obj else ""
 
+
 def get_digest(val):
-    return hashlib.md5(val.encode('utf-8')).hexdigest()
+    return hashlib.md5(val.encode("utf-8")).hexdigest()
 
 
 def utcnow() -> datetime:
-    return datetime.now(tz=timezone.utc).replace(tzinfo=None)
+    return datetime.now(tz=UTC).replace(tzinfo=None)
 
 
 def utcnow_timestamp() -> int:
-    return int(datetime.now(tz=timezone.utc).timestamp())
+    return int(datetime.now(tz=UTC).timestamp())
 
 
 env = Environment(

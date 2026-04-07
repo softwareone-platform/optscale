@@ -25,6 +25,7 @@ target_metadata.naming_convention = {
     "pk": "pk_%(table_name)s",
 }
 
+
 def include_object(object, name, type_, reflected, compare_to):
     if type_ == "table" and object.schma in [app_settings.mysql_db, app_settings.auth_db]:
         return False

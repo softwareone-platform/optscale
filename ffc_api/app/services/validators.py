@@ -1,5 +1,4 @@
 from app.dependencies.db import DataSourceRepository, OrganizationRepository
-from app.db.handlers import NotFoundError
 
 
 class ResourceValidator:
@@ -13,7 +12,6 @@ class ResourceValidator:
 class OrganizationValidator(ResourceValidator):
     def __init__(self, repo: OrganizationRepository):
         self.repo = repo
-
 
 
 class DataSourceValidator(ResourceValidator):

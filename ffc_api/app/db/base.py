@@ -1,3 +1,5 @@
+import ssl
+
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -5,7 +7,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-import ssl
 
 from app.conf import Settings
 
@@ -20,9 +21,7 @@ def configure_db_engine(settings: Settings) -> AsyncEngine:
     db_engine = create_async_engine(
         str(settings.mysql_async_url),
         echo=settings.debug,
-        connect_args={
-            "ssl": ssl_ctx
-        },
+        connect_args={"ssl": ssl_ctx},
         future=True,
         pool_pre_ping=True,
         pool_recycle=280,

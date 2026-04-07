@@ -5,14 +5,30 @@ from requela import FieldRule, ModelRQLRules, RelationshipRule, RequelaError
 from sqlalchemy.sql.selectable import Select
 
 from app.db.models import Tag
+from app.optscale.models import DataSource, Organization, User
 from app.utils import wrap_exc_in_http_response
-from app.optscale.models import DataSource, User, Organization
 
 
 class TimestampMixin:
     created_at = FieldRule(alias="events.created.at")
     updated_at = FieldRule(alias="events.updated.at")
     deleted_at = FieldRule(alias="events.deleted.at")
+
+
+class TagRules(ModelRQLRules):
+    __model__ = Tag
+
+    name = FieldRule()
+    value = FieldRule()
+    resource_type = FieldRule()
+    resource_id = FieldRule()
+
+
+class UserRules(ModelRQLRules):
+    __model__ = User
+
+    name = FieldRule()
+    tags = RelationshipRule(rules=TagRules())
 
 
 class OrganizationRules(ModelRQLRules):
@@ -22,11 +38,7 @@ class OrganizationRules(ModelRQLRules):
     name = FieldRule()
     currency = FieldRule()
 
-
-class UserRules(ModelRQLRules):
-    __model__ = User
-
-    name = FieldRule()
+    tags = RelationshipRule(rules=TagRules())
 
 
 class DataSourceRules(ModelRQLRules):
@@ -37,14 +49,7 @@ class DataSourceRules(ModelRQLRules):
     account_id = FieldRule()
     parent_id = FieldRule()
 
-
-class TagRules(ModelRQLRules):
-    __model__ = Tag
-
-    name = FieldRule()
-    value = FieldRule()
-    resource_type = FieldRule()
-    resource_id = FieldRule()
+    tags = RelationshipRule(rules=TagRules())
 
 
 class RQLQuery:
@@ -63,3 +68,5 @@ class RQLQuery:
 
         with wrap_exc_in_http_response(RequelaError):
             return self.rules.build_query(unquote(rql_expression))
+
+        return None

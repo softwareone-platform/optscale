@@ -8,7 +8,7 @@ from fastapi.routing import APIRoute, APIRouter
 from app.conf import get_settings
 from app.db.base import configure_db_engine, verify_db_connection
 from app.dependencies.auth import verify_cluster_secret
-from app.routers import organizations, tags
+from app.routers import datasources, organizations, tags, users
 from app.services.roles_loader import configure_roles
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ def setup_app():
     )
     fastapi_pagination.add_pagination(app)
 
-    for router in (organizations.router, tags.router):
+    for router in (organizations.router, datasources.router, tags.router, users.router):
         setup_custom_serialization(router)
 
     app.include_router(
@@ -58,8 +58,18 @@ def setup_app():
         dependencies=[Depends(verify_cluster_secret)],
     )
     app.include_router(
+        datasources.router,
+        prefix="/datasources",
+        dependencies=[Depends(verify_cluster_secret)],
+    )
+    app.include_router(
         tags.router,
         prefix="/tags",
+        dependencies=[Depends(verify_cluster_secret)],
+    )
+    app.include_router(
+        users.router,
+        prefix="/users",
         dependencies=[Depends(verify_cluster_secret)],
     )
 

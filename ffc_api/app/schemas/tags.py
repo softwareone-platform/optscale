@@ -1,7 +1,6 @@
-from datetime import datetime
-from typing import Annotated, Optional
+from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from app.enums import TagResourceType
 from app.schemas.core import BaseSchema, CommonEventsSchema, IdSchema
@@ -22,10 +21,14 @@ class TagRead(IdSchema, TagBase, CommonEventsSchema):
     pass
 
 
+class TagRef(IdSchema):
+    name: Annotated[str, Field(min_length=1, max_length=255, examples=["Version"])]
+    value: Annotated[str, Field(min_length=1, max_length=255, examples=["1.0.0"])]
+
+
 class TagCreate(TagBase):
     pass
 
 
 class TagUpdate(BaseSchema):
     value: Annotated[str, Field(min_length=1, max_length=255, examples=["1.0.1"])]
-

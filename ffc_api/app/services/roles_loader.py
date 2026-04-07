@@ -1,4 +1,4 @@
-from typing import Any, Optional, Sequence
+from typing import Any
 
 from app.db.base import session_factory
 from app.db.handlers import RoleHandler, TypeHandler
@@ -11,11 +11,9 @@ class Roles:
         self.role_map: dict[int, str] = {}
         self.type_map: dict[int, str] = {}
 
-
     async def load(self):
         async with session_factory() as session:
             async with session.begin():
-
                 role_handler = RoleHandler(session)
                 type_handler = TypeHandler(session)
 
@@ -25,10 +23,10 @@ class Roles:
                 self.role_map = {r.id: r.name for r in roles}
                 self.type_map = {t.id: t.name for t in types}
 
-    def get_role_name(self, role_id: int) -> Optional[str]:
+    def get_role_name(self, role_id: int) -> str | None:
         return self.role_map.get(role_id)
 
-    def get_type_name(self, type_id: int) -> Optional[str]:
+    def get_type_name(self, type_id: int) -> str | None:
         return self.type_map.get(type_id)
 
 
