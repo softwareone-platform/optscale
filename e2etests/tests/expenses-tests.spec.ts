@@ -1,7 +1,7 @@
 /* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { debugLog } from '../utils/debug-logging';
-import { getExpectedDateRangeText, getThisMonthUnixDateRange } from '../utils/date-range-utils';
+import { getExpectedDateRangeText, getLast7DaysUnixRange, getThisMonthUnixDateRange } from '../utils/date-range-utils';
 import { expect } from '@playwright/test';
 import {
   ExpensesFilterByDataSourceResponse,
@@ -20,6 +20,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
+  const currentDate = new Date();
   const defaultDateRange = getExpectedDateRangeText('this month');
   let dateRangeReset = false;
   const name = getEnvironmentTestOrgName();
@@ -27,29 +28,36 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
     await expensesPage.waitForAllProgressBarsToDisappear();
-    await expensesPage.waitForCanvas();
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
-    if (!dateRange.includes(defaultDateRange)) {
-      await datePicker.selectThisMonthDateRange();
-      dateRangeReset = true;
+    if (currentDate.getDate() === 1) {
+      debugLog('Current date is the first of the month, selecting last 7 days date range to ensure data is displayed');
+      await datePicker.selectLast7DaysDateRange();
+      await expensesPage.waitForAllProgressBarsToDisappear();
+      await expensesPage.waitForCanvas();
+    } else {
+      if (!dateRange.includes(defaultDateRange)) {
+        await datePicker.selectThisMonthDateRange();
+        dateRangeReset = true;
+      }
     }
   });
 
   test('[231181] Verify default Expenses Page layout', async ({ expensesPage }) => {
-    await expect(expensesPage.downloadButton).toBeVisible();
-    expect(dateRangeReset).toBe(false);
-    expect(await expensesPage.evaluateActiveButton(expensesPage.dailyBtn)).toBe(true);
-    await expect(expensesPage.seeExpensesBreakdownGrid).toBeVisible();
-    await expect(expensesPage.sourceBtn).toBeVisible();
-    await expect(expensesPage.poolBtn).toBeVisible();
-    await expect(expensesPage.ownerBtn).toBeVisible();
+    await expect.soft(expensesPage.downloadButton).toBeVisible();
+    expect.soft(dateRangeReset).toBe(false);
+    expect.soft(await expensesPage.evaluateActiveButton(expensesPage.dailyBtn)).toBe(true);
+    await expect.soft(expensesPage.seeExpensesBreakdownGrid).toBeVisible();
+    await expect.soft(expensesPage.sourceBtn).toBeVisible();
+    await expect.soft(expensesPage.poolBtn).toBeVisible();
+    await expect.soft(expensesPage.ownerBtn).toBeVisible();
     await expect(expensesPage.geographyBtn).toBeVisible();
   });
 
   test('Validate API default chart data', { tag: '@p1' }, async ({ expensesPage }) => {
-    const { startDate, endDate } = getThisMonthUnixDateRange();
+    //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
+    const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesResponse;
 
     await test.step('Load expenses data for the this month', async () => {
@@ -158,13 +166,22 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
-  const defaultDateRange = getExpectedDateRangeText('this month');
+  const currentDate = new Date();
+  const defaultDateRange = currentDate.getDate() === 1 ? getExpectedDateRangeText('last 7 days') : getExpectedDateRangeText('this month');
   const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
     await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
+
+    if(currentDate.getDate() === 1) {
+      debugLog('Current date is the first of the month, selecting last 7 days date range to ensure data is displayed');
+      await datePicker.selectLast7DaysDateRange();
+      await expensesPage.waitForAllProgressBarsToDisappear();
+      await expensesPage.waitForCanvas();
+    }
+
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
@@ -191,7 +208,8 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
   });
 
   test('[231215] Validate API Source Breakdown chart data', async ({ expensesPage }) => {
-    const { startDate, endDate } = getThisMonthUnixDateRange();
+    //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
+    const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByDataSourceResponse;
 
     await test.step('Load expenses data', async () => {
@@ -299,13 +317,22 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
-  const defaultDateRange = getExpectedDateRangeText('this month');
+  const currentDate = new Date();
+  const defaultDateRange = currentDate.getDate() === 1 ? getExpectedDateRangeText('last 7 days') : getExpectedDateRangeText('this month');
   const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
     await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
+
+    if(currentDate.getDate() === 1) {
+      debugLog('Current date is the first of the month, selecting last 7 days date range to ensure data is displayed');
+      await datePicker.selectLast7DaysDateRange();
+      await expensesPage.waitForAllProgressBarsToDisappear();
+      await expensesPage.waitForCanvas();
+    }
+
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
@@ -332,7 +359,8 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
   });
 
   test('[231219] Validate API Pool Breakdown chart data', { tag: '@p1' }, async ({ expensesPage }) => {
-    const { startDate, endDate } = getThisMonthUnixDateRange();
+    //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
+    const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByPoolResponse;
 
     await test.step('Load expenses data', async () => {
@@ -425,13 +453,22 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
 
-  const defaultDateRange = getExpectedDateRangeText('this month');
+  const currentDate = new Date();
+  const defaultDateRange = currentDate.getDate() === 1 ? getExpectedDateRangeText('last 7 days') : getExpectedDateRangeText('this month');
   const name = getEnvironmentTestOrgName();
 
   test.beforeEach('Navigate to Expenses Page', async ({ expensesPage, datePicker }) => {
     await expensesPage.navigateToURL();
     await expensesPage.waitForAllProgressBarsToDisappear();
     await expensesPage.waitForCanvas();
+
+    if(currentDate.getDate() === 1) {
+      debugLog('Current date is the first of the month, selecting last 7 days date range to ensure data is displayed');
+      await datePicker.selectLast7DaysDateRange();
+      await expensesPage.waitForAllProgressBarsToDisappear();
+      await expensesPage.waitForCanvas();
+    }
+
     const dateRange = await datePicker.selectedDateText.textContent();
     debugLog(`Current date range on Expenses Page: ${dateRange}`);
 
@@ -458,7 +495,8 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
   });
 
   test('[231223] Validate API Owner Breakdown chart data', async ({ expensesPage }) => {
-    const { startDate, endDate } = getThisMonthUnixDateRange();
+    //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
+    const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByEmployeeResponse;
 
     await test.step('Load expenses data', async () => {

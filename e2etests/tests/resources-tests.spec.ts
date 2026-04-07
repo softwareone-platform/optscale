@@ -151,12 +151,20 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
   });
 
-  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
+  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage, datePicker }) => {
     test.setTimeout(1200000);
     test.skip(
       (await resourcesPage.getResourceCountValue()) > 5000,
       'Skipping test as resource count is greater than the tables maximum resources'
     );
+
+    // if the current day of the month is the 1st, then there may be no data so the tests will need to change the date range to Last 7 days to have data to compare.
+    const currentDate = new Date();
+    if (currentDate.getDate() === 1) {
+      await test.step('Set date range to Last 7 days to ensure there is data to compare', async () => {
+        await datePicker.selectLast7DaysDateRange();
+      });
+    }
 
     await test.step('Get total expenses value from resources page', async () => {
       totalExpensesValue = await resourcesPage.getTotalExpensesValue();
