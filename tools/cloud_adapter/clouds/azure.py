@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+import json
 import os
 import enum
 import logging
@@ -7,9 +8,9 @@ import time
 import random
 from typing import Any, Dict
 
-from requests.models import Request
+from azure.core.pipeline.transport import HttpRequest
 from urllib.parse import urlencode
-from multiprocessing import Process, Queue
+import concurrent.futures
 
 import msal
 from azure.core.credentials import AccessToken, TokenCredential
@@ -25,11 +26,10 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.commerce import UsageManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.compute.models import InstanceViewTypes
-from azure.mgmt.commerce.models.error_response import ErrorResponseException
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.subscription import SubscriptionClient
-from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import AuthenticationError, ClientRequestError
+from msrest.exceptions import (
+    AuthenticationError, ClientRequestError, HttpOperationError)
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
                                    ResourceNotFoundError, ServiceRequestError)
@@ -86,7 +86,7 @@ ARM_SCOPE = "https://management.azure.com/.default"
 
 # defining it to use outside CAd
 AzureConsumptionException = HttpResponseError
-AzureErrorResponseException = ErrorResponseException
+AzureErrorResponseException = HttpOperationError
 AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
 
@@ -411,15 +411,16 @@ def _client_with_retry(client_cls, *args, **kwargs):
 
 
 def call_with_time_limit(func, args, kwargs, timeout):
-    q = Queue()
-    p = Process(target=func, args=(args, q), kwargs=kwargs)
-    p.start()
-    p.join(timeout)
-    if p.is_alive():
-        p.terminate()
-        raise TimeoutError
-    if not q.empty():
-        return q.get_nowait()
+    if args is None:
+        args = ()
+    if kwargs is None:
+        kwargs = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(func, *args, **kwargs)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            raise TimeoutError
 
 
 class ExpenseImportScheme(enum.Enum):
@@ -774,8 +775,8 @@ class Azure(CloudBase):
     def _check_subscription(self, subscription_id):
         try:
             self.subscription.subscriptions.get(subscription_id)
-        except CloudError as ex:
-            raise ResourceNotFound(ex.inner_exception.message)
+        except ResourceNotFoundError as ex:
+            raise ResourceNotFound(ex.error.message)
 
     def _get_cpu_ram(self, flavor):
         caps = flavor.capabilities
@@ -927,7 +928,7 @@ class Azure(CloudBase):
     def validate_credentials(self, org_id=None):
         try:
             result = call_with_time_limit(
-                self._validate_credentials, args=org_id, kwargs={},
+                self._validate_credentials, args=(org_id,), kwargs={},
                 timeout=CLOUD_VALIDATION_TIMEOUT)
             if isinstance(result, Exception):
                 raise result
@@ -1044,7 +1045,7 @@ class Azure(CloudBase):
         for vm in virtual_machines:
             if not vnet_id_to_name:
                 vnet_id_to_name = self._discover_vnets()
-            os_type = vm.storage_profile.os_disk.os_type.value
+            os_type = vm.storage_profile.os_disk.os_type
             tags = vm.tags or {}
             spotted = vm.priority == 'Spot'
             status = self._get_vm_status(vm.id)
@@ -1332,10 +1333,11 @@ class Azure(CloudBase):
         :return: an iterator with usage objects
         """
         def get_values(_req):
-            result = self.raw_client.send(_req)
-            deserialized = DESERIALIZER.deserialize_data(
-                result.json(), "UsageDetailsListResult")
-            return deserialized.value or [], deserialized.next_link
+            http_response = self.raw_client._pipeline.run(_req).http_response
+            data = json.loads(http_response.text())
+            values = data.get("value", [])
+            next_link = data.get("nextLink")
+            return values, next_link
 
         date_format = '%Y-%m-%d'
         start_str = start_date.strftime(date_format)
@@ -1344,20 +1346,22 @@ class Azure(CloudBase):
         base_url = 'https://management.azure.com'
         usage_url = self.consumption.usage_details.list.metadata[
             'url'].format(scope=scope)
-        url = f'{base_url}{usage_url}?$extend=properties/meterDetails,' \
-              f'properties/additionalProperties&startDate={start_str}' \
-              f'&endDate={end_str}&api-version=2021-10-01'
+        url = (f"{base_url}{usage_url}?$extend=properties/meterDetails,"
+               f"properties/additionalProperties"
+               f"&$filter=properties/usageStart ge '{start_str}' and "
+               f"properties/usageEnd le '{end_str}'"
+               f"&api-version=2021-10-01")
         if limit:
-            url += f'&top={limit}'
+            url += f'&$top={limit}'
 
         # Ensure msrest client has a fresh token from our MSAL-based credential
-        cred = self.raw_client.config.credentials
+        cred = self.raw_client._config.credential
         # One signed_session() call forces refresh + sets cred.token["access_token"]
         cred.signed_session()
         token = cred.token['access_token']
 
         headers = {'Authorization': f'Bearer {token}'}
-        request = Request(method='GET', url=url, headers=headers)
+        request = HttpRequest(method='GET', url=url, headers=headers)
         values, next_link = get_values(request)
         for v in values:
             yield v
@@ -1717,8 +1721,8 @@ class Azure(CloudBase):
             headers={'Content-Type': 'application/json'},
             content={'requests': request_specs},
         )
-        response = self.raw_client.send(batch_request, stream=False)
-        return response.json()
+        response = self.raw_client._pipeline.run(batch_request)
+        return json.loads(response.http_response.text())
 
     @retry(stop_max_attempt_number=5, wait_fixed=5000,
            retry_on_exception=_retry_on_error)
@@ -1787,9 +1791,9 @@ class Azure(CloudBase):
 
     def start_instance(self, instance_name, group_name):
         try:
-            return self.compute.virtual_machines.start(
+            return self.compute.virtual_machines.begin_start(
                 group_name, instance_name)
-        except CloudError as exc:
+        except HttpOperationError as exc:
             if exc.error.error == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:
@@ -1797,9 +1801,9 @@ class Azure(CloudBase):
 
     def stop_instance(self, instance_name, group_name):
         try:
-            return self.compute.virtual_machines.deallocate(
+            return self.compute.virtual_machines.begin_deallocate(
                 group_name, instance_name)
-        except CloudError as exc:
+        except HttpOperationError as exc:
             if exc.error.error == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:

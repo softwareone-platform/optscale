@@ -324,8 +324,17 @@ class Aws(S3CloudMixin):
 
     def _is_region_usable(self, region):
         try:
-            self.session.client("ec2", region).describe_availability_zones()
+            check_config = CoreConfig(
+                connect_timeout=5,
+                read_timeout=10,
+                retries={"max_attempts": 1}
+            )
+            self.session.client("ec2", region, config=check_config
+                                ).describe_availability_zones()
             return True
+        except (ReadTimeoutError, ConnectTimeoutError, SSLError,
+                EndpointConnectionError):
+            return False
         except ClientError as e:
             code = e.response["Error"]["Code"]
             if code in ("AuthFailure", "UnauthorizedOperation"):
