@@ -22,7 +22,7 @@ export const useSyncQueryParamWithState = <T, P extends boolean = false>({
   possibleStates,
   defaultValue,
   parameterIsArray = false as P,
-  searchParamsGetterOptions,
+  searchParamsGetterOptions
 }: SyncQueryParamWithStateProps<T, P>): ReturnType<T, P> => {
   const [query, setQuery] = useState(() => {
     const params = getSearchParams(searchParamsGetterOptions);

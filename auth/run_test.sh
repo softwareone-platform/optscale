@@ -23,7 +23,7 @@ echo "<<Alembic down revision tests"
 
 echo "Unit tests>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "uv --project auth run python -m unittest discover ./auth/auth_server/tests"
+    bash -c "uv --project auth run pytest -n auto auth --disable-warnings"
 echo "<<Unit tests"
 
 docker rmi ${TEST_IMAGE}

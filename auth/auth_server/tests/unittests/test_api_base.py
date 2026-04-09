@@ -38,6 +38,10 @@ class TestAuthBase(tornado.testing.AsyncHTTPTestCase):
         }.get(version)
 
     def setUp(self, version='v1'):
+        patch(
+            'optscale_client.config_client.client.Client.read_branch',
+            return_value=None,
+        ).start()
         super().setUp()
         secret = gen_id()
         patch('optscale_client.config_client.client.Client.cluster_secret',

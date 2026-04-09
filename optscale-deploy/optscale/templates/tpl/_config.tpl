@@ -92,9 +92,25 @@ etcd:
     report_imports:
       not_processed_threshold_secs: {{ .Values.import_reports.not_processed_threshold_secs }}
       message_expiration_secs: {{ .Values.import_reports.message_expiration_secs }}
+    opentelemetry:
+      enable_asyncio: true
+      enable_threading: true
+      enable_tornado: true
+      enable_urllib3: true
+      enable_requests: true
+      enable_sqlalchemy: true
+      enable_mongo: true
+      enable_kombu: true
   auth:
     host: {{ .Values.auth.service.name }}
     port: {{ .Values.auth.service.externalPort }}
+    opentelemetry:
+      enable_asyncio: true
+      enable_threading: true
+      enable_tornado: true
+      enable_urllib3: true
+      enable_requests: true
+      enable_sqlalchemy: true
   katara:
     host: {{ .Values.katara_service.service.name }}
     port: {{ .Values.katara_service.service.externalPort }}
@@ -271,6 +287,11 @@ etcd:
     demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
   diworker:
     max_report_imports_workers: {{ .Values.import_reports.max_workers }}
+    opentelemetry:
+      enable_threading: true
+      enable_urllib3: true
+      enable_requests: true
+      enable_kombu: true
   exchange_rates:
     {{- range $currency, $rate := .Values.exchange_rates }}
       {{ $currency }}: {{ $rate }}
@@ -279,17 +300,13 @@ etcd:
     api_key: {{ .Values.stripe.api_key }}
     webhook_secret: {{ .Values.stripe.webhook_secret }}
     enabled: {{ .Values.stripe.enabled }}
-{{- if .Values.opentelemetry.enabled }}
   opentelemetry:
-{{- if (and (eq .Values.opentelemetry.exporter "otlp") (.Values.tempo.enabled)) }}
-    tempo_host: {{ .Values.opentelemetry.exporters.tempo.host }}
-    tempo_port: {{ .Values.opentelemetry.exporters.tempo.port }}
-{{- end }}
-{{- if (eq .Values.opentelemetry.exporter "azure_monitor") }}
-    connection_string: {{ .Values.opentelemetry.exporters.azure_monitor.connection_string }}
-{{- end }}
-    enable_sqlalchemy: {{ .Values.opentelemetry.enable_sqlalchemy | quote }}
-    enable_future_traces: {{ .Values.opentelemetry.enable_future_traces | quote }}
-    enable_mongo_statements: {{ .Values.opentelemetry.enable_mongo_statements | quote }}
-{{- end }}
+    enabled: {{ .Values.opentelemetry.enabled }}
+    {{- if .Values.opentelemetry.enabled }}
+    exporter:
+      type: {{ .Values.opentelemetry.exporter.type }}
+      {{- if or (eq .Values.opentelemetry.exporter.type "otlp") (eq .Values.opentelemetry.exporter.type "azure_monitor") }}
+      connection_string: {{ .Values.opentelemetry.exporter.connection_string }}
+      {{- end }}
+    {{- end }}
 {{- end }}
