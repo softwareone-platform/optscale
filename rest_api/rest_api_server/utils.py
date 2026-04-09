@@ -11,6 +11,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from decimal import Decimal
+from functools import cache
 from string import ascii_letters, digits
 from urllib.parse import urlencode
 
@@ -523,6 +524,7 @@ def get_root_directory_path():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+@cache
 def _get_encryption_salt():
     return Config().client.encryption_salt()
 
@@ -607,11 +609,3 @@ def handle_http_exc(func):
 def timestamp_to_day_start(timestamp) -> datetime:
     return utcfromtimestamp(timestamp).replace(
         hour=0, minute=0, second=0, microsecond=0)
-
-
-def get_trace_headers():
-    ctx = trace.get_current_span().get_span_context()
-    if not ctx.is_valid:
-        return {}
-    tid = format(ctx.trace_id, "032x")
-    return {"x-trace-id": tid}
