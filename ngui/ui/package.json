@@ -126,7 +126,7 @@
     "glob": "13.0.1",
     "jsdom": "22.1.0",
     "redux-immutable-state-invariant": "2.1.0",
-    "storybook": "^8.6.15",
+    "storybook": "8.6.17",
     "vitest": "3.2.4"
   }
 }
