@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize]
 
 permissions:
+  contents: read # Recommended for actions/checkout
   pull-requests: write
   issues: write
 
@@ -12,6 +13,9 @@ jobs:
   manage-ui-label:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+
       - name: Filter changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -22,14 +26,12 @@ jobs:
 
       - name: Add "ui" label if ngui files changed
         if: steps.filter.outputs.ngui == 'true'
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: ./.github/actions/add_pull_request_label
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: ui
+          label: ui
 
       - name: Remove "ui" label if no ngui files changed
         if: steps.filter.outputs.ngui != 'true'
-        uses: actions-ecosystem/action-remove-labels@v1
+        uses: ./.github/actions/remove_pull_request_label
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: ui
+          label: ui

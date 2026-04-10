@@ -1,0 +1,20 @@
+name: Add pull request label
+description: Add a label to the pull request that triggered the workflow
+inputs:
+  label:
+    description: Name of the label to add
+    type: string
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Add label
+      uses: actions/github-script@v8
+      with:
+        script: |
+          await github.rest.issues.addLabels({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            labels: ['${{ inputs.label }}'],
+          });
