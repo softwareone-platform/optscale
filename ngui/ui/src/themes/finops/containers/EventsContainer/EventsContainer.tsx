@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import EventList from "@theme/components/Events/Events";
+import Events from "@theme/components/Events/Events";
 import { SECOND } from "api/constants";
 import { useEventsLazyQuery } from "graphql/__generated__/hooks/keeper";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { getLastElement } from "utils/arrays";
 import { EVENT_LEVEL, EVENTS_LIMIT } from "utils/constants";
+import { scrolledToBottom } from "utils/layouts";
 import { getSearchParams, updateSearchParams } from "utils/network";
 
 type FilterParams = {
@@ -39,9 +40,13 @@ const getQueryParamFilters = () => {
     level = EVENT_LEVEL.ALL,
     timeStart,
     timeEnd,
-    descriptionLike = "",
     includeDebugEvents = false
-  } = getSearchParams() as Partial<FilterParams>;
+  } = getSearchParams() as Partial<Pick<FilterParams, "level" | "timeStart" | "timeEnd" | "includeDebugEvents">>;
+
+  const { descriptionLike } = getSearchParams({
+    parseBooleans: false,
+    parseNumbers: false
+  }) as Partial<Pick<FilterParams, "descriptionLike">>;
 
   return {
     level,
@@ -104,7 +109,6 @@ const EventsContainer = () => {
   const intervalId = useRef();
 
   const [events, setEvents] = useState([]);
-  const [eventsCount, setEventsCount] = useState(0);
 
   const getEventsAbortControllerRef = useRef<AbortController | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -177,7 +181,6 @@ const EventsContainer = () => {
     })
       .then(({ data }) => {
         setEvents(data.events);
-        setEventsCount(data.events.length);
         setPolling(variables);
       })
       .finally(() => {
@@ -246,49 +249,49 @@ const EventsContainer = () => {
     }
   };
 
-  const getMoreEvents = () => {
+  const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     if (isFetchingMore) {
       return;
     }
 
-    const lastEvent = getLastElement(events);
+    if (scrolledToBottom(event.target)) {
+      const lastEvent = getLastElement(events);
 
-    fetchMoreAbortControllerRef.current = new AbortController();
+      fetchMoreAbortControllerRef.current = new AbortController();
 
-    setIsFetchingMore(true);
+      setIsFetchingMore(true);
 
-    fetchMoreEvents({
-      variables: getQueryVariables({
-        ...filters,
-        lastId: lastEvent.id
-      }),
-      context: {
-        fetchOptions: {
-          signal: fetchMoreAbortControllerRef.current?.signal
-        }
-      }
-    })
-      .then(({ data }) => {
-        if (data) {
-          setEvents((currentEvents) => [...currentEvents, ...data.events]);
-          setEventsCount(data.events.length);
+      fetchMoreEvents({
+        variables: getQueryVariables({
+          ...filters,
+          lastId: lastEvent.id
+        }),
+        context: {
+          fetchOptions: {
+            signal: fetchMoreAbortControllerRef.current?.signal
+          }
         }
       })
-      .finally(() => {
-        setIsFetchingMore(false);
-      });
+        .then(({ data }) => {
+          if (data) {
+            setEvents((currentEvents) => [...currentEvents, ...data.events]);
+          }
+        })
+        .finally(() => {
+          setIsFetchingMore(false);
+        });
+    }
   };
 
   return (
-    <EventList
+    <Events
       eventLevel={filters.level}
       descriptionLike={filters.descriptionLike}
       includeDebugEvents={filters.includeDebugEvents}
       events={events}
       isLoading={isLoading}
       isFetchingMore={isFetchingMore}
-      getMoreEvents={getMoreEvents}
-      eventsCount={eventsCount}
+      onScroll={handleScroll}
       applyFilter={applyFilter}
     />
   );

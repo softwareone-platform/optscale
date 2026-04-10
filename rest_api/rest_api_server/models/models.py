@@ -1642,6 +1642,29 @@ class OrganizationGemini(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
         return res
 
 
+class GeminiData(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
+    __tablename__ = "gemini_data"
+
+    gemini_id = Column(
+        Uuid("gemini_id"), ForeignKey("organization_gemini.id"),
+        nullable=False, info=ColumnPermissions.create_only, index=True)
+    organization_gemini = relationship(
+        "OrganizationGemini", foreign_keys=[gemini_id])
+    buckets = Column(BaseString("buckets"), nullable=False,
+                     info=ColumnPermissions.create_only)
+    status = Column(GeminiStatus, default=GeminiStatuses.QUEUED,
+                    nullable=False, info=ColumnPermissions.update_only)
+    url = Column(NullableString('url'), nullable=True,
+                 info=ColumnPermissions.update_only)
+    valid_until = Column(
+        NullableInt('valid_until'), default=0, nullable=False,
+        info=ColumnPermissions.update_only)
+
+    @validates("gemini_id", "buckets", "status", "url", "valid_until")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+
 class PowerSchedule(Base, CreatedMixin, MutableMixin, ValidatorMixin):
     __tablename__ = "power_schedule"
 

@@ -40,9 +40,13 @@ const getQueryParamFilters = () => {
     level = EVENT_LEVEL.ALL,
     timeStart,
     timeEnd,
-    descriptionLike = "",
     includeDebugEvents = false
-  } = getSearchParams() as Partial<FilterParams>;
+  } = getSearchParams() as Partial<Pick<FilterParams, "level" | "timeStart" | "timeEnd" | "includeDebugEvents">>;
+
+  const { descriptionLike } = getSearchParams({
+    parseBooleans: false,
+    parseNumbers: false
+  }) as Partial<Pick<FilterParams, "descriptionLike">>;
 
   return {
     level,

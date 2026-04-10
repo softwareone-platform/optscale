@@ -1722,10 +1722,6 @@ class Client(Client_v1):
         url = '%s/%s' % (Client.organization_url(organization_id), url)
         return url
 
-    @staticmethod
-    def geminis_data_url(id_):
-        return 'geminis/%s/data' % id_
-
     def gemini_list(self, organization_id=None, params=None):
         url = self.geminis_url(organization_id=organization_id)
         return self.get(url, body=params)
@@ -1737,11 +1733,34 @@ class Client(Client_v1):
     def gemini_get(self, id_):
         return self.get(self.geminis_url(id_=id_))
 
-    def gemini_data_get(self, id_, params=None):
-        url = self.geminis_data_url(id_=id_)
-        if params:
-            url += self.query_url(**params)
-        return self.get(url)
+    @staticmethod
+    def geminis_data_url(id_=None, gemini_id=None):
+        url = 'geminis_data'
+        if id_ is not None:
+            url = '%s/%s' % (url, id_)
+        if gemini_id is not None:
+            url = '%s/%s' % (Client.geminis_url(id_=gemini_id), url)
+        return url
+
+    def geminis_data_create(self, gemini_id, params):
+        return self.post(self.geminis_data_url(gemini_id=gemini_id), params)
+
+    def geminis_data_list(self, gemini_id, only_active=False):
+        return self.get(self.geminis_data_url(
+            gemini_id=gemini_id) + self.query_url(only_active=only_active))
+
+    def geminis_data_get(self, id_):
+        return self.get(self.geminis_data_url(id_=id_))
+
+    def geminis_data_update(self, id_, params):
+        return self.patch(self.geminis_data_url(id_=id_), params)
+
+    @staticmethod
+    def geminis_data_download_url(id_):
+        return f'{Client.geminis_data_url(id_=id_)}/download'
+
+    def geminis_data_download(self, id_):
+        return self.get(self.geminis_data_download_url(id_=id_))
 
     def gemini_update(self, id_, params):
         return self.patch(self.geminis_url(id_=id_), params)
