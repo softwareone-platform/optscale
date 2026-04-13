@@ -220,6 +220,10 @@ def test_console_exporter(mocker: MockerFixture):
         ("enable_requests", "opentelemetry.instrumentation.requests.RequestsInstrumentor"),
         ("enable_urllib3", "opentelemetry.instrumentation.urllib3.URLLib3Instrumentor"),
         ("enable_mongo", "opentelemetry.instrumentation.pymongo.PymongoInstrumentor"),
+        (
+            "enable_clickhouse",
+            "tools.optscale_telemetry.clickhouse_instrumentor.ClickHouseInstrumentor",
+        ),
         ("enable_kombu", "tools.optscale_telemetry.kombu_instrumentor.KombuInstrumentor"),
     ],
 )
@@ -258,6 +262,10 @@ def test_instrument(
         ("enable_requests", "opentelemetry.instrumentation.requests.RequestsInstrumentor"),
         ("enable_urllib3", "opentelemetry.instrumentation.urllib3.URLLib3Instrumentor"),
         ("enable_mongo", "opentelemetry.instrumentation.pymongo.PymongoInstrumentor"),
+        (
+            "enable_clickhouse",
+            "tools.optscale_telemetry.clickhouse_instrumentor.ClickHouseInstrumentor",
+        ),
         ("enable_kombu", "tools.optscale_telemetry.kombu_instrumentor.KombuInstrumentor"),
     ],
 )
