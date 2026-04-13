@@ -1334,6 +1334,7 @@ class Azure(CloudBase):
         """
         def get_values(_req):
             http_response = self.raw_client._pipeline.run(_req).http_response
+            http_response.raise_for_status()
             data = json.loads(http_response.text())
             values = data.get("value", [])
             next_link = data.get("nextLink")

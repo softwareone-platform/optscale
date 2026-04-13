@@ -475,11 +475,10 @@ class AzureApiImporter(AzureImporterBase):
         chunk = []
         usages = self.cloud_adapter.get_usage(self.period_start) or []
         record_number = 0
-        for usage_obj in usages:
+        for usage_dict in usages:
             if len(chunk) == CHUNK_SIZE:
                 self.update_raw_records(chunk)
                 chunk = []
-            usage_dict = usage_obj.as_dict()
             record_number += 1
             usage_dict['_rec_n'] = record_number
             self._fill_custom_fields(usage_dict)
