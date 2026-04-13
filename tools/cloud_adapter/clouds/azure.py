@@ -844,7 +844,7 @@ class Azure(CloudBase):
                 raise StopIteration
             usage_detail = next(usage)
             currency = (getattr(usage_detail, 'billing_currency', None) or
-                        getattr(usage_detail, 'billing_currency_code', None))
+                        getattr(usage_detail, 'billingCurrencyCode', None))
         except (AzureConsumptionException, StopIteration, ClientRequestError,
                 TypeError) as exc:
             # according to logs in this issue we get TypeError deep inside
@@ -874,7 +874,7 @@ class Azure(CloudBase):
 
         if (subscription_type == 'EnterpriseAgreement' and
                 not (getattr(usage_detail, 'cost', None) or
-                     getattr(usage_detail, 'cost_in_billing_currency', None))):
+                     getattr(usage_detail, 'costInBillingCurrency', None))):
             consumption_api_supported = False
 
         return {
