@@ -31,7 +31,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232655] Verify that Sample data pop-up is visible when no policies exist', async ({ taggingPoliciesPage }) => {
+  test('[232655] Verify that Sample data pop-up is visible when no policies exist', { tag: ['@fast', '@p2'] }, async ({ taggingPoliciesPage }) => {
     await test.step('Ensure all policies are deleted', async () => {
       // eslint-disable-next-line playwright/no-conditional-in-test
       if (!(await taggingPoliciesPage.addRealDataBtn.isVisible())) {
@@ -46,7 +46,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232656] Verify that a user can create a required tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+  test('[232656] Verify that a user can create a required tagging policy', { tag: ['@fast', '@p2'] }, async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
     const policyName = `Required Tag Policy ${Date.now()}`;
     const tagName = 'AccountId';
 
@@ -66,7 +66,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232657] Verify that a user can create a prohibited tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+  test('[232657] Verify that a user can create a prohibited tagging policy', { tag: ['@fast', '@p2'] }, async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
     const policyName = `Prohibited Tag Policy ${Date.now()}`;
     const tagName = '__department';
     const filter = 'Activity';
@@ -96,7 +96,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232658] Verify that a user can create a tags correlation tagging policy', async ({
+  test('[232658] Verify that a user can create a tags correlation tagging policy', { tag: ['@fast', '@p2'] }, async ({
     taggingPoliciesPage,
     taggingPoliciesCreatePage,
   }) => {
@@ -122,7 +122,7 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232659] Verify that user can delete a policy from the tagging policy details page', async ({
+  test('[232659] Verify that user can delete a policy from the tagging policy details page', { tag: ['@fast', '@p2'] }, async ({
     taggingPoliciesPage,
     taggingPoliciesCreatePage,
   }) => {
@@ -175,7 +175,7 @@ test.describe('[MPT-17042] Mocked Tagging Policies Tests', { tag: ['@ui', '@tagg
     });
   });
 
-  test('[232660] Verify that tagging policies are displayed with the correct status', async ({ taggingPoliciesPage }) => {
+  test('[232660] Verify that tagging policies are displayed with the correct status', { tag: ['@fast', '@p2'] }, async ({ taggingPoliciesPage }) => {
     const cancelIconXpath = '//*[@data-testid="CancelIcon"]';
     const checkCheckIconXpath = '//*[@data-testid="CheckCircleIcon"]';
     const correlatedTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Correlated Tag")]/ancestor::tr/td[2]/div)[1]');

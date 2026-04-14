@@ -44,7 +44,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
     }
   });
 
-  test('[231181] Verify default Expenses Page layout', async ({ expensesPage }) => {
+  test('[231181] Verify default Expenses Page layout', { tag: ['@fast', '@p2'] }, async ({ expensesPage }) => {
     await expect.soft(expensesPage.downloadButton).toBeVisible();
     expect.soft(dateRangeReset).toBe(false);
     expect.soft(await expensesPage.evaluateActiveButton(expensesPage.dailyBtn)).toBe(true);
@@ -55,7 +55,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
     await expect(expensesPage.geographyBtn).toBeVisible();
   });
 
-  test('Validate API default chart data', { tag: '@p1' }, async ({ expensesPage }) => {
+  test('[231182] Validate API default chart data', { tag: ['@fast', '@p1'] }, async ({ expensesPage }) => {
     //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
     const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesResponse;
@@ -96,7 +96,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
     });
   });
 
-  test('[231212] Breakdown by Geography button navigates to Cost map page', async ({ expensesPage, expensesMapPage }) => {
+  test('[231212] Breakdown by Geography button navigates to Cost map page', { tag: ['@fast', '@p2'] }, async ({ expensesPage, expensesMapPage }) => {
     await expensesPage.geographyBtn.click();
     await expect(expensesMapPage.heading).toBeVisible();
   });
@@ -127,7 +127,7 @@ test.describe('[MPT-12859] Expenses page default view mocked tests', { tag: ['@u
       await expensesPage.clickDailyBtnIfNotSelected();
     });
   });
-  test('[231183] Verify expenses chart download', { tag: '@p1' }, async ({ expensesPage }) => {
+  test('[231183] Verify expenses chart download', { tag: ['@fast', '@p1'] }, async ({ expensesPage }) => {
     let actualPath = path.resolve('tests', 'downloads', 'expenses-page-daily-chart.pdf');
     let expectedPath = path.resolve('tests', 'expected', 'expected-expenses-page-daily-chart.pdf');
     let diffPath = path.resolve('tests', 'downloads', 'expenses-page-daily-chart-diff.png');
@@ -190,7 +190,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     await expensesPage.waitForCanvas();
   });
 
-  test('[231214] Verify Expenses Page Source Breakdown layout', async ({ expensesPage, datePicker }) => {
+  test('[231214] Verify Expenses Page Source Breakdown layout', { tag: ['@fast', '@p2'] }, async ({ expensesPage, datePicker }) => {
     await test.step('Verify Expenses Page Source Breakdown elements', async () => {
       await expect(expensesPage.downloadButton).toBeHidden();
       await expect(expensesPage.seeExpensesBreakdownGrid).toBeHidden();
@@ -207,7 +207,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     });
   });
 
-  test('[231215] Validate API Source Breakdown chart data', async ({ expensesPage }) => {
+  test('[231215] Validate API Source Breakdown chart data', { tag: ['@fast', '@p2'] }, async ({ expensesPage }) => {
     //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
     const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByDataSourceResponse;
@@ -273,7 +273,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
 
   test(
     '[231216] Verify data source expenses total for(default) period matches chart and table totals',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ expensesPage }) => {
       const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
       debugLog(`Total expenses for selected period: ${totalForPeriod}`);
@@ -289,7 +289,7 @@ test.describe('[MPT-12859] Expenses Page Source Breakdown Tests', { tag: ['@ui',
     }
   );
 
-  test('[231217] Verify data source expenses total for (last month) period matches chart and table totals', async ({
+  test('[231217] Verify data source expenses total for (last month) period matches chart and table totals', { tag: ['@fast', '@p2'] }, async ({
     expensesPage,
     datePicker,
   }) => {
@@ -341,7 +341,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     await expensesPage.waitForCanvas();
   });
 
-  test('[231218] Verify Expenses Page Pool Breakdown layout', async ({ expensesPage, datePicker }) => {
+  test('[231218] Verify Expenses Page Pool Breakdown layout', { tag: ['@fast', '@p2'] }, async ({ expensesPage, datePicker }) => {
     await test.step('Verify Expenses Page Pool Breakdown elements', async () => {
       await expect(expensesPage.downloadButton).toBeHidden();
       await expect(expensesPage.seeExpensesBreakdownGrid).toBeHidden();
@@ -358,7 +358,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     });
   });
 
-  test('[231219] Validate API Pool Breakdown chart data', { tag: '@p1' }, async ({ expensesPage }) => {
+  test('[231219] Validate API Pool Breakdown chart data', { tag: ['@fast', '@p1'] }, async ({ expensesPage }) => {
     //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
     const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByPoolResponse;
@@ -412,7 +412,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     });
   });
 
-  test('[231220] Verify pool expenses total for(default) period matches chart and table totals', async ({ expensesPage }) => {
+  test('[231220] Verify pool expenses total for(default) period matches chart and table totals', { tag: ['@fast', '@p2'] }, async ({ expensesPage }) => {
     const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
     debugLog(`Total expenses for selected period: ${totalForPeriod}`);
     const chartTotal = await expensesPage.getExpensesPieChartValue();
@@ -426,7 +426,7 @@ test.describe('[MPT-12859] Expenses Page Pool Breakdown Tests', { tag: ['@ui', '
     });
   });
 
-  test('[231221] Verify pool expenses total for (last 7 days) period matches chart and table totals', async ({
+  test('[231221] Verify pool expenses total for (last 7 days) period matches chart and table totals', { tag: ['@fast', '@p2'] }, async ({
     expensesPage,
     datePicker,
   }) => {
@@ -477,7 +477,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
     await expensesPage.waitForCanvas();
   });
 
-  test('[231222] Verify Expenses Page Owner Breakdown layout', async ({ expensesPage, datePicker }) => {
+  test('[231222] Verify Expenses Page Owner Breakdown layout', { tag: ['@fast', '@p2'] }, async ({ expensesPage, datePicker }) => {
     await test.step('Verify Expenses Page Owner Breakdown elements', async () => {
       await expect(expensesPage.downloadButton).toBeHidden();
       await expect(expensesPage.seeExpensesBreakdownGrid).toBeHidden();
@@ -494,7 +494,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
     });
   });
 
-  test('[231223] Validate API Owner Breakdown chart data', async ({ expensesPage }) => {
+  test('[231223] Validate API Owner Breakdown chart data', { tag: ['@fast', '@p2'] }, async ({ expensesPage }) => {
     //if it's the first day of the month, the API will return 0 expenses for the current month, so we need to get the date range for last 7 days to validate the data
     const { startDate, endDate } = currentDate.getDate() === 1 ? getLast7DaysUnixRange() : getThisMonthUnixDateRange();
     let expensesData: ExpensesFilterByEmployeeResponse;
@@ -547,7 +547,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
     });
   });
 
-  test('[231224] Verify owner expenses total for(default) period matches chart and table totals', async ({ expensesPage }) => {
+  test('[231224] Verify owner expenses total for(default) period matches chart and table totals', { tag: ['@fast', '@p2'] }, async ({ expensesPage }) => {
     const totalForPeriod = await expensesPage.getTotalExpensesForSelectedPeriod();
     debugLog(`Total expenses for selected period: ${totalForPeriod}`);
     const chartTotal = await expensesPage.getExpensesPieChartValue();
@@ -561,7 +561,7 @@ test.describe('[MPT-12859] Expenses Page Owner Breakdown Tests', { tag: ['@ui', 
     });
   });
 
-  test('[231225] Verify owner expenses total for (last 30 days) period matches chart and table totals', async ({
+  test('[231225] Verify owner expenses total for (last 30 days) period matches chart and table totals', { tag: ['@fast', '@p2'] }, async ({
     expensesPage,
     datePicker,
   }) => {

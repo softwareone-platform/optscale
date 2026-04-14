@@ -58,4 +58,5 @@ optscale-deploy/.vagrant/
 /e2etests/.cache/
 /e2etests/.cache/*
 /e2etests/tests/downloads/*
+/e2etests/reports/*
 

@@ -8,7 +8,7 @@ test.describe('Auth API tests @api_tests', { tag: '@api' }, () => {
   const password = process.env.DEFAULT_USER_PASSWORD;
   const userId = process.env.DEFAULT_AUTH_USER_ID;
 
-  test('Set verification codes', async ({ authRequest }) => {
+  test('Set verification codes', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.setVerificationCode(email, '123456');
 
     await test.step('Verify response status and payload fields', async () => {
@@ -16,7 +16,7 @@ test.describe('Auth API tests @api_tests', { tag: '@api' }, () => {
     });
   });
 
-  test('Authorize user payload', async ({ authRequest }) => {
+  test('Authorize user payload', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.authorization(email, password);
     const payload = JSON.parse(await response.text()) as AuthResponse;
 
@@ -39,23 +39,23 @@ test.describe('Auth API tests @api_tests', { tag: '@api' }, () => {
     });
   });
 
-  test('Authorize user with invalid credentials', async ({ authRequest }) => {
+  test('Authorize user with invalid credentials', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.authorization(email, 'invalidPassword');
     expect(response.status()).toBe(403);
   });
 
-  test('Authorize user with invalid email', async ({ authRequest }) => {
+  test('Authorize user with invalid email', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const invalidEmail = generateRandomEmail();
     const response = await authRequest.authorization(invalidEmail, password);
     expect(response.status()).toBe(403);
   });
 
-  test('Authorize user with empty email', async ({ authRequest }) => {
+  test('Authorize user with empty email', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.authorization('', password);
     expect(response.status()).toBe(400);
   });
 
-  test('Get users with Cluster Secret', async ({ authRequest }) => {
+  test('Get users with Cluster Secret', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const email = process.env.DEFAULT_USER_EMAIL.toLowerCase();
     const response = await authRequest.getUsersWithClusterSecret(userId);
     const payload = JSON.parse(await response.text()) as UsersResponse;
@@ -80,17 +80,17 @@ test.describe('Auth API tests @api_tests', { tag: '@api' }, () => {
     }
   });
 
-  test('Get user with Cluster Secret but no user ID', async ({ authRequest }) => {
+  test('Get user with Cluster Secret but no user ID', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.getUsersWithClusterSecret();
     expect(response.status()).toBe(401);
   });
 
-  test('Get user with Cluster Secret and invalid user ID', async ({ authRequest }) => {
+  test('Get user with Cluster Secret and invalid user ID', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.getUsersWithClusterSecret('invalidUserID');
     expect(response.status()).toBe(404);
   });
 
-  test('Get users with bad cluster secret', async ({ authRequest }) => {
+  test('Get users with bad cluster secret', { tag: ['@fast', '@p2'] }, async ({ authRequest }) => {
     const response = await authRequest.getUsersWithBadClusterSecret(userId);
     expect(response.status()).toBe(403);
   });

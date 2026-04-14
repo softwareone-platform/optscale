@@ -24,7 +24,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     await poolsPage.toggleExpandPool();
   });
 
-  test('[230911] Verify Pools page column selection', async ({ poolsPage }) => {
+  test('[230911] Verify Pools page column selection', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     const defaultColumns = [
       poolsPage.nameTableHeading,
       poolsPage.monthlyLimitTableHeading,
@@ -81,7 +81,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230912] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', async ({ poolsPage }) => {
+  test('[230912] Verify Organization limit, Pools Expenses and Forecast this month match totals in the table', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     // test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     let organizationLimitValue: number;
@@ -131,7 +131,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230913] Verify Organisation Limit functionality - limit not set', async ({ poolsPage }) => {
+  test('[230913] Verify Organisation Limit functionality - limit not set', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     await test.step('Remove organisation limit if it is set.', async () => {
@@ -155,7 +155,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230914] Verify Organisation Limit functionality - expenses are less than 90% of limit', async ({ poolsPage }) => {
+  test('[230914] Verify Organisation Limit functionality - expenses are less than 90% of limit', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -184,7 +184,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230915] Verify Organisation Limit functionality - expenses are greater than 90% of limit', async ({ poolsPage }) => {
+  test('[230915] Verify Organisation Limit functionality - expenses are greater than 90% of limit', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -215,7 +215,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230916] Verify Organisation Limit functionality - limit set lower than expenses this month', async ({ poolsPage }) => {
+  test('[230916] Verify Organisation Limit functionality - limit set lower than expenses this month', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
 
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
@@ -245,7 +245,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230917] Verify Organisation Limit functionality - limit set lower than forecast', async ({ poolsPage }) => {
+  test('[230917] Verify Organisation Limit functionality - limit set lower than forecast', { tag: ['@fast', '@p2'] }, async ({ poolsPage }) => {
     const expensesThisMonth = await poolsPage.getExpensesThisMonth();
     const forecastThisMonth = await poolsPage.getForecastThisMonth();
     test.skip(expensesThisMonth <= 1, 'Skipping test as it requires expenses to be greater than 1');
@@ -272,7 +272,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230918] Verify sub-pool monthly limit behaviour', async ({ poolsPage }) => {
+  test('[230918] Verify sub-pool monthly limit behaviour', { tag: ['@slow', '@p2'] }, async ({ poolsPage }) => {
     test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
     test.setTimeout(75000);
 
@@ -312,7 +312,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[230919] Verify pool exceeded count and expand requiring attention', { tag: '@p1' }, async ({ poolsPage }) => {
+  test('[230919] Verify pool exceeded count and expand requiring attention', { tag: ['@slow', '@p1'] }, async ({ poolsPage }) => {
     // test.fail((await poolsPage.getPoolCount()) !== 1, `Expected 1 pool, but found ${await poolsPage.getPoolCount()}`);
     test.setTimeout(75000);
 
@@ -356,7 +356,7 @@ test.describe('[MPT-12743] Pools Tests', { tag: ['@ui', '@pools'] }, () => {
     });
   });
 
-  test('[232865] Verify that updating limits of pools and sub-pools is recorded in the logs', async ({ poolsPage, eventsPage }) => {
+  test('[232865] Verify that updating limits of pools and sub-pools is recorded in the logs', { tag: ['@slow', '@p2'] }, async ({ poolsPage, eventsPage }) => {
     test.setTimeout(60000);
     let timestamp: string;
     const randomNumber = Math.floor(Math.random() * 1_000);

@@ -81,7 +81,7 @@ test.describe('Mocked RI/SP coverage page test', { tag: ['@ui', '@risp-coverage'
 
   test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
-  test('[232683] Verify mocked table data is displayed on the RI/SP coverage page', async ({ recommendationsPage, riSpCoveragePage }) => {
+  test('[232683] Verify mocked table data is displayed on the RI/SP coverage page', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage, riSpCoveragePage }) => {
     let savingsValue: number;
 
     await test.step('Navigate to the RI/SP coverage page from recommendations page', async () => {

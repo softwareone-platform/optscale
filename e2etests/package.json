@@ -29,6 +29,8 @@
     "playwright:regression:headed": "npm run playwright:regression -- --headed --workers=1",
     "playwright:regression:update": "npm run playwright:regression -- --update-snapshots",
     "playwright:devops": "npx playwright test --grep @devops --config=playwright.devops.config.ts",
+    "playwright:metrics": "npx playwright test --config=playwright.metrics.config.ts --grep @ui",
+    "playwright:flaky": "npx playwright test --config=playwright.flaky.config.ts --grep @ui",
     "docker:test": "./run_pw.sh",
     "docker:update": "./run_pw.sh -u"
   },
@@ -55,6 +57,7 @@
     "uuid": "^11.0.5"
   },
   "dependencies": {
+    "@reportportal/agent-js-playwright": "^5.4.0",
     "playwright": "^1.56.1"
   }
 }

@@ -43,7 +43,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232286] Verify that Sample data pop-up is visible when no policies exist', async ({ policiesPage }) => {
+  test('[232286] Verify that Sample data pop-up is visible when no policies exist', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await test.step('Ensure all policies are deleted', async () => {
       // eslint-disable-next-line playwright/no-conditional-in-test
       if(!await policiesPage.realDataAddBtn.isVisible()) {
@@ -58,7 +58,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232287] Verify that user can add a resource quota policy', async ({ policiesPage, policiesCreatePage }) => {
+  test('[232287] Verify that user can add a resource quota policy', { tag: ['@fast', '@p2'] }, async ({ policiesPage, policiesCreatePage }) => {
     const NBSP = '\u00A0'
     const policyName = `Resource Policy ${Date.now()}`;
     const resourceCount = 10;
@@ -96,7 +96,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232288] Verify that user can create a recurring budget policy', async ({ policiesPage, policiesCreatePage }) => {
+  test('[232288] Verify that user can create a recurring budget policy', { tag: ['@fast', '@p2'] }, async ({ policiesPage, policiesCreatePage }) => {
     const policyName = `Recurring Budget ${Date.now()}`;
     const budgetAmount = 1000;
     const formattedAmount = formatCurrency(budgetAmount);
@@ -129,7 +129,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232289] Verify that user can create an expiring budget policy', async ({ policiesPage, policiesCreatePage }) => {
+  test('[232289] Verify that user can create an expiring budget policy', { tag: ['@fast', '@p2'] }, async ({ policiesPage, policiesCreatePage }) => {
     const policyName = `Expiring Budget ${Date.now()}`;
     const budgetAmount = 500;
     const formattedAmount = formatCurrency(budgetAmount);
@@ -165,7 +165,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232290] Verify that user can delete a policy from the policy details page', async ({ policiesPage, policiesCreatePage }) => {
+  test('[232290] Verify that user can delete a policy from the policy details page', { tag: ['@fast', '@p2'] }, async ({ policiesPage, policiesCreatePage }) => {
     const policyName = `Policy To Be Deleted ${Date.now()}`;
     const resourceCount = 5;
 
@@ -208,7 +208,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     {
       gql: 'GetOrganizationLimitHits',
       mock: ExpiringBudgetOverLimitHitsResponse,
-      variableMatch: { constraintId: 'e0f96d76-bdb2-4c7e-906b-fb6966dd4c23' },
+      variableMatch: { constraintId: 'e0f96d76-bdb2-4c7e-906b-fb69666dd4c23' },
     },
     {
       gql: 'GetOrganizationConstraints',
@@ -275,7 +275,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     });
   });
 
-  test('[232337] Verify that statuses are displayed correctly from each policy type when over and under limit', async ({
+  test('[232337] Verify that statuses are displayed correctly from each policy type when over and under limit', { tag: ['@fast', '@p2'] }, async ({
     policiesPage,
   }) => {
     expect(await policiesPage.getColorFromElement(policiesPage.resourceUnderLimitStatus)).toBe(policiesPage.successColor);
@@ -286,7 +286,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     expect(await policiesPage.getColorFromElement(policiesPage.expiringBudgetOverLimitStatus)).toBe(policiesPage.errorColor);
   });
 
-  test('[232338] Verify that expiring budget over limit displays violation in violation history table', async ({ policiesPage }) => {
+  test('[232338] Verify that expiring budget over limit displays violation in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.expiringBudgetOverLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 
@@ -298,7 +298,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     await expect(firstBudgetActualExpensesTableCell).toHaveText('$1 ⟶ $48,646.2');
   });
 
-  test('[232339] Verify that expiring budget under limit shows no violations in violation history table', async ({ policiesPage }) => {
+  test('[232339] Verify that expiring budget under limit shows no violations in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.expiringBudgetUnderLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 
@@ -306,7 +306,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     await expect(policiesPage.table).toBeHidden();
   });
 
-  test('[232340] Verify that recurring budget over limit displays violation in violation history table', async ({ policiesPage }) => {
+  test('[232340] Verify that recurring budget over limit displays violation in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.recurringBudgetOverLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 
@@ -318,7 +318,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     await expect(firstBudgetActualExpensesTableCell).toHaveText('$10 ⟶ $48,646.2');
   });
 
-  test('[232341] Verify that recurring budget under limit shows no violations in violation history table', async ({ policiesPage }) => {
+  test('[232341] Verify that recurring budget under limit shows no violations in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.recurringBudgetUnderLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 
@@ -326,7 +326,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     await expect(policiesPage.table).toBeHidden();
   });
 
-  test('[232342] Verify that resource quota over limit displays violation in violation history table', async ({ policiesPage }) => {
+  test('[232342] Verify that resource quota over limit displays violation in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.resourceOverLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 
@@ -338,7 +338,7 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     await expect(firstQuotaActualResourceCountTableCell).toHaveText('1 ⟶ 3,012');
   });
 
-  test('[232343] Verify that resource quota under limit shows no violations in violation history table', async ({ policiesPage }) => {
+  test('[232343] Verify that resource quota under limit shows no violations in violation history table', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await policiesPage.resourceUnderLimitLink.click();
     await policiesPage.policyDetailsDiv.waitFor();
 

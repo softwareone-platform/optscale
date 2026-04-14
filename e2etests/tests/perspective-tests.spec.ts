@@ -9,7 +9,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
   test.use({ restoreSession: true });
   test.slow();
 
-  test('[232963] User can create an Expenses perspective and the chart options are saved and applied correctly', async ({
+  test('[232963] User can create an Expenses perspective and the chart options are saved and applied correctly', { tag: '@p2' }, async ({
     resourcesPage,
     perspectivesPage,
   }) => {
@@ -79,7 +79,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232964] User can create perspective for resource count and the perspective is saved and applied correctly', async ({
+  test('[232964] User can create perspective for resource count and the perspective is saved and applied correctly', { tag: '@p2' }, async ({
     resourcesPage,
   }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
@@ -124,7 +124,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232965] User can create a perspective a Tags chart is saved and applied correctly', async ({ resourcesPage }) => {
+  test('[232965] User can create a perspective a Tags chart is saved and applied correctly', { tag: '@p2' }, async ({ resourcesPage }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter = 'Pool';
@@ -163,7 +163,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232966] User can create a perspective for the Meta chart and the perspective is saved and applied correctly', async ({
+  test('[232966] User can create a perspective for the Meta chart and the perspective is saved and applied correctly', { tag: '@p2' }, async ({
     resourcesPage,
   }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
@@ -205,7 +205,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232967] User can create a perspective and delete it via the perspectives table', async ({ resourcesPage, perspectivesPage }) => {
+  test('[232967] User can create a perspective and delete it via the perspectives table', { tag: '@p2' }, async ({ resourcesPage, perspectivesPage }) => {
     await perspectivesPage.navigateToURL();
     const initialPerspectivesCount = await perspectivesPage.getPerspectivesCount();
     debugLog(`Initial perspectives count: ${initialPerspectivesCount}`);
@@ -243,7 +243,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232969] User can create a perspective with multiple filters', async ({ resourcesPage, perspectivesPage }) => {
+  test('[232969] User can create a perspective with multiple filters', { tag: '@p2' }, async ({ resourcesPage, perspectivesPage }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter1 = 'Region';
@@ -284,7 +284,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232970] Creating a perspective with an existing name shows a message stating that the original will be overwritten', async ({
+  test('[232970] Creating a perspective with an existing name shows a message stating that the original will be overwritten', { tag: '@p2' }, async ({
     resourcesPage,
   }) => {
     await resourcesPage.navigateToResourcesPageAndResetFilters();
@@ -329,7 +329,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     });
   });
 
-  test('[232968] No perspectives message is displayed and perspectives button is hidden if there are no perspectives', async ({
+  test('[232968] No perspectives message is displayed and perspectives button is hidden if there are no perspectives', { tag: '@p2' }, async ({
     resourcesPage,
     perspectivesPage,
   }) => {

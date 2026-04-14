@@ -18,7 +18,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await recommendationsPage.selectCategory('All');
   });
 
-  test('[230511] Verify Card total savings match possible monthly savings', { tag: '@p1' }, async ({ recommendationsPage }) => {
+  test('[230511] Verify Card total savings match possible monthly savings', { tag: ['@fast', '@p1'] }, async ({ recommendationsPage }) => {
     let possibleMonthlySavings: number;
     let cardTotalSavings: number;
 
@@ -37,7 +37,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     });
   });
 
-  test('[230597] Verify Data Source selection works correctly', async ({ recommendationsPage }) => {
+  test('[230597] Verify Data Source selection works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'CPA (Development and Test)';
 
     await test.step(`Select data source: ${dataSource}`, async () => {
@@ -58,7 +58,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   });
 
   //It appears that environments don't have the correct permissions to run S3 Duplicate checks, so marking this as FIXME for now.
-  test.fixme('[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page', async ({
+  test.fixme('[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page', { tag: ['@fast', '@p2'] }, async ({
     recommendationsPage,
     s3DuplicateFinder,
   }) => {
@@ -92,7 +92,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     });
   });
 
-  test('[230514] Verify Search functionality works correctly', async ({ recommendationsPage }) => {
+  test('[230514] Verify Search functionality works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     await recommendationsPage.searchByName('Public');
 
     await recommendationsPage.allCardHeadings.last().waitFor();
@@ -105,7 +105,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
   test(
     '[230598] Verify only the correct applicable services are displayed for SWO Customisation',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ recommendationsPage }) => {
       await test.step('Verify applicable services combo box options shows expected items', async () => {
         await recommendationsPage.applicableServices.click();
@@ -227,11 +227,11 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   ];
 
   // eslint-disable-next-line playwright/expect-expect
-  test('[230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
+  test('[230515] Verify all expected cards are present when All category selected', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
   });
 
-  test(`[231467] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
+  test(`[231467] Verify no cards are displaying errors`, { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     await recommendationsPage.selectCategory('All');
     await recommendationsPage.allCardHeadings.last().waitFor();
 
@@ -249,7 +249,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     expect(errorCount, 'No cards should be displaying errors').toBe(0);
   });
   // eslint-disable-next-line playwright/expect-expect
-  test('[230518] Verify all expected cards are present when Savings category selected', async ({ recommendationsPage }) => {
+  test('[230518] Verify all expected cards are present when Savings category selected', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'Abandoned Amazon S3 buckets',
       'Abandoned Images',
@@ -276,7 +276,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   });
 
   // eslint-disable-next-line playwright/expect-expect
-  test('[230519] Verify all expected cards are present when Security category selected', async ({ recommendationsPage }) => {
+  test('[230519] Verify all expected cards are present when Security category selected', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     const expectedCardHeadings = [
       'IAM users with unused console access',
       'Inactive IAM users',
@@ -286,7 +286,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
   });
 
-  test('[230520] Verify all cards display critical icon when Critical category selected', async ({ recommendationsPage }) => {
+  test('[230520] Verify all cards display critical icon when Critical category selected', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     let count: number;
     let actualHeadings: string[];
     let criticalIconCount: number;
@@ -324,7 +324,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     });
   });
 
-  test('[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({
+  test('[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected', { tag: ['@fast', '@p2'] }, async ({
     recommendationsPage,
   }) => {
     let count: number;
@@ -357,7 +357,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     });
   });
 
-  test('[230523] Verify filtering by applicable service works correctly', async ({ recommendationsPage }) => {
+  test('[230523] Verify filtering by applicable service works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     let count: number;
     let actualHeadings: string[];
     let rdsCount: number;
@@ -426,7 +426,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   ];
 
   for (const cardName of cardEntries) {
-    test(`[230524] ${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({
+    test(`[230524] ${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, { tag: ['@fast', '@p2'] }, async ({
       recommendationsPage,
     }) => {
       // Find this card’s full metadata at runtime

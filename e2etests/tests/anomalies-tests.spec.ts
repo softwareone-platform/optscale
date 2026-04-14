@@ -30,7 +30,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     await anomaliesPage.navigateToURL();
   });
 
-  test('[231429] Anomalies page components', async ({ anomaliesPage }) => {
+  test('[231429] Anomalies page components', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage }) => {
     await test.step('Verify page header components', async () => {
       await expect.soft(anomaliesPage.heading).toHaveText('Anomaly detection');
       await expect.soft(anomaliesPage.addBtn).toBeVisible();
@@ -56,7 +56,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     });
   });
 
-  test('[231432] Verify navigation of link and show resources button', async ({ anomaliesPage, resourcesPage }) => {
+  test('[231432] Verify navigation of link and show resources button', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage, resourcesPage }) => {
     await test.step('Navigate to policy details and verify values', async () => {
       await anomaliesPage.waitForAllProgressBarsToDisappear();
       await anomaliesPage.click(anomaliesPage.defaultExpenseAnomalyLink);
@@ -77,7 +77,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
 
   test(
     '[231488] API responses matches expected structure for default anomaly detection policies',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ anomaliesPage }) => {
       let anomalyData: DefaultAnomalyResponse;
       await test.step('Load expenses data', async () => {
@@ -168,7 +168,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     }
   );
 
-  test('[231431] Anomalies page search function', async ({ anomaliesPage }) => {
+  test('[231431] Anomalies page search function', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage }) => {
     await test.step('Search by "expense" shows only expense anomaly', async () => {
       await anomaliesPage.searchAnomaly('expense');
       await expect.soft(anomaliesPage.defaultExpenseAnomalyLink).toBeVisible();
@@ -194,7 +194,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     });
   });
 
-  test('[231433] Add a resource count anomaly detection policy', { tag: '@p1' }, async ({ anomaliesPage, anomaliesCreatePage }) => {
+  test('[231433] Add a resource count anomaly detection policy', { tag: ['@fast', '@p1'] }, async ({ anomaliesPage, anomaliesCreatePage }) => {
     const policyName = `E2E Test - Resource Count Anomaly - ${Date.now()}`;
 
     await test.step('Create a new resource count anomaly policy', async () => {
@@ -212,7 +212,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     });
   });
 
-  test('[231434] Add an expenses anomaly detection policy with filter', async ({ anomaliesPage, anomaliesCreatePage }) => {
+  test('[231434] Add an expenses anomaly detection policy with filter', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage, anomaliesCreatePage }) => {
     const policyName = `E2E Test - Expense Anomaly - ${Date.now()}`;
 
     await test.step('Create a new expenses anomaly policy with a filter', async () => {
@@ -239,7 +239,7 @@ test.describe('[MPT-14737] Anomalies Tests', { tag: ['@ui', '@anomalies'] }, () 
     });
   });
 
-  test('[231441] Verify delete policy functions correctly', async ({ anomaliesPage, anomaliesCreatePage }) => {
+  test('[231441] Verify delete policy functions correctly', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage, anomaliesCreatePage }) => {
     const policyName = `E2E Test - Delete Anomaly Policy - ${Date.now()}`;
 
     await test.step('Create a new anomaly policy', async () => {
@@ -316,7 +316,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: false },
   });
 
-  test('[231435] Verify Chart export for each category by comparing downloaded png', async ({ anomaliesPage }) => {
+  test('[231435] Verify Chart export for each category by comparing downloaded png', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'anomaly-expenses-region-daily-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-anomaly-expenses-region-daily-chart-export.png');
@@ -382,7 +382,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
   });
 
-  test('[231436] Verify Chart export for each expenses option by comparing downloaded png', async ({ anomaliesPage }) => {
+  test('[231436] Verify Chart export for each expenses option by comparing downloaded png', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath: string;
     let expectedPath: string;
@@ -440,7 +440,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     });
   });
 
-  test('[231439] Verify detected anomalies are displayed in the table correctly', async ({ anomaliesPage }) => {
+  test('[231439] Verify detected anomalies are displayed in the table correctly', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage }) => {
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
 
@@ -460,7 +460,7 @@ test.describe('[MPT-14737] Mocked Anomalies Tests', { tag: ['@ui', '@anomalies']
     expect.soft(await anomaliesPage.getAverageActualExpensesByIndex(4)).toBe('$10,737 ⟶ $43,279.5 (303%)');
   });
 
-  test('[231440] Verify detected anomalies are resource button navigate correctly', async ({ anomaliesPage, resourcesPage }) => {
+  test('[231440] Verify detected anomalies are resource button navigate correctly', { tag: ['@fast', '@p2'] }, async ({ anomaliesPage, resourcesPage }) => {
     await anomaliesPage.page.clock.setFixedTime(new Date('2025-11-11T14:11:00Z'));
     await anomaliesPage.navigateToURL();
 

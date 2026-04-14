@@ -49,7 +49,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
   });
 
-  test('[230778] All expected filters are displayed', async ({ resourcesPage }) => {
+  test('[230778] All expected filters are displayed', { tag: ['@fast', '@p2'] }, async ({ resourcesPage }) => {
     await test.step('Click Show more filters button', async () => {
       await resourcesPage.clickShowMoreFilters();
       await resourcesPage.showLessFiltersBtn.waitFor();
@@ -84,7 +84,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
   });
 
-  test('[230779] Verify table column selection', async ({ resourcesPage }) => {
+  test('[230779] Verify table column selection', { tag: ['@fast', '@p2'] }, async ({ resourcesPage }) => {
     const defaultColumns = [
       resourcesPage.resourceTableHeading,
       resourcesPage.expensesTableHeading,
@@ -151,7 +151,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
   });
 
-  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage, datePicker }) => {
+  test('[230780] Unfiltered Total expenses matches table itemised total', { tag: ['@slow', '@p2'] }, async ({ resourcesPage, datePicker }) => {
     test.setTimeout(1200000);
     test.skip(
       (await resourcesPage.getResourceCountValue()) > 5000,
@@ -181,7 +181,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     });
   });
 
-  test('[230788] Filtered Total expenses matches table itemised total', { tag: '@slow' }, async ({ resourcesPage }) => {
+  test('[230788] Filtered Total expenses matches table itemised total', { tag: ['@slow', '@p2'] }, async ({ resourcesPage }) => {
     test.setTimeout(120000);
     let initialTotalExpensesValue: number;
 
@@ -221,7 +221,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
   test(
     '[230781] Total expenses matches table itemised total for date range set to last 7 days',
-    { tag: '@slow' },
+    { tag: ['@slow', '@p2'] },
     async ({ resourcesPage, datePicker }) => {
       test.setTimeout(120000);
 
@@ -246,7 +246,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
     }
   );
 
-  test('[230782] Validate API default chart/table data for 7 days', async ({ resourcesPage, datePicker }) => {
+  test('[230782] Validate API default chart/table data for 7 days', { tag: ['@slow', '@p2'] }, async ({ resourcesPage, datePicker }) => {
     test.slow();
     const { startDate, endDate } = getLast7DaysUnixRange();
 
@@ -327,7 +327,7 @@ test.describe('[MPT-11957] Resources page tests', { tag: ['@ui', '@resources'] }
 
   test(
     '[230783] Validate API data for the daily expenses chart by breakdown for 7 days',
-    { tag: '@slow' },
+    { tag: ['@slow', '@p2'] },
     async ({ resourcesPage, datePicker }) => {
       test.setTimeout(120000);
       const { startDate, endDate } = getLast7DaysUnixRange();
@@ -746,7 +746,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
   });
 
-  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: '@p1' }, async ({ resourcesPage }) => {
+  test('[230784] Verify default service daily expenses chart export with and without legend', { tag: ['@fast', '@p1'] }, async ({ resourcesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-expenses-chart-export.png');
@@ -777,7 +777,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
   });
 
-  test('[230785] Verify weekly and monthly expenses chart export', async ({ resourcesPage }) => {
+  test('[230785] Verify weekly and monthly expenses chart export', { tag: ['@fast', '@p2'] }, async ({ resourcesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'weekly-expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-weekly-expenses-chart-export.png');
@@ -803,7 +803,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
   });
 
-  test('[230786] Verify expenses chart export with different categories', async ({ resourcesPage }) => {
+  test('[230786] Verify expenses chart export with different categories', { tag: ['@fast', '@p2'] }, async ({ resourcesPage }) => {
     test.fixme(process.env.CI === '1', 'Tests do not work in CI. It appears that the png comparison is unsupported on linux');
     let actualPath = path.resolve('tests', 'downloads', 'region-expenses-chart-export.png');
     let expectedPath = path.resolve('tests', 'expected', 'expected-region-expenses-chart-export.png');
@@ -895,7 +895,7 @@ test.describe('[MPT-11957] Resources page mocked tests', { tag: ['@ui', '@resour
     });
   });
 
-  test('[230787] Verify table grouping', async ({ resourcesPage }) => {
+  test('[230787] Verify table grouping', { tag: ['@fast', '@p2'] }, async ({ resourcesPage }) => {
     await test.step('Verify default grouping is None', async () => {
       await resourcesPage.table.waitFor();
       await resourcesPage.table.scrollIntoViewIfNeeded();

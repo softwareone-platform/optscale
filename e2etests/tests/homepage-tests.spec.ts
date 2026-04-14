@@ -19,7 +19,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
 
   test(
     '[230550] Compare possible savings on home page with those on recommendations page',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ homePage, recommendationsPage }) => {
       const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
       await homePage.recommendationsBtn.click();
@@ -28,7 +28,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     }
   );
 
-  test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', async ({
+  test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', { tag: ['@fast', '@p2'] }, async ({
     homePage,
     recommendationsPage,
   }) => {
@@ -38,7 +38,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
   });
 
-  test('[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category', async ({
+  test('[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category', { tag: ['@fast', '@p2'] }, async ({
     homePage,
     recommendationsPage,
   }) => {
@@ -49,7 +49,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
   });
 
   // Test failing due to bug MPT-11558 The home page recommendations block not returning the real Critical item count
-  test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({
+  test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', { tag: ['@fast', '@p2'] }, async ({
     homePage,
     recommendationsPage,
   }) => {
@@ -73,7 +73,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     });
   });
 
-  test('[230838] Verify Top Resource block Resource link works correctly', async ({ homePage, resourcesPage }) => {
+  test('[230838] Verify Top Resource block Resource link works correctly', { tag: ['@fast', '@p2'] }, async ({ homePage, resourcesPage }) => {
     await test.step('Click on Top Resources button', async () => {
       await homePage.clickTopResourcesBtn();
       await expect.soft(resourcesPage.heading).toBeVisible();
@@ -82,7 +82,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
 
   test(
     '[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ homePage, resourceDetailsPage, datePicker }) => {
       let homepageResourceTitle: string;
       let homePageExpenseValue: number;
@@ -113,7 +113,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     }
   );
 
-  test('[230842] Verify Top Resource Block displayed correctly', async ({ homePage }) => {
+  test('[230842] Verify Top Resource Block displayed correctly', { tag: ['@fast', '@p2'] }, async ({ homePage }) => {
     await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
       const count = await homePage.topResourcesAllLinks.count();
       expect.soft(count).toBeLessThanOrEqual(6);
@@ -131,7 +131,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
   test.slow();
   test.describe.configure({ mode: 'serial' }); //Tests in this describe block are state dependent, so they should not run in parallel with pools tests.
 
-  test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', async ({
+  test('[230921] Verify Pools requiring attention block is displayed and link navigates to the pools page', { tag: '@p2' }, async ({
     homePage,
     poolsPage,
   }) => {
@@ -147,7 +147,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     });
   });
 
-  test('[230922] Verify that Pools Requiring attention is empty when the are no qualifying pools', async ({
+  test('[230922] Verify that Pools Requiring attention is empty when the are no qualifying pools', { tag: '@p2' }, async ({
     homePage,
     poolsPage,
     mainMenu,
@@ -212,7 +212,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     }
   );
 
-  test('[230924] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend', async ({
+  test('[230924] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend', { tag: '@p2' }, async ({
     homePage,
     poolsPage,
     mainMenu,
@@ -260,7 +260,7 @@ test.describe('[MPT-18353] Home Page test for Policy Violation block', { tag: ['
     interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true },
   });
 
-  test('[232876] Verify that Policy Violation block displays policy violations correctly', async ({ homePage }) => {
+  test('[232876] Verify that Policy Violation block displays policy violations correctly', { tag: ['@fast', '@p2'] }, async ({ homePage }) => {
     await test.step('Navigate to home page', async () => {
       await homePage.page.clock.setFixedTime(new Date('2026-02-24T11:00:00Z'));
       await homePage.navigateToURL();

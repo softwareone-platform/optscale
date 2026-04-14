@@ -10,7 +10,7 @@ const verificationCode = '123456';
 let invitationEmail: string;
 let inviteLink: string;
 
-test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
+test.describe('[MPT-8230] Invitation Flow Tests for new users', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
   test.describe.configure({ mode: 'parallel' });
 
@@ -22,9 +22,10 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     await loginPage.waitForLoadingPageImgToDisappear();
   });
 
+  // [229865] already has @p1 — the describe has @slow so no @fast
   test(
     '[229865] Invite new user to organisation, user accepts',
-    { tag: '@p1' },
+    { tag: ['@p1'] },
     async ({ header, mainMenu, usersPage, usersInvitePage, registerPage, pendingInvitationsPage, emailVerificationPage, baseRequest }) => {
       test.slow();
 
@@ -69,7 +70,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     }
   );
 
-  test('[229866] Invite new user to organisation, but user declines', async ({
+  test('[229866] Invite new user to organisation, but user declines', { tag: '@p2' }, async ({
     header,
     mainMenu,
     usersPage,
@@ -117,7 +118,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
     });
   });
 
-  test('[229867] Invite new user to organisation, who has previously declined @slow', async ({
+  test('[229867] Invite new user to organisation, who has previously declined @slow', { tag: '@p2' }, async ({
     header,
     loginPage,
     mainMenu,
@@ -207,7 +208,7 @@ test.describe('MPT-8230 Invitation Flow Tests for new users', { tag: ['@invitati
 test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
 
-  test('[229868] Invitation is visible in Settings Tab @slow', async ({
+  test('[229868] Invitation is visible in Settings Tab @slow', { tag: '@p2' }, async ({
     loginPage,
     header,
     mainMenu,
@@ -304,7 +305,7 @@ test.describe('MPT-8229 Validate invitations in the settings', { tag: ['@invitat
 test.describe('MPT-8231 Invitation Flow Tests for an existing user', { tag: ['@invitation-flow', '@ui', '@slow'] }, () => {
   test.skip(process.env.USE_LIVE_DEMO === 'true', 'Live demo environment does not support invitation flow tests');
 
-  test('[229869] Invite existing user with a new role @slow', async ({
+  test('[229869] Invite existing user with a new role @slow', { tag: '@p2' }, async ({
     header,
     loginPage,
     mainMenu,
@@ -398,7 +399,8 @@ test.describe(
   () => {
     test.use({ restoreSession: true });
 
-    test('[232868] Invite a new user and verify the event is logged', async ({ mainMenu, usersPage, usersInvitePage, eventsPage }) => {
+    // [MPT-18378] has no @slow — tests here get @fast
+    test('[232868] Invite a new user and verify the event is logged', { tag: ['@fast', '@p2'] }, async ({ mainMenu, usersPage, usersInvitePage, eventsPage }) => {
       invitationEmail = generateRandomEmail();
       let date: string;
 

@@ -18,7 +18,7 @@ import {
 } from '../mocks/cloud-accounts-page.mocks';
 import { getCurrentUTCTimestamp, getTimestampWithVariance } from '../utils/date-range-utils';
 
-test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
+test.describe('[MPT-14561] Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
   test.fixme();
   test.describe.configure({ mode: 'serial' });
   test.use({ restoreSession: true });
@@ -27,7 +27,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
   // the test datasource that we can configure without external dependencies.
   test.fixme(
     '[231860] A successful billing import should have been successful within the last 24 hours',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ page, cloudAccountsPage }) => {
       let dataSourceResponse: DataSourceBillingResponse;
       const now = Math.floor(Date.now() / 1000);
@@ -57,7 +57,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
     }
   );
 
-  test('[231861] Verify adding a new AWS Assumed role - Management', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
+  test('[231861] Verify adding a new AWS Assumed role - Management', { tag: ['@fast', '@p2'] }, async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
     await cloudAccountsPage.navigateToCloudAccountsPage();
     const awsAccountName = 'Marketplace (Dev)';
@@ -80,7 +80,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
 
   test(
     '[231862] Verify adding a new AWS Assumed role - Member',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
       test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
       await cloudAccountsPage.navigateToCloudAccountsPage();
@@ -103,7 +103,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
     }
   );
 
-  test('[231863] Verify adding a new AWS Assumed role - Standalone', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
+  test('[231863] Verify adding a new AWS Assumed role - Standalone', { tag: ['@fast', '@p2'] }, async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
     await cloudAccountsPage.navigateToCloudAccountsPage();
     const awsAccountName = 'Marketplace (Dev)';
@@ -124,7 +124,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
     });
   });
 
-  test('[232861] Verify that a message is displayed recommending the Assume role method for AWS accounts, when Access key method is selected', async ({
+  test('[232861] Verify that a message is displayed recommending the Assume role method for AWS accounts, when Access key method is selected', { tag: ['@fast', '@p2'] }, async ({
     cloudAccountsPage,
     cloudAccountsConnectPage,
   }) => {
@@ -145,7 +145,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
     });
   });
 
-  test('[232862] Verify that the user can schedule a billing reimport, and see warning alert', async ({ cloudAccountsPage }) => {
+  test('[232862] Verify that the user can schedule a billing reimport, and see warning alert', { tag: ['@fast', '@p2'] }, async ({ cloudAccountsPage }) => {
     const expectedAlertMessage =
       'Reimporting billing starting from the selected import date will overwrite existing billing data. This action may cause discrepancies or breaks in the current billing records and can take some time to complete. The new billing data will be imported during the next billing import report processing. Please proceed with caution, as this process cannot be undone. Ensure that this action is necessary and that you are prepared for any potential data loss and inaccuracies in billing tracking.';
 
@@ -176,7 +176,7 @@ test.describe('Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () =>
   });
 });
 
-test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
+test.describe('[MPT-14561] Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }, () => {
   test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
   test.describe.configure({ mode: 'serial' });
 
@@ -222,7 +222,7 @@ test.describe('Mocked Cloud Accounts Tests', { tag: ['@ui', '@cloud-accounts'] }
   ];
   test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
-  test('[232859] Verify the correct messages are displayed when updating an AWS Access Key account', async ({ cloudAccountsPage }) => {
+  test('[232859] Verify the correct messages are displayed when updating an AWS Access Key account', { tag: ['@fast', '@p2'] }, async ({ cloudAccountsPage }) => {
     const accessKeyMessage =
       'Access keys are a set of permanent credentials. This authentication type is not recommended by SoftwareOne or AWS - use an assumed role where possible.More information';
     const permissionsMessage =
@@ -263,7 +263,7 @@ test.describe(
     test.fixme(); //'Skipping due to these tests possibly corrupting data due to orphaned sub-pools when disconnecting accounts'
     test.use({ restoreSession: true });
 
-    test('[232954] Verify that disconnecting and creating a cloud account is recorded in the events log', async ({
+    test('[232954] Verify that disconnecting and creating a cloud account is recorded in the events log', { tag: ['@fast', '@p2'] }, async ({
       cloudAccountsPage,
       cloudAccountsConnectPage,
       eventsPage,
