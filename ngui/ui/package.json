@@ -113,7 +113,7 @@
     ]
   },
   "devDependencies": {
-    "@hystax/eslint-config-ui": "1.0.0",
+    "@hystax/eslint-config-ui": "2.1.0",
     "@storybook/addon-actions": "8.6.15",
     "@storybook/addon-backgrounds": "8.6.15",
     "@storybook/addon-controls": "8.6.15",
