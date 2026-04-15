@@ -26,7 +26,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { reportDebugLog, limitString } from '../utils/report-utils';
-import { logTagAttributes } from './tags-helper';
+import { logTagAttributes, TAGS_MODULE, TAGS_SPEED, TAGS_TYPE, TAGS_DEBUG } from './tags-helper';
 
 // ---------------------------------------------------------------------------
 // Output configuration
@@ -35,7 +35,7 @@ import { logTagAttributes } from './tags-helper';
 const OUTPUT_FOLDER = 'reports';
 
 // ---------------------------------------------------------------------------
-// Tag definitions — aligned with the optscale e2e test suite
+// Tag definitions — imported from tags-helper.ts (single source of truth)
 // ---------------------------------------------------------------------------
 
 /** Priority tags — matched via regex rather than an explicit list */
@@ -44,33 +44,6 @@ const priorityRegex = /^p\d+$/;
 /** Test-case ID tags — e.g. [231181] */
 const testCaseIdRegex = /^\[\d+]$/;
 
-/**
- * Module tags — functional areas covered by the test suite.
- * Sourced from actual @tags found in tests/** and regression-tests/**.
- */
-export const TAGS_MODULE = [
-  'expenses',         // Expenses page / cost analysis
-  'homepage',         // Home / dashboard page
-  'recommendations',  // Recommendations module
-  'resources',        // Resources management
-  'pools',            // Pools management
-  'policies',         // Policies (general)
-  'tagging-policies', // Tagging policies
-  'cloud-accounts',   // Cloud account integration
-  'events',           // Events log
-  'perspectives',     // Perspectives / saved views
-  'risp-coverage',    // RISP coverage reports
-  'invitation-flow',  // Invitation / onboarding flow
-];
-
-/** Speed tags */
-export const TAGS_SPEED: string[] = ['slow'];
-
-/** Test type tags */
-export const TAGS_TYPE = ['ui', 'devops'];
-
-/** Debug / development-only tests */
-export const TAGS_DEBUG: string[] = ['debug'];
 
 // ---------------------------------------------------------------------------
 // Timestamp & branch helpers
