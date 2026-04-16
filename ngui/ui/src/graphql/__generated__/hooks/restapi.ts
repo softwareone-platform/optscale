@@ -558,6 +558,20 @@ export type GcpTenantPricingDataConfig = {
   table_name: Scalars["String"]["output"];
 };
 
+export type GeminiDataPreparation = {
+  __typename?: "GeminiDataPreparation";
+  buckets: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
+  deleted_at?: Maybe<Scalars["Int"]["output"]>;
+  gemini_id: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  status: GeminiDataPreparationStatus;
+  url?: Maybe<Scalars["String"]["output"]>;
+  valid_until?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type GeminiDataPreparationStatus = "FAILED" | "QUEUED" | "RUNNING" | "SUCCESS";
+
 export type Invitation = {
   __typename?: "Invitation";
   id: Scalars["String"]["output"];
@@ -631,6 +645,7 @@ export type Mutation = {
   createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
+  scheduleGeminiDataPreparation?: Maybe<ScheduleGeminiDataPreparation>;
   updateDataSource?: Maybe<DataSourceInterface>;
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
   updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
@@ -664,6 +679,11 @@ export type MutationDeleteDataSourceArgs = {
 
 export type MutationDeleteOrganizationArgs = {
   organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationScheduleGeminiDataPreparationArgs = {
+  buckets: Array<Scalars["String"]["input"]>;
+  geminiId: Scalars["ID"]["input"];
 };
 
 export type MutationUpdateDataSourceArgs = {
@@ -825,6 +845,7 @@ export type Query = {
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
+  geminiDataPreparation: GeminiDataPreparation;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
   metaBreakdown?: Maybe<MetaBreakdown>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
@@ -883,6 +904,10 @@ export type QueryExpensesDailyBreakdownArgs = {
   params?: InputMaybe<BreakdownParams>;
 };
 
+export type QueryGeminiDataPreparationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type QueryMetaBreakdownArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<BreakdownParams>;
@@ -934,6 +959,11 @@ export type ResourceCountBreakdown = {
   first_breakdown: Scalars["Int"]["output"];
   last_breakdown: Scalars["Int"]["output"];
   start_date: Scalars["Int"]["output"];
+};
+
+export type ScheduleGeminiDataPreparation = {
+  __typename?: "ScheduleGeminiDataPreparation";
+  id: Scalars["ID"]["output"];
 };
 
 export type StripeSession = {
@@ -2341,6 +2371,25 @@ export type OrganizationSummaryQuery = {
       month_expenses: Record<string, unknown>;
     };
   };
+};
+
+export type ScheduleGeminiDataPreparationMutationVariables = Exact<{
+  geminiId: Scalars["ID"]["input"];
+  buckets: Array<Scalars["String"]["input"]> | Scalars["String"]["input"];
+}>;
+
+export type ScheduleGeminiDataPreparationMutation = {
+  __typename?: "Mutation";
+  scheduleGeminiDataPreparation?: { __typename?: "ScheduleGeminiDataPreparation"; id: string } | null;
+};
+
+export type GeminiDataPreparationQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type GeminiDataPreparationQuery = {
+  __typename?: "Query";
+  geminiDataPreparation: { __typename?: "GeminiDataPreparation"; id: string; status: GeminiDataPreparationStatus };
 };
 
 export const AwsDataSourceConfigFragmentFragmentDoc = gql`
@@ -4348,4 +4397,117 @@ export type OrganizationSummarySuspenseQueryHookResult = ReturnType<typeof useOr
 export type OrganizationSummaryQueryResult = Apollo.QueryResult<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>;
 export function refetchOrganizationSummaryQuery(variables: OrganizationSummaryQueryVariables) {
   return { query: OrganizationSummaryDocument, variables: variables };
+}
+export const ScheduleGeminiDataPreparationDocument = gql`
+  mutation ScheduleGeminiDataPreparation($geminiId: ID!, $buckets: [String!]!) {
+    scheduleGeminiDataPreparation(geminiId: $geminiId, buckets: $buckets) {
+      id
+    }
+  }
+`;
+export type ScheduleGeminiDataPreparationMutationFn = Apollo.MutationFunction<
+  ScheduleGeminiDataPreparationMutation,
+  ScheduleGeminiDataPreparationMutationVariables
+>;
+
+/**
+ * __useScheduleGeminiDataPreparationMutation__
+ *
+ * To run a mutation, you first call `useScheduleGeminiDataPreparationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useScheduleGeminiDataPreparationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [scheduleGeminiDataPreparationMutation, { data, loading, error }] = useScheduleGeminiDataPreparationMutation({
+ *   variables: {
+ *      geminiId: // value for 'geminiId'
+ *      buckets: // value for 'buckets'
+ *   },
+ * });
+ */
+export function useScheduleGeminiDataPreparationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ScheduleGeminiDataPreparationMutation,
+    ScheduleGeminiDataPreparationMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<ScheduleGeminiDataPreparationMutation, ScheduleGeminiDataPreparationMutationVariables>(
+    ScheduleGeminiDataPreparationDocument,
+    options
+  );
+}
+export type ScheduleGeminiDataPreparationMutationHookResult = ReturnType<typeof useScheduleGeminiDataPreparationMutation>;
+export type ScheduleGeminiDataPreparationMutationResult = Apollo.MutationResult<ScheduleGeminiDataPreparationMutation>;
+export type ScheduleGeminiDataPreparationMutationOptions = Apollo.BaseMutationOptions<
+  ScheduleGeminiDataPreparationMutation,
+  ScheduleGeminiDataPreparationMutationVariables
+>;
+export const GeminiDataPreparationDocument = gql`
+  query GeminiDataPreparation($id: ID!) {
+    geminiDataPreparation(id: $id) {
+      id
+      status
+    }
+  }
+`;
+
+/**
+ * __useGeminiDataPreparationQuery__
+ *
+ * To run a query within a React component, call `useGeminiDataPreparationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeminiDataPreparationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeminiDataPreparationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGeminiDataPreparationQuery(
+  baseOptions: Apollo.QueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables> &
+    ({ variables: GeminiDataPreparationQueryVariables; skip?: boolean } | { skip: boolean })
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+export function useGeminiDataPreparationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+export function useGeminiDataPreparationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+) {
+  const options = baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+export type GeminiDataPreparationQueryHookResult = ReturnType<typeof useGeminiDataPreparationQuery>;
+export type GeminiDataPreparationLazyQueryHookResult = ReturnType<typeof useGeminiDataPreparationLazyQuery>;
+export type GeminiDataPreparationSuspenseQueryHookResult = ReturnType<typeof useGeminiDataPreparationSuspenseQuery>;
+export type GeminiDataPreparationQueryResult = Apollo.QueryResult<
+  GeminiDataPreparationQuery,
+  GeminiDataPreparationQueryVariables
+>;
+export function refetchGeminiDataPreparationQuery(variables: GeminiDataPreparationQueryVariables) {
+  return { query: GeminiDataPreparationDocument, variables: variables };
 }

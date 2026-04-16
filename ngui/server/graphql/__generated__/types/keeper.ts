@@ -160,7 +160,7 @@ export type ResolversParentTypes = {
 
 export type EventResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Event"] = ResolversParentTypes["Event"]
+  ParentType extends ResolversParentTypes["Event"] = ResolversParentTypes["Event"],
 > = {
   ack?: Resolver<Maybe<ResolversTypes["Boolean"]>, ParentType, ContextType>;
   acknowledged_user?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
@@ -180,14 +180,14 @@ export type EventResolvers<
 
 export type MutationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
 };
 
 export type QueryResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
+  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   events?: Resolver<

@@ -185,7 +185,7 @@ export type ResolversParentTypes = {
 
 export type MutationResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   signIn?: Resolver<
@@ -211,7 +211,7 @@ export type MutationResolvers<
 
 export type QueryResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
+  ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
   _empty?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   organizationAllowedActions?: Resolver<
@@ -228,7 +228,7 @@ export interface StringArrayMapScalarConfig extends GraphQLScalarTypeConfig<Reso
 
 export type TokenResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["Token"] = ResolversParentTypes["Token"]
+  ParentType extends ResolversParentTypes["Token"] = ResolversParentTypes["Token"],
 > = {
   token?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   user_email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
@@ -238,7 +238,7 @@ export type TokenResolvers<
 
 export type UserResolvers<
   ContextType = ContextValue,
-  ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
+  ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"],
 > = {
   token?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   user_email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;

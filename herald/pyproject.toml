@@ -14,7 +14,7 @@ dependencies = [
     "pika==1.1.0",
     "requests==2.32.4",
     "sqlalchemy==1.3.24",
-    "tornado==6.5",
+    "tornado===6.5.5",
 ]
 
 [tool.uv.sources]
@@ -44,9 +44,9 @@ module-root = ".."
 module-name = "herald"
 
 [tool.pytest.ini_options]
-testpaths = ["herald/herald_server/tests", "herald/modules/tests/"]
+testpaths = ["herald_server/tests", "modules/tests/"]
 pythonpath = "."
-addopts = "--cov=herald --cov-report=term-missing:skip-covered"
+addopts = "--cov=herald --cov-report=term-missing:skip-covered --ignore=tools"
 
 [tool.coverage.run]
 branch = true

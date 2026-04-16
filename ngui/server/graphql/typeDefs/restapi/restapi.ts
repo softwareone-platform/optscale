@@ -767,6 +767,28 @@ export default gql`
     entity: [OrganizationSummaryEntity!]!
   }
 
+  enum GeminiDataPreparationStatus {
+    QUEUED
+    RUNNING
+    FAILED
+    SUCCESS
+  }
+
+  type GeminiDataPreparation {
+    id: ID!
+    gemini_id: ID!
+    buckets: String!
+    status: GeminiDataPreparationStatus!
+    url: String
+    valid_until: Int
+    created_at: Int
+    deleted_at: Int
+  }
+
+  type ScheduleGeminiDataPreparation {
+    id: ID!
+  }
+
   type Query {
     organizations: [Organization!]!
     currentEmployee(organizationId: ID!): Employee
@@ -789,6 +811,7 @@ export default gql`
     billingSubscriptionPlans(organizationId: ID!): [BillingSubscriptionPlan!]!
     billingSubscription(organizationId: ID!): BillingSubscription!
     organizationSummary(organizationId: ID!, params: OrganizationSummaryParams): OrganizationSummary!
+    geminiDataPreparation(id: ID!): GeminiDataPreparation!
   }
 
   type Mutation {
@@ -805,5 +828,6 @@ export default gql`
     updateOrganizationPerspectives(organizationId: ID!, value: JSONObject!): JSONObject
     createStripeCheckoutSession(organizationId: ID!, params: CreateStripeCheckoutSessionInput!): StripeSession
     createStripeBillingPortalSession(organizationId: ID!): StripeSession
+    scheduleGeminiDataPreparation(geminiId: ID!, buckets: [String!]!): ScheduleGeminiDataPreparation
   }
 `;
