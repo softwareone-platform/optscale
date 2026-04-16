@@ -1,0 +1,59 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
+
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom: 5px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; padding-bottom: 20px; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                We regret to inform you that the report import process has encountered persistent
+                                                issues.</p>
+                                            <p style="font-size:16px; margin: 0; padding-bottom: 20px;  font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Since <strong>{{texts.cloud_account.last_import_at}}</strong>,
+                                                attempts to import reports to the data source <strong>{{texts.cloud_account.name}}</strong>
+                                                ({{texts.cloud_account.id}}, {{texts.cloud_account.type}}) have
+                                                consistently failed.
+                                            </p>
+
+                                            <p style="font-size:16px; margin: 0;font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                The system has reported the reason for the failure
+                                                as "{{texts.reason}}".
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + '/cloud-accounts/' + texts.cloud_account.id + texts.control_panel_parameters %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}

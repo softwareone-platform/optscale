@@ -1,0 +1,31 @@
+/* disable-antialiasing.css */
+html,
+body,
+* {
+  font-smooth: never !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  -webkit-text-stroke: 0 transparent !important;
+  text-shadow: none !important;
+  color-adjust: exact !important;
+  image-rendering: pixelated !important;
+  backface-visibility: hidden !important;
+  caret-color: transparent !important;
+}
+
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Hide scrollbars across browsers to match headless mode which don't use scrollbars */
+::-webkit-scrollbar {
+  display: none !important;
+}
+
+* {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
