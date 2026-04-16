@@ -98,7 +98,10 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "check": "pnpm lint && pnpm translate:check",
-    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix"
+    "check:all": "pnpm check && pnpm prettier:check && pnpm build",
+    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix",
+    "prettier:check": "prettier --check 'src/**/*.{ts,tsx,json}'",
+    "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'"
   },
   "browserslist": {
     "production": [
@@ -122,6 +125,7 @@
     "@storybook/react": "8.6.15",
     "@storybook/react-vite": "8.6.15",
     "@storybook/theming": "^8.6.14",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-react": "7.37.5",
     "glob": "13.0.1",
     "jsdom": "22.1.0",

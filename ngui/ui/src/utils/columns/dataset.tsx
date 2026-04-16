@@ -41,7 +41,7 @@ const dataset = ({ id, accessorFn, accessorKey }) => ({
         </Box>
       </>
     );
-  },
+  }
 });
 
 export default dataset;
