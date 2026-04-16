@@ -5,6 +5,7 @@ on:
     types: [opened]
 
 permissions:
+  contents: read # Recommended for actions/checkout
   pull-requests: write
   issues: write
 
@@ -12,6 +13,9 @@ jobs:
   manage-bug-label:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v6
+
       - name: Check if branch contains "bug"
         id: check-branch
         uses: actions/github-script@v8
@@ -23,8 +27,6 @@ jobs:
 
       - name: Add "bug" label if branch contains "bug"
         if: steps.check-branch.outputs.contains_bug == 'true'
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: ./.github/actions/add_pull_request_label
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: bug
-
+          label: bug
