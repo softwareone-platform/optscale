@@ -16,10 +16,10 @@
     "dev": "concurrently \"pnpm -r dev\" \"pnpm codegen:watch\""
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "5.0.7",
-    "@graphql-codegen/typescript": "4.1.6",
+    "@graphql-codegen/cli": "6.3.0",
+    "@graphql-codegen/typescript": "5.0.10",
     "@graphql-codegen/typescript-react-apollo": "4.4.1",
-    "@graphql-codegen/typescript-resolvers": "4.5.2",
+    "@graphql-codegen/typescript-resolvers": "5.1.8",
     "@parcel/watcher": "2.5.1",
     "@types/file-saver": "2.0.7",
     "@types/jest": "29.5.12",
