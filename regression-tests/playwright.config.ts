@@ -16,7 +16,7 @@ export const LARGE_DATA_TIMEOUT = 30000;
 export default defineConfig({
   testDir: './',
   testMatch: /tests\/.*\.spec\.ts$/,
-  snapshotPathTemplate: `./snapshots/{projectName}/${os.platform()}-{arg}{ext}`,
+  snapshotPathTemplate: `./snapshots/${process.env.IS_REGRESSION_RUN ? 'reference' : os.platform()}/{arg}{ext}`,
   testIgnore: ['**/snapshots/**'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

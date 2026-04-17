@@ -35,15 +35,18 @@ export abstract class BasePage {
   }
 
   async fitViewportToFullPage(): Promise<void> {
-    const { maxHeight = 12000 } = {};
+    const maxHeight = 12000;
     const headerHeight = 80;
     const { width } = this.page.viewportSize() ?? { width: 1280 };
-    const scrollHeight = await this.page.evaluate(() => {
-      const contentWrapper = document.querySelector('main#mainLayoutWrapper') as HTMLElement | null;
+    await this.page.setViewportSize({ width, height: 768 });
+    const contentHeight = await this.page.evaluate(() => {
+      const contentWrapper = document.querySelector('main#mainLayoutWrapper');
       if (!contentWrapper) return 0;
-      return Math.max(contentWrapper.scrollHeight, contentWrapper.offsetHeight, contentWrapper.clientHeight);
+      return Array.from(contentWrapper.children).reduce(
+        (sum, child) => sum + (child as HTMLElement).offsetHeight, 0
+      );
     });
-    const targetHeight = Math.min(scrollHeight + headerHeight, maxHeight);
+    const targetHeight = Math.min(contentHeight + headerHeight, maxHeight);
     await this.page.setViewportSize({ width, height: targetHeight });
   }
 

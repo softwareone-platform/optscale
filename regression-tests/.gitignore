@@ -4,4 +4,6 @@ test-results/
 playwright-report/
 .env
 results.json
-snapshots/
+snapshots/*
+!snapshots/reference/
+!snapshots/reference/*.png
