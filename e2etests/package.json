@@ -24,7 +24,7 @@
     "playwright:invitation": "npx playwright test --workers=1 --grep @invitation-flow",
     "playwright:trace": "npx playwright test --trace",
     "playwright:single-worker": "npx playwright test --workers=1 --project chrome --grep @ui",
-    "playwright:devops": "npx playwright test --grep @devops --config=playwright.devops.config.ts",
+    "playwright:devops": "npx playwright test --grep @devops --config=playwright.devops.config.ts"
   },
   "keywords": [],
   "author": "",

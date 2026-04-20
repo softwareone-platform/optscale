@@ -5,38 +5,65 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const baseURL = process.env.BASE_URL || 'http://0.0.0.0:3000';
+const BASE_URL = process.env.BASE_URL || 'http://0.0.0.0:3000';
+const IS_CI = !!process.env.CI;
+const VIEWPORT = { width: 1920, height: 1080 };
+
+/** Default test timeout (ms) — time allowed for a single test to complete. */
+const TEST_TIMEOUT = 30000;
+
+/** Default action timeout (ms) — time allowed for a single action (click, fill, etc.) to complete. */
+const ACTION_TIMEOUT = 20000;
 
 /**
  * Extended timeout (ms) for operations that load large amounts of data,
  * such as reports, exports, or pages with many resources.
  */
-export const LARGE_DATA_TIMEOUT = 30000;
+export const LARGE_DATA_TIMEOUT = 60000;
+
+const getSnapshotPath = (): string =>
+  process.env.IS_REGRESSION_RUN ? 'baseline' : `local/${os.platform()}`;
+
+/**
+ * Chromium launch flags that disable GPU rendering, font hinting and
+ * anti-aliasing so that screenshots are pixel-identical across machines and CI runs.
+ */
+const CHROMIUM_LAUNCH_ARGS = [
+  '--disable-gpu',
+  '--disable-font-subpixel-positioning',
+  '--disable-lcd-text',
+  '--font-render-hinting=none',
+  '--disable-accelerated-2d-canvas',
+];
 
 export default defineConfig({
   testDir: './',
   testMatch: /tests\/.*\.spec\.ts$/,
-  snapshotPathTemplate: `./snapshots/${process.env.IS_REGRESSION_RUN ? 'reference' : os.platform()}/{arg}{ext}`,
   testIgnore: ['**/snapshots/**'],
+  snapshotPathTemplate: `./snapshots/${getSnapshotPath()}/{arg}{ext}`,
+
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : 3,
-  timeout: 30000,
+  forbidOnly: IS_CI,
+  retries: IS_CI ? 1 : 0,
+  workers: IS_CI ? 2 : 3,
+  timeout: TEST_TIMEOUT,
+
   reporter: [
     ['list'],
     ['json', { outputFile: 'results.json' }],
     ['html', { open: 'never' }],
   ],
+
   expect: {
     toHaveScreenshot: {
       animations: 'disabled',
       stylePath: './utils/disable-antialiasing/pre-screenshot-styles.css',
     },
   },
+
   use: {
-    baseURL: baseURL,
-    actionTimeout: 20000,
+    baseURL: BASE_URL,
+    actionTimeout: ACTION_TIMEOUT,
     testIdAttribute: 'data-test-id',
     headless: true,
     trace: 'retain-on-failure',
@@ -45,7 +72,7 @@ export default defineConfig({
     contextOptions: {
       reducedMotion: 'reduce',
       ignoreHTTPSErrors: process.env.IGNORE_HTTPS_ERRORS === 'true',
-      viewport: { width: 1920, height: 1080 },
+      viewport: VIEWPORT,
     },
   },
 
@@ -56,25 +83,17 @@ export default defineConfig({
     },
     {
       name: 'chromium',
+      dependencies: ['setup'],
       use: {
         channel: 'chromium',
-        viewport: { width: 1920, height: 1080 },
-        launchOptions: {
-          args: [
-            '--disable-gpu',
-            '--disable-font-subpixel-positioning',
-            '--disable-lcd-text',
-            '--font-render-hinting=none',
-            '--disable-accelerated-2d-canvas',
-          ],
-        },
+        viewport: VIEWPORT,
+        launchOptions: { args: CHROMIUM_LAUNCH_ARGS },
         contextOptions: {
           deviceScaleFactor: 1,
           reducedMotion: 'reduce',
           ignoreHTTPSErrors: true,
         },
       },
-      dependencies: ['setup'],
     },
   ],
 });

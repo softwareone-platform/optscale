@@ -4,7 +4,7 @@ Visual regression tests for the OptScale UI, using [Playwright](https://playwrig
 
 ## Overview
 
-These tests capture screenshots of key UI components and compare them against stored baseline snapshots, ensuring visual consistency across releases.
+These tests capture screenshots of key UI components and compare them against stored **baseline** snapshots, ensuring visual consistency across releases.
 
 Tests are tagged with `@swo_regression` and cover:
 
@@ -20,12 +20,16 @@ Tests are tagged with `@swo_regression` and cover:
 - Users
 - Common UI (header, navigation)
 
+---
+
+## Prerequisites
+
+- Node.js 18+
+- A running OptScale instance (or use the built-in Docker runner against a remote URL)
+
+---
+
 ## Setup
-
-### Prerequisites
-
-- Node.js (see `.nvmrc` or use the version in `package.json` engines if present)
-- A running OptScale instance
 
 ### Install dependencies
 
@@ -36,63 +40,136 @@ npx playwright install chromium
 
 ### Configure environment
 
-Copy `.env.example` to `.env.local` and fill in the values:
-
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Key variables:
+Edit `.env` with the appropriate values:
 
 | Variable | Description |
 |---|---|
-| `BASE_URL` | URL of the OptScale instance to test |
-| `DEFAULT_USER_EMAIL` | Login email for the test user |
-| `LIVE_DEMO_API` | Live demo API endpoint (when using live demo) |
-| `LIVE_DEMO_TOKEN` | Live demo token |
-| `IGNORE_HTTPS_ERRORS` | Set to `true` to ignore HTTPS certificate errors |
+| `BASE_URL` | URL of the OptScale instance to test against |
+| `DEFAULT_USER_ID` | ID of the test user |
+| `DEFAULT_AUTH_USER_ID` | Auth user ID for the test user |
+| `DEFAULT_ORG_ID` | Organization ID used by tests |
+| `CLUSTER_SECRET` | Cluster secret / admin password |
+| `IGNORE_HTTPS_ERRORS` | Set to `true` to ignore TLS certificate errors |
+| `BROWSER_ERROR_LOGGING` | Enable browser console error capture |
+| `DEBUG_LOG` | Enable verbose debug logging |
+| `LIVE_DEMO_API` | Live demo API endpoint |
+| `LIVE_DEMO_TOKEN` | Live demo auth token |
+| `DEV` / `TEST` / `STAGING` | Convenience URLs for different environments |
+| `CLEAN_UP` | Set to `true` to delete test data after each run (use `false` when debugging) |
+| `IS_REGRESSION_RUN` | When set, snapshots are stored in `snapshots/baseline/` instead of `snapshots/local/<platform>/` |
+
+---
 
 ## Running Tests
 
-```bash
-# Run all regression tests (headless)
-npm run playwright:test
+| Command | Description |
+|---|---|
+| `npm test` | Run all tests headless |
+| `npm run test:ui` | Run with the Playwright interactive UI |
+| `npm run test:headed` | Run in headed mode (single worker) |
+| `npm run test:update` | Re-generate local snapshots |
+| `npm run test:docker` | Run inside Docker (Linux) — results go to `snapshots/baseline/` |
+| `npm run test:docker:update` | Run inside Docker and update baseline snapshots |
+| `npm run report` | Open the last HTML report |
+| `npm run lint` | Lint all TypeScript files |
+| `npm run format` | Format all files with Prettier |
 
-# Run with Playwright UI (interactive mode)
-npm run playwright:test:ui
+### Docker runner (`run_pw.sh`)
 
-# Run headed (visible browser)
-npm run playwright:test:headed
+The shell script `run_pw.sh` builds and runs a Linux Docker container to produce platform-independent snapshots. Key flags:
 
-# Update baseline snapshots
-npm run playwright:test:update
 ```
+-u, --update          Update baseline screenshots
+-U, --url URL         Override BASE_URL
+-p, --port PORT       Port for the local app (default 4000)
+-a, --run-application Run the ngui app inside the container pointing at API_ENDPOINT
+-k, --keep-running    Keep the container alive after tests finish
+-i, --ci              Set CI=true inside the container
+```
+
+---
 
 ## Project Structure
 
 ```
 regression-tests/
-├── tests/              # Test specs (.spec.ts)
-├── mocks/              # API mock data used by tests
-├── utils/              # Shared test utilities
-│   └── disable-antialiasing/  # CSS to ensure consistent screenshots
-├── fixtures/           # Playwright test fixtures (page objects wiring)
-├── pages/              # Page Object Models
-├── types/              # TypeScript types
-├── utils/              # General utilities (auth, API requests, etc.)
-├── setup/              # Auth setup for Playwright
-├── api-requests/       # Low-level API request helpers
+├── tests/              # Test specs (.spec.ts) — one file per feature area
+├── pages/              # Page Object Models (POM)
+│   ├── base-page.ts          # Shared base class (navigation, viewport, screenshots)
+│   ├── layout-components.ts  # Header / sidebar / common layout
+│   ├── simple-pages.ts       # Single-page POMs (homepage, events, pools, …)
+│   ├── anomalies-pages.ts
+│   ├── cloud-accounts-pages.ts
+│   ├── expenses-pages.ts
+│   ├── policies-pages.ts
+│   ├── resources-pages.ts
+│   ├── tagging-policies-pages.ts
+│   ├── users-pages.ts
+│   └── index.ts              # Re-exports
+├── fixtures/           # Playwright fixtures
+│   ├── api.fixture.ts        # API request helpers wired into tests
+│   └── page.fixture.ts       # Page object instances wired into tests
+├── mocks/              # API mock/intercept data used by tests
+├── setup/              # Auth state setup (runs before all tests)
+│   └── auth.setup.ts
+├── utils/              # Shared utilities
+│   ├── api-requests/         # Low-level HTTP helpers (interceptor)
+│   ├── auth-session-storage/ # Auth session helpers
+│   ├── disable-antialiasing/ # CSS injected before screenshots for pixel consistency
+│   ├── debug-logging.ts
+│   ├── file.ts
+│   └── roundElementDimensions.ts
+├── types/              # TypeScript type definitions
+│   ├── api-response.types.ts
+│   ├── enums.ts
+│   └── interceptor.types.ts
+├── snapshots/          # Stored reference screenshots
+│   ├── baseline/       # Canonical baseline (generated via Docker / CI) — committed to git
+│   └── local/          # Local-only snapshots — gitignored, not committed
+├── docker/
+│   └── Dockerfile.linux
 ├── playwright.config.ts
+├── run_pw.sh
 ├── package.json
 └── .env.example
 ```
 
+---
+
 ## Snapshots
 
-Baseline snapshots are stored in `snapshots/`. They are platform-specific (OS-named subfolders).
+| Folder | When used | Committed |
+|---|---|---|
+| `snapshots/baseline/` | Generated by `test:docker` / `test:docker:update` inside Linux Docker | ✅ Yes |
+| `snapshots/local/<platform>/` | Generated locally on macOS / Windows / Linux | ❌ No (gitignored) |
 
-To regenerate all snapshots:
+Only **baseline** snapshots are pixel-perfect and cross-platform — they are produced inside a Linux Docker container with all rendering flags applied (no GPU, no font hinting, no anti-aliasing). These are the snapshots used for CI comparison.
+
+**Local** snapshots (`snapshots/local/`) are for development convenience only and are gitignored. They may differ slightly from baseline due to OS-level font rendering differences.
+
+To regenerate **local** snapshots (development only):
 
 ```bash
-npm run playwright:test:update
+npm run test:update
 ```
+
+To regenerate **baseline** (canonical) snapshots:
+
+```bash
+npm run test:docker:update
+```
+
+---
+
+## Timeouts
+
+| Constant | Value | Purpose |
+|---|---|---|
+| `TEST_TIMEOUT` | 30 s | Maximum time for a single test |
+| `ACTION_TIMEOUT` | 20 s | Maximum time for a single action (click, fill, …) |
+| `LARGE_DATA_TIMEOUT` | 60 s | Used explicitly for heavy pages (expenses, resources) |
+

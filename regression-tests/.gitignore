@@ -5,5 +5,5 @@ playwright-report/
 .env
 results.json
 snapshots/*
-!snapshots/reference/
-!snapshots/reference/*.png
+!snapshots/baseline/
+!snapshots/baseline/*.png
