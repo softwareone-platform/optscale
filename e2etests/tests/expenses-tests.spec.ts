@@ -14,6 +14,7 @@ import { ExpensesDefaultResponse } from '../mocks/expenses-page-mocks';
 import { comparePdfFiles } from '../utils/pdf-comparison';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
 import { getEnvironmentTestOrgName } from '../utils/environment-util';
+import { LARGE_DATA_TIMEOUT } from '../playwright.config';
 import path from 'path';
 
 test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@expenses'] }, () => {
@@ -62,7 +63,7 @@ test.describe('[MPT-12859] Expenses Page default view Tests', { tag: ['@ui', '@e
 
     await test.step('Load expenses data for the this month', async () => {
       const [expensesResponse] = await Promise.all([
-        expensesPage.page.waitForResponse(resp => resp.url().includes('/pools_expenses/') && resp.request().method() === 'GET'),
+        expensesPage.page.waitForResponse(resp => resp.url().includes('/pools_expenses/') && resp.request().method() === 'GET', { timeout: LARGE_DATA_TIMEOUT }),
         expensesPage.page.reload(),
       ]);
 

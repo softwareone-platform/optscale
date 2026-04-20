@@ -23,6 +23,7 @@ async function globalSetup(config: FullConfig) {
   const localHostURL = 'http://localhost:3000';
 
   // Log key environment variables for debugging purposes
+  console.log(`Environment: ${process.env.ENVIRONMENT}`);
   console.log(`Tests running on ${process.env.BASE_URL}`);
   console.log(`Ignoring HTTPS errors: ${process.env.IGNORE_HTTPS_ERRORS}`);
   console.log(`SCREENSHOT_UPDATE_DELAY: ${process.env.SCREENSHOT_UPDATE_DELAY}`);
