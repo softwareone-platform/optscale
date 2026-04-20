@@ -1,21 +1,15 @@
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=softwareone-platform_ffc-finops-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=softwareone-platform_ffc-finops-api) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=softwareone-platform_ffc-finops-api&metric=coverage)](https://sonarcloud.io/summary/new_code?id=softwareone-platform_ffc-finops-operations)
-
 # SoftwareOne FinOps for Cloud API
 
 The API extends SoftwareOne FinOps for Cloud API.
 
 ## Create your .env file
 
-You can use the `env.example` as a base to setup your running environment and customize it according to your needs.
+You can use the `env.example` as a base to set up your running environment and customize it according to your needs.
 
 ```bash
 cp env.example .env
 ```
 
-**Required**: Configure FinOps database connection
-**Optional**: Configure OptScale database connection for user endpoints
-
-See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
 
 ### Database Migrations
 
@@ -29,22 +23,20 @@ alembic upgrade head
 
 ## Run tests
 
-`docker compose run --rm app_test`
+`run_tests.sh`
 
 ## Run for Development
 
-`docker compose up app`
+Build image from optscale directory:
+
+`docker build -t ffc_api:build --build-arg BUILDTAG=build -f ffc_api/Dockerfile .`
+
+Run image:
+
+`docker run --env-file ffc_api/.env -p 8095:8000 ffc_api:build`
 
 Or directly with uvicorn:
 
 ```bash
-uvicorn app.main:app --reload
+uv run uvicorn ffc_api_server.app.main:app --host 0.0.0.0 --port 8095
 ```
-
-## Build production image
-
-To build the production image please use the `prod.Dockefile` dockerfile.
-
-> [!IMPORTANT]
-> Developers must take care of keep in sync `dev.Dockerfile` and `prod.Dockerfile`.
-
