@@ -1,9 +1,8 @@
 import {test as base, type Page} from '@playwright/test';
 import * as Pages from '../pages';
 import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
-import {apiInterceptors} from "../utils/api-requests/interceptor";
-import {InterceptionEntry} from "../types/interceptor.types";
-import {EStorageStatePath} from "../types/enums";
+import {apiInterceptors, InterceptionEntry} from "../utils/interceptor";
+import {EStorageStatePath} from "../types";
 interface Options {
   restoreSession?: boolean;
   setFixedTime?: boolean;

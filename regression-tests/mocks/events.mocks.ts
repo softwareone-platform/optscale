@@ -20,7 +20,7 @@ export const EventsRegressionResponse = {
         ]
     }
 }
-import type { InterceptionEntry } from '../types/interceptor.types';
+import type { InterceptionEntry } from '../utils/interceptor';
 export const eventsInterceptions: InterceptionEntry[] = [
   { mock: EventsRegressionResponse, gql: 'events' },
 ];

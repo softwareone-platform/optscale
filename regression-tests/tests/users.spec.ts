@@ -1,7 +1,7 @@
 import { test } from "../fixtures/page.fixture";
 import { expect } from "@playwright/test";
 import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { usersInterceptions } from "../mocks/users-interceptions.mocks";
+import { usersInterceptions } from "../mocks/user.mocks";
 
 
 test.describe('FFC: Users', () => {

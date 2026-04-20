@@ -1,4 +1,4 @@
-import type { InterceptionEntry } from '../types/interceptor.types';
+import type { InterceptionEntry } from '../utils/interceptor';
 
 export const GeminisMock = {
     "geminis": [

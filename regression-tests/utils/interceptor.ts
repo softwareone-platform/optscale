@@ -1,5 +1,5 @@
 import { expect, Page, Route } from '@playwright/test';
-import { debugLog } from '../debug-logging';
+import { debugLog } from './debug-logging';
 
 type XOR<T, U> =
   | (T & { [K in Exclude<keyof U, keyof T>]?: never })

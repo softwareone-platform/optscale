@@ -850,7 +850,7 @@ export const PoolRegressionResponse = {
         }
     ]
 }
-import type { InterceptionEntry } from '../types/interceptor.types';
+import type { InterceptionEntry } from '../utils/interceptor';
 export const poolsInterceptions: InterceptionEntry[] = [
   { url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolRegressionResponse },
   { url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolRegressionResponse },

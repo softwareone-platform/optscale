@@ -1,4 +1,5 @@
-import type { InterceptionEntry } from '../types/interceptor.types';
+import type { InterceptionEntry } from '../utils/interceptor';
+
 
 export const EmployeesMock = {
     "employees": [
@@ -808,6 +809,6 @@ export const UsersPoolsPermissionsMock = {
 }
 
 export const usersInterceptions: InterceptionEntry[] = [
-  { url: `/v2/organizations/[^/]+/employees`, mock: EmployeesMock },
-  { url: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mock: UsersPoolsPermissionsMock },
+    { url: `/v2/organizations/[^/]+/employees`, mock: EmployeesMock },
+    { url: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mock: UsersPoolsPermissionsMock },
 ];

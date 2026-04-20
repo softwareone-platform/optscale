@@ -1,7 +1,7 @@
 import { test } from "../fixtures/page.fixture";
 import { expect } from "@playwright/test";
 import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { anomaliesInterceptions, policiesInterceptions, taggingPoliciesInterceptions } from "../mocks/policies-interceptions.mocks";
+import { anomaliesInterceptions, policiesInterceptions, taggingPoliciesInterceptions } from "../mocks/policies.mocks";
 
 test.describe('FFC: Anomalies page', () => {
 
@@ -12,14 +12,14 @@ test.describe('FFC: Anomalies page', () => {
       await anomaliesPage.navigateToURL();
     });
 
-    await test.step('Page content', async () => {
+    await test.step('Anomalies list page', async () => {
       await anomaliesPage.heading.hover();
       await anomaliesPage.waitForCanvas();
       await roundElementDimensions(anomaliesPage.main);
       await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-screenshot.png');
     });
 
-    await test.step('Page content 1', async () => {
+    await test.step('Create anomaly form', async () => {
       await anomaliesPage.clickAddBtn();
       await anomaliesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
       await anomaliesCreatePage.heading.hover();
@@ -39,13 +39,13 @@ test.describe('FFC: Policies page', () => {
       await policiesPage.navigateToURL();
     });
 
-    await test.step('Page content', async () => {
+    await test.step('Policies list page', async () => {
       await policiesPage.heading.hover();
       await roundElementDimensions(policiesPage.main);
       await expect(policiesPage.main).toHaveScreenshot('Policies-screenshot.png');
     });
 
-    await test.step('Page content 1', async () => {
+    await test.step('Create policy form', async () => {
       await policiesPage.clickAddBtn();
       await policiesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
       await policiesCreatePage.heading.hover();
@@ -64,13 +64,13 @@ test.describe('FFC: Tagging Policies page', () => {
       await taggingPoliciesPage.navigateToURL();
     });
 
-    await test.step('Page content', async () => {
+    await test.step('Tagging policies list page', async () => {
       await taggingPoliciesPage.heading.hover();
       await roundElementDimensions(taggingPoliciesPage.main);
       await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
     });
 
-    await test.step('Page content', async () => {
+    await test.step('Create tagging policy form', async () => {
       await taggingPoliciesPage.clickAddBtn();
       await taggingPoliciesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
       await taggingPoliciesCreatePage.heading.hover();

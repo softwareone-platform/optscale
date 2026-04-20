@@ -97,45 +97,71 @@ The shell script `run_pw.sh` builds and runs a Linux Docker container to produce
 
 ```
 regression-tests/
-├── tests/              # Test specs (.spec.ts) — one file per feature area
-├── pages/              # Page Object Models (POM)
-│   ├── base-page.ts          # Shared base class (navigation, viewport, screenshots)
-│   ├── layout-components.ts  # Header / sidebar / common layout
-│   ├── simple-pages.ts       # Single-page POMs (homepage, events, pools, …)
-│   ├── anomalies-pages.ts
-│   ├── cloud-accounts-pages.ts
-│   ├── expenses-pages.ts
-│   ├── policies-pages.ts
-│   ├── resources-pages.ts
-│   ├── tagging-policies-pages.ts
-│   ├── users-pages.ts
-│   └── index.ts              # Re-exports
-├── fixtures/           # Playwright fixtures
-│   ├── api.fixture.ts        # API request helpers wired into tests
-│   └── page.fixture.ts       # Page object instances wired into tests
-├── mocks/              # API mock/intercept data used by tests
-├── setup/              # Auth state setup (runs before all tests)
-│   └── auth.setup.ts
-├── utils/              # Shared utilities
-│   ├── api-requests/         # Low-level HTTP helpers (interceptor)
-│   ├── auth-session-storage/ # Auth session helpers
-│   ├── disable-antialiasing/ # CSS injected before screenshots for pixel consistency
-│   ├── debug-logging.ts
-│   ├── file.ts
-│   └── roundElementDimensions.ts
-├── types/              # TypeScript type definitions
-│   ├── api-response.types.ts
-│   ├── enums.ts
-│   └── interceptor.types.ts
-├── snapshots/          # Stored reference screenshots
-│   ├── baseline/       # Canonical baseline (generated via Docker / CI) — committed to git
-│   └── local/          # Local-only snapshots — gitignored, not committed
+├── tests/                          # Test specs — one file per feature area
+│   ├── homepage.spec.ts
+│   ├── cloud-accounts.spec.ts
+│   ├── expenses.spec.ts
+│   ├── events.spec.ts
+│   ├── policies.spec.ts
+│   ├── pools.spec.ts
+│   ├── recommendations.spec.ts
+│   ├── resources.spec.ts
+│   ├── settings.spec.ts
+│   ├── users.spec.ts
+│   └── common-ui.spec.ts
+│
+├── pages/                          # Page Object Models (POM)
+│   ├── base-page.ts                # Abstract base class: navigation, waitForLoad, takeScreenshot, shared locators
+│   ├── layout-components.ts        # Header, sidebar and other shared layout elements
+│   ├── simple-pages.ts             # Lightweight POMs for pages with minimal interactions (Events, HomePage, Pools, …)
+│   ├── anomalies-pages.ts          # Create / list anomaly detection pages
+│   ├── cloud-accounts-pages.ts     # Cloud account list and detail pages
+│   ├── expenses-pages.ts           # Raw expenses and breakdown pages
+│   ├── policies-pages.ts           # Budget / quota / recurring expense policy pages
+│   ├── resources-pages.ts          # Resource list and detail pages
+│   ├── tagging-policies-pages.ts   # Tagging policy pages
+│   ├── users-pages.ts              # User management pages
+│   └── index.ts                    # Barrel re-exports for all page objects
+│
+├── fixtures/                       # Playwright custom fixtures
+│   ├── api.fixture.ts              # AuthClient + REST helpers exposed as `api` fixture
+│   └── page.fixture.ts             # All page object instances wired into tests as fixtures
+│
+├── mocks/                          # Static API mock data used for route interceptions
+│   ├── *.mocks.ts                  # Response payloads per feature
+│   └── *-interceptions.mocks.ts    # Route interception configurations per feature
+│
+├── setup/
+│   └── auth.setup.ts               # Authenticates once and stores session state for all tests
+│
+├── utils/
+│   ├── api-requests/
+│   │   └── interceptor.ts          # Route interception helpers (REST + GraphQL mock routing)
+│   ├── auth-session-storage/       # Helpers for reading/writing auth tokens from localforage
+│   ├── disable-antialiasing/
+│   │   └── pre-screenshot-styles.css  # CSS injected before screenshots to ensure pixel-identical rendering
+│   ├── debug-logging.ts            # Conditional debug/error logging controlled by DEBUG_LOG env var
+│   ├── file.ts                     # File system helpers (PDF conversion, image comparison)
+│   └── roundElementDimensions.ts   # Rounds element bounding boxes to whole pixels before screenshots
+│
+├── types/
+│   ├── api-response.types.ts       # Typed API response shapes
+│   ├── enums.ts                    # Shared enums (roles, policy types, …)
+│   └── interceptor.types.ts        # Types for route interception entries
+│
+├── snapshots/
+│   ├── baseline/                   # ✅ Committed — canonical baselines generated via Docker
+│   └── local/                      # ❌ Gitignored — local-only snapshots for development
+│
 ├── docker/
-│   └── Dockerfile.linux
-├── playwright.config.ts
-├── run_pw.sh
+│   └── Dockerfile.linux            # Linux image used to produce cross-platform baseline snapshots
+│
+├── playwright.config.ts            # Playwright configuration (timeouts, projects, snapshot paths)
+├── run_pw.sh                       # Docker runner script for baseline snapshot generation
+├── eslint.config.mjs               # ESLint config (playwright plugin + TypeScript rules)
+├── tsconfig.json
 ├── package.json
-└── .env.example
+└── .env.example                    # Environment variable template
 ```
 
 ---

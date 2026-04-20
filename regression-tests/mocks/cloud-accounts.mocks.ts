@@ -621,7 +621,7 @@ export const poolsMock =
     'default_owner_name': 'Francesco',
     'unallocated_limit': 154387,
   };
-import type { InterceptionEntry } from '../types/interceptor.types';
+import type { InterceptionEntry } from '../utils/interceptor';
 export const cloudAccountsInterceptions: InterceptionEntry[] = [
   { mock: CurrentEmployee, gql: 'CurrentEmployee' },
   { mock: DataSourcesMock, gql: 'DataSources' },

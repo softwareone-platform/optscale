@@ -1,7 +1,7 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { roundElementDimensions } from '../utils/roundElementDimensions';
-import { settingsInterceptions } from '../mocks/settings-interceptions.mocks';
+import { settingsInterceptions } from '../mocks/settings.mock';
 
 
 test.describe('FFC: Settings page', () => {

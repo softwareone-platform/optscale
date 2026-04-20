@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { EStorageStatePath } from '../types/enums';
+import { EStorageStatePath } from '../types';
 
 /**
  * Safely writes a JSON object to a file.

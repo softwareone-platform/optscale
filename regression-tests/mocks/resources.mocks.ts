@@ -1,3 +1,5 @@
+import type { InterceptionEntry } from '../utils/interceptor';
+
 export const ResourceDetailsMock = {
     "cloud_account_id": "42e6a779-6b1f-4469-b221-412f7aa15466",
     "cloud_resource_id": "sunflower-eu-fra",
@@ -9342,3 +9344,20 @@ export const SummaryMock = {
   "total_cost": 1111.1111,
   "total_saving": 3733.244514756799
 }
+
+
+export const resourcesInterceptions: InterceptionEntry[] = [
+    { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
+    { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
+    { url: `v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock },
+    { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
+];
+
+export const resourceDetailsInterceptions: InterceptionEntry[] = [
+    { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
+    { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
+    { url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock },
+    { url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock },
+    { url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsSunflowerEUMock },
+    { url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock },
+];

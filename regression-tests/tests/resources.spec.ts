@@ -1,7 +1,7 @@
 import { test } from "../fixtures/page.fixture";
 import { expect } from "@playwright/test";
 import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { resourcesInterceptions, resourceDetailsInterceptions } from "../mocks/resources-interceptions.mocks";
+import { resourcesInterceptions, resourceDetailsInterceptions } from "../mocks/resources.mocks";
 
 test.describe('FFC: Resources Dashboard', () => {
 

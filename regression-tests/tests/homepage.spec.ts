@@ -1,7 +1,7 @@
 import { test } from "../fixtures/page.fixture";
 import { expect } from "@playwright/test";
 import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { homepageInterceptions } from "../mocks/homepage-interceptions.mocks";
+import { homepageInterceptions } from "../mocks/homepage.mocks";
 
 test.describe('FFC: Home', () => {
 
