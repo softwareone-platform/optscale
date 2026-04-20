@@ -4481,8 +4481,8 @@ packages:
   flatten-vertex-data@1.0.2:
     resolution: {integrity: sha512-BvCBFK2NZqerFTdMDgqfHBwxYWnxeCkwONsw6PvBMcUXqo8U/KDWwmXhqx1x2kLIg7DqIsJfOaJFOmlua3Lxuw==}
 
-  follow-redirects@1.15.11:
-    resolution: {integrity: sha512-deG2P0JfjrTxl50XGCDyfI97ZGVCxIpfKYmfyrQ54n5FO/0gfIES8C/Psl6kWVDolizcaaxZJnTS0QSMxvnsBQ==}
+  follow-redirects@1.16.0:
+    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -11190,7 +11190,7 @@ snapshots:
 
   axios@1.15.0:
     dependencies:
-      follow-redirects: 1.15.11
+      follow-redirects: 1.16.0
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -12539,7 +12539,7 @@ snapshots:
     dependencies:
       dtype: 2.0.0
 
-  follow-redirects@1.15.11: {}
+  follow-redirects@1.16.0: {}
 
   font-atlas@2.1.0:
     dependencies:
@@ -13102,7 +13102,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.11
+      follow-redirects: 1.16.0
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
