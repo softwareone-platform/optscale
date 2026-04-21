@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "=22.16.0",
-    "pnpm": "=10.12.1"
+    "pnpm": "=10.33.0"
   },
   "scripts": {
     "check": "pnpm -r check",
@@ -29,7 +29,7 @@
     "@types/react-dom": "18.2.18",
     "@types/react-syntax-highlighter": "15.5.13",
     "concurrently": "9.2.1",
-    "eslint": "9.34.0",
+    "eslint": "9.39.4",
     "globals": "15.13.0",
     "prettier": "3.3.3",
     "typescript": "5.7.2",
