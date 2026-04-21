@@ -6099,3242 +6099,1240 @@ export const BreakdownExpensesMock = {
     "breakdown_by": "service_name"
 }
 
-export const ResourcesCountMock = {
-    "start_date": 1738368000,
-    "end_date": 1740700799,
-    "count": 780,
-    "breakdown": {
-        "1738368000": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 184,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 33,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 182,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738454400": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 183,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 33,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 182,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738540800": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 183,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 181,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738627200": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 157,
-                "created": 0,
-                "deleted_day_before": 26
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 180,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738713600": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 156,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 180,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738800000": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 155,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 179,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738886400": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 142,
-                "created": 0,
-                "deleted_day_before": 13
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 179,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1738972800": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 141,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 179,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739059200": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 141,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 32,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 179,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739145600": {
-            "microsoft.compute": {
-                "count": 7,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 141,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 179,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739232000": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 2
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 111,
-                "created": 0,
-                "deleted_day_before": 30
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 178,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739318400": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 109,
-                "created": 0,
-                "deleted_day_before": 2
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 178,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739404800": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 81,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 106,
-                "created": 0,
-                "deleted_day_before": 3
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 177,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739491200": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 3
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 103,
-                "created": 0,
-                "deleted_day_before": 3
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 176,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739577600": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 103,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 176,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739664000": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 103,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 176,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739750400": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 93,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 103,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 171,
-                "created": 0,
-                "deleted_day_before": 5
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739836800": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 70,
-                "created": 0,
-                "deleted_day_before": 33
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 171,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1739923200": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 65,
-                "created": 0,
-                "deleted_day_before": 5
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 171,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740009600": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 65,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 31,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 169,
-                "created": 0,
-                "deleted_day_before": 2
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740096000": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 55,
-                "created": 0,
-                "deleted_day_before": 10
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 30,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 169,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740182400": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 55,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 30,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 169,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740268800": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 60,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 55,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 52,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 30,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 169,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740355200": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 59,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 55,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 51,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonCloudWatch": {
-                "count": 8,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 30,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 168,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSCloudTrail": {
-                "count": 2,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740441600": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 14,
-                "created": 0,
-                "deleted_day_before": 2
-            },
-            "Elastic Compute Service": {
-                "count": 59,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AWSELB": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonQuickSight": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "Compute Engine": {
-                "count": 78,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 22,
-                "created": 0,
-                "deleted_day_before": 33
-            },
-            "AmazonKinesis": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonS3": {
-                "count": 50,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonCloudWatch": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 8
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 15,
-                "created": 0,
-                "deleted_day_before": 15
-            },
-            "BigQuery": {
-                "count": 1,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "awskms": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "AmazonEC2": {
-                "count": 166,
-                "created": 0,
-                "deleted_day_before": 2
-            },
-            "AWSCloudTrail": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 2
-            }
-        },
-        "1740528000": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 14,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 59,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 70,
-                "created": 0,
-                "deleted_day_before": 8
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 6
-            },
-            "AmazonKinesis": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 50,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 15,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 1
-            },
-            "awskms": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 166,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        },
-        "1740614400": {
-            "microsoft.compute": {
-                "count": 5,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Compute": {
-                "count": 92,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic IP Address": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Block Storage": {
-                "count": 14,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Elastic Compute Service": {
-                "count": 59,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Microsoft.Storage": {
-                "count": 10,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonRedshift": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSELB": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonQuickSight": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Compute Engine": {
-                "count": 70,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "Cloud Storage": {
-                "count": 3,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "null": {
-                "count": 16,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonKinesis": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonS3": {
-                "count": 50,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonCloudWatch": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "microsoft.network": {
-                "count": 39,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonVPC": {
-                "count": 15,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "BigQuery": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "awskms": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AmazonEC2": {
-                "count": 166,
-                "created": 0,
-                "deleted_day_before": 0
-            },
-            "AWSCloudTrail": {
-                "count": 0,
-                "created": 0,
-                "deleted_day_before": 0
-            }
-        }
-    },
-    "first_breakdown": 1738368000,
-    "last_breakdown": 1740614400,
-    "breakdown_by": "service_name",
-    "counts": {
-        "microsoft.compute": {
-            "total": 7,
-            "average": 5.7407407407407405
-        },
-        "Microsoft.Compute": {
-            "total": 93,
-            "average": 92.62962962962963
-        },
-        "Elastic IP Address": {
-            "total": 3,
-            "average": 3.0
-        },
-        "Elastic Block Storage": {
-            "total": 16,
-            "average": 15.777777777777779
-        },
-        "Elastic Compute Service": {
-            "total": 60,
-            "average": 59.851851851851855
-        },
-        "Microsoft.Storage": {
-            "total": 10,
-            "average": 10.0
-        },
-        "AmazonRedshift": {
-            "total": 1,
-            "average": 0.8888888888888888
-        },
-        "AWSELB": {
-            "total": 1,
-            "average": 0.8888888888888888
-        },
-        "AmazonQuickSight": {
-            "total": 1,
-            "average": 0.8888888888888888
-        },
-        "Compute Engine": {
-            "total": 81,
-            "average": 78.85185185185185
-        },
-        "Cloud Storage": {
-            "total": 3,
-            "average": 3.0
-        },
-        "null": {
-            "total": 184,
-            "average": 103.51851851851852
-        },
-        "AmazonKinesis": {
-            "total": 1,
-            "average": 0.8888888888888888
-        },
-        "AmazonS3": {
-            "total": 52,
-            "average": 51.74074074074074
-        },
-        "AmazonCloudWatch": {
-            "total": 8,
-            "average": 7.111111111111111
-        },
-        "microsoft.network": {
-            "total": 39,
-            "average": 39.0
-        },
-        "AmazonVPC": {
-            "total": 33,
-            "average": 29.48148148148148
-        },
-        "BigQuery": {
-            "total": 2,
-            "average": 1.8148148148148149
-        },
-        "awskms": {
-            "total": 1,
-            "average": 0.8888888888888888
-        },
-        "AmazonEC2": {
-            "total": 182,
-            "average": 174.66666666666666
-        },
-        "AWSCloudTrail": {
-            "total": 2,
-            "average": 1.7777777777777777
+
+export const CleanExpensesMock = {
+    "data": {
+        "cleanExpenses": {
+            "start_date": 1735689600,
+            "end_date": 1737849599,
+            "total_count": 20,
+            "total_cost": 3033.029059987807,
+            "clean_expenses": [
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/virtualmachines/nlpvps00515[e2etest]",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297266,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "os": "Windows",
+                        "cpu_count": 8,
+                        "flavor": "Standard_D8s_v3",
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00515RGP/providers/Microsoft.Compute/virtualMachines/nlpvps00515/overview",
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1776692946,
+                        "spotted": false,
+                        "security_groups": [
+                            "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpvs00515rgp/providers/Microsoft.Network/networkSecurityGroups/nlpvps00515-nsg"
+                        ],
+                        "vpc_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpvne0100rgp/providers/Microsoft.Network/virtualNetworks/nlpvne0100",
+                        "vpc_name": "nlpvne0100",
+                        "ram": 34359738368,
+                        "architecture": "x86_64"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Instance",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 5.688240388924163
+                    },
+                    "total_cost": 14635.428413960126,
+                    "has_metrics": true,
+                    "active": true,
+                    "id": "7b1d556d-d949-4291-9a95-3027298bc9c8",
+                    "is_environment": false,
+                    "saving": 866.7259199999999,
+                    "cost": 1000.7583856144644,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "7b1d556d-d949-4291-9a95-3027298bc9c8",
+                    "resource_name": "nlpvps00515",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "westeurope",
+                            "to": "Inter-Region",
+                            "usage": 0.2033127257600427,
+                            "cost": 0.0053865173086524035
+                        },
+                        {
+                            "from": "westeurope",
+                            "to": "External",
+                            "usage": 0.004981070756912231,
+                            "cost": 0.00043335315585136386
+                        }
+                    ]
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/virtualmachines/nlpvs00516",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297266,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "os": "Windows",
+                        "cpu_count": 8,
+                        "flavor": "Standard_D8s_v3",
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/virtualMachines/nlpvs00516/overview",
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1776692946,
+                        "spotted": false,
+                        "security_groups": [
+                            "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpvs00516rgp/providers/Microsoft.Network/networkSecurityGroups/nlpvs00516-nsg"
+                        ],
+                        "vpc_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/nlpvne0100rgp/providers/Microsoft.Network/virtualNetworks/nlpvne0100",
+                        "vpc_name": "nlpvne0100",
+                        "ram": 34359738368,
+                        "architecture": "x86_64"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Instance",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 5.307923558276984
+                    },
+                    "total_cost": 14996.054006671007,
+                    "has_metrics": true,
+                    "active": true,
+                    "id": "c7142c02-3eed-449e-8871-348cec83fd7b",
+                    "is_environment": false,
+                    "saving": 1167.010785348639,
+                    "cost": 1000.7309814119433,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "c7142c02-3eed-449e-8871-348cec83fd7b",
+                    "resource_name": "nlpvs00516",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "westeurope",
+                            "to": "External",
+                            "usage": 0.006379135884344578,
+                            "cost": 0.0005549848219379782
+                        },
+                        {
+                            "from": "westeurope",
+                            "to": "Inter-Region",
+                            "usage": 0.19374755118042233,
+                            "cost": 0.005152284223586321
+                        }
+                    ]
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516-disk-4",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516-disk-4/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 2199023255552,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 1.682054935575
+                    },
+                    "total_cost": 4435.05318666001,
+                    "active": true,
+                    "id": "2cc0d96b-b218-4733-950f-b4f6fe50471e",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 229.7675519999999,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "2cc0d96b-b218-4733-950f-b4f6fe50471e",
+                    "resource_name": "nlpvs00516-disk-4",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516-disk-5",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516-disk-5/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 1099511627776,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.87769521
+                    },
+                    "total_cost": 2314.2636199620047,
+                    "active": true,
+                    "id": "50d26d25-11be-4176-9410-1e43bcf4fd78",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 119.89555199999992,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "50d26d25-11be-4176-9410-1e43bcf4fd78",
+                    "resource_name": "nlpvs00516-disk-5",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/disks/nlpvps00515_datadisk_1",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00515RGP/providers/Microsoft.Compute/disks/nlpvps00515_DataDisk_1/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 1099511627776,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.87769521
+                    },
+                    "total_cost": 2314.263619962003,
+                    "active": true,
+                    "id": "58d74a4a-1aab-48a6-9afd-0e2f67bdd915",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 119.89555199999992,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "58d74a4a-1aab-48a6-9afd-0e2f67bdd915",
+                    "resource_name": "nlpvps00515_DataDisk_1",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/disks/nlpvps00515_datadisk_0",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00515RGP/providers/Microsoft.Compute/disks/nlpvps00515_DataDisk_0/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 1099511627776,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.87769521
+                    },
+                    "total_cost": 2314.263619962003,
+                    "active": true,
+                    "id": "d3faf4e8-bb9e-41ca-a137-edd46ec6b123",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 119.89555199999992,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "d3faf4e8-bb9e-41ca-a137-edd46ec6b123",
+                    "resource_name": "nlpvps00515_DataDisk_0",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516-disk-3",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516-disk-3/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 1099511627776,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.702156168
+                    },
+                    "total_cost": 2314.088080920003,
+                    "active": true,
+                    "id": "fb29f7c8-5616-47e5-8b58-bacdf9222841",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 119.89555199999992,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "fb29f7c8-5616-47e5-8b58-bacdf9222841",
+                    "resource_name": "nlpvs00516-disk-3",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516-disk-6",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516-disk-6/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 549755813888,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.475447755
+                    },
+                    "total_cost": 1253.637287811,
+                    "active": true,
+                    "id": "a8dcf81b-78b6-4a40-b405-61def4d5c323",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 64.94745599999999,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "a8dcf81b-78b6-4a40-b405-61def4d5c323",
+                    "resource_name": "nlpvs00516-disk-6",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516_datadisk_0",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516_DataDisk_0/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 274877906944,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.246823312341
+                    },
+                    "total_cost": 650.7901365978399,
+                    "active": true,
+                    "id": "6a543180-17aa-48cb-8a96-abad04e9c4cc",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 33.71558400000001,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "6a543180-17aa-48cb-8a96-abad04e9c4cc",
+                    "resource_name": "nlpvs00516_DataDisk_0",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00509rgp/providers/microsoft.compute/disks/nlpvs00509_disk2_9f704f260ced4da28b41ffa0979fb122",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00509RGP/providers/Microsoft.Compute/disks/nlpvs00509_disk2_9f704f260ced4da28b41ffa0979fb122/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 274877906944,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "DevOps",
+                        "costcenter": "14.20",
+                        "costobject": "devops"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.246823312341
+                    },
+                    "total_cost": 650.7901365978399,
+                    "active": true,
+                    "id": "94a9685b-71f6-4622-9fd4-92b8810f379a",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 33.71558400000001,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "94a9685b-71f6-4622-9fd4-92b8810f379a",
+                    "resource_name": "nlpvs00509_disk2_9f704f260ced4da28b41ffa0979fb122",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516_datadisk_1",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516_DataDisk_1/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 274877906944,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.1974586498728
+                    },
+                    "total_cost": 650.7407719353718,
+                    "active": true,
+                    "id": "cca5ffa2-026b-42c0-8a96-024f80611762",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 33.71558400000001,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "cca5ffa2-026b-42c0-8a96-024f80611762",
+                    "resource_name": "nlpvs00516_DataDisk_1",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00510rgp/providers/microsoft.compute/disks/nlpvs00510_disk2_35c2d67a35db4f6595b084e2b2540357",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00510RGP/providers/Microsoft.Compute/disks/nlpvs00510_disk2_35c2d67a35db4f6595b084e2b2540357/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 274877906944,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "DevOps",
+                        "costcenter": "14.20",
+                        "costobject": "devops"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.246823312341
+                    },
+                    "total_cost": 650.7901365978399,
+                    "active": true,
+                    "id": "db3f31e0-cb39-4d70-a49e-c9ce6fc81106",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 33.71558400000001,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "db3f31e0-cb39-4d70-a49e-c9ce6fc81106",
+                    "resource_name": "nlpvs00510_disk2_35c2d67a35db4f6595b084e2b2540357",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00518rgp/providers/microsoft.compute/disks/nlpvs00518_osdisk_1_0e1a70045d054bdbb62deca00a588982",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00518RGP/providers/Microsoft.Compute/disks/nlpvs00518_OsDisk_1_0e1a70045d054bdbb62deca00a588982/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "38d1f922-aaf4-44b1-9799-a961ad78a27e",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "38d1f922-aaf4-44b1-9799-a961ad78a27e",
+                    "resource_name": "nlpvs00518_OsDisk_1_0e1a70045d054bdbb62deca00a588982",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00509rgp/providers/microsoft.compute/disks/nlpvs00509_disk1_0ec4eac68378404d8f815049b7d9be0d",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00509RGP/providers/Microsoft.Compute/disks/nlpvs00509_disk1_0ec4eac68378404d8f815049b7d9be0d/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "DevOps",
+                        "costcenter": "14.20",
+                        "costobject": "devops"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "4a71ce43-681a-470a-83f8-e00da7dd3cb6",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "4a71ce43-681a-470a-83f8-e00da7dd3cb6",
+                    "resource_name": "nlpvs00509_disk1_0ec4eac68378404d8f815049b7d9be0d",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpxxx0001test/providers/microsoft.compute/disks/nlpxxx0001vm_osdisk_1_b342bfd4061a4056bf39a9e9a3692a52",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPXXX0001TEST/providers/Microsoft.Compute/disks/nlpxxx0001vm_OsDisk_1_b342bfd4061a4056bf39a9e9a3692a52/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "DevOps",
+                        "devops": "",
+                        "costcenter": "14.20",
+                        "costobject": "devops"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "5828bab3-a0ee-4c02-a1cc-71bd8e5c73d3",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "5828bab3-a0ee-4c02-a1cc-71bd8e5c73d3",
+                    "resource_name": "nlpxxx0001vm_OsDisk_1_b342bfd4061a4056bf39a9e9a3692a52",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/disks/nlpvps00515_osdisk_1_3f92bdb8ca5142c7987219dd1de3f919",
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00515RGP/providers/Microsoft.Compute/disks/nlpvps00515_OsDisk_1_3f92bdb8ca5142c7987219dd1de3f919/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "642f9a1a-d2c8-494e-90f3-274f6c4f218e",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "642f9a1a-d2c8-494e-90f3-274f6c4f218e",
+                    "resource_name": "nlpvps00515_OsDisk_1_3f92bdb8ca5142c7987219dd1de3f919",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00516rgp/providers/microsoft.compute/disks/nlpvs00516_osdisk_1_1f582ab66a26418695f56f225f13d507",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00516RGP/providers/Microsoft.Compute/disks/nlpvs00516_OsDisk_1_1f582ab66a26418695f56f225f13d507/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "Pixel",
+                        "devops-component": "DWH",
+                        "environment": "QA"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "711caca5-383f-4f99-b8bd-cfb7ffcc345c",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "711caca5-383f-4f99-b8bd-cfb7ffcc345c",
+                    "resource_name": "nlpvs00516_OsDisk_1_1f582ab66a26418695f56f225f13d507",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00519rgp/providers/microsoft.compute/disks/nlpvs00519_osdisk_1_1feb5a01946348da98d3e98a92571c58",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00519RGP/providers/Microsoft.Compute/disks/nlpvs00519_OsDisk_1_1feb5a01946348da98d3e98a92571c58/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {},
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "9661a57f-4e82-4b14-afb4-0a7cd3ac30ed",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "9661a57f-4e82-4b14-afb4-0a7cd3ac30ed",
+                    "resource_name": "nlpvs00519_OsDisk_1_1feb5a01946348da98d3e98a92571c58",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_account_id": "100efd88-28fb-49f1-946b-edbf78ad4650",
+                    "cloud_resource_id": "/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00510rgp/providers/microsoft.compute/disks/nlpvs00510_disk1_a0dafcefea1a49e9876b6ad7b5b8514f",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-21T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "2c363b0a-7cf6-462a-b3c9-579fa99b2431",
+                            "name": "Rule for CPA (Infrastructure)_1744297056",
+                            "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58"
+                        }
+                    ],
+                    "created_at": 1744297257,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776729600,
+                    "meta": {
+                        "cloud_console_link": "https://portal.azure.com/#resource/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourceGroups/NLPVS00510RGP/providers/Microsoft.Compute/disks/nlpvs00510_disk1_a0dafcefea1a49e9876b6ad7b5b8514f/overview",
+                        "attached": true,
+                        "last_attached": 1776692951,
+                        "size": 136365211648,
+                        "volume_type": "Microsoft.Compute/disks"
+                    },
+                    "pool_id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                    "region": "West Europe",
+                    "resource_type": "Volume",
+                    "tags": {
+                        "devops-ownerteam": "DevOps",
+                        "costcenter": "14.20",
+                        "costobject": "devops"
+                    },
+                    "service_name": "microsoft.compute",
+                    "last_expense": {
+                        "date": 1776643200,
+                        "cost": 0.12798246
+                    },
+                    "total_cost": 337.4578644120003,
+                    "active": true,
+                    "id": "ad8d27b9-7cda-4e67-bc72-3769bf7e359f",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 17.482751999999998,
+                    "cloud_account_name": "CPA (Infrastructure)",
+                    "cloud_account_type": "azure_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "e20b9495-9237-4b22-a03a-f0fb0b481a58",
+                        "name": "CPA (Infrastructure)",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "ad8d27b9-7cda-4e67-bc72-3769bf7e359f",
+                    "resource_name": "nlpvs00510_disk1_a0dafcefea1a49e9876b6ad7b5b8514f",
+                    "shareable": false,
+                    "constraint_violated": false
+                },
+                {
+                    "cloud_resource_id": "i-06b92e5543302d718",
+                    "cloud_account_id": "3f584d10-4293-4599-8ad5-413acc72fd45",
+                    "_first_seen_date": "2025-01-01T00:00:00",
+                    "_last_seen_date": "2026-04-20T00:00:00",
+                    "applied_rules": [
+                        {
+                            "id": "0dacc61b-f185-41f8-809e-9804db99744c",
+                            "name": "QA_PROD_4",
+                            "pool_id": "7365f455-3210-4d34-964e-f00ce45ccbe5"
+                        }
+                    ],
+                    "cloud_created_at": 1715970770,
+                    "created_at": 1746464775,
+                    "deleted_at": 0,
+                    "employee_id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                    "first_seen": 1735689600,
+                    "last_seen": 1776692423,
+                    "meta": {
+                        "flavor": "t4g.2xlarge",
+                        "cloud_console_link": "https://console.aws.amazon.com/ec2/v2/home?region=eu-west-1#InstanceDetails:instanceId=i-06b92e5543302d718",
+                        "stopped_allocated": false,
+                        "last_seen_not_stopped": 1776692426,
+                        "spotted": false,
+                        "security_groups": [
+                            "sg-0a686dc1c44c9680a"
+                        ],
+                        "image_id": "ami-0a636034c582e2138",
+                        "vpc_id": "vpc-0b929b438ef06d92f",
+                        "os": "NA",
+                        "preinstalled": "NA",
+                        "architecture": "arm64"
+                    },
+                    "pool_id": "7365f455-3210-4d34-964e-f00ce45ccbe5",
+                    "region": "eu-west-1",
+                    "resource_type": "Instance",
+                    "tags": {
+                        "Component": "jenkins"
+                    },
+                    "has_metrics": true,
+                    "service_name": "AmazonEC2",
+                    "last_expense": {
+                        "date": 1765152000,
+                        "cost": 0.006618283699999998
+                    },
+                    "total_cost": 131.13422942980003,
+                    "active": true,
+                    "id": "38921f4e-00c6-41a6-8160-2180364a9d3f",
+                    "is_environment": false,
+                    "saving": 0,
+                    "cost": 0.0008769613999999999,
+                    "cloud_account_name": "Marketplace (Production)",
+                    "cloud_account_type": "aws_cnr",
+                    "owner": {
+                        "id": "4447ab7b-da32-4d3e-8840-f244ed505c05",
+                        "name": "Francesco"
+                    },
+                    "pool": {
+                        "id": "7365f455-3210-4d34-964e-f00ce45ccbe5",
+                        "name": "QA & Prod",
+                        "purpose": "budget"
+                    },
+                    "resource_id": "38921f4e-00c6-41a6-8160-2180364a9d3f",
+                    "resource_name": "mpt-jenkins-vm",
+                    "shareable": false,
+                    "constraint_violated": false,
+                    "traffic_expenses": [
+                        {
+                            "from": "eu-west-1",
+                            "to": "External",
+                            "usage": 0.009744011799999999,
+                            "cost": 0.0008769614000000001
+                        }
+                    ]
+                }
+            ],
+            "limit": 5000
         }
     }
-}
-
-export const BreakdownTagsMock = {
-    "breakdown": [
-        {
-            "tag": "sunflower_cloud_agent_nic_id",
-            "cost": 4.860610560000002,
-            "count": 2
-        },
-        {
-            "tag": "sunflower_cloud_id",
-            "cost": 2.43030528,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_cloud_agent_floating_ip_id",
-            "cost": 2.43030528,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_partner_id",
-            "cost": 2.43030528,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_failover_id",
-            "cost": 199.45813066896645,
-            "count": 6
-        },
-        {
-            "tag": null,
-            "cost": 2102.826517933279,
-            "count": 315
-        },
-        {
-            "tag": "created_by",
-            "cost": 114.27813907999982,
-            "count": 9
-        },
-        {
-            "tag": "sunflower_resource_id",
-            "cost": 370.8927446089641,
-            "count": 43
-        },
-        {
-            "tag": "aqa_tag",
-            "cost": 1.6495247999999938,
-            "count": 8
-        },
-        {
-            "tag": "test",
-            "cost": 16.474493952000042,
-            "count": 7
-        },
-        {
-            "tag": "aqa_uuid",
-            "cost": 3.9176213999999874,
-            "count": 19
-        },
-        {
-            "tag": "sunflower_partner_name",
-            "cost": 2.43030528,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_device_name",
-            "cost": 374.6656253841661,
-            "count": 44
-        },
-        {
-            "tag": "component",
-            "cost": 3.78091263608519,
-            "count": 2
-        },
-        {
-            "tag": "job",
-            "cost": 4.7069982720000025,
-            "count": 2
-        },
-        {
-            "tag": "sunflower_type",
-            "cost": 540.183697944166,
-            "count": 103
-        },
-        {
-            "tag": "aws:cloudformation:stack-name",
-            "cost": 17.25459332100001,
-            "count": 7
-        },
-        {
-            "tag": "name",
-            "cost": 3.782601639507444,
-            "count": 3
-        },
-        {
-            "tag": "controller_revision_hash",
-            "cost": 155.02389784511195,
-            "count": 41
-        },
-        {
-            "tag": "app_kubernetes_io_component",
-            "cost": 1.7971580150976427,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_backup_id",
-            "cost": 175.20749471520065,
-            "count": 38
-        },
-        {
-            "tag": "nk-tag",
-            "cost": 1.9554583158000005,
-            "count": 1
-        },
-        {
-            "tag": "statefulset_kubernetes_io_pod_name",
-            "cost": 152.92956420775522,
-            "count": 39
-        },
-        {
-            "tag": "aws:createdBy",
-            "cost": 1507.744489347402,
-            "count": 91
-        },
-        {
-            "tag": "orchid_rule_testing",
-            "cost": 7.707942176800008,
-            "count": 4
-        },
-        {
-            "tag": "purpose",
-            "cost": 527.9903286602546,
-            "count": 69
-        },
-        {
-            "tag": "orchid_tracking_id",
-            "cost": 375.4401259999997,
-            "count": 73
-        },
-        {
-            "tag": "orchid_owner_id",
-            "cost": 0.8835430248,
-            "count": 1
-        },
-        {
-            "tag": "orchid_resource_id",
-            "cost": 1.538294000000001,
-            "count": 2
-        },
-        {
-            "tag": "ms-resource-usage",
-            "cost": 0.4749892480000001,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_device_id",
-            "cost": 366.3712253841664,
-            "count": 42
-        },
-        {
-            "tag": "aqa",
-            "cost": 3.2266258856,
-            "count": 1
-        },
-        {
-            "tag": "sunflower_drive_id",
-            "cost": 41.3069774448,
-            "count": 8
-        },
-        {
-            "tag": "ml_value",
-            "cost": 0.001426846,
-            "count": 3
-        },
-        {
-            "tag": "Seed",
-            "cost": 0.001426846,
-            "count": 3
-        },
-        {
-            "tag": "pod_template_generation",
-            "cost": 2.094333637356761,
-            "count": 2
-        },
-        {
-            "tag": "goog-ops-agent-policy",
-            "cost": 59.92786599999998,
-            "count": 1
-        },
-        {
-            "tag": "orchid_budget_id",
-            "cost": 0.8835430248,
-            "count": 1
-        },
-        {
-            "tag": "chart",
-            "cost": 1.983754620987548,
-            "count": 1
-        },
-        {
-            "tag": "marketing",
-            "cost": 0.2551558998,
-            "count": 1
-        },
-        {
-            "tag": "aws:cloudformation:stack-id",
-            "cost": 17.25459332100001,
-            "count": 7
-        },
-        {
-            "tag": "mytag1",
-            "cost": 3.2406007428000003,
-            "count": 1
-        },
-        {
-            "tag": "aws:cloudformation:logical-id",
-            "cost": 17.25459332100001,
-            "count": 7
-        },
-        {
-            "tag": "app",
-            "cost": 250.19241100098318,
-            "count": 172
-        },
-        {
-            "tag": "owner",
-            "cost": 33.191913723599974,
-            "count": 5
-        },
-        {
-            "tag": "sunflower_cloud_agent_id",
-            "cost": 2.43030528,
-            "count": 1
-        },
-        {
-            "tag": "pod_template_hash",
-            "cost": 95.46568877813023,
-            "count": 132
-        },
-        {
-            "tag": "release",
-            "cost": 249.92430993373486,
-            "count": 171
-        },
-        {
-            "tag": "heritage",
-            "cost": 1.983754620987548,
-            "count": 1
-        }
-    ],
-    "start_date": 1738368000,
-    "end_date": 1740700799
 }
 
 export const SummaryMock = {
@@ -9349,8 +7347,8 @@ export const SummaryMock = {
 export const resourcesInterceptions: InterceptionEntry[] = [
     { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
     { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
-    { url: `v2/organizations/[^/]+/resources_count`, mock: ResourcesCountMock },
-    { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
+    { gql: `CleanExpenses`, mock:  CleanExpensesMock },
+    // { url: `v2/organizations/[^/]+/breakdown_tags`, mock: BreakdownTagsMock },
 ];
 
 export const resourceDetailsInterceptions: InterceptionEntry[] = [

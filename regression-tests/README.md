@@ -68,12 +68,12 @@ Edit `.env` with the appropriate values:
 
 | Command | Description |
 |---|---|
-| `npm test` | Run all tests headless |
-| `npm run test:ui` | Run with the Playwright interactive UI |
-| `npm run test:headed` | Run in headed mode (single worker) |
-| `npm run test:update` | Re-generate local snapshots |
-| `npm run test:docker` | Run inside Docker (Linux) — results go to `snapshots/baseline/` |
-| `npm run test:docker:update` | Run inside Docker and update baseline snapshots |
+| `npm test` | Run all tests inside Docker (Linux) — generates baseline snapshots |
+| `npm run test:update` | Run inside Docker and update baseline snapshots |
+| `npm run test:local` | Run all tests headless locally |
+| `npm run test:local:ui` | Run with the Playwright interactive UI |
+| `npm run test:local:headed` | Run in headed mode (single worker) |
+| `npm run test:local:update` | Re-generate local snapshots |
 | `npm run report` | Open the last HTML report |
 | `npm run lint` | Lint all TypeScript files |
 | `npm run format` | Format all files with Prettier |
@@ -180,13 +180,13 @@ Only **baseline** snapshots are pixel-perfect and cross-platform — they are pr
 To regenerate **local** snapshots (development only):
 
 ```bash
-npm run test:update
+npm run test:local:update
 ```
 
 To regenerate **baseline** (canonical) snapshots:
 
 ```bash
-npm run test:docker:update
+npm run test:update
 ```
 
 ---

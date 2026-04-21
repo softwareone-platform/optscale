@@ -14,7 +14,7 @@
     "test:update": "npm run test -- --update-snapshots",
     "test:docker": "./run_pw.sh",
     "test:docker:update": "./run_pw.sh -u",
-    "report": "npx playwright show-report"
+    "report": "npx playwright show-report ./test-results/html"
   },
   "keywords": [],
   "author": "",

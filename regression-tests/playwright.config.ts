@@ -21,8 +21,15 @@ const ACTION_TIMEOUT = 20000;
  */
 export const LARGE_DATA_TIMEOUT = 60000;
 
-const getSnapshotPath = (): string =>
-  process.env.IS_REGRESSION_RUN ? 'baseline' : `local/${os.platform()}`;
+const getSnapshotPath = (): string => {
+  if (!process.env.IS_REGRESSION_RUN) return `local/${os.platform()}`;
+  const host = (process.env.LIVE_DEMO_API || 'baseline')
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0]
+    .split('?')[0];
+  return `baseline/${host}`;
+};
 
 /**
  * Chromium launch flags that disable GPU rendering, font hinting and
@@ -48,10 +55,12 @@ export default defineConfig({
   workers: IS_CI ? 2 : 3,
   timeout: TEST_TIMEOUT,
 
+  outputDir: './results/test-results',
+
   reporter: [
     ['list'],
-    ['json', { outputFile: 'results.json' }],
-    ['html', { open: 'never' }],
+    ['json', { outputFile: './results/results.json' }],
+    ['html', { outputFolder: './results/html', open: IS_CI ? 'never' : 'on-failure' }],
   ],
 
   expect: {
