@@ -1,4 +1,4 @@
-import type { InterceptionEntry } from '@/utils/interceptor';
+import type { InterceptionEntry } from '@/types';
 import { E2E_RIB, E2E_RO } from './e2e-markers';
 
 // ─── Mock payloads ──────────────────────────────────────────────────────────

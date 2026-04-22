@@ -1,4 +1,4 @@
-import type { InterceptionEntry } from '@/utils/interceptor';
+import type { InterceptionEntry } from '@/types';
 import { E2E_CDS } from './e2e-markers';
 
 // ─── Shared primitives ──────────────────────────────────────────────────────

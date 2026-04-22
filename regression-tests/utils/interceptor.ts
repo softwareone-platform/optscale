@@ -1,12 +1,6 @@
 import { Page, Route } from '@playwright/test';
 import { debugLog } from './debug-logging';
-
-type XOR<T, U> = (T & { [K in Exclude<keyof U, keyof T>]?: never }) | (U & { [K in Exclude<keyof T, keyof U>]?: never });
-
-type IGraphQLEntry = { gql: string; mock: any };
-type IRESTEntry = { url: string; mock: any };
-
-export type InterceptionEntry = XOR<IGraphQLEntry, IRESTEntry>;
+import type { InterceptionEntry } from '@/types';
 
 const HTTP_STATUS_OK = 200;
 const CONTENT_TYPE_JSON = 'application/json';

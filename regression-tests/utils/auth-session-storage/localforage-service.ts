@@ -3,9 +3,10 @@ import { safeReadJsonFile } from '@/utils/file';
 import path from 'path';
 import { EStorageStatePath } from '@/types';
 
+const LOCALFORAGE_SCRIPT = path.resolve(__dirname, '../../vendor/localforage.min.js');
+
 export async function injectLocalforage(page: Page) {
-  const scriptPath = path.resolve(__dirname, './script/localforage.min.js');
-  await page.addScriptTag({ path: scriptPath });
+  await page.addScriptTag({ path: LOCALFORAGE_SCRIPT });
   await page.waitForFunction(() => !!(window as any).localforage);
 }
 

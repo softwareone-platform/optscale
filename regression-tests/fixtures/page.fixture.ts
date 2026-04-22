@@ -1,7 +1,8 @@
 import { test as base, type Page } from '@playwright/test';
 import * as Pages from '@/pages';
 import { restoreUserSessionInLocalForage } from '@/utils/auth-session-storage/localforage-service';
-import { apiInterceptors, InterceptionEntry } from '@/utils/interceptor';
+import { apiInterceptors } from '@/utils/interceptor';
+import type { InterceptionEntry } from '@/types';
 import { EStorageStatePath } from '@/types';
 
 interface Options {

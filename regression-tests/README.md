@@ -115,11 +115,15 @@ regression-tests/
 ├── pages/                          # Page Object Models (POM)
 │   ├── base-page.ts                # Abstract base class: navigation, waitForLoad, takeScreenshot, shared locators
 │   ├── layout-components.ts        # Header, sidebar and other shared layout elements
-│   ├── simple-pages.ts             # Lightweight POMs for pages with minimal interactions (Events, HomePage, Pools, …)
-│   ├── policy-pages.ts             # Shared template + concrete POMs for Anomalies / Policies / Tagging Policies list & create pages
 │   ├── cloud-accounts-pages.ts     # Cloud account list and detail pages
+│   ├── events.page.ts              # Events page
 │   ├── expenses-pages.ts           # Raw expenses and breakdown pages
+│   ├── home.page.ts                # Homepage
+│   ├── policy-pages.ts             # Shared template + concrete POMs for Anomalies / Policies / Tagging Policies list & create pages
+│   ├── pools.page.ts               # Pools page
+│   ├── recommendations.page.ts     # Recommendations page
 │   ├── resources-pages.ts          # Resource list and detail pages
+│   ├── settings.page.ts            # Settings page
 │   ├── users-pages.ts              # User management pages
 │   └── index.ts                    # Barrel re-exports for all page objects
 │
@@ -143,13 +147,16 @@ regression-tests/
 │   ├── auth-session-storage/       # Helpers for reading/writing auth tokens from localforage
 │   ├── debug-logging.ts            # Conditional debug/error logging controlled by DEBUG_LOG env var
 │   ├── file.ts                     # File system helpers (PDF conversion, image comparison)
-│   ├── interceptor.ts              # Route interception helpers (REST + GraphQL mock routing)
+│   ├── interceptor.ts              # Route interception implementation (REST + GraphQL mock routing)
 │   └── screenshots.ts              # captureScreenshot + waitForPageIdle helpers
 │
 ├── types/
 │   ├── api-response.types.ts       # Typed API response shapes
 │   ├── enums.ts                    # Shared enums (roles, policy types, …)
-│   └── interceptor.types.ts        # Types for route interception entries
+│   └── interceptor.types.ts        # `InterceptionEntry` (GraphQL/REST mock-route entry)
+│
+├── vendor/
+│   └── localforage.min.js          # Third-party script injected into the page to mirror app session storage
 │
 ├── snapshots/
 │   ├── baseline/                   # ✅ Committed — canonical baselines generated via Docker
