@@ -12,7 +12,7 @@ export class EventsPage extends BasePage {
   }
 
   async clickEventsTable(): Promise<void> {
-    await this.eventsTable.click({ timeout: 5000 });
+    await this.eventsTable.click({ timeout: 10000 });
   }
 }
 

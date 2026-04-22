@@ -3,9 +3,15 @@ import * as Pages from '../pages';
 import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
 import {apiInterceptors, InterceptionEntry} from "../utils/interceptor";
 import {EStorageStatePath} from "../types";
+
 interface Options {
   restoreSession?: boolean;
   setFixedTime?: boolean;
+  /**
+   * When `true`, injects an init script that hides `.MuiSnackbar-anchorOriginTopRight`
+   * (e.g. the "pending invitation" info banner) so it doesn't flicker into screenshots.
+   */
+  hideTopRightSnackbar?: boolean;
   interceptAPI?: {
     // Known Playwright issue: when an option fixture's value is a bare array,
     // `test.use()` unwraps it and only the first element reaches the fixture
@@ -73,13 +79,21 @@ function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
 const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
-  restoreSession: [false, {option: true}],
-  setFixedTime: [false, {option: true}],
-  interceptAPI: [undefined, {option: true}], // <-- allow full override
+  restoreSession: [true, {option: true}],
+  setFixedTime: [true, {option: true}],
+  hideTopRightSnackbar: [false, {option: true}],
+  interceptAPI: [undefined, {option: true}],
 
-  page: async ({page, restoreSession, setFixedTime, interceptAPI}, use) => {
+  page: async ({page, restoreSession, setFixedTime, hideTopRightSnackbar, interceptAPI}, use) => {
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, setFixedTime);
+    }
+    if (hideTopRightSnackbar) {
+      await page.addInitScript(() => {
+        const style = document.createElement('style');
+        style.textContent = `.MuiSnackbar-anchorOriginTopRight { display: none !important; }`;
+        document.documentElement.appendChild(style);
+      });
     }
     if (interceptAPI?.entries?.length > 0) {
       await apiInterceptors(page, interceptAPI.entries);

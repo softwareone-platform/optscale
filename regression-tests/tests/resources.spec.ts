@@ -1,48 +1,48 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { resourcesInterceptions, resourceDetailsInterceptions } from '../mocks/resources.mocks';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
-import { captureScreenshot, regressionOptions } from '../utils/test-helpers';
+import { resourcesInterceptions, resourceDetailsInterceptions } from '../mocks';
+import { captureScreenshot } from '../utils/screenshots';
 
-test.describe('FFC: Resources Dashboard', () => {
-  test.use(regressionOptions(resourcesInterceptions));
+test.describe(() => {
+  test.use({ interceptAPI: { entries: resourcesInterceptions } });
 
-  test('Page matches screenshots', async ({ resourcesPage }) => {
+  test('FFC: Resources Dashboard', async ({ resourcesPage }) => {
     await resourcesPage.navigateToURL();
     await resourcesPage.waitForCanvas();
     await resourcesPage.searchInput.waitFor();
-    await resourcesPage.fitViewportToFullPage();
-    await captureScreenshot(resourcesPage.main, 'Resources-Container--Expenses.png', resourcesPage.heading);
+    await captureScreenshot(resourcesPage.main, 'Resources-Container--Expenses.png', {
+      hoverAnchor: resourcesPage.heading,
+      fitViewport: resourcesPage,
+    });
   });
 });
 
-test.describe('FFC: Resources Details', () => {
-  test.use(regressionOptions(resourceDetailsInterceptions));
+test.describe(() => {
+  test.use({ interceptAPI: { entries: resourceDetailsInterceptions } });
 
-  test('Resource details page matches screenshots', async ({ resourcesPage, resourceDetailsPage }) => {
-    await test.step('Navigate to Resource details page for sunflower[E2E_RR]', async () => {
+  test('FFC: Resources Details', async ({ resourcesPage, resourceDetailsPage }) => {
+    await test.step('Open details page', async () => {
       await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
       await resourcesPage.firstResourceItemInTable.click();
-      await roundElementDimensions(resourceDetailsPage.heading);
       await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower[E2E_RR]');
     });
 
     const tabs: Array<{ label: string; open: () => Promise<void>; snapshot: string; withCharts?: boolean }> = [
-      { label: 'Details',          open: () => resourceDetailsPage.clickDetailsTab(),         snapshot: 'ResourceDetails-Container--Details.png' },
-      { label: 'Constraints',      open: async () => {
+      { label: 'Details tab',              open: () => resourceDetailsPage.clickDetailsTab(),         snapshot: 'ResourceDetails-Container--Details.png' },
+      { label: 'Constraints tab',          open: async () => {
           await resourceDetailsPage.clickConstraintsTab();
           await resourceDetailsPage.constraintsTable.waitFor();
         }, snapshot: 'ResourceDetails-Container--Constraints.png' },
-      { label: 'Expenses grouped', open: async () => {
+      { label: 'Expenses tab — Grouped',   open: async () => {
           await resourceDetailsPage.clickExpensesTab();
           await resourceDetailsPage.clickExpensesGroupedButton();
         }, snapshot: 'ResourceDetails-Container--ExpensesGrouped.png', withCharts: true },
-      { label: 'Expenses detailed',open: () => resourceDetailsPage.clickExpensesDetailedButton(), snapshot: 'ResourceDetails-Container--ExpensesDetailed.png', withCharts: true },
-      { label: 'Recommendations',  open: () => resourceDetailsPage.clickRecommendationsTab(),     snapshot: 'ResourceDetails-Container--Recommendations.png' },
+      { label: 'Expenses tab — Detailed',  open: () => resourceDetailsPage.clickExpensesDetailedButton(), snapshot: 'ResourceDetails-Container--ExpensesDetailed.png', withCharts: true },
+      { label: 'Recommendations tab',      open: () => resourceDetailsPage.clickRecommendationsTab(),     snapshot: 'ResourceDetails-Container--Recommendations.png' },
     ];
 
     for (const { label, open, snapshot, withCharts } of tabs) {
-      await test.step(`${label} tab`, async () => {
+      await test.step(label, async () => {
         await open();
         await resourceDetailsPage.prepareScreenshot(withCharts);
         await expect(resourceDetailsPage.main).toHaveScreenshot(snapshot);

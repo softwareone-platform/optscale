@@ -1,7 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
 import { LARGE_DATA_TIMEOUT } from '../playwright.config';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
 
 export class ResourcesPage extends BasePage {
   readonly heading: Locator;
@@ -82,13 +81,12 @@ export class ResourceDetailsPage extends BasePage {
   async clickExpensesDetailedButton(): Promise<void> { await this.expensesDetailedButton.click(); }
 
   /**
-   * Standard screenshot sequence: hover heading, optional canvas wait,
-   * round dimensions, fit viewport, return locator for snapshot assertion.
+   * Standard screenshot sequence: hover heading, optional canvas wait, fit
+   * viewport to full page.
    */
   async prepareScreenshot(waitForCanvas = false): Promise<void> {
     await this.heading.hover();
     if (waitForCanvas) await this.waitForCanvas();
-    await roundElementDimensions(this.main);
     await this.fitViewportToFullPage();
   }
 }

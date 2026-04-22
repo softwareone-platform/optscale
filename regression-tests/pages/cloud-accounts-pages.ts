@@ -1,6 +1,5 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
 
 export class CloudAccountsPage extends BasePage {
   readonly heading: Locator;
@@ -42,7 +41,6 @@ export class CloudAccountsConnectPage extends BasePage {
   async prepareConnectPageForScreenshot(cloudAccountsPage: CloudAccountsPage): Promise<void> {
     await cloudAccountsPage.navigateToURL();
     await cloudAccountsPage.clickAddBtn();
-    await roundElementDimensions(this.main);
     await this.fitViewportToFullPage();
   }
 

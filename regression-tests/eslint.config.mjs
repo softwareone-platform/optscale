@@ -29,5 +29,16 @@ export default [
   ...(Array.isArray(playwright.configs['flat/recommended'])
     ? playwright.configs['flat/recommended']
     : [playwright.configs['flat/recommended']]),
+  {
+    files: ['tests/**/*.ts'],
+    rules: {
+      // `captureScreenshot` wraps an `expect(...).toHaveScreenshot(...)` call —
+      // treat it as an assertion so tests using only the helper aren't flagged.
+      'playwright/expect-expect': ['warn', {
+        assertFunctionNames: ['captureScreenshot'],
+      }],
+      'playwright/no-conditional-in-test': 'off',
+    },
+  },
   ...(Array.isArray(prettier) ? prettier : [prettier]),
 ];

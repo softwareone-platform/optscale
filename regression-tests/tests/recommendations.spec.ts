@@ -1,34 +1,25 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { recommendationsInterceptions } from '../mocks/recommendations.mocks';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
-import { regressionOptions } from '../utils/test-helpers';
+import { recommendationsInterceptions } from '../mocks';
+import { captureScreenshot } from '../utils/screenshots';
 
-test.use(regressionOptions(recommendationsInterceptions));
+test.use({ interceptAPI: { entries: recommendationsInterceptions } });
 
-test('FFC: Recommendations — page matches screenshots', async ({ recommendationsPage }) => {
-  await recommendationsPage.navigateToURL();
+test('FFC: Recommendations', async ({ recommendationsPage }) => {
+  const page = recommendationsPage;
+  await page.navigateToURL();
 
   await test.step('Cards view', async () => {
-    await recommendationsPage.clickCardsButtonIfNotActive();
-    await roundElementDimensions([
-      recommendationsPage.main,
-      recommendationsPage.possibleMonthlySavingsDiv,
-      recommendationsPage.firstCard,
-    ]);
-    await recommendationsPage.fitViewportToFullPage();
-    await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-Container--Cards.png');
+    await page.clickCardsButtonIfNotActive();
+    await captureScreenshot(page.main, 'Recommendations-Container--Cards.png', {
+      fitViewport: page,
+    });
   });
 
   await test.step('Table view', async () => {
-    await recommendationsPage.clickTableButton();
-    await roundElementDimensions([
-      recommendationsPage.main,
-      recommendationsPage.possibleMonthlySavingsDiv,
-      recommendationsPage.table,
-    ]);
-    await recommendationsPage.fitViewportToFullPage();
-    await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-Savings.png');
-    await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-Table.png');
+    await page.clickTableButton();
+    await page.fitViewportToFullPage();
+    await expect(page.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-Savings.png');
+    await expect(page.table).toHaveScreenshot('Recommendations-Table.png');
   });
 });

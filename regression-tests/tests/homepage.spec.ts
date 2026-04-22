@@ -1,40 +1,25 @@
 import { test } from '../fixtures/page.fixture';
-import { expect } from '@playwright/test';
-import { homepageInterceptions } from '../mocks/homepage.mocks';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
-import { regressionOptions } from '../utils/test-helpers';
+import { homepageInterceptions } from '../mocks';
+import { captureScreenshot } from '../utils/screenshots';
 
-test.use(regressionOptions(homepageInterceptions));
+test.use({ interceptAPI: { entries: homepageInterceptions } });
 
-test('FFC: Home — all dashboard blocks match screenshots', async ({ homePage }) => {
+test('FFC: Home', async ({ homePage }) => {
   await homePage.navigateToURL();
   await homePage.waitForAllBoxesToLoad();
   await homePage.fitViewportToFullPage();
 
   const blocks = [
-    {
-      name: 'Organization Expenses',
-      locator: homePage.organizationExpensesBlock,
-      snapshot: 'Home-Block--OrganizationExpenses.png',
-    },
-    { name: 'Top Resources', locator: homePage.topResourcesBlock, snapshot: 'Home-Block--TopResources.png' },
-    { name: 'Recommendations', locator: homePage.recommendationsBlock, snapshot: 'Home-Block--Recommendations.png' },
-    {
-      name: 'Policy Violations',
-      locator: homePage.policyViolationsBlock,
-      snapshot: 'Home-Block--PolicyViolations.png',
-    },
-    {
-      name: 'Pools Requiring Attn.',
-      locator: homePage.poolsRequiringAttentionBlock,
-      snapshot: 'Home-Block--PoolsRequiringAttention.png',
-    },
+    { label: 'Organization Expenses block',     locator: homePage.organizationExpensesBlock,    snapshot: 'Home-Block--OrganizationExpenses.png' },
+    { label: 'Top Resources block',             locator: homePage.topResourcesBlock,            snapshot: 'Home-Block--TopResources.png' },
+    { label: 'Recommendations block',           locator: homePage.recommendationsBlock,         snapshot: 'Home-Block--Recommendations.png' },
+    { label: 'Policy Violations block',         locator: homePage.policyViolationsBlock,        snapshot: 'Home-Block--PolicyViolations.png' },
+    { label: 'Pools Requiring Attention block', locator: homePage.poolsRequiringAttentionBlock, snapshot: 'Home-Block--PoolsRequiringAttention.png' },
   ];
 
-  for (const { name, locator, snapshot } of blocks) {
-    await test.step(`${name} block`, async () => {
-      await roundElementDimensions(locator);
-      await expect(locator).toHaveScreenshot(snapshot);
+  for (const { label, locator, snapshot } of blocks) {
+    await test.step(label, async () => {
+      await captureScreenshot(locator, snapshot, { skipHover: true });
     });
   }
 });

@@ -1,11 +1,13 @@
 import { test } from '../fixtures/page.fixture';
-import { eventsInterceptions } from '../mocks/events.mocks';
-import { captureScreenshot, regressionOptions } from '../utils/test-helpers';
+import { eventsInterceptions } from '../mocks';
+import { captureScreenshot } from '../utils/screenshots';
 
-test.use(regressionOptions(eventsInterceptions));
+test.use({ interceptAPI: { entries: eventsInterceptions } });
 
-test('FFC: Events — page matches screenshots', async ({ eventsPage }) => {
+test('FFC: Events', async ({ eventsPage }) => {
   await eventsPage.navigateToURL();
   await eventsPage.clickEventsTable();
-  await captureScreenshot(eventsPage.main, 'Events-Container--Expanded.png', eventsPage.heading);
+  await captureScreenshot(eventsPage.main, 'Events-Container--Expanded.png', {
+    hoverAnchor: eventsPage.heading,
+  });
 });

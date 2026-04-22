@@ -1,90 +1,67 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { expensesInterceptions, expensesMapInterceptions, expensesBreakdownsInterceptions } from '../mocks/expenses.mocks';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
-import { captureScreenshot, regressionOptions } from '../utils/test-helpers';
+import { expensesInterceptions, expensesMapInterceptions, expensesBreakdownsInterceptions } from '../mocks';
+import { captureScreenshot } from '../utils/screenshots';
 
-test.describe('FFC: Expenses Dashboard page', () => {
-  test.use(regressionOptions(expensesInterceptions));
+test.describe(() => {
+  test.use({ interceptAPI: { entries: expensesInterceptions } });
 
-  test('Page matches screenshots', async ({ expensesPage }) => {
+  test('FFC: Expenses Dashboard', async ({ expensesPage }) => {
     await expensesPage.navigateToURL();
 
     const views: Array<[string, () => Promise<void>, string]> = [
-      ['daily', () => expensesPage.clickDailyBtnIfNotSelected(), 'Expenses-Container--Daily.png'],
-      ['weekly', () => expensesPage.clickWeeklyBtn(), 'Expenses-Container--Weekly.png'],
-      ['monthly', () => expensesPage.clickMonthlyBtn(), 'Expenses-Container--Monthly.png'],
+      ['Daily view',   () => expensesPage.clickDailyBtnIfNotSelected(), 'Expenses-Container--Daily.png'],
+      ['Weekly view',  () => expensesPage.clickWeeklyBtn(),             'Expenses-Container--Weekly.png'],
+      ['Monthly view', () => expensesPage.clickMonthlyBtn(),            'Expenses-Container--Monthly.png'],
     ];
 
     for (const [label, pickView, snapshot] of views) {
-      await test.step(`${label} view`, async () => {
+      await test.step(label, async () => {
         await pickView();
         await expensesPage.waitForCanvas();
-        await captureScreenshot(expensesPage.main, snapshot, expensesPage.heading);
+        await captureScreenshot(expensesPage.main, snapshot, {
+          hoverAnchor: expensesPage.heading,
+        });
       });
     }
   });
 });
 
-test.describe('FFC: Expenses Map page', () => {
-  test.use(regressionOptions(expensesMapInterceptions));
+test.describe(() => {
+  test.use({ interceptAPI: { entries: expensesMapInterceptions } });
 
-  test('Page matches screenshots', async ({ expensesMapPage }) => {
+  test('FFC: Expenses Map', async ({ expensesMapPage }) => {
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
     await expensesMapPage.fitViewportToFullPage();
     await expect(expensesMapPage.mapLegend).toBeVisible();
-    await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMap-Content.png', {
+    await expect(expensesMapPage.main).toHaveScreenshot('ExpensesMap-Container.png', {
       mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
     });
   });
 });
 
-test.describe('FFC: Expenses Breakdowns page', () => {
-  test.use(regressionOptions(expensesBreakdownsInterceptions));
+test.describe(() => {
+  test.use({ interceptAPI: { entries: expensesBreakdownsInterceptions } });
 
-  test('Page matches screenshots', async ({ expensesPage }) => {
+  test('FFC: Expenses Breakdowns', async ({ expensesPage }) => {
     await expensesPage.navigateToURL();
 
-    const breakdowns: Array<{
-      label: string;
-      open: () => Promise<void>;
-      heading: () => typeof expensesPage.dataSourceHeading;
-      snapshot: string;
-      needsBreadcrumb: boolean;
-    }> = [
-      {
-        label: 'source',
-        open: () => expensesPage.clickSourceBtn(),
-        heading: () => expensesPage.dataSourceHeading,
-        snapshot: 'Expenses-Breakdown--Source.png',
-        needsBreadcrumb: false,
-      },
-      {
-        label: 'pool',
-        open: () => expensesPage.clickPoolBtn(),
-        heading: () => expensesPage.poolHeading,
-        snapshot: 'Expenses-Breakdown--Pool.png',
-        needsBreadcrumb: true,
-      },
-      {
-        label: 'owner',
-        open: () => expensesPage.clickOwnerBtn(),
-        heading: () => expensesPage.ownerHeading,
-        snapshot: 'Expenses-Breakdown--Owner.png',
-        needsBreadcrumb: true,
-      },
+    const breakdowns = [
+      { label: 'Breakdown by source', open: () => expensesPage.clickSourceBtn(), heading: () => expensesPage.dataSourceHeading, snapshot: 'Expenses-Breakdown--Source.png', needsBreadcrumb: false },
+      { label: 'Breakdown by pool',   open: () => expensesPage.clickPoolBtn(),   heading: () => expensesPage.poolHeading,       snapshot: 'Expenses-Breakdown--Pool.png',   needsBreadcrumb: true  },
+      { label: 'Breakdown by owner',  open: () => expensesPage.clickOwnerBtn(),  heading: () => expensesPage.ownerHeading,      snapshot: 'Expenses-Breakdown--Owner.png',  needsBreadcrumb: true  },
     ];
 
     for (const { label, open, heading, snapshot, needsBreadcrumb } of breakdowns) {
-      await test.step(`Breakdown by ${label}`, async () => {
+      await test.step(label, async () => {
         if (needsBreadcrumb) await expensesPage.clickCostExploreBreadcrumb();
         await open();
-        await heading().hover();
         await expensesPage.waitForCanvas();
-        await roundElementDimensions(expensesPage.main);
-        await expensesPage.fitViewportToFullPage();
-        await expect(expensesPage.main).toHaveScreenshot(snapshot);
+        await captureScreenshot(expensesPage.main, snapshot, {
+          hoverAnchor: heading(),
+          fitViewport: expensesPage,
+        });
       });
     }
   });

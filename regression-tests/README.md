@@ -143,7 +143,7 @@ regression-tests/
 │   ├── debug-logging.ts            # Conditional debug/error logging controlled by DEBUG_LOG env var
 │   ├── file.ts                     # File system helpers (PDF conversion, image comparison)
 │   ├── interceptor.ts              # Route interception helpers (REST + GraphQL mock routing)
-│   └── roundElementDimensions.ts   # Rounds element bounding boxes to whole pixels before screenshots
+│   └── screenshots.ts              # captureScreenshot + waitForPageIdle helpers
 │
 ├── types/
 │   ├── api-response.types.ts       # Typed API response shapes
