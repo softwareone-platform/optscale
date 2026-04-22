@@ -1,8 +1,8 @@
-import {test as base, type Page} from '@playwright/test';
+import { test as base, type Page } from '@playwright/test';
 import * as Pages from '../pages';
-import {restoreUserSessionInLocalForage} from "../utils/auth-session-storage/localforage-service";
-import {apiInterceptors, InterceptionEntry} from "../utils/interceptor";
-import {EStorageStatePath} from "../types";
+import { restoreUserSessionInLocalForage } from '../utils/auth-session-storage/localforage-service';
+import { apiInterceptors, InterceptionEntry } from '../utils/interceptor';
+import { EStorageStatePath } from '../types';
 
 interface Options {
   restoreSession?: boolean;
@@ -19,7 +19,7 @@ interface Options {
     // Wrapping the array in an object (`{ entries: [...] }`) avoids the unwrap.
     // See: https://github.com/microsoft/playwright/issues/22068
     entries: InterceptionEntry[];
-  }
+  };
 }
 
 // Generic "new (page) => instance" type for Page Objects
@@ -28,9 +28,9 @@ type PageObjectCtor<T = unknown> = new (page: Page) => T;
 // Build a single fixture from a Page Object constructor
 const createFixture =
   <T>(Ctor: PageObjectCtor<T>) =>
-    async ({page}: { page: Page }, use: (po: T) => Promise<void>) => {
-      await use(new Ctor(page));
-    };
+  async ({ page }: { page: Page }, use: (po: T) => Promise<void>) => {
+    await use(new Ctor(page));
+  };
 
 // Declare all POs in one place with strong typing
 const constructors = {
@@ -62,15 +62,12 @@ type Fixtures = { [K in keyof Constructors]: InstanceType<Constructors[K]> };
 
 function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
   const result = {} as {
-    [K in keyof C]: (
-      args: { page: Page },
-      use: (po: InstanceType<C[K]>) => Promise<void>
-    ) => Promise<void>;
+    [K in keyof C]: (args: { page: Page }, use: (po: InstanceType<C[K]>) => Promise<void>) => Promise<void>;
   };
 
   for (const key in ctors) {
     const Ctor = ctors[key];
-    result[key] = createFixture(Ctor) as typeof result[typeof key];
+    result[key] = createFixture(Ctor) as (typeof result)[typeof key];
   }
 
   return result;
@@ -79,12 +76,12 @@ function buildFixtures<C extends Record<string, PageObjectCtor>>(ctors: C) {
 const fixtures = buildFixtures(constructors);
 
 export const test = base.extend<Fixtures & Options>({
-  restoreSession: [true, {option: true}],
-  setFixedTime: [true, {option: true}],
-  hideTopRightSnackbar: [false, {option: true}],
-  interceptAPI: [undefined, {option: true}],
+  restoreSession: [true, { option: true }],
+  setFixedTime: [true, { option: true }],
+  hideTopRightSnackbar: [false, { option: true }],
+  interceptAPI: [undefined, { option: true }],
 
-  page: async ({page, restoreSession, setFixedTime, hideTopRightSnackbar, interceptAPI}, use) => {
+  page: async ({ page, restoreSession, setFixedTime, hideTopRightSnackbar, interceptAPI }, use) => {
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, setFixedTime);
     }

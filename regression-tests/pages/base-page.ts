@@ -58,10 +58,7 @@ export abstract class BasePage {
       const contentHeight = await this.page.evaluate(() => {
         const wrapper = document.querySelector('main#mainLayoutWrapper');
         if (!wrapper) return 0;
-        return Array.from(wrapper.children).reduce(
-          (sum, child) => sum + (child as HTMLElement).offsetHeight,
-          0,
-        );
+        return Array.from(wrapper.children).reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0);
       });
 
       const targetHeight = Math.min(contentHeight + HEADER_HEIGHT, MAX_HEIGHT);
@@ -70,12 +67,7 @@ export abstract class BasePage {
       await this.page.setViewportSize({ width, height: targetHeight });
 
       // Two rAFs give the browser a full commit cycle before we re-measure.
-      await this.page.evaluate(
-        () =>
-          new Promise<void>((resolve) =>
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-          ),
-      );
+      await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
 
       previousHeight = targetHeight;
     }
@@ -110,10 +102,7 @@ export abstract class BasePage {
 
   async waitForAPIResponseByPartialTextMatch(urlText: string, timeout: number): Promise<void> {
     debugLog(`Waiting for ${urlText} API response`);
-    await this.page.waitForResponse(
-      response => response.url().includes(urlText) && response.status() === 200,
-      { timeout }
-    );
+    await this.page.waitForResponse(response => response.url().includes(urlText) && response.status() === 200, { timeout });
     debugLog(`API response including ${urlText} received`);
   }
 
@@ -126,7 +115,6 @@ export abstract class BasePage {
       return Array.from(el.classList).some(className => className.endsWith('-button-activeButton'));
     });
   }
-
 
   async waitForLoadingPageImgToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {

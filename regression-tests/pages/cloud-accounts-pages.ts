@@ -49,12 +49,28 @@ export class CloudAccountsConnectPage extends BasePage {
     if (fitViewport) await this.fitViewportToFullPage();
   }
 
-  async clickAwsRootBtn(fitViewport = false): Promise<void> { await this.clickAndFit(this.awsRootBtn, fitViewport); }
-  async clickAzureTenantBtn(fitViewport = false): Promise<void> { await this.clickAndFit(this.azureTenantBtn, fitViewport); }
-  async clickGoogleCloudBtn(fitViewport = false): Promise<void> { await this.clickAndFit(this.googleCloudBtn, fitViewport); }
-  async clickGoogleCloudTenantBtn(fitViewport = false): Promise<void> { await this.clickAndFit(this.googleCloudTenantBtn, fitViewport); }
-  async clickBtnStandalone(fitViewport = false): Promise<void> { await this.clickAndFit(this.btnStandalone, fitViewport); }
-  async clickBtnMember(fitViewport = false): Promise<void> { await this.clickAndFit(this.btnMember, fitViewport); }
-  async clickBtnAssumedRole(fitViewport = false): Promise<void> { await this.clickAndFit(this.btnAssumedRole, fitViewport); }
-  async clickBtnAccessKey(fitViewport = false): Promise<void> { await this.clickAndFit(this.btnAccessKey, fitViewport); }
+  async clickAwsRootBtn(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.awsRootBtn, fitViewport);
+  }
+  async clickAzureTenantBtn(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.azureTenantBtn, fitViewport);
+  }
+  async clickGoogleCloudBtn(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.googleCloudBtn, fitViewport);
+  }
+  async clickGoogleCloudTenantBtn(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.googleCloudTenantBtn, fitViewport);
+  }
+  async clickBtnStandalone(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.btnStandalone, fitViewport);
+  }
+  async clickBtnMember(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.btnMember, fitViewport);
+  }
+  async clickBtnAssumedRole(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.btnAssumedRole, fitViewport);
+  }
+  async clickBtnAccessKey(fitViewport = false): Promise<void> {
+    await this.clickAndFit(this.btnAccessKey, fitViewport);
+  }
 }

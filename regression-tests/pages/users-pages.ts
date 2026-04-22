@@ -11,7 +11,9 @@ export class UsersPage extends BasePage {
     this.inviteBtn = this.main.getByTestId('btn_invite');
   }
 
-  async clickInviteBtn(): Promise<void> { await this.inviteBtn.click(); }
+  async clickInviteBtn(): Promise<void> {
+    await this.inviteBtn.click();
+  }
 }
 
 export class UsersInvitePage extends BasePage {

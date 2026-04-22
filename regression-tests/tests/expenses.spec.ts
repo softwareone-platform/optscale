@@ -10,9 +10,9 @@ test.describe(() => {
     await expensesPage.navigateToURL();
 
     const views: Array<[string, () => Promise<void>, string]> = [
-      ['Daily view',   () => expensesPage.clickDailyBtnIfNotSelected(), 'Expenses-Container--Daily.png'],
-      ['Weekly view',  () => expensesPage.clickWeeklyBtn(),             'Expenses-Container--Weekly.png'],
-      ['Monthly view', () => expensesPage.clickMonthlyBtn(),            'Expenses-Container--Monthly.png'],
+      ['Daily view', () => expensesPage.clickDailyBtnIfNotSelected(), 'Expenses-Container--Daily.png'],
+      ['Weekly view', () => expensesPage.clickWeeklyBtn(), 'Expenses-Container--Weekly.png'],
+      ['Monthly view', () => expensesPage.clickMonthlyBtn(), 'Expenses-Container--Monthly.png'],
     ];
 
     for (const [label, pickView, snapshot] of views) {
@@ -48,9 +48,27 @@ test.describe(() => {
     await expensesPage.navigateToURL();
 
     const breakdowns = [
-      { label: 'Breakdown by source', open: () => expensesPage.clickSourceBtn(), heading: () => expensesPage.dataSourceHeading, snapshot: 'Expenses-Breakdown--Source.png', needsBreadcrumb: false },
-      { label: 'Breakdown by pool',   open: () => expensesPage.clickPoolBtn(),   heading: () => expensesPage.poolHeading,       snapshot: 'Expenses-Breakdown--Pool.png',   needsBreadcrumb: true  },
-      { label: 'Breakdown by owner',  open: () => expensesPage.clickOwnerBtn(),  heading: () => expensesPage.ownerHeading,      snapshot: 'Expenses-Breakdown--Owner.png',  needsBreadcrumb: true  },
+      {
+        label: 'Breakdown by source',
+        open: () => expensesPage.clickSourceBtn(),
+        heading: () => expensesPage.dataSourceHeading,
+        snapshot: 'Expenses-Breakdown--Source.png',
+        needsBreadcrumb: false,
+      },
+      {
+        label: 'Breakdown by pool',
+        open: () => expensesPage.clickPoolBtn(),
+        heading: () => expensesPage.poolHeading,
+        snapshot: 'Expenses-Breakdown--Pool.png',
+        needsBreadcrumb: true,
+      },
+      {
+        label: 'Breakdown by owner',
+        open: () => expensesPage.clickOwnerBtn(),
+        heading: () => expensesPage.ownerHeading,
+        snapshot: 'Expenses-Breakdown--Owner.png',
+        needsBreadcrumb: true,
+      },
     ];
 
     for (const { label, open, heading, snapshot, needsBreadcrumb } of breakdowns) {

@@ -2,7 +2,6 @@ import { test } from '../fixtures/page.fixture';
 import { settingsInterceptions } from '../mocks';
 import { captureScreenshot } from '../utils/screenshots';
 
-
 test.describe(() => {
   test.use({
     hideTopRightSnackbar: true,
@@ -14,11 +13,15 @@ test.describe(() => {
 
     const tabs: Array<{ label: string; open?: () => Promise<void>; snapshot: string }> = [
       { label: 'Organizations tab', snapshot: 'Settings-Container--Organization.png' },
-      { label: 'Invitations tab',   open: () => settingsPage.invitationsTab.click(), snapshot: 'Settings-Container--Invitation.png' },
-      { label: 'Email Notifications tab', open: async () => {
+      { label: 'Invitations tab', open: () => settingsPage.invitationsTab.click(), snapshot: 'Settings-Container--Invitation.png' },
+      {
+        label: 'Email Notifications tab',
+        open: async () => {
           await settingsPage.emailNotificationsTab.click();
           await settingsPage.emailNotificationSection.first().click();
-        }, snapshot: 'Settings-Container--EmailNotifications.png' },
+        },
+        snapshot: 'Settings-Container--EmailNotifications.png',
+      },
     ];
 
     for (const { label, open, snapshot } of tabs) {

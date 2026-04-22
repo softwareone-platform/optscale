@@ -1,3 +1,3 @@
 export enum EStorageStatePath {
-  liveDemoUser = '.cache/userStoredSession-live-demo-user.json'
+  liveDemoUser = '.cache/userStoredSession-live-demo-user.json',
 }

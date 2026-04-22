@@ -111,8 +111,6 @@ export class SettingsPage extends BasePage {
     // Snackbar is rendered at the document root (outside `main`).
     // Exclude the `alert_error` variant so we only target neutral info banners
     // like the "pending invitation" notification.
-    this.topRightSnackbar = page.locator(
-      '.MuiSnackbar-anchorOriginTopRight:not([data-test-id="alert_error"])',
-    );
+    this.topRightSnackbar = page.locator('.MuiSnackbar-anchorOriginTopRight:not([data-test-id="alert_error"])');
   }
 }

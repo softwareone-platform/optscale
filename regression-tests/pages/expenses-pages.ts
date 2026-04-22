@@ -37,12 +37,24 @@ export class ExpensesPage extends BasePage {
     }
   }
 
-  async clickWeeklyBtn(): Promise<void> { await this.weeklyBtn.click(); }
-  async clickMonthlyBtn(): Promise<void> { await this.monthlyBtn.click(); }
-  async clickCostExploreBreadcrumb(): Promise<void> { await this.costExploreBreadcrumb.click(); }
-  async clickSourceBtn(): Promise<void> { await this.sourceBtn.click(); }
-  async clickPoolBtn(): Promise<void> { await this.poolBtn.click(); }
-  async clickOwnerBtn(): Promise<void> { await this.ownerBtn.click(); }
+  async clickWeeklyBtn(): Promise<void> {
+    await this.weeklyBtn.click();
+  }
+  async clickMonthlyBtn(): Promise<void> {
+    await this.monthlyBtn.click();
+  }
+  async clickCostExploreBreadcrumb(): Promise<void> {
+    await this.costExploreBreadcrumb.click();
+  }
+  async clickSourceBtn(): Promise<void> {
+    await this.sourceBtn.click();
+  }
+  async clickPoolBtn(): Promise<void> {
+    await this.poolBtn.click();
+  }
+  async clickOwnerBtn(): Promise<void> {
+    await this.ownerBtn.click();
+  }
 }
 
 export class ExpensesMapPage extends BasePage {

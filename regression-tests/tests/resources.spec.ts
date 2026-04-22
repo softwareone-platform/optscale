@@ -28,17 +28,35 @@ test.describe(() => {
     });
 
     const tabs: Array<{ label: string; open: () => Promise<void>; snapshot: string; withCharts?: boolean }> = [
-      { label: 'Details tab',              open: () => resourceDetailsPage.clickDetailsTab(),         snapshot: 'ResourceDetails-Container--Details.png' },
-      { label: 'Constraints tab',          open: async () => {
+      { label: 'Details tab', open: () => resourceDetailsPage.clickDetailsTab(), snapshot: 'ResourceDetails-Container--Details.png' },
+      {
+        label: 'Constraints tab',
+        open: async () => {
           await resourceDetailsPage.clickConstraintsTab();
           await resourceDetailsPage.constraintsTable.waitFor();
-        }, snapshot: 'ResourceDetails-Container--Constraints.png' },
-      { label: 'Expenses tab — Grouped',   open: async () => {
+        },
+        snapshot: 'ResourceDetails-Container--Constraints.png',
+      },
+      {
+        label: 'Expenses tab — Grouped',
+        open: async () => {
           await resourceDetailsPage.clickExpensesTab();
           await resourceDetailsPage.clickExpensesGroupedButton();
-        }, snapshot: 'ResourceDetails-Container--ExpensesGrouped.png', withCharts: true },
-      { label: 'Expenses tab — Detailed',  open: () => resourceDetailsPage.clickExpensesDetailedButton(), snapshot: 'ResourceDetails-Container--ExpensesDetailed.png', withCharts: true },
-      { label: 'Recommendations tab',      open: () => resourceDetailsPage.clickRecommendationsTab(),     snapshot: 'ResourceDetails-Container--Recommendations.png' },
+        },
+        snapshot: 'ResourceDetails-Container--ExpensesGrouped.png',
+        withCharts: true,
+      },
+      {
+        label: 'Expenses tab — Detailed',
+        open: () => resourceDetailsPage.clickExpensesDetailedButton(),
+        snapshot: 'ResourceDetails-Container--ExpensesDetailed.png',
+        withCharts: true,
+      },
+      {
+        label: 'Recommendations tab',
+        open: () => resourceDetailsPage.clickRecommendationsTab(),
+        snapshot: 'ResourceDetails-Container--Recommendations.png',
+      },
     ];
 
     for (const { label, open, snapshot, withCharts } of tabs) {

@@ -1,12 +1,9 @@
 import { Page, Route } from '@playwright/test';
 import { debugLog } from './debug-logging';
 
+type XOR<T, U> = (T & { [K in Exclude<keyof U, keyof T>]?: never }) | (U & { [K in Exclude<keyof T, keyof U>]?: never });
 
-type XOR<T, U> =
-  | (T & { [K in Exclude<keyof U, keyof T>]?: never })
-  | (U & { [K in Exclude<keyof T, keyof U>]?: never });
-
-type IGraphQLEntry = { gql: string; mock: any; };
+type IGraphQLEntry = { gql: string; mock: any };
 type IRESTEntry = { url: string; mock: any };
 
 export type InterceptionEntry = XOR<IGraphQLEntry, IRESTEntry>;
@@ -42,12 +39,7 @@ export async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock:
  * Matches on the request URL (e.g. `api?op=<operationName>`) so that each
  * operation gets its own route handler.
  */
-async function interceptGraphQLRequest(
-  page: Page,
-  operationName: string,
-  mock: any,
-  onIntercepted: () => void
-) {
+async function interceptGraphQLRequest(page: Page, operationName: string, mock: any, onIntercepted: () => void) {
   const requestUrl = new RegExp(`[?&]op=${operationName}(?:&|$)`);
 
   await page.route(requestUrl, async route => {
@@ -81,9 +73,7 @@ export async function apiInterceptors(page: Page, config: InterceptionEntry[]): 
 
     const onHit = () => debugLog(`[Hit] ${interceptorId}`);
 
-    return gql
-      ? interceptGraphQLRequest(page, gql, mock, onHit)
-      : interceptRESTRequest(page, urlRegExp, mock, onHit);
+    return gql ? interceptGraphQLRequest(page, gql, mock, onHit) : interceptRESTRequest(page, urlRegExp, mock, onHit);
   });
 
   await Promise.all(interceptPromises);

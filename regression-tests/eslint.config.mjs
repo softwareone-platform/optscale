@@ -34,9 +34,12 @@ export default [
     rules: {
       // `captureScreenshot` wraps an `expect(...).toHaveScreenshot(...)` call —
       // treat it as an assertion so tests using only the helper aren't flagged.
-      'playwright/expect-expect': ['warn', {
-        assertFunctionNames: ['captureScreenshot'],
-      }],
+      'playwright/expect-expect': [
+        'warn',
+        {
+          assertFunctionNames: ['captureScreenshot'],
+        },
+      ],
       'playwright/no-conditional-in-test': 'off',
     },
   },

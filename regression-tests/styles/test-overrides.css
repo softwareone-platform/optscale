@@ -1,5 +1,5 @@
 /* Styles injected into pages during regression tests to stabilize visuals. */
 
-[data-test-id="alert_error"] {
+[data-test-id='alert_error'] {
   display: none !important;
 }

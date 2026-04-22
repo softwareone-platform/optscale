@@ -40,10 +40,7 @@ export interface CaptureOptions {
  */
 export async function waitForPageIdle(
   target: Locator,
-  {
-    idleMs = 400,
-    maxWaitMs = 8_000,
-  }: { idleMs?: number; maxWaitMs?: number } = {},
+  { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {}
 ): Promise<void> {
   const page: Page = target.page();
 
@@ -51,7 +48,7 @@ export async function waitForPageIdle(
 
   await page.evaluate(
     ({ idleMs, maxWaitMs }) =>
-      new Promise<void>((resolve) => {
+      new Promise<void>(resolve => {
         const deadline = performance.now() + maxWaitMs;
         let timer: ReturnType<typeof setTimeout>;
 
@@ -80,13 +77,13 @@ export async function waitForPageIdle(
 
         reset();
       }),
-    { idleMs, maxWaitMs },
+    { idleMs, maxWaitMs }
   );
 
   // Final cross-check: two consecutive bbox samples match. Guards against
   // CSS-only transitions (e.g. MUI Accordion height interpolation) that don't
   // fire mutations.
-  const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+  const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
   for (let i = 0; i < 10; i++) {
     const a = await target.boundingBox();
     await sleep(50);
@@ -108,11 +105,7 @@ export async function waitForPageIdle(
  * freezes animating elements at their in-progress size and causes persistent
  * pixel diffs that `toHaveScreenshot` can never reconcile.
  */
-export async function captureScreenshot(
-  target: Locator,
-  name: string,
-  options: CaptureOptions = {},
-): Promise<void> {
+export async function captureScreenshot(target: Locator, name: string, options: CaptureOptions = {}): Promise<void> {
   if (!options.skipHover) {
     await (options.hoverAnchor ?? target).hover();
   }
@@ -126,4 +119,3 @@ export async function captureScreenshot(
 
   await expect(target).toHaveScreenshot(name, options.screenshotOptions);
 }
-

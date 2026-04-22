@@ -72,13 +72,25 @@ export class ResourceDetailsPage extends BasePage {
     await this.waitForAllProgressBarsToDisappear();
   }
 
-  async clickDetailsTab(): Promise<void> { await this.clickTab(this.detailsTab); }
-  async clickConstraintsTab(): Promise<void> { await this.clickTab(this.constraintsTab); }
-  async clickExpensesTab(): Promise<void> { await this.clickTab(this.expensesTab); }
-  async clickRecommendationsTab(): Promise<void> { await this.clickTab(this.recommendationsTab); }
+  async clickDetailsTab(): Promise<void> {
+    await this.clickTab(this.detailsTab);
+  }
+  async clickConstraintsTab(): Promise<void> {
+    await this.clickTab(this.constraintsTab);
+  }
+  async clickExpensesTab(): Promise<void> {
+    await this.clickTab(this.expensesTab);
+  }
+  async clickRecommendationsTab(): Promise<void> {
+    await this.clickTab(this.recommendationsTab);
+  }
 
-  async clickExpensesGroupedButton(): Promise<void> { await this.expensesGroupedButton.click(); }
-  async clickExpensesDetailedButton(): Promise<void> { await this.expensesDetailedButton.click(); }
+  async clickExpensesGroupedButton(): Promise<void> {
+    await this.expensesGroupedButton.click();
+  }
+  async clickExpensesDetailedButton(): Promise<void> {
+    await this.expensesDetailedButton.click();
+  }
 
   /**
    * Standard screenshot sequence: hover heading, optional canvas wait, fit

@@ -1,7 +1,7 @@
-import {EStorageStatePath,} from '../../types';
-import {APIRequestContext, request} from "@playwright/test";
-import {DemoAuthCredentials, LiveDemoAuthResponse} from '../../types';
-import {safeReadJsonFile} from "../file";
+import { EStorageStatePath } from '../../types';
+import { APIRequestContext, request } from '@playwright/test';
+import { DemoAuthCredentials, LiveDemoAuthResponse } from '../../types';
+import { safeReadJsonFile } from '../file';
 
 const baseAPIUrl: string = process.env.LIVE_DEMO_API || '';
 
@@ -12,8 +12,8 @@ export class LiveDemoService {
     if (!this.token || !baseAPIUrl) {
       throw new Error(
         `Live demo environment variables are not properly configured. ` +
-        `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
-        `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!baseAPIUrl ? 'LIVE_DEMO_API' : ''}`
+          `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
+          `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!baseAPIUrl ? 'LIVE_DEMO_API' : ''}`
       );
     }
   }
@@ -24,11 +24,10 @@ export class LiveDemoService {
    * @param subscribe - Whether the user wants to subscribe
    */
   static async getDemoLoginCredentials(email: string, subscribe: boolean = false): Promise<DemoAuthCredentials> {
-
     const context = await this.createContext();
 
-    const response  = await context.post('/restapi/v2/live_demo', {
-      data: {email, subscribe},
+    const response = await context.post('/restapi/v2/live_demo', {
+      data: { email, subscribe },
     });
 
     if (!response.ok()) {
@@ -36,17 +35,18 @@ export class LiveDemoService {
       throw new Error(`Live demo request failed: ${response.status()} - ${errorText}`);
     }
 
-    return { ...await response.json() as LiveDemoAuthResponse, baseApiUrl: baseAPIUrl };
+    return { ...((await response.json()) as LiveDemoAuthResponse), baseApiUrl: baseAPIUrl };
   }
 
   static hasCachedDemoCredentials(): boolean {
     const file = safeReadJsonFile(EStorageStatePath.liveDemoUser);
 
-    return file?.demoAuthCredentials &&
+    return (
+      file?.demoAuthCredentials &&
       isCurrentDateLower(file.demoAuthCredentials.created_at) &&
       baseAPIUrl === file.demoAuthCredentials.baseApiUrl
+    );
   }
-
 
   /**
    * Creates a new APIRequestContext with the necessary headers.
@@ -69,4 +69,4 @@ const isCurrentDateLower = (createdAt: number): boolean => {
   const createdAtPlusSixDays = createdAt + 518400;
 
   return currentTimestampInSeconds < createdAtPlusSixDays;
-}
+};

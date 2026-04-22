@@ -46,39 +46,39 @@ cp .env.example .env
 
 Edit `.env` with the appropriate values:
 
-| Variable | Description |
-|---|---|
-| `BASE_URL` | URL of the OptScale instance to test against |
-| `DEFAULT_USER_ID` | ID of the test user |
-| `DEFAULT_AUTH_USER_ID` | Auth user ID for the test user |
-| `DEFAULT_ORG_ID` | Organization ID used by tests |
-| `CLUSTER_SECRET` | Cluster secret / admin password |
-| `IGNORE_HTTPS_ERRORS` | Set to `true` to ignore TLS certificate errors |
-| `BROWSER_ERROR_LOGGING` | Enable browser console error capture |
-| `DEBUG_LOG` | Enable verbose debug logging |
-| `LIVE_DEMO_API` | Live demo API endpoint |
-| `LIVE_DEMO_TOKEN` | Live demo auth token |
-| `DEV` / `TEST` / `STAGING` | Convenience URLs for different environments |
-| `CLEAN_UP` | Set to `true` to delete test data after each run (use `false` when debugging) |
-| `IS_REGRESSION_RUN` | When set, snapshots are stored in `snapshots/baseline/` instead of `snapshots/local/<platform>/` |
+| Variable                   | Description                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------ |
+| `BASE_URL`                 | URL of the OptScale instance to test against                                                     |
+| `DEFAULT_USER_ID`          | ID of the test user                                                                              |
+| `DEFAULT_AUTH_USER_ID`     | Auth user ID for the test user                                                                   |
+| `DEFAULT_ORG_ID`           | Organization ID used by tests                                                                    |
+| `CLUSTER_SECRET`           | Cluster secret / admin password                                                                  |
+| `IGNORE_HTTPS_ERRORS`      | Set to `true` to ignore TLS certificate errors                                                   |
+| `BROWSER_ERROR_LOGGING`    | Enable browser console error capture                                                             |
+| `DEBUG_LOG`                | Enable verbose debug logging                                                                     |
+| `LIVE_DEMO_API`            | Live demo API endpoint                                                                           |
+| `LIVE_DEMO_TOKEN`          | Live demo auth token                                                                             |
+| `DEV` / `TEST` / `STAGING` | Convenience URLs for different environments                                                      |
+| `CLEAN_UP`                 | Set to `true` to delete test data after each run (use `false` when debugging)                    |
+| `IS_REGRESSION_RUN`        | When set, snapshots are stored in `snapshots/baseline/` instead of `snapshots/local/<platform>/` |
 
 ---
 
 ## Running Tests
 
-| Command | Description |
-|---|---|
-| `npm test` | Run all tests headless locally |
-| `npm run test:ui` | Run with the Playwright interactive UI |
-| `npm run test:headed` | Run in headed mode (single worker) |
-| `npm run test:update` | Re-generate local snapshots |
-| `npm run test:docker` | Run all tests inside Docker (Linux) — used to produce baseline snapshots |
-| `npm run test:docker:update` | Run inside Docker and update baseline snapshots |
-| `npm run report` | Open the last HTML report |
-| `npm run lint` | Lint all TypeScript files |
-| `npm run lint:fix` | Lint and auto-fix issues |
-| `npm run format` | Format all files with Prettier |
-| `npm run format:check` | Check formatting without writing |
+| Command                      | Description                                                              |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `npm test`                   | Run all tests headless locally                                           |
+| `npm run test:ui`            | Run with the Playwright interactive UI                                   |
+| `npm run test:headed`        | Run in headed mode (single worker)                                       |
+| `npm run test:update`        | Re-generate local snapshots                                              |
+| `npm run test:docker`        | Run all tests inside Docker (Linux) — used to produce baseline snapshots |
+| `npm run test:docker:update` | Run inside Docker and update baseline snapshots                          |
+| `npm run report`             | Open the last HTML report                                                |
+| `npm run lint`               | Lint all TypeScript files                                                |
+| `npm run lint:fix`           | Lint and auto-fix issues                                                 |
+| `npm run format`             | Format all files with Prettier                                           |
+| `npm run format:check`       | Check formatting without writing                                         |
 
 ### Docker runner (`run_pw.sh`)
 
@@ -169,10 +169,10 @@ regression-tests/
 
 ## Snapshots
 
-| Folder | When used | Committed |
-|---|---|---|
-| `snapshots/baseline/` | Generated by `npm run test:docker` / `npm run test:docker:update` inside Linux Docker | ✅ Yes |
-| `snapshots/local/<platform>/` | Generated locally on macOS / Windows / Linux | ❌ No (gitignored) |
+| Folder                        | When used                                                                             | Committed          |
+| ----------------------------- | ------------------------------------------------------------------------------------- | ------------------ |
+| `snapshots/baseline/`         | Generated by `npm run test:docker` / `npm run test:docker:update` inside Linux Docker | ✅ Yes             |
+| `snapshots/local/<platform>/` | Generated locally on macOS / Windows / Linux                                          | ❌ No (gitignored) |
 
 Only **baseline** snapshots are pixel-perfect and cross-platform — they are produced inside a Linux Docker container with all rendering flags applied (no GPU, no font hinting, no anti-aliasing). These are the snapshots used for CI comparison.
 
@@ -194,9 +194,8 @@ npm run test:docker:update
 
 ## Timeouts
 
-| Constant | Value | Purpose |
-|---|---|---|
-| `TEST_TIMEOUT` | 30 s | Maximum time for a single test |
-| `ACTION_TIMEOUT` | 20 s | Maximum time for a single action (click, fill, …) |
-| `LARGE_DATA_TIMEOUT` | 60 s | Used explicitly for heavy pages (expenses, resources) |
-
+| Constant             | Value | Purpose                                               |
+| -------------------- | ----- | ----------------------------------------------------- |
+| `TEST_TIMEOUT`       | 30 s  | Maximum time for a single test                        |
+| `ACTION_TIMEOUT`     | 20 s  | Maximum time for a single action (click, fill, …)     |
+| `LARGE_DATA_TIMEOUT` | 60 s  | Used explicitly for heavy pages (expenses, resources) |

@@ -39,10 +39,7 @@ setup.describe('Auth Setup', () => {
     });
 
     await setup.step('Save session state to disk', async () => {
-      const [authValue, storageState] = await Promise.all([
-        getLocalforageRoot(page),
-        page.context().storageState(),
-      ]);
+      const [authValue, storageState] = await Promise.all([getLocalforageRoot(page), page.context().storageState()]);
 
       safeWriteJsonFile(EStorageStatePath.liveDemoUser, {
         ...storageState,
