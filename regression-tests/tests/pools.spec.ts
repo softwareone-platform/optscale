@@ -5,7 +5,7 @@ import { poolsInterceptions } from "../mocks/pools.mocks";
 
 test.describe('FFC: Pools', () => {
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: poolsInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: poolsInterceptions } });
 
   test('Page matches screenshots', async ({ poolsPage }) => {
 

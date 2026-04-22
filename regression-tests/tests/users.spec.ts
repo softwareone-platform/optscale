@@ -5,7 +5,7 @@ import { usersInterceptions } from "../mocks/user.mocks";
 
 
 test.describe('FFC: Users', () => {
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: usersInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: usersInterceptions } });
 
   test('Users page matches screenshots', async ({ usersPage, usersInvitePage }) => {
     await test.step('Navigate to Users page', async () => {

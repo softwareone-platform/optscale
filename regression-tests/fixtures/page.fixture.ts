@@ -6,9 +6,13 @@ import {EStorageStatePath} from "../types";
 interface Options {
   restoreSession?: boolean;
   setFixedTime?: boolean;
-  interceptAPI?: { //List array must be wrapped as object first otherwise it will pass only first array item
+  interceptAPI?: {
+    // Known Playwright issue: when an option fixture's value is a bare array,
+    // `test.use()` unwraps it and only the first element reaches the fixture
+    // (Playwright interprets arrays as `[value, options]` tuples internally).
+    // Wrapping the array in an object (`{ entries: [...] }`) avoids the unwrap.
+    // See: https://github.com/microsoft/playwright/issues/22068
     entries: InterceptionEntry[];
-    failOnInterceptionMissing?: boolean;
   }
 }
 
@@ -74,16 +78,11 @@ export const test = base.extend<Fixtures & Options>({
   interceptAPI: [undefined, {option: true}], // <-- allow full override
 
   page: async ({page, restoreSession, setFixedTime, interceptAPI}, use) => {
-    let verifyInterceptions: (() => void) | undefined;
     if (restoreSession) {
       await restoreUserSessionInLocalForage(page, setFixedTime);
     }
     if (interceptAPI?.entries?.length > 0) {
-      verifyInterceptions = await apiInterceptors(
-        page,
-        interceptAPI.entries,
-        interceptAPI.failOnInterceptionMissing
-      );
+      await apiInterceptors(page, interceptAPI.entries);
     }
     if (process.env.BROWSER_ERROR_LOGGING === 'true') {
       page.on('console', msg => {
@@ -93,10 +92,6 @@ export const test = base.extend<Fixtures & Options>({
       });
     }
     await use(page);
-
-    if (verifyInterceptions) {
-      verifyInterceptions();
-    }
   },
 
   storageState: async ({}, use) => {

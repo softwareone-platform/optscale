@@ -5,7 +5,7 @@ import { resourcesInterceptions, resourceDetailsInterceptions } from "../mocks/r
 
 test.describe('FFC: Resources Dashboard', () => {
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: resourcesInterceptions, failOnInterceptionMissing: false } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: resourcesInterceptions } });
 
   test('Page matches screenshots', async ({ resourcesPage }) => {
     await test.step('Set up test data', async () => {

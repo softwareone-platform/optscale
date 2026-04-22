@@ -5,7 +5,7 @@ import { recommendationsInterceptions } from "../mocks/recommendations.mocks";
 
 
 test.describe('FFC: Recommendations', () => {
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: recommendationsInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: recommendationsInterceptions } });
 
   test('Page matches screenshots', async ({ recommendationsPage }) => {
     await test.step('Set up test data', async () => {

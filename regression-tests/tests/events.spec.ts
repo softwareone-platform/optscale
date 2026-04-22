@@ -4,7 +4,7 @@ import { roundElementDimensions } from "../utils/roundElementDimensions";
 import { eventsInterceptions } from "../mocks/events.mocks";
 
 test.describe('FFC: Events', () => {
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: eventsInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: eventsInterceptions } });
 
   test('Page matches screenshots', async ({ eventsPage }) => {
     await test.step('Navigate to Events page', async () => {

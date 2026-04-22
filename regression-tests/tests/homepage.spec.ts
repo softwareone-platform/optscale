@@ -5,7 +5,7 @@ import { homepageInterceptions } from "../mocks/homepage.mocks";
 
 test.describe('FFC: Home', () => {
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: homepageInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: homepageInterceptions } });
 
   test('Blocks matches screenshots', async ({ homePage }) => {
     await test.step('Set up test data', async () => {

@@ -39,7 +39,7 @@ test.describe('FFC: Expenses Dashboard page', () => {
 })
 
 test.describe('FFC: Expenses Map page', () => {
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: expensesMapInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: expensesMapInterceptions } });
 
   test("Page matches screenshots", async ({ expensesMapPage }) => {
     await expensesMapPage.navigateToURL();

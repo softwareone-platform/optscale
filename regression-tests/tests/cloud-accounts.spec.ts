@@ -8,7 +8,7 @@ test.describe('FFC: Cloud Account', () => {
   test.use({
     restoreSession: true,
     setFixedTime: true,
-    interceptAPI: { entries: cloudAccountsInterceptions, failOnInterceptionMissing: false },
+    interceptAPI: { entries: cloudAccountsInterceptions },
   });
 
   test('Page matches screenshots', async ({ cloudAccountsPage }) => {

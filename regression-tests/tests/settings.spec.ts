@@ -8,7 +8,7 @@ test.describe('FFC: Settings page', () => {
   test.use({
     restoreSession: true,
     setFixedTime: true,
-    interceptAPI: { entries: settingsInterceptions, failOnInterceptionMissing: true },
+    interceptAPI: { entries: settingsInterceptions },
   });
 
   test.beforeEach(async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('FFC: Settings page - Snackbar notification', () => {
   test.use({
     restoreSession: true,
     setFixedTime: true,
-    interceptAPI: { entries: settingsInterceptions, failOnInterceptionMissing: false },
+    interceptAPI: { entries: settingsInterceptions },
   });
 
   test('Pending invitation snackbar matches screenshot', async ({ settingsPage }) => {

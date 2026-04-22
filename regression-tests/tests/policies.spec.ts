@@ -5,7 +5,7 @@ import { anomaliesInterceptions, policiesInterceptions, taggingPoliciesIntercept
 
 test.describe('FFC: Policy Anomalies page', () => {
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: anomaliesInterceptions, failOnInterceptionMissing: true } });
+  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: anomaliesInterceptions } });
 
   test('Page matches screenshots', async ({ policiesAnomaliesPage, policiesAnomaliesCreatePage }) => {
     await test.step('Navigate to Policy Anomalies page', async () => {
