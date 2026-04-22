@@ -17,27 +17,27 @@ test.describe('FFC: Home', () => {
     await test.step('Organization Expenses Block', async () => {
       await roundElementDimensions(homePage.organizationExpensesBlock);
 
-      await expect(homePage.organizationExpensesBlock).toHaveScreenshot('OrganizationExpensesBlock-screenshot.png');
+      await expect(homePage.organizationExpensesBlock).toHaveScreenshot('Home-OrganizationExpanses.png');
     });
 
     await test.step('TopResources Block', async () => {
       await roundElementDimensions(homePage.topResourcesBlock);
-      await expect(homePage.topResourcesBlock).toHaveScreenshot('TopResourcesBlock-screenshot.png');
+      await expect(homePage.topResourcesBlock).toHaveScreenshot('Home-TopResources.png');
     });
 
     await test.step('Recommendations Block', async () => {
       await roundElementDimensions(homePage.recommendationsBlock);
-      await expect(homePage.recommendationsBlock).toHaveScreenshot('RecommendationsBlock-screenshot.png');
+      await expect(homePage.recommendationsBlock).toHaveScreenshot('Home-Recommendations.png');
     });
 
     await test.step('PolicyViolations Block', async () => {
       await roundElementDimensions(homePage.policyViolationsBlock);
-      await expect(homePage.policyViolationsBlock).toHaveScreenshot('PolicyViolationsBlock-screenshot.png');
+      await expect(homePage.policyViolationsBlock).toHaveScreenshot('Home-PolicyViolations.png');
     });
 
     await test.step('Pools Requiring Attention Block', async () => {
       await roundElementDimensions(homePage.poolsRequiringAttentionBlock);
-      await expect(homePage.poolsRequiringAttentionBlock).toHaveScreenshot('PoolsRequiringAttentionBlock-screenshot.png');
+      await expect(homePage.poolsRequiringAttentionBlock).toHaveScreenshot('Home-PoolsRequiringAttention.png');
     });
   });
 })

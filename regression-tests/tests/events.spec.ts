@@ -14,7 +14,8 @@ test.describe('FFC: Events', () => {
     await test.step('Page content', async () => {
       await eventsPage.heading.hover();
       await roundElementDimensions(eventsPage.main);
-      await expect(eventsPage.main).toHaveScreenshot('Events-screenshot.png');
+      await eventsPage.clickEventsTable();
+      await expect(eventsPage.main).toHaveScreenshot('Events-Container--Expanded.png');
     });
   })
 })

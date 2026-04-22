@@ -14,12 +14,12 @@ test.describe('FFC: Common UI', () => {
 
     await test.step('Header widget', async () => {
       await roundElementDimensions(header.header);
-      await expect(header.header).toHaveScreenshot('Header-screenshot.png');
+      await expect(header.header).toHaveScreenshot('CommonUI-Header.png');
     });
 
     await test.step('Main Menu widget', async () => {
       await roundElementDimensions(mainMenu.menu);
-      await expect(mainMenu.menu).toHaveScreenshot('MainMenu-screenshot.png');
+      await expect(mainMenu.menu).toHaveScreenshot('CommonUI-MainMenu.png');
     });
   })
 })

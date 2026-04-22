@@ -51,7 +51,7 @@ jira_ui/*/build/
 optscale-deploy/.vagrant/
 # Playwright E2E tests
 /e2etests/.env.local
-/e2etests/test-results/
+/e2etests/results/
 /e2etests/node_modules/
 /e2etests/playwright-report/
 /e2etests/results.json

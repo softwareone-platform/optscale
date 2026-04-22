@@ -18,7 +18,7 @@ test.describe('FFC: Pools', () => {
       await poolsPage.heading.hover();
       await roundElementDimensions(poolsPage.main);
       await poolsPage.fitViewportToFullPage();
-      await expect(poolsPage.main).toHaveScreenshot('Pools-landing-screenshot.png');
+      await expect(poolsPage.main).toHaveScreenshot('Pools-Container.png');
     });
 
     await test.step('View type - with expanded requiring attention', async () => {
@@ -26,18 +26,18 @@ test.describe('FFC: Pools', () => {
       await poolsPage.heading.hover();
       await roundElementDimensions(poolsPage.main);
       await poolsPage.fitViewportToFullPage();
-      await expect(poolsPage.main).toHaveScreenshot('Pools-requiring-attention-expanded-screenshot.png');
+      await expect(poolsPage.main).toHaveScreenshot('Pools-RequiringAttention--Expanded.png');
     });
 
     await test.step('Side modal - General tab check', async () => {
       await poolsPage.firstSubItem.click();
       await roundElementDimensions(poolsPage.sideModal);
-      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-side-modal--General.png');
+      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-SideModal--General.png');
     });
 
     await test.step('Side modal - Assignment tabs check', async () => {
       await poolsPage.sideModalTabAssignment.click();
-      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-side-modal--Assignment.png');
+      await expect(poolsPage.sideModal).toHaveScreenshot('Pools-SideModal--Assignment.png');
     });
   });
 })

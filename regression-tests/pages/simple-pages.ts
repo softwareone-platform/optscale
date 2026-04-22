@@ -3,10 +3,16 @@ import { Locator, Page } from '@playwright/test';
 
 export class EventsPage extends BasePage {
   readonly heading: Locator;
+  readonly eventsTable: Locator;
 
   constructor(page: Page) {
     super(page, '/events');
     this.heading = this.main.getByTestId('lbl_events');
+    this.eventsTable = this.main.getByTestId('sp_first_event').locator('.MuiAccordionSummary-content');
+  }
+
+  async clickEventsTable(): Promise<void> {
+    await this.eventsTable.click({ timeout: 5000 });
   }
 }
 
@@ -94,6 +100,7 @@ export class SettingsPage extends BasePage {
   readonly invitationsTab: Locator;
   readonly emailNotificationsTab: Locator;
   readonly emailNotificationSection: Locator;
+  readonly topRightSnackbar: Locator;
 
   constructor(page: Page) {
     super(page, '/settings');
@@ -101,5 +108,11 @@ export class SettingsPage extends BasePage {
     this.invitationsTab = this.main.getByTestId('tab_invitations');
     this.emailNotificationsTab = this.main.getByTestId('tab_emailNotifications');
     this.emailNotificationSection = this.main.getByTestId('lbl_[object Object]_title');
+    // Snackbar is rendered at the document root (outside `main`).
+    // Exclude the `alert_error` variant so we only target neutral info banners
+    // like the "pending invitation" notification.
+    this.topRightSnackbar = page.locator(
+      '.MuiSnackbar-anchorOriginTopRight:not([data-test-id="alert_error"])',
+    );
   }
 }

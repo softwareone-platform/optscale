@@ -16,7 +16,7 @@ test.describe('FFC: Recommendations', () => {
       await recommendationsPage.clickCardsButtonIfNotActive();
       await roundElementDimensions([recommendationsPage.main, recommendationsPage.possibleMonthlySavingsDiv, recommendationsPage.firstCard]);
       await recommendationsPage.fitViewportToFullPage();
-      await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-cards-screenshot.png');
+      await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-Container--Cards.png');
     });
 
     await test.step('Page view table', async () => {
@@ -25,7 +25,7 @@ test.describe('FFC: Recommendations', () => {
       await recommendationsPage.fitViewportToFullPage();
       await expect(recommendationsPage.main).toHaveScreenshot('Recommendations-table-selected-screenshot.png');
       await expect(recommendationsPage.possibleMonthlySavingsDiv).toHaveScreenshot('Recommendations-cards-savings-screenshot.png');
-      await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-table-screenshot.png');
+      await expect(recommendationsPage.table).toHaveScreenshot('Recommendations-Container--Table.png');
     });
   })
 })

@@ -5,71 +5,6 @@ export const EmployeesMock = {
     "employees": [
         {
             "deleted_at": 0,
-            "id": "d7bc59a1-9e86-4667-a0d8-3221a368fa5e",
-            "created_at": 1694590928,
-            "name": "Winston Smith",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "0477e33e-8710-4fa9-8d81-808811e90bd1",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Winston Smith",
-            "user_email": "wsmith.9262fce6e3324269abea82bce8fa6a69@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "388e9b24-2527-49a5-ad66-3a4623d88fe1",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "a61ba9f1-7c21-451b-9a49-07319ddc1fea",
-            "created_at": 1694583038,
-            "name": "Luke White",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "32c2c69a-e3ca-4107-9a5e-489d21400197",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Luke White",
-            "user_email": "lwhite.3d9d27420ffc4ab7b7bfa1dd7488f672@sunflower.demo",
-            "assignments": []
-        },
-        {
-            "deleted_at": 0,
-            "id": "e9352576-adab-45ce-ad76-7890d19e589c",
-            "created_at": 1694584961,
-            "name": "Joe Roy",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "3b82047b-2a5d-44f7-8144-6ac7bc2ebca6",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Joe Roy",
-            "user_email": "jroy.64728138b7454575a22ee82122b16919@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "8c044e6e-0d4b-4864-8011-c2028965b204",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
             "id": "c8a95f06-8a1a-41d7-b64d-f4b19489e387",
             "created_at": 1694585586,
             "name": "Christian Thomas",
@@ -82,146 +17,6 @@ export const EmployeesMock = {
             "user_display_name": "Christian Thomas",
             "user_email": "cthomas.41c720397ad74ea7bc3b7a871d75771f@sunflower.demo",
             "assignments": []
-        },
-        {
-            "deleted_at": 0,
-            "id": "c71e247c-bdef-47a1-8f74-29d9786fbb9d",
-            "created_at": 1740482948,
-            "name": "Demo User",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "41a9df0a-2976-4127-956b-11d55c9f62ca",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740578867,
-            "user_display_name": "Demo User",
-            "user_email": "46262dd812b540bbb543ccf9ca804347@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "d840d7c0-f90c-433d-afec-40dbce1c263b",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "dd49e113-d24e-411c-adb6-8ce2adbf3200",
-            "created_at": 1694584268,
-            "name": "Elly Grey",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "5119ff10-c0d1-41d8-8334-685643451dc9",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Elly Grey",
-            "user_email": "egrey.a820f724c20542ca9ac0a057e9656f94@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "228ecbde-e2d5-4773-91a4-4311b142e12f",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "00dacda6-ce8c-48be-80fa-b8edd6d65bdc",
-            "created_at": 1694583602,
-            "name": "Ellie West",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "5cdfb596-e318-4ab9-8d1f-b54a65500968",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Ellie West",
-            "user_email": "ewest.cd929cf1d82b479daab74d04dff1a941@sunflower.demo",
-            "assignments": []
-        },
-        {
-            "deleted_at": 0,
-            "id": "d2477dcd-1a9b-4aec-bd55-d01ce1f778d4",
-            "created_at": 1694583735,
-            "name": "Edwin Gagnon",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "670aae2d-c668-44e1-a60d-d8bc1e592ac5",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Edwin Gagnon",
-            "user_email": "egagnon.a165de89937644e481b62833d4bafbbc@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "711f95b5-9583-419f-b3a3-caf8e443fb6e",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "42d94ada-476c-4d07-a613-2db67c4e3173",
-            "created_at": 1694585585,
-            "name": "William Johnson",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "7bd40026-5ddf-4a6f-83dc-fcc5d45dd3ac",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "William Johnson",
-            "user_email": "wjohnson.08810978fd33404eaeda1828ac5c6985@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "e91bd607-574c-48d0-9c78-e4ed34e8af7e",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "d76bdcdd-f0c5-440e-b046-c5dbdf923ebc",
-            "created_at": 1694618982,
-            "name": "Jessica Evans",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "80facec2-510c-42c4-9f84-dd265088d4f9",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Jessica Evans",
-            "user_email": "jevans.6bb43658e6c445c3a3b3a78077837207@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "0c804851-f078-4f1f-908c-22708ee54312",
-                    "purpose": "optscale_manager"
-                }
-            ]
         },
         {
             "deleted_at": 0,
@@ -261,14 +56,14 @@ export const EmployeesMock = {
             "deleted_at": 0,
             "id": "cc823af1-fe0b-4ec1-be52-13f1da7acdb1",
             "created_at": 1694586883,
-            "name": "Addison Atkinson (E2E)",
+            "name": "Addison Atkinson [E2E_UE]",
             "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
             "auth_user_id": "b86d7b1f-2c5d-424b-a6c8-9a4096e70d9f",
             "default_ssh_key_id": null,
             "slack_connected": false,
             "jira_connected": false,
             "last_login": 1740482959,
-            "user_display_name": "Addison Atkinson (E2E)",
+            "user_display_name": "Addison Atkinson  [E2E_UE]",
             "user_email": "aatkinson.4e2a6ba803904573888e305b60a17b31@sunflower.demo",
             "assignments": [
                 {
@@ -278,86 +73,6 @@ export const EmployeesMock = {
                     "assignment_resource_type": "organization",
                     "assignment_resource_purpose": "business_unit",
                     "assignment_id": "832adf04-701b-4f83-9899-1a1bea2ac085",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "4ad4e30b-cd35-40c2-8bac-f1e68ee2cc47",
-            "created_at": 1723011851,
-            "name": "Poppy Jenkins",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "d0f2388a-57a0-4610-9070-b0df1e0f98e3",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Poppy Jenkins",
-            "user_email": "pjenkins.4913d7c01e184bf2b1f3238fb67d6787@sunflower.demo",
-            "assignments": []
-        },
-        {
-            "deleted_at": 0,
-            "id": "942e1ac9-31d7-4f2d-9e9c-8579ae053796",
-            "created_at": 1694585513,
-            "name": "Julian Jackson",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "d86396ae-88e9-498b-bb44-261aaf67a7e1",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Julian Jackson",
-            "user_email": "jjackson.6c91dab0e8aa4f00b948f257e95fb5ff@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "b1ef0883-2030-4012-b254-a657290729ff",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "pool",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "c5b75e50-556d-4602-940a-088aee78b910",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "6d4a7175-66ea-46a5-a0b3-8831fc8e3396",
-            "created_at": 1694585914,
-            "name": "Hope Simpson",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "d98444a3-ada5-4bb5-a66d-6bbb396822b8",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482960,
-            "user_display_name": "Hope Simpson",
-            "user_email": "hsimpson.9ba73b714f6e4bb3b619ed2c3e038b8e@sunflower.demo",
-            "assignments": []
-        },
-        {
-            "deleted_at": 0,
-            "id": "8d50c2b1-1b98-4e9d-999d-97d30c22e36e",
-            "created_at": 1694586283,
-            "name": "Oscar Foster",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "da5aa146-1fb0-4c35-942f-5b0f523d7f36",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Oscar Foster",
-            "user_email": "ofoster.a87bee3daf674a6e949d0f1ca25bd714@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "e839a40d-5297-47ed-bbc9-c664045445ec",
                     "purpose": "optscale_manager"
                 }
             ]
@@ -386,80 +101,6 @@ export const EmployeesMock = {
                     "purpose": "optscale_manager"
                 }
             ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "9a651454-8815-4d50-bf2f-4c30ac6e0dc6",
-            "created_at": 1694586196,
-            "name": "Lily Walsh",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "f3400d55-62be-45e2-a2a7-0b8f09c4c7b9",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Lily Walsh",
-            "user_email": "lwalsh.d12b138e827f4fbabf882ea470dbd617@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "04713f9f-e5e5-4a66-8806-931c046e34ec",
-                    "purpose": "optscale_manager"
-                },
-                {
-                    "assignment_resource_id": "b1ef0883-2030-4012-b254-a657290729ff",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "pool",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "53fb5583-79fc-48ea-abc8-9b23deeb7920",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "fd5d1e25-5fb7-4a30-9684-c661b6e9e0c4",
-            "created_at": 1694585476,
-            "name": "Thomas Byrne",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "f80f940a-7f00-44ef-9426-b5386e906f5a",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Thomas Byrne",
-            "user_email": "tbyrne.4475306bfafc4ea395abde743fc187c7@sunflower.demo",
-            "assignments": [
-                {
-                    "assignment_resource_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-                    "role_name": "Manager",
-                    "assignment_resource_name": "Sunflower Inc",
-                    "assignment_resource_type": "organization",
-                    "assignment_resource_purpose": "business_unit",
-                    "assignment_id": "06d032c5-f2b3-4b3a-b237-7bdf1aa8fa4e",
-                    "purpose": "optscale_manager"
-                }
-            ]
-        },
-        {
-            "deleted_at": 0,
-            "id": "eaece7c5-3b84-4104-9152-23573565e3c4",
-            "created_at": 1694942091,
-            "name": "Melody Edwards",
-            "organization_id": "77fe9add-bafc-4199-980a-da275af7c2c7",
-            "auth_user_id": "fd4c421f-acc5-4346-89fb-78e74210ff63",
-            "default_ssh_key_id": null,
-            "slack_connected": false,
-            "jira_connected": false,
-            "last_login": 1740482959,
-            "user_display_name": "Melody Edwards",
-            "user_email": "medwards.1444c5feaa374d09af28d59c85a77692@sunflower.demo",
-            "assignments": []
         }
     ]
 }

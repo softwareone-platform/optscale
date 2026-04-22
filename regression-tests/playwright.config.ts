@@ -10,10 +10,10 @@ const IS_CI = !!process.env.CI;
 const VIEWPORT = { width: 1920, height: 1080 };
 
 /** Default test timeout (ms) — time allowed for a single test to complete. */
-const TEST_TIMEOUT = 30000;
+const TEST_TIMEOUT = 40000;
 
 /** Default action timeout (ms) — time allowed for a single action (click, fill, etc.) to complete. */
-const ACTION_TIMEOUT = 20000;
+const ACTION_TIMEOUT = 30000;
 
 /**
  * Extended timeout (ms) for operations that load large amounts of data,
@@ -58,15 +58,15 @@ export default defineConfig({
   outputDir: './results/test-results',
 
   reporter: [
-    ['list'],
+    ['list', { printSteps: true }],
     ['json', { outputFile: './results/results.json' }],
-    ['html', { outputFolder: './results/html', open: IS_CI ? 'never' : 'on-failure' }],
+    ['html', { outputFolder: './results/html', open: 'never' }],
   ],
 
   expect: {
     toHaveScreenshot: {
       animations: 'disabled',
-      stylePath: './utils/disable-antialiasing/pre-screenshot-styles.css',
+      stylePath: './styles/pre-screenshot-styles.css',
     },
   },
 

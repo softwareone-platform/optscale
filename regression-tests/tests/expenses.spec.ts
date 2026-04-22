@@ -17,7 +17,7 @@ test.describe('FFC: Expenses Dashboard page', () => {
       await expensesPage.heading.hover();
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-daily-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Container--Daily.png');
     });
 
     await test.step('View type - weekly selected', async () => {
@@ -25,7 +25,7 @@ test.describe('FFC: Expenses Dashboard page', () => {
       await expensesPage.heading.hover();
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-weekly-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Container--Weekly.png');
     });
 
     await test.step('View type - monthly selected', async () => {
@@ -33,7 +33,7 @@ test.describe('FFC: Expenses Dashboard page', () => {
       await expensesPage.heading.hover();
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-monthly-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Container--Monthly.png');
     });
   });
 })
@@ -46,7 +46,7 @@ test.describe('FFC: Expenses Map page', () => {
     await expensesMapPage.heading.hover();
     await expensesMapPage.fitViewportToFullPage();
     await expect(expensesMapPage.mapLegend).toBeVisible();
-    await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMapPage-screenshot.png', {
+    await expect(expensesMapPage.main).toHaveScreenshot('ExpansesMap-Content.png', {
       mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
     });
   })
@@ -66,7 +66,7 @@ test.describe('FFC: Expenses Breakdowns page', () => {
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
       await expensesPage.fitViewportToFullPage();
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-source-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Source.png');
     });
 
     await test.step('View type - breakdown by pool', async () => {
@@ -76,7 +76,7 @@ test.describe('FFC: Expenses Breakdowns page', () => {
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
       await expensesPage.fitViewportToFullPage();
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-pool-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Pool.png');
     });
 
     await test.step('View type - breakdown by owner', async () => {
@@ -86,7 +86,7 @@ test.describe('FFC: Expenses Breakdowns page', () => {
       await expensesPage.waitForCanvas();
       await roundElementDimensions(expensesPage.main);
       await expensesPage.fitViewportToFullPage();
-      await expect(expensesPage.main).toHaveScreenshot('Expenses-owner-screenshot.png');
+      await expect(expensesPage.main).toHaveScreenshot('Expenses-Owner.png');
     });
   });
 })

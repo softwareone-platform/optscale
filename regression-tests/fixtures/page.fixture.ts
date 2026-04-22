@@ -24,8 +24,8 @@ const createFixture =
 
 // Declare all POs in one place with strong typing
 const constructors = {
-  anomaliesPage: Pages.AnomaliesPage,
-  anomaliesCreatePage: Pages.AnomaliesCreatePage,
+  policiesAnomaliesPage: Pages.AnomaliesPage,
+  policiesAnomaliesCreatePage: Pages.AnomaliesCreatePage,
   cloudAccountsPage: Pages.CloudAccountsPage,
   cloudAccountsConnectPage: Pages.CloudAccountsConnectPage,
   eventsPage: Pages.EventsPage,
@@ -34,15 +34,15 @@ const constructors = {
   header: Pages.Header,
   homePage: Pages.HomePage,
   mainMenu: Pages.MainMenu,
-  policiesPage: Pages.PoliciesPage,
-  policiesCreatePage: Pages.PoliciesCreatePage,
+  policiesQuotaPage: Pages.PoliciesPage,
+  policiesQuotaCreatePage: Pages.PoliciesCreatePage,
   poolsPage: Pages.PoolsPage,
   recommendationsPage: Pages.RecommendationsPage,
   resourcesPage: Pages.ResourcesPage,
   resourceDetailsPage: Pages.ResourceDetailsPage,
   settingsPage: Pages.SettingsPage,
-  taggingPoliciesPage: Pages.TaggingPoliciesPage,
-  taggingPoliciesCreatePage: Pages.TaggingPoliciesCreatePage,
+  policiesTaggingPoliciesPage: Pages.TaggingPoliciesPage,
+  policiesTaggingPoliciesCreatePage: Pages.TaggingPoliciesCreatePage,
   usersPage: Pages.UsersPage,
   usersInvitePage: Pages.UsersInvitePage,
 } satisfies Record<string, PageObjectCtor>;

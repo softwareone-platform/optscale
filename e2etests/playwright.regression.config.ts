@@ -27,7 +27,7 @@ export default defineConfig({
   expect: {
     toHaveScreenshot: {
       animations: "disabled",
-      stylePath: './regression-tests/utils/disable-antialiasing/pre-screenshot-styles.css'
+      stylePath: './regression-tests/styles/pre-screenshot-styles.css'
     },
   },
   use: {

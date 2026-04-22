@@ -1,6 +1,6 @@
 import type { InterceptionEntry } from '../utils/interceptor';
 
-export const GeminisMock = {
+ const GeminisMock = {
     "geminis": [
         {
             "deleted_at": 0,
@@ -364,136 +364,7 @@ export const GeminisMock = {
     ]
 }
 
-export const OptionsMock = {
-    "options": [
-        {
-            "name": "recommendation_s3_abandoned_buckets",
-            "value": "{\"days_threshold\":7,\"data_size_threshold\":1024,\"tier_1_request_quantity_threshold\":100,\"tier_2_request_quantity_threshold\":2000,\"excluded_pools\":{},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_rightsizing_rds",
-            "value": "{\"days_threshold\": 9, \"metric\": {\"type\": \"avg\", \"limit\": 81}, \"excluded_flavor_regex\": \"\", \"excluded_pools\": {}, \"recommended_flavor_cpu_min\": 1, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_nebius_migration",
-            "value": "{\"days_threshold\": 30, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_obsolete_images",
-            "value": "{\"days_threshold\":7,\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_saving_spike_notification",
-            "value": "{\"threshold\": 10, \"skip_notifications\": false}"
-        },
-        {
-            "name": "recommendation_s3_public_buckets",
-            "value": "{\"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "orchid_mode",
-            "value": "{\"value\":{\"finops\":true,\"mlops\":true}}"
-        },
-        {
-            "name": "recommendation_security_optimization_notification",
-            "value": "{\"skip_security_notification\": false}"
-        },
-        {
-            "name": "recommendation_instances_in_stopped_state_for_a_long_time",
-            "value": "{\"days_threshold\":2,\"excluded_pools\":{},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_obsolete_snapshots",
-            "value": "{\"days_threshold\":4,\"excluded_pools\":{},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_obsolete_ips",
-            "value": "{\"days_threshold\": 7, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_inactive_users",
-            "value": "{\"days_threshold\":91,\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_insecure_security_groups",
-            "value": "{\"excluded_pools\":{},\"skip_cloud_accounts\":[],\"insecure_ports\":[{\"protocol\":\"tcp\",\"port\":22},{\"protocol\":\"tcp\",\"port\":3389},{\"protocol\":\"tcp\",\"port\":1080}]}"
-        },
-        {
-            "name": "recommendation_instance_generation_upgrade",
-            "value": "{\"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "s3_duplicates_settings",
-            "value": "{\"thresholds\":{\"requiring_attention\":0.1,\"critical\":2}}"
-        },
-        {
-            "name": "finops_checklist",
-            "value": "{\"items\":[]}"
-        },
-        {
-            "name": "recommendation_instance_subscription",
-            "value": "{\"days_threshold\": 90, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_instance_migration",
-            "value": "{\"excluded_pools\":{\"f6fafb13-747b-4cb3-bee6-0cb91bc56fbb\":true},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_abandoned_kinesis_streams",
-            "value": "{\"days_threshold\":7,\"excluded_pools\":{},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_reserved_instances",
-            "value": "{\"days_threshold\": 90, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_instances_for_shutdown",
-            "value": "{\"days_threshold\": 15, \"cpu_percent_threshold\": 6, \"network_bps_threshold\": 1001, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_rightsizing_instances",
-            "value": "{\"days_threshold\": 3, \"metric\": {\"type\": \"avg\", \"limit\": 80}, \"excluded_flavor_regex\": \"\", \"excluded_pools\": {\"3a248797-84f6-46b8-b6b9-9aa612105d1e\": true, \"9ef6f469-434d-4937-80b0-6eea3085deb6\": true}, \"recommended_flavor_cpu_min\": 1, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_abandoned_images",
-            "value": "{\"days_threshold\": 7, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "perspectives",
-            "value": "{\"Basic\":{\"filters\":{\"filterValues\":{},\"appliedFilters\":{}},\"breakdownBy\":\"expenses\",\"breakdownData\":{\"breakdownBy\":\"service_name\",\"groupBy\":{}}}}"
-        },
-        {
-            "name": "recommendation_short_living_instances",
-            "value": "{\"days_threshold\": 3, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "theme_settings",
-            "value": "{\"typography\":{\"body1\":{},\"body2\":{},\"subtitle1\":{},\"subtitle2\":{},\"h1\":{},\"h2\":{},\"h3\":{},\"h4\":{},\"h5\":{},\"h6\":{}},\"palette\":{\"text\":{},\"primary\":{},\"secondary\":{},\"info\":{},\"warning\":{},\"error\":{},\"success\":{}},\"chartPalette\":{\"chart\":[],\"monoChart\":[]}}"
-        },
-        {
-            "name": "recommendation_cvos_opportunities",
-            "value": "{\"days_threshold\": 90, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "features",
-            "value": "{\"paid_organization\":0,\"show_aws_upload_report\":0,\"nebius_connection_enabled\":0,\"ri_sp_enabled\":0}"
-        },
-        {
-            "name": "recommendation_abandoned_instances",
-            "value": "{\"days_threshold\": 7, \"cpu_percent_threshold\": 5, \"network_bps_threshold\": 1000, \"excluded_pools\": {}, \"skip_cloud_accounts\": []}"
-        },
-        {
-            "name": "recommendation_obsolete_snapshot_chains",
-            "value": "{\"days_threshold\":3,\"excluded_pools\":{},\"skip_cloud_accounts\":[]}"
-        },
-        {
-            "name": "recommendation_inactive_console_users",
-            "value": "{\"days_threshold\":91,\"skip_cloud_accounts\":[]}"
-        }
-    ]
-}
-
-export const RIBreakdownMock = {
+ const RIBreakdownMock = {
     "breakdown": {
         "1739404800": [
             {
@@ -509,7 +380,7 @@ export const RIBreakdownMock = {
                 "ri_cost_without_offer": 0.6432,
                 "ri_cost_with_offer": 0.4608,
                 "cloud_account_type": "aws_cnr",
-                "cloud_account_name": "AWS HQ"
+                "cloud_account_name": "AWS HQ[E2E_RIB]"
             },
             {
                 "cloud_account_id": "402fc0bc-da7c-4eb1-b194-1c409471d0e5",
@@ -786,7 +657,7 @@ export const RIBreakdownMock = {
     }
 }
 
-export const SPBreakdownMock = {
+ const SPBreakdownMock = {
     "breakdown": {
         "1739404800": [
             {
@@ -1091,15 +962,7 @@ export const SPBreakdownMock = {
     }
 }
 
-export const SummaryExpensesMock = {
-    "start_date": 1738022400,
-    "end_date": 1740614399,
-    "total_count": 787,
-    "total_cost": 5862.251871638755,
-    "total_saving": 3733.244514756799
-}
-
-export const OptimisationsMock = {
+ const OptimisationsMock = {
     "total_saving": 3956.1424881109824,
     "optimizations": {
         "abandoned_images": {
@@ -1206,17 +1069,6 @@ export const OptimisationsMock = {
                 }
             ],
             "limit": 3
-        },
-        "cvos_opportunities": {
-            "count": 0,
-            "saving": 0,
-            "options": {
-                "days_threshold": 90,
-                "excluded_pools": {},
-                "skip_cloud_accounts": []
-            },
-            "items": [],
-            "cloud_accounts": []
         },
         "inactive_users": {
             "count": 37,
@@ -1365,47 +1217,6 @@ export const OptimisationsMock = {
             ],
             "limit": 3
         },
-        "instance_generation_upgrade": {
-            "count": 1,
-            "saving": 12.6144,
-            "options": {
-                "excluded_pools": {},
-                "skip_cloud_accounts": []
-            },
-            "items": [
-                {
-                    "cloud_resource_id": "i-gw8csaxjubfrl7s2e1ip",
-                    "resource_name": "aqa-instance-generation-upgrade",
-                    "resource_id": "837cad0b-a9b8-41b2-b513-449a2f3ccf21",
-                    "cloud_account_id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "cloud_type": "alibaba_cnr",
-                    "cloud_account_name": "Ali dev",
-                    "region": "Germany (Frankfurt)",
-                    "owner": {
-                        "id": "c71e247c-bdef-47a1-8f74-29d9786fbb9d",
-                        "name": "Lincoln Davies"
-                    },
-                    "pool": {
-                        "id": "43ec75c7-79f3-4a07-92c8-423758ac4ad7",
-                        "name": "Ali dev",
-                        "purpose": "budget"
-                    },
-                    "saving": 12.6144,
-                    "recommended_flavor": "ecs.t6-c1m1.large",
-                    "is_excluded": false,
-                    "flavor": "ecs.t5-c1m1.large",
-                    "detected_at": 1739062255
-                }
-            ],
-            "cloud_accounts": [
-                {
-                    "id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "name": "Ali dev",
-                    "type": "alibaba_cnr"
-                }
-            ],
-            "limit": 3
-        },
         "instance_subscription": {
             "count": 2,
             "saving": 32.751066666666674,
@@ -1453,58 +1264,6 @@ export const OptimisationsMock = {
                     "id": "719306dd-072b-4a33-9275-24fc25e7ae17",
                     "name": "Ali dev",
                     "type": "alibaba_cnr"
-                }
-            ],
-            "limit": 3
-        },
-        "instances_in_stopped_state_for_a_long_time": {
-            "count": 2,
-            "saving": 42.90462443612902,
-            "options": {
-                "days_threshold": 2,
-                "excluded_pools": {},
-                "skip_cloud_accounts": []
-            },
-            "items": [
-                {
-                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.compute/virtualmachines/aqa-stopped-not-deallocated",
-                    "resource_name": "aqa-stopped-not-deallocated",
-                    "resource_id": "7ed5ffc9-c02b-4de1-94c2-eb2bca199408",
-                    "cloud_account_id": "9db87a3b-d5bd-4eb9-bc5b-ddd81516e698",
-                    "cloud_type": "azure_cnr",
-                    "cloud_account_name": "Azure QA",
-                    "cost_in_stopped_state": 356.70413100297145,
-                    "saving": 33.62787443612902,
-                    "region": "Germany West Central",
-                    "is_excluded": false,
-                    "last_seen_active": 0,
-                    "detected_at": 1717245288
-                },
-                {
-                    "cloud_resource_id": "i-gw8692qiefklcvhgc75e",
-                    "resource_name": "aqa-stopped-not-deallocated",
-                    "resource_id": "ecfadbd7-a9f6-49e0-9953-21e465342f34",
-                    "cloud_account_id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "cloud_type": "alibaba_cnr",
-                    "cloud_account_name": "Ali dev",
-                    "cost_in_stopped_state": 37.929122,
-                    "saving": 9.27675,
-                    "region": "Germany (Frankfurt)",
-                    "is_excluded": false,
-                    "last_seen_active": 1719897778,
-                    "detected_at": 1720078676
-                }
-            ],
-            "cloud_accounts": [
-                {
-                    "id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "name": "Ali dev",
-                    "type": "alibaba_cnr"
-                },
-                {
-                    "id": "9db87a3b-d5bd-4eb9-bc5b-ddd81516e698",
-                    "name": "Azure QA",
-                    "type": "azure_cnr"
                 }
             ],
             "limit": 3
@@ -1604,7 +1363,7 @@ export const OptimisationsMock = {
             },
             "items": [
                 {
-                    "cloud_resource_id": "eip-gw80wgx89t7t7p3x2ah7y",
+                    "cloud_resource_id": "eip-gw80wgx89t7t7p3x2ah7y[E2E_RO]",
                     "resource_name": "aqa-obsolete-ip",
                     "resource_id": "a35328df-1949-437d-a879-5c84adffac9a",
                     "cloud_account_id": "719306dd-072b-4a33-9275-24fc25e7ae17",
@@ -1792,24 +1551,6 @@ export const OptimisationsMock = {
             ],
             "limit": 3
         },
-        "s3_abandoned_buckets_nebius": {
-            "count": 0,
-            "saving": 0,
-            "options": {
-                "days_threshold": 7,
-                "data_size_threshold": 1024,
-                "get_request_quantity_threshold": 100,
-                "post_request_quantity_threshold": 100,
-                "put_request_quantity_threshold": 100,
-                "head_request_quantity_threshold": 100,
-                "options_request_quantity_threshold": 100,
-                "delete_request_quantity_threshold": 100,
-                "excluded_pools": {},
-                "skip_cloud_accounts": []
-            },
-            "items": [],
-            "cloud_accounts": []
-        },
         "s3_public_buckets": {
             "count": 3,
             "options": {
@@ -1893,75 +1634,6 @@ export const OptimisationsMock = {
             ],
             "limit": 3
         },
-        "short_living_instances": {
-            "count": 5,
-            "saving": 0.03899418623999999,
-            "options": {
-                "days_threshold": 3,
-                "excluded_pools": {},
-                "skip_cloud_accounts": []
-            },
-            "items": [
-                {
-                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.compute/virtualmachines/aqa-power-schedule-instance-1726452362",
-                    "resource_name": "aqa-power-schedule-instance-1726452362",
-                    "resource_id": null,
-                    "cloud_account_id": "9db87a3b-d5bd-4eb9-bc5b-ddd81516e698",
-                    "cloud_type": "azure_cnr",
-                    "cloud_account_name": "Azure QA",
-                    "total_cost": 0.007600152,
-                    "saving": 0.010944218879999999,
-                    "region": "Germany West Central",
-                    "is_excluded": false,
-                    "first_seen": 1740268800,
-                    "last_seen": 1740355200,
-                    "detected_at": 1740375369
-                },
-                {
-                    "cloud_resource_id": "/subscriptions/318bd278-e4ef-4230-9ab4-2ad6a29f578c/resourcegroups/aqa/providers/microsoft.compute/virtualmachines/aqa-power-schedule-instance-1726538731",
-                    "resource_name": "aqa-power-schedule-instance-1726538731",
-                    "resource_id": null,
-                    "cloud_account_id": "9db87a3b-d5bd-4eb9-bc5b-ddd81516e698",
-                    "cloud_type": "azure_cnr",
-                    "cloud_account_name": "Azure QA",
-                    "total_cost": 0.007200144,
-                    "saving": 0.01036820736,
-                    "region": "Germany West Central",
-                    "is_excluded": false,
-                    "first_seen": 1740355200,
-                    "last_seen": 0,
-                    "detected_at": 1740483798
-                },
-                {
-                    "cloud_resource_id": "i-gw836x0o3ntvox94ug9i",
-                    "resource_name": "aqa-power-schedule-instance-1726538739",
-                    "resource_id": null,
-                    "cloud_account_id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "cloud_type": "alibaba_cnr",
-                    "cloud_account_name": "Ali dev",
-                    "total_cost": 0.004246,
-                    "saving": 0.006114239999999999,
-                    "region": "Germany (Frankfurt)",
-                    "is_excluded": false,
-                    "first_seen": 1740355200,
-                    "last_seen": 0,
-                    "detected_at": 1740386359
-                }
-            ],
-            "cloud_accounts": [
-                {
-                    "id": "719306dd-072b-4a33-9275-24fc25e7ae17",
-                    "name": "Ali dev",
-                    "type": "alibaba_cnr"
-                },
-                {
-                    "id": "9db87a3b-d5bd-4eb9-bc5b-ddd81516e698",
-                    "name": "Azure QA",
-                    "type": "azure_cnr"
-                }
-            ],
-            "limit": 3
-        },
     },
     "dismissed_optimizations": {
         "obsolete_snapshot_chains": {
@@ -2001,9 +1673,7 @@ export const OptimisationsMock = {
 }
 export const recommendationsInterceptions: InterceptionEntry[] = [
   { url: `/v2/organizations/[^/]+/geminis`, mock: GeminisMock },
-  { url: `/v2/organizations/[^/]+/options`, mock: OptionsMock },
   { url: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownMock },
   { url: `/v2/organizations/[^/]+/sp_breakdown`, mock: SPBreakdownMock },
-  { url: `/v2/organizations/[^/]+/summary_expenses`, mock: SummaryExpensesMock },
   { url: `/v2/organizations/[^/]+/optimizations`, mock: OptimisationsMock },
 ];

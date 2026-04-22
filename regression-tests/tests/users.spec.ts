@@ -16,7 +16,7 @@ test.describe('FFC: Users', () => {
       await usersPage.heading.hover();
       await roundElementDimensions(usersPage.main);
       await usersPage.fitViewportToFullPage();
-      await expect(usersPage.main).toHaveScreenshot('Users-screenshot.png');
+      await expect(usersPage.main).toHaveScreenshot('Users-List.png');
     });
 
     await test.step('Invite user page', async () => {
@@ -25,7 +25,7 @@ test.describe('FFC: Users', () => {
       await expect(usersInvitePage.form).toBeAttached({ timeout: 10000 });
       await expect(usersInvitePage.form.locator('.MuiCircularProgress-root')).toHaveCount(0, { timeout: 10000 });
       await usersPage.fitViewportToFullPage();
-      await expect(usersInvitePage.main).toHaveScreenshot('Users-invite-screenshot.png');
+      await expect(usersInvitePage.main).toHaveScreenshot('Users-invite.png');
     });
   })
 })

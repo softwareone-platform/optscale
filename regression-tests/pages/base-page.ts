@@ -1,6 +1,9 @@
 import { Locator, Page } from '@playwright/test';
+import * as path from 'path';
 import { debugLog, errorLog } from '../utils/debug-logging';
 import { LARGE_DATA_TIMEOUT } from '../playwright.config';
+
+const TEST_OVERRIDES_CSS_PATH = path.resolve(__dirname, '../styles/test-overrides.css');
 
 /**
  * Abstract class representing the base structure for all pages.
@@ -31,6 +34,7 @@ export abstract class BasePage {
   async navigateToURL(customUrl: string = null): Promise<void> {
     debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);
     await this.page.goto(customUrl ? customUrl : this.url, { waitUntil: 'load' });
+    await this.page.addStyleTag({ path: TEST_OVERRIDES_CSS_PATH });
     await this.waitForLoadingPageImgToDisappear();
   }
 
@@ -48,6 +52,10 @@ export abstract class BasePage {
     });
     const targetHeight = Math.min(contentHeight + headerHeight, maxHeight);
     await this.page.setViewportSize({ width, height: targetHeight });
+    // Wait two animation frames for the layout to settle after viewport resize
+    await this.page.evaluate(
+      () => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    );
   }
 
   async waitForCanvas(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {

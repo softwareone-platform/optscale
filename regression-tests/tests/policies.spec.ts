@@ -3,79 +3,79 @@ import { expect } from "@playwright/test";
 import { roundElementDimensions } from "../utils/roundElementDimensions";
 import { anomaliesInterceptions, policiesInterceptions, taggingPoliciesInterceptions } from "../mocks/policies.mocks";
 
-test.describe('FFC: Anomalies page', () => {
+test.describe('FFC: Policy Anomalies page', () => {
 
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: anomaliesInterceptions, failOnInterceptionMissing: true } });
 
-  test('Page matches screenshots', async ({ anomaliesPage, anomaliesCreatePage }) => {
-    await test.step('Navigate to Anomalies page', async () => {
-      await anomaliesPage.navigateToURL();
+  test('Page matches screenshots', async ({ policiesAnomaliesPage, policiesAnomaliesCreatePage }) => {
+    await test.step('Navigate to Policy Anomalies page', async () => {
+      await policiesAnomaliesPage.navigateToURL();
     });
 
-    await test.step('Anomalies list page', async () => {
-      await anomaliesPage.heading.hover();
-      await anomaliesPage.waitForCanvas();
-      await roundElementDimensions(anomaliesPage.main);
-      await expect(anomaliesPage.main).toHaveScreenshot('Anomalies-screenshot.png');
+    await test.step('Policy Anomalies list page', async () => {
+      await policiesAnomaliesPage.heading.hover();
+      await policiesAnomaliesPage.waitForCanvas();
+      await roundElementDimensions(policiesAnomaliesPage.main);
+      await expect(policiesAnomaliesPage.main).toHaveScreenshot('Policies-Anomalies-Container.png');
     });
 
-    await test.step('Create anomaly form', async () => {
-      await anomaliesPage.clickAddBtn();
-      await anomaliesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
-      await anomaliesCreatePage.heading.hover();
-      await roundElementDimensions(anomaliesCreatePage.main);
-      await expect(anomaliesCreatePage.main).toHaveScreenshot('Anomalies-create-screenshot.png');
+    await test.step('Policy Anomaly Create form', async () => {
+      await policiesAnomaliesPage.clickAddBtn();
+      await policiesAnomaliesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
+      await policiesAnomaliesCreatePage.heading.hover();
+      await roundElementDimensions(policiesAnomaliesCreatePage.main);
+      await expect(policiesAnomaliesCreatePage.main).toHaveScreenshot('Policies-Anomalies-CreateForm.png');
     });
   });
 });
 
 
-test.describe('FFC: Policies page', () => {
+test.describe('FFC: Policies Quota and Budget page', () => {
 
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: policiesInterceptions } });
 
-  test('Page matches screenshots', async ({ policiesPage, policiesCreatePage }) => {
+  test('Page matches screenshots', async ({ policiesQuotaPage, policiesQuotaCreatePage }) => {
     await test.step('Navigate to Policies page', async () => {
-      await policiesPage.navigateToURL();
+      await policiesQuotaPage.navigateToURL();
     });
 
-    await test.step('Policies list page', async () => {
-      await policiesPage.heading.hover();
-      await roundElementDimensions(policiesPage.main);
-      await expect(policiesPage.main).toHaveScreenshot('Policies-screenshot.png');
+    await test.step('Policies Quota and  budget list page', async () => {
+      await policiesQuotaPage.heading.hover();
+      await roundElementDimensions(policiesQuotaPage.main);
+      await expect(policiesQuotaPage.main).toHaveScreenshot('Policies-Quota-Container.png');
     });
 
-    await test.step('Create policy form', async () => {
-      await policiesPage.clickAddBtn();
-      await policiesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
-      await policiesCreatePage.heading.hover();
-      await roundElementDimensions(policiesCreatePage.main);
-      await expect(policiesCreatePage.main).toHaveScreenshot('Policies-create-screenshot.png');
+    await test.step('Policies Quota and  budget Create policy form', async () => {
+      await policiesQuotaPage.clickAddBtn();
+      await policiesQuotaPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
+      await policiesQuotaCreatePage.heading.hover();
+      await roundElementDimensions(policiesQuotaCreatePage.main);
+      await expect(policiesQuotaCreatePage.main).toHaveScreenshot('Policies-Quota-CreateForm.png');
     });
   });
 });
 
-test.describe('FFC: Tagging Policies page', () => {
+test.describe('FFC: Policies Tagging Policies  page', () => {
 
   test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: taggingPoliciesInterceptions } });
 
-  test('Page matches screenshots', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+  test('Page matches screenshots', async ({ policiesTaggingPoliciesPage, policiesTaggingPoliciesCreatePage }) => {
     await test.step('Navigate to Tagging Policies page', async () => {
-      await taggingPoliciesPage.navigateToURL();
+      await policiesTaggingPoliciesPage.navigateToURL();
     });
 
     await test.step('Tagging policies list page', async () => {
-      await taggingPoliciesPage.heading.hover();
-      await roundElementDimensions(taggingPoliciesPage.main);
-      await expect(taggingPoliciesPage.main).toHaveScreenshot('TaggingPolicies-screenshot.png');
+      await policiesTaggingPoliciesPage.heading.hover();
+      await roundElementDimensions(policiesTaggingPoliciesPage.main);
+      await expect(policiesTaggingPoliciesPage.main).toHaveScreenshot('Policies-TaggingPolicies-Container.png');
     });
 
     await test.step('Create tagging policy form', async () => {
-      await taggingPoliciesPage.clickAddBtn();
-      await taggingPoliciesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
-      await taggingPoliciesCreatePage.heading.hover();
-      await roundElementDimensions(taggingPoliciesCreatePage.main);
-      await expect(taggingPoliciesCreatePage.main).toHaveScreenshot('TaggingPolicies-create-screenshot.png');
+      await policiesTaggingPoliciesPage.clickAddBtn();
+      await policiesTaggingPoliciesPage.getByAnyTestId('btn_suggestion_filter').waitFor({ state: 'visible', timeout: 40000 });
+      await policiesTaggingPoliciesCreatePage.heading.hover();
+      await roundElementDimensions(policiesTaggingPoliciesCreatePage.main);
+      await expect(policiesTaggingPoliciesCreatePage.main).toHaveScreenshot('Policies-TaggingPolicies-CreateForm.png');
     });
   });
 });
