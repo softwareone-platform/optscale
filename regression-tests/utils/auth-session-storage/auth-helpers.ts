@@ -1,7 +1,7 @@
-import { EStorageStatePath } from '../../types';
+import { EStorageStatePath } from '@/types';
 import { APIRequestContext, request } from '@playwright/test';
-import { DemoAuthCredentials, LiveDemoAuthResponse } from '../../types';
-import { safeReadJsonFile } from '../file';
+import { DemoAuthCredentials, LiveDemoAuthResponse } from '@/types';
+import { safeReadJsonFile } from '@/utils/file';
 
 const baseAPIUrl: string = process.env.LIVE_DEMO_API || '';
 

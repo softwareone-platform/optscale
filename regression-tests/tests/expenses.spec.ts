@@ -1,7 +1,7 @@
-import { test } from '../fixtures/page.fixture';
+import { test } from '@/fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { expensesInterceptions, expensesMapInterceptions, expensesBreakdownsInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { expensesInterceptions, expensesMapInterceptions, expensesBreakdownsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.describe(() => {
   test.use({ interceptAPI: { entries: expensesInterceptions } });

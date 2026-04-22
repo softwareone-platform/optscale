@@ -1,6 +1,6 @@
-import { test } from '../fixtures/page.fixture';
-import { settingsInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { test } from '@/fixtures/page.fixture';
+import { settingsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.describe(() => {
   test.use({

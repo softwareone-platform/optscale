@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 import * as path from 'path';
-import { debugLog, errorLog } from '../utils/debug-logging';
-import { LARGE_DATA_TIMEOUT } from '../playwright.config';
+import { debugLog, errorLog } from '@/utils/debug-logging';
+import { LARGE_DATA_TIMEOUT } from '@/playwright.config';
 
 const TEST_OVERRIDES_CSS_PATH = path.resolve(__dirname, '../styles/test-overrides.css');
 

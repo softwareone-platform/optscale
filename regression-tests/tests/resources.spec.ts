@@ -1,8 +1,8 @@
-import { test } from '../fixtures/page.fixture';
-import { E2E_RRD } from '../mocks/e2e-markers';
+import { test } from '@/fixtures/page.fixture';
+import { E2E_RRD } from '@/mocks/e2e-markers';
 import { expect } from '@playwright/test';
-import { resourcesInterceptions, resourceDetailsInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { resourcesInterceptions, resourceDetailsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.describe(() => {
   test.use({ interceptAPI: { entries: resourcesInterceptions } });

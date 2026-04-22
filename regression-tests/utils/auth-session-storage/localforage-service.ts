@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
-import { safeReadJsonFile } from '../file';
+import { safeReadJsonFile } from '@/utils/file';
 import path from 'path';
-import { EStorageStatePath } from '../../types';
+import { EStorageStatePath } from '@/types';
 
 export async function injectLocalforage(page: Page) {
   const scriptPath = path.resolve(__dirname, './script/localforage.min.js');

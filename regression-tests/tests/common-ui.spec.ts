@@ -1,5 +1,5 @@
-import { test } from '../fixtures/page.fixture';
-import { captureScreenshot } from '../utils/screenshots';
+import { test } from '@/fixtures/page.fixture';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test('FFC: Common UI', async ({ homePage, header, mainMenu }) => {
   await homePage.navigateToURL();

@@ -1,7 +1,7 @@
-import { test } from '../fixtures/page.fixture';
+import { test } from '@/fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { poolsInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { poolsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.use({ interceptAPI: { entries: poolsInterceptions } });
 

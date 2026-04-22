@@ -1,7 +1,7 @@
-import { test } from '../fixtures/page.fixture';
+import { test } from '@/fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { cloudAccountsInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { cloudAccountsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.describe('FFC: Cloud Accounts', () => {
   test.use({ interceptAPI: { entries: cloudAccountsInterceptions } });

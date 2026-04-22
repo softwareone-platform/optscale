@@ -3,7 +3,7 @@
  * array (or individual mock payload) from `../mocks` without knowing which
  * file it lives in:
  *
- *   import { homepageInterceptions, settingsInterceptions } from '../mocks';
+ *   import { homepageInterceptions, settingsInterceptions } from '@/mocks';
  */
 export * from './cloud-accounts.mocks';
 export * from './events.mocks';

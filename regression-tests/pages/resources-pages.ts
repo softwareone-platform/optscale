@@ -1,6 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
-import { LARGE_DATA_TIMEOUT } from '../playwright.config';
+import { LARGE_DATA_TIMEOUT } from '@/playwright.config';
 
 export class ResourcesPage extends BasePage {
   readonly heading: Locator;

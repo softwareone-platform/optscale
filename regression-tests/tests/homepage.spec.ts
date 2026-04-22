@@ -1,6 +1,6 @@
-import { test } from '../fixtures/page.fixture';
-import { homepageInterceptions } from '../mocks';
-import { captureScreenshot } from '../utils/screenshots';
+import { test } from '@/fixtures/page.fixture';
+import { homepageInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
 
 test.use({ interceptAPI: { entries: homepageInterceptions } });
 
