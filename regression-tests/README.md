@@ -128,6 +128,7 @@ regression-tests/
 │   └── page.fixture.ts             # All page object instances wired into tests as fixtures
 │
 ├── mocks/                          # Static API mock data used for route interceptions
+│   ├── e2e-markers.ts              # Central registry of `[E2E_*]` marker constants
 │   ├── *.mocks.ts                  # Response payloads per feature
 │   └── *-interceptions.mocks.ts    # Route interception configurations per feature
 │
@@ -199,3 +200,80 @@ npm run test:docker:update
 | `TEST_TIMEOUT`       | 30 s  | Maximum time for a single test                        |
 | `ACTION_TIMEOUT`     | 20 s  | Maximum time for a single action (click, fill, …)     |
 | `LARGE_DATA_TIMEOUT` | 60 s  | Used explicitly for heavy pages (expenses, resources) |
+
+---
+
+## E2E mock markers
+
+Every mock payload that produces user-visible text (names, titles, resource ids, descriptions…) embeds a short **marker** inside one of its fields. The marker is visible in the rendered UI — and therefore in the baseline screenshot — so a reviewer can tell at a glance that the data on screen came from the test harness rather than a live API.
+
+### Central registry
+
+All markers are defined once in [`mocks/e2e-markers.ts`](./mocks/e2e-markers.ts) as plain exported constants:
+
+```ts
+// mocks/e2e-markers.ts
+export const E2E_CDS = '[E2E_CDS]';   // cloud-accounts.mocks.ts → DataSourcesMock
+export const E2E_EV  = '[E2E_EV]';    // events.mocks.ts          → EventsRegressionMock
+// …
+```
+
+Mock files import only the markers they need and interpolate them into payload values with a template literal:
+
+```ts
+import { E2E_CDS } from './e2e-markers';
+
+const DataSourcesMock = {
+  name: `SoftwareOne ${E2E_CDS}`,   // renders as 'SoftwareOne [E2E_CDS]'
+  // …
+};
+```
+
+Benefits over hard-coding the string:
+
+- Renaming a marker is a **one-line change** in `e2e-markers.ts`.
+- `grep E2E_CDS` finds every usage, definition, and import in one sweep.
+- TypeScript catches typos at compile time — you cannot import a marker that doesn't exist.
+- `imports` at the top of each mock file advertise which markers the file contains.
+
+### Convention
+
+```
+[E2E_<F><C>]
+```
+
+- **`E2E_`** — literal prefix, identical everywhere.
+- **`<F>`** — uppercase first letter of the mock file name
+  (`cloud-accounts.mocks.ts` → `C`, `homepage.mocks.ts` → `H`, `policies.mocks.ts` → `P`, …).
+- **`<C>`** — 1–3 uppercase letters abbreviating the mock constant's distinguishing part (omit the file-domain word if the file letter already encodes it, and omit the `Mock` / `Response` suffix).
+- Optional `_<variant>` suffix distinguishes multiple uses of the same payload
+  (e.g. `[E2E_PR_Modal]` = `PoolsMock` rendered inside a modal).
+
+Example: `DataSourcesMock` in `cloud-accounts.mocks.ts` → `[E2E_CDS]`
+&nbsp;&nbsp;&nbsp;&nbsp;(`C` from file + `DS` from *DataSources*).
+
+### Adding a new marker
+
+1. Add one line to `mocks/e2e-markers.ts`:
+   ```ts
+   export const E2E_NEW = '[E2E_NEW]';   // <file>.mocks.ts → <MockConstant>
+   ```
+2. Import it in the target mock file and interpolate it into any user-visible value:
+   ```ts
+   import { E2E_NEW } from './e2e-markers';
+   const MyMock = { name: `Example ${E2E_NEW}` };
+   ```
+3. Regenerate baselines — the new marker now appears in the rendered UI:
+   ```bash
+   npm run test:docker:update
+   ```
+
+### Changing a marker's rendered string
+
+Changing the value of an `E2E_*` constant in `e2e-markers.ts` changes every pixel that contains it and invalidates the affected baselines. To do it safely:
+
+1. Edit the constant in `mocks/e2e-markers.ts`.
+2. Regenerate baselines with `npm run test:docker:update`.
+3. Commit the constant edit **and** the updated baseline PNGs together.
+
+No mock file needs to be touched — all usages are variable references.

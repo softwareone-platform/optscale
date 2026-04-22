@@ -1,4 +1,5 @@
 import { test } from '../fixtures/page.fixture';
+import { E2E_RRD } from '../mocks/e2e-markers';
 import { expect } from '@playwright/test';
 import { resourcesInterceptions, resourceDetailsInterceptions } from '../mocks';
 import { captureScreenshot } from '../utils/screenshots';
@@ -24,7 +25,7 @@ test.describe(() => {
     await test.step('Open details page', async () => {
       await resourcesPage.navigateToURL('/resources?breakdownBy=expenses&categorizedBy=service_name&expenses=daily&withLegend=true');
       await resourcesPage.firstResourceItemInTable.click();
-      await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, 'Details of sunflower[E2E_RR]');
+      await resourceDetailsPage.waitForTextContent(resourceDetailsPage.heading, `Details of sunflower${E2E_RRD}`);
     });
 
     const tabs: Array<{ label: string; open: () => Promise<void>; snapshot: string; withCharts?: boolean }> = [

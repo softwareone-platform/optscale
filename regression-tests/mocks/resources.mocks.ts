@@ -1,8 +1,10 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_RBE, E2E_RCE, E2E_RRD, E2E_RRE } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 const ResourceDetailsMock = {
   cloud_account_id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-  cloud_resource_id: 'sunflower[E2E_RR]',
+  cloud_resource_id: `sunflower${E2E_RRD}`,
   applied_rules: [
     {
       id: '7299520a-2864-474e-8e40-fc998e2dd2ab',
@@ -12,7 +14,7 @@ const ResourceDetailsMock = {
   ],
   employee_id: 'c71e247c-bdef-47a1-8f74-29d9786fbb9d',
   first_seen: 1677628800,
-  name: 'sunflower[E2E_RR]',
+  name: `sunflower${E2E_RRD}`,
   pool_id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
   region: 'us-west-2',
   resource_type: 'Bucket',
@@ -33,8 +35,8 @@ const ResourceDetailsMock = {
   recommendations: {
     modules: [
       {
-        cloud_resource_id: 'sunflower[E2E_RR]',
-        resource_name: 'sunflower[E2E_RR]',
+        cloud_resource_id: `sunflower${E2E_RRD}`,
+        resource_name: `sunflower${E2E_RRD}`,
         resource_id: '58af729b-64a3-4d1f-ad95-e9c1f1399283',
         cloud_account_id: 'fd09fa10-1b30-4a39-9a6b-fc1d7e85d9f3',
         cloud_type: 'aws_cnr',
@@ -200,7 +202,7 @@ const LimitHitsMock = {
   ],
 };
 
-const AllowedActionsResponse = {
+const AllowedActionsMock = {
   allowed_actions: {
     'ae385f3a-d3ad-4542-b206-21e7abcc9ef3': [
       'CREATE_PARTNER',
@@ -231,7 +233,7 @@ const RawExpensesMock = {
   total_cost: 4422.722058416666,
   raw_expenses: [
     {
-      _id: '69e0b4c2136fc91534b4124b[E2E_RRE]',
+      _id: `69e0b4c2136fc91534b4124b${E2E_RRE}`,
       start_date: '2026-04-14T00:00:00',
       cloud_account_id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
       resource_id:
@@ -475,7 +477,7 @@ const RawExpensesMock = {
       kind: 'modern',
       meterId: '04f2be54-5cfe-4ad7-97f3-0badfc1dc247',
       meter_details: {
-        meter_name: 'Cloud Orchestration Activity Run [E2E_RRE]',
+        meter_name: `Cloud Orchestration Activity Run ${E2E_RRE}`,
         meter_category: 'Azure Data Factory v2',
         meter_sub_category: 'Azure Data Factory v2',
         unit: '1K',
@@ -576,7 +578,7 @@ const RawExpensesMock = {
       kind: 'modern',
       meterId: '04f2be54-5cfe-4ad7-97f3-0badfc1dc247',
       meter_details: {
-        meter_name: 'Cloud Orchestration Activity Run [E2E_RRE]',
+        meter_name: `Cloud Orchestration Activity Run ${E2E_RRE}`,
         meter_category: 'Azure Data Factory v2',
         meter_sub_category: 'Azure Data Factory v2',
         unit: '1K',
@@ -677,7 +679,7 @@ const RawExpensesMock = {
       kind: 'modern',
       meterId: '04f2be54-5cfe-4ad7-97f3-0badfc1dc247',
       meter_details: {
-        meter_name: 'Cloud Orchestration Activity Run [E2E_RRE]',
+        meter_name: `Cloud Orchestration Activity Run ${E2E_RRE}`,
         meter_category: 'Azure Data Factory v2',
         meter_sub_category: 'Azure Data Factory v2',
         unit: '1K',
@@ -1687,7 +1689,7 @@ const RawExpensesMock = {
       kind: 'modern',
       meterId: '04f2be54-5cfe-4ad7-97f3-0badfc1dc247',
       meter_details: {
-        meter_name: 'Cloud Orchestration Activity Run [E2E_RRE]',
+        meter_name: `Cloud Orchestration Activity Run ${E2E_RRE}`,
         meter_category: 'Azure Data Factory v2',
         meter_sub_category: 'Azure Data Factory v2',
         unit: '1K',
@@ -1770,7 +1772,7 @@ const BreakdownExpensesMock = {
       total: 19.887600000000006,
       previous_total: 29.01149399999999,
     },
-    'AmazonEC2[E2E_RBE]': {
+    [`AmazonEC2${E2E_RBE}`]: {
       total: 1580.8009178687996,
       previous_total: 1194.3135000401999,
     },
@@ -3419,7 +3421,7 @@ const CleanExpensesMock = {
         {
           cloud_account_id: '100efd88-28fb-49f1-946b-edbf78ad4650',
           cloud_resource_id:
-            '/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/virtualmachines/nlpvps00515[E2E_RCE]',
+            `/subscriptions/01643997-4d64-4718-8114-15e488ce3f61/resourcegroups/nlpvs00515rgp/providers/microsoft.compute/virtualmachines/nlpvps00515${E2E_RCE}`,
           _first_seen_date: '2025-01-01T00:00:00',
           _last_seen_date: '2026-04-21T00:00:00',
           applied_rules: [
@@ -3647,6 +3649,7 @@ const SummaryMock = {
   total_saving: 3733.244514756799,
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const resourcesInterceptions: InterceptionEntry[] = [
   { url: `v2/organizations/[^/]+/summary_expenses`, mock: SummaryMock },
   { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
@@ -3658,6 +3661,6 @@ export const resourceDetailsInterceptions: InterceptionEntry[] = [
   { url: `v2/organizations/[^/]+/breakdown_expenses`, mock: BreakdownExpensesMock },
   { url: `v2/cloud_resources/[^/]+?details=true`, mock: ResourceDetailsMock },
   { url: `v2/cloud_resources/[^/]+/limit_hits`, mock: LimitHitsMock },
-  { url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsResponse },
+  { url: `v2/allowed_actions\\?cloud_resource=.+`, mock: AllowedActionsMock },
   { url: `v2/resources/[^/]+/raw_expenses`, mock: RawExpensesMock },
 ];

@@ -1,5 +1,7 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_UE } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 export const EmployeesMock = {
   employees: [
     {
@@ -55,14 +57,14 @@ export const EmployeesMock = {
       deleted_at: 0,
       id: 'cc823af1-fe0b-4ec1-be52-13f1da7acdb1',
       created_at: 1694586883,
-      name: 'Addison Atkinson [E2E_UE]',
+      name: `Addison Atkinson ${E2E_UE}`,
       organization_id: '77fe9add-bafc-4199-980a-da275af7c2c7',
       auth_user_id: 'b86d7b1f-2c5d-424b-a6c8-9a4096e70d9f',
       default_ssh_key_id: null,
       slack_connected: false,
       jira_connected: false,
       last_login: 1740482959,
-      user_display_name: 'Addison Atkinson  [E2E_UE]',
+      user_display_name: `Addison Atkinson  ${E2E_UE}`,
       user_email: 'aatkinson.4e2a6ba803904573888e305b60a17b31@sunflower.demo',
       assignments: [
         {
@@ -448,6 +450,7 @@ export const UsersPoolsPermissionsMock = {
   ],
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const usersInterceptions: InterceptionEntry[] = [
   { url: `/v2/organizations/[^/]+/employees`, mock: EmployeesMock },
   { url: `/v2/organizations/[^/]+/pools\\?permission=INFO_ORGANIZATION`, mock: UsersPoolsPermissionsMock },

@@ -1,8 +1,13 @@
+import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_CDS } from './e2e-markers';
+
+// ─── Shared primitives ──────────────────────────────────────────────────────
 const SAMPLE_ID = '1d0fe384-b1cf-4929-ad5e-1aa544f93dd5';
 const SAMPLE_NAME = 'SoftwareOne[e2e] (Test Environment)';
 const POOL_ID = 'ccaceadf-6878-4ab4-9fd8-3f6177d0b9d3';
 
-const CurrentEmployee = {
+// ─── Mock payloads ──────────────────────────────────────────────────────────
+const CurrentEmployeeMock = {
   data: {
     currentEmployee: {
       id: '73b8772c-7a66-4261-96e6-8e4b494dd25b',
@@ -610,7 +615,7 @@ const DataSourcesMock = {
         last_import_at: 0,
         last_import_attempt_at: 1764764361,
         last_import_attempt_error: 'Cloud azure_tenant is not supported',
-        name: 'SoftwareOne [E2EMock]',
+        name: `SoftwareOne ${E2E_CDS}`,
         parent_id: null,
         type: 'azure_tenant',
         details: {
@@ -631,7 +636,7 @@ const DataSourcesMock = {
   },
 };
 
-const poolsMock = {
+const PoolMock = {
   deleted_at: 0,
   id: POOL_ID,
   created_at: 1743693482,
@@ -644,10 +649,10 @@ const poolsMock = {
   default_owner_name: 'Francesco',
   unallocated_limit: 154387,
 };
-import type { InterceptionEntry } from '../utils/interceptor';
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const cloudAccountsInterceptions: InterceptionEntry[] = [
-  { mock: CurrentEmployee, gql: 'CurrentEmployee' },
+  { mock: CurrentEmployeeMock, gql: 'CurrentEmployee' },
   { mock: DataSourcesMock, gql: 'DataSources' },
-  { mock: poolsMock, url: `/v2/pools/` },
+  { mock: PoolMock, url: `/v2/pools/` },
 ];

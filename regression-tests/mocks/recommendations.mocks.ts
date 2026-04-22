@@ -1,5 +1,7 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_RIB, E2E_RO } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 const GeminisMock = {
   geminis: [
     {
@@ -380,7 +382,7 @@ const RIBreakdownMock = {
         ri_cost_without_offer: 0.6432,
         ri_cost_with_offer: 0.4608,
         cloud_account_type: 'aws_cnr',
-        cloud_account_name: 'AWS HQ[E2E_RIB]',
+        cloud_account_name: `AWS HQ${E2E_RIB}`,
       },
       {
         cloud_account_id: '402fc0bc-da7c-4eb1-b194-1c409471d0e5',
@@ -1365,7 +1367,7 @@ const OptimisationsMock = {
       },
       items: [
         {
-          cloud_resource_id: 'eip-gw80wgx89t7t7p3x2ah7y[E2E_RO]',
+          cloud_resource_id: `eip-gw80wgx89t7t7p3x2ah7y${E2E_RO}`,
           resource_name: 'aqa-obsolete-ip',
           resource_id: 'a35328df-1949-437d-a879-5c84adffac9a',
           cloud_account_id: '719306dd-072b-4a33-9275-24fc25e7ae17',
@@ -1675,6 +1677,8 @@ const OptimisationsMock = {
   next_run: 1740494598,
   last_completed: 1740483798,
 };
+
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const recommendationsInterceptions: InterceptionEntry[] = [
   { url: `/v2/organizations/[^/]+/geminis`, mock: GeminisMock },
   { url: `/v2/organizations/[^/]+/ri_breakdown`, mock: RIBreakdownMock },

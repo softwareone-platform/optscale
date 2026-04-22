@@ -1,12 +1,14 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_PAC, E2E_PQ, E2E_PTP } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 const PolicyQuotaMock = {
   organization_constraints: [
     {
       deleted_at: 0,
       id: '6a139798-4d7a-43ed-9a80-a10eaaf10d0b',
       created_at: 1695192326,
-      name: ' eu-west-2[E2E_PQ]',
+      name: ` eu-west-2${E2E_PQ}`,
       organization_id: '6765b96c-3fda-4073-ade4-aaa840e45f97',
       type: 'resource_quota',
       definition: {
@@ -164,7 +166,7 @@ const TaggingPolicyMock = {
       deleted_at: 0,
       id: '0df3fc33-e58c-4d1d-b79a-dfc51c42ba11',
       created_at: 1711279995,
-      name: 'Instances tagging policy[E2E_TP]',
+      name: `Instances tagging policy${E2E_PTP}`,
       organization_id: '77fe9add-bafc-4199-980a-da275af7c2c7',
       type: 'tagging_policy',
       definition: {
@@ -292,7 +294,7 @@ const AnomaliesConstraintsMock = {
       deleted_at: 0,
       id: '274c55fc-07b1-45fa-8721-26bc1f91b8f9',
       created_at: 1694587419,
-      name: 'Expenses[E2E_AC]',
+      name: `Expenses${E2E_PAC}`,
       organization_id: '77fe9add-bafc-4199-980a-da275af7c2c7',
       type: 'expense_anomaly',
       definition: {
@@ -385,6 +387,7 @@ const AnomaliesConstraintsMock = {
   ],
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const anomaliesInterceptions: InterceptionEntry[] = [
   {
     url: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,

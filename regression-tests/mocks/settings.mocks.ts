@@ -1,11 +1,13 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_SI, E2E_SSO } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 const SettingsOrganizationMock = {
   data: {
     organizations: [
       {
         id: '3d0fe384-b1cf-4929-ad5e-1aa544f93dd5',
-        name: 'SoftwareOne [E2E_SSO]]',
+        name: `SoftwareOne ${E2E_SSO}`,
         pool_id: 'ccaceadf-6878-4ab4-9fd8-3f6177d0b9d3',
         currency: 'USD',
         is_demo: false,
@@ -182,7 +184,7 @@ const InvitationsMock = {
         id: '091c5569-a351-4775-9975-b2c84d002b36',
         owner_name: 'Dawid',
         owner_email: 'dawid.wolosz@softwareone.com',
-        organization: 'SoftwareOne [E2E_SI]',
+        organization: `SoftwareOne ${E2E_SI}`,
         invite_assignments: [
           {
             id: '55ef0694-84ad-4ed5-a4d1-cbb692bd0958',
@@ -199,6 +201,7 @@ const InvitationsMock = {
   },
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const settingsInterceptions: InterceptionEntry[] = [
   { gql: 'Organizations', mock: SettingsOrganizationMock },
   { gql: 'EmployeeEmails', mock: SettingsEmailNotificationsMock },

@@ -1,6 +1,8 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_PAS, E2E_PR, E2E_PR_Modal } from './e2e-markers';
 
-const AllowedActionsPoolResponse = {
+// ─── Mock payloads ──────────────────────────────────────────────────────────
+const AllowedActionsPoolMock = {
   allowed_actions: {
     '1dbf633b-9496-47d7-b70b-0b1ccc6bde8b': [
       'CREATE_PARTNER',
@@ -425,12 +427,12 @@ const AllowedActionsPoolResponse = {
   },
 };
 
-const PoolsResponse = {
+const PoolsMock = {
   deleted_at: 0,
   id: 'b1ef0883-2030-4012-b254-a657290729ff',
   created_at: 1740482948,
   limit: 15000,
-  name: 'Sunflower Inc [E2E_PR]',
+  name: `Sunflower Inc ${E2E_PR}`,
   organization_id: '77fe9add-bafc-4199-980a-da275af7c2c7',
   parent_id: null,
   purpose: 'business_unit',
@@ -474,7 +476,7 @@ const PoolsResponse = {
       id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
       created_at: 1700027940,
       limit: 0,
-      name: 'AWS HQ [E2E_PR_Modal]',
+      name: `AWS HQ ${E2E_PR_Modal}`,
       organization_id: '77fe9add-bafc-4199-980a-da275af7c2c7',
       parent_id: 'b1ef0883-2030-4012-b254-a657290729ff',
       purpose: 'budget',
@@ -853,13 +855,13 @@ const PoolsResponse = {
   ],
 };
 
-const PoolsAssigmentRulesResponse = {
+const PoolsAssigmentRulesMock = {
   entities: {
     '1812ae7a-890f-413a-a4e3-9a76c357cfb2': {
       deleted_at: 0,
       id: '1812ae7a-890f-413a-a4e3-9a76c357cfb2',
       created_at: 1744297151,
-      name: 'CPA (QA and [E2E_PAS]])',
+      name: `CPA (QA and ${E2E_PAS}])`,
       type: 'azure_cnr',
       config: {
         client_id: '990d710f-9527-4155-98da-7e1a0e637406',
@@ -1020,8 +1022,9 @@ const PoolsAssigmentRulesResponse = {
   ],
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const poolsInterceptions: InterceptionEntry[] = [
-  { url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsResponse },
-  { url: `/v2/organizations/[^/]+/rules.*`, mock: PoolsAssigmentRulesResponse },
-  { url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolResponse },
+  { url: `/v2/pools/[^/]+?children=true&details=true`, mock: PoolsMock },
+  { url: `/v2/organizations/[^/]+/rules.*`, mock: PoolsAssigmentRulesMock },
+  { url: `/v2/allowed_actions\\?pool=[^&]+.*`, mock: AllowedActionsPoolMock },
 ];

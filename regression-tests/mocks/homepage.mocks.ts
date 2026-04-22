@@ -1,5 +1,7 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_HOC, E2E_HOCE, E2E_HP } from './e2e-markers';
 
+// ─── Mock payloads ──────────────────────────────────────────────────────────
 const OrganizationExpensesPoolsMock = {
   expenses: {
     last_month: {
@@ -38,7 +40,7 @@ const OrganizationCleanExpansesMock = {
       clean_expenses: [
         {
           cloud_account_id: 'f53423c6-c474-4a91-8666-65fcc3608297',
-          cloud_resource_id: 'sunflower-eu-fra[E2E_OCE]]',
+          cloud_resource_id: `sunflower-eu-fra${E2E_HOCE}`,
           applied_rules: [
             {
               id: '7299520a-2864-474e-8e40-fc998e2dd2ab',
@@ -1616,7 +1618,7 @@ const OrganizationConstraintsMock = {
       deleted_at: 0,
       id: '8c43d5a2-d1e6-45a5-86aa-d0fbef5d4598',
       created_at: 1694069189,
-      name: 'Buckets count in us-east[E2E_OC]',
+      name: `Buckets count in us-east${E2E_HOC}`,
       organization_id: 'df58ec86-8e73-4f9b-95e7-67cb6b9db52f',
       type: 'resource_quota',
       definition: {
@@ -1937,7 +1939,7 @@ const PoolsMock = {
   id: '649ba12c-8384-4521-9923-67e514b22d53',
   created_at: 1739937079,
   limit: 15000,
-  name: 'Sunflower Inc [E2E_P]',
+  name: `Sunflower Inc ${E2E_HP}`,
   organization_id: 'df58ec86-8e73-4f9b-95e7-67cb6b9db52f',
   parent_id: null,
   purpose: 'business_unit',
@@ -2125,7 +2127,7 @@ const PoolsMock = {
       id: 'c0ab8c74-f1e5-4a89-a053-fbd4b230331a',
       created_at: 1694063520,
       limit: 200,
-      name: 'Dev sample [E2E_P]',
+      name: `Dev sample ${E2E_HP}`,
       organization_id: 'df58ec86-8e73-4f9b-95e7-67cb6b9db52f',
       parent_id: '649ba12c-8384-4521-9923-67e514b22d53',
       purpose: 'budget',
@@ -2785,6 +2787,7 @@ const AllowedActionsMock = {
   },
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const homepageInterceptions: InterceptionEntry[] = [
   { gql: 'CleanExpenses', mock: OrganizationCleanExpansesMock },
   { url: `/v2/organizations/[^/]+/pool_expenses`, mock: OrganizationExpensesPoolsMock },

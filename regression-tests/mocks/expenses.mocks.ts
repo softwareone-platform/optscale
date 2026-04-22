@@ -1,12 +1,14 @@
 import type { InterceptionEntry } from '../utils/interceptor';
+import { E2E_EO, E2E_EP, E2E_EPE, E2E_ERG, E2E_ES } from './e2e-markers';
 
-const PoolsExpensesResponse = {
+// ─── Mock payloads ──────────────────────────────────────────────────────────
+const PoolsExpensesMock = {
   expenses: {
     total: 5074.293801968137,
     previous_total: 5333.019745918592,
     previous_range_start: 1735948800,
     id: 'b1ef0883-2030-4012-b254-a657290729ff',
-    name: 'Sunflower Inc [E2E_PE]',
+    name: `Sunflower Inc ${E2E_EPE}`,
     breakdown: {
       '1739750400': 292.26185874744425,
       '1739923200': 369.17186298852914,
@@ -36,7 +38,7 @@ const PoolsExpensesResponse = {
   },
 };
 
-const PoolsExpensesSourceResponse = {
+const PoolsExpensesSourceMock = {
   expenses: {
     total: 1111.111111111111,
     previous_total: 5333.019745918592,
@@ -53,7 +55,7 @@ const PoolsExpensesSourceResponse = {
         },
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 39.3672132062,
         },
@@ -97,7 +99,7 @@ const PoolsExpensesSourceResponse = {
       '1740096000': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 57.837255615800025,
         },
@@ -147,7 +149,7 @@ const PoolsExpensesSourceResponse = {
       '1740182400': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 57.34778389320001,
         },
@@ -197,7 +199,7 @@ const PoolsExpensesSourceResponse = {
       '1738368000': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 54.65512288240001,
         },
@@ -247,7 +249,7 @@ const PoolsExpensesSourceResponse = {
       '1739577600': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 54.65217683120004,
         },
@@ -297,7 +299,7 @@ const PoolsExpensesSourceResponse = {
       '1739491200': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 54.60239607980001,
         },
@@ -347,7 +349,7 @@ const PoolsExpensesSourceResponse = {
       '1738886400': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 54.09097941680001,
         },
@@ -397,7 +399,7 @@ const PoolsExpensesSourceResponse = {
       '1738627200': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 53.8690424456,
         },
@@ -447,7 +449,7 @@ const PoolsExpensesSourceResponse = {
       '1738972800': [
         {
           id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_ES}`,
           type: 'aws_cnr',
           expense: 53.04583503440002,
         },
@@ -498,7 +500,7 @@ const PoolsExpensesSourceResponse = {
     cloud: [
       {
         id: '42e6a779-6b1f-4469-b221-412f7aa15466',
-        name: 'AWS HQ [E2E_EX]',
+        name: `AWS HQ ${E2E_ES}`,
         type: 'aws_cnr',
         total: 1905.6799510878,
         previous_total: 1799.7963922594004,
@@ -556,7 +558,7 @@ const PoolsExpensesSourceResponse = {
   },
 };
 
-const PoolsExpensesPoolResponse = {
+const PoolsExpensesPoolMock = {
   expenses: {
     total: 5074.293801968137,
     previous_total: 5333.0197459186265,
@@ -567,7 +569,7 @@ const PoolsExpensesPoolResponse = {
       '1739059200': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 62.8178318874,
         },
@@ -647,7 +649,7 @@ const PoolsExpensesPoolResponse = {
       '1739404800': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 62.7182378414,
         },
@@ -733,7 +735,7 @@ const PoolsExpensesPoolResponse = {
         },
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 39.1865380402,
         },
@@ -807,7 +809,7 @@ const PoolsExpensesPoolResponse = {
       '1740096000': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 57.468868213200025,
         },
@@ -887,7 +889,7 @@ const PoolsExpensesPoolResponse = {
       '1740182400': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 56.98268816100001,
         },
@@ -967,7 +969,7 @@ const PoolsExpensesPoolResponse = {
       '1738368000': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 54.32815738080001,
         },
@@ -1047,7 +1049,7 @@ const PoolsExpensesPoolResponse = {
       '1739577600': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 54.307178206199964,
         },
@@ -1127,7 +1129,7 @@ const PoolsExpensesPoolResponse = {
       '1739491200': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 54.25074678320001,
         },
@@ -1207,7 +1209,7 @@ const PoolsExpensesPoolResponse = {
       '1738886400': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 53.75902583960002,
         },
@@ -1287,7 +1289,7 @@ const PoolsExpensesPoolResponse = {
       '1738627200': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 53.545057627200016,
         },
@@ -1367,7 +1369,7 @@ const PoolsExpensesPoolResponse = {
       '1738972800': [
         {
           id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-          name: 'AWS HQ [E2E_EX]',
+          name: `AWS HQ ${E2E_EP}`,
           purpose: 'budget',
           expense: 52.70669194140002,
         },
@@ -1448,7 +1450,7 @@ const PoolsExpensesPoolResponse = {
     pool: [
       {
         id: '349414ea-b340-48fa-b57e-6cea84c1c3e5',
-        name: 'AWS HQ [E2E_EX]',
+        name: `AWS HQ ${E2E_EP}`,
         purpose: 'budget',
         total: 1408.3514846816004,
         previous_total: 1788.2666242718003,
@@ -1541,7 +1543,7 @@ const PoolsExpensesPoolResponse = {
   },
 };
 
-const PoolsExpensesOwnerResponse = {
+const PoolsExpensesOwnerMock = {
   expenses: {
     total: 5074.293801968135,
     previous_total: 5333.019745918627,
@@ -1552,7 +1554,7 @@ const PoolsExpensesOwnerResponse = {
       '1738713600': [
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 117.05651835434375,
         },
         {
@@ -1589,7 +1591,7 @@ const PoolsExpensesOwnerResponse = {
       '1740355200': [
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 92.36176974484874,
         },
         {
@@ -1626,7 +1628,7 @@ const PoolsExpensesOwnerResponse = {
       '1739318400': [
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 111.2772803445513,
         },
         {
@@ -1663,7 +1665,7 @@ const PoolsExpensesOwnerResponse = {
       '1738540800': [
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 107.91560197122959,
         },
         {
@@ -1705,7 +1707,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 88.97526645163626,
         },
         {
@@ -1742,7 +1744,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 64.55762428661131,
         },
         {
@@ -1774,7 +1776,7 @@ const PoolsExpensesOwnerResponse = {
       '1740268800': [
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 101.86904008703752,
         },
         {
@@ -1816,7 +1818,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 86.31259707578259,
         },
         {
@@ -1853,7 +1855,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 95.87640453372362,
         },
         {
@@ -1890,7 +1892,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 89.24812133659736,
         },
         {
@@ -1927,7 +1929,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 44.181358230454336,
         },
         {
@@ -1964,7 +1966,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 43.90374547298582,
         },
         {
@@ -2001,7 +2003,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 77.60002658674429,
         },
         {
@@ -2038,7 +2040,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 96.85357441144924,
         },
         {
@@ -2075,7 +2077,7 @@ const PoolsExpensesOwnerResponse = {
         },
         {
           id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-          name: '[E2E_EO]Edwin Gagnon',
+          name: `${E2E_EO}Edwin Gagnon`,
           expense: 88.14932986654934,
         },
         {
@@ -2108,7 +2110,7 @@ const PoolsExpensesOwnerResponse = {
     employee: [
       {
         id: 'd2477dcd-1a9b-4aec-bd55-d01ce1f778d4',
-        name: '[E2E_EO]Edwin Gagnon',
+        name: `${E2E_EO}Edwin Gagnon`,
         total: 2152.0613048073374,
         previous_total: 2447.1740208352026,
       },
@@ -2152,7 +2154,7 @@ const PoolsExpensesOwnerResponse = {
   },
 };
 
-const RegionExpensesResponse = {
+const RegionExpensesMock = {
   expenses: {
     total: 1111.1111,
     previous_total: 5847.141660291579,
@@ -2177,7 +2179,7 @@ const RegionExpensesResponse = {
         type: 'alibaba_cnr',
       },
       {
-        name: '[E2E_RG] us-west-2',
+        name: `${E2E_ERG} us-west-2`,
         id: 'us-west-2',
         total: 1439.1502305229997,
         previous_total: 1632.497026537799,
@@ -2252,21 +2254,22 @@ const RegionExpensesResponse = {
   },
 };
 
+// ─── Interceptions ──────────────────────────────────────────────────────────
 export const expensesInterceptions: InterceptionEntry[] = [
   {
     url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
-    mock: PoolsExpensesResponse,
+    mock: PoolsExpensesMock,
   },
 ];
 export const expensesMapInterceptions: InterceptionEntry[] = [
-  { url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesResponse },
+  { url: `/v2/organizations/[^/]+/region_expenses?.*$`, mock: RegionExpensesMock },
 ];
 export const expensesBreakdownsInterceptions: InterceptionEntry[] = [
-  { url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceResponse },
-  { url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolResponse },
-  { url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerResponse },
+  { url: `/v2/pools_expenses/[^/]+filter_by=cloud`, mock: PoolsExpensesSourceMock },
+  { url: `/v2/pools_expenses/[^/]+filter_by=pool`, mock: PoolsExpensesPoolMock },
+  { url: `/v2/pools_expenses/[^/]+filter_by=employee`, mock: PoolsExpensesOwnerMock },
   {
     url: `/v2/pools_expenses/[^/]+?end_date=[0-9]+&start_date=[0-9]+(?!.*filter)`,
-    mock: PoolsExpensesResponse,
+    mock: PoolsExpensesMock,
   },
 ];
