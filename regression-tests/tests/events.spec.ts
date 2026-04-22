@@ -1,21 +1,11 @@
-import { test } from "../fixtures/page.fixture";
-import { expect } from "@playwright/test";
-import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { eventsInterceptions } from "../mocks/events.mocks";
+import { test } from '../fixtures/page.fixture';
+import { eventsInterceptions } from '../mocks/events.mocks';
+import { captureScreenshot, regressionOptions } from '../utils/test-helpers';
 
-test.describe('FFC: Events', () => {
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: eventsInterceptions } });
+test.use(regressionOptions(eventsInterceptions));
 
-  test('Page matches screenshots', async ({ eventsPage }) => {
-    await test.step('Navigate to Events page', async () => {
-      await eventsPage.navigateToURL();
-    });
-
-    await test.step('Page content', async () => {
-      await eventsPage.heading.hover();
-      await roundElementDimensions(eventsPage.main);
-      await eventsPage.clickEventsTable();
-      await expect(eventsPage.main).toHaveScreenshot('Events-Container--Expanded.png');
-    });
-  })
-})
+test('FFC: Events — page matches screenshots', async ({ eventsPage }) => {
+  await eventsPage.navigateToURL();
+  await eventsPage.clickEventsTable();
+  await captureScreenshot(eventsPage.main, 'Events-Container--Expanded.png', eventsPage.heading);
+});

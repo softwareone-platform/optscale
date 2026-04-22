@@ -1,39 +1,24 @@
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
-import { roundElementDimensions } from '../utils/roundElementDimensions';
 import { cloudAccountsInterceptions } from '../mocks/cloud-accounts.mocks';
+import { captureScreenshot, regressionOptions } from '../utils/test-helpers';
 
 test.describe('FFC: Cloud Account', () => {
+  test.use(regressionOptions(cloudAccountsInterceptions));
 
-  test.use({
-    restoreSession: true,
-    setFixedTime: true,
-    interceptAPI: { entries: cloudAccountsInterceptions },
+  test('List page matches screenshots', async ({ cloudAccountsPage }) => {
+    await cloudAccountsPage.navigateToURL();
+    await captureScreenshot(cloudAccountsPage.main, 'CloudAccounts-Container.png', cloudAccountsPage.heading);
   });
 
-  test('Page matches screenshots', async ({ cloudAccountsPage }) => {
-    await test.step('Navigate to Cloud Accounts page', async () => {
-      await cloudAccountsPage.navigateToURL();
-    });
-
-    await test.step('Page content', async () => {
-      await cloudAccountsPage.heading.hover();
-      await roundElementDimensions(cloudAccountsPage.main);
-      await expect(cloudAccountsPage.main).toHaveScreenshot('CloudAccounts-Container.png');
-    });
-  });
-
-  test('Page Connect - AWS Root matches screenshots', async ({
-    cloudAccountsPage,
-    cloudAccountsConnectPage,
-  }) => {
+  test('Connect — AWS Root matches screenshots', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
 
     await cloudAccountsConnectPage.clickAwsRootBtn();
     await cloudAccountsConnectPage.clickBtnAssumedRole(true);
-    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts_ConnectAwsManagement--AssumedRole.png');
+    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AssumedRole.png');
     await cloudAccountsConnectPage.clickBtnAccessKey();
-    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts_ConnectAwsManagement--AccessKey.png');
+    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AccessKey.png');
 
     await cloudAccountsConnectPage.clickBtnMember();
     await cloudAccountsConnectPage.clickBtnAssumedRole(true);
@@ -45,22 +30,16 @@ test.describe('FFC: Cloud Account', () => {
     await cloudAccountsConnectPage.clickBtnAssumedRole(true);
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AssumedRole.png');
     await cloudAccountsConnectPage.clickBtnAccessKey();
-    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAws--StandardAccessKey.png');
+    await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AccessKey.png');
   });
 
-  test('Page Connect - Azure Tenant matches screenshots', async ({
-    cloudAccountsPage,
-    cloudAccountsConnectPage,
-  }) => {
+  test('Connect — Azure Tenant matches screenshots', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.clickAzureTenantBtn();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAzureTenant.png');
   });
 
-  test('Page Connect - Google Cloud matches screenshots', async ({
-    cloudAccountsPage,
-    cloudAccountsConnectPage,
-  }) => {
+  test('Connect — Google Cloud matches screenshots', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.clickGoogleCloudBtn(true);
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectGoogleCloud.png');

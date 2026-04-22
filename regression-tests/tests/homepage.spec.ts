@@ -1,43 +1,40 @@
-import { test } from "../fixtures/page.fixture";
-import { expect } from "@playwright/test";
-import { roundElementDimensions } from "../utils/roundElementDimensions";
-import { homepageInterceptions } from "../mocks/homepage.mocks";
+import { test } from '../fixtures/page.fixture';
+import { expect } from '@playwright/test';
+import { homepageInterceptions } from '../mocks/homepage.mocks';
+import { roundElementDimensions } from '../utils/roundElementDimensions';
+import { regressionOptions } from '../utils/test-helpers';
 
-test.describe('FFC: Home', () => {
+test.use(regressionOptions(homepageInterceptions));
 
-  test.use({ restoreSession: true, setFixedTime: true, interceptAPI: { entries: homepageInterceptions } });
+test('FFC: Home — all dashboard blocks match screenshots', async ({ homePage }) => {
+  await homePage.navigateToURL();
+  await homePage.waitForAllBoxesToLoad();
+  await homePage.fitViewportToFullPage();
 
-  test('Blocks matches screenshots', async ({ homePage }) => {
-    await test.step('Set up test data', async () => {
-      await homePage.navigateToURL();
-      await homePage.waitForAllBoxesToLoad();
-      await homePage.fitViewportToFullPage();
+  const blocks = [
+    {
+      name: 'Organization Expenses',
+      locator: homePage.organizationExpensesBlock,
+      snapshot: 'Home-Block--OrganizationExpenses.png',
+    },
+    { name: 'Top Resources', locator: homePage.topResourcesBlock, snapshot: 'Home-Block--TopResources.png' },
+    { name: 'Recommendations', locator: homePage.recommendationsBlock, snapshot: 'Home-Block--Recommendations.png' },
+    {
+      name: 'Policy Violations',
+      locator: homePage.policyViolationsBlock,
+      snapshot: 'Home-Block--PolicyViolations.png',
+    },
+    {
+      name: 'Pools Requiring Attn.',
+      locator: homePage.poolsRequiringAttentionBlock,
+      snapshot: 'Home-Block--PoolsRequiringAttention.png',
+    },
+  ];
+
+  for (const { name, locator, snapshot } of blocks) {
+    await test.step(`${name} block`, async () => {
+      await roundElementDimensions(locator);
+      await expect(locator).toHaveScreenshot(snapshot);
     });
-
-    await test.step('Organization Expenses Block', async () => {
-      await roundElementDimensions(homePage.organizationExpensesBlock);
-
-      await expect(homePage.organizationExpensesBlock).toHaveScreenshot('Home-OrganizationExpanses.png');
-    });
-
-    await test.step('TopResources Block', async () => {
-      await roundElementDimensions(homePage.topResourcesBlock);
-      await expect(homePage.topResourcesBlock).toHaveScreenshot('Home-TopResources.png');
-    });
-
-    await test.step('Recommendations Block', async () => {
-      await roundElementDimensions(homePage.recommendationsBlock);
-      await expect(homePage.recommendationsBlock).toHaveScreenshot('Home-Recommendations.png');
-    });
-
-    await test.step('PolicyViolations Block', async () => {
-      await roundElementDimensions(homePage.policyViolationsBlock);
-      await expect(homePage.policyViolationsBlock).toHaveScreenshot('Home-PolicyViolations.png');
-    });
-
-    await test.step('Pools Requiring Attention Block', async () => {
-      await roundElementDimensions(homePage.poolsRequiringAttentionBlock);
-      await expect(homePage.poolsRequiringAttentionBlock).toHaveScreenshot('Home-PoolsRequiringAttention.png');
-    });
-  });
-})
+  }
+});
