@@ -1,74 +1,69 @@
-import { Page, Route } from '@playwright/test';
-import { debugLog } from './debug-logging';
+import type { Page, Route } from '@playwright/test';
 import type { InterceptionEntry } from '@/types';
+import { debugLog } from './debug-logging';
 
-const HTTP_STATUS_OK = 200;
-const CONTENT_TYPE_JSON = 'application/json';
+const OK_JSON = { status: 200, contentType: 'application/json' } as const;
 
-/**
- * Responds to a route with mock JSON data
- */
-export const respondWithMockData = async <T>(route: Route, mock: T): Promise<void> => {
-  await route.fulfill({
-    status: HTTP_STATUS_OK,
-    contentType: CONTENT_TYPE_JSON,
-    body: JSON.stringify(mock),
-  });
-};
+/** Fulfills a route with `mock` serialised as JSON. */
+export const respondWithMockData = <T>(route: Route, mock: T): Promise<void> =>
+  route.fulfill({ ...OK_JSON, body: JSON.stringify(mock) });
 
-export const createInterceptorId = (gql?: string, url?: string): string => (gql ? `GraphQL:${gql}` : `REST:${url}`);
+/** Stable identifier used in debug logs. */
+export const createInterceptorId = (gql?: string, url?: string): string =>
+  gql ? `GraphQL:${gql}` : `REST:${url}`;
 
-/**
- * Intercepts REST API requests matching the provided pattern
- */
-export async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock: T, onIntercepted: () => void): Promise<void> {
+/** Intercepts REST requests matching `pattern`. */
+export async function interceptRESTRequest<T>(
+  page: Page,
+  pattern: RegExp,
+  mock: T,
+  onHit: () => void,
+): Promise<void> {
   await page.route(pattern, async route => {
-    onIntercepted();
-    return await respondWithMockData(route, mock);
+    onHit();
+    await respondWithMockData(route, mock);
   });
 }
 
 /**
- * Intercepts GraphQL requests matching the provided operation name.
- * Matches on the request URL (e.g. `api?op=<operationName>`) so that each
- * operation gets its own route handler.
+ * Intercepts GraphQL requests by operation name. Matches on the `?op=<name>`
+ * URL param so each operation gets its own handler, then double-checks the
+ * `operationName` in the POST body before fulfilling.
  */
-async function interceptGraphQLRequest(page: Page, operationName: string, mock: any, onIntercepted: () => void) {
-  const requestUrl = new RegExp(`[?&]op=${operationName}(?:&|$)`);
+async function interceptGraphQLRequest<T>(
+  page: Page,
+  operationName: string,
+  mock: T,
+  onHit: () => void,
+): Promise<void> {
+  const urlPattern = new RegExp(`[?&]op=${operationName}(?:&|$)`);
 
-  await page.route(requestUrl, async route => {
+  await page.route(urlPattern, async route => {
     const postData = route.request().postData();
     if (!postData) return route.fallback();
 
-    const body = JSON.parse(postData);
-
-    if (body.operationName !== operationName) {
-      debugLog(`[GraphQL] skip ${operationName} (got ${body.operationName})`);
+    const { operationName: actual } = JSON.parse(postData) as { operationName?: string };
+    if (actual !== operationName) {
+      debugLog(`[GraphQL] skip ${operationName} (got ${actual ?? 'none'})`);
       return route.fallback();
     }
 
-    onIntercepted();
-    return await respondWithMockData(route, mock);
+    onHit();
+    await respondWithMockData(route, mock);
   });
 }
 
-/**
- * Sets up API interceptors for Playwright tests.
- *
- * @param page - The Playwright `Page` object where the interceptors will be applied
- * @param config - Array of interception configurations
- */
+/** Registers every entry in `config` as a Playwright route handler. */
 export async function apiInterceptors(page: Page, config: InterceptionEntry[]): Promise<void> {
-  const interceptPromises = config.map(({ url, mock, gql }) => {
-    const urlRegExp = new RegExp(url || '/api$');
-    const interceptorId = createInterceptorId(gql, url);
+  await Promise.all(
+    config.map(({ url, mock, gql }) => {
+      const id = createInterceptorId(gql, url);
+      debugLog(`[Register] ${id}`);
+      const onHit = () => debugLog(`[Hit] ${id}`);
 
-    debugLog(`[Register] ${interceptorId}`);
-
-    const onHit = () => debugLog(`[Hit] ${interceptorId}`);
-
-    return gql ? interceptGraphQLRequest(page, gql, mock, onHit) : interceptRESTRequest(page, urlRegExp, mock, onHit);
-  });
-
-  await Promise.all(interceptPromises);
+      return gql
+        ? interceptGraphQLRequest(page, gql, mock, onHit)
+        : interceptRESTRequest(page, new RegExp(url ?? '/api$'), mock, onHit);
+    }),
+  );
 }

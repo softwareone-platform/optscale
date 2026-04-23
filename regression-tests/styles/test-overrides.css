@@ -3,3 +3,13 @@
 [data-test-id='alert_error'] {
   display: none !important;
 }
+
+/*
+ * Hide the MUI top-right snackbar (e.g. the "pending invitation" info banner)
+ * for any spec that opts in by adding the `e2e-test` class to <body> via
+ * `page.evaluate`. Tests that screenshot the snackbar itself simply don't
+ * add the class.
+ */
+body.e2eTest-hideSnackbar .MuiSnackbar-anchorOriginTopRight {
+  display: none !important;
+}

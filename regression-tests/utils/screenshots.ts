@@ -3,44 +3,26 @@ import { expect, Locator, Page } from '@playwright/test';
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
 
 export interface CaptureOptions {
-  /**
-   * Element to hover before capturing, to neutralise hover state elsewhere on
-   * the page. Defaults to `target`. Ignored when `skipHover` is `true`.
-   */
+  /** Element hovered before the shot. Defaults to `target`. */
   hoverAnchor?: Locator;
-  /**
-   * Skip the hover step entirely. Use for hover-sensitive widgets (header,
-   * menus, tiles that react to pointer events).
-   */
+  /** Skip the hover step entirely (for hover-sensitive widgets). */
   skipHover?: boolean;
-  /**
-   * When set, resize the viewport so the full target is visible before
-   * snapshotting. Pass any object exposing `fitViewportToFullPage()`
-   * (typically the page object itself).
-   */
+  /** Page object exposing `fitViewportToFullPage()` — resizes before snapshotting. */
   fitViewport?: { fitViewportToFullPage: () => Promise<void> };
   /** Forwarded to `toHaveScreenshot`. */
   screenshotOptions?: ScreenshotOptions;
 }
 
+const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
+
 /**
- * Waits until the page has been visibly quiet for `idleMs` in a row.
- *
- * Combines three orthogonal signals:
- *   1. `document.fonts.ready`              — text metrics final.
- *   2. `MutationObserver` on `<html>`      — DOM has stopped changing.
- *   3. Final bounding-box sample on target — catches CSS-only layout shifts
- *                                            (animations, transitions) that
- *                                            don't mutate the DOM.
- *
- * More reliable than polling `boundingBox()` because it runs inside the page,
- * reacts to every DOM mutation, and resets its timer on each one. A page that
- * hydrates async content in several waves will wait out all waves in a single
- * call instead of prematurely returning between two of them.
+ * Waits until the page has been quiet for `idleMs` in a row.
+ * Combines fonts-ready, DOM-mutation silence, and a bbox cross-check to
+ * catch CSS-only transitions (e.g. MUI Accordion) that don't fire mutations.
  */
 export async function waitForPageIdle(
   target: Locator,
-  { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {}
+  { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {},
 ): Promise<void> {
   const page: Page = target.page();
 
@@ -60,10 +42,7 @@ export async function waitForPageIdle(
 
         const reset = () => {
           clearTimeout(timer);
-          if (performance.now() > deadline) {
-            done();
-            return;
-          }
+          if (performance.now() > deadline) return done();
           timer = setTimeout(done, idleMs);
         };
 
@@ -77,13 +56,10 @@ export async function waitForPageIdle(
 
         reset();
       }),
-    { idleMs, maxWaitMs }
+    { idleMs, maxWaitMs },
   );
 
-  // Final cross-check: two consecutive bbox samples match. Guards against
-  // CSS-only transitions (e.g. MUI Accordion height interpolation) that don't
-  // fire mutations.
-  const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+  // Cross-check: two consecutive bbox samples match.
   for (let i = 0; i < 10; i++) {
     const a = await target.boundingBox();
     await sleep(50);
@@ -93,22 +69,18 @@ export async function waitForPageIdle(
 }
 
 /**
- * Take a stable screenshot of a region.
+ * Take a stable screenshot of a region: hover → wait idle → (optionally)
+ * fit viewport and wait again → `toHaveScreenshot`.
  *
- *   1. Hover a neutral anchor (or skip).
- *   2. Wait for the page to go idle (fonts + DOM mutations + stable layout).
- *   3. Optionally fit the viewport to the target's full height — then wait
- *      idle again, because viewport resizes trigger reflows.
- *   4. `expect(target).toHaveScreenshot(name, screenshotOptions)`.
- *
- * Intentionally does **not** pin inline width/height on the target. Doing so
- * freezes animating elements at their in-progress size and causes persistent
- * pixel diffs that `toHaveScreenshot` can never reconcile.
+ * Deliberately does NOT pin inline width/height on `target` — that freezes
+ * mid-animation sizes and causes persistent pixel diffs.
  */
-export async function captureScreenshot(target: Locator, name: string, options: CaptureOptions = {}): Promise<void> {
-  if (!options.skipHover) {
-    await (options.hoverAnchor ?? target).hover();
-  }
+export async function captureScreenshot(
+  target: Locator,
+  name: string,
+  options: CaptureOptions = {},
+): Promise<void> {
+  if (!options.skipHover) await (options.hoverAnchor ?? target).hover();
 
   await waitForPageIdle(target);
 

@@ -3,13 +3,16 @@ import { settingsInterceptions } from '@/mocks';
 import { captureScreenshot } from '@/utils/screenshots';
 
 test.describe(() => {
-  test.use({
-    hideTopRightSnackbar: true,
-    interceptAPI: { entries: settingsInterceptions },
-  });
+  test.use({ interceptAPI: { entries: settingsInterceptions } });
 
   test('FFC: Settings', async ({ settingsPage }) => {
+
     await settingsPage.navigateToURL();
+
+    await settingsPage.page.evaluate(() => {
+      document.body.classList.add('e2eTest-hideSnackbar');
+
+    });
 
     const tabs: Array<{ label: string; open?: () => Promise<void>; snapshot: string }> = [
       { label: 'Organizations tab', snapshot: 'Settings-Container--Organization.png' },

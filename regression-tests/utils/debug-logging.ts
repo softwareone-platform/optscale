@@ -1,25 +1,29 @@
-/**
- * Logs a debug message to the console if debugging is enabled.
- *
- * This function checks the `DEBUG_LOG` environment variable to determine
- * if debug logging is enabled. If it is set to 'true', the provided message
- * is logged to the console with a `[DEBUG]` prefix.
- *
- * @param {string} message - The debug message to log.
- */
-export function debugLog(message: string) {
-  if (process.env.DEBUG_LOG === 'true') {
-    console.debug(`[DEBUG] ${message}`);
-  }
+import type { Page } from '@playwright/test';
+import { env } from './env';
+
+/** Node-side debug log. Enabled only when `DEBUG_LOG=true`. */
+export function debugLog(message: string): void {
+  if (env.debugLog) console.debug(`[DEBUG] ${message}`);
 }
-/**
- * Logs an error message to the console.
- *
- * This function prefixes the provided message with `[ERROR]` and logs it
- * to the console using `console.error`.
- *
- * @param {string} message - The error message to log.
- */
-export function errorLog(message: string) {
+
+/** Node-side error log. Always enabled. */
+export function errorLog(message: string): void {
   console.error(`[ERROR] ${message}`);
 }
+
+/**
+ * Forwards browser-side `console.error` output to the Node-side test runner.
+ * No-op unless `BROWSER_ERROR_LOGGING=true`.
+ */
+
+export function attachBrowserErrorLogging(page: Page): void {
+  if (!env.browserErrorLogging) return;
+
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      console.error(`[Browser Console Error] ${msg.text()}`);
+    }
+  });
+}
+
+

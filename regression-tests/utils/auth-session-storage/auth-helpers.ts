@@ -2,28 +2,17 @@ import { EStorageStatePath } from '@/types';
 import { APIRequestContext, request } from '@playwright/test';
 import { DemoAuthCredentials, LiveDemoAuthResponse } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
+import { env, requireEnv } from '@/utils/env';
 
-const baseAPIUrl: string = process.env.LIVE_DEMO_API || '';
+const baseAPIUrl: string = env.liveDemoApi;
 
 export class LiveDemoService {
-  private static readonly token: string = process.env.LIVE_DEMO_TOKEN || '';
-
-  private static validateEnvironment(): void {
-    if (!this.token || !baseAPIUrl) {
-      throw new Error(
-        `Live demo environment variables are not properly configured. ` +
-          `Required: LIVE_DEMO_TOKEN and LIVE_DEMO_API. ` +
-          `Missing: ${!this.token ? 'LIVE_DEMO_TOKEN ' : ''}${!baseAPIUrl ? 'LIVE_DEMO_API' : ''}`
-      );
-    }
-  }
+  private static readonly token: string = env.liveDemoToken;
 
   /**
    * Sends a POST request to /restapi/v2/live_demo with given email and subscribe status.
-   * @param email - User's email address
-   * @param subscribe - Whether the user wants to subscribe
    */
-  static async getDemoLoginCredentials(email: string, subscribe: boolean = false): Promise<DemoAuthCredentials> {
+  static async getDemoLoginCredentials(email: string, subscribe = false): Promise<DemoAuthCredentials> {
     const context = await this.createContext();
 
     const response = await context.post('/restapi/v2/live_demo', {
@@ -39,22 +28,17 @@ export class LiveDemoService {
   }
 
   static hasCachedDemoCredentials(): boolean {
-    const file = safeReadJsonFile(EStorageStatePath.liveDemoUser);
+    const file = safeReadJsonFile<{ demoAuthCredentials?: DemoAuthCredentials }>(EStorageStatePath.liveDemoUser);
+    const cached = file?.demoAuthCredentials;
 
-    return (
-      file?.demoAuthCredentials &&
-      isCurrentDateLower(file.demoAuthCredentials.created_at) &&
-      baseAPIUrl === file.demoAuthCredentials.baseApiUrl
-    );
+    return !!cached && isCurrentDateLower(cached.created_at) && cached.baseApiUrl === baseAPIUrl;
   }
 
-  /**
-   * Creates a new APIRequestContext with the necessary headers.
-   */
+  /** Creates a new APIRequestContext with the necessary headers. */
   private static async createContext(): Promise<APIRequestContext> {
-    LiveDemoService.validateEnvironment();
+    requireEnv('liveDemoApi', 'liveDemoToken');
 
-    return await request.newContext({
+    return request.newContext({
       baseURL: baseAPIUrl,
       extraHTTPHeaders: {
         'X-LiveDemo-Token': this.token,
