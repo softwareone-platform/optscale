@@ -1,10 +1,10 @@
 import type { Page } from '@playwright/test';
 
 /** A class that takes a Playwright `Page` in its constructor. */
-export type PageObjectConstructor<T = unknown> = new (page: Page) => T;
+type PageObjectConstructor<T = unknown> = new (page: Page) => T;
 
 /** The async factory shape Playwright expects for every fixture. */
-export type PageObjectFixtureFactory<T> = (
+type PageObjectFixtureFactory<T> = (
   args: { page: Page },
   use: (pageObject: T) => Promise<void>,
 ) => Promise<void>;
@@ -15,7 +15,7 @@ export type FixtureInstances<Constructors extends Record<string, PageObjectConst
 };
 
 /** Turns a PascalCase-keyed map into a camelCase-keyed one. */
-export type CamelCasedConstructors<Constructors extends Record<string, PageObjectConstructor>> = {
+type CamelCasedConstructors<Constructors extends Record<string, PageObjectConstructor>> = {
   [Name in keyof Constructors & string as Uncapitalize<Name>]: Constructors[Name];
 };
 

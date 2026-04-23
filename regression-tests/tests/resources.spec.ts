@@ -29,11 +29,11 @@ test.describe(() => {
     });
 
     const tabs: Array<{ label: string; open: () => Promise<void>; snapshot: string; withCharts?: boolean }> = [
-      { label: 'Details tab', open: () => resourceDetailsPage.clickDetailsTab(), snapshot: 'ResourceDetails-Container--Details.png' },
+      { label: 'Details tab', open: () => resourceDetailsPage.clickTab(resourceDetailsPage.detailsTab), snapshot: 'ResourceDetails-Container--Details.png' },
       {
         label: 'Constraints tab',
         open: async () => {
-          await resourceDetailsPage.clickConstraintsTab();
+          await resourceDetailsPage.clickTab(resourceDetailsPage.constraintsTab);
           await resourceDetailsPage.constraintsTable.waitFor();
         },
         snapshot: 'ResourceDetails-Container--Constraints.png',
@@ -41,7 +41,7 @@ test.describe(() => {
       {
         label: 'Expenses tab — Grouped',
         open: async () => {
-          await resourceDetailsPage.clickExpensesTab();
+          await resourceDetailsPage.clickTab(resourceDetailsPage.expensesTab);
           await resourceDetailsPage.clickExpensesGroupedButton();
         },
         snapshot: 'ResourceDetails-Container--ExpensesGrouped.png',
@@ -55,7 +55,7 @@ test.describe(() => {
       },
       {
         label: 'Recommendations tab',
-        open: () => resourceDetailsPage.clickRecommendationsTab(),
+        open: () => resourceDetailsPage.clickTab(resourceDetailsPage.recommendationsTab),
         snapshot: 'ResourceDetails-Container--Recommendations.png',
       },
     ];

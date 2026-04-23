@@ -2,7 +2,7 @@ import { expect, Locator, Page } from '@playwright/test';
 
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
 
-export interface CaptureOptions {
+interface CaptureOptions {
   /** Element hovered before the shot. Defaults to `target`. */
   hoverAnchor?: Locator;
   /** Skip the hover step entirely (for hover-sensitive widgets). */

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { EStorageStatePath } from '@/types';
 
 /** Writes `data` as pretty-printed JSON, creating parent directories as needed. */
 export function safeWriteJsonFile(filePath: string, data: unknown): void {
@@ -13,7 +12,7 @@ export function safeWriteJsonFile(filePath: string, data: unknown): void {
 }
 
 /** Reads and parses a JSON file. Returns `null` when the file does not exist. */
-export function safeReadJsonFile<T = unknown>(filePath: EStorageStatePath): T | null {
+export function safeReadJsonFile<T = unknown>(filePath: string): T | null {
   if (!fs.existsSync(filePath)) return null;
 
   try {

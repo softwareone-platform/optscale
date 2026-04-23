@@ -6,12 +6,9 @@ test.describe(() => {
   test.use({ interceptAPI: { entries: settingsInterceptions } });
 
   test('FFC: Settings', async ({ settingsPage }) => {
-
     await settingsPage.navigateToURL();
-
     await settingsPage.page.evaluate(() => {
-      document.body.classList.add('e2eTest-hideSnackbar');
-
+      document.body.classList.add('e2e-hide-snackbar');
     });
 
     const tabs: Array<{ label: string; open?: () => Promise<void>; snapshot: string }> = [

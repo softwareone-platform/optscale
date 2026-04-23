@@ -1,6 +1,5 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
-import { LARGE_DATA_TIMEOUT } from '@/playwright.config';
 
 export class ResourcesPage extends BasePage {
   readonly heading: Locator;
@@ -24,24 +23,6 @@ export class ResourcesPage extends BasePage {
     this.resourceCountBreakdownChart = this.main.getByTestId('resource_count_breakdown_chart');
     this.tagsBreakdownChart = this.main.getByTestId('tags_breakdown_chart');
     this.firstResourceItemInTable = this.main.locator('table tbody tr').first().locator('a').first();
-  }
-
-  async clickExpensesTab(): Promise<void> {
-    if ((await this.tabExpensesBtn.getAttribute('aria-selected')) !== 'true') {
-      await this.tabExpensesBtn.click();
-      await this.waitForAPIResponseByPartialTextMatch('breakdown_expenses', LARGE_DATA_TIMEOUT);
-      await this.waitForAllProgressBarsToDisappear();
-    }
-  }
-
-  async clickTagsTab(): Promise<void> {
-    await this.tabTagsBtn.click();
-    await this.waitForAllProgressBarsToDisappear();
-  }
-
-  async clickResourceCountTab(): Promise<void> {
-    await this.tabResourceCountBtn.click();
-    await this.waitForAllProgressBarsToDisappear();
   }
 }
 
@@ -67,23 +48,11 @@ export class ResourceDetailsPage extends BasePage {
     this.recommendationsTab = this.page.getByTestId('tab_recommendations');
   }
 
-  private async clickTab(tab: Locator): Promise<void> {
+  async clickTab(tab: Locator): Promise<void> {
     await tab.click();
     await this.waitForAllProgressBarsToDisappear();
   }
 
-  async clickDetailsTab(): Promise<void> {
-    await this.clickTab(this.detailsTab);
-  }
-  async clickConstraintsTab(): Promise<void> {
-    await this.clickTab(this.constraintsTab);
-  }
-  async clickExpensesTab(): Promise<void> {
-    await this.clickTab(this.expensesTab);
-  }
-  async clickRecommendationsTab(): Promise<void> {
-    await this.clickTab(this.recommendationsTab);
-  }
 
   async clickExpensesGroupedButton(): Promise<void> {
     await this.expensesGroupedButton.click();

@@ -44,23 +44,20 @@ npx playwright install chromium
 cp .env.example .env
 ```
 
-Edit `.env` with the appropriate values:
+Edit `.env` with the appropriate values. The complete list of variables the suite reads lives in [`utils/env.ts`](./utils/env.ts):
 
-| Variable                   | Description                                                                                      |
-| -------------------------- | ------------------------------------------------------------------------------------------------ |
-| `BASE_URL`                 | URL of the OptScale instance to test against                                                     |
-| `DEFAULT_USER_ID`          | ID of the test user                                                                              |
-| `DEFAULT_AUTH_USER_ID`     | Auth user ID for the test user                                                                   |
-| `DEFAULT_ORG_ID`           | Organization ID used by tests                                                                    |
-| `CLUSTER_SECRET`           | Cluster secret / admin password                                                                  |
-| `IGNORE_HTTPS_ERRORS`      | Set to `true` to ignore TLS certificate errors                                                   |
-| `BROWSER_ERROR_LOGGING`    | Enable browser console error capture                                                             |
-| `DEBUG_LOG`                | Enable verbose debug logging                                                                     |
-| `LIVE_DEMO_API`            | Live demo API endpoint                                                                           |
-| `LIVE_DEMO_TOKEN`          | Live demo auth token                                                                             |
-| `DEV` / `TEST` / `STAGING` | Convenience URLs for different environments                                                      |
-| `CLEAN_UP`                 | Set to `true` to delete test data after each run (use `false` when debugging)                    |
-| `IS_REGRESSION_RUN`        | When set, snapshots are stored in `snapshots/baseline/` instead of `snapshots/local/<platform>/` |
+| Variable                  | Required? | Description                                                                                                           |
+|---------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------|
+| `BASE_URL`                | no        | Portal URL Playwright points at. Defaults to `http://0.0.0.0:3000`.                                                   |
+| `DEMO_ACCOUNT_API_URL`    | yes¹      | Endpoint that mints demo-account credentials (`POST /restapi/v2/live_demo`).                                          |
+| `DEMO_ACCOUNT_API_TOKEN`  | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
+| `CI`                      | no        | `true` inside CI — enables `forbidOnly`, raises retries, lowers workers. Playwright sets this automatically.          |
+| `IS_REGRESSION_RUN`       | no        | `true` → snapshots compared against `snapshots/baseline/<host>/`. Unset → `snapshots/local/<platform>/` (gitignored). |
+| `IGNORE_HTTPS_ERRORS`     | no        | `true` to accept self-signed / expired certificates in the browser context.                                           |
+| `DEBUG_LOG`               | no        | `true` emits `[DEBUG]`-prefixed messages from `debugLog`.                                                             |
+| `BROWSER_ERROR_LOGGING`   | no        | `true` forwards browser `console.error` output to the Node test runner.                                               |
+
+¹ Required only when `auth.setup.ts` actually mints demo-account credentials. `requireEnv('demoAccountApiUrl', 'demoAccountApiToken')` fails fast with a clear message if either is missing.
 
 ---
 
@@ -99,61 +96,46 @@ The shell script `run_pw.sh` builds and runs a Linux Docker container to produce
 
 ```
 regression-tests/
-├── tests/                          # Test specs — one file per feature area
-│   ├── homepage.spec.ts
-│   ├── cloud-accounts.spec.ts
-│   ├── expenses.spec.ts
-│   ├── events.spec.ts
-│   ├── policies.spec.ts
-│   ├── pools.spec.ts
-│   ├── recommendations.spec.ts
-│   ├── resources.spec.ts
-│   ├── settings.spec.ts
-│   ├── users.spec.ts
-│   └── common-ui.spec.ts
+├── tests/                          # Test specs — auto-discovered by Playwright (`testMatch` in `playwright.config.ts`)
+│   └── *.spec.ts                   # One file per feature area
 │
 ├── pages/                          # Page Object Models (POM)
-│   ├── base-page.ts                # Abstract base class: navigation, waitForLoad, takeScreenshot, shared locators
+│   ├── base-page.ts                # Abstract base class: navigation, waitForLoad, shared locators
 │   ├── layout-components.ts        # Header, sidebar and other shared layout elements
-│   ├── cloud-accounts-pages.ts     # Cloud account list and detail pages
-│   ├── events.page.ts              # Events page
-│   ├── expenses-pages.ts           # Raw expenses and breakdown pages
-│   ├── home.page.ts                # Homepage
-│   ├── policy-pages.ts             # Shared template + concrete POMs for Anomalies / Policies / Tagging Policies list & create pages
-│   ├── pools.page.ts               # Pools page
-│   ├── recommendations.page.ts     # Recommendations page
-│   ├── resources-pages.ts          # Resource list and detail pages
-│   ├── settings.page.ts            # Settings page
-│   ├── users-pages.ts              # User management pages
-│   └── index.ts                    # Barrel re-exports for all page objects
+│   ├── policy-pages.ts             # Shared template for Anomalies / Policies / Tagging Policies list & create pages
+│   ├── index.ts                    # Barrel — every class re-exported here becomes a typed `<className>` fixture
+│   └── *.page.ts / *-pages.ts      # One file per feature; re-export from `index.ts` to auto-register
 │
 ├── fixtures/                       # Playwright custom fixtures
-│   ├── api.fixture.ts              # AuthClient + REST helpers exposed as `api` fixture
-│   └── page.fixture.ts             # All page object instances wired into tests as fixtures
+│   ├── build-fixtures.ts           # Generic helpers: turn `pages/index.ts` into typed fixture factories
+│   └── page.fixture.ts             # `test` export — wires page objects + options (restoreSession, interceptAPI, …) into every spec
 │
 ├── mocks/                          # Static API mock data used for route interceptions
 │   ├── e2e-markers.ts              # Central registry of `[E2E_*]` marker constants
-│   ├── *.mocks.ts                  # Response payloads per feature
-│   └── *-interceptions.mocks.ts    # Route interception configurations per feature
+│   ├── index.ts                    # Barrel re-exports every `*Interceptions` array
+│   └── *.mocks.ts                  # Per-feature payloads + exported `<feature>Interceptions: InterceptionEntry[]`
 │
 ├── setup/
-│   └── auth.setup.ts               # Authenticates once and stores session state for all tests
+│   ├── auth.setup.ts               # Authenticates once and stores session state for all tests
+│   └── demo-account-service.ts     # `DemoAccountService` — mints demo-account credentials via `/restapi/v2/live_demo`
 │
 ├── styles/
 │   ├── pre-screenshot-styles.css   # CSS injected before screenshots to ensure pixel-identical rendering
 │   └── test-overrides.css          # CSS injected on page load to hide noisy/unstable UI elements
 │
 ├── utils/
-│   ├── auth-session-storage/       # Helpers for reading/writing auth tokens from localforage
-│   ├── debug-logging.ts            # Conditional debug/error logging controlled by DEBUG_LOG env var
-│   ├── file.ts                     # File system helpers (PDF conversion, image comparison)
+│   ├── debug-logging.ts            # `debugLog` / `errorLog` + `attachBrowserErrorLogging`, gated by env flags
+│   ├── demo-account-session.ts     # Injects localforage, restores the cached demo-account session
+│   ├── env.ts                      # Single source of truth for `process.env.*` + `requireEnv(...)` validator
+│   ├── file.ts                     # `safeReadJsonFile<T>` / `safeWriteJsonFile` helpers
 │   ├── interceptor.ts              # Route interception implementation (REST + GraphQL mock routing)
-│   └── screenshots.ts              # captureScreenshot + waitForPageIdle helpers
+│   └── screenshots.ts              # `captureScreenshot` + `waitForPageIdle` helpers
 │
 ├── types/
 │   ├── api-response.types.ts       # Typed API response shapes
-│   ├── enums.ts                    # Shared enums (roles, policy types, …)
-│   └── interceptor.types.ts        # `InterceptionEntry` (GraphQL/REST mock-route entry)
+│   ├── enums.ts                    # Shared enums (roles, policy types, storage-state paths, …)
+│   ├── interceptor.types.ts        # `InterceptionEntry` (GraphQL/REST mock-route entry)
+│   └── index.ts                    # Barrel re-export
 │
 ├── vendor/
 │   └── localforage.min.js          # Third-party script injected into the page to mirror app session storage
@@ -204,8 +186,8 @@ npm run test:docker:update
 
 | Constant             | Value | Purpose                                               |
 | -------------------- | ----- | ----------------------------------------------------- |
-| `TEST_TIMEOUT`       | 30 s  | Maximum time for a single test                        |
-| `ACTION_TIMEOUT`     | 20 s  | Maximum time for a single action (click, fill, …)     |
+| `TEST_TIMEOUT`       | 40 s  | Maximum time for a single test                        |
+| `ACTION_TIMEOUT`     | 30 s  | Maximum time for a single action (click, fill, …)     |
 | `LARGE_DATA_TIMEOUT` | 60 s  | Used explicitly for heavy pages (expenses, resources) |
 
 ---
@@ -284,3 +266,165 @@ Changing the value of an `E2E_*` constant in `e2e-markers.ts` changes every pixe
 3. Commit the constant edit **and** the updated baseline PNGs together.
 
 No mock file needs to be touched — all usages are variable references.
+
+---
+
+## Adding a new test
+
+End-to-end walkthrough: add a mock, a page object, and a spec for a hypothetical **Alerts** page at `/alerts`.
+
+### 1. Page Object
+
+Create **`pages/alerts.page.ts`**. Extend `BasePage`, declare locators in the constructor, expose interaction methods.
+
+```ts
+// pages/alerts.page.ts
+import { Locator, Page } from '@playwright/test';
+import { BasePage } from './base-page';
+
+export class AlertsPage extends BasePage {
+  readonly heading: Locator;
+  readonly addBtn: Locator;
+
+  constructor(page: Page) {
+    super(page, '/alerts');                       // 2nd arg = default URL
+    this.heading = this.main.getByTestId('lbl_alerts');
+    this.addBtn  = this.main.getByTestId('btn_add');
+  }
+
+  async clickAddBtn(): Promise<void> {
+    await this.addBtn.click();
+  }
+}
+```
+
+Register it in the barrel file so the fixture layer picks it up automatically:
+
+```ts
+// pages/index.ts
+export * from './alerts.page';
+```
+
+That's it — a fixture named `alertsPage` is now available on every spec, derived from the class name (`AlertsPage` → `alertsPage`). See [`fixtures/build-fixtures.ts`](./fixtures/build-fixtures.ts) for how.
+
+### 2. Mock data + interceptions
+
+Create **`mocks/alerts.mocks.ts`**. Every user-visible string gets an E2E marker (see [E2E mock markers](#e2e-mock-markers)).
+
+```ts
+// mocks/alerts.mocks.ts
+import { E2E_A } from './e2e-markers';          // add `export const E2E_A = '[E2E_A]';`
+import type { InterceptionEntry } from '@/types';
+
+const AlertsMock = {
+  alerts: [
+    { id: '1', name: `High-cost resource ${E2E_A}`, severity: 'high' },
+    { id: '2', name: `Idle EC2 ${E2E_A}`,           severity: 'low'  },
+  ],
+};
+
+export const alertsInterceptions: InterceptionEntry[] = [
+  // GraphQL operations are matched by operation name:
+  { gql: 'Alerts', mock: AlertsMock },
+
+  // REST endpoints are matched by URL fragment (RegExp-compatible string):
+  // { url: '/restapi/v2/alerts/', mock: AlertsMock },
+];
+```
+
+Re-export the interceptions from the mocks barrel so specs can import it by name:
+
+```ts
+// mocks/index.ts
+export * from './alerts.mocks';
+```
+
+### 3. Spec
+
+Create **`tests/alerts.spec.ts`**. Import `test` from the **project fixture**, not `@playwright/test` — that's what wires in page objects and `interceptAPI`.
+
+```ts
+// tests/alerts.spec.ts
+import { test } from '@/fixtures/page.fixture';
+import { alertsInterceptions } from '@/mocks';
+import { captureScreenshot } from '@/utils/screenshots';
+
+test.describe(() => {
+  test.use({ interceptAPI: { entries: alertsInterceptions } });
+
+  test('FFC: Alerts', async ({ alertsPage }) => {
+    await alertsPage.navigateToURL();
+
+    await test.step('List page', async () => {
+      await captureScreenshot(alertsPage.main, 'Alerts-Container.png', {
+        hoverAnchor: alertsPage.heading,
+      });
+    });
+
+    await test.step('Create form', async () => {
+      await alertsPage.clickAddBtn();
+      await captureScreenshot(alertsPage.main, 'Alerts-Create--Container.png', {
+        hoverAnchor: alertsPage.heading,
+      });
+    });
+  });
+});
+```
+
+Key points:
+
+- **`test.use({ interceptAPI: { entries } })`** registers the mocks before the spec runs. Must be wrapped in `{ entries: [...] }` — see the comment in `page.fixture.ts`.
+- **`alertsPage`** is injected by the fixture — no manual `new AlertsPage(page)`.
+- **`captureScreenshot(target, name, opts)`** hovers a stable anchor, waits for the page to idle, and calls `toHaveScreenshot`. Use `fitViewport: alertsPage` for tall pages; see `utils/screenshots.ts`.
+- **Screenshot names** follow `<Feature>-<Area>--<Variant>.png` (double-dash before the variant). They map 1:1 to baseline PNGs under `snapshots/…`.
+
+#### Fixture options (passed via `test.use({...})`)
+
+All three options are declared in [`fixtures/page.fixture.ts`](./fixtures/page.fixture.ts); defaults match the "typical regression test" case so most specs only need `interceptAPI`.
+
+| Option         | Default  | What it does                                                                                                                                                                                                                                                  |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `restoreSession` | `true`   | Injects the cached live-demo session into `localforage` on a fresh `/` load so the app starts logged-in. Set to `false` only for specs that exercise the login flow itself.                                                                                   |
+| `setFixedTime`   | `true`   | Pins the browser clock to `2025-01-25T12:00:00Z` via `page.clock.setFixedTime` so date-dependent UI (charts, "Last seen 3 days ago", etc.) renders identically run-to-run. Set to `false` for specs that rely on real time or test date-picker logic.         |
+| `interceptAPI`   | `undefined` | Array of REST/GraphQL route mocks (see above). Wrapped in `{ entries: [...] }` to work around a Playwright array-unwrap quirk.                                                                                                                             |
+
+Examples:
+
+```ts
+// Login-flow test — start from a clean browser with no session.
+test.use({ restoreSession: false });
+
+// Time-travel test — let the clock tick naturally.
+test.use({ setFixedTime: false, interceptAPI: { entries: myInterceptions } });
+```
+
+### 4. Generate baselines
+
+Screenshots don't exist yet — generate them once:
+
+```bash
+npm run test:docker:update -- tests/alerts.spec.ts
+```
+
+Review the PNGs in `snapshots/baseline/<host>/` and commit them with the new spec.
+
+### 5. Run
+
+```bash
+# local, single file
+npx playwright test tests/alerts.spec.ts
+
+# against the regression baseline
+npm run test:docker -- tests/alerts.spec.ts
+```
+
+### Checklist when adding a new test
+
+- [ ] `pages/<feature>.page.ts` — class extends `BasePage`, locators declared in constructor.
+- [ ] `pages/index.ts` — re-export the new page.
+- [ ] `mocks/<feature>.mocks.ts` — payload constants + exported `<feature>Interceptions` array.
+- [ ] `mocks/e2e-markers.ts` — new `E2E_*` constant if the feature has its own domain.
+- [ ] `mocks/index.ts` — re-export the new mocks file.
+- [ ] `tests/<feature>.spec.ts` — `import { test } from '@/fixtures/page.fixture'`, `test.use({ interceptAPI })`, `captureScreenshot` per viewpoint.
+- [ ] Baselines regenerated with `npm run test:docker:update`.
+- [ ] Baseline PNGs and code changes committed together.

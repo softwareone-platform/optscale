@@ -14,53 +14,58 @@ test.describe('FFC: Cloud Accounts', () => {
   });
 
   test('Connect — AWS', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
-    await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
-    await cloudAccountsConnectPage.clickAwsRootBtn();
+    const connect = cloudAccountsConnectPage;
+    await connect.prepareConnectPageForScreenshot(cloudAccountsPage);
+    await connect.awsRootBtn.click();
 
     await test.step('Management — Assumed role', async () => {
-      await cloudAccountsConnectPage.clickBtnAssumedRole(true);
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AssumedRole.png');
+      await connect.btnAssumedRole.click();
+      await connect.fitViewportToFullPage();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AssumedRole.png');
     });
 
     await test.step('Management — Access key', async () => {
-      await cloudAccountsConnectPage.clickBtnAccessKey();
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AccessKey.png');
+      await connect.btnAccessKey.click();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AccessKey.png');
     });
 
-    await cloudAccountsConnectPage.clickBtnMember();
+    await connect.btnMember.click();
 
     await test.step('Member — Assumed role', async () => {
-      await cloudAccountsConnectPage.clickBtnAssumedRole(true);
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AssumedRole.png');
+      await connect.btnAssumedRole.click();
+      await connect.fitViewportToFullPage();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AssumedRole.png');
     });
 
     await test.step('Member — Access key', async () => {
-      await cloudAccountsConnectPage.clickBtnAccessKey();
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AccessKey.png');
+      await connect.btnAccessKey.click();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AccessKey.png');
     });
 
-    await cloudAccountsConnectPage.clickBtnStandalone();
+    await connect.btnStandalone.click();
 
     await test.step('Standalone — Assumed role', async () => {
-      await cloudAccountsConnectPage.clickBtnAssumedRole(true);
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AssumedRole.png');
+      await connect.btnAssumedRole.click();
+      await connect.fitViewportToFullPage();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AssumedRole.png');
     });
 
     await test.step('Standalone — Access key', async () => {
-      await cloudAccountsConnectPage.clickBtnAccessKey();
-      await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AccessKey.png');
+      await connect.btnAccessKey.click();
+      await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AccessKey.png');
     });
   });
 
   test('Connect — Azure Tenant', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
-    await cloudAccountsConnectPage.clickAzureTenantBtn();
+    await cloudAccountsConnectPage.azureTenantBtn.click();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAzureTenant.png');
   });
 
   test('Connect — Google Cloud', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
-    await cloudAccountsConnectPage.clickGoogleCloudBtn(true);
+    await cloudAccountsConnectPage.googleCloudBtn.click();
+    await cloudAccountsConnectPage.fitViewportToFullPage();
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectGoogleCloud.png');
   });
 });

@@ -1,8 +1,8 @@
 import { test as base } from '@playwright/test';
 import * as Pages from '@/pages';
 import type { InterceptionEntry } from '@/types';
-import { EStorageStatePath } from '@/types';
-import { restoreUserSessionInLocalForage } from '@/utils/auth-session-storage/localforage-service';
+import { DEMO_ACCOUNT_SESSION_PATH } from '@/types';
+import { restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
 import { attachBrowserErrorLogging } from '@/utils/debug-logging';
 import { apiInterceptors } from '@/utils/interceptor';
 import { buildFixtures, toFixtureMap, type FixtureInstances } from './build-fixtures';
@@ -25,7 +25,7 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
   setFixedTime: [true, { option: true }],
   interceptAPI: [undefined, { option: true }],
 
-  storageState: EStorageStatePath.liveDemoUser,
+  storageState: DEMO_ACCOUNT_SESSION_PATH,
 
   page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
     // Per-test setup (driven by fixture options).

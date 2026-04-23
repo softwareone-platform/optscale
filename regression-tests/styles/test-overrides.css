@@ -10,6 +10,6 @@
  * `page.evaluate`. Tests that screenshot the snackbar itself simply don't
  * add the class.
  */
-body.e2eTest-hideSnackbar .MuiSnackbar-anchorOriginTopRight {
+body.e2e-hide-snackbar .MuiSnackbar-anchorOriginTopRight {
   display: none !important;
 }

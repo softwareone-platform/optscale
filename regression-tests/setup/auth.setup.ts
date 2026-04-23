@@ -1,24 +1,42 @@
 import { expect, test as setup } from '@playwright/test';
-import { getLocalforageRoot, injectLocalforage } from '@/utils/auth-session-storage/localforage-service';
+import { injectLocalforage } from '@/utils/demo-account-session';
 import { safeReadJsonFile, safeWriteJsonFile } from '@/utils/file';
-import { LiveDemoService } from '@/utils/auth-session-storage/auth-helpers';
-import { EStorageStatePath } from '@/types';
+import { DemoAccountService } from './demo-account-service';
+import { DEMO_ACCOUNT_SESSION_PATH, type StoredDemoSession } from '@/types';
+import type { Page } from '@playwright/test';
 
 const DEMO_EMAIL = 'example@mail.com';
 const LOGIN_TIMEOUT = 20_000;
 const LOADING_IMAGE_APPEAR_TIMEOUT = 2_000;
 
+/**
+ * Reads the `root` key from localforage. Throws if the script isn't loaded
+ * or the key is missing. Used once, at the end of the login flow, to capture
+ * what the app wrote before we snapshot it to disk.
+ */
+async function getLocalforageRoot(page: Page): Promise<unknown> {
+  return page.evaluate(async () => {
+    type LF = { getItem: (k: string) => Promise<unknown> };
+    const lf = (window as Window & { localforage?: LF }).localforage;
+    if (!lf) throw new Error('localforage is not loaded');
+
+    const root = await lf.getItem('root');
+    if (!root) throw new Error("No auth data found under key 'root'");
+    return root;
+  });
+}
+
 setup.describe.configure({ retries: 1 });
 
-setup('Login as live demo using generated demo account credentials', async ({ page }) => {
+setup('Login as demo account using generated credentials', async ({ page }) => {
   // eslint-disable-next-line playwright/no-skipped-test
   setup.skip(
-    LiveDemoService.hasCachedDemoCredentials(),
-    'Valid live demo credentials are cached — nothing to do.',
+    DemoAccountService.hasCachedDemoCredentials(),
+    'Valid demo-account credentials are cached — nothing to do.',
   );
 
-  const demoAuthCredentials = await LiveDemoService.getDemoLoginCredentials(DEMO_EMAIL);
-  const { email, password } = demoAuthCredentials;
+  const demoAccountCredentials = await DemoAccountService.getDemoLoginCredentials(DEMO_EMAIL);
+  const { email, password } = demoAccountCredentials;
 
   await setup.step('Navigate to /login', async () => {
     await page.goto('/login', { timeout: LOGIN_TIMEOUT });
@@ -49,13 +67,14 @@ setup('Login as live demo using generated demo account credentials', async ({ pa
       page.context().storageState(),
     ]);
 
-    safeWriteJsonFile(EStorageStatePath.liveDemoUser, {
+    const session: StoredDemoSession = {
       ...storageState,
       localforageStoredSession: { root: authValue },
-      demoAuthCredentials,
-    });
+      demoAccountCredentials,
+    };
+    safeWriteJsonFile(DEMO_ACCOUNT_SESSION_PATH, session);
 
-    const written = safeReadJsonFile(EStorageStatePath.liveDemoUser);
-    expect(written?.demoAuthCredentials?.email).toBe(email);
+    const written = safeReadJsonFile<StoredDemoSession>(DEMO_ACCOUNT_SESSION_PATH);
+    expect(written?.demoAccountCredentials.email).toBe(email);
   });
 });

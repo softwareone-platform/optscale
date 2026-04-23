@@ -1,10 +1,8 @@
-export interface LiveDemoAuthResponse {
+/** Demo-account credentials minted by `DemoAccountService` + the API URL they were minted against. */
+export interface DemoAccountCredentials {
   organization_id: string;
   email: string;
   password: string;
   created_at: number;
-}
-
-export interface DemoAuthCredentials extends LiveDemoAuthResponse {
   baseApiUrl: string;
 }

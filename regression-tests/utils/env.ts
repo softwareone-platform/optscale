@@ -18,14 +18,14 @@ const asString = (value: string | undefined, fallback: string): string =>
 
 export const env = {
   // ─── App under test ────────────────────────────────────────────────────
-  /** Base URL Playwright points at. */
+  /** Base URL Playwright points at (the portal the tests exercise). */
   baseUrl: asString(process.env.BASE_URL, 'http://0.0.0.0:3000'),
 
-  /** Live-demo API endpoint. */
-  liveDemoApi: process.env.LIVE_DEMO_API ?? '',
+  /** Demo-account provisioning endpoint (`POST /restapi/v2/live_demo`). */
+  demoAccountApiUrl: process.env.DEMO_ACCOUNT_API_URL ?? '',
 
-  /** Token used to mint live-demo credentials. */
-  liveDemoToken: process.env.LIVE_DEMO_TOKEN ?? '',
+  /** Bearer token the demo-account endpoint expects in `X-LiveDemo-Token`. */
+  demoAccountApiToken: process.env.DEMO_ACCOUNT_API_TOKEN ?? '',
 
   // ─── Run modes ─────────────────────────────────────────────────────────
   /** `true` when running inside CI. */
@@ -48,20 +48,32 @@ export const env = {
 export type Env = typeof env;
 
 /**
+ * Maps each `env.*` key back to the literal env-var name users set in `.env`.
+ * Kept as an explicit table so error messages from `requireEnv(...)` reference
+ * the name the user actually has to search for.
+ */
+const ENV_VAR_NAMES: Record<keyof Env, string> = {
+  baseUrl: 'BASE_URL',
+  demoAccountApiUrl: 'DEMO_ACCOUNT_API_URL',
+  demoAccountApiToken: 'DEMO_ACCOUNT_API_TOKEN',
+  isCI: 'CI',
+  isRegressionRun: 'IS_REGRESSION_RUN',
+  ignoreHttpsErrors: 'IGNORE_HTTPS_ERRORS',
+  debugLog: 'DEBUG_LOG',
+  browserErrorLogging: 'BROWSER_ERROR_LOGGING',
+};
+
+/**
  * Throws if any of the listed env vars is empty. Call from a consumer right
  * before it needs them (fail-fast, with a single clear error message).
  *
  * @example
- *   requireEnv('liveDemoApi', 'liveDemoToken');
+ *   requireEnv('demoAccountApiUrl', 'demoAccountApiToken');
  */
 export function requireEnv(...keys: Array<keyof Env>): void {
   const missing = keys.filter(key => !env[key]);
   if (missing.length === 0) return;
 
-  const envVarNames = missing.map(camelCaseToScreamingSnakeCase).join(', ');
+  const envVarNames = missing.map(key => ENV_VAR_NAMES[key]).join(', ');
   throw new Error(`Missing required env var${missing.length > 1 ? 's' : ''}: ${envVarNames}`);
 }
-
-/** `liveDemoApi` → `LIVE_DEMO_API` — keeps errors consistent with `.env` file names. */
-const camelCaseToScreamingSnakeCase = (name: string): string =>
-  name.replace(/([A-Z])/g, '_$1').toUpperCase();

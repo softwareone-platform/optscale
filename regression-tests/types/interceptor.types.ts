@@ -10,7 +10,7 @@ type XOR<T, U> =
   | (T & { [K in Exclude<keyof U, keyof T>]?: never })
   | (U & { [K in Exclude<keyof T, keyof U>]?: never });
 
-export type GraphQLInterceptionEntry = { gql: string; mock: unknown };
-export type RESTInterceptionEntry = { url: string; mock: unknown };
+type RESTInterceptionEntry = { url: string; mock: unknown };
+type GraphQLInterceptionEntry = { gql: string; mock: unknown };
 
 export type InterceptionEntry = XOR<GraphQLInterceptionEntry, RESTInterceptionEntry>;

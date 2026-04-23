@@ -18,7 +18,7 @@ export const LARGE_DATA_TIMEOUT = 60000;
 
 const getSnapshotPath = (): string => {
   if (!env.isRegressionRun) return `local/${os.platform()}`;
-  const host = (env.liveDemoApi || 'baseline')
+  const host = (env.demoAccountApiUrl || 'baseline')
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '')
     .split('/')[0]

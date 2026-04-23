@@ -66,44 +66,29 @@ export abstract class BasePage {
 
       await this.page.setViewportSize({ width, height: targetHeight });
 
-      // Two rAFs give the browser a full commit cycle before we re-measure.
       await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
 
       previousHeight = targetHeight;
     }
   }
 
-  async waitForCanvas(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
+  /**
+   * Resolves when any (default) or all `<canvas>` elements on the page have
+   * painted at least one non-transparent pixel.
+   */
+  async waitForCanvas(mode: 'any' | 'all' = 'any', timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     await this.page.waitForFunction(
-      () => {
-        const canvases = document.querySelectorAll('canvas');
-        return Array.from(canvases).some(canvas => {
+      requiredMode => {
+        const hasPixels = (canvas: HTMLCanvasElement) => {
           const ctx = canvas.getContext('2d', { willReadFrequently: true });
-          return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-        });
+          return !!ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
+        };
+        const canvases = Array.from(document.querySelectorAll('canvas'));
+        return requiredMode === 'any' ? canvases.some(hasPixels) : canvases.every(hasPixels);
       },
-      null,
+      mode,
       { timeout }
     );
-  }
-
-  async waitForAllCanvases(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
-    await this.page.waitForFunction(
-      () => {
-        return Array.from(document.querySelectorAll('canvas')).every(canvas => {
-          const ctx = canvas.getContext('2d', { willReadFrequently: true });
-          return ctx && ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(pixel => pixel !== 0);
-        });
-      },
-      null,
-      { timeout }
-    );
-  }
-
-  async waitForAPIResponseByPartialTextMatch(urlText: string, timeout: number): Promise<void> {
-    debugLog(`Waiting for ${urlText} API response`);
-    await this.page.waitForResponse(response => response.url().includes(urlText) && response.status() === 200, { timeout });
-    debugLog(`API response including ${urlText} received`);
   }
 
   async waitForTextContent(locator: Locator, expectedText: string): Promise<void> {
@@ -119,43 +104,36 @@ export abstract class BasePage {
   async waitForLoadingPageImgToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {
       await this.loadingPageImg.first().waitFor({ timeout: 1000 });
-    } catch (_error) {
+    } catch {
       return;
     }
     try {
       debugLog('Waiting for loading page image to disappear...');
-      await this.loadingPageImg.waitFor({ state: 'hidden', timeout: timeout });
-    } catch (_error) {
-      errorLog('[ERROR] Loading page image did not disappear within the timeout.');
+      await this.loadingPageImg.waitFor({ state: 'hidden', timeout });
+    } catch {
+      errorLog('Loading page image did not disappear within the timeout.');
     }
   }
 
   async waitForAllProgressBarsToDisappear(timeout: number = 10000): Promise<void> {
     try {
       await this.progressBar.first().waitFor({ timeout: 1000 });
-    } catch (_error) {
+    } catch {
       return;
     }
     debugLog(`Waiting for ${await this.progressBar.count()} total progress bar(s) to disappear...`);
     try {
       await this.page.waitForFunction(
-        () => {
-          const xpath = '//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]';
-          const result = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-          const elements = [];
-          for (let i = 0; i < result.snapshotLength; i++) {
-            elements.push(result.snapshotItem(i));
-          }
-          return elements.every(element => {
-            const style = window.getComputedStyle(element);
+        () =>
+          Array.from(document.querySelectorAll('main#mainLayoutWrapper [role="progressbar"]')).every(el => {
+            const style = window.getComputedStyle(el);
             return style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0';
-          });
-        },
+          }),
         null,
         { timeout }
       );
     } catch {
-      errorLog(`${await this.progressBar.count()} :Progress Bar(s) still visible at wait timeout`);
+      errorLog(`${await this.progressBar.count()} progress bar(s) still visible at wait timeout`);
     }
   }
 }

@@ -3,7 +3,7 @@ import { captureScreenshot } from '@/utils/screenshots';
 
 test('FFC: Common UI', async ({ homePage, header, mainMenu }) => {
   await homePage.navigateToURL();
-  await homePage.waitForAllCanvases();
+  await homePage.waitForCanvas('all');
 
   await test.step('Header widget', async () => {
     await captureScreenshot(header.header, 'CommonUI-Header.png', { skipHover: true });
