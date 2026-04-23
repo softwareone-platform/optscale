@@ -7,7 +7,7 @@ def retry_if_connection_error(exception):
     if isinstance(exception, requests.ConnectionError):
         return True
     if isinstance(exception, requests.HTTPError):
-        if exception.response.status_code in (503,):
+        if exception.response.status_code in (503, 504):
             return True
         # retry too many requests
         elif exception.response.status_code in (429,):
@@ -40,6 +40,8 @@ class Client:
                     response.content.decode('utf-8'))
             if 'text/plain' in response.headers['Content-Type']:
                 response_body = response.content.decode()
+            if 'application/octet-stream' in response.headers['Content-Type']:
+                response_body = response.content
         return response.status_code, response_body
 
     def get(self, url):
