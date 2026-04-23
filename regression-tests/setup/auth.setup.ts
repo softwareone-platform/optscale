@@ -1,8 +1,8 @@
 import { expect, test as setup } from '@playwright/test';
-import { injectLocalforage } from '@/utils/demo-account-session';
+import { DEMO_ACCOUNT_SESSION_PATH, injectLocalforage } from '@/utils/demo-account-session';
 import { safeReadJsonFile, safeWriteJsonFile } from '@/utils/file';
 import { DemoAccountService } from './demo-account-service';
-import { DEMO_ACCOUNT_SESSION_PATH, type StoredDemoSession } from '@/types';
+import { type StoredDemoSession } from '@/types';
 import type { Page } from '@playwright/test';
 
 const DEMO_EMAIL = 'example@mail.com';

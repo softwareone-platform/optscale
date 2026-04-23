@@ -1,13 +1,12 @@
-import { DEMO_ACCOUNT_SESSION_PATH, StoredDemoSession } from '@/types';
+import { StoredDemoSession } from '@/types';
 import { APIRequestContext, request } from '@playwright/test';
 import { DemoAccountCredentials } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
 import { env, requireEnv } from '@/utils/env';
-
-const baseAPIUrl: string = env.demoAccountApiUrl;
+import { DEMO_ACCOUNT_SESSION_PATH } from '@/utils/demo-account-session';
 
 export class DemoAccountService {
-  private static readonly token: string = env.demoAccountApiToken;
+  private static readonly token: string = env.hostAccountApiToken;
 
   /**
    * POSTs to `/restapi/v2/live_demo` with the given email and subscribe status,
@@ -25,23 +24,28 @@ export class DemoAccountService {
       throw new Error(`Demo-account request failed: ${response.status()} - ${errorText}`);
     }
 
-    const minted = (await response.json()) as Omit<DemoAccountCredentials, 'baseApiUrl'>;
-    return { ...minted, baseApiUrl: baseAPIUrl };
+    return (await response.json()) as DemoAccountCredentials;
   }
 
+  /**
+   * `true` when a fresh cached session exists for the *current host*.
+   * Host identity is encoded in the cache filename, so a session for a
+   * different host simply won't be found here — no explicit host-match
+   * check is needed.
+   */
   static hasCachedDemoCredentials(): boolean {
     const file = safeReadJsonFile<Partial<StoredDemoSession>>(DEMO_ACCOUNT_SESSION_PATH);
     const cached = file?.demoAccountCredentials;
 
-    return !!cached && isSessionFresh(cached.created_at) && cached.baseApiUrl === baseAPIUrl;
+    return !!cached && isSessionFresh(cached.created_at);
   }
 
   /** Creates a new APIRequestContext with the necessary headers. */
   private static async createContext(): Promise<APIRequestContext> {
-    requireEnv('demoAccountApiUrl', 'demoAccountApiToken');
+    requireEnv('hostUrl', 'hostAccountApiToken');
 
     return request.newContext({
-      baseURL: baseAPIUrl,
+      hostUrl: env.hostUrl,
       extraHTTPHeaders: {
         'X-LiveDemo-Token': this.token,
         'Content-Type': 'application/json',

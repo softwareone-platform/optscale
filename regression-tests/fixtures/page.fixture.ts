@@ -1,9 +1,8 @@
 import { test as base } from '@playwright/test';
 import * as Pages from '@/pages';
 import type { InterceptionEntry } from '@/types';
-import { DEMO_ACCOUNT_SESSION_PATH } from '@/types';
-import { restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
-import { attachBrowserErrorLogging } from '@/utils/debug-logging';
+import { DEMO_ACCOUNT_SESSION_PATH, restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
+import { attachBrowserErrorLogging, errorLog } from '@/utils/debug-logging';
 import { apiInterceptors } from '@/utils/interceptor';
 import { buildFixtures, toFixtureMap, type FixtureInstances } from './build-fixtures';
 
@@ -34,6 +33,18 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
 
     // Debug hooks (driven by env vars; helpers are no-ops when disabled).
     attachBrowserErrorLogging(page);
+
+    // If the SPA ever redirects to /login during a test, the session restore
+    // didn't stick. Surface it loudly — without this, the test would just hang
+    // waiting for page-specific locators (canvas, tables, …) that never exist
+    // on the login page, producing a misleading timeout stack trace.
+    if (restoreSession) {
+      page.on('framenavigated', frame => {
+        if (frame === page.mainFrame() && /\/login(\?|$)/.test(frame.url())) {
+          errorLog(`SPA redirected to /login — session restore failed (url=${frame.url()})`);
+        }
+      });
+    }
 
     await use(page);
   },

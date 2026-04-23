@@ -46,25 +46,25 @@ cp .env.example .env
 
 Edit `.env` with the appropriate values. The complete list of variables the suite reads lives in [`utils/env.ts`](./utils/env.ts):
 
-| Variable                  | Required? | Description                                                                                                           |
-|---------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------|
-| `BASE_URL`                | no        | Portal URL Playwright points at. Defaults to `http://0.0.0.0:3000`.                                                   |
-| `DEMO_ACCOUNT_API_URL`    | yes¹      | Endpoint that mints demo-account credentials (`POST /restapi/v2/live_demo`).                                          |
-| `DEMO_ACCOUNT_API_TOKEN`  | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
-| `CI`                      | no        | `true` inside CI — enables `forbidOnly`, raises retries, lowers workers. Playwright sets this automatically.          |
-| `IS_REGRESSION_RUN`       | no        | `true` → snapshots compared against `snapshots/baseline/<host>/`. Unset → `snapshots/local/<platform>/` (gitignored). |
-| `IGNORE_HTTPS_ERRORS`     | no        | `true` to accept self-signed / expired certificates in the browser context.                                           |
-| `DEBUG_LOG`               | no        | `true` emits `[DEBUG]`-prefixed messages from `debugLog`.                                                             |
-| `BROWSER_ERROR_LOGGING`   | no        | `true` forwards browser `console.error` output to the Node test runner.                                               |
+| Variable                 | Required? | Description                                                                                                           |
+|--------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------|
+| `BASE_URL`               | no        | Portal URL Playwright points at. Defaults to `http://0.0.0.0:3000`.                                                   |
+| `HOST_URL`               | yes¹      | Cluster URL to proxy API requests to — same concept as `VITE_PROXY` in `ngui/ui/.env.sample`.                         |
+| `DEMO_ACCOUNT_API_TOKEN` | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
+| `CI`                     | no        | `true` inside CI — enables `forbidOnly`, raises retries, lowers workers. Playwright sets this automatically.          |
+| `IS_REGRESSION_RUN`      | no        | `true` → snapshots compared against `snapshots/baseline/<host>/`. Unset → `snapshots/local/<platform>/` (gitignored). |
+| `IGNORE_HTTPS_ERRORS`    | no        | `true` to accept self-signed / expired certificates in the browser context.                                           |
+| `DEBUG_LOG`              | no        | `true` emits `[DEBUG]`-prefixed messages from `debugLog`.                                                             |
+| `BROWSER_ERROR_LOGGING`  | no        | `true` forwards browser `console.error` output to the Node test runner.                                               |
 
-¹ Required only when `auth.setup.ts` actually mints demo-account credentials. `requireEnv('demoAccountApiUrl', 'demoAccountApiToken')` fails fast with a clear message if either is missing.
+¹ Required only when `auth.setup.ts` actually mints demo-account credentials. `requireEnv('hostUrl', 'hostAccountApiToken')` fails fast with a clear message if either is missing.
 
 ---
 
 ## Running Tests
 
 | Command                      | Description                                                              |
-| ---------------------------- | ------------------------------------------------------------------------ |
+|------------------------------|--------------------------------------------------------------------------|
 | `npm test`                   | Run all tests headless locally                                           |
 | `npm run test:ui`            | Run with the Playwright interactive UI                                   |
 | `npm run test:headed`        | Run in headed mode (single worker)                                       |
@@ -159,8 +159,8 @@ regression-tests/
 
 ## Snapshots
 
-| Folder                        | When used                                                                             | Committed          |
-| ----------------------------- | ------------------------------------------------------------------------------------- | ------------------ |
+| Folder                        | When used                                                                             | Committed         |
+|-------------------------------|---------------------------------------------------------------------------------------|-------------------|
 | `snapshots/baseline/`         | Generated by `npm run test:docker` / `npm run test:docker:update` inside Linux Docker | ✅ Yes             |
 | `snapshots/local/<platform>/` | Generated locally on macOS / Windows / Linux                                          | ❌ No (gitignored) |
 

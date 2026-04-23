@@ -21,11 +21,11 @@ export const env = {
   /** Base URL Playwright points at (the portal the tests exercise). */
   baseUrl: asString(process.env.BASE_URL, 'http://0.0.0.0:3000'),
 
-  /** Demo-account provisioning endpoint (`POST /restapi/v2/live_demo`). */
-  demoAccountApiUrl: process.env.DEMO_ACCOUNT_API_URL ?? '',
+  /** Cluster URL to proxy API requests to — mirrors `VITE_PROXY` in `ngui/ui/.env.sample`. */
+  hostUrl: process.env.HOST_URL ?? '',
 
   /** Bearer token the demo-account endpoint expects in `X-LiveDemo-Token`. */
-  demoAccountApiToken: process.env.DEMO_ACCOUNT_API_TOKEN ?? '',
+  hostAccountApiToken: process.env.HOST_ACCOUNT_API_TOKEN ?? '',
 
   // ─── Run modes ─────────────────────────────────────────────────────────
   /** `true` when running inside CI. */
@@ -54,8 +54,8 @@ export type Env = typeof env;
  */
 const ENV_VAR_NAMES: Record<keyof Env, string> = {
   baseUrl: 'BASE_URL',
-  demoAccountApiUrl: 'DEMO_ACCOUNT_API_URL',
-  demoAccountApiToken: 'DEMO_ACCOUNT_API_TOKEN',
+  hostUrl: 'HOST_URL',
+  hostAccountApiToken: 'HOST_ACCOUNT_API_TOKEN',
   isCI: 'CI',
   isRegressionRun: 'IS_REGRESSION_RUN',
   ignoreHttpsErrors: 'IGNORE_HTTPS_ERRORS',
@@ -68,7 +68,7 @@ const ENV_VAR_NAMES: Record<keyof Env, string> = {
  * before it needs them (fail-fast, with a single clear error message).
  *
  * @example
- *   requireEnv('demoAccountApiUrl', 'demoAccountApiToken');
+ *   requireEnv('hostUrl', 'hostAccountApiToken');
  */
 export function requireEnv(...keys: Array<keyof Env>): void {
   const missing = keys.filter(key => !env[key]);
