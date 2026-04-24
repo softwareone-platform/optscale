@@ -77,3 +77,12 @@ export function requireEnv(...keys: Array<keyof Env>): void {
   const envVarNames = missing.map(key => ENV_VAR_NAMES[key]).join(', ');
   throw new Error(`Missing required env var${missing.length > 1 ? 's' : ''}: ${envVarNames}`);
 }
+
+/** Turn an HTTPS host URL into a filesystem-safe slug shared by the cache and snapshot paths. */
+export const hostSlug = (url: string, fallback = 'host'): string =>
+  (url || fallback)
+    .replace(/^https?:\/\//, '')
+    .replace(/[^a-z0-9]+/gi, '-')
+    .toLowerCase()
+    .replace(/^-+|-+$/g, '') || fallback;
+

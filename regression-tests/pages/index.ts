@@ -1,10 +1,8 @@
 export {
   AnomaliesPage,
-  AnomaliesCreatePage,
+  CreatePoliciesPage,
   PoliciesPage,
-  PoliciesCreatePage,
   TaggingPoliciesPage,
-  TaggingPoliciesCreatePage,
 } from './policy-pages';
 export { CloudAccountsPage, CloudAccountsConnectPage } from './cloud-accounts-pages';
 export { ExpensesPage, ExpensesMapPage } from './expenses-pages';

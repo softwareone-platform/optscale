@@ -382,11 +382,11 @@ Key points:
 
 All three options are declared in [`fixtures/page.fixture.ts`](./fixtures/page.fixture.ts); defaults match the "typical regression test" case so most specs only need `interceptAPI`.
 
-| Option         | Default  | What it does                                                                                                                                                                                                                                                  |
-| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `restoreSession` | `true`   | Injects the cached live-demo session into `localforage` on a fresh `/` load so the app starts logged-in. Set to `false` only for specs that exercise the login flow itself.                                                                                   |
-| `setFixedTime`   | `true`   | Pins the browser clock to `2025-01-25T12:00:00Z` via `page.clock.setFixedTime` so date-dependent UI (charts, "Last seen 3 days ago", etc.) renders identically run-to-run. Set to `false` for specs that rely on real time or test date-picker logic.         |
-| `interceptAPI`   | `undefined` | Array of REST/GraphQL route mocks (see above). Wrapped in `{ entries: [...] }` to work around a Playwright array-unwrap quirk.                                                                                                                             |
+| Option           | Default     | What it does                                                                                                                                                                                                                                          |
+|------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `restoreSession` | `true`      | Injects the cached live-demo session into `localforage` on a fresh `/` load so the app starts logged-in. Set to `false` only for specs that exercise the login flow itself.                                                                           |
+| `setFixedTime`   | `true`      | Pins the browser clock to `2025-01-25T12:00:00Z` via `page.clock.setFixedTime` so date-dependent UI (charts, "Last seen 3 days ago", etc.) renders identically run-to-run. Set to `false` for specs that rely on real time or test date-picker logic. |
+| `interceptAPI`   | `undefined` | Array of REST/GraphQL route mocks (see above). Wrapped in `{ entries: [...] }` to work around a Playwright array-unwrap quirk.                                                                                                                        |
 
 Examples:
 

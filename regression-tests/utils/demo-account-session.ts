@@ -2,23 +2,13 @@ import { Page } from '@playwright/test';
 import path from 'path';
 import { type StoredDemoSession } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
-import { env } from '@/utils/env';
+import { env, hostSlug } from '@/utils/env';
 
 const LOCALFORAGE_SCRIPT = path.resolve(__dirname, '../vendor/localforage.min.js');
 const FIXED_TIME = new Date('2025-01-25T12:00:00Z');
 
-/**
- * Slug of the configured host, suitable for filenames.
- * `https://portal.finops.s1.today/` → `portal-finops-s1-today`
- */
-const hostSlug = (env.hostUrl || 'demo-account')
-  .replace(/^https?:\/\//, '')
-  .replace(/[^a-z0-9]+/gi, '-')
-  .toLowerCase()
-  .replace(/^-+|-+$/g, '');
-
 /** Path (relative to the repo root) of the cached demo-account session file — one per host. */
-export const DEMO_ACCOUNT_SESSION_PATH = `.cache/${hostSlug}-session.json`;
+export const DEMO_ACCOUNT_SESSION_PATH = `.cache/${hostSlug(env.hostUrl, 'demo-account')}-session.json`;
 
 /** Narrow typing for the global injected by the vendored localforage script. */
 type LocalForageWindow = Window & {

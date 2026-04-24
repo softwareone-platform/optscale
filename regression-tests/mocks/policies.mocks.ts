@@ -387,11 +387,736 @@ const AnomaliesConstraintsMock = {
   ],
 };
 
+const FilterResponseMock = {
+  "filter_values": {
+    "cloud_account": [
+      {
+        "id": "5cf0c694-f4f7-4b28-9b79-0fd35c2e1e8a",
+        "name": "AWS HQ",
+        "type": "aws_cnr",
+        "account_id": "b22c6f3c-949d-4e18-8d3b-9443a18d6113"
+      },
+      {
+        "id": "c9b64252-6307-427f-8504-958af91741db",
+        "name": "Environment",
+        "type": "environment",
+        "account_id": "34ef0382-e932-4ebf-8d7d-9856a16a0491"
+      },
+      {
+        "id": "fb108942-28dc-4629-8d8b-29d532ff1501",
+        "name": "Ali dev",
+        "type": "alibaba_cnr",
+        "account_id": "3d5f5092-2c28-43fa-a89e-ed973134a2ef"
+      },
+      {
+        "id": "15606797-a0d4-4003-8647-48115160f55e",
+        "name": "GCP dev",
+        "type": "gcp_cnr",
+        "account_id": "3c82b12a-8521-4cbd-a44e-72f646ddd553"
+      },
+      {
+        "id": "b356c76b-a6c6-4610-bb06-659059fa7eb7",
+        "name": "Azure QA",
+        "type": "azure_cnr",
+        "account_id": "5fef05af-a58d-487c-a373-c1247d4a1d90"
+      },
+      {
+        "id": "909dc250-b317-4473-aa9f-411c3698c346",
+        "name": "AWS Marketing",
+        "type": "aws_cnr",
+        "account_id": "210624c6-6a81-4ec1-9f04-8c65dd017d3b"
+      },
+      null,
+      {
+        "id": "c66d0d3b-93eb-4ce6-bda0-753c28041131",
+        "name": "Dev environment",
+        "type": "azure_cnr",
+        "account_id": "0db8f81a-7378-43a3-ade7-5023b0788b64"
+      },
+      {
+        "id": "e9f47991-8daf-4250-82b3-5ab0a1234aff",
+        "name": "Azure Marketing",
+        "type": "azure_cnr",
+        "account_id": "3249702e-dc40-40fa-8cc3-938bf732b5f2"
+      },
+      {
+        "id": "57ca70e5-b9d1-4a56-aac8-df7d063e2ab8",
+        "name": "K8s dev",
+        "type": "kubernetes_cnr",
+        "account_id": "7e0bda6b-4595-4cff-8cbd-58a10f483f5b"
+      }
+    ],
+    "owner": [
+      {
+        "id": "9c23a52a-8b2e-495d-b3f9-199476757db0",
+        "name": "Demo User"
+      },
+      {
+        "id": "e2365df8-423c-4aca-ac62-c45be5100802",
+        "name": "Leeroy Johnson"
+      },
+      {
+        "id": "8fcb9f07-b41e-4666-8ace-4f5f4e55ece9",
+        "name": "Alexander Edwards"
+      },
+      {
+        "id": "87ab1faf-1b19-4c24-b571-8b5cb5f44c39",
+        "name": "Addison Gagnon"
+      },
+      {
+        "id": "f04d94ee-35d1-4958-bb1b-300a6547e64a",
+        "name": "Stephen Swan"
+      },
+      {
+        "id": "f46ba5a0-2d18-415b-ae82-6bdd8e9c9bb9",
+        "name": "Lena Rodriguez"
+      },
+      {
+        "id": "f1326947-d01e-4433-a89e-b60ac38e3911",
+        "name": "Edwin Wilson"
+      },
+      {
+        "id": "078b5ca6-f7ed-4cc7-bbbb-d1f7b73b5f23",
+        "name": "Amelia Allen"
+      },
+      {
+        "id": "71a10acc-7c22-43ca-abfe-0fb82472e6a5",
+        "name": "Alyssa Morton"
+      },
+      {
+        "id": "ef32d707-4a06-4b0b-866a-e6355fc17b8c",
+        "name": "Hope Black"
+      },
+      {
+        "id": "d5f4a1bb-b903-4819-918e-20a4fe5524a8",
+        "name": "Luke Walsh"
+      },
+      {
+        "id": "e4065f94-5ac5-4bd4-9ed3-787d9d3b714a",
+        "name": "Olivia Brown"
+      },
+      {
+        "id": "6515437f-dd5c-4ca4-ba46-c9f007b7b990",
+        "name": "Poppy Roberts"
+      },
+      {
+        "id": "1ea597a7-5dc9-42e9-b06f-a4da94893e91",
+        "name": "Jessica Hamilton"
+      },
+      {
+        "id": "ea1686c4-29ec-491e-9bd9-55f17497b63a",
+        "name": "Homer Fisher"
+      },
+      {
+        "id": "f078dcf9-712d-44b4-a899-e2a3f8fb6126",
+        "name": "Lincoln White"
+      },
+      {
+        "id": "9c18dbd3-7ad8-4955-9df0-4467495ba251",
+        "name": "Andy Smith"
+      },
+      {
+        "id": "8f154424-27b5-4ba1-ba64-48971330b3ea",
+        "name": "William Jenkins"
+      },
+      {
+        "id": "28309568-f996-44b3-8b55-08e7b7343ef9",
+        "name": "Winston Lee"
+      },
+      {
+        "id": "c632ed34-7858-42fc-ab78-5d41b5bbc882",
+        "name": "Jack Jones"
+      },
+      {
+        "id": "b070b75a-f7ae-4c74-9283-bd47e554495b",
+        "name": "Isabella Carter"
+      }
+    ],
+    "pool": [
+      {
+        "id": "51bbe881-75df-42af-93f2-cafe3161bcdf",
+        "name": "AWS HQ",
+        "purpose": "budget"
+      },
+      {
+        "id": "a8ae21fa-c174-46db-8c40-ee35ae38d88b",
+        "name": "Environment",
+        "purpose": "budget"
+      },
+      {
+        "id": "2808d268-8fad-40e5-8fba-596465bf3b2f",
+        "name": "Ali dev",
+        "purpose": "budget"
+      },
+      {
+        "id": "1bd1849c-b656-448a-beff-51516c5607f6",
+        "name": "QA",
+        "purpose": "team"
+      },
+      {
+        "id": "1ea9ee5a-12bb-4925-b9d1-7022417d97bb",
+        "name": "GCP dev",
+        "purpose": "budget"
+      },
+      {
+        "id": "0312f258-a172-429d-834e-04ce28eb0ead",
+        "name": "Azure QA",
+        "purpose": "budget"
+      },
+      {
+        "id": "bfc011b0-0a22-4efe-b2b8-9096c5fa6975",
+        "name": "Clicks research",
+        "purpose": "mlai"
+      },
+      {
+        "id": "d9d9b851-56a5-4c69-84e8-e1ada32f750e",
+        "name": "AWS Marketing",
+        "purpose": "budget"
+      },
+      {
+        "id": "8573a8ba-5774-45f7-ab4a-0fe7267eae32",
+        "name": "Sunflower Inc",
+        "purpose": "business_unit"
+      },
+      {
+        "id": "db009e0a-d115-4473-8bb5-79cd0fed6d85",
+        "name": "Dev environment",
+        "purpose": "budget"
+      },
+      {
+        "id": "73214fc4-d6bd-46a0-9869-e3f79cb368e5",
+        "name": "Dev",
+        "purpose": "team"
+      },
+      {
+        "id": "217576eb-ab47-4454-8c03-240afb7e996f",
+        "name": "diworker",
+        "purpose": "mlai"
+      },
+      {
+        "id": "291e4b7f-62bc-4688-a195-812de6491926",
+        "name": "Daily checks",
+        "purpose": "cicd"
+      },
+      {
+        "id": "32abd9a2-ca0d-4044-8e1e-243a9cb7bf3f",
+        "name": "Monitoring",
+        "purpose": "project"
+      },
+      {
+        "id": "5cb2a895-c94a-4f9b-abb1-45dc216a650b",
+        "name": "Marketing",
+        "purpose": "business_unit"
+      },
+      {
+        "id": "65b2a8d9-3cdc-4933-bc08-db062753b11e",
+        "name": "Crawler",
+        "purpose": "cicd"
+      },
+      {
+        "id": "8e7ca2da-32d5-4a32-8283-874214090b52",
+        "name": "Release 3.5",
+        "purpose": "project"
+      },
+      {
+        "id": "afe7eb61-52a3-42b9-98c3-84197b3b1632",
+        "name": "Engineering",
+        "purpose": "business_unit"
+      },
+      {
+        "id": "dd3aa9f3-c100-44cd-ab1a-a238b5845d17",
+        "name": "K8s dev",
+        "purpose": "budget"
+      },
+      {
+        "id": "e927cd12-f46b-4682-86a4-cceb1cdfb8d2",
+        "name": "discovery",
+        "purpose": "cicd"
+      },
+      {
+        "id": "e997d376-22ba-432b-b9e4-91ccd9692e31",
+        "name": "Databricks",
+        "purpose": "budget"
+      },
+      {
+        "id": "fa8bcd36-0b9f-420d-94fd-74715056f0d0",
+        "name": "Azure Marketing",
+        "purpose": "budget"
+      }
+    ],
+    "service_name": [
+      {
+        "name": "AmazonEC2",
+        "cloud_type": "aws_cnr"
+      },
+      null,
+      {
+        "name": "Elastic Compute Service",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "Compute Engine",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "AmazonVPC",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "microsoft.network",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "AmazonQuickSight",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "AWSCloudTrail",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "AWSELB",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "awskms",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "AmazonKinesis",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "AmazonCloudWatch",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "AmazonS3",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "Cloud Storage",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "microsoft.storage",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "microsoft.compute",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "BigQuery",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "Elastic Block Storage",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "Elastic IP Address",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "AmazonRedshift",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "Translate",
+        "cloud_type": "gcp_cnr"
+      }
+    ],
+    "region": [
+      {
+        "name": "us-west-1",
+        "cloud_type": "aws_cnr"
+      },
+      null,
+      {
+        "name": "Germany (Frankfurt)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "Indonesia (Jakarta)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "eu-north-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "SAU (Riyadh)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "us-central1",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "us-east-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "UAE (Dubai)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "Germany West Central",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "US (Silicon Valley)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "us-west-2",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "global",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "ap-southeast-3",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "eu-west-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "us-east-2",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "ap-south-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "eu-south-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "ap-southeast-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "ap-northeast-2",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "europe",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "us-west1",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "southamerica-east1",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "europe-west3",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "me-central-1",
+        "cloud_type": "aws_cnr"
+      },
+      {
+        "name": "West Europe",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "East US 2",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "Norway East",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "East US",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "West US",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "West US 2",
+        "cloud_type": "azure_cnr"
+      },
+      {
+        "name": "europe-west6",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "us",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "europe-west1",
+        "cloud_type": "gcp_cnr"
+      },
+      {
+        "name": "China (Hohhot)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "Philippines (Manila)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "China (Hong Kong)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "China (Qingdao)",
+        "cloud_type": "alibaba_cnr"
+      },
+      {
+        "name": "us-east1",
+        "cloud_type": "gcp_cnr"
+      }
+    ],
+    "k8s_node": [
+      null
+    ],
+    "k8s_service": [
+      null
+    ],
+    "k8s_namespace": [
+      null
+    ],
+    "resource_type": [
+      {
+        "name": "Snapshot",
+        "type": "regular"
+      },
+      {
+        "name": "Dev stand",
+        "type": "environment"
+      },
+      {
+        "name": "QA stand",
+        "type": "environment"
+      },
+      {
+        "name": "Instance",
+        "type": "regular"
+      },
+      {
+        "name": "Volume",
+        "type": "regular"
+      },
+      {
+        "name": "Snapshot Chain",
+        "type": "regular"
+      },
+      {
+        "name": "IP Address",
+        "type": "regular"
+      },
+      {
+        "name": "NAT Gateway",
+        "type": "regular"
+      },
+      {
+        "name": "Business Analytics",
+        "type": "regular"
+      },
+      {
+        "name": "Kinesis Streams",
+        "type": "regular"
+      },
+      {
+        "name": "Management Tools - AWS CloudTrail Free Events Recorded",
+        "type": "regular"
+      },
+      {
+        "name": "Metric",
+        "type": "regular"
+      },
+      {
+        "name": "Management Tools - AWS CloudTrail Insights Events",
+        "type": "regular"
+      },
+      {
+        "name": "StorageLens",
+        "type": "regular"
+      },
+      {
+        "name": "Load Balancer",
+        "type": "regular"
+      },
+      {
+        "name": "Encryption Key",
+        "type": "regular"
+      },
+      {
+        "name": "Bucket",
+        "type": "regular"
+      },
+      {
+        "name": "API Request",
+        "type": "regular"
+      },
+      {
+        "name": "CF Stack",
+        "type": "cluster"
+      },
+      {
+        "name": "Image",
+        "type": "regular"
+      },
+      {
+        "name": "Savings Plan",
+        "type": "regular"
+      },
+      {
+        "name": "Reserved Instances",
+        "type": "regular"
+      },
+      {
+        "name": "Redshift Managed Storage",
+        "type": "regular"
+      },
+      {
+        "name": "Translate",
+        "type": "regular"
+      },
+      {
+        "name": "Data Transfer",
+        "type": "regular"
+      }
+    ],
+    "active": [
+      false,
+      true
+    ],
+    "constraint_violated": [
+      false,
+      true
+    ],
+    "recommendations": [
+      false,
+      true
+    ],
+    "meta": [
+      "block_device_mappings",
+      "offering_type",
+      "category",
+      "vpc_name",
+      "is_public_policy",
+      "vpc_id",
+      "applied_region",
+      "architecture",
+      "cloud_console_link",
+      "attached",
+      "snapshot_id",
+      "end",
+      "stopped_allocated",
+      "disk_size",
+      "os",
+      "description",
+      "size",
+      "spotted",
+      "last_attached",
+      "flavor",
+      "platform",
+      "last_seen_not_stopped",
+      "purchase_term",
+      "snapshots",
+      "state",
+      "cpu_count",
+      "instance_id",
+      "image_id",
+      "payment_option",
+      "last_used",
+      "available",
+      "is_public_acls",
+      "volume_type",
+      "start",
+      "instance_type",
+      "zone_id",
+      "ram",
+      "security_groups",
+      "preinstalled",
+      "volume_id"
+    ],
+    "tag": [
+      "ms-resource-usage",
+      "orchid_rule_testing",
+      "sunflower_backup_id",
+      "sunflower_type",
+      "aws:cloudformation:stack-name",
+      "ml_value",
+      "orchid_tracking_id",
+      "sunflower_drive_id",
+      "Seed",
+      "kubernetes.io/cluster/egelbero-cluster",
+      "purpose",
+      "mytag1",
+      "nk-tag",
+      "sunflower_resource_id",
+      "aws:createdBy",
+      "goog-ops-agent-policy",
+      "owner",
+      "aws:cloudformation:stack-id",
+      "aws:cloudformation:logical-id",
+      "kubernetes.io/service-name",
+      "test",
+      "aqa",
+      "marketing",
+      "sunflower_device_id",
+      "orchid_resource_id",
+      "created_by",
+      "sunflower_device_name"
+    ],
+    "without_tag": [
+      "ms-resource-usage",
+      "orchid_rule_testing",
+      "sunflower_backup_id",
+      "sunflower_type",
+      "aws:cloudformation:stack-name",
+      "ml_value",
+      "orchid_tracking_id",
+      "sunflower_drive_id",
+      "Seed",
+      "kubernetes.io/cluster/egelbero-cluster",
+      "purpose",
+      "mytag1",
+      "nk-tag",
+      "sunflower_resource_id",
+      "aws:createdBy",
+      "goog-ops-agent-policy",
+      "owner",
+      "aws:cloudformation:stack-id",
+      "aws:cloudformation:logical-id",
+      "kubernetes.io/service-name",
+      "test",
+      "aqa",
+      "marketing",
+      "sunflower_device_id",
+      "orchid_resource_id",
+      "created_by",
+      "sunflower_device_name"
+    ]
+  }
+}
+
 // ─── Interceptions ──────────────────────────────────────────────────────────
 export const anomaliesInterceptions: InterceptionEntry[] = [
   {
     url: `v2/organizations/[^/]+/organization_constraints\\?hit_days=3&type=resource_count_anomaly&type=expense_anomaly`,
     mock: AnomaliesConstraintsMock,
+  },
+  {
+    url: `v2/organizations/[^/]+/available_filters`,
+    mock: FilterResponseMock,
   },
 ];
 

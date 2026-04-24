@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 import os from 'os';
-import { env } from './utils/env';
+import { env, hostSlug } from './utils/env';
 
 const VIEWPORT = { width: 1920, height: 1080 };
 
@@ -16,14 +16,20 @@ const ACTION_TIMEOUT = 30000;
  */
 export const LARGE_DATA_TIMEOUT = 60000;
 
+/**
+ * Resolves the snapshot sub-folder.
+ *
+ * - Local runs (default) → `local/<host>/<platform>/` so macOS/Linux/Windows
+ *   snapshots stay separated and don't overwrite each other.
+ * - Regression runs (`IS_REGRESSION_RUN=true`, set by CI) → `baseline/<host>/`
+ *   — CI is always Linux, so the platform segment would be noise.
+ *
+ * `host` is derived from `HOST_URL` via the shared `hostSlug` helper so this
+ * path and the demo-account cache filename stay in lockstep.
+ */
 const getSnapshotPath = (): string => {
-  if (!env.isRegressionRun) return `local/${os.platform()}`;
-  const host = (env.hostUrl || 'baseline')
-    .replace(/^https?:\/\//, '')
-    .replace(/^www\./, '')
-    .split('/')[0]
-    .split('?')[0];
-  return `baseline/${host}`;
+  const host = hostSlug(env.hostUrl, 'baseline');
+  return env.isRegressionRun ? `baseline/${host}` : `local/${host}/${os.platform()}`;
 };
 
 /**
