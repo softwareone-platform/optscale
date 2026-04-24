@@ -6,8 +6,8 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from ffc_api.ffc_api_server.app.conf import get_settings
-from ffc_api.ffc_api_server.app.db.models import Base
+from ffc_api.ffc_api_server.app.conf import get_settings, mysql_async_url_ffc
+from ffc_api.ffc_api_server.app.db.models.ffc import Base
 
 app_settings = get_settings()
 config = context.config
@@ -46,7 +46,7 @@ def run_migrations_offline() -> None:
     """
 
     context.configure(
-        url=str(app_settings.mysql_async_url_ffc),
+        url=mysql_async_url_ffc(),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -72,7 +72,7 @@ async def run_migrations_online():
     """
 
     config_section = config.get_section(config.config_ini_section)
-    config_section["sqlalchemy.url"] = str(app_settings.mysql_async_url_ffc)
+    config_section["sqlalchemy.url"] = mysql_async_url_ffc()
 
     connectable = AsyncEngine(
         engine_from_config(

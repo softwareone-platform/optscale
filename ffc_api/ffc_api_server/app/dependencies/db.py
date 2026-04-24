@@ -32,5 +32,4 @@ UserRepository = Annotated[handlers.UserHandler, Depends(HandlerFactory(handlers
 DataSourceRepository = Annotated[
     handlers.DataSourceHandler, Depends(HandlerFactory(handlers.DataSourceHandler))
 ]
-TokenRepository = Annotated[handlers.TokenHandler, Depends(HandlerFactory(handlers.TokenHandler))]
 TagRepository = Annotated[handlers.TagHandler, Depends(HandlerFactory(handlers.TagHandler))]

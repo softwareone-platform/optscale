@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import datetime
 import types
+import uuid
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
-from ffc_api.ffc_api_server.app.db.models import Base
-from ffc_api.ffc_api_server.app.optscale.models import Base as OptScaleBase
+from ffc_api.ffc_api_server.app.db.models.ffc import Base
+from ffc_api.ffc_api_server.app.db.models.optscale import Base as OptScaleBase
 
 
 def convert_model_to_schema[M: Base | OptScaleBase, S: BaseModel](
@@ -148,6 +149,10 @@ class BaseSchema(BaseModel):
 
 class IdSchema(BaseSchema):
     id: str
+
+
+class UUIDSchema(BaseSchema):
+    id: uuid.UUID
 
 
 class AuditFieldSchema(BaseSchema):

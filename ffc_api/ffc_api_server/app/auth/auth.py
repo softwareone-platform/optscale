@@ -1,8 +1,7 @@
 import logging
 
-from fastapi import Request, HTTPException, status
+from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pymacaroons import Macaroon, Verifier
 
 LOG = logging.getLogger(__name__)
 
@@ -21,20 +20,3 @@ class TokenBearer(HTTPBearer):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
         return credentials.credentials
-
-
-class MacaroonToken:
-    def __init__(self, secret: str, ident: str, location: str = ""):
-        self._secret = secret
-        self._ident = ident
-        self._location = location
-
-    def verify(self, token: str) -> bool:
-        try:
-            macaroon = Macaroon.deserialize(token)
-            verifier = Verifier()
-            verifier.satisfy_general(lambda x: True)
-            return verifier.verify(macaroon, self._secret)
-        except Exception as exc:
-            LOG.warning("Cannot verify token %s, exception %s", token, str(exc))
-            return False

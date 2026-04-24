@@ -3,7 +3,7 @@ from typing import Annotated
 from pydantic import Field
 
 from ffc_api.ffc_api_server.app.enums import TagResourceType
-from ffc_api.ffc_api_server.app.schemas.core import BaseSchema, CommonEventsSchema, IdSchema
+from ffc_api.ffc_api_server.app.schemas.core import BaseSchema, CommonEventsSchema, UUIDSchema
 
 
 class TagBase(BaseSchema):
@@ -17,11 +17,11 @@ class TagBase(BaseSchema):
     resource_type: TagResourceType
 
 
-class TagRead(IdSchema, TagBase, CommonEventsSchema):
+class TagRead(UUIDSchema, TagBase, CommonEventsSchema):
     pass
 
 
-class TagRef(IdSchema):
+class TagRef(UUIDSchema):
     name: Annotated[str, Field(min_length=1, max_length=255, examples=["Version"])]
     value: Annotated[str, Field(min_length=1, max_length=255, examples=["1.0.0"])]
 

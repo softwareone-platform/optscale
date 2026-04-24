@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
 
 from ffc_api.ffc_api_server.app.db.handlers import NotFoundError
+from ffc_api.ffc_api_server.app.db.models.optscale import Organization
 from ffc_api.ffc_api_server.app.dependencies.db import OrganizationRepository
 from ffc_api.ffc_api_server.app.dependencies.path import OrganizationId
-from ffc_api.ffc_api_server.app.optscale.models import Organization
 
 
 async def fetch_organization_or_404(
@@ -12,7 +12,7 @@ async def fetch_organization_or_404(
     try:
         return await organization_repo.get(
             id=organization_id,
-            extra_conditions=[Organization.disabled == False],
+            extra_conditions=[Organization.disabled.is_(False)],
         )
     except NotFoundError as e:
         raise HTTPException(

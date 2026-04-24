@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import Select
 
 from ffc_api.ffc_api_server.app.db.handlers import NotFoundError
-from ffc_api.ffc_api_server.app.db.models import Tag
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
+from ffc_api.ffc_api_server.app.db.models.optscale import User
 from ffc_api.ffc_api_server.app.dependencies.db import TagRepository, UserRepository
 from ffc_api.ffc_api_server.app.dependencies.path import TagId, UserId
 from ffc_api.ffc_api_server.app.enums import TagResourceType
-from ffc_api.ffc_api_server.app.optscale.models import User
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, paginate
 from ffc_api.ffc_api_server.app.rql import RQLQuery, TagRules, UserRules
 from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema

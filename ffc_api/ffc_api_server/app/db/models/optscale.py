@@ -4,14 +4,13 @@ OptScale database models (read-only).
 These models are NOT tracked by Alembic migrations.
 """
 
-from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Integer, String, Text, and_
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, and_
 from sqlalchemy.orm import DeclarativeBase, Mapped, foreign, mapped_column, relationship
 
 from ffc_api.ffc_api_server.app.conf import get_settings
-from ffc_api.ffc_api_server.app.db.models import Tag
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 
 settings = get_settings()
@@ -116,27 +115,12 @@ class DataSource(Base):
     )
 
 
-class Token(Base):
-    __tablename__ = "token"
-    __table_args__ = {"schema": AUTH_DB_SCHEMA}
-
-    digest: Mapped[str] = mapped_column(String(32), primary_key=True)
-    user_id: Mapped[str] = mapped_column(String(36), ForeignKey(f"{AUTH_DB_SCHEMA}.user.id"))
-    user: Mapped["AuthUser"] = relationship(back_populates="tokens", lazy="selectin")
-    valid_until: Mapped[datetime] = mapped_column(TIMESTAMP)
-
-
 class AuthUser(Base, IDMixin):
     __tablename__ = "user"
     __table_args__ = {"schema": AUTH_DB_SCHEMA}
 
-    salt: Mapped[str] = mapped_column(String(20))
     email: Mapped[str] = mapped_column(String(256))
 
-    tokens: Mapped[list["Token"]] = relationship(
-        "Token",
-        back_populates="user",
-    )
     assignments: Mapped[list["Assignment"]] = relationship(
         "Assignment",
         back_populates="user",

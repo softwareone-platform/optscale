@@ -4,8 +4,8 @@ from fastapi import Request
 from requela import FieldRule, ModelRQLRules, RelationshipRule, RequelaError
 from sqlalchemy.sql.selectable import Select
 
-from ffc_api.ffc_api_server.app.db.models import Tag
-from ffc_api.ffc_api_server.app.optscale.models import DataSource, Organization, User
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
+from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, User
 from ffc_api.ffc_api_server.app.utils import wrap_exc_in_http_response
 
 

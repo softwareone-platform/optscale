@@ -10,18 +10,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.orm.interfaces import ORMOption
 
-from ffc_api.ffc_api_server.app.db.models import Base as BaseModel, Tag, TimestampMixin
-from ffc_api.ffc_api_server.app.optscale.models import (
+from ffc_api.ffc_api_server.app.db.models.ffc import Base as BaseModel
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag, TimestampMixin
+from ffc_api.ffc_api_server.app.db.models.optscale import (
     Assignment,
     AuthUser,
     DataSource,
     Organization,
     Role,
-    Token,
     Type,
     User,
 )
-from ffc_api.ffc_api_server.app.optscale.models import Base as OptscaleBaseModel
+from ffc_api.ffc_api_server.app.db.models.optscale import Base as OptscaleBaseModel
 from ffc_api.ffc_api_server.app.utils import utcnow_timestamp
 
 M = TypeVar("M", bound=BaseModel | OptscaleBaseModel)
@@ -319,14 +319,6 @@ class DataSourceHandler(ReadOnlyHandler[DataSource]):
 
 class OrganizationHandler(ReadOnlyHandler[Organization]):
     model_cls = Organization
-
-
-class TokenHandler(ReadOnlyHandler[Token]):
-    model_cls = Token
-
-    def __init__(self, session):
-        super().__init__(session)
-        self.default_options = [selectinload(Token.user)]
 
 
 class UserHandler(ReadOnlyHandler[User]):

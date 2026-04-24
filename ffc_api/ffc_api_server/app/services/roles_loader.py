@@ -2,7 +2,7 @@ from typing import Any
 
 from ffc_api.ffc_api_server.app.db.base import session_factory
 from ffc_api.ffc_api_server.app.db.handlers import RoleHandler, TypeHandler
-from ffc_api.ffc_api_server.app.optscale.models import Role
+from ffc_api.ffc_api_server.app.db.models.optscale import Role
 
 
 class Roles:
@@ -17,7 +17,7 @@ class Roles:
                 role_handler = RoleHandler(session)
                 type_handler = TypeHandler(session)
 
-                roles = await role_handler.query_db(where_clauses=[Role.is_active == True])
+                roles = await role_handler.query_db(where_clauses=[Role.is_active])
                 types = await type_handler.query_db()
 
                 self.role_map = {r.id: r.name for r in roles}

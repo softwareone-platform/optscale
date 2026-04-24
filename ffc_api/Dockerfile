@@ -1,4 +1,4 @@
-FROM python:3.12.11-slim
+FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y \
     gcc \
@@ -16,6 +16,7 @@ WORKDIR /usr/src/app
 ENV PYTHONPATH=/usr/src/app
 
 COPY optscale_client optscale_client
+COPY tools tools
 
 COPY ffc_api/__init__.py ffc_api/__init__.py
 COPY ffc_api/ffc_api_server ffc_api/ffc_api_server

@@ -3,14 +3,14 @@ import secrets
 from fastapi import Depends, HTTPException, status
 from fastapi.security import APIKeyHeader
 
-from ffc_api.ffc_api_server.app.auth.auth import MacaroonToken, TokenBearer
+from ffc_api.ffc_api_server.app.auth.auth import TokenBearer
+from ffc_api.ffc_api_server.app.auth.client import authorize
 from ffc_api.ffc_api_server.app.conf import get_settings
-from ffc_api.ffc_api_server.app.db.handlers import TokenHandler
-from ffc_api.ffc_api_server.app.dependencies.db import DBSession
-from ffc_api.ffc_api_server.app.optscale.models import Token
-from ffc_api.ffc_api_server.app.utils import get_digest, utcnow
+from ffc_api.ffc_api_server.app.db.models.optscale import Organization
+from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 
 secret_header = APIKeyHeader(name="Secret", auto_error=False)
+token_bearer = TokenBearer()
 
 
 def verify_cluster_secret(secret: str | None = Depends(secret_header)):
@@ -26,26 +26,12 @@ def verify_cluster_secret(secret: str | None = Depends(secret_header)):
         )
 
 
-token_bearer = TokenBearer()
+def verify_org_permission(action: str):
 
+    def dependency(
+        token: str | None = Depends(token_bearer),
+        organization: Organization = Depends(fetch_organization_or_404),
+    ) -> None:
+        authorize(token, action, "organization", organization.id)
 
-async def verify_cluster_token(
-    db_session: DBSession,
-    token_str: str = Depends(token_bearer),
-):
-    if not token_str:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Missing token")
-
-    token_handler = TokenHandler(db_session)
-    token = await token_handler.first(
-        where_clauses=[Token.digest == get_digest(token_str), Token.valid_until >= utcnow()],
-    )
-
-    if token is None:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token not found")
-
-    macaroon_token = MacaroonToken(token.user.salt, token.user.id)
-    if not macaroon_token.verify(token_str):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
-
-    return
+    return dependency

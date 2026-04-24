@@ -1,8 +1,10 @@
 from calendar import monthrange
 from datetime import datetime, timedelta
 
-from ffc_api.ffc_api_server.app.clickhouse.data_converter import ExternalDataConverter
-from ffc_api.ffc_api_server.app.clickhouse.clients import get_clickhouse_client, get_mongo_client
+from tools.optscale_data.clickhouse import ExternalDataConverter
+
+from ffc_api.ffc_api_server.app.clients.clickhouse import get_clickhouse_client
+from ffc_api.ffc_api_server.app.clients.mongo import get_mongo_client
 from ffc_api.ffc_api_server.app.utils import utcnow
 
 
@@ -11,27 +13,24 @@ def get_cloud_expenses_with_resource_info(
 ):
     pipeline = [
         {
-            '$match': {
-                '$and': [
-                    {'cloud_account_id': {'$in': datasource_ids}},
-                    {'_first_seen_date': {'$lt': end_date}},
+            "$match": {
+                "$and": [
+                    {"cloud_account_id": {"$in": datasource_ids}},
+                    {"_first_seen_date": {"$lt": end_date}},
                     {
-                        '_last_seen_date': {
-                            '$gte': start_date.replace(hour=0, minute=0, second=0, microsecond=0),
+                        "_last_seen_date": {
+                            "$gte": start_date.replace(hour=0, minute=0, second=0, microsecond=0),
                         },
                     },
-                    {'first_seen': {'$lt': int(end_date.timestamp())}},
-                    {'last_seen': {'$gte': int(start_date.timestamp())}},
-                    {'deleted_at': 0}
+                    {"first_seen": {"$lt": int(end_date.timestamp())}},
+                    {"last_seen": {"$gte": int(start_date.timestamp())}},
+                    {"deleted_at": 0},
                 ]
             }
         },
         {
-            '$group': {
-                '_id': '$cloud_account_id',
-                'count': {'$sum': 1}
-            }
-        }
+            "$group": {"_id": "$cloud_account_id", "count": {"$sum": 1}},
+        },
     ]
     resource_counts = list(mongo_client.restapi.resources.aggregate(pipeline))
     query = """
@@ -47,18 +46,16 @@ def get_cloud_expenses_with_resource_info(
 
     return clickhouse_client.query(
         query=query,
-        parameters={
-            'start_date': start_date,
-            'end_date': end_date
-        },
-        external_data=ExternalDataConverter()([{
-            'name': 'cloud_accounts',
-            'structure': [
-                ('_id', 'String'),
-                ('count', 'Int32')
-            ],
-            'data': resource_counts
-        }]),
+        parameters={"start_date": start_date, "end_date": end_date},
+        external_data=ExternalDataConverter()(
+            [
+                {
+                    "name": "cloud_accounts",
+                    "structure": [("_id", "String"), ("count", "Int32")],
+                    "data": resource_counts,
+                }
+            ]
+        ),
     ).result_rows
 
 
@@ -70,12 +67,7 @@ def get_cloud_expenses(clickhouse_client, mongo_client, start, end, datasource_i
         start_date=start,
         end_date=end,
     )
-    return {
-        x[0]: {
-            'cost': x[1],
-            'count': x[2]
-        } for x in expenses
-    }
+    return {x[0]: {"cost": x[1], "count": x[2]} for x in expenses}
 
 
 def get_this_month_expenses(clickhouse_client, mongo_client, datasource_ids, today_date):
@@ -93,9 +85,9 @@ def get_last_month_expenses(clickhouse_client, mongo_client, datasource_ids, tod
 
 
 def get_first_expenses_for_forecast(clickhouse_client, datasource_ids):
-    prev_month_start = (
-        utcnow().replace(day=1) - timedelta(days=1)
-    ).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    prev_month_start = (utcnow().replace(day=1) - timedelta(days=1)).replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0
+    )
 
     query = """
         SELECT 'cloud_account_id', min(date)
@@ -107,16 +99,16 @@ def get_first_expenses_for_forecast(clickhouse_client, datasource_ids):
     """
     external_tables = [
         {
-            'name': 'cloud_account_ids',
-            'structure': [('id', 'String')],
-            'data': [{'id': r_id} for r_id in datasource_ids]
+            "name": "cloud_account_ids",
+            "structure": [("id", "String")],
+            "data": [{"id": r_id} for r_id in datasource_ids],
         }
     ]
 
     result = clickhouse_client.query(
         query=query,
-        parameters={'date': prev_month_start},
-        external_data=ExternalDataConverter()(external_tables)
+        parameters={"date": prev_month_start},
+        external_data=ExternalDataConverter()(external_tables),
     ).result_rows
 
     return {r[0]: r[1] for r in result}
@@ -144,26 +136,24 @@ def get_forecasts(datasource_ids):
     mongo_client = get_mongo_client()
 
     today = utcnow()
-    month_expenses = get_this_month_expenses(
-        clickhouse_client, mongo_client, datasource_ids, today
-    )
+    month_expenses = get_this_month_expenses(clickhouse_client, mongo_client, datasource_ids, today)
     last_month_expenses = get_last_month_expenses(
         clickhouse_client, mongo_client, datasource_ids, today
     )
     first_expenses = get_first_expenses_for_forecast(clickhouse_client, datasource_ids)
 
     for datasource_id in datasource_ids:
-        default = {'cost': 0, 'count': 0}
+        default = {"cost": 0, "count": 0}
         current_stats = month_expenses.get(datasource_id, default)
         last_stats = last_month_expenses.get(datasource_id, default)
         result[datasource_id] = {
-            'cost': current_stats['cost'],
-            'forecast': get_monthly_forecast(
-                last_stats['cost'] + current_stats['cost'],
-                current_stats['cost'],
+            "cost": current_stats["cost"],
+            "forecast": get_monthly_forecast(
+                last_stats["cost"] + current_stats["cost"],
+                current_stats["cost"],
                 first_expenses.get(datasource_id),
             ),
-            'resources': current_stats['count'],
+            "resources": current_stats["count"],
         }
 
     return result

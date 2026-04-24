@@ -5,12 +5,13 @@ import fastapi_pagination
 from fastapi import Depends, FastAPI
 from fastapi.routing import APIRoute, APIRouter
 
+from ffc_api.ffc_api_server.app.clients.clickhouse import get_clickhouse_client
+from ffc_api.ffc_api_server.app.clients.mongo import get_mongo_client
 from ffc_api.ffc_api_server.app.conf import get_settings
-from ffc_api.ffc_api_server.app.clickhouse.clients import configure_clickhouse_client
 from ffc_api.ffc_api_server.app.db.base import configure_db_engine, verify_db_connection
 from ffc_api.ffc_api_server.app.dependencies.auth import verify_cluster_secret
-from ffc_api.ffc_api_server.app.routers import datasources, organizations, tags, users
-from ffc_api.ffc_api_server.app.routers.ffc_client import organizations as client_organizations
+from ffc_api.ffc_api_server.app.routers.admin import datasources, organizations, tags, users
+from ffc_api.ffc_api_server.app.routers.client import organizations as client_organizations
 from ffc_api.ffc_api_server.app.services.roles_loader import configure_roles
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,8 @@ async def lifespan(ffc_app: FastAPI):
     configure_db_engine(settings)
     await verify_db_connection()
     await configure_roles()
-    configure_clickhouse_client()
+    get_clickhouse_client()
+    get_mongo_client()
     yield
 
 
@@ -55,28 +57,24 @@ def setup_app():
     for router in (organizations.router, datasources.router, tags.router, users.router):
         setup_custom_serialization(router)
 
-    admin_router = APIRouter(prefix="/admin")
+    admin_router = APIRouter(prefix="/admin", dependencies=[Depends(verify_cluster_secret)])
     client_router = APIRouter(prefix="/client")
 
     admin_router.include_router(
         organizations.router,
         prefix="/organizations",
-        dependencies=[Depends(verify_cluster_secret)],
     )
     admin_router.include_router(
         datasources.router,
         prefix="/datasources",
-        dependencies=[Depends(verify_cluster_secret)],
     )
     admin_router.include_router(
         tags.router,
         prefix="/tags",
-        dependencies=[Depends(verify_cluster_secret)],
     )
     admin_router.include_router(
         users.router,
         prefix="/users",
-        dependencies=[Depends(verify_cluster_secret)],
     )
 
     client_router.include_router(
