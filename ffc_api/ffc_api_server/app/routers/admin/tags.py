@@ -5,8 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import Select
 
 from ffc_api.ffc_api_server.app.db.handlers import ConstraintViolationError, NotFoundError
-from ffc_api.ffc_api_server.app.db.models import Tag
-from ffc_api.ffc_api_server.app.dependencies.auth import verify_cluster_token
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.dependencies.db import TagRepository
 from ffc_api.ffc_api_server.app.dependencies.path import TagId
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, paginate
@@ -49,7 +48,6 @@ async def get_tags(
     "",
     response_model=TagRead,
     status_code=status.HTTP_201_CREATED,
-    # dependencies=[Depends(verify_cluster_token)],
 )
 async def create_tag(
     data: TagCreate,
@@ -84,7 +82,6 @@ async def get_tag_by_id(
 @router.delete(
     "/{tag_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(verify_cluster_token)],
 )
 async def delete_tag_by_id(
     tag: Annotated[Tag, Depends(fetch_tag_or_404)],
@@ -96,7 +93,6 @@ async def delete_tag_by_id(
 @router.put(
     "/{tag_id}",
     response_model=TagRead,
-    dependencies=[Depends(verify_cluster_token)],
 )
 async def update_account(
     data: TagUpdate,

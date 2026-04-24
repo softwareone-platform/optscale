@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy import or_
 
-from ffc_api.ffc_api_server.app.db.models import Tag
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.dependencies.db import TagRepository
 from ffc_api.ffc_api_server.app.dependencies.path import TagId
 from ffc_api.ffc_api_server.app.enums import TagResourceType

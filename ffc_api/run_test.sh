@@ -6,19 +6,19 @@ TEST_IMAGE=ffc_api_tests:${BUILD_TAG}
 
 docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f ffc_api/Dockerfile_tests .
 
-echo "Pycodestyle tests>>>"
+echo "Run Ruff to check code style>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
-    "uv --project ffc_api run pycodestyle --ignore=E712,W503 --exclude=.venv --max-line-length=100 ffc_api"
-echo "<<<Pycodestyle tests"
+    "uv --project ffc_api run ruff check ffc_api"
+echo "<<<Ruff check"
 
-echo "Pylint tests>>>"
+echo "Check formatting with Ruff>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
-  "uv --project ffc_api run pylint --rcfile=ffc_api/.pylintrc --fail-under=9 --fail-on=E,F ./ffc_api"
-echo "<<Pylint tests"
+  "uv --project ffc_api run ruff format --check --diff ffc_api"
+echo "<<Ruff format"
 
-echo "Unit tests>>>"
+echo "Run tests with pytest>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
-    "uv --project ffc_api run pytest --disable-warnings"
-echo "<<Unit tests"
+    "uv --project ffc_api run pytest --disable-warnings ffc_api"
+echo "<<Pytest"
 
 docker rmi ${TEST_IMAGE}

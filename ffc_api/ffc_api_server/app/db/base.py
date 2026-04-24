@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from ffc_api.ffc_api_server.app.conf import Settings
+from ffc_api.ffc_api_server.app.conf import mysql_async_url
 
 session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
     class_=AsyncSession, expire_on_commit=False
@@ -17,9 +17,9 @@ session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
 ssl_ctx = ssl.create_default_context()
 
 
-def configure_db_engine(settings: Settings) -> AsyncEngine:
+def configure_db_engine(settings) -> AsyncEngine:
     db_engine = create_async_engine(
-        str(settings.mysql_async_url),
+        mysql_async_url(),
         echo=settings.debug,
         connect_args={"ssl": ssl_ctx},
         future=True,

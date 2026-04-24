@@ -1,6 +1,7 @@
 import enum
 
 
+@enum.unique
 class TagResourceType(str, enum.Enum):
     """Types of resources that can be tagged"""
 

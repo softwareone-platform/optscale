@@ -6,8 +6,8 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi_pagination import create_page, resolve_params
 from sqlalchemy import Select
 
-from ffc_api.ffc_api_server.app.clickhouse.service import get_forecasts
-from ffc_api.ffc_api_server.app.db.models import Tag
+from ffc_api.ffc_api_server.app.db.models.ffc import Tag
+from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, User
 from ffc_api.ffc_api_server.app.dependencies.db import (
     DataSourceRepository,
     OrganizationRepository,
@@ -16,7 +16,6 @@ from ffc_api.ffc_api_server.app.dependencies.db import (
 )
 from ffc_api.ffc_api_server.app.dependencies.path import TagId
 from ffc_api.ffc_api_server.app.enums import TagResourceType
-from ffc_api.ffc_api_server.app.optscale.models import DataSource, Organization, User
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from ffc_api.ffc_api_server.app.rql import (
     DataSourceRules,
@@ -30,6 +29,7 @@ from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceWithExpense
 from ffc_api.ffc_api_server.app.schemas.organizations import OrganizationRead
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
 from ffc_api.ffc_api_server.app.schemas.users import UserRead
+from ffc_api.ffc_api_server.app.services.expenses import get_forecasts
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
 
@@ -64,7 +64,7 @@ async def get_organizations(
         organization_repo,
         OrganizationRead,
         base_query=base_query,
-        where_clauses=[Organization.is_demo == False, Organization.disabled == False],
+        where_clauses=[Organization.is_demo.is_(False), Organization.disabled.is_(False)],
     )
 
 
@@ -168,13 +168,16 @@ async def get_datasources_by_organization_id(
     )
 
     return create_page(
-        [convert_model_to_schema(
-            DataSourceWithExpenses,
-            item,
-            forecast=expenses[item.id].get('forecast'),
-            cost=expenses[item.id].get('cost'),
-            resources=expenses[item.id].get('resources'),
-        ) for item in datasources],
+        [
+            convert_model_to_schema(
+                DataSourceWithExpenses,
+                item,
+                forecast=expenses[item.id].get("forecast"),
+                cost=expenses[item.id].get("cost"),
+                resources=expenses[item.id].get("resources"),
+            )
+            for item in datasources
+        ],
         params=params,
         total=total,
     )

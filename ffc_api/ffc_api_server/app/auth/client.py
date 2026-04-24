@@ -1,12 +1,11 @@
 import requests
-
 from fastapi import HTTPException, status
-
-from ffc_api.ffc_api_server.app.conf import get_settings
 from optscale_client.auth_client.client_v2 import Client as AuthClient
 
+from ffc_api.ffc_api_server.app.conf import get_settings
 
-def authorize(token: object, action: object, type: object, resource_id: object):
+
+def authorize(token: str | None, action: str, type: str, resource_id: str):
     try:
         settings = get_settings()
 

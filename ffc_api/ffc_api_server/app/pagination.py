@@ -13,13 +13,13 @@ from sqlalchemy.orm.interfaces import ORMOption
 from sqlalchemy.sql.selectable import Select
 
 from ffc_api.ffc_api_server.app.db.handlers import ReadOnlyHandler, ReadWriteHandler
-from ffc_api.ffc_api_server.app.db.models import Base, TimestampMixin
-from ffc_api.ffc_api_server.app.optscale.models import Base as OptScaleBase
+from ffc_api.ffc_api_server.app.db.models.ffc import Base, TimestampMixin
+from ffc_api.ffc_api_server.app.db.models.optscale import Base as OptScaleBase
 from ffc_api.ffc_api_server.app.schemas.core import BaseSchema, convert_model_to_schema
 
 
 class LimitOffsetParams(BaseModel, AbstractParams):
-    limit: int = Query(50, ge=0, le=1000, description="Page size limit")
+    limit: int = Query(50, ge=0, le=100, description="Page size limit")
     offset: int = Query(0, ge=0, description="Page offset")
 
     def to_raw_params(self) -> RawParams:

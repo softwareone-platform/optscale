@@ -37,10 +37,24 @@ from etcd.
 
 **Important**: This step is required only once to create the database.
 
-```bash
+```sql
 CREATE DATABASE IF NOT EXISTS `{FFC_API_DB_NAME}`
 DEFAULT CHARACTER SET `utf8mb4`
 DEFAULT COLLATE `utf8mb4_unicode_ci`
+```
+
+After applying migrations for the first time, check that collacte is set to `utf8mb4_unicode_ci` and not overwritten to `utf8mb4_0900_ai_ci`:
+
+```sql
+SHOW TABLE STATUS FROM `{FFC_API_DB_NAME}` LIKE 'tags';
+```
+
+If you see `utf8mb4_0900_ai_ci` collation, run the following command to fix it:
+
+```sql
+ALTER TABLE `{FFC_API_DB_NAME}`.tags
+CONVERT TO CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci
 ```
 
 ### Initialize Alembic Migrations
@@ -48,6 +62,6 @@ DEFAULT COLLATE `utf8mb4_unicode_ci`
 ```bash
 # Review the generated migration in migrations/versions/
 
-# Apply migration
+# Apply migration, run from ffc_api_server directory where alembic.ini is located
 alembic upgrade head
 ```

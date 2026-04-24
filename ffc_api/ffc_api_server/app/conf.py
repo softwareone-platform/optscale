@@ -1,82 +1,50 @@
 import pathlib
 from urllib.parse import quote
 
-from pydantic import MySQLDsn, computed_field
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from ffc_api.ffc_api_server.app.services.config_loader import load_etcd_config
+from dynaconf import Dynaconf
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent
 
+settings = Dynaconf(
+    envvar_prefix="FFC_API",
+    load_dotenv=True,
+    dotenv_path=str(PROJECT_ROOT / ".env"),
+    LOADERS_FOR_DYNACONF=[
+        "dynaconf.loaders.env_loader",
+        "ffc_api.ffc_api_server.app.services.config_loader",
+    ],
+    DEBUG=False,
+    MYSQL_DB="my-db",
+    MYSQL_USER="user",
+    MYSQL_PASSWORD="password",
+    MYSQL_HOST="mysql.database.azure.com",
+    MYSQL_PORT=3306,
+    AUTH_DB="auth-db",
+    AUTH_URL="http://auth.service:8080",
+    CLUSTER_SECRET="secret",
+    CLICKHOUSE_HOST="clickhouse.database.azure.com",
+    CLICKHOUSE_PORT=9000,
+    CLICKHOUSE_USER="user",
+    CLICKHOUSE_PASSWORD="password",
+    CLICKHOUSE_DB="clickhouse-db",
+    CLICKHOUSE_SECURE=False,
+    MONGO_URL="mongodb://mongo:27017",
+)
 
-class Settings(BaseSettings):
-    """
-    Project settings loaded from environment variables
-    """
 
-    model_config = SettingsConfigDict(
-        env_file=PROJECT_ROOT / ".env",
-        env_file_encoding="utf-8",
-        env_prefix="ffc_api_",
-        extra="ignore",
+def mysql_async_url() -> str:
+    return (
+        f"mysql+asyncmy://{settings.mysql_user}:{quote(settings.mysql_password)}"
+        f"@{settings.mysql_host}:{settings.mysql_port}/{settings.mysql_db}"
     )
 
-    etcd_host: str
-    etcd_port: int
 
-    db_name: str
-    debug: bool = False
-
-    mysql_db: str = "my-db"
-    mysql_user: str = "user"
-    mysql_password: str = "password"
-    mysql_host: str = "mysql.database.azure.com"
-    mysql_port: int = 3306
-
-    auth_db: str = "auth-db"
-
-    auth_url: str = "http://auth.service:8080"
-
-    cluster_secret: str = "secret"
-
-    clickhouse_host: str = "clickhouse.database.azure.com"
-    clickhouse_port: int = 9000
-    clickhouse_user: str = "user"
-    clickhouse_password: str = "password"
-    clickhouse_db: str = "clickhouse-db"
-    clickhouse_secure: bool = False
-
-    mongo_url: str = "mongodb://mongo:27017"
-
-    @computed_field
-    def mysql_async_url(self) -> MySQLDsn:
-        return MySQLDsn.build(
-            scheme="mysql+asyncmy",
-            username=self.mysql_user,
-            password=quote(self.mysql_password),
-            host=self.mysql_host,
-            port=self.mysql_port,
-            path=self.mysql_db,
-        )
-
-    @computed_field
-    def mysql_async_url_ffc(self) -> MySQLDsn:
-        return MySQLDsn.build(
-            scheme="mysql+asyncmy",
-            username=self.mysql_user,
-            password=quote(self.mysql_password),
-            host=self.mysql_host,
-            port=self.mysql_port,
-            path=self.db_name,
-        )
+def mysql_async_url_ffc() -> str:
+    return (
+        f"mysql+asyncmy://{settings.mysql_user}:{quote(settings.mysql_password)}"
+        f"@{settings.mysql_host}:{settings.mysql_port}/{settings.db_name}"
+    )
 
 
-_settings = None
-
-
-def get_settings() -> Settings:
-    global _settings
-    if not _settings:
-        _settings = Settings()  # type: ignore[call-arg]
-        load_etcd_config(_settings)
-    return _settings
+def get_settings():
+    return settings

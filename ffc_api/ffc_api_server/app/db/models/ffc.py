@@ -1,3 +1,4 @@
+import uuid
 from datetime import UTC, datetime
 
 import sqlalchemy as sa
@@ -5,7 +6,6 @@ from sqlalchemy import BigInteger, Enum, Index, String, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from ffc_api.ffc_api_server.app.conf import get_settings
-from ffc_api.ffc_api_server.app.db.human_readable_pk import HumanReadablePKMixin
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 
 settings = get_settings()
@@ -43,12 +43,14 @@ class TimestampMixin:
     )
 
 
-class Tag(Base, HumanReadablePKMixin, TimestampMixin):
+class Tag(Base, TimestampMixin):
     __tablename__ = "tags"
 
-    PK_PREFIX = "FTAG"
-    PK_NUM_LENGTH = 12
-
+    id: Mapped[uuid.UUID] = mapped_column(
+        sa.Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     value: Mapped[str] = mapped_column(String(255), nullable=False)
     resource_type: Mapped[TagResourceType] = mapped_column(

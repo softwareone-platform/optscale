@@ -31,7 +31,7 @@ def upgrade() -> None:
                     ),
                     sa.Column('resource_id', sa.String(length=255), nullable=False),
                     sa.Column('deleted_ts', sa.BigInteger(), nullable=False),
-                    sa.Column('id', sa.String(length=32), nullable=False),
+                    sa.Column('id', sa.Uuid(as_uuid=True), nullable=False),
                     sa.Column(
                         'created_at',
                         sa.DateTime(timezone=True),
@@ -53,9 +53,6 @@ def upgrade() -> None:
                     ),
                     schema='ffc-api-db',
                     )
-    op.create_index(
-        op.f('ix_ffc-api-db_tags_id'), 'tags', ['id'], unique=True, schema='ffc-api-db'
-    )
     op.create_index(
         op.f('ix_ffc-api-db_tags_name'), 'tags', ['name'], unique=False, schema='ffc-api-db'
     )
@@ -89,6 +86,5 @@ def downgrade() -> None:
     op.drop_index('ix_tags_resource_lookup', table_name='tags', schema='ffc-api-db')
     op.drop_index(op.f('ix_ffc-api-db_tags_resource_id'), table_name='tags', schema='ffc-api-db')
     op.drop_index(op.f('ix_ffc-api-db_tags_name'), table_name='tags', schema='ffc-api-db')
-    op.drop_index(op.f('ix_ffc-api-db_tags_id'), table_name='tags', schema='ffc-api-db')
     op.drop_table('tags', schema='ffc-api-db')
     # ### end Alembic commands ###
