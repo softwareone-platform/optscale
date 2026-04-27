@@ -8,6 +8,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "postinstall": "playwright install chromium",
+    "install:browser": "playwright install chromium",
     "test": "cross-env npx playwright test",
     "test:ui": "npm run test -- --ui",
     "test:headed": "npm run test -- --headed --workers=1",

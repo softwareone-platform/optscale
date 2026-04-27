@@ -88,10 +88,6 @@ export default defineConfig({
 
   projects: [
     {
-      name: 'setup',
-      testMatch: /setup\/auth\.setup\.ts/,
-    },
-    {
       name: 'chromium',
       dependencies: ['setup'],
       use: {
@@ -104,6 +100,10 @@ export default defineConfig({
           ignoreHTTPSErrors: true,
         },
       },
+    },
+    {
+      name: 'setup',
+      testMatch: /setup\/auth\.setup\.ts/,
     },
   ],
 });

@@ -5,6 +5,6 @@ WORKDIR /app
 RUN npm install @playwright/test@1.52.0
 RUN npm install dotenv@16.4.7
 
-RUN npx playwright install
+RUN npx playwright install --with-deps chromium
 
 CMD ["npx", "playwright"]
