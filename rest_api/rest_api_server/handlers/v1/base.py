@@ -34,12 +34,12 @@ from rest_api.rest_api_server.utils import (
     Config,
     ModelEncoder,
     get_http_error_info,
-    get_trace_headers,
     run_task,
     tp_executor,
 )
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
 from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_telemetry import get_trace_headers
 
 LOG = logging.getLogger(__name__)
 
@@ -107,8 +107,8 @@ class BaseHandler(tornado.web.RequestHandler):
         return self._session()
 
     def prepare(self):
-        for k, v in get_trace_headers().items():
-            self.set_header(k, v)
+        for name, value in get_trace_headers().items():
+            self.set_header(name, value)
 
         self.set_content_type()
         if self.request.method == 'POST':
