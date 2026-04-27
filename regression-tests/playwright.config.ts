@@ -67,7 +67,7 @@ export default defineConfig({
   expect: {
     toHaveScreenshot: {
       animations: 'disabled',
-      stylePath: './styles/pre-screenshot-styles.css',
+      stylePath: ['./styles/no-scrollbars.css', './styles/pre-screenshot-styles.css'],
     },
   },
 

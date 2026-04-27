@@ -1,4 +1,6 @@
-/* disable-antialiasing.css */
+/*
+ * Disable platform-dependent text rendering and motion.
+*/
 html,
 body,
 * {
@@ -18,14 +20,4 @@ body,
 *::after {
   animation: none !important;
   transition: none !important;
-}
-
-/* Hide scrollbars across browsers to match headless mode which don't use scrollbars */
-::-webkit-scrollbar {
-  display: none !important;
-}
-
-* {
-  -ms-overflow-style: none !important; /* IE and Edge */
-  scrollbar-width: none !important; /* Firefox */
 }
