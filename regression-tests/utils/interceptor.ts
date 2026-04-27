@@ -5,13 +5,13 @@ import { debugLog } from './debug-logging';
 const OK_JSON = { status: 200, contentType: 'application/json' } as const;
 
 /** Fulfills a route with `mock` serialised as JSON. */
-export const respondWithMockData = <T>(route: Route, mock: T): Promise<void> => route.fulfill({ ...OK_JSON, body: JSON.stringify(mock) });
+const respondWithMockData = <T>(route: Route, mock: T): Promise<void> => route.fulfill({ ...OK_JSON, body: JSON.stringify(mock) });
 
 /** Stable identifier used in debug logs. */
-export const createInterceptorId = (gql?: string, url?: string): string => (gql ? `GraphQL:${gql}` : `REST:${url}`);
+const createInterceptorId = (gql?: string, url?: string): string => (gql ? `GraphQL:${gql}` : `REST:${url}`);
 
 /** Intercepts REST requests matching `pattern`. */
-export async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock: T, onHit: () => void): Promise<void> {
+async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock: T, onHit: () => void): Promise<void> {
   await page.route(pattern, async route => {
     onHit();
     await respondWithMockData(route, mock);

@@ -2,6 +2,7 @@ import { test } from '@/fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { cloudAccountsInterceptions } from '@/mocks';
 import { captureScreenshot } from '@/utils/screenshots';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 test.describe('FFC: Cloud Accounts', () => {
   test.use({ interceptAPI: { entries: cloudAccountsInterceptions } });
@@ -20,7 +21,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Management — Assumed role', async () => {
       await connect.btnAssumedRole.click();
-      await connect.fitViewportToFullPage();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AssumedRole.png');
     });
 
@@ -33,7 +34,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Member — Assumed role', async () => {
       await connect.btnAssumedRole.click();
-      await connect.fitViewportToFullPage();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AssumedRole.png');
     });
 
@@ -46,7 +47,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Standalone — Assumed role', async () => {
       await connect.btnAssumedRole.click();
-      await connect.fitViewportToFullPage();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AssumedRole.png');
     });
 
@@ -65,7 +66,7 @@ test.describe('FFC: Cloud Accounts', () => {
   test('Connect — Google Cloud', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.googleCloudBtn.click();
-    await cloudAccountsConnectPage.fitViewportToFullPage();
+    await fitViewportToFullPage(cloudAccountsConnectPage.page);
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectGoogleCloud.png');
   });
 });

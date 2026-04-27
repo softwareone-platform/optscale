@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 export class ResourcesPage extends BasePage {
   readonly heading: Locator;
@@ -68,6 +69,6 @@ export class ResourceDetailsPage extends BasePage {
   async prepareScreenshot(waitForCanvas = false): Promise<void> {
     await this.heading.hover();
     if (waitForCanvas) await this.waitForCanvas();
-    await this.fitViewportToFullPage();
+    await fitViewportToFullPage(this.page);
   }
 }

@@ -24,8 +24,9 @@ Tests are tagged with `@swo_regression` and cover:
 
 ## Prerequisites
 
-- Node.js 18+
-- A running OptScale instance (or use the built-in Docker runner against a remote URL)
+- **Node.js 20+** (Playwright 1.52 requires ≥ 18; the project's `@types/node` targets 22).
+- A running OptScale instance, or a remote URL the tests can reach.
+- **Docker** — only needed for `npm run test:docker[:update]` (used to regenerate cross-platform baseline snapshots). Local headless runs don't need it.
 
 ---
 
@@ -35,6 +36,11 @@ Tests are tagged with `@swo_regression` and cover:
 
 ```bash
 npm install
+```
+
+`npm install` runs a `postinstall` hook that downloads the Playwright-bundled **Chromium** browser. To re-install or update it manually:
+
+```bash
 npx playwright install chromium
 ```
 
@@ -50,7 +56,7 @@ Edit `.env` with the appropriate values. The complete list of variables the suit
 |--------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------|
 | `BASE_URL`               | no        | Portal URL Playwright points at. Defaults to `http://0.0.0.0:3000`.                                                   |
 | `HOST_URL`               | yes¹      | Cluster URL to proxy API requests to — same concept as `VITE_PROXY` in `ngui/ui/.env.sample`.                         |
-| `DEMO_ACCOUNT_API_TOKEN` | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
+| `HOST_ACCOUNT_API_TOKEN` | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
 | `CI`                     | no        | `true` inside CI — enables `forbidOnly`, raises retries, lowers workers. Playwright sets this automatically.          |
 | `IS_REGRESSION_RUN`      | no        | `true` → snapshots compared against `snapshots/baseline/<host>/`. Unset → `snapshots/local/<platform>/` (gitignored). |
 | `IGNORE_HTTPS_ERRORS`    | no        | `true` to accept self-signed / expired certificates in the browser context.                                           |
@@ -72,6 +78,7 @@ Edit `.env` with the appropriate values. The complete list of variables the suit
 | `npm run test:docker`        | Run all tests inside Docker (Linux) — used to produce baseline snapshots |
 | `npm run test:docker:update` | Run inside Docker and update baseline snapshots                          |
 | `npm run report`             | Open the last HTML report                                                |
+| `npm run install:browser`    | (Re-)install the Playwright-bundled Chromium browser                     |
 | `npm run lint`               | Lint all TypeScript files                                                |
 | `npm run lint:fix`           | Lint and auto-fix issues                                                 |
 | `npm run format`             | Format all files with Prettier                                           |
@@ -82,6 +89,7 @@ Edit `.env` with the appropriate values. The complete list of variables the suit
 The shell script `run_pw.sh` builds and runs a Linux Docker container to produce platform-independent snapshots. Key flags:
 
 ```
+-c, --config FILE     Use an alternate Playwright config file
 -u, --update          Update baseline screenshots
 -U, --url URL         Override BASE_URL
 -p, --port PORT       Port for the local app (default 4000)
@@ -129,7 +137,8 @@ regression-tests/
 │   ├── env.ts                      # Single source of truth for `process.env.*` + `requireEnv(...)` validator
 │   ├── file.ts                     # `safeReadJsonFile<T>` / `safeWriteJsonFile` helpers
 │   ├── interceptor.ts              # Route interception implementation (REST + GraphQL mock routing)
-│   └── screenshots.ts              # `captureScreenshot` + `waitForPageIdle` helpers
+│   ├── screenshots.ts              # `captureScreenshot` helper
+│   └── viewport.ts                 # `fitViewportToFullPage` — resizes viewport to fit full `<main>` content
 │
 ├── types/
 │   ├── api-response.types.ts       # Typed API response shapes
@@ -375,7 +384,7 @@ Key points:
 
 - **`test.use({ interceptAPI: { entries } })`** registers the mocks before the spec runs. Must be wrapped in `{ entries: [...] }` — see the comment in `page.fixture.ts`.
 - **`alertsPage`** is injected by the fixture — no manual `new AlertsPage(page)`.
-- **`captureScreenshot(target, name, opts)`** hovers a stable anchor, waits for the page to idle, and calls `toHaveScreenshot`. Use `fitViewport: alertsPage` for tall pages; see `utils/screenshots.ts`.
+- **`captureScreenshot(target, name, opts)`** hovers a stable anchor, waits for the page to idle, and calls `toHaveScreenshot`. Pass `fitViewport: true` for tall pages — it resizes the browser to fit the full `<main>` content (helper lives in `utils/viewport.ts`).
 - **Screenshot names** follow `<Feature>-<Area>--<Variant>.png` (double-dash before the variant). They map 1:1 to baseline PNGs under `snapshots/…`.
 
 #### Fixture options (passed via `test.use({...})`)

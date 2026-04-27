@@ -13,7 +13,7 @@ test.describe(() => {
     await resourcesPage.searchInput.waitFor();
     await captureScreenshot(resourcesPage.main, 'Resources-Container--Expenses.png', {
       hoverAnchor: resourcesPage.heading,
-      fitViewport: resourcesPage,
+      fitViewport: true,
     });
   });
 });

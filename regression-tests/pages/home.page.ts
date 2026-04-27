@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 export class HomePage extends BasePage {
   readonly organizationExpensesBlock: Locator;
@@ -24,6 +25,6 @@ export class HomePage extends BasePage {
     await this.recommendationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.policyViolationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.poolsRequiringAttentionBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
-    await this.fitViewportToFullPage();
+    await fitViewportToFullPage(this.page);
   }
 }

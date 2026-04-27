@@ -2,6 +2,7 @@ import { test } from '@/fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { expensesInterceptions, expensesMapInterceptions, expensesBreakdownsInterceptions } from '@/mocks';
 import { captureScreenshot } from '@/utils/screenshots';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 test.describe(() => {
   test.use({ interceptAPI: { entries: expensesInterceptions } });
@@ -33,7 +34,7 @@ test.describe(() => {
   test('FFC: Expenses Map', async ({ expensesMapPage }) => {
     await expensesMapPage.navigateToURL();
     await expensesMapPage.heading.hover();
-    await expensesMapPage.fitViewportToFullPage();
+    await fitViewportToFullPage(expensesMapPage.page);
     await expect(expensesMapPage.mapLegend).toBeVisible();
     await expect(expensesMapPage.main).toHaveScreenshot('ExpensesMap-Container.png', {
       mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
@@ -78,7 +79,7 @@ test.describe(() => {
         await expensesPage.waitForCanvas();
         await captureScreenshot(expensesPage.main, snapshot, {
           hoverAnchor: heading(),
-          fitViewport: expensesPage,
+          fitViewport: true,
         });
       });
     }

@@ -38,39 +38,6 @@ export abstract class BasePage {
     await this.waitForLoadingPageImgToDisappear();
   }
 
-  async fitViewportToFullPage(): Promise<void> {
-    const MAX_HEIGHT = 12_000;
-    const HEADER_HEIGHT = 80;
-    const MAX_ITERATIONS = 5;
-
-    const { width } = this.page.viewportSize() ?? { width: 1280 };
-
-    // Iterate: resize viewport → measure content → resize again if the
-    // content height changed (which it can, because resizing the viewport
-    // itself triggers reflow — especially in responsive layouts).
-    //
-    // Stops as soon as two consecutive measurements agree or when we hit
-    // `MAX_ITERATIONS`. This avoids the old two-step (shrink-to-768, then
-    // grow) pattern which caused 12–50 px differences on pages with
-    // flex/grid children whose height depended on the current viewport.
-    let previousHeight = 0;
-    for (let i = 0; i < MAX_ITERATIONS; i++) {
-      const contentHeight = await this.page.evaluate(() => {
-        const wrapper = document.querySelector('main#mainLayoutWrapper');
-        if (!wrapper) return 0;
-        return Array.from(wrapper.children).reduce((sum, child) => sum + (child as HTMLElement).offsetHeight, 0);
-      });
-
-      const targetHeight = Math.min(contentHeight + HEADER_HEIGHT, MAX_HEIGHT);
-      if (targetHeight === previousHeight) break;
-
-      await this.page.setViewportSize({ width, height: targetHeight });
-
-      await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-
-      previousHeight = targetHeight;
-    }
-  }
 
   /**
    * Resolves when any (default) or all `<canvas>` elements on the page have

@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
 
@@ -7,8 +8,8 @@ interface CaptureOptions {
   hoverAnchor?: Locator;
   /** Skip the hover step entirely (for hover-sensitive widgets). */
   skipHover?: boolean;
-  /** Page object exposing `fitViewportToFullPage()` — resizes before snapshotting. */
-  fitViewport?: { fitViewportToFullPage: () => Promise<void> };
+  /** Resize the viewport to fit the full `<main>` before snapshotting. */
+  fitViewport?: boolean;
   /** Forwarded to `toHaveScreenshot`. */
   screenshotOptions?: ScreenshotOptions;
 }
@@ -20,7 +21,7 @@ const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms))
  * Combines fonts-ready, DOM-mutation silence, and a bbox cross-check to
  * catch CSS-only transitions (e.g. MUI Accordion) that don't fire mutations.
  */
-export async function waitForPageIdle(
+async function waitForPageIdle(
   target: Locator,
   { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {},
 ): Promise<void> {
@@ -85,7 +86,7 @@ export async function captureScreenshot(
   await waitForPageIdle(target);
 
   if (options.fitViewport) {
-    await options.fitViewport.fitViewportToFullPage();
+    await fitViewportToFullPage(target.page());
     await waitForPageIdle(target, { idleMs: 250 });
   }
 

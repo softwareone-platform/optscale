@@ -29,7 +29,7 @@ test.describe(() => {
         if (open) await open();
         await captureScreenshot(settingsPage.main, snapshot, {
           hoverAnchor: settingsPage.heading,
-          fitViewport: settingsPage,
+          fitViewport: true,
         });
       });
     }

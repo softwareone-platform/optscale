@@ -1,13 +1,14 @@
 import { test } from '@/fixtures/page.fixture';
 import { homepageInterceptions } from '@/mocks';
 import { captureScreenshot } from '@/utils/screenshots';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 test.use({ interceptAPI: { entries: homepageInterceptions } });
 
 test('FFC: Home', async ({ homePage }) => {
   await homePage.navigateToURL();
   await homePage.waitForAllBoxesToLoad();
-  await homePage.fitViewportToFullPage();
+  await fitViewportToFullPage(homePage.page);
 
   const blocks = [
     { label: 'Organization Expenses block', locator: homePage.organizationExpensesBlock, snapshot: 'Home-Block--OrganizationExpenses.png' },

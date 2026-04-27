@@ -45,7 +45,7 @@ export const env = {
   browserErrorLogging: asBool(process.env.BROWSER_ERROR_LOGGING),
 } as const;
 
-export type Env = typeof env;
+type Env = typeof env;
 
 /**
  * Maps each `env.*` key back to the literal env-var name users set in `.env`.

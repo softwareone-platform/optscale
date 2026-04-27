@@ -2,7 +2,7 @@ import type { InterceptionEntry } from '@/types';
 import { E2E_UE } from './e2e-markers';
 
 // ─── Mock payloads ──────────────────────────────────────────────────────────
-export const EmployeesMock = {
+const EmployeesMock = {
   employees: [
     {
       deleted_at: 0,
@@ -106,7 +106,7 @@ export const EmployeesMock = {
   ],
 };
 
-export const UsersPoolsPermissionsMock = {
+const UsersPoolsPermissionsMock = {
   pools: [
     {
       id: '038193c2-29e8-44a2-a18e-3d362bb82b27',

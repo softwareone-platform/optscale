@@ -7,7 +7,7 @@ import { Locator, Page } from '@playwright/test';
  *  - a heading inside `main`
  *  - an "Add" button
  */
-export abstract class PolicyPage extends BasePage {
+abstract class PolicyPage extends BasePage {
   readonly heading: Locator;
   readonly addBtn: Locator;
 

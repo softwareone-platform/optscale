@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import { fitViewportToFullPage } from '@/utils/viewport';
 
 export class CloudAccountsPage extends BasePage {
   readonly heading: Locator;
@@ -39,6 +40,6 @@ export class CloudAccountsConnectPage extends BasePage {
   async prepareConnectPageForScreenshot(cloudAccountsPage: CloudAccountsPage): Promise<void> {
     await cloudAccountsPage.navigateToURL();
     await cloudAccountsPage.clickAddBtn();
-    await this.fitViewportToFullPage();
+    await fitViewportToFullPage(this.page);
   }
 }
