@@ -27,9 +27,6 @@ export abstract class BasePage {
     this.progressBar = this.page.locator('//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]');
   }
 
-  getByAnyTestId(testId: string, root: Locator | Page = this.page): Locator {
-    return root.locator(`[data-test-id="${testId}"], [data-testid="${testId}"]`);
-  }
 
   async navigateToURL(customUrl: string = null): Promise<void> {
     debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);

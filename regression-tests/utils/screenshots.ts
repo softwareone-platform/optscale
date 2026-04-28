@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from '@playwright/test';
-import path from 'path';
 import { fitViewportToFullPage } from '@/utils/viewport';
 
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
@@ -16,27 +15,6 @@ interface CaptureOptions {
 }
 
 const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
-
-/**
- * Inject `styles/no-scrollbars.css` into the page **at runtime**.
- *
- * Why this exists separately from Playwright's `expect.toHaveScreenshot.stylePath`:
- *  - `stylePath` injects styles during `toHaveScreenshot()`, *after* layout
- *    measurement is complete.
- *  - `fitViewportToFullPage` measures `scrollHeight` *before* the snapshot,
- *    so it needs the scrollbar rules applied earlier — otherwise platform
- *    scrollbar widths (Linux ~15 px, Windows ~17 px, macOS overlay 0 px)
- *    leak into the measured height and screenshots drift across machines.
- *
- * Only the scrollbar rules are needed for measurement; the antialiasing
- * rules in `pre-screenshot-styles.css` are pulled in by `stylePath` later.
- * Idempotent — repeated calls just append harmless duplicate `<style>` tags.
- */
-async function applyNoScrollbarStyles(page: Page): Promise<void> {
-  await page.addStyleTag({ path: NO_SCROLLBARS_STYLES_PATH });
-}
-
-const NO_SCROLLBARS_STYLES_PATH = path.resolve(__dirname, '..', 'styles', 'no-scrollbars.css');
 
 /**
  * Waits until the page has been quiet for `idleMs` in a row.
@@ -108,7 +86,6 @@ export async function captureScreenshot(
   await waitForPageIdle(target);
 
   if (options.fitViewport) {
-    await applyNoScrollbarStyles(target.page());
     await fitViewportToFullPage(target.page());
     await waitForPageIdle(target, { idleMs: 250 });
   }

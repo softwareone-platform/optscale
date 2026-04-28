@@ -9,7 +9,7 @@ const SuggestionFilter = (props: SuggestionFilterProps) => {
   const { classes } = useStyles();
 
   return (
-    <Box data-testid="btn_suggestion_filter" className={classes.filterWrapper}>
+    <Box data-test-id="btn_suggestion_filter" className={classes.filterWrapper}>
       <SuggestionFilterOriginal {...props} />
     </Box>
   );

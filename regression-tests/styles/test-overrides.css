@@ -13,3 +13,21 @@
 body.e2e-hide-snackbar .MuiSnackbar-anchorOriginTopRight {
   display: none !important;
 }
+
+/*
+ * Hide every native scrollbar (root + nested containers).
+ *
+ * Must be present BEFORE `fitViewportToFullPage` measures `scrollHeight`,
+ * otherwise platform scrollbar widths (Linux ~15 px, Windows ~17 px, macOS
+ * overlay 0 px) leak into the measured height and screenshots drift across
+ * machines.
+ */
+::-webkit-scrollbar {
+  display: none !important;
+}
+
+* {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+

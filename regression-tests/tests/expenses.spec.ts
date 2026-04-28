@@ -37,7 +37,7 @@ test.describe(() => {
     await fitViewportToFullPage(expensesMapPage.page);
     await expect(expensesMapPage.mapLegend).toBeVisible();
     await expect(expensesMapPage.main).toHaveScreenshot('ExpensesMap-Container.png', {
-      mask: [expensesMapPage.page.locator('[data-testid="google-map-wrapper"]')],
+      mask: [expensesMapPage.page.getByTestId('google-map-wrapper')],
     });
   });
 });

@@ -73,7 +73,7 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
                 onClick={expandRequiresAttentionHandler}
                 variant="outlined"
                 color="primary"
-                data-testid="expandRequiringAttention"
+                data-test-id="expandRequiringAttention"
               >
                 <FormattedMessage id="expandRequiringAttention" />
               </Button>

@@ -16,6 +16,6 @@ export class ExpensesMapPage extends BasePage {
   constructor(page: Page) {
     super(page, '/expenses-map');
     this.heading = this.main.locator('//h1[contains(text(), "Cost map")]');
-    this.mapLegend = this.main.locator('[data-testid="map-legend"]');
+    this.mapLegend = this.main.locator('[data-test-id="map-legend"]');
   }
 }

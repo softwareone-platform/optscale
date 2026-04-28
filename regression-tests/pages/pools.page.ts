@@ -11,7 +11,7 @@ export class PoolsPage extends BasePage {
   constructor(page: Page) {
     super(page, '/pools');
     this.heading = this.main.getByTestId('lbl_pool_name');
-    this.expandRequiringAttentionBtn = this.getByAnyTestId('expandRequiringAttention');
+    this.expandRequiringAttentionBtn = this.page.getByTestId('expandRequiringAttention');
     this.firstSubItem = this.table.locator('//tr[@data-test-id="row_1"]');
     this.sideModal = this.page.getByTestId('smodal_edit_pool');
     this.sideModalTabAssignment = this.page.getByTestId('tab_assignment');

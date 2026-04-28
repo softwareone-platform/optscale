@@ -8,7 +8,7 @@ const MapLegend = ({ markers }) => {
   const uniqueTypes = [...new Map(markers.map((item) => [item.type, item])).values()].filter((item) => item.type);
 
   return (
-    <Box data-testid="map-legend">
+    <Box data-test-id="map-legend">
       {uniqueTypes.map(({ type, color }) => (
         <Box key={`legend-${type}`} display="inline-flex" mr={2}>
           <Typography component="span">
