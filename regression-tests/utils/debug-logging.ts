@@ -12,7 +12,7 @@ export function errorLog(message: string): void {
 }
 
 /**
- * Forwards browser-side `console.error` output to the Node-side test runner.
+ * Forwards browser `console.error` to the Node test runner.
  * No-op unless `BROWSER_ERROR_LOGGING=true`.
  */
 

@@ -9,11 +9,7 @@ const DEMO_EMAIL = 'example@mail.com';
 const LOGIN_TIMEOUT = 20_000;
 const LOADING_IMAGE_APPEAR_TIMEOUT = 2_000;
 
-/**
- * Reads the `root` key from localforage. Throws if the script isn't loaded
- * or the key is missing. Used once, at the end of the login flow, to capture
- * what the app wrote before we snapshot it to disk.
- */
+/** Reads the `root` key from localforage. Throws if the script isn't loaded or the key is missing. */
 async function getLocalforageRoot(page: Page): Promise<unknown> {
   return page.evaluate(async () => {
     type LF = { getItem: (k: string) => Promise<unknown> };
@@ -48,14 +44,13 @@ setup('Login as demo account using generated credentials', async ({ page }) => {
     await page.getByTestId('input_pass').fill(password);
     await page.getByTestId('btn_login').click();
 
-    // The "Initializing…" splash always renders, but may disappear before our
-    // first waitFor latches — swallow the attach-timeout and only assert on
-    // the detach side.
+    // The "Initializing…" splash always renders but may detach before our
+    // first waitFor latches — swallow the attach-timeout, only assert detach.
     const initializingMessage = page.getByTestId('p_initializing');
     await initializingMessage.waitFor({ timeout: LOGIN_TIMEOUT }).catch(() => undefined);
     await initializingMessage.waitFor({ state: 'detached', timeout: LOGIN_TIMEOUT });
 
-    // The loading image is optional — it only renders on slower cold-starts.
+    // Loading image is optional — only renders on slower cold-starts.
     const loadingImage = page.getByRole('img', { name: 'Loading page' });
     await loadingImage.waitFor({ timeout: LOADING_IMAGE_APPEAR_TIMEOUT }).catch(() => undefined);
     await loadingImage.waitFor({ state: 'detached', timeout: LOGIN_TIMEOUT });

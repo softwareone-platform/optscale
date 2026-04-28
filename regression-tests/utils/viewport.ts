@@ -1,12 +1,10 @@
 import { Page } from '@playwright/test';
 
 /**
- * Resize the viewport so the entire `<main id="mainLayoutWrapper">` content
- * fits without scrolling.
+ * Resize the viewport so all `<main id="mainLayoutWrapper">` content fits without scrolling.
  *
- * Re-measures iteratively because resizing itself can trigger reflow on
- * responsive layouts; stops as soon as two consecutive measurements agree
- * or `MAX_ITERATIONS` is reached.
+ * Re-measures iteratively (resizing can trigger reflow) until two measurements
+ * agree or `MAX_ITERATIONS` is reached.
  */
 export async function fitViewportToFullPage(page: Page): Promise<void> {
   const MAX_HEIGHT = 12_000;

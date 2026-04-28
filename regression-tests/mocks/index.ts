@@ -1,7 +1,6 @@
 /**
- * Barrel re-export for every mock module. Specs can import any interception
- * array (or individual mock payload) from `../mocks` without knowing which
- * file it lives in:
+ * Barrel re-export for every mock module. Specs import any interception array
+ * (or mock payload) from `@/mocks` without knowing the source file:
  *
  *   import { homepageInterceptions, settingsInterceptions } from '@/mocks';
  */

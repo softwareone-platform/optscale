@@ -4,11 +4,11 @@ import { fitViewportToFullPage } from '@/utils/viewport';
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
 
 interface CaptureOptions {
-  /** Element hovered before the shot. Defaults to `target`. */
+  /** Hovered before the shot. Defaults to `target`. */
   hoverAnchor?: Locator;
-  /** Skip the hover step entirely (for hover-sensitive widgets). */
+  /** Skip the hover step (for hover-sensitive widgets). */
   skipHover?: boolean;
-  /** Resize the viewport to fit the full `<main>` before snapshotting. */
+  /** Fit viewport to full `<main>` before snapshotting. */
   fitViewport?: boolean;
   /** Forwarded to `toHaveScreenshot`. */
   screenshotOptions?: ScreenshotOptions;
@@ -16,11 +16,7 @@ interface CaptureOptions {
 
 const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
 
-/**
- * Waits until the page has been quiet for `idleMs` in a row.
- * Combines fonts-ready, DOM-mutation silence, and a bbox cross-check to
- * catch CSS-only transitions (e.g. MUI Accordion) that don't fire mutations.
- */
+/** Waits until the page is quiet for `idleMs`: fonts ready, no DOM mutations, stable bbox. */
 async function waitForPageIdle(
   target: Locator,
   { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {},
@@ -60,7 +56,7 @@ async function waitForPageIdle(
     { idleMs, maxWaitMs },
   );
 
-  // Cross-check: two consecutive bbox samples match.
+  // Cross-check: two consecutive bbox samples agree.
   for (let i = 0; i < 10; i++) {
     const a = await target.boundingBox();
     await sleep(50);
@@ -70,11 +66,10 @@ async function waitForPageIdle(
 }
 
 /**
- * Take a stable screenshot of a region: hover → wait idle → (optionally)
- * fit viewport and wait again → `toHaveScreenshot`.
+ * Stable region screenshot: hover → wait idle → (optionally) fit viewport → `toHaveScreenshot`.
  *
- * Deliberately does NOT pin inline width/height on `target` — that freezes
- * mid-animation sizes and causes persistent pixel diffs.
+ * Avoids pinning inline width/height on `target`, which would freeze
+ * mid-animation sizes and cause persistent pixel diffs.
  */
 export async function captureScreenshot(
   target: Locator,

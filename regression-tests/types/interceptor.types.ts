@@ -1,9 +1,8 @@
 /**
- * Shape of a single API-route interception entry consumed by `apiInterceptors`.
+ * Single API-route interception entry consumed by `apiInterceptors`.
  *
  * Exactly one of `gql` (GraphQL operation name) or `url` (REST path regex)
- * must be supplied per entry — the `XOR` keeps that mutually-exclusive shape
- * enforceable at compile time.
+ * must be supplied — `XOR` enforces this at compile time.
  */
 
 type XOR<T, U> =

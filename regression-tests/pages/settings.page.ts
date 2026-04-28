@@ -14,9 +14,8 @@ export class SettingsPage extends BasePage {
     this.invitationsTab = this.main.getByTestId('tab_invitations');
     this.emailNotificationsTab = this.main.getByTestId('tab_emailNotifications');
     this.emailNotificationSection = this.main.getByTestId('lbl_[object Object]_title');
-    // Snackbar is rendered at the document root (outside `main`).
-    // Exclude the `alert_error` variant so we only target neutral info banners
-    // like the "pending invitation" notification.
+    // Snackbar renders at document root (outside `main`); exclude `alert_error`
+    // to target only neutral info banners (e.g. pending invitation).
     this.topRightSnackbar = page.locator('.MuiSnackbar-anchorOriginTopRight:not([data-test-id="alert_error"])');
   }
 }

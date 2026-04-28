@@ -32,8 +32,8 @@ export default [
   {
     files: ['tests/**/*.ts'],
     rules: {
-      // `captureScreenshot` wraps an `expect(...).toHaveScreenshot(...)` call —
-      // treat it as an assertion so tests using only the helper aren't flagged.
+      // `captureScreenshot` wraps `expect(...).toHaveScreenshot(...)` —
+      // treat it as an assertion.
       'playwright/expect-expect': [
         'warn',
         {

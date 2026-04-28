@@ -4,10 +4,10 @@ import { debugLog } from './debug-logging';
 
 const OK_JSON = { status: 200, contentType: 'application/json' } as const;
 
-/** Fulfills a route with `mock` serialised as JSON. */
+/** Fulfills `route` with `mock` as JSON. */
 const respondWithMockData = <T>(route: Route, mock: T): Promise<void> => route.fulfill({ ...OK_JSON, body: JSON.stringify(mock) });
 
-/** Stable identifier used in debug logs. */
+/** Identifier used in debug logs. */
 const createInterceptorId = (gql?: string, url?: string): string => (gql ? `GraphQL:${gql}` : `REST:${url}`);
 
 /** Intercepts REST requests matching `pattern`. */
@@ -18,14 +18,10 @@ async function interceptRESTRequest<T>(page: Page, pattern: RegExp, mock: T, onH
   });
 }
 
-/** Shared URL pattern for every GraphQL operation — the app posts all operations to `/api`. */
+/** Shared URL pattern for every GraphQL operation — all are POSTed to `/api`. */
 const GRAPHQL_ENDPOINT = /\/api(\?|$)/;
 
-/**
- * Intercepts GraphQL requests by operation name.
- *
- * Every handler routes on the same `/api` endpointt
- */
+/** Intercepts GraphQL requests by operation name (all share the `/api` endpoint). */
 async function interceptGraphQLRequest<T>(page: Page, operationName: string, mock: T, onHit: () => void): Promise<void> {
   await page.route(GRAPHQL_ENDPOINT, async route => {
     const postData = route.request().postData();

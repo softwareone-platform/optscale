@@ -14,7 +14,7 @@ interface Options {
   };
 }
 
-// The constructors map is derived directly from `pages/index.ts`.
+// Constructors map derived directly from `pages/index.ts`.
 const constructors = toFixtureMap(Pages);
 
 const fixtures = buildFixtures(constructors);
@@ -31,13 +31,11 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
     if (restoreSession) await restoreUserSessionInLocalForage(page, setFixedTime);
     if (interceptAPI?.entries?.length) await apiInterceptors(page, interceptAPI.entries);
 
-    // Debug hooks (driven by env vars; helpers are no-ops when disabled).
+    // Debug hooks (env-driven; no-op when disabled).
     attachBrowserErrorLogging(page);
 
-    // If the SPA ever redirects to /login during a test, the session restore
-    // didn't stick. Surface it loudly — without this, the test would just hang
-    // waiting for page-specific locators (canvas, tables, …) that never exist
-    // on the login page, producing a misleading timeout stack trace.
+    // If the SPA redirects to /login mid-test, session restore failed. Surface
+    // it loudly — otherwise the test hangs on locators that don't exist on /login.
     if (restoreSession) {
       page.on('framenavigated', frame => {
         if (frame === page.mainFrame() && /\/login(\?|$)/.test(frame.url())) {

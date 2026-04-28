@@ -1,12 +1,11 @@
 /**
  * Global E2E mock markers.
  *
- * Each marker is a short string embedded in mock payload values that end up
- * rendered in the UI. Because the marker survives into baseline screenshots,
- * anyone reviewing a diff can see at a glance that the data on screen came
- * from the test harness rather than a live API.
+ * Each marker is a short string embedded in mock payload values rendered in
+ * the UI. It survives into baseline screenshots, so reviewers can tell at a
+ * glance the data came from the test harness, not a live API.
  *
- * Usage inside a mock file:
+ * Example:
  *
  *     import { E2E_EV } from './e2e-markers';
  *
@@ -14,13 +13,12 @@
  *       data: { events: [{ object_name: `${E2E_EV} Sunflower Inc`, … }] },
  *     };
  *
- * Convention — `[E2E_<F><C>]`:
+ * Naming — `[E2E_<F><C>]`:
  *   F — first letter of the mock filename (C = cloud-accounts, H = homepage, …)
- *   C — 1–3 uppercase initials of the mock constant's meaningful name
+ *   C — 1–3 uppercase initials of the mock constant's name
  *
- * Renaming a marker's string literal invalidates every baseline PNG that
- * renders it — regenerate with `npm run test:docker:update` in the same
- * commit.
+ * Renaming a marker invalidates every baseline PNG that renders it —
+ * regenerate via `npm run test:docker:update` in the same commit.
  */
 
 export const E2E_CDS = '[E2E_CDS]'; // cloud-accounts.mocks.ts → DataSourcesMock

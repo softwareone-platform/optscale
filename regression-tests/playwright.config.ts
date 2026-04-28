@@ -4,38 +4,31 @@ import { env, hostSlug } from './utils/env';
 
 const VIEWPORT = { width: 1920, height: 1080 };
 
-/** Default test timeout (ms) — time allowed for a single test to complete. */
+/** Default test timeout (ms). */
 const TEST_TIMEOUT = 40000;
 
-/** Default action timeout (ms) — time allowed for a single action (click, fill, etc.) to complete. */
+/** Default action timeout (ms) — for clicks, fills, etc. */
 const ACTION_TIMEOUT = 30000;
 
-/**
- * Extended timeout (ms) for operations that load large amounts of data,
- * such as reports, exports, or pages with many resources.
- */
+/** Extended timeout (ms) for data-heavy operations (reports, exports, large lists). */
 export const LARGE_DATA_TIMEOUT = 60000;
 
 /**
  * Resolves the snapshot sub-folder.
  *
- * - Local runs (default) → `local/<host>/<platform>/` so macOS/Linux/Windows
- *   snapshots stay separated and don't overwrite each other.
- * - Regression runs (`IS_REGRESSION_RUN=true`, set by CI) → `baseline/<host>/`
- *   — CI is always Linux, so the platform segment would be noise.
+ * - Local runs → `local/<host>/<platform>/` to keep OS snapshots separated.
+ * - Regression runs (`IS_REGRESSION_RUN=true`, CI) → `baseline/<host>/`
+ *   (CI is always Linux, so the platform segment is noise).
  *
- * `host` is derived from `HOST_URL` via the shared `hostSlug` helper so this
- * path and the demo-account cache filename stay in lockstep.
+ * `host` comes from `API_BASE_URL` via `hostSlug`, keeping this path and the
+ * demo-account cache filename in lockstep.
  */
 const getSnapshotPath = (): string => {
-  const host = hostSlug(env.hostUrl, 'baseline');
+  const host = hostSlug(env.apiBaseUrl, 'baseline');
   return env.isRegressionRun ? `baseline/${host}` : `local/${host}/${os.platform()}`;
 };
 
-/**
- * Chromium launch flags that disable GPU rendering, font hinting and
- * anti-aliasing so that screenshots are pixel-identical across machines and CI runs.
- */
+/** Chromium flags that disable GPU/font hinting for pixel-stable screenshots. */
 const CHROMIUM_LAUNCH_ARGS = [
   '--disable-gpu',
   '--disable-font-subpixel-positioning',

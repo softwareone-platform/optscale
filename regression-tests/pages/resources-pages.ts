@@ -62,10 +62,7 @@ export class ResourceDetailsPage extends BasePage {
     await this.expensesDetailedButton.click();
   }
 
-  /**
-   * Standard screenshot sequence: hover heading, optional canvas wait, fit
-   * viewport to full page.
-   */
+  /** Standard screenshot prep: hover heading, optional canvas wait, fit viewport. */
   async prepareScreenshot(waitForCanvas = false): Promise<void> {
     await this.heading.hover();
     if (waitForCanvas) await this.waitForCanvas();

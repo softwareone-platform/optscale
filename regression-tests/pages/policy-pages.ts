@@ -2,10 +2,8 @@ import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
 
 /**
- * Shared base for "policy-style" pages (Anomalies, Policies, Tagging Policies — both
- * list and create variants). All of them share the same skeleton:
- *  - a heading inside `main`
- *  - an "Add" button
+ * Shared base for "policy-style" pages (Anomalies, Policies, Tagging Policies —
+ * list and create variants). All share: a heading inside `main` + an "Add" button.
  */
 abstract class PolicyPage extends BasePage {
   readonly heading: Locator;

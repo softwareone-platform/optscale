@@ -6,12 +6,9 @@ import { env, requireEnv } from '@/utils/env';
 import { DEMO_ACCOUNT_SESSION_PATH } from '@/utils/demo-account-session';
 
 export class DemoAccountService {
-  private static readonly token: string = env.hostAccountApiToken;
+  private static readonly token: string = env.liveDemoToken;
 
-  /**
-   * POSTs to `/restapi/v2/live_demo` with the given email and subscribe status,
-   * and returns the minted demo-account credentials.
-   */
+  /** POSTs to `/restapi/v2/live_demo` and returns the minted credentials. */
   static async getDemoLoginCredentials(email: string, subscribe = false): Promise<DemoAccountCredentials> {
     const context = await this.createContext();
 
@@ -28,10 +25,9 @@ export class DemoAccountService {
   }
 
   /**
-   * `true` when a fresh cached session exists for the *current host*.
-   * Host identity is encoded in the cache filename, so a session for a
-   * different host simply won't be found here — no explicit host-match
-   * check is needed.
+   * `true` when a fresh cached session exists for the current host.
+   * Host identity is encoded in the cache filename, so cross-host sessions
+   * simply won't be found.
    */
   static hasCachedDemoCredentials(): boolean {
     const file = safeReadJsonFile<Partial<StoredDemoSession>>(DEMO_ACCOUNT_SESSION_PATH);
@@ -40,12 +36,12 @@ export class DemoAccountService {
     return !!cached && isSessionFresh(cached.created_at);
   }
 
-  /** Creates a new APIRequestContext with the necessary headers. */
+  /** Creates an APIRequestContext with the required headers. */
   private static async createContext(): Promise<APIRequestContext> {
-    requireEnv('hostUrl', 'hostAccountApiToken');
+    requireEnv('apiBaseUrl', 'liveDemoToken');
 
     return request.newContext({
-      hostUrl: env.hostUrl,
+      baseURL: env.apiBaseUrl,
       extraHTTPHeaders: {
         'X-LiveDemo-Token': this.token,
         'Content-Type': 'application/json',
@@ -56,7 +52,7 @@ export class DemoAccountService {
 
 const SIX_DAYS_SECONDS = 6 * 24 * 60 * 60;
 
-/** `true` while the cached session is still within its six-day freshness window. */
+/** `true` while the cached session is within its six-day freshness window. */
 const isSessionFresh = (createdAt: number): boolean => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   return nowSeconds < createdAt + SIX_DAYS_SECONDS;

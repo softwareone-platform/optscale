@@ -5,9 +5,7 @@ import { LARGE_DATA_TIMEOUT } from '@/playwright.config';
 
 const TEST_OVERRIDES_CSS_PATH = path.resolve(__dirname, '../styles/test-overrides.css');
 
-/**
- * Abstract class representing the base structure for all pages.
- */
+/** Base class for all page objects. */
 export abstract class BasePage {
   readonly page: Page;
   readonly url: string;
@@ -36,10 +34,7 @@ export abstract class BasePage {
   }
 
 
-  /**
-   * Resolves when any (default) or all `<canvas>` elements on the page have
-   * painted at least one non-transparent pixel.
-   */
+  /** Resolves when any (default) or all `<canvas>` elements have painted at least one non-transparent pixel. */
   async waitForCanvas(mode: 'any' | 'all' = 'any', timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     await this.page.waitForFunction(
       requiredMode => {
