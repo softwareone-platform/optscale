@@ -16,7 +16,7 @@
     "test:update": "npm run test -- --update-snapshots",
     "test:docker": "./run_pw.sh",
     "test:docker:update": "./run_pw.sh -u",
-    "report": "npx playwright show-report ./test-results/html"
+    "report": "npx playwright show-report ./results/html"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.36.0",
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.56.1",
     "@types/node": "^22.10.5",
     "@types/pngjs": "^6.0.5",
     "cross-env": "^7.0.3",
@@ -34,13 +34,11 @@
     "eslint-plugin-playwright": "^2.2.2",
     "pdf-poppler": "^0.2.2",
     "pixelmatch": "^7.1.0",
+    "playwright": "^1.56.1",
     "pngjs": "^7.0.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "uuid": "^11.0.5"
-  },
-  "dependencies": {
-    "playwright": "^1.56.1"
   }
 }

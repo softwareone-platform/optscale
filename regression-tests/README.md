@@ -24,7 +24,7 @@ Tests are tagged with `@swo_regression` and cover:
 
 ## Prerequisites
 
-- **Node.js 20+** (Playwright 1.52 requires ≥ 18; the project's `@types/node` targets 22).
+- **Node.js 20+** (Playwright 1.56 requires ≥ 18; the project's `@types/node` targets 22).
 - A running OptScale instance, or a remote URL the tests can reach.
 - **Docker** — only needed for `npm run test:docker[:update]` (used to regenerate cross-platform baseline snapshots). Local headless runs don't need it.
 

@@ -1,4 +1,5 @@
 import { test as base } from '@playwright/test';
+import type { Frame } from '@playwright/test';
 import * as Pages from '@/pages';
 import type { InterceptionEntry } from '@/types';
 import { DEMO_ACCOUNT_SESSION_PATH, restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
@@ -9,6 +10,12 @@ import { buildFixtures, toFixtureMap, type FixtureInstances } from './build-fixt
 interface Options {
   restoreSession?: boolean;
   setFixedTime?: boolean;
+  /**
+   * REST/GraphQL route mocks applied before the spec runs.
+   *
+   * Wrapped in `{ entries }` because option fixtures spread bare arrays
+   * across `test.use({...})` merges (Playwright ≤1.56).
+   */
   interceptAPI?: {
     entries: InterceptionEntry[];
   };
@@ -34,17 +41,21 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
     // Debug hooks (env-driven; no-op when disabled).
     attachBrowserErrorLogging(page);
 
-    // If the SPA redirects to /login mid-test, session restore failed. Surface
-    // it loudly — otherwise the test hangs on locators that don't exist on /login.
+    // Surface session-restore failure (SPA redirect to /login) instead of hanging.
+    const onFrameNavigated = (frame: Frame) => {
+      if (frame === page.mainFrame() && /\/login(\?|$)/.test(frame.url())) {
+        errorLog(`SPA redirected to /login — session restore failed (url=${frame.url()})`);
+      }
+    };
     if (restoreSession) {
-      page.on('framenavigated', frame => {
-        if (frame === page.mainFrame() && /\/login(\?|$)/.test(frame.url())) {
-          errorLog(`SPA redirected to /login — session restore failed (url=${frame.url()})`);
-        }
-      });
+      page.on('framenavigated', onFrameNavigated);
     }
 
     await use(page);
+
+    if (restoreSession) {
+      page.off('framenavigated', onFrameNavigated);
+    }
   },
 
   ...fixtures,

@@ -14,14 +14,35 @@ export type FixtureInstances<Constructors extends Record<string, PageObjectConst
   [Name in keyof Constructors]: InstanceType<Constructors[Name]>;
 };
 
-/** Maps a PascalCase-keyed map to a camelCase-keyed one. */
+/**
+ * PascalCase → camelCase keys.
+ *
+ * Note: `Uncapitalize<…>` only lowercases the first character, so `URLPage`
+ * is typed as `uRLPage` though `toCamelCase` produces `urlPage` at runtime.
+ * Prefer single-leading-capital class names (e.g. `UrlPage`).
+ */
 type CamelCasedConstructors<Constructors extends Record<string, PageObjectConstructor>> = {
   [Name in keyof Constructors & string as Uncapitalize<Name>]: Constructors[Name];
 };
 
 /**
- * Lower-cases each key so `pages/index.ts` can feed Playwright's fixture layer.
- * Non-function entries are dropped to prevent stray constants becoming broken fixtures.
+ * PascalCase → camelCase, preserving leading acronyms:
+ * `HomePage` → `homePage`, `URLPage` → `urlPage`, `URL` → `url`.
+ */
+function toCamelCase(name: string): string {
+  if (name.length === 0) return name;
+  const match = /^[A-Z]+/.exec(name);
+  if (!match) return name;
+  const acronym = match[0];
+  if (acronym.length === 1) return name.charAt(0).toLowerCase() + name.slice(1);
+  if (acronym.length === name.length) return acronym.toLowerCase();
+  // Keep the last capital of the acronym run as the start of the next word.
+  return acronym.slice(0, -1).toLowerCase() + name.slice(acronym.length - 1);
+}
+
+/**
+ * Lower-cases each key for Playwright's fixture layer. Non-function entries
+ * are dropped so stray constants don't become broken fixtures.
  */
 export function toFixtureMap<Namespace extends Record<string, PageObjectConstructor>>(
   namespace: Namespace,
@@ -32,8 +53,7 @@ export function toFixtureMap<Namespace extends Record<string, PageObjectConstruc
     const exported = namespace[exportName];
     if (typeof exported !== 'function') continue;
 
-    const fixtureName = exportName.charAt(0).toLowerCase() + exportName.slice(1);
-    fixtureMap[fixtureName] = exported;
+    fixtureMap[toCamelCase(exportName)] = exported;
   }
 
   return fixtureMap as CamelCasedConstructors<Namespace>;

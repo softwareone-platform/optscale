@@ -72,10 +72,11 @@ export default defineConfig({
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    viewport: VIEWPORT,
     contextOptions: {
       reducedMotion: 'reduce',
       ignoreHTTPSErrors: env.ignoreHttpsErrors,
-      viewport: VIEWPORT,
+      deviceScaleFactor: 1,
     },
   },
 
