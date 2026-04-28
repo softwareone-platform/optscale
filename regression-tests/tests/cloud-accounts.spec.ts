@@ -27,6 +27,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Management — Access key', async () => {
       await connect.btnAccessKey.click();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsManagement--AccessKey.png');
     });
 
@@ -40,6 +41,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Member — Access key', async () => {
       await connect.btnAccessKey.click();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsMember--AccessKey.png');
     });
 
@@ -53,6 +55,7 @@ test.describe('FFC: Cloud Accounts', () => {
 
     await test.step('Standalone — Access key', async () => {
       await connect.btnAccessKey.click();
+      await fitViewportToFullPage(connect.page);
       await expect(connect.main).toHaveScreenshot('CloudAccounts-ConnectAwsStandard--AccessKey.png');
     });
   });
@@ -60,6 +63,7 @@ test.describe('FFC: Cloud Accounts', () => {
   test('Connect — Azure Tenant', async ({ cloudAccountsPage, cloudAccountsConnectPage }) => {
     await cloudAccountsConnectPage.prepareConnectPageForScreenshot(cloudAccountsPage);
     await cloudAccountsConnectPage.azureTenantBtn.click();
+    await fitViewportToFullPage(cloudAccountsConnectPage.page);
     await expect(cloudAccountsConnectPage.main).toHaveScreenshot('CloudAccounts-ConnectAzureTenant.png');
   });
 
