@@ -16,22 +16,22 @@ export async function fitViewportToFullPage(page: Page): Promise<void> {
     () => {
       const wrapper = document.querySelector('main#mainLayoutWrapper');
       if (!wrapper) return false;
-      const h = Array.from(wrapper.children).reduce(
-        (sum, c) => sum + (c as HTMLElement).offsetHeight,
+      const measuredHeight = Array.from(wrapper.children).reduce(
+        (sum, child) => sum + (child as HTMLElement).offsetHeight,
         0
       );
       // Cache last measurement on the window; require N stable hits.
-      const w = window as Window & {
+      const cache = window as Window & {
         lastMeasuredHeight?: number;
         consecutiveStableSamples?: number;
       };
-      if (h === w.lastMeasuredHeight) {
-        w.consecutiveStableSamples = (w.consecutiveStableSamples ?? 0) + 1;
+      if (measuredHeight === cache.lastMeasuredHeight) {
+        cache.consecutiveStableSamples = (cache.consecutiveStableSamples ?? 0) + 1;
       } else {
-        w.consecutiveStableSamples = 0;
-        w.lastMeasuredHeight = h;
+        cache.consecutiveStableSamples = 0;
+        cache.lastMeasuredHeight = measuredHeight;
       }
-      return (w.consecutiveStableSamples ?? 0) >= 5 ? h : false;
+      return (cache.consecutiveStableSamples ?? 0) >= 5 ? measuredHeight : false;
     },
     null,
     { polling: 100, timeout: 10_000 }
