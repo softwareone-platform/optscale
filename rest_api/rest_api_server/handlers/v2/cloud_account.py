@@ -1,5 +1,8 @@
 import json
 from datetime import datetime, timezone
+
+from opentelemetry import trace
+
 from tools.optscale_exceptions.common_exc import (NotFoundException,
                                                   ForbiddenException)
 from tools.optscale_exceptions.common_exc import WrongArgumentsException
@@ -15,6 +18,8 @@ from rest_api.rest_api_server.handlers.v1.base import BaseAuthHandler
 from rest_api.rest_api_server.utils import (
     check_int_attribute, check_string_attribute, run_task, ModelEncoder)
 
+
+_tracer = trace.get_tracer(__name__)
 
 class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
                                          BaseAuthHandler,
@@ -305,8 +310,9 @@ class CloudAccountAsyncCollectionHandler(BaseAsyncCollectionHandler,
             params['process_recommendations'] = process_recommendations
 
         res = await run_task(self.controller.list, **params)
-        cloud_acc_dict = {'cloud_accounts': res}
-        self.write(json.dumps(cloud_acc_dict, cls=ModelEncoder))
+        with _tracer.start_as_current_span("handler.write_response"):
+            cloud_acc_dict = {'cloud_accounts': res}
+            self.write(json.dumps(cloud_acc_dict, cls=ModelEncoder))
 
 
 class CloudAccountAsyncItemHandler(BaseAsyncItemHandler, BaseAuthHandler,

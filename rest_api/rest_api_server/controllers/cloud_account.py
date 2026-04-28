@@ -5,6 +5,8 @@ import tools.optscale_time as opttime
 from datetime import timedelta
 from calendar import monthrange
 
+from opentelemetry import trace
+
 from optscale_client.herald_client.client_v2 import Client as HeraldClient
 
 from sqlalchemy import Enum, true
@@ -60,7 +62,7 @@ from rest_api.rest_api_server.utils import (
 from currency_symbols.currency_symbols import CURRENCY_SYMBOLS_MAP
 
 LOG = logging.getLogger(__name__)
-
+_tracer = trace.get_tracer(__name__)
 
 NOTIFY_FIELDS = ["name", "config"]
 
@@ -820,20 +822,24 @@ class CloudAccountController(BaseController, ClickHouseMixin):
 
         result = {}
         discovery_infos = self._get_discovery_infos(cloud_acc_ids)
-        for acc in cloud_accounts:
-            default = {'cost': 0, 'count': 0}
-            current_stats = month_expenses.get(acc.id, default)
-            last_stats = last_month_expenses.get(acc.id, default)
-            result[acc.id] = acc.to_dict(secure)
-            result[acc.id]['details'] = {
-                'cost': current_stats['cost'],
-                'forecast': expense_ctrl.get_monthly_forecast(
-                    last_stats['cost'] + current_stats['cost'],
-                    current_stats['cost'], first_expenses.get(acc.id)),
-                'resources': current_stats['count'],
-                'last_month_cost': last_stats['cost'],
-                'discovery_infos': discovery_infos.get(acc.id, {})
-            }
+        with _tracer.start_as_current_span(
+            "cloud_account.list.build_result",
+            attributes={"count": len(cloud_accounts)}
+        ):
+            for acc in cloud_accounts:
+                default = {'cost': 0, 'count': 0}
+                current_stats = month_expenses.get(acc.id, default)
+                last_stats = last_month_expenses.get(acc.id, default)
+                result[acc.id] = acc.to_dict(secure)
+                result[acc.id]['details'] = {
+                    'cost': current_stats['cost'],
+                    'forecast': expense_ctrl.get_monthly_forecast(
+                        last_stats['cost'] + current_stats['cost'],
+                        current_stats['cost'], first_expenses.get(acc.id)),
+                    'resources': current_stats['count'],
+                    'last_month_cost': last_stats['cost'],
+                    'discovery_infos': discovery_infos.get(acc.id, {})
+                }
         return list(result.values())
 
     def get_employee(self, user_id, org_id):
