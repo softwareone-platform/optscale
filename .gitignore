@@ -21,6 +21,26 @@ rest_api/.clickhouse
 **/dist
 **/*egg-info/
 **/*.tar.gz
+htmlcov
+.coverage
+coverage.xml
+.cache
+
+# ngui
+ngui/server/.env
+ngui/ui/.env
+ngui/*/node_modules
+ngui/*/build/
+ngui/*/dist/
+ngui/*/storybook
+
+# MPT_TODO: prevent accidental package-lock commits
+ngui/server/package-lock.json
+ngui/ui/package-lock.json
+
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
 # jira_ui
 jira_ui/*/.env
@@ -29,3 +49,15 @@ jira_ui/*/build/
 
 # Vagrant
 optscale-deploy/.vagrant/
+# Playwright E2E tests
+/e2etests/.env.local
+/e2etests/test-results/
+/e2etests/node_modules/
+/e2etests/playwright-report/
+/e2etests/results.json
+/e2etests/.cache/
+/e2etests/.cache/*
+/e2etests/tests/downloads/*
+
+# ffc_api
+ffc_api/.env
