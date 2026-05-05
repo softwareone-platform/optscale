@@ -27,7 +27,7 @@ target_metadata.naming_convention = {
 
 
 def include_object(object, name, type_, reflected, compare_to):
-    if type_ == "table" and object.schma in [app_settings.mysql_db, app_settings.auth_db]:
+    if type_ == "table" and object.schema in [app_settings.mysql_db, app_settings.auth_db]:
         return False
     return True
 

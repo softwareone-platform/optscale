@@ -62,6 +62,6 @@ COLLATE utf8mb4_unicode_ci
 ```bash
 # Review the generated migration in migrations/versions/
 
-# Apply migration, run from ffc_api_server directory where alembic.ini is located
+# Apply migration, run from ffc_api_server directory where alembic.ini is located or specify the path to alembic.ini
 alembic upgrade head
 ```
