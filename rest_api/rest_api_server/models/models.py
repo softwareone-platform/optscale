@@ -332,16 +332,21 @@ class CloudAccount(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
 
     @hybrid_property
     def decoded_config(self):
-        return decode_config(self.config)
+        cached = self.__dict__.get('_decoded_config_cache')
+        if cached is not None and cached[0] == self.config:
+            return cached[1]
+        decoded = decode_config(self.config)
+        self.__dict__['_decoded_config_cache'] = (self.config, decoded)
+        return decoded
 
     def to_dict(self, secure=False):
         cloud_acc_dict = super().to_dict()
         cloud_acc_dict['type'] = cloud_acc_dict['type'].value
         if self.parent_id and self.parent and self.parent.deleted_at == 0:
-            config = self.parent.decoded_config
+            config = dict(self.parent.decoded_config)
             config.update(self.decoded_config)
         else:
-            config = self.decoded_config
+            config = dict(self.decoded_config)
         if cloud_acc_dict.pop('cost_model_id', None):
             config['cost_model'] = self.cost_model.loaded_value
         if secure:
