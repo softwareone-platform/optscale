@@ -915,7 +915,7 @@ class Nebius(S3CloudMixin):
         return self._get_metrics(start_date, end_date, query, folder_id,
                                  downsampling)
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         return self.config.get('regions_coordinates', {}) or REGIONS_COORDINATES
 
     def get_prices(self, currency='USD', filter=None, **kwargs):

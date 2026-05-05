@@ -79,12 +79,16 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
             'deleted_at': 0
         }, resource_fields)
 
-        external_resource_table = [{
-            '_id': x['_id'],
-            'cloud_account_id': x['cloud_account_id'],
-            'group_field': x.get(resource_field_mappings.get(
-                group_by, group_by))
-        } for x in resource_results if x.get('cloud_account_id')]
+        cloud_account_ids, external_resource_table = set(), []
+        for x in resource_results:
+            cloud_account_id = x.get('cloud_account_id')
+            if cloud_account_id:
+                cloud_account_ids.add(cloud_account_id)
+            external_resource_table.append({
+                '_id': x['_id'],
+                'group_field': x.get(resource_field_mappings.get(
+                    group_by, group_by))
+            })
         expenses_results = self.execute_clickhouse(
             query="""
                 SELECT
@@ -92,8 +96,8 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
                     SUM(cost * sign) AS total_cost
                 FROM expenses
                 JOIN resources ON expenses.resource_id = resources._id
-                    AND expenses.cloud_account_id = resources.cloud_account_id
-                WHERE date >= %(start_date)s
+                WHERE cloud_account_id IN %(cloud_account_ids)s
+                    AND date >= %(start_date)s
                     AND date <= %(end_date)s
                 GROUP BY date, group_field, cloud_account_id
                 HAVING SUM(sign) > 0
@@ -102,12 +106,12 @@ class ExpenseController(MongoMixin, ClickHouseMixin):
             parameters={
                 'start_date': start_date,
                 'end_date': end_date,
+                'cloud_account_ids': list(cloud_account_ids),
             },
             external_data=ExternalDataConverter()([{
                 'name': 'resources',
                 'structure': [
                     ('_id', 'String'),
-                    ('cloud_account_id', 'String'),
                     ('group_field', 'Nullable(String)'),
                 ],
                 'data': external_resource_table
@@ -1982,7 +1986,7 @@ class RegionExpenseController(FilteredFormattedExpenseController,
             if cloud_type in scanned:
                 continue
             adapter = CloudAdapter.get_adapter(cloud_config)
-            regions = adapter.get_regions_coordinates()
+            regions = adapter.get_regions_coordinates(load=False)
             for region_id, info in regions.items():
                 res.update(self._generate_info_map_element(
                     region_id, info, cloud_type
