@@ -1151,21 +1151,17 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         for cloud_account_id in cloud_account_ids:
             # dict is unhashable so collect via dict
             if cloud_account_id == nil_uuid:
-                main_filters[True] = {'$and': [
-                    {'organization_id': organization_id},
-                    {'cloud_account_id': None}
-                ]}
+                main_filters[True] = {
+                    'organization_id': organization_id,
+                    'cloud_account_id': None
+                }
             else:
                 main_filters[False] = {
                     'cloud_account_id': {'$in': cloud_account_ids}
                 }
-
-        query = {
-            '$and': [
-                {'$or': list(main_filters.values())},
-                {'deleted_at': 0}
-            ]
-        }
+        filters: list[dict] = [
+            {'deleted_at': 0}
+        ]
         first_seen_lte = data_filters.get('first_seen_lte')
         if first_seen_lte is not None:
             end_date = min(end_date, first_seen_lte)
@@ -1192,12 +1188,11 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
             seen_filters['_last_seen_date'].update({
                 '$lte': timestamp_to_day_start(last_seen_lte)
             })
-        query['$and'].append(seen_filters)
-
+        filters.append(seen_filters)
         resource_type_condition = self.get_resource_type_condition(
             params.pop('resource_type', []))
         if resource_type_condition:
-            query['$and'].append({'$or': resource_type_condition})
+            filters.append({'$or': resource_type_condition})
 
         for filter_name in ['tag', 'without_tag']:
             tag_params = params.pop(filter_name, None)
@@ -1211,13 +1206,13 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                     else:
                         tag_filter.append(
                             {'tags.%s' % v: {'$exists': filled_cond}})
-                query['$and'].append({'$or': tag_filter})
+                filters.append({'$or': tag_filter})
         meta_filters = params.pop('meta', None)
         if meta_filters:
             meta_vals = []
             for v in meta_filters:
                 meta_vals.append({f'meta.{v}': {'$exists': True}})
-            query['$and'].append({'$or': meta_vals})
+            filters.append({'$or': meta_vals})
 
         for regex_key, query_key in {
             'name_like': 'name',
@@ -1226,7 +1221,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
             regex_val = params.pop(regex_key, None)
             if regex_val:
                 query_val = self._transform_regex(regex_val)
-                query['$and'].append({
+                filters.append({
                     query_key: {'$regex': query_val, '$options': 'i'}
                 })
 
@@ -1234,7 +1229,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
             for n, filter_value in enumerate(filter_values):
                 if filter_value == nil_uuid:
                     filter_values[n] = None
-            query['$and'].append({filter_key: {'$in': filter_values}})
+            filters.append({filter_key: {'$in': filter_values}})
 
         for string_field in [
             'service_name', 'created_by_kind', 'created_by_name',
@@ -1242,7 +1237,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
         ]:
             name_set = data_filters.get(string_field)
             if name_set is not None:
-                query['$and'].append(
+                filters.append(
                     {string_field: {'$in': list(set(name_set))}})
 
         for bool_field in ['active', 'constraint_violated']:
@@ -1252,7 +1247,7 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                 for value in bool_value:
                     value = {'$ne': True} if value is False else value
                     bool_cond['$or'].append({bool_field: value})
-                query['$and'].append(bool_cond)
+                filters.append(bool_cond)
 
         recommend_filter = data_filters.get('recommendations')
         if recommend_filter is not None:
@@ -1268,7 +1263,8 @@ class CleanExpenseController(BaseController, MongoMixin, ClickHouseMixin,
                         {'recommendations': None},
                         {'recommendations.run_timestamp': {'$lt': last_run}}
                     ]})
-            query['$and'].append(recommend_cond)
+            filters.append(recommend_cond)
+        query = {'$or': [{'$and': [v, *filters]} for v in main_filters.values()]}
         return query
 
     def get_resources_data(self, organization_id, query_filters, data_filters,
