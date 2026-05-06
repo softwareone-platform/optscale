@@ -90,9 +90,12 @@ export type ResolverTypeWrapper<T> = Promise<T> | T;
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
 };
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
-  | ResolverFn<TResult, TParent, TContext, TArgs>
-  | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+export type Resolver<
+  TResult,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -129,17 +132,23 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+export type SubscriptionResolver<
+  TResult,
+  TKey extends string,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+export type TypeResolveFn<TTypes, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
+export type IsTypeOfResolverFn<T = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (
   obj: T,
   context: TContext,
   info: GraphQLResolveInfo
@@ -147,7 +156,12 @@ export type IsTypeOfResolverFn<T = {}, TContext = {}> = (
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<
+  TResult = Record<PropertyKey, never>,
+  TParent = Record<PropertyKey, never>,
+  TContext = Record<PropertyKey, never>,
+  TArgs = Record<PropertyKey, never>,
+> = (
   next: NextResolverFn<TResult>,
   parent: TParent,
   args: TArgs,
@@ -159,9 +173,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]["output"]>;
   ID: ResolverTypeWrapper<Scalars["ID"]["output"]>;
-  Mutation: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   OrganizationAllowedActionsRequestParams: OrganizationAllowedActionsRequestParams;
-  Query: ResolverTypeWrapper<{}>;
+  Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   String: ResolverTypeWrapper<Scalars["String"]["output"]>;
   StringArrayMap: ResolverTypeWrapper<Scalars["StringArrayMap"]["output"]>;
   Token: ResolverTypeWrapper<Token>;
@@ -173,9 +187,9 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"]["output"];
   ID: Scalars["ID"]["output"];
-  Mutation: {};
+  Mutation: Record<PropertyKey, never>;
   OrganizationAllowedActionsRequestParams: OrganizationAllowedActionsRequestParams;
-  Query: {};
+  Query: Record<PropertyKey, never>;
   String: Scalars["String"]["output"];
   StringArrayMap: Scalars["StringArrayMap"]["output"];
   Token: Token;
@@ -233,7 +247,6 @@ export type TokenResolvers<
   token?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   user_email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<
@@ -244,7 +257,6 @@ export type UserResolvers<
   user_email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   user_id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   verified?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = ContextValue> = {

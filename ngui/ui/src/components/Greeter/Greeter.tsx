@@ -41,7 +41,7 @@ const OptScaleLink = () => {
   return (
     <Typography component="div" variant="body2" color="white">
       <IconLabel
-        icon={<LanguageOutlinedIcon className={cx(classes.webIconMargin)} />}
+        icon={<LanguageOutlinedIcon className={cx(classes.webIconMargin)} data-test-id="icon_link_optscale_site" />}
         label={
           <Link
             data-test-id="link_optscale_site"

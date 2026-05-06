@@ -337,7 +337,7 @@ class Aws(S3CloudMixin):
             return False
         except ClientError as e:
             code = e.response["Error"]["Code"]
-            if code in ("AuthFailure", "UnauthorizedOperation"):
+            if code in ("AuthFailure", "UnauthorizedOperation", "InternalError"):
                 return False
             raise
 

@@ -16,7 +16,11 @@ from influxdb import InfluxDBClient
 from optscale_client.config_client.client import Client as EtcdClient
 
 
-ETCD_KEYS_TO_DELETE = ["/logstash_host", "/optscale_meter_enabled"]
+ETCD_KEYS_TO_DELETE = [
+    "/logstash_host",
+    "/optscale_meter_enabled",
+    "/opentelemetry",
+]
 RETRY_ARGS = dict(stop_max_attempt_number=300, wait_fixed=500)
 RABBIT_PRECONDIFITON_FAILED_CODE = 406
 

@@ -3,10 +3,10 @@ ARG IMAGE=node:22.16.0-alpine3.21
 
 FROM $IMAGE AS base
 
-RUN npm install -g pnpm@10.12.1
+RUN npm install -g pnpm@10.33.0
 
-ENV VITE_APP_THEME finops
-ENV NODE_ENV production
+ENV VITE_APP_THEME=finops
+ENV NODE_ENV=production
 
 # --- Setup project source stage ---
 FROM base AS source

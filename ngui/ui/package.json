@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "=22.16.0",
-    "pnpm": "=10.12.1"
+    "pnpm": "=10.33.0"
   },
   "dependencies": {
     "@analytics/google-analytics": "1.0.5",
@@ -33,9 +33,9 @@
     "@tanstack/react-table": "8.7.6",
     "@uiw/react-textarea-code-editor": "2.1.1",
     "@vitejs/plugin-react-swc": "3.10.2",
-    "ajv": "8.12.0",
+    "ajv": "8.18.0",
     "analytics": "0.8.1",
-    "axios": "1.13.5",
+    "axios": "1.15.0",
     "core-js": "3.27.2",
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
@@ -99,9 +99,9 @@
     "lint:fix": "eslint . --fix",
     "check": "pnpm lint && pnpm translate:check",
     "check:all": "pnpm check && pnpm prettier:check && pnpm build",
-    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix",
     "prettier:check": "prettier --check 'src/**/*.{ts,tsx,json}'",
-    "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'"
+    "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'",
+    "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix"
   },
   "browserslist": {
     "production": [
@@ -116,7 +116,7 @@
     ]
   },
   "devDependencies": {
-    "@hystax/eslint-config-ui": "1.0.0",
+    "@hystax/eslint-config-ui": "2.1.0",
     "@storybook/addon-actions": "8.6.15",
     "@storybook/addon-backgrounds": "8.6.15",
     "@storybook/addon-controls": "8.6.15",
@@ -125,10 +125,9 @@
     "@storybook/react": "8.6.15",
     "@storybook/react-vite": "8.6.15",
     "@storybook/theming": "^8.6.14",
-    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-react": "7.37.5",
     "glob": "13.0.1",
-    "jsdom": "22.1.0",
+    "jsdom": "26.1.0",
     "redux-immutable-state-invariant": "2.1.0",
     "storybook": "8.6.17",
     "vitest": "3.2.4"

@@ -178,6 +178,15 @@ export function useOrganizationAllowedActionsLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useOrganizationAllowedActionsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationAllowedActionsQuery, OrganizationAllowedActionsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationAllowedActionsQuery, OrganizationAllowedActionsQueryVariables>;
+export function useOrganizationAllowedActionsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationAllowedActionsQuery, OrganizationAllowedActionsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationAllowedActionsQuery | undefined, OrganizationAllowedActionsQueryVariables>;
 export function useOrganizationAllowedActionsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
