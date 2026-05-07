@@ -8,6 +8,7 @@ import pika
 import pika.exceptions
 import yaml
 import etcd
+import botocore
 import boto3
 from boto3.session import Config as BotoConfig
 from sqlalchemy import create_engine
@@ -17,9 +18,9 @@ from optscale_client.config_client.client import Client as EtcdClient
 
 
 ETCD_KEYS_TO_DELETE = [
-    "/logstash_host",
-    "/optscale_meter_enabled",
-    "/opentelemetry",
+    ("/logstash_host", False),
+    ("/optscale_meter_enabled", False),
+    ("/opentelemetry", True),
 ]
 RETRY_ARGS = dict(stop_max_attempt_number=300, wait_fixed=500)
 RABBIT_PRECONDIFITON_FAILED_CODE = 406
@@ -134,11 +135,14 @@ class Configurator(object):
             self.commit_config()
             return
         logger.info("Writing default etcd keys")
-        for key in ETCD_KEYS_TO_DELETE:
+        for (key, is_dir) in ETCD_KEYS_TO_DELETE:
             try:
                 logger.debug("Deleting key %s from etc", key)
-                self.etcd_cl.delete(key)
-            except etcd.EtcdKeyNotFound:
+                if is_dir:
+                    self.etcd_cl.delete(key, dir=True, recursive=True)
+                else:
+                    self.etcd_cl.delete(key)
+            except (etcd.EtcdKeyNotFound, etcd.EtcdNotFile):
                 pass
         self.etcd_cl.write_branch("/", config, overwrite_lists=True)
         logger.info("Configuring database server")
@@ -256,11 +260,14 @@ class Configurator(object):
                 }
             ]
         }
-        self.s3_client.put_bucket_lifecycle_configuration(
-            Bucket=bucket_name,
-            LifecycleConfiguration=lifecycle_config,
-        )
-        logger.info('Gemini bucket lifecycle configuration updated')
+        try:
+            self.s3_client.put_bucket_lifecycle_configuration(
+                Bucket=bucket_name,
+                LifecycleConfiguration=lifecycle_config,
+            )
+            logger.info('Gemini bucket lifecycle configuration upated')
+        except botocore.exceptions.ClientError as e:
+            logger.warning('Failed to update Gemini bucket lifecycle configuration: %s', e)
 
 
 if __name__ == "__main__":
