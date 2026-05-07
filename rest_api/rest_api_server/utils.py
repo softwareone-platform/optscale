@@ -528,6 +528,7 @@ def get_root_directory_path():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+@cache
 def _get_encryption_salt():
     return Config().client.encryption_salt()
 
