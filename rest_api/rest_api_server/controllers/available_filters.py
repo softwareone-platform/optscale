@@ -166,7 +166,8 @@ class AvailableFiltersController(CleanExpenseController):
         query = super().generate_filters_pipeline(
             organization_id, start_date, end_date, params,
             data_filters)
-        query['$and'].append({'cluster_id': None})
+        for part in query['$or']:
+            part['$and'].append({'cluster_id': None})
         return query
 
     def get_filter_values(self, uniq_values_map, filters):
