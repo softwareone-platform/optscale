@@ -3,6 +3,8 @@ import { test as setup } from '@playwright/test';
 import { getLocalforageRoot, injectLocalforage } from '../utils/auth-session-storage/localforage-service';
 import { safeWriteJsonFile } from '../utils/file';
 import { LiveDemoService } from '../utils/auth-session-storage/auth-helpers';
+import { LARGE_DATA_TIMEOUT } from '../playwright.config';
+import { debugLog, errorLog } from '../utils/debug-logging';
 
 const useLiveDemoCredentials = LiveDemoService.shouldUseLiveDemo();
 
@@ -40,8 +42,18 @@ setup.describe('Auth Setup', () => {
         await page.getByTestId('input_pass').fill(password);
         await page.getByTestId('btn_login').click();
         const initializingMessage = page.getByTestId('p_initializing')
-        await initializingMessage.waitFor({ timeout: 20000 });
-        await initializingMessage.waitFor({ state: 'detached', timeout: 20000 });
+        try {
+          await initializingMessage.first().waitFor({ timeout: 1000 });
+        } catch (_error) {
+          // Exit the method if the initialisation message is not present.
+          return;
+        }
+        try {
+          debugLog('Waiting for initialisaton message to disappear...');
+          await initializingMessage.waitFor({ state: 'hidden', timeout: LARGE_DATA_TIMEOUT });
+        } catch (_error) {
+          errorLog('[ERROR] initialisaton message did not disappear within the timeout.');
+        }
         const loadingImage = page.getByRole('img', { name: 'Loading page' });
         await loadingImage.waitFor();
         await loadingImage.waitFor({ state: 'detached', timeout: 20000 });
