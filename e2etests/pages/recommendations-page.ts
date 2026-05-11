@@ -168,9 +168,11 @@ export class RecommendationsPage extends BasePage {
   readonly reservedInstancesOpportunitiesError: Locator;
   readonly reservedInstancesOpportunitiesTableSavingsValue: Locator;
 
+  readonly resourcesWithInsecureSecurityGroupsSettingsCardSavingsValue: Locator;
   readonly resourcesWithInsecureSecurityGroupsSettingsCountValue: Locator;
   readonly resourcesWithInsecureSecurityGroupsSettingsSeeAllBtn: Locator;
   readonly resourcesWithInsecureSecurityGroupsSettingsError: Locator;
+  readonly resourcesWithInsecureSecurityGroupsSettingsTableSavingsValue: Locator;
 
   readonly publicS3BucketsCardSavingsValue: Locator;
   readonly publicS3BucketsSeeAllBtn: Locator;
@@ -189,6 +191,8 @@ export class RecommendationsPage extends BasePage {
   readonly snapshotsWithNonUsedImagesSeeAllBtn: Locator;
   readonly snapshotsWithNonUsedImagesError: Locator;
   readonly snapshotsWithNonUsedImagesTableSavingsValue: Locator;
+
+  readonly noRecommendationsMessage: Locator;
 
   /**
    * Initializes a new instance of the RecommendationsPage class.
@@ -239,6 +243,7 @@ export class RecommendationsPage extends BasePage {
     this.searchInput = this.main.getByPlaceholder('Search');
     this.cardsGrid = this.main.locator('//div[contains(@class, "cardsGrid MuiBox-root")]');
     this.table = this.main.locator('table');
+    this.noRecommendationsMessage = this.main.getByText('No recommendations found');
 
     // Data source icons
     const brandConfigs = {
@@ -482,6 +487,7 @@ export class RecommendationsPage extends BasePage {
   async getCurrencyValue(currencyLocator: Locator): Promise<number> {
     await currencyLocator.scrollIntoViewIfNeeded();
     const text = await currencyLocator.textContent();
+    debugLog(`getCurrencyValue raw text: "${text}"`);  // add this
     return this.parseCurrencyValue(text);
   }
 
@@ -522,6 +528,7 @@ export class RecommendationsPage extends BasePage {
       { label: 'Obsolete Snapshots', locator: this.obsoleteSnapshotsCardSavingsValue },
       { label: 'Obsolete Snapshot Chains', locator: this.obsoleteSnapshotChainsCardSavingsValue },
       { label: 'Reserved Instances Opportunities', locator: this.reservedInstancesOpportunitiesCardSavingsValue },
+      { label: 'Resources with Insecure Security Groups settings', locator: this.resourcesWithInsecureSecurityGroupsSettingsTableSavingsValue },
       { label: 'Public S3 Buckets', locator: this.publicS3BucketsCardSavingsValue },
       { label: 'Snapshots With Non-used Images', locator: this.snapshotsWithNonUsedImagesCardSavingsValue },
       { label: 'Underutilized Instances', locator: this.underutilizedInstancesCardSavingsValue },
