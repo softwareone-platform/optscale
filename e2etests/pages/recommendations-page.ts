@@ -487,7 +487,7 @@ export class RecommendationsPage extends BasePage {
   async getCurrencyValue(currencyLocator: Locator): Promise<number> {
     await currencyLocator.scrollIntoViewIfNeeded();
     const text = await currencyLocator.textContent();
-    debugLog(`getCurrencyValue raw text: "${text}"`);  // add this
+    debugLog(`getCurrencyValue raw text: "${text}"`);
     return this.parseCurrencyValue(text);
   }
 
