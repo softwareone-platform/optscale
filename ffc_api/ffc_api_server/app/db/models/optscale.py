@@ -4,10 +4,19 @@ OptScale database models (read-only).
 These models are NOT tracked by Alembic migrations.
 """
 
+from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, and_
-from sqlalchemy.orm import DeclarativeBase, Mapped, foreign, mapped_column, relationship
+from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Integer, String, Text, and_, func, select
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    column_property,
+    declared_attr,
+    foreign,
+    mapped_column,
+    relationship,
+)
 
 from ffc_api.ffc_api_server.app.conf import get_settings
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
@@ -53,6 +62,18 @@ class Organization(Base, IDMixin):
     )
 
 
+class Pool(Base, IDMixin):
+    __tablename__ = "pool"
+    __table_args__ = {"schema": DB_SCHEMA}
+
+    limit: Mapped[int] = mapped_column(Integer)
+    name: Mapped[str] = mapped_column(String)
+    organization_id: Mapped[str] = mapped_column(String)
+    purpose: Mapped[str] = mapped_column(String)
+    default_owner_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    deleted_at: Mapped[int] = mapped_column(Integer)
+
+
 class User(Base, IDMixin):
     __tablename__ = "employee"
     __table_args__ = {"schema": DB_SCHEMA}
@@ -66,6 +87,8 @@ class User(Base, IDMixin):
         viewonly=True,
         lazy="raise",
     )
+    created_at: Mapped[int] = mapped_column(Integer)
+    deleted_at: Mapped[int] = mapped_column(Integer)
 
     tags = relationship(
         Tag,
@@ -115,6 +138,15 @@ class DataSource(Base):
     )
 
 
+class Token(Base):
+    __tablename__ = "token"
+    __table_args__ = {"schema": AUTH_DB_SCHEMA}
+
+    digest: Mapped[str] = mapped_column(String(32), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey(f"{AUTH_DB_SCHEMA}.user.id"))
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP)
+
+
 class AuthUser(Base, IDMixin):
     __tablename__ = "user"
     __table_args__ = {"schema": AUTH_DB_SCHEMA}
@@ -126,6 +158,16 @@ class AuthUser(Base, IDMixin):
         back_populates="user",
     )
 
+    @declared_attr
+    def last_login(cls) -> Mapped[datetime | None]:
+        return column_property(
+            select(func.max(Token.created_at))
+            .where(Token.user_id == cls.id)
+            .correlate_except(Token)
+            .scalar_subquery(),
+            deferred=True,
+        )
+
 
 class Role(Base):
     __tablename__ = "role"
@@ -133,7 +175,8 @@ class Role(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(64), index=True)
-    is_active: Mapped[bool] = mapped_column(Boolean)
+    purpose: Mapped[str] = mapped_column(String(64))
+    deleted_at: Mapped[int] = mapped_column(Integer)
 
 
 class Type(Base):
@@ -150,5 +193,6 @@ class Assignment(Base, IDMixin):
 
     type_id: Mapped[int] = mapped_column(Integer)
     role_id: Mapped[int] = mapped_column(Integer)
+    resource_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey(f"{AUTH_DB_SCHEMA}.user.id"))
     user: Mapped["AuthUser"] = relationship(back_populates="assignments")

@@ -10,6 +10,7 @@ class Roles:
         # Add ttl to update cached values, but maybe not worth it
         self.role_map: dict[int, str] = {}
         self.type_map: dict[int, str] = {}
+        self.role_purpose_map: dict[int, str] = {}
 
     async def load(self):
         async with session_factory() as session:
@@ -17,14 +18,18 @@ class Roles:
                 role_handler = RoleHandler(session)
                 type_handler = TypeHandler(session)
 
-                roles = await role_handler.query_db(where_clauses=[Role.is_active])
+                roles = await role_handler.query_db(where_clauses=[Role.deleted_at == 0])
                 types = await type_handler.query_db()
 
                 self.role_map = {r.id: r.name for r in roles}
+                self.role_purpose_map = {r.id: r.purpose for r in roles}
                 self.type_map = {t.id: t.name for t in types}
 
     def get_role_name(self, role_id: int) -> str | None:
         return self.role_map.get(role_id)
+
+    def get_role_purpose(self, role_id: int) -> str | None:
+        return self.role_purpose_map.get(role_id)
 
     def get_type_name(self, type_id: int) -> str | None:
         return self.type_map.get(type_id)
