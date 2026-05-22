@@ -1,5 +1,6 @@
 import logging
-from typing import Annotated
+from collections.abc import Sequence
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
 from fastapi.concurrency import run_in_threadpool
@@ -7,10 +8,11 @@ from fastapi_pagination import create_page, resolve_params
 from sqlalchemy import Select
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
-from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, User
+from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, Pool, User
 from ffc_api.ffc_api_server.app.dependencies.db import (
     DataSourceRepository,
     OrganizationRepository,
+    PoolRepository,
     TagRepository,
     UserRepository,
 )
@@ -32,6 +34,7 @@ from ffc_api.ffc_api_server.app.schemas.users import UserRead
 from ffc_api.ffc_api_server.app.services.expenses import get_forecasts
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
+from ffc_api.ffc_api_server.app.services.users import build_user_read
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -110,13 +113,39 @@ async def get_organization_by_id(
 async def get_users_by_organization_id(
     organization: Annotated[Organization, Depends(fetch_organization_or_404)],
     user_repo: UserRepository,
+    pool_repo: PoolRepository,
     base_query: Select = Depends(RQLQuery(UserRules())),
 ):
-    return await paginate(
-        user_repo,
-        UserRead,
-        base_query=base_query,
-        where_clauses=[User.organization_id == organization.id],
+    pools = await pool_repo.query_db(
+        where_clauses=[
+            Pool.organization_id == organization.id,
+            Pool.deleted_at == 0,
+        ],
+    )
+
+    where_clauses = [User.organization_id == organization.id, User.deleted_at == 0]
+    params: LimitOffsetParams = resolve_params()
+    total = await user_repo.count(base_query=base_query, where_clauses=where_clauses)
+    users: Sequence[User] = []
+    if params.limit > 0:
+        users = await user_repo.query_with_assignment_scope(
+            resource_ids=[pool.id for pool in pools] + [organization.id],
+            base_query=base_query,
+            where_clauses=where_clauses,
+            limit=params.limit,
+            offset=params.offset,
+            order_by=[User.id],
+        )
+
+    resource_map: dict[str, dict[str, Any]] = {
+        pool.id: {"name": pool.name, "purpose": pool.purpose} for pool in pools
+    }
+    resource_map[organization.id] = {"name": organization.name}
+
+    return create_page(
+        [build_user_read(user, resource_map=resource_map) for user in users],
+        params=params,
+        total=total,
     )
 
 

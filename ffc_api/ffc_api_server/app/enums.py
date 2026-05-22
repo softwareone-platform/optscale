@@ -8,3 +8,9 @@ class TagResourceType(str, enum.Enum):
     USER = "user"
     ORGANIZATION = "organization"
     DATA_SOURCE = "data_source"
+
+
+class RolePurposes(enum.Enum):
+    optscale_member = "optscale_member"
+    optscale_engineer = "optscale_engineer"
+    optscale_manager = "optscale_manager"

@@ -7,7 +7,7 @@ from typing import Any, Generic, TypeVar
 from sqlalchemy import ColumnExpressionArgument, Select, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, with_loader_criteria
 from sqlalchemy.orm.interfaces import ORMOption
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Base as BaseModel
@@ -17,6 +17,7 @@ from ffc_api.ffc_api_server.app.db.models.optscale import (
     AuthUser,
     DataSource,
     Organization,
+    Pool,
     Role,
     Type,
     User,
@@ -329,13 +330,40 @@ class UserHandler(ReadOnlyHandler[User]):
         self.default_options = [
             selectinload(User.auth_user)
             .load_only(AuthUser.id, AuthUser.email)
+            .undefer(AuthUser.last_login)
             .selectinload(AuthUser.assignments)
             .load_only(
+                Assignment.id,
                 Assignment.user_id,
                 Assignment.type_id,
                 Assignment.role_id,
+                Assignment.resource_id,
             ),
         ]
+
+    async def query_with_assignment_scope(
+        self,
+        *,
+        resource_ids: Sequence[str],
+        base_query: Select | None = None,
+        where_clauses: Sequence[ColumnExpressionArgument] | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        order_by: Sequence[ColumnExpressionArgument] | None = None,
+    ) -> Sequence[User]:
+        return await self.query_db(
+            base_query=base_query,
+            where_clauses=where_clauses,
+            limit=limit,
+            offset=offset,
+            order_by=order_by,
+            options=[
+                with_loader_criteria(
+                    Assignment,
+                    Assignment.resource_id.in_(resource_ids),
+                ),
+            ],
+        )
 
 
 class TagHandler(ReadWriteHandler[Tag]):
@@ -348,3 +376,7 @@ class RoleHandler(ReadOnlyHandler[Role]):
 
 class TypeHandler(ReadOnlyHandler[Type]):
     model_cls = Type
+
+
+class PoolHandler(ReadOnlyHandler[Pool]):
+    model_cls = Pool
