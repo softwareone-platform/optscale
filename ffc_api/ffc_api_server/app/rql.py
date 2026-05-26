@@ -5,7 +5,7 @@ from requela import FieldRule, ModelRQLRules, RelationshipRule, RequelaError
 from sqlalchemy.sql.selectable import Select
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
-from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, User
+from ffc_api.ffc_api_server.app.db.models.optscale import AuthUser, DataSource, Organization, User
 from ffc_api.ffc_api_server.app.utils import wrap_exc_in_http_response
 
 
@@ -24,10 +24,19 @@ class TagRules(ModelRQLRules):
     resource_id = FieldRule()
 
 
+class AuthUserRules(ModelRQLRules):
+    __model__ = AuthUser
+
+    id = FieldRule()
+    email = FieldRule()
+
+
 class UserRules(ModelRQLRules):
     __model__ = User
 
+    id = FieldRule()
     name = FieldRule()
+    auth_user = RelationshipRule(rules=AuthUserRules())
     tags = RelationshipRule(rules=TagRules())
 
 
