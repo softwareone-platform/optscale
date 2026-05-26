@@ -1,7 +1,7 @@
 import React from "react";
 import { DOCS_HYSTAX_CONNECT_AMAZON, DOCS_HYSTAX_CONNECT_AWS_ROOT } from "@theme/urls";
 import { AWS_CNR, CONNECTION_TYPES } from "@theme/utils/constants";
-import { AwsTypeDescription } from "./AwsConnectionFormElements";
+import { AwsTypeDescription } from "./AwsTypeDescription";
 
 export const AUTHENTICATION_TYPES = Object.freeze({
   ASSUMED_ROLE: "assumedRole",

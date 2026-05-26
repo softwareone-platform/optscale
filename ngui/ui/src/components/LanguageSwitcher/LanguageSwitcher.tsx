@@ -1,4 +1,3 @@
-import LanguageIcon from "@mui/icons-material/Language";
 import Box from "@mui/material/Box";
 import MuiMenuItem from "@mui/material/MenuItem";
 import MuiSelect from "@mui/material/Select";
@@ -14,7 +13,6 @@ const LanguageSwitcher = () => {
 
   return (
     <Box display="flex" alignItems="center">
-      <LanguageIcon color="primary" sx={{ mr: 0.5, fontSize: "1.25rem" }} />
       <MuiSelect
         value={locale}
         onChange={handleChange}
@@ -27,12 +25,12 @@ const LanguageSwitcher = () => {
           "& .MuiSelect-select": {
             paddingTop: 0,
             paddingBottom: 0,
-            paddingRight: "20px !important",
+            paddingRight: "20px !important"
           },
           "& .MuiSvgIcon-root": {
             color: "primary.main",
-            fontSize: "1.25rem",
-          },
+            fontSize: "1.25rem"
+          }
         }}
         data-test-id="select_language"
       >

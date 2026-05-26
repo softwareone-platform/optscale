@@ -1,7 +1,5 @@
-import { ReactNode, useState } from "react";
-import Alert from "@mui/material/Alert";
+import { useState } from "react";
 import Box from "@mui/material/Box";
-import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { MPT_SPACING_2 } from "@theme/utils/layouts";
@@ -12,53 +10,9 @@ import {
   awsConnectionAssumedRoleDescriptions,
   awsConnectionKeyAccessDescriptions
 } from "./constants";
-import { AuthenticationType, AuthenticationTypeSelectorType, AwsTypeDescriptionProps } from "./types";
+import { AuthenticationType, AuthenticationTypeSelectorType } from "./types";
 
-export const AwsTypeDescription = ({
-  messageId,
-  linkUrl,
-  linkDisplayBlock = false,
-  type = "paragraph"
-}: AwsTypeDescriptionProps) => {
-  const content = (
-    <Typography>
-      <FormattedMessage
-        id={messageId}
-        values={{
-          link: (chunks: ReactNode[]) => {
-            const linkText = chunks.length > 0 ? chunks : linkUrl;
-            return (
-              <Link
-                data-test-id="link_guide"
-                sx={{ display: linkDisplayBlock ? "inline" : "block" }}
-                href={linkUrl}
-                target="_blank"
-                rel="noopener"
-              >
-                {linkText}
-              </Link>
-            );
-          },
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }}
-      />
-    </Typography>
-  );
-
-  if (type === "warning") {
-    return (
-      <Alert severity="warning" sx={{ mt: 1, mb: 1 }}>
-        {content}
-      </Alert>
-    );
-  }
-
-  return (
-    <Box key={messageId} sx={{ mt: 1, mb: 1 }}>
-      {content}
-    </Box>
-  );
-};
+export { AwsTypeDescription } from "./AwsTypeDescription";
 
 export const useAuthenticationType = () => {
   const [authenticationType, setAuthenticationType] = useState<AuthenticationType>(() => AUTHENTICATION_TYPES.ASSUMED_ROLE);

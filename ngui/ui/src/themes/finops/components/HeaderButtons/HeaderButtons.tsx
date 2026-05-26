@@ -8,6 +8,7 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import { FormattedMessage } from "react-intl";
+import LanguageSwitcher from "@main/components/LanguageSwitcher";
 import { MPT_BRAND_TYPE } from "@theme/utils/layouts";
 import IconButton from "components/IconButton";
 import Popover from "components/Popover";
@@ -49,6 +50,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
   return (
     <>
       <Box component="div" className={classes.sectionDesktop}>
+        <LanguageSwitcher />
         <IconButton
           dataTestId="btn_doc"
           color="info"
