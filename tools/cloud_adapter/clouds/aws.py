@@ -1651,12 +1651,14 @@ class Aws(S3CloudMixin):
             'global': {'longitude': -98.48424, 'latitude': 39.01190}
         }
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         zero_coordinates = {
             'longitude': None,
             'latitude': None
         }
         coordinates_map = self._get_coordinates_map()
+        if not load:
+            return coordinates_map
         try:
             for available_region in self.list_regions():
                 if not coordinates_map.get(available_region):
