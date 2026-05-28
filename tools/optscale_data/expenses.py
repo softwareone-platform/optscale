@@ -42,14 +42,16 @@ class ExpenseQuery:
             FROM expenses
             JOIN cloud_accounts
                 ON expenses.cloud_account_id = cloud_accounts._id
-            WHERE date >= %(start_date)s AND date < %(end_date)s
+            WHERE cloud_account_id IN %(cloud_acc_list)s
+                AND date >= %(start_date)s AND date < %(end_date)s
             GROUP BY cloud_account_id, count
         """
         return self._execute(
             query=query,
             parameters={
                 'start_date': start_date,
-                'end_date': end_date
+                'end_date': end_date,
+                'cloud_acc_list': cloud_acc_list
             },
             external_data=ExternalDataConverter()([{
                 'name': 'cloud_accounts',
