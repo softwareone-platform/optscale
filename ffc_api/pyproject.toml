@@ -14,6 +14,7 @@ dependencies = [
     "auth-client",
     "config-client",
     "clickhouse-connect>=0.8.15,<1",
+    "cloud-adapter",
     "cryptography>=46.0.5,<47",
     "dynaconf>=3.2.13,<4",
     "fastapi-pagination>=0.12.34,<1",
@@ -75,6 +76,7 @@ module-name = "ffc_api"
 
 [tool.uv.sources]
 optscale-data = { path = "../tools/optscale_data", editable = true }
+cloud-adapter = { path = "../tools/cloud_adapter", editable = true }
 config-client = { path = "../optscale_client/config_client", editable = true }
 auth-client = { path = "../optscale_client/auth_client", editable = true }
 

@@ -53,6 +53,7 @@ class OrganizationRules(ModelRQLRules):
 class DataSourceRules(ModelRQLRules):
     __model__ = DataSource
 
+    id = FieldRule()
     name = FieldRule()
     type = FieldRule()
     account_id = FieldRule()
