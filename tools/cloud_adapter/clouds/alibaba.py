@@ -956,9 +956,11 @@ class Alibaba(CloudBase):
                 'longitude': 150.7915495, 'latitude': -33.8481643},
         }
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         coordinates_map = self._get_coordinates_map()
         coordinates_map.update(self._get_outdated_regions())
+        if not load:
+            return coordinates_map
         try:
             for region_details in self._list_region_details():
                 region_id = region_details['RegionId']
