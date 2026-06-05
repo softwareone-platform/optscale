@@ -1,0 +1,698 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
+
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom: 5px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Your weekly expense report is ready and available below.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom: 20px; padding-top: 20px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:18px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                                <strong>Organization expenses</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Expenses > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Limit</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Expenses up-to-date</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif; text-align: right; ">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right;  mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Forecasted expenses</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Expenses > Table content -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="33.3333333%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.organization.limit|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="33.3333333%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.organization.total_cost|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="33.3333333%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.organization.forecast|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Unassigned resources > Table title -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 20px; padding-bottom: 20px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:18px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                          <strong>Unassigned resource expenses</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Unassigned resources > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 15px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Expenses up-to-date</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Forecasted expenses</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="33.3333333%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; text-align: right; padding-top: 5px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Number of resources</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Unassigned resources > Table -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="25%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.unassigned.total_cost|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="25%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.unassigned.forecast|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="25%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{texts.unassigned.resources_tracked}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pools report > Table title -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 20px; padding-bottom: 20px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 0px; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:18px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                          <strong>Pools expenses</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Pools report > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="30"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Pool</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="17.5%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif; text-align: right; ">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Limit</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="17.5%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Expenses up-to-date</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-4" width="17.5%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px;  text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Forecasted expenses</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-5" width="17.5%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 5px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <strong>Number of resources</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Pools report > Table -->
+
+{% for pool in texts.pools %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="30"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
+                                        <span style="font-size: 14px">
+                                          <a href="https://{{etcd.control_panel_link}}/pools/{{pool.id}}{{texts.control_panel_parameters}}"
+                                             target="_blank" rel="noopener">{{pool.name}}</a>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="17.5%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{pool.limit|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="17.5%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{pool.cost|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-4" width="17.5%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{pool.forecast|format_money(currency=texts.organization.currency_code)}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-5" width="17.5%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 15px; padding-top: 5px; text-align: right; ">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: right; mso-line-height-alt: 21px">
+                                                <span style="font-size: 14px">{{pool.tracked}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + texts.control_panel_parameters %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}
