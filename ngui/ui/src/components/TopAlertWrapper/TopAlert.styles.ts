@@ -33,6 +33,13 @@ const useStyles = makeStyles()((theme) => ({
       color: theme.palette.common.white,
     },
   },
+  promo: {
+    backgroundColor: "#2c67ce",
+    color: theme.palette.common.white,
+    ".close-alert-button": {
+      color: theme.palette.common.white,
+    },
+  },
 }));
 
 export default useStyles;
