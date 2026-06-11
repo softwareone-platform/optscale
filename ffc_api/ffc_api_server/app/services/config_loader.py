@@ -26,6 +26,7 @@ def load(obj, env=None, silent=True, key=None, filename=None):
         "CLUSTER_SECRET": config_client.cluster_secret(),
         "AUTH_URL": config_client.auth_url(),
         "AUTH_DB": auth_db,
+        "REST_API_URL": config_client.restapi_url(),
         "CLICKHOUSE_USER": c_user,
         "CLICKHOUSE_PASSWORD": c_password,
         "CLICKHOUSE_HOST": c_host,

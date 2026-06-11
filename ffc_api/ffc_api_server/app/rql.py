@@ -37,7 +37,9 @@ class UserRules(ModelRQLRules):
     id = FieldRule()
     name = FieldRule()
     auth_user = RelationshipRule(rules=AuthUserRules())
+
     tags = RelationshipRule(rules=TagRules())
+    email = FieldRule(source="auth_user.email")
 
 
 class OrganizationRules(ModelRQLRules):

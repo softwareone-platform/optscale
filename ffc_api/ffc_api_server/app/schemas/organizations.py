@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Annotated
 
 import pycountry
@@ -42,3 +43,12 @@ class OrganizationBase(BaseSchema):
 
 class OrganizationRead(IdSchema, OrganizationBase):
     tags: list[TagRef] = []
+
+
+class OrganizationExpenses(BaseSchema):
+    limit: Annotated[Decimal, Field(examples=["10000.00"], default=Decimal(0))]
+    expenses_this_month: Annotated[Decimal, Field(examples=["2111.49"], default=Decimal(0))]
+    expenses_this_month_forecast: Annotated[
+        Decimal, Field(examples=["5001.12"], default=Decimal(0))
+    ]
+    possible_monthly_saving: Annotated[Decimal, Field(examples=["4.66"], default=Decimal(0))]

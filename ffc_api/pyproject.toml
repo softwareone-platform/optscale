@@ -32,7 +32,8 @@ dependencies = [
     "python-dotenv>=1.0.1,<2",
     "python-etcd>=0.4.5,<0.5.0",
     "pyyaml>=6.0.2,<7",
-    "requela>=0.1.17,<1",
+    "requela>=0.1.19,<1",
+    "restapi-client",
     "sqlalchemy[asyncio]>=2.0.40,<3",
     "sqlalchemy-utils>=0.41.2,<1",
     "snippettoni>=0.1.0,<0.2.0",
@@ -79,6 +80,7 @@ optscale-data = { path = "../tools/optscale_data", editable = true }
 cloud-adapter = { path = "../tools/cloud_adapter", editable = true }
 config-client = { path = "../optscale_client/config_client", editable = true }
 auth-client = { path = "../optscale_client/auth_client", editable = true }
+restapi-client = { path = "../optscale_client/rest_api_client", editable = true }
 
 [tool.ruff]
 line-length = 100
