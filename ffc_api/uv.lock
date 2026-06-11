@@ -1312,6 +1312,7 @@ dependencies = [
     { name = "python-etcd" },
     { name = "pyyaml" },
     { name = "requela" },
+    { name = "restapi-client" },
     { name = "snippettoni" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "sqlalchemy-utils" },
@@ -1371,7 +1372,8 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1,<2" },
     { name = "python-etcd", specifier = ">=0.4.5,<0.5.0" },
     { name = "pyyaml", specifier = ">=6.0.2,<7" },
-    { name = "requela", specifier = ">=0.1.17,<1" },
+    { name = "requela", specifier = ">=0.1.19,<1" },
+    { name = "restapi-client", editable = "../optscale_client/rest_api_client" },
     { name = "snippettoni", specifier = ">=0.1.0,<0.2.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.40,<3" },
     { name = "sqlalchemy-utils", specifier = ">=0.41.2,<1" },
@@ -3032,15 +3034,15 @@ wheels = [
 
 [[package]]
 name = "requela"
-version = "0.1.18"
+version = "0.1.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "lark" },
     { name = "pytest-randomly" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/05/45/532a50215860a57ef1c90b8d91e274b9e61cc4c44d10c5d4d05fe0afa337/requela-0.1.18.tar.gz", hash = "sha256:63a417d727112bc5f9228f33f0781abfc0f8762c8e9c14154a4d90390692c94b", size = 552927, upload-time = "2025-06-23T13:50:54.06Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/d8/ff00ba7b93fd77b20620d9fddea6d4b8601e1f4471f686d98bb8c4815421/requela-0.1.19.tar.gz", hash = "sha256:2076eed5efac769b71f27e45ce095d8ed996985eb8c578d67e8b9ce3ebd4694b", size = 553060, upload-time = "2026-06-05T16:54:25.752Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/1a/63a6e656e3c2c3b08e0a9ff4540590909c20af37ce417cf3753fed40717e/requela-0.1.18-py3-none-any.whl", hash = "sha256:352b95a6a4577c109fa4c1e8c48ea5a91143536336c4a5a1f7c9af142c7f2297", size = 22654, upload-time = "2025-06-23T13:50:52.924Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/7a/0ea31438b89472ed86c08c30f66170566da90994c0ae5a65613152542d1e/requela-0.1.19-py3-none-any.whl", hash = "sha256:9937cc4bc876f2e6e4acc5011da51fc51b1513a466b43700ee190e3d78f3df2a", size = 22706, upload-time = "2026-06-05T16:54:24.397Z" },
 ]
 
 [[package]]
@@ -3069,6 +3071,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/42/f2/05f29bc3913aea15eb670be136045bf5c5bbf4b99ecb839da9b422bb2c85/requests-oauthlib-2.0.0.tar.gz", hash = "sha256:b3dffaebd884d8cd778494369603a9e7b58d29111bf6b41bdc2dcd87203af4e9", size = 55650, upload-time = "2024-03-22T20:32:29.939Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3b/5d/63d4ae3b9daea098d5d6f5da83984853c1bbacd5dc826764b249fe119d24/requests_oauthlib-2.0.0-py2.py3-none-any.whl", hash = "sha256:7dd8a5c40426b779b0868c404bdef9768deccf22749cde15852df527e6269b36", size = 24179, upload-time = "2024-03-22T20:32:28.055Z" },
+]
+
+[[package]]
+name = "restapi-client"
+version = "0.0.0"
+source = { editable = "../optscale_client/rest_api_client" }
+dependencies = [
+    { name = "requests" },
+    { name = "retrying" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "requests", specifier = "==2.32.4" },
+    { name = "retrying", specifier = ">=1.4.1" },
 ]
 
 [[package]]

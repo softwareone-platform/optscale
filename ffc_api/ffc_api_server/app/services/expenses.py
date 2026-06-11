@@ -1,129 +1,14 @@
-from calendar import monthrange
-from datetime import datetime, timedelta
+import logging
+from datetime import timedelta
 
-from tools.optscale_data.clickhouse import ExternalDataConverter
+from tools.optscale_data.expenses import ExpenseQuery
 
 from ffc_api.ffc_api_server.app.clients.clickhouse import get_clickhouse_client
 from ffc_api.ffc_api_server.app.clients.mongo import get_mongo_client
+from ffc_api.ffc_api_server.app.clients.rest_api import get_rest_api_client
 from ffc_api.ffc_api_server.app.utils import utcnow
 
-
-def get_cloud_expenses_with_resource_info(
-    clickhouse_client, mongo_client, datasource_ids, start_date, end_date
-):
-    pipeline = [
-        {
-            "$match": {
-                "$and": [
-                    {"cloud_account_id": {"$in": datasource_ids}},
-                    {"_first_seen_date": {"$lt": end_date}},
-                    {
-                        "_last_seen_date": {
-                            "$gte": start_date.replace(hour=0, minute=0, second=0, microsecond=0),
-                        },
-                    },
-                    {"first_seen": {"$lt": int(end_date.timestamp())}},
-                    {"last_seen": {"$gte": int(start_date.timestamp())}},
-                    {"deleted_at": 0},
-                ]
-            }
-        },
-        {
-            "$group": {"_id": "$cloud_account_id", "count": {"$sum": 1}},
-        },
-    ]
-    resource_counts = list(mongo_client.restapi.resources.aggregate(pipeline))
-    query = """
-            SELECT cloud_account_id, SUM(cost * sign), count
-            FROM expenses
-                     JOIN cloud_accounts
-                          ON expenses.cloud_account_id = cloud_accounts._id
-            WHERE date >= %(start_date)s \
-              AND date \
-                < %(end_date)s
-            GROUP BY cloud_account_id, count
-            """
-
-    return clickhouse_client.query(
-        query=query,
-        parameters={"start_date": start_date, "end_date": end_date},
-        external_data=ExternalDataConverter()(
-            [
-                {
-                    "name": "cloud_accounts",
-                    "structure": [("_id", "String"), ("count", "Int32")],
-                    "data": resource_counts,
-                }
-            ]
-        ),
-    ).result_rows
-
-
-def get_cloud_expenses(clickhouse_client, mongo_client, start, end, datasource_ids):
-    expenses = get_cloud_expenses_with_resource_info(
-        clickhouse_client,
-        mongo_client,
-        datasource_ids=datasource_ids,
-        start_date=start,
-        end_date=end,
-    )
-    return {x[0]: {"cost": x[1], "count": x[2]} for x in expenses}
-
-
-def get_this_month_expenses(clickhouse_client, mongo_client, datasource_ids, today_date):
-    start = today_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    end = today_date.replace(hour=23, minute=59, second=59, microsecond=0)
-
-    return get_cloud_expenses(clickhouse_client, mongo_client, start, end, datasource_ids)
-
-
-def get_last_month_expenses(clickhouse_client, mongo_client, datasource_ids, today_date):
-    end = today_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    last_day_in_month = end - timedelta(days=1)
-    start = last_day_in_month.replace(day=1)
-    return get_cloud_expenses(clickhouse_client, mongo_client, start, end, datasource_ids)
-
-
-def get_first_expenses_for_forecast(clickhouse_client, datasource_ids):
-    prev_month_start = (utcnow().replace(day=1) - timedelta(days=1)).replace(
-        day=1, hour=0, minute=0, second=0, microsecond=0
-    )
-
-    query = """
-        SELECT 'cloud_account_id', min(date)
-        FROM expenses
-        WHERE cloud_account_id
-            IN cloud_account_ids
-            AND date >= %(date)s
-        GROUP BY cloud_account_id
-    """
-    external_tables = [
-        {
-            "name": "cloud_account_ids",
-            "structure": [("id", "String")],
-            "data": [{"id": r_id} for r_id in datasource_ids],
-        }
-    ]
-
-    result = clickhouse_client.query(
-        query=query,
-        parameters={"date": prev_month_start},
-        external_data=ExternalDataConverter()(external_tables),
-    ).result_rows
-
-    return {r[0]: r[1] for r in result}
-
-
-def get_monthly_forecast(cost, month_cost, first_expense=None):
-    today = datetime.today()
-    month_start = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    last_month_start = (month_start - timedelta(days=1)).replace(day=1)
-    start_date = max(last_month_start, first_expense) if first_expense else last_month_start
-    forecast_days = (today - start_date).days
-    daily_forecast = cost / forecast_days if forecast_days > 0 else cost
-    _, days_in_month = monthrange(today.year, today.month)
-    forecast = month_cost + daily_forecast * (days_in_month - (today - month_start).days)
-    return round(forecast, 2)
+logger = logging.getLogger(__name__)
 
 
 def get_forecasts(datasource_ids):
@@ -132,28 +17,58 @@ def get_forecasts(datasource_ids):
     if not datasource_ids:
         return result
 
-    clickhouse_client = get_clickhouse_client()
-    mongo_client = get_mongo_client()
-
+    q = _build_query()
     today = utcnow()
-    month_expenses = get_this_month_expenses(clickhouse_client, mongo_client, datasource_ids, today)
-    last_month_expenses = get_last_month_expenses(
-        clickhouse_client, mongo_client, datasource_ids, today
-    )
-    first_expenses = get_first_expenses_for_forecast(clickhouse_client, datasource_ids)
 
-    for datasource_id in datasource_ids:
+    month_start = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    month_end = today.replace(hour=23, minute=59, second=59, microsecond=0)
+    month_rows = q.get_cloud_expenses_with_resource_info(datasource_ids, month_start, month_end)
+    month_expenses = {r[0]: {"cost": r[1], "count": r[2]} for r in month_rows}
+
+    last_month_end = month_start
+    last_month_start = (last_month_end - timedelta(days=1)).replace(day=1)
+    last_month_rows = q.get_cloud_expenses_with_resource_info(
+        datasource_ids, last_month_start, last_month_end
+    )
+    last_month_expenses = {r[0]: {"cost": r[1], "count": r[2]} for r in last_month_rows}
+
+    first_expenses = q.get_first_expenses_for_forecast("cloud_account_id", datasource_ids)
+
+    result = {}
+    for ds_id in datasource_ids:
         default = {"cost": 0, "count": 0}
-        current_stats = month_expenses.get(datasource_id, default)
-        last_stats = last_month_expenses.get(datasource_id, default)
-        result[datasource_id] = {
+        current_stats = month_expenses.get(ds_id, default)
+        last_stats = last_month_expenses.get(ds_id, default)
+        result[ds_id] = {
             "cost": current_stats["cost"],
-            "forecast": get_monthly_forecast(
+            "forecast": q.get_monthly_forecast(
                 last_stats["cost"] + current_stats["cost"],
                 current_stats["cost"],
-                first_expenses.get(datasource_id),
+                first_expenses.get(ds_id),
             ),
             "resources": current_stats["count"],
         }
-
     return result
+
+
+def _build_query() -> ExpenseQuery:
+    clickhouse_client = get_clickhouse_client()
+    mongo_client = get_mongo_client().restapi.resources
+
+    def execute_clickhouse(query, **kwargs):
+        return clickhouse_client.query(query=query, **kwargs).result_rows
+
+    return ExpenseQuery(
+        execute_clickhouse=execute_clickhouse,
+        resources_collection=mongo_client,
+    )
+
+
+def get_organization_expenses(organization):
+    pool_id = organization.pool_id
+    if not pool_id:
+        return None
+
+    client = get_rest_api_client()
+    _, expenses = client.pool_get(pool_id, details=True)
+    return expenses

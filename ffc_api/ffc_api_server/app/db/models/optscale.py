@@ -44,6 +44,7 @@ class Organization(Base, IDMixin):
     is_demo: Mapped[bool] = mapped_column(Boolean)
     currency: Mapped[str] = mapped_column(String)
     disabled: Mapped[bool] = mapped_column(Boolean)
+    pool_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
     cloudaccounts: Mapped[list["DataSource"]] = relationship(
         "DataSource",
