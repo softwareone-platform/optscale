@@ -34,6 +34,21 @@ It provides deep visibility into infrastructure costs, automated optimization re
 </div>
 
 <br>
+<br>
+
+<div>
+<br>  
+  <img src="documentation/images/OptScale-AI-description-ReadMe-GitHub.png" width="92" align="left" style="border-radius: 50%; margin-right: 15px">
+  <b>
+    🔖 NEW 🔖 <br>Cloud costs under control? Time to go beyond – into AI.
+  </b>
+  <br> OptScale AI covers it all – cost control, security and guardrails, and full visibility over every AI prompt, model, and agent.
+  
+  <b>Try free at [optscale.ai](https://optscale.ai) </b>
+</div>
+
+<br>
+<br>
 
 <div>
 <br>  
