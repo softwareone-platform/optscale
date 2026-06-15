@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import { MlEditArtifactForm } from "components/forms/MlArtifactForm";
-import { TABS } from "components/MlTaskRun/Components/Tabs";
+import { TABS } from "components/MlTaskRun/components/Tabs";
 import PageContentWrapper from "components/PageContentWrapper";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import MlArtifactsService from "services/MlArtifactsService";
@@ -44,12 +44,12 @@ const MlEditRunArtifactContainer = () => {
         {formatRunFullName(runNumber, runName)}
       </Link>,
       <FormattedMessage key={4} id="artifacts" />,
-      <Typography key={5}>{artifactName}</Typography>
+      <Typography key={5}>{artifactName}</Typography>,
     ],
     title: {
       isLoading: isGetArtifactLoading || isGetRunLoading,
-      messageId: "editArtifactTitle"
-    }
+      messageId: "editArtifactTitle",
+    },
   };
 
   const redirect = () => navigate(taskRunUrl);
@@ -60,7 +60,7 @@ const MlEditRunArtifactContainer = () => {
       <PageContentWrapper>
         <Box
           sx={{
-            width: { md: "50%" }
+            width: { md: "50%" },
           }}
         >
           <MlEditArtifactForm

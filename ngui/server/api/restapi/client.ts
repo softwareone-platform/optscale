@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 import BaseClient from "../baseClient.js";
 import {
   DataSourceRequestParams,
@@ -9,6 +10,8 @@ import {
   MutationCreateOrganizationArgs,
   MutationDeleteOrganizationArgs,
   MutationUpdateOrganizationPerspectivesArgs,
+  MutationCreateStripeCheckoutSessionArgs,
+  MutationCreateStripeBillingPortalSessionArgs,
   QueryOrganizationPerspectivesArgs,
   QueryOrganizationFeaturesArgs,
   QueryOrganizationConstraintArgs,
@@ -20,7 +23,12 @@ import {
   QueryCleanExpensesArgs,
   QueryCloudPoliciesArgs,
   QueryMetaBreakdownArgs,
-  QueryAvailableFiltersArgs
+  QueryAvailableFiltersArgs,
+  QueryOrganizationSummaryArgs,
+  QueryBillingSubscriptionPlansArgs,
+  QueryBillingSubscriptionArgs,
+  MutationScheduleGeminiDataPreparationArgs,
+  QueryGeminiDataPreparationArgs,
 } from "../../graphql/__generated__/types/restapi";
 import { getParams } from "../../utils/getParams.js";
 
@@ -37,7 +45,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/employees`;
 
     const currentEmployee = await this.get(path, {
-      params: getParams({ current_only: true })
+      params: getParams({ current_only: true }),
     });
 
     return currentEmployee.employees[0];
@@ -47,7 +55,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/cloud_accounts`;
 
     const dataSources = await this.get(path, {
-      params: getParams({ details: true })
+      params: getParams({ details: true }),
     });
 
     return dataSources.cloud_accounts;
@@ -58,8 +66,8 @@ class RestApiClient extends BaseClient {
 
     const dataSource = await this.get(path, {
       params: getParams({
-        details: requestParams.details
-      })
+        details: requestParams.details,
+      }),
     });
 
     return dataSource;
@@ -86,9 +94,9 @@ class RestApiClient extends BaseClient {
           ...params.alibabaConfig,
           ...params.nebiusConfig,
           ...params.databricksConfig,
-          ...params.k8sConfig
-        }
-      }
+          ...params.k8sConfig,
+        },
+      },
     });
 
     return dataSource;
@@ -116,9 +124,9 @@ class RestApiClient extends BaseClient {
           ...params.alibabaConfig,
           ...params.nebiusConfig,
           ...params.databricksConfig,
-          ...params.k8sConfig
-        }
-      })
+          ...params.k8sConfig,
+        },
+      }),
     });
 
     return dataSource;
@@ -139,7 +147,7 @@ class RestApiClient extends BaseClient {
     const path = `employees/${employeeId}/emails/bulk`;
 
     const emails = await this.post(path, {
-      body: params
+      body: params,
     });
 
     const emailIds = [...(params?.enable ?? []), ...(params.disable ?? [])];
@@ -157,11 +165,11 @@ class RestApiClient extends BaseClient {
 
     const emails = await this.post(path, {
       body: {
-        [action === "enable" ? "enable" : "disable"]: [emailId]
-      }
+        [action === "enable" ? "enable" : "disable"]: [emailId],
+      },
     });
 
-    const email = emails.employee_emails.find((email) => email.id === emailId);
+    const email = emails.employee_emails.find((employeeEmail) => employeeEmail.id === emailId);
 
     return email;
   }
@@ -183,8 +191,8 @@ class RestApiClient extends BaseClient {
 
     return await this.patch(path, {
       body: JSON.stringify({
-        action
-      })
+        action,
+      }),
     });
   }
 
@@ -209,8 +217,8 @@ class RestApiClient extends BaseClient {
   async updateOrganizationThemeSettings(organizationId, value) {
     const themeSettings = await this.patch(`organizations/${organizationId}/options/theme_settings`, {
       body: {
-        value: JSON.stringify(value)
-      }
+        value: JSON.stringify(value),
+      },
     });
 
     const parsedThemeSettings = JSON.parse(themeSettings.value);
@@ -233,8 +241,8 @@ class RestApiClient extends BaseClient {
   ) {
     const perspectives = await this.patch(`organizations/${organizationId}/options/perspectives`, {
       body: {
-        value: JSON.stringify(value)
-      }
+        value: JSON.stringify(value),
+      },
     });
 
     const parsedPerspectives = JSON.parse(perspectives.value);
@@ -245,8 +253,8 @@ class RestApiClient extends BaseClient {
   async createOrganization(organizationName: MutationCreateOrganizationArgs["organizationName"]) {
     return await this.post("organizations", {
       body: {
-        name: organizationName
-      }
+        name: organizationName,
+      },
     });
   }
 
@@ -255,7 +263,7 @@ class RestApiClient extends BaseClient {
     params: MutationUpdateOrganizationArgs["params"]
   ) {
     return await this.patch(`organizations/${organizationId}`, {
-      body: params
+      body: params,
     });
   }
 
@@ -278,7 +286,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/resources_count`;
 
     const resourceCountBreakdown = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return resourceCountBreakdown;
@@ -288,7 +296,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/breakdown_meta`;
 
     const metaBreakdown = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return metaBreakdown;
@@ -301,7 +309,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/breakdown_expenses`;
 
     const dailyExpensesBreakdown = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return dailyExpensesBreakdown;
@@ -315,8 +323,8 @@ class RestApiClient extends BaseClient {
 
     const organizationLimitHits = await this.get(path, {
       params: getParams({
-        constraint_id: constraintId
-      })
+        constraint_id: constraintId,
+      }),
     });
 
     return organizationLimitHits.organization_limit_hits;
@@ -329,7 +337,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/relevant_flavors`;
 
     const flavors = await this.get(path, {
-      params: getParams(requestParams)
+      params: getParams(requestParams),
     });
 
     return flavors;
@@ -339,7 +347,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/clean_expenses`;
 
     const cleanExpenses = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return cleanExpenses;
@@ -349,7 +357,7 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/cloud_policies`;
 
     const cloudPolicies = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return cloudPolicies;
@@ -362,10 +370,93 @@ class RestApiClient extends BaseClient {
     const path = `organizations/${organizationId}/available_filters`;
 
     const availableFilters = await this.get(path, {
-      params: getParams(params)
+      params: getParams(params),
     });
 
     return availableFilters.filter_values;
+  }
+
+  async getBillingSubscriptionPlans(organizationId: QueryBillingSubscriptionPlansArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription_plans`;
+    const plans = await this.get(path);
+
+    return plans.plans;
+  }
+
+  async getBillingSubscription(organizationId: QueryBillingSubscriptionArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription`;
+    const subscription = await this.get(path);
+
+    return subscription;
+  }
+
+  async createStripeCheckoutSession(
+    organizationId: MutationCreateStripeCheckoutSessionArgs["organizationId"],
+    params: MutationCreateStripeCheckoutSessionArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/subscription`;
+    const session = await this.patch(path, {
+      body: params,
+    });
+
+    return session;
+  }
+
+  async createStripeBillingPortalSession(organizationId: MutationCreateStripeBillingPortalSessionArgs["organizationId"]) {
+    const path = `organizations/${organizationId}/subscription`;
+    const session = await this.patch(path, {
+      body: {},
+    });
+    return session;
+  }
+
+  async getOrganizationSummary(
+    organizationId: QueryOrganizationSummaryArgs["organizationId"],
+    params: QueryOrganizationSummaryArgs["params"]
+  ) {
+    const path = `organizations/${organizationId}/summary`;
+    const summary = await this.get(path, {
+      params: getParams(params),
+    });
+
+    return summary;
+  }
+
+  async scheduleGeminiDataPreparation(
+    geminiId: MutationScheduleGeminiDataPreparationArgs["geminiId"],
+    buckets: MutationScheduleGeminiDataPreparationArgs["buckets"]
+  ) {
+    try {
+      const geminiData = await this.post(`geminis/${geminiId}/geminis_data`, {
+        body: { buckets },
+      });
+
+      return {
+        id: geminiData.id,
+      };
+    } catch (error) {
+      // @ts-expect-error - TODO: extend GraphQLError type with custom response error
+      if (error instanceof GraphQLError && error.extensions?.response?.status === 409) {
+        // @ts-expect-error - TODO: extend GraphQLError type with custom response error
+        const existingId = error.extensions?.response?.body?.error?.params?.[1];
+
+        if (existingId) {
+          return {
+            id: existingId,
+          };
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  async getGeminiDataPreparation(geminiDataPreparationId: QueryGeminiDataPreparationArgs["id"]) {
+    const path = `geminis_data/${geminiDataPreparationId}`;
+
+    const geminiDataPreparation = await this.get(path);
+
+    return geminiDataPreparation;
   }
 }
 

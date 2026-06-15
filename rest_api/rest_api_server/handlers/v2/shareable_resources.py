@@ -21,7 +21,7 @@ class ShareableBookingBaseAsyncHandler(BaseAuthHandler, BaseHandler):
 
     async def check_booking_permission(self, resource_type, resource_id):
         user_id = await self.check_self_auth()
-        user_roles = self.get_roles_info(
+        user_roles = await self.get_roles_info(
             [user_id], [RolePurposes.optscale_engineer.value,
                         RolePurposes.optscale_manager.value])
         user_purposes = {user_role.get('role_purpose')

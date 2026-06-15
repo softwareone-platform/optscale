@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import Input from "components/Input";
@@ -29,7 +30,7 @@ type TextInputProps = {
     value: RegExp;
     message: string;
   };
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   minRows?: number;
   maxRows?: number;
   disabled?: boolean;
@@ -67,11 +68,11 @@ const TextInput = ({
   masked,
   className,
   fullWidth,
-  shouldUnregister
+  shouldUnregister,
 }: TextInputProps) => {
   const {
     register,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext();
 
   const intl = useIntl();
@@ -107,13 +108,13 @@ const TextInput = ({
       {...register(name, {
         required: {
           value: required,
-          message: intl.formatMessage({ id: "thisFieldIsRequired" })
+          message: intl.formatMessage({ id: "thisFieldIsRequired" }),
         },
         maxLength:
           maxLength !== null
             ? {
                 value: maxLength,
-                message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength })
+                message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength }),
               }
             : undefined,
         minLength:
@@ -123,9 +124,9 @@ const TextInput = ({
         pattern,
         validate: {
           notOnlyWhiteSpaces,
-          ...validate
+          ...validate,
         },
-        shouldUnregister
+        shouldUnregister,
       })}
     />
   );

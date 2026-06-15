@@ -11,8 +11,9 @@ import Tooltip from "components/Tooltip";
 import { DOCS_HYSTAX_CLEANUP_SCRIPTS, EMAIL_SALES } from "urls";
 import { Menu } from "../RecommendationCard";
 import { useDownloadCleanupScripts, useDownloadItems, usePinItems, useSettingItems } from "./hooks";
+import type { DownloadCleanupScriptsProps, GeneralActionsProps, DownloadItemsProps, ActionsProps } from "./types";
 
-const DownloadCleanupScripts = ({ recommendation }) => {
+const DownloadCleanupScripts = ({ recommendation }: DownloadCleanupScriptsProps) => {
   const downloadCleanupScripts = useDownloadCleanupScripts(recommendation);
 
   return (
@@ -27,7 +28,7 @@ const DownloadCleanupScripts = ({ recommendation }) => {
               <Link href={DOCS_HYSTAX_CLEANUP_SCRIPTS} data-test-id="link_cleanup_script" target="_blank" rel="noopener">
                 {chunks}
               </Link>
-            )
+            ),
           }}
         />
       }
@@ -35,7 +36,7 @@ const DownloadCleanupScripts = ({ recommendation }) => {
   );
 };
 
-const GeneralActions = ({ recommendation, withMenu }) => {
+const GeneralActions = ({ recommendation, withMenu }: GeneralActionsProps) => {
   const settingItems = useSettingItems(recommendation);
   const pinItems = usePinItems(recommendation);
 
@@ -53,8 +54,8 @@ const DownloadItems = ({
   downloadLimit,
   isDownloadAvailable = false,
   isLoading = false,
-  selectedDataSourceIds
-}) => {
+  selectedDataSourceIds,
+}: DownloadItemsProps) => {
   const downloadItems = useDownloadItems(recommendation, downloadLimit, selectedDataSourceIds);
 
   return (
@@ -66,7 +67,7 @@ const DownloadItems = ({
           <FormattedMessage
             id="recommendationDownloadFeatureIsUnavailable"
             values={{
-              email: <MailTo email={EMAIL_SALES} text={EMAIL_SALES} />
+              email: <MailTo email={EMAIL_SALES} text={EMAIL_SALES} />,
             }}
           />
         )
@@ -85,8 +86,8 @@ const Actions = ({
   withMenu = false,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSourceIds
-}) => {
+  selectedDataSourceIds,
+}: ActionsProps) => {
   const { withCleanupScripts, hasItems } = recommendation;
 
   return (

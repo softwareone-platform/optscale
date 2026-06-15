@@ -11,15 +11,14 @@ import RecommendationsOverviewService from "services/RecommendationsOverviewServ
 import {
   RECOMMENDATION_CATEGORY_QUERY_PARAMETER,
   RECOMMENDATION_SERVICE_QUERY_PARAMETER,
-  RECOMMENDATION_VIEW_QUERY_PARAMETER
+  RECOMMENDATION_VIEW_QUERY_PARAMETER,
 } from "urls";
-import { RECOMMENDATIONS_LIMIT_FILTER } from "utils/constants";
 import { DEFAULT_RECOMMENDATIONS_FILTER, DEFAULT_VIEW, POSSIBLE_RECOMMENDATIONS_FILTERS, POSSIBLE_VIEWS } from "./Filters";
 import RecommendationsOverview from "./RecommendationsOverview";
 import {
   setCategory as setCategoryActionCreator,
   setService as setServiceActionCreator,
-  setView as setViewActionCreator
+  setView as setViewActionCreator,
 } from "./redux/controlsState/actionCreators";
 import { useControlState } from "./redux/controlsState/hooks";
 import { VALUE_ACCESSORS } from "./redux/controlsState/reducer";
@@ -33,12 +32,13 @@ type RecommendationsOverviewContainerProps = {
 
 const RecommendationsOverviewContainer = ({
   selectedDataSourceIds,
-  selectedDataSourceTypes
+  selectedDataSourceTypes,
 }: RecommendationsOverviewContainerProps) => {
   const { useGet, useGetRecommendationsDownloadOptions } = OrganizationOptionsService();
   const { options: downloadOptions } = useGetRecommendationsDownloadOptions();
   const { options } = useGet(true);
-  const downloadLimit = downloadOptions?.limit ?? RECOMMENDATIONS_LIMIT_FILTER;
+
+  const downloadLimit = downloadOptions?.limit;
 
   const services = useRecommendationServices();
 
@@ -46,26 +46,30 @@ const RecommendationsOverviewContainer = ({
     redux: { stateAccessor: VALUE_ACCESSORS.CATEGORY, actionCreator: setCategoryActionCreator },
     queryParamName: RECOMMENDATION_CATEGORY_QUERY_PARAMETER,
     defaultValue: DEFAULT_RECOMMENDATIONS_FILTER,
-    possibleStates: POSSIBLE_RECOMMENDATIONS_FILTERS
+    possibleStates: POSSIBLE_RECOMMENDATIONS_FILTERS,
   });
 
   const [service, setService] = useControlState({
     redux: { stateAccessor: VALUE_ACCESSORS.SERVICE, actionCreator: setServiceActionCreator },
     queryParamName: RECOMMENDATION_SERVICE_QUERY_PARAMETER,
     defaultValue: ALL_SERVICES,
-    possibleStates: Object.keys(services)
+    possibleStates: Object.keys(services),
   });
 
   const [view, setView] = useControlState({
     redux: { stateAccessor: VALUE_ACCESSORS.VIEW, actionCreator: setViewActionCreator },
     queryParamName: RECOMMENDATION_VIEW_QUERY_PARAMETER,
     defaultValue: DEFAULT_VIEW,
-    possibleStates: POSSIBLE_VIEWS
+    possibleStates: POSSIBLE_VIEWS,
   });
 
   const [search, setSearch] = useSyncQueryParamWithState({
     queryParamName: "search",
-    defaultValue: ""
+    defaultValue: "",
+    searchParamsGetterOptions: {
+      parseBooleans: false,
+      parseNumbers: false,
+    },
   });
 
   const { useGetOptimizationsOverview } = RecommendationsOverviewService();
@@ -75,7 +79,7 @@ const RecommendationsOverviewContainer = ({
   const optscaleRecommendations = useOptscaleRecommendations();
 
   const organizationRecommendationOptions = options
-    .filter(({ name }) =>
+    .filter(({ name }: { name: string }) =>
       /**
        * The options API has 2 output formats: an array of names ([string]) and an array of objects ([{name, value}]).
        * On the "Org options" page, we request options with withValues set to false, giving us an array of strings.
@@ -95,8 +99,8 @@ const RecommendationsOverviewContainer = ({
         titleMessageId: recommendation.title,
         limit: downloadLimit,
         dataSourceIds: selectedDataSourceIds,
-        dismissable: recommendation.dismissable,
-        withExclusions: recommendation.withExclusions
+        dismissible: recommendation.dismissible,
+        withExclusions: recommendation.withExclusions,
       });
     },
     [downloadLimit, openSideModal, selectedDataSourceIds]

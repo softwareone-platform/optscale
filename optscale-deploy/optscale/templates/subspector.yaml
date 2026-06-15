@@ -1,0 +1,72 @@
+{{- $config := .Values.subspector -}}
+{{- if .Values.stripe.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $config.service.name }}
+  labels:
+    app: {{ $config.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+spec:
+  type: {{ $config.service.type }}
+  ports:
+    - port: {{ $config.service.externalPort }}
+      targetPort: {{ $config.service.internalPort }}
+      protocol: TCP
+      name: {{ $config.service.name }}
+  selector:
+    app: {{ $config.name }}
+    release: {{ .Release.Name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $config.name }}
+  labels:
+    app: {{ $config.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ $config.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $config.name }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $config.name }}
+        release: {{ .Release.Name }}
+    spec:
+      initContainers:
+{{- if .Values.elk.enabled }}
+{{ include "wait_for_elk" . | indent 8 }}
+{{- end }}
+{{ include "wait_for_service" .Values.etcd | indent 8 }}
+{{ include "wait_mariadb" . | indent 8 }}
+{{ include "wait_for_service" .Values.rabbitmq | indent 8 }}
+        - name: migrations
+          image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+          command: [ "uv", "run", "--project", "subspector", "python", "subspector/migrate.py" ]
+          env:
+            - name: HX_ETCD_HOST
+              value: {{ .Values.etcd.service.name }}
+            - name: HX_ETCD_PORT
+              value: {{ .Values.etcd.service.externalPort | quote }}
+      containers:
+      - name: {{ $config.name }}
+        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        imagePullPolicy: {{ $config.image.pullPolicy }}
+        ports:
+        - containerPort: {{ $config.service.internalPort }}
+        env:
+        - name: IMAGE_ID
+          value: {{ $config.image.id }}
+        - name: HX_ETCD_HOST
+          value: {{ .Values.etcd.service.name }}
+        - name: HX_ETCD_PORT
+          value: {{ .Values.etcd.service.externalPort | quote }}
+{{ include "ready_probe" $config | indent 8 }}
+{{- end -}}

@@ -94,6 +94,7 @@ class PolicyGeneratorController(BaseController):
                     "s3:GetBucketPolicyStatus",
                     "s3:GetBucketTagging",
                     "iam:GetAccessKeyLastUsed",
+                    "cloudwatch:GetMetricData",
                     "cloudwatch:GetMetricStatistics",
                     "s3:GetBucketAcl",
                     "ec2:Describe*",
@@ -160,6 +161,7 @@ class PolicyGeneratorController(BaseController):
                       "Sid": "AllowMonitoringAndInfrastructureReadOnly",
                       "Effect": "Allow",
                       "Action": [
+                        "cloudwatch:GetMetricData",
                         "cloudwatch:GetMetricStatistics",
                         "ec2:Describe*",
                         "elasticloadbalancing:Describe*"

@@ -1,14 +1,10 @@
 from datetime import datetime, timezone
 from datetime import timedelta
-import time
-from concurrent.futures import as_completed
-from datetime import timedelta
 import enum
-import urllib.parse
 from collections import defaultdict
 from concurrent.futures.thread import ThreadPoolExecutor
 from functools import wraps
-from importlib import metadata
+import threading
 import json
 import logging
 import os
@@ -24,7 +20,6 @@ from botocore.exceptions import (ClientError,
                                  ConnectTimeoutError,
                                  ReadTimeoutError,
                                  SSLError)
-from botocore.session import Session as CoreSession
 from botocore.parsers import ResponseParserError
 from retrying import retry
 
@@ -55,6 +50,10 @@ BUCKET_ACCEPTED_URIS = [
     'http://acs.amazonaws.com/groups/global/AllUsers',
     'http://acs.amazonaws.com/groups/global/AuthenticatedUsers'
 ]
+
+DEFAULT_STS_REGION_NAME = "us-east-1"
+DEFAULT_STS_ENDPOINT_URL = "https://sts.amazonaws.com"
+
 # maximum value for MaxResults (AWS limitation)
 MAX_RESULTS = 1000
 CSV_FORMAT_PATTERN = r'\.csv.(gz|zip)$'
@@ -76,6 +75,16 @@ AUTH_ERROR_CODES = {
 THROTTLE_ERROR_CODES = {
     'RequestLimitExceeded', 'Throttling', 'ThrottlingException',
     'TooManyRequestsException', 'ProvisionedThroughputExceededException',
+}
+
+TIER_STORAGE_TYPE_MAP = {
+    "STANDARD": "StandardStorage",
+    "STANDARD_IA": "StandardIAStorage",
+    "ONEZONE_IA": "OneZoneIAStorage",
+    "REDUCED_REDUNDANCY": "ReducedRedundancyStorage",
+    "GLACIER": "GlacierStorage",
+    "GLACIER_IR": "GlacierInstantRetrievalStorage",
+    "DEEP_ARCHIVE": "DeepArchiveStorage"
 }
 
 def _is_auth_error(exc) -> bool:
@@ -161,10 +170,14 @@ class Aws(S3CloudMixin):
     SUPPORTS_REPORT_UPLOAD = True
 
     def get_session(self, access_key=None, secret_key=None, region_name=None):
+        if not hasattr(self, "_session_lock"):
+            self._session_lock = threading.RLock()
+
         role_account_id = self.config.get('assume_role_account_id')
         role_name = self.config.get('assume_role_name')
-        role_session_name = self.config.get('assume_role_session_name',
-                                            'opt-session')
+        role_session_name = self.config.get(
+            'assume_role_session_name', 'opt-session'
+        )
 
         def refresh_session():
             nonlocal access_key, secret_key, region_name
@@ -174,8 +187,9 @@ class Aws(S3CloudMixin):
             if not secret_key:
                 secret_key = self.config.get('secret_access_key')
             if not region_name:
-                region_name = self.config.get('region_name',
-                                              self.DEFAULT_S3_REGION_NAME)
+                region_name = self.config.get(
+                    'region_name', self.DEFAULT_S3_REGION_NAME
+                )
 
             base_session = boto3.Session(
                 aws_access_key_id=access_key,
@@ -199,19 +213,21 @@ class Aws(S3CloudMixin):
         if not (role_account_id and role_name):
             return super().get_session(access_key, secret_key, region_name)
 
-        if not hasattr(self, '_session') or self._session is None:
-            refresh_session()
-
-        try:
-            self._session.client('sts').get_caller_identity()
-        except ClientError as exc:
-            err_code = exc.response['Error'].get('Code')
-            if err_code in ['ExpiredToken', 'InvalidToken']:
+        with self._session_lock:
+            if not hasattr(self, '_session') or self._session is None:
                 refresh_session()
-            else:
-                raise
 
-        return self._session
+            try:
+                self._session.client('sts').get_caller_identity()
+            except ClientError as exc:
+                if exc.response['Error'].get('Code') in (
+                        'ExpiredToken', 'InvalidToken'
+                ):
+                    refresh_session()
+                else:
+                    raise
+
+            return self._session
 
     def discovery_calls_map(self):
         return {
@@ -285,6 +301,67 @@ class Aws(S3CloudMixin):
     def _retry(self, method, *args, **kwargs):
         return method(*args, **kwargs)
 
+    def _base_session(self, region_name=None):
+        rn = region_name or self.config.get("region_name",
+                                            self.DEFAULT_S3_REGION_NAME)
+        return boto3.Session(
+            aws_access_key_id=self.config.get("access_key_id"),
+            aws_secret_access_key=self.config.get("secret_access_key"),
+            region_name=rn,
+        )
+
+    @property
+    def _sts_global(self):
+        base = self._base_session(region_name=self.config.get("region_name"))
+        return base.client(
+            "sts",
+            region_name=self.config.get(
+                "sts_region_name") or DEFAULT_STS_REGION_NAME,
+            endpoint_url=self.config.get(
+                "sts_endpoint_url") or DEFAULT_STS_ENDPOINT_URL,
+            config=IAM_CLIENT_CONFIG,
+        )
+
+    def _is_region_usable(self, region):
+        try:
+            check_config = CoreConfig(
+                connect_timeout=5,
+                read_timeout=10,
+                retries={"max_attempts": 1}
+            )
+            self.session.client("ec2", region, config=check_config
+                                ).describe_availability_zones()
+            return True
+        except (ReadTimeoutError, ConnectTimeoutError, SSLError,
+                EndpointConnectionError):
+            return False
+        except ClientError as e:
+            code = e.response["Error"]["Code"]
+            if code in ("AuthFailure", "UnauthorizedOperation", "InternalError"):
+                return False
+            raise
+
+    @property
+    def allowed_regions(self):
+        if not hasattr(self, "_allowed_regions_lock"):
+            self._allowed_regions_lock = threading.RLock()
+
+        with self._allowed_regions_lock:
+            if getattr(self, "_allowed_regions", None) is None:
+                ec2 = self.session.client("ec2", "us-east-1")
+                resp = ec2.describe_regions(AllRegions=True)
+                allowed = []
+                for r in resp.get("Regions", []):
+                    status = r.get("OptInStatus")
+                    name = r.get("RegionName")
+                    if status == "opt-in-not-required":
+                        allowed.append(name)
+                    elif status == "opted-in" and self._is_region_usable(name):
+                        allowed.append(name)
+                self._allowed_regions = allowed
+
+            return self._allowed_regions
+
     def describe_security_groups(self, region, group_ids=None):
         session = self.get_session()
         ec2 = session.client('ec2', region)
@@ -319,8 +396,7 @@ class Aws(S3CloudMixin):
         Lists regions
         :return: list(string)
         """
-        return [region['RegionName'] for region in
-                self.ec2.describe_regions()['Regions']]
+        return self.allowed_regions
 
     @staticmethod
     def _extract_tag(obj_, tag_name, dict_name='Tags'):
@@ -496,6 +572,14 @@ class Aws(S3CloudMixin):
                 self._set_cloud_link(snapshot_resource, region)
                 yield snapshot_resource
 
+    def _s3_client_for_bucket_region(self, region: str, bucket: str):
+        if region not in self.allowed_regions:
+            LOG.info(
+                "[S3_SKIP_REGION] bucket=%s bucket_region=%s reason=region_not_opted_in",
+                bucket, region)
+            return None
+        return self.session.client("s3", region_name=region)
+
     def snapshot_discovery_calls(self):
         """
         Returns list of discovery calls to discover snapshots presented
@@ -593,7 +677,7 @@ class Aws(S3CloudMixin):
         return result
 
     @staticmethod
-    def get_bucket_storage_info(s3_client, bucket_name):
+    def get_bucket_storage_info(cloudwatch, bucket_name):
         """
         Gather storage metadata for a bucket.
         - total_size_bytes (int): aggregated bucket size in bytes.
@@ -601,22 +685,64 @@ class Aws(S3CloudMixin):
         - tiers (dict): aggregated bucket size per storage tier.
         """
 
-        # Filter out directories - only count actual objects
-        def is_actual_object(obj):
-            key = obj.get('Key', '')
-            size = obj.get('Size', 0)
-            return size > 0 or not key.endswith('/')
-
-        paginator = s3_client.get_paginator('list_objects_v2')
-        pages = paginator.paginate(Bucket=bucket_name, Prefix="")
-        obj_count, total_size = 0, 0
-        tiers = defaultdict(float)
-        for page in pages:
-            for obj in page.get("Contents", list()):
-                if is_actual_object(obj):
-                    obj_count += 1
-                    total_size += obj["Size"]
-                    tiers[obj["StorageClass"]] += obj["Size"]
+        end = datetime.now(tz=timezone.utc).replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+        start = end - timedelta(days=2)
+        queries = []
+        for tier, storage_type in TIER_STORAGE_TYPE_MAP.items():
+            queries.append({
+                "Id": f"size{tier}",
+                "MetricStat": {
+                    "Metric": {
+                        "Namespace": "AWS/S3",
+                        "MetricName": "BucketSizeBytes",
+                        "Dimensions": [
+                            {"Name": "BucketName", "Value": bucket_name},
+                            {"Name": "StorageType", "Value": storage_type},
+                        ],
+                    },
+                    "Period": SECONDS_IN_DAY,
+                    "Stat": "Average",
+                },
+            })
+        queries.append({
+            "Id": "count",
+            "MetricStat": {
+                "Metric": {
+                    "Namespace": "AWS/S3",
+                    "MetricName": "NumberOfObjects",
+                    "Dimensions": [
+                        {"Name": "BucketName", "Value": bucket_name},
+                        {"Name": "StorageType", "Value": "AllStorageTypes"},
+                    ],
+                },
+                "Period": SECONDS_IN_DAY,
+                "Stat": "Average",
+            },
+        })
+        total_size = 0
+        obj_count = 0
+        tiers = defaultdict(int)
+        try:
+            response = cloudwatch.get_metric_data(
+                StartTime=start,
+                EndTime=end,
+                MetricDataQueries=queries,
+                ScanBy="TimestampDescending",
+            )
+            for result in response["MetricDataResults"]:
+                if not result["Values"]:
+                    continue
+                value = int(result["Values"][0])
+                metric_id = result["Id"]
+                if metric_id == "count":
+                    obj_count = value
+                else:
+                    tier = metric_id.removeprefix("size")
+                    tiers[tier] = value
+                    total_size += value
+        except ClientError as exc:
+            LOG.warning(f"Failed to get cloud watch metric: {str(exc)}")
         return {
             bucket_name: {
                 "total_size_bytes": total_size,
@@ -753,43 +879,45 @@ class Aws(S3CloudMixin):
         # get_bucket_tagging fails for eu-south-1 if region is not set
         # explicitly, so we find region first and initialize client for
         # specific region
-        s3 = self.session.client('s3', region_name=region)
 
-        public_and_tiering = self._get_bucket_public_settings(s3, bucket_name)
-        is_public_policy = public_and_tiering.get('is_public_policy', False)
-        is_public_acls = public_and_tiering.get('is_public_acls', False)
+        s3 = self._s3_client_for_bucket_region(region, bucket_name)
+        if s3:
 
-        try:
-            tags = s3.get_bucket_tagging(Bucket=bucket_name)
-        except ClientError as exc:
-            err_code = exc.response['Error'].get('Code')
-            if err_code and err_code == 'NoSuchTagSet':
-                tags = {}
-            else:
-                raise
+            public_and_tiering = self._get_bucket_public_settings(s3, bucket_name)
+            is_public_policy = public_and_tiering.get('is_public_policy', False)
+            is_public_acls = public_and_tiering.get('is_public_acls', False)
 
-        meta_by_s3 = self._get_bucket_meta_by_s3(s3, bucket_name)
-        bucket_resource = BucketResource(
-            cloud_resource_id=bucket_name,
-            cloud_account_id=self.cloud_account_id,
-            region=region,
-            organization_id=self.organization_id,
-            name=bucket_name,
-            tags=self._extract_tags(tags, dict_name='TagSet'),
-            is_public_policy=is_public_policy,
-            is_public_acls=is_public_acls,
-            intelligent_tiering_enabled=meta_by_s3.get(
-                'intelligent_tiering_enabled', False),
-            intelligent_tiering_configs=meta_by_s3.get(
-                'intelligent_tiering_configs', []),
-            lifecycle_rules=meta_by_s3.get('lifecycle_rules', []),
-            storage_class_analysis=meta_by_s3.get('storage_class_analysis', []),
-            metrics_configurations=meta_by_s3.get('metrics_configurations', []),
-            it_status_bucket=meta_by_s3.get('it_status_bucket'),
-        )
+            try:
+                tags = s3.get_bucket_tagging(Bucket=bucket_name)
+            except ClientError as exc:
+                err_code = exc.response['Error'].get('Code')
+                if err_code and err_code == 'NoSuchTagSet':
+                    tags = {}
+                else:
+                    raise
 
-        self._set_cloud_link(bucket_resource, region)
-        yield bucket_resource
+            meta_by_s3 = self._get_bucket_meta_by_s3(s3, bucket_name)
+            bucket_resource = BucketResource(
+                cloud_resource_id=bucket_name,
+                cloud_account_id=self.cloud_account_id,
+                region=region,
+                organization_id=self.organization_id,
+                name=bucket_name,
+                tags=self._extract_tags(tags, dict_name='TagSet'),
+                is_public_policy=is_public_policy,
+                is_public_acls=is_public_acls,
+                intelligent_tiering_enabled=meta_by_s3.get(
+                    'intelligent_tiering_enabled', False),
+                intelligent_tiering_configs=meta_by_s3.get(
+                    'intelligent_tiering_configs', []),
+                lifecycle_rules=meta_by_s3.get('lifecycle_rules', []),
+                storage_class_analysis=meta_by_s3.get('storage_class_analysis', []),
+                metrics_configurations=meta_by_s3.get('metrics_configurations', []),
+                it_status_bucket=meta_by_s3.get('it_status_bucket'),
+            )
+
+            self._set_cloud_link(bucket_resource, region)
+            yield bucket_resource
 
     def bucket_discovery_calls(self):
         """
@@ -964,26 +1092,25 @@ class Aws(S3CloudMixin):
         for common_prefix in resp.get('CommonPrefixes', []):
             common_prefix = common_prefix['Prefix']
             last_objects_map = {}
-            resp = self.s3.list_objects_v2(
-                Bucket=bucket_name,
-                Prefix=common_prefix,
-            )
-            for r in resp.get('Contents', []):
-                # replace daily reports with the latest
-                # for "create_new" report versioning
-                path = r['Key']
-                day = path.split(common_prefix)[1].split(report_name)[0]
-                if day:
-                    for rgx in [el for el_l in GROUP_DATES_PATTERNS.values()
-                                for el in el_l]:
-                        if re.search(rgx, day):
-                            day = re.sub(rgx, '', day)
-                            break
-                key = path.replace(day, '')
-                last_obj = last_objects_map.get(key)
-                if not last_obj or last_obj['LastModified'] < r['LastModified']:
-                    last_objects_map[key] = r
-            result['Contents'].extend(last_objects_map.values())
+            paginator = self.s3.get_paginator('list_objects_v2')
+            pages = paginator.paginate(Bucket=bucket_name, Prefix=common_prefix)
+            for p in pages:
+                for r in p['Contents']:
+                    # replace daily reports with the latest
+                    # for "create_new" report versioning
+                    path = r['Key']
+                    day = path.split(common_prefix)[1].split(report_name)[0]
+                    if day:
+                        for rgx in [el for el_l in GROUP_DATES_PATTERNS.values()
+                                    for el in el_l]:
+                            if re.search(rgx, day):
+                                day = re.sub(rgx, '', day)
+                                break
+                    key = path.replace(day, '')
+                    last_obj = last_objects_map.get(key)
+                    if not last_obj or last_obj['LastModified'] < r['LastModified']:
+                        last_objects_map[key] = r
+                result['Contents'].extend(last_objects_map.values())
         return result
 
     def get_report_files(self):
@@ -1524,12 +1651,14 @@ class Aws(S3CloudMixin):
             'global': {'longitude': -98.48424, 'latitude': 39.01190}
         }
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         zero_coordinates = {
             'longitude': None,
             'latitude': None
         }
         coordinates_map = self._get_coordinates_map()
+        if not load:
+            return coordinates_map
         try:
             for available_region in self.list_regions():
                 if not coordinates_map.get(available_region):

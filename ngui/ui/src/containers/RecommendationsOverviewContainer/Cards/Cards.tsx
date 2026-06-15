@@ -6,16 +6,27 @@ import QuestionMark from "components/QuestionMark";
 import { isEmptyArray } from "utils/arrays";
 import Actions from "../Actions";
 import RecommendationCard, { ServicesChipsGrid, TableContent, Header } from "../RecommendationCard";
+import BaseRecommendation from "../recommendations/BaseRecommendation";
 import { usePinnedRecommendations } from "../redux/pinnedRecommendations/hooks";
 
-const useOrderedRecommendations = (recommendations) => {
+type CardsProps = {
+  isLoading: boolean;
+  downloadLimit?: number;
+  recommendations: BaseRecommendation[];
+  onRecommendationClick: (id: string) => void;
+  isDownloadAvailable: boolean;
+  isGetIsDownloadAvailableLoading: boolean;
+  selectedDataSourceIds: string[];
+};
+
+const useOrderedRecommendations = (recommendations: BaseRecommendation[]) => {
   const pinnedRecommendations = usePinnedRecommendations();
 
   const pinnedRecommendationInstances = pinnedRecommendations
-    .map((pinnedRecommendationType) =>
+    .map((pinnedRecommendationType: string) =>
       recommendations.find((recommendation) => recommendation.type === pinnedRecommendationType)
     )
-    .filter((instance) => instance !== undefined);
+    .filter((instance: BaseRecommendation) => instance !== undefined);
 
   const unpinnedRecommendationInstances = recommendations.filter(
     (recommendation) => !pinnedRecommendations.includes(recommendation.type)
@@ -31,15 +42,15 @@ const Cards = ({
   onRecommendationClick,
   isDownloadAvailable,
   isGetIsDownloadAvailableLoading,
-  selectedDataSourceIds
-}) => {
+  selectedDataSourceIds,
+}: CardsProps) => {
   const orderedRecommendations = useOrderedRecommendations(recommendations);
 
   if (isLoading) {
     return [
       <RecommendationCard isLoading key={1} />,
       <RecommendationCard isLoading key={2} />,
-      <RecommendationCard isLoading key={3} />
+      <RecommendationCard isLoading key={3} />,
     ];
   }
 

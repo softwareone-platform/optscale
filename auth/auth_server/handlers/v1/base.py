@@ -10,6 +10,7 @@ from auth.auth_server.utils import ModelEncoder, run_task
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
                                                   UnauthorizedException)
 from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_telemetry import get_trace_headers
 
 LOG = logging.getLogger(__name__)
 
@@ -59,6 +60,10 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def options(self, *args, **kwargs):
         self.raise405()
+
+    def prepare(self):
+        for name, value in get_trace_headers().items():
+            self.set_header(name, value)
 
     def _get_request(self):
         return self.request

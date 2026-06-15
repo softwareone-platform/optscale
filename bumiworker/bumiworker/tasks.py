@@ -89,9 +89,7 @@ class Base(object):
 
     def can_continue(self, ex):
         return not isinstance(
-            ex, BumiTaskTimeoutError
-        ) and not isinstance(
-            ex, BumiTaskWaitError
+            ex, (BumiTaskTimeoutError, BumiTaskWaitError)
         ) and self.body['tries_count'] < self.body['max_retries']
 
     @property
@@ -276,6 +274,14 @@ class InitializeChildrenBase(CheckTimeoutThreshold):
     def update_task_state(self):
         raise NotImplementedError
 
+    def list_modules(self, module_type):
+        modules = list_modules(module_type)
+        disabled = set(self.config_cl.disabled_recommendations() or [])
+        filtered = [m for m in modules if m not in disabled]
+        skipped = [m for m in modules if m in disabled]
+        LOG.info("[disabled modules] %s::%s", module_type, skipped)
+        return filtered
+
     def _get_child_task(self, module):
         return {
                 'last_update': utcnow_timestamp(),
@@ -307,7 +313,8 @@ class InitializeChecklist(InitializeChildrenBase):
         self.body['state'] = TaskState.INITIALIZED_CHECKLIST
 
     def _execute(self):
-        modules = list_modules(self.module_type)
+        modules = self.list_modules(self.module_type)
+
         if not modules:
             LOG.warning('No %s modules found', self.module_type)
             # Nothing to do, update checklist & complete
@@ -455,7 +462,8 @@ class InitializeService(InitializeChildrenBase):
         self.body['state'] = TaskState.INITIALIZED_SERVICE
 
     def _execute(self):
-        modules = list_modules(self.module_type)
+        modules = self.list_modules(self.module_type)
+
         self.create_children_tasks(modules)
         self.body['children_count'] = len(modules)
         self.update_task_state()
@@ -520,6 +528,29 @@ class HandleTaskTimeout(CheckTimeoutThreshold):
 
 class Process(HandleTaskTimeout):
     def _execute(self):
+
+        # skip already-queued tasks for disabled modules
+        disabled = set(self.config_cl.disabled_recommendations() or [])
+        if self.body.get('module') in disabled:
+            LOG.info(
+                "Skipping disabled module %s (%s) for org %s (created_at %s)",
+                self.body.get('module'),
+                self.body.get('module_type'),
+                self.body.get('organization_id'),
+                self.body.get('created_at'),
+            )
+            module_data = {
+                'data': [],
+                'options': {},
+                'error': None,
+                'skipped': True,
+                'skip_reason': 'disabled_by_config',
+            }
+            self.save_result_to_file(module_data)
+            self.body['state'] = TaskState.PROCESSED
+            super()._execute()
+            return
+
         try:
             data, options, error = call_module(
                 self.body['module'], self.body['module_type'],

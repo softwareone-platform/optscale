@@ -17,6 +17,7 @@ import clickhouse_connect
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from tools.optscale_time.optscale_time import startday, utcfromtimestamp
+from tools.optscale_telemetry import OpenTelemetryConfig
 
 from diworker.diworker.importers.base import BaseReportImporter
 from diworker.diworker.importers.factory import get_importer_class
@@ -39,6 +40,14 @@ LOG = logging.getLogger(__name__)
 ENVIRONMENT_CLOUD_TYPE = 'environment'
 HEARTBEAT_INTERVAL = 300
 DEFAULT_MAX_WORKERS = 4
+DEFAULT_MAX_TENANT_WORKERS = 1
+
+
+def _is_rate_limit_exc(exc):
+    if getattr(exc, 'status_code', None) == 429:
+        return True
+    msg = str(exc).lower()
+    return '429' in msg or 'toomanyrequests' in msg or 'too many requests' in msg
 
 
 class DIWorker(ConsumerMixin):
@@ -167,7 +176,9 @@ class DIWorker(ConsumerMixin):
             'mongo_resources': mongo_cl.restapi['resources'],
             'clickhouse_cl': clickhouse_cl,
             'import_file': import_dict.get('import_file'),
-            'recalculate': is_recalculation}
+            'recalculate': is_recalculation,
+            'max_tenant_concurrent': int(self.diworker_settings.get(
+                'max_tenant_import_workers', DEFAULT_MAX_TENANT_WORKERS))}
         importer = None
         ca = None
         previous_attempt_ts = 0
@@ -219,11 +230,13 @@ class DIWorker(ConsumerMixin):
             if not importer:
                 importer = BaseReportImporter(**importer_params)
             importer.update_cloud_import_attempt(now, reason)
-            self.send_report_failed_email(ca, previous_attempt_ts, now)
+            self.send_report_failed_email(
+                ca, previous_attempt_ts, now,
+                is_throttled=_is_rate_limit_exc(exc))
             raise
 
     def send_report_failed_email(self, cloud_account, previous_attempt_ts,
-                                 now):
+                                 now, is_throttled=False):
         last_import_at = cloud_account['last_import_at']
         if not last_import_at:
             last_import_at = cloud_account['created_at']
@@ -235,9 +248,11 @@ class DIWorker(ConsumerMixin):
                     utcfromtimestamp(now)):
                 # email already sent today during previous report import fails
                 return
+        action = ('report_import_throttled' if is_throttled
+                  else 'report_import_failed')
         self.publish_activities_task(
             cloud_account['organization_id'], cloud_account['id'],
-            'cloud_account', 'report_import_failed',
+            'cloud_account', action,
             'organization.report_import.failed')
 
     def process_task(self, body, message):
@@ -285,6 +300,13 @@ if __name__ == '__main__':
         **config_cl.read_branch('/rabbit'))
     dw_settings = config_cl.diworker_settings()
     with QConnection(conn_str) as conn:
+        config = OpenTelemetryConfig(
+            service_name=os.getenv("OTEL_SERVICE_NAME", "diworker"),
+            service_version=os.getenv("OTEL_SERVICE_VERSION", "local"),
+            otel_config=config_cl.read_branch("/opentelemetry"),
+            service_config=config_cl.read_branch("diworker/opentelemetry"),
+        )
+        config.setup_open_telemetry()
         try:
             worker = DIWorker(conn, conn_str, dw_settings, config_cl_params)
             worker.run()

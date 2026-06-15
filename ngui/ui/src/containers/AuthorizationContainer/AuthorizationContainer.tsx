@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,15 +22,15 @@ import {
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
   NEXT_QUERY_PARAMETER_NAME,
-  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME
+  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME,
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
+import { processGraphQLErrorData } from "utils/apollo";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
+import { ERROR_CODES } from "utils/errorCodes";
 import { SPACING_4 } from "utils/layouts";
 import macaroon from "utils/macaroons";
 import { stringifySearchParams, getSearchParams } from "utils/network";
-
-const EMAIL_NOT_VERIFIED_ERROR_CODE = "OA0073";
 
 const AuthorizationContainer = () => {
   const { pathname } = useLocation();
@@ -61,8 +62,11 @@ const AuthorizationContainer = () => {
       const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
       dispatch(initialize({ ...data.token, caveats }));
     } catch (error) {
-      if (error?.graphQLErrors?.[0].extensions.response.body.error.error_code === EMAIL_NOT_VERIFIED_ERROR_CODE) {
-        navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+      if (error instanceof ApolloError) {
+        const errorsData = error.graphQLErrors.map(processGraphQLErrorData);
+        if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OA0073)) {
+          navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+        }
       }
     }
   };
@@ -84,20 +88,20 @@ const AuthorizationContainer = () => {
     await sendEmailVerificationCode(email, {
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: Object.values(OPTSCALE_CAPABILITY).includes(capability)
         ? capability
-        : undefined
+        : undefined,
     });
 
     return navigate(
       `${EMAIL_VERIFICATION}?${stringifySearchParams({
         email,
-        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
+        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       })}`
     );
   };
 
   const handleThirdPartySignIn = async ({ provider, token: thirdPartyToken, tenantId, redirectUri }) => {
     const { data } = await signIn({
-      variables: { provider, token: thirdPartyToken, tenantId, redirectUri }
+      variables: { provider, token: thirdPartyToken, tenantId, redirectUri },
     });
 
     const caveats = macaroon.processCaveats(macaroon.deserialize(data.signIn.token).getCaveats());
@@ -126,7 +130,7 @@ const AuthorizationContainer = () => {
           disabled={loginLoading || signInLoading || isSendEmailVerificationCodeLoading}
           isInvited={isInvited}
         />
-      )
+      ),
     }[pathname] || (() => null);
 
   // TODO: get back to the force redirect
@@ -139,7 +143,7 @@ const AuthorizationContainer = () => {
       [NEXT_QUERY_PARAMETER_NAME]: next,
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
-      [SHOW_POLICY_QUERY_PARAM]: showPolicy
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy,
     } = getSearchParams() as {
       [NEXT_QUERY_PARAMETER_NAME]: string;
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
@@ -151,7 +155,7 @@ const AuthorizationContainer = () => {
       [NEXT_QUERY_PARAMETER_NAME]: next,
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
-      [SHOW_POLICY_QUERY_PARAM]: showPolicy
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy,
     })}`;
   };
 

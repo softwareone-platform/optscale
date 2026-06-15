@@ -3,7 +3,7 @@ import { FormattedMessage } from "react-intl";
 import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import { MlCreateArtifactForm } from "components/forms/MlArtifactForm";
-import { TABS } from "components/MlTaskRun/Components/Tabs";
+import { TABS } from "components/MlTaskRun/components/Tabs";
 import PageContentWrapper from "components/PageContentWrapper";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import MlArtifactsService from "services/MlArtifactsService";
@@ -40,12 +40,12 @@ const MlCreateRunArtifactContainer = () => {
       <Link key={4} to={taskRunUrl} component={RouterLink}>
         {formatRunFullName(runNumber, runName)}
       </Link>,
-      <FormattedMessage key={4} id="artifacts" />
+      <FormattedMessage key={4} id="artifacts" />,
     ],
     title: {
       isLoading: isGetRunLoading,
-      messageId: "addArtifactTitle"
-    }
+      messageId: "addArtifactTitle",
+    },
   };
 
   const redirect = () => navigate(taskRunUrl);
@@ -56,14 +56,14 @@ const MlCreateRunArtifactContainer = () => {
       <PageContentWrapper>
         <Box
           sx={{
-            width: { md: "50%" }
+            width: { md: "50%" },
           }}
         >
           <MlCreateArtifactForm
             onSubmit={(formData) => onCreate({ ...formData, runId }).then(redirect)}
             onCancel={redirect}
             isLoadingProps={{
-              isCreateArtifactLoading
+              isCreateArtifactLoading,
             }}
           />
         </Box>

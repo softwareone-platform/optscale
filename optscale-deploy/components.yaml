@@ -19,6 +19,7 @@ failed_imports_dataset_generator:
 filebeat:
 gemini_scheduler:
 gemini_worker:
+gemini_data_worker:
 grafana:
 grafana_nginx:
 herald:
@@ -56,4 +57,6 @@ trapper_scheduler:
 trapper_worker:
 users_dataset_generator:
 webhook_executor:
-deactivatorg:
+subspector:
+subsyncer:
+bailiff:

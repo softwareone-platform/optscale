@@ -194,19 +194,3 @@ class TestContextApi(TestApiBase):
             self.organization['id'], {'disabled': False})
         self.assertEqual(code, 200)
         self.assertFalse(resp['disabled'])
-
-    def test_soft_disabled_parent(self):
-        self._create_cloud_account()
-        patch('rest_api.rest_api_server.controllers.employee.EmployeeController.'
-              'get_org_manager_user', return_value=None).start()
-        code, resp = self.client.organization_update(
-            self.organization['id'], {'disabled': True, 'disable_type': 'soft'})
-        self.assertEqual(code, 200)
-        self.assertTrue(resp['disabled'])
-
-        code, resp = self.client.context_get('cloud_account', self.cloud_acc_id)
-        self.assertEqual(code, 200)
-        self.assertEqual(resp['organization'], [self.organization['id']])
-        code, org = self.client.organization_get(self.organization['id'])
-        self.assertEqual(code, 200)
-        self.assertFalse(org['disabled'])

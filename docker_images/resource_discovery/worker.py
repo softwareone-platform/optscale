@@ -401,7 +401,7 @@ class DiscoveryWorker(ConsumerMixin):
             self._update_discovery_info(
                 cloud_acc_id, resource_type,
                 last_error_at=utcnow_timestamp(),
-                last_error=str(ex)[:255])
+                last_error=str(ex)[:1024])
             raise
 
     def _update_discovery_info(self, cloud_acc_id, resource_type, **kwargs):

@@ -23,7 +23,7 @@ const descriptionColumn = (state) => ({
   accessorKey: "name",
   cell: ({ row: { original } }) => (
     <FormattedMessage values={original.descriptionMessageValues} id={original.descriptionMessageId} />
-  )
+  ),
 });
 
 const actionsColumn = ({ active = true, isLoading, patchResource, havePermissionsToPerformActions }) => ({
@@ -33,7 +33,7 @@ const actionsColumn = ({ active = true, isLoading, patchResource, havePermission
     </TextWithDataTestId>
   ),
   enableSorting: false,
-  accessorKey: "dismissable",
+  accessorKey: "dismissible",
   cell: ({ cell, row: { original, index } }) =>
     cell.getValue() && (
       <IconButton
@@ -50,10 +50,10 @@ const actionsColumn = ({ active = true, isLoading, patchResource, havePermission
             <FormattedMessage id={active ? "dismissRecommendation" : "activateRecommendation"} />
           ) : (
             <FormattedMessage id="youDoNotHaveEnoughPermissions" />
-          )
+          ),
         }}
       />
-    )
+    ),
 });
 
 const ResourceRecommendationTitle = ({ messageId }) => (
@@ -73,13 +73,13 @@ const DismissedResourceRecommendations = ({
   patchResource,
   dismissedRecommendations = [],
   havePermissionsToPerformActions,
-  isLoading
+  isLoading,
 }) => {
   const data = useMemo(() => dismissedRecommendations, [dismissedRecommendations]);
   const columns = useMemo(
     () => [
       descriptionColumn("dismissed"),
-      actionsColumn({ active: false, isLoading, patchResource, havePermissionsToPerformActions })
+      actionsColumn({ active: false, isLoading, patchResource, havePermissionsToPerformActions }),
     ],
     [isLoading, patchResource, havePermissionsToPerformActions]
   );
@@ -89,15 +89,15 @@ const DismissedResourceRecommendations = ({
       table={
         <Table
           dataTestIds={{
-            container: "table_dismissed"
+            container: "table_dismissed",
           }}
           data={data}
           columns={columns}
           localization={{
-            emptyMessageId: "noDismissedRecommendations"
+            emptyMessageId: "noDismissedRecommendations",
           }}
           counters={{
-            show: false
+            show: false,
           }}
         />
       }
@@ -109,11 +109,11 @@ const ActiveResourceRecommendations = ({
   patchResource,
   activeRecommendations = [],
   havePermissionsToPerformActions,
-  isLoading
+  isLoading,
 }) => {
   const data = useMemo(() => activeRecommendations, [activeRecommendations]);
   const columns = useMemo(() => {
-    const includesAnyDismissable = activeRecommendations.some((recommendation) => recommendation.dismissable);
+    const includesAnyDismissible = activeRecommendations.some((recommendation) => recommendation.dismissible);
 
     return [
       descriptionColumn("active"),
@@ -125,11 +125,11 @@ const ActiveResourceRecommendations = ({
         ),
         accessorKey: "saving",
         defaultSort: "desc",
-        cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />
+        cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />,
       },
-      ...(includesAnyDismissable
+      ...(includesAnyDismissible
         ? [actionsColumn({ active: true, isLoading, patchResource, havePermissionsToPerformActions })]
-        : [])
+        : []),
     ];
   }, [activeRecommendations, isLoading, patchResource, havePermissionsToPerformActions]);
   return (
@@ -138,15 +138,15 @@ const ActiveResourceRecommendations = ({
       table={
         <Table
           dataTestIds={{
-            container: "table_active"
+            container: "table_active",
           }}
           data={data}
           columns={columns}
           localization={{
-            emptyMessageId: "noRecommendations"
+            emptyMessageId: "noRecommendations",
           }}
           counters={{
-            show: false
+            show: false,
           }}
         />
       }
@@ -158,7 +158,7 @@ const patchRecommendationWithDescriptions = (backendData, RecommendationClass) =
   ...backendData,
   descriptionMessageId: RecommendationClass.resourceDescriptionMessageId,
   descriptionMessageValues: RecommendationClass.getResourceDescriptionMessageValues(backendData),
-  dismissable: new RecommendationClass("active", {}).dismissable
+  dismissible: new RecommendationClass("active", {}).dismissible,
 });
 
 const ResourceRecommendations = ({
@@ -166,12 +166,12 @@ const ResourceRecommendations = ({
   dismissedRecommendations,
   patchResource,
   resourceId,
-  isLoading = false
+  isLoading = false,
 }) => {
   const havePermissionsToPerformActions = useIsAllowed({
     entityType: SCOPE_TYPES.RESOURCE,
     entityId: resourceId,
-    requiredActions: ["MANAGE_RESOURCES", "MANAGE_OWN_RESOURCES"]
+    requiredActions: ["MANAGE_RESOURCES", "MANAGE_OWN_RESOURCES"],
   });
 
   const allRecommendations = useAllRecommendations();

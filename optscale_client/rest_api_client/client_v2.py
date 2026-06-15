@@ -1722,10 +1722,6 @@ class Client(Client_v1):
         url = '%s/%s' % (Client.organization_url(organization_id), url)
         return url
 
-    @staticmethod
-    def geminis_data_url(id_):
-        return 'geminis/%s/data' % id_
-
     def gemini_list(self, organization_id=None, params=None):
         url = self.geminis_url(organization_id=organization_id)
         return self.get(url, body=params)
@@ -1737,11 +1733,34 @@ class Client(Client_v1):
     def gemini_get(self, id_):
         return self.get(self.geminis_url(id_=id_))
 
-    def gemini_data_get(self, id_, params=None):
-        url = self.geminis_data_url(id_=id_)
-        if params:
-            url += self.query_url(**params)
-        return self.get(url)
+    @staticmethod
+    def geminis_data_url(id_=None, gemini_id=None):
+        url = 'geminis_data'
+        if id_ is not None:
+            url = '%s/%s' % (url, id_)
+        if gemini_id is not None:
+            url = '%s/%s' % (Client.geminis_url(id_=gemini_id), url)
+        return url
+
+    def geminis_data_create(self, gemini_id, params):
+        return self.post(self.geminis_data_url(gemini_id=gemini_id), params)
+
+    def geminis_data_list(self, gemini_id, only_active=False):
+        return self.get(self.geminis_data_url(
+            gemini_id=gemini_id) + self.query_url(only_active=only_active))
+
+    def geminis_data_get(self, id_):
+        return self.get(self.geminis_data_url(id_=id_))
+
+    def geminis_data_update(self, id_, params):
+        return self.patch(self.geminis_data_url(id_=id_), params)
+
+    @staticmethod
+    def geminis_data_download_url(id_):
+        return f'{Client.geminis_data_url(id_=id_)}/download'
+
+    def geminis_data_download(self, id_):
+        return self.get(self.geminis_data_download_url(id_=id_))
 
     def gemini_update(self, id_, params):
         return self.patch(self.geminis_url(id_=id_), params)
@@ -1887,3 +1906,30 @@ class Client(Client_v1):
     def cloud_policy_get(self, org_id, cloud_type, bucket_name=None, linked=False):
         return self.get(self.cloud_policy_url(org_id)+self.query_url(
             cloud_type=cloud_type, bucket_name=bucket_name, linked=linked))
+
+    @staticmethod
+    def organization_summary_url(organization_id):
+        return '%s/summary' % Client.organization_url(organization_id)
+
+    def get_organization_summary(self, organization_id, entities=None):
+        url = self.organization_summary_url(organization_id)
+        if entities:
+            url += self.query_url(entity=entities)
+        return self.get(url)
+
+    @staticmethod
+    def subscription_url(organization_id):
+        return '%s/subscription' % Client.organization_url(organization_id)
+
+    @staticmethod
+    def subscription_plan_url(organization_id):
+        return '%s/subscription_plans' % Client.organization_url(organization_id)
+
+    def subscription_update(self, organization_id, params):
+        return self.patch(self.subscription_url(organization_id), params)
+
+    def subscription_get(self, organization_id):
+        return self.get(self.subscription_url(organization_id))
+
+    def subscription_plan_list(self, organization_id):
+        return self.get(self.subscription_plan_url(organization_id))

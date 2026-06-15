@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { type SxProps, type Theme } from "@mui/material";
 import { useIntl } from "react-intl";
 import IconButton from "components/IconButton";
 import Input from "components/Input";
@@ -14,7 +15,7 @@ type SearchInputProps = {
     searchButton?: string;
     deleteSearchButton?: string;
   };
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   fullWidth?: boolean;
 };
 
@@ -26,7 +27,7 @@ const SearchInput = ({ onSearch, initialSearchText = "", dataTestIds = {}, sx = 
   const {
     searchInput: searchInputDataTestId,
     searchButton: searchButtonDataTestId,
-    deleteSearchButton: deleteSearchButtonDataTestId
+    deleteSearchButton: deleteSearchButtonDataTestId,
   } = dataTestIds;
 
   const [currentText, setCurrentText] = useState(initialSearchText);
@@ -76,7 +77,7 @@ const SearchInput = ({ onSearch, initialSearchText = "", dataTestIds = {}, sx = 
             }}
           />
         ),
-        sx: { paddingLeft: 0 }
+        sx: { paddingLeft: 0 },
       }}
       ref={inputRef}
       margin="none"

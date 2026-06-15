@@ -12,6 +12,7 @@ import { ProfilingIntegrationModalContext } from "contexts/ProfilingIntegrationM
 import { ML_METRICS, ML_TASKS, PYPI_OPTSCALE_ARCEE, isProduction } from "urls";
 import { isEmptyArray } from "utils/arrays";
 import { SPACING_2 } from "utils/layouts";
+import { IntlFormatValues } from "utils/types";
 
 type ProfilingIntegrationProps = {
   profilingToken: string;
@@ -33,7 +34,7 @@ type MethodUsageProps = {
 };
 
 type MethodDescriptionProps = {
-  descriptionMessage: { id: string; values?: Record<string, unknown> };
+  descriptionMessage: { id: string; values?: IntlFormatValues };
   parameterMessageIds?: string[];
   method: string;
   example?: string;
@@ -44,12 +45,12 @@ const codeFormatMessageValues = {
     <Box
       sx={(theme) => ({
         backgroundColor: theme.palette.background.default,
-        display: "inline"
+        display: "inline",
       })}
     >
       <samp>{chunks}</samp>
     </Box>
-  )
+  ),
 };
 
 const SectionTitle = ({ messageId }: SectionTitleProps) => (
@@ -66,7 +67,7 @@ const MethodParametersDescription = ({ parameterMessageIds }: MethodParametersDe
           <FormattedMessage
             id={messageId}
             values={{
-              strong: (chunks) => <strong>{chunks}</strong>
+              strong: (chunks) => <strong>{chunks}</strong>,
             }}
           />
         </Typography>
@@ -138,7 +139,7 @@ const ENDPOINT_URL_PARAMETER = `endpoint_url="${ENDPOINT_URL}"` as const;
 const Initialization = ({
   profilingToken,
   taskKey,
-  isLoading = false
+  isLoading = false,
 }: {
   profilingToken: string;
   taskKey?: string;
@@ -178,7 +179,7 @@ arcee.error()
           <FormattedMessage
             id="mlProfilingIntegration.initialization.description"
             values={{
-              ...codeFormatMessageValues
+              ...codeFormatMessageValues,
             }}
           />
         </Typography>
@@ -191,7 +192,7 @@ arcee.error()
                 <FormattedMessage
                   id="mlProfilingIntegration.initialization.parameters.1.token"
                   values={{
-                    strong: (chunks) => <strong>{chunks}</strong>
+                    strong: (chunks) => <strong>{chunks}</strong>,
                   }}
                 />
                 <KeyValueLabel
@@ -206,7 +207,7 @@ arcee.error()
             <FormattedMessage
               id="mlProfilingIntegration.initialization.parameters.2.task_key"
               values={{
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               }}
             />
             <Typography>
@@ -229,7 +230,7 @@ arcee.error()
                       >
                         {chunks}
                       </Link>
-                    )
+                    ),
                   }}
                 />
               )}
@@ -239,7 +240,7 @@ arcee.error()
             <FormattedMessage
               id="mlProfilingIntegration.initialization.parameters.3.run_name"
               values={{
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               }}
             />
           </li>
@@ -247,7 +248,7 @@ arcee.error()
             <FormattedMessage
               id="mlProfilingIntegration.initialization.parameters.4.endpoint_url"
               values={{
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               }}
             />
           </li>
@@ -255,7 +256,7 @@ arcee.error()
             <FormattedMessage
               id="mlProfilingIntegration.initialization.parameters.5.ssl"
               values={{
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               }}
             />
           </li>
@@ -263,7 +264,7 @@ arcee.error()
             <FormattedMessage
               id="mlProfilingIntegration.initialization.parameters.6.period"
               values={{
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               }}
             />
           </li>
@@ -272,7 +273,7 @@ arcee.error()
           <FormattedMessage
             id="mlProfilingIntegration.initialization.initCollectorUsingContextManager"
             values={{
-              br: <br />
+              br: <br />,
             }}
           />
           <HtmlSymbol symbol="colon" />
@@ -308,7 +309,7 @@ arcee.error()
         <FormattedMessage
           id="mlProfilingIntegration.initialization.initCollectorUsingContextManagerDescription"
           values={{
-            ...codeFormatMessageValues
+            ...codeFormatMessageValues,
           }}
         />
       </Typography>
@@ -317,7 +318,7 @@ arcee.error()
           <FormattedMessage
             id="mlProfilingIntegration.initialization.alternativeInit"
             values={{
-              ...codeFormatMessageValues
+              ...codeFormatMessageValues,
             }}
           />
         </Typography>
@@ -338,8 +339,8 @@ const SendingMetrics = () => (
             <Link to={ML_METRICS} component={RouterLink}>
               {chunks}
             </Link>
-          )
-        }
+          ),
+        },
       }}
       parameterMessageIds={["mlProfilingIntegration.sendingMetrics.parameters.1.data"]}
       method={`arcee.send({ "YOUR-METRIC-1-KEY": YOUR_METRIC_1_VALUE, "YOUR-METRIC-2-KEY": YOUR_METRIC_2_VALUE })`}
@@ -359,12 +360,12 @@ const AddingHyperparameters = () => (
             <Link to={ML_METRICS} component={RouterLink}>
               {chunks}
             </Link>
-          )
-        }
+          ),
+        },
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.addingHyperparameters.parameters.1.key",
-        "mlProfilingIntegration.addingHyperparameters.parameters.2.value"
+        "mlProfilingIntegration.addingHyperparameters.parameters.2.value",
       ]}
       method={`arcee.hyperparam(key="YOUR-PARAM-KEY", value=YOUR_PARAM_VALUE)`}
       example={`arcee.hyperparam("EPOCHS", 100)`}
@@ -377,11 +378,11 @@ const TaggingTaskRun = () => (
     <SectionTitle messageId="mlProfilingIntegration.taggingTaskRun.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.taggingTaskRun.description"
+        id: "mlProfilingIntegration.taggingTaskRun.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.taggingTaskRun.parameters.1.key",
-        "mlProfilingIntegration.taggingTaskRun.parameters.2.value"
+        "mlProfilingIntegration.taggingTaskRun.parameters.2.value",
       ]}
       method={`arcee.tag(key="YOUR-TAG-KEY", value=YOUR_TAG_VALUE)`}
       example={`arcee.tag("Algorithm", "Linear Learn Algorithm")`}
@@ -394,7 +395,7 @@ const AddingMilestone = () => (
     <SectionTitle messageId="mlProfilingIntegration.addingMilestone.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.addingMilestone.description"
+        id: "mlProfilingIntegration.addingMilestone.description",
       }}
       parameterMessageIds={["mlProfilingIntegration.addingMilestone.parameters.1.name"]}
       method={`arcee.milestone(name="YOUR-MILESTONE-NAME")`}
@@ -405,10 +406,10 @@ const AddingMilestone = () => (
 
 const AddingStage = () => (
   <>
-    <SectionTitle messageId={"mlProfilingIntegration.addingStage.title"} />
+    <SectionTitle messageId="mlProfilingIntegration.addingStage.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.addingStage.description"
+        id: "mlProfilingIntegration.addingStage.description",
       }}
       parameterMessageIds={["mlProfilingIntegration.addingStage.parameters.1.name"]}
       method={`arcee.stage(name="YOUR-STAGE-NAME")`}
@@ -422,13 +423,13 @@ const LoggingDatasets = () => (
     <SectionTitle messageId="mlProfilingIntegration.loggingDatasets.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.loggingDataset.description"
+        id: "mlProfilingIntegration.loggingDataset.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.loggingDataset.parameters.1.path",
         "mlProfilingIntegration.loggingDataset.parameters.2.name",
         "mlProfilingIntegration.loggingDataset.parameters.3.description",
-        "mlProfilingIntegration.loggingDataset.parameters.4.labels"
+        "mlProfilingIntegration.loggingDataset.parameters.4.labels",
       ]}
       method={`arcee.dataset(path="YOUR-DATASET-PATH",
               name="YOUR-DATASET-NAME",
@@ -447,11 +448,11 @@ const CreatingModels = () => (
     <SectionTitle messageId="mlProfilingIntegration.creatingModels.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.creatingModels.description"
+        id: "mlProfilingIntegration.creatingModels.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.creatingModels.parameters.1.key",
-        "mlProfilingIntegration.creatingModels.parameters.2.path"
+        "mlProfilingIntegration.creatingModels.parameters.2.path",
       ]}
       method={`arcee.model(key="YOUR-MODEL-KEY", path="YOUR-MODEL-PATH")`}
       example={`arcee.model("my_model", "/home/user/my_model")`}
@@ -464,7 +465,7 @@ const SettingModelVersion = () => (
     <SectionTitle messageId="mlProfilingIntegration.settingModelVersion.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.settingModelVersion.description"
+        id: "mlProfilingIntegration.settingModelVersion.description",
       }}
       parameterMessageIds={["mlProfilingIntegration.settingModelVersion.parameters.1.version"]}
       method={`arcee.model_version(version="YOUR-MODEL-VERSION")`}
@@ -478,7 +479,7 @@ const SettingModelVersionAlias = () => (
     <SectionTitle messageId="mlProfilingIntegration.settingModelVersionAlias.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.settingModelVersionAlias.description"
+        id: "mlProfilingIntegration.settingModelVersionAlias.description",
       }}
       parameterMessageIds={["mlProfilingIntegration.settingModelVersionAlias.parameters.1.alias"]}
       method={`arcee.model_version_alias(alias="YOUR-MODEL-VERSION-ALIAS")`}
@@ -492,11 +493,11 @@ const SettingModelVersionTag = () => (
     <SectionTitle messageId="mlProfilingIntegration.settingModelVersionTag.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.settingModelVersionTag.description"
+        id: "mlProfilingIntegration.settingModelVersionTag.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.settingModelVersionTag.parameters.1.key",
-        "mlProfilingIntegration.settingModelVersionTag.parameters.2.value"
+        "mlProfilingIntegration.settingModelVersionTag.parameters.2.value",
       ]}
       method={`arcee.model_version_tag(key="YOUR-MODEL-VERSION-TAG-KEY", value=YOUR_MODEL_VERSION_TAG_VALUE)`}
       example={`arcee.model_version_tag("env", "staging demo")`}
@@ -509,13 +510,13 @@ const CreatingArtifacts = () => (
     <SectionTitle messageId="mlProfilingIntegration.creatingArtifacts.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.creatingArtifacts.description"
+        id: "mlProfilingIntegration.creatingArtifacts.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.creatingArtifacts.parameters.1.path",
         "mlProfilingIntegration.creatingArtifacts.parameters.2.name",
         "mlProfilingIntegration.creatingArtifacts.parameters.3.description",
-        "mlProfilingIntegration.creatingArtifacts.parameters.4.tags"
+        "mlProfilingIntegration.creatingArtifacts.parameters.4.tags",
       ]}
       method={`arcee.artifact(path="YOUR-ARTIFACT-PATH",
                name="YOUR-ARTIFACT-NAME",
@@ -534,12 +535,12 @@ const SettingArtifactTag = () => (
     <SectionTitle messageId="mlProfilingIntegration.settingArtifactTag.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.settingArtifactTag.description"
+        id: "mlProfilingIntegration.settingArtifactTag.description",
       }}
       parameterMessageIds={[
         "mlProfilingIntegration.settingArtifactTag.parameters.1.path",
         "mlProfilingIntegration.settingArtifactTag.parameters.2.key",
-        "mlProfilingIntegration.settingArtifactTag.parameters.3.value"
+        "mlProfilingIntegration.settingArtifactTag.parameters.3.value",
       ]}
       method={`arcee.artifact_tag(path="YOUR-ARTIFACT-PATH",
                    key="YOUR-ARTIFACT-TAG-KEY",
@@ -555,9 +556,9 @@ const FinishTaskRun = () => (
     <SectionTitle messageId="mlProfilingIntegration.finishTaskRun.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.finishTaskRun.description"
+        id: "mlProfilingIntegration.finishTaskRun.description",
       }}
-      method={`arcee.finish()`}
+      method="arcee.finish()"
     />
   </>
 );
@@ -567,9 +568,9 @@ const FailTaskRun = () => (
     <SectionTitle messageId="mlProfilingIntegration.failTaskRun.title" />
     <MethodDescription
       descriptionMessage={{
-        id: "mlProfilingIntegration.failTaskRun.description"
+        id: "mlProfilingIntegration.failTaskRun.description",
       }}
-      method={`arcee.error()`}
+      method="arcee.error()"
     />
   </>
 );
@@ -585,7 +586,7 @@ const ProfilingIntegration = ({ profilingToken, taskKey, isLoading = false }: Pr
               <Link data-test-id="link_check_pypi" href={PYPI_OPTSCALE_ARCEE} target="_blank" rel="noopener">
                 {chunks}
               </Link>
-            )
+            ),
           }}
         />
       </Typography>

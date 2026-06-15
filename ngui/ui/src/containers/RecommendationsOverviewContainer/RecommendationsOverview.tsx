@@ -28,7 +28,7 @@ type RecommendationsOverviewProps = {
   service: string;
   setView: (view: string) => void;
   view: string;
-  downloadLimit: number;
+  downloadLimit?: number;
   isDownloadAvailable: boolean;
   isGetIsDownloadAvailableLoading: boolean;
   selectedDataSourceIds: string[];
@@ -82,7 +82,7 @@ const RecommendationsOverview = ({
   lastCompleted,
   totalSaving,
   nextRun,
-  lastRun
+  lastRun,
 }: RecommendationsOverviewProps) => {
   const { classes } = useStyles();
   const checkDone = lastCompleted !== 0;
@@ -106,7 +106,7 @@ const RecommendationsOverview = ({
           riSpExpensesSummary={riSpExpensesSummary}
           isLoadingProps={{
             isRecommendationsLoading: !isDataReady,
-            isRiSpExpensesSummaryLoading
+            isRiSpExpensesSummaryLoading,
           }}
         />
       </div>

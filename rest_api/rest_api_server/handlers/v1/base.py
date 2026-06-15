@@ -1,25 +1,45 @@
+import functools
 import hashlib
 import json
 import logging
 import time
 import traceback
 from json.decoder import JSONDecodeError
-import functools
+
 import requests
 import tornado.web
-from optscale_client.auth_client.client_v2 import Client as AuthClient
 from tornado.ioloop import IOLoop
 
-from tools.optscale_exceptions.common_exc import WrongArgumentsException
-from tools.optscale_exceptions.http_exc import OptHTTPError
+from optscale_client.auth_client.client_v2 import Client as AuthClient
 from rest_api.rest_api_server.exceptions import Err
 from rest_api.rest_api_server.models.db_base import BaseDB
 from rest_api.rest_api_server.models.models import (
-    Organization, CloudAccount, Employee, Pool, ReportImport,
-    PoolAlert, PoolPolicy, ResourceConstraint, OrganizationBI, ShareableBooking,
-    Rule, Webhook, OrganizationConstraint, OrganizationGemini, PowerSchedule)
-from rest_api.rest_api_server.utils import (ModelEncoder, Config, tp_executor,
-                                            run_task, get_http_error_info)
+    CloudAccount,
+    Employee,
+    Organization,
+    OrganizationBI,
+    OrganizationConstraint,
+    OrganizationGemini,
+    Pool,
+    PoolAlert,
+    PoolPolicy,
+    PowerSchedule,
+    ReportImport,
+    ResourceConstraint,
+    Rule,
+    ShareableBooking,
+    Webhook,
+)
+from rest_api.rest_api_server.utils import (
+    Config,
+    ModelEncoder,
+    get_http_error_info,
+    run_task,
+    tp_executor,
+)
+from tools.optscale_exceptions.common_exc import WrongArgumentsException
+from tools.optscale_exceptions.http_exc import OptHTTPError
+from tools.optscale_telemetry import get_trace_headers
 
 LOG = logging.getLogger(__name__)
 
@@ -87,6 +107,9 @@ class BaseHandler(tornado.web.RequestHandler):
         return self._session()
 
     def prepare(self):
+        for name, value in get_trace_headers().items():
+            self.set_header(name, value)
+
         self.set_content_type()
         if self.request.method == 'POST':
             self._validate_post_parameters()
@@ -339,8 +362,16 @@ class BaseAuthHandler(BaseHandler):
         _, user = client.user_get(user_id)
         return user
 
-    def get_roles_info(self, user_ids: list = None, role_purposes: list = None,
-                       scope_ids: list = None):
+    async def get_roles_info(
+            self, user_ids: list = None, role_purposes: list = None,
+            scope_ids: list = None
+    ):
+        return await self.run_on_executor(
+            self._get_roles_info, user_ids=user_ids,
+            role_purposes=role_purposes, scope_ids=scope_ids)
+
+    def _get_roles_info(self, user_ids: list = None, role_purposes: list = None,
+                        scope_ids: list = None):
         client = AuthClient(url=Config().auth_url)
         client.secret = self._config.cluster_secret()
         _, response = client.user_roles_get(user_ids, role_purposes, scope_ids)

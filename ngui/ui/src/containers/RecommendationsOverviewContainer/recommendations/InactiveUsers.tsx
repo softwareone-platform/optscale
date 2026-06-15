@@ -10,11 +10,11 @@ const columns = [
     captionAccessor: "user_id",
     headerDataTestId: "lbl_iu_name",
     enableTextCopy: true,
-    defaultSort: "asc"
+    defaultSort: "asc",
   }),
   userLocation({ headerDataTestId: "lbl_iu_location" }),
   lastUsed({ headerDataTestId: "lbl_iu_last_used" }),
-  detectedAt({ headerDataTestId: "lbl_iu_detected_at" })
+  detectedAt({ headerDataTestId: "lbl_iu_detected_at" }),
 ];
 
 class InactiveUsers extends BaseRecommendation {
@@ -44,14 +44,14 @@ class InactiveUsers extends BaseRecommendation {
 
   settingsSidemodalClass = InactiveUsersModal;
 
-  dismissable = false;
+  dismissible = false;
 
   get previewItems() {
     return this.items.map((item) => [
       {
         key: `${item.user_name}-label`,
-        value: item.user_name
-      }
+        value: item.user_name,
+      },
     ]);
   }
 

@@ -682,6 +682,113 @@ export default gql`
     k8s_namespace: [String!]
   }
 
+  type BillingSubscriptionPlan {
+    id: ID!
+    name: String!
+    limits: JSONObject!
+    customer_id: ID
+    price_id: ID
+    trial_days: Int!
+    grace_period_days: Int!
+    created_at: Int!
+    deleted_at: Int!
+    qty_unit: QuantityUnit
+    default: Boolean!
+    price: Float
+    currency: String
+  }
+
+  enum BillingSubscriptionStatus {
+    active
+    limit_exceeded
+    suspended
+  }
+
+  type BillingSubscription {
+    id: ID!
+    plan: BillingSubscriptionPlan!
+    quantity: Int!
+    status: BillingSubscriptionStatus!
+    stripe_status: String
+    end_date: Int!
+    grace_period_start: Int!
+    trial_used: Boolean!
+    cancel_at_period_end: Boolean!
+  }
+
+  enum StripeSessionResult {
+    checkout_session_created
+    subscription_canceled
+    plan_changed
+    billing_portal_created
+    subscription_reactivated
+  }
+
+  type StripeSession {
+    url: String
+    result: StripeSessionResult!
+  }
+
+  input CreateStripeCheckoutSessionInput {
+    plan_id: ID!
+  }
+
+  enum QuantityUnit {
+    cloud_accounts
+    employees
+    month_expenses
+  }
+
+  type OrganizationSummaryEntities {
+    cloud_accounts: Int!
+    employees: Int!
+    month_expenses: JSONObject!
+  }
+
+  type OrganizationSummary {
+    entities: OrganizationSummaryEntities!
+    deleted_at: Int!
+    created_at: Int!
+    id: ID!
+    name: String!
+    is_demo: Boolean!
+    currency: String!
+    cleaned_at: Int!
+    disabled: Boolean!
+  }
+
+  enum OrganizationSummaryEntity {
+    cloud_accounts
+    employees
+    month_expenses
+  }
+
+  input OrganizationSummaryParams {
+    entity: [OrganizationSummaryEntity!]!
+  }
+
+  enum GeminiDataPreparationStatus {
+    QUEUED
+    RUNNING
+    FAILED
+    SUCCESS
+  }
+
+  type GeminiDataPreparation {
+    id: ID!
+    gemini_id: ID!
+    buckets: String!
+    status: GeminiDataPreparationStatus!
+    url: String
+    valid_until: Int
+    created_at: Int
+    deleted_at: Int
+  }
+
+  type ScheduleGeminiDataPreparation {
+    id: ID!
+  }
+
   type Query {
     organizations: [Organization!]!
     currentEmployee(organizationId: ID!): Employee
@@ -701,6 +808,10 @@ export default gql`
     cleanExpenses(organizationId: ID!, params: CleanExpensesParams): JSONObject
     cloudPolicies(organizationId: ID!, params: CloudPoliciesParams): JSONObject
     availableFilters(organizationId: ID!, params: AvailableFiltersParams): JSONObject
+    billingSubscriptionPlans(organizationId: ID!): [BillingSubscriptionPlan!]!
+    billingSubscription(organizationId: ID!): BillingSubscription!
+    organizationSummary(organizationId: ID!, params: OrganizationSummaryParams): OrganizationSummary!
+    geminiDataPreparation(id: ID!): GeminiDataPreparation!
   }
 
   type Mutation {
@@ -715,5 +826,8 @@ export default gql`
     updateInvitation(invitationId: String!, action: String!): String
     updateOrganizationThemeSettings(organizationId: ID!, value: JSONObject!): JSONObject
     updateOrganizationPerspectives(organizationId: ID!, value: JSONObject!): JSONObject
+    createStripeCheckoutSession(organizationId: ID!, params: CreateStripeCheckoutSessionInput!): StripeSession
+    createStripeBillingPortalSession(organizationId: ID!): StripeSession
+    scheduleGeminiDataPreparation(geminiId: ID!, buckets: [String!]!): ScheduleGeminiDataPreparation
   }
 `;

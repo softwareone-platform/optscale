@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import Executors from "components/MlRunsetOverview/Components/Tabs/Executors";
+import Executors from "components/MlRunsetOverview/components/Tabs/Executors";
 import MlRunsetsService from "services/MlRunsetsService";
 
 const MlRunsetExecutorsContainer = () => {

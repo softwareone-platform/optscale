@@ -67,15 +67,6 @@ To modify a job's default schedule, update the corresponding value in `user_temp
 **Default schedule**: `*/3 * * * *`
 
 
-## deactivatorg
-
-**Type**: CronJob
-
-**Description**: disables organizations with no user activity
-
-**Default schedule**: `0 2 * * *`
-
-
 ## demoorgcleanup
 
 **Type**: CronJob

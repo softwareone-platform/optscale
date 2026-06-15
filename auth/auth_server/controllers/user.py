@@ -211,12 +211,12 @@ class UserController(BaseController):
         if 'token' in kwargs:
             token = kwargs.pop('token')
             user = self.get_user(token)
-            action_resources = self.get_action_resources(token,
-                                                         ['LIST_USERS'])
-            if not (check_action(action_resources, 'LIST_USERS',
-                                 item.type.name, item.scope_id) or
-                    self._is_self_edit(user, item_id)):
-                raise ForbiddenException(Err.OA0012, [])
+            if not self._is_self_edit(user, item_id):
+                action_resources = self.get_action_resources(
+                    token, ['LIST_USERS'])
+                if not check_action(action_resources, 'LIST_USERS',
+                                    item.type.name, item.scope_id):
+                    raise ForbiddenException(Err.OA0012, [])
         payload = ((item.type.name, item.scope_id),)
         scope_info = self.get_resources_info(payload).get(item.scope_id, {})
         return item, scope_info

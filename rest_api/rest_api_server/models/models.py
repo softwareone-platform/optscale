@@ -35,7 +35,7 @@ from rest_api.rest_api_server.models.types import (
     MediumNullableString, MediumString, MediumLargeNullableString,
     ConstraintLimitState, OrganizationConstraintType, ConstraintDefinition,
     RunResult, BIOrganizationStatus, BIType, Float, GeminiStatus,
-    HMTimeString, TimezoneString, PowerScheduleAction, OrganizationDisableType,
+    HMTimeString, TimezoneString, PowerScheduleAction,
     NullableMediumJSON, NullableMediumText
 )
 
@@ -166,8 +166,8 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
                       info=ColumnPermissions.full, default='USD')
     cleaned_at = Column(NullableInt('cleaned_at'), default=0, nullable=False,
                         info=ColumnPermissions.update_only)
-    disabled = Column(OrganizationDisableType('disabled'), nullable=True,
-                      info=ColumnPermissions.update_only)
+    disabled = Column(NullableBool('disabled'), nullable=False,
+                      default=False, info=ColumnPermissions.update_only)
 
     @validates('id')
     def _validate_id(self, key, id):
@@ -192,11 +192,6 @@ class Organization(Base, MutableMixin, ValidatorMixin, CreatedMixin):
     @validates('disabled')
     def _validate_disabled(self, key, name):
         return self.get_validator(key, name)
-
-    def to_dict(self):
-        result = super().to_dict()
-        result['disabled'] = True if result['disabled'] else False
-        return result
 
 
 class Pool(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
@@ -337,16 +332,21 @@ class CloudAccount(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
 
     @hybrid_property
     def decoded_config(self):
-        return decode_config(self.config)
+        cached = self.__dict__.get('_decoded_config_cache')
+        if cached is not None and cached[0] == self.config:
+            return cached[1]
+        decoded = decode_config(self.config)
+        self.__dict__['_decoded_config_cache'] = (self.config, decoded)
+        return decoded
 
     def to_dict(self, secure=False):
         cloud_acc_dict = super().to_dict()
         cloud_acc_dict['type'] = cloud_acc_dict['type'].value
         if self.parent_id and self.parent and self.parent.deleted_at == 0:
-            config = self.parent.decoded_config
+            config = dict(self.parent.decoded_config)
             config.update(self.decoded_config)
         else:
-            config = self.decoded_config
+            config = dict(self.decoded_config)
         if cloud_acc_dict.pop('cost_model_id', None):
             config['cost_model'] = self.cost_model.loaded_value
         if secure:
@@ -1647,6 +1647,29 @@ class OrganizationGemini(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
         return res
 
 
+class GeminiData(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
+    __tablename__ = "gemini_data"
+
+    gemini_id = Column(
+        Uuid("gemini_id"), ForeignKey("organization_gemini.id"),
+        nullable=False, info=ColumnPermissions.create_only, index=True)
+    organization_gemini = relationship(
+        "OrganizationGemini", foreign_keys=[gemini_id])
+    buckets = Column(BaseString("buckets"), nullable=False,
+                     info=ColumnPermissions.create_only)
+    status = Column(GeminiStatus, default=GeminiStatuses.QUEUED,
+                    nullable=False, info=ColumnPermissions.update_only)
+    url = Column(NullableString('url'), nullable=True,
+                 info=ColumnPermissions.update_only)
+    valid_until = Column(
+        NullableInt('valid_until'), default=0, nullable=False,
+        info=ColumnPermissions.update_only)
+
+    @validates("gemini_id", "buckets", "status", "url", "valid_until")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+
 class PowerSchedule(Base, CreatedMixin, MutableMixin, ValidatorMixin):
     __tablename__ = "power_schedule"
 
@@ -1779,5 +1802,52 @@ class EmployeeEmail(Base, ValidatorMixin, MutableMixin):
         return ["employee_id", "email_template"]
 
     @validates("employee_id", "enabled", "email_template")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+
+class Type(Base, CreatedMixin, ImmutableMixin, ValidatorMixin):
+    __tablename__ = 'type'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(NotWhiteSpaceString('name'), nullable=False,
+                  info=ColumnPermissions.full)
+
+    @hybrid_property
+    def unique_fields(self):
+        return ["name"]
+
+    __table_args__ = (UniqueConstraint(
+        "name", "deleted_at", name="name_deleted_at"),)
+
+    @validates("name")
+    def _validate(self, key, value):
+        return self.get_validator(key, value)
+
+
+class Tag(Base, CreatedMixin, MutableMixin, ValidatorMixin):
+    __tablename__ = 'tag'
+
+    id = Column(AutogenUuid('id'), primary_key=True, default=gen_id,
+                info=ColumnPermissions.create_only)
+    type_id = Column(Integer, ForeignKey('type.id'), nullable=False,
+                     info=ColumnPermissions.create_only)
+    resource_id = Column(Uuid('resource_id'), nullable=False,
+                         info=ColumnPermissions.create_only, index=True)
+    name = Column(NotWhiteSpaceString('name'), nullable=False,
+                  info=ColumnPermissions.full)
+    value = Column(NotWhiteSpaceString('value'), nullable=False, info=ColumnPermissions.full)
+    updated_at = Column(NullableInt('updated_at'), default=0, nullable=False,
+                        info=ColumnPermissions.update_only)
+
+    @hybrid_property
+    def unique_fields(self):
+        return ["type_id", "resource_id", "name"]
+
+    __table_args__ = (
+        UniqueConstraint("type_id", 'resource_id', "name",
+                         'deleted_at', name="uc_type_id_res_id_name_del_at"),)
+
+    @validates("type_id", "resource_id", "name", "value")
     def _validate(self, key, value):
         return self.get_validator(key, value)

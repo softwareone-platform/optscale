@@ -1,3 +1,6 @@
+import { ComponentProps } from "react";
+import { FormattedMessage } from "react-intl";
+
 export type TODO = unknown;
 
 export type PickRename<T, R extends { [K in keyof R]: K extends keyof T ? PropertyKey : "Error: key not in T" }> = {
@@ -37,3 +40,5 @@ export type ExclusiveUnion<T extends Record<string, unknown>> = {
     [P in Exclude<keyof T, K>]?: never; // forbid all others
   };
 }[keyof T];
+
+export type IntlFormatValues = ComponentProps<typeof FormattedMessage>["values"];

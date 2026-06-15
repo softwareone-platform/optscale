@@ -6,11 +6,12 @@ import PowerScheduleValidityPeriod from "components/PowerScheduleValidityPeriod"
 import QuestionMark from "components/QuestionMark";
 import SummaryGrid from "components/SummaryGrid";
 import { SUMMARY_VALUE_COMPONENT_TYPES } from "utils/constants";
+import { isPowerScheduleExpired } from "utils/poweSchedules";
 
 type PowerScheduleSummaryCardsProps = {
   timeZone: string;
-  startDate: string;
-  endDate: string;
+  startDate: number;
+  endDate: number;
   lastRun: number;
   lastRunError: string;
   resourcesOnSchedule: number;
@@ -24,7 +25,7 @@ const PowerScheduleSummaryCards = ({
   lastRun,
   lastRunError,
   resourcesOnSchedule,
-  isLoading = false
+  isLoading = false,
 }: PowerScheduleSummaryCardsProps) => (
   <SummaryGrid
     summaryData={[
@@ -50,10 +51,10 @@ const PowerScheduleSummaryCards = ({
         captionMessageId: "lastExecution",
         color: lastRunError ? "error" : "primary",
         dataTestIds: {
-          cardTestId: "card_last_execution_time"
+          cardTestId: "card_last_execution_time",
         },
         isLoading,
-        renderCondition: () => lastRun !== undefined || lastRunError !== undefined
+        renderCondition: () => lastRun !== undefined || lastRunError !== undefined,
       },
       {
         key: "resourcesOnSchedule",
@@ -61,9 +62,9 @@ const PowerScheduleSummaryCards = ({
         CustomValueComponent: () => resourcesOnSchedule,
         captionMessageId: "resourcesOnSchedule",
         dataTestIds: {
-          cardTestId: "card_resources_on_schedule"
+          cardTestId: "card_resources_on_schedule",
         },
-        isLoading
+        isLoading,
       },
       {
         key: "timeZone",
@@ -71,9 +72,9 @@ const PowerScheduleSummaryCards = ({
         CustomValueComponent: () => timeZone,
         captionMessageId: "timeZone",
         dataTestIds: {
-          cardTestId: "card_time_zone"
+          cardTestId: "card_time_zone",
         },
-        isLoading
+        isLoading,
       },
       {
         key: "validityPeriod",
@@ -81,11 +82,12 @@ const PowerScheduleSummaryCards = ({
         CustomValueComponent: () => <PowerScheduleValidityPeriod startDate={startDate} endDate={endDate} />,
         captionMessageId: "validityPeriod",
         dataTestIds: {
-          cardTestId: "card_time_zone"
+          cardTestId: "card_time_zone",
         },
+        color: isPowerScheduleExpired(endDate) ? "warning" : "primary",
         isLoading,
-        renderCondition: () => !!startDate || !!endDate
-      }
+        renderCondition: () => !!startDate || !!endDate,
+      },
     ]}
   />
 );

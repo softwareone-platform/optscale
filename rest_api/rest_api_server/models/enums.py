@@ -180,3 +180,8 @@ class PowerScheduleActions(str, enum.Enum):
 class OrganizationDisableTypes(str, enum.Enum):
     SOFT = 'soft'
     HARD = 'hard'
+
+
+class TagTypes(enum.Enum):
+    CLOUD_ACCOUNT = 'cloud_account'
+    ORGANIZATION = 'organization'

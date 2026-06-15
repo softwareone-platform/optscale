@@ -21,7 +21,7 @@ const useGetOptimizations = ({ type, limit, status, cloudAccountIds }) => {
     cloudAccountIds,
     type,
     status,
-    limit
+    limit,
   });
 
   const allRecommendations = useAllRecommendations();
@@ -33,7 +33,7 @@ const useGetOptimizations = ({ type, limit, status, cloudAccountIds }) => {
           const newOptimizations = getState()?.[RESTAPI]?.[GET_OPTIMIZATION_DETAILS] ?? {};
           const recommendation = new allRecommendations[type](status, newOptimizations);
 
-          if (!recommendation.dismissable) {
+          if (!recommendation.dismissible) {
             return;
           }
           const ids = recommendation.items.map(({ resource_id: resourceId }) => resourceId).filter(Boolean);
@@ -55,7 +55,7 @@ const usePatchResource = (recommendationType, status) => {
     dispatch(
       updateResourceVisibility(resourceId, {
         recommendation: recommendationType,
-        action: status === STATUS.ACTIVE ? RESOURCE_VISIBILITY_ACTIONS.DISMISS : RESOURCE_VISIBILITY_ACTIONS.ACTIVATE
+        action: status === STATUS.ACTIVE ? RESOURCE_VISIBILITY_ACTIONS.DISMISS : RESOURCE_VISIBILITY_ACTIONS.ACTIVATE,
       })
     );
 };
@@ -63,7 +63,7 @@ const usePatchResource = (recommendationType, status) => {
 function RecommendationDetailsService() {
   return {
     useGetOptimizations,
-    usePatchResource
+    usePatchResource,
   };
 }
 

@@ -13,7 +13,7 @@ EMAIL_TEST_DATA = {
                 "pool_name": "Zoo-org",
                 "alert_type": "cost",
                 "threshold": "$5",
-                "link": "https://172.25.1.3/resources?endDate=1764115199&poolId=71bbe9bf-9272-4c71-bbbc-282e0887bfeb&startDate=1761955200"
+                "link": "https://172.25.1.3/resources?endDate=1764115199&poolId=71bbe9bf-9272-4c71-bbbc-282e0887bfeb&startDate=1761955200",
             }
         },
     },

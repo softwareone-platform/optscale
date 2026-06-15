@@ -63,8 +63,8 @@ rabbitmq:
   replicaCount: 1
   mnesiaSize: 10Gi
   memory_limit: 512
-  enableClassicMirroring: false     # MUST be false on 4.x
-  enableQuorumDefaults: true        # optional: default policy for quorum queues
+  enableClassicMirroring: false # MUST be false on 4.x
+  enableQuorumDefaults: true # optional: default policy for quorum queues
   quorum:
     deliveryLimit: 100
   image:
@@ -154,6 +154,25 @@ phpmyadmin:
     externalPort: 30080
     internalPort: 80
 
+tempo:
+  enabled: true
+  name: &tempo_name tempo
+  replicaCount: 1
+  image:
+    id:
+    repository: grafana/tempo
+    tag: "2.10.0"
+    pullPolicy: IfNotPresent
+  service:
+    name: *tempo_name
+    type: ClusterIP
+    externalQueryPort: 3200
+    internalQueryPort: 3200
+    externalGrpcPort: 4317
+    internalGrpcPort: 4317
+    externalHttpPort: 4318
+    internalHttpPort: 4318
+
 herald:
   name: &herald_name herald
   api:
@@ -231,6 +250,8 @@ ngui:
     hotjar_id:
     on_initialize_organization_setup_mode:
     finops_in_practice_portal_overview:
+    billing_integration:
+    app_theme:
 
 minio:
   name: &minio_name minio
@@ -689,6 +710,15 @@ gemini_worker:
     tag: *tag
     pullPolicy: Never
 
+gemini_data_worker:
+  name: gemini-data-worker
+  replicaCount: 1
+  image:
+    id:
+    repository: gemini_data_worker
+    tag: *tag
+    pullPolicy: Never
+
 bi_scheduler:
   name: bi-scheduler
   image:
@@ -866,16 +896,38 @@ layout_cleaner:
   startingDeadlineSeconds: 100
   schedule: "0 3 * * *"
 
-deactivatorg:
-  name: deactivatorg
+subspector:
+  name: &subspector_name subspector
+  replicaCount: 1
   image:
-    repository: deactivatorg
+    id:
+    repository: subspector
+    tag: *tag
+    pullPolicy: Never
+  service:
+    name: *subspector_name
+    type: ClusterIP
+    externalPort: 80
+    internalPort: 8800
+
+subsyncer:
+  name: subsyncer
+  image:
+    repository: subsyncer
     tag: *tag
     pullPolicy: Never
   startingDeadlineSeconds: 100
-  schedule: "0 2 * * *"
-  enable: true
-  days_limit: 30
+  schedule: "0 * * * *"
+
+bailiff:
+  name: bailiff
+  replicaCount: 1
+  image:
+    repository: bailiff
+    tag: *tag
+    pullPolicy: Never
+  startingDeadlineSeconds: 100
+  schedule: "30 * * * *"
 
 # list of databases to create (if not exist) during DC initialization
 databases:
@@ -886,6 +938,7 @@ databases:
   - katara
   - slacker
   - jira-bus
+  - subspector
 
 # filled from base overlay
 public_ip:
@@ -1012,6 +1065,14 @@ google_calendar_service:
     client_x509_cert_url:
   enabled: false
 
+# skip sending messages by template parameter value
+skip_email_filters:
+  # email template name:
+  #   template parameter path: parameter value regex to skip email
+  # example:
+  #  anomaly_detection_alert:
+  #    texts.organization.name: ^aqa-(.*)$
+
 bumi_scheduler_timeout: 300
 bumi_worker:
   max_retries: 5
@@ -1057,3 +1118,20 @@ password_strength_settings:
   min_uppercase:
   min_digits:
   min_special_chars:
+
+exchange_rates:
+  BRL:
+  INR:
+  EUR:
+
+stripe:
+  enabled: false
+  api_key:
+  webhook_secret:
+
+#open telemetry settings
+opentelemetry:
+  enabled: true
+  exporter: 
+    type: otlp
+    connection_string: http://tempo.default.svc.cluster.local:4317

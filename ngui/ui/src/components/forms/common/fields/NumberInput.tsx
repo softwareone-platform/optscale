@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import Input from "components/Input";
@@ -21,7 +22,7 @@ type NumberInputProps = {
   valueAsNumber?: boolean;
   type?: string;
   inputProps?: Record<string, unknown>;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
   defaultValue?: string;
   margin?: "none" | "dense" | "normal";
   onChange?: (event: unknown) => void;
@@ -43,11 +44,11 @@ const NumberInput = ({
   sx,
   defaultValue,
   margin,
-  onChange
+  onChange,
 }: NumberInputProps) => {
   const {
     register,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext();
 
   const intl = useIntl();
@@ -72,33 +73,33 @@ const NumberInput = ({
       {...register(name, {
         required: {
           value: required,
-          message: intl.formatMessage({ id: "thisFieldIsRequired" })
+          message: intl.formatMessage({ id: "thisFieldIsRequired" }),
         },
         min:
           min !== null
             ? {
                 value: min,
-                message: intl.formatMessage({ id: "moreOrEqual" }, { min })
+                message: intl.formatMessage({ id: "moreOrEqual" }, { min }),
               }
             : undefined,
         max:
           max !== null
             ? {
                 value: max,
-                message: intl.formatMessage({ id: "lessOrEqual" }, { max })
+                message: intl.formatMessage({ id: "lessOrEqual" }, { max }),
               }
             : undefined,
         validate: {
           notOnlyWhiteSpaces,
           isNumber: (value) => (isNumber(Number(value)) ? true : intl.formatMessage({ id: "fieldMustBeANumber" })),
-          ...validate
+          ...validate,
         },
         /**
          * valueAsNumber converts a string containing only white spaces to 0,
          * so the notOnlyWhiteSpaces validation will not work when valueAsNumber is set to true.
          */
         valueAsNumber,
-        onChange
+        onChange,
       })}
     />
   );

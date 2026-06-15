@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
 import { FormattedMessage } from "react-intl";
 import PageTitle from "components/PageTitle";
+import { IntlFormatValues } from "utils/types";
 
 type TitleProps = {
   messageId: string;
-  messageValues?: Record<string, ReactNode>;
+  messageValues?: IntlFormatValues;
   dataTestId?: string;
 };
 

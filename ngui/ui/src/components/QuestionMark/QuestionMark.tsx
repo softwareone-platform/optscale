@@ -3,6 +3,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { SvgIconProps } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import Tooltip from "components/Tooltip";
+import { IntlFormatValues } from "utils/types";
 import useStyles from "./QuestionMark.styles";
 
 type TooltipTitleType =
@@ -15,7 +16,7 @@ type TooltipTitleType =
   | {
       tooltipText?: never;
       messageId: string;
-      messageValues?: { [key: string]: string };
+      messageValues?: IntlFormatValues;
       onTooltipTitleClick?: (event: MouseEvent<HTMLDivElement>) => void;
     };
 
@@ -46,7 +47,7 @@ const QuestionMark = ({
   /**
    * TODO: Consider replacing it with a "margin" (or just "m") setting that utilizes theme.spacing(1) as the default left margin.
    */
-  withLeftMargin = true
+  withLeftMargin = true,
 }: QuestionMarkProps) => {
   const { classes, cx } = useStyles();
 

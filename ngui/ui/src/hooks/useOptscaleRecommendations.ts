@@ -25,14 +25,17 @@ import ReservedInstances from "containers/RecommendationsOverviewContainer/recom
 import RightsizingInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingInstances";
 import RightsizingRdsInstances from "containers/RecommendationsOverviewContainer/recommendations/RightsizingRdsInstances";
 import ShortLivingInstances from "containers/RecommendationsOverviewContainer/recommendations/ShortLivingInstances";
+import SnapshotsWithNonUsedImages from "containers/RecommendationsOverviewContainer/recommendations/SnapshotsWithNonUsedImages";
 import VolumesNotAttachedForLongTime from "containers/RecommendationsOverviewContainer/recommendations/VolumesNotAttachedForLongTime";
 import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled";
 
 const NEBIUS_RECOMMENDATIONS = [CvocAgreementOpportunities, AbandonedNebiusS3Buckets, NebiusMigration];
 
+const DEPRECATED_RECOMMENDATIONS = [ObsoleteImages];
+
 export const NEBIUS_RECOMMENDATION_TYPES = NEBIUS_RECOMMENDATIONS.map((Recommendation) => new Recommendation().type);
 
-export const useOptscaleRecommendations = () => {
+export const useOptscaleRecommendations = ({ withDeprecated = false }: { withDeprecated?: boolean } = {}) => {
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
 
   return useMemo(() => {
@@ -59,11 +62,12 @@ export const useOptscaleRecommendations = () => {
       AbandonedInstances,
       AbandonedLoadBalancers,
       PublicS3Buckets,
-      ObsoleteImages,
+      SnapshotsWithNonUsedImages,
       AbandonedImages,
-      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
+      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : []),
+      ...(withDeprecated ? DEPRECATED_RECOMMENDATIONS : []),
     ];
 
     return Object.fromEntries(recommendations.map((Rec) => [new Rec().type, Rec]));
-  }, [isNebiusConnectionEnabled]);
+  }, [isNebiusConnectionEnabled, withDeprecated]);
 };

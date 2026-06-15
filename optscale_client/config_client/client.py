@@ -1,6 +1,7 @@
 import os
 
 import etcd
+import json
 import logging
 import subprocess
 from retrying import retry
@@ -212,6 +213,15 @@ class Client(etcd.Client):
         return (params['user'], params['password'], params['host'],
                 params['db'])
 
+    def subspector_db_params(self):
+        """
+        Get tuple with access args for subspector db
+        :return: ('username', 'password', 'host ip', 'db name')
+        """
+        params = self.read_branch('/subspectordb')
+        return (params['user'], params['password'], params['host'],
+                params['db'])
+
     def smtp_params(self):
         """
         Get tuple with access args for smtp
@@ -303,6 +313,13 @@ class Client(etcd.Client):
         :return: 'http://<cluster_ip>:80'
         """
         return self._get_url_from_branch('/jira_bus')
+
+    def subspector_url(self):
+        """
+        Url for subspector client
+        :return: 'http://<cluster_ip>:80'
+        """
+        return self._get_url_from_branch('/subspector')
 
     @retry(**DEFAULT_RETRY_ARGS, retry_on_exception=_retry_not_exist)
     def wait_until_exist(self, key):
@@ -570,3 +587,56 @@ class Client(etcd.Client):
         Get settings diworker
         """
         return self.read_branch('/diworker')
+
+    def exchange_rates(self):
+        """
+        Get exchange rates
+        """
+        return self.read_branch('/exchange_rates')
+
+    def stripe_settings(self):
+        """
+        Get stripe settings (api_key, webhook_secret, enabled)
+        """
+        branch = self.read_branch('/stripe')
+        return {
+            'api_key': branch['api_key'],
+            'webhook_secret': branch['webhook_secret'],
+            'enabled': True if branch['enabled'].lower() == 'true' else False
+        }
+
+    def disabled_recommendations(self):
+        """
+        Get settings for disabled recommendations.
+        Accepts:
+          - "r1,r2,r3"
+          - "r1, r2, r3"
+          - multiline: "r1,r2\nr3"
+          - JSON list: ["r1","r2"]
+        Returns: List[str]
+        """
+        try:
+            dr = self.get('/disabled_recommendations').value
+        except etcd.EtcdKeyNotFound:
+            return []
+
+        if dr is None:
+            return []
+
+        if isinstance(dr, (bytes, bytearray)):
+            dr = dr.decode("utf-8", errors="replace")
+
+        dr = str(dr).strip()
+        if not dr:
+            return []
+
+        if dr.startswith("["):
+            try:
+                val = json.loads(dr)
+                if isinstance(val, list):
+                    return [str(x).strip() for x in val if str(x).strip()]
+            except Exception:
+                pass
+
+        dr = dr.replace("\n", ",").replace(";", ",")
+        return [x.strip() for x in dr.split(",") if x.strip()]

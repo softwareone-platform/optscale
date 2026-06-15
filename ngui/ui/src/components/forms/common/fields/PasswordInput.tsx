@@ -1,6 +1,7 @@
 import { ReactNode, useState, useRef } from "react";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { type SxProps, type Theme } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useIntl } from "react-intl";
 import IconButton from "components/IconButton";
@@ -21,7 +22,7 @@ type PasswordInputProps = {
   dataTestId?: string;
   margin?: "none" | "dense" | "normal";
   autoComplete?: string;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
 };
 
 const PasswordInput = ({
@@ -36,11 +37,11 @@ const PasswordInput = ({
   dataTestId,
   margin,
   autoComplete,
-  sx
+  sx,
 }: PasswordInputProps) => {
   const {
     register,
-    formState: { errors }
+    formState: { errors },
   } = useFormContext();
 
   const intl = useIntl();
@@ -49,20 +50,20 @@ const PasswordInput = ({
   const { ref, ...rest } = register(name, {
     required: {
       value: required,
-      message: intl.formatMessage({ id: "thisFieldIsRequired" })
+      message: intl.formatMessage({ id: "thisFieldIsRequired" }),
     },
     maxLength:
       maxLength !== null
         ? {
             value: maxLength,
-            message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength })
+            message: intl.formatMessage({ id: "maxFieldLength" }, { max: maxLength }),
           }
         : undefined,
     minLength:
       minLength !== null
         ? { value: minLength, message: intl.formatMessage({ id: "minFieldLength" }, { min: minLength }) }
         : undefined,
-    validate
+    validate,
   });
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false);
@@ -93,7 +94,13 @@ const PasswordInput = ({
             <IconButton
               tooltip={{ show: true, messageId: shouldShowPassword ? "hidePassword" : "showPassword" }}
               key="eyeButton"
-              icon={shouldShowPassword ? <VisibilityOffOutlinedIcon /> : <RemoveRedEyeOutlinedIcon />}
+              icon={
+                shouldShowPassword ? (
+                  <VisibilityOffOutlinedIcon data-test-id="icon_hide_password" />
+                ) : (
+                  <RemoveRedEyeOutlinedIcon data-test-id="icon_show_password" />
+                )
+              }
               color="primary"
               onClick={() => {
                 inputRef.current.focus();
@@ -103,7 +110,7 @@ const PasswordInput = ({
             {endAdornment}
           </>
         ),
-        ...restInputProps
+        ...restInputProps,
       }}
       {...rest}
     />

@@ -4,6 +4,20 @@ import ResourceLocationCell from "components/ResourceLocationCell";
 import TextWithDataTestId from "components/TextWithDataTestId";
 import { intl } from "translations/react-intl-config";
 
+type CellRowData = Record<string, string>;
+
+type ResourceLocationConfig = {
+  headerDataTestId?: string;
+  idAccessor?: string;
+  typeAccessor?: string;
+  locationAccessors?: {
+    region?: string;
+    folderId?: string;
+    zoneId?: string;
+  };
+  accessorKey?: string;
+};
+
 const resourceLocation = ({
   headerDataTestId,
   idAccessor = "cloud_account_id",
@@ -11,40 +25,42 @@ const resourceLocation = ({
   locationAccessors: {
     region: regionAccessor = "region",
     folderId: folderIdAccessor = "folder_id",
-    zoneId: zoneIdAccessor = "zone_id"
+    zoneId: zoneIdAccessor = "zone_id",
   } = {},
-  accessorKey: nameAccessor = "cloud_account_name"
-}) => ({
+  accessorKey: nameAccessor = "cloud_account_name",
+}: ResourceLocationConfig = {}) => ({
   header: (
     <TextWithDataTestId dataTestId={headerDataTestId}>
       <FormattedMessage id="location" />
     </TextWithDataTestId>
   ),
   accessorKey: nameAccessor,
-  cell: ({ row: { original } }) => (
+  cell: ({ row: { original } }: { row: { original: CellRowData } }) => (
     <ResourceLocationCell
       dataSource={{
         id: original[idAccessor],
         name: original[nameAccessor],
-        type: original[typeAccessor]
+        type: original[typeAccessor],
       }}
       caption={[
         {
           key: "region",
-          node: original[regionAccessor] ? <KeyValueLabel keyMessageId="region" value={original[regionAccessor]} /> : null
+          node: original[regionAccessor] ? <KeyValueLabel keyMessageId="region" value={original[regionAccessor]} /> : null,
         },
         {
           key: "folderId",
-          node: original[folderIdAccessor] ? <KeyValueLabel keyMessageId="folderId" value={original[folderIdAccessor]} /> : null
+          node: original[folderIdAccessor] ? (
+            <KeyValueLabel keyMessageId="folderId" value={original[folderIdAccessor]} />
+          ) : null,
         },
         {
           key: "zoneId",
-          node: original[zoneIdAccessor] ? <KeyValueLabel keyMessageId="zoneId" value={original[zoneIdAccessor]} /> : null
-        }
+          node: original[zoneIdAccessor] ? <KeyValueLabel keyMessageId="zoneId" value={original[zoneIdAccessor]} /> : null,
+        },
       ].filter(({ node }) => node !== null)}
     />
   ),
-  globalFilterFn: (_, filterValue, { row: { original } }) => {
+  globalFilterFn: (_: unknown, filterValue: string, { row: { original } }: { row: { original: CellRowData } }) => {
     const { [nameAccessor]: name, [regionAccessor]: region, [folderIdAccessor]: folderId, [zoneIdAccessor]: zoneId } = original;
 
     const search = filterValue.toLocaleLowerCase();
@@ -53,12 +69,12 @@ const resourceLocation = ({
       name,
       `${intl.formatMessage({ id: "region" })}: ${region}`,
       `${intl.formatMessage({ id: "folderId" })}: ${folderId}`,
-      `${intl.formatMessage({ id: "zoneId" })}: ${zoneId}`
+      `${intl.formatMessage({ id: "zoneId" })}: ${zoneId}`,
     ]
       .join(" ")
       .toLocaleLowerCase()
       .includes(search);
-  }
+  },
 });
 
 export default resourceLocation;

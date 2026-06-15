@@ -1,5 +1,5 @@
 import { ReactNode, forwardRef } from "react";
-import { Box } from "@mui/material";
+import { Box, type SxProps, type Theme } from "@mui/material";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 
@@ -23,7 +23,7 @@ type KeyValueLabelProps = KeyType & {
     value?: string;
   };
   gutterBottom?: boolean;
-  sx?: Record<string, unknown>;
+  sx?: SxProps<Theme>;
 };
 
 const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
@@ -57,7 +57,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
           display: "flex",
           alignItems: "center",
           flexWrap: "wrap",
-          ...sx
+          ...sx,
         }}
       >
         <Box
@@ -66,17 +66,17 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
             display: "flex",
             flexWrap: "nowrap",
             whiteSpace: "normal",
-            overflowWrap: "anywhere"
+            overflowWrap: "anywhere",
           }}
         >
           {renderKey()}
-          {<>:&nbsp;</>}
+          <>:&nbsp;</>
         </Box>
         <Box
           sx={{
             fontWeight: isBoldValue ? "bold" : undefined,
             whiteSpace: "normal",
-            overflowWrap: "anywhere"
+            overflowWrap: "anywhere",
           }}
           data-test-id={valueDataTestId}
         >
