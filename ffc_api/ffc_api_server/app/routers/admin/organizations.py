@@ -5,6 +5,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.concurrency import run_in_threadpool
 from fastapi_pagination import create_page, resolve_params
+from requests import RequestException
 from sqlalchemy import Select
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
@@ -28,13 +29,14 @@ from ffc_api.ffc_api_server.app.rql import (
 )
 from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema
 from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceWithExpenses
-from ffc_api.ffc_api_server.app.schemas.organizations import OrganizationRead
+from ffc_api.ffc_api_server.app.schemas.organizations import OrganizationExpenses, OrganizationRead
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
 from ffc_api.ffc_api_server.app.schemas.users import UserRead
-from ffc_api.ffc_api_server.app.services.expenses import get_forecasts
+from ffc_api.ffc_api_server.app.services.expenses import get_forecasts, get_organization_expenses
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
 from ffc_api.ffc_api_server.app.services.users import build_user_read
+from ffc_api.ffc_api_server.app.utils import wrap_exc_in_http_response
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -210,6 +212,36 @@ async def get_datasources_by_organization_id(
         params=params,
         total=total,
     )
+
+
+@router.get(
+    "/{organization_id}/expenses",
+    response_model=OrganizationExpenses,
+    responses={
+        200: {
+            "description": "Organization expenses",
+            "content": {
+                "application/json": {
+                    "example": None,
+                },
+            },
+        },
+    },
+)
+async def get_expenses_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+):
+    with wrap_exc_in_http_response(
+        exc_cls=RequestException,
+        status_code=502,
+    ):
+        expenses = await run_in_threadpool(get_organization_expenses, organization) or {}
+        return OrganizationExpenses(
+            limit=expenses.get("limit", 0),
+            expenses_this_month=expenses.get("cost", 0),
+            expenses_this_month_forecast=expenses.get("forecast", 0),
+            possible_monthly_saving=expenses.get("saving", 0),
+        )
 
 
 @router.get(

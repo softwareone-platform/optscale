@@ -21,6 +21,7 @@ settings = Dynaconf(
     MYSQL_PORT=3306,
     AUTH_DB="auth-db",
     AUTH_URL="http://auth.service:8080",
+    REST_API_URL="http://rest-api.service:8080",
     CLUSTER_SECRET="secret",
     CLICKHOUSE_HOST="clickhouse.database.azure.com",
     CLICKHOUSE_PORT=9000,
