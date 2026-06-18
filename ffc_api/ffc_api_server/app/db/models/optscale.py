@@ -4,10 +4,23 @@ OptScale database models (read-only).
 These models are NOT tracked by Alembic migrations.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Optional
 
-from sqlalchemy import TIMESTAMP, Boolean, ForeignKey, Integer, String, Text, and_, func, select
+from sqlalchemy import (
+    TIMESTAMP,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    and_,
+    exists,
+    func,
+    select,
+)
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -20,7 +33,7 @@ from sqlalchemy.orm import (
 
 from ffc_api.ffc_api_server.app.conf import get_settings
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
-from ffc_api.ffc_api_server.app.enums import TagResourceType
+from ffc_api.ffc_api_server.app.enums import RoleName, RoleType, TagResourceType
 
 settings = get_settings()
 
@@ -75,6 +88,24 @@ class Pool(Base, IDMixin):
     deleted_at: Mapped[int] = mapped_column(Integer)
 
 
+class Role(Base):
+    __tablename__ = "role"
+    __table_args__ = {"schema": AUTH_DB_SCHEMA}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(64), index=True)
+    purpose: Mapped[str] = mapped_column(String(64))
+    deleted_at: Mapped[int] = mapped_column(Integer)
+
+
+class Type(Base):
+    __tablename__ = "type"
+    __table_args__ = {"schema": AUTH_DB_SCHEMA}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(24), index=True)
+
+
 class User(Base, IDMixin):
     __tablename__ = "employee"
     __table_args__ = {"schema": DB_SCHEMA}
@@ -101,6 +132,43 @@ class User(Base, IDMixin):
         viewonly=True,
         lazy="selectin",
     )
+
+    @hybrid_property
+    def is_admin(self) -> bool:
+        from ffc_api.ffc_api_server.app.services.roles_loader import get_roles
+
+        if self.auth_user is None:
+            return False
+        roles = get_roles()
+        return any(
+            roles.get_role_name(a.role_id) == RoleName.MANAGER.value
+            and roles.get_type_name(a.type_id) == RoleType.ORGANIZATION.value
+            for a in self.auth_user.assignments
+        )
+
+    @is_admin.inplace.expression
+    @classmethod
+    def _is_admin_expr(cls):
+        return (
+            exists()
+            .where(
+                Assignment.user_id == cls.auth_user_id,
+                Assignment.role_id == Role.id,
+                Role.name == RoleName.MANAGER.value,
+                Assignment.type_id == Type.id,
+                Type.name == RoleType.ORGANIZATION.value,
+            )
+            .label("is_admin")
+        )
+
+    @hybrid_property
+    def created_at_dt(self) -> datetime:
+        return datetime.fromtimestamp(self.created_at, tz=UTC)
+
+    @created_at_dt.inplace.expression
+    @classmethod
+    def _created_at_dt_expr(cls):
+        return func.from_unixtime(cls.created_at, type_=DateTime)
 
 
 class DataSource(Base):
@@ -168,24 +236,6 @@ class AuthUser(Base, IDMixin):
             .scalar_subquery(),
             deferred=True,
         )
-
-
-class Role(Base):
-    __tablename__ = "role"
-    __table_args__ = {"schema": AUTH_DB_SCHEMA}
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(64), index=True)
-    purpose: Mapped[str] = mapped_column(String(64))
-    deleted_at: Mapped[int] = mapped_column(Integer)
-
-
-class Type(Base):
-    __tablename__ = "type"
-    __table_args__ = {"schema": AUTH_DB_SCHEMA}
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(24), index=True)
 
 
 class Assignment(Base, IDMixin):

@@ -1372,7 +1372,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.0.1,<2" },
     { name = "python-etcd", specifier = ">=0.4.5,<0.5.0" },
     { name = "pyyaml", specifier = ">=6.0.2,<7" },
-    { name = "requela", specifier = ">=0.1.19,<1" },
+    { name = "requela", specifier = ">=0.2.0,<3" },
     { name = "restapi-client", editable = "../optscale_client/rest_api_client" },
     { name = "snippettoni", specifier = ">=0.1.0,<0.2.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.40,<3" },
@@ -3034,15 +3034,15 @@ wheels = [
 
 [[package]]
 name = "requela"
-version = "0.1.19"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "lark" },
     { name = "pytest-randomly" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/d8/ff00ba7b93fd77b20620d9fddea6d4b8601e1f4471f686d98bb8c4815421/requela-0.1.19.tar.gz", hash = "sha256:2076eed5efac769b71f27e45ce095d8ed996985eb8c578d67e8b9ce3ebd4694b", size = 553060, upload-time = "2026-06-05T16:54:25.752Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/34/32cac2330b1dc53f84b6292b83f19482e9b2ae8e0a67ac5619234bb0677b/requela-0.2.0.tar.gz", hash = "sha256:7356cfe6ed14a2c073bc2cf174ad2310234af55cd42058da0a5cf959931f50fa", size = 553487, upload-time = "2026-06-17T05:59:17.364Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2b/7a/0ea31438b89472ed86c08c30f66170566da90994c0ae5a65613152542d1e/requela-0.1.19-py3-none-any.whl", hash = "sha256:9937cc4bc876f2e6e4acc5011da51fc51b1513a466b43700ee190e3d78f3df2a", size = 22706, upload-time = "2026-06-05T16:54:24.397Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/83/aa73c115afa41a414fc8794293f2e98dad365dc331c4094688a3cd7d9c2a/requela-0.2.0-py3-none-any.whl", hash = "sha256:9f91dc30afe84925f644fb9b773e56dacf0ab52e946e32f4185477082aa755dc", size = 22739, upload-time = "2026-06-17T05:59:16.155Z" },
 ]
 
 [[package]]
