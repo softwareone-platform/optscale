@@ -14,3 +14,14 @@ class RolePurposes(enum.Enum):
     optscale_member = "optscale_member"
     optscale_engineer = "optscale_engineer"
     optscale_manager = "optscale_manager"
+
+
+class RoleType(enum.Enum):
+    POOL = "pool"
+    ORGANIZATION = "organization"
+
+
+class RoleName(enum.Enum):
+    MANAGER = "manager"
+    ENGINEER = "engineer"
+    MEMBER = "member"

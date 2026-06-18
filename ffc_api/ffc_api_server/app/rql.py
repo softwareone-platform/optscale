@@ -2,6 +2,7 @@ from urllib.parse import parse_qs, quote, unquote
 
 from fastapi import Request
 from requela import FieldRule, ModelRQLRules, RelationshipRule, RequelaError
+from requela.dataclasses import Operator
 from sqlalchemy.sql.selectable import Select
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
@@ -35,11 +36,14 @@ class UserRules(ModelRQLRules):
     __model__ = User
 
     id = FieldRule()
-    name = FieldRule()
+    name = FieldRule(alias="display_name")
     auth_user = RelationshipRule(rules=AuthUserRules())
+    email = FieldRule(source="auth_user.email")
+    is_admin = FieldRule(allowed_operators=[Operator.EQ, Operator.NE])
+    created_at = FieldRule(source="created_at_dt")
+    last_login = FieldRule(source="auth_user.last_login")
 
     tags = RelationshipRule(rules=TagRules())
-    email = FieldRule(source="auth_user.email")
 
 
 class OrganizationRules(ModelRQLRules):
@@ -52,14 +56,19 @@ class OrganizationRules(ModelRQLRules):
     tags = RelationshipRule(rules=TagRules())
 
 
-class DataSourceRules(ModelRQLRules):
+class BaseDataSourceRules(ModelRQLRules):
     __model__ = DataSource
 
     id = FieldRule()
     name = FieldRule()
     type = FieldRule()
-    account_id = FieldRule()
-    parent_id = FieldRule()
+
+
+class DataSourceRules(BaseDataSourceRules):
+    __model__ = DataSource
+
+    account_id = FieldRule(alias="datasource_id")
+    parent = RelationshipRule(rules=BaseDataSourceRules())
 
     tags = RelationshipRule(rules=TagRules())
 
