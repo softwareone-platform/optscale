@@ -82,10 +82,18 @@ class AzurePriceProcessor(BasePriceProcessor):
         currencies = set(map(lambda x: x['currency'], orgs['organizations']))
         return list(currencies)
 
-    def _process_global_prices(self, http_client, old_prices_map):
+    def _get_old_prices_map(self, started_at, currency):
+        old_prices = self.prices.find(
+            {'last_seen': {'$gte': started_at}, 'currencyCode': currency},
+            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
+        )
+        return {self.unique_values(p): p for p in old_prices}
+
+    def _process_global_prices(self, http_client, started_at):
         LOG.info('Start processing Azure Global prices')
         for currency in self._get_currencies_list():
             LOG.info('Processing Azure prices for currency: %s', currency)
+            old_prices_map = self._get_old_prices_map(started_at, currency)
             processed_keys = {}
             prices_counter = 0
 
@@ -116,7 +124,7 @@ class AzurePriceProcessor(BasePriceProcessor):
                 next_page = new_url
                 prices_counter += response.get('Count', 0)
 
-    def _process_china_prices(self, http_client, old_prices_map):
+    def _process_china_prices(self, http_client, started_at):
         LOG.info('Start processing Azure China prices')
         url = 'https://prices.azure.cn/api/retail/pricesheet/download?' \
               'api-version=2023-06-01-preview'
@@ -125,22 +133,38 @@ class AzurePriceProcessor(BasePriceProcessor):
         _, response = http_client.get(download_url)
         stream = StringIO(response.decode('utf-8'))
         csv_reader = csv.DictReader(stream)
-        new_prices_map = {self.unique_values(p): p for p in csv_reader}
-        self.update_price_records(new_prices_map, old_prices_map, {})
-        LOG.info('Total number of prices got from cloud: %s',
-                 len(new_prices_map))
+        # Stream the price sheet in batches instead of materializing the whole
+        # catalog at once. Old prices are loaded lazily per currency so peak
+        # memory stays bounded by a single batch + the currencies actually seen.
+        old_prices_map = {}
+        loaded_currencies = set()
+        processed_keys = {}
+        new_prices_map = {}
+        prices_counter = 0
+        for price in csv_reader:
+            prices_counter += 1
+            currency = price.get('currencyCode')
+            if currency not in loaded_currencies:
+                old_prices_map.update(
+                    self._get_old_prices_map(started_at, currency))
+                loaded_currencies.add(currency)
+            new_prices_map[self.unique_values(price)] = price
+            if len(new_prices_map) >= PRICES_PER_REQUEST:
+                self.update_price_records(
+                    new_prices_map, old_prices_map, processed_keys)
+                new_prices_map = {}
+        if new_prices_map:
+            self.update_price_records(
+                new_prices_map, old_prices_map, processed_keys)
+        LOG.info('Total number of prices got from cloud: %s', prices_counter)
 
     def process_prices(self):
         last_discovery = self.get_last_discovery()
-        old_prices = self.prices.find(
-            {'last_seen': {'$gte': last_discovery.get('started_at', 0)}},
-            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
-        )
-        old_prices_map = {self.unique_values(p): p for p in old_prices}
+        started_at = last_discovery.get('started_at', 0)
 
         http_client = Client()
-        self._process_global_prices(http_client, old_prices_map)
-        self._process_china_prices(http_client, old_prices_map)
+        self._process_global_prices(http_client, started_at)
+        self._process_china_prices(http_client, started_at)
 
     def update_price_records(self, new_prices_map, old_prices_map,
                              processed_keys):
@@ -148,20 +172,19 @@ class AzurePriceProcessor(BasePriceProcessor):
             return
         now_ts = int(datetime.now(tz=timezone.utc).timestamp())
         update_ids = []
-        for key, new_price in new_prices_map.copy().items():
-            processed_key = processed_keys.get(key)
-            if processed_key:
+        for key in list(new_prices_map.keys()):
+            new_price = new_prices_map[key]
+            if processed_keys.get(key):
                 new_prices_map.pop(key)
                 continue
             processed_keys[key] = True
-            if self.change_values(new_price) == self.change_values(
-                    old_prices_map.get(key, {})):
-                update_ids.append(old_prices_map.get(key)['_id'])
+            old_price = old_prices_map.get(key, {})
+            if self.change_values(new_price) == self.change_values(old_price):
+                update_ids.append(old_price['_id'])
                 new_prices_map.pop(key)
                 continue
 
-            new_prices_map[key].update(
-                {'created_at': now_ts, 'last_seen': now_ts})
+            new_price.update({'created_at': now_ts, 'last_seen': now_ts})
         if update_ids:
             self.prices.update_many(
                 filter={
