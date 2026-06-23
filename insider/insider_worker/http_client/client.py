@@ -35,12 +35,13 @@ class Client:
         response_body = None
         # pylint: disable=E1101
         if response.status_code != requests.codes.no_content:
-            if 'application/json' in response.headers['Content-Type']:
+            content_type = response.headers.get('Content-Type', '')
+            if 'application/json' in content_type:
                 response_body = json.loads(
                     response.content.decode('utf-8'))
-            if 'text/plain' in response.headers['Content-Type']:
+            elif 'text/plain' in content_type:
                 response_body = response.content.decode()
-            if 'application/octet-stream' in response.headers['Content-Type']:
+            else:
                 response_body = response.content
         return response.status_code, response_body
 
