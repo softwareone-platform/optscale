@@ -18,6 +18,7 @@ from tools.cloud_adapter.exceptions import InvalidResourceTypeException
 from tools.cloud_adapter.model import (
     ResourceTypes, RES_MODEL_MAP, InstanceResource, RdsInstanceResource
 )
+from tools.cloud_adapter.clouds.gcp import GcpInstance
 from tools.optscale_time import utcnow, utcnow_timestamp
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.insider_client.client import Client as InsiderClient
@@ -37,7 +38,10 @@ DEFAULT_DISCOVER_SIZE = 10000
 
 class ResourcesSaver:
 
-    MODEL_MAP_INVERTED = {v: k for k, v in RES_MODEL_MAP.items()}
+    MODEL_MAP_INVERTED = {
+        GcpInstance: ResourceTypes.instance.name,
+        **{v: k for k, v in RES_MODEL_MAP.items()}
+    }
 
     def __init__(self, rest_cl, insider_cl, limit, timeout, pause_timeout):
         queue_len = int(limit / CHUNK_SIZE) if CHUNK_SIZE else 0
@@ -140,20 +144,25 @@ class ResourcesSaver:
         flavor_archs = {}
         resource_type = None
         for resource in resources:
-            if type(resource) not in [InstanceResource, RdsInstanceResource]:
+            if type(resource) not in [InstanceResource, RdsInstanceResource, GcpInstance]:
                 break
             flavor_name = resource.flavor
-            if resource.cloud_type == 'azure_cnr':
+            if resource.cloud_type in ['azure_cnr', 'aws_cnr', 'gcp_cnr']:
                 flavor = flavors.get(flavor_name)
                 if not flavor:
                     if not resource_type:
                         resource_type = getattr(
                             ResourceTypes, self.MODEL_MAP_INVERTED[
                                 type(resource)]).name
-                    _, flavor = self.insider_cl.find_flavor(
-                        resource.cloud_type, resource_type, resource.region,
-                        {'source_flavor_id': flavor_name}, 'current',
-                        cloud_account_id=resource.cloud_account_id)
+                    try:
+                        _, flavor = self.insider_cl.find_flavor(
+                            resource.cloud_type, resource_type, resource.region,
+                            {'source_flavor_id': flavor_name}, 'current',
+                            cloud_account_id=resource.cloud_account_id)
+                    except Exception as exc:
+                        LOG.warning('Unable to find flavor %s for '
+                                    'cloud account %s: %s', flavor_name,
+                                    resource.cloud_account_id, str(exc))
                 if flavor:
                     flavors[flavor_name] = flavor
                     resource.cpu_count = flavor['cpu']
