@@ -1,15 +1,24 @@
+import uuid
+
 from fastapi import HTTPException, status
-from sqlalchemy import or_
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.dependencies.db import TagRepository
-from ffc_api.ffc_api_server.app.dependencies.path import TagId
+from ffc_api.ffc_api_server.app.dependencies.path import TagIdOrName
 from ffc_api.ffc_api_server.app.enums import TagResourceType
+
+
+def tag_identity_clause(tag_id_or_name: TagIdOrName):
+    try:
+        tag_uuid = uuid.UUID(tag_id_or_name)
+        return Tag.id == tag_uuid
+    except ValueError:
+        return Tag.name == tag_id_or_name
 
 
 async def fetch_tag_or_404(
     resource_id: str,
-    tag_id_or_name: TagId,
+    tag_id_or_name: TagIdOrName,
     tag_repo: TagRepository,
     resource_type: TagResourceType,
 ) -> Tag:
@@ -18,7 +27,7 @@ async def fetch_tag_or_404(
             Tag.resource_id == resource_id,
             Tag.deleted_at.is_(None),
             Tag.resource_type == resource_type,
-            or_(Tag.id == tag_id_or_name, Tag.name == tag_id_or_name),
+            tag_identity_clause(tag_id_or_name),
         ]
     )
 
