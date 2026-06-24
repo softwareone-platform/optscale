@@ -8,7 +8,7 @@ from ffc_api.ffc_api_server.app.db.handlers import NotFoundError
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import DataSource
 from ffc_api.ffc_api_server.app.dependencies.db import DataSourceRepository, TagRepository
-from ffc_api.ffc_api_server.app.dependencies.path import DataSourceId, TagId
+from ffc_api.ffc_api_server.app.dependencies.path import DataSourceId, TagIdOrName
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, paginate
 from ffc_api.ffc_api_server.app.rql import DataSourceRules, RQLQuery, TagRules
@@ -85,7 +85,7 @@ async def get_tags_by_datasource_id(
 )
 async def get_tag_by_datasource_id(
     datasource: Annotated[DataSource, Depends(fetch_datasource_or_404)],
-    tag_id_or_name: TagId,
+    tag_id_or_name: TagIdOrName,
     tag_repo: TagRepository,
 ):
     tag = await fetch_tag_or_404(

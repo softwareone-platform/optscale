@@ -17,7 +17,7 @@ from ffc_api.ffc_api_server.app.dependencies.db import (
     TagRepository,
     UserRepository,
 )
-from ffc_api.ffc_api_server.app.dependencies.path import TagId
+from ffc_api.ffc_api_server.app.dependencies.path import TagIdOrName
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from ffc_api.ffc_api_server.app.rql import (
@@ -271,7 +271,7 @@ async def get_tags_by_organization_id(
 )
 async def get_tag_by_organization_id(
     organization: Annotated[Organization, Depends(fetch_organization_or_404)],
-    tag_id_or_name: TagId,
+    tag_id_or_name: TagIdOrName,
     tag_repo: TagRepository,
 ):
     tag = await fetch_tag_or_404(

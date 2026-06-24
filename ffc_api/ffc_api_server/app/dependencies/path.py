@@ -6,4 +6,5 @@ from fastapi import Path
 OrganizationId = Annotated[str, Path()]
 DataSourceId = Annotated[str, Path()]
 TagId = Annotated[uuid.UUID, Path()]
+TagIdOrName = Annotated[str, Path()]
 UserId = Annotated[str, Path()]
