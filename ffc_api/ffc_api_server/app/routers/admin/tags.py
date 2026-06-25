@@ -94,7 +94,7 @@ async def delete_tag_by_id(
     "/{tag_id}",
     response_model=TagRead,
 )
-async def update_account(
+async def update_tag_by_id(
     data: TagUpdate,
     tag_repo: TagRepository,
     tag: Annotated[Tag, Depends(fetch_tag_or_404)],
