@@ -1,5 +1,5 @@
-/** Demo-account credentials minted by `DemoAccountService`. */
-export interface DemoAccountCredentials {
+/** Test-account credentials minted by `TestAccountService`. */
+export interface TestAccountCredentials {
   organization_id: string;
   email: string;
   password: string;

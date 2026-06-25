@@ -12,8 +12,7 @@ export abstract class BasePage {
   readonly page: Page;
   readonly url: string;
   readonly main: Locator;
-  readonly initialisationMessage: Locator;
-  readonly loadingPageImg: Locator;
+  readonly loadingPageImage: Locator;
   readonly progressBar: Locator;
   readonly table: Locator;
 
@@ -22,8 +21,7 @@ export abstract class BasePage {
     this.url = url;
     this.main = this.page.locator('main');
     this.table = this.main.locator('table');
-    this.initialisationMessage = this.page.getByTestId('p_initializing');
-    this.loadingPageImg = this.page.getByRole('img', { name: 'Loading page' });
+    this.loadingPageImage = this.page.getByRole('img', { name: 'Loading page' });
     this.progressBar = this.page.locator('//main[@id="mainLayoutWrapper"]//*[@role="progressbar"]');
   }
 
@@ -32,7 +30,7 @@ export abstract class BasePage {
     debugLog(`Navigating to URL: ${customUrl ? customUrl : this.url}`);
     await this.page.goto(customUrl ? customUrl : this.url, { waitUntil: 'load' });
     await this.page.addStyleTag({ path: TEST_OVERRIDES_CSS_PATH });
-    await this.waitForLoadingPageImgToDisappear();
+    await this.waitForLoadingPageImageToDisappear();
   }
 
 
@@ -56,21 +54,21 @@ export abstract class BasePage {
     await locator.filter({ hasText: expectedText }).waitFor();
   }
 
-  async evaluateActiveButton(button: Locator): Promise<boolean> {
+  async isButtonActive(button: Locator): Promise<boolean> {
     return await button.evaluate(el => {
       return Array.from(el.classList).some(className => className.endsWith('-button-activeButton'));
     });
   }
 
-  async waitForLoadingPageImgToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
+  async waitForLoadingPageImageToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {
-      await this.loadingPageImg.first().waitFor({ timeout: config.timeouts.probe });
+      await this.loadingPageImage.first().waitFor({ timeout: config.timeouts.probe });
     } catch {
       return;
     }
     try {
       debugLog('Waiting for loading page image to disappear...');
-      await this.loadingPageImg.waitFor({ state: 'hidden', timeout });
+      await this.loadingPageImage.waitFor({ state: 'hidden', timeout });
     } catch {
       errorLog('Loading page image did not disappear within the timeout.');
     }

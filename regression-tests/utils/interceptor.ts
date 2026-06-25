@@ -44,10 +44,10 @@ async function interceptGraphQLRequest<T>(page: Page, operationName: string, moc
   });
 }
 
-/** Registers every entry in `config` as a Playwright route handler. */
-export async function apiInterceptors(page: Page, config: InterceptionEntry[]): Promise<void> {
+/** Registers every entry in `entries` as a Playwright route handler. */
+export async function apiInterceptors(page: Page, entries: InterceptionEntry[]): Promise<void> {
   await Promise.all(
-    config.map(({ url, mock, gql }) => {
+    entries.map(({ url, mock, gql }) => {
       const id = createInterceptorId(gql, url);
       debugLog(`[Register] ${id}`);
       const onHit = () => debugLog(`[Hit] ${id}`);

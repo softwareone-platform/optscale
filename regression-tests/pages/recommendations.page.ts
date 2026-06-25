@@ -22,7 +22,7 @@ export class RecommendationsPage extends BasePage {
   }
 
   async clickCardsButtonIfNotActive(): Promise<void> {
-    if (!(await this.evaluateActiveButton(this.cardsBtn))) {
+    if (!(await this.isButtonActive(this.cardsBtn))) {
       await this.cardsBtn.click();
     }
   }

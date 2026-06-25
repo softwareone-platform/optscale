@@ -35,7 +35,7 @@ export const config = {
   /** Per-host paths: snapshot template + session cache, both keyed by `hostSlug`. */
   paths: {
     snapshotTemplate: `./snapshots/${snapshotSubdir}/{arg}{ext}`,
-    demoSessionFile: `.cache/${hostSlug(env.apiBaseUrl, 'demo-account')}-session.json`,
+    testAccountSessionFile: `.cache/${hostSlug(env.apiBaseUrl, 'test-account')}-session.json`,
   },
 } as const;
 

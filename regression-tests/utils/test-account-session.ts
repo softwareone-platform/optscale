@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 import path from 'path';
-import { type StoredDemoSession } from '@/types';
+import { type StoredTestAccountSession } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
 import { config } from '@/utils/config';
 
@@ -22,12 +22,12 @@ export async function injectLocalforage(page: Page): Promise<void> {
 }
 
 /**
- * Restores the cached demo-account session into localforage on a fresh `/` load.
+ * Restores the cached test-account session into localforage on a fresh `/` load.
  * `setFixedTime=true` pins the clock — only enable for time-independent tests.
  */
-export async function restoreUserSessionInLocalForage(page: Page, setFixedTime = false): Promise<void> {
-  const session = safeReadJsonFile<StoredDemoSession>(config.paths.demoSessionFile);
-  if (!session) throw new Error(`No cached demo-account session at ${config.paths.demoSessionFile}`);
+export async function restoreSession(page: Page, setFixedTime = false): Promise<void> {
+  const session = safeReadJsonFile<StoredTestAccountSession>(config.paths.testAccountSessionFile);
+  if (!session) throw new Error(`No cached test-account session at ${config.paths.testAccountSessionFile}`);
 
   // Pin the clock before the first navigation so all app timestamps see it.
   if (setFixedTime) await page.clock.setFixedTime(FIXED_TIME);
@@ -36,7 +36,7 @@ export async function restoreUserSessionInLocalForage(page: Page, setFixedTime =
   await injectLocalforage(page);
 
   // Write the cached session and verify it committed.
-  await page.evaluate(async (data: StoredDemoSession) => {
+  await page.evaluate(async (data: StoredTestAccountSession) => {
     const lf = (window as LocalForageWindow).localforage!;
     await lf.setItem('root', data.localforageStoredSession.root);
     const written = await lf.getItem('root');

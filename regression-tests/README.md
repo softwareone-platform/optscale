@@ -126,7 +126,7 @@ regression-tests/
 │
 ├── setup/
 │   ├── auth.setup.ts               # Authenticates once and stores session state for all tests
-│   └── demo-account-service.ts     # `DemoAccountService` — mints demo-account credentials via `/restapi/v2/live_demo`
+│   └── test-account-service.ts     # `TestAccountService` — mints test-account credentials via `/restapi/v2/live_demo`
 │
 ├── styles/
 │   ├── pre-screenshot-styles.css   # CSS injected before screenshots to ensure pixel-identical rendering
@@ -134,7 +134,7 @@ regression-tests/
 │
 ├── utils/
 │   ├── debug-logging.ts            # `debugLog` / `errorLog` + `attachBrowserErrorLogging`, gated by env flags
-│   ├── demo-account-session.ts     # Injects localforage, restores the cached demo-account session
+│   ├── test-account-session.ts     # Injects localforage, restores the cached test-account session
 │   ├── env.ts                      # Single source of truth for `process.env.*` + `requireEnv(...)` validator
 │   ├── file.ts                     # `safeReadJsonFile<T>` / `safeWriteJsonFile` helpers
 │   ├── interceptor.ts              # Route interception implementation (REST + GraphQL mock routing)
@@ -394,7 +394,7 @@ All three options are declared in [`fixtures/page.fixture.ts`](./fixtures/page.f
 
 | Option           | Default     | What it does                                                                                                                                                                                                                                          |
 |------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `restoreSession` | `true`      | Injects the cached live-demo session into `localforage` on a fresh `/` load so the app starts logged-in. Set to `false` only for specs that exercise the login flow itself.                                                                           |
+| `restoreSession` | `true`      | Injects the cached test-account session into `localforage` on a fresh `/` load so the app starts logged-in. Set to `false` only for specs that exercise the login flow itself.                                                                           |
 | `setFixedTime`   | `true`      | Pins the browser clock to `2025-01-25T12:00:00Z` via `page.clock.setFixedTime` so date-dependent UI (charts, "Last seen 3 days ago", etc.) renders identically run-to-run. Set to `false` for specs that rely on real time or test date-picker logic. |
 | `interceptAPI`   | `undefined` | Array of REST/GraphQL route mocks (see above). Wrapped in `{ entries: [...] }` to work around a Playwright array-unwrap quirk.                                                                                                                        |
 

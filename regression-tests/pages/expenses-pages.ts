@@ -32,7 +32,7 @@ export class ExpensesPage extends BasePage {
   }
 
   async clickDailyBtnIfNotSelected(): Promise<void> {
-    if (!(await this.evaluateActiveButton(this.dailyBtn))) {
+    if (!(await this.isButtonActive(this.dailyBtn))) {
       await this.dailyBtn.click();
     }
   }

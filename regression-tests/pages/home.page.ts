@@ -19,7 +19,7 @@ export class HomePage extends BasePage {
   }
 
   async waitForAllBoxesToLoad(): Promise<void> {
-    await this.waitForLoadingPageImgToDisappear();
+    await this.waitForLoadingPageImageToDisappear();
     await this.organizationExpensesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.topResourcesBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });
     await this.recommendationsBlock.locator('h3 + span[role="progressbar"]').waitFor({ state: 'detached' });

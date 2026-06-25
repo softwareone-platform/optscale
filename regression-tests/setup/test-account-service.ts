@@ -1,14 +1,14 @@
-import { StoredDemoSession } from '@/types';
+import { StoredTestAccountSession } from '@/types';
 import { APIRequestContext, request } from '@playwright/test';
-import { DemoAccountCredentials } from '@/types';
+import { TestAccountCredentials } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
 import { config, requireEnv } from '@/utils/config';
 
-export class DemoAccountService {
+export class TestAccountService {
   private static readonly token: string = config.testAccountToken;
 
   /** POSTs to `/restapi/v2/live_demo` and returns the minted credentials. */
-  static async getDemoLoginCredentials(email: string, subscribe = false): Promise<DemoAccountCredentials> {
+  static async getTestAccountCredentials(email: string, subscribe = false): Promise<TestAccountCredentials> {
     const context = await this.createContext();
 
     const response = await context.post('/restapi/v2/live_demo', {
@@ -17,10 +17,10 @@ export class DemoAccountService {
 
     if (!response.ok()) {
       const errorText = await response.text();
-      throw new Error(`Demo-account request failed: ${response.status()} - ${errorText}`);
+      throw new Error(`Test-account request failed: ${response.status()} - ${errorText}`);
     }
 
-    return (await response.json()) as DemoAccountCredentials;
+    return (await response.json()) as TestAccountCredentials;
   }
 
   /**
@@ -28,9 +28,9 @@ export class DemoAccountService {
    * Host identity is encoded in the cache filename, so cross-host sessions
    * simply won't be found.
    */
-  static hasCachedDemoCredentials(): boolean {
-    const file = safeReadJsonFile<Partial<StoredDemoSession>>(config.paths.demoSessionFile);
-    const cached = file?.demoAccountCredentials;
+  static hasCachedTestAccountCredentials(): boolean {
+    const file = safeReadJsonFile<Partial<StoredTestAccountSession>>(config.paths.testAccountSessionFile);
+    const cached = file?.testAccountCredentials;
 
     return !!cached && isSessionFresh(cached.created_at);
   }

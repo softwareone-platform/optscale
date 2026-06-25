@@ -1,12 +1,12 @@
 import { expect, test as setup } from '@playwright/test';
-import { injectLocalforage } from '@/utils/demo-account-session';
+import { injectLocalforage } from '@/utils/test-account-session';
 import { safeReadJsonFile, safeWriteJsonFile } from '@/utils/file';
-import { DemoAccountService } from './demo-account-service';
+import { TestAccountService } from './test-account-service';
 import { config } from '@/utils/config';
-import { type StoredDemoSession } from '@/types';
+import { type StoredTestAccountSession } from '@/types';
 import type { Page } from '@playwright/test';
 
-const DEMO_EMAIL = 'example@mail.com';
+const TEST_ACCOUNT_EMAIL = 'example@mail.com';
 const LOGIN_TIMEOUT = 20_000;
 
 /** Reads the `root` key from localforage. Throws if the script isn't loaded or the key is missing. */
@@ -24,15 +24,15 @@ async function getLocalforageRoot(page: Page): Promise<unknown> {
 
 setup.describe.configure({ retries: 1 });
 
-setup('Login as demo account using generated credentials', async ({ page }) => {
+setup('Login as test account using generated credentials', async ({ page }) => {
   // eslint-disable-next-line playwright/no-skipped-test
   setup.skip(
-    DemoAccountService.hasCachedDemoCredentials(),
-    'Valid demo-account credentials are cached — nothing to do.',
+    TestAccountService.hasCachedTestAccountCredentials(),
+    'Valid test-account credentials are cached — nothing to do.',
   );
 
-  const demoAccountCredentials = await DemoAccountService.getDemoLoginCredentials(DEMO_EMAIL);
-  const { email, password } = demoAccountCredentials;
+  const testAccountCredentials = await TestAccountService.getTestAccountCredentials(TEST_ACCOUNT_EMAIL);
+  const { email, password } = testAccountCredentials;
 
   await setup.step('Navigate to /login', async () => {
     await page.goto('/login', { timeout: LOGIN_TIMEOUT });
@@ -62,14 +62,14 @@ setup('Login as demo account using generated credentials', async ({ page }) => {
       page.context().storageState(),
     ]);
 
-    const session: StoredDemoSession = {
+    const session: StoredTestAccountSession = {
       ...storageState,
       localforageStoredSession: { root: authValue },
-      demoAccountCredentials,
+      testAccountCredentials,
     };
-    safeWriteJsonFile(config.paths.demoSessionFile, session);
+    safeWriteJsonFile(config.paths.testAccountSessionFile, session);
 
-    const written = safeReadJsonFile<StoredDemoSession>(config.paths.demoSessionFile);
-    expect(written?.demoAccountCredentials.email).toBe(email);
+    const written = safeReadJsonFile<StoredTestAccountSession>(config.paths.testAccountSessionFile);
+    expect(written?.testAccountCredentials.email).toBe(email);
   });
 });

@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import * as Pages from '@/pages';
 import type { InterceptionEntry } from '@/types';
-import { restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
+import { restoreSession as restoreTestAccountSession } from '@/utils/test-account-session';
 import { attachBrowserErrorLogging, errorLog } from '@/utils/debug-logging';
 import { apiInterceptors } from '@/utils/interceptor';
 import { config } from '@/utils/config';
@@ -32,11 +32,11 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
   setFixedTime: [true, { option: true }],
   interceptAPI: [undefined, { option: true }],
 
-  storageState: config.paths.demoSessionFile,
+  storageState: config.paths.testAccountSessionFile,
 
   page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
     // Per-test setup (driven by fixture options).
-    if (restoreSession) await restoreUserSessionInLocalForage(page, setFixedTime);
+    if (restoreSession) await restoreTestAccountSession(page, setFixedTime);
     if (interceptAPI?.entries?.length) await apiInterceptors(page, interceptAPI.entries);
 
     // Debug hooks (env-driven; no-op when disabled).
