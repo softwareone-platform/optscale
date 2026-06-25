@@ -26,6 +26,7 @@ from optscale_client.rest_api_client.client_v2 import Client as RestClient
 
 
 BYTES_IN_MB = 1024 * 1024
+BYTES_IN_GB = BYTES_IN_MB * 1024
 CHUNK_SIZE = 200
 EXCHANGE_NAME = 'resource-discovery'
 QUEUE_NAME = 'discovery'
@@ -166,7 +167,10 @@ class ResourcesSaver:
                 if flavor:
                     flavors[flavor_name] = flavor
                     resource.cpu_count = flavor['cpu']
-                    resource.ram = flavor['ram'] * BYTES_IN_MB
+                    multiplier = BYTES_IN_MB
+                    if resource.cloud_type == 'gcp_cnr':
+                        multiplier = BYTES_IN_GB
+                    resource.ram = flavor['ram'] * multiplier
             if not resource.architecture and resource.cloud_type in [
                 'aws_cnr', 'azure_cnr', 'alibaba_cnr'
             ]:
