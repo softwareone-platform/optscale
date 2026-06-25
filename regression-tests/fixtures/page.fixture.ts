@@ -2,9 +2,10 @@ import { test as base } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import * as Pages from '@/pages';
 import type { InterceptionEntry } from '@/types';
-import { DEMO_ACCOUNT_SESSION_PATH, restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
+import { restoreUserSessionInLocalForage } from '@/utils/demo-account-session';
 import { attachBrowserErrorLogging, errorLog } from '@/utils/debug-logging';
 import { apiInterceptors } from '@/utils/interceptor';
+import { config } from '@/utils/config';
 import { buildFixtures, toFixtureMap, type FixtureInstances } from './build-fixtures';
 
 interface Options {
@@ -31,7 +32,7 @@ export const test = base.extend<FixtureInstances<typeof constructors> & Options>
   setFixedTime: [true, { option: true }],
   interceptAPI: [undefined, { option: true }],
 
-  storageState: DEMO_ACCOUNT_SESSION_PATH,
+  storageState: config.paths.demoSessionFile,
 
   page: async ({ page, restoreSession, setFixedTime, interceptAPI }, use) => {
     // Per-test setup (driven by fixture options).

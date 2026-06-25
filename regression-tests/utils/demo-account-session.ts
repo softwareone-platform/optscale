@@ -2,13 +2,10 @@ import { Page } from '@playwright/test';
 import path from 'path';
 import { type StoredDemoSession } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
-import { env, hostSlug } from '@/utils/env';
+import { config } from '@/utils/config';
 
 const LOCALFORAGE_SCRIPT = path.resolve(__dirname, '../vendor/localforage.min.js');
 const FIXED_TIME = new Date('2025-01-25T12:00:00Z');
-
-/** Cached demo-account session file path (one per host), relative to repo root. */
-export const DEMO_ACCOUNT_SESSION_PATH = `.cache/${hostSlug(env.apiBaseUrl, 'demo-account')}-session.json`;
 
 /** Window with the localforage global injected by the vendored script. */
 type LocalForageWindow = Window & {
@@ -29,8 +26,8 @@ export async function injectLocalforage(page: Page): Promise<void> {
  * `setFixedTime=true` pins the clock — only enable for time-independent tests.
  */
 export async function restoreUserSessionInLocalForage(page: Page, setFixedTime = false): Promise<void> {
-  const session = safeReadJsonFile<StoredDemoSession>(DEMO_ACCOUNT_SESSION_PATH);
-  if (!session) throw new Error(`No cached demo-account session at ${DEMO_ACCOUNT_SESSION_PATH}`);
+  const session = safeReadJsonFile<StoredDemoSession>(config.paths.demoSessionFile);
+  if (!session) throw new Error(`No cached demo-account session at ${config.paths.demoSessionFile}`);
 
   // Pin the clock before the first navigation so all app timestamps see it.
   if (setFixedTime) await page.clock.setFixedTime(FIXED_TIME);

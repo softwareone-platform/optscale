@@ -2,11 +2,10 @@ import { StoredDemoSession } from '@/types';
 import { APIRequestContext, request } from '@playwright/test';
 import { DemoAccountCredentials } from '@/types';
 import { safeReadJsonFile } from '@/utils/file';
-import { env, requireEnv } from '@/utils/env';
-import { DEMO_ACCOUNT_SESSION_PATH } from '@/utils/demo-account-session';
+import { config, requireEnv } from '@/utils/config';
 
 export class DemoAccountService {
-  private static readonly token: string = env.liveDemoToken;
+  private static readonly token: string = config.testAccountToken;
 
   /** POSTs to `/restapi/v2/live_demo` and returns the minted credentials. */
   static async getDemoLoginCredentials(email: string, subscribe = false): Promise<DemoAccountCredentials> {
@@ -30,7 +29,7 @@ export class DemoAccountService {
    * simply won't be found.
    */
   static hasCachedDemoCredentials(): boolean {
-    const file = safeReadJsonFile<Partial<StoredDemoSession>>(DEMO_ACCOUNT_SESSION_PATH);
+    const file = safeReadJsonFile<Partial<StoredDemoSession>>(config.paths.demoSessionFile);
     const cached = file?.demoAccountCredentials;
 
     return !!cached && isSessionFresh(cached.created_at);
@@ -38,10 +37,10 @@ export class DemoAccountService {
 
   /** Creates an APIRequestContext with the required headers. */
   private static async createContext(): Promise<APIRequestContext> {
-    requireEnv('apiBaseUrl', 'liveDemoToken');
+    requireEnv('apiBaseUrl', 'testAccountToken');
 
     return request.newContext({
-      baseURL: env.apiBaseUrl,
+      baseURL: config.apiBaseUrl,
       extraHTTPHeaders: {
         'X-LiveDemo-Token': this.token,
         'Content-Type': 'application/json',

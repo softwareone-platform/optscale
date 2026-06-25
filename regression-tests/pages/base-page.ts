@@ -1,9 +1,11 @@
 import { Locator, Page } from '@playwright/test';
 import * as path from 'path';
 import { debugLog, errorLog } from '@/utils/debug-logging';
-import { LARGE_DATA_TIMEOUT } from '@/playwright.config';
+import { config } from '@/utils/config';
 
 const TEST_OVERRIDES_CSS_PATH = path.resolve(__dirname, '../styles/test-overrides.css');
+const LARGE_DATA_TIMEOUT = 60_000;
+const PROGRESS_BAR_TIMEOUT = 10_000;
 
 /** Base class for all page objects. */
 export abstract class BasePage {
@@ -62,7 +64,7 @@ export abstract class BasePage {
 
   async waitForLoadingPageImgToDisappear(timeout: number = LARGE_DATA_TIMEOUT): Promise<void> {
     try {
-      await this.loadingPageImg.first().waitFor({ timeout: 1000 });
+      await this.loadingPageImg.first().waitFor({ timeout: config.timeouts.probe });
     } catch {
       return;
     }
@@ -74,9 +76,9 @@ export abstract class BasePage {
     }
   }
 
-  async waitForAllProgressBarsToDisappear(timeout: number = 10000): Promise<void> {
+  async waitForAllProgressBarsToDisappear(timeout: number = PROGRESS_BAR_TIMEOUT): Promise<void> {
     try {
-      await this.progressBar.first().waitFor({ timeout: 1000 });
+      await this.progressBar.first().waitFor({ timeout: config.timeouts.probe });
     } catch {
       return;
     }

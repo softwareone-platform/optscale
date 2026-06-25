@@ -4,6 +4,8 @@ import { usersInterceptions } from '@/mocks';
 import { captureScreenshot } from '@/utils/screenshots';
 import { fitViewportToFullPage } from '@/utils/viewport';
 
+const FORM_READY_TIMEOUT = 10_000;
+
 test.use({ interceptAPI: { entries: usersInterceptions } });
 
 test('FFC: Users', async ({ usersPage, usersInvitePage }) => {
@@ -18,8 +20,8 @@ test('FFC: Users', async ({ usersPage, usersInvitePage }) => {
 
   await test.step('Invite page', async () => {
     await usersPage.clickInviteBtn();
-    await expect(usersInvitePage.form).toBeAttached({ timeout: 10000 });
-    await expect(usersInvitePage.form.locator('.MuiCircularProgress-root')).toHaveCount(0, { timeout: 10000 });
+    await expect(usersInvitePage.form).toBeAttached({ timeout: FORM_READY_TIMEOUT });
+    await expect(usersInvitePage.form.locator('.MuiCircularProgress-root')).toHaveCount(0, { timeout: FORM_READY_TIMEOUT });
     await captureScreenshot(usersInvitePage.main, 'UsersInvite-Container.png', {
       fitViewport: true,
     });

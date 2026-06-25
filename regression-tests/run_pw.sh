@@ -105,13 +105,13 @@ run_tests() {
         TEST_ARGS="$TEST_ARGS --update-snapshots"
     fi
 
-    # Build environment variables
-    ENV_ARGS="-e BASE_URL=$BASE_URL"
+    # Build environment variables (override the TEST_ENV preset's base URL)
+    ENV_ARGS="-e BASE_URL_OVERRIDE=$BASE_URL"
     if [ "$CI_MODE" = true ]; then
         ENV_ARGS="$ENV_ARGS -e CI=true"
     fi
 
-    ENV_ARGS="$ENV_ARGS -e IS_REGRESSION_RUN=true"
+    ENV_ARGS="$ENV_ARGS -e SNAPSHOT_MODE=baseline"
 
     # Use host networking only on Linux. On macOS/Windows, Docker Desktop runs
     # containers inside a VM, so --network host points at the VM (not the host)

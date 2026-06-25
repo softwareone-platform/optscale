@@ -1,5 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
+import { config } from '@/utils/config';
 
 export class EventsPage extends BasePage {
   readonly heading: Locator;
@@ -12,6 +13,6 @@ export class EventsPage extends BasePage {
   }
 
   async clickEventsTable(): Promise<void> {
-    await this.eventsTable.click({ timeout: 10000 });
+    await this.eventsTable.click({ timeout: config.timeouts.click });
   }
 }

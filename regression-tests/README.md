@@ -54,16 +54,17 @@ Edit `.env` with the appropriate values. The complete list of variables the suit
 
 | Variable                 | Required? | Description                                                                                                           |
 |--------------------------|-----------|-----------------------------------------------------------------------------------------------------------------------|
-| `BASE_URL`               | no        | Portal URL Playwright points at. Defaults to `http://0.0.0.0:3000`.                                                   |
-| `API_BASE_URL`           | yes¹      | Cluster URL to proxy API requests to — same concept as `VITE_PROXY` in `ngui/ui/.env.sample`.                         |
-| `LIVE_DEMO_TOKEN`        | yes¹      | Bearer token the demo-account endpoint expects in the `X-LiveDemo-Token` header.                                      |
+| `TEST_ENV`               | no        | Environment preset selecting the base + API URLs: `prerelease` \| `dev` \| `local` (default). Presets live in `utils/env.ts`. |
+| `BASE_URL_OVERRIDE`      | no        | Overrides the preset's portal URL Playwright points at (CI or ad-hoc runs).                                           |
+| `API_BASE_URL_OVERRIDE`  | no        | Overrides the preset's cluster URL for proxied API requests — same concept as `VITE_PROXY` in `ngui/ui/.env.sample`.   |
+| `TEST_ACCOUNT_TOKEN`     | yes¹      | Test-account bearer token, sent in the `X-LiveDemo-Token` header. The per-env variant matching `TEST_ENV` (e.g. `DEV_TEST_ACCOUNT_TOKEN`) is preferred; this is the fallback. |
 | `CI`                     | no        | `true` inside CI — enables `forbidOnly`, raises retries, lowers workers. Playwright sets this automatically.          |
-| `IS_REGRESSION_RUN`      | no        | `true` → snapshots compared against `snapshots/baseline/<host>/`. Unset → `snapshots/local/<platform>/` (gitignored). |
+| `SNAPSHOT_MODE`          | no        | `baseline` → snapshots compared against `snapshots/baseline/<host>/` (shared/committed; CI uses this). `local` (default) → `snapshots/local/<host>/<platform>/` (gitignored, per developer). |
 | `IGNORE_HTTPS_ERRORS`    | no        | `true` to accept self-signed / expired certificates in the browser context.                                           |
 | `DEBUG_LOG`              | no        | `true` emits `[DEBUG]`-prefixed messages from `debugLog`.                                                             |
 | `BROWSER_ERROR_LOGGING`  | no        | `true` forwards browser `console.error` output to the Node test runner.                                               |
 
-¹ Required only when `auth.setup.ts` actually mints demo-account credentials. `requireEnv('apiBaseUrl', 'liveDemoToken')` fails fast with a clear message if either is missing.
+¹ Required only when `auth.setup.ts` actually mints test-account credentials. `requireEnv('apiBaseUrl', 'testAccountToken')` fails fast with a clear message if either is missing.
 
 ---
 

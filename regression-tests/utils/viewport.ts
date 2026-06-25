@@ -1,4 +1,12 @@
 import { Page } from '@playwright/test';
+import { config } from '@/utils/config';
+
+const MAX_HEIGHT = 12_000;
+const HEADER_HEIGHT = 80;
+const SAFETY_BUFFER = 8;
+const FALLBACK_WIDTH = 1280;
+const STABLE_SAMPLES = 5;
+const POLLING_MS = 100;
 
 /**
  * Resize the viewport so all `<main id="mainLayoutWrapper">` content fits
@@ -6,14 +14,10 @@ import { Page } from '@playwright/test';
  * across consecutive samples, then resizes once.
  */
 export async function fitViewportToFullPage(page: Page): Promise<void> {
-  const MAX_HEIGHT = 12_000;
-  const HEADER_HEIGHT = 80;
-  const SAFETY_BUFFER = 8;
-
   await page.waitForLoadState('load').catch(() => {});
 
   const contentHeight = await page.waitForFunction(
-    () => {
+    requiredStableSamples => {
       const wrapper = document.querySelector('main#mainLayoutWrapper');
       if (!wrapper) return false;
       const measuredHeight = Array.from(wrapper.children).reduce(
@@ -31,13 +35,13 @@ export async function fitViewportToFullPage(page: Page): Promise<void> {
         cache.consecutiveStableSamples = 0;
         cache.lastMeasuredHeight = measuredHeight;
       }
-      return (cache.consecutiveStableSamples ?? 0) >= 5 ? measuredHeight : false;
+      return (cache.consecutiveStableSamples ?? 0) >= requiredStableSamples ? measuredHeight : false;
     },
-    null,
-    { polling: 100, timeout: 10_000 }
+    STABLE_SAMPLES,
+    { polling: POLLING_MS, timeout: config.timeouts.viewportStable }
   ).then(handle => handle.jsonValue() as Promise<number>);
 
-  const { width } = page.viewportSize() ?? { width: 1280 };
+  const { width } = page.viewportSize() ?? { width: FALLBACK_WIDTH };
   await page.setViewportSize({
     width,
     height: Math.min(contentHeight + HEADER_HEIGHT + SAFETY_BUFFER, MAX_HEIGHT),

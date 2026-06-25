@@ -1,13 +1,13 @@
 import { expect, test as setup } from '@playwright/test';
-import { DEMO_ACCOUNT_SESSION_PATH, injectLocalforage } from '@/utils/demo-account-session';
+import { injectLocalforage } from '@/utils/demo-account-session';
 import { safeReadJsonFile, safeWriteJsonFile } from '@/utils/file';
 import { DemoAccountService } from './demo-account-service';
+import { config } from '@/utils/config';
 import { type StoredDemoSession } from '@/types';
 import type { Page } from '@playwright/test';
 
 const DEMO_EMAIL = 'example@mail.com';
 const LOGIN_TIMEOUT = 20_000;
-const LOADING_IMAGE_APPEAR_TIMEOUT = 2_000;
 
 /** Reads the `root` key from localforage. Throws if the script isn't loaded or the key is missing. */
 async function getLocalforageRoot(page: Page): Promise<unknown> {
@@ -52,7 +52,7 @@ setup('Login as demo account using generated credentials', async ({ page }) => {
 
     // Loading image is optional — only renders on slower cold-starts.
     const loadingImage = page.getByRole('img', { name: 'Loading page' });
-    await loadingImage.waitFor({ timeout: LOADING_IMAGE_APPEAR_TIMEOUT }).catch(() => undefined);
+    await loadingImage.waitFor({ timeout: config.timeouts.probe }).catch(() => undefined);
     await loadingImage.waitFor({ state: 'detached', timeout: LOGIN_TIMEOUT });
   });
 
@@ -67,9 +67,9 @@ setup('Login as demo account using generated credentials', async ({ page }) => {
       localforageStoredSession: { root: authValue },
       demoAccountCredentials,
     };
-    safeWriteJsonFile(DEMO_ACCOUNT_SESSION_PATH, session);
+    safeWriteJsonFile(config.paths.demoSessionFile, session);
 
-    const written = safeReadJsonFile<StoredDemoSession>(DEMO_ACCOUNT_SESSION_PATH);
+    const written = safeReadJsonFile<StoredDemoSession>(config.paths.demoSessionFile);
     expect(written?.demoAccountCredentials.email).toBe(email);
   });
 });

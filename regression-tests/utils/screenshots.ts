@@ -1,6 +1,12 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { fitViewportToFullPage } from '@/utils/viewport';
 
+const IDLE_MS = 400;
+const REFIT_IDLE_MS = 250;
+const MAX_WAIT_MS = 8_000;
+const BBOX_SAMPLES = 10;
+const BBOX_SAMPLE_GAP_MS = 50;
+
 type ScreenshotOptions = Parameters<Locator['screenshot']>[0];
 
 interface CaptureOptions {
@@ -19,7 +25,7 @@ const sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms))
 /** Waits until the page is quiet for `idleMs`: fonts ready, no DOM mutations, stable bbox. */
 async function waitForPageIdle(
   target: Locator,
-  { idleMs = 400, maxWaitMs = 8_000 }: { idleMs?: number; maxWaitMs?: number } = {},
+  { idleMs = IDLE_MS, maxWaitMs = MAX_WAIT_MS }: { idleMs?: number; maxWaitMs?: number } = {},
 ): Promise<void> {
   const page: Page = target.page();
 
@@ -57,9 +63,9 @@ async function waitForPageIdle(
   );
 
   // Cross-check: two consecutive bbox samples agree.
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < BBOX_SAMPLES; i++) {
     const a = await target.boundingBox();
-    await sleep(50);
+    await sleep(BBOX_SAMPLE_GAP_MS);
     const b = await target.boundingBox();
     if (a && b && a.width === b.width && a.height === b.height) return;
   }
@@ -82,7 +88,7 @@ export async function captureScreenshot(
 
   if (options.fitViewport) {
     await fitViewportToFullPage(target.page());
-    await waitForPageIdle(target, { idleMs: 250 });
+    await waitForPageIdle(target, { idleMs: REFIT_IDLE_MS });
   }
 
   await expect(target).toHaveScreenshot(name, options.screenshotOptions);
