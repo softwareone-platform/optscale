@@ -8,7 +8,7 @@ KEEP_RUNNING=false
 API_ENDPOINT=""
 CI_MODE=
 BASE_URL=""
-PORT=4000
+PORT=3000
 
 # Help message
 show_help() {
@@ -113,9 +113,17 @@ run_tests() {
 
     ENV_ARGS="$ENV_ARGS -e IS_REGRESSION_RUN=true"
 
+    # Use host networking only on Linux. On macOS/Windows, Docker Desktop runs
+    # containers inside a VM, so --network host points at the VM (not the host)
+    # and breaks host.docker.internal resolution.
+    NETWORK_ARGS=""
+    if [[ "$OSTYPE" != "darwin"* && "$OSTYPE" != "msys"* ]]; then
+        NETWORK_ARGS="--network host"
+    fi
+
     # Run the tests
     docker run --rm \
-        --network host \
+        $NETWORK_ARGS \
         $ENV_ARGS \
         -v $(pwd):/app \
         -v /app/node_modules \
