@@ -52,7 +52,7 @@ class CloudBase(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         raise NotImplementedError
 
 

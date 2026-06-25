@@ -38,7 +38,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   });
 
   test('[230597] Verify Data Source selection works correctly', async ({ recommendationsPage }) => {
-    const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'CPA (Development and Test)';
+    const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'Marketplace (Dev)';
 
     await test.step(`Select data source: ${dataSource}`, async () => {
       await recommendationsPage.selectDataSource(dataSource);
@@ -293,6 +293,8 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
     await test.step('Select Critical category and verify every card has a critical icon', async () => {
       await recommendationsPage.selectCategory('Critical');
+      test.skip(await recommendationsPage.noRecommendationsMessage.isVisible(), 'No recommendations are marked as Critical');
+
       await recommendationsPage.allCardHeadings.last().waitFor();
       count = await recommendationsPage.allCardHeadings.count();
       actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
@@ -439,8 +441,11 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
       let cardSavings = undefined;
       let cardCount = undefined;
 
+      debugLog(`${cardName} savingsValue defined: ${!!savingsValue}`);
       if (savingsValue) {
         cardSavings = await recommendationsPage.getCurrencyValue(savingsValue);
+        debugLog(`${cardName} Card Savings Value: ${cardSavings}`);
+
 
         if (cardSavings === 0) {
           const value = await savingsValue.textContent();

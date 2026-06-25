@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+import json
 import os
 import enum
 import logging
@@ -7,9 +8,9 @@ import time
 import random
 from typing import Any, Dict
 
-from requests.models import Request
+from azure.core.pipeline.transport import HttpRequest
 from urllib.parse import urlencode
-from multiprocessing import Process, Queue
+import concurrent.futures
 
 import msal
 from azure.core.credentials import AccessToken, TokenCredential
@@ -25,11 +26,10 @@ from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.commerce import UsageManagementClient
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.compute.models import InstanceViewTypes
-from azure.mgmt.commerce.models.error_response import ErrorResponseException
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.subscription import SubscriptionClient
-from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import AuthenticationError, ClientRequestError
+from msrest.exceptions import (
+    AuthenticationError, ClientRequestError, HttpOperationError)
 from azure.mgmt.monitor import MonitorManagementClient
 from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
                                    ResourceNotFoundError, ServiceRequestError)
@@ -73,8 +73,6 @@ SECONDS_IN_DAY = 60 * 60 * 24
 CLOUD_VALIDATION_TIMEOUT = 90
 CLOUD_LINK_PATTERN = '%s%s/overview'
 DAYS_IN_MONTH = 30
-# we use base_url without tenant_name, azure can resolve links and also add tenant_name by itself while using link
-DEFAULT_BASE_URL = 'https://portal.azure.com/#resource'
 DESERIALIZER = Deserializer(classes={
     'ModernUsageDetail': ModernUsageDetail,
     'LegacyUsageDetail': LegacyUsageDetail,
@@ -83,10 +81,10 @@ DESERIALIZER = Deserializer(classes={
 })
 
 ARM_SCOPE = "https://management.azure.com/.default"
-
+AZURE_CN_CREDS_SCOPE = "https://management.core.chinacloudapi.cn//.default"
 # defining it to use outside CAd
 AzureConsumptionException = HttpResponseError
-AzureErrorResponseException = ErrorResponseException
+AzureErrorResponseException = HttpOperationError
 AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
 
@@ -108,6 +106,23 @@ AUTH_ERROR_CODES = {
 }
 
 
+class BaseUrl:
+    AZURE_GLOBAL = 'https://management.azure.com'
+    AZURE_CN = 'https://management.chinacloudapi.cn'
+
+
+class AuthorityUrl:
+    AZURE_GLOBAL = 'https://login.microsoftonline.com'
+    AZURE_CN = 'https://login.chinacloudapi.cn'
+
+
+# we use base_url without tenant_name, azure can resolve links and also add
+# tenant_name by itself while using link
+class PortalUrl:
+    AZURE_GLOBAL = 'https://portal.azure.com/#resource'
+    AZURE_CN = 'https://portal.azure.cn/#resource'
+
+
 class MsalCredential(BasicTokenAuthentication, TokenCredential):
     """
     Uses MSAL ConfidentialClientApplication
@@ -115,12 +130,15 @@ class MsalCredential(BasicTokenAuthentication, TokenCredential):
     works for azure-core clients via TokenCredential.get_token().
     """
 
-    def __init__(self, tenant_id: str, client_id: str, client_secret: str):
+    def __init__(self, tenant_id: str, client_id: str, client_secret: str,
+                 base_url=None):
         super().__init__(token=None)
         self._tenant_id = tenant_id
         self._client_id = client_id
         self._client_secret = client_secret
-        self._authority = f"https://login.microsoftonline.com/{tenant_id}"
+        self._authority = f"{AuthorityUrl.AZURE_GLOBAL}/{tenant_id}"
+        if base_url == BaseUrl.AZURE_CN:
+            self._authority = f"{AuthorityUrl.AZURE_CN}/{tenant_id}"
         self._scopes = [ARM_SCOPE]
 
         LOG.info(
@@ -411,15 +429,16 @@ def _client_with_retry(client_cls, *args, **kwargs):
 
 
 def call_with_time_limit(func, args, kwargs, timeout):
-    q = Queue()
-    p = Process(target=func, args=(args, q), kwargs=kwargs)
-    p.start()
-    p.join(timeout)
-    if p.is_alive():
-        p.terminate()
-        raise TimeoutError
-    if not q.empty():
-        return q.get_nowait()
+    if args is None:
+        args = ()
+    if kwargs is None:
+        kwargs = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(func, *args, **kwargs)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            raise TimeoutError
 
 
 class ExpenseImportScheme(enum.Enum):
@@ -436,6 +455,7 @@ class Azure(CloudBase):
         CloudParameter(name='client_id', type=str, required=True),
         CloudParameter(name='tenant', type=str, required=True),
         CloudParameter(name='expense_import_scheme', type=str, required=False),
+        CloudParameter(name='base_url', type=str, required=False),
 
         # Additional credentials for CSP partners
         CloudParameter(name='partner_tenant', type=str, required=False),
@@ -488,6 +508,7 @@ class Azure(CloudBase):
                 tenant_id=self.config['tenant'],
                 client_id=self.config['client_id'],
                 client_secret=self.config['secret'],
+                base_url=self.base_url
             )
             cred.get_token(ARM_SCOPE)
         except Exception as ex:
@@ -514,7 +535,8 @@ class Azure(CloudBase):
             'SEK': 'SE',
             'CHF': 'CH',
             'TWD': 'TW',
-            'GBP': 'GB'
+            'GBP': 'GB',
+            'CNY': 'CN'
         }.get(currency) or 'US'
 
     def discovery_calls_map(self):
@@ -553,6 +575,10 @@ class Azure(CloudBase):
             'expense_import_scheme', self.DEFAULT_IMPORT_SCHEME)
 
     @property
+    def base_url(self):
+        return self.config.get('base_url') or BaseUrl.AZURE_GLOBAL
+
+    @property
     def service_principal_credentials(self):
         """
         Backwards-compatible accessor for credentials.
@@ -580,7 +606,8 @@ class Azure(CloudBase):
             self._compute = _client_with_retry(
                 ComputeManagementClient,
                 self.service_principal_credentials,
-                self._subscription_id
+                self._subscription_id,
+                base_url=self.base_url
             )
         return self._compute
 
@@ -590,7 +617,8 @@ class Azure(CloudBase):
             self._resource = _client_with_retry(
                 ResourceManagementClient,
                 self.service_principal_credentials,
-                self._subscription_id
+                self._subscription_id,
+                base_url=self.base_url
             )
         return self._resource
 
@@ -600,7 +628,8 @@ class Azure(CloudBase):
             self._network = _client_with_retry(
                 NetworkManagementClient,
                 self.client_secret_credentials,
-                self._subscription_id
+                self._subscription_id,
+                base_url=self.base_url
                 )
         return self._network
 
@@ -610,7 +639,8 @@ class Azure(CloudBase):
             self._storage = _client_with_retry(
                 StorageManagementClient,
                 self.service_principal_credentials,
-                self._subscription_id
+                self._subscription_id,
+                base_url=self.base_url
             )
         return self._storage
 
@@ -639,8 +669,12 @@ class Azure(CloudBase):
     def consumption(self):
         if self._consumption:
             return self._consumption
+        kwargs = {'base_url': self.base_url}
+        if self.base_url == BaseUrl.AZURE_CN:
+            kwargs['credential_scopes'] = [AZURE_CN_CREDS_SCOPE]
         self._consumption = ConsumptionManagementClient(
-            self.client_secret_credentials, self._subscription_id)
+            self.client_secret_credentials, self._subscription_id, **kwargs
+        )
         return self._consumption
 
     @property
@@ -648,7 +682,7 @@ class Azure(CloudBase):
         if self._subscription:
             return self._subscription
         self._subscription = SubscriptionClient(
-            self.service_principal_credentials)
+            self.service_principal_credentials, base_url=self.base_url)
         return self._subscription
 
     @property
@@ -656,7 +690,9 @@ class Azure(CloudBase):
         if self._monitor:
             return self._monitor
         self._monitor = MonitorManagementClient(
-            self.service_principal_credentials, self._subscription_id)
+            self.service_principal_credentials, self._subscription_id,
+            base_url=self.base_url
+        )
         return self._monitor
 
     @property
@@ -676,7 +712,9 @@ class Azure(CloudBase):
     def usage(self):
         if not self._usage:
             self._usage = UsageManagementClient(
-                self.service_principal_credentials, self._subscription_id)
+                self.service_principal_credentials, self._subscription_id,
+                base_url=self.base_url
+            )
         return self._usage
 
     @property
@@ -684,7 +722,8 @@ class Azure(CloudBase):
         if not self._reservations:
             self._reservations = _client_with_retry(
                 AzureReservationAPI,
-                self.client_secret_credentials
+                self.client_secret_credentials,
+                base_url=self.base_url
             )
         return self._reservations
 
@@ -697,6 +736,13 @@ class Azure(CloudBase):
         Returns a unified MSAL-based credential that is compatible with
         msrest-based clients
         """
+        kwargs = {
+            'client_id': self.config['client_id'],
+            'secret': self.config['secret'],
+            'tenant': self.config['tenant']
+        }
+        if self.base_url == BaseUrl.AZURE_CN:
+            kwargs['china'] = True
         try:
             cred = self._get_msal_credential()
             LOG.info(
@@ -774,8 +820,8 @@ class Azure(CloudBase):
     def _check_subscription(self, subscription_id):
         try:
             self.subscription.subscriptions.get(subscription_id)
-        except CloudError as ex:
-            raise ResourceNotFound(ex.inner_exception.message)
+        except ResourceNotFoundError as ex:
+            raise ResourceNotFound(ex.error.message)
 
     def _get_cpu_ram(self, flavor):
         caps = flavor.capabilities
@@ -843,7 +889,7 @@ class Azure(CloudBase):
                 raise StopIteration
             usage_detail = next(usage)
             currency = (getattr(usage_detail, 'billing_currency', None) or
-                        getattr(usage_detail, 'billing_currency_code', None))
+                        getattr(usage_detail, 'billingCurrencyCode', None))
         except (AzureConsumptionException, StopIteration, ClientRequestError,
                 TypeError) as exc:
             # according to logs in this issue we get TypeError deep inside
@@ -851,8 +897,8 @@ class Azure(CloudBase):
             is_timeout_error = isinstance(exc, (ClientRequestError, TypeError))
             is_empty = isinstance(exc, StopIteration)
             is_unsupported = (isinstance(exc, AzureConsumptionException) and
-                              int(exc.response.status_code) in [400, 404, 422])
-
+                              hasattr(exc.response, 'status_code') and int(
+                                  exc.response.status_code) in [400, 404, 422])
             # Sponsored subscriptions are known to be unsupported by
             # Consumption API, but it returns an empty result for them
             # instead of an error, so there is a check for that as well
@@ -873,7 +919,7 @@ class Azure(CloudBase):
 
         if (subscription_type == 'EnterpriseAgreement' and
                 not (getattr(usage_detail, 'cost', None) or
-                     getattr(usage_detail, 'cost_in_billing_currency', None))):
+                     getattr(usage_detail, 'costInBillingCurrency', None))):
             consumption_api_supported = False
 
         return {
@@ -927,7 +973,7 @@ class Azure(CloudBase):
     def validate_credentials(self, org_id=None):
         try:
             result = call_with_time_limit(
-                self._validate_credentials, args=org_id, kwargs={},
+                self._validate_credentials, args=(org_id,), kwargs={},
                 timeout=CLOUD_VALIDATION_TIMEOUT)
             if isinstance(result, Exception):
                 raise result
@@ -1000,9 +1046,12 @@ class Azure(CloudBase):
     def configure_last_import_modified_at(self):
         pass
 
-    @staticmethod
-    def _generate_cloud_link(resource_id):
-        return CLOUD_LINK_PATTERN % (DEFAULT_BASE_URL, resource_id)
+    def _generate_cloud_link(self, resource_id):
+        if self.base_url == BaseUrl.AZURE_CN:
+            portal_url = PortalUrl.AZURE_CN
+        else:
+            portal_url = PortalUrl.AZURE_GLOBAL
+        return CLOUD_LINK_PATTERN % (portal_url, resource_id)
 
     def _discover_vnets(self):
         vnets = self._retry(self.network.virtual_networks.list_all)
@@ -1044,7 +1093,7 @@ class Azure(CloudBase):
         for vm in virtual_machines:
             if not vnet_id_to_name:
                 vnet_id_to_name = self._discover_vnets()
-            os_type = vm.storage_profile.os_disk.os_type.value
+            os_type = vm.storage_profile.os_disk.os_type
             tags = vm.tags or {}
             spotted = vm.priority == 'Spot'
             status = self._get_vm_status(vm.id)
@@ -1304,7 +1353,9 @@ class Azure(CloudBase):
             range_end = datetime.now(tz=timezone.utc).replace(tzinfo=None)
         start_str = start_date.strftime(date_format)
         end_str = range_end.strftime(date_format)
-        # test request to check subscription type
+        if self.base_url == BaseUrl.AZURE_CN:
+            start_str = start_date.strftime('%Y-%m-%d')
+            end_str = range_end.strftime('%Y-%m-%d')
         result = self.consumption.usage_details.list(
             scope='/subscriptions/{}/'.format(self._subscription_id),
             filter=filter_fmt.format(start_str, end_str),
@@ -1332,32 +1383,33 @@ class Azure(CloudBase):
         :return: an iterator with usage objects
         """
         def get_values(_req):
-            result = self.raw_client.send(_req)
-            deserialized = DESERIALIZER.deserialize_data(
-                result.json(), "UsageDetailsListResult")
-            return deserialized.value or [], deserialized.next_link
+            http_response = self.raw_client._pipeline.run(_req).http_response
+            http_response.raise_for_status()
+            data = json.loads(http_response.text())
+            values = data.get("value", [])
+            next_link = data.get("nextLink")
+            return values, next_link
 
         date_format = '%Y-%m-%d'
         start_str = start_date.strftime(date_format)
         end_str = range_end.strftime(date_format)
         scope = 'subscriptions/{}'.format(self._subscription_id)
-        base_url = 'https://management.azure.com'
         usage_url = self.consumption.usage_details.list.metadata[
             'url'].format(scope=scope)
-        url = f'{base_url}{usage_url}?$extend=properties/meterDetails,' \
+        url = f'{self.base_url}{usage_url}?$extend=properties/meterDetails,' \
               f'properties/additionalProperties&startDate={start_str}' \
               f'&endDate={end_str}&api-version=2021-10-01'
         if limit:
-            url += f'&top={limit}'
+            url += f'&$top={limit}'
 
         # Ensure msrest client has a fresh token from our MSAL-based credential
-        cred = self.raw_client.config.credentials
+        cred = self.raw_client._config.credential
         # One signed_session() call forces refresh + sets cred.token["access_token"]
         cred.signed_session()
         token = cred.token['access_token']
 
         headers = {'Authorization': f'Bearer {token}'}
-        request = Request(method='GET', url=url, headers=headers)
+        request = HttpRequest(method='GET', url=url, headers=headers)
         values, next_link = get_values(request)
         for v in values:
             yield v
@@ -1478,7 +1530,8 @@ class Azure(CloudBase):
             for p in prices['meters']
         }
 
-    def _get_coordinates_map(self):
+    @staticmethod
+    def _get_global_coordinates_map():
         return {
             'usgovarizona': {
                 'name': 'US Gov Arizona', 'alias': 'US Gov AZ',
@@ -1675,7 +1728,35 @@ class Azure(CloudBase):
         return {v['alias']: k for k, v in coord_map.items()
                 if 'alias' in v}
 
-    def get_regions_coordinates(self):
+    @staticmethod
+    def _get_cn_coordinates_map():
+        return {
+            'chinaeast': {
+                'name': 'China East', 'alias': 'CN East',
+                'longitude': 121.5891, 'latitude': 31.3209},
+            'chinaeast2': {
+                'name': 'China East 2', 'alias': 'CN East 2',
+                'longitude': 121.391, 'latitude': 31.302},
+            'chinaeast3': {
+                'name': 'China East 3', 'alias': 'CN East 3',
+                'longitude': 121.389, 'latitude': 31.219},
+            'chinanorth': {
+                'name': 'China North', 'alias': 'CN North',
+                'longitude': 116.4959, 'latitude': 39.9788},
+            'chinanorth2': {
+                'name': 'China North 2', 'alias': 'CN North 2',
+                'longitude': 116.500, 'latitude': 39.977},
+            'chinanorth3': {
+                'name': 'China North 3', 'alias': 'CN North 3',
+                'longitude': 114.8863, 'latitude': 40.7675},
+        }
+
+    def _get_coordinates_map(self):
+        coordinates_map = self._get_global_coordinates_map()
+        coordinates_map.update(self._get_cn_coordinates_map())
+        return coordinates_map
+
+    def get_regions_coordinates(self, load=True):
         def to_coord(coordinate):
             if isinstance(coordinate, str):
                 try:
@@ -1685,6 +1766,8 @@ class Azure(CloudBase):
             return coordinate
 
         coordinates_map = self._get_coordinates_map()
+        if not load:
+            return coordinates_map
         try:
             for region in self.subscription.subscriptions.list_locations(
                     self._subscription_id):
@@ -1717,8 +1800,8 @@ class Azure(CloudBase):
             headers={'Content-Type': 'application/json'},
             content={'requests': request_specs},
         )
-        response = self.raw_client.send(batch_request, stream=False)
-        return response.json()
+        response = self.raw_client._pipeline.run(batch_request)
+        return json.loads(response.http_response.text())
 
     @retry(stop_max_attempt_number=5, wait_fixed=5000,
            retry_on_exception=_retry_on_error)
@@ -1787,9 +1870,9 @@ class Azure(CloudBase):
 
     def start_instance(self, instance_name, group_name):
         try:
-            return self.compute.virtual_machines.start(
+            return self.compute.virtual_machines.begin_start(
                 group_name, instance_name)
-        except CloudError as exc:
+        except HttpOperationError as exc:
             if exc.error.error == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:
@@ -1797,9 +1880,9 @@ class Azure(CloudBase):
 
     def stop_instance(self, instance_name, group_name):
         try:
-            return self.compute.virtual_machines.deallocate(
+            return self.compute.virtual_machines.begin_deallocate(
                 group_name, instance_name)
-        except CloudError as exc:
+        except HttpOperationError as exc:
             if exc.error.error == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:

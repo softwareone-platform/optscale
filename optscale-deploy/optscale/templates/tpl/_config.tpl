@@ -101,6 +101,7 @@ etcd:
       enable_sqlalchemy: true
       enable_mongo: true
       enable_kombu: true
+      enable_clickhouse: true
   auth:
     host: {{ .Values.auth.service.name }}
     port: {{ .Values.auth.service.externalPort }}
@@ -292,6 +293,7 @@ etcd:
       enable_urllib3: true
       enable_requests: true
       enable_kombu: true
+      enable_clickhouse: true
   exchange_rates:
     {{- range $currency, $rate := .Values.exchange_rates }}
       {{ $currency }}: {{ $rate }}

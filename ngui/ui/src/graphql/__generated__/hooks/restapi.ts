@@ -558,6 +558,20 @@ export type GcpTenantPricingDataConfig = {
   table_name: Scalars["String"]["output"];
 };
 
+export type GeminiDataPreparation = {
+  __typename?: "GeminiDataPreparation";
+  buckets: Scalars["String"]["output"];
+  created_at?: Maybe<Scalars["Int"]["output"]>;
+  deleted_at?: Maybe<Scalars["Int"]["output"]>;
+  gemini_id: Scalars["ID"]["output"];
+  id: Scalars["ID"]["output"];
+  status: GeminiDataPreparationStatus;
+  url?: Maybe<Scalars["String"]["output"]>;
+  valid_until?: Maybe<Scalars["Int"]["output"]>;
+};
+
+export type GeminiDataPreparationStatus = "FAILED" | "QUEUED" | "RUNNING" | "SUCCESS";
+
 export type Invitation = {
   __typename?: "Invitation";
   id: Scalars["String"]["output"];
@@ -631,6 +645,7 @@ export type Mutation = {
   createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
+  scheduleGeminiDataPreparation?: Maybe<ScheduleGeminiDataPreparation>;
   updateDataSource?: Maybe<DataSourceInterface>;
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
   updateEmployeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
@@ -664,6 +679,11 @@ export type MutationDeleteDataSourceArgs = {
 
 export type MutationDeleteOrganizationArgs = {
   organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationScheduleGeminiDataPreparationArgs = {
+  buckets: Array<Scalars["String"]["input"]>;
+  geminiId: Scalars["ID"]["input"];
 };
 
 export type MutationUpdateDataSourceArgs = {
@@ -825,6 +845,7 @@ export type Query = {
   dataSources?: Maybe<Array<Maybe<DataSourceInterface>>>;
   employeeEmails?: Maybe<Array<Maybe<EmployeeEmail>>>;
   expensesDailyBreakdown?: Maybe<ExpensesDailyBreakdown>;
+  geminiDataPreparation: GeminiDataPreparation;
   invitations?: Maybe<Array<Maybe<Invitation>>>;
   metaBreakdown?: Maybe<MetaBreakdown>;
   organizationConstraint?: Maybe<OrganizationConstraint>;
@@ -883,6 +904,10 @@ export type QueryExpensesDailyBreakdownArgs = {
   params?: InputMaybe<BreakdownParams>;
 };
 
+export type QueryGeminiDataPreparationArgs = {
+  id: Scalars["ID"]["input"];
+};
+
 export type QueryMetaBreakdownArgs = {
   organizationId: Scalars["ID"]["input"];
   params?: InputMaybe<BreakdownParams>;
@@ -934,6 +959,11 @@ export type ResourceCountBreakdown = {
   first_breakdown: Scalars["Int"]["output"];
   last_breakdown: Scalars["Int"]["output"];
   start_date: Scalars["Int"]["output"];
+};
+
+export type ScheduleGeminiDataPreparation = {
+  __typename?: "ScheduleGeminiDataPreparation";
+  id: Scalars["ID"]["output"];
 };
 
 export type StripeSession = {
@@ -2343,6 +2373,25 @@ export type OrganizationSummaryQuery = {
   };
 };
 
+export type ScheduleGeminiDataPreparationMutationVariables = Exact<{
+  geminiId: Scalars["ID"]["input"];
+  buckets: Array<Scalars["String"]["input"]> | Scalars["String"]["input"];
+}>;
+
+export type ScheduleGeminiDataPreparationMutation = {
+  __typename?: "Mutation";
+  scheduleGeminiDataPreparation?: { __typename?: "ScheduleGeminiDataPreparation"; id: string } | null;
+};
+
+export type GeminiDataPreparationQueryVariables = Exact<{
+  id: Scalars["ID"]["input"];
+}>;
+
+export type GeminiDataPreparationQuery = {
+  __typename?: "Query";
+  geminiDataPreparation: { __typename?: "GeminiDataPreparation"; id: string; status: GeminiDataPreparationStatus };
+};
+
 export const AwsDataSourceConfigFragmentFragmentDoc = gql`
   fragment AwsDataSourceConfigFragment on AwsDataSource {
     config {
@@ -2490,6 +2539,13 @@ export function useOrganizationsLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<OrganizationsQuery, OrganizationsQueryVariables>(OrganizationsDocument, options);
 }
+// @ts-ignore
+export function useOrganizationsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationsQuery, OrganizationsQueryVariables>;
+export function useOrganizationsSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationsQuery | undefined, OrganizationsQueryVariables>;
 export function useOrganizationsSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>
 ) {
@@ -2676,6 +2732,13 @@ export function useCurrentEmployeeLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<CurrentEmployeeQuery, CurrentEmployeeQueryVariables>(CurrentEmployeeDocument, options);
 }
+// @ts-ignore
+export function useCurrentEmployeeSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<CurrentEmployeeQuery, CurrentEmployeeQueryVariables>
+): Apollo.UseSuspenseQueryResult<CurrentEmployeeQuery, CurrentEmployeeQueryVariables>;
+export function useCurrentEmployeeSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CurrentEmployeeQuery, CurrentEmployeeQueryVariables>
+): Apollo.UseSuspenseQueryResult<CurrentEmployeeQuery | undefined, CurrentEmployeeQueryVariables>;
 export function useCurrentEmployeeSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CurrentEmployeeQuery, CurrentEmployeeQueryVariables>
 ) {
@@ -2761,6 +2824,13 @@ export function useDataSourcesLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<DataSourcesQuery, DataSourcesQueryVariables>(DataSourcesDocument, options);
 }
+// @ts-ignore
+export function useDataSourcesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<DataSourcesQuery, DataSourcesQueryVariables>
+): Apollo.UseSuspenseQueryResult<DataSourcesQuery, DataSourcesQueryVariables>;
+export function useDataSourcesSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DataSourcesQuery, DataSourcesQueryVariables>
+): Apollo.UseSuspenseQueryResult<DataSourcesQuery | undefined, DataSourcesQueryVariables>;
 export function useDataSourcesSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DataSourcesQuery, DataSourcesQueryVariables>
 ) {
@@ -2857,6 +2927,13 @@ export function useDataSourceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<DataSourceQuery, DataSourceQueryVariables>(DataSourceDocument, options);
 }
+// @ts-ignore
+export function useDataSourceSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<DataSourceQuery, DataSourceQueryVariables>
+): Apollo.UseSuspenseQueryResult<DataSourceQuery, DataSourceQueryVariables>;
+export function useDataSourceSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DataSourceQuery, DataSourceQueryVariables>
+): Apollo.UseSuspenseQueryResult<DataSourceQuery | undefined, DataSourceQueryVariables>;
 export function useDataSourceSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<DataSourceQuery, DataSourceQueryVariables>
 ) {
@@ -2913,6 +2990,13 @@ export function useInvitationsLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<InvitationsQuery, InvitationsQueryVariables>(InvitationsDocument, options);
 }
+// @ts-ignore
+export function useInvitationsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<InvitationsQuery, InvitationsQueryVariables>
+): Apollo.UseSuspenseQueryResult<InvitationsQuery, InvitationsQueryVariables>;
+export function useInvitationsSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<InvitationsQuery, InvitationsQueryVariables>
+): Apollo.UseSuspenseQueryResult<InvitationsQuery | undefined, InvitationsQueryVariables>;
 export function useInvitationsSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<InvitationsQuery, InvitationsQueryVariables>
 ) {
@@ -3001,6 +3085,15 @@ export function useOrganizationFeaturesLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useOrganizationFeaturesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationFeaturesQuery, OrganizationFeaturesQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationFeaturesQuery, OrganizationFeaturesQueryVariables>;
+export function useOrganizationFeaturesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationFeaturesQuery, OrganizationFeaturesQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationFeaturesQuery | undefined, OrganizationFeaturesQueryVariables>;
 export function useOrganizationFeaturesSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3060,6 +3153,15 @@ export function useOrganizationThemeSettingsLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useOrganizationThemeSettingsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationThemeSettingsQuery, OrganizationThemeSettingsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationThemeSettingsQuery, OrganizationThemeSettingsQueryVariables>;
+export function useOrganizationThemeSettingsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationThemeSettingsQuery, OrganizationThemeSettingsQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationThemeSettingsQuery | undefined, OrganizationThemeSettingsQueryVariables>;
 export function useOrganizationThemeSettingsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3168,6 +3270,15 @@ export function useOrganizationPerspectivesLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useOrganizationPerspectivesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationPerspectivesQuery, OrganizationPerspectivesQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationPerspectivesQuery, OrganizationPerspectivesQueryVariables>;
+export function useOrganizationPerspectivesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationPerspectivesQuery, OrganizationPerspectivesQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationPerspectivesQuery | undefined, OrganizationPerspectivesQueryVariables>;
 export function useOrganizationPerspectivesSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3316,6 +3427,13 @@ export function useEmployeeEmailsLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<EmployeeEmailsQuery, EmployeeEmailsQueryVariables>(EmployeeEmailsDocument, options);
 }
+// @ts-ignore
+export function useEmployeeEmailsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<EmployeeEmailsQuery, EmployeeEmailsQueryVariables>
+): Apollo.UseSuspenseQueryResult<EmployeeEmailsQuery, EmployeeEmailsQueryVariables>;
+export function useEmployeeEmailsSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<EmployeeEmailsQuery, EmployeeEmailsQueryVariables>
+): Apollo.UseSuspenseQueryResult<EmployeeEmailsQuery | undefined, EmployeeEmailsQueryVariables>;
 export function useEmployeeEmailsSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<EmployeeEmailsQuery, EmployeeEmailsQueryVariables>
 ) {
@@ -3377,6 +3495,15 @@ export function useGetOrganizationConstraintLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useGetOrganizationConstraintSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<GetOrganizationConstraintQuery, GetOrganizationConstraintQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetOrganizationConstraintQuery, GetOrganizationConstraintQueryVariables>;
+export function useGetOrganizationConstraintSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetOrganizationConstraintQuery, GetOrganizationConstraintQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetOrganizationConstraintQuery | undefined, GetOrganizationConstraintQueryVariables>;
 export function useGetOrganizationConstraintSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3494,6 +3621,15 @@ export function useGetResourceCountBreakdownLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useGetResourceCountBreakdownSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<GetResourceCountBreakdownQuery, GetResourceCountBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetResourceCountBreakdownQuery, GetResourceCountBreakdownQueryVariables>;
+export function useGetResourceCountBreakdownSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetResourceCountBreakdownQuery, GetResourceCountBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetResourceCountBreakdownQuery | undefined, GetResourceCountBreakdownQueryVariables>;
 export function useGetResourceCountBreakdownSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3556,6 +3692,13 @@ export function useMetaBreakdownLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<MetaBreakdownQuery, MetaBreakdownQueryVariables>(MetaBreakdownDocument, options);
 }
+// @ts-ignore
+export function useMetaBreakdownSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<MetaBreakdownQuery, MetaBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<MetaBreakdownQuery, MetaBreakdownQueryVariables>;
+export function useMetaBreakdownSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MetaBreakdownQuery, MetaBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<MetaBreakdownQuery | undefined, MetaBreakdownQueryVariables>;
 export function useMetaBreakdownSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MetaBreakdownQuery, MetaBreakdownQueryVariables>
 ) {
@@ -3755,6 +3898,15 @@ export function useGetExpensesDailyBreakdownLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useGetExpensesDailyBreakdownSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<GetExpensesDailyBreakdownQuery, GetExpensesDailyBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetExpensesDailyBreakdownQuery, GetExpensesDailyBreakdownQueryVariables>;
+export function useGetExpensesDailyBreakdownSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetExpensesDailyBreakdownQuery, GetExpensesDailyBreakdownQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetExpensesDailyBreakdownQuery | undefined, GetExpensesDailyBreakdownQueryVariables>;
 export function useGetExpensesDailyBreakdownSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3823,6 +3975,15 @@ export function useGetOrganizationLimitHitsLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useGetOrganizationLimitHitsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<GetOrganizationLimitHitsQuery, GetOrganizationLimitHitsQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetOrganizationLimitHitsQuery, GetOrganizationLimitHitsQueryVariables>;
+export function useGetOrganizationLimitHitsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetOrganizationLimitHitsQuery, GetOrganizationLimitHitsQueryVariables>
+): Apollo.UseSuspenseQueryResult<GetOrganizationLimitHitsQuery | undefined, GetOrganizationLimitHitsQueryVariables>;
 export function useGetOrganizationLimitHitsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -3880,6 +4041,13 @@ export function useRelevantFlavorsLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<RelevantFlavorsQuery, RelevantFlavorsQueryVariables>(RelevantFlavorsDocument, options);
 }
+// @ts-ignore
+export function useRelevantFlavorsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<RelevantFlavorsQuery, RelevantFlavorsQueryVariables>
+): Apollo.UseSuspenseQueryResult<RelevantFlavorsQuery, RelevantFlavorsQueryVariables>;
+export function useRelevantFlavorsSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RelevantFlavorsQuery, RelevantFlavorsQueryVariables>
+): Apollo.UseSuspenseQueryResult<RelevantFlavorsQuery | undefined, RelevantFlavorsQueryVariables>;
 export function useRelevantFlavorsSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RelevantFlavorsQuery, RelevantFlavorsQueryVariables>
 ) {
@@ -3929,6 +4097,13 @@ export function useCleanExpensesLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<CleanExpensesQuery, CleanExpensesQueryVariables>(CleanExpensesDocument, options);
 }
+// @ts-ignore
+export function useCleanExpensesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<CleanExpensesQuery, CleanExpensesQueryVariables>
+): Apollo.UseSuspenseQueryResult<CleanExpensesQuery, CleanExpensesQueryVariables>;
+export function useCleanExpensesSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CleanExpensesQuery, CleanExpensesQueryVariables>
+): Apollo.UseSuspenseQueryResult<CleanExpensesQuery | undefined, CleanExpensesQueryVariables>;
 export function useCleanExpensesSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CleanExpensesQuery, CleanExpensesQueryVariables>
 ) {
@@ -3978,6 +4153,13 @@ export function useCloudPoliciesLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<CloudPoliciesQuery, CloudPoliciesQueryVariables>(CloudPoliciesDocument, options);
 }
+// @ts-ignore
+export function useCloudPoliciesSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<CloudPoliciesQuery, CloudPoliciesQueryVariables>
+): Apollo.UseSuspenseQueryResult<CloudPoliciesQuery, CloudPoliciesQueryVariables>;
+export function useCloudPoliciesSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CloudPoliciesQuery, CloudPoliciesQueryVariables>
+): Apollo.UseSuspenseQueryResult<CloudPoliciesQuery | undefined, CloudPoliciesQueryVariables>;
 export function useCloudPoliciesSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<CloudPoliciesQuery, CloudPoliciesQueryVariables>
 ) {
@@ -4027,6 +4209,13 @@ export function useAvailableFiltersLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<AvailableFiltersQuery, AvailableFiltersQueryVariables>(AvailableFiltersDocument, options);
 }
+// @ts-ignore
+export function useAvailableFiltersSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<AvailableFiltersQuery, AvailableFiltersQueryVariables>
+): Apollo.UseSuspenseQueryResult<AvailableFiltersQuery, AvailableFiltersQueryVariables>;
+export function useAvailableFiltersSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AvailableFiltersQuery, AvailableFiltersQueryVariables>
+): Apollo.UseSuspenseQueryResult<AvailableFiltersQuery | undefined, AvailableFiltersQueryVariables>;
 export function useAvailableFiltersSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<AvailableFiltersQuery, AvailableFiltersQueryVariables>
 ) {
@@ -4095,6 +4284,15 @@ export function useBillingSubscriptionPlansLazyQuery(
     options
   );
 }
+// @ts-ignore
+export function useBillingSubscriptionPlansSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>
+): Apollo.UseSuspenseQueryResult<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>;
+export function useBillingSubscriptionPlansSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<BillingSubscriptionPlansQuery, BillingSubscriptionPlansQueryVariables>
+): Apollo.UseSuspenseQueryResult<BillingSubscriptionPlansQuery | undefined, BillingSubscriptionPlansQueryVariables>;
 export function useBillingSubscriptionPlansSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
@@ -4175,6 +4373,13 @@ export function useBillingSubscriptionLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>(BillingSubscriptionDocument, options);
 }
+// @ts-ignore
+export function useBillingSubscriptionSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>
+): Apollo.UseSuspenseQueryResult<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>;
+export function useBillingSubscriptionSuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>
+): Apollo.UseSuspenseQueryResult<BillingSubscriptionQuery | undefined, BillingSubscriptionQueryVariables>;
 export function useBillingSubscriptionSuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<BillingSubscriptionQuery, BillingSubscriptionQueryVariables>
 ) {
@@ -4333,6 +4538,13 @@ export function useOrganizationSummaryLazyQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>(OrganizationSummaryDocument, options);
 }
+// @ts-ignore
+export function useOrganizationSummarySuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>;
+export function useOrganizationSummarySuspenseQuery(
+  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>
+): Apollo.UseSuspenseQueryResult<OrganizationSummaryQuery | undefined, OrganizationSummaryQueryVariables>;
 export function useOrganizationSummarySuspenseQuery(
   baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>
 ) {
@@ -4348,4 +4560,126 @@ export type OrganizationSummarySuspenseQueryHookResult = ReturnType<typeof useOr
 export type OrganizationSummaryQueryResult = Apollo.QueryResult<OrganizationSummaryQuery, OrganizationSummaryQueryVariables>;
 export function refetchOrganizationSummaryQuery(variables: OrganizationSummaryQueryVariables) {
   return { query: OrganizationSummaryDocument, variables: variables };
+}
+export const ScheduleGeminiDataPreparationDocument = gql`
+  mutation ScheduleGeminiDataPreparation($geminiId: ID!, $buckets: [String!]!) {
+    scheduleGeminiDataPreparation(geminiId: $geminiId, buckets: $buckets) {
+      id
+    }
+  }
+`;
+export type ScheduleGeminiDataPreparationMutationFn = Apollo.MutationFunction<
+  ScheduleGeminiDataPreparationMutation,
+  ScheduleGeminiDataPreparationMutationVariables
+>;
+
+/**
+ * __useScheduleGeminiDataPreparationMutation__
+ *
+ * To run a mutation, you first call `useScheduleGeminiDataPreparationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useScheduleGeminiDataPreparationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [scheduleGeminiDataPreparationMutation, { data, loading, error }] = useScheduleGeminiDataPreparationMutation({
+ *   variables: {
+ *      geminiId: // value for 'geminiId'
+ *      buckets: // value for 'buckets'
+ *   },
+ * });
+ */
+export function useScheduleGeminiDataPreparationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ScheduleGeminiDataPreparationMutation,
+    ScheduleGeminiDataPreparationMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<ScheduleGeminiDataPreparationMutation, ScheduleGeminiDataPreparationMutationVariables>(
+    ScheduleGeminiDataPreparationDocument,
+    options
+  );
+}
+export type ScheduleGeminiDataPreparationMutationHookResult = ReturnType<typeof useScheduleGeminiDataPreparationMutation>;
+export type ScheduleGeminiDataPreparationMutationResult = Apollo.MutationResult<ScheduleGeminiDataPreparationMutation>;
+export type ScheduleGeminiDataPreparationMutationOptions = Apollo.BaseMutationOptions<
+  ScheduleGeminiDataPreparationMutation,
+  ScheduleGeminiDataPreparationMutationVariables
+>;
+export const GeminiDataPreparationDocument = gql`
+  query GeminiDataPreparation($id: ID!) {
+    geminiDataPreparation(id: $id) {
+      id
+      status
+    }
+  }
+`;
+
+/**
+ * __useGeminiDataPreparationQuery__
+ *
+ * To run a query within a React component, call `useGeminiDataPreparationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGeminiDataPreparationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGeminiDataPreparationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGeminiDataPreparationQuery(
+  baseOptions: Apollo.QueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables> &
+    ({ variables: GeminiDataPreparationQueryVariables; skip?: boolean } | { skip: boolean })
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+export function useGeminiDataPreparationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+// @ts-ignore
+export function useGeminiDataPreparationSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+): Apollo.UseSuspenseQueryResult<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>;
+export function useGeminiDataPreparationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+): Apollo.UseSuspenseQueryResult<GeminiDataPreparationQuery | undefined, GeminiDataPreparationQueryVariables>;
+export function useGeminiDataPreparationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>
+) {
+  const options = baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GeminiDataPreparationQuery, GeminiDataPreparationQueryVariables>(
+    GeminiDataPreparationDocument,
+    options
+  );
+}
+export type GeminiDataPreparationQueryHookResult = ReturnType<typeof useGeminiDataPreparationQuery>;
+export type GeminiDataPreparationLazyQueryHookResult = ReturnType<typeof useGeminiDataPreparationLazyQuery>;
+export type GeminiDataPreparationSuspenseQueryHookResult = ReturnType<typeof useGeminiDataPreparationSuspenseQuery>;
+export type GeminiDataPreparationQueryResult = Apollo.QueryResult<
+  GeminiDataPreparationQuery,
+  GeminiDataPreparationQueryVariables
+>;
+export function refetchGeminiDataPreparationQuery(variables: GeminiDataPreparationQueryVariables) {
+  return { query: GeminiDataPreparationDocument, variables: variables };
 }

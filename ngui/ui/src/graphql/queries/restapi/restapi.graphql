@@ -444,3 +444,16 @@ query OrganizationSummary($organizationId: ID!, $params: OrganizationSummaryPara
     disabled
   }
 }
+
+mutation ScheduleGeminiDataPreparation($geminiId: ID!, $buckets: [String!]!) {
+  scheduleGeminiDataPreparation(geminiId: $geminiId, buckets: $buckets) {
+    id
+  }
+}
+
+query GeminiDataPreparation($id: ID!) {
+  geminiDataPreparation(id: $id) {
+    id
+    status
+  }
+}

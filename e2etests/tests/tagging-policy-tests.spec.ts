@@ -23,6 +23,7 @@ async function deleteAllPolicies() {
 test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-policies'] }, () => {
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
+  const env = process.env.ENVIRONMENT.toLowerCase();
 
   test.beforeEach('Login admin user', async ({ taggingPoliciesPage }) => {
     await test.step('Login admin user', async () => {
@@ -48,7 +49,8 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
 
   test('[232656] Verify that a user can create a required tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
     const policyName = `Required Tag Policy ${Date.now()}`;
-    const tagName = 'AccountId';
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const tagName = env !== 'test' ? 'Component' : 'devops-component';
 
     await test.step('Create required Tagging Policy page', async () => {
       await taggingPoliciesPage.navigateToCreateTaggingPolicy();
@@ -68,7 +70,8 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
 
   test('[232657] Verify that a user can create a prohibited tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
     const policyName = `Prohibited Tag Policy ${Date.now()}`;
-    const tagName = '__department';
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const tagName = env !== 'test' ? 'Component' : 'devops-component';
     const filter = 'Activity';
     const filterOption = 'Active';
 
@@ -101,8 +104,10 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     taggingPoliciesCreatePage,
   }) => {
     const policyName = `Correlated Tag Policy ${Date.now()}`;
-    const tagName = 'Instance';
-    const secondaryTagName = 'Environment';
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const tagName = env !== 'test' ? 'Component' : 'devops-component';
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const secondaryTagName = env !== 'test' ? 'aws:backup:source-resource' : 'CostCenter';
 
     await test.step('Create tags correlation Tagging Policy page', async () => {
       await taggingPoliciesPage.navigateToCreateTaggingPolicy();
@@ -127,7 +132,8 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     taggingPoliciesCreatePage,
   }) => {
     const policyName = `Policy To Be Deleted ${Date.now()}`;
-    const tagName = 'Application';
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const tagName = env !== 'test' ? 'Component' : 'devops-component';
 
     await test.step('Create a policy to be deleted', async () => {
       await taggingPoliciesPage.navigateToCreateTaggingPolicy();

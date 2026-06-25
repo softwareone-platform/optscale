@@ -4,7 +4,9 @@ import os
 import requests
 import gzip
 import shutil
+import threading
 import uuid
+from contextlib import nullcontext
 from functools import cached_property
 
 from collections import defaultdict
@@ -24,16 +26,30 @@ import tools.optscale_time as opttime
 
 LOG = logging.getLogger(__name__)
 CHUNK_SIZE = 200
+
+_THROTTLE_SEMAPHORES: dict[str, threading.Semaphore] = {}
+_THROTTLE_LOCK = threading.Lock()
+
 CSV_REWRITE_DAYS = 5
 GZIP_ENDING = '.gz'
 REPORTS_PATH_PREFIX = 'reports'
 
 
+def _get_throttle_semaphore(parent_id: str,
+                            max_concurrent: int) -> threading.Semaphore:
+    with _THROTTLE_LOCK:
+        if parent_id not in _THROTTLE_SEMAPHORES:
+            _THROTTLE_SEMAPHORES[parent_id] = threading.Semaphore(max_concurrent)
+        return _THROTTLE_SEMAPHORES[parent_id]
+
+
 class BaseReportImporter:
     def __init__(self, cloud_account_id, rest_cl, config_cl, mongo_raw,
                  mongo_resources, clickhouse_cl, import_file=None,
-                 recalculate=False, detect_period_start=True):
+                 recalculate=False, detect_period_start=True,
+                 max_tenant_concurrent=1):
         self.cloud_acc_id = cloud_account_id
+        self.max_tenant_concurrent = max_tenant_concurrent
         self.rest_cl = rest_cl
         self.config_cl = config_cl
         self.mongo_raw = mongo_raw
@@ -429,6 +445,15 @@ class BaseReportImporter:
         self.generate_clean_records(regeneration=regeneration)
 
     def import_report(self):
+        parent_id = self.cloud_acc.get('parent_id')
+        throttle = (
+            _get_throttle_semaphore(parent_id, self.max_tenant_concurrent)
+            if parent_id else nullcontext()
+        )
+        with throttle:
+            self._run_import()
+
+    def _run_import(self):
         LOG.info('Started import for %s', self.cloud_acc_id)
         self.prepare()
         try:

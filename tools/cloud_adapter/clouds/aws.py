@@ -324,11 +324,20 @@ class Aws(S3CloudMixin):
 
     def _is_region_usable(self, region):
         try:
-            self.session.client("ec2", region).describe_availability_zones()
+            check_config = CoreConfig(
+                connect_timeout=5,
+                read_timeout=10,
+                retries={"max_attempts": 1}
+            )
+            self.session.client("ec2", region, config=check_config
+                                ).describe_availability_zones()
             return True
+        except (ReadTimeoutError, ConnectTimeoutError, SSLError,
+                EndpointConnectionError):
+            return False
         except ClientError as e:
             code = e.response["Error"]["Code"]
-            if code in ("AuthFailure", "UnauthorizedOperation"):
+            if code in ("AuthFailure", "UnauthorizedOperation", "InternalError"):
                 return False
             raise
 
@@ -1642,12 +1651,14 @@ class Aws(S3CloudMixin):
             'global': {'longitude': -98.48424, 'latitude': 39.01190}
         }
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         zero_coordinates = {
             'longitude': None,
             'latitude': None
         }
         coordinates_map = self._get_coordinates_map()
+        if not load:
+            return coordinates_map
         try:
             for available_region in self.list_regions():
                 if not coordinates_map.get(available_region):

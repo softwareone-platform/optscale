@@ -162,9 +162,12 @@ export const getCardMetaData = (recommendationsPage: RecommendationsPage): CardM
   },
   {
     name: 'Resources With Insecure Security Groups Settings',
+    savingsValue: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsCardSavingsValue,
     countValue: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsCountValue,
     seeAllBtn: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsSeeAllBtn,
     errorLocator: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsError,
+    tableLocator: recommendationsPage.resourcesWithInsecureSecurityGroupsSettingsTableSavingsValue,
+    modalColumnLocator: undefined, //TODO: Unable to determine which column this card uses without any savings data
   },
   {
     name: 'Snapshots with non-used Images',

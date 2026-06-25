@@ -2129,7 +2129,7 @@ class Gcp(CloudBase):
         regions["australia-southeast1"]["alias"] = "Australia"
         regions["asia-east2"]["alias"] = "China"
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         coordinates = self._get_regions_coordinates()
         self._add_global_coordinates(coordinates)
         return coordinates

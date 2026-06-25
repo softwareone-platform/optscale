@@ -1,17 +1,21 @@
+import csv
+from io import StringIO
 from datetime import datetime, timezone
-
-from insider.insider_worker.http_client.client import Client
-from insider.insider_worker.processors.base import BasePriceProcessor
+from kombu.log import get_logger
 from kombu import Connection as QConnection
 from kombu import Exchange
 from kombu.log import get_logger
 from kombu.pools import producers
-from optscale_client.rest_api_client.client_v2 import Client as RestClient
 from requests.exceptions import SSLError
+from optscale_client.rest_api_client.client_v2 import Client as RestClient
+from insider.insider_worker.processors.base import BasePriceProcessor
+from insider.insider_worker.http_client.client import Client
+
 
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ACTIVITIES_EXCHANGE = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
 LOG = get_logger(__name__)
+PRICES_PER_REQUEST = 100
 PRICES_COUNT_TO_LOG = 1000
 
 
@@ -78,18 +82,10 @@ class AzurePriceProcessor(BasePriceProcessor):
         currencies = set(map(lambda x: x['currency'], orgs['organizations']))
         return list(currencies)
 
-    def process_prices(self):
-        last_discovery = self.get_last_discovery()
-
-        http_client = Client()
+    def _process_global_prices(self, http_client, old_prices_map):
+        LOG.info('Start processing Azure Global prices')
         for currency in self._get_currencies_list():
             LOG.info('Processing Azure prices for currency: %s', currency)
-
-            old_prices = self.prices.find(
-                {'last_seen': {'$gte': last_discovery.get('started_at', 0)}, 'currencyCode': currency},
-                {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
-            )
-            old_prices_map = {self.unique_values(p): p for p in old_prices}
             processed_keys = {}
             prices_counter = 0
 
@@ -102,9 +98,9 @@ class AzurePriceProcessor(BasePriceProcessor):
                 try:
                     code, response = http_client.get(next_page)
                 except SSLError:
-                    LOG.error('Getting Azure prices failed with SSL verification '
-                              'error. Will try to get prices without SSL '
-                              'verification')
+                    LOG.error('Getting Azure prices failed with SSL '
+                              'verification error. Will try to get prices'
+                              'without SSL verification')
                     self.send_sslerror_service_email()
                     http_client = Client(verify=False)
                     code, response = http_client.get(next_page)
@@ -119,6 +115,32 @@ class AzurePriceProcessor(BasePriceProcessor):
                     break
                 next_page = new_url
                 prices_counter += response.get('Count', 0)
+
+    def _process_china_prices(self, http_client, old_prices_map):
+        LOG.info('Start processing Azure China prices')
+        url = 'https://prices.azure.cn/api/retail/pricesheet/download?' \
+              'api-version=2023-06-01-preview'
+        _, response = http_client.get(url)
+        download_url = response['DownloadUrl']
+        _, response = http_client.get(download_url)
+        stream = StringIO(response.decode('utf-8'))
+        csv_reader = csv.DictReader(stream)
+        new_prices_map = {self.unique_values(p): p for p in csv_reader}
+        self.update_price_records(new_prices_map, old_prices_map, {})
+        LOG.info('Total number of prices got from cloud: %s',
+                 len(new_prices_map))
+
+    def process_prices(self):
+        last_discovery = self.get_last_discovery()
+        old_prices = self.prices.find(
+            {'last_seen': {'$gte': last_discovery.get('started_at', 0)}},
+            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
+        )
+        old_prices_map = {self.unique_values(p): p for p in old_prices}
+
+        http_client = Client()
+        self._process_global_prices(http_client, old_prices_map)
+        self._process_china_prices(http_client, old_prices_map)
 
     def update_price_records(self, new_prices_map, old_prices_map,
                              processed_keys):

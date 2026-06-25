@@ -65,7 +65,11 @@ const RecommendationsOverviewContainer = ({
 
   const [search, setSearch] = useSyncQueryParamWithState({
     queryParamName: "search",
-    defaultValue: ""
+    defaultValue: "",
+    searchParamsGetterOptions: {
+      parseBooleans: false,
+      parseNumbers: false
+    }
   });
 
   const { useGetOptimizationsOverview } = RecommendationsOverviewService();

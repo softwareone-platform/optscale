@@ -230,7 +230,7 @@ class Kubernetes(CloudBase):
         # For Kubernetes cloud we don't have ips as a separate resources
         return []
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         return {}
 
     def set_currency(self, currency):

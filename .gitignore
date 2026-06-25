@@ -59,3 +59,5 @@ optscale-deploy/.vagrant/
 /e2etests/.cache/*
 /e2etests/tests/downloads/*
 
+# ffc_api
+ffc_api/.env

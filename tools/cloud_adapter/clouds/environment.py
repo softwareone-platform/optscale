@@ -43,7 +43,7 @@ class Environment(CloudBase):
     def ip_address_discovery_calls(self):
         raise NotImplementedError
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         return {}
 
     def set_currency(self, currency):

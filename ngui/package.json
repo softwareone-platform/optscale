@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "=22.16.0",
-    "pnpm": "=10.12.1"
+    "pnpm": "=10.33.0"
   },
   "scripts": {
     "check": "pnpm -r check",
@@ -16,10 +16,10 @@
     "dev": "concurrently \"pnpm -r dev\" \"pnpm codegen:watch\""
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "5.0.3",
-    "@graphql-codegen/typescript": "4.1.2",
-    "@graphql-codegen/typescript-react-apollo": "4.3.3",
-    "@graphql-codegen/typescript-resolvers": "4.4.1",
+    "@graphql-codegen/cli": "6.3.0",
+    "@graphql-codegen/typescript": "5.0.10",
+    "@graphql-codegen/typescript-react-apollo": "4.4.1",
+    "@graphql-codegen/typescript-resolvers": "5.1.8",
     "@parcel/watcher": "2.5.1",
     "@types/file-saver": "2.0.7",
     "@types/jest": "29.5.12",
@@ -29,11 +29,10 @@
     "@types/react-dom": "18.2.18",
     "@types/react-syntax-highlighter": "15.5.13",
     "concurrently": "9.2.1",
-    "eslint": "9.34.0",
+    "eslint": "9.39.4",
     "globals": "15.13.0",
     "prettier": "3.3.3",
     "typescript": "5.7.2",
-    "typescript-eslint": "8.41.0"
-  },
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
+    "typescript-eslint": "8.58.2"
+  }
 }

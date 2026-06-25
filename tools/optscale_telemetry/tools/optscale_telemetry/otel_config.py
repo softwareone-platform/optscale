@@ -106,6 +106,7 @@ class OpenTelemetryConfig:
         self.instrument_requests()
         self.instrument_urllib3()
         self.instrument_mongo()
+        self.instrument_clickhouse()
         self.instrument_kombu()
         atexit.register(self.shutdown)
 
@@ -153,6 +154,15 @@ class OpenTelemetryConfig:
 
         KombuInstrumentor().instrument()
         LOG.info("OTEL: `kombu` as been instrumented.")
+
+    def instrument_clickhouse(self):
+        if self.service_config.get("enable_clickhouse", "true").lower() != "true":
+            return
+
+        from tools.optscale_telemetry.clickhouse_instrumentor import ClickHouseInstrumentor
+        ClickHouseInstrumentor().instrument()
+
+        LOG.info("OTEL: `clickhouse` as been instrumented.")
 
     def instrument_sqlalchemy(self):
         if self.service_config.get("enable_sqlalchemy", "").lower() != "true":

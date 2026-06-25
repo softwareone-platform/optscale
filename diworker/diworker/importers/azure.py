@@ -87,9 +87,9 @@ class AzureImporterBase(BaseReportImporter):
         legacy_fields = {
             'cost', 'effective_price'}
         modern_fields = {
-            'cost_in_billing_currency', 'cost_in_pricing_currency',
-            'cost_in_usd', 'payg_cost_in_billing_currency',
-            'payg_cost_in_usd'}
+            'costInBillingCurrency', 'costInPricingCurrency',
+            'costInUSD', 'paygCostInBillingCurrency',
+            'paygCostInUSD'}
         raw_fields = {
             'usage_end_time'}
         return list(custom_fields | legacy_fields | modern_fields | raw_fields)
@@ -102,9 +102,10 @@ class AzureImporterBase(BaseReportImporter):
                 del tree[k]
 
     @staticmethod
-    def datetime_from_str(date_str):
+    def datetime_from_str(date_str, format=None):
+        format = format or '%Y-%m-%dT%H:%M:%S.%fZ'
         return datetime.strptime(
-            date_str, '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=timezone.utc)
+            date_str, format).replace(tzinfo=timezone.utc)
 
     @staticmethod
     def str_from_datetime(date_obj):
@@ -152,20 +153,24 @@ class AzureImporterBase(BaseReportImporter):
             u['start_date'] = self.datetime_from_str(u['date'])
             u['end_date'] = u['start_date'] + timedelta(days=1)
         elif usage_kind == 'modern':
-            u['cost'] = float(u['cost_in_billing_currency'])
-            u['resource_id'] = u['instance_name'].lower()
-            if not u['instance_name']:
+            properties = u.pop('properties', {})
+            u.update(properties)
+            u['cost'] = float(u['costInBillingCurrency'])
+            u['resource_id'] = u['instanceName'].lower()
+            if not u['instanceName']:
                 u['resource_id'] = u['product']
-            if 'additional_info' in u:
-                u['additional_properties'] = u.pop('additional_info')
+            additional_properties = u.pop('additionalInfo', None)
+            if additional_properties:
+                u['additional_properties'] = additional_properties
             u['meter_details'] = {
-                'meter_name': u.pop('meter_name'),
-                'meter_category': u.pop('meter_category'),
-                'meter_sub_category': u.pop('meter_sub_category'),
-                'unit': u.pop('unit_of_measure'),
-                'meter_location': u.pop('meter_region'),
+                'meter_name': u.pop('meterName'),
+                'meter_category': u.pop('meterCategory'),
+                'meter_sub_category': u.pop('meterSubCategory'),
+                'unit': u.pop('unitOfMeasure'),
+                'meter_location': u.pop('meterRegion'),
             }
-            u['start_date'] = self.datetime_from_str(u['date'])
+            u['start_date'] = self.datetime_from_str(
+                u['date'], format='%Y-%m-%dT%H:%M:%SZ')
             u['end_date'] = u['start_date'] + timedelta(days=1)
         elif usage_kind == 'raw':
             u['cost'] = float(u['cost'])
@@ -475,11 +480,12 @@ class AzureApiImporter(AzureImporterBase):
         chunk = []
         usages = self.cloud_adapter.get_usage(self.period_start) or []
         record_number = 0
-        for usage_obj in usages:
+        for usage_dict in usages:
             if len(chunk) == CHUNK_SIZE:
                 self.update_raw_records(chunk)
                 chunk = []
-            usage_dict = usage_obj.as_dict()
+            if not isinstance(usage_dict, dict):
+                usage_dict = usage_dict.as_dict()
             record_number += 1
             usage_dict['_rec_n'] = record_number
             self._fill_custom_fields(usage_dict)

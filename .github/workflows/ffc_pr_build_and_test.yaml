@@ -23,6 +23,7 @@ jobs:
       diworker_changed: ${{ steps.check_diworker.outputs.changed }}
       error_pages_changed: ${{ steps.check_error_pages.outputs.changed }}
       failed_imports_dataset_generator_changed: ${{ steps.check_failed_imports_dataset_generator.outputs.changed }}
+      ffc_api_changed: ${{ steps.check_ffc_api.outputs.changed }}
       gemini_scheduler_changed: ${{ steps.check_gemini_scheduler.outputs.changed }}
       gemini_worker_changed: ${{ steps.check_gemini_worker.outputs.changed }}
       herald_executor_changed: ${{ steps.check_herald_executor.outputs.changed }}
@@ -362,11 +363,18 @@ jobs:
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
-
       - name: Check if 'tools/**' changed
         id: check_tools
         run: |
           if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^tools/'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if 'ffc_api/**' changed
+        id: check_ffc_api
+        run: |
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q '^ffc_api/'; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -539,6 +547,18 @@ jobs:
         run: bash -x build.sh failed_imports_dataset_generator build
       - name: Build test image and run tests
         run: bash -x docker_images/run_test.sh failed_imports_dataset_generator
+  ffc_api_tests:
+    if: needs.determine_changes.outputs.ffc_api_changed == 'true'
+    needs: determine_changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image
+        run: bash -x build.sh ffc_api build
+      - name: Build test image and run tests
+        run: bash -x ffc_api/run_test.sh
   gemini_scheduler_tests:
     if: needs.determine_changes.outputs.gemini_scheduler_changed == 'true'
     needs: determine_changes
@@ -854,6 +874,7 @@ jobs:
       - diworker_tests
       - error_pages_tests
       - failed_imports_dataset_generator_tests
+      - ffc_api_tests
       - gemini_scheduler_tests
       - gemini_worker_tests
       - herald_executor_tests

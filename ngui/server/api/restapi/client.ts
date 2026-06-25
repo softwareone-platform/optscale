@@ -1,3 +1,4 @@
+import { GraphQLError } from "graphql";
 import BaseClient from "../baseClient.js";
 import {
   DataSourceRequestParams,
@@ -26,6 +27,8 @@ import {
   QueryOrganizationSummaryArgs,
   QueryBillingSubscriptionPlansArgs,
   QueryBillingSubscriptionArgs,
+  MutationScheduleGeminiDataPreparationArgs,
+  QueryGeminiDataPreparationArgs,
 } from "../../graphql/__generated__/types/restapi";
 import { getParams } from "../../utils/getParams.js";
 
@@ -417,6 +420,43 @@ class RestApiClient extends BaseClient {
     });
 
     return summary;
+  }
+
+  async scheduleGeminiDataPreparation(
+    geminiId: MutationScheduleGeminiDataPreparationArgs["geminiId"],
+    buckets: MutationScheduleGeminiDataPreparationArgs["buckets"]
+  ) {
+    try {
+      const geminiData = await this.post(`geminis/${geminiId}/geminis_data`, {
+        body: { buckets },
+      });
+
+      return {
+        id: geminiData.id,
+      };
+    } catch (error) {
+      // @ts-expect-error - TODO: extend GraphQLError type with custom response error
+      if (error instanceof GraphQLError && error.extensions?.response?.status === 409) {
+        // @ts-expect-error - TODO: extend GraphQLError type with custom response error
+        const existingId = error.extensions?.response?.body?.error?.params?.[1];
+
+        if (existingId) {
+          return {
+            id: existingId,
+          };
+        }
+      }
+
+      throw error;
+    }
+  }
+
+  async getGeminiDataPreparation(geminiDataPreparationId: QueryGeminiDataPreparationArgs["id"]) {
+    const path = `geminis_data/${geminiDataPreparationId}`;
+
+    const geminiDataPreparation = await this.get(path);
+
+    return geminiDataPreparation;
   }
 }
 

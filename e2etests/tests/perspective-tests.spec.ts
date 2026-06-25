@@ -8,6 +8,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
   test.describe.configure({ mode: 'default' });
   test.use({ restoreSession: true });
   test.slow();
+  const env = process.env.ENVIRONMENT.toLowerCase();
 
   test('[232963] User can create an Expenses perspective and the chart options are saved and applied correctly', async ({
     resourcesPage,
@@ -16,9 +17,9 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter = 'Region';
-    const filterOption = 'East US';
+    const filterOption = env !== 'test' ? 'eu-west-1' : 'West Europe';
     const categorizeBy = 'Resource type';
-    const groupByTag = 'costcenter';
+    const groupByTag = env !== 'test' ? 'Component' : 'devops-component';
     const perspectiveName = `Test Perspective ${new Date().getTime()}`;
 
     await test.step('Select options to save as a perspective', async () => {
@@ -128,7 +129,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter = 'Pool';
-    const filterOption = 'Marketplace (Dev)';
+    const filterOption = env !== 'test' ? 'Marketplace (Staging)' : 'Marketplace (Test)';
     const perspectiveName = `Test Perspective ${new Date().getTime()}`;
 
     await test.step('Select options to save as a perspective', async () => {
@@ -206,6 +207,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
   });
 
   test('[232967] User can create a perspective and delete it via the perspectives table', async ({ resourcesPage, perspectivesPage }) => {
+    const tag= env !== 'test' ? 'Component' : 'devops-component';
     await perspectivesPage.navigateToURL();
     const initialPerspectivesCount = await perspectivesPage.getPerspectivesCount();
     debugLog(`Initial perspectives count: ${initialPerspectivesCount}`);
@@ -216,7 +218,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
 
     await test.step('Create and save a perspective', async () => {
       await resourcesPage.clickExpensesTab();
-      await resourcesPage.selectGroupByTag('environment');
+      await resourcesPage.selectGroupByTag(tag);
       await resourcesPage.click(resourcesPage.savePerspectiveBtn);
       await resourcesPage.savePerspective(perspectiveName);
     });
@@ -247,7 +249,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter1 = 'Region';
-    const filterOption1 = 'West Europe';
+    const filterOption1 = env !== 'test' ? 'eu-west-1' : 'West Europe';
     const filter2 = 'Recommendations';
     const filterOption2 = 'With recommendations';
     const perspectiveName = `Test Perspective ${new Date().getTime()}`;
@@ -290,7 +292,7 @@ test.describe('[MPT-18579] Perspective Tests', { tag: ['@ui', '@resources', '@pe
     await resourcesPage.navigateToResourcesPageAndResetFilters();
 
     const filter1 = 'Region';
-    const filterOption1 = 'West Europe';
+    const filterOption1 = env !== 'test' ? 'eu-west-1' : 'West Europe';
     const filter2 = 'Recommendations';
     const filterOption2 = 'With recommendations';
     const perspectiveName = `Test Perspective ${new Date().getTime()}`;

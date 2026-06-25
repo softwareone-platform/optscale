@@ -1,8 +1,10 @@
+/* eslint-disable playwright/no-conditional-in-test,  playwright/no-conditional-expect */
 import { test } from '../fixtures/page.fixture';
 import { expect } from '@playwright/test';
 import { isWithinRoundingDrift } from '../utils/custom-assertions';
 import { InterceptionEntry } from '../types/interceptor.types';
 import { OrganisationConstraintsMock } from '../mocks/home-page.mocks';
+import { debugLog } from '../utils/debug-logging';
 
 test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui', '@recommendations', '@homepage'] }, () => {
   test.describe.configure({ mode: 'default' });
@@ -48,13 +50,19 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
   });
 
-  // Test failing due to bug MPT-11558 The home page recommendations block not returning the real Critical item count
   test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({
     homePage,
     recommendationsPage,
   }) => {
     const homePageValue = await homePage.getRecommendationsCriticalValue();
     await homePage.recommendationsCriticalLink.click();
+
+    if(homePageValue === 0){
+      debugLog('No critical recommendations, verifying that the no recommendations message is shown');
+      await expect(recommendationsPage.noRecommendationsMessage).toBeVisible();
+      return;
+    }
+
     expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Critical');
     expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
   });
@@ -186,6 +194,7 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         const limitValue = Math.round(expenseValue - 1);
         await poolsPage.toggleExpandPool();
         subPoolExpenseValue = await poolsPage.getSubPoolExpensesThisMonth(1);
+        test.skip(subPoolExpenseValue <= 1, 'Sub-pool expenses are too low to set a limit below them and still have a positive limit value');
         const subPoolLimitValue = Math.round(subPoolExpenseValue - 1);
         await poolsPage.editSubPoolMonthlyLimit(subPoolLimitValue, true, 1);
         await poolsPage.editPoolMonthlyLimit(limitValue);

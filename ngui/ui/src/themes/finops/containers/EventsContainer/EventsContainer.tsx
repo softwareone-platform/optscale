@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import EventList from "@theme/components/Events/Events";
+import Events from "@theme/components/Events/Events";
 import { SECOND } from "api/constants";
 import { useEventsLazyQuery } from "graphql/__generated__/hooks/keeper";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
@@ -39,9 +39,13 @@ const getQueryParamFilters = () => {
     level = EVENT_LEVEL.ALL,
     timeStart,
     timeEnd,
-    descriptionLike = "",
     includeDebugEvents = false
-  } = getSearchParams() as Partial<FilterParams>;
+  } = getSearchParams() as Partial<Pick<FilterParams, "level" | "timeStart" | "timeEnd" | "includeDebugEvents">>;
+
+  const { descriptionLike } = getSearchParams({
+    parseBooleans: false,
+    parseNumbers: false
+  }) as Partial<Pick<FilterParams, "descriptionLike">>;
 
   return {
     level,
@@ -238,6 +242,7 @@ const EventsContainer = () => {
       })
         .then(({ data }) => {
           setEvents(data.events);
+          setEventsCount(data.events.length);
           setPolling(variables);
         })
         .finally(() => {
@@ -252,6 +257,9 @@ const EventsContainer = () => {
     }
 
     const lastEvent = getLastElement(events);
+    if (!lastEvent) {
+      return;
+    }
 
     fetchMoreAbortControllerRef.current = new AbortController();
 
@@ -280,7 +288,7 @@ const EventsContainer = () => {
   };
 
   return (
-    <EventList
+    <Events
       eventLevel={filters.level}
       descriptionLike={filters.descriptionLike}
       includeDebugEvents={filters.includeDebugEvents}

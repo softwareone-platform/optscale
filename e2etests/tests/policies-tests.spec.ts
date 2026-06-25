@@ -59,14 +59,12 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
   });
 
   test('[232287] Verify that user can add a resource quota policy', async ({ policiesPage, policiesCreatePage }) => {
-    const NBSP = '\u00A0'
+    const env = process.env.ENVIRONMENT.toLowerCase();
     const policyName = `Resource Policy ${Date.now()}`;
     const resourceCount = 10;
-    const filterOption = 'West Europe';
-    const filterData = `Region:${NBSP}.a{fill:url(#a);}
-            .b{fill:#0078d4;}
-            .c{fill:url(#b);}
-            .d{fill:url(#c);} ${filterOption}`;
+    // eslint-disable-next-line playwright/no-conditional-in-test
+    const filterOption = env !== 'test' ? 'eu-west-1' : 'West Europe';
+
 
     await test.step('Create Resource Policy', async () => {
       await policiesPage.navigateToCreatePolicy();
@@ -80,7 +78,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
 
       await expect.soft(targetPolicyRow.locator('xpath=/td[1]')).toHaveText(policyName);
       await expect.soft(targetPolicyRow.locator('xpath=/td[3]')).toHaveText(`Resource count must not exceed ${resourceCount}.`);
-      await expect.soft(targetPolicyRow.locator('xpath=/td[4]')).toContainText(filterData);
+      await expect.soft(targetPolicyRow.locator('xpath=/td[4]')).toContainText(filterOption);
     });
 
     await test.step('Navigate to the created policy details page', async () => {
@@ -92,7 +90,7 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
       await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
       await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Resource quota');
       await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Resource count: ${resourceCount}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`${filterData}`);
+      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`${filterOption}`);
     });
   });
 

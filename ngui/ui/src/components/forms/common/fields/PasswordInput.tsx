@@ -94,7 +94,13 @@ const PasswordInput = ({
             <IconButton
               tooltip={{ show: true, messageId: shouldShowPassword ? "hidePassword" : "showPassword" }}
               key="eyeButton"
-              icon={shouldShowPassword ? <VisibilityOffOutlinedIcon /> : <RemoveRedEyeOutlinedIcon />}
+              icon={
+                shouldShowPassword ? (
+                  <VisibilityOffOutlinedIcon data-test-id="icon_hide_password" />
+                ) : (
+                  <RemoveRedEyeOutlinedIcon data-test-id="icon_show_password" />
+                )
+              }
               color="primary"
               onClick={() => {
                 inputRef.current.focus();
