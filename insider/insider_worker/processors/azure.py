@@ -15,8 +15,8 @@ from insider.insider_worker.http_client.client import Client
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ACTIVITIES_EXCHANGE = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
 LOG = get_logger(__name__)
-PRICES_PER_REQUEST = 100
 PRICES_COUNT_TO_LOG = 1000
+CHINA_CURRENCY_CODE = 'CNY'
 
 
 class AzurePriceProcessor(BasePriceProcessor):
@@ -34,16 +34,6 @@ class AzurePriceProcessor(BasePriceProcessor):
     @property
     def prices(self):
         return self.mongo_client.insider.azure_prices
-
-    def get_last_discovery(self):
-        discoveries = self.discoveries.find(
-            {'cloud_type': self.CLOUD_TYPE, 'completed_at': {'$ne': 0}}
-        ).sort(
-            [('completed_at', -1)]).limit(1)
-        try:
-            return next(discoveries)
-        except StopIteration:
-            return {}
 
     @staticmethod
     def unique_values(price):
@@ -82,42 +72,39 @@ class AzurePriceProcessor(BasePriceProcessor):
         currencies = set(map(lambda x: x['currency'], orgs['organizations']))
         return list(currencies)
 
-    def _process_global_prices(self, http_client, old_prices_map):
-        LOG.info('Start processing Azure Global prices')
-        for currency in self._get_currencies_list():
-            LOG.info('Processing Azure prices for currency: %s', currency)
-            processed_keys = {}
-            prices_counter = 0
+    def _process_global_prices(self, http_client, old_prices_map, currency):
+        LOG.info('Processing Azure prices for currency: %s', currency)
+        processed_keys = {}
+        prices_counter = 0
+        next_page = 'https://prices.azure.com/api/retail/prices'
+        next_page += '?currencyCode=%s' % currency
+        while True:
+            if prices_counter % PRICES_COUNT_TO_LOG == 0:
+                LOG.info('Total number of prices got from '
+                         'cloud: %s', prices_counter)
+            try:
+                code, response = http_client.get(next_page)
+            except SSLError:
+                LOG.error('Getting Azure prices failed with SSL '
+                          'verification error. Will try to get prices'
+                          'without SSL verification')
+                self.send_sslerror_service_email()
+                http_client = Client(verify=False)
+                code, response = http_client.get(next_page)
+            items = response.get('Items', [])
+            new_prices_map = {self.unique_values(p): p for p in items}
+            self.update_price_records(new_prices_map, old_prices_map,
+                                      processed_keys)
+            new_url = response.get('NextPageLink')
+            if not new_url or new_url == next_page:
+                LOG.info('Total number of prices got from '
+                         'cloud: %s', prices_counter)
+                break
+            next_page = new_url
+            prices_counter += response.get('Count', 0)
 
-            next_page = 'https://prices.azure.com/api/retail/prices'
-            next_page += '?currencyCode=%s' % currency
-            while True:
-                if prices_counter % PRICES_COUNT_TO_LOG == 0:
-                    LOG.info('Total number of prices got from '
-                             'cloud: %s', prices_counter)
-                try:
-                    code, response = http_client.get(next_page)
-                except SSLError:
-                    LOG.error('Getting Azure prices failed with SSL '
-                              'verification error. Will try to get prices'
-                              'without SSL verification')
-                    self.send_sslerror_service_email()
-                    http_client = Client(verify=False)
-                    code, response = http_client.get(next_page)
-                items = response.get('Items', [])
-                new_prices_map = {self.unique_values(p): p for p in items}
-                self.update_price_records(new_prices_map, old_prices_map,
-                                          processed_keys)
-                new_url = response.get('NextPageLink')
-                if not new_url or new_url == next_page:
-                    LOG.info('Total number of prices got from '
-                             'cloud: %s', prices_counter)
-                    break
-                next_page = new_url
-                prices_counter += response.get('Count', 0)
-
-    def _process_china_prices(self, http_client, old_prices_map):
-        LOG.info('Start processing Azure China prices')
+    def _process_china_prices(self, http_client, old_prices_map, currency):
+        LOG.info('Start processing Azure China prices (%s)', currency)
         url = 'https://prices.azure.cn/api/retail/pricesheet/download?' \
               'api-version=2023-06-01-preview'
         _, response = http_client.get(url)
@@ -130,17 +117,28 @@ class AzurePriceProcessor(BasePriceProcessor):
         LOG.info('Total number of prices got from cloud: %s',
                  len(new_prices_map))
 
-    def process_prices(self):
-        last_discovery = self.get_last_discovery()
-        old_prices = self.prices.find(
-            {'last_seen': {'$gte': last_discovery.get('started_at', 0)}},
-            {k: 1 for k in self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']}
-        )
-        old_prices_map = {self.unique_values(p): p for p in old_prices}
-
+    def process_prices(self, last_discovery_ts):
         http_client = Client()
-        self._process_global_prices(http_client, old_prices_map)
-        self._process_china_prices(http_client, old_prices_map)
+        process_func_map = {
+            CHINA_CURRENCY_CODE: self._process_china_prices
+        }
+        for currency in self._get_currencies_list():
+            old_prices = self.prices.find(
+                {
+                    'last_seen': {
+                        '$gte': last_discovery_ts
+                    },
+                    'currencyCode': currency
+                },
+                {
+                    k: 1 for k in
+                    self.UNIQUE_FIELDS + self.CHANGE_FIELDS + ['last_seen']
+                }
+            )
+            old_prices_map = {self.unique_values(p): p for p in old_prices}
+            process_func = process_func_map.get(
+                currency, self._process_global_prices)
+            process_func(http_client, old_prices_map, currency)
 
     def update_price_records(self, new_prices_map, old_prices_map,
                              processed_keys):

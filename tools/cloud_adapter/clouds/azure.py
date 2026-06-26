@@ -1756,7 +1756,7 @@ class Azure(CloudBase):
         coordinates_map.update(self._get_cn_coordinates_map())
         return coordinates_map
 
-    def get_regions_coordinates(self):
+    def get_regions_coordinates(self, load=True):
         def to_coord(coordinate):
             if isinstance(coordinate, str):
                 try:
@@ -1766,6 +1766,8 @@ class Azure(CloudBase):
             return coordinate
 
         coordinates_map = self._get_coordinates_map()
+        if not load:
+            return coordinates_map
         try:
             for region in self.subscription.subscriptions.list_locations(
                     self._subscription_id):
