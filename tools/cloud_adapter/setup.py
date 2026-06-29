@@ -32,7 +32,7 @@ requirements = [
     "azure-mgmt-reservations==2.3.0",
     "msal==1.34.0",
     "msrest==0.7.1",
-    "urllib3==2.5.0",
+    "urllib3==2.7.0",
     "azure-identity==1.16.1",
     "oauthlib==3.2.2",
 
