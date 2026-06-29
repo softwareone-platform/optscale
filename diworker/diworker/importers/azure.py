@@ -220,6 +220,9 @@ class AzureImporterBase(BaseReportImporter):
         else:
             raise Exception('Unknown usage kind for usage dict: {}'.format(u))
 
+        # some of the subscriptions contain meterId instead of meter_id
+        u['meter_id'] = u.get('meter_id') or u.pop('meterId', None)
+
         if u['meter_details'].get('meter_category', '') == 'Virtual Machines':
             u['box_usage'] = True
 
