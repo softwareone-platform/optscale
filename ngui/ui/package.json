@@ -98,6 +98,9 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "check": "pnpm lint && pnpm translate:check",
+    "check:all": "pnpm check && pnpm prettier:check && pnpm build",
+    "prettier:check": "prettier --check 'src/**/*.{ts,tsx,json}'",
+    "prettier:fix": "prettier --write 'src/**/*.{ts,tsx,json}'",
     "fix": "pnpm lint:fix && pnpm translate:sort && pnpm translate:fix"
   },
   "browserslist": {

@@ -27,12 +27,12 @@ const LanguageSwitcher = () => {
           "& .MuiSelect-select": {
             paddingTop: 0,
             paddingBottom: 0,
-            paddingRight: "20px !important",
+            paddingRight: "20px !important"
           },
           "& .MuiSvgIcon-root": {
             color: "primary.main",
-            fontSize: "1.25rem",
-          },
+            fontSize: "1.25rem"
+          }
         }}
         data-test-id="select_language"
       >
