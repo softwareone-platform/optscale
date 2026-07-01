@@ -6,9 +6,11 @@ from datetime import datetime, timezone, timedelta
 import tools.optscale_time as opttime
 from diworker.diworker.utils import retry_backoff
 from tools.cloud_adapter.clouds.azure import (
-    AzureConsumptionException, ExpenseImportScheme,
-    AzureErrorResponseException, AzureAuthenticationError,
-    AzureResourceNotFoundError)
+    AzureConsumptionException,
+    ExpenseImportScheme,
+    AzureAuthenticationError,
+    AzureResourceNotFoundError,
+)
 
 from diworker.diworker.importers.base import BaseReportImporter
 
@@ -449,13 +451,10 @@ class AzureApiImporter(AzureImporterBase):
             LOG.info('Downloading PayAsYouGo prices')
             try:
                 prices = self.cloud_adapter.get_public_prices()
-            except AzureErrorResponseException as exc:
-                code = getattr(exc.error, 'additional_properties', {}).get(
-                    'error', {}).get('code')
+            except AzureConsumptionException as exc:
+                code = getattr(exc.error, 'code', None)
                 if code == 'SubscriptionNotFound':
-                    msg = exc.error.additional_properties['error'].get(
-                        'message')
-                    raise AzureResourceNotFoundError(msg)
+                    raise AzureResourceNotFoundError(getattr(exc.error, 'message', str(exc)))
                 else:
                     raise exc
             LOG.info('Fetched %s price entries', len(prices))
@@ -554,14 +553,11 @@ class AzureApiImporter(AzureImporterBase):
                     if len(chunk) == CHUNK_SIZE:
                         self.update_raw_records(chunk)
                         chunk = []
-            except AzureErrorResponseException as ex:
-                code = getattr(ex.error, 'additional_properties', {}).get(
-                    'error', {}).get('code')
+            except AzureConsumptionException as exc:
+                code = getattr(exc.error, 'code', None)
                 if code == 'SubscriptionNotFound':
-                    msg = ex.error.additional_properties['error'].get(
-                        'message')
-                    raise AzureResourceNotFoundError(msg)
-                error_message = str(ex)
+                    raise AzureResourceNotFoundError(getattr(exc.error, 'message', str(exc)))
+                error_message = str(exc)
                 if 'Unknown error' in error_message:
                     LOG.error('No ready reports yet in cloud for %s. Will '
                               'skip the remaining report import days and try '
