@@ -14,11 +14,14 @@ import concurrent.futures
 
 import msal
 from azure.core.credentials import AccessToken, TokenCredential
-from msrest.authentication import BasicTokenAuthentication
 
 from azure.mgmt.consumption import ConsumptionManagementClient
-from azure.mgmt.consumption.models import (ModernUsageDetail, LegacyUsageDetail,
-                                           UsageDetail, UsageDetailsListResult)
+from azure.mgmt.consumption.models import (
+    ModernUsageDetail,
+    LegacyUsageDetail,
+    UsageDetail,
+    UsageDetailsListResult,
+)
 from retrying import retry
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.reservations import AzureReservationAPI
@@ -28,17 +31,21 @@ from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.compute.models import InstanceViewTypes
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.subscription import SubscriptionClient
-from msrest.exceptions import (
-    AuthenticationError, ClientRequestError, HttpOperationError)
 from azure.mgmt.monitor import MonitorManagementClient
-from azure.core.exceptions import (HttpResponseError, ClientAuthenticationError,
-                                   ResourceNotFoundError, ServiceRequestError)
+from azure.core.exceptions import (
+    HttpResponseError,
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ServiceRequestError,
+    ServiceResponseError,
+)
 from azure.storage.blob import BlobServiceClient
-from msrest import Deserializer
 
 from tools.cloud_adapter.lib.azure_partner.client import AzurePartnerClient
 from tools.cloud_adapter.lib.azure_partner.exceptions import (
-    AzurePartnerConnectionException, AzurePartnerHttpException)
+    AzurePartnerConnectionException,
+    AzurePartnerHttpException,
+)
 from tools.cloud_adapter.clouds.base import CloudBase
 from tools.cloud_adapter.model import (
     InstanceResource,
@@ -56,7 +63,7 @@ from tools.cloud_adapter.exceptions import (
     CloudConnectionError,
     MetricsNotFoundException,
     MetricsServerTimeoutException,
-    ReportFilesNotFoundException
+    ReportFilesNotFoundException,
 )
 from tools.cloud_adapter.utils import (
     CloudParameter,
@@ -69,22 +76,14 @@ logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(
 logging.getLogger('azure.identity').setLevel(logging.WARNING)
 
 LOG = logging.getLogger(__name__)
-SECONDS_IN_DAY = 60 * 60 * 24
 CLOUD_VALIDATION_TIMEOUT = 90
 CLOUD_LINK_PATTERN = '%s%s/overview'
 DAYS_IN_MONTH = 30
-DESERIALIZER = Deserializer(classes={
-    'ModernUsageDetail': ModernUsageDetail,
-    'LegacyUsageDetail': LegacyUsageDetail,
-    'UsageDetail': UsageDetail,
-    'UsageDetailsListResult': UsageDetailsListResult
-})
 
 ARM_SCOPE = "https://management.azure.com/.default"
 AZURE_CN_CREDS_SCOPE = "https://management.core.chinacloudapi.cn//.default"
 # defining it to use outside CAd
 AzureConsumptionException = HttpResponseError
-AzureErrorResponseException = HttpOperationError
 AzureAuthenticationError = ClientAuthenticationError
 AzureResourceNotFoundError = ResourceNotFoundError
 
@@ -123,16 +122,14 @@ class PortalUrl:
     AZURE_CN = 'https://portal.azure.cn/#resource'
 
 
-class MsalCredential(BasicTokenAuthentication, TokenCredential):
+class MsalCredential(TokenCredential):
     """
     Uses MSAL ConfidentialClientApplication
-    Works for msrest-based clients via BasicTokenAuthentication, also
-    works for azure-core clients via TokenCredential.get_token().
+    Works for azure-core clients via TokenCredential.get_token().
     """
 
     def __init__(self, tenant_id: str, client_id: str, client_secret: str,
                  base_url=None):
-        super().__init__(token=None)
         self._tenant_id = tenant_id
         self._client_id = client_id
         self._client_secret = client_secret
@@ -197,8 +194,6 @@ class MsalCredential(BasicTokenAuthentication, TokenCredential):
         self._access_token = access_token
         self._expires_on = expires_on
 
-        self.token = {"access_token": access_token}
-
         LOG.info(
             "MSAL: New access token acquired; expires_on=%s "
             "(%s seconds from now)",
@@ -246,16 +241,6 @@ class MsalCredential(BasicTokenAuthentication, TokenCredential):
         )
         return AccessToken(access_token, expires_on)
 
-    def signed_session(self, session=None):
-        """
-        Called by msrest-based SDKs (old msrest approach).
-        We refresh token if needed, then delegate to the base class.
-        """
-        LOG.debug("MSAL: signed_session() called for msrest client")
-        self._ensure_token(self._scopes)
-        LOG.info("MSAL: signed_session() using MSAL-backed access token")
-        return super().signed_session(session)
-
 
 def _extract_azure_status_and_code(exc):
     """
@@ -293,7 +278,7 @@ def _extract_azure_status_and_code(exc):
 
 def _is_auth_error(exc) -> bool:
 
-    if isinstance(exc, (AuthenticationError, ClientAuthenticationError)):
+    if isinstance(exc, ClientAuthenticationError):
         return True
 
     if isinstance(exc, HttpResponseError) or hasattr(exc, "response"):
@@ -402,7 +387,7 @@ def _retry_on_error(exc):
         return False
 
     # Network/client side transients
-    if isinstance(exc, (ServiceRequestError, ClientRequestError)):
+    if isinstance(exc, (ServiceRequestError, ServiceResponseError)):
         LOG.error("RETRY: network/client exception: %s", type(exc).__name__)
         _sleep_with_headers({}, source="network")
         return True
@@ -733,8 +718,7 @@ class Azure(CloudBase):
 
     def _get_service_principal_credentials(self):
         """
-        Returns a unified MSAL-based credential that is compatible with
-        msrest-based clients
+        Returns a unified MSAL-based credential
         """
         kwargs = {
             'client_id': self.config['client_id'],
@@ -753,8 +737,7 @@ class Azure(CloudBase):
         except AuthorizationException:
             raise
         except Exception as ex:
-            description = self._get_error_description(ex)
-            raise AuthorizationException(description)
+            raise AuthorizationException(str(exc))
 
     def _get_client_secret_credentials(self):
         """
@@ -773,18 +756,6 @@ class Azure(CloudBase):
         return ('partner_tenant' in self.config and
                 'partner_client_id' in self.config and
                 'partner_secret' in self.config)
-
-    @staticmethod
-    def _get_error_description(exc: Exception):
-        try:
-            if isinstance(exc, AuthenticationError):
-                description = exc.inner_exception.error_response.get(
-                    'error_description').split('\r\n')[0]
-            else:
-                description = str(exc)
-        except Exception:
-            description = str(exc)
-        return description
 
     @retry(retry_on_exception=_retry_on_error, wait_fixed=2000,
            stop_max_attempt_number=10)
@@ -890,11 +861,13 @@ class Azure(CloudBase):
             usage_detail = next(usage)
             currency = (getattr(usage_detail, 'billing_currency', None) or
                         getattr(usage_detail, 'billingCurrencyCode', None))
-        except (AzureConsumptionException, StopIteration, ClientRequestError,
-                TypeError) as exc:
+        except (AzureConsumptionException, StopIteration, ServiceRequestError,
+                ServiceResponseError, TypeError) as exc:
             # according to logs in this issue we get TypeError deep inside
             # python lib in case of timeout error
-            is_timeout_error = isinstance(exc, (ClientRequestError, TypeError))
+            is_timeout_error = isinstance(
+                exc, (ServiceRequestError, ServiceResponseError, TypeError),
+            )
             is_empty = isinstance(exc, StopIteration)
             is_unsupported = (isinstance(exc, AzureConsumptionException) and
                               hasattr(exc.response, 'status_code') and int(
@@ -1402,11 +1375,9 @@ class Azure(CloudBase):
         if limit:
             url += f'&$top={limit}'
 
-        # Ensure msrest client has a fresh token from our MSAL-based credential
+        # Fetch a fresh bearer token from our MSAL-based credential
         cred = self.raw_client._config.credential
-        # One signed_session() call forces refresh + sets cred.token["access_token"]
-        cred.signed_session()
-        token = cred.token['access_token']
+        token = cred.get_token(ARM_SCOPE).token
 
         headers = {'Authorization': f'Bearer {token}'}
         request = HttpRequest(method='GET', url=url, headers=headers)
@@ -1872,8 +1843,8 @@ class Azure(CloudBase):
         try:
             return self.compute.virtual_machines.begin_start(
                 group_name, instance_name)
-        except HttpOperationError as exc:
-            if exc.error.error == 'ResourceNotFound':
+        except HttpResponseError as exc:
+            if getattr(exc.error, 'code', None) == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:
                 raise
@@ -1882,8 +1853,8 @@ class Azure(CloudBase):
         try:
             return self.compute.virtual_machines.begin_deallocate(
                 group_name, instance_name)
-        except HttpOperationError as exc:
-            if exc.error.error == 'ResourceNotFound':
+        except HttpResponseError as exc:
+            if getattr(exc.error, 'code', None) == 'ResourceNotFound':
                 raise ResourceNotFound(str(exc))
             else:
                 raise
