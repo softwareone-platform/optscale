@@ -11,9 +11,7 @@ from collections import defaultdict, OrderedDict
 from datetime import datetime, timedelta, timezone
 from functools import cached_property
 
-from diworker.diworker.importers.base import (
-    CSVBaseReportImporter, CSV_REWRITE_DAYS
-)
+from diworker.diworker.importers.base import CSVBaseReportImporter
 import tools.optscale_time as opttime
 import pyarrow.parquet as pq
 
@@ -219,7 +217,7 @@ class AWSReportImporter(CSVBaseReportImporter):
         if self._is_first_import_in_month(last_import_dt):
             # import full previous month on the first import in month
             return last_import_dt.replace(day=1)
-        return last_import_dt - timedelta(days=CSV_REWRITE_DAYS)
+        return last_import_dt - timedelta(days=self.csv_rewrite_days)
 
     def get_raw_upsert_filters(self, expense):
         filters = super().get_raw_upsert_filters(expense)
