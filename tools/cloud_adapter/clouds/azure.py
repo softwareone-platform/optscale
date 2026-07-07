@@ -1409,6 +1409,9 @@ class Azure(CloudBase):
             but the missing usage for that day will appear when you query data
             for some later day. And usage dates in both cases will say that
             they are for 24h.
+        - It returns None instead of an empty list for days with no data, the
+            generated pager then does iter(None) -> TypeError; to fix it, we
+            use lambda expression in cls argument so it terminates cleanly.
 
         For hourly granularity
         - It returns an error if ranges are not aligned by hour
@@ -1429,6 +1432,7 @@ class Azure(CloudBase):
             reported_end_time=range_end,
             show_details=True,
             aggregation_granularity=granularity,
+            cls=lambda elems: elems or [],
         )
 
     def get_public_prices(self, currency=None, region=None,
