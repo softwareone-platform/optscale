@@ -199,16 +199,16 @@ wheels = [
 
 [[package]]
 name = "azure-mgmt-commerce"
-version = "6.0.0"
+version = "6.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "azure-common" },
     { name = "azure-mgmt-core" },
-    { name = "msrest" },
+    { name = "isodate" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/01/b9/6751a3183f7688e0c3b23de4a0a28356b42f93b3206073dbfbe75cfbc6fd/azure-mgmt-commerce-6.0.0.zip", hash = "sha256:6f5447395503b2318f451d24f8021ee08db1cac44f1c3337ea690700419626b6", size = 4425716, upload-time = "2021-01-04T06:17:46.316Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/23/e5e58318f7242b76691d15ba28350d0f1bb905065ff98b22110b2ecdf07d/azure_mgmt_commerce-6.0.1.tar.gz", hash = "sha256:e4a32f2af684020b02e1e847d2d940604ddbd6010261262c33791ffc692fdeae", size = 43464, upload-time = "2026-05-15T11:06:03.49Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/42/a72d1c37584ce5dd98e34a3256b8480ad7c67653cc0022bb9dd0972191e0/azure_mgmt_commerce-6.0.0-py2.py3-none-any.whl", hash = "sha256:1cf047ec0d202818f014fb54a78ee0c4b9753e561d8ed03cd88977603dd7dcb8", size = 29478, upload-time = "2021-01-04T06:17:44.697Z" },
+    { url = "https://files.pythonhosted.org/packages/ab/3b/dfed784e68377f3e5f6bb99eac54321e8aa7bffe55cad92f99470c498707/azure_mgmt_commerce-6.0.1-py3-none-any.whl", hash = "sha256:e9e12fd467808d22fc867514ff31fdee74539119d21dbe4072cba283573b1130", size = 52774, upload-time = "2026-05-15T11:06:04.827Z" },
 ]
 
 [[package]]
@@ -475,7 +475,6 @@ dependencies = [
     { name = "google-cloud-monitoring" },
     { name = "google-cloud-storage" },
     { name = "msal" },
-    { name = "msrest" },
     { name = "oauthlib" },
     { name = "requests" },
     { name = "retrying" },
@@ -498,7 +497,7 @@ requires-dist = [
     { name = "aliyun-python-sdk-sts", specifier = "==3.0.2" },
     { name = "aliyun-python-sdk-vpc", specifier = "==3.0.14" },
     { name = "azure-identity", specifier = "==1.16.1" },
-    { name = "azure-mgmt-commerce", specifier = "==6.0.0" },
+    { name = "azure-mgmt-commerce", specifier = "==6.0.1" },
     { name = "azure-mgmt-compute", specifier = "==37.2.0" },
     { name = "azure-mgmt-consumption", specifier = "==10.0.0" },
     { name = "azure-mgmt-monitor", specifier = "==7.0.0" },
@@ -516,7 +515,6 @@ requires-dist = [
     { name = "google-cloud-monitoring", specifier = ">=2.15.1,<3.0" },
     { name = "google-cloud-storage", specifier = ">=2.10.0,<3.0" },
     { name = "msal", specifier = "==1.34.0" },
-    { name = "msrest", specifier = "==0.7.1" },
     { name = "oauthlib", specifier = "==3.2.2" },
     { name = "requests", specifier = "==2.32.4" },
     { name = "retrying", specifier = ">=1.4.1" },
