@@ -42,6 +42,7 @@ HEARTBEAT_INTERVAL = 300
 DEFAULT_MAX_WORKERS = 4
 DEFAULT_MAX_TENANT_WORKERS = 1
 DEFAULT_CSV_REWRITE_DAYS = 10
+MIGRATIONS_READY_FILE = '/tmp/diworker-migrations-ready'
 
 
 def _is_rate_limit_exc(exc):
@@ -299,6 +300,8 @@ if __name__ == '__main__':
     # starting at the same time on cluster
     with EtcdLock(config_cl, 'diworker_migrations'):
         migrator.migrate()
+    with open(MIGRATIONS_READY_FILE, 'w') as ready_file:
+        ready_file.write('ready\n')
     LOG.info("starting worker")
     conn_str = 'amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit'))
