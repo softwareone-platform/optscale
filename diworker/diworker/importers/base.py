@@ -30,7 +30,6 @@ CHUNK_SIZE = 200
 _THROTTLE_SEMAPHORES: dict[str, threading.Semaphore] = {}
 _THROTTLE_LOCK = threading.Lock()
 
-CSV_REWRITE_DAYS = 5
 GZIP_ENDING = '.gz'
 REPORTS_PATH_PREFIX = 'reports'
 
@@ -47,9 +46,10 @@ class BaseReportImporter:
     def __init__(self, cloud_account_id, rest_cl, config_cl, mongo_raw,
                  mongo_resources, clickhouse_cl, import_file=None,
                  recalculate=False, detect_period_start=True,
-                 max_tenant_concurrent=1):
+                 max_tenant_concurrent=1, csv_rewrite_days=5):
         self.cloud_acc_id = cloud_account_id
         self.max_tenant_concurrent = max_tenant_concurrent
+        self.csv_rewrite_days = csv_rewrite_days
         self.rest_cl = rest_cl
         self.config_cl = config_cl
         self.mongo_raw = mongo_raw
@@ -650,7 +650,7 @@ class CSVBaseReportImporter(BaseReportImporter):
             self.cloud_acc.get('last_import_modified_at', 0), tz=timezone.utc)
         return last_import_dt.replace(
             hour=0, minute=0, second=0, microsecond=0
-        ) - timedelta(days=CSV_REWRITE_DAYS)
+        ) - timedelta(days=self.csv_rewrite_days)
 
     def detect_period_start(self):
         pass

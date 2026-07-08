@@ -41,6 +41,9 @@ def find_duplicates(
             },
         )
 
+    # sqlite cannot create intermediate directories; in k8s the directory is
+    # created by a volume mount, but in other deployments it may not exist
+    os.makedirs(CACHE_PATH, exist_ok=True)
     cache_filename = os.path.join(CACHE_PATH, f"{random_string()}.sqlite")
     LOG.info(f"Cache filename is {cache_filename}")
     cache = SqliteCache(cache_filename, stats)
