@@ -182,7 +182,7 @@ class DIWorker(ConsumerMixin):
             'max_tenant_concurrent': int(self.diworker_settings.get(
                 'max_tenant_import_workers', DEFAULT_MAX_TENANT_WORKERS)),
             'csv_rewrite_days': int(self.diworker_settings.get(
-                'csv_rewrite_days', DEFAULT_CSV_REWRITE_DAYS))
+                'csv_rewrite_days') or DEFAULT_CSV_REWRITE_DAYS)
         }
         importer = None
         ca = None
