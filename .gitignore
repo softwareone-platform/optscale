@@ -47,6 +47,9 @@ jira_ui/*/.env
 jira_ui/*/node_modules
 jira_ui/*/build/
 
+# Compose env
+optscale-deploy/compose/.env
+
 # Vagrant
 optscale-deploy/.vagrant/
 # Playwright E2E tests

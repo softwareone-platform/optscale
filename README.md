@@ -130,6 +130,25 @@ It supports multi-cloud environments and integrates with popular data platforms,
 
 ## Getting started
 
+### Docker Compose quickstart (try mode)
+
+The fastest way to try OptScale locally — no Kubernetes required. Requires Docker Engine 24+ and Docker Compose v2.20+ with at least 8 CPU cores and 16 GB RAM.
+
+```bash
+git clone https://github.com/hystax/optscale.git
+cd optscale/optscale-deploy/compose
+cp .env.example .env
+docker compose up -d
+```
+
+Once the `configurator` container exits successfully (1-2 minutes), open **http://localhost** in your browser.
+
+See [optscale-deploy/compose/README.md](optscale-deploy/compose/README.md) for full details, configuration options, and troubleshooting.
+
+> **Note:** The Docker Compose deployment is for evaluation and development only. For production, use the Kubernetes installation below.
+
+### Production installation (Kubernetes)
+
 The minimum hardware requirements for OptScale cluster: CPU: 8+ cores, RAM: 16Gb, SSD: 150+ Gb.
 
 NVMe SSD is recommended.  
