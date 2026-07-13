@@ -18,7 +18,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     await recommendationsPage.selectCategory('All');
   });
 
-  test('[230511] Verify Card total savings match possible monthly savings', { tag: '@p1' }, async ({ recommendationsPage }) => {
+  test('[230511] Verify Card total savings match possible monthly savings', { tag: ['@fast', '@p1'] }, async ({ recommendationsPage }) => {
     let possibleMonthlySavings: number;
     let cardTotalSavings: number;
 
@@ -37,7 +37,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     });
   });
 
-  test('[230597] Verify Data Source selection works correctly', async ({ recommendationsPage }) => {
+  test('[230597] Verify Data Source selection works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     const dataSource = process.env.USE_LIVE_DEMO === 'true' ? 'Azure QA' : 'Marketplace (Dev)';
 
     await test.step(`Select data source: ${dataSource}`, async () => {
@@ -58,41 +58,42 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   });
 
   //It appears that environments don't have the correct permissions to run S3 Duplicate checks, so marking this as FIXME for now.
-  test.fixme('[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page', async ({
-    recommendationsPage,
-    s3DuplicateFinder,
-  }) => {
-    let captionText: string;
-    await test.step('Determine whether duplicate check run is completed', async () => {
-      captionText = await recommendationsPage.s3DuplicatesCaption.textContent();
-    });
-
-    if (captionText === 'No successfully completed checks') {
-      await test.step('Verify behaviour is correct if no completed duplicate checks', async () => {
-        debugLog('No successfully completed checks found.');
-
-        // eslint-disable-next-line playwright/no-nested-step
-        await test.step('Verify S3 Duplicate Finder table shows no duplicate checks message', async () => {
-          await recommendationsPage.clickS3DuplicatesCard();
-          await expect
-            .soft(s3DuplicateFinder.tableFirstRow)
-            .toHaveText('No duplicate checks, create a new one using the "Run check" button.');
-        });
+  test.fixme(
+    '[230513] Verify S3 Duplicate Possible monthly savings matches that on S3 Duplicate Finder page',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage, s3DuplicateFinder }) => {
+      let captionText: string;
+      await test.step('Determine whether duplicate check run is completed', async () => {
+        captionText = await recommendationsPage.s3DuplicatesCaption.textContent();
       });
-      return;
+
+      if (captionText === 'No successfully completed checks') {
+        await test.step('Verify behaviour is correct if no completed duplicate checks', async () => {
+          debugLog('No successfully completed checks found.');
+
+          // eslint-disable-next-line playwright/no-nested-step
+          await test.step('Verify S3 Duplicate Finder table shows no duplicate checks message', async () => {
+            await recommendationsPage.clickS3DuplicatesCard();
+            await expect
+              .soft(s3DuplicateFinder.tableFirstRow)
+              .toHaveText('No duplicate checks, create a new one using the "Run check" button.');
+          });
+        });
+        return;
+      }
+      await test.step('Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
+        const possibleMonthlySavings = await recommendationsPage.getS3DuplicateFinderPossibleMonthlySavingsValue();
+        await recommendationsPage.clickS3DuplicatesCard();
+        const s3DuplicateFinderPageSavings = await s3DuplicateFinder.getSavingsFromTable();
+
+        debugLog(`Possible Monthly Savings: ${possibleMonthlySavings}`);
+        debugLog(`S3 Duplicate Finder Page Savings: ${s3DuplicateFinderPageSavings}`);
+        expect(s3DuplicateFinderPageSavings).toBeCloseTo(possibleMonthlySavings, 0);
+      });
     }
-    await test.step('Compare S3 Duplicates possible savings matches total of savings on s3 Duplicate finder table', async () => {
-      const possibleMonthlySavings = await recommendationsPage.getS3DuplicateFinderPossibleMonthlySavingsValue();
-      await recommendationsPage.clickS3DuplicatesCard();
-      const s3DuplicateFinderPageSavings = await s3DuplicateFinder.getSavingsFromTable();
+  );
 
-      debugLog(`Possible Monthly Savings: ${possibleMonthlySavings}`);
-      debugLog(`S3 Duplicate Finder Page Savings: ${s3DuplicateFinderPageSavings}`);
-      expect(s3DuplicateFinderPageSavings).toBeCloseTo(possibleMonthlySavings, 0);
-    });
-  });
-
-  test('[230514] Verify Search functionality works correctly', async ({ recommendationsPage }) => {
+  test('[230514] Verify Search functionality works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     await recommendationsPage.searchByName('Public');
 
     await recommendationsPage.allCardHeadings.last().waitFor();
@@ -105,7 +106,7 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
 
   test(
     '[230598] Verify only the correct applicable services are displayed for SWO Customisation',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ recommendationsPage }) => {
       await test.step('Verify applicable services combo box options shows expected items', async () => {
         await recommendationsPage.applicableServices.click();
@@ -227,11 +228,15 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   ];
 
   // eslint-disable-next-line playwright/expect-expect
-  test('[230515] Verify all expected cards are present when All category selected', async ({ recommendationsPage }) => {
-    await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
-  });
+  test(
+    '[230515] Verify all expected cards are present when All category selected',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage }) => {
+      await verifyCardsAndTable(recommendationsPage, 'All', allExpectedCardHeadings);
+    }
+  );
 
-  test(`[231467] Verify no cards are displaying errors`, async ({ recommendationsPage }) => {
+  test(`[231467] Verify no cards are displaying errors`, { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     await recommendationsPage.selectCategory('All');
     await recommendationsPage.allCardHeadings.last().waitFor();
 
@@ -249,117 +254,131 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
     expect(errorCount, 'No cards should be displaying errors').toBe(0);
   });
   // eslint-disable-next-line playwright/expect-expect
-  test('[230518] Verify all expected cards are present when Savings category selected', async ({ recommendationsPage }) => {
-    const expectedCardHeadings = [
-      'Abandoned Amazon S3 buckets',
-      'Abandoned Images',
-      'Abandoned instances',
-      'Abandoned Kinesis Streams',
-      'Abandoned Load Balancers',
-      'Instances eligible for generation upgrade',
-      'Instances for shutdown',
-      'Instances with migration opportunities',
-      'Instances with Spot (Preemptible) opportunities',
-      'Instances with Subscription opportunities',
-      'Intelligent Tiering',
-      'Not attached Volumes',
-      'Not deallocated Instances',
-      'Obsolete IPs',
-      'Obsolete snapshot chains',
-      'Obsolete snapshots',
-      'Reserved instances opportunities',
-      'Snapshots with non-used Images',
-      'Underutilized instances',
-      'Underutilized RDS Instances',
-    ];
-    await verifyCardsAndTable(recommendationsPage, 'Savings', expectedCardHeadings);
-  });
+  test(
+    '[230518] Verify all expected cards are present when Savings category selected',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage }) => {
+      const expectedCardHeadings = [
+        'Abandoned Amazon S3 buckets',
+        'Abandoned Images',
+        'Abandoned instances',
+        'Abandoned Kinesis Streams',
+        'Abandoned Load Balancers',
+        'Instances eligible for generation upgrade',
+        'Instances for shutdown',
+        'Instances with migration opportunities',
+        'Instances with Spot (Preemptible) opportunities',
+        'Instances with Subscription opportunities',
+        'Intelligent Tiering',
+        'Not attached Volumes',
+        'Not deallocated Instances',
+        'Obsolete IPs',
+        'Obsolete snapshot chains',
+        'Obsolete snapshots',
+        'Reserved instances opportunities',
+        'Snapshots with non-used Images',
+        'Underutilized instances',
+        'Underutilized RDS Instances',
+      ];
+      await verifyCardsAndTable(recommendationsPage, 'Savings', expectedCardHeadings);
+    }
+  );
 
   // eslint-disable-next-line playwright/expect-expect
-  test('[230519] Verify all expected cards are present when Security category selected', async ({ recommendationsPage }) => {
-    const expectedCardHeadings = [
-      'IAM users with unused console access',
-      'Inactive IAM users',
-      'Resources with insecure Security Groups settings',
-      'Public S3 buckets',
-    ];
-    await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
-  });
+  test(
+    '[230519] Verify all expected cards are present when Security category selected',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage }) => {
+      const expectedCardHeadings = [
+        'IAM users with unused console access',
+        'Inactive IAM users',
+        'Resources with insecure Security Groups settings',
+        'Public S3 buckets',
+      ];
+      await verifyCardsAndTable(recommendationsPage, 'Security', expectedCardHeadings);
+    }
+  );
 
-  test('[230520] Verify all cards display critical icon when Critical category selected', async ({ recommendationsPage }) => {
-    let count: number;
-    let actualHeadings: string[];
-    let criticalIconCount: number;
+  test(
+    '[230520] Verify all cards display critical icon when Critical category selected',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage }) => {
+      let count: number;
+      let actualHeadings: string[];
+      let criticalIconCount: number;
 
-    await test.step('Select Critical category and verify every card has a critical icon', async () => {
-      await recommendationsPage.selectCategory('Critical');
-      test.skip(await recommendationsPage.noRecommendationsMessage.isVisible(), 'No recommendations are marked as Critical');
+      await test.step('Select Critical category and verify every card has a critical icon', async () => {
+        await recommendationsPage.selectCategory('Critical');
+        test.skip(await recommendationsPage.noRecommendationsMessage.isVisible(), 'No recommendations are marked as Critical');
 
-      await recommendationsPage.allCardHeadings.last().waitFor();
-      count = await recommendationsPage.allCardHeadings.count();
-      actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-      debugLog(`Actual heading texts: ${actualHeadings}`);
-      debugLog(`Number of card headings found: ${count}`);
-      criticalIconCount = await recommendationsPage.allCriticalIcon.count();
-      debugLog(`Number of critical icons found: ${criticalIconCount}`);
-      expect.soft(criticalIconCount).toBe(count);
-    });
+        await recommendationsPage.allCardHeadings.last().waitFor();
+        count = await recommendationsPage.allCardHeadings.count();
+        actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        debugLog(`Actual heading texts: ${actualHeadings}`);
+        debugLog(`Number of card headings found: ${count}`);
+        criticalIconCount = await recommendationsPage.allCriticalIcon.count();
+        debugLog(`Number of critical icons found: ${criticalIconCount}`);
+        expect.soft(criticalIconCount).toBe(count);
+      });
 
-    await test.step('Switch to table view and verify row count matches card count', async () => {
-      await recommendationsPage.clickTableButton();
-      await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
-      expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
-    });
+      await test.step('Switch to table view and verify row count matches card count', async () => {
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(criticalIconCount - 1).waitFor();
+        expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(criticalIconCount);
+      });
 
-    await test.step('Verify table row names match card headings', async () => {
-      const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-      const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
-      const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
-      expect.soft(buttonNamesSorted).toEqual(expectedSorted);
-    });
+      await test.step('Verify table row names match card headings', async () => {
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+        expect.soft(buttonNamesSorted).toEqual(expectedSorted);
+      });
 
-    await test.step('Verify all table rows have Critical status', async () => {
-      const allStatuses = await recommendationsPage.statusColumn.allTextContents();
-      for (const status of allStatuses) {
-        expect(status.trim()).toBe('Critical');
-      }
-    });
-  });
+      await test.step('Verify all table rows have Critical status', async () => {
+        const allStatuses = await recommendationsPage.statusColumn.allTextContents();
+        for (const status of allStatuses) {
+          expect(status.trim()).toBe('Critical');
+        }
+      });
+    }
+  );
 
-  test('[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected', async ({
-    recommendationsPage,
-  }) => {
-    let count: number;
-    let actualHeadings: string[];
-    let seeAllBtnCount: number;
+  test(
+    '[230521] Verify that only cards with See Item buttons are displayed when Non-empty category selected',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage }) => {
+      let count: number;
+      let actualHeadings: string[];
+      let seeAllBtnCount: number;
 
-    await test.step('Select Non-empty category and verify every card has a See All button', async () => {
-      await recommendationsPage.selectCategory('Non-empty');
-      await recommendationsPage.allCardHeadings.last().waitFor();
-      count = await recommendationsPage.allCardHeadings.count();
-      actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
-      debugLog(`Actual heading texts: ${actualHeadings}`);
-      debugLog(`Number of card headings found: ${count}`);
-      seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
-      debugLog(`Number of See Item buttons found: ${seeAllBtnCount}`);
-      expect.soft(seeAllBtnCount).toBe(count);
-    });
+      await test.step('Select Non-empty category and verify every card has a See All button', async () => {
+        await recommendationsPage.selectCategory('Non-empty');
+        await recommendationsPage.allCardHeadings.last().waitFor();
+        count = await recommendationsPage.allCardHeadings.count();
+        actualHeadings = await recommendationsPage.allCardHeadings.allTextContents();
+        debugLog(`Actual heading texts: ${actualHeadings}`);
+        debugLog(`Number of card headings found: ${count}`);
+        seeAllBtnCount = await recommendationsPage.allSeeAllBtns.count();
+        debugLog(`Number of See Item buttons found: ${seeAllBtnCount}`);
+        expect.soft(seeAllBtnCount).toBe(count);
+      });
 
-    await test.step('Switch to table view and verify row count matches card count', async () => {
-      await recommendationsPage.clickTableButton();
-      await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
-      expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
-    });
+      await test.step('Switch to table view and verify row count matches card count', async () => {
+        await recommendationsPage.clickTableButton();
+        await recommendationsPage.allNameTableButtons.nth(seeAllBtnCount - 1).waitFor();
+        expect.soft(await recommendationsPage.allNameTableButtons.count()).toBe(seeAllBtnCount);
+      });
 
-    await test.step('Verify table row names match card headings', async () => {
-      const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
-      const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
-      const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
-      expect(buttonNamesSorted).toEqual(expectedSorted);
-    });
-  });
+      await test.step('Verify table row names match card headings', async () => {
+        const buttonNames = await recommendationsPage.allNameTableButtons.allTextContents();
+        const expectedSorted = actualHeadings.map((t: string) => t.trim()).sort();
+        const buttonNamesSorted = buttonNames.map((t: string) => t.trim()).sort();
+        expect(buttonNamesSorted).toEqual(expectedSorted);
+      });
+    }
+  );
 
-  test('[230523] Verify filtering by applicable service works correctly', async ({ recommendationsPage }) => {
+  test('[230523] Verify filtering by applicable service works correctly', { tag: ['@fast', '@p2'] }, async ({ recommendationsPage }) => {
     let count: number;
     let actualHeadings: string[];
     let rdsCount: number;
@@ -428,63 +447,64 @@ test.describe('[MPT-11310] Recommendations page tests', { tag: ['@ui', '@recomme
   ];
 
   for (const cardName of cardEntries) {
-    test(`[230524] ${cardName}: Cards displaying possible savings, should match itemised modal total and table total`, async ({
-      recommendationsPage,
-    }) => {
-      // Find this card’s full metadata at runtime
-      const allCardData = getCardMetaData(recommendationsPage);
-      const card = allCardData.find(c => c.name === cardName);
-      if (!card) throw new Error(`Card data not found for: ${cardName}`);
+    test(
+      `[230524] ${cardName}: Cards displaying possible savings, should match itemised modal total and table total`,
+      { tag: ['@fast', '@p2'] },
+      async ({ recommendationsPage }) => {
+        // Find this card’s full metadata at runtime
+        const allCardData = getCardMetaData(recommendationsPage);
+        const card = allCardData.find(c => c.name === cardName);
+        if (!card) throw new Error(`Card data not found for: ${cardName}`);
 
-      const { savingsValue, countValue, seeAllBtn, tableLocator, modalColumnLocator } = card;
-      let isApproximate: boolean;
-      let cardSavings = undefined;
-      let cardCount = undefined;
+        const { savingsValue, countValue, seeAllBtn, tableLocator, modalColumnLocator } = card;
+        let isApproximate: boolean;
+        let cardSavings = undefined;
+        let cardCount = undefined;
 
-      debugLog(`${cardName} savingsValue defined: ${!!savingsValue}`);
-      if (savingsValue) {
-        cardSavings = await recommendationsPage.getCurrencyValue(savingsValue);
-        debugLog(`${cardName} Card Savings Value: ${cardSavings}`);
+        debugLog(`${cardName} savingsValue defined: ${!!savingsValue}`);
+        if (savingsValue) {
+          cardSavings = await recommendationsPage.getCurrencyValue(savingsValue);
+          debugLog(`${cardName} Card Savings Value: ${cardSavings}`);
 
+          if (cardSavings === 0) {
+            const value = await savingsValue.textContent();
+            isApproximate = value.includes('≈');
+            debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
+          }
 
-        if (cardSavings === 0) {
-          const value = await savingsValue.textContent();
-          isApproximate = value.includes('≈');
-          debugLog(`${cardName} Card shows approximate savings: ${isApproximate}`);
-        }
+          debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
 
-        debugLog(`${cardName} Card Possible Savings: ${cardSavings}`);
+          if (cardSavings === 0 && !isApproximate) {
+            await test.step('Card savings is 0, check table and see-all button', async () => {
+              await expect.soft(seeAllBtn).toBeHidden();
+              await recommendationsPage.clickTableButton();
+              expect.soft(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
+            });
+          } else {
+            await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
 
-        if (cardSavings === 0 && !isApproximate) {
-          await test.step('Card savings is 0, check table and see-all button', async () => {
-            await expect.soft(seeAllBtn).toBeHidden();
-            await recommendationsPage.clickTableButton();
-            expect.soft(await recommendationsPage.getCurrencyValue(tableLocator)).toBe(0);
-          });
+            const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
+
+            await test.step('Compare modal itemised total and card savings', async () => {
+              expect.soft(itemisedSavings).toBeCloseTo(cardSavings, 0);
+            });
+
+            await test.step('Compare modal and table savings', async () => {
+              await recommendationsPage.clickTableButton();
+              await recommendationsPage.waitForAllProgressBarsToDisappear();
+              const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
+              debugLog(`${cardName} Table Savings: ${tableSavings}`);
+              expect.soft(isWithinRoundingDrift(cardSavings, tableSavings, 0.001)).toBe(true); // Allowable drift of 0.1%
+            });
+          }
         } else {
-          await recommendationsPage.skipTestIfMoreThan100Items(seeAllBtn);
-
-          const itemisedSavings = await recommendationsPage.getItemisedSavingsFromModal(seeAllBtn, modalColumnLocator);
-
-          await test.step('Compare modal itemised total and card savings', async () => {
-            expect.soft(itemisedSavings).toBeCloseTo(cardSavings, 0);
-          });
-
-          await test.step('Compare modal and table savings', async () => {
-            await recommendationsPage.clickTableButton();
-            await recommendationsPage.waitForAllProgressBarsToDisappear();
-            const tableSavings = await recommendationsPage.getCurrencyValue(tableLocator);
-            debugLog(`${cardName} Table Savings: ${tableSavings}`);
-            expect.soft(isWithinRoundingDrift(cardSavings, tableSavings, 0.001)).toBe(true); // Allowable drift of 0.1%
-          });
+          cardCount = await recommendationsPage.getCardCountValue(countValue);
+          debugLog(`${cardName} Card Count: ${cardCount}`);
+          const seeAllCount = await recommendationsPage.getItemCountFromSeeAllButton(seeAllBtn);
+          debugLog(`${cardName} See All Button Count: ${seeAllCount}`);
+          expect.soft(seeAllCount).toBeCloseTo(cardCount);
         }
-      } else {
-        cardCount = await recommendationsPage.getCardCountValue(countValue);
-        debugLog(`${cardName} Card Count: ${cardCount}`);
-        const seeAllCount = await recommendationsPage.getItemCountFromSeeAllButton(seeAllBtn);
-        debugLog(`${cardName} See All Button Count: ${seeAllCount}`);
-        expect.soft(seeAllCount).toBeCloseTo(cardCount);
       }
-    });
+    );
   }
 });

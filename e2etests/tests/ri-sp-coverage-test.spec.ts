@@ -75,34 +75,37 @@ test.describe('Mocked RI/SP coverage page test', { tag: ['@ui', '@risp-coverage'
     {
       url: `/v2/organizations/[^/]+/optimizations\\?limit=3&overview=true`,
       mock: OptimizationsLimitsResponse,
-    }
-
+    },
   ];
 
   test.use({ restoreSession: true, interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true } });
 
-  test('[232683] Verify mocked table data is displayed on the RI/SP coverage page', async ({ recommendationsPage, riSpCoveragePage }) => {
-    let savingsValue: number;
+  test(
+    '[232683] Verify mocked table data is displayed on the RI/SP coverage page',
+    { tag: ['@fast', '@p2'] },
+    async ({ recommendationsPage, riSpCoveragePage }) => {
+      let savingsValue: number;
 
-    await test.step('Navigate to the RI/SP coverage page from recommendations page', async () => {
-      await recommendationsPage.page.clock.setFixedTime(new Date('2026-02-10T00:00:00Z'));
-      await recommendationsPage.navigateToURL();
-      savingsValue = await recommendationsPage.getSavedWithCommitmentsValue();
-      await recommendationsPage.clickRI_SPCard();
-    });
+      await test.step('Navigate to the RI/SP coverage page from recommendations page', async () => {
+        await recommendationsPage.page.clock.setFixedTime(new Date('2026-02-10T00:00:00Z'));
+        await recommendationsPage.navigateToURL();
+        savingsValue = await recommendationsPage.getSavedWithCommitmentsValue();
+        await recommendationsPage.clickRI_SPCard();
+      });
 
-    await test.step('Verify that the RI SP breakdown table displays the mocked data', async () => {
-      await riSpCoveragePage.waitForAllCanvases();
-      await riSpCoveragePage.table.waitFor();
-      const tableSavingsValue = riSpCoveragePage.parseCurrencyValue(await riSpCoveragePage.targetSavingsTableCell.textContent());
+      await test.step('Verify that the RI SP breakdown table displays the mocked data', async () => {
+        await riSpCoveragePage.waitForAllCanvases();
+        await riSpCoveragePage.table.waitFor();
+        const tableSavingsValue = riSpCoveragePage.parseCurrencyValue(await riSpCoveragePage.targetSavingsTableCell.textContent());
 
-      await expect(riSpCoveragePage.targetSP_UsageTableCell).toContainText('2393.2 hours');
-      await expect(riSpCoveragePage.targetRI_UsageTableCell).toContainText('662 hours');
-      await expect(riSpCoveragePage.targetTotalUsageTableCell).toContainText('3979.2 hours');
-      await expect(riSpCoveragePage.targetSP_ExpensesTableCell).toContainText('$3,557.07');
-      await expect(riSpCoveragePage.targetRI_ExpensesTableCell).toContainText('$266.65');
-      expect(tableSavingsValue).toBe(savingsValue);
-      await expect(riSpCoveragePage.targetTotalExpensesCell).toContainText('$10,238.65');
-    });
-  });
+        await expect(riSpCoveragePage.targetSP_UsageTableCell).toContainText('2393.2 hours');
+        await expect(riSpCoveragePage.targetRI_UsageTableCell).toContainText('662 hours');
+        await expect(riSpCoveragePage.targetTotalUsageTableCell).toContainText('3979.2 hours');
+        await expect(riSpCoveragePage.targetSP_ExpensesTableCell).toContainText('$3,557.07');
+        await expect(riSpCoveragePage.targetRI_ExpensesTableCell).toContainText('$266.65');
+        expect(tableSavingsValue).toBe(savingsValue);
+        await expect(riSpCoveragePage.targetTotalExpensesCell).toContainText('$10,238.65');
+      });
+    }
+  );
 });
