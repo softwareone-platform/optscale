@@ -53,6 +53,7 @@ const applyPaletteSettings = (settings) => {
       main: MPT_BRAND_PRIMARY,
       white: MPT_BRAND_WHITE,
       gray2: MPT_GRAY_2,
+      gray4: MPT_GRAY_4,
       gradient: MPT_GRADIENT,
       card: MPT_BRAND_TYPE
     },
