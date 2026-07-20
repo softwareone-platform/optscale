@@ -32,130 +32,144 @@ test.describe('[MPT-17042] Tagging Policy Tests', { tag: ['@ui', '@tagging-polic
     });
   });
 
-  test('[232655] Verify that Sample data pop-up is visible when no policies exist', async ({ taggingPoliciesPage }) => {
-    await test.step('Ensure all policies are deleted', async () => {
+  test(
+    '[232655] Verify that Sample data pop-up is visible when no policies exist',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage }) => {
+      await test.step('Ensure all policies are deleted', async () => {
+        // eslint-disable-next-line playwright/no-conditional-in-test
+        if (!(await taggingPoliciesPage.addRealDataBtn.isVisible())) {
+          await deleteAllPolicies();
+          await taggingPoliciesPage.page.reload();
+          await taggingPoliciesPage.waitForAllProgressBarsToDisappear();
+        }
+      });
+
+      await test.step('Verify Sample data pop-up visibility', async () => {
+        await expect(taggingPoliciesPage.addRealDataBtn).toBeVisible();
+      });
+    }
+  );
+
+  test(
+    '[232656] Verify that a user can create a required tagging policy',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+      const policyName = `Required Tag Policy ${Date.now()}`;
       // eslint-disable-next-line playwright/no-conditional-in-test
-      if (!(await taggingPoliciesPage.addRealDataBtn.isVisible())) {
-        await deleteAllPolicies();
-        await taggingPoliciesPage.page.reload();
-        await taggingPoliciesPage.waitForAllProgressBarsToDisappear();
-      }
-    });
+      const tagName = env !== 'test' ? 'Component' : 'devops-component';
 
-    await test.step('Verify Sample data pop-up visibility', async () => {
-      await expect(taggingPoliciesPage.addRealDataBtn).toBeVisible();
-    });
-  });
+      await test.step('Create required Tagging Policy page', async () => {
+        await taggingPoliciesPage.navigateToCreateTaggingPolicy();
+        await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.requiredTag, policyName, tagName);
+      });
 
-  test('[232656] Verify that a user can create a required tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
-    const policyName = `Required Tag Policy ${Date.now()}`;
-    // eslint-disable-next-line playwright/no-conditional-in-test
-    const tagName = env !== 'test' ? 'Component' : 'devops-component';
+      const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
 
-    await test.step('Create required Tagging Policy page', async () => {
-      await taggingPoliciesPage.navigateToCreateTaggingPolicy();
-      await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.requiredTag, policyName, tagName);
-    });
+      await test.step('Verify that the required tagging policy is created', async () => {
+        await targetPolicyRow.waitFor();
 
-    const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
-    const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
+        await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
+        await expect.soft(targetPolicyRow.locator('//td[3]')).toHaveText(`The ${tagName} tag is required starting from ${date}.`);
+      });
+    }
+  );
 
-    await test.step('Verify that the required tagging policy is created', async () => {
-      await targetPolicyRow.waitFor();
+  test(
+    '[232657] Verify that a user can create a prohibited tagging policy',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+      const policyName = `Prohibited Tag Policy ${Date.now()}`;
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      const tagName = env !== 'test' ? 'Component' : 'devops-component';
+      const filter = 'Activity';
+      const filterOption = 'Active';
 
-      await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
-      await expect.soft(targetPolicyRow.locator('//td[3]')).toHaveText(`The ${tagName} tag is required starting from ${date}.`);
-    });
-  });
+      await test.step('Create prohibited Tagging Policy page', async () => {
+        await taggingPoliciesPage.navigateToCreateTaggingPolicy();
+        await taggingPoliciesCreatePage.createTaggingPolicy(
+          ETaggingPolicyType.prohibitedTag,
+          policyName,
+          tagName,
+          undefined,
+          filter,
+          filterOption
+        );
+      });
 
-  test('[232657] Verify that a user can create a prohibited tagging policy', async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
-    const policyName = `Prohibited Tag Policy ${Date.now()}`;
-    // eslint-disable-next-line playwright/no-conditional-in-test
-    const tagName = env !== 'test' ? 'Component' : 'devops-component';
-    const filter = 'Activity';
-    const filterOption = 'Active';
+      const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
 
-    await test.step('Create prohibited Tagging Policy page', async () => {
-      await taggingPoliciesPage.navigateToCreateTaggingPolicy();
-      await taggingPoliciesCreatePage.createTaggingPolicy(
-        ETaggingPolicyType.prohibitedTag,
-        policyName,
-        tagName,
-        undefined,
-        filter,
-        filterOption
-      );
-    });
+      await test.step('Verify that the prohibited tagging policy is created', async () => {
+        await targetPolicyRow.waitFor();
 
-    const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
-    const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
+        await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
+        await expect.soft(targetPolicyRow.locator('//td[3]')).toHaveText(`Tag ${tagName} is prohibited starting from ${date}.`);
+        await expect(targetPolicyRow.locator('//td[4]')).toHaveText(`${filter}: ${filterOption}`);
+      });
+    }
+  );
 
-    await test.step('Verify that the prohibited tagging policy is created', async () => {
-      await targetPolicyRow.waitFor();
+  test(
+    '[232658] Verify that a user can create a tags correlation tagging policy',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+      const policyName = `Correlated Tag Policy ${Date.now()}`;
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      const tagName = env !== 'test' ? 'Component' : 'devops-component';
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      const secondaryTagName = env !== 'test' ? 'aws:backup:source-resource' : 'CostCenter';
 
-      await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
-      await expect.soft(targetPolicyRow.locator('//td[3]')).toHaveText(`Tag ${tagName} is prohibited starting from ${date}.`);
-      await expect(targetPolicyRow.locator('//td[4]')).toHaveText(`${filter}: ${filterOption}`);
-    });
-  });
+      await test.step('Create tags correlation Tagging Policy page', async () => {
+        await taggingPoliciesPage.navigateToCreateTaggingPolicy();
+        await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.tagsCorrelation, policyName, tagName, secondaryTagName);
+      });
 
-  test('[232658] Verify that a user can create a tags correlation tagging policy', async ({
-    taggingPoliciesPage,
-    taggingPoliciesCreatePage,
-  }) => {
-    const policyName = `Correlated Tag Policy ${Date.now()}`;
-    // eslint-disable-next-line playwright/no-conditional-in-test
-    const tagName = env !== 'test' ? 'Component' : 'devops-component';
-    // eslint-disable-next-line playwright/no-conditional-in-test
-    const secondaryTagName = env !== 'test' ? 'aws:backup:source-resource' : 'CostCenter';
+      const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
 
-    await test.step('Create tags correlation Tagging Policy page', async () => {
-      await taggingPoliciesPage.navigateToCreateTaggingPolicy();
-      await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.tagsCorrelation, policyName, tagName, secondaryTagName);
-    });
+      await test.step('Verify that the tags correlation tagging policy is created', async () => {
+        await targetPolicyRow.waitFor();
 
-    const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
-    const date = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
+        await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
+        await expect
+          .soft(targetPolicyRow.locator('//td[3]'))
+          .toHaveText(`Resources tagged with ${tagName} must be tagged with ${secondaryTagName} starting from ${date}.`);
+      });
+    }
+  );
 
-    await test.step('Verify that the tags correlation tagging policy is created', async () => {
-      await targetPolicyRow.waitFor();
+  test(
+    '[232659] Verify that user can delete a policy from the tagging policy details page',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage, taggingPoliciesCreatePage }) => {
+      const policyName = `Policy To Be Deleted ${Date.now()}`;
+      // eslint-disable-next-line playwright/no-conditional-in-test
+      const tagName = env !== 'test' ? 'Component' : 'devops-component';
 
-      await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
-      await expect
-        .soft(targetPolicyRow.locator('//td[3]'))
-        .toHaveText(`Resources tagged with ${tagName} must be tagged with ${secondaryTagName} starting from ${date}.`);
-    });
-  });
+      await test.step('Create a policy to be deleted', async () => {
+        await taggingPoliciesPage.navigateToCreateTaggingPolicy();
+        await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.requiredTag, policyName, tagName);
+      });
 
-  test('[232659] Verify that user can delete a policy from the tagging policy details page', async ({
-    taggingPoliciesPage,
-    taggingPoliciesCreatePage,
-  }) => {
-    const policyName = `Policy To Be Deleted ${Date.now()}`;
-    // eslint-disable-next-line playwright/no-conditional-in-test
-    const tagName = env !== 'test' ? 'Component' : 'devops-component';
+      const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
 
-    await test.step('Create a policy to be deleted', async () => {
-      await taggingPoliciesPage.navigateToCreateTaggingPolicy();
-      await taggingPoliciesCreatePage.createTaggingPolicy(ETaggingPolicyType.requiredTag, policyName, tagName);
-    });
+      await test.step('Navigate to the created policy details page', async () => {
+        await targetPolicyRow.waitFor();
+        await taggingPoliciesPage.click(targetPolicyRow.locator('//a'));
+        await taggingPoliciesPage.policyDetailsDiv.waitFor();
+      });
 
-    const targetPolicyRow = taggingPoliciesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      await test.step('Delete the policy from the details page', async () => {
+        await taggingPoliciesPage.deletePolicyFromDetailsPage();
+      });
 
-    await test.step('Navigate to the created policy details page', async () => {
-      await targetPolicyRow.waitFor();
-      await taggingPoliciesPage.click(targetPolicyRow.locator('//a'));
-      await taggingPoliciesPage.policyDetailsDiv.waitFor();
-    });
-
-    await test.step('Delete the policy from the details page', async () => {
-      await taggingPoliciesPage.deletePolicyFromDetailsPage();
-    });
-
-    await test.step('Verify that the policy is deleted and no longer appears in the policies table', async () => {
-      await expect(targetPolicyRow).toBeHidden();
-    });
-  });
+      await test.step('Verify that the policy is deleted and no longer appears in the policies table', async () => {
+        await expect(targetPolicyRow).toBeHidden();
+      });
+    }
+  );
 });
 
 test.describe('[MPT-17042] Mocked Tagging Policies Tests', { tag: ['@ui', '@tagging-policies'] }, () => {
@@ -181,20 +195,24 @@ test.describe('[MPT-17042] Mocked Tagging Policies Tests', { tag: ['@ui', '@tagg
     });
   });
 
-  test('[232660] Verify that tagging policies are displayed with the correct status', async ({ taggingPoliciesPage }) => {
-    const cancelIconXpath = '//*[@data-testid="CancelIcon"]';
-    const checkCheckIconXpath = '//*[@data-testid="CheckCircleIcon"]';
-    const correlatedTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Correlated Tag")]/ancestor::tr/td[2]/div)[1]');
-    const nonViolatingTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Non-violating")]/ancestor::tr/td[2]/div)[1]');
-    const prohibitedTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Prohibited Tag")]/ancestor::tr/td[2]/div)[1]');
-    const requiredTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Required Tag")]/ancestor::tr/td[2]/div)[1]');
+  test(
+    '[232660] Verify that tagging policies are displayed with the correct status',
+    { tag: ['@fast', '@p2'] },
+    async ({ taggingPoliciesPage }) => {
+      const cancelIconXpath = '//*[@data-testid="CancelIcon"]';
+      const checkCheckIconXpath = '//*[@data-testid="CheckCircleIcon"]';
+      const correlatedTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Correlated Tag")]/ancestor::tr/td[2]/div)[1]');
+      const nonViolatingTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Non-violating")]/ancestor::tr/td[2]/div)[1]');
+      const prohibitedTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Prohibited Tag")]/ancestor::tr/td[2]/div)[1]');
+      const requiredTagStatus = taggingPoliciesPage.table.locator('(//a[contains(text(), "Required Tag")]/ancestor::tr/td[2]/div)[1]');
 
-    await expect.soft(correlatedTagStatus.locator(cancelIconXpath)).toBeVisible();
-    await expect.soft(correlatedTagStatus).toHaveText('1 violation right now');
-    await expect.soft(nonViolatingTagStatus.locator(checkCheckIconXpath)).toBeVisible();
-    await expect.soft(prohibitedTagStatus.locator(cancelIconXpath)).toBeVisible();
-    await expect.soft(prohibitedTagStatus).toHaveText('2 violations right now');
-    await expect.soft(requiredTagStatus.locator(cancelIconXpath)).toBeVisible();
-    await expect.soft(requiredTagStatus).toHaveText('3185 violations right now');
-  });
+      await expect.soft(correlatedTagStatus.locator(cancelIconXpath)).toBeVisible();
+      await expect.soft(correlatedTagStatus).toHaveText('1 violation right now');
+      await expect.soft(nonViolatingTagStatus.locator(checkCheckIconXpath)).toBeVisible();
+      await expect.soft(prohibitedTagStatus.locator(cancelIconXpath)).toBeVisible();
+      await expect.soft(prohibitedTagStatus).toHaveText('2 violations right now');
+      await expect.soft(requiredTagStatus.locator(cancelIconXpath)).toBeVisible();
+      await expect.soft(requiredTagStatus).toHaveText('3185 violations right now');
+    }
+  );
 });

@@ -7,7 +7,7 @@ import {
   PoolsResponse,
   TaggingPolicyResponse
 } from '../types/api-response.types';
-import { AuthRequest } from './api-requests/auth-request';
+import { AuthRequest } from '../api-requests/auth-request';
 import { RestAPIRequest } from '../api-requests/restapi-request';
 import { GetDatasourcesByOrganizationIDResponse } from '../types/GetDatasourcesByIDResponse';
 import { getEnvironmentOpsAccountId, getEnvironmentOpsOrgId } from './environment-util';

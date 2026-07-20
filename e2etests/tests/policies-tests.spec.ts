@@ -43,10 +43,10 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232286] Verify that Sample data pop-up is visible when no policies exist', async ({ policiesPage }) => {
+  test('[232286] Verify that Sample data pop-up is visible when no policies exist', { tag: ['@fast', '@p2'] }, async ({ policiesPage }) => {
     await test.step('Ensure all policies are deleted', async () => {
       // eslint-disable-next-line playwright/no-conditional-in-test
-      if(!await policiesPage.realDataAddBtn.isVisible()) {
+      if (!(await policiesPage.realDataAddBtn.isVisible())) {
         await deleteAllPolicies();
         await policiesPage.page.reload();
         await policiesPage.waitForAllProgressBarsToDisappear();
@@ -64,7 +64,6 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     const resourceCount = 10;
     // eslint-disable-next-line playwright/no-conditional-in-test
     const filterOption = env !== 'test' ? 'eu-west-1' : 'West Europe';
-
 
     await test.step('Create Resource Policy', async () => {
       await policiesPage.navigateToCreatePolicy();
@@ -94,100 +93,112 @@ test.describe('[MPT-16366] Policies Tests', { tag: ['@ui', '@policies'] }, () =>
     });
   });
 
-  test('[232288] Verify that user can create a recurring budget policy', async ({ policiesPage, policiesCreatePage }) => {
-    const policyName = `Recurring Budget ${Date.now()}`;
-    const budgetAmount = 1000;
-    const formattedAmount = formatCurrency(budgetAmount);
-    const filterOption = 'Active';
+  test(
+    '[232288] Verify that user can create a recurring budget policy',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage, policiesCreatePage }) => {
+      const policyName = `Recurring Budget ${Date.now()}`;
+      const budgetAmount = 1000;
+      const formattedAmount = formatCurrency(budgetAmount);
+      const filterOption = 'Active';
 
-    await test.step('Create Recurring Budget Policy', async () => {
-      await policiesPage.navigateToCreatePolicy();
-      await policiesCreatePage.createRecurringBudgetPolicy(policyName, budgetAmount, policiesCreatePage.activityFilter, filterOption);
-    });
+      await test.step('Create Recurring Budget Policy', async () => {
+        await policiesPage.navigateToCreatePolicy();
+        await policiesCreatePage.createRecurringBudgetPolicy(policyName, budgetAmount, policiesCreatePage.activityFilter, filterOption);
+      });
 
-    const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
 
-    await test.step('Verify that the new policy is displayed in the policies table', async () => {
-      await targetPolicyRow.waitFor();
-      await expect.soft(targetPolicyRow.locator('xpath=/td[1]')).toHaveText(policyName);
-      await expect.soft(targetPolicyRow.locator('xpath=/td[3]')).toHaveText(`Current month expenses must not exceed ${formattedAmount}.`);
-      await expect.soft(targetPolicyRow.locator('xpath=/td[4]')).toContainText(`Activity: ${filterOption}`);
-    });
+      await test.step('Verify that the new policy is displayed in the policies table', async () => {
+        await targetPolicyRow.waitFor();
+        await expect.soft(targetPolicyRow.locator('xpath=/td[1]')).toHaveText(policyName);
+        await expect.soft(targetPolicyRow.locator('xpath=/td[3]')).toHaveText(`Current month expenses must not exceed ${formattedAmount}.`);
+        await expect.soft(targetPolicyRow.locator('xpath=/td[4]')).toContainText(`Activity: ${filterOption}`);
+      });
 
-    await test.step('Navigate to the created policy details page', async () => {
-      await policiesPage.click(targetPolicyRow.locator('//a'));
-      await policiesPage.policyDetailsDiv.waitFor();
-    });
+      await test.step('Navigate to the created policy details page', async () => {
+        await policiesPage.click(targetPolicyRow.locator('//a'));
+        await policiesPage.policyDetailsDiv.waitFor();
+      });
 
-    await test.step('Verify policy details', async () => {
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Recurring budget');
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Current month expenses budget: ${formattedAmount}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Activity: ${filterOption}`);
-    });
-  });
+      await test.step('Verify policy details', async () => {
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Recurring budget');
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Current month expenses budget: ${formattedAmount}`);
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Activity: ${filterOption}`);
+      });
+    }
+  );
 
-  test('[232289] Verify that user can create an expiring budget policy', async ({ policiesPage, policiesCreatePage }) => {
-    const policyName = `Expiring Budget ${Date.now()}`;
-    const budgetAmount = 500;
-    const formattedAmount = formatCurrency(budgetAmount);
-    const startDate = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
+  test(
+    '[232289] Verify that user can create an expiring budget policy',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage, policiesCreatePage }) => {
+      const policyName = `Expiring Budget ${Date.now()}`;
+      const budgetAmount = 500;
+      const formattedAmount = formatCurrency(budgetAmount);
+      const startDate = `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getDate().toString().padStart(2, '0')}/${new Date().getFullYear()} 12:00 AM`;
 
-    await test.step('Create Expiring Budget Policy', async () => {
-      await policiesPage.navigateToCreatePolicy();
-      await policiesCreatePage.createExpiringBudgetPolicy(policyName, budgetAmount);
-    });
+      await test.step('Create Expiring Budget Policy', async () => {
+        await policiesPage.navigateToCreatePolicy();
+        await policiesCreatePage.createExpiringBudgetPolicy(policyName, budgetAmount);
+      });
 
-    const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
 
-    await test.step('Verify that the new policy is displayed in the policies table', async () => {
-      await targetPolicyRow.waitFor();
-      await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
-      await expect
-        .soft(targetPolicyRow.locator('//td[3]'))
-        .toHaveText(`Total expenses from ${startDate} must not exceed ${formattedAmount}.`);
-      await expect.soft(targetPolicyRow.locator('//td[4]')).toHaveText('-');
-    });
+      await test.step('Verify that the new policy is displayed in the policies table', async () => {
+        await targetPolicyRow.waitFor();
+        await expect.soft(targetPolicyRow.locator('//td[1]')).toHaveText(policyName);
+        await expect
+          .soft(targetPolicyRow.locator('//td[3]'))
+          .toHaveText(`Total expenses from ${startDate} must not exceed ${formattedAmount}.`);
+        await expect.soft(targetPolicyRow.locator('//td[4]')).toHaveText('-');
+      });
 
-    await test.step('Navigate to the created policy details page', async () => {
-      await policiesPage.click(targetPolicyRow.locator('//a'));
-      await policiesPage.policyDetailsDiv.waitFor();
-    });
+      await test.step('Navigate to the created policy details page', async () => {
+        await policiesPage.click(targetPolicyRow.locator('//a'));
+        await policiesPage.policyDetailsDiv.waitFor();
+      });
 
-    await test.step('Verify policy details', async () => {
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Expiring budget');
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Start date: ${startDate}`);
-      await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Budget: ${formattedAmount}`);
-      await expect.soft(policiesPage.policyDetailsDiv).not.toContainText('Filters:');
-    });
-  });
+      await test.step('Verify policy details', async () => {
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Name: ${policyName}`);
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText('Type: Expiring budget');
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Start date: ${startDate}`);
+        await expect.soft(policiesPage.policyDetailsDiv).toContainText(`Budget: ${formattedAmount}`);
+        await expect.soft(policiesPage.policyDetailsDiv).not.toContainText('Filters:');
+      });
+    }
+  );
 
-  test('[232290] Verify that user can delete a policy from the policy details page', async ({ policiesPage, policiesCreatePage }) => {
-    const policyName = `Policy To Be Deleted ${Date.now()}`;
-    const resourceCount = 5;
+  test(
+    '[232290] Verify that user can delete a policy from the policy details page',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage, policiesCreatePage }) => {
+      const policyName = `Policy To Be Deleted ${Date.now()}`;
+      const resourceCount = 5;
 
-    await test.step('Create a policy to be deleted', async () => {
-      await policiesPage.navigateToCreatePolicy();
-      await policiesCreatePage.createResourcePolicy(policyName, resourceCount);
-    });
+      await test.step('Create a policy to be deleted', async () => {
+        await policiesPage.navigateToCreatePolicy();
+        await policiesCreatePage.createResourcePolicy(policyName, resourceCount);
+      });
 
-    const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
+      const targetPolicyRow = policiesPage.table.locator(`//td[.="${policyName}"]/ancestor::tr`);
 
-    await test.step('Navigate to the created policy details page', async () => {
-      await targetPolicyRow.waitFor();
-      await policiesPage.click(targetPolicyRow.locator('//a'));
-      await policiesPage.policyDetailsDiv.waitFor();
-    });
+      await test.step('Navigate to the created policy details page', async () => {
+        await targetPolicyRow.waitFor();
+        await policiesPage.click(targetPolicyRow.locator('//a'));
+        await policiesPage.policyDetailsDiv.waitFor();
+      });
 
-    await test.step('Delete the policy from the details page', async () => {
-      await policiesPage.deletePolicyFromDetailsPage();
-    });
+      await test.step('Delete the policy from the details page', async () => {
+        await policiesPage.deletePolicyFromDetailsPage();
+      });
 
-    await test.step('Verify that the policy is deleted and no longer appears in the policies table', async () => {
-      await expect(targetPolicyRow).toBeHidden();
-    });
-  });
+      await test.step('Verify that the policy is deleted and no longer appears in the policies table', async () => {
+        await expect(targetPolicyRow).toBeHidden();
+      });
+    }
+  );
 });
 
 test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }, () => {
@@ -273,74 +284,100 @@ test.describe('[MPT-16366] Mocked Policies Tests', { tag: ['@ui', '@policies'] }
     });
   });
 
-  test('[232337] Verify that statuses are displayed correctly from each policy type when over and under limit', async ({
-    policiesPage,
-  }) => {
-    expect(await policiesPage.getColorFromElement(policiesPage.resourceUnderLimitStatus)).toBe(policiesPage.successColor);
-    expect(await policiesPage.getColorFromElement(policiesPage.resourceOverLimitStatus)).toBe(policiesPage.errorColor);
-    expect(await policiesPage.getColorFromElement(policiesPage.recurringBudgetUnderLimitStatus)).toBe(policiesPage.successColor);
-    expect(await policiesPage.getColorFromElement(policiesPage.recurringBudgetOverLimitStatus)).toBe(policiesPage.errorColor);
-    expect(await policiesPage.getColorFromElement(policiesPage.expiringBudgetUnderLimitStatus)).toBe(policiesPage.successColor);
-    expect(await policiesPage.getColorFromElement(policiesPage.expiringBudgetOverLimitStatus)).toBe(policiesPage.errorColor);
-  });
+  test(
+    '[232337] Verify that statuses are displayed correctly from each policy type when over and under limit',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      expect(await policiesPage.getColorFromElement(policiesPage.resourceUnderLimitStatus)).toBe(policiesPage.successColor);
+      expect(await policiesPage.getColorFromElement(policiesPage.resourceOverLimitStatus)).toBe(policiesPage.errorColor);
+      expect(await policiesPage.getColorFromElement(policiesPage.recurringBudgetUnderLimitStatus)).toBe(policiesPage.successColor);
+      expect(await policiesPage.getColorFromElement(policiesPage.recurringBudgetOverLimitStatus)).toBe(policiesPage.errorColor);
+      expect(await policiesPage.getColorFromElement(policiesPage.expiringBudgetUnderLimitStatus)).toBe(policiesPage.successColor);
+      expect(await policiesPage.getColorFromElement(policiesPage.expiringBudgetOverLimitStatus)).toBe(policiesPage.errorColor);
+    }
+  );
 
-  test('[232338] Verify that expiring budget over limit displays violation in violation history table', async ({ policiesPage }) => {
-    await policiesPage.expiringBudgetOverLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232338] Verify that expiring budget over limit displays violation in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.expiringBudgetOverLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
-    const firstBudgetActualExpensesTableCell = policiesPage.table.locator('//td[2]');
+      const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
+      const firstBudgetActualExpensesTableCell = policiesPage.table.locator('//td[2]');
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
-    await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:20 AM');
-    await expect(firstBudgetActualExpensesTableCell).toHaveText('$1 ⟶ $48,646.2');
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
+      await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:20 AM');
+      await expect(firstBudgetActualExpensesTableCell).toHaveText('$1 ⟶ $48,646.2');
+    }
+  );
 
-  test('[232339] Verify that expiring budget under limit shows no violations in violation history table', async ({ policiesPage }) => {
-    await policiesPage.expiringBudgetUnderLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232339] Verify that expiring budget under limit shows no violations in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.expiringBudgetUnderLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
-    await expect(policiesPage.table).toBeHidden();
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
+      await expect(policiesPage.table).toBeHidden();
+    }
+  );
 
-  test('[232340] Verify that recurring budget over limit displays violation in violation history table', async ({ policiesPage }) => {
-    await policiesPage.recurringBudgetOverLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232340] Verify that recurring budget over limit displays violation in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.recurringBudgetOverLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
-    const firstBudgetActualExpensesTableCell = policiesPage.table.locator('//td[2]');
+      const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
+      const firstBudgetActualExpensesTableCell = policiesPage.table.locator('//td[2]');
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
-    await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:15 AM');
-    await expect(firstBudgetActualExpensesTableCell).toHaveText('$10 ⟶ $48,646.2');
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
+      await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:15 AM');
+      await expect(firstBudgetActualExpensesTableCell).toHaveText('$10 ⟶ $48,646.2');
+    }
+  );
 
-  test('[232341] Verify that recurring budget under limit shows no violations in violation history table', async ({ policiesPage }) => {
-    await policiesPage.recurringBudgetUnderLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232341] Verify that recurring budget under limit shows no violations in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.recurringBudgetUnderLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
-    await expect(policiesPage.table).toBeHidden();
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
+      await expect(policiesPage.table).toBeHidden();
+    }
+  );
 
-  test('[232342] Verify that resource quota over limit displays violation in violation history table', async ({ policiesPage }) => {
-    await policiesPage.resourceOverLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232342] Verify that resource quota over limit displays violation in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.resourceOverLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
-    const firstQuotaActualResourceCountTableCell = policiesPage.table.locator('//td[2]');
+      const firstViolatedAtTableCell = policiesPage.table.locator('//td[1]');
+      const firstQuotaActualResourceCountTableCell = policiesPage.table.locator('//td[2]');
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
-    await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:15 AM');
-    await expect(firstQuotaActualResourceCountTableCell).toHaveText('1 ⟶ 3,012');
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeVisible();
+      await expect(firstViolatedAtTableCell).toHaveText('01/08/2026 09:15 AM');
+      await expect(firstQuotaActualResourceCountTableCell).toHaveText('1 ⟶ 3,012');
+    }
+  );
 
-  test('[232343] Verify that resource quota under limit shows no violations in violation history table', async ({ policiesPage }) => {
-    await policiesPage.resourceUnderLimitLink.click();
-    await policiesPage.policyDetailsDiv.waitFor();
+  test(
+    '[232343] Verify that resource quota under limit shows no violations in violation history table',
+    { tag: ['@fast', '@p2'] },
+    async ({ policiesPage }) => {
+      await policiesPage.resourceUnderLimitLink.click();
+      await policiesPage.policyDetailsDiv.waitFor();
 
-    await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
-    await expect(policiesPage.table).toBeHidden();
-  });
+      await expect(policiesPage.policyViolationsHistoryHeading).toBeHidden();
+      await expect(policiesPage.table).toBeHidden();
+    }
+  );
 });
