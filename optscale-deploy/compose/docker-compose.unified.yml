@@ -226,7 +226,7 @@ services:
             except etcd.EtcdKeyNotFound:
                 pass
         PY
-        python docker_images/configurator/configurator.py /config/config
+        uv --project docker_images/configurator run python3 docker_images/configurator/configurator.py /config/config
         python - <<'PY'
         import os
         from optscale_client.config_client.client import Client
@@ -822,7 +822,7 @@ services:
   # every 5 min
   resource-discovery-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/resource_discovery/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/resource_discovery run python3 docker_images/resource_discovery/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -834,7 +834,7 @@ services:
   # every 5 min
   resource-observer-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/resource_observer/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/resource_observer run python3 docker_images/resource_observer/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -846,7 +846,7 @@ services:
   # every 5 min
   resource-violations-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/resource_violations/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/resource_violations run python3 docker_images/resource_violations/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -858,7 +858,7 @@ services:
   # every 1 min
   booking-observer-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/booking_observer/scheduler.py; sleep 60; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/booking_observer run python3 docker_images/booking_observer/scheduler.py; sleep 60; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -870,7 +870,7 @@ services:
   # every hour
   calendar-observer-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/calendar_observer/scheduler.py; sleep 3600; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/calendar_observer run python3 docker_images/calendar_observer/scheduler.py; sleep 3600; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -882,7 +882,7 @@ services:
   # every 5 min
   organization-violations-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/organization_violations/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/organization_violations run python3 docker_images/organization_violations/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -894,7 +894,7 @@ services:
   # every 5 min
   power-schedule-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/power_schedule/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/power_schedule run python3 docker_images/power_schedule/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -906,7 +906,7 @@ services:
   # every hour
   live-demo-generator-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/live_demo_generator/scheduler.py; sleep 3600; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/live_demo_generator run python3 docker_images/live_demo_generator/scheduler.py; sleep 3600; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -980,7 +980,7 @@ services:
   # every 5 min
   bi-scheduler:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/bi_scheduler/scheduler.py; sleep 300; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/bi_scheduler run python3 docker_images/bi_scheduler/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1048,7 +1048,7 @@ services:
   # every 3 min
   cleanmongodb:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python docker_images/cleanmongodb/clean-mongo-db.py; sleep 180; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/cleanmongodb run python3 docker_images/cleanmongodb/clean-mongo-db.py; sleep 180; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1060,7 +1060,7 @@ services:
   # weekly
   cleaninfluxdb:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python docker_images/cleaninfluxdb/clean-influx-db.py; sleep 604800; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/cleaninfluxdb run python3 docker_images/cleaninfluxdb/clean-influx-db.py; sleep 604800; done"]
     environment:
       HX_INFLUXDB_HOST: influxdb
       HX_INFLUXDB_PORT: "8086"
@@ -1074,7 +1074,7 @@ services:
   # daily
   layout-cleaner:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/layout_cleaner/worker.py; sleep 86400; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/layout_cleaner run python3 docker_images/layout_cleaner/worker.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1086,7 +1086,7 @@ services:
   # daily
   demo-org-cleanup:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/demo_org_cleanup/cleanup.py; sleep 86400; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/demo_org_cleanup run python3 docker_images/demo_org_cleanup/cleanup.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1098,7 +1098,7 @@ services:
   # daily
   failed-imports-dataset-generator:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python docker_images/failed_imports_dataset_generator/failed_imports_dataset_generator.py; sleep 86400; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/failed_imports_dataset_generator run python3 docker_images/failed_imports_dataset_generator/failed_imports_dataset_generator.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1110,7 +1110,7 @@ services:
   # daily
   users-dataset-generator:
     <<: [*optscale-app, *restart]
-    command: ["sh", "-c", "while true; do python3 docker_images/users_dataset_generator/users_dataset_generator.py; sleep 86400; done"]
+    command: ["sh", "-c", "while true; do uv --project docker_images/users_dataset_generator run python3 docker_images/users_dataset_generator/users_dataset_generator.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:

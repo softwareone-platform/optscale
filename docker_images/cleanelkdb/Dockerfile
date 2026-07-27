@@ -1,7 +1,7 @@
 FROM python:3.12.11-slim
 LABEL org.opencontainers.image.authors="Hystax"
 
-WORKDIR /src
+WORKDIR /usr/src/app
 
 RUN apt-get update \
     && apt-get install -y jq curl \
