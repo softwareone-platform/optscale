@@ -8,7 +8,7 @@ import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { useRootData } from "hooks/useRootData";
 import { GITHUB_HYSTAX_OPTSCALE_REPO, OPTSCALE_AI } from "urls";
-import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
+import { AZURE_TENANT, ENVIRONMENT, GCP_TENANT } from "utils/constants";
 import { SPACING_1 } from "utils/layouts";
 import { updateOrganizationTopAlert as updateOrganizationTopAlertActionCreator } from "./actionCreators";
 import { ALERT_TYPES, IS_EXISTING_USER } from "./constants";
@@ -16,7 +16,10 @@ import { useAllAlertsSelector } from "./selectors";
 import TopAlert from "./TopAlert";
 import type { AlertType, StoredAlert, TopAlertWrapperProps } from "./types";
 
-const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) => ![ENVIRONMENT, AZURE_TENANT].includes(type));
+const DATA_SOURCE_TYPES_EXCLUDED_FROM_PROCESSING_ALERT = [ENVIRONMENT, AZURE_TENANT, GCP_TENANT];
+
+const getEligibleDataSources = (dataSources) =>
+  dataSources.filter(({ type }) => !DATA_SOURCE_TYPES_EXCLUDED_FROM_PROCESSING_ALERT.includes(type));
 
 const GitHubInlineButton = ({ children, ariaLabelMessageId, href, dataIcon }) => {
   const intl = useIntl();

@@ -213,7 +213,7 @@ services:
             except etcd.EtcdKeyNotFound:
                 pass
         PY
-        python docker_images/configurator/configurator.py /config/config
+        uv --project docker_images/configurator run python3 docker_images/configurator/configurator.py /config/config
         python - <<'PY'
         import os
         from optscale_client.config_client.client import Client
@@ -809,7 +809,7 @@ services:
   resource-discovery-scheduler:
     image: ${COMPANY:-hystax}/resource_discovery:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/resource_discovery/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/resource_discovery run python3 docker_images/resource_discovery/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -822,7 +822,7 @@ services:
   resource-observer-scheduler:
     image: ${COMPANY:-hystax}/resource_observer:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/resource_observer/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/resource_observer run python3 docker_images/resource_observer/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -835,7 +835,7 @@ services:
   resource-violations-scheduler:
     image: ${COMPANY:-hystax}/resource_violations:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/resource_violations/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/resource_violations run python3 docker_images/resource_violations/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -848,7 +848,7 @@ services:
   booking-observer-scheduler:
     image: ${COMPANY:-hystax}/booking_observer:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/booking_observer/scheduler.py; sleep 60; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/booking_observer run python3 docker_images/booking_observer/scheduler.py; sleep 60; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -861,7 +861,7 @@ services:
   calendar-observer-scheduler:
     image: ${COMPANY:-hystax}/calendar_observer:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/calendar_observer/scheduler.py; sleep 3600; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/calendar_observer run python3 docker_images/calendar_observer/scheduler.py; sleep 3600; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -874,7 +874,7 @@ services:
   organization-violations-scheduler:
     image: ${COMPANY:-hystax}/organization_violations:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/organization_violations/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/organization_violations run python3 docker_images/organization_violations/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -887,7 +887,7 @@ services:
   power-schedule-scheduler:
     image: ${COMPANY:-hystax}/power_schedule:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/power_schedule/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/power_schedule run python3 docker_images/power_schedule/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -900,7 +900,7 @@ services:
   live-demo-generator-scheduler:
     image: ${COMPANY:-hystax}/live_demo_generator:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/live_demo_generator/scheduler.py; sleep 3600; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/live_demo_generator run python3 docker_images/live_demo_generator/scheduler.py; sleep 3600; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -980,7 +980,7 @@ services:
   bi-scheduler:
     image: ${COMPANY:-hystax}/bi_scheduler:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/bi_scheduler/scheduler.py; sleep 300; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/bi_scheduler run python3 docker_images/bi_scheduler/scheduler.py; sleep 300; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1050,7 +1050,7 @@ services:
   cleanmongodb:
     image: ${COMPANY:-hystax}/cleanmongodb:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python /src/clean-mongo-db.py; sleep 180; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/cleanmongodb run python3 docker_images/cleanmongodb/clean-mongo-db.py; sleep 180; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1063,7 +1063,7 @@ services:
   cleaninfluxdb:
     image: ${COMPANY:-hystax}/cleaninfluxdb:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python /src/clean-influx-db.py; sleep 604800; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/cleaninfluxdb run python3 docker_images/cleaninfluxdb/clean-influx-db.py; sleep 604800; done"]
     environment:
       HX_INFLUXDB_HOST: influxdb
       HX_INFLUXDB_PORT: "8086"
@@ -1078,7 +1078,7 @@ services:
   layout-cleaner:
     image: ${COMPANY:-hystax}/layout_cleaner:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/layout_cleaner/worker.py; sleep 86400; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/layout_cleaner run python3 docker_images/layout_cleaner/worker.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1091,7 +1091,7 @@ services:
   demo-org-cleanup:
     image: ${COMPANY:-hystax}/demo_org_cleanup:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/demo_org_cleanup/cleanup.py; sleep 86400; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/demo_org_cleanup run python3 docker_images/demo_org_cleanup/cleanup.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1104,7 +1104,7 @@ services:
   failed-imports-dataset-generator:
     image: ${COMPANY:-hystax}/failed_imports_dataset_generator:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python docker_images/failed_imports_dataset_generator/failed_imports_dataset_generator.py; sleep 86400; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/failed_imports_dataset_generator run python3 docker_images/failed_imports_dataset_generator/failed_imports_dataset_generator.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
@@ -1117,7 +1117,7 @@ services:
   users-dataset-generator:
     image: ${COMPANY:-hystax}/users_dataset_generator:${OPTSCALE_VERSION:-latest}
     <<: *restart
-    entrypoint: ["sh", "-c", "while true; do python3 docker_images/users_dataset_generator/users_dataset_generator.py; sleep 86400; done"]
+    entrypoint: ["sh", "-c", "while true; do uv --project docker_images/users_dataset_generator run python3 docker_images/users_dataset_generator/users_dataset_generator.py; sleep 86400; done"]
     environment:
       <<: *etcd-env
     depends_on:
