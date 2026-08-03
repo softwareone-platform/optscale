@@ -1903,9 +1903,11 @@ class Client(Client_v1):
 
         return url
 
-    def cloud_policy_get(self, org_id, cloud_type, bucket_name=None, linked=False):
+    def cloud_policy_get(self, org_id, cloud_type, bucket_name=None,
+                         linked=False, external_id=None):
         return self.get(self.cloud_policy_url(org_id)+self.query_url(
-            cloud_type=cloud_type, bucket_name=bucket_name, linked=linked))
+            cloud_type=cloud_type, bucket_name=bucket_name, linked=linked,
+            external_id=external_id))
 
     @staticmethod
     def organization_summary_url(organization_id):
