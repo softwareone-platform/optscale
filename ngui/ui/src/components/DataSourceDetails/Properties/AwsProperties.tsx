@@ -8,6 +8,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
     access_key_id: accessKeyId,
     assume_role_account_id: assumeRoleAccountId,
     assume_role_name: assumeRoleName,
+    assume_role_external_id: assumeRoleExternalId,
     bucket_name: bucketName,
     bucket_prefix: bucketPrefix,
     linked,
@@ -67,11 +68,20 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         dataTestIds={{ key: "p_authentication_type_key", value: "p_authentication_type_value" }}
       />
       {isAssumeRole && (
-        <KeyValueLabel
-          keyMessageId="awsRoleName"
-          value={assumeRoleName}
-          dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
-        />
+        <>
+          <KeyValueLabel
+            keyMessageId="awsRoleName"
+            value={assumeRoleName}
+            dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
+          />
+          {!!assumeRoleExternalId && (
+            <KeyValueLabel
+              keyMessageId="awsRoleExternalId"
+              value={assumeRoleExternalId}
+              dataTestIds={{ key: "p_assume_role_external_id_key", value: "p_assume_role_external_id_value" }}
+            />
+          )}
+        </>
       )}
       {!isAssumeRole && (
         <KeyValueLabel

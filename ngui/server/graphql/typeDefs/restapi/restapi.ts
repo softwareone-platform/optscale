@@ -59,6 +59,7 @@ export default gql`
     access_key_id: String
     assume_role_account_id: String
     assume_role_name: String
+    assume_role_external_id: String
     linked: Boolean
     use_edp_discount: Boolean
     cur_version: Int
@@ -352,6 +353,7 @@ export default gql`
   input AwsAssumedRoleConfigInput {
     assume_role_account_id: String!
     assume_role_name: String!
+    assume_role_external_id: String
     bucket_name: String
     bucket_prefix: String
     region_name: String
@@ -654,6 +656,7 @@ export default gql`
   input CloudPoliciesParams {
     bucket_name: String!
     cloud_type: String!
+    external_id: String!
   }
 
   input AvailableFiltersParams {
