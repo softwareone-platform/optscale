@@ -503,6 +503,7 @@ export const DATE_RANGE_TYPE = Object.freeze({
   RESOURCES: "resources",
   TTL_ANALYSIS: "ttlAnalysis",
   ARCHIVED_RECOMMENDATIONS: "archivedRecommendations",
+  POOLS: "pools",
 });
 
 export const METRIC_TYPES = Object.freeze({
@@ -557,6 +558,7 @@ export const ENVIRONMENT_TOUR_IDS_BY_DYNAMIC_FIELDS = Object.freeze({
 export const DOWNLOAD_FILE_FORMATS = Object.freeze({
   JSON: "json",
   XLSX: "xlsx",
+  CSV: "csv",
 });
 
 export const ENV_COLLECTOR_URL = "ENV_COLLECTOR_URL";

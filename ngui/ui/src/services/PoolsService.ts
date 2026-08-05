@@ -4,6 +4,7 @@ import {
   getAvailablePools,
   deletePool as deletePoolAction,
   getPool,
+  getPoolExpensesRange,
   getPoolAllowedActions,
   RESTAPI,
   createPool as createPoolApi,
@@ -11,11 +12,21 @@ import {
   getPoolOwners,
 } from "api";
 import { GET_POOL_ALLOWED_ACTIONS } from "api/auth/actionTypes";
-import { CREATE_POOL, DELETE_POOL, GET_AVAILABLE_POOLS, GET_POOL, GET_POOL_OWNERS, UPDATE_POOL } from "api/restapi/actionTypes";
+import {
+  CREATE_POOL,
+  DELETE_POOL,
+  GET_AVAILABLE_POOLS,
+  GET_POOL,
+  GET_POOL_EXPENSES_RANGE,
+  GET_POOL_OWNERS,
+  UPDATE_POOL,
+} from "api/restapi/actionTypes";
 import { useApiData } from "hooks/useApiData";
 import { useApiState } from "hooks/useApiState";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { useReactiveDefaultDateRange } from "hooks/useReactiveDefaultDateRange";
 import { rejectOnError, isError } from "utils/api";
+import { DATE_RANGE_TYPE } from "utils/constants";
 
 const MOCKED_ORGANIZATION_POOL_ID = "organization_pool_id";
 export const dataMocked = {
@@ -241,6 +252,31 @@ const useGet = ({ withPoolDetails = true, withPoolChildren = true } = {}) => {
   return { isLoading, isDataReady, data, isGetPoolAllowedActionsLoading };
 };
 
+const useGetExpensesRange = () => {
+  const { organizationPoolId } = useOrganizationInfo();
+  const dispatch = useDispatch();
+
+  const [startDateTimestamp, endDateTimestamp] = useReactiveDefaultDateRange(DATE_RANGE_TYPE.POOLS);
+
+  const {
+    apiData: { pool: data = {} },
+  } = useApiData(GET_POOL_EXPENSES_RANGE);
+
+  const { isLoading, isError, shouldInvoke } = useApiState(GET_POOL_EXPENSES_RANGE, {
+    poolId: organizationPoolId,
+    startDate: startDateTimestamp,
+    endDate: endDateTimestamp,
+  });
+
+  useEffect(() => {
+    if (shouldInvoke) {
+      dispatch(getPoolExpensesRange(organizationPoolId, startDateTimestamp, endDateTimestamp));
+    }
+  }, [dispatch, shouldInvoke, organizationPoolId, startDateTimestamp, endDateTimestamp]);
+
+  return { data, isLoading, isError, startDateTimestamp, endDateTimestamp };
+};
+
 const useCreatePool = () => {
   const dispatch = useDispatch();
   const { organizationId } = useOrganizationInfo();
@@ -328,7 +364,7 @@ const useGetPoolOwners = (
 };
 
 function PoolsService() {
-  return { useGetAvailablePools, useDelete, useGet, useCreatePool, useUpdatePool, useGetPoolOwners };
+  return { useGetAvailablePools, useDelete, useGet, useGetExpensesRange, useCreatePool, useUpdatePool, useGetPoolOwners };
 }
 
 export default PoolsService;

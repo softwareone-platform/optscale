@@ -3,16 +3,35 @@ import PoolsOverview from "components/PoolsOverview";
 import { PageMockupContextProvider } from "contexts/PageMockupContext";
 import PoolsService, { dataMocked } from "services/PoolsService";
 import { isEmptyArray } from "utils/arrays";
+import { getCurrentMonthRange } from "utils/datetime";
 
 const Pools = () => {
-  const { useGet } = PoolsService();
+  const { useGet, useGetExpensesRange } = PoolsService();
   const { isLoading, data, isGetPoolAllowedActionsLoading, isDataReady } = useGet();
+  const {
+    data: expensesRangeData,
+    isLoading: isExpensesRangeLoading,
+    isError: isExpensesRangeError,
+    startDateTimestamp,
+    endDateTimestamp,
+  } = useGetExpensesRange();
+
+  const { startOfMonth: mockedStartDateTimestamp, today: mockedEndDateTimestamp } = getCurrentMonthRange(true);
 
   return (
     <Mocked
       mock={
         <PageMockupContextProvider>
-          <PoolsOverview data={dataMocked} isLoading={false} isDataReady isGetPoolAllowedActionsLoading={false} />
+          <PoolsOverview
+            data={dataMocked}
+            isLoading={false}
+            isDataReady
+            isGetPoolAllowedActionsLoading={false}
+            expensesRangeData={dataMocked}
+            isExpensesRangeLoading={false}
+            startDateTimestamp={mockedStartDateTimestamp}
+            endDateTimestamp={mockedEndDateTimestamp}
+          />
         </PageMockupContextProvider>
       }
       backdropMessageType={MESSAGE_TYPES.POOLS}
@@ -23,6 +42,11 @@ const Pools = () => {
         isLoading={isLoading}
         isDataReady={isDataReady}
         isGetPoolAllowedActionsLoading={isGetPoolAllowedActionsLoading}
+        expensesRangeData={expensesRangeData}
+        isExpensesRangeLoading={isExpensesRangeLoading}
+        isExpensesRangeError={isExpensesRangeError}
+        startDateTimestamp={startDateTimestamp}
+        endDateTimestamp={endDateTimestamp}
       />
     </Mocked>
   );

@@ -4,12 +4,12 @@ import { useTheme } from "@mui/material/styles";
 import { FormattedMessage } from "react-intl";
 import Button from "components/Button";
 import Circle from "components/Circle";
+import ExpensesTableHeader from "components/ExpensesTableHeader";
 import FormattedMoney from "components/FormattedMoney";
 import { EditPoolForm } from "components/forms/PoolForm";
 import KeyValueChartTooltipBody from "components/KeyValueChartTooltipBody";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
 import PieChart from "components/PieChart";
-import PoolExpenses from "components/PoolExpenses";
 import PoolForecast from "components/PoolForecast";
 import PoolLabel from "components/PoolLabel";
 import PoolTypeIcon from "components/PoolTypeIcon";
@@ -18,6 +18,7 @@ import { isEmptyArray } from "utils/arrays";
 import { getColorScale } from "utils/charts";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
+import { CELL_EMPTY_VALUE } from "utils/tables";
 
 const renderTooltipBody = (sectionData) => {
   const {
@@ -89,8 +90,8 @@ const Summary = ({ name, purpose, limit, owner }) => (
   </>
 );
 
-const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
-  const { limit = 0, cost = 0, forecast = 0, name, purpose, default_owner_name: owner } = pool;
+const PoolSummary = ({ pool, periodCost, startDateTimestamp, endDateTimestamp, parentPool, childPools, onSuccess }) => {
+  const { limit = 0, forecast = 0, name, purpose, default_owner_name: owner } = pool;
   const { unallocated_limit: unallocatedLimit = 0 } = parentPool;
 
   const [isEditMode, toggleIsEditMode] = useToggle(false);
@@ -114,10 +115,14 @@ const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
       <Divider />
       <Box display="flex" alignItems="center">
         <Typography>
-          <FormattedMessage id="expensesThisMonth" />
+          <ExpensesTableHeader startDateTimestamp={startDateTimestamp} endDateTimestamp={endDateTimestamp} />
         </Typography>
         &#58;&nbsp;
-        <PoolExpenses limit={limit} cost={cost} />
+        {periodCost === undefined ? (
+          CELL_EMPTY_VALUE
+        ) : (
+          <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={periodCost} />
+        )}
       </Box>
       <Box display="flex" alignItems="center">
         <Typography>
@@ -126,7 +131,9 @@ const PoolSummary = ({ pool, parentPool, childPools, onSuccess }) => {
         &#58;&nbsp;
         <PoolForecast limit={limit} forecast={forecast} />
       </Box>
-      {!isEmptyArray(childPools) && <Chart poolPurpose={purpose} poolCost={cost} childPools={childPools} />}
+      {!isEmptyArray(childPools) && periodCost !== undefined && (
+        <Chart poolPurpose={purpose} poolCost={periodCost} childPools={childPools} />
+      )}
     </Stack>
   );
 };

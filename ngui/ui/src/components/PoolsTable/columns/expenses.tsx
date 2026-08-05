@@ -1,18 +1,24 @@
-import PoolExpenses from "components/PoolExpenses";
+import ExpensesTableHeader from "components/ExpensesTableHeader";
+import FormattedMoney from "components/FormattedMoney";
 import TextWithDataTestId from "components/TextWithDataTestId";
+import { FORMATTED_MONEY_TYPES } from "utils/constants";
+import { CELL_EMPTY_VALUE } from "utils/tables";
 
-const expenses = ({ defaultSort } = {}) => ({
-  header: <TextWithDataTestId dataTestId="lbl_expenses" messageId="expensesThisMonth" />,
+const expenses = ({ defaultSort, startDateTimestamp, endDateTimestamp } = {}) => ({
+  header: (
+    <TextWithDataTestId dataTestId="lbl_expenses">
+      <ExpensesTableHeader startDateTimestamp={startDateTimestamp} endDateTimestamp={endDateTimestamp} />
+    </TextWithDataTestId>
+  ),
   accessorKey: "cost",
-  cell: ({
-    row: {
-      original: { cost = 0, limit = 0 },
-    },
-  }) => <PoolExpenses limit={limit} cost={cost} />,
+  cell: ({ cell }) => {
+    const cost = cell.getValue();
+    return cost === undefined ? CELL_EMPTY_VALUE : <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cost} />;
+  },
   defaultSort,
   columnSelector: {
     accessor: "cost",
-    messageId: "expensesThisMonth",
+    messageId: "expenses",
     dataTestId: "btn_toggle_cost",
   },
 });
