@@ -7,7 +7,6 @@ import PoolConstraintsContainer from "containers/PoolConstraintsContainer";
 import ShareSettingsContainer from "containers/ShareSettingsContainer";
 import PoolsService from "services/PoolsService";
 import { EDIT_POOL_TAB_QUERY } from "urls";
-import { getRangeCostMap } from "utils/pools";
 import BaseSideModal from "./BaseSideModal";
 
 export const POOL_TABS = Object.freeze({
@@ -19,9 +18,8 @@ export const POOL_TABS = Object.freeze({
 
 const Pool = ({ onSuccess, id }) => {
   const [activeTab, setActiveTab] = useState();
-  const { useGet, useGetExpensesRange } = PoolsService();
-  const { data } = useGet();
-  const { data: rangeData, isError: isRangeError, startDateTimestamp, endDateTimestamp } = useGetExpensesRange();
+  const { useGetExpensesRange } = PoolsService();
+  const { data, startDateTimestamp, endDateTimestamp } = useGetExpensesRange();
 
   const allPools = [data, ...(data.children || [])];
   const pool = allPools.find(({ id: poolId }) => poolId === id) ?? {};
@@ -30,10 +28,6 @@ const Pool = ({ onSuccess, id }) => {
 
   const { id: poolId, name: poolName, purpose: poolPurpose, expenses_export_link: initialLink } = pool;
 
-  const rangeCostById = getRangeCostMap(rangeData, isRangeError);
-  const periodCost = rangeCostById.get(poolId);
-  const periodChildPools = childPools.map((childPool) => ({ ...childPool, cost: rangeCostById.get(childPool.id) }));
-
   const tabs = [
     {
       title: POOL_TABS.GENERAL,
@@ -41,11 +35,10 @@ const Pool = ({ onSuccess, id }) => {
       node: (
         <PoolSummary
           pool={pool}
-          periodCost={periodCost}
           startDateTimestamp={startDateTimestamp}
           endDateTimestamp={endDateTimestamp}
           parentPool={parentPool}
-          childPools={periodChildPools}
+          childPools={childPools}
           onSuccess={onSuccess}
         />
       ),

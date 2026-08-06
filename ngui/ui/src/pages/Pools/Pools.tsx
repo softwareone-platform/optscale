@@ -7,7 +7,7 @@ import { getCurrentMonthRange } from "utils/datetime";
 
 const Pools = () => {
   const { useGet, useGetExpensesRange } = PoolsService();
-  const { isLoading, data, isGetPoolAllowedActionsLoading, isDataReady } = useGet();
+  const { isLoading, data, isGetPoolAllowedActionsLoading } = useGet();
   const {
     data: expensesRangeData,
     isLoading: isExpensesRangeLoading,
@@ -25,7 +25,6 @@ const Pools = () => {
           <PoolsOverview
             data={dataMocked}
             isLoading={false}
-            isDataReady
             isGetPoolAllowedActionsLoading={false}
             expensesRangeData={dataMocked}
             isExpensesRangeLoading={false}
@@ -40,7 +39,6 @@ const Pools = () => {
       <PoolsOverview
         data={data}
         isLoading={isLoading}
-        isDataReady={isDataReady}
         isGetPoolAllowedActionsLoading={isGetPoolAllowedActionsLoading}
         expensesRangeData={expensesRangeData}
         isExpensesRangeLoading={isExpensesRangeLoading}

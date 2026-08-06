@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -14,29 +13,14 @@ import { ASSIGNMENT_RULES } from "urls";
 import { DATE_RANGE_TYPE, POOL_TYPE_BUSINESS_UNIT } from "utils/constants";
 import { SPACING_2 } from "utils/layouts";
 import { updateSearchParams } from "utils/network";
-import { getRangeCostMap } from "utils/pools";
 import { sliceByLimitWithEllipsis } from "utils/strings";
 import { PoolExpensesReportDownload, Summary } from "./components";
 
 const MAX_POOL_NAME_LENGTH = 64;
 
-const mergeCostsForRange = (rootPool, rangePool, hasRangeError) => {
-  const costById = getRangeCostMap(rangePool, hasRangeError);
-
-  return {
-    ...rootPool,
-    cost: costById.get(rootPool.id),
-    children: (rootPool.children ?? []).map((child) => ({
-      ...child,
-      cost: costById.get(child.id),
-    })),
-  };
-};
-
 const PoolsOverview = ({
   data = {},
   isLoading = false,
-  isDataReady = false,
   isGetPoolAllowedActionsLoading = false,
   expensesRangeData = {},
   isExpensesRangeLoading = false,
@@ -47,11 +31,6 @@ const PoolsOverview = ({
   const { name } = useOrganizationInfo();
 
   const isNameLong = name.length > MAX_POOL_NAME_LENGTH;
-
-  const tablePool = useMemo(
-    () => mergeCostsForRange(data, expensesRangeData, isExpensesRangeError),
-    [data, expensesRangeData, isExpensesRangeError]
-  );
 
   const applyDates = ({ startDate, endDate }) => {
     updateSearchParams({ startDate, endDate });
@@ -105,12 +84,12 @@ const PoolsOverview = ({
           </Grid>
           <Grid item xs={12}>
             <PoolsTable
-              rootPool={tablePool}
+              rootPool={expensesRangeData}
               startDateTimestamp={startDateTimestamp}
               endDateTimestamp={endDateTimestamp}
               isLoadingProps={{
-                isGetPoolLoading: isLoading || isExpensesRangeLoading,
-                isGetPoolDataReady: isDataReady,
+                isGetPoolLoading: isExpensesRangeLoading || isExpensesRangeError || !expensesRangeData?.id,
+                isGetPoolDataReady: !isExpensesRangeLoading,
                 isGetPoolAllowedActionsLoading,
               }}
             />

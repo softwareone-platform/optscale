@@ -18,7 +18,6 @@ import { isEmptyArray } from "utils/arrays";
 import { getColorScale } from "utils/charts";
 import { FORMATTED_MONEY_TYPES } from "utils/constants";
 import { SPACING_1, SPACING_2 } from "utils/layouts";
-import { CELL_EMPTY_VALUE } from "utils/tables";
 
 const renderTooltipBody = (sectionData) => {
   const {
@@ -90,8 +89,8 @@ const Summary = ({ name, purpose, limit, owner }) => (
   </>
 );
 
-const PoolSummary = ({ pool, periodCost, startDateTimestamp, endDateTimestamp, parentPool, childPools, onSuccess }) => {
-  const { limit = 0, forecast = 0, name, purpose, default_owner_name: owner } = pool;
+const PoolSummary = ({ pool, startDateTimestamp, endDateTimestamp, parentPool, childPools, onSuccess }) => {
+  const { cost = 0, limit = 0, forecast = 0, name, purpose, default_owner_name: owner } = pool;
   const { unallocated_limit: unallocatedLimit = 0 } = parentPool;
 
   const [isEditMode, toggleIsEditMode] = useToggle(false);
@@ -118,11 +117,7 @@ const PoolSummary = ({ pool, periodCost, startDateTimestamp, endDateTimestamp, p
           <ExpensesTableHeader startDateTimestamp={startDateTimestamp} endDateTimestamp={endDateTimestamp} />
         </Typography>
         &#58;&nbsp;
-        {periodCost === undefined ? (
-          CELL_EMPTY_VALUE
-        ) : (
-          <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={periodCost} />
-        )}
+        <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cost} />
       </Box>
       <Box display="flex" alignItems="center">
         <Typography>
@@ -131,9 +126,7 @@ const PoolSummary = ({ pool, periodCost, startDateTimestamp, endDateTimestamp, p
         &#58;&nbsp;
         <PoolForecast limit={limit} forecast={forecast} />
       </Box>
-      {!isEmptyArray(childPools) && periodCost !== undefined && (
-        <Chart poolPurpose={purpose} poolCost={periodCost} childPools={childPools} />
-      )}
+      {!isEmptyArray(childPools) && <Chart poolPurpose={purpose} poolCost={cost} childPools={childPools} />}
     </Stack>
   );
 };
