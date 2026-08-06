@@ -507,11 +507,13 @@ class PoolController(BaseController, MongoMixin):
             day=1)
         if forecast:
             start_date = min(last_month_start, period_day)
+            fetch_end = today
         else:
             start_date = period_day
+            fetch_end = end_date
 
         expenses = expense_ctrl.get_expenses_for_pools(
-            start_date, end_date, pool_ids)
+            start_date, fetch_end, pool_ids)
 
         first_expenses = {}
         result = {}
@@ -521,7 +523,7 @@ class PoolController(BaseController, MongoMixin):
             if not result.get(pool_id):
                 result[pool_id] = {'cost': 0, 'month_cost': 0,
                                    'forecast_cost': 0}
-            if date >= period_day:
+            if date >= period_day and date <= end_date:
                 result[pool_id]['cost'] += expense['cost']
             if date >= last_month_start:
                 result[pool_id]['forecast_cost'] += expense['cost']

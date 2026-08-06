@@ -191,7 +191,8 @@ class PoolExpensesReportAsyncHandler(BaseAsyncItemHandler,
                 'spreadsheetml.sheet')
             self.set_header('Content-Disposition',
                             'attachment; filename="%s.xlsx"' % filename)
-            self.write(object_to_xlsx(rows))
+            fields = list(rows[0].keys()) if rows else None
+            self.write(object_to_xlsx(rows, fields=fields))
 
     def delete(self, *args, **kwargs):
         self.raise405()

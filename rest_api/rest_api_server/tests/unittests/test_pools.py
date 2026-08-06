@@ -1561,6 +1561,46 @@ class TestPoolApi(PoolApiTestBase):
         self.assertEqual(code, 200)
         self.assertEqual(pool['cost'], 1099)
 
+    def test_pool_get_date_range_forecast_current_month(self):
+        _, cloud_acc = self.create_cloud_account(
+            self.org_id,
+            {'name': 'test_acc', 'type': 'aws_cnr',
+             'config': {'access_key_id': 'key', 'secret_access_key': 'secret'}},
+            auth_user_id=self.auth_user_1)
+        resource = self._create_resource(
+            cloud_acc['id'], pool_id=self.org['pool_id'])
+
+        for date, cost in [
+            (datetime(2021, 1, 15), 50),
+            (datetime(2021, 2, 5), 200),
+        ]:
+            self.expenses.append({
+                'resource_id': resource['id'],
+                'cost': cost,
+                'date': date,
+                'cloud_account_id': cloud_acc['id'],
+                'sign': 1,
+            })
+
+        with freeze_time(datetime(2021, 2, 15)):
+            # current month
+            code, pool = self.client.pool_get(
+                self.org['pool_id'], details=True)
+            self.assertEqual(code, 200)
+            self.assertEqual(pool['cost'], 200)
+            self.assertEqual(pool['forecast'], 312.9)
+
+            # prev month
+            range_start = datetime(2021, 1, 1)
+            range_end = datetime(2021, 1, 31)
+            code, pool = self.client.pool_get(
+                self.org['pool_id'], details=True,
+                start_date=int(range_start.timestamp()),
+                end_date=int(range_end.timestamp()))
+            self.assertEqual(code, 200)
+            self.assertEqual(pool['cost'], 50)
+            self.assertEqual(pool['forecast'], 312.9)
+
 
 class TestPoolExpensesReportApi(PoolApiTestBase):
     def setUp(self, version='v2'):
