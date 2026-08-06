@@ -1022,6 +1022,7 @@ export type AwsDataSourceConfigFragmentFragment = {
     __typename?: "AwsConfig";
     assume_role_account_id?: string | null;
     assume_role_name?: string | null;
+    assume_role_external_id?: string | null;
     access_key_id?: string | null;
     linked?: boolean | null;
     use_edp_discount?: boolean | null;
@@ -1228,6 +1229,7 @@ export type DataSourcesQuery = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -1558,6 +1560,7 @@ export type DataSourceQuery = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -2120,6 +2123,7 @@ export type UpdateDataSourceMutation = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -2400,6 +2404,7 @@ export const AwsDataSourceConfigFragmentFragmentDoc = gql`
     config {
       assume_role_account_id
       assume_role_name
+      assume_role_external_id
       access_key_id
       linked
       use_edp_discount

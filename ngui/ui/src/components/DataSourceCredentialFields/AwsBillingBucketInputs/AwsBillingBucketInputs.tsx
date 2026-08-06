@@ -28,7 +28,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
     try {
       const { data } = await fetchPolicies({
         organizationId,
-        params: { bucket_name: bucketName, cloud_type: AWS_CNR, external_id: externalId },
+        params: { bucket_name: bucketName, cloud_type: AWS_CNR, external_id: externalId.trim() },
       });
 
       if (showAssumedRoleCredentialsInModal) {
@@ -47,7 +47,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
 
   return (
     <>
-      <AwsBillingBucket showRoleButton={{ onClick: handleClick, isDisabled: !bucketName || !externalId, isLoading }} />
+      <AwsBillingBucket showRoleButton={{ onClick: handleClick, isDisabled: !bucketName || !externalId?.trim(), isLoading }} />
       <Box>
         {canShowResult && !showAssumedRoleCredentialsInModal && (
           <FormControl fullWidth>

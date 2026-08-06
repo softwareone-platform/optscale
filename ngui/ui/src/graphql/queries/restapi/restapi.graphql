@@ -2,6 +2,7 @@ fragment AwsDataSourceConfigFragment on AwsDataSource {
   config {
     assume_role_account_id
     assume_role_name
+    assume_role_external_id
     access_key_id
     linked
     use_edp_discount
