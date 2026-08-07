@@ -272,6 +272,7 @@ const getConfig = (type, config) => {
             return {
               [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]: config.assume_role_account_id,
               [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME]: config.assume_role_name,
+              [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]: config.assume_role_external_id,
               [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
               [AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
               [AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
@@ -297,11 +298,17 @@ const getConfig = (type, config) => {
         },
         parseFormDataToApiParams: (formData) => {
           if (config.assume_role_account_id && config.assume_role_name) {
+            // Legacy assumed-role data sources have no external ID and the field is hidden, so omit
+            // it from the params rather than sending `undefined` for a field the API treats as set.
+            const externalId = formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID];
+            const externalIdParam = externalId ? { assume_role_external_id: externalId } : {};
+
             return config.linked
               ? {
                   config: {
                     assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
                     assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+                    ...externalIdParam,
                     linked: true,
                   },
                 }
@@ -309,6 +316,7 @@ const getConfig = (type, config) => {
                   config: {
                     assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
                     assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+                    ...externalIdParam,
                     config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
                     use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
                     cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),

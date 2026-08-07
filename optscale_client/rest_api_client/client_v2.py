@@ -150,9 +150,11 @@ class Client(Client_v1):
             url = '%s/%s' % (url, id)
         return url
 
-    def pool_get(self, pool_id, details=False, children=False):
+    def pool_get(self, pool_id, details=False, children=False,
+                 start_date=None, end_date=None):
         url = self.pool_url(pool_id) + self.query_url(
-            details=details, children=children)
+            details=details, children=children,
+            start_date=start_date, end_date=end_date)
         return self.get(url)
 
     def pool_update(self, pool_id, params):
@@ -993,6 +995,17 @@ class Client(Client_v1):
 
     def pool_expenses_export_delete(self, pool_id):
         return self.delete(self.pool_expenses_export_url(pool_id))
+
+    @staticmethod
+    def pool_expenses_report_url(organization_id):
+        url = Client.organization_url(organization_id) + "/pool_expenses_report"
+        return url
+
+    def pool_expenses_report_get(self, organization_id, start_date, end_date,
+                                 exp_format):
+        url = self.pool_expenses_report_url(organization_id) + self.query_url(
+            start_date=start_date, end_date=end_date, format=exp_format)
+        return self.get(url)
 
     @staticmethod
     def node_bulk_url(cloud_account_id):
@@ -1903,9 +1916,11 @@ class Client(Client_v1):
 
         return url
 
-    def cloud_policy_get(self, org_id, cloud_type, bucket_name=None, linked=False):
+    def cloud_policy_get(self, org_id, cloud_type, bucket_name=None,
+                         linked=False, external_id=None):
         return self.get(self.cloud_policy_url(org_id)+self.query_url(
-            cloud_type=cloud_type, bucket_name=bucket_name, linked=linked))
+            cloud_type=cloud_type, bucket_name=bucket_name, linked=linked,
+            external_id=external_id))
 
     @staticmethod
     def organization_summary_url(organization_id):

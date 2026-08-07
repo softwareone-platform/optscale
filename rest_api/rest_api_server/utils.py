@@ -23,6 +23,7 @@ from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from json_excel_converter import Converter as ExcelConverter
+from json_excel_converter.options import Options as ExcelOptions
 from json_excel_converter.xlsx import Writer as ExcelWriter, DEFAULT_COLUMN_WIDTH
 from opentelemetry import trace
 from pymongo.errors import BulkWriteError
@@ -484,9 +485,10 @@ def retry_mongo_upsert(method, *args, **kwargs):
     return method(*args, **kwargs)
 
 
-def object_to_xlsx(obj):
+def object_to_xlsx(obj, fields=None):
+    options = ExcelOptions(fields=fields) if fields else ExcelOptions()
     with io.BytesIO() as f:
-        conv = ExcelConverter()
+        conv = ExcelConverter(options=options)
         conv.convert(obj, ExcelWriter(
             file=f,
             header_formats=(

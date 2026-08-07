@@ -18,8 +18,8 @@ export const POOL_TABS = Object.freeze({
 
 const Pool = ({ onSuccess, id }) => {
   const [activeTab, setActiveTab] = useState();
-  const { useGet } = PoolsService();
-  const { data } = useGet();
+  const { useGetExpensesRange } = PoolsService();
+  const { data, startDateTimestamp, endDateTimestamp } = useGetExpensesRange();
 
   const allPools = [data, ...(data.children || [])];
   const pool = allPools.find(({ id: poolId }) => poolId === id) ?? {};
@@ -32,7 +32,16 @@ const Pool = ({ onSuccess, id }) => {
     {
       title: POOL_TABS.GENERAL,
       dataTestId: "tab_general",
-      node: <PoolSummary pool={pool} parentPool={parentPool} childPools={childPools} onSuccess={onSuccess} />,
+      node: (
+        <PoolSummary
+          pool={pool}
+          startDateTimestamp={startDateTimestamp}
+          endDateTimestamp={endDateTimestamp}
+          parentPool={parentPool}
+          childPools={childPools}
+          onSuccess={onSuccess}
+        />
+      ),
     },
     {
       title: POOL_TABS.CONSTRAINTS,

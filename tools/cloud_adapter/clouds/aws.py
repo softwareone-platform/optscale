@@ -161,6 +161,8 @@ class Aws(S3CloudMixin):
         CloudParameter(name='assume_role_name', type=str, required=False),
         CloudParameter(name='assume_role_session_name', type=str,
                        required=False),
+        CloudParameter(name='assume_role_external_id', type=str,
+                       required=False),
 
         # Service parameters
         CloudParameter(name='cur_version', type=int, required=False),
@@ -178,6 +180,7 @@ class Aws(S3CloudMixin):
         role_session_name = self.config.get(
             'assume_role_session_name', 'opt-session'
         )
+        role_external_id = self.config.get('assume_role_external_id')
 
         def refresh_session():
             nonlocal access_key, secret_key, region_name
@@ -198,10 +201,13 @@ class Aws(S3CloudMixin):
             )
 
             sts_client = base_session.client('sts', config=IAM_CLIENT_CONFIG)
-            response = sts_client.assume_role(
-                RoleArn=f'arn:aws:iam::{role_account_id}:role/{role_name}',
-                RoleSessionName=role_session_name,
-            )
+            assume_role_kwargs = {
+                'RoleArn': f'arn:aws:iam::{role_account_id}:role/{role_name}',
+                'RoleSessionName': role_session_name,
+            }
+            if role_external_id:
+                assume_role_kwargs['ExternalId'] = role_external_id
+            response = sts_client.assume_role(**assume_role_kwargs)
             creds = response['Credentials']
             self._session = boto3.Session(
                 aws_access_key_id=creds['AccessKeyId'],

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
+import { v4 as uuidv4 } from "uuid";
 import Button from "components/Button";
 import ButtonGroup from "components/ButtonGroup/ButtonGroup";
 import ButtonLoader from "components/ButtonLoader";
@@ -195,6 +196,7 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+      assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID],
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
         ? extraParams
         : {
@@ -490,7 +492,15 @@ const trackConnectionTypeChangeEvent = (connectionType: ConnectionType) => {
 };
 
 const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCancel = true }) => {
-  const methods = useForm();
+  // Computed once and reused as the initial value of the assumed-role external ID field —
+  // useForm() only reads `defaultValues` on mount
+  const defaultAssumeRoleExternalId = useMemo(() => uuidv4(), []);
+
+  const methods = useForm({
+    defaultValues: {
+      [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]: defaultAssumeRoleExternalId,
+    },
+  });
 
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 

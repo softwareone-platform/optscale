@@ -39,6 +39,7 @@ type TextInputProps = {
   className?: string;
   fullWidth?: boolean;
   shouldUnregister?: boolean;
+  suppressErrorMessage?: boolean;
 };
 
 const TextInput = ({
@@ -69,6 +70,7 @@ const TextInput = ({
   className,
   fullWidth,
   shouldUnregister,
+  suppressErrorMessage = false,
 }: TextInputProps) => {
   const {
     register,
@@ -87,7 +89,7 @@ const TextInput = ({
       required={required}
       autoFocus={autoFocus}
       error={!!fieldError}
-      helperText={fieldError?.message}
+      helperText={suppressErrorMessage ? undefined : fieldError?.message}
       dataTestId={dataTestId}
       InputProps={InputProps}
       inputProps={inputProps}

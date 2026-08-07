@@ -1,6 +1,7 @@
 import csv
 from io import StringIO
 from datetime import datetime, timezone
+from urllib.parse import quote
 from kombu.log import get_logger
 from kombu import Connection as QConnection
 from kombu import Exchange
@@ -15,8 +16,9 @@ from insider.insider_worker.http_client.client import Client
 ACTIVITIES_EXCHANGE_NAME = 'activities-tasks'
 ACTIVITIES_EXCHANGE = Exchange(ACTIVITIES_EXCHANGE_NAME, type='topic')
 LOG = get_logger(__name__)
-PRICES_COUNT_TO_LOG = 1000
+PRICES_COUNT_TO_LOG = 10000
 CHINA_CURRENCY_CODE = 'CNY'
+BASE_PRICES_URL = 'https://prices.azure.com/api/retail/prices'
 
 
 class AzurePriceProcessor(BasePriceProcessor):
@@ -73,35 +75,32 @@ class AzurePriceProcessor(BasePriceProcessor):
         return list(currencies)
 
     def _process_global_prices(self, http_client, old_prices_map, currency):
-        LOG.info('Processing Azure prices for currency: %s', currency)
-        processed_keys = {}
-        prices_counter = 0
-        next_page = 'https://prices.azure.com/api/retail/prices'
-        next_page += '?currencyCode=%s' % currency
-        while True:
-            if prices_counter % PRICES_COUNT_TO_LOG == 0:
-                LOG.info('Total number of prices got from '
-                         'cloud: %s', prices_counter)
-            try:
-                code, response = http_client.get(next_page)
-            except SSLError:
-                LOG.error('Getting Azure prices failed with SSL '
-                          'verification error. Will try to get prices'
-                          'without SSL verification')
-                self.send_sslerror_service_email()
-                http_client = Client(verify=False)
-                code, response = http_client.get(next_page)
-            items = response.get('Items', [])
-            new_prices_map = {self.unique_values(p): p for p in items}
-            self.update_price_records(new_prices_map, old_prices_map,
-                                      processed_keys)
-            new_url = response.get('NextPageLink')
-            if not new_url or new_url == next_page:
-                LOG.info('Total number of prices got from '
-                         'cloud: %s', prices_counter)
-                break
-            next_page = new_url
-            prices_counter += response.get('Count', 0)
+        price_types = self._get_all_price_types(http_client, currency)
+        # break down by type to avoid 1000000 record limit
+        for price_type in price_types:
+            LOG.info('Processing Azure prices for currency: %s, type: %s',
+                     currency, price_type)
+            processed_keys = {}
+            prices_counter = 0
+            next_page = BASE_PRICES_URL + '?currencyCode=%s&$filter=%s' % (
+                currency, quote("type eq '%s'" % price_type))
+            while True:
+                if prices_counter % PRICES_COUNT_TO_LOG == 0:
+                    LOG.info('Total number of prices got from '
+                             'cloud: %s', prices_counter)
+                code, response = self._make_ratail_price_request(
+                    http_client, next_page)
+                items = response.get('Items', [])
+                new_prices_map = {self.unique_values(p): p for p in items}
+                self.update_price_records(new_prices_map, old_prices_map,
+                                          processed_keys)
+                new_url = response.get('NextPageLink')
+                if not new_url or new_url == next_page:
+                    LOG.info('Total number of prices got from '
+                             'cloud: %s', prices_counter)
+                    break
+                next_page = new_url
+                prices_counter += response.get('Count', 0)
 
     def _process_china_prices(self, http_client, old_prices_map, currency):
         LOG.info('Start processing Azure China prices (%s)', currency)
@@ -116,6 +115,38 @@ class AzurePriceProcessor(BasePriceProcessor):
         self.update_price_records(new_prices_map, old_prices_map, {})
         LOG.info('Total number of prices got from cloud: %s',
                  len(new_prices_map))
+
+    def _make_ratail_price_request(self, http_client, url):
+        try:
+            code, response = http_client.get(url)
+        except SSLError:
+            LOG.error('Getting Azure prices failed with SSL '
+                      'verification error. Will try to get prices'
+                      'without SSL verification')
+            self.send_sslerror_service_email()
+            http_client = Client(verify=False)
+            code, response = http_client.get(url)
+        return code, response
+
+    def _get_all_price_types(self, http_client, currency):
+        def _get_next_price_types(http_client, currency, excluded_types=None):
+            next_page = BASE_PRICES_URL + '?currencyCode=%s' % currency
+            if excluded_types:
+                conditions = ["type ne '%s'" % f for f in excluded_types]
+                filter_str = ' and '.join(conditions)
+                next_page += '&$filter=%s' % quote(filter_str)
+            code, response = self._make_ratail_price_request(
+                http_client, next_page)
+            items = response.get('Items', [])
+            return set(item['type'] for item in items)
+
+        all_types = set()
+        while True:
+            new_types = _get_next_price_types(
+                http_client, currency, list(all_types))
+            if not new_types:
+                return all_types
+            all_types |= new_types
 
     def process_prices(self, last_discovery_ts):
         http_client = Client()
