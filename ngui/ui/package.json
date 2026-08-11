@@ -94,7 +94,7 @@
     "translate:fix": "prettier --write 'src/translations/**/*.json'",
     "translate:sort": "node src/translations/sortTranslations.ts",
     "translate:test": "vitest run src/translations/translationSorting.test.ts",
-    "translate:validate": "node src/themes/finops/translations/validateIcu.mjs && vitest run src/themes/finops/translations/translationCoverage.test.ts && node src/themes/finops/translations/reportMissingTranslations.mjs",
+    "translate:validate": "node src/themes/finops/translations/validateIcu.mjs && vitest run src/themes/finops/translations && node src/themes/finops/translations/reportMissingTranslations.mjs",
     "type:check": "tsc",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
