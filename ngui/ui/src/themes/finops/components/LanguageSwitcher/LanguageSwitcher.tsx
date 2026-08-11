@@ -2,15 +2,24 @@ import LanguageIcon from "@mui/icons-material/Language";
 import Box from "@mui/material/Box";
 import MuiMenuItem from "@mui/material/MenuItem";
 import MuiSelect, { SelectChangeEvent } from "@mui/material/Select";
+import { SUPPORTED_LOCALES, getVisibleLocales } from "@theme/translations/localeManager";
 import { useLocaleContext } from "contexts/LocaleContext";
-import { SUPPORTED_LOCALES, SupportedLocale } from "translations/localeManager";
+import { SupportedLocale } from "translations/localeManager";
 
 const LanguageSwitcher = () => {
   const { locale, setLocale } = useLocaleContext();
 
+  const visibleLocales = getVisibleLocales();
+
   const handleChange = (event: SelectChangeEvent<SupportedLocale>) => {
     setLocale(event.target.value as SupportedLocale);
   };
+
+  // Nothing to switch to (e.g. every non-default language is still experimental/hidden) —
+  // don't show a single-option control.
+  if (visibleLocales.length <= 1) {
+    return null;
+  }
 
   return (
     <Box display="flex" alignItems="center">
@@ -36,9 +45,9 @@ const LanguageSwitcher = () => {
         }}
         data-test-id="select_language"
       >
-        {Object.entries(SUPPORTED_LOCALES).map(([localeKey, label]) => (
+        {visibleLocales.map((localeKey) => (
           <MuiMenuItem key={localeKey} value={localeKey} data-test-id={`option_lang_${localeKey}`}>
-            {label}
+            {SUPPORTED_LOCALES[localeKey]}
           </MuiMenuItem>
         ))}
       </MuiSelect>

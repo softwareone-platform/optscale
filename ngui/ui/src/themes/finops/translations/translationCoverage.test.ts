@@ -53,4 +53,10 @@ describe("Theme translation coverage (app namespace)", () => {
     const stale = [...covered].filter((key) => !referenceKeys.has(key)).sort();
     expect({ locale, stale }).toEqual({ locale, stale: [] });
   });
+
+  // The default (English) locale is the guaranteed fallback for every other language and
+  // must always be visible — it can never be gated behind the experimental flag.
+  it("never marks the default (English) locale as experimental", () => {
+    expect(EXPERIMENTAL_LOCALES.has(DEFAULT_LOCALE)).toBe(false);
+  });
 });

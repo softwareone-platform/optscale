@@ -45,7 +45,17 @@ export const LOCALE_STORAGE_KEY = "locale";
  * reload:  localStorage.setItem("experimentalLanguages", "true")
  * To hide them again:  localStorage.removeItem("experimentalLanguages")
  */
-export const EXPERIMENTAL_LOCALES = new Set<SupportedLocale>(["pl-PL"]);
+// Every language except the default (English) is currently experimental/hidden — only
+// English is shown until the others are signed off and removed from this set.
+export const EXPERIMENTAL_LOCALES = new Set<SupportedLocale>(
+  (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter((locale) => locale !== DEFAULT_LOCALE)
+);
+
+// Invariant: the default (English) locale is the guaranteed fallback and must always be
+// visible, so it can never be gated behind the experimental flag.
+if (EXPERIMENTAL_LOCALES.has(DEFAULT_LOCALE)) {
+  throw new Error(`DEFAULT_LOCALE "${DEFAULT_LOCALE}" must never be marked experimental.`);
+}
 
 export const EXPERIMENTAL_LOCALES_STORAGE_KEY = "experimentalLanguages";
 
