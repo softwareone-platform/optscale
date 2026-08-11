@@ -75,14 +75,14 @@ const detectBrowserLocale = (): SupportedLocale => {
   const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
 
   for (const candidate of candidates) {
-    if (isSupportedLocale(candidate)) {
+    if (isSupportedLocale(candidate) && isLocaleVisible(candidate)) {
       return candidate;
     }
 
     // Match by language subtag only, e.g. browser "fr", "fr-CA" -> "fr-FR"
     const language = candidate.split("-")[0].toLowerCase();
     const match = (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).find(
-      (locale) => locale.split("-")[0].toLowerCase() === language
+      (locale) => locale.split("-")[0].toLowerCase() === language && isLocaleVisible(locale)
     );
     if (match) {
       return match;
