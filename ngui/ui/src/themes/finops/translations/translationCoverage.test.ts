@@ -8,7 +8,7 @@ import { DEFAULT_LOCALE, EXPERIMENTAL_LOCALES, SUPPORTED_LOCALES, type Supported
  * Because the base (English) source lives in `@main` and is merged in from an upstream
  * integration branch we do not control, new keys can appear in the English `app.json`
  * (or theme `app-override.json`) without us noticing. This test fails on such drift,
- * listing the untranslated keys so they can be filled (see `pnpm translate:missing`).
+ * listing the untranslated keys so they can be filled (see `pnpm translate:validate`).
  *
  * Scope: the `app` namespace (base `app.json` + theme `app-override.json`) — the strings
  * we actively maintain translations for. Paths are resolved from the package root (cwd).
