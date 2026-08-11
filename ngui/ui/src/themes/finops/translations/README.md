@@ -77,17 +77,19 @@ the language.
 
 ## Promoting an experimental locale to public
 
-1. Fill in the remaining translations. Find the gaps with:
+1. Remove the locale's key from `EXPERIMENTAL_LOCALES` in `localeManager.ts` (the hard gate
+   then enforces full coverage for this locale).
+2. Fill in the remaining translations and verify everything passes:
 
    ```bash
-   pnpm translate:missing   # writes untranslated keys to .missing/<locale>.json
+   pnpm translate:validate
    ```
 
-2. Remove the locale's key from `EXPERIMENTAL_LOCALES` in `localeManager.ts`.
-3. Verify full coverage (the hard gate now enforces this locale):
-
-   ```bash
-   pnpm translate:coverage
-   ```
+   This runs all translation checks together:
+   - **ICU validation** — every message compiles as valid ICU MessageFormat.
+   - **Coverage** — every non-experimental locale translates every English key, and no
+     locale defines stray keys.
+   - **Missing report** — writes any untranslated keys to `.missing/<locale>.json` as a
+     translator handoff.
 
 The language is now visible to all users without any browser flag.

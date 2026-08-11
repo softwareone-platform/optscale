@@ -3,7 +3,7 @@
 // strings to <theme>/.missing/<locale>.json so they can be handed to translators.
 //
 // Usage: node src/themes/finops/translations/reportMissingTranslations.mjs
-//        (or `pnpm translate:missing`). Run from the package root (ngui/ui).
+//        (or via `pnpm translate:validate`). Run from the package root (ngui/ui).
 import fs from "node:fs";
 
 const THEME = "src/themes/finops/translations";
