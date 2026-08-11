@@ -15,8 +15,6 @@ const LanguageSwitcher = () => {
     setLocale(event.target.value as SupportedLocale);
   };
 
-  // Nothing to switch to (e.g. every non-default language is still experimental/hidden) —
-  // don't show a single-option control.
   if (visibleLocales.length <= 1) {
     return null;
   }

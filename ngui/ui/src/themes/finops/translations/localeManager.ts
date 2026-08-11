@@ -1,12 +1,7 @@
 /**
- * Locale manager for the FinOps theme.
- *
- * Drop-in replacement for `@main/translations/localeManager`. The theme resolver
- * redirects base imports of `translations/localeManager` to this module, so it must
- * expose the same public API. It adds:
- *   - Two extra locales (fr-FR, de-DE) on top of the base en-US / es-ES.
- *   - Persistence of the selected locale in localStorage.
- *   - Browser-language detection with fallback to English.
+ * Locale manager for the FinOps theme — a drop-in replacement for
+ * `@main/translations/localeManager` (the theme resolver swaps it in). Exposes the same API
+ * plus extra locales, localStorage persistence, and experimental-language gating.
  */
 import { currencyCodes } from "utils/currency";
 import messagesDeDE from "./de-DE/index";
@@ -34,25 +29,14 @@ export type SupportedLocale = keyof typeof SUPPORTED_LOCALES;
 
 export const LOCALE_STORAGE_KEY = "locale";
 
-/**
- * Experimental locales are work-in-progress translations that must stay hidden from
- * regular users until they are complete. They are:
- *   - excluded from the language switcher and initial-locale resolution by default,
- *   - revealed only when the browser opts in via localStorage (see below),
- *   - exempt from the translation-coverage hard gate (translationCoverage.test.ts).
- *
- * To preview an experimental language, run this in the browser devtools console and
- * reload:  localStorage.setItem("experimentalLanguages", "true")
- * To hide them again:  localStorage.removeItem("experimentalLanguages")
- */
-// Every language except the default (English) is currently experimental/hidden — only
-// English is shown until the others are signed off and removed from this set.
+// Experimental locales are hidden from users (and exempt from the completeness gate) until
+// signed off — shown only when the browser opts in via
+// localStorage.setItem("experimentalLanguages", "true"). Currently, every language but English.
 export const EXPERIMENTAL_LOCALES = new Set<SupportedLocale>(
   (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter((locale) => locale !== DEFAULT_LOCALE)
 );
 
-// Invariant: the default (English) locale is the guaranteed fallback and must always be
-// visible, so it can never be gated behind the experimental flag.
+// English is the guaranteed fallback and must always be visible.
 if (EXPERIMENTAL_LOCALES.has(DEFAULT_LOCALE)) {
   throw new Error(`DEFAULT_LOCALE "${DEFAULT_LOCALE}" must never be marked experimental.`);
 }
@@ -67,13 +51,13 @@ const isSupportedLocale = (value: string | null | undefined): value is Supported
 export const isLocaleVisible = (locale: SupportedLocale): boolean =>
   !EXPERIMENTAL_LOCALES.has(locale) || areExperimentalLocalesEnabled();
 
-// Locales that should appear in the language switcher for the current browser.
 export const getVisibleLocales = (): SupportedLocale[] =>
   (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter(isLocaleVisible);
 
 const detectBrowserLocale = (): SupportedLocale => {
   const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
 
+  // Skip hidden locales so a non-English browser stays on English until sign-off.
   for (const candidate of candidates) {
     if (isSupportedLocale(candidate) && isLocaleVisible(candidate)) {
       return candidate;
@@ -94,8 +78,7 @@ const detectBrowserLocale = (): SupportedLocale => {
 
 export const getStoredLocale = (): SupportedLocale | null => {
   const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-  // Ignore a persisted experimental locale once it is no longer visible, so users can't
-  // get stuck on a hidden language after the preview flag is turned off.
+  // Drop a persisted locale that's no longer visible so users can't get stuck on it.
   return isSupportedLocale(stored) && isLocaleVisible(stored) ? stored : null;
 };
 

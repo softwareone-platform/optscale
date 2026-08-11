@@ -1,9 +1,5 @@
-// Reports app-namespace translation gaps between the English source and each theme locale.
-// Mirrors the checks in translationCoverage.test.ts, and writes the untranslated English
-// strings to <theme>/.missing/<locale>.json so they can be handed to translators.
-//
-// Usage: node src/themes/finops/translations/reportMissingTranslations.mjs
-//        (or via `pnpm translate:validate`). Run from the package root (ngui/ui).
+// Writes untranslated English strings per locale to <theme>/.missing/<locale>.json as a
+// translator handoff. Run via `pnpm translate:validate` from the package root.
 import fs from "node:fs";
 
 const THEME = "src/themes/finops/translations";
