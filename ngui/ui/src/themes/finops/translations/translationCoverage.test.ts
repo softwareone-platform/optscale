@@ -31,20 +31,24 @@ const coveredKeys = (locale: string): Set<string> =>
     ...Object.keys(readIfExists(`${THEME}/${locale}/app-override.json`))
   ]);
 
-// Experimental locales are work-in-progress and intentionally exempt from the hard gate
-// until they are complete and promoted out of EXPERIMENTAL_LOCALES.
-const locales = (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter(
-  (locale) => locale !== DEFAULT_LOCALE && !EXPERIMENTAL_LOCALES.has(locale)
-);
+// All translated locales, and the subset that is held to the full-coverage hard gate.
+// Experimental locales are work-in-progress and exempt from the *completeness* gate until
+// they are promoted out of EXPERIMENTAL_LOCALES — but they are still checked for stray keys.
+const allLocales = (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter((locale) => locale !== DEFAULT_LOCALE);
+const gatedLocales = allLocales.filter((locale) => !EXPERIMENTAL_LOCALES.has(locale));
 
 describe("Theme translation coverage (app namespace)", () => {
-  it.each(locales)("%s translates every English app key", (locale) => {
+  it.each(gatedLocales)("%s translates every English app key", (locale) => {
     const covered = coveredKeys(locale);
     const missing = [...referenceKeys].filter((key) => !covered.has(key)).sort();
     expect({ locale, missing }).toEqual({ locale, missing: [] });
   });
 
-  it.each(locales)("%s has no stale keys that were removed from English", (locale) => {
+  // Stray keys (present in one locale but not in the English source, and therefore absent
+  // from the other languages) are always a bug — a typo or a leftover from a removed/renamed
+  // English key — since they would silently never render. Enforced for every locale,
+  // including experimental ones.
+  it.each(allLocales)("%s defines no keys that are missing from English / the other languages", (locale) => {
     const covered = coveredKeys(locale);
     const stale = [...covered].filter((key) => !referenceKeys.has(key)).sort();
     expect({ locale, stale }).toEqual({ locale, stale: [] });

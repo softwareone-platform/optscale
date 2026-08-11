@@ -1785,7 +1785,7 @@
   "poolsBackdropMessage": "Establezca un límite de gastos para su organización para comenzar con la gestión de costes.",
   "poolsContactManagerBackdropMessage": "Póngase en contacto con el gestor de su organización para establecer un límite de gastos para su organización y comenzar con la gestión de costes.",
   "poolsExceedingLimit": "Pools que superan el límite",
-  "poolsFor": "Grupos de ",
+  "poolsFor": "Pools de ",
   "poolsProductTourContent": "Los recursos se pueden categorizar en una jerarquía de pools manualmente o utilizando reglas de asignación. Cada pool representa un equipo, un proyecto, una canalización de CI/CD, etc., y tiene un límite de gastos mensual para rastrear el sobregasto del presupuesto. Puede establecer reglas de TTL o límites de presupuesto para recursos individuales y todos los recursos de un pool.",
   "poolsRequiringAttention": "Pools que requieren atención",
   "poolTypesDescription": "Los tipos de pool representan:{br}{budget} - presupuestos{br}{businessUnit} - departamentos{br}{team} - equipos{br}{project} - proyectos{br}{cicd} - recursos temporales generados al ejecutar trabajos de CI/CD{br}{mlai} - recursos para ejecutar ML o IA{br}{assetPool} - algunos recursos agrupados lógicamente",
