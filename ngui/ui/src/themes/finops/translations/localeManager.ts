@@ -13,11 +13,12 @@ import messagesDeDE from "./de-DE/index";
 import messagesEnUS from "./en-US/index";
 import messagesEsES from "./es-ES/index";
 import messagesFrFR from "./fr-FR/index";
+import messagesPlPL from "./pl-PL/index";
 
-const getCurrencySymbol = (currency, locale) =>
+const getCurrencySymbol = (currency: string, locale: string) =>
   new Intl.NumberFormat(locale, { style: "currency", currency, currencyDisplay: "narrowSymbol" })
     .formatToParts(1)
-    .find((x) => x.type === "currency").value;
+    .find((x) => x.type === "currency")?.value;
 
 export const DEFAULT_LOCALE = "en-US";
 
@@ -25,15 +26,40 @@ export const SUPPORTED_LOCALES = {
   "en-US": "English",
   "es-ES": "Español",
   "fr-FR": "Français",
-  "de-DE": "Deutsch"
+  "de-DE": "Deutsch",
+  "pl-PL": "Polski"
 } as const;
 
 export type SupportedLocale = keyof typeof SUPPORTED_LOCALES;
 
 export const LOCALE_STORAGE_KEY = "locale";
 
+/**
+ * Experimental locales are work-in-progress translations that must stay hidden from
+ * regular users until they are complete. They are:
+ *   - excluded from the language switcher and initial-locale resolution by default,
+ *   - revealed only when the browser opts in via localStorage (see below),
+ *   - exempt from the translation-coverage hard gate (translationCoverage.test.ts).
+ *
+ * To preview an experimental language, run this in the browser devtools console and
+ * reload:  localStorage.setItem("experimentalLanguages", "true")
+ * To hide them again:  localStorage.removeItem("experimentalLanguages")
+ */
+export const EXPERIMENTAL_LOCALES = new Set<SupportedLocale>(["pl-PL"]);
+
+export const EXPERIMENTAL_LOCALES_STORAGE_KEY = "experimentalLanguages";
+
+export const areExperimentalLocalesEnabled = (): boolean => localStorage.getItem(EXPERIMENTAL_LOCALES_STORAGE_KEY) === "true";
+
 const isSupportedLocale = (value: string | null | undefined): value is SupportedLocale =>
   value != null && value in SUPPORTED_LOCALES;
+
+export const isLocaleVisible = (locale: SupportedLocale): boolean =>
+  !EXPERIMENTAL_LOCALES.has(locale) || areExperimentalLocalesEnabled();
+
+// Locales that should appear in the language switcher for the current browser.
+export const getVisibleLocales = (): SupportedLocale[] =>
+  (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter(isLocaleVisible);
 
 const detectBrowserLocale = (): SupportedLocale => {
   const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
@@ -58,7 +84,9 @@ const detectBrowserLocale = (): SupportedLocale => {
 
 export const getStoredLocale = (): SupportedLocale | null => {
   const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-  return isSupportedLocale(stored) ? stored : null;
+  // Ignore a persisted experimental locale once it is no longer visible, so users can't
+  // get stuck on a hidden language after the preview flag is turned off.
+  return isSupportedLocale(stored) && isLocaleVisible(stored) ? stored : null;
 };
 
 export const storeLocale = (locale: SupportedLocale): void => {
@@ -68,14 +96,14 @@ export const storeLocale = (locale: SupportedLocale): void => {
 // Resolves the locale to use on load: persisted choice -> browser language -> English.
 export const resolveInitialLocale = (): SupportedLocale => getStoredLocale() ?? detectBrowserLocale();
 
-const getCurrencyConfiguration = (currency, rest = {}) => ({
+const getCurrencyConfiguration = (currency: string, rest = {}) => ({
   style: "currency",
   currency,
   minimumFractionDigits: 0,
   ...rest
 });
 
-const getCompactCurrencyConfiguration = (currency, rest = {}) => ({
+const getCompactCurrencyConfiguration = (currency: string, rest = {}) => ({
   style: "currency",
   currency,
   maximumFractionDigits: 1,
@@ -108,7 +136,8 @@ const messagesMap: Record<SupportedLocale, Record<string, string>> = {
   "en-US": messagesEnUS,
   "es-ES": messagesEsES,
   "fr-FR": messagesFrFR,
-  "de-DE": messagesDeDE
+  "de-DE": messagesDeDE,
+  "pl-PL": messagesPlPL
 };
 
 export const getMessagesForLocale = (locale: SupportedLocale): Record<string, string> => messagesMap[locale] ?? messagesEnUS;
@@ -132,6 +161,6 @@ export default (() => {
 
   return {
     getConfig,
-    getCurrencySymbol: (currencyCode) => getCurrencySymbol(currencyCode, locale)
+    getCurrencySymbol: (currencyCode: string) => getCurrencySymbol(currencyCode, locale)
   };
 })();
