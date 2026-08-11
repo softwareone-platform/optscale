@@ -1,18 +1,9 @@
-// Validates that every translation string is a well-formed ICU MessageFormat template.
-//
-// Each message is fed to the same parser react-intl uses at runtime (@formatjs/icu-
-// messageformat-parser, a dependency of react-intl). If a string fails to parse, the app
-// would throw when that screen renders — a malformed plural, an unbalanced brace, or a
-// broken <tag> is caught here instead. Exits non-zero on any failure so it can gate CI.
-//
-// Usage: node src/themes/finops/translations/validateIcu.mjs   (or via `pnpm translate:validate`)
-//        Run from the package root (ngui/ui).
+// Checks every translation string parses as valid ICU MessageFormat (same parser react-intl
+// uses at runtime), so a malformed plural/brace/tag fails here instead of crashing a screen.
+// Exits non-zero on failure. Run via `pnpm translate:validate` from the package root.
 import fs from "node:fs";
 import { createRequire } from "node:module";
 
-// The parser ships as a (transitive) dependency of react-intl rather than a direct one, so
-// resolve it through the guaranteed react-intl -> intl-messageformat -> parser chain instead
-// of importing it by bare name (which pnpm's strict layout won't hoist).
 const req = createRequire(import.meta.url);
 const reqIntl = createRequire(req.resolve("react-intl"));
 const reqParser = createRequire(reqIntl.resolve("intl-messageformat"));

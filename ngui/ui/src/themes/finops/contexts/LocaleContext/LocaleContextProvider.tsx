@@ -19,9 +19,8 @@ const LocaleContextProvider = ({ children }: { children: ReactNode }) => {
 
   const intlConfig = useMemo(() => getConfigForLocale(locale), [locale]);
 
-  // tsc can't follow the vite theme resolver, so it still types LocaleContext with the base
-  // locale union (en-US/es-ES). At runtime the base localeManager is this theme's, so the
-  // extra locales are valid — reconcile the nominal mismatch here.
+  // tsc types LocaleContext with the base locale union (it can't follow the vite resolver);
+  // this theme's locales apply at runtime, so reconcile the mismatch here.
   const contextValue = useMemo(
     () => ({ locale, setLocale }) as ComponentProps<typeof LocaleContext.Provider>["value"],
     [locale, setLocale]
