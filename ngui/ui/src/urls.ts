@@ -604,6 +604,9 @@ export const GITHUB_HYSTAX_EXTRACT_LINKED_REPORTS = "https://github.com/hystax/o
 export const GITHUB_HYSTAX_OPTSCALE_REPO = "https://github.com/hystax/optscale";
 export const PYPI_OPTSCALE_ARCEE = "https://pypi.org/project/optscale-arcee";
 
+// OptScale AI promo
+export const OPTSCALE_AI = "https://optscale.ai/";
+
 // Nebius documentation
 export const NEBIUS_CREATE_SERVICE_ACCOUNT = "https://nebius.com/il/docs/iam/quickstart-sa#create-sa";
 export const NEBIUS_CREATING_AUTHORIZED_KEYS = "https://nebius.com/il/docs/iam/operations/authorized-key/create";

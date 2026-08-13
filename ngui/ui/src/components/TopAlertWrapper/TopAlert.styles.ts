@@ -32,6 +32,13 @@ const useStyles = makeStyles()((theme) => ({
     ".close-alert-button": {
       color: theme.palette.common.white
     }
+  },
+  promo: {
+    backgroundColor: "#2c67ce",
+    color: theme.palette.common.white,
+    ".close-alert-button": {
+      color: theme.palette.common.white
+    }
   }
 }));
 

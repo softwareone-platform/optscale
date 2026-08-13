@@ -4,7 +4,7 @@ import { RANGE_DATES } from "containers/RangePickerFormContainer/reducer";
 import { millisecondsToSeconds } from "utils/datetime";
 import { objectMap } from "utils/objects";
 
-export const CURRENT_VERSION = 15;
+export const CURRENT_VERSION = 16;
 
 // When we modify storage structure, we will need to properly use migrations:
 // https://github.com/rt2zz/redux-persist/blob/master/docs/migrations.md
@@ -130,6 +130,21 @@ const migrations = {
         orgId,
         // MLOPS_REMOVAL_ANNOUNCEMENT = 6
         payload.filter(({ id }) => id !== 6)
+      ])
+    );
+
+    return {
+      ...state,
+      alerts: newAlerts
+    };
+  },
+  16: (state) => {
+    // OPEN_SOURCE_ANNOUNCEMENT (github stars) is temporarily replaced by the OptScale AI promo banner.
+    const newAlerts = Object.fromEntries(
+      Object.entries(state.alerts).map(([orgId, payload]) => [
+        orgId,
+        // OPEN_SOURCE_ANNOUNCEMENT = 4
+        payload.filter(({ id }) => id !== 4)
       ])
     );
 

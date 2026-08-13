@@ -288,6 +288,7 @@ etcd:
     demo_org_lifetime_hrs: {{ .Values.demo_org_cleanup.demo_org_lifetime_hrs }}
   diworker:
     max_report_imports_workers: {{ .Values.import_reports.max_workers }}
+    csv_rewrite_days: {{ .Values.import_reports.csv_rewrite_days }}
     opentelemetry:
       enable_threading: true
       enable_urllib3: true

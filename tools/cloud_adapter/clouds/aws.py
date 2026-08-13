@@ -481,6 +481,13 @@ class Aws(S3CloudMixin):
                     spotted = instance.get('InstanceLifecycle') == 'spot'
                     vpc_id = instance.get('VpcId')
                     architecture = instance.get('Architecture')
+                    core_count = instance.get('CpuOptions', {}).get(
+                        'CoreCount', 0)
+                    threads_per_core = instance.get('CpuOptions', {}).get(
+                        'ThreadsPerCore', 0)
+                    cpu_count = None
+                    if core_count and threads_per_core:
+                        cpu_count = core_count * threads_per_core
                     instance_resource = InstanceResource(
                         cloud_resource_id=instance['InstanceId'],
                         cloud_account_id=self.cloud_account_id,
@@ -495,7 +502,8 @@ class Aws(S3CloudMixin):
                         image_id=instance.get('ImageId'),
                         cloud_created_at=int(cloud_created.timestamp()),
                         vpc_id=vpc_id,
-                        vpc_name=vpc_id_to_name.get(vpc_id)
+                        vpc_name=vpc_id_to_name.get(vpc_id),
+                        cpu_count=cpu_count
                     )
                     self._set_cloud_link(instance_resource, region)
                     yield instance_resource

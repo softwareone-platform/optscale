@@ -41,6 +41,8 @@ ENVIRONMENT_CLOUD_TYPE = 'environment'
 HEARTBEAT_INTERVAL = 300
 DEFAULT_MAX_WORKERS = 4
 DEFAULT_MAX_TENANT_WORKERS = 1
+DEFAULT_CSV_REWRITE_DAYS = 10
+MIGRATIONS_READY_FILE = '/tmp/diworker-migrations-ready'
 
 
 def _is_rate_limit_exc(exc):
@@ -178,7 +180,10 @@ class DIWorker(ConsumerMixin):
             'import_file': import_dict.get('import_file'),
             'recalculate': is_recalculation,
             'max_tenant_concurrent': int(self.diworker_settings.get(
-                'max_tenant_import_workers', DEFAULT_MAX_TENANT_WORKERS))}
+                'max_tenant_import_workers', DEFAULT_MAX_TENANT_WORKERS)),
+            'csv_rewrite_days': int(self.diworker_settings.get(
+                'csv_rewrite_days') or DEFAULT_CSV_REWRITE_DAYS)
+        }
         importer = None
         ca = None
         previous_attempt_ts = 0
@@ -295,6 +300,8 @@ if __name__ == '__main__':
     # starting at the same time on cluster
     with EtcdLock(config_cl, 'diworker_migrations'):
         migrator.migrate()
+    with open(MIGRATIONS_READY_FILE, 'w') as ready_file:
+        ready_file.write('ready\n')
     LOG.info("starting worker")
     conn_str = 'amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit'))

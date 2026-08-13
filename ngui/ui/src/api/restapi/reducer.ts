@@ -117,7 +117,8 @@ import {
   SET_ML_ARTIFACT,
   SET_ML_DATASET_LABELS,
   SET_ML_TASK_TAGS,
-  CREATE_ML_LEADERBOARD
+  CREATE_ML_LEADERBOARD,
+  SET_ORG_DATASOURCES_TAGS
 } from "./actionTypes";
 
 export const RESTAPI = "restapi";
@@ -147,6 +148,13 @@ const reducer = (state = {}, action) => {
         ...state,
         [action.label]: {
           pool: action.payload
+        }
+      };
+    case SET_ORG_DATASOURCES_TAGS:
+      return {
+        ...state,
+        [action.label]: {
+          dataSourcesTags: action.payload
         }
       };
     case DELETE_POOL:
