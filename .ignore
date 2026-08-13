@@ -1,0 +1,80 @@
+# AI / search ignore file.
+#
+# Honored by ripgrep (which powers Claude Code's Grep/Glob tools) using the
+# same syntax as .gitignore. Paths listed here are skipped by AI code search,
+# which reduces token usage and keeps sensitive files out of AI context.
+#
+# This file does NOT affect git — it only scopes what AI tooling reads.
+# Trim or extend it freely; a leading "/" anchors to this repo root.
+
+# ─── Service dirs excluded from AI context (per request) ──────────────────
+/auth/
+/bi_exporter/
+/bulldozer/
+/bumischeduler/
+/bumiworker/
+/diproxy/
+/diworker/
+/docker_images/
+/gemini/
+/herald/
+/insider/
+/jira_bus/
+/jira_ui/
+/katara/
+/keeper/
+/metroculus/
+/ovr/
+/risp/
+/slacker/
+/subspector/
+/trapper/
+
+# ─── Dependencies & virtualenvs (huge, generated) ─────────────────────────
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# ─── Build / generated artifacts (token-heavy, low signal) ────────────────
+**/build/
+**/dist/
+**/*.egg-info/
+storybook-static/
+coverage/
+htmlcov/
+.coverage
+coverage.xml
+*.min.js
+*.min.css
+*.map
+
+# ─── Lock files (very large, rarely useful to read) ───────────────────────
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+uv.lock
+
+# ─── Secrets & credentials (AI security) ──────────────────────────────────
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.keystore
+*.jks
+credentials.json
+service-account*.json
