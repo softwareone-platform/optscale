@@ -138,6 +138,11 @@ class Configurator(object):
             try:
                 logger.debug("Deleting key %s from etc", key)
                 self.etcd_cl.delete(key)
+            except etcd.EtcdNotFile:
+                try:
+                    self.etcd_cl.delete(key, recursive=True, dir=True)
+                except etcd.EtcdKeyNotFound:
+                    pass
             except etcd.EtcdKeyNotFound:
                 pass
         self.etcd_cl.write_branch("/", config, overwrite_lists=True)
