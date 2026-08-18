@@ -14,6 +14,7 @@ import {
 
 const experimentalLocale = [...EXPERIMENTAL_LOCALES][0] as SupportedLocale; // e.g. "es-ES"
 const allLocales = Object.keys(SUPPORTED_LOCALES) as SupportedLocale[];
+const publicLocales = allLocales.filter((locale) => !EXPERIMENTAL_LOCALES.has(locale));
 
 const enablePreview = () => localStorage.setItem(EXPERIMENTAL_LOCALES_STORAGE_KEY, "true");
 const stubBrowserLanguages = (languages: string[]) => vi.stubGlobal("navigator", { languages });
@@ -42,8 +43,12 @@ describe("isLocaleVisible", () => {
 });
 
 describe("getVisibleLocales", () => {
-  it("returns only the default locale when the preview flag is off", () => {
-    expect(getVisibleLocales()).toEqual([DEFAULT_LOCALE]);
+  it("omits experimental locales when the preview flag is off", () => {
+    expect(getVisibleLocales()).toEqual(publicLocales);
+  });
+
+  it("always includes the default locale", () => {
+    expect(getVisibleLocales()).toContain(DEFAULT_LOCALE);
   });
 
   it("returns every locale when the preview flag is on", () => {
