@@ -8,7 +8,7 @@ API. On top of the base POC (see `src/translations/README.md`) it adds:
 - Extra locales (`fr-FR`, `de-DE`, `pl-PL`) on top of the base `en-US` / `es-ES`.
 - Persistence of the selected locale in `localStorage` (base POC resets on refresh).
 - Browser-language detection with fallback to English.
-- **Experimental (hidden) locales** gated behind a browser flag — see below.
+- **Draft (hidden) locales** gated behind a browser flag — see below.
 - A translation-coverage hard gate (`translationCoverage.test.ts`).
 
 ## Layout
@@ -16,10 +16,11 @@ API. On top of the base POC (see `src/translations/README.md`) it adds:
 ```
 themes/finops/translations/
 ├── en-US/                       # Theme overrides for the English source (app-override.json)
-├── es-ES/  fr-FR/  de-DE/       # Complete locales (must pass the coverage gate)
-├── pl-PL/                       # Experimental locale (partial, hidden by default)
+├── es-ES/  fr-FR/  de-DE/       # Draft locales (hidden by default, exempt from the gate)
+├── pl-PL/                       # Draft locale (partial)
 ├── .missing/                    # Generated: untranslated keys per locale (translator handoff)
-├── localeManager.ts             # Registry: locales, experimental gating, messages, formats
+├── locales.ts                   # Registry: locale definitions, labels, draft flags
+├── localeManager.ts             # Visibility gating, persistence, browser detection, formats
 ├── translationCoverage.test.ts  # Hard gate: every English app key must be translated
 └── reportMissingTranslations.mjs
 ```
@@ -28,10 +29,10 @@ Each locale folder mirrors the same JSON split (`app.json`, `errors.json`, `succ
 `finops.json`, `currencies.json`) plus an `index.ts` that merges them. Untranslated keys
 fall back to English via the merge in `getConfigForLocale`.
 
-## Experimental (hidden) languages
+## Draft (hidden) languages
 
 Work-in-progress translations can be shipped without exposing them to regular users. A
-locale listed in `EXPERIMENTAL_LOCALES` (in `localeManager.ts`) is:
+locale marked `draft: true` in `locales.ts` (collected into `DRAFT_LOCALES`) is:
 
 - **excluded** from the `LanguageSwitcher` and from initial-locale resolution by default,
 - **revealed** only when the current browser opts in via a `localStorage` flag,
@@ -44,15 +45,15 @@ This lets you test a language in your own browser while it stays invisible to ev
 In the running app, open DevTools → **Console**, run this and reload the page:
 
 ```js
-localStorage.setItem("experimentalLanguages", "true");
+localStorage.setItem("draftLanguages", "true");
 ```
 
-The experimental language (e.g. **Polski**) now appears in the header language switcher.
+The draft language (e.g. **Polski**) now appears in the header language switcher.
 
 ### Disabling again
 
 ```js
-localStorage.removeItem("experimentalLanguages");
+localStorage.removeItem("draftLanguages");
 ```
 
 Reload. The language disappears from the switcher, and if it was selected the app falls
@@ -62,23 +63,25 @@ back to the browser default / English (a persisted hidden locale is ignored by
 The flag is per-browser and per-origin — only the browser where you ran the command sees
 the language.
 
-## Adding an experimental locale
+## Adding a draft locale
 
 1. Create `themes/finops/translations/<locale>/` with the same JSON files and an
    `index.ts` (copy from an existing locale). Only translate what you need; the rest falls
    back to English.
-2. In `localeManager.ts`:
-   - import the bundle,
-   - add it to `SUPPORTED_LOCALES` (label shown in the switcher),
-   - add it to `messagesMap`,
-   - add its key to `EXPERIMENTAL_LOCALES`.
+2. In `locales.ts`, import the bundle and add one entry to `LOCALES`:
 
-`SupportedLocale` is inferred from `SUPPORTED_LOCALES` — no extra type changes needed.
+   ```ts
+   "it-IT": { label: "Italiano", messages: messagesItIT, draft: true }
+   ```
 
-## Promoting an experimental locale to public
+`SupportedLocale`, `SUPPORTED_LOCALES` and `DRAFT_LOCALES` are all derived from that
+object — no other edits and no type changes needed. A locale added without a flag file
+fails `type:check`, since `LOCALE_FLAGS` is a total record.
 
-1. Remove the locale's key from `EXPERIMENTAL_LOCALES` in `localeManager.ts` (the hard gate
-   then enforces full coverage for this locale).
+## Promoting a draft locale to public
+
+1. Remove `draft: true` from the locale's entry in `locales.ts` (the hard gate then
+   enforces full coverage for this locale).
 2. Fill in the remaining translations and verify everything passes:
 
    ```bash
@@ -87,7 +90,7 @@ the language.
 
    This runs all translation checks together:
    - **ICU validation** — every message compiles as valid ICU MessageFormat.
-   - **Coverage** — every non-experimental locale translates every English key, and no
+   - **Coverage** — every non-draft locale translates every English key, and no
      locale defines stray keys.
    - **Missing report** — writes any untranslated keys to `.missing/<locale>.json` as a
      translator handoff.

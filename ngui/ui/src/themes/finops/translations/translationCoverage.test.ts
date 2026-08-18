@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DEFAULT_LOCALE, EXPERIMENTAL_LOCALES, SUPPORTED_LOCALES, type SupportedLocale } from "./localeManager";
+import { DEFAULT_LOCALE, DRAFT_LOCALES, SUPPORTED_LOCALES, type SupportedLocale } from "./localeManager";
 
 /**
  * Coverage gate for the `app` namespace: every public locale must translate every English
@@ -24,9 +24,9 @@ const coveredKeys = (locale: string): Set<string> =>
     ...Object.keys(readIfExists(`${THEME}/${locale}/app-override.json`))
   ]);
 
-// Experimental locales are exempt from the completeness gate (WIP) but still stray-checked.
+// Draft locales are exempt from the completeness gate (WIP) but still stray-checked.
 const allLocales = (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter((locale) => locale !== DEFAULT_LOCALE);
-const gatedLocales = allLocales.filter((locale) => !EXPERIMENTAL_LOCALES.has(locale));
+const gatedLocales = allLocales.filter((locale) => !DRAFT_LOCALES.has(locale));
 
 describe("Theme translation coverage (app namespace)", () => {
   it.each(gatedLocales)("%s translates every English app key", (locale) => {
@@ -41,7 +41,7 @@ describe("Theme translation coverage (app namespace)", () => {
     expect({ locale, stale }).toEqual({ locale, stale: [] });
   });
 
-  it("never marks the default (English) locale as experimental", () => {
-    expect(EXPERIMENTAL_LOCALES.has(DEFAULT_LOCALE)).toBe(false);
+  it("never marks the default (English) locale as draft", () => {
+    expect(DRAFT_LOCALES.has(DEFAULT_LOCALE)).toBe(false);
   });
 });

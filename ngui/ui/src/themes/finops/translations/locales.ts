@@ -9,15 +9,15 @@ export const DEFAULT_LOCALE = "en-US";
 type LocaleDefinition = {
   label: string;
   messages: Record<string, string>;
-  experimental?: boolean;
+  draft?: boolean;
 };
 
 const LOCALES = {
   "en-US": { label: "English", messages: messagesEnUS },
-  "es-ES": { label: "Español", messages: messagesEsES, experimental: true },
-  "fr-FR": { label: "Français", messages: messagesFrFR, experimental: true },
-  "de-DE": { label: "Deutsch", messages: messagesDeDE, experimental: true },
-  "pl-PL": { label: "Polski", messages: messagesPlPL, experimental: true }
+  "es-ES": { label: "Español", messages: messagesEsES, draft: true },
+  "fr-FR": { label: "Français", messages: messagesFrFR, draft: true },
+  "de-DE": { label: "Deutsch", messages: messagesDeDE, draft: true },
+  "pl-PL": { label: "Polski", messages: messagesPlPL, draft: true }
 } as const satisfies Record<string, LocaleDefinition>;
 
 export type SupportedLocale = keyof typeof LOCALES;
@@ -30,12 +30,10 @@ export const SUPPORTED_LOCALES = Object.fromEntries(entries.map(([code, { label 
 >;
 
 // Languages hidden from users (and excluded from the completeness gate) until signed off.
-export const EXPERIMENTAL_LOCALES = new Set<SupportedLocale>(
-  entries.filter(([, { experimental }]) => experimental).map(([code]) => code)
-);
+export const DRAFT_LOCALES = new Set<SupportedLocale>(entries.filter(([, { draft }]) => draft).map(([code]) => code));
 
-if (EXPERIMENTAL_LOCALES.has(DEFAULT_LOCALE)) {
-  throw new Error(`DEFAULT_LOCALE "${DEFAULT_LOCALE}" must never be marked experimental.`);
+if (DRAFT_LOCALES.has(DEFAULT_LOCALE)) {
+  throw new Error(`DEFAULT_LOCALE "${DEFAULT_LOCALE}" must never be marked draft.`);
 }
 
 const messagesMap = Object.fromEntries(entries.map(([code, { messages }]) => [code, messages])) as Record<
