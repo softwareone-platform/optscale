@@ -1,55 +1,73 @@
-import LanguageIcon from "@mui/icons-material/Language";
-import Box from "@mui/material/Box";
+import { useState, type MouseEvent } from "react";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import ListItemText from "@mui/material/ListItemText";
+import MuiMenu from "@mui/material/Menu";
 import MuiMenuItem from "@mui/material/MenuItem";
-import MuiSelect, { SelectChangeEvent } from "@mui/material/Select";
-import { SUPPORTED_LOCALES, getVisibleLocales } from "@theme/translations/localeManager";
+import { useIntl } from "react-intl";
+import { SUPPORTED_LOCALES, getVisibleLocales, type SupportedLocale } from "@theme/translations/localeManager";
 import { useLocaleContext } from "contexts/LocaleContext";
-import { SupportedLocale } from "translations/localeManager";
+import { type SupportedLocale as ContextLocale } from "translations/localeManager";
+import { LOCALE_FLAGS } from "./localeFlags";
+
+const TRIGGER_FLAG_SIZE = 24;
+const MENU_FLAG_SIZE = 28;
+
+const LocaleFlag = ({ locale, size }: { locale: SupportedLocale; size: number }) => (
+  <Avatar src={LOCALE_FLAGS[locale]} alt="" sx={{ width: size, height: size, border: 1, borderColor: "divider" }} />
+);
 
 const LanguageSwitcher = () => {
+  const intl = useIntl();
   const { locale, setLocale } = useLocaleContext();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const visibleLocales = getVisibleLocales();
-
-  const handleChange = (event: SelectChangeEvent<SupportedLocale>) => {
-    setLocale(event.target.value as SupportedLocale);
-  };
 
   if (visibleLocales.length <= 1) {
     return null;
   }
 
+  const selectLocale = (nextLocale: SupportedLocale) => {
+    setLocale(nextLocale as ContextLocale);
+    setAnchorEl(null);
+  };
+
   return (
-    <Box display="flex" alignItems="center">
-      <LanguageIcon color="primary" sx={{ mr: 0.5, fontSize: "1.25rem" }} />
-      <MuiSelect
-        value={locale}
-        onChange={handleChange}
-        variant="standard"
-        disableUnderline
-        sx={{
-          color: "primary.main",
-          fontSize: "0.875rem",
-          fontWeight: 500,
-          "& .MuiSelect-select": {
-            paddingTop: 0,
-            paddingBottom: 0,
-            paddingRight: "20px !important"
-          },
-          "& .MuiSvgIcon-root": {
-            color: "primary.main",
-            fontSize: "1.25rem"
-          }
-        }}
+    <>
+      <IconButton
+        onClick={(event: MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget)}
+        aria-label={intl.formatMessage({ id: "language" })}
+        aria-haspopup="listbox"
+        aria-expanded={Boolean(anchorEl)}
+        size="small"
         data-test-id="select_language"
       >
+        <LocaleFlag locale={locale} size={TRIGGER_FLAG_SIZE} />
+      </IconButton>
+      <MuiMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        MenuListProps={{ role: "listbox" }}
+        PaperProps={{ sx: { mt: 1, minWidth: 220, borderRadius: 2 } }}
+      >
         {visibleLocales.map((localeKey) => (
-          <MuiMenuItem key={localeKey} value={localeKey} data-test-id={`option_lang_${localeKey}`}>
-            {SUPPORTED_LOCALES[localeKey]}
+          <MuiMenuItem
+            key={localeKey}
+            selected={localeKey === locale}
+            onClick={() => selectLocale(localeKey)}
+            sx={{ gap: 1.5, py: 1 }}
+            data-test-id={`option_lang_${localeKey}`}
+          >
+            <LocaleFlag locale={localeKey} size={MENU_FLAG_SIZE} />
+            <ListItemText primary={SUPPORTED_LOCALES[localeKey]} primaryTypographyProps={{ color: "inherit" }} />
           </MuiMenuItem>
         ))}
-      </MuiSelect>
-    </Box>
+      </MuiMenu>
+    </>
   );
 };
 
