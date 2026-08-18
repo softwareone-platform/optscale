@@ -1,7 +1,7 @@
 import { currencyCodes } from "utils/currency";
 import {
   DEFAULT_LOCALE,
-  EXPERIMENTAL_LOCALES,
+  DRAFT_LOCALES,
   SUPPORTED_LOCALES,
   getDefaultMessages,
   getMessagesForLocale,
@@ -10,12 +10,11 @@ import {
 
 export * from "./locales";
 export const LOCALE_STORAGE_KEY = "locale";
-export const EXPERIMENTAL_LOCALES_STORAGE_KEY = "experimentalLanguages";
+export const DRAFT_LOCALES_STORAGE_KEY = "draftLanguages";
 
-export const areExperimentalLocalesEnabled = (): boolean => localStorage.getItem(EXPERIMENTAL_LOCALES_STORAGE_KEY) === "true";
+export const areDraftLocalesEnabled = (): boolean => localStorage.getItem(DRAFT_LOCALES_STORAGE_KEY) === "true";
 
-export const isLocaleVisible = (locale: SupportedLocale): boolean =>
-  !EXPERIMENTAL_LOCALES.has(locale) || areExperimentalLocalesEnabled();
+export const isLocaleVisible = (locale: SupportedLocale): boolean => !DRAFT_LOCALES.has(locale) || areDraftLocalesEnabled();
 
 export const getVisibleLocales = (): SupportedLocale[] =>
   (Object.keys(SUPPORTED_LOCALES) as SupportedLocale[]).filter(isLocaleVisible);
