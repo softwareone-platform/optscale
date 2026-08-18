@@ -52,7 +52,7 @@ const LanguageSwitcher = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         MenuListProps={{ role: "listbox" }}
-        PaperProps={{ sx: { mt: 1, minWidth: 220, borderRadius: 2 } }}
+        slotProps={{ paper: { sx: { mt: 1, minWidth: 220, borderRadius: 2 } } }}
       >
         {visibleLocales.map((localeKey) => (
           <MuiMenuItem
