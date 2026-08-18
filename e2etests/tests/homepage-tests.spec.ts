@@ -21,7 +21,7 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
 
   test(
     '[230550] Compare possible savings on home page with those on recommendations page',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ homePage, recommendationsPage }) => {
       const homePageValue = await homePage.getRecommendationsPossibleSavingsValue();
       await homePage.recommendationsBtn.click();
@@ -30,42 +30,45 @@ test.describe('[MPT-11464] Home Page Recommendations block tests', { tag: ['@ui'
     }
   );
 
-  test('[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings', async ({
-    homePage,
-    recommendationsPage,
-  }) => {
-    const homePageValue = await homePage.getRecommendationsCostValue();
-    await homePage.recommendationsCostLink.click();
-    expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Savings');
-    expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
-  });
-
-  test('[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category', async ({
-    homePage,
-    recommendationsPage,
-  }) => {
-    const homePageValue = await homePage.getRecommendationsSecurityValue();
-    await homePage.recommendationsSecurityLink.click();
-    expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Security');
-    expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
-  });
-
-  test('[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status', async ({
-    homePage,
-    recommendationsPage,
-  }) => {
-    const homePageValue = await homePage.getRecommendationsCriticalValue();
-    await homePage.recommendationsCriticalLink.click();
-
-    if(homePageValue === 0){
-      debugLog('No critical recommendations, verifying that the no recommendations message is shown');
-      await expect(recommendationsPage.noRecommendationsMessage).toBeVisible();
-      return;
+  test(
+    '[230551] Verify Cost items displayed in the recommendations block match the sum total of items displayed on cards with savings',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, recommendationsPage }) => {
+      const homePageValue = await homePage.getRecommendationsCostValue();
+      await homePage.recommendationsCostLink.click();
+      expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Savings');
+      expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
     }
+  );
 
-    expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Critical');
-    expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
-  });
+  test(
+    '[230552] Verify Security items displayed in the recommendations block match the sum total of items displayed on cards in the security category',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, recommendationsPage }) => {
+      const homePageValue = await homePage.getRecommendationsSecurityValue();
+      await homePage.recommendationsSecurityLink.click();
+      expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Security');
+      expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
+    }
+  );
+
+  test(
+    '[230553] Verify Critical items displayed in the recommendations block match the sum total of items displayed on cards with the critical status',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, recommendationsPage }) => {
+      const homePageValue = await homePage.getRecommendationsCriticalValue();
+      await homePage.recommendationsCriticalLink.click();
+
+      if (homePageValue === 0) {
+        debugLog('No critical recommendations, verifying that the no recommendations message is shown');
+        await expect(recommendationsPage.noRecommendationsMessage).toBeVisible();
+        return;
+      }
+
+      expect.soft(await recommendationsPage.selectedComboBoxOption(recommendationsPage.categoriesSelect)).toEqual('Critical');
+      expect.soft(await recommendationsPage.getTotalSumOfItemsFromSeeItemsButtons()).toBe(homePageValue);
+    }
+  );
 });
 
 test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@resources', '@homepage'] }, () => {
@@ -81,16 +84,20 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     });
   });
 
-  test('[230838] Verify Top Resource block Resource link works correctly', async ({ homePage, resourcesPage }) => {
-    await test.step('Click on Top Resources button', async () => {
-      await homePage.clickTopResourcesBtn();
-      await expect.soft(resourcesPage.heading).toBeVisible();
-    });
-  });
+  test(
+    '[230838] Verify Top Resource block Resource link works correctly',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, resourcesPage }) => {
+      await test.step('Click on Top Resources button', async () => {
+        await homePage.clickTopResourcesBtn();
+        await expect.soft(resourcesPage.heading).toBeVisible();
+      });
+    }
+  );
 
   test(
     '[230839] Verify top Resource link navigates to the correct resource details page and last 30 days value match',
-    { tag: '@p1' },
+    { tag: ['@fast', '@p1'] },
     async ({ homePage, resourceDetailsPage, datePicker }) => {
       let homepageResourceTitle: string;
       let homePageExpenseValue: number;
@@ -121,7 +128,7 @@ test.describe('[MPT-11958] Home Page Resource block tests', { tag: ['@ui', '@res
     }
   );
 
-  test('[230842] Verify Top Resource Block displayed correctly', async ({ homePage }) => {
+  test('[230842] Verify Top Resource Block displayed correctly', { tag: ['@fast', '@p2'] }, async ({ homePage }) => {
     await test.step('Verify that the Top Resources section is displayed with 6 or fewer resources and include names for each', async () => {
       const count = await homePage.topResourcesAllLinks.count();
       expect.soft(count).toBeLessThanOrEqual(6);
@@ -155,31 +162,31 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     });
   });
 
-  test('[230922] Verify that Pools Requiring attention is empty when the are no qualifying pools', async ({
-    homePage,
-    poolsPage,
-    mainMenu,
-  }) => {
-    await test.step('Remove limits from all pools if any', async () => {
-      await poolsPage.navigateToURL();
-      await poolsPage.waitForAllProgressBarsToDisappear();
-      await poolsPage.poolExpandMoreIcon.waitFor();
-      if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
-      await poolsPage.toggleExpandPool();
-      await poolsPage.removeAllSubPoolMonthlyLimits();
-      await poolsPage.toggleExpandPool();
-      if ((await poolsPage.getOrganizationLimitValue()) !== 0) await poolsPage.editPoolMonthlyLimit(0);
-      await mainMenu.clickHomeBtn();
-    });
-    await test.step('Navigate to home page and verify Pools Requiring attention block is empty', async () => {
-      await expect.soft(homePage.poolsNoDataMessage).toBeVisible();
-      expect.soft(await homePage.getPoolsBlockTotalValue()).toBe(0);
-    });
-  });
+  test(
+    '[230922] Verify that Pools Requiring attention is empty when the are no qualifying pools',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, poolsPage, mainMenu }) => {
+      await test.step('Remove limits from all pools if any', async () => {
+        await poolsPage.navigateToURL();
+        await poolsPage.waitForAllProgressBarsToDisappear();
+        await poolsPage.poolExpandMoreIcon.waitFor();
+        if ((await poolsPage.getColumnBadgeText()) !== 'All') await poolsPage.selectAllColumns();
+        await poolsPage.toggleExpandPool();
+        await poolsPage.removeAllSubPoolMonthlyLimits();
+        await poolsPage.toggleExpandPool();
+        if ((await poolsPage.getOrganizationLimitValue()) !== 0) await poolsPage.editPoolMonthlyLimit(0);
+        await mainMenu.clickHomeBtn();
+      });
+      await test.step('Navigate to home page and verify Pools Requiring attention block is empty', async () => {
+        await expect.soft(homePage.poolsNoDataMessage).toBeVisible();
+        expect.soft(await homePage.getPoolsBlockTotalValue()).toBe(0);
+      });
+    }
+  );
 
   test(
     '[230923] Verify that Pools Requiring attention shows Pool and Sub-pools that have exceeded their limit',
-    { tag: ['@p1'] },
+    { tag: ['@fast', '@p1'] },
     async ({ homePage, poolsPage, mainMenu }) => {
       let expenseValue: number;
       let subPoolExpenseValue: number;
@@ -194,7 +201,10 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
         const limitValue = Math.round(expenseValue - 1);
         await poolsPage.toggleExpandPool();
         subPoolExpenseValue = await poolsPage.getSubPoolExpensesThisMonth(1);
-        test.skip(subPoolExpenseValue <= 1, 'Sub-pool expenses are too low to set a limit below them and still have a positive limit value');
+        test.skip(
+          subPoolExpenseValue <= 1,
+          'Sub-pool expenses are too low to set a limit below them and still have a positive limit value'
+        );
         const subPoolLimitValue = Math.round(subPoolExpenseValue - 1);
         await poolsPage.editSubPoolMonthlyLimit(subPoolLimitValue, true, 1);
         await poolsPage.editPoolMonthlyLimit(limitValue);
@@ -221,39 +231,39 @@ test.describe('[MPT-12743] Home Page test for Pools requiring attention block', 
     }
   );
 
-  test('[230924] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend', async ({
-    homePage,
-    poolsPage,
-    mainMenu,
-  }) => {
-    let expenseValue: number;
-    let forecastedValue: number;
+  test(
+    '[230924] Verify that Pools Requiring attention shows Pool and Sub-pools that are forecasted to overspend',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage, poolsPage, mainMenu }) => {
+      let expenseValue: number;
+      let forecastedValue: number;
 
-    await test.step('Set monthly limit for a pool that is higher than expenses this month, but lower than forecast', async () => {
-      await poolsPage.navigateToURL();
-      await homePage.waitForAllProgressBarsToDisappear();
-      await poolsPage.poolExpandMoreIcon.waitFor();
-      await poolsPage.selectAllColumns();
-      expenseValue = await poolsPage.getExpensesThisMonth();
-      forecastedValue = await poolsPage.getForecastThisMonth();
-      const limitValue = Math.ceil(expenseValue / 0.99);
-      await poolsPage.toggleExpandPool();
-      await poolsPage.removeAllSubPoolMonthlyLimits();
-      await poolsPage.editPoolMonthlyLimit(limitValue);
-    });
-    await test.step('Navigate to home page and verify Pools Requiring attention block', async () => {
-      await mainMenu.clickHomeBtn();
-      await expect.soft(homePage.poolsNoDataMessage).toBeVisible();
-      await homePage.clickPoolsBlockForecastedOverspendTab();
-      expect.soft(await homePage.getPoolsBlockExpensesColumnValue(1)).toBe(expenseValue);
-      expect.soft(await homePage.getPoolsBlockForecastColumnValue(1)).toBe(forecastedValue);
-      expect
-        .soft(await homePage.getColorFromElement(homePage.poolsBlockExpensesColumn.locator('xpath=/div/div')))
-        .toBe(homePage.successColor);
-      expect.soft(await homePage.getColorFromElement(homePage.poolsBlockForecastColumn.locator('span'))).toBe(homePage.warningColor);
-      expect.soft(await homePage.getPoolsBlockTotalValue()).toBe(1);
-    });
-  });
+      await test.step('Set monthly limit for a pool that is higher than expenses this month, but lower than forecast', async () => {
+        await poolsPage.navigateToURL();
+        await homePage.waitForAllProgressBarsToDisappear();
+        await poolsPage.poolExpandMoreIcon.waitFor();
+        await poolsPage.selectAllColumns();
+        expenseValue = await poolsPage.getExpensesThisMonth();
+        forecastedValue = await poolsPage.getForecastThisMonth();
+        const limitValue = Math.ceil(expenseValue / 0.99);
+        await poolsPage.toggleExpandPool();
+        await poolsPage.removeAllSubPoolMonthlyLimits();
+        await poolsPage.editPoolMonthlyLimit(limitValue);
+      });
+      await test.step('Navigate to home page and verify Pools Requiring attention block', async () => {
+        await mainMenu.clickHomeBtn();
+        await expect.soft(homePage.poolsNoDataMessage).toBeVisible();
+        await homePage.clickPoolsBlockForecastedOverspendTab();
+        expect.soft(await homePage.getPoolsBlockExpensesColumnValue(1)).toBe(expenseValue);
+        expect.soft(await homePage.getPoolsBlockForecastColumnValue(1)).toBe(forecastedValue);
+        expect
+          .soft(await homePage.getColorFromElement(homePage.poolsBlockExpensesColumn.locator('xpath=/div/div')))
+          .toBe(homePage.successColor);
+        expect.soft(await homePage.getColorFromElement(homePage.poolsBlockForecastColumn.locator('span'))).toBe(homePage.warningColor);
+        expect.soft(await homePage.getPoolsBlockTotalValue()).toBe(1);
+      });
+    }
+  );
 });
 
 test.describe('[MPT-18353] Home Page test for Policy Violation block', { tag: ['@ui', '@anomalies', '@homepage'] }, () => {
@@ -269,57 +279,61 @@ test.describe('[MPT-18353] Home Page test for Policy Violation block', { tag: ['
     interceptAPI: { entries: apiInterceptions, failOnInterceptionMissing: true },
   });
 
-  test('[232876] Verify that Policy Violation block displays policy violations correctly', async ({ homePage }) => {
-    await test.step('Navigate to home page', async () => {
-      await homePage.page.clock.setFixedTime(new Date('2026-02-24T11:00:00Z'));
-      await homePage.navigateToURL();
-      await homePage.waitForAllCanvases();
-    });
+  test(
+    '[232876] Verify that Policy Violation block displays policy violations correctly',
+    { tag: ['@fast', '@p2'] },
+    async ({ homePage }) => {
+      await test.step('Navigate to home page', async () => {
+        await homePage.page.clock.setFixedTime(new Date('2026-02-24T11:00:00Z'));
+        await homePage.navigateToURL();
+        await homePage.waitForAllCanvases();
+      });
 
-    const typeColumn = '//td[2]';
-    const statusColumn = '//td[3]';
+      const typeColumn = '//td[2]';
+      const statusColumn = '//td[3]';
 
-    await test.step('Verify that the Policy Violation block first page is displayed with correct data', async () => {
-      const NBSP = '\u00A0';
+      await test.step('Verify that the Policy Violation block first page is displayed with correct data', async () => {
+        const NBSP = '\u00A0';
 
-      await expect.soft(homePage.correlatedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
-      await expect.soft(homePage.correlatedTaggingRow.locator(statusColumn)).toHaveText('1 violation right now');
+        await expect.soft(homePage.correlatedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
+        await expect.soft(homePage.correlatedTaggingRow.locator(statusColumn)).toHaveText('1 violation right now');
 
-      await expect.soft(homePage.defaultExpenseAnomalyRow.locator(typeColumn)).toHaveText('Anomaly');
-      await homePage.defaultExpenseAnomalyRow.locator(statusColumn).hover();
-      await expect.soft(homePage.tooltip).toHaveText(`Average:${NBSP}$7,621.64Today:${NBSP}$63,376.15`);
+        await expect.soft(homePage.defaultExpenseAnomalyRow.locator(typeColumn)).toHaveText('Anomaly');
+        await homePage.defaultExpenseAnomalyRow.locator(statusColumn).hover();
+        await expect.soft(homePage.tooltip).toHaveText(`Average:${NBSP}$7,621.64Today:${NBSP}$63,376.15`);
 
-      await expect.soft(homePage.expiringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
-      await expect.soft(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$1,175.82');
-      expect
-        .soft(await homePage.getColorFromElement(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)))
-        .toBe(homePage.errorColor);
+        await expect.soft(homePage.expiringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+        await expect.soft(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$1,175.82');
+        expect
+          .soft(await homePage.getColorFromElement(homePage.expiringBudgetRow.locator(`${statusColumn}/div/div`)))
+          .toBe(homePage.errorColor);
 
-      await expect.soft(homePage.prohibitedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
-      await expect.soft(homePage.prohibitedTaggingRow.locator(statusColumn)).toHaveText('2 violations right now');
+        await expect.soft(homePage.prohibitedTaggingRow.locator(typeColumn)).toHaveText('Tagging');
+        await expect.soft(homePage.prohibitedTaggingRow.locator(statusColumn)).toHaveText('2 violations right now');
 
-      await expect.soft(homePage.recurringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
-      await expect.soft(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$234,445.89');
-      expect
-        .soft(await homePage.getColorFromElement(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)))
-        .toBe(homePage.errorColor);
+        await expect.soft(homePage.recurringBudgetRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+        await expect.soft(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)).toHaveText('$234,445.89');
+        expect
+          .soft(await homePage.getColorFromElement(homePage.recurringBudgetRow.locator(`${statusColumn}/div/div`)))
+          .toBe(homePage.errorColor);
 
-      await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
-    });
+        await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
+      });
 
-    await test.step('Verify second page of the Policy Violation block is displayed with correct data when clicking on the pagination button', async () => {
-      await homePage.policyViolationsNavigateNextBtn.click();
+      await test.step('Verify second page of the Policy Violation block is displayed with correct data when clicking on the pagination button', async () => {
+        await homePage.policyViolationsNavigateNextBtn.click();
 
-      await expect.soft(homePage.resourceQuotaRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
-      await expect.soft(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)).toHaveText('478');
-      expect
-        .soft(await homePage.getColorFromElement(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)))
-        .toBe(homePage.errorColor);
+        await expect.soft(homePage.resourceQuotaRow.locator(`${typeColumn}`)).toHaveText('Quota/Budget');
+        await expect.soft(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)).toHaveText('478');
+        expect
+          .soft(await homePage.getColorFromElement(homePage.resourceQuotaRow.locator(`${statusColumn}/div/div`)))
+          .toBe(homePage.errorColor);
 
-      await expect.soft(homePage.taggingRequiredRow.locator(`${typeColumn}`)).toHaveText('Tagging');
-      await expect.soft(homePage.taggingRequiredRow.locator(`${statusColumn}`)).toHaveText('3119 violations right now');
+        await expect.soft(homePage.taggingRequiredRow.locator(`${typeColumn}`)).toHaveText('Tagging');
+        await expect.soft(homePage.taggingRequiredRow.locator(`${statusColumn}`)).toHaveText('3119 violations right now');
 
-      await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
-    });
-  });
+        await expect.soft(homePage.defaultResourceCountAnomalyRow).toBeHidden();
+      });
+    }
+  );
 });
