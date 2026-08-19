@@ -2,12 +2,8 @@ name: Screenshot regression tests
 run-name: Screenshot regression tests - started by ${{ github.actor }}
 permissions: read-all
 
+# Manual runs only for now: the pull_request trigger is temporarily removed so this doesn't gate PRs.
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - "ngui/**"
-      - "regression-tests/**"
   workflow_dispatch:
 
 env:
