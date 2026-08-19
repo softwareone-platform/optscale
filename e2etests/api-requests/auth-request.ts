@@ -114,34 +114,6 @@ export class AuthRequest extends BaseRequest {
   }
 
   /**
-   * Creates a new user with the provided email, password, and display name.
-   * @param {string} email - The email address of the user.
-   * @param {string} password - The password of the user.
-   * @param {string} displayName - The display name of the user.
-   * @returns {Promise<APIResponse>} A promise that resolves to the API response.
-   * @throws Will throw an error if the user creation fails.
-   */
-  async createUser(email: string, password: string, displayName: string): Promise<APIResponse> {
-    const response = await this.request.post(this.userEndpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Secret: process.env.CLUSTER_SECRET,
-      },
-      data: {
-        email,
-        display_name: displayName,
-        password,
-        verified: true,
-      },
-    });
-
-    if (response.status() !== 201) {
-      throw new Error(`Failed to create user: Status ${response.status()}`);
-    }
-    return response;
-  }
-
-  /**
    * Sets a verification code for a user.
    * This method sends a POST request to the verification codes endpoint with the provided email and code.
    * It validates the presence of the `CLUSTER_SECRET` environment variable and handles errors if the request fails.
@@ -172,24 +144,5 @@ export class AuthRequest extends BaseRequest {
       throw new Error(`Failed to create verification code: Status ${response.status()} - Reason: ${reason}`);
     }
     return response;
-  }
-
-  /**
-   * Deletes a user with the provided user ID.
-   * @param {string} userID - The user identifier.
-   * @returns {Promise<void>} A promise that resolves when the user is deleted.
-   * @throws Will throw an error if the user deletion fails.
-   */
-  async deleteUser(userID: string): Promise<void> {
-    const response = await this.request.delete(`${this.userEndpoint}/${userID}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Secret: `${process.env.CLUSTER_SECRET}`,
-      },
-    });
-    if (response.status() !== 204) {
-      throw new Error(`Failed to delete userID ${userID}: response status ${response.status()} reason ${response.statusText}`);
-    }
-    console.log(`UserID ${userID} deleted`);
   }
 }
