@@ -104,24 +104,6 @@
     mode: '0644'
   become: yes
 
-- name: Ensure kubelet systemd override directory exists
-  file:
-    path: /etc/systemd/system/kubelet.service.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-  become: yes
-
-- name: Ensure kubelet starts after containerd
-  copy:
-    src: kubelet-containerd-override.conf
-    dest: /etc/systemd/system/kubelet.service.d/20-containerd-dependency.conf
-    owner: root
-    group: root
-    mode: '0644'
-  become: yes
-
 - name: Restart kubelet service
   systemd:
     state: restarted
