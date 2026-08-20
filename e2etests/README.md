@@ -70,7 +70,7 @@ npm run [script name]
 Or they can be added to the Run/Debug Configuration in an IDE like WebStorm.
 
 ### Scripts for Running Tests
-These scripts facilitate running various Playwright tests to ensure the functionality and stability of the application, including API tests, screenshot matching regression tests, and end-to-end tests.
+These scripts facilitate running various Playwright tests to ensure the functionality and stability of the application, including API tests and end-to-end tests. Visual regression tests live in the standalone `regression-tests/` project at the repository root.
 They also include options for running tests in different browsers, in headed mode, and with debugging capabilities.
 
 | Script name                  | Description                                                                                                                                                                                                                                                                   | npm command and arguments                                                                                                  |
@@ -85,9 +85,6 @@ They also include options for running tests in different browsers, in headed mod
 | playwright:api               | Runs all test with the @api tag.                                                                                                                                                                                                                                              | ```npx playwright test --grep @api```                                                                                      |
 | playwright:single-worker     | Runs all Playwright @ui tests with a single chrome worker. This overrides the configured number of workers and runs the tests serially. This is useful when running on a local build where hardware resources are limited, and can increase reliability at the cost of speed. | ```npx playwright test --workers=1 --project chrome --grep @ui```                                                          |
 | playwright:test_chrome       | Runs all Playwright tests in a headless Chrome browser. playwright:test_firefox, playwright:test_edge, etc do the same for their respective browsers.                                                                                                                         | ```npx playwright test --project chrome```                                                                                 |
-| playwright:regression        | Runs the regression screenshot matching tests using its own specified config.ts.                                                                                                                                                                                              | ```cross-env IS_REGRESSION_RUN=true npx playwright test --grep @swo_regression --config=playwright.regression.config.ts``` |
-| playwright:regression:ui     | Runs the playwright:regression script with the --ui mode argument.                                                                                                                                                                                                            | ```npm run playwright:regression -- --ui```                                                                                |
-| playwright:regression:update | Runs the playwright:regression script with the --update-snapshot argument. This tells Playwright to capture new screenshots where they do not match the existing one.                                                                                                         | ```npm run playwright:regression -- --update-snapshots```                                                                  |
 
 ### Command line instruction for Running Specific Tests or configurations
 | CLI                                     | Description                                                                                                                                                               | Example npm                                         |
@@ -98,7 +95,7 @@ They also include options for running tests in different browsers, in headed mod
 | npx playwright test --workers=int       | Runs tests in parallel using the number of workers specified. It is suggested that workers should not exceed 50% of the CPU cores available to prevent performance issues | ```npx playwright test --workers=4```               |
 
 ## Playwright Configuration
-The default Playwright configuration is specified in the `playwright.config.ts` file. The regression tests use a separate configuration file, `playwright.regression.config.ts`, which is used to run the regression tests with specific settings.
+The default Playwright configuration is specified in the `playwright.config.ts` file. The DevOps tests use a separate configuration file, `playwright.devops.config.ts`.
 The config file contains settings for the test runner, such as the base URL, timeout settings, and the browsers to run tests on. It can also be used to specify dependencies such as creating a user session, which is shared across tests to avoid logging in before each test.
 
 ## Setup and Teardown
