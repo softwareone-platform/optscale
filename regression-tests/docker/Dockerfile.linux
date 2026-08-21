@@ -1,8 +1,14 @@
-FROM mcr.microsoft.com/playwright:v1.52.0
+# Version comes from package.json, passed in by run_pw.sh — the image, the runner and the
+# committed screenshots have to be the same browser, and repeating it here is how they drifted.
+ARG PLAYWRIGHT_VERSION
+
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}
+
+ARG PLAYWRIGHT_VERSION
 
 WORKDIR /app
 
-RUN npm install @playwright/test@1.52.0
+RUN npm install @playwright/test@${PLAYWRIGHT_VERSION}
 RUN npm install dotenv@16.4.7
 
 RUN npx playwright install --with-deps chromium

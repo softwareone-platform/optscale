@@ -23,6 +23,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
 
+      # run_pw.sh reads the pinned Playwright version out of package.json to build the image with.
+      # Only the container's Node renders anything, so the version here is not a screenshot input —
+      # this is just so the script doesn't depend on whatever the runner image happens to ship.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       # Fails in seconds rather than after a multi-minute image build.
       - name: Verify the test-account token is configured
         env:

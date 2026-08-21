@@ -145,6 +145,16 @@ require_known() {
 require_known "$TEST_ENV_NAME" --names -E
 require_known "$SNAPSHOT_ENV_NAME" --keys -S
 
+# Both the image tag and the in-container install come from this one value, so a range like
+# ^1.52.0 would name no image at all. Checked here rather than at the build, like the flags above.
+PLAYWRIGHT_VERSION="$(node -p "require('./package.json').devDependencies['@playwright/test']")" || exit 1
+if ! printf '%s' "$PLAYWRIGHT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+    echo "Error: @playwright/test in package.json is \"$PLAYWRIGHT_VERSION\", which is not an exact version."
+    echo "  The container runs mcr.microsoft.com/playwright:v<that>, so it has to name a single release."
+    echo "  Pinning it is deliberate: the browser version is what renders the committed screenshots."
+    exit 1
+fi
+
 # -u writes whatever -S selected, so the pair would re-base one environment's committed screenshots
 # on another's pixels. An environment is only ever updated from itself.
 if [ "$UPDATE_SCREENSHOTS" = true ] && [ -n "$SNAPSHOT_ENV_NAME" ]; then
@@ -208,7 +218,7 @@ fi
 
 run_tests() {
     echo "Running tests in Docker container..."
-    docker build -t playwright-tests -f docker/Dockerfile.linux . || exit 1
+    docker build -t playwright-tests --build-arg "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" -f docker/Dockerfile.linux . || exit 1
 
     TEST_ARGS=("--config=$CONFIG_FILE")
     [ "$UPDATE_SCREENSHOTS" = true ] && TEST_ARGS+=("--update-snapshots")

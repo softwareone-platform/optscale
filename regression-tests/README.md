@@ -359,6 +359,8 @@ Screenshots live at **`snapshots/<env>/<renderer>/`**.
 
 The container's output is canonical because it is reproducible: fixed image, fixed fonts, and rendering flags that disable the GPU, font hinting and subpixel anti-aliasing. That is what CI compares against.
 
+The browser version is part of that reproducibility, so `@playwright/test` is pinned to an exact version in `package.json` and `run_pw.sh` passes it to the image as a build arg — `mcr.microsoft.com/playwright:v<version>` and the in-container install can't drift from what you run locally. A range like `^1.52.0` is rejected before the build, since it names no single image. Bumping the pin changes the browser that renders every committed screenshot, so treat it as its own change: bump, regenerate per environment, review the PNG diff.
+
 To regenerate your own screenshots (development only):
 
 ```bash

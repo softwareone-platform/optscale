@@ -38,6 +38,9 @@ rules to follow when changing it.
   `-H`/`-a`/`-U`, so neither can quietly commit another environment's pixels or a blank page.
 - Comparisons are exact. Don't add `maxDiffPixelRatio`/`threshold` to make a cross-platform run
   pass — Docker is the only trustworthy comparison.
+- `@playwright/test` is pinned to an exact version, and `docker/Dockerfile.linux` takes it as a
+  build arg rather than repeating it. The pin is a property of the committed screenshots: bumping it
+  changes the browser that renders them, so it comes with a regenerate-and-review pass.
 - Changing a rendered mock value (including the `e2e()` marker) invalidates screenshots. Regenerate
   and commit them together.
 - `captureScreenshot` is the only entry point. A spec that positioned the page itself passes
