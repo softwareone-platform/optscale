@@ -22,6 +22,7 @@
     "test:prod": "cross-env TEST_ENV=prod npm run test --",
     "test:docker": "node scripts/run-pw.mjs",
     "test:docker:update": "node scripts/run-pw.mjs -u",
+    "snapshots:prune": "node scripts/prune-snapshots.mjs",
     "report": "playwright show-report ./results/html"
   },
   "keywords": [],
