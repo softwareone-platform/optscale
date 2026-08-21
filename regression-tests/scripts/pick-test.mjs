@@ -8,8 +8,7 @@ import { dirname, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { loadEnvConfig } from './env-config.mjs';
-import { binary, onWindows, runToCompletion } from './platform.mjs';
-
+import { onWindows, runToCompletion } from './platform.mjs';
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const countScreenshots = (key, renderer) => {
@@ -127,7 +126,14 @@ async function ensureServing(baseUrl, fromContainer) {
     return false;
   }
 
-  const server = spawn(binary('npm'), ['start', '--', '--host'], { cwd: DEV_SERVER_DIR, detached: true, stdio: 'ignore' });
+  // shell:true because npm is a .cmd shim on Windows that spawn will not run otherwise; safe here
+  // only because every argument is a literal.
+  const server = spawn('npm', ['start', '--', '--host'], {
+    cwd: DEV_SERVER_DIR,
+    detached: true,
+    stdio: 'ignore',
+    shell: onWindows,
+  });
   // An unhandled 'error' event would kill the picker with a raw stack trace.
   server.on('error', error => console.log(`\n!  Could not start it (${error.code}). Start it by hand:  ${DEV_SERVER_HINT}`));
   server.unref();
@@ -154,9 +160,9 @@ const askIntent = () =>
   ]);
 
 async function confirmAndRun(command, env = {}) {
-  const prefix = Object.entries(env)
-    .map(([key, value]) => `${key}=${value}`)
-    .join(' ');
+  const assignments = Object.entries(env).map(([key, value]) => `${key}=${value}`);
+  // A VAR=value prefix is shell syntax PowerShell does not have, so print the portable form there.
+  const prefix = assignments.length && onWindows ? `cross-env ${assignments.join(' ')}` : assignments.join(' ');
   console.log(`\n$ ${[prefix, ...command].filter(Boolean).join(' ')}\n`);
 
   const confirmation = await ask('Run it? [Y/n]: ');
