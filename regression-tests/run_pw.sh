@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/docker/ngui-container.sh"
+
 # Default values
 CONFIG_FILE="playwright.config.ts"
 UPDATE_SCREENSHOTS=false
@@ -14,12 +17,6 @@ PW_ARGS=()
 RUN_APP=false
 KEEP_RUNNING=false
 API_ENDPOINT=""
-
-# The ngui container publishes its internal 4000 on $PORT of the host.
-NGUI_CONTAINER="ngui-container"
-NGUI_IMAGE="ngui-app"
-NGUI_INTERNAL_PORT=4000
-NGUI_READY_TIMEOUT=90
 
 # Help message
 show_help() {
@@ -126,6 +123,22 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# An unknown -E or -S is as much a typo as an unknown flag, so it fails here rather than after a
+# docker build. env-config.mjs reads the same table the tests do, so there is nothing to keep in sync.
+require_known() {
+    local value="$1" listing="$2" flag="$3" allowed
+    [ -z "$value" ] && return 0
+
+    allowed="$(node "$SCRIPT_DIR/scripts/env-config.mjs" "$listing")" || exit 1
+    if ! printf '%s\n' "$allowed" | grep -qx "$value"; then
+        echo "Unknown $flag \"$value\". Choose one of: $(printf '%s' "$allowed" | tr '\n' ' ')"
+        exit 1
+    fi
+}
+
+require_known "$TEST_ENV_NAME" --names -E
+require_known "$SNAPSHOT_ENV_NAME" --keys -S
+
 # Docker Desktop (macOS, Windows) runs containers inside a VM, so the developer's machine is only
 # reachable through the gateway alias and --network host would bind the VM instead. Both Windows
 # spellings are listed: Git Bash reports cygwin, MSYS2 reports msys.
@@ -190,61 +203,6 @@ run_tests() {
         playwright-tests npx playwright test "${TEST_ARGS[@]}" "${PW_ARGS[@]}"
 }
 
-ngui_container_exists() {
-    docker ps -a --format '{{.Names}}' | grep -q "^${NGUI_CONTAINER}$"
-}
-
-remove_ngui_container() {
-    if ngui_container_exists; then
-        docker stop "$NGUI_CONTAINER" >/dev/null 2>&1
-        docker rm "$NGUI_CONTAINER" >/dev/null 2>&1
-    fi
-}
-
-# Builds and serves ngui, then blocks until it actually answers. A bounded wait matters: the
-# original loop here had no timeout, so a container that never came up hung the run forever.
-run_application() {
-    echo "Starting ngui application..."
-    remove_ngui_container
-
-    # Every service endpoint points at the same cluster; the UI proxies to it.
-    NGUI_ENV_ARGS=(
-        -e "PROXY_URL=$API_ENDPOINT"
-        -e "KEEPER_ENDPOINT=$API_ENDPOINT"
-        -e "SLACKER_ENDPOINT=$API_ENDPOINT"
-        -e "RESTAPI_ENDPOINT=$API_ENDPOINT"
-        -e "AUTH_ENDPOINT=$API_ENDPOINT"
-        -e "BUILD_MODE=production"
-        -e "UI_BUILD_PATH=/usr/src/app/ui"
-    )
-    [ "$CI_MODE" = true ] && NGUI_ENV_ARGS+=(-e "CI=true")
-
-    docker build -t "$NGUI_IMAGE" -f ../ngui/Dockerfile ../. || exit 1
-    docker run -d --name "$NGUI_CONTAINER" -p "$PORT:$NGUI_INTERNAL_PORT" \
-        "${NGUI_ENV_ARGS[@]}" "$NGUI_IMAGE" || exit 1
-
-    # Checked from this machine, so localhost — the tests reach the same app via $BASE_URL.
-    HEALTH_URL="http://localhost:$PORT"
-    echo "Waiting up to ${NGUI_READY_TIMEOUT}s for $HEALTH_URL ..."
-    WAITED=0
-    # -f so an error page doesn't count as ready; plain -s returns 0 for a 500.
-    until curl -sf -o /dev/null "$HEALTH_URL"; do
-        if ! docker ps --format '{{.Names}}' | grep -q "^${NGUI_CONTAINER}$"; then
-            echo "Error: $NGUI_CONTAINER exited before serving. Logs:"
-            docker logs "$NGUI_CONTAINER" 2>&1 | tail -40
-            exit 1
-        fi
-        sleep 1
-        WAITED=$((WAITED + 1))
-        if [ "$WAITED" -ge "$NGUI_READY_TIMEOUT" ]; then
-            echo "Error: $HEALTH_URL did not answer within ${NGUI_READY_TIMEOUT}s. Logs:"
-            docker logs "$NGUI_CONTAINER" 2>&1 | tail -40
-            exit 1
-        fi
-    done
-    echo "Application is ready at $HEALTH_URL (tests will use $BASE_URL)"
-}
-
 cleanup() {
     if [ "$RUN_APP" != true ]; then
         return
@@ -255,14 +213,14 @@ cleanup() {
         return
     fi
     echo "Removing $NGUI_CONTAINER..."
-    remove_ngui_container
+    ngui_remove
 }
 
 # Runs on any exit, so a failed build or a Ctrl-C doesn't leave the app behind.
 trap cleanup EXIT
 
 if [ "$RUN_APP" = true ]; then
-    run_application
+    ngui_start "$API_ENDPOINT" "$PORT" "$CI_MODE"
 fi
 
 run_tests

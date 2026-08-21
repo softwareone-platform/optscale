@@ -23,7 +23,18 @@ export function loadEnvConfig() {
 // CLI form, for shell callers: `node scripts/env-config.mjs dev apiBaseUrl`
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [name, field = 'apiBaseUrl'] = process.argv.slice(2);
-  const { ENVIRONMENTS } = loadEnvConfig();
+  const { ENVIRONMENTS, ENVIRONMENT_KEYS } = loadEnvConfig();
+
+  // Listings, so a shell can check a name against the same table rather than repeating it.
+  if (name === '--names') {
+    console.log(Object.keys(ENVIRONMENTS).join('\n'));
+    process.exit(0);
+  }
+  if (name === '--keys') {
+    console.log(ENVIRONMENT_KEYS.join('\n'));
+    process.exit(0);
+  }
+
   const definition = ENVIRONMENTS[name];
 
   if (!definition) {

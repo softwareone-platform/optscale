@@ -308,7 +308,8 @@ regression-tests/
 │       └── <platform>/            # ❌ Gitignored — your machine's own set
 │
 ├── docker/
-│   └── Dockerfile.linux            # Linux image used to produce cross-platform baseline snapshots
+│   ├── Dockerfile.linux            # Linux image used to produce cross-platform baseline snapshots
+│   └── ngui-container.sh           # Building and serving the app for `run_pw.sh -a`
 │
 ├── scripts/
 │   ├── dev-server.mjs              # The locally served UI: is it reachable, and starting one
