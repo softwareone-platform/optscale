@@ -119,27 +119,26 @@ That authenticates against prerelease, points the browser at your local UI, and 
 
 ## Running Tests
 
-| Command                      | Description                                                          |
-| ---------------------------- | -------------------------------------------------------------------- |
-| `npm run test:pick`          | **Interactive picker** — choose environment, baselines and run mode  |
-| `npm test`                   | Run all tests headless locally                                       |
-| `npm run test:ui`            | Run with the Playwright interactive UI                               |
-| `npm run test:headed`        | Run in headed mode (single worker)                                   |
-| `npm run test:update`        | Re-generate local snapshots                                          |
-| `npm run snapshots:prune`    | Report (or `--delete`) screenshots the committed set no longer names |
-| `npm run test:local`         | Run against `localhost:3000` (dev baselines)                         |
-| `npm run test:dev`           | Run against `portal.finops.s1.today`                                 |
-| `npm run test:prerelease`    | Run against `portal.finops.s1.show`                                  |
-| `npm run test:staging`       | Run against `portal.finops.s1.live`                                  |
-| `npm run test:prod`          | Run against `portal.finops.softwareone.com`                          |
-| `npm run test:docker`        | Run inside Docker (Linux) against whatever `TEST_ENV` selects        |
-| `npm run test:docker:update` | Same, updating that environment's baselines                          |
-| `npm run report`             | Open the last HTML report                                            |
-| `npm run install:browser`    | (Re-)install the Playwright-bundled Chromium browser                 |
-| `npm run lint`               | Lint all TypeScript files                                            |
-| `npm run lint:fix`           | Lint and auto-fix issues                                             |
-| `npm run format`             | Format all files with Prettier                                       |
-| `npm run format:check`       | Check formatting without writing                                     |
+| Command                      | Description                                                         |
+| ---------------------------- | ------------------------------------------------------------------- |
+| `npm run test:pick`          | **Interactive picker** — choose environment, baselines and run mode |
+| `npm test`                   | Run all tests headless locally                                      |
+| `npm run test:ui`            | Run with the Playwright interactive UI                              |
+| `npm run test:headed`        | Run in headed mode (single worker)                                  |
+| `npm run test:update`        | Re-generate local snapshots                                         |
+| `npm run test:local`         | Run against `localhost:3000` (dev baselines)                        |
+| `npm run test:dev`           | Run against `portal.finops.s1.today`                                |
+| `npm run test:prerelease`    | Run against `portal.finops.s1.show`                                 |
+| `npm run test:staging`       | Run against `portal.finops.s1.live`                                 |
+| `npm run test:prod`          | Run against `portal.finops.softwareone.com`                         |
+| `npm run test:docker`        | Run inside Docker (Linux) against whatever `TEST_ENV` selects       |
+| `npm run test:docker:update` | Same, updating that environment's baselines                         |
+| `npm run report`             | Open the last HTML report                                           |
+| `npm run install:browser`    | (Re-)install the Playwright-bundled Chromium browser                |
+| `npm run lint`               | Lint all TypeScript files                                           |
+| `npm run lint:fix`           | Lint and auto-fix issues                                            |
+| `npm run format`             | Format all files with Prettier                                      |
+| `npm run format:check`       | Check formatting without writing                                    |
 
 ### Docker runs, per environment
 
@@ -330,7 +329,6 @@ regression-tests/
 │   ├── pick-test.mjs               # `npm run test:pick` — interactive environment/baseline picker
 │   ├── platform/                   # Host differences, one file per OS + an index that picks
 │   ├── prompt.mjs                  # Console prompting, including the non-interactive path
-│   ├── prune-snapshots.mjs         # `npm run snapshots:prune` — screenshots the committed set no longer names
 │   ├── runners/                    # One file per place a run happens — docker.mjs, this-machine.mjs
 │   ├── run-pw.mjs                  # `npm run test:docker` — runs run_pw.sh on either platform
 │   └── snapshots.mjs               # Which screenshots a run compares against, and the warnings
@@ -390,31 +388,31 @@ A container run **fails** on a screenshot that doesn't exist yet rather than cre
 
 Locally, Playwright's normal loop applies: the first run writes the image and fails the test, the next run passes.
 
-### Missing and unused screenshots
+### Screenshots a container run doesn't have
 
-Some screenshot names are only known while a test runs (`Recommendations-Card--<title>.png` comes from
-the cards the page renders), so there is no static list of them. `snapshots/<env>/docker/` is used as
-that list instead: it is the reviewed set, so whatever it holds is what a run is expected to compare.
+Since a container run fails on a missing screenshot rather than creating one, cross-checking (`-S`)
+against an environment with a thinner committed set fails partway through. `npm run test:pick`
+compares the two folders and says so before asking whether to run:
 
-`npm run test:pick` diffs your target folder against it before asking whether to run, because the two
-directions fail differently and neither is loud during a run:
-
-- **Missing locally** — a local run captures the image from the app as it is now and compares nothing.
-  A screenshot you never generated therefore _passes_, which is the case worth being told about.
-- **Missing in the container** — the run fails on the first one. Cross-checking against an environment
-  with fewer committed screenshots (`-S`) is the usual way to hit this.
-
-Files in your own renderer folder that the committed set doesn't name are what a rename or a deleted
-spec leaves behind. They cost nothing but never fail either, so nothing surfaces them:
-
-```bash
-npm run snapshots:prune                       # report, every environment, your platform's folder
-npm run snapshots:prune -- --env dev          # one environment
-npm run snapshots:prune -- --delete           # actually remove them
+```
+!  4 of the 88 screenshots dev captures are not committed
+   in snapshots/staging/docker/, so this run fails on them:
+     ExpensesMap-Container.png
+     …
+   Add them with `./run_pw.sh -E staging -u` and commit them for review.
 ```
 
-Reporting is the default and `--delete` is the only thing that removes a file. The committed
-`docker` folders are refused outright — deleting one of those is a `git rm` that a reviewer sees.
+The reference is the environment under test, not every environment's names put together. A thinner
+folder can mean the other deployment doesn't render that widget at all — `snapshots/staging/docker/`
+is short four for exactly that reason — and a union would report those as owed when no amount of
+`-u` can produce them.
+
+No equivalent check exists for a local run, and deliberately so: it captures whatever it lacks and
+carries on, so there is nothing to predict. That also means a name you have never generated locally
+passes rather than fails — the container is what holds you to the committed set.
+
+There is no list of expected names to check against, incidentally, because some are only known while
+a test runs: `Recommendations-Card--<title>.png` comes from the cards the page actually rendered.
 
 ---
 
@@ -446,8 +444,7 @@ So a sub-page header is `CloudAccountsConnect-Header.png`, not `CloudAccounts-Co
 control: the AWS "Standalone" option is `--AwsStandalone…`, so a reviewer diffing the PNG looks for the right button.
 
 Renaming a screenshot is a `git mv` of the baseline in every `snapshots/*/docker/` directory — the pixels don't change,
-so it needs no regeneration. Afterwards, `npm run snapshots:prune` shows the old name left behind in your own renderer
-folder (see [Missing and unused screenshots](#missing-and-unused-screenshots)).
+so it needs no regeneration. Check afterwards that no baseline is orphaned and no referenced name is missing.
 
 ---
 

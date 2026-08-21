@@ -9,7 +9,7 @@ import { envPrefix, runToCompletion } from './platform/index.mjs';
 import { ask, choose, closePrompt, pad } from './prompt.mjs';
 import * as docker from './runners/docker.mjs';
 import * as thisMachine from './runners/this-machine.mjs';
-import { countScreenshots, warnings } from './snapshots.mjs';
+import { countScreenshots, screenshotDirLabel, warnings } from './snapshots.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -28,11 +28,13 @@ const askMode = () =>
     [docker, thisMachine].flatMap(runner => runner.modes.map(({ label, ui }) => ({ label, value: { runner, ui } })))
   );
 
-const askIntent = () =>
+// Named by folder rather than by environment: `local` and `dev` share one, so a name would be a
+// second way of saying it that can disagree with the path the run actually reads.
+const askIntent = ownScreenshots =>
   choose('What should this run do?', [
-    { label: "compare      against this environment's own screenshots", value: 'compare' },
-    { label: "cross-check  against another environment's screenshots", value: 'cross' },
-    { label: "update       overwrite this environment's screenshots", value: 'update' },
+    { label: `${pad('compare', 13)}against ${ownScreenshots}`, value: 'compare' },
+    { label: `${pad('cross-check', 13)}against another environment's screenshots`, value: 'cross' },
+    { label: `${pad('update', 13)}overwrite ${ownScreenshots}`, value: 'update' },
   ]);
 
 const askSnapshotEnv = (keys, ownKey, renderer) =>
@@ -41,7 +43,7 @@ const askSnapshotEnv = (keys, ownKey, renderer) =>
     keys
       .filter(key => key !== ownKey)
       .map(key => ({
-        label: `${pad(key, 12)} snapshots/${key}/${renderer}/ (${countScreenshots(key, renderer)} screenshots)`,
+        label: `${pad(key, 12)} ${screenshotDirLabel(key, renderer)} (${countScreenshots(key, renderer)} screenshots)`,
         value: key,
       }))
   );
@@ -70,7 +72,7 @@ async function main() {
     return;
   }
 
-  const intent = await askIntent();
+  const intent = await askIntent(screenshotDirLabel(environment.key, runner.renderer));
 
   // Only a cross-check has a folder to choose. Plain compare uses this environment's own, and an
   // update writes it — offering another there would re-base it on foreign pixels.
