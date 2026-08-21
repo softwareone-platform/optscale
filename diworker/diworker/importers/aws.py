@@ -88,6 +88,23 @@ class AWSReportImporter(CSVBaseReportImporter):
     def use_edp_discount(self):
         return self.cloud_acc['config'].get('use_edp_discount', False)
 
+    @cached_property
+    def _region_filter(self):
+        config = self.cloud_acc['config']
+        included = config.get('included_regions')
+        excluded = config.get('excluded_regions')
+        if included:
+            return ('include', set(included))
+        elif excluded:
+            return ('exclude', set(excluded))
+        return None
+
+    def _is_region_allowed(self, region):
+        if not region or self._region_filter is None:
+            return True
+        mode, regions = self._region_filter
+        return region in regions if mode == 'include' else region not in regions
+
     @staticmethod
     def short_resource_id(resource_id):
         return resource_id[resource_id.find('/') + 1:]
@@ -425,6 +442,8 @@ class AWSReportImporter(CSVBaseReportImporter):
                     skipped_accounts.add(row['lineItem/UsageAccountId'])
                     continue
 
+                if not self._is_region_allowed(row.get('product/region')):
+                    continue
                 self.detected_cloud_accounts.add(cloud_account_id)
                 record_number += 1
                 row['_rec_n'] = record_number
@@ -496,6 +515,10 @@ class AWSReportImporter(CSVBaseReportImporter):
                             continue
                         chunk[expense_num]['cloud_account_id'] = cloud_account_id
                         self.detected_cloud_accounts.add(cloud_account_id)
+                    elif field_name == 'product/region':
+                        if not self._is_region_allowed(value):
+                            skipped_rows.add(expense_num)
+                            continue
                     elif field_name == 'lineItem/ResourceId' and value:
                         chunk[expense_num][
                             'resource_id'] = self.short_resource_id(value)
