@@ -52,6 +52,7 @@ optscale-deploy/compose/.env
 
 # Vagrant
 optscale-deploy/.vagrant/
+
 # Playwright E2E tests
 /e2etests/.env.local
 /e2etests/test-results/
@@ -64,3 +65,6 @@ optscale-deploy/.vagrant/
 
 # ffc_api
 ffc_api/.env
+
+# Claude Code — personal overrides (shared .claude/settings.json is committed)
+.claude/settings.local.json

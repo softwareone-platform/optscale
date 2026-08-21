@@ -124,7 +124,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
           if (someApiLoading) {
             return (
               <PageContentWrapper>
-                <div data-testid="mainPreloader" className={override.classes.preloaderOverlay}>
+                <div data-test-id="mainPreloader" className={override.classes.preloaderOverlay}>
                   <img src={preloaderLogo} alt="Loading page" />
                 </div>
               </PageContentWrapper>

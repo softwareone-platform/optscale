@@ -12,7 +12,6 @@ export default defineConfig({
   globalSetup: './setup/global-setup.ts',
   globalTeardown: './setup/global-teardown.ts',
   testDir: '../e2etests/dev-ops-tests',
-  testIgnore: ['**/regression-tests/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

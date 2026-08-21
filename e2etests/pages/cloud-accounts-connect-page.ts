@@ -1,6 +1,6 @@
 import { BasePage } from './base-page';
 import { Locator, Page } from '@playwright/test';
-import { roundElementDimensions } from '../regression-tests/utils/roundElementDimensions';
+import { roundElementDimensions } from '../utils/roundElementDimensions';
 import { CloudAccountsPage } from './cloud-accounts-page';
 import { EAWSAccountType } from '../types/enums';
 
