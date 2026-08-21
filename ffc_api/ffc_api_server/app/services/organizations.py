@@ -12,7 +12,7 @@ async def fetch_organization_or_404(
     try:
         return await organization_repo.get(
             id=organization_id,
-            extra_conditions=[Organization.disabled.is_(False)],
+            extra_conditions=[Organization.deleted_at == 0],
         )
     except NotFoundError as e:
         raise HTTPException(
