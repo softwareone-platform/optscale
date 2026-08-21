@@ -76,7 +76,7 @@ export function ThemeResolver(theme: string): Plugin {
       if (!importer) return null;
 
       const resolved = await this.resolve(source, importer, { skipSelf: true, ...options });
-      if (!resolved?.id?.startsWith("/")) return null;
+      if (!resolved?.id || !path.isAbsolute(resolved.id)) return null;
 
       return redirectToThemePath(resolved.id, importer);
     }

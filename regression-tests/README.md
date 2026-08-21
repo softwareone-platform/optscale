@@ -28,6 +28,7 @@ They run under the Playwright project **`FFC`** (FinOps for Cloud), so every rep
 - **Node.js 20+** (Playwright 1.56 requires ≥ 18; the project's `@types/node` targets 22).
 - A running OptScale instance, or a remote URL the tests can reach.
 - **Docker** — only needed for `npm run test:docker[:update]` (used to produce the committed screenshots). Local headless runs don't need it.
+- **On Windows: Git Bash** (bundled with Git for Windows). `run_pw.sh` is a bash script, and the npm scripts hand it to Git Bash rather than WSL's — inside WSL the container would resolve the host and networking differently. Everything else works from PowerShell.
 
 ---
 
@@ -310,7 +311,10 @@ regression-tests/
 │   └── Dockerfile.linux            # Linux image used to produce cross-platform baseline snapshots
 │
 ├── scripts/
-│   └── pick-test.mjs               # `npm run test:pick` — interactive environment/baseline picker
+│   ├── env-config.mjs              # Single reader for env.config.ts, shared by the picker and shell
+│   ├── pick-test.mjs               # `npm run test:pick` — interactive environment/baseline picker
+│   ├── platform.mjs                # macOS/Windows differences (bash location, .cmd shims)
+│   └── run-pw.mjs                  # `npm run test:docker` — runs run_pw.sh on either platform
 │
 ├── env.config.ts                   # Environment definitions — URLs + token variable per TEST_ENV
 ├── playwright.config.ts            # Playwright configuration (timeouts, projects, snapshot paths)

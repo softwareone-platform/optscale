@@ -126,9 +126,21 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Docker Desktop (macOS, Windows) runs containers inside a VM, so the developer's machine is only
+# reachable through the gateway alias and --network host would bind the VM instead. Both Windows
+# spellings are listed: Git Bash reports cygwin, MSYS2 reports msys.
+case "$OSTYPE" in
+    darwin*|msys*|cygwin*|win32) DOCKER_IN_VM=true ;;
+    *) DOCKER_IN_VM=false ;;
+esac
+
+# Every docker call here carries container-side paths (-w /app, UI_BUILD_PATH); without this a
+# Git Bash shell rewrites them into Windows paths on the way through. Ignored off Windows.
+export MSYS_NO_PATHCONV=1
+
 # Inside the container `localhost` is the container, so an app served from the developer's
 # machine is reached through the host gateway. Only place this rule lives; -H asks for it.
-if [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "msys"* ]]; then
+if [ "$DOCKER_IN_VM" = true ]; then
     DEFAULT_BASE_URL="http://host.docker.internal:$PORT"
 else
     DEFAULT_BASE_URL="http://0.0.0.0:$PORT"
@@ -164,15 +176,15 @@ run_tests() {
     [ -n "$SNAPSHOT_ENV_NAME" ] && DOCKER_ARGS+=(-e "SNAPSHOT_ENV=$SNAPSHOT_ENV_NAME")
     [ "$CI_MODE" = true ] && DOCKER_ARGS+=(-e "CI=true")
 
-    # Host networking only on Linux. On macOS/Windows, Docker Desktop runs containers inside a VM,
-    # so --network host points at the VM (not the host) and breaks host.docker.internal.
-    if [[ "$OSTYPE" != "darwin"* && "$OSTYPE" != "msys"* ]]; then
-        DOCKER_ARGS+=(--network host)
-    fi
+    # Host networking only where the daemon shares the host's stack, i.e. Linux.
+    [ "$DOCKER_IN_VM" = false ] && DOCKER_ARGS+=(--network host)
+
+    # Git Bash reports /c/... which docker does not accept as a mount source; pwd -W gives C:/...
+    HOST_CWD="$(pwd -W 2>/dev/null || pwd)"
 
     docker run --rm \
         "${DOCKER_ARGS[@]}" \
-        -v "$(pwd):/app" \
+        -v "$HOST_CWD:/app" \
         -v /app/node_modules \
         -w /app \
         playwright-tests npx playwright test "${TEST_ARGS[@]}" "${PW_ARGS[@]}"

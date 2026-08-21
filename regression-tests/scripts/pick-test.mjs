@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Interactive launcher. Prints the equivalent command before running it, so the flags stay learnable.
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { networkInterfaces } from 'node:os';
@@ -8,6 +8,7 @@ import { dirname, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { loadEnvConfig } from './env-config.mjs';
+import { binary, onWindows, runToCompletion } from './platform.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -64,8 +65,13 @@ const localPort = baseUrl => new URL(baseUrl).port || '3000';
 
 const DEV_SERVER_DIR = resolve(projectRoot, '..', 'ngui', 'ui');
 // `--host` is not optional: vite binds localhost only by default, which a container cannot reach.
-const DEV_SERVER_HINT = 'cd ngui/ui && npm start -- --host';
+const DEV_SERVER_HINT = onWindows ? 'cd ngui\\ui; npm start -- --host' : 'cd ngui/ui && npm start -- --host';
 const DEV_SERVER_TIMEOUT_S = 40;
+
+const stopHint = baseUrl =>
+  onWindows
+    ? `stop it with: Get-Process -Id (Get-NetTCPConnection -LocalPort ${localPort(baseUrl)} -State Listen).OwningProcess | Stop-Process`
+    : `stop it with: kill $(lsof -ti:${localPort(baseUrl)})`;
 
 const isServing = async url => {
   try {
@@ -76,11 +82,13 @@ const isServing = async url => {
 };
 
 // A container reaches the host over one of these, never over loopback, so serving on one of them is
-// the honest test of "the test container will see this".
-const externalAddress = () =>
+// the honest test of "the test container will see this". 169.254.* is skipped because Windows keeps
+// an APIPA address on every idle adapter and macOS self-assigns the same range — neither routes.
+const externalAddresses = () =>
   Object.values(networkInterfaces())
     .flat()
-    .find(candidate => candidate?.family === 'IPv4' && !candidate.internal)?.address;
+    .filter(candidate => candidate?.family === 'IPv4' && !candidate.internal && !candidate.address.startsWith('169.254.'))
+    .map(candidate => candidate.address);
 
 const onHost = (url, hostname) => {
   const rewritten = new URL(url);
@@ -93,16 +101,21 @@ const onHost = (url, hostname) => {
  * more than loopback. Offers to start one, detached — a dev server shouldn't die with the test run.
  */
 async function ensureServing(baseUrl, fromContainer) {
-  const external = externalAddress();
-  const reachable = async () => (fromContainer && external ? isServing(onHost(baseUrl, external)) : isServing(baseUrl));
+  // Any one of them answering proves the bind is not loopback-only; a VPN or virtual adapter among
+  // them would make "the first one" the wrong thing to judge by.
+  const external = externalAddresses();
+  const reachable = async () =>
+    fromContainer && external.length
+      ? (await Promise.all(external.map(address => isServing(onHost(baseUrl, address))))).some(Boolean)
+      : isServing(baseUrl);
 
   if (await reachable()) return true;
 
   // Serving, but only on loopback: the localhost probe passes while the container gets refused.
   if (fromContainer && (await isServing(baseUrl))) {
     console.log(
-      `\n!  ${baseUrl} answers here, but not on ${external} — so it is bound to loopback only and` +
-        `\n   the test container will get ECONNREFUSED. Vite needs --host to listen on every` +
+      `\n!  ${baseUrl} answers here, but not on ${external.join(' or ')} — so it is bound to loopback` +
+        `\n   only and the test container will get ECONNREFUSED. Vite needs --host to listen on every` +
         `\n   interface. Restart it with:  ${DEV_SERVER_HINT}`
     );
     return false;
@@ -114,13 +127,16 @@ async function ensureServing(baseUrl, fromContainer) {
     return false;
   }
 
-  spawn('npm', ['start', '--', '--host'], { cwd: DEV_SERVER_DIR, detached: true, stdio: 'ignore' }).unref();
+  const server = spawn(binary('npm'), ['start', '--', '--host'], { cwd: DEV_SERVER_DIR, detached: true, stdio: 'ignore' });
+  // An unhandled 'error' event would kill the picker with a raw stack trace.
+  server.on('error', error => console.log(`\n!  Could not start it (${error.code}). Start it by hand:  ${DEV_SERVER_HINT}`));
+  server.unref();
 
   process.stdout.write('   Waiting for it');
   for (let second = 0; second < DEV_SERVER_TIMEOUT_S; second++) {
     await new Promise(wait => setTimeout(wait, 1000));
     if (await reachable()) {
-      console.log(`\n   Up. It keeps running after this — stop it with: kill $(lsof -ti:${localPort(baseUrl)})`);
+      console.log(`\n   Up. It keeps running after this — ${stopHint(baseUrl)}`);
       return true;
     }
     process.stdout.write('.');
@@ -147,12 +163,7 @@ async function confirmAndRun(command, env = {}) {
   rl?.close();
   if (/^n/i.test(confirmation)) return;
 
-  const result = spawnSync(command[0], command.slice(1), {
-    cwd: projectRoot,
-    stdio: 'inherit',
-    env: { ...process.env, ...env },
-  });
-  process.exit(result.status ?? 1);
+  runToCompletion(command, { cwd: projectRoot, env });
 }
 
 async function main() {
