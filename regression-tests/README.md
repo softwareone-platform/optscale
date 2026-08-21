@@ -311,10 +311,14 @@ regression-tests/
 │   └── Dockerfile.linux            # Linux image used to produce cross-platform baseline snapshots
 │
 ├── scripts/
+│   ├── dev-server.mjs              # The locally served UI: is it reachable, and starting one
 │   ├── env-config.mjs              # Single reader for env.config.ts, shared by the picker and shell
 │   ├── pick-test.mjs               # `npm run test:pick` — interactive environment/baseline picker
-│   ├── platform.mjs                # macOS/Windows differences (bash location, .cmd shims)
-│   └── run-pw.mjs                  # `npm run test:docker` — runs run_pw.sh on either platform
+│   ├── platform/                   # Host differences, one file per OS + an index that picks
+│   ├── prompt.mjs                  # Console prompting, including the non-interactive path
+│   ├── runners/                    # One file per place a run happens — docker.mjs, this-machine.mjs
+│   ├── run-pw.mjs                  # `npm run test:docker` — runs run_pw.sh on either platform
+│   └── snapshots.mjs               # Which screenshots a run compares against, and the warnings
 │
 ├── env.config.ts                   # Environment definitions — URLs + token variable per TEST_ENV
 ├── playwright.config.ts            # Playwright configuration (timeouts, projects, snapshot paths)

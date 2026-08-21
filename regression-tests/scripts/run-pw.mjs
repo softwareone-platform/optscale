@@ -4,7 +4,7 @@
 import { dirname, resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { runToCompletion } from './platform.mjs';
+import { runToCompletion } from './platform/index.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
