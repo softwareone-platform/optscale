@@ -1,6 +1,11 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# The build contexts, the /app mount and ngui-container.sh's ../ngui all resolve from here, so the
+# script has to own its directory rather than inherit the caller's.
+cd "$SCRIPT_DIR" || exit 1
+
 source "$SCRIPT_DIR/docker/ngui-container.sh"
 
 # Default values
@@ -23,10 +28,11 @@ show_help() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -c, --config FILE        Playwright config file (default: $CONFIG_FILE)"
-    echo "  -u, --update             Update screenshots"
+    echo "  -u, --update             Update screenshots. Refuses -S: a committed set is only ever"
+    echo "                          rebuilt from its own environment's pixels."
     echo "  -E, --env NAME          Environment preset: local | dev | prerelease | staging | prod"
     echo "                          Targets that preset's URLs and its snapshots/<env>/docker/ folder."
-    echo "                          'local' serves the UI from the host, so pair it with -a or -U."
+    echo "                          'local' is served from your machine, so it requires -H, -a or -U."
     echo "  -S, --snapshots KEY     Compare against another environment's screenshots"
     echo "                          (dev | prerelease | staging | prod). Defaults to -E's own."
     echo "                          Moves only the screenshots; the token stays with -E."
@@ -139,6 +145,16 @@ require_known() {
 require_known "$TEST_ENV_NAME" --names -E
 require_known "$SNAPSHOT_ENV_NAME" --keys -S
 
+# -u writes whatever -S selected, so the pair would re-base one environment's committed screenshots
+# on another's pixels. An environment is only ever updated from itself.
+if [ "$UPDATE_SCREENSHOTS" = true ] && [ -n "$SNAPSHOT_ENV_NAME" ]; then
+    echo "Error: -u/--update cannot be combined with -S/--snapshots"
+    echo "  -u would overwrite snapshots/$SNAPSHOT_ENV_NAME/docker/ with pixels rendered against"
+    echo "  ${TEST_ENV_NAME:-the environment under test}. Drop -S to update this environment's own screenshots,"
+    echo "  or run with -E $SNAPSHOT_ENV_NAME -u to update that one from itself."
+    exit 1
+fi
+
 # Docker Desktop (macOS, Windows) runs containers inside a VM, so the developer's machine is only
 # reachable through the gateway alias and --network host would bind the VM instead. Both Windows
 # spellings are listed: Git Bash reports cygwin, MSYS2 reports msys.
@@ -171,6 +187,23 @@ fi
 if [ -z "$BASE_URL" ]; then
     BASE_URL="$DEFAULT_BASE_URL"
     { [ "$HOST_APP" = true ] || [ "$RUN_APP" = true ]; } && URL_EXPLICIT=true
+fi
+
+# A preset served from this machine points the container at itself, so every test would shoot a
+# blank page — and with -u it would commit those blanks. The picker holds the same rule in
+# scripts/dev-server.mjs, where it can also offer to start the server.
+if [ -n "$TEST_ENV_NAME" ] && [ "$URL_EXPLICIT" = false ]; then
+    PRESET_URL="$(node "$SCRIPT_DIR/scripts/env-config.mjs" "$TEST_ENV_NAME" baseUrl)" || exit 1
+    case "$PRESET_URL" in
+        http://localhost*|http://127.0.0.1*|http://0.0.0.0*)
+            echo "Error: -E $TEST_ENV_NAME is served from your machine ($PRESET_URL), which inside the test"
+            echo "  container means the container itself. Say where the app really is:"
+            echo "    -H                     you are already serving it (port $PORT, or -p)"
+            echo "    -a API_ENDPOINT        let this script build and serve it"
+            echo "    -U URL                 somewhere else entirely"
+            exit 1
+            ;;
+    esac
 fi
 
 run_tests() {

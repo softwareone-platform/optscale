@@ -18,7 +18,8 @@ rules to follow when changing it.
 - Entries are typed (`key`, `tokenVar`, `https://` except under `dev`) **and** re-validated at
   import time, because the runner transpiles without typechecking. Keep both in step.
 - Never add a token fallback. Each environment reads only its own variable so a missing one fails
-  fast instead of authenticating against the wrong cluster.
+  fast instead of authenticating against the wrong cluster. `tokenVar` is validated against the
+  entry's `key` for the same reason — the type alone would accept another key's variable.
 - Three axes are deliberately independent — changing one must not move the others:
 
   | Axis                      | Set by                                              |
@@ -33,7 +34,8 @@ rules to follow when changing it.
   the container, otherwise the host platform — never a setting.
 - `snapshots/*/docker/` is committed and reviewed. It only ever grows through an explicit
   `./run_pw.sh -E <env> -u`. A container run fails on a missing screenshot rather than creating
-  one; don't weaken that guard.
+  one; don't weaken that guard. `-u` refuses `-S`, and a locally served `-E` refuses to run without
+  `-H`/`-a`/`-U`, so neither can quietly commit another environment's pixels or a blank page.
 - Comparisons are exact. Don't add `maxDiffPixelRatio`/`threshold` to make a cross-platform run
   pass — Docker is the only trustworthy comparison.
 - Changing a rendered mock value (including the `e2e()` marker) invalidates screenshots. Regenerate

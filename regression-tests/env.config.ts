@@ -55,7 +55,7 @@ export type TestEnv = keyof typeof ENVIRONMENTS;
 
 const BARE_ORIGIN_PATTERN = /^https?:\/\/[a-z0-9]([a-z0-9.-]*[a-z0-9])?(?::\d{1,5})?$/i;
 
-const TOKEN_VARS: readonly string[] = ENVIRONMENT_KEYS.map(key => `TEST_ACCOUNT_TOKEN_${key.toUpperCase()}`);
+const tokenVarFor = (key: EnvironmentKey): TokenVar => `TEST_ACCOUNT_TOKEN_${key.toUpperCase() as Uppercase<EnvironmentKey>}`;
 
 export const isBareOrigin = (value: string): boolean => BARE_ORIGIN_PATTERN.test(value);
 
@@ -73,8 +73,12 @@ function assertEnvironmentsAreValid(): void {
         problems.push(`${name}.${field} must use https:// — only the "dev" key may use http:// — got "${url}"`);
       }
     }
-    if (!TOKEN_VARS.includes(definition.tokenVar)) {
-      problems.push(`${name}.tokenVar must be one of ${TOKEN_VARS.join(', ')} — got "${definition.tokenVar}"`);
+    // The type only narrows this to *some* known token var, so a var belonging to another key would
+    // typecheck and then authenticate the run against the wrong cluster.
+    if (definition.tokenVar !== tokenVarFor(definition.key)) {
+      problems.push(
+        `${name}.tokenVar must be ${tokenVarFor(definition.key)} to match key "${definition.key}" — got "${definition.tokenVar}"`
+      );
     }
 
     const twin = seenByKey.get(definition.key);
@@ -86,12 +90,6 @@ function assertEnvironmentsAreValid(): void {
       problems.push(
         `${name} and ${twin.name} share key "${definition.key}" but call different APIs ` +
           `("${definition.apiBaseUrl}" vs "${twin.definition.apiBaseUrl}") — they cannot share baselines`
-      );
-    }
-    if (twin.definition.tokenVar !== definition.tokenVar) {
-      problems.push(
-        `${name} and ${twin.name} share key "${definition.key}" but read different tokens ` +
-          `("${definition.tokenVar}" vs "${twin.definition.tokenVar}")`
       );
     }
   }

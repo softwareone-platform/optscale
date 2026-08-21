@@ -77,7 +77,9 @@ Edit `.env` with the appropriate values. The complete list of variables the suit
 
 Each entry carries a **key** that decides which token, cached session and snapshot folder the run uses — `local` and `dev` share the key `dev`, because they exercise the same deployment and therefore expect the same pixels.
 
-Definitions are checked twice. The **types** allow only a known `key`, a `tokenVar` drawn from `TEST_ACCOUNT_TOKEN_<KEY>`, and `https://` URLs — `http://` is accepted only under the `dev` key, which serves the UI from localhost. The **same rules are re-checked at import time**, before Playwright starts, because the runner transpiles without typechecking; that pass also enforces URL format (bare origin, no trailing slash) and the shared-key invariant, since environments under one key compare against the same screenshots and must therefore call the same API and read the same token.
+Definitions are checked twice. The **types** allow only a known `key`, a `tokenVar` drawn from `TEST_ACCOUNT_TOKEN_<KEY>`, and `https://` URLs — `http://` is accepted only under the `dev` key, which serves the UI from localhost. The **same rules are re-checked at import time**, before Playwright starts, because the runner transpiles without typechecking; that pass also enforces URL format (bare origin, no trailing slash) and the shared-key invariant, since environments under one key compare against the same screenshots and must therefore call the same API.
+
+The import-time pass is deliberately stricter than the types in one place: `tokenVar` must be exactly `TEST_ACCOUNT_TOKEN_<KEY>` for that entry's own key. The type only narrows it to _some_ known token var, so `staging` holding `TEST_ACCOUNT_TOKEN_PROD` would typecheck and then authenticate the run against the wrong cluster — the same accident the no-fallback rule exists to prevent.
 
 `BASE_URL_OVERRIDE` / `API_BASE_URL_OVERRIDE` are held to the URL format but deliberately not to the `https://` rule, so pointing a run at a locally served UI (`./run_pw.sh -E prerelease -H`) still works.
 
@@ -170,10 +172,10 @@ The shell script `run_pw.sh` builds and runs a Linux Docker container to produce
 
 ```
 -c, --config FILE     Use an alternate Playwright config file (default playwright.config.ts)
--u, --update          Update baseline screenshots
+-u, --update          Update baseline screenshots. Refuses -S (see below).
 -E, --env NAME        Environment preset (local | dev | prerelease | staging | prod).
                       Uses that preset's URLs and its snapshots/<env>/docker folder.
-                      `local` serves the UI from the host, so pair it with -H or -U.
+                      `local` is served from your machine, so it requires -H, -a or -U.
 -S, --snapshots KEY   Compare against another environment's baselines
                       (dev | prerelease | staging | prod). Moves only the
                       screenshots; the token and session stay with -E.
@@ -190,7 +192,17 @@ The shell script `run_pw.sh` builds and runs a Linux Docker container to produce
 ```
 
 Trailing arguments go to `playwright test`; Playwright's own flags go after `--`. Unknown _options_
-are rejected before the container starts, so a typo fails fast.
+are rejected before the container starts, so a typo fails fast. Three combinations are refused the
+same way, each because it would otherwise fail slowly or silently:
+
+| Refused                                      | Why                                                                                                                           |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `-u` with `-S`                               | Writes one environment's pixels into another's committed set. Update an environment from itself.                              |
+| A locally served `-E` without `-H`/`-a`/`-U` | Inside the container `localhost` is the container, so every test would shoot a blank page — and `-u` would commit the blanks. |
+| `-U` with `-a`                               | `-a` already publishes the app and targets it.                                                                                |
+
+The script also anchors itself to `regression-tests/`, so it can be invoked by any path
+(`./regression-tests/run_pw.sh …`) rather than only from that directory.
 
 ### Testing a UI served from your machine
 
