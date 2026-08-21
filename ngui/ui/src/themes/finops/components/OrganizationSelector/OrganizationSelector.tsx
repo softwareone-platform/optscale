@@ -5,12 +5,12 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { Box, Theme } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import { getOrganizationDisplayName } from "@theme/utils/organization";
 import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Selector, { Button, Divider, Item, ItemContent } from "components/Selector";
 import { useIsDownMediaQuery } from "hooks/useMediaQueries";
 import { ORGANIZATIONS_OVERVIEW } from "urls";
-import { getOrganizationDisplayName } from "utils/organization";
 import { MPT_BRAND_TYPE } from "../../utils/layouts";
 
 const HIDDEN_SELECTOR_SX = { visibility: "hidden", maxWidth: 0, minWidth: 0 };
