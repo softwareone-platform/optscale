@@ -59,6 +59,8 @@ export type AwsPropertiesProps = BasePropertiesProps & {
     region_name?: string;
     cur_version?: 1 | 2;
     use_edp_discount?: boolean;
+    included_regions?: string[];
+    excluded_regions?: string[];
   };
 };
 

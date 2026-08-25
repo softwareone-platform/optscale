@@ -4,6 +4,7 @@ import ConnectForm from "components/ConnectForm";
 import {
   AwsBillingBucket,
   AwsExportType,
+  AwsRegionScope,
   AwsRootCredentials,
   AwsUseAwsEdpDiscount,
 } from "components/DataSourceCredentialFields";
@@ -22,6 +23,7 @@ export const AwsConnectionAccessKeyInputs = ({ showAdvancesOptions = true }) => 
       return (
         <>
           <AwsRootCredentials />
+          <AwsRegionScope />
           {showAdvancesOptions && (
             <>
               <AwsUseAwsEdpDiscount />

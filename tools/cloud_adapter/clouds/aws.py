@@ -164,6 +164,9 @@ class Aws(S3CloudMixin):
         CloudParameter(name='assume_role_external_id', type=str,
                        required=False),
 
+        CloudParameter(name='included_regions', type=list, required=False),
+        CloudParameter(name='excluded_regions', type=list, required=False),
+
         # Service parameters
         CloudParameter(name='cur_version', type=int, required=False),
         CloudParameter(name='use_edp_discount', type=bool, required=False)
@@ -364,6 +367,14 @@ class Aws(S3CloudMixin):
                         allowed.append(name)
                     elif status == "opted-in" and self._is_region_usable(name):
                         allowed.append(name)
+                included = self.config.get("included_regions")
+                excluded = self.config.get("excluded_regions")
+                if included:
+                    included_set = set(included)
+                    allowed = [r for r in allowed if r in included_set]
+                elif excluded:
+                    excluded_set = set(excluded)
+                    allowed = [r for r in allowed if r not in excluded_set]
                 self._allowed_regions = allowed
 
             return self._allowed_regions
@@ -386,6 +397,21 @@ class Aws(S3CloudMixin):
         region_name = self.config.get("region_name")
         if region_name and region_name not in self._get_coordinates_map():
             raise InvalidParameterException(f"Invalid region: {region_name}")
+        included_regions = self.config.get("included_regions")
+        excluded_regions = self.config.get("excluded_regions")
+        if included_regions and excluded_regions:
+            raise InvalidParameterException(
+                "included_regions and excluded_regions are mutually exclusive")
+        for param_name, value in (("included_regions", included_regions),
+                                  ("excluded_regions", excluded_regions)):
+            if value is None:
+                continue
+            if not isinstance(value, list) or not value:
+                raise InvalidParameterException(
+                    f"{param_name} must be a non-empty list")
+            if not all(isinstance(r, str) and r.strip() for r in value):
+                raise InvalidParameterException(
+                    f"{param_name} must be a list of non-empty strings")
         try:
             result = self._retry(self.sts.get_caller_identity)
         except (ClientError, InvalidRegionError,

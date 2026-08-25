@@ -68,6 +68,8 @@ export default gql`
     config_scheme: String
     region_name: String
     report_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   type AwsDataSource implements DataSourceInterface {
@@ -342,12 +344,16 @@ export default gql`
     config_scheme: String
     report_name: String
     region_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   input AwsLinkedConfigInput {
     access_key_id: String!
     secret_access_key: String!
     linked: Boolean!
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   input AwsAssumedRoleConfigInput {
@@ -361,6 +367,8 @@ export default gql`
     cur_version: Int
     config_scheme: String
     report_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
     linked: Boolean
   }
 

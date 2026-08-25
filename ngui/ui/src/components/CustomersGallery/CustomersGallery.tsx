@@ -74,18 +74,17 @@ const CustomersGallery = () => {
       <SubTitle>
         <FormattedMessage id="trustedBy" />
       </SubTitle>
-      <Grid container rowSpacing={SPACING_1}>
+      <Grid container columnSpacing={SPACING_1} rowSpacing={SPACING_1}>
         {logos.map((item) => (
           <Grid item key={item.altMessageId} xs={4} sm={3} md={3} lg={2}>
-            <Box display="flex" alignItems="center" justifyContent="center" height={24}>
+            <Box height={40} width="100%">
               <Box
                 component="img"
                 src={item.src}
                 alt={intl.formatMessage({ id: item.altMessageId })}
+                width="100%"
                 height="100%"
-                width="auto"
-                maxWidth="100%"
-                sx={{ opacity: 0.55 }}
+                sx={{ objectFit: "contain", opacity: 0.55 }}
               />
             </Box>
           </Grid>

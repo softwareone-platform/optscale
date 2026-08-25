@@ -17,6 +17,7 @@ import {
   AwsRootCredentials,
   AwsBillingBucket,
   AwsExportType,
+  AwsRegionScope,
   AwsUseAwsEdpDiscount,
   GcpTenantCredentials,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
@@ -91,12 +92,18 @@ const CredentialInputs = ({ type, config }) => {
     }
 
     if (config.linked) {
-      return <AwsLinkedCredentials />;
+      return (
+        <>
+          <AwsLinkedCredentials />
+          <AwsRegionScope />
+        </>
+      );
     }
 
     return (
       <>
         <AwsRootCredentials />
+        <AwsRegionScope />
         <AwsUseAwsEdpDiscount />
         <CostAndUsageReport />
       </>

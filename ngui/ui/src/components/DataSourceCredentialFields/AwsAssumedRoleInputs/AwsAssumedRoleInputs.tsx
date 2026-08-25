@@ -3,6 +3,7 @@ import { FormattedMessage } from "react-intl";
 import AwsAssumedRoleCredentials from "../AwsAssumedRoleCredentials";
 import AwsBillingBucketInputs from "../AwsBillingBucketInputs";
 import AwsExportType from "../AwsExportType";
+import AwsRegionScope from "../AwsRegionScope";
 import AwsUseAwsEdpDiscount from "../AwsUseAwsEdpDiscount";
 
 const AwsAssumedRoleInputs = ({
@@ -18,6 +19,7 @@ const AwsAssumedRoleInputs = ({
 }) => (
   <>
     <AwsAssumedRoleCredentials readOnlyFields={readOnlyFields} hiddenFields={hiddenFields} />
+    <AwsRegionScope />
     {showAdvancedOptions && (
       <>
         <AwsUseAwsEdpDiscount />

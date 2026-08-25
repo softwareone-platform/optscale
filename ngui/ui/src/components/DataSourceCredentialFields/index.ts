@@ -4,6 +4,12 @@ import AwsAssumedRoleInputs from "./AwsAssumedRoleInputs";
 import AwsBillingBucket, { FIELD_NAMES as AWS_BILLING_BUCKET_FIELD_NAMES } from "./AwsBillingBucket";
 import AwsExportType, { FIELD_NAMES as AWS_EXPORT_TYPE_FIELD_NAMES } from "./AwsExportType";
 import AwsLinkedCredentials, { FIELD_NAMES as AWS_LINKED_CREDENTIALS_FIELD_NAMES } from "./AwsLinkedCredentials";
+import AwsRegionScope, {
+  AWS_REGION_SCOPE_FIELD_NAMES,
+  REGION_SCOPE_MODES as AWS_REGION_SCOPE_MODES,
+  getRegionScopeDefaultValues,
+  getRegionScopeConfigParams,
+} from "./AwsRegionScope";
 import AwsRootCredentials, { FIELD_NAMES as AWS_ROOT_CREDENTIALS_FIELD_NAMES } from "./AwsRootCredentials";
 import AwsUseAwsEdpDiscount, { FIELD_NAMES as AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES } from "./AwsUseAwsEdpDiscount";
 import AzureSubscriptionCredentials, {
@@ -30,6 +36,11 @@ export {
   AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
   AwsLinkedCredentials,
   AWS_LINKED_CREDENTIALS_FIELD_NAMES,
+  AwsRegionScope,
+  AWS_REGION_SCOPE_FIELD_NAMES,
+  AWS_REGION_SCOPE_MODES,
+  getRegionScopeDefaultValues,
+  getRegionScopeConfigParams,
   AzureTenantCredentials,
   AZURE_TENANT_CREDENTIALS_FIELD_NAMES,
   AzureSubscriptionCredentials,
