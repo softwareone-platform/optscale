@@ -23,6 +23,7 @@ import {
   DATABRICKS_CREDENTIALS_FIELD_NAMES,
   GCP_CREDENTIALS_FIELD_NAMES,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
+  getRegionScopeConfigParams,
   KUBERNETES_CREDENTIALS_FIELD_NAMES,
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
@@ -174,6 +175,7 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
     config: {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
+      ...getRegionScopeConfigParams(formData),
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : { linked: true }),
     },
   };
@@ -197,6 +199,7 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
       assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID],
+      ...getRegionScopeConfigParams(formData),
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
         ? extraParams
         : {

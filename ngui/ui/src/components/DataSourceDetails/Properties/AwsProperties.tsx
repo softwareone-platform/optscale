@@ -1,5 +1,6 @@
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import { isEmptyArray } from "utils/arrays";
 import { AWS_CNR, AWS_ROOT_CONNECT_CUR_VERSION, AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID } from "utils/constants";
 import { AwsPropertiesProps } from "./types";
 
@@ -16,6 +17,8 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
     report_name: reportName,
     use_edp_discount: useEdpDiscount,
     region_name: regionName,
+    included_regions: includedRegions,
+    excluded_regions: excludedRegions,
   } = config;
 
   const isAssumeRole = Boolean(assumeRoleAccountId && assumeRoleName);
@@ -127,6 +130,20 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
             />
           )}
         </>
+      )}
+      {!isEmptyArray(includedRegions) && (
+        <KeyValueLabel
+          keyMessageId="regionScopeInclude"
+          value={includedRegions?.join(", ")}
+          dataTestIds={{ key: "p_included_regions_key", value: "p_included_regions_value" }}
+        />
+      )}
+      {!isEmptyArray(excludedRegions) && (
+        <KeyValueLabel
+          keyMessageId="regionScopeExclude"
+          value={excludedRegions?.join(", ")}
+          dataTestIds={{ key: "p_excluded_regions_key", value: "p_excluded_regions_value" }}
+        />
       )}
     </>
   );
