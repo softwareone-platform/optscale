@@ -5,6 +5,7 @@ import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import { DataSourceTagCell } from "@theme/shared/components/DataSourceTagCell/DataSourceTagCell";
 import CaptionedCell from "components/CaptionedCell";
 import Circle from "components/Circle";
 import CloudLabel from "components/CloudLabel";
@@ -32,16 +33,16 @@ const NameCell = ({
       last_import_at: lastImportAt,
       last_import_attempt_at: lastImportAttemptAt,
       last_import_attempt_error: lastImportAttemptError,
-      children,
+      children
     },
-    index,
+    index
   },
-  colorScale,
+  colorScale
 }) => {
   const importStatus = getBillingImportStatus({
     timestamp: lastImportAt,
     attemptTimestamp: lastImportAttemptAt,
-    error: lastImportAttemptError,
+    error: lastImportAttemptError
   });
 
   return (
@@ -61,7 +62,7 @@ const NameCell = ({
                     </span>
                   </Tooltip>
                 </Typography>
-              ),
+              )
             }
           : undefined
       }
@@ -79,7 +80,6 @@ const NameCell = ({
 
 const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
   const navigate = useNavigate();
-
   const theme = useTheme();
 
   const { classes } = useStyles();
@@ -95,32 +95,40 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
             <Expander row={cellData.row} />
             <NameCell {...cellData} colorScale={colorScale} />
           </div>
-        ),
+        )
       },
       {
         header: intl.formatMessage({ id: "type" }),
         accessorKey: "type",
-        cell: ({ cell }) => <CloudType type={cell.getValue()} />,
+        cell: ({ cell }) => <CloudType type={cell.getValue()} />
+      },
+      {
+        header: intl.formatMessage({ id: "entitled" }),
+        id: "tags",
+        accessorKey: "id",
+        cell: ({ cell }) => <DataSourceTagCell dataSourceId={cell.getValue()} tagKey="entitlement" />,
+        enableSorting: false,
+        emptyValue: <FormattedMessage id="notEntitled" />
       },
       {
         header: intl.formatMessage({ id: "resourcesChargedThisMonth" }),
         id: "details.resources",
         accessorFn: (originalRow) => originalRow.details?.resources,
-        emptyValue: "0",
+        emptyValue: "0"
       },
       {
         header: intl.formatMessage({ id: "expensesUpToDateThisMonth" }),
         id: "details.cost",
         accessorFn: (originalRow) => originalRow.details?.cost,
         cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />,
-        defaultSort: "desc",
+        defaultSort: "desc"
       },
       {
         header: intl.formatMessage({ id: "expensesForecastThisMonth" }),
         id: "details.forecast",
         accessorFn: (originalRow) => originalRow.details?.forecast,
-        cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />,
-      },
+        cell: ({ cell }) => <FormattedMoney type={FORMATTED_MONEY_TYPES.COMMON} value={cell.getValue()} />
+      }
     ];
   }, [theme.palette.chart, classes.nameCellWrapper]);
 
@@ -148,30 +156,35 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
         variant: "contained",
         type: "button",
         action: () => navigate(CLOUD_ACCOUNT_CONNECT),
-        requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
-      },
-    ],
+        requiredActions: ["MANAGE_CLOUD_CREDENTIALS"]
+      }
+    ]
   };
 
   return isLoading ? (
     <TableLoader columnsCounter={columns.length} showHeader />
   ) : (
-    <Table
-      dataTestIds={{
-        container: "table_accs",
-      }}
-      data={data}
-      columns={columns}
-      localization={{
-        emptyMessageId: "noDataSources",
-      }}
-      pageSize={50}
-      withExpanded
-      actionBar={{
-        show: true,
-        definition: actionBarDefinition,
-      }}
-    />
+    <>
+      <Table
+        dataTestIds={{
+          container: "table_accs"
+        }}
+        data={data}
+        columns={columns}
+        localization={{
+          emptyMessageId: "noDataSources"
+        }}
+        pageSize={50}
+        withExpanded
+        actionBar={{
+          show: true,
+          definition: actionBarDefinition
+        }}
+      />
+      <Typography variant="caption" color="text.primary">
+        <FormattedMessage id="entitledColumnDisclaimer" />
+      </Typography>
+    </>
   );
 };
 

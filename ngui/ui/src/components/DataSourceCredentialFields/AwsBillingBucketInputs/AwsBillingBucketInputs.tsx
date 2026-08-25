@@ -34,7 +34,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
       if (showAssumedRoleCredentialsInModal) {
         openSideModal(AwsAssumedRoleCredentialsModal, {
           name: bucketName,
-          text: JSON.stringify(data?.cloudPolicies, null, 2),
+          text: JSON.stringify(data?.cloudPolicies, null, 2)
         });
       }
     } catch (error) {
@@ -58,7 +58,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
                   justifyContent: "center",
                   alignItems: "center",
                   height: CODE_BLOCK_HEIGHT,
-                  backgroundColor: (theme) => theme.palette.background.default,
+                  backgroundColor: (theme) => theme.palette.background.default
                 }}
               >
                 <CircularProgress />

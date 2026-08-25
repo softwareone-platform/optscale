@@ -9,7 +9,7 @@ const AwsAssumedRoleInputs = ({
   readOnlyFields = [],
   hiddenFields = [],
   showAssumedRoleCredentialsInModal = false,
-  showAdvancedOptions = true,
+  showAdvancedOptions = true
 }: {
   readOnlyFields?: string[];
   hiddenFields?: string[];

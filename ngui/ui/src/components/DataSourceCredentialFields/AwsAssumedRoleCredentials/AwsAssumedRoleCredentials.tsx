@@ -9,7 +9,7 @@ import FieldWithActionButton from "../FieldWithActionButton";
 export const FIELD_NAMES = Object.freeze({
   ASSUME_ROLE_ACCOUNT_ID: "awsRoleAccountId",
   ASSUME_ROLE_NAME: "awsRoleName",
-  ASSUME_ROLE_EXTERNAL_ID: "awsRoleExternalId",
+  ASSUME_ROLE_EXTERNAL_ID: "awsRoleExternalId"
 });
 
 const EXTERNAL_ID_MIN_LENGTH = 2;
@@ -86,7 +86,7 @@ const AwsAssumedRoleCredentials = ({
         dataTestId="input_assume_role_account_id"
         InputProps={{
           readOnly: isReadOnly(FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID),
-          endAdornment: <QuestionMark messageId="awsRoleAccountIdTooltip" dataTestId="qmark_assume_role_id" />,
+          endAdornment: <QuestionMark messageId="awsRoleAccountIdTooltip" dataTestId="qmark_assume_role_id" />
         }}
         label={<FormattedMessage id="awsRoleAccountId" />}
         autoComplete="off"
@@ -96,7 +96,7 @@ const AwsAssumedRoleCredentials = ({
         required
         dataTestId="input_assume_role_name"
         InputProps={{
-          endAdornment: <QuestionMark messageId="awsRoleNameTooltip" dataTestId="qmark_assume_role_name" />,
+          endAdornment: <QuestionMark messageId="awsRoleNameTooltip" dataTestId="qmark_assume_role_name" />
         }}
         label={<FormattedMessage id="awsRoleName" />}
         autoComplete="off"
