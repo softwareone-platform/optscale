@@ -195,7 +195,7 @@ class PolicyGeneratorController(BaseController):
             account_id = self._get_aws_account_id(**service_creds)
         except Exception as exc:
             LOG.info("error getting account id: %s", str(exc))
-            raise FailedDependency(Err.OE0570, [exc])
+            raise FailedDependency(Err.OE0570, [str(exc)])
         return account_id
 
     def generate_role_policy_linked_account(self):
