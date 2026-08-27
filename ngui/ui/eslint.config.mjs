@@ -2,6 +2,13 @@ import hystaxConfig from "@hystax/eslint-config-ui";
 import reactPlugin from "eslint-plugin-react";
 
 export default [
+  {
+    // src/ is upstream OptScale code, kept byte-identical so upstream syncs stay mechanical. It
+    // follows upstream's formatting (trailing commas), which this fork's prettier config forbids —
+    // linting it would fail on hundreds of lines nobody here is allowed to change. Our own code
+    // lives in the theme, so that is what gets checked.
+    ignores: ["src/*", "!src/themes", "src/themes/*", "!src/themes/finops"]
+  },
   ...hystaxConfig,
   {
     files: ["**/graphql/__generated__/**"],

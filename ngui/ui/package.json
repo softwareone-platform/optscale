@@ -90,7 +90,7 @@
     "storybook": "storybook dev -p 9009",
     "storybook:build": "storybook build -o ./storybook",
     "storybook:clean": "rm -rf src/tests/__snapshots__",
-    "translate:check": "prettier --check 'src/translations/**/*.json'",
+    "translate:check": "prettier --check 'src/themes/finops/translations/**/*.json'",
     "translate:fix": "prettier --write 'src/translations/**/*.json'",
     "translate:sort": "node src/translations/sortTranslations.ts",
     "translate:test": "vitest run src/translations/translationSorting.test.ts",
