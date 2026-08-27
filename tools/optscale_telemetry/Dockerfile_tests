@@ -3,10 +3,11 @@ FROM python:3.12
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 LABEL org.opencontainers.image.authors="Hystax"
 
-WORKDIR /usr/src/app/
+WORKDIR /usr/src/app/tools/optscale_telemetry/
 
+COPY tools/optscale_telemetry/*.py ./
 COPY tools/optscale_telemetry/tests/. tests/
 COPY tools/optscale_telemetry/pyproject.toml pyproject.toml
 COPY tools/optscale_telemetry/uv.lock uv.lock
 
-RUN uv --project tools/optscale_telemetry sync --locked
+RUN uv sync --locked
