@@ -8,6 +8,7 @@ import pika
 import pika.exceptions
 import yaml
 import etcd
+import botocore
 import boto3
 from boto3.session import Config as BotoConfig
 from sqlalchemy import create_engine
