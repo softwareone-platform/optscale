@@ -5,18 +5,20 @@ import { FormattedMessage } from "react-intl";
 import { GET_ORG_DATASOURCES_TAGS } from "@main/api/restapi/actionTypes";
 import IconLabel from "@main/components/IconLabel";
 import { useApiData } from "@main/hooks/useApiData";
+import { useApiState } from "@main/hooks/useApiState";
 import { DataSourceTag } from "@theme/shared/hooks/useDataSourceTagsByOrg";
 import useStyles from "./DataSourceTagCell.styles";
 
 export const DataSourceTagCell = ({ dataSourceId, tagKey }: { dataSourceId: string; tagKey: string }) => {
   const { apiData: { dataSourcesTags: tags } = {} } = useApiData(GET_ORG_DATASOURCES_TAGS);
+  const { isLoading } = useApiState(GET_ORG_DATASOURCES_TAGS);
   const { classes } = useStyles();
 
-  if (!tags) {
+  if (isLoading) {
     return <FormattedMessage id="loading" />;
   }
 
-  const tag = tags[dataSourceId]?.find((tag: DataSourceTag) => tag.name === tagKey);
+  const tag = tags?.[dataSourceId]?.find((tag: DataSourceTag) => tag.name === tagKey);
   const labelClass = tag ? classes.labelSuccess : "";
 
   return (
