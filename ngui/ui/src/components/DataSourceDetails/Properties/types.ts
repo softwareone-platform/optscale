@@ -50,6 +50,7 @@ export type AwsPropertiesProps = BasePropertiesProps & {
     access_key_id: string;
     assume_role_account_id: string;
     assume_role_name: string;
+    assume_role_external_id?: string;
     bucket_name: string;
     bucket_prefix: string;
     linked: boolean;

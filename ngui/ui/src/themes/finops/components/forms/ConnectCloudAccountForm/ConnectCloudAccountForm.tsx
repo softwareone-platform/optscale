@@ -194,6 +194,10 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
+      // Optional here, so send nothing rather than an empty string the API would have to interpret.
+      ...(formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]
+        ? { assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID] }
+        : {}),
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
         ? extraParams
         : {

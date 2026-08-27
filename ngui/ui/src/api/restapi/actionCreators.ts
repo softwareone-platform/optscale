@@ -304,7 +304,8 @@ import {
   GET_ML_TASK_TAGS,
   RESTORE_PASSWORD,
   VERIFY_EMAIL,
-  GET_POOL
+  GET_POOL,
+  GET_POOL_EXPENSES_RANGE
 } from "./actionTypes";
 import {
   onUpdateOrganizationOption,
@@ -499,6 +500,22 @@ export const getPool = (poolId, children = false, details = false) =>
     params: {
       children,
       details
+    }
+  });
+
+export const getPoolExpensesRange = (poolId, startDate, endDate) =>
+  apiAction({
+    url: `${API_URL}/pools/${poolId}`,
+    method: "GET",
+    onSuccess: handleSuccess(SET_POOL),
+    label: GET_POOL_EXPENSES_RANGE,
+    ttl: 30 * MINUTE,
+    hash: hashParams({ poolId, startDate, endDate }),
+    params: {
+      children: true,
+      details: true,
+      start_date: startDate,
+      end_date: endDate
     }
   });
 

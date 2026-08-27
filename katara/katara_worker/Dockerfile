@@ -17,4 +17,4 @@ COPY katara/katara_worker/*.py ./
 
 RUN uv --project /usr/src/app/katara/katara_worker sync --locked --no-dev
 
-CMD ["uv", "run", "--project", "/usr/src/app/katara/katara_worker", "python", "-u","/usr/src/app/katara/katara_worker/main.py"]
+CMD ["uv", "run", "--project", "/usr/src/app/katara/katara_worker", "python", "-u", "main.py"]

@@ -27,7 +27,7 @@ export const ENVIRONMENTS = {
   },
   dev: {
     key: 'dev',
-    baseUrl: 'https://portal.finops.s1.today',
+    baseUrl: 'http://localhost:4000',
     apiBaseUrl: 'https://api.finops.s1.today',
     tokenVar: 'TEST_ACCOUNT_TOKEN_DEV',
   },

@@ -212,6 +212,7 @@ const DataSourcesMock = {
         config: {
           assume_role_account_id: '203689795269',
           assume_role_name: 'FinOpsForCloudOperations',
+          assume_role_external_id: null,
           access_key_id: 'AKIAS63G3T3CQOHK7SEG',
           linked: null,
           use_edp_discount: false,
@@ -248,6 +249,7 @@ const DataSourcesMock = {
         config: {
           assume_role_account_id: null,
           assume_role_name: null,
+          assume_role_external_id: null,
           access_key_id: 'AKIAZQR4G3JVRTTL2DUY',
           linked: true,
           use_edp_discount: null,
@@ -284,6 +286,7 @@ const DataSourcesMock = {
         config: {
           assume_role_account_id: '563690021965',
           assume_role_name: 'FinOpsForCloudAssumeRole',
+          assume_role_external_id: null,
           access_key_id: 'AKIAS63G3T3CQOHK7SEG',
           linked: true,
           use_edp_discount: null,
@@ -320,6 +323,7 @@ const DataSourcesMock = {
         config: {
           assume_role_account_id: null,
           assume_role_name: null,
+          assume_role_external_id: null,
           access_key_id: 'AKIA6P7SLCZ6TGN2JF7L',
           linked: true,
           use_edp_discount: null,

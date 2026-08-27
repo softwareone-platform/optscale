@@ -17,6 +17,8 @@ const Input = forwardRef((props, ref) => {
     maxRows,
     variant,
     sx,
+    onBlur,
+    onChange,
     ...rest
   } = props;
 
@@ -25,6 +27,22 @@ const Input = forwardRef((props, ref) => {
   const inputClassName = cx(isMasked ? classes.masked : "");
 
   const { readOnly } = InputProps;
+
+  // Sensitive values (passwords, masked secrets) are sent verbatim - trimming them could silently
+  // corrupt a real value, so leading/trailing whitespace is only cleaned up for regular text fields.
+  const isTrimmable = type !== "password" && !isMasked;
+
+  const handleBlur = (event) => {
+    const { target } = event;
+    if (isTrimmable && typeof target.value === "string") {
+      const trimmedValue = target.value.trim();
+      if (trimmedValue !== target.value) {
+        target.value = trimmedValue;
+        onChange?.(event);
+      }
+    }
+    onBlur?.(event);
+  };
 
   return (
     <TextField
@@ -51,6 +69,8 @@ const Input = forwardRef((props, ref) => {
       InputProps={InputProps}
       minRows={minRows}
       maxRows={maxRows}
+      onChange={onChange}
+      onBlur={handleBlur}
       {...rest}
       inputRef={ref}
     />

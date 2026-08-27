@@ -140,34 +140,29 @@ RUN uv --project rest_api run python -u rest_api/rest_api_server/write_spec.py &
     uv --project auth run python -u auth/auth_server/write_spec.py && \
     uv --project slacker run python -u slacker/slacker_server/write_spec.py
 
-# ── Install pip-managed dependencies (docker_images/* services) ──────
-# Split into two passes to resolve the influxdb version conflict:
-# configurator pins influxdb==4.1.1, cleaninfluxdb pins influxdb==5.2.3.
-# Install cleaninfluxdb last so the newer (backward-compatible) version wins.
-RUN pip install --no-cache-dir \
-    -r docker_images/configurator/requirements.txt \
-    -r docker_images/resource_discovery/requirements.txt \
-    -r docker_images/resource_observer/requirements.txt \
-    -r docker_images/resource_violations/requirements.txt \
-    -r docker_images/booking_observer/requirements.txt \
-    -r docker_images/calendar_observer/requirements.txt \
-    -r docker_images/organization_violations/requirements.txt \
-    -r docker_images/power_schedule/requirements.txt \
-    -r docker_images/live_demo_generator/requirements.txt \
-    -r docker_images/webhook_executor/requirements.txt \
-    -r docker_images/herald_executor/requirements.txt \
-    -r docker_images/slacker_executor/requirements.txt \
-    -r docker_images/keeper_executor/requirements.txt \
-    -r docker_images/bi_scheduler/requirements.txt \
-    -r docker_images/cleanmongodb/requirements.txt \
-    -r docker_images/layout_cleaner/requirements.txt \
-    -r docker_images/demo_org_cleanup/requirements.txt \
-    -r docker_images/failed_imports_dataset_generator/requirements.txt \
-    -r docker_images/users_dataset_generator/requirements.txt \
-    -r docker_images/subsyncer/requirements.txt \
-    -r docker_images/bailiff/requirements.txt && \
-    pip install --no-cache-dir \
-    -r docker_images/cleaninfluxdb/requirements.txt
+# ── Install uv-managed dependencies (docker_images/* services) ───────
+RUN uv --project docker_images/configurator sync --locked --no-dev && \
+    uv --project docker_images/resource_discovery sync --locked --no-dev && \
+    uv --project docker_images/resource_observer sync --locked --no-dev && \
+    uv --project docker_images/resource_violations sync --locked --no-dev && \
+    uv --project docker_images/booking_observer sync --locked --no-dev && \
+    uv --project docker_images/calendar_observer sync --locked --no-dev && \
+    uv --project docker_images/organization_violations sync --locked --no-dev && \
+    uv --project docker_images/power_schedule sync --locked --no-dev && \
+    uv --project docker_images/live_demo_generator sync --locked --no-dev && \
+    uv --project docker_images/webhook_executor sync --locked --no-dev && \
+    uv --project docker_images/herald_executor sync --locked --no-dev && \
+    uv --project docker_images/slacker_executor sync --locked --no-dev && \
+    uv --project docker_images/keeper_executor sync --locked --no-dev && \
+    uv --project docker_images/bi_scheduler sync --locked --no-dev && \
+    uv --project docker_images/cleanmongodb sync --locked --no-dev && \
+    uv --project docker_images/cleaninfluxdb sync --locked --no-dev && \
+    uv --project docker_images/layout_cleaner sync --locked --no-dev && \
+    uv --project docker_images/demo_org_cleanup sync --locked --no-dev && \
+    uv --project docker_images/failed_imports_dataset_generator sync --locked --no-dev && \
+    uv --project docker_images/users_dataset_generator sync --locked --no-dev && \
+    uv --project docker_images/subsyncer sync --locked --no-dev && \
+    uv --project docker_images/bailiff sync --locked --no-dev
 
 # ── Copy Node.js frontend build artifacts ────────────────────────────
 COPY --from=ngui-builder /build/prod/server/dist     /opt/ngui/server/dist
