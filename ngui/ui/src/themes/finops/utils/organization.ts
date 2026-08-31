@@ -1,7 +1,9 @@
 import { intl } from "translations/react-intl-config";
 import { sliceByLimitWithEllipsis } from "./strings";
 
-const INACTIVE_SUFFIX = ` (${intl.formatMessage({ id: "terminated" })})`;
+// Read per call, not at import time: a module-scope const captures whichever locale was active
+// when this file first loaded, so switching language leaves the suffix stuck until refresh.
+const inactiveSuffix = () => ` (${intl.formatMessage({ id: "terminated" })})`;
 
 type GetOrganizationDisplayNameParams = {
   name: string;
@@ -10,14 +12,13 @@ type GetOrganizationDisplayNameParams = {
 };
 
 export const getOrganizationDisplayName = ({ name, isInactive = false, maxLength }: GetOrganizationDisplayNameParams) => {
-  const displayName = isInactive ? `${name}${INACTIVE_SUFFIX}` : name;
-  const effectiveMaxLength = isInactive ? maxLength - INACTIVE_SUFFIX.length : maxLength;
+  const suffix = isInactive ? inactiveSuffix() : "";
+  const displayName = `${name}${suffix}`;
+  const effectiveMaxLength = maxLength - suffix.length;
 
   const isNameLong = displayName.length > maxLength;
   return {
-    displayName: isNameLong
-      ? `${sliceByLimitWithEllipsis(name, effectiveMaxLength)}${isInactive ? INACTIVE_SUFFIX : ""}`
-      : displayName,
+    displayName: isNameLong ? `${sliceByLimitWithEllipsis(name, effectiveMaxLength)}${suffix}` : displayName,
     isNameLong,
     originalName: name
   };
