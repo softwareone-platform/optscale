@@ -3,7 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useForm, type SubmitHandler, FormProvider, useFieldArray } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { FIELD_NAMES } from "@main/components/forms/InviteEmployeesForm/constants";
 import { AdditionalRolesFieldArray } from "@main/components/forms/InviteEmployeesForm/FormElements";
 import {
@@ -45,6 +45,11 @@ const getEmailInvitations = (
 };
 
 const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProps = {} }: InviteEmployeesFormProps) => {
+  // The `intl` singleton imported from react-intl-config is frozen at first module load, so it
+  // never picks up a language switch — labels via <FormattedMessage> update, values driven by
+  // formatMessage() don't. Reading from the hook subscribes to the provider and re-renders.
+  const localizedIntl = useIntl();
+
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { isCreateInvitationsLoading = false, isGetAvailablePoolsLoading = false } = isLoadingProps;
@@ -100,7 +105,8 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
           InputProps={{
             readOnly: true
           }}
-          defaultValue={intl.formatMessage({ id: "member" })}
+          // Controlled and read through the hook-obtained intl — see `localizedIntl` note above.
+          value={localizedIntl.formatMessage({ id: "member" })}
           label={<FormattedMessage id="role" />}
           type="text"
           dataTestId="input_role"
