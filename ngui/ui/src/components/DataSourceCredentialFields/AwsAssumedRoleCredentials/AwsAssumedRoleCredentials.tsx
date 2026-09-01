@@ -45,7 +45,6 @@ const ExternalIdTextInput = ({ readOnly = false }: { readOnly?: boolean }) => {
     >
       <TextInput
         name={FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID}
-        required
         dataTestId="input_assume_role_external_id"
         InputProps={{
           readOnly: readOnly,

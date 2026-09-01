@@ -21,6 +21,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
 
   const bucketName = watch(AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME);
   const externalId = watch(AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID);
+  const normalizedExternalId = externalId?.trim() || undefined;
 
   const text = useMemo(() => (cloudPolicies ? JSON.stringify(cloudPolicies, null, 2) : ""), [cloudPolicies]);
 
@@ -28,7 +29,7 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
     try {
       const { data } = await fetchPolicies({
         organizationId,
-        params: { bucket_name: bucketName, cloud_type: AWS_CNR, external_id: externalId.trim() },
+        params: { bucket_name: bucketName, cloud_type: AWS_CNR, external_id: normalizedExternalId },
       });
 
       if (showAssumedRoleCredentialsInModal) {
@@ -43,11 +44,11 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
   };
 
   const canShowResult =
-    (isLoading || !!cloudPolicies) && bucketName === lastRequestedBucket && externalId === lastRequestedExternalId;
+    (isLoading || !!cloudPolicies) && bucketName === lastRequestedBucket && normalizedExternalId === lastRequestedExternalId;
 
   return (
     <>
-      <AwsBillingBucket showRoleButton={{ onClick: handleClick, isDisabled: !bucketName || !externalId?.trim(), isLoading }} />
+      <AwsBillingBucket showRoleButton={{ onClick: handleClick, isDisabled: !bucketName, isLoading }} />
       <Box>
         {canShowResult && !showAssumedRoleCredentialsInModal && (
           <FormControl fullWidth>

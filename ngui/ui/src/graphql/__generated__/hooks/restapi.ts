@@ -317,7 +317,7 @@ export type CleanExpensesParams = {
 export type CloudPoliciesParams = {
   bucket_name: Scalars["String"]["input"];
   cloud_type: Scalars["String"]["input"];
-  external_id: Scalars["String"]["input"];
+  external_id?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type CreateDataSourceInput = {

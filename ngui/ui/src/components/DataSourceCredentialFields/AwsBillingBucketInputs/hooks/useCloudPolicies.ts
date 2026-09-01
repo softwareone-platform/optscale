@@ -11,7 +11,7 @@ const useCloudPolicies = () => {
 
   const fetchPolicies = (variables: {
     organizationId: string;
-    params: { bucket_name: string; cloud_type: string; external_id: string };
+    params: { bucket_name: string; cloud_type: string; external_id?: string };
   }) => {
     const { bucket_name: bucket, external_id: externalId } = variables.params;
 

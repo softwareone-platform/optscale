@@ -664,7 +664,7 @@ export default gql`
   input CloudPoliciesParams {
     bucket_name: String!
     cloud_type: String!
-    external_id: String!
+    external_id: String
   }
 
   input AvailableFiltersParams {
