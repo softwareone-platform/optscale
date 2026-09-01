@@ -45,9 +45,6 @@ const getEmailInvitations = (
 };
 
 const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProps = {} }: InviteEmployeesFormProps) => {
-  // The `intl` singleton imported from react-intl-config is frozen at first module load, so it
-  // never picks up a language switch — labels via <FormattedMessage> update, values driven by
-  // formatMessage() don't. Reading from the hook subscribes to the provider and re-renders.
   const localizedIntl = useIntl();
 
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
