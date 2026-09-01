@@ -1,8 +1,6 @@
 import { intl } from "translations/react-intl-config";
 import { sliceByLimitWithEllipsis } from "./strings";
 
-// Read per call, not at import time: a module-scope const captures whichever locale was active
-// when this file first loaded, so switching language leaves the suffix stuck until refresh.
 const inactiveSuffix = () => ` (${intl.formatMessage({ id: "terminated" })})`;
 
 type GetOrganizationDisplayNameParams = {
