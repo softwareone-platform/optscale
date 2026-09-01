@@ -340,9 +340,8 @@ class CloudAccountController(BaseController, ClickHouseMixin):
                 if not assume_role_account_id:
                     raise_not_provided_exception('assume_role_account_id')
                 external_id = config.get('assume_role_external_id')
-                if not external_id:
-                    raise_not_provided_exception('assume_role_external_id')
-                self.validate_assume_role_external_id(external_id)
+                if external_id is not None:
+                    self.validate_assume_role_external_id(external_id)
                 # assumed role -> get credentials from service account
                 for param in not_allowed:
                     if config.get(param):

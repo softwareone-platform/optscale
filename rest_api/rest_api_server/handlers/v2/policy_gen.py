@@ -83,8 +83,6 @@ class PolicyGeneratorAsyncCollectionHandler(BaseAuthHandler, BaseHandler):
 
         if not cloud_type:
             raise OptHTTPError(400, Err.OE0548, ['cloud_type'])
-        if not external_id:
-            raise OptHTTPError(400, Err.OE0548, ['external_id'])
         # bucket name is required for the non-linked account
         if not linked:
             if not bucket_name:

@@ -248,8 +248,7 @@ class TestCloudAccountApi(TestApiBase):
                 'config_scheme': 'create_report'
             }
         })
-        self.assertEqual(code, 400)
-        self.assertEqual(cloud_acc['error']['error_code'], 'OE0216')
+        self.assertEqual(code, 201)
 
     @patch('rest_api.rest_api_server.controllers.cloud_account.'
            'ExpensesRecalculationScheduleController.schedule')
