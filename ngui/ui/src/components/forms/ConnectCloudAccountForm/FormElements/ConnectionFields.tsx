@@ -44,7 +44,7 @@ const renderAwsInputs = (connectionType: ConnectionType, authenticationType: Aut
   const showAdvancedOptions = connectionType !== CONNECTION_TYPES.AWS_MEMBER;
 
   return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
-    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancedOptions={showAdvancedOptions} />
+    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancedOptions={showAdvancedOptions} showExternalIdToggle />
   ) : (
     <AwsConnectionAccessKeyInputs showAdvancesOptions={showAdvancedOptions} />
   );
