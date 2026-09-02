@@ -21,7 +21,8 @@ const AwsBillingBucketInputs = ({ showAssumedRoleCredentialsInModal = false }) =
 
   const bucketName = watch(AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME);
   const externalId = watch(AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID);
-  const normalizedExternalId = externalId?.trim() || undefined;
+  const useExternalId = watch(AWS_ROLE_CREDENTIALS_FIELD_NAMES.USE_EXTERNAL_ID) ?? true;
+  const normalizedExternalId = (useExternalId && externalId?.trim()) || undefined;
 
   const text = useMemo(() => (cloudPolicies ? JSON.stringify(cloudPolicies, null, 2) : ""), [cloudPolicies]);
 
