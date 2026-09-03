@@ -20,7 +20,7 @@ const LOCALES = {
   "fr-FR": { label: "Français", messages: messagesFrFR },
   "es-ES": { label: "Español", messages: messagesEsES },
   "nl-NL": { label: "Nederlands", messages: messagesNlNL },
-  "ja-JP": { label: "日本語", messages: messagesJaJP, draft: true },
+  "ja-JP": { label: "日本語", messages: messagesJaJP },
   "pl-PL": { label: "Polski", messages: messagesPlPL, draft: true }
 } as const satisfies Record<string, LocaleDefinition>;
 
