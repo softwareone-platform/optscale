@@ -1,7 +1,7 @@
 from typing import Annotated
 
-from cloud_adapter.enums import CloudTypes
 from pydantic import BeforeValidator, Field
+from tools.cloud_adapter.enums import CloudTypes
 
 from ffc_api.ffc_api_server.app.schemas.core import BaseSchema, IdSchema
 from ffc_api.ffc_api_server.app.schemas.tags import TagRef
