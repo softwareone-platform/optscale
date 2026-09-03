@@ -62,6 +62,14 @@ class Tag(Base, TimestampMixin):
     resource_id: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     deleted_ts: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
 
+    # 0 while the row is active, NULL once soft-deleted. MySQL treats NULLs as
+    # distinct in a unique key, so only active rows can collide below.
+    active_key: Mapped[int | None] = mapped_column(
+        BigInteger,
+        sa.Computed("IF(deleted_ts = 0, 0, NULL)", persisted=False),
+        nullable=True,
+    )
+
     __table_args__ = (
         Index("ix_tags_resource_lookup", "resource_type", "resource_id"),
         Index("ix_tags_resource_name_lookup", "resource_type", "resource_id", "name"),
@@ -69,7 +77,7 @@ class Tag(Base, TimestampMixin):
             "name",
             "resource_id",
             "resource_type",
-            "deleted_ts",
+            "active_key",
             name="uq_tags_active",
         ),
         {"schema": DB_SCHEMA},
