@@ -1,6 +1,8 @@
 import deFlag from "@theme/assets/flags/de.svg";
 import esFlag from "@theme/assets/flags/es.svg";
 import frFlag from "@theme/assets/flags/fr.svg";
+import jpFlag from "@theme/assets/flags/jp.svg";
+import nlFlag from "@theme/assets/flags/nl.svg";
 import plFlag from "@theme/assets/flags/pl.svg";
 import usFlag from "@theme/assets/flags/us.svg";
 import { type SupportedLocale } from "@theme/translations/localeManager";
@@ -14,5 +16,7 @@ export const LOCALE_FLAGS: Record<SupportedLocale, string> = {
   "es-ES": esFlag,
   "fr-FR": frFlag,
   "de-DE": deFlag,
-  "pl-PL": plFlag
+  "pl-PL": plFlag,
+  "nl-NL": nlFlag,
+  "ja-JP": jpFlag
 };
