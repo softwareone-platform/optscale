@@ -1,0 +1,302 @@
+import { useState, type FC, type ReactNode } from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { useForm, type SubmitHandler, FormProvider, useFieldArray } from "react-hook-form";
+import { FormattedMessage, useIntl } from "react-intl";
+import { FIELD_NAMES } from "@main/components/forms/InviteEmployeesForm/constants";
+import { AdditionalRolesFieldArray } from "@main/components/forms/InviteEmployeesForm/FormElements";
+import {
+  EmailInvitations,
+  FormValues,
+  Invitation,
+  InviteEmployeesFormProps
+} from "@main/components/forms/InviteEmployeesForm/types";
+import ButtonBase from "components/Button";
+import ButtonLoaderBase from "components/ButtonLoader";
+import Chip from "components/Chip";
+import FormButtonsWrapper from "components/FormButtonsWrapper";
+import InputBase from "components/Input";
+import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
+import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { intl } from "translations/react-intl-config";
+import { getDifference, isEmptyArray } from "utils/arrays";
+import { SCOPE_TYPES, EMAIL_MAX_LENGTH, MANAGER, ORGANIZATION_MANAGER } from "utils/constants";
+import { SPACING_1 } from "utils/layouts";
+import { removeKey } from "utils/objects";
+import { emailRegex, splitInvites } from "utils/strings";
+
+const Input = InputBase as unknown as FC<{
+  value?: string;
+  defaultValue?: string;
+  label?: ReactNode;
+  type?: string;
+  dataTestId?: string;
+  multiline?: boolean;
+  required?: boolean;
+  error?: boolean;
+  helperText?: ReactNode;
+  InputProps?: Record<string, unknown>;
+  [key: string]: unknown;
+}>;
+const Button = ButtonBase as unknown as FC<{ messageId: string; dataTestId?: string; onClick?: () => void }>;
+const ButtonLoader = ButtonLoaderBase as unknown as FC<{
+  messageId: string;
+  dataTestId?: string;
+  color?: string;
+  variant?: string;
+  type?: string;
+  disabled?: boolean;
+  tooltip?: { show: boolean; value?: string };
+  isLoading?: boolean;
+}>;
+
+const ADDITIONAL_ROLES = "additionalRoles";
+
+const getEmailInvitations = (
+  additionalRoles: FormValues["additionalRoles"],
+  organizationId: string,
+  emails: string[]
+): EmailInvitations => {
+  const invitations: Invitation[] = !isEmptyArray(additionalRoles)
+    ? additionalRoles.map((item) => ({
+        scope_id: item.role === ORGANIZATION_MANAGER ? organizationId : item.poolId,
+        scope_type: item.role === ORGANIZATION_MANAGER ? SCOPE_TYPES.ORGANIZATION : SCOPE_TYPES.POOL,
+        purpose: item.role === ORGANIZATION_MANAGER ? MANAGER : item.role
+      }))
+    : [{ scope_id: organizationId, scope_type: SCOPE_TYPES.ORGANIZATION, purpose: null }];
+
+  return Object.fromEntries(emails.map((email) => [email, invitations]));
+};
+
+const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProps = {} }: InviteEmployeesFormProps) => {
+  const localizedIntl = useIntl();
+
+  const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
+
+  const { isCreateInvitationsLoading = false, isGetAvailablePoolsLoading = false } = isLoadingProps;
+
+  const { name, organizationId } = useOrganizationInfo();
+  const methods = useForm<FormValues>({
+    shouldUnregister: true
+  });
+
+  const { control, handleSubmit } = methods;
+
+  const [values, setValues] = useState<{
+    emails: string[];
+    invalidEmails: string[];
+  }>({
+    emails: [],
+    invalidEmails: []
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: FIELD_NAMES.ADDITIONAL_ROLES_FIELD_ARRAY.FIELD_NAME
+  });
+
+  const onSuccessCallback = () => {
+    setValues({
+      emails: [],
+      invalidEmails: []
+    });
+    remove();
+  };
+
+  const [isEmptyEmail, setIsEmptyEmail] = useState(false);
+  const [isOnlyInvalidEmail, setIsOnlyInvalidEmail] = useState(false);
+
+  const onFormSubmit: SubmitHandler<FormValues> = (formData) => {
+    const { emails, invalidEmails } = values;
+    if (isEmptyArray(emails)) {
+      // Custom error handling for email field, since it is not a part of the form
+      if (isEmptyArray(invalidEmails)) {
+        return setIsEmptyEmail(true);
+      }
+      return setIsOnlyInvalidEmail(true);
+    }
+
+    return onSubmit(getEmailInvitations(formData[ADDITIONAL_ROLES], organizationId, emails), onSuccessCallback);
+  };
+
+  const organizationMemberRow = (
+    <Grid container spacing={SPACING_1}>
+      <Grid item xs={4}>
+        <Input
+          InputProps={{
+            readOnly: true
+          }}
+          // Controlled and read through the hook-obtained intl — see `localizedIntl` note above.
+          value={localizedIntl.formatMessage({ id: "member" })}
+          label={<FormattedMessage id="role" />}
+          type="text"
+          dataTestId="input_role"
+        />
+      </Grid>
+      <Grid item xs={8}>
+        <Input
+          InputProps={{
+            readOnly: true
+          }}
+          defaultValue={name}
+          label={<FormattedMessage id="organization" />}
+          type="text"
+          dataTestId="input_org"
+          multiline
+        />
+      </Grid>
+    </Grid>
+  );
+
+  const isEmailValid = (email: string) => emailRegex.test(email) && email.length <= EMAIL_MAX_LENGTH;
+
+  const saveEmails = (emails: string[]) => {
+    emails.forEach((email) => {
+      const normalizedEmail = email.toLowerCase();
+      if (isEmailValid(email)) {
+        setValues((prevState) => ({ ...prevState, emails: [...new Set([...prevState.emails, normalizedEmail])] }));
+      } else {
+        setValues((prevState) => ({
+          ...prevState,
+          invalidEmails: [...new Set([...prevState.invalidEmails, email])]
+        }));
+      }
+      // Clear error state for email field
+      setIsEmptyEmail(false);
+      setIsOnlyInvalidEmail(false);
+    });
+  };
+
+  const emailsChange = (emailsString: string) => saveEmails(splitInvites(emailsString));
+
+  const handleEmailsChange = (email: string) => {
+    emailsChange(email);
+  };
+
+  const deleteEmail = (option: string) => {
+    const { emails, invalidEmails } = values;
+    if (emails.includes(option)) {
+      setValues({
+        ...values,
+        emails: emails.filter((email) => email !== option)
+      });
+    } else {
+      setValues({
+        ...values,
+        invalidEmails: invalidEmails.filter((email) => email !== option)
+      });
+    }
+  };
+
+  const getEmailValidation = () => {
+    if (isEmptyEmail) {
+      return intl.formatMessage({ id: "thisFieldIsRequired" });
+    }
+    if (isOnlyInvalidEmail) {
+      return intl.formatMessage({ id: "notContainAnyValidEmails" });
+    }
+    return null;
+  };
+
+  return (
+    <>
+      <Typography paragraph data-test-id="p_enter_employees">
+        <FormattedMessage id="inviteUsersInviteEnterEmail" />
+      </Typography>
+      <Autocomplete
+        multiple
+        freeSolo
+        disableClearable
+        options={[]}
+        clearOnBlur
+        value={values.emails.concat(values.invalidEmails)}
+        onChange={(event, value, reason) => {
+          if (reason === "removeOption") {
+            let diff = getDifference(values.emails, value);
+            let [first] = diff;
+            if (first) {
+              return deleteEmail(first);
+            }
+            diff = getDifference(values.invalidEmails, value);
+            [first] = diff;
+            if (first) {
+              return deleteEmail(first);
+            }
+          }
+          // Autocomplete's `onChange` types `event.target` as `EventTarget`, which has no `value`.
+          // In this path the event is a change from the input; cast to the DOM shape upstream uses.
+          const email = (event.target as HTMLInputElement).value;
+          return handleEmailsChange(email);
+        }}
+        onClose={(event, reason) => {
+          if (reason === "blur") {
+            const email = (event.target as HTMLInputElement).value;
+            if (email) {
+              return handleEmailsChange(email);
+            }
+          }
+          return null;
+        }}
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            // `getTagProps` returns its own `key`, so spread first and let our explicit `key`
+            // win. `removeKey` still drops `onDelete` since we provide our own handler.
+            <Chip
+              {...removeKey(getTagProps({ index }), "onDelete")}
+              onDelete={() => deleteEmail(option)}
+              key={option}
+              size="small"
+              label={<span data-test-id={`chip_email_${index}`}>{option}</span>}
+              color={values.invalidEmails.includes(option) ? "error" : "info"}
+              dataTestIds={{
+                chip: `chip_${index}`,
+                deleteIcon: `chip_btn_close_${index}`
+              }}
+            />
+          ))
+        }
+        renderInput={(params) => (
+          <Input
+            {...params}
+            dataTestId="input_email"
+            error={isEmptyEmail || isOnlyInvalidEmail}
+            helperText={getEmailValidation()}
+            label={<FormattedMessage id="email" />}
+            required
+          />
+        )}
+      />
+      {organizationMemberRow}
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
+          <AdditionalRolesFieldArray
+            isGetAvailablePoolsLoading={isGetAvailablePoolsLoading}
+            availablePools={availablePools}
+            fields={fields}
+            onFieldAppend={append}
+            onFieldRemove={remove}
+          />
+          <FormButtonsWrapper>
+            <ButtonLoader
+              messageId="invite"
+              dataTestId="btn_invite"
+              color="primary"
+              variant="contained"
+              type="submit"
+              disabled={isRestricted}
+              tooltip={{
+                show: isRestricted,
+                value: restrictionReasonMessage
+              }}
+              isLoading={isCreateInvitationsLoading || isGetAvailablePoolsLoading}
+            />
+            <Button messageId="cancel" dataTestId="btn_cancel" onClick={onCancel} />
+          </FormButtonsWrapper>
+        </form>
+      </FormProvider>
+    </>
+  );
+};
+
+export default InviteEmployeesForm;

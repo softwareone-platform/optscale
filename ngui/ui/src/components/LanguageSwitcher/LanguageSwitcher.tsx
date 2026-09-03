@@ -1,15 +1,15 @@
 import LanguageIcon from "@mui/icons-material/Language";
 import Box from "@mui/material/Box";
 import MuiMenuItem from "@mui/material/MenuItem";
-import MuiSelect from "@mui/material/Select";
+import MuiSelect, { SelectChangeEvent } from "@mui/material/Select";
 import { useLocaleContext } from "contexts/LocaleContext";
-import { SUPPORTED_LOCALES } from "translations/localeManager";
+import { SUPPORTED_LOCALES, SupportedLocale } from "translations/localeManager";
 
 const LanguageSwitcher = () => {
   const { locale, setLocale } = useLocaleContext();
 
-  const handleChange = (event) => {
-    setLocale(event.target.value);
+  const handleChange = (event: SelectChangeEvent<SupportedLocale>) => {
+    setLocale(event.target.value as SupportedLocale);
   };
 
   return (
@@ -27,12 +27,12 @@ const LanguageSwitcher = () => {
           "& .MuiSelect-select": {
             paddingTop: 0,
             paddingBottom: 0,
-            paddingRight: "20px !important",
+            paddingRight: "20px !important"
           },
           "& .MuiSvgIcon-root": {
             color: "primary.main",
-            fontSize: "1.25rem",
-          },
+            fontSize: "1.25rem"
+          }
         }}
         data-test-id="select_language"
       >

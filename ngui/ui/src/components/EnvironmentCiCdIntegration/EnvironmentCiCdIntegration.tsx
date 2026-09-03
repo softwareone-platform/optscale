@@ -28,7 +28,7 @@ const EnvironmentCiCdIntegration = ({ text }) => (
           id="requestBodyMustContainPlainJSON"
           values={{
             break: <br />,
-            strong: (chunks) => <strong>{chunks}</strong>,
+            strong: (chunks) => <strong>{chunks}</strong>
           }}
         />
       </Typography>
@@ -42,7 +42,7 @@ const EnvironmentCiCdIntegration = ({ text }) => (
               <Link to={INTEGRATIONS} component={RouterLink}>
                 {chunks}
               </Link>
-            ),
+            )
           }}
         />
       </Typography>
