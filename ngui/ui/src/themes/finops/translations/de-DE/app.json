@@ -9,7 +9,6 @@
   "{key}:{value}": "{key}: {value}",
   "{value}": "{value}",
   "{value}businessDays": "{value} Werktage",
-  "de": "Deutsch",
   "{value}minutes": "{value} Minuten",
   "{value}OutOf{defaultValue}": "{value} von {defaultValue}",
   "99quantile": "99%-Quantil",
