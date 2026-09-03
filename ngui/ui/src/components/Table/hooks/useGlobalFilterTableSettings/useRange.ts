@@ -25,6 +25,6 @@ export const useRange = <TData>({ rangeFilter }: UseRangeParams<TData>) => {
 
   return {
     range,
-    onRangeChange,
+    onRangeChange
   };
 };

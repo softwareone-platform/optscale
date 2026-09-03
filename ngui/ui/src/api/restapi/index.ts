@@ -201,7 +201,7 @@ import {
   getMlDatasetLabels,
   getMlTaskTags,
   restorePassword,
-  verifyEmail,
+  verifyEmail
 } from "./actionCreators";
 
 export {
@@ -407,5 +407,5 @@ export {
   getMlDatasetLabels,
   getMlTaskTags,
   restorePassword,
-  verifyEmail,
+  verifyEmail
 };

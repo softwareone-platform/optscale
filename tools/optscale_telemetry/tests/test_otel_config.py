@@ -5,7 +5,6 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from pytest_mock import MockerFixture
-
 from tools.optscale_telemetry import OpenTelemetryConfig, OTELException
 
 

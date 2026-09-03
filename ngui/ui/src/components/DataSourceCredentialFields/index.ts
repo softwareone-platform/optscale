@@ -13,7 +13,7 @@ import AwsRegionScope, {
 import AwsRootCredentials, { FIELD_NAMES as AWS_ROOT_CREDENTIALS_FIELD_NAMES } from "./AwsRootCredentials";
 import AwsUseAwsEdpDiscount, { FIELD_NAMES as AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES } from "./AwsUseAwsEdpDiscount";
 import AzureSubscriptionCredentials, {
-  FIELD_NAMES as AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES,
+  FIELD_NAMES as AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES
 } from "./AzureSubscriptionCredentials";
 import AzureTenantCredentials, { FIELD_NAMES as AZURE_TENANT_CREDENTIALS_FIELD_NAMES } from "./AzureTenantCredentials";
 import DatabricksCredentials, { FIELD_NAMES as DATABRICKS_CREDENTIALS_FIELD_NAMES } from "./DatabricksCredentials";
@@ -55,5 +55,5 @@ export {
   ALIBABA_CREDENTIALS_FIELD_NAMES,
   NebiusCredentials,
   DatabricksCredentials,
-  DATABRICKS_CREDENTIALS_FIELD_NAMES,
+  DATABRICKS_CREDENTIALS_FIELD_NAMES
 };

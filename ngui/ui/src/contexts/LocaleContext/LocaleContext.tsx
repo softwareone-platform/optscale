@@ -8,5 +8,5 @@ type LocaleContextType = {
 
 export default createContext<LocaleContextType>({
   locale: DEFAULT_LOCALE,
-  setLocale: () => {},
+  setLocale: () => {}
 });

@@ -26,7 +26,9 @@ class BaseClient extends RESTDataSource {
   }
 
   override willSendRequest(_path: string, request: AugmentedRequest) {
-    request.headers["authorization"] = `Bearer ${this.token}`;
+    if (this.token && this.token !== "undefined") {
+      request.headers["authorization"] = `Bearer ${this.token}`;
+    }
   }
 
   override async fetch<TResult>(
