@@ -626,7 +626,7 @@ class BaseReportImporter:
                     '$gte': dates.get('start_date'),
                     '$lte': dates.get('last_start_date')
                 },
-                'report_identity': {'$ne': self.report_identity}
+                'report_identity': {'$lt': self.report_identity}
             })
             LOG.info('Cleared %s rudiments for cloud_account %s' %
                      (result.deleted_count, cloud_account_id))

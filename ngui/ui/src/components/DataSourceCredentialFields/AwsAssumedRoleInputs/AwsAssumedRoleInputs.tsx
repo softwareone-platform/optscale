@@ -11,14 +11,20 @@ const AwsAssumedRoleInputs = ({
   hiddenFields = [],
   showAssumedRoleCredentialsInModal = false,
   showAdvancedOptions = true,
+  showExternalIdToggle = false,
 }: {
   readOnlyFields?: string[];
   hiddenFields?: string[];
   showAssumedRoleCredentialsInModal?: boolean;
   showAdvancedOptions?: boolean;
+  showExternalIdToggle?: boolean;
 }) => (
   <>
-    <AwsAssumedRoleCredentials readOnlyFields={readOnlyFields} hiddenFields={hiddenFields} />
+    <AwsAssumedRoleCredentials
+      readOnlyFields={readOnlyFields}
+      hiddenFields={hiddenFields}
+      showExternalIdToggle={showExternalIdToggle}
+    />
     <AwsRegionScope />
     {showAdvancedOptions && (
       <>

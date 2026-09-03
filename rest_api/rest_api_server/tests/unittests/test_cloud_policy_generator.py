@@ -50,14 +50,6 @@ class TestCloudPolicyGeneratorApi(TestApiBase):
         self.assertEqual(code, 400)
         self.assertEqual(result["error"]["error_code"], "OE0548")
 
-    def test_missing_external_id(self):
-        url = self.client.cloud_policy_url(self.org_id) + self.client.query_url(
-            cloud_type="aws_cnr", bucket_name="test"
-        )
-        code, result = self.client.get(url)
-        self.assertEqual(code, 400)
-        self.assertEqual(result["error"]["error_code"], "OE0548")
-
     def test_missing_bucket_non_linked(self):
         url = self.client.cloud_policy_url(self.org_id) + self.client.query_url(
             cloud_type="aws_cnr", external_id=EXT_ID
@@ -87,9 +79,10 @@ class TestCloudPolicyGeneratorApi(TestApiBase):
     def test_generate_policy_without_external_id(self):
         code, resp = self.client.cloud_policy_get(
             self.org_id, "aws_cnr", linked=True, bucket_name=None)
-        self.assertEqual(code, 400)
-        self.verify_error_code(resp, 'OE0548')
-        self.assertEqual(resp["error"]["params"], ['external_id'])
+        self.assertEqual(code, 200)
+        self.assertTrue(resp.get("trust_policy", {}).get("Statement"))
+        statement = resp["trust_policy"]["Statement"][0]
+        self.assertNotIn("Condition", statement)
 
     def test_generate_policy_invalid_external_id(self):
         for value in ['x', 'a' * 1225]:

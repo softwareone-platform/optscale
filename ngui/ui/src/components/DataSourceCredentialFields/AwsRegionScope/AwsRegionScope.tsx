@@ -37,6 +37,7 @@ const RegionsField = ({
         <Autocomplete
           name={name}
           multiple
+          freeSolo
           value={value ?? []}
           onChange={(_event, newValue) => onChange(newValue)}
           onBlur={onBlur}

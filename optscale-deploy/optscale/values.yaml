@@ -1016,6 +1016,7 @@ invite_expiration_days: 30 # days before invite url expiration
 import_reports:
   message_expiration_secs: 10800 # 3 hours expiration to process a queue message
   not_processed_threshold_secs: 10800 # 3 hours gap for report generating
+  active_import_threshold_secs: 1800 # 30 min hb gap after which an import counts as dead
   max_workers: 10
   csv_rewrite_days: 10
 

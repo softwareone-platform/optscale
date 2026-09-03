@@ -198,7 +198,9 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
-      assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID],
+      assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.USE_EXTERNAL_ID]
+        ? formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID] || undefined
+        : undefined,
       ...getRegionScopeConfigParams(formData),
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
         ? extraParams
@@ -502,6 +504,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
   const methods = useForm({
     defaultValues: {
       [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]: defaultAssumeRoleExternalId,
+      [AWS_ROLE_CREDENTIALS_FIELD_NAMES.USE_EXTERNAL_ID]: true,
     },
   });
 
