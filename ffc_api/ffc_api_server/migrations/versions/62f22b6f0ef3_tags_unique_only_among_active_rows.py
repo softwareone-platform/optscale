@@ -17,13 +17,6 @@ down_revision: Union[str, None] = '0f57303a227b'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-
-revision = "abc123def456"
-down_revision = "789xyz"
-branch_labels = None
-depends_on = None
-
-
 def upgrade() -> None:
     op.drop_constraint(
         "uq_tags_active", "tags", type_="unique", schema='ffc-api-db'
