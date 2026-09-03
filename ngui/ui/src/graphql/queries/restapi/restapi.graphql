@@ -12,6 +12,8 @@ fragment AwsDataSourceConfigFragment on AwsDataSource {
     config_scheme
     region_name
     report_name
+    included_regions
+    excluded_regions
   }
 }
 

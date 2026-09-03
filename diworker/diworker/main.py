@@ -16,7 +16,9 @@ import clickhouse_connect
 
 from optscale_client.config_client.client import Client as ConfigClient
 from optscale_client.rest_api_client.client_v2 import Client as RestClient
-from tools.optscale_time.optscale_time import startday, utcfromtimestamp
+from tools.optscale_time.optscale_time import (
+    startday, utcfromtimestamp, utcnow_timestamp
+)
 from tools.optscale_telemetry import OpenTelemetryConfig
 
 from diworker.diworker.importers.base import BaseReportImporter
@@ -38,6 +40,8 @@ task_queue = Queue(
 
 LOG = logging.getLogger(__name__)
 ENVIRONMENT_CLOUD_TYPE = 'environment'
+
+ACTIVE_IMPORT_THRESHOLD = 1800
 HEARTBEAT_INTERVAL = 300
 DEFAULT_MAX_WORKERS = 4
 DEFAULT_MAX_TENANT_WORKERS = 1
@@ -150,10 +154,24 @@ class DIWorker(ConsumerMixin):
         if not report_import_id:
             raise Exception('invalid task received: {}'.format(task))
 
+        _, import_dict = rest_cl.report_import_get(report_import_id)
+        if import_dict.get('state') == 'in_progress':
+            # task that is not acked too long and is redelivered by rabbitmq
+            updated_at = import_dict.get('updated_at')
+            threshold = int(
+                self.diworker_settings.get('active_import_threshold_secs')
+                or ACTIVE_IMPORT_THRESHOLD)
+            if updated_at is None or updated_at >= utcnow_timestamp() - threshold:
+                LOG.warning('Import %s is already in progress, skipping '
+                            'redelivered task', report_import_id)
+                return True
+            LOG.warning('Import %s is in progress, but its last heartbeat is '
+                        'at %s, will process the task', report_import_id,
+                        updated_at)
+
         with self.active_reports_lock:
             self.active_report_import_ids.add(report_import_id)
 
-        _, import_dict = rest_cl.report_import_get(report_import_id)
         cloud_acc_id = import_dict.get('cloud_account_id')
         _, resp = rest_cl.report_import_list(cloud_acc_id, show_active=True)
         imports = list(filter(
@@ -268,17 +286,21 @@ class DIWorker(ConsumerMixin):
         rest_cl = self.get_rest_cl(config_cl)
         mongo_cl = self.get_mongo_cl(config_cl)
         clickhouse_cl = self.get_clickhouse_cl(config_cl)
+        skipped = False
         try:
-            self.report_import(body, config_cl=config_cl, rest_cl=rest_cl,
-                               mongo_cl=mongo_cl, clickhouse_cl=clickhouse_cl)
+            skipped = self.report_import(
+                body, config_cl=config_cl, rest_cl=rest_cl,
+                mongo_cl=mongo_cl, clickhouse_cl=clickhouse_cl)
         except Exception as exc:
             LOG.exception('Data import failed: %s', str(exc))
         finally:
             mongo_cl.close()
             clickhouse_cl.close()
             rest_cl.close()
-            with self.active_reports_lock:
-                self.active_report_import_ids.discard(body.get('report_import_id'))
+            if not skipped:
+                with self.active_reports_lock:
+                    self.active_report_import_ids.discard(
+                        body.get('report_import_id'))
         message.ack()
 
 

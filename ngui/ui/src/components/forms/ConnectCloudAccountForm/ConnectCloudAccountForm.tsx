@@ -23,7 +23,8 @@ import {
   DATABRICKS_CREDENTIALS_FIELD_NAMES,
   GCP_CREDENTIALS_FIELD_NAMES,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
-  KUBERNETES_CREDENTIALS_FIELD_NAMES
+  getRegionScopeConfigParams,
+  KUBERNETES_CREDENTIALS_FIELD_NAMES,
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import { FIELD_NAMES as NEBIUS_FIELD_NAMES } from "components/NebiusConfigFormElements";
@@ -44,7 +45,7 @@ import {
   DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD,
   DOCS_HYSTAX_CONNECT_GOOGLE_CLOUD_TENANT,
   DOCS_HYSTAX_CONNECT_KUBERNETES,
-  GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR
+  GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR,
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import {
@@ -60,7 +61,7 @@ import {
   GCP_TENANT,
   KUBERNETES_CNR,
   NEBIUS,
-  OPTSCALE_CAPABILITY
+  OPTSCALE_CAPABILITY,
 } from "utils/constants";
 import { readFileAsText } from "utils/files";
 import { SPACING_2 } from "utils/layouts";
@@ -74,7 +75,7 @@ import {
   useAuthenticationType,
   AUTHENTICATION_TYPES,
   AWS_ROOT_INPUTS_FIELD_NAMES,
-  AuthenticationType
+  AuthenticationType,
 } from "./FormElements/AwsConnectionForm";
 import { FIELD_NAME as DATA_SOURCE_NAME_FIELD_NAME } from "./FormElements/DataSourceNameField";
 
@@ -109,20 +110,20 @@ type CloudProviderTypes = Record<
 const CLOUD_PROVIDER_TYPES: CloudProviderTypes = {
   [CLOUD_PROVIDERS.AWS]: [
     { connectionType: CONNECTION_TYPES.AWS_MANAGEMENT, messageId: "managementStandalone", cloudType: AWS_CNR },
-    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR }
+    { connectionType: CONNECTION_TYPES.AWS_MEMBER, messageId: "member", cloudType: AWS_CNR },
   ],
   [CLOUD_PROVIDERS.AZURE]: [
     { connectionType: CONNECTION_TYPES.AZURE_TENANT, messageId: "tenant", cloudType: AZURE_TENANT },
-    { connectionType: CONNECTION_TYPES.AZURE_SUBSCRIPTION, messageId: "subscription", cloudType: AZURE_CNR }
+    { connectionType: CONNECTION_TYPES.AZURE_SUBSCRIPTION, messageId: "subscription", cloudType: AZURE_CNR },
   ],
   [CLOUD_PROVIDERS.GCP]: [
     { connectionType: CONNECTION_TYPES.GCP_TENANT, messageId: "tenant", cloudType: GCP_TENANT },
-    { connectionType: CONNECTION_TYPES.GCP_PROJECT, messageId: "project", cloudType: GCP_CNR }
+    { connectionType: CONNECTION_TYPES.GCP_PROJECT, messageId: "project", cloudType: GCP_CNR },
   ],
   [CLOUD_PROVIDERS.ALIBABA]: { connectionType: CONNECTION_TYPES.ALIBABA, cloudType: ALIBABA_CNR },
   [CLOUD_PROVIDERS.NEBIUS]: { connectionType: CONNECTION_TYPES.NEBIUS, cloudType: NEBIUS },
   [CLOUD_PROVIDERS.DATABRICKS]: { connectionType: CONNECTION_TYPES.DATABRICKS, cloudType: DATABRICKS },
-  [CLOUD_PROVIDERS.KUBERNETES]: { connectionType: CONNECTION_TYPES.KUBERNETES, cloudType: KUBERNETES_CNR }
+  [CLOUD_PROVIDERS.KUBERNETES]: { connectionType: CONNECTION_TYPES.KUBERNETES, cloudType: KUBERNETES_CNR },
 };
 
 const getCloudProviderFromConnectionType = (connectionType: ConnectionType): CloudProvider => {
@@ -152,20 +153,20 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
   const getConfigSchemeParameters = () =>
     formData.isFindReport
       ? {
-          config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.FIND_REPORT
+          config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.FIND_REPORT,
         }
       : {
           bucket_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_NAME],
           bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
           report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
           region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
-          config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME]
+          config_scheme: formData[AWS_ROOT_INPUTS_FIELD_NAMES.CONFIG_SCHEME],
         };
 
   const extraParams = {
     use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
     cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),
-    ...getConfigSchemeParameters()
+    ...getConfigSchemeParameters(),
   };
 
   return {
@@ -174,8 +175,9 @@ const getAwsRootParameters = (formData: FieldValues, connectionType: string) => 
     config: {
       access_key_id: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
       secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
-      ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : { linked: true })
-    }
+      ...getRegionScopeConfigParams(formData),
+      ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER ? extraParams : { linked: true }),
+    },
   };
 };
 
@@ -187,7 +189,7 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
     report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
     region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
-    config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY
+    config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
   };
 
   return {
@@ -196,13 +198,16 @@ const getAwsAssumedRoleParameters = (formData: FieldValues, connectionType: stri
     config: {
       assume_role_account_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID],
       assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
-      assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID],
+      assume_role_external_id: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.USE_EXTERNAL_ID]
+        ? formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID] || undefined
+        : undefined,
+      ...getRegionScopeConfigParams(formData),
       ...(connectionType !== CONNECTION_TYPES.AWS_MEMBER
         ? extraParams
         : {
-            linked: true
-          })
-    }
+            linked: true,
+          }),
+    },
   };
 };
 
@@ -217,8 +222,8 @@ const getAzureTenantParameters = (formData: FieldValues) => ({
   config: {
     client_id: formData[AZURE_TENANT_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
     tenant: formData[AZURE_TENANT_CREDENTIALS_FIELD_NAMES.TENANT],
-    secret: formData[AZURE_TENANT_CREDENTIALS_FIELD_NAMES.SECRET]
-  }
+    secret: formData[AZURE_TENANT_CREDENTIALS_FIELD_NAMES.SECRET],
+  },
 });
 
 const getAzureSubscriptionParameters = (formData: FieldValues) => ({
@@ -234,10 +239,10 @@ const getAzureSubscriptionParameters = (formData: FieldValues) => ({
           export_name: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.EXPORT_NAME],
           sa_connection_string: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_ACCOUNT_CONNECTION_STRING],
           container: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_CONTAINER],
-          directory: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_DIRECTORY]
+          directory: formData[AZURE_SUBSCRIPTION_CREDENTIALS_FIELD_NAMES.STORAGE_DIRECTORY],
         }
-      : {})
-  }
+      : {}),
+  },
 });
 
 const getKubernetesParameters = (formData: FieldValues) => ({
@@ -247,8 +252,8 @@ const getKubernetesParameters = (formData: FieldValues) => ({
     password: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.PASSWORD] || undefined,
     user: formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USER] || undefined,
     custom_price: !formData[KUBERNETES_CREDENTIALS_FIELD_NAMES.USE_FLAVOR_BASED_COST_MODEL],
-    cost_model: {}
-  }
+    cost_model: {},
+  },
 });
 
 const getAlibabaParameters = (formData: FieldValues) => ({
@@ -256,8 +261,8 @@ const getAlibabaParameters = (formData: FieldValues) => ({
   type: ALIBABA_CNR,
   config: {
     access_key_id: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
-    secret_access_key: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]
-  }
+    secret_access_key: formData[ALIBABA_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
+  },
 });
 
 const getGoogleParameters = async (formData: FieldValues) => {
@@ -271,7 +276,7 @@ const getGoogleParameters = async (formData: FieldValues) => {
       billing_data: {
         dataset_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
         table_name: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE],
-        project_id: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_PROJECT_ID] || undefined
+        project_id: formData[GCP_CREDENTIALS_FIELD_NAMES.BILLING_DATA_PROJECT_ID] || undefined,
       },
       ...(formData[GCP_CREDENTIALS_FIELD_NAMES.AUTOMATICALLY_DETECT_PRICING_DATA]
         ? {}
@@ -279,10 +284,10 @@ const getGoogleParameters = async (formData: FieldValues) => {
             pricing_data: {
               dataset_name: formData[GCP_CREDENTIALS_FIELD_NAMES.PRICING_DATA_DATASET],
               table_name: formData[GCP_CREDENTIALS_FIELD_NAMES.PRICING_DATA_TABLE],
-              project_id: formData[GCP_CREDENTIALS_FIELD_NAMES.PRICING_DATA_PROJECT_ID] || undefined
-            }
-          })
-    }
+              project_id: formData[GCP_CREDENTIALS_FIELD_NAMES.PRICING_DATA_PROJECT_ID] || undefined,
+            },
+          }),
+    },
   };
 };
 
@@ -296,17 +301,17 @@ const getGoogleTenantParameters = async (formData: FieldValues) => {
       credentials: JSON.parse(credentials as string),
       billing_data: {
         dataset_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_DATASET],
-        table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE]
+        table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.BILLING_DATA_TABLE],
       },
       ...(formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.AUTOMATICALLY_DETECT_PRICING_DATA]
         ? {}
         : {
             pricing_data: {
               dataset_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.PRICING_DATA_DATASET],
-              table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.PRICING_DATA_TABLE]
-            }
-          })
-    }
+              table_name: formData[GCP_TENANT_CREDENTIALS_FIELD_NAMES.PRICING_DATA_TABLE],
+            },
+          }),
+    },
   };
 };
 
@@ -326,8 +331,8 @@ const getNebiusParameters = (formData: FieldValues) => ({
     secret_access_key: formData[NEBIUS_FIELD_NAMES.SECRET_ACCESS_KEY],
     // bucket where report files are located
     bucket_name: formData[NEBIUS_FIELD_NAMES.BUCKET_NAME],
-    bucket_prefix: formData[NEBIUS_FIELD_NAMES.BUCKET_PREFIX]
-  }
+    bucket_prefix: formData[NEBIUS_FIELD_NAMES.BUCKET_PREFIX],
+  },
 });
 
 const getDatabricksParameters = (formData: FieldValues) => ({
@@ -337,8 +342,8 @@ const getDatabricksParameters = (formData: FieldValues) => ({
     account_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.ACCOUNT_ID],
     client_id: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_ID],
     client_secret: formData[DATABRICKS_CREDENTIALS_FIELD_NAMES.CLIENT_SECRET],
-    cost_model: {}
-  }
+    cost_model: {},
+  },
 });
 
 const renderConnectionTypeDescription = (settings) =>
@@ -361,9 +366,9 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
               {chunks}
             </Link>
           ),
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }
-      }
+          strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.AZURE_SUBSCRIPTION]: renderConnectionTypeDescription([
       {
@@ -375,9 +380,9 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
               {chunks}
             </Link>
           ),
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }
-      }
+          strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.GCP_PROJECT]: renderConnectionTypeDescription([
       {
@@ -390,14 +395,14 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
             </Link>
           ),
           strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
-          p: (chunks: ReactNode) => <p>{chunks}</p>
-        }
-      }
+          p: (chunks: ReactNode) => <p>{chunks}</p>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.GCP_TENANT]: renderConnectionTypeDescription([
       {
         key: "createGCPTenantDocumentationReference1",
-        messageId: "createGCPTenantDocumentationReference1"
+        messageId: "createGCPTenantDocumentationReference1",
       },
       {
         key: "createGCPTenantDocumentationReference2",
@@ -409,9 +414,9 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
             </Link>
           ),
           strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
-          p: (chunks: ReactNode) => <p>{chunks}</p>
-        }
-      }
+          p: (chunks: ReactNode) => <p>{chunks}</p>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.KUBERNETES]: renderConnectionTypeDescription([
       {
@@ -422,12 +427,12 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
             <Link data-test-id="link_guide" href={DOCS_HYSTAX_CONNECT_KUBERNETES} target="_blank" rel="noopener">
               {chunks}
             </Link>
-          )
-        }
+          ),
+        },
       },
       {
         key: "createKubernetesDocumentationReference2",
-        messageId: "createKubernetesDocumentationReference2"
+        messageId: "createKubernetesDocumentationReference2",
       },
       {
         key: "createKubernetesDocumentationReference3",
@@ -438,9 +443,9 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
               {GITHUB_HYSTAX_K8S_COST_METRICS_COLLECTOR}
             </Link>
           ),
-          p: (chunks: ReactNode) => <p>{chunks}</p>
-        }
-      }
+          p: (chunks: ReactNode) => <p>{chunks}</p>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.ALIBABA]: renderConnectionTypeDescription([
       {
@@ -452,9 +457,9 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
               {chunks}
             </Link>
           ),
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }
-      }
+          strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+        },
+      },
     ]),
     [CONNECTION_TYPES.DATABRICKS]: renderConnectionTypeDescription([
       {
@@ -466,11 +471,11 @@ const renderConnectionTypeInfoMessage = (connectionType: ConnectionType, authent
               {chunks}
             </Link>
           ),
-          strong: (chunks: ReactNode) => <strong>{chunks}</strong>
-        }
-      }
+          strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+        },
+      },
     ]),
-    [CONNECTION_TYPES.NEBIUS]: null
+    [CONNECTION_TYPES.NEBIUS]: null,
   })[connectionType];
 
 const getConnectionTypeFromQueryParams = () => {
@@ -487,7 +492,7 @@ const trackConnectionTypeChangeEvent = (connectionType: ConnectionType) => {
   trackEvent({
     category: GA_EVENT_CATEGORIES.DATA_SOURCE,
     action: "Switch",
-    label: getCloudTypeFromConnectionType(connectionType)
+    label: getCloudTypeFromConnectionType(connectionType),
   });
 };
 
@@ -499,6 +504,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
   const methods = useForm({
     defaultValues: {
       [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]: defaultAssumeRoleExternalId,
+      [AWS_ROLE_CREDENTIALS_FIELD_NAMES.USE_EXTERNAL_ID]: true,
     },
   });
 
@@ -534,28 +540,28 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       icon: AwsLogoIcon,
       messageId: "aws",
       dataTestId: "btn_aws_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AWS_MANAGEMENT)
+      action: () => setConnectionType(CONNECTION_TYPES.AWS_MANAGEMENT),
     },
     {
       id: CLOUD_PROVIDERS.AZURE,
       icon: AzureLogoIcon,
       messageId: "azure",
       dataTestId: "btn_azure_account",
-      action: () => setConnectionType(CONNECTION_TYPES.AZURE_TENANT)
+      action: () => setConnectionType(CONNECTION_TYPES.AZURE_TENANT),
     },
     {
       id: CLOUD_PROVIDERS.GCP,
       icon: GcpLogoIcon,
       messageId: "gcp",
       dataTestId: "btn_gcp_account",
-      action: () => setConnectionType(CONNECTION_TYPES.GCP_TENANT)
+      action: () => setConnectionType(CONNECTION_TYPES.GCP_TENANT),
     },
     {
       id: CLOUD_PROVIDERS.ALIBABA,
       icon: AlibabaLogoIcon,
       messageId: "alibaba",
       dataTestId: "btn_alibaba_account",
-      action: () => setConnectionType(CONNECTION_TYPES.ALIBABA)
+      action: () => setConnectionType(CONNECTION_TYPES.ALIBABA),
     },
     {
       id: CLOUD_PROVIDERS.NEBIUS,
@@ -563,7 +569,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: "nebius",
       dataTestId: "btn_nebius_account",
       action: () => setConnectionType(CONNECTION_TYPES.NEBIUS),
-      capability: OPTSCALE_CAPABILITY.FINOPS
+      capability: OPTSCALE_CAPABILITY.FINOPS,
     },
     {
       id: CLOUD_PROVIDERS.DATABRICKS,
@@ -571,7 +577,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: "databricks",
       dataTestId: "btn_databricks_account",
       action: () => setConnectionType(CONNECTION_TYPES.DATABRICKS),
-      capability: OPTSCALE_CAPABILITY.FINOPS
+      capability: OPTSCALE_CAPABILITY.FINOPS,
     },
     {
       id: CLOUD_PROVIDERS.KUBERNETES,
@@ -579,8 +585,8 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
       messageId: "kubernetes",
       dataTestId: "btn_kubernetes_account",
       action: () => setConnectionType(CONNECTION_TYPES.KUBERNETES),
-      capability: OPTSCALE_CAPABILITY.FINOPS
-    }
+      capability: OPTSCALE_CAPABILITY.FINOPS,
+    },
   ].filter(({ id }) => {
     const providerTypes = CLOUD_PROVIDER_TYPES[id];
 
@@ -607,7 +613,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                 id: subtype.connectionType,
                 messageId: subtype.messageId,
                 dataTestId: `btn_${subtype.messageId}`,
-                action: () => setConnectionType(subtype.connectionType)
+                action: () => setConnectionType(subtype.connectionType),
               }))}
             activeButtonId={connectionType}
           />
@@ -636,7 +642,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 onClick={action}
                 data-test-id={dataTestId}
@@ -668,7 +674,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                       [ALIBABA_CNR]: getAlibabaParameters,
                       [NEBIUS]: getNebiusParameters,
                       [KUBERNETES_CNR]: getKubernetesParameters,
-                      [DATABRICKS]: getDatabricksParameters
+                      [DATABRICKS]: getDatabricksParameters,
                     }[cloudType];
 
                     onSubmit(await getParameters(formData));
@@ -689,7 +695,7 @@ const ConnectCloudAccountForm = ({ onSubmit, onCancel, isLoading = false, showCa
                 isLoading={isLoading}
                 tooltip={{
                   show: isRestricted,
-                  value: restrictionReasonMessage
+                  value: restrictionReasonMessage,
                 }}
                 type="submit"
               />

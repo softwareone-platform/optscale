@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import os
+import resource
+import threading
 import time
 import traceback
 
@@ -35,6 +37,18 @@ task_exchange = Exchange(EXCHANGE_NAME, type='direct')
 task_queue = Queue(QUEUE_NAME, task_exchange, routing_key=QUEUE_NAME)
 LOG = get_logger(__name__)
 DEFAULT_DISCOVER_SIZE = 10000
+
+
+def get_current_rss_mb():
+    """Current resident set size in MB, read from /proc"""
+    try:
+        with open('/proc/self/status') as f:
+            for line in f:
+                if line.startswith('VmRSS:'):
+                    return int(line.split()[1]) / 1024
+    except (OSError, ValueError, IndexError):
+        return None
+    return None
 
 
 class ResourcesSaver:
@@ -149,8 +163,10 @@ class ResourcesSaver:
                 break
             flavor_name = resource.flavor
             if resource.cloud_type in ['azure_cnr', 'aws_cnr', 'gcp_cnr']:
-                flavor = flavors.get(flavor_name)
-                if not flavor:
+                if flavor_name in flavors:
+                    flavor = flavors[flavor_name]
+                else:
+                    flavor = None
                     if not resource_type:
                         resource_type = getattr(
                             ResourceTypes, self.MODEL_MAP_INVERTED[
@@ -164,16 +180,18 @@ class ResourcesSaver:
                         LOG.warning('Unable to find flavor %s for '
                                     'cloud account %s: %s', flavor_name,
                                     resource.cloud_account_id, str(exc))
-                if flavor:
+                    # Not found flavors are cached too, to not call insider
+                    # several times
                     flavors[flavor_name] = flavor
+                if flavor:
                     resource.cpu_count = flavor['cpu']
                     multiplier = BYTES_IN_MB
                     if resource.cloud_type == 'gcp_cnr':
                         multiplier = BYTES_IN_GB
                     resource.ram = flavor['ram'] * multiplier
-            if not resource.architecture and resource.cloud_type in [
-                'aws_cnr', 'azure_cnr', 'alibaba_cnr'
-            ]:
+            if (hasattr(resource, 'architecture') and
+                    not resource.architecture and resource.cloud_type in [
+                        'aws_cnr', 'azure_cnr', 'alibaba_cnr']):
                 flavor_arch = flavor_archs.get(flavor_name)
                 if not flavor_arch:
                     _, arch_info = self.insider_cl.get_architecture(
@@ -202,9 +220,9 @@ class ResourcesSaver:
             _, response = self.rest_cl.cloud_resource_create_bulk(
                 cloud_acc_id, {'resources': payload},
                 behavior='update_existing', return_resources=True)
-        for resource in resources:
+        for res in resources:
             try:
-                resource.post_discover()
+                res.post_discover()
             except Exception as exc:
                 LOG.error('Post discover actions failed: %s', str(exc))
 
@@ -296,23 +314,28 @@ class DiscoveryWorker(ConsumerMixin):
     def discover(self, config, resource_type):
         res = []
         if not config:
-            return res
+            return res, None
         adapter = CloudAdapter.get_adapter(config)
         max_parallel_requests = self.max_parallel_requests(config)
-        with ThreadPoolExecutor(
-                max_workers=max_parallel_requests) as executor:
-            try:
-                discover_calls = adapter.get_discovery_calls(resource_type)
-            except InvalidResourceTypeException:
-                LOG.exception('Discovery calls for resource type %s are '
-                              'not found', resource_type)
-                return res
-            futures = []
-            for call in discover_calls:
-                futures.append(executor.submit(call[0], *call[1]))
-            for f in futures:
-                res.append(f.result())
-        return res
+        try:
+            with ThreadPoolExecutor(
+                    max_workers=max_parallel_requests) as executor:
+                try:
+                    discover_calls = adapter.get_discovery_calls(
+                        resource_type)
+                except InvalidResourceTypeException:
+                    LOG.exception('Discovery calls for resource type %s are '
+                                  'not found', resource_type)
+                    return res, adapter
+                futures = []
+                for call in discover_calls:
+                    futures.append(executor.submit(call[0], *call[1]))
+                for f in futures:
+                    res.append(f.result())
+        except Exception:
+            adapter.close()
+            raise
+        return res, adapter
 
     @staticmethod
     def extract_from_generator(generator):
@@ -346,41 +369,45 @@ class DiscoveryWorker(ConsumerMixin):
                      'skipped due to disabled organization.', cloud_acc_id,
                      resource_type)
             return
-        gen_list = self.discover(config, resource_type)
         discovered_resources = set()
         resources_count = 0
-        max_parallel_requests = self.max_parallel_requests(config)
         errors = set()
-        for i in range(0, len(gen_list), max_parallel_requests):
-            gen_list_chunk = gen_list[i:i + max_parallel_requests]
-            while gen_list_chunk:
-                futures = []
-                with ThreadPoolExecutor(
-                        max_workers=max_parallel_requests) as executor:
-                    for gen in gen_list_chunk:
-                        futures.append(
-                            executor.submit(self.extract_from_generator, gen))
-                for f in futures:
-                    res, gen = f.result()
-                    if isinstance(res, Exception):
-                        if self.is_404(res):
-                            LOG.debug("Got 404 exception: %s, skipping it",
-                                      str(res))
-                            continue
-                        LOG.error("Exception: %s %s", str(res),
-                                  traceback.print_tb(res.__traceback__))
-                        gen_list_chunk.remove(gen)
-                        errors.add(str(res))
-                    elif res:
-                        res.cloud_account_id = cloud_acc_id
-                        res.cloud_type = config['type']
-                        discovered_resources.add(res)
-                    else:
-                        gen_list_chunk.remove(gen)
-                    if len(discovered_resources) >= CHUNK_SIZE:
-                        resources_count += len(discovered_resources)
-                        self.res_saving.send(discovered_resources)
-                        discovered_resources.clear()
+        adapter = None
+        try:
+            max_parallel_requests = self.max_parallel_requests(config)
+            gen_list, adapter = self.discover(config, resource_type)
+            with ThreadPoolExecutor(
+                    max_workers=max_parallel_requests) as executor:
+                for i in range(0, len(gen_list), max_parallel_requests):
+                    gen_list_chunk = gen_list[i:i + max_parallel_requests]
+                    while gen_list_chunk:
+                        futures = [
+                            executor.submit(self.extract_from_generator, gen)
+                            for gen in gen_list_chunk]
+                        for f in futures:
+                            res, gen = f.result()
+                            if isinstance(res, Exception):
+                                if self.is_404(res):
+                                    LOG.debug("Got 404 exception: %s, skipping it",
+                                              str(res))
+                                    continue
+                                LOG.error("Exception: %s %s", str(res),
+                                          traceback.print_tb(res.__traceback__))
+                                gen_list_chunk.remove(gen)
+                                errors.add(str(res))
+                            elif res:
+                                res.cloud_account_id = cloud_acc_id
+                                res.cloud_type = config['type']
+                                discovered_resources.add(res)
+                            else:
+                                gen_list_chunk.remove(gen)
+                            if len(discovered_resources) >= CHUNK_SIZE:
+                                resources_count += len(discovered_resources)
+                                self.res_saving.send(discovered_resources)
+                                discovered_resources = set()
+        finally:
+            if adapter is not None:
+                adapter.close()
         if len(discovered_resources):
             resources_count += len(discovered_resources)
             self.res_saving.send(discovered_resources)
@@ -429,6 +456,24 @@ class DiscoveryWorker(ConsumerMixin):
             self.discover_resources(body)
         except Exception as exc:
             LOG.exception('Resource discovery failed: %s', str(exc))
+        finally:
+            body = body if isinstance(body, dict) else {}
+            # ru_maxrss is the process' peak resident set size so far (KB on
+            # Linux) - monotonically non-decreasing, so logging it after
+            # every task lets us correlate RSS growth with a specific
+            # cloud_account_id/resource_type task and with thread count.
+            # current_rss_mb (from /proc) is the actual usage right now,
+            # for comparison - unlike ru_maxrss it can go down.
+            max_rss_mb = resource.getrusage(
+                resource.RUSAGE_SELF).ru_maxrss / 1024
+            current_rss_mb = get_current_rss_mb()
+            LOG.info(
+                'RSS after task cloud_account_id=%s resource_type=%s: '
+                'peak=%.1f MB, current=%s MB, active threads=%s',
+                body.get('cloud_account_id'), body.get('resource_type'),
+                max_rss_mb,
+                f'{current_rss_mb:.1f}' if current_rss_mb is not None else 'n/a',
+                threading.active_count())
         message.ack()
 
     def heartbeat(self):

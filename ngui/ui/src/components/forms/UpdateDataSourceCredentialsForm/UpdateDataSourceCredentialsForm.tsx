@@ -17,6 +17,8 @@ import {
   AWS_EXPORT_TYPE_FIELD_NAMES,
   AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES,
   AWS_ROLE_CREDENTIALS_FIELD_NAMES,
+  getRegionScopeDefaultValues,
+  getRegionScopeConfigParams,
 } from "components/DataSourceCredentialFields";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
 import FormContentDescription from "components/FormContentDescription";
@@ -276,6 +278,7 @@ const getConfig = (type, config) => {
               [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
               [AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
               [AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
+              ...getRegionScopeDefaultValues(config),
               ...billingBucketFields,
             };
           }
@@ -284,6 +287,7 @@ const getConfig = (type, config) => {
             return {
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID]: config.access_key_id,
               [AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY]: "",
+              ...getRegionScopeDefaultValues(config),
             };
           }
 
@@ -293,6 +297,7 @@ const getConfig = (type, config) => {
             [AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]: false,
             [AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT]: config.use_edp_discount ?? false,
             [AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]: config.cur_version ?? AWS_ROOT_CONNECT_CUR_VERSION.CUR_2,
+            ...getRegionScopeDefaultValues(config),
             ...billingBucketFields,
           };
         },
@@ -310,6 +315,7 @@ const getConfig = (type, config) => {
                     assume_role_name: formData[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_NAME],
                     ...externalIdParam,
                     linked: true,
+                    ...getRegionScopeConfigParams(formData),
                   },
                 }
               : {
@@ -324,6 +330,7 @@ const getConfig = (type, config) => {
                     report_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.EXPORT_NAME],
                     region_name: formData[AWS_BILLING_BUCKET_FIELD_NAMES.REGION_NAME] || undefined,
                     bucket_prefix: formData[AWS_BILLING_BUCKET_FIELD_NAMES.BUCKET_PREFIX],
+                    ...getRegionScopeConfigParams(formData),
                   },
                 };
           }
@@ -333,6 +340,7 @@ const getConfig = (type, config) => {
                 access_key_id: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.ACCESS_KEY_ID],
                 secret_access_key: formData[AWS_LINKED_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
                 linked: true,
+                ...getRegionScopeConfigParams(formData),
               },
             };
           }
@@ -343,6 +351,7 @@ const getConfig = (type, config) => {
               secret_access_key: formData[AWS_ROOT_CREDENTIALS_FIELD_NAMES.SECRET_ACCESS_KEY],
               config_scheme: AWS_ROOT_CONNECT_CONFIG_SCHEMES.BUCKET_ONLY,
               use_edp_discount: formData[AWS_USE_AWS_EDP_DISCOUNT_FIELD_NAMES.USE_EDP_DISCOUNT],
+              ...getRegionScopeConfigParams(formData),
               ...(formData[AWS_ROOT_UPDATE_DATA_EXPORT_PARAMETERS]
                 ? {
                     cur_version: Number(formData[AWS_EXPORT_TYPE_FIELD_NAMES.CUR_VERSION]),

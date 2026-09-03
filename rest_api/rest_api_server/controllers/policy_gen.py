@@ -195,7 +195,7 @@ class PolicyGeneratorController(BaseController):
             account_id = self._get_aws_account_id(**service_creds)
         except Exception as exc:
             LOG.info("error getting account id: %s", str(exc))
-            raise FailedDependency(Err.OE0570, [exc])
+            raise FailedDependency(Err.OE0570, [str(exc)])
         return account_id
 
     def generate_role_policy_linked_account(self):
@@ -209,7 +209,7 @@ class PolicyGeneratorController(BaseController):
     def generate_aws_trust_rel_template(self, account_id, external_id=None):
         policy = json.loads(
             json.dumps(self.aws_trust_rel_template) % account_id)
-        if external_id:
+        if external_id is not None:
             policy['Statement'][0]['Condition'] = {
                 'StringEquals': {'sts:ExternalId': external_id}
             }
@@ -219,7 +219,8 @@ class PolicyGeneratorController(BaseController):
                           external_id=None):
         if cloud_type not in self.supported_clouds:
             raise WrongArgumentsException(Err.OE0436, [cloud_type])
-        CloudAccountController.validate_assume_role_external_id(external_id)
+        if external_id is not None:
+            CloudAccountController.validate_assume_role_external_id(external_id)
         account_id = self.get_aws_account_id()
         result = {
             "trust_policy": self.generate_aws_trust_rel_template(
