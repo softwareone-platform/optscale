@@ -2,7 +2,7 @@ import re
 from calendar import monthrange
 from datetime import datetime, timedelta, timezone
 
-from optscale_data.clickhouse import ExternalDataConverter
+from tools.optscale_data.clickhouse import ExternalDataConverter
 from tools.optscale_time import utcnow
 
 

@@ -487,6 +487,9 @@ jobs:
     needs: determine_changes
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Build image
         run: bash -x build.sh demo_org_cleanup build
       - name: Build test image and run tests

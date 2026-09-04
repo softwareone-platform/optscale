@@ -244,6 +244,8 @@ def get_handlers(handler_kwargs, version=None):
              handler_kwargs),
             (urls_v2.pool_expense_exports, h_v2.pool_expenses_export.PoolExpensesExportAsyncItemHandler,
              handler_kwargs),
+            (urls_v2.pool_expenses_report, h_v2.pool_expenses_report.PoolExpensesReportAsyncHandler,
+             handler_kwargs),
             (urls_v2.nodes_collection_bulk, h_v2.nodes.NodesAsyncCollectionBulkHandler,
              handler_kwargs),
             (urls_v2.nodes_collection, h_v2.nodes.NodesAsyncCollectionHandler,

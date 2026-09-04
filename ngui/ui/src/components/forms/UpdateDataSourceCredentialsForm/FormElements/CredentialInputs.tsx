@@ -17,6 +17,7 @@ import {
   AwsRootCredentials,
   AwsBillingBucket,
   AwsExportType,
+  AwsRegionScope,
   AwsUseAwsEdpDiscount,
   GcpTenantCredentials,
   GCP_TENANT_CREDENTIALS_FIELD_NAMES,
@@ -73,21 +74,36 @@ const CostAndUsageReport = () => {
 const CredentialInputs = ({ type, config }) => {
   const getAwsInputs = (config) => {
     if (config.assume_role_account_id && config.assume_role_name) {
+      // Legacy assumed-role data sources were connected before the external ID existed, so they
+      // never have one set. Hide the field entirely in that case rather than showing an empty,
+      // read-only, required input the user could never satisfy.
+      const isLegacyWithoutExternalId = !config.assume_role_external_id;
+
       return (
         <AwsAssumedRoleInputs
-          readOnlyFields={[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]}
+          readOnlyFields={[
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID,
+            AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID,
+          ]}
+          hiddenFields={isLegacyWithoutExternalId ? [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID] : []}
           showAdvancedOptions={!config.linked}
         />
       );
     }
 
     if (config.linked) {
-      return <AwsLinkedCredentials />;
+      return (
+        <>
+          <AwsLinkedCredentials />
+          <AwsRegionScope />
+        </>
+      );
     }
 
     return (
       <>
         <AwsRootCredentials />
+        <AwsRegionScope />
         <AwsUseAwsEdpDiscount />
         <CostAndUsageReport />
       </>

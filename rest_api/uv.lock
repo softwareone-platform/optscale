@@ -1694,7 +1694,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "netaddr", specifier = "==0.7.19" },
-    { name = "optscale-exceptions", specifier = "==0.0.0" },
+    { name = "optscale-exceptions", editable = "../tools/optscale_exceptions" },
     { name = "requests", specifier = "==2.32.4" },
     { name = "sqlalchemy", specifier = "==1.3.24" },
 ]

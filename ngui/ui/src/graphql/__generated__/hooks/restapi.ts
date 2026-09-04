@@ -74,11 +74,14 @@ export type AvailableFiltersParams = {
 
 export type AwsAssumedRoleConfigInput = {
   assume_role_account_id: Scalars["String"]["input"];
+  assume_role_external_id?: InputMaybe<Scalars["String"]["input"]>;
   assume_role_name: Scalars["String"]["input"];
   bucket_name?: InputMaybe<Scalars["String"]["input"]>;
   bucket_prefix?: InputMaybe<Scalars["String"]["input"]>;
   config_scheme?: InputMaybe<Scalars["String"]["input"]>;
   cur_version?: InputMaybe<Scalars["Int"]["input"]>;
+  excluded_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  included_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
   linked?: InputMaybe<Scalars["Boolean"]["input"]>;
   region_name?: InputMaybe<Scalars["String"]["input"]>;
   report_name?: InputMaybe<Scalars["String"]["input"]>;
@@ -89,11 +92,14 @@ export type AwsConfig = {
   __typename?: "AwsConfig";
   access_key_id?: Maybe<Scalars["String"]["output"]>;
   assume_role_account_id?: Maybe<Scalars["String"]["output"]>;
+  assume_role_external_id?: Maybe<Scalars["String"]["output"]>;
   assume_role_name?: Maybe<Scalars["String"]["output"]>;
   bucket_name?: Maybe<Scalars["String"]["output"]>;
   bucket_prefix?: Maybe<Scalars["String"]["output"]>;
   config_scheme?: Maybe<Scalars["String"]["output"]>;
   cur_version?: Maybe<Scalars["Int"]["output"]>;
+  excluded_regions?: Maybe<Array<Scalars["String"]["output"]>>;
+  included_regions?: Maybe<Array<Scalars["String"]["output"]>>;
   linked?: Maybe<Scalars["Boolean"]["output"]>;
   region_name?: Maybe<Scalars["String"]["output"]>;
   report_name?: Maybe<Scalars["String"]["output"]>;
@@ -120,6 +126,8 @@ export type AwsDataSource = DataSourceInterface & {
 
 export type AwsLinkedConfigInput = {
   access_key_id: Scalars["String"]["input"];
+  excluded_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  included_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
   linked: Scalars["Boolean"]["input"];
   secret_access_key: Scalars["String"]["input"];
 };
@@ -130,6 +138,8 @@ export type AwsRootConfigInput = {
   bucket_prefix?: InputMaybe<Scalars["String"]["input"]>;
   config_scheme?: InputMaybe<Scalars["String"]["input"]>;
   cur_version?: InputMaybe<Scalars["Int"]["input"]>;
+  excluded_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  included_regions?: InputMaybe<Array<Scalars["String"]["input"]>>;
   region_name?: InputMaybe<Scalars["String"]["input"]>;
   report_name?: InputMaybe<Scalars["String"]["input"]>;
   secret_access_key: Scalars["String"]["input"];
@@ -307,6 +317,7 @@ export type CleanExpensesParams = {
 export type CloudPoliciesParams = {
   bucket_name: Scalars["String"]["input"];
   cloud_type: Scalars["String"]["input"];
+  external_id?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type CreateDataSourceInput = {
@@ -1019,6 +1030,7 @@ export type AwsDataSourceConfigFragmentFragment = {
     __typename?: "AwsConfig";
     assume_role_account_id?: string | null;
     assume_role_name?: string | null;
+    assume_role_external_id?: string | null;
     access_key_id?: string | null;
     linked?: boolean | null;
     use_edp_discount?: boolean | null;
@@ -1028,6 +1040,8 @@ export type AwsDataSourceConfigFragmentFragment = {
     config_scheme?: string | null;
     region_name?: string | null;
     report_name?: string | null;
+    included_regions?: Array<string> | null;
+    excluded_regions?: Array<string> | null;
   } | null;
 };
 
@@ -1225,6 +1239,7 @@ export type DataSourcesQuery = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -1234,6 +1249,8 @@ export type DataSourcesQuery = {
           config_scheme?: string | null;
           region_name?: string | null;
           report_name?: string | null;
+          included_regions?: Array<string> | null;
+          excluded_regions?: Array<string> | null;
         } | null;
       }
     | {
@@ -1555,6 +1572,7 @@ export type DataSourceQuery = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -1564,6 +1582,8 @@ export type DataSourceQuery = {
           config_scheme?: string | null;
           region_name?: string | null;
           report_name?: string | null;
+          included_regions?: Array<string> | null;
+          excluded_regions?: Array<string> | null;
         } | null;
       }
     | {
@@ -2117,6 +2137,7 @@ export type UpdateDataSourceMutation = {
           __typename?: "AwsConfig";
           assume_role_account_id?: string | null;
           assume_role_name?: string | null;
+          assume_role_external_id?: string | null;
           access_key_id?: string | null;
           linked?: boolean | null;
           use_edp_discount?: boolean | null;
@@ -2126,6 +2147,8 @@ export type UpdateDataSourceMutation = {
           config_scheme?: string | null;
           region_name?: string | null;
           report_name?: string | null;
+          included_regions?: Array<string> | null;
+          excluded_regions?: Array<string> | null;
         } | null;
       }
     | {
@@ -2397,6 +2420,7 @@ export const AwsDataSourceConfigFragmentFragmentDoc = gql`
     config {
       assume_role_account_id
       assume_role_name
+      assume_role_external_id
       access_key_id
       linked
       use_edp_discount
@@ -2406,6 +2430,8 @@ export const AwsDataSourceConfigFragmentFragmentDoc = gql`
       config_scheme
       region_name
       report_name
+      included_regions
+      excluded_regions
     }
   }
 `;

@@ -20,7 +20,7 @@ import useGetRowStyle from "./hooks/useGetRowStyle";
 import useHoverableRows from "./hooks/useHoverableRows";
 import { EXPANDED_POOL_ROWS } from "./reducer";
 
-const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
+const PoolsTable = ({ rootPool, isLoadingProps = {}, startDateTimestamp, endDateTimestamp }) => {
   const dispatch = useDispatch();
 
   const openSideModal = useOpenSideModal();
@@ -84,7 +84,7 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
         onConstraintsClick: (id) => openEditModal(POOL_TABS.CONSTRAINTS, id)
       }),
       poolLimit(),
-      expenses({ defaultSort: "desc" }),
+      expenses({ defaultSort: "desc", startDateTimestamp, endDateTimestamp }),
       poolForecast(),
       text({
         headerMessageId: "owner",
@@ -100,7 +100,7 @@ const PoolsTable = ({ rootPool, isLoadingProps = {} }) => {
       }),
       poolActions()
     ],
-    [openEditModal]
+    [openEditModal, startDateTimestamp, endDateTimestamp]
   );
 
   const root = useMemo(() => [rootPool], [rootPool]);

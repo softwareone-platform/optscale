@@ -59,6 +59,7 @@ export default gql`
     access_key_id: String
     assume_role_account_id: String
     assume_role_name: String
+    assume_role_external_id: String
     linked: Boolean
     use_edp_discount: Boolean
     cur_version: Int
@@ -67,6 +68,8 @@ export default gql`
     config_scheme: String
     region_name: String
     report_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   type AwsDataSource implements DataSourceInterface {
@@ -341,17 +344,22 @@ export default gql`
     config_scheme: String
     report_name: String
     region_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   input AwsLinkedConfigInput {
     access_key_id: String!
     secret_access_key: String!
     linked: Boolean!
+    included_regions: [String!]
+    excluded_regions: [String!]
   }
 
   input AwsAssumedRoleConfigInput {
     assume_role_account_id: String!
     assume_role_name: String!
+    assume_role_external_id: String
     bucket_name: String
     bucket_prefix: String
     region_name: String
@@ -359,6 +367,8 @@ export default gql`
     cur_version: Int
     config_scheme: String
     report_name: String
+    included_regions: [String!]
+    excluded_regions: [String!]
     linked: Boolean
   }
 
@@ -654,6 +664,7 @@ export default gql`
   input CloudPoliciesParams {
     bucket_name: String!
     cloud_type: String!
+    external_id: String
   }
 
   input AvailableFiltersParams {

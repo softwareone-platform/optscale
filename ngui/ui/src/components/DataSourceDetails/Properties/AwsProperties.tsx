@@ -1,5 +1,6 @@
 import { FormattedMessage } from "react-intl";
 import KeyValueLabel from "components/KeyValueLabel/KeyValueLabel";
+import { isEmptyArray } from "utils/arrays";
 import { AWS_CNR, AWS_ROOT_CONNECT_CUR_VERSION, AWS_ROOT_CONNECT_CUR_VERSION_MESSAGE_ID } from "utils/constants";
 import { AwsPropertiesProps } from "./types";
 
@@ -8,13 +9,16 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
     access_key_id: accessKeyId,
     assume_role_account_id: assumeRoleAccountId,
     assume_role_name: assumeRoleName,
+    assume_role_external_id: assumeRoleExternalId,
     bucket_name: bucketName,
     bucket_prefix: bucketPrefix,
     linked,
     cur_version: curVersion,
     report_name: reportName,
     use_edp_discount: useEdpDiscount,
-    region_name: regionName
+    region_name: regionName,
+    included_regions: includedRegions,
+    excluded_regions: excludedRegions,
   } = config;
 
   const isAssumeRole = Boolean(assumeRoleAccountId && assumeRoleName);
@@ -42,7 +46,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         value={createdAt}
         dataTestIds={{
           key: `p_connected_at_id`,
-          value: `p_connected_at_value`
+          value: `p_connected_at_value`,
         }}
       />
       <KeyValueLabel
@@ -50,7 +54,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         value={accountId}
         dataTestIds={{
           key: `p_${AWS_CNR}_id`,
-          value: `p_${AWS_CNR}_value`
+          value: `p_${AWS_CNR}_value`,
         }}
       />
       <KeyValueLabel
@@ -58,7 +62,7 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         value={<FormattedMessage id={getAwsAccountTypeMessageId()} />}
         dataTestIds={{
           key: `p_${AWS_CNR}_key`,
-          value: `p_${AWS_CNR}_value`
+          value: `p_${AWS_CNR}_value`,
         }}
       />
       <KeyValueLabel
@@ -67,11 +71,20 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
         dataTestIds={{ key: "p_authentication_type_key", value: "p_authentication_type_value" }}
       />
       {isAssumeRole && (
-        <KeyValueLabel
-          keyMessageId="awsRoleName"
-          value={assumeRoleName}
-          dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
-        />
+        <>
+          <KeyValueLabel
+            keyMessageId="awsRoleName"
+            value={assumeRoleName}
+            dataTestIds={{ key: "p_assume_role_name_key", value: "p_assume_role_name_value" }}
+          />
+          {!!assumeRoleExternalId && (
+            <KeyValueLabel
+              keyMessageId="awsRoleExternalId"
+              value={assumeRoleExternalId}
+              dataTestIds={{ key: "p_assume_role_external_id_key", value: "p_assume_role_external_id_value" }}
+            />
+          )}
+        </>
       )}
       {!isAssumeRole && (
         <KeyValueLabel
@@ -117,6 +130,20 @@ const AwsProperties = ({ accountId, config, createdAt }: AwsPropertiesProps) => 
             />
           )}
         </>
+      )}
+      {!isEmptyArray(includedRegions) && (
+        <KeyValueLabel
+          keyMessageId="regionScopeInclude"
+          value={includedRegions?.join(", ")}
+          dataTestIds={{ key: "p_included_regions_key", value: "p_included_regions_value" }}
+        />
+      )}
+      {!isEmptyArray(excludedRegions) && (
+        <KeyValueLabel
+          keyMessageId="regionScopeExclude"
+          value={excludedRegions?.join(", ")}
+          dataTestIds={{ key: "p_excluded_regions_key", value: "p_excluded_regions_value" }}
+        />
       )}
     </>
   );

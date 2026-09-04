@@ -192,24 +192,63 @@ class TestCloudAccountApi(TestApiBase):
     def test_create_aws_cloud_acc_assume(self):
         assume_role_account_id = '87629'
         assume_role_name = 'va-test'
+        external_id = 'test-external-id'
         code, cloud_acc = self.create_cloud_account(self.org_id, {
             'name': 'assume_cloud_acc',
             'type': 'aws_cnr',
             'config': {
                 'assume_role_account_id': assume_role_account_id,
                 'assume_role_name': assume_role_name,
+                'assume_role_external_id': external_id,
                 'config_scheme': 'create_report'
             }
         })
         self.assertEqual(code, 201)
-        # check service creds account id in config
         self.assertEqual(cloud_acc['config']['access_key_id'],
                          self._aws_service_creds['access_key_id'])
-        # check assume parameters in config
         self.assertEqual(cloud_acc['config']['assume_role_account_id'],
                          assume_role_account_id)
         self.assertEqual(cloud_acc['config']['assume_role_name'],
                          assume_role_name)
+        self.assertEqual(cloud_acc['config']['assume_role_external_id'],
+                         external_id)
+
+    def test_create_aws_cloud_acc_assume_invalid_external_id(self):
+        base_config = {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'sd-test',
+                'config_scheme': 'create_report'
+            }
+        }
+        for value in ['x', 'a' * 1225]:
+            config = base_config.copy()
+            config['config'] = {**base_config['config'],
+                                'assume_role_external_id': value}
+            code, resp = self.create_cloud_account(self.org_id, config)
+            self.assertEqual(code, 400)
+            self.verify_error_code(resp, 'OE0215')
+        for value in ['bad value!', 'bad$value']:
+            config = base_config.copy()
+            config['config'] = {**base_config['config'],
+                                'assume_role_external_id': value}
+            code, resp = self.create_cloud_account(self.org_id, config)
+            self.assertEqual(code, 400)
+            self.verify_error_code(resp, 'OE0218')
+
+    def test_create_aws_cloud_acc_assume_no_external_id(self):
+        code, cloud_acc = self.create_cloud_account(self.org_id, {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'va-test',
+                'config_scheme': 'create_report'
+            }
+        })
+        self.assertEqual(code, 201)
 
     @patch('rest_api.rest_api_server.controllers.cloud_account.'
            'ExpensesRecalculationScheduleController.schedule')
@@ -220,6 +259,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'config_scheme': 'create_report'
             }
         }
@@ -297,6 +337,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'config_scheme': 'create_report'
             }
         }
@@ -331,6 +372,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'config_scheme': 'create_report'
             }
         }
@@ -367,6 +409,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'linked': True,  # linked acc with assumed role
             }
         }
@@ -397,6 +440,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'linked': True,  # linked acc with assumed role
             }
         }
@@ -426,6 +470,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
                 'linked': True,  # linked acc with assumed role
             }
         }
@@ -457,6 +502,7 @@ class TestCloudAccountApi(TestApiBase):
             'config': {
                 'assume_role_account_id': '87629',
                 'assume_role_name': 'va-test',
+                'assume_role_external_id': 'test-ext-id',
             }
         }
         code, cloud_acc = self.create_cloud_account(self.org_id, config)
@@ -485,6 +531,7 @@ class TestCloudAccountApi(TestApiBase):
             config = {
                     'assume_role_account_id': '87629',
                     'assume_role_name': 'va-test',
+                    'assume_role_external_id': 'test-ext-id',
                     'config_scheme': 'create_report',
                 }
             config.update(i)
@@ -513,6 +560,117 @@ class TestCloudAccountApi(TestApiBase):
             })
             self.assertEqual(code, 400)
             self.assertEqual(cloud_acc['error']['error_code'], 'OE0216')
+
+    def test_create_aws_cloud_acc_assume_with_external_id(self):
+        assume_role_account_id = '87629'
+        assume_role_name = 'sd-test'
+        external_id = 'my-external-id-123'
+        code, cloud_acc = self.create_cloud_account(self.org_id, {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': assume_role_account_id,
+                'assume_role_name': assume_role_name,
+                'assume_role_external_id': external_id,
+                'config_scheme': 'create_report'
+            }
+        })
+        self.assertEqual(code, 201)
+        self.assertEqual(cloud_acc['config']['assume_role_external_id'],
+                         external_id)
+
+    @patch('rest_api.rest_api_server.controllers.cloud_account.'
+           'ExpensesRecalculationScheduleController.schedule')
+    def test_edit_aws_cloud_acc_assume_external_id(self, t_schedule):
+        config = {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'sd-test',
+                'assume_role_external_id': 'original-ext-id',
+                'config_scheme': 'create_report'
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, config)
+        ca_id = cloud_acc['id']
+        patch('tools.cloud_adapter.clouds.aws.Aws.validate_credentials',
+              return_value={'account_id': ca_id, 'warnings': []}).start()
+
+        # update role name — external_id must be preserved from old config
+        ch_config = {'config': {'assume_role_name': 'sd-test-2'}}
+        code, new_cloud_acc = self.client.cloud_account_update(ca_id, ch_config)
+        self.assertEqual(code, 200)
+        self.assertEqual(new_cloud_acc['config']['assume_role_external_id'],
+                         'original-ext-id')
+
+    @patch('rest_api.rest_api_server.controllers.cloud_account.'
+           'ExpensesRecalculationScheduleController.schedule')
+    def test_edit_aws_cloud_acc_assume_external_id_immutable(self, t_schedule):
+        config = {
+            'name': 'assume_cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'assume_role_account_id': '87629',
+                'assume_role_name': 'va-test',
+                'assume_role_external_id': 'original-ext-id',
+                'config_scheme': 'create_report'
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, config)
+        ca_id = cloud_acc['id']
+        patch('tools.cloud_adapter.clouds.aws.Aws.validate_credentials',
+              return_value={'account_id': ca_id, 'warnings': []}).start()
+
+        # changing to a different value is rejected
+        for bad_value in ['new-ext-id', '', None]:
+            ch_config = {
+                'config': {
+                    'assume_role_name': 'va-test',
+                    'assume_role_external_id': bad_value,
+                }
+            }
+            code, resp = self.client.cloud_account_update(ca_id, ch_config)
+            self.assertEqual(code, 400)
+            self.assertEqual(resp['error']['error_code'], 'OE0211')
+
+        # passing the same value is allowed
+        ch_config = {
+            'config': {
+                'assume_role_name': 'va-test2',
+                'assume_role_external_id': 'original-ext-id',
+            }
+        }
+        code, resp = self.client.cloud_account_update(ca_id, ch_config)
+        self.assertEqual(code, 200)
+        self.assertEqual(resp['config']['assume_role_external_id'],
+                         'original-ext-id')
+
+    @patch('rest_api.rest_api_server.controllers.cloud_account.'
+           'ExpensesRecalculationScheduleController.schedule')
+    def test_edit_assume_external_id_unexpected_in_non_assumed(self,
+                                                               t_schedule):
+        valid_config = {
+            'name': 'my cloud_acc',
+            'type': 'aws_cnr',
+            'config': {
+                'access_key_id': 'key',
+                'secret_access_key': 'secret',
+            }
+        }
+        code, cloud_acc = self.create_cloud_account(self.org_id, valid_config)
+        cloud_acc_id = cloud_acc['id']
+        patch('tools.cloud_adapter.clouds.aws.Aws.validate_credentials',
+              return_value={'account_id': cloud_acc_id, 'warnings': []}).start()
+
+        ch_config = {
+            'config': {
+                'assume_role_external_id': 'some-id',
+            }
+        }
+        code, resp = self.client.cloud_account_update(cloud_acc_id, ch_config)
+        self.assertEqual(code, 400)
+        self.assertEqual(resp['error']['error_code'], 'OE0212')
 
     def test_pool_and_rule_for_created_cloud_acc(self):
         auth_user_id = self.gen_id()

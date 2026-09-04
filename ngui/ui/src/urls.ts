@@ -635,3 +635,6 @@ export const WITH_LEGEND_QUERY_PARAMETER_NAME = "withLegend";
 export const APPLY_FILTER_BY_CATEGORY_QUERY_PARAMETER_NAME = "applyFilterByCategory";
 
 export const CONTACT_US_URL = "https://hystax.com/contact-us/";
+
+export const AWS_DOCS_IAM_THIRD_PARTY_ACCESS =
+  "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html";
