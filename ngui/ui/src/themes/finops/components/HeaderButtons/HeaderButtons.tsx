@@ -10,6 +10,7 @@ import Menu from "@mui/material/Menu";
 import { FormattedMessage } from "react-intl";
 import { MPT_BRAND_TYPE } from "@theme/utils/layouts";
 import IconButton from "components/IconButton";
+import LanguageSwitcher from "components/LanguageSwitcher";
 import Popover from "components/Popover";
 import { PRODUCT_TOUR, useStartTour } from "components/Tour";
 import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
@@ -49,6 +50,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
   return (
     <>
       <Box component="div" className={classes.sectionDesktop}>
+        <LanguageSwitcher />
         <IconButton
           dataTestId="btn_doc"
           color="info"
@@ -88,6 +90,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
         />
       </Box>
       <Box component="div" className={classes.sectionMobile}>
+        <LanguageSwitcher />
         <IconButton icon={<MoreVertIcon />} sx={{ color: MPT_BRAND_TYPE }} onClick={openMobileMenu} />
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={closeMobileMenu}>
           <Box className={classes.customMenuItem}>
