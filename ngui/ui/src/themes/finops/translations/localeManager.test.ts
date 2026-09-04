@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_LOCALE,
-  EXPERIMENTAL_LOCALES,
-  EXPERIMENTAL_LOCALES_STORAGE_KEY,
+  DRAFT_LOCALES,
+  DRAFT_LOCALES_STORAGE_KEY,
   LOCALE_STORAGE_KEY,
   SUPPORTED_LOCALES,
   getStoredLocale,
@@ -12,11 +12,11 @@ import {
   type SupportedLocale
 } from "./localeManager";
 
-const experimentalLocale = [...EXPERIMENTAL_LOCALES][0] as SupportedLocale; // e.g. "es-ES"
+const draftLocale = [...DRAFT_LOCALES][0] as SupportedLocale; // e.g. "es-ES"
 const allLocales = Object.keys(SUPPORTED_LOCALES) as SupportedLocale[];
-const publicLocales = allLocales.filter((locale) => !EXPERIMENTAL_LOCALES.has(locale));
+const publicLocales = allLocales.filter((locale) => !DRAFT_LOCALES.has(locale));
 
-const enablePreview = () => localStorage.setItem(EXPERIMENTAL_LOCALES_STORAGE_KEY, "true");
+const enablePreview = () => localStorage.setItem(DRAFT_LOCALES_STORAGE_KEY, "true");
 const stubBrowserLanguages = (languages: string[]) => vi.stubGlobal("navigator", { languages });
 
 beforeEach(() => {
@@ -35,15 +35,15 @@ describe("isLocaleVisible", () => {
     expect(isLocaleVisible(DEFAULT_LOCALE)).toBe(true);
   });
 
-  it("hides an experimental locale until the preview flag is set", () => {
-    expect(isLocaleVisible(experimentalLocale)).toBe(false);
+  it("hides a draft locale until the preview flag is set", () => {
+    expect(isLocaleVisible(draftLocale)).toBe(false);
     enablePreview();
-    expect(isLocaleVisible(experimentalLocale)).toBe(true);
+    expect(isLocaleVisible(draftLocale)).toBe(true);
   });
 });
 
 describe("getVisibleLocales", () => {
-  it("omits experimental locales when the preview flag is off", () => {
+  it("omits draft locales when the preview flag is off", () => {
     expect(getVisibleLocales()).toEqual(publicLocales);
   });
 
@@ -72,40 +72,40 @@ describe("getStoredLocale", () => {
     expect(getStoredLocale()).toBe(DEFAULT_LOCALE);
   });
 
-  it("ignores a stored experimental locale while it is hidden (can't get stuck)", () => {
-    localStorage.setItem(LOCALE_STORAGE_KEY, experimentalLocale);
+  it("ignores a stored draft locale while it is hidden (can't get stuck)", () => {
+    localStorage.setItem(LOCALE_STORAGE_KEY, draftLocale);
     expect(getStoredLocale()).toBeNull();
   });
 
-  it("returns the stored experimental locale once preview is enabled", () => {
-    localStorage.setItem(LOCALE_STORAGE_KEY, experimentalLocale);
+  it("returns the stored draft locale once preview is enabled", () => {
+    localStorage.setItem(LOCALE_STORAGE_KEY, draftLocale);
     enablePreview();
-    expect(getStoredLocale()).toBe(experimentalLocale);
+    expect(getStoredLocale()).toBe(draftLocale);
   });
 });
 
 describe("resolveInitialLocale", () => {
   it("does NOT auto-select a hidden language from the browser (stays on English)", () => {
-    stubBrowserLanguages([experimentalLocale]);
+    stubBrowserLanguages([draftLocale]);
     expect(resolveInitialLocale()).toBe(DEFAULT_LOCALE);
   });
 
   it("matches a hidden language by subtag but still stays on English", () => {
-    stubBrowserLanguages([experimentalLocale.split("-")[0]]); // e.g. "es"
+    stubBrowserLanguages([draftLocale.split("-")[0]]); // e.g. "es"
     expect(resolveInitialLocale()).toBe(DEFAULT_LOCALE);
   });
 
   it("auto-selects the browser language once preview is enabled", () => {
     enablePreview();
-    stubBrowserLanguages([experimentalLocale]);
-    expect(resolveInitialLocale()).toBe(experimentalLocale);
+    stubBrowserLanguages([draftLocale]);
+    expect(resolveInitialLocale()).toBe(draftLocale);
   });
 
   it("prefers a persisted choice over browser detection", () => {
     enablePreview();
-    localStorage.setItem(LOCALE_STORAGE_KEY, experimentalLocale);
+    localStorage.setItem(LOCALE_STORAGE_KEY, draftLocale);
     stubBrowserLanguages([DEFAULT_LOCALE]);
-    expect(resolveInitialLocale()).toBe(experimentalLocale);
+    expect(resolveInitialLocale()).toBe(draftLocale);
   });
 
   it("falls back to English for an unknown browser language", () => {
